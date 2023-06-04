@@ -11,6 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
     [Autoload(true)]
     public class AlienRifle : ModItem
     {
+        public const int BaseDamage = 60;
         public override void SetStaticDefaults()
         {
             ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
@@ -29,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item157;
             Item.DamageType = DamageClass.Ranged; 
-            Item.damage = 60;
+            Item.damage = BaseDamage;
             Item.knockBack = 5f;
             Item.noMelee = true;
             Item.shoot = ProjectileID.Seed;

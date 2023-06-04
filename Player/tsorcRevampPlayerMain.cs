@@ -561,7 +561,7 @@ namespace tsorcRevamp
             }
             if (MiakodaFull)
             { //Miakoda Full Moon
-                if (MiakodaEffectsTimer > 720)
+                if (MiakodaEffectsTimer > Items.Pets.MiakodaFull.HealCooldown)
                 {
                     if (hit.Crit)
                     {
@@ -586,7 +586,7 @@ namespace tsorcRevamp
 
             if (MiakodaCrescent)
             { //Miakoda Crescent Moon
-                if (MiakodaEffectsTimer > 720)
+                if (MiakodaEffectsTimer > Items.Pets.MiakodaCrescent.BoostCooldown)
                 {
                     if (hit.Crit)
                     {
@@ -603,7 +603,7 @@ namespace tsorcRevamp
 
             if (MiakodaNew)
             { //Miakoda New Moon
-                if (MiakodaEffectsTimer > 720)
+                if (MiakodaEffectsTimer > Items.Pets.MiakodaNew.BoostCooldown * 60)
                 {
                     if (hit.Crit)
                     {
@@ -627,7 +627,7 @@ namespace tsorcRevamp
         {
             if (MiakodaFull)
             { //Miakoda Full Moon
-                if (MiakodaEffectsTimer > 720)
+                if (MiakodaEffectsTimer > Items.Pets.MiakodaFull.HealCooldown * 60)
                 {
                     if (hit.Crit) //summoner has decent options for crits now
                     {
@@ -637,7 +637,7 @@ namespace tsorcRevamp
 
 
                         //2 per 100 max hp, plus 2
-                        int HealAmount = (int)((Math.Floor((double)(Player.statLifeMax2 / 100)) * 2) + 2);
+                        int HealAmount = (int)((Math.Floor((double)(Player.statLifeMax2 / 100)) * Items.Pets.MiakodaFull.MaxHPHealPercent) + Items.Pets.MiakodaFull.BaseHealing);
                         Player.statLife += HealAmount;
                         Player.HealEffect(HealAmount, false);
                         if (Player.statLife > Player.statLifeMax2)
@@ -654,7 +654,7 @@ namespace tsorcRevamp
 
             if (MiakodaCrescent)
             { //Miakoda Crescent Moon
-                if (MiakodaEffectsTimer > 720)
+                if (MiakodaEffectsTimer > Items.Pets.MiakodaCrescent.BoostCooldown * 60)
                 {
                     if (hit.Crit) //summoner has decent options for crits now
                     {
@@ -671,7 +671,7 @@ namespace tsorcRevamp
 
             if (MiakodaNew)
             { //Miakoda New Moon
-                if (MiakodaEffectsTimer > 720)
+                if (MiakodaEffectsTimer > Items.Pets.MiakodaNew.BoostCooldown * 60)
                 {
                     if (hit.Crit)
                     {
@@ -716,7 +716,7 @@ namespace tsorcRevamp
 
             if (Player.GetModPlayer<tsorcRevampPlayer>().SweepingBladeDamage)
             {
-                modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 3000, 150);
+                modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * PlasmaWhirlwindDash.PercentHealthDamage / 100f, PlasmaWhirlwindDash.HealthDamageCap);
             }
 
             if (OldWeapon)

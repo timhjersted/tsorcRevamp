@@ -23,7 +23,7 @@ namespace tsorcRevamp.Buffs
                 Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.MiakodaCrescent>(), 0, 0f, player.whoAmI);
             }
 
-            player.GetDamage(DamageClass.Generic) *= 1.03f;
+            player.GetDamage(DamageClass.Generic) *= 1f + Items.Pets.MiakodaCrescent.DamageMultiplier1 / 100f;
         }
     }
 }

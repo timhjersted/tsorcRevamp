@@ -23,7 +23,7 @@ namespace tsorcRevamp.Buffs
                 Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.MiakodaFull>(), 0, 0f, player.whoAmI);
             }
 
-            player.endurance += 0.03f;
+            player.endurance += Items.Pets.MiakodaFull.DamageReduction / 100f;
         }
     }
 }

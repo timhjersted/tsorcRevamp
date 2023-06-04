@@ -11,6 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
     [Autoload(true)]
     public class OmegaSquadRifle : ModItem
     {
+        public const int BaseDamage = 220;
         public override void SetStaticDefaults()
         {
             ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
@@ -29,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item99;
             Item.DamageType = DamageClass.Ranged; 
-            Item.damage = 220;
+            Item.damage = BaseDamage;
             Item.knockBack = 6f;
             Item.noMelee = true;
             Item.shoot = ProjectileID.Seed;

@@ -9,6 +9,7 @@ using tsorcRevamp.Projectiles.VFX;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
@@ -35,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Projectile.minionSlots = 0.5f; 
 			Projectile.penetrate = -1;
 			Projectile.extraUpdates = 1;
-            Projectile.ContinuouslyUpdateDamage = true;
+            Projectile.ContinuouslyUpdateDamageStats = true;
 
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 20;
@@ -229,7 +230,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		}
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-			if (hit.Crit)
+            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = Main.player[Projectile.owner];
+            if (hit.Crit)
 			{
 				target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 2 * 60);
 			}

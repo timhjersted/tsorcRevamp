@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 
@@ -8,16 +9,13 @@ namespace tsorcRevamp.Items.Pets
 {
     class MiakodaCrescent : ModItem
     {
+        public static float DamageMultiplier1 = 3f;
+        public static float DamageMultiplier2 = 7f;
+        public static float BoostDuration = 2.5f;
+        public static int BoostCooldown = 12;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageMultiplier1, DamageMultiplier2, BoostDuration, BoostCooldown);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Miakoda - Crescent Moon Form");
-            /* Tooltip.SetDefault("Miakoda - an ancient being of light over 100 years old, " +
-                                "\nwho has vowed to help you find your wife and defeat Attraidies." +
-                                "\nMiakoda is an indigenous name that means \"Power of the Moon\"." +
-                                "\nCrescent Moon Form - Imbues weapons with Crescent Moonlight" +
-                                "\nwhen you get a crit (2 second duration, 12 second cooldown)" +
-                                "\n+3% damage, +7% more while weapon imbue is active" +
-                                "\nCan switch between forms at an altar"); */
         }
         public override void SetDefaults()
         {

@@ -36,7 +36,6 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 
             if (player.GetModPlayer<tsorcRevampPlayer>().CritCounter == 3)
             {
-                Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.One, ModContent.ProjectileType<CenterOfTheUniverseStellarNova>(), 100, 1f, Main.myPlayer);
                 player.GetModPlayer<tsorcRevampPlayer>().CritCounter = 0;
             }
 

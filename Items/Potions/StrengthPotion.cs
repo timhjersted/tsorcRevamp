@@ -1,16 +1,18 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Potions
 {
     public class StrengthPotion : ModItem
     {
+        public static int Defense = 15;
+        public static float DamageBoost = 10f;
+        public static float AttackSpeedBoost = 15f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Defense, DamageBoost, AttackSpeedBoost);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases damage by 10%," +
-                             "\ndefense by 15, and all attack speed by 15%(doubled for melee)" +
-                             "\nDoes not stack with Demon Drug, Armor Drug, or Battlefront Potions."); */
         }
 
         public override void SetDefaults()

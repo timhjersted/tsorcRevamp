@@ -1,6 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra.Magic
 {
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
         {
 			if (Sundered && modifiers.DamageType == DamageClass.Magic)
             {
-                modifiers.FinalDamage *= 1.2f;
+                modifiers.FinalDamage *= 1f + OrbOfFlame.MagicSunder / 100f;
             }
         }
     }

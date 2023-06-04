@@ -8,15 +8,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     class ShadowSickle : ModItem
     {
-        
+        public const int BaseDamage = 50;
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("A curiously simple but deadly weapon - its short reach seems to be its only weakness.");
         }
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Blue;
-            Item.damage = 50;
+            Item.damage = BaseDamage;
             Item.width = 32;
             Item.height = 32;
             Item.knockBack = 6f;

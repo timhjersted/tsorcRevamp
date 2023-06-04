@@ -7,48 +7,62 @@ namespace tsorcRevamp.Buffs
 {
     public class Flasks : GlobalBuff
     {
+        public static float PoisonFlaskDMG = 10f;
+        public static float IchorFlaskDMG = 10f;
+        public static float FireFlaskDMG = 12f;
+        public static float GoldFlaskDMG = 15f;
+        public static float ConfettiFlaskDMG = 17f;
+        public static float CursedFlaskDMG = 16f;
+        public static float VenomFlaskDMGCrit = 8f;
+        public static float NanitesFlaskDMGCrit = 11f;
         public override void Update(int type, Player player, ref int buffIndex)
         {
-            if (type == BuffID.WeaponImbueIchor || type == BuffID.WeaponImbuePoison)
+            if (type == BuffID.WeaponImbuePoison)
             {
-                player.GetDamage(DamageClass.Melee) += 0.1f;
-                player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
+                player.GetDamage(DamageClass.Melee) += PoisonFlaskDMG / 100f;
+                player.GetDamage(DamageClass.SummonMeleeSpeed) += PoisonFlaskDMG / 100f;
+            }
+
+            if (type == BuffID.WeaponImbueIchor)
+            {
+                player.GetDamage(DamageClass.Melee) += IchorFlaskDMG / 100f;
+                player.GetDamage(DamageClass.SummonMeleeSpeed) += IchorFlaskDMG / 100f;
             }
 
             if (type == BuffID.WeaponImbueFire)
             {
-                player.GetDamage(DamageClass.Melee) += 0.12f;
-                player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.12f;
+                player.GetDamage(DamageClass.Melee) += FireFlaskDMG / 100f;
+                player.GetDamage(DamageClass.SummonMeleeSpeed) += FireFlaskDMG / 100f;
             }
 
             if (type == BuffID.WeaponImbueGold)
             {
-                player.GetDamage(DamageClass.Melee) += 0.15f;
-                player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.15f;
+                player.GetDamage(DamageClass.Melee) += GoldFlaskDMG / 100f;
+                player.GetDamage(DamageClass.SummonMeleeSpeed) += GoldFlaskDMG / 100f;
             }
 
             if (type == BuffID.WeaponImbueConfetti)
             {
-                player.GetDamage(DamageClass.Melee) += 0.17f;
-                player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.17f;
+                player.GetDamage(DamageClass.Melee) += ConfettiFlaskDMG / 100f;
+                player.GetDamage(DamageClass.SummonMeleeSpeed) += ConfettiFlaskDMG / 100f;
             }
 
             if (type == BuffID.WeaponImbueCursedFlames)
             {
-                player.GetDamage(DamageClass.Melee) += 0.16f;
-                player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.16f;
+                player.GetDamage(DamageClass.Melee) += CursedFlaskDMG / 100f;
+                player.GetDamage(DamageClass.SummonMeleeSpeed) += CursedFlaskDMG / 100f;
             }
 
             if (type == BuffID.WeaponImbueVenom)
             {
-                player.GetCritChance(DamageClass.Melee) += 8f;
-                player.GetDamage(DamageClass.SummonMeleeSpeed) *= 1.08f;
+                player.GetCritChance(DamageClass.Melee) += VenomFlaskDMGCrit;
+                player.GetDamage(DamageClass.SummonMeleeSpeed) *= 1f + VenomFlaskDMGCrit / 100f;
             }
 
             if (type == BuffID.WeaponImbueNanites)
             {
-                player.GetCritChance(DamageClass.Melee) += 14f;
-                player.GetDamage(DamageClass.SummonMeleeSpeed) *= 1.14f;
+                player.GetCritChance(DamageClass.Melee) += NanitesFlaskDMGCrit;
+                player.GetDamage(DamageClass.SummonMeleeSpeed) *= 1f + NanitesFlaskDMGCrit / 100f;
             }
         }
 
@@ -56,42 +70,42 @@ namespace tsorcRevamp.Buffs
         {
             if (type == BuffID.WeaponImbuePoison)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", 10);
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", PoisonFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueFire)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", 12);
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", FireFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueGold)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", 15);
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", GoldFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueConfetti)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", 17);
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", ConfettiFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueCursedFlames)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", 16);
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", CursedFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueIchor)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", 10);
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", IchorFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueVenom)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", 8, 8);
+                tip += "\n" + LanguageUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", VenomFlaskDMGCrit, VenomFlaskDMGCrit);
             }
 
             if (type == BuffID.WeaponImbueNanites)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", 14, 14);
+                tip += "\n" + LanguageUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", NanitesFlaskDMGCrit, NanitesFlaskDMGCrit);
             }
         }
 

@@ -15,8 +15,8 @@ namespace tsorcRevamp.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            player.GetDamage(DamageClass.Generic) *= modPlayer.BearerOfTheCurse ? 1.4f : 1.2f;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= modPlayer.BearerOfTheCurse ? 1.6f : 1.3f;
+            player.GetDamage(DamageClass.Generic) *= modPlayer.BearerOfTheCurse ? (1f + (2f * Items.PowerWithin.DamageIncrease / 100f)) : (1f + Items.PowerWithin.DamageIncrease / 100f);
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= modPlayer.BearerOfTheCurse ? (1f + (2f * Items.PowerWithin.StaminaRegen / 100f)) : (1f + Items.PowerWithin.StaminaRegen / 100f);
             modPlayer.PowerWithin = true;
         }
     }

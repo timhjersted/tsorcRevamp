@@ -25,25 +25,15 @@ namespace tsorcRevamp.Buffs.Debuffs
 
             if (modPlayer.CurseLevel >= 100 && player.statLifeMax > 100)
             {
-                // Better safe than sorry
-                if (Main.myPlayer == player.whoAmI)
+                if (player.statLifeMax <= 100)
                 {
-                    if (player.statLifeMax <= 100)
-                    {
-                        Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseText1"));
-                    }
+                    Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseText1"));
+                }
 
-                    if (player.statLifeMax >= 120)
-                    {
-                        player.statLifeMax -= 20;
-                        Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", 20));
-                    }
-                    else
-                    {
-                        int lifeLoss = player.statLifeMax - 100;
-                        player.statLife -= lifeLoss;
-                        Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", lifeLoss));
-                    }
+                if (player.statLifeMax >= 120)
+                {
+                    player.statLifeMax -= 20;
+                    Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", 20));
                 }
 
                 modPlayer.CurseLevel = 0; // Reset it to 0

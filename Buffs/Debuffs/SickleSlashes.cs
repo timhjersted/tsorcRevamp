@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
@@ -23,7 +24,7 @@ namespace tsorcRevamp.Buffs.Debuffs
                     {
                         player.statMana -= (int)(player.manaCost * 10f);
                         player.manaRegenDelay = 200;
-                        Projectile.NewProjectile(npc.GetSource_Buff(buffIndex), npc.Center, Vector2.Zero, ProjectileID.Muramasa, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(25), 0, Main.myPlayer);
+                        Projectile.NewProjectile(npc.GetSource_Buff(buffIndex), npc.Center, Vector2.Zero, ProjectileID.Muramasa, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(ShadowSickle.BaseDamage / 2), 0, Main.myPlayer);
                     }
                 }
             }

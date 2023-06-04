@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
             Projectile.friendly = true;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 15;
-            Projectile.ContinuouslyUpdateDamage = true;
+            Projectile.ContinuouslyUpdateDamageStats = true;
             DrawOffsetX = -14;
             DrawOriginOffsetY = -14;
         }

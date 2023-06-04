@@ -1,15 +1,16 @@
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class ProtectRing : ModItem
     {
+        public static int Defense = 30;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Defense);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Ring that guards against death." +
-                                "\nPuts \"protect\" on wearer (+30 defense)."); */
         }
 
         public override void SetDefaults()

@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
@@ -103,11 +104,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		}
 
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-		{
-			{
-                target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 2 * 60);
-            }
-		}
+        {
+            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = Main.player[Projectile.owner];
+            target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 2 * 60);
+        }
 
         public override bool PreDraw(ref Color lightColor)
         {

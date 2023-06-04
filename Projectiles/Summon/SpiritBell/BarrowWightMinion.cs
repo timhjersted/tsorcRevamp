@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Summon.SpiritBell
             Projectile.width = 104;
             Projectile.height = 93;
             Projectile.tileCollide = false; // Makes the minion go through tiles freely
-            Projectile.ContinuouslyUpdateDamage = true;
+            Projectile.ContinuouslyUpdateDamageStats = true;
             Projectile.friendly = true; 
             Projectile.minion = true;
             Projectile.DamageType = DamageClass.Summon; 

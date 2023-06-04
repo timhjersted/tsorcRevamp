@@ -1,6 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Buffs.Runeterra.Ranged
 {
@@ -13,35 +14,12 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
 
 		public override void Update(NPC npc, ref int buffIndex)
 		{
-			npc.GetGlobalNPC<ElectrifiedDebuffNPC>().Electrified = true;
+			npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Electrified = true;
 
 			if (Main.GameUpdateCount % 5 == 0)
 			{
 				Dust.NewDust(npc.Top, 10, 10, DustID.Electric);
 			}
 		}
-	}
-
-	public class ElectrifiedDebuffNPC : GlobalNPC
-	{
-		public override bool InstancePerEntity => true;
-
-		public bool Electrified;
-
-		public override void ResetEffects(NPC npc)
-		{
-			Electrified = false;
-		}
-
-		public override void UpdateLifeRegen(NPC npc, ref int damage)
-		{
-            var player = Main.LocalPlayer;
-			int DoTPerS = (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(60) + (int)(player.GetTotalCritChance(DamageClass.Ranged) / 100f * 60f);
-            if (Electrified)
-			{
-				npc.lifeRegen -= DoTPerS * 2;
-				damage += DoTPerS;
-            }
-        }
 	}
 }

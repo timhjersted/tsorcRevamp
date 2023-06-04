@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
@@ -39,7 +40,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-			target.AddBuff(ModContent.BuffType<VenomDebuff>(), 2 * 60);
+            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[Projectile.owner];
+            target.AddBuff(ModContent.BuffType<VenomDebuff>(), 2 * 60);
         }
 		public override bool PreDraw(ref Color lightColor)
 		{

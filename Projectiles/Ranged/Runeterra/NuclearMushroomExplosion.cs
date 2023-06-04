@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using Terraria.DataStructures;
 using static Humanizer.In;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
@@ -44,7 +45,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-			target.AddBuff(ModContent.BuffType<IrradiatedByShroomDebuff>(), 600);
+            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[Projectile.owner];
+            target.AddBuff(ModContent.BuffType<IrradiatedByShroomDebuff>(), 10 * 60);
         }
         private void Visuals()
         {

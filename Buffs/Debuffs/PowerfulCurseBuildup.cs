@@ -23,32 +23,28 @@ namespace tsorcRevamp.Buffs.Debuffs
         {
             if (player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel >= 500)
             {
-                // Better safe than sorry
-                if (Main.myPlayer == player.whoAmI)
+                if (player.statLifeMax <= 100)
                 {
-                    if (player.statLifeMax <= 100)
-                    {
-                        Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseText1"));
-                    }
+                    Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseText1"));
+                }
 
-                    if (player.statLifeMax >= 200)
-                    {
-                        player.statLifeMax -= 100;
-                        Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", 100));
-                    }
-                    else
-                    {
-                        int lifeLoss = player.statLifeMax - 100;
-                        player.statLife -= lifeLoss;
-                        Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", lifeLoss));
-                    }
+                if (player.statLifeMax >= 200)
+                {
+                    player.statLifeMax -= 100;
+                    Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", 100));
+                }
+                else
+                {
+                    int lifeLoss = player.statLifeMax - 100;
+                    player.statLife -= lifeLoss;
+                    Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", lifeLoss));
                 }
 
                 player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel = 0; // Reset to 0
-                player.AddBuff(ModContent.BuffType<Invincible>(), 300); // 5 seconds
-                player.AddBuff(ModContent.BuffType<Strength>(), 7200); // 2 minutes
-                player.AddBuff(ModContent.BuffType<CrimsonDrain>(), 300); // Reduced duration, so it adds visually to the moment of curse
-                player.AddBuff(BuffID.Clairvoyance, 7200); // 2 minutes
+                player.AddBuff(ModContent.BuffType<Invincible>(), 5 * 60); // 5 seconds
+                player.AddBuff(ModContent.BuffType<Strength>(), 120 * 60); // 2 minutes
+                player.AddBuff(ModContent.BuffType<CrimsonDrain>(), 5 * 60); // Reduced duration, so it adds visually to the moment of curse
+                player.AddBuff(BuffID.Clairvoyance, 120 * 60); // 2 minutes
 
                 for (int i = 0; i < 50; i++)
                 {

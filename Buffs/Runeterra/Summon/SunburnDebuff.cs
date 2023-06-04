@@ -1,6 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Buffs.Runeterra.Summon
 {
@@ -13,46 +14,12 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 
 		public override void Update(NPC npc, ref int buffIndex)
 		{
-			npc.GetGlobalNPC<SunburnDebuffNPC>().Sunburnt = true;
+			npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Sunburnt = true;
 
             if (Main.GameUpdateCount % 5 == 0)
             {
                 Dust.NewDust(npc.Center, 20, 20, DustID.GoldFlame);
             }
         }
-	}
-
-	public class SunburnDebuffNPC : GlobalNPC
-	{
-		public override bool InstancePerEntity => true;
-
-		public bool Sunburnt;
-
-		public override void ResetEffects(NPC npc)
-		{
-			Sunburnt = false;
-		}
-
-		public override void UpdateLifeRegen(NPC npc, ref int damage)
-		{
-			var player = Main.LocalPlayer;
-            int DoTPerS = (int)player.GetTotalDamage(DamageClass.Summon).ApplyTo(110);
-            if (Sunburnt)
-			{
-				npc.lifeRegen -= DoTPerS * 2;
-				damage += DoTPerS;
-			}
-        }
-
-		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
-		{
-			if (Sunburnt && projectile.IsMinionOrSentryRelated)
-            {
-                if (Main.rand.NextBool(100 / (int)(Main.LocalPlayer.GetTotalCritChance(DamageClass.Summon) / 2.5f)))
-                {
-                    modifiers.SetCrit();
-                }
-            }
-		}
 	}
 }

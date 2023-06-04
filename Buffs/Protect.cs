@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Accessories.Defensive;
 
 namespace tsorcRevamp.Buffs
 {
@@ -13,7 +14,7 @@ namespace tsorcRevamp.Buffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.statDefense += 30;
+            player.statDefense += ProtectRing.Defense;
         }
     }
 }

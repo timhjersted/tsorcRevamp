@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Accessories.Expert;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
@@ -26,7 +27,7 @@ namespace tsorcRevamp.Buffs.Debuffs
         {
             if (RammedByMythril)
             {
-                modifiers.FinalDamage *= 1.25f;
+                modifiers.FinalDamage *= 1f + MythrilBulwark.Vulnerability / 100f;
             }
         }
     }

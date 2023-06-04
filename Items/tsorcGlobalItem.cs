@@ -362,7 +362,7 @@ namespace tsorcRevamp.Items
 
             if (modPlayer.MiakodaNewBoost)
             {
-                target.AddBuff(BuffID.Midas, 300);
+                target.AddBuff(BuffID.Midas, 5 * 60);
             }
 
             if (modPlayer.MagicWeapon || modPlayer.GreatMagicWeapon)

@@ -1,6 +1,7 @@
 using System;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Expert
@@ -8,9 +9,11 @@ namespace tsorcRevamp.Items.Accessories.Expert
     [AutoloadEquip(EquipType.Shield)]
     public class MythrilBulwark: ModItem
     {
+        public static float Vulnerability = 25f;
+        public static int VulnerabilityDuration = 10;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Vulnerability, VulnerabilityDuration);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Rolling through enemies makes them take 25% more damage");
         }
 
         public override void SetDefaults()

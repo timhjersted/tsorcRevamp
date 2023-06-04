@@ -22,9 +22,11 @@ using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Items.Weapons.Ranged;
+using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Items.Weapons.Throwing;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Sentry;
 using tsorcRevamp.Projectiles.Summon.Whips;
 
@@ -38,6 +40,8 @@ namespace tsorcRevamp.NPCs
         float multiplier = 1f;
         float divisorMultiplier = 1f;
         int DarkSoulQuantity;
+        public Player lastHitPlayerSummoner = Main.LocalPlayer;
+        public Player lastHitPlayerRanger = Main.LocalPlayer;
 
         public float SummonTagFlatDamage;
         public float BaseSummonTagCriticalStrikeChance;
@@ -72,6 +76,10 @@ namespace tsorcRevamp.NPCs
 
         public float DragoonLashFireBreathTimer = 0f;
 
+        public bool Scorched;
+        public bool Shocked;
+        public bool Sunburnt;
+
         //Stores the event this NPC belongs to
         public ScriptedEvent ScriptedEventOwner;
 
@@ -98,6 +106,11 @@ namespace tsorcRevamp.NPCs
         public bool Soulstruck;
         public bool PhazonCorruption;
 
+        public bool Venomized;
+        public bool Electrified;
+        public bool Irradiated;
+        public bool IrradiatedByShroom;
+
 
         public override void ResetEffects(NPC npc)
         {
@@ -114,6 +127,10 @@ namespace tsorcRevamp.NPCs
             CrescentMoonlight = false;
             Soulstruck = false;
             PhazonCorruption = false;
+            Venomized = false;
+            Electrified = false;
+            Irradiated = false;
+            IrradiatedByShroom = false;
             SummonTagFlatDamage = 0f;
             BaseSummonTagCriticalStrikeChance = 4f;
             SummonTagScalingDamage = 0f;
@@ -139,6 +156,9 @@ namespace tsorcRevamp.NPCs
             markedByDarkHarvest = false;
             markedByKaleidoscope = false;
             CrystalNunchakuScalingDamage = 0f;
+            Scorched = false;
+            Shocked = false;
+            Sunburnt = false;
         }
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
@@ -916,6 +936,12 @@ namespace tsorcRevamp.NPCs
                     });
                 }
                 #endregion
+                #region Runeterra effects
+                if (Scorched || Shocked || Sunburnt)
+                {
+                    BaseSummonTagCriticalStrikeChance += 10f;
+                }
+                #endregion
 
                 modifiers.FlatBonusDamage += SummonTagFlatDamage * ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type] * modPlayerProjectileOwner.SummonTagStrength;
                 modifiers.ScalingBonusDamage += SummonTagScalingDamage * ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type] * modPlayerProjectileOwner.SummonTagStrength;
@@ -1103,6 +1129,55 @@ namespace tsorcRevamp.NPCs
 
         public override void UpdateLifeRegen(NPC npc, ref int damage)
         {
+            if (Venomized)
+            {
+                int DoTPerS = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)ToxicShot.BaseDamage) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)ToxicShot.BaseDamage);
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+
+            if (Electrified)
+            {
+                int DoTPerS = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)AlienRifle.BaseDamage) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)AlienRifle.BaseDamage);
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+
+            if (Irradiated)
+            {
+                int DoTPerS = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)OmegaSquadRifle.BaseDamage) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)OmegaSquadRifle.BaseDamage);
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+
+            if (IrradiatedByShroom)
+            {
+                int DoTPerS = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)OmegaSquadRifle.BaseDamage * 2.28f) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)OmegaSquadRifle.BaseDamage * 2.28f);
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+
+            if (Scorched)
+            {
+                int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(10);
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+
+            if (Shocked)
+            {
+                int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(30);
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+
+            if (Sunburnt)
+            {
+                int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(110);
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+
             if (DarkInferno)
             {
                 int DoTPerS = 20;
@@ -1605,7 +1680,7 @@ namespace tsorcRevamp.NPCs
                 Main.player[projectile.owner].AddBuff(ModContent.BuffType<CrystalShield>(), 4 * 60);
             }
             #endregion
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>()))
+                if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>()))
             {
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetToxicCatBlobs = true;
                 int tags;

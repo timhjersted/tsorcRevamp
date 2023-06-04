@@ -506,7 +506,7 @@ namespace tsorcRevamp
             {
                 MiakodaCrescentBoostTimer++;
             }
-            if (MiakodaCrescentBoostTimer > 150)
+            if (MiakodaCrescentBoostTimer > Items.Pets.MiakodaCrescent.BoostDuration * 60)
             {
                 Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = false;
                 MiakodaCrescentBoostTimer = 0;
@@ -527,7 +527,7 @@ namespace tsorcRevamp
                 Player.armorEffectDrawShadow = true;
 
             }
-            if (MiakodaNewBoostTimer > 150)
+            if (MiakodaNewBoostTimer > Items.Pets.MiakodaNew.BoostDuration * 60)
             {
                 Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = false;
                 MiakodaNewBoostTimer = 0;
@@ -876,9 +876,9 @@ namespace tsorcRevamp
 
             if (MiakodaNewBoost)
             {
-                Player.moveSpeed += 0.9f;
+                Player.moveSpeed += Items.Pets.MiakodaNew.MoveSpeed2 / 100f;
                 Player.endurance *= 0.5f;
-                Player.endurance += 0.5f;
+                Player.endurance += Items.Pets.MiakodaNew.DamageReduction / 100f;
                 Player.noKnockback = true;
             }
 

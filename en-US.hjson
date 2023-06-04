@@ -1,28 +1,10 @@
 Mods: {
 	tsorcRevamp: {
 		CommonItemTooltip: {
-			IncreasesWhipKnockback: Increases whip knockback
-			IncreasedSummonAttackSpeed: Increases whip attack speed by {0}%
-			IncreasedWhipDamage: Increases whip damage by {0}%
-			IncreasedMeleeAndWhipDamage: Increases melee and whip damage by {0}%
-			GrantsMeleeWhipAutoswing: Enables auto swing for melee weapons
+			General: ""
 			AggroIncrease: Enemies are more likely to target you
-			WhipCritDamage: Increases the damage of whip crits by {0}%
-			WhipCritHitboxSize: Increases the Whip Tip Crit Hitbox Size to {0}x
-			SummonTagStrength: Increases Summon Tag Damage and Armor Penetration by {0}%
-			SummonTagDuration: Increases the duration of Summon Tag effects by {0}%
-			BotCSummonTagDoubleBuffCount: Fully charged whip debuff counts as 2
 			CriticalStrikeDamage: Critical strikes deal {0}% more damage
-			ChargedWhip: Stats of this whip scale with how long you've charged it
-			ChargedWhipSummonTagDamage: "{0}-{1} summon tag damage"
-			ChargedWhipSummonTagCrit: "{0}-{1}% summon tag critical strike chance"
-			ChargedWhipSummonAttackSpeed: Gain {0}-{1}% summon attack speed upon striking an enemy
-			ImprovedWhipCrowdControl: Performs better against multiple targets than most whips
-			SummonTagArmorPen: "{0} summon tag armor penetration"
-			IncreasedRangedCriticalDamage: Increases ranged critical strike damage by {0}%
 			IncreasedLifeRegen: Increases life regeneration by {0}
-			IncreasedManaRegen: Increases mana regeneration by {0}
-			DecreasedManaRegenDelay: Decreases mana regeneration delay by {0}%
 			SetBonus: "Set Bonus: "
 			LifeThreshold: "If life falls below {0}%: "
 			KnockbackImmunity: Grants immunity to knockback
@@ -34,8 +16,40 @@ Mods: {
 			IncreasedConsumableSoulDrops: Increases the chance of consumable soul drops by {0}%
 			NonConsumable: Item is non-consumable
 			UnusableDUringBossFight: Can not be used while a boss is alive!
+			AttackSpeed: Increases attack speed by {0}%
+			GrantsMeleeWhipAutoswing: Enables auto swing for melee weapons
+			IncreasedMeleeAndWhipDamage: Increases melee and whip damage by {0}%
+			DamageMultiplier: Increases damage by {0}% multiplicatively
+			StaminaRegen: Increases stamina regeneration rate by {0}%
+			IncreasesDR: Increases damage reduction by {0}%
+			DecreasesDR: Decreases damage reduction by {0}%
+			Duration: "{0} seconds duration"
+			Cooldown: "{0} seconds cooldown"
+			Melee: ""
 			MeleeArmorPenPercent: Increases melee armor penetration by {0}%
 			FlatMeleeDamageBoost: Increases melee damage by {0} flat
+			Melee2x: (doubled for melee)
+			Ranged: ""
+			IncreasedRangedCriticalDamage: Increases ranged critical strike damage by {0}%
+			Magic: ""
+			IncreasedManaRegen: Increases mana regeneration by {0}
+			DecreasedManaRegenDelay: Decreases mana regeneration delay by {0}%
+			MagicDamageMultiplier: Increases magic damage by {0}% multiplicatively
+			Summon: ""
+			IncreasesWhipKnockback: Increases whip knockback
+			IncreasedSummonAttackSpeed: Increases whip attack speed by {0}%
+			IncreasedWhipDamage: Increases whip damage by {0}%
+			WhipCritDamage: Increases the damage of whip crits by {0}%
+			WhipCritHitboxSize: Increases the Whip Tip Crit Hitbox Size to {0}x
+			SummonTagStrength: Increases Summon Tag Damage and Armor Penetration by {0}%
+			SummonTagDuration: Increases the duration of Summon Tag effects by {0}%
+			BotCSummonTagDoubleBuffCount: Fully charged whip debuff counts as 2
+			ChargedWhip: Stats of this whip scale with how long you've charged it
+			ChargedWhipSummonTagDamage: "{0}-{1} summon tag damage"
+			ChargedWhipSummonTagCrit: "{0}-{1}% summon tag critical strike chance"
+			ChargedWhipSummonAttackSpeed: Gain {0}-{1}% summon attack speed upon striking an enemy
+			ImprovedWhipCrowdControl: Performs better against multiple targets than most whips
+			SummonTagArmorPen: "{0} summon tag armor penetration"
 		}
 
 		Items: {
@@ -669,7 +683,7 @@ Mods: {
 				DisplayName: Ancient Demon Shield
 				Tooltip:
 					'''
-					{$CommonItemTooltip.ReducesDamageTakenByPercent}
+					{$CommonItemTooltip.IncreasesDR}
 					Inherits Obsidian Shield's effects
 					{$CommonItemTooltip.IncreasedThorns@1}
 					'''
@@ -873,7 +887,7 @@ Mods: {
 				Tooltip:
 					'''
 					Ring that guards against death.
-					Puts "protect" on wearer (+30 defense).
+					Puts "Protect" on wearer ({$CommonItemTooltip.IncreasesDefenseBy})
 					'''
 			}
 
@@ -1123,13 +1137,13 @@ Mods: {
 					Inherits Mythril Bulwark, Ankh Shield and Frozen Shield effects
 					Includes immunity to Chilled and Stoned
 					Slows down your dodgeroll slightly
-					Rolling through an enemy may inflict some debuffs this item grants immunity to for 10 seconds
+					Rolling through an enemy may inflict some debuffs this item grants immunity to
 					'''
 			}
 
 			MythrilBulwark: {
 				DisplayName: Mythril Bulwark
-				Tooltip: Rolling through enemies makes them take 25% more damage for 10 seconds
+				Tooltip: Rolling through enemies makes them take {0}% more damage for {1} seconds
 			}
 
 			ReflectionShift: {
@@ -3567,9 +3581,10 @@ Mods: {
 					Miakoda - an ancient being of light over 100 years old, 
 					who has vowed to help you find your wife and defeat Attraidies.
 					Miakoda is an indigenous name that means "Power of the Moon".
+					{$CommonItemTooltip.DamageMultiplier}
 					Crescent Moon Form - Imbues weapons with Crescent Moonlight
-					when you get a crit (2 second duration, 12 second cooldown)
-					+3% damage, +7% more while weapon imbue is active
+					when you hit a crit ({$CommonItemTooltip.Duration@2}, {$CommonItemTooltip.Cooldown@3})
+					{$CommonItemTooltip.DamageMultiplier@1} while weapon imbue is active again
 					Can switch between forms at an altar
 					'''
 			}
@@ -3581,9 +3596,9 @@ Mods: {
 					Miakoda - an ancient being of light over 100 years old, 
 					who has vowed to help you find your wife and defeat Attraidies.
 					Miakoda is an indigenous name that means "Power of the Moon".
-					Full Moon Form - Heals you when you get a crit
-					(12 second cooldown - heal scales with max hp)
-					+3% damage reduction
+					Full Moon Form - Heals you when you hit a crit for {1} + {2}% of your max life
+					({$CommonItemTooltip.Cooldown@3})
+					{$CommonItemTooltip.IncreasesDR}
 					Can switch between forms at an altar
 					'''
 			}
@@ -3595,10 +3610,13 @@ Mods: {
 					Miakoda - an ancient being of light over 100 years old, 
 					who has vowed to help you find your wife and defeat Attraidies.
 					Miakoda is an indigenous name that means "Power of the Moon".
-					New Moon Form - Imbues weapons with Midas when you get a crit,
-					boosting enemy coin drops (2 second duration, 12 second cooldown)
-					+5% movespeed, +90% more while boost is active
-					Knockback immunity and half damage taken while boost is active
+					New Moon Form - Imbues weapons with Midas when you hit a crit,
+					boosting enemy coin drops ({$CommonItemTooltip.Duration@3}, {$CommonItemTooltip.Cooldown@4})
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}, stacking with the boost
+					While boost is active, gain the following bonuses:
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
+					{$CommonItemTooltip.KnockbackImmunity}
+					{$CommonItemTooltip.ReducesDamageTakenByPercent@2}
 					Can switch between forms at an altar
 					'''
 			}
@@ -4111,9 +4129,10 @@ Mods: {
 				DisplayName: Strength Potion
 				Tooltip:
 					'''
-					Increases damage by 10%,
-					defense by 15, and all attack speed by 15%(doubled for melee)
-					Does not stack with Demon Drug, Armor Drug, or Battlefront Potions.
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					{$CommonItemTooltip.IncreasesDefenseBy@1}
+					{$CommonItemTooltip.AttackSpeed@2}{$CommonItemTooltip.Melee2x}
+					Does not stack with Demon Drug, Armor Drug, or Battlefront Potions
 					'''
 			}
 
@@ -4132,10 +4151,11 @@ Mods: {
 				Tooltip:
 					'''
 					Harness the power of flame to actualize the inner-self
-					Increases damage by 20% and stamina regeneration by 30%
+					{$CommonItemTooltip.DamageMultiplier}
+					{$CommonItemTooltip.StaminaRegen@1}
 					Excessive power eats away the life-force of its caster
-					Lasts 30 seconds, can't be cancelled
-					Effect potency doubled for the [c/6d8827:Bearer of the Curse]
+					Lasts {2} seconds, can't be cancelled
+					Effect potency doubled{$CommonItemTooltip.ForBotCOnly}
 					'''
 			}
 
@@ -6425,7 +6445,7 @@ Mods: {
 
 			BrokenSpirit: {
 				DisplayName: Broken Spirit
-				Description: You feel like giving up!
+				Description: You feel like giving up! Removes knockback immunity
 			}
 
 			CowardsAffliction: {
@@ -6727,7 +6747,7 @@ Mods: {
 
 			NightbringerDash: {
 				DisplayName: Sweeping Blade
-				Description: Increases melee damage by 100% and adds % max health damage
+				Description: "{$CommonItemTooltip.PercentIncreasedMeleeDamage} and adds {1}% max health damage on-hit({2}max)"
 			}
 
 			NightbringerDashCooldown: {
@@ -6747,7 +6767,7 @@ Mods: {
 
 			PlasmaWhirlwindDash: {
 				DisplayName: Sweeping Blade
-				Description: Increases melee damage by 100% and adds % max health damage
+				Description: "{$CommonItemTooltip.PercentIncreasedMeleeDamage} and adds {1}% max health damage on-hit({2}max)"
 			}
 
 			PlasmaWhirlwindDashCooldown: {

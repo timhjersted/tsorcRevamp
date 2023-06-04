@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
@@ -8,13 +9,12 @@ namespace tsorcRevamp.Items
 {
     public class PowerWithin : ModItem
     {
+        public static float DamageIncrease = 20f;
+        public static float StaminaRegen = 30f;
+        public static int Duration = 30;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageIncrease, StaminaRegen, Duration);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Harness the power of flame to actualize the inner-self" +
-                                "\nIncreases damage by 20% and stamina regeneration by 30%" +
-                                "\nExcessive power eats away the life-force of its caster" +
-                                "\nLasts 30 seconds, can't be cancelled" +
-                                "\nEffect potency doubled for the [c/6d8827:Bearer of the Curse]"); */
         }
 
         public override void SetDefaults()
@@ -81,7 +81,7 @@ namespace tsorcRevamp.Items
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item100 with { Volume = 1f, PitchVariance = 0.3f }, player.Center);
 
-                player.AddBuff(ModContent.BuffType<Buffs.PowerWithin>(), 1800); //30s
+                player.AddBuff(ModContent.BuffType<Buffs.PowerWithin>(), Duration * 60);
 
                 for (int q = 0; q < 30; q++)
                 {

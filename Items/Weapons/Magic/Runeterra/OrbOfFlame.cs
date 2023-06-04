@@ -16,6 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
     public class OrbOfFlame : ModItem
     {
         public static Color FilledColor = Color.YellowGreen;
+        public static float MagicSunder = 20f;
         public override void SetStaticDefaults()
         {
         }

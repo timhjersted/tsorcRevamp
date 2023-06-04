@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer {
             Projectile.height = 40;
             Projectile.tileCollide = false;
             //Projectile.minion = true;
-            Projectile.ContinuouslyUpdateDamage = true;
+            Projectile.ContinuouslyUpdateDamageStats = true;
             Projectile.minionSlots = 0f;
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.Summon;

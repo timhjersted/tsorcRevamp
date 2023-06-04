@@ -11,10 +11,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Pierces enemies with dark magic" +
-                "\nHold left click to charge a throw, right click to stab" +
-                "\nChanges its damage type between ranged or melee depending your highest stats" +
-                "\nFully charged tridents ignite, setting hit enemies ablaze"); */
         }
 
         public override void SetDefaults()

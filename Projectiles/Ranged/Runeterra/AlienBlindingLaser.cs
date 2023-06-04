@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using System;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
@@ -47,6 +48,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 		}
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[Projectile.owner];
             target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 2 * 60);
             target.AddBuff(BuffID.Confused, 2 * 60);
         }
