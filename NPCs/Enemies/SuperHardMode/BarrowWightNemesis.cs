@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.DataStructures;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -418,8 +419,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.CursedSoul>(), 1, 3, 3));
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 1, 3, 3));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 50));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>(), 5));
         }

@@ -1,11 +1,16 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Accessories.Magic
 {
     public class EssenceOfMana : ModItem
     {
+        public static float PercentMaxManaAmplifier = 50f;
+        public static float ManaCostReduction = 9f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PercentMaxManaAmplifier, ManaCostReduction);
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Essence of Mana");
@@ -35,8 +40,8 @@ namespace tsorcRevamp.Items.Accessories.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.statManaMax2 = (int)(player.statManaMax2 * 1.5f);
-            player.manaCost -= 0.09f;
+            player.GetModPlayer<tsorcRevampPlayer>().MaxManaAmplifier += PercentMaxManaAmplifier;
+            player.manaCost -= ManaCostReduction / 100f;
         }
 
     }

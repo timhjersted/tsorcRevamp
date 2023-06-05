@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 
     public class OrbOfDeceptionOrb : ModProjectile
     {
-        public int EssenceThiefTimer1 = 0;
+        public int EssenceThiefTimer = 0;
         private enum AIState
 		{
 			LaunchingForward,
@@ -74,7 +74,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 						{
 							CurrentAIState = AIState.Retracting;
                             StateTimer = 0f;
-							EssenceThiefTimer1 = 0;
+							EssenceThiefTimer = 0;
                             Projectile.ResetLocalNPCHitImmunity();
                             SoundEngine.PlaySound(SoundID.Item131, player.Center);
                             break;
@@ -118,10 +118,10 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 		{
-			modifiers.SourceDamage *= 1.25f;
+			modifiers.SourceDamage *= OrbOfDeception.OrbDmgMod / 100f;
 			if (CurrentAIState  == AIState.Retracting)
 			{
-				modifiers.SourceDamage *= 1.5f;
+				modifiers.SourceDamage *= OrbOfDeception.OrbReturnDmgMod / 100f;
             }
             modifiers.HitDirectionOverride = (Main.player[Projectile.owner].Center.X < target.Center.X) ? 1 : (-1);
         }
@@ -129,16 +129,16 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
-			if (EssenceThiefTimer1 == 0)
+			if (EssenceThiefTimer == 0)
             {
                 player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
                 if (hit.Crit)
                 {
                     player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
                 }
-				EssenceThiefTimer1 = 1;
+				EssenceThiefTimer = 1;
             }
-			Projectile.damage = (int)(Projectile.damage * 0.95f);
+			Projectile.damage = (int)(Projectile.damage * (1f - OrbOfDeception.DmgLossOnPierce / 100f));
         }
 
         public override bool PreDraw(ref Color lightColor)

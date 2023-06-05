@@ -47,6 +47,8 @@ using tsorcRevamp.Projectiles.Summon.Archer;
 using tsorcRevamp.Projectiles.Summon.SpiritBell;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Tiles.BuffStations;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Lore;
 
 namespace tsorcRevamp
 {
@@ -916,27 +918,27 @@ namespace tsorcRevamp
                 #region Robes
                 { ItemID.AmethystRobe,  new List<(int ItemID, int Count)>()
                                         {
-                                            (ModContent.ItemType<Items.DarkSoul>(), 550)
+                                            (ModContent.ItemType<DarkSoul>(), 550)
                                         }                                                   },
                 { ItemID.TopazRobe,     new List<(int ItemID, int Count)>()
                                         {
-                                            (ModContent.ItemType<Items.DarkSoul>(), 600)
+                                            (ModContent.ItemType<DarkSoul>(), 600)
                                         }                                                   },
                 { ItemID.SapphireRobe,  new List<(int ItemID, int Count)>()
                                         {
-                                            (ModContent.ItemType<Items.DarkSoul>(), 650)
+                                            (ModContent.ItemType<DarkSoul>(), 650)
                                         }                                                   },
                 { ItemID.EmeraldRobe,   new List<(int ItemID, int Count)>()
                                         {
-                                            (ModContent.ItemType<Items.DarkSoul>(), 700)
+                                            (ModContent.ItemType<DarkSoul>(), 700)
                                         }                                                   },
                 { ItemID.RubyRobe,      new List<(int ItemID, int Count)>()
                                         {
-                                            (ModContent.ItemType<Items.DarkSoul>(), 750)
+                                            (ModContent.ItemType<DarkSoul>(), 750)
                                         }                                                   },
                 { ItemID.DiamondRobe,   new List<(int ItemID, int Count)>()
                                         {
-                                            (ModContent.ItemType<Items.DarkSoul>(), 800)
+                                            (ModContent.ItemType<DarkSoul>(), 800)
                                         }                                                   }
                 #endregion
             };
@@ -1161,11 +1163,11 @@ namespace tsorcRevamp
                         //You can not drop items in a stack larger than 32766 in multiplayer, because the stack size gets converted to a short when syncing
                         while (count > 32000) {
                             //UsefulFunctions.ServerText("Dropping " + 32000 + "souls");
-                            Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position + Main.rand.NextVector2Circular(10, 10), ModContent.ItemType<Items.DarkSoul>(), 32000);
+                            Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position + Main.rand.NextVector2Circular(10, 10), ModContent.ItemType<DarkSoul>(), 32000);
                             count -= 32000;
                         }
 
-                        Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position, ModContent.ItemType<Items.DarkSoul>(), count);
+                        Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position, ModContent.ItemType<DarkSoul>(), count);
                         //UsefulFunctions.NewItemInstanced(position, new Vector2(1, 1), ModContent.ItemType<Items.DarkSoul>(), count);
                     }
                     break;
@@ -1472,7 +1474,7 @@ namespace tsorcRevamp
                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()))), // Downed variable (the one keeping track the boss has been defeated once)
                    ModContent.ItemType<Items.BossItems.WingOfTheFallen>(),
                    0,
-                   new List<int> { ModContent.ItemType<Items.BossBags.WyvernMageBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.LionheartGunblade>(), ModContent.ItemType<Items.Weapons.Magic.LampTome>(), ModContent.ItemType<Items.Accessories.Magic.GemBox>(), ModContent.ItemType<Items.Accessories.Defensive.PoisonbiteRing>(), ModContent.ItemType<Items.Accessories.Defensive.BloodbiteRing>() }, // List containing all the loot to show in the bestiary
+                   new List<int> { ModContent.ItemType<Items.BossBags.WyvernMageBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.LionheartGunblade>(), ModContent.ItemType<Items.Tools.LampTome>(), ModContent.ItemType<Items.Accessories.Magic.GemBox>(), ModContent.ItemType<Items.Accessories.Defensive.PoisonbiteRing>(), ModContent.ItemType<Items.Accessories.Defensive.BloodbiteRing>() }, // List containing all the loot to show in the bestiary
                    $"Found high atop a mountain in a great fortress.", // Guide to fight the boss
                    "", // Despawning Message
                    "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/WyvernMage");
@@ -1499,7 +1501,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.SerrisBait>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.SerrisBag>(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>() }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.SerrisBag>(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), ModContent.ItemType<Items.Tools.MagicBarrierScroll>() }, // List containing all the loot to show in the bestiary
                     $"???", // Guide to fight the boss
                     "", // Despawning Message
                     "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/Serris");
@@ -1514,7 +1516,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Death>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     0,
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.DeathBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>(), ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>() }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.DeathBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.Tools.GreatMagicShieldScroll>(), ModContent.ItemType<Items.Tools.MagicBarrierScroll>() }, // List containing all the loot to show in the bestiary
                     $"???", // Guide to fight the boss
                     "");
 
@@ -1545,7 +1547,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.AttraidiesBag>(), ModContent.ItemType<Items.TheEnd>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.SoulOfAttraidies>(), ModContent.ItemType<Items.Weapons.Magic.BloomShards>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.SeveringDusk>(), ModContent.ItemType<Items.Weapons.Ranged.Guns.PyroclasticFlow>(), ModContent.ItemType<Items.Weapons.Summon.ShatteredReflection>(),ModContent.ItemType<Items.Weapons.Magic.BloomShards>(), ItemID.Picksaw }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.AttraidiesBag>(), ModContent.ItemType<TheEnd>(), ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<SoulOfAttraidies>(), ModContent.ItemType<Items.Weapons.Magic.Tomes.BloomShards>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.SeveringDusk>(), ModContent.ItemType<Items.Weapons.Ranged.Guns.PyroclasticFlow>(), ModContent.ItemType<Items.Weapons.Summon.ShatteredReflection>(),ModContent.ItemType<Items.Weapons.Magic.Tomes.BloomShards>(), ItemID.Picksaw }, // List containing all the loot to show in the bestiary
                     $"Use the Mindflayer Illusion Relic dropped by Attraidies' illusion.", // Guide to fight the boss
                     "", // Despawning Message
                     "",
@@ -1567,7 +1569,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.HellkiteStone>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.HellkiteBag>(), ModContent.ItemType<Items.DragonEssence>(), ModContent.ItemType<Items.Accessories.Expert.DragonStone>() }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.HellkiteBag>(), ModContent.ItemType<DragonEssence>(), ModContent.ItemType<Items.Accessories.Expert.DragonStone>() }, // List containing all the loot to show in the bestiary
                     $"Often sighted roaming the skies above the Village, searching for its next meal.", // Guide to fight the boss
                     "", // Despawning Message
                     "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/HellkiteDragon");
@@ -1582,7 +1584,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.DyingWaterCrystal>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.KrakenBag>(), ModContent.ItemType<Items.Accessories.Expert.DragoonHorn>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.KrakenBag>(), ModContent.ItemType<Items.Accessories.Expert.DragoonHorn>(), ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() }, // List containing all the loot to show in the bestiary
                     $"Seek out the lihzahrd gate in the Great Chasm.", // Guide to fight the boss
                     "");
 
@@ -1596,7 +1598,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.DyingEarthCrystal>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.LichBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), ModContent.ItemType<Items.Accessories.Expert.DragoonBoots>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenGaiaSword>() }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.LichBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Magic.Tomes.Bolt3Tome>(), ModContent.ItemType<Items.Accessories.Expert.DragoonBoots>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenGaiaSword>() }, // List containing all the loot to show in the bestiary
                     $"Seek out the lihzahrd gate below the Western Ocean.", // Guide to fight the boss
                     "");
 
@@ -1624,7 +1626,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     0,
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.ArtoriasBag>(), ModContent.ItemType<Items.Accessories.Expert.RingofArtorias>(), ModContent.ItemType<Items.Accessories.Defensive.WolfRing>(), ModContent.ItemType<Items.SoulOfArtorias>(), ItemID.LargeAmethyst }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.ArtoriasBag>(), ModContent.ItemType<Items.Accessories.Expert.RingofArtorias>(), ModContent.ItemType<Items.Accessories.Defensive.WolfRing>(), ModContent.ItemType<SoulOfArtorias>(), ItemID.LargeAmethyst }, // List containing all the loot to show in the bestiary
                     $"The Abyss pervades the tunnels east of the Forgotten City.", // Guide to fight the boss
                     "");
 
@@ -1637,7 +1639,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.StoneOfSeath>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.SeathBag>(), ModContent.ItemType<Items.DragonEssence>(), ModContent.ItemType<Items.BequeathedSoul>(), ModContent.ItemType<Items.Accessories.Defensive.BlueTearstoneRing>(), ModContent.ItemType<Items.PurgingStone>(), ModContent.ItemType<Items.Accessories.Expert.WingsOfSeath>() },// List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.SeathBag>(), ModContent.ItemType<DragonEssence>(), ModContent.ItemType<BequeathedSoul>(), ModContent.ItemType<Items.Accessories.Defensive.BlueTearstoneRing>(), ModContent.ItemType<Items.PurgingStone>(), ModContent.ItemType<Items.Accessories.Expert.WingsOfSeath>() },// List containing all the loot to show in the bestiary
                     $"Seek out the lihzahrd gate below the Eastern Ocean.", // Guide to fight the boss
                     "");
 
@@ -1651,7 +1653,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.AbysmalStone>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.OolacileSorcererBag>(), ModContent.ItemType<Items.Potions.HealingElixir>(), ModContent.ItemType<Items.Accessories.Expert.DuskCrownRing>(), ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<Items.PurgingStone>(), ModContent.ItemType<Items.RedTitanite>() },// List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.OolacileSorcererBag>(), ModContent.ItemType<Items.Potions.HealingElixir>(), ModContent.ItemType<Items.Accessories.Expert.DuskCrownRing>(), ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<Items.PurgingStone>(), ModContent.ItemType<RedTitanite>() },// List containing all the loot to show in the bestiary
                     $"Seek out the lihzahrd gate below the Lihzahrd Temple.", // Guide to fight the boss
                     "");
 
@@ -1664,7 +1666,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.DyingFireCrystal>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.MarilithBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.GuardianSoul>(), ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>(), ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() },// List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.MarilithBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>(), ModContent.ItemType<Items.Weapons.Magic.Tomes.Ice3Tome>(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() },// List containing all the loot to show in the bestiary
                     $"Seek out the lihzahrd gate in the Western Desert.", // Guide to fight the boss
                     "");
 
@@ -1677,7 +1679,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.BlightStone>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.BlightBag>(), ModContent.ItemType<Items.SoulOfBlight>(), ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() },// List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.BlightBag>(), ModContent.ItemType<SoulOfBlight>(), ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() },// List containing all the loot to show in the bestiary
                     $"The fissure on the Frozen Ocean churns with the energy of the abyss.", // Guide to fight the boss
                     "");
 

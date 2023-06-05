@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp
 {
@@ -23,8 +24,9 @@ namespace tsorcRevamp
         public const int DefaultCeruleanChargesMax = 6; //How many charges the player starts with
         public int ceruleanChargesMax; //The max amount of charges the player has
         public const int DefaultCeruleanManaGain = 120; //How much 1 charge heals to begin with
-        public int ceruleanManaGain; //The amount of health restored per charge
-        public float ceruleanManaGainBonus; //A bonus to the health restored
+        public int ceruleanManaGain; //The amount of mana restored per charge
+        public float ceruleanManaGainMaxManaBonus; //A bonus to the mana restored
+        public float ceruleanManaGainManaRegenBonus; //A bonus to the mana restored
 
 
         public bool isDrinking; //Whether or not the player is currently drinking estus
@@ -73,7 +75,8 @@ namespace tsorcRevamp
         }
         public override void PostUpdateMiscEffects()
         {
-            ceruleanManaGainBonus = 1f + ((float)Player.manaRegenBonus / 150f); //manaRegenBonus is usually in the double digits so this is good scaling 
+            ceruleanManaGainMaxManaBonus = Player.statManaMax2 * Darksign.FlaskMaxManaScaling / 100f;
+            ceruleanManaGainManaRegenBonus = 1f + ((float)Player.manaRegenBonus / 150f); //manaRegenBonus is usually in the double digits so this is good scaling 
             ceruleanRestorationTimerBonus = 1f + (Player.manaRegenDelayBonus / 5f);  //manaRegenDelayBonus is given out at 1 or 0.5 by 2 sources in vanilla so this is also very good scaling
             if (Player.manaRegenBuff) //so mana regen pot does something
             {
@@ -138,7 +141,7 @@ namespace tsorcRevamp
                 isDrinking = false; //No longer drinking
                 ceruleanChargesCurrent--; //Remove a charge
                 ceruleanDrinkTimer = 0; //Set the timer back to 0
-                Player.ManaEffect((int)((ceruleanManaGain + (Player.statManaMax2 / 20)) * ceruleanManaGainBonus * ceruleanRestorationTimerBonus)); //Show blue restoration text equal to mana gain
+                Player.ManaEffect((int)((ceruleanManaGain + ceruleanManaGainMaxManaBonus) * ceruleanManaGainManaRegenBonus * ceruleanRestorationTimerBonus)); //Show blue restoration text equal to mana gain
                 isCeruleanRestoring = true; //Commence restoration process
             }
         }
@@ -152,7 +155,7 @@ namespace tsorcRevamp
                 if (ceruleanRestorationTimer <= ceruleanRestorationTimerMax && Player.statMana < Player.statManaMax2) //If the timer is less or equal to timer max and player mp is not at max
                 {
 
-                    ceruleanManaPerTick += ((ceruleanManaGain + (Player.statManaMax2 / 20)) * ceruleanManaGainBonus * ceruleanRestorationTimerBonus) / ceruleanRestorationTimerMax; //Heal this much each tick
+                    ceruleanManaPerTick += ((ceruleanManaGain + ceruleanManaGainMaxManaBonus) * ceruleanManaGainManaRegenBonus * ceruleanRestorationTimerBonus) / ceruleanRestorationTimerMax; //Heal this much each tick
 
                     if (ceruleanManaPerTick > (int)ceruleanManaPerTick)
                     {

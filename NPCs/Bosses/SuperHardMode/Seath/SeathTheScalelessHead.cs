@@ -15,6 +15,7 @@ using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 {

@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items
 {
@@ -55,6 +56,7 @@ namespace tsorcRevamp.Items
 
     public class FadingSoul : ConsumableSoul
     {
+        public override string Texture => "tsorcRevamp/Items/ConsumableSoul_Fading";
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
@@ -92,6 +94,7 @@ namespace tsorcRevamp.Items
     }
     public class LostUndeadSoul : ConsumableSoul
     {
+        public override string Texture => "tsorcRevamp/Items/ConsumableSoul_LostUndead";
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
@@ -125,6 +128,7 @@ namespace tsorcRevamp.Items
 
     public class NamelessSoldierSoul : ConsumableSoul
     {
+        public override string Texture => "tsorcRevamp/Items/ConsumableSoul_NamelessSoldier";
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
@@ -150,7 +154,7 @@ namespace tsorcRevamp.Items
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.5f, PitchVariance = 0.3f }, player.Center); // Plays sound.
 
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
-                {
+                {   
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), 800); // Gives player souls.
                 }
 
@@ -174,6 +178,7 @@ namespace tsorcRevamp.Items
 
     public class ProudKnightSoul : ConsumableSoul
     {
+        public override string Texture => "tsorcRevamp/Items/ConsumableSoul_ProudKnight";
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
@@ -228,6 +233,7 @@ namespace tsorcRevamp.Items
 
     public class BraveWarriorSoul : ModItem
     {
+        public override string Texture => "tsorcRevamp/Items/ConsumableSoul_BraveWarrior";
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
@@ -319,6 +325,7 @@ namespace tsorcRevamp.Items
 
     public class HeroSoul : ModItem
     {
+        public override string Texture => "tsorcRevamp/Items/ConsumableSoul_Hero";
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();

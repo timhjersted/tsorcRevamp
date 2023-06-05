@@ -1,70 +1,110 @@
 Mods: {
 	tsorcRevamp: {
 		CommonItemTooltip: {
-			General: ""
-			AggroIncrease: Enemies are more likely to target you
-			CriticalStrikeDamage: Critical strikes deal {0}% more damage
-			IncreasedLifeRegen: Increases life regeneration by {0}
+			AggroBoost: Enemies are more likely to target you
 			SetBonus: "Set Bonus: "
-			LifeThreshold: "If life falls below {0}%: "
-			KnockbackImmunity: Grants immunity to knockback
+			NoKnockback: Grants immunity to knockback
 			ForBotCOnly: " for the [c/6d8827:Bearer of the Curse]"
-			DecreasedDefense: Decreases defense by {0}
-			IncreasedThorns: Increases thorns by {0}
 			UniqueBarrier: Does not stack with other barrier or shield spells
-			IncreasedSoulDrops: Increases the amount of souls dropped by fallen creatures by {0}%
-			IncreasedConsumableSoulDrops: Increases the chance of consumable soul drops by {0}%
 			NonConsumable: Item is non-consumable
-			UnusableDUringBossFight: Can not be used while a boss is alive!
-			AttackSpeed: Increases attack speed by {0}%
-			GrantsMeleeWhipAutoswing: Enables auto swing for melee weapons
-			IncreasedMeleeAndWhipDamage: Increases melee and whip damage by {0}%
-			DamageMultiplier: Increases damage by {0}% multiplicatively
-			StaminaRegen: Increases stamina regeneration rate by {0}%
-			IncreasesDR: Increases damage reduction by {0}%
-			DecreasesDR: Decreases damage reduction by {0}%
-			Duration: "{0} seconds duration"
-			Cooldown: "{0} seconds cooldown"
-			Melee: ""
-			MeleeArmorPenPercent: Increases melee armor penetration by {0}%
-			FlatMeleeDamageBoost: Increases melee damage by {0} flat
-			Melee2x: (doubled for melee)
-			Ranged: ""
-			IncreasedRangedCriticalDamage: Increases ranged critical strike damage by {0}%
-			Magic: ""
-			IncreasedManaRegen: Increases mana regeneration by {0}
-			DecreasedManaRegenDelay: Decreases mana regeneration delay by {0}%
-			MagicDamageMultiplier: Increases magic damage by {0}% multiplicatively
-			Summon: ""
-			IncreasesWhipKnockback: Increases whip knockback
-			IncreasedSummonAttackSpeed: Increases whip attack speed by {0}%
-			IncreasedWhipDamage: Increases whip damage by {0}%
-			WhipCritDamage: Increases the damage of whip crits by {0}%
-			WhipCritHitboxSize: Increases the Whip Tip Crit Hitbox Size to {0}x
-			SummonTagStrength: Increases Summon Tag Damage and Armor Penetration by {0}%
-			SummonTagDuration: Increases the duration of Summon Tag effects by {0}%
-			BotCSummonTagDoubleBuffCount: Fully charged whip debuff counts as 2
-			ChargedWhip: Stats of this whip scale with how long you've charged it
-			ChargedWhipSummonTagDamage: "{0}-{1} summon tag damage"
-			ChargedWhipSummonTagCrit: "{0}-{1}% summon tag critical strike chance"
-			ChargedWhipSummonAttackSpeed: Gain {0}-{1}% summon attack speed upon striking an enemy
-			ImprovedWhipCrowdControl: Performs better against multiple targets than most whips
-			SummonTagArmorPen: "{0} summon tag armor penetration"
+			UnusableDuringBoss: Can not be used while a boss is alive!
+			MeleeWhipAutoswing: Enables auto swing for melee weapons
+			RecipeTooltip: "[c/66fc03:Dark Soul recipe material]"
+			WingsDisabled:
+				'''
+				These wings have been [c/383838:cursed] by a ferocious [c/009400:Hunter]
+				They can not be used until it is defeated
+				'''
+			TileEnabled: "[c/1cfc03:Can be placed in adventure mode!]"
+			TileDisabled: "[c/fc1c03:Can not be placed in adventure mode!]"
+			ItemDisabled: "[c/fc1c03:This item is disabled in adventure mode!]"
+			AttraidiesCursed:
+				'''
+				This item has been [c/383838:cursed] by [c/aa00ff:Attraidies]
+				The only thing that will break it is his death...
+				'''
+			Cursed:
+				'''
+				This item has been [c/383838:cursed] and can't be used yet
+				You can see a strange [c/878787:skull] symbol glowing on its surface...	
+				'''
+			CorruptionCursed: This item has been [c/383838:cursed] by the [c/701070:corruption] and can't be used yet
+			BotCNoHeal: Doesn't heal the [c/6d8827:Bearer of the Curse]
+
+			Generic: {
+				LifeRegenBoost: Increases life regeneration by {0}
+				BadDefense: Decreases defense by {0}
+				DmgMultiplier: Increases damage by {0}% multiplicatively
+				BadDmgMultiplier: Decreases damage by {0}% multiplicatively
+				AtkSpeed: Increases attack speed by {0}%
+				StaminaRegen: Increases stamina regeneration rate by {0}%
+				DRStatBoost: Increases damage reduction by {0}%
+				DRStatPenalty: Decreases damage reduction by {0}%
+				Duration: "{0} seconds duration"
+				Cooldown: "{0} seconds cooldown"
+				CriticalDmg: Critical strikes deal {0}% more damage
+				LifeThreshold: "If life falls below {0}%: "
+				Slowness: Slows down movement by {0}%
+				Thorns: Increases thorns by {0}
+				SoulDropsBoost: Increases the amount of souls dropped by fallen creatures by {0}%
+				ConsumableSoulDropsBoost: Increases the chance of consumable soul drops by {0}%
+				MeleeWhipDmg: Increases melee and whip damage by {0}%
+				MoveSpeedMultiplier: Increases your movement speed multiplicatively by {0}%
+			}
+
+			Melee: {
+				ArmorPenPercent: Increases melee armor penetration by {0}%
+				FlatDmgBoost: Increases melee damage by {0} flat
+				Doubled: (doubled for melee)
+			}
+
+			Ranged.CriticalDmg: Increases ranged critical strike damage by {0}%
+
+			Magic: {
+				ManaRegenBoost: Increases mana regeneration by {0}
+				ManaRegenDelay: Decreases mana regeneration delay by {0}%
+				DmgMultiplier: Increases magic damage by {0}% multiplicatively
+			}
+
+			Summon: {
+				WhipKnockback: Increases whip knockback
+				AtkSpeed: Increases whip attack speed by {0}%
+				WhipDmg: Increases whip damage by {0}%
+				WhipCritDmg: Increases the damage of whip crits by {0}%
+				WhipCritHitbox: Increases the Whip Tip Crit Hitbox Size to {0}x
+				SummonTagStrength: Increases Summon Tag Damage and Armor Penetration by {0}%
+				SummonTagDuration: Increases the duration of Summon Tag effects by {0}%
+				BotCSummonTagDoubleBuffCount: Fully charged whip debuff counts as 2
+				ChargedWhip: Stats of this whip scale with how long you've charged it
+				ChargedWhipSummonTagDmg: "{0}-{1} summon tag damage"
+				ChargedWhipSummonTagCrit: "{0}-{1}% summon tag critical strike chance"
+				ChargedWhipAtkSpeed: Gain {0}-{1}% summon attack speed upon striking an enemy
+				ImprovedWhipCC: Performs better against multiple targets than most whips
+				SummonTagArmorPen: "{0} summon tag armor penetration"
+			}
 		}
 
 		Items: {
 			VanillaItems: {
+				ObsidianSkinPotion: Your supply of these is finite, so they are never used by Quick Buff
 				SuspiciousLookingEye:
 					'''
 					Item is not consumed so that you can retry the fight on defeat
 					The Eye of Cthulhu can only be summoned during the night
 					A silver watch may aid in the passing of time...
 					'''
-				MechanicalEye:
-					'''
-					Summons The Triad
-					{$CommonItemTooltip.NonConsumable}
-					'''
+
+				MechanicalEye: {
+					Tooltip:
+						'''
+						Summons The Triad
+						{$CommonItemTooltip.NonConsumable}
+						'''
+					OnUseText1: The Triad has spotted you
+					OnUseText2: The Triad already has you in their sights...
+					OnUseText3: The Triad only awakens at night...
+				}
+
 				SharpeningStation: "{$CommonItemTooltip.MeleeArmorPenPercent}"
 				GoldenGi: "{$CommonItemTooltip.FlatMeleeDamageBoost}"
 				ManaCost1: "Requires "
@@ -158,7 +198,6 @@ Mods: {
 				VulnerabilityHex: Applies a vulnerability hex
 				StarinaBottle: Increases mana regen by 10 and decreases mana regen delay by 50%
 				ManaRegenerationBand: Increases mana regen by 25 and decreases mana regen delay by 100%
-				BotCHealingItems: Doesn't heal the [c/6d8827:Bearer of the Curse]
 				WellFedItemsBotC: Increases stamina regen by {0}% for the [c/6d8827:Bearer of the Curse]
 				ManaRegenerationPotionBotC: Increases Cerulean Flask restoration time by {0}
 				CelestialMagnetBotC: Mana Star pickups only restore 4% of the [c/6d8827:Bearer of the Curse's] maximum mana
@@ -693,10 +732,10 @@ Mods: {
 				DisplayName: Band of Cosmic Power
 				Tooltip:
 					'''
-					{$CommonItemTooltip.IncreasedLifeRegen}
+					{$CommonItemTooltip.Generic.LifeRegenBoost}
 					{$CommonItemTooltip.IncreasesMaxManaBy@1}
-					{$CommonItemTooltip.IncreasedManaRegen@2}
-					{$CommonItemTooltip.DecreasedManaRegenDelay@3}
+					{$CommonItemTooltip.Magic.ManaRegenBoost@2}
+					{$CommonItemTooltip.Magic.ManaRegenDelay@3}
 					'''
 			}
 
@@ -704,10 +743,10 @@ Mods: {
 				DisplayName: Band of Great Cosmic Power
 				Tooltip:
 					'''
-					{$CommonItemTooltip.IncreasedLifeRegen}
+					{$CommonItemTooltip.Generic.LifeRegenBoost}
 					{$CommonItemTooltip.IncreasesMaxManaBy@1}
-					{$CommonItemTooltip.IncreasedManaRegen@2}
-					{$CommonItemTooltip.DecreasedManaRegenDelay@3}
+					{$CommonItemTooltip.Magic.ManaRegenBoost@2}
+					{$CommonItemTooltip.Magic.ManaRegenDelay@3}
 					'''
 			}
 
@@ -715,10 +754,10 @@ Mods: {
 				DisplayName: Band of Phenomenal Cosmic Power
 				Tooltip:
 					'''
-					{$CommonItemTooltip.IncreasedLifeRegen}
+					{$CommonItemTooltip.Generic.LifeRegenBoost}
 					{$CommonItemTooltip.IncreasesMaxManaBy@1}
-					{$CommonItemTooltip.IncreasedManaRegen@2}
-					{$CommonItemTooltip.DecreasedManaRegenDelay@3}
+					{$CommonItemTooltip.Magic.ManaRegenBoost@2}
+					{$CommonItemTooltip.Magic.ManaRegenDelay@3}
 					'''
 			}
 
@@ -726,12 +765,11 @@ Mods: {
 				DisplayName: Band Of Starforging
 				Tooltip:
 					'''
-					{$CommonItemTooltip.IncreasedLifeRegen}
-					{$CommonItemTooltip.IncreasesMaxManaBy@1}
-					{$CommonItemTooltip.IncreasedManaRegen@2}
-					{$CommonItemTooltip.DecreasedManaRegenDelay@3}
-					{$CommonItemTooltip.IncreasesMaxManaByPercent@4}
-					{$CommonItemTooltip.PercentReducedManaCost@5}
+					{$CommonItemTooltip.Generic.LifeRegenBoost}
+					{$CommonItemTooltip.IncreasesMaxManaByPercent@1}
+					{$CommonItemTooltip.Magic.ManaRegenBoost@2}
+					{$CommonItemTooltip.Magic.ManaRegenDelay@3}
+					{$CommonItemTooltip.PercentReducedManaCost@4}
 					'''
 			}
 
@@ -780,10 +818,11 @@ Mods: {
 				Tooltip:
 					'''
 					[c/ffbf00:Focuses the user's mana into a protective shield]
-					Mana Shield reduces incoming damage by 35%, but drains 90 mana per hit
-					Inhibits both natural and artificial mana regen for a period of time
-					[c/00ffd4:Doubles max mana and decreases stamina usage by 15%]
-					Reduces ranged, magic and summon damage by 25% multiplicatively
+					{$CommonItemTooltip.Generic.DRStatBoost}, but drains {1} mana per hit
+					[c/00ffd4:{$CommonItemTooltip.IncreasesMaxManaByPercent@2}]
+					[c/00ffd4:{$CommonItemTooltip.Generic.StaminaRegen@3}]
+					Inhibits both natural and artificial mana regen after being hit({$CommonItemTooltip.Generic.Duration@4})
+					Reduces ranged, magic and summon damage by {5}% multiplicatively
 					'''
 			}
 
@@ -844,10 +883,10 @@ Mods: {
 				Tooltip:
 					'''
 					Focuses the user's mana into a protective shield
-					Reduces incoming damage by 35%, but drains 100 mana per hit
-					Inhibits both natural and artificial mana regen
+					{$CommonItemTooltip.Generic.DRStatBoost}, but drains {1} mana per hit
+					Inhibits both natural and artificial mana regen after being hit({$CommonItemTooltip.Generic.Duration@2})
 					[c/ffbf00:Useful for those who do not specialize in magic]
-					Reduces ranged, magic summon damage by 25% multiplicatively
+					Reduces ranged, magic and summon damage by {3}% multiplicatively
 					'''
 			}
 
@@ -855,9 +894,11 @@ Mods: {
 				DisplayName: Mythril Glove
 				Tooltip:
 					'''
-					Casts and sustains Wall when wearer is critically wounded
-					Wall gives +50 defense
-					Does not stack with Fog, Barrier or Shield spells
+					{$CommonItemTooltip.Generic.LifeThreshold}Casts and sustains Wall
+					{$CommonItemTooltip.IncreasesDefenseBy@1}
+					{$CommonItemTooltip.Generic.BadDamageMultiplier@2}
+					{$CommonItemTooltip.Generic.Slowness@3}
+					{$CommonItemTooltip.UniqueBarrier}
 					'''
 			}
 
@@ -1261,8 +1302,8 @@ Mods: {
 				DisplayName: Essence of Mana
 				Tooltip:
 					'''
-					Increases max mana by 50%
-					Reduces mana usage by 9%
+					{$CommonItemTooltip.IncreasesMaxManaByPercent}
+					{$CommonItemTooltip.PercentReducedManaCost@1}
 					'''
 			}
 
@@ -2662,7 +2703,11 @@ Mods: {
 
 			BlueTitanite: {
 				DisplayName: Blue Titanite
-				Tooltip: A rare and valuable ore
+				Tooltip:
+					'''
+					A rare and valuable ore
+					Ice cold to the touch, it glows with enchanted power
+					'''
 			}
 
 			AncientDemonBag: {
@@ -3041,6 +3086,12 @@ Mods: {
 					However, they will drop the rest of their normal loot
 					[Developer note: Not all bosses can be summoned this way yet, but the rest will be added over time]
 					'''
+				None: No rematchable bosses defeated!
+				Selected: "Currently selected boss: "
+				Forbidden: Can not summon a second boss while one is alive!
+				Duo1: Slogra and Gaibon
+				Attraidies1: Attradies First Phase
+				Attraidies2: Attradies Final Form
 			}
 
 			BraveWarriorSoul: {
@@ -3202,6 +3253,8 @@ Mods: {
 					[c/ca1e00:This mode is intended for players experienced with the mod]
 					[c/ca1e00:It is not recommended on first playthroughs.]
 					'''
+				Enabled: You have become the Bearer of the Curse
+				Disabled: The curse has been lifted
 			}
 
 			DarkSoul: {
@@ -3308,6 +3361,7 @@ Mods: {
 			DyingWindShard: {
 				DisplayName: Dying Wind Shard
 				Tooltip: A shard of the fading Crystal of Wind.
+				Chaos: Used to craft the crystal that summons Chaos.
 			}
 
 			EphemeralDust: {
@@ -3364,6 +3418,7 @@ Mods: {
 					A fairy can be seen trapped in the bottle.
 					Using this will free the fairy.
 					'''
+				Guide: Check your minimap to find them!
 			}
 
 			FlameOfTheAbyss: {
@@ -3415,6 +3470,13 @@ Mods: {
 					Reduces defense to 0 and slows movement while equipped and setting your warp point.
 					Channel time is five seconds and you cannot move during the channel.
 					'''
+				NoLocation: You haven't set a location!
+				WrongWorld: This mirror is set in a different world!
+				OnUse: Picking up where you left off...
+				NewLocation: New warp location set!
+				Oops: Your warp location is broken! Please file a bug report!
+				BotCDisabled: "[c/ca1e00:The Curse prevents you from using this!]"
+				OutOfBounds: Your warp location is outside the world!
 			}
 
 			GuardianSoul: {
@@ -3562,6 +3624,12 @@ Mods: {
 					Turns on Master Mode or turns it off
 					Receive 20% more souls in master mode
 					'''
+				Enabled: Master Mode has been enabled, enjoy your extra accessory slot!
+				Disabled:
+					'''
+					Master Mode has been disabled, the cost was simply too great....
+					Coward! Your resolve must be lacking.
+					'''
 			}
 
 			MysteriousIdol: {
@@ -3651,7 +3719,8 @@ Mods: {
 				DisplayName: Armor Drug
 				Tooltip:
 					'''
-					Increases defense by 25 and damage reduction by 15
+					{$CommonItemTooltip.IncreasesDefenseBy}
+					{$CommonItemTooltip.Generic.DRStatBoost@1}
 					Does not stack with Demon Drug, Strength, or Battlefront Potions.
 					'''
 			}
@@ -3660,15 +3729,16 @@ Mods: {
 				DisplayName: Battlefront Potion
 				Tooltip:
 					'''
-					Increases damage by 15% and critical strike chance by 15%
-					Increases thorns by 200% and grants the Battle potion effect
+					{$CommonItemTooltip.PercentIncreasedDamageCritChance}
+					{$CommonItemTooltip.Generic.Thorns@1} and grants the Battle potion effect
+					{$CommonItemTooltip.Generic.DRStatPenalty@2}
 					Does not stack with Demon Drug, Armor Drug, or Strength Potions.
 					'''
 			}
 
 			BoostPotion: {
 				DisplayName: Boost Potion
-				Tooltip: Multiplies your movement speed by 20%
+				Tooltip: "{$CommonItemTooltip.Generic.MoveSpeedMultiplier}"
 			}
 
 			ChickenGlowingMushroomSkewer: {
@@ -3714,7 +3784,8 @@ Mods: {
 				DisplayName: Demon Drug
 				Tooltip:
 					'''
-					Multiplies damage by 22%, lowers defense by 15
+					{$CommonItemTooltip.Generic.DmgMultiplier}
+					{$CommonItemTooltip.Generic.BadDefense@1}
 					Does not stack with Armor Drug, Strength, or Battlefront Potions.
 					'''
 			}
@@ -3738,7 +3809,7 @@ Mods: {
 
 			GreenBlossom: {
 				DisplayName: Green Blossom
-				Tooltip: Increases stamina recovery rate by 30%
+				Tooltip: "{$CommonItemTooltip.Generic.StaminaRegen}"
 			}
 
 			HealingElixir: {
@@ -4178,11 +4249,16 @@ Mods: {
 					Won't increase max HP over the maximum achieved 
 					via Life Crystals or Life Fruit
 					'''
+				Record: "Current max life record: "
 			}
 
 			RedTitanite: {
 				DisplayName: Red Titanite
-				Tooltip: A rare and valuable ore
+				Tooltip:
+					'''
+					A rare and valuable ore
+					Radiating heat, it shimmers with forbidden magic
+					'''
 			}
 
 			SoulCoin: {
@@ -4235,6 +4311,7 @@ Mods: {
 					Permanently increases max stamina by 5%
 					Stamina maxes out after consuming 10
 					'''
+				UsedCounter: "Consumed so far: "
 			}
 
 			SublimeBoneDust: {
@@ -4245,6 +4322,8 @@ Mods: {
 					Cast into the flames of a Bonfire to increase Estus
 					Flask potency, increasing the amount of HP healed
 					'''
+				EstusFlaskPotency: "Estus Flask potency increased! Heal per charge: "
+				CeruleanFlaskPotency: "Cerulean Flask potency increased! Heal per charge: "
 			}
 
 			TheEnd: {
@@ -4262,6 +4341,7 @@ Mods: {
 					Reduces defense to 0 and slows movement while equipped and setting your warp point.
 					Channel time is five seconds and you cannot move during the channel.
 					'''
+				BotCNerfed: Will always take the [c/6d8827:Bearer of the Curse] to the center of the village
 			}
 
 			DebugTome: {
@@ -4634,8 +4714,10 @@ Mods: {
 				Tooltip:
 					'''
 					A lost beginner's scroll
-					[c/ffbf00:Casts Magic Shield on the player, raising defense by 10 for 15 seconds]
-					Does not stack with other shield or barrier spells
+					[c/ffbf00:Casts Magic Shield on the player]
+					[c/ffbf00:{$CommonItemTooltip.IncreasesDefenseBy}
+					{$CommonItemTooltip.Duration@1}]
+					{$CommonItemToltip.UniqueBarrier}
 					'''
 			}
 
@@ -5839,7 +5921,7 @@ Mods: {
 					'''
 					Enemies struck by this whip will explode once on minion hit
 					Explosion increases the damage dealt by {0}%
-					Exploded enemies will also deal triple the contact damage to you for 4 seconds
+					Exploded enemies will also deal {1}x the contact damage to you for 4 seconds
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -5979,7 +6061,11 @@ Mods: {
 
 			WhiteTitanite: {
 				DisplayName: White Titanite
-				Tooltip: A rare and valuable ore
+				Tooltip:
+					'''
+					A rare and valuable ore
+					A solid white surface, it casts an eerie purple shadow
+					'''
 			}
 
 			WitchkingScroll: {
@@ -6415,7 +6501,7 @@ Mods: {
 
 			Boost: {
 				DisplayName: Boost
-				Description: Increased movement speed
+				Description: "{$CommonItemTooltip.Generic.MoveSpeedMultiplier}"
 			}
 
 			BossZenBuff: {
@@ -6583,12 +6669,17 @@ Mods: {
 
 			GreatMagicBarrier: {
 				DisplayName: Great Magic Barrier
-				Description: Defense is increased by 60!
+				Description: "{$CommonItemTooltip.IncreasesDefenseBy}"
 			}
 
 			GreatMagicShield: {
 				DisplayName: Great Magic Shield
-				Description: Defense increased by 25, but damage reduced by 20% and speed reduced by 15%!
+				Description:
+					'''
+					{$CommonItemTooltip.IncreasesDefenseBy}
+					{$CommonItemTooltip.Generic.BadDmgMultiplier@1}
+					{$CommonItemTooltip.Generic.Slowness@2}
+					'''
 			}
 
 			GreatMagicWeapon: {
@@ -6598,7 +6689,7 @@ Mods: {
 
 			GreenBlossom: {
 				DisplayName: Green Blossom
-				Description: Stamina recovery speed increased!
+				Description: "{$CommonItemTooltip.Generic.StaminaRegen}"
 			}
 
 			HealingElixirCooldown: {
@@ -6638,7 +6729,7 @@ Mods: {
 
 			MagicPlating: {
 				DisplayName: Magic Plating
-				Description: "{0}% increased damage reduction against the next attack"
+				Description: " against the next attack"
 			}
 
 			MagicShield: {
@@ -8045,16 +8136,21 @@ Mods: {
 		}
 
 		Prefixes: {
-			Blessed.DisplayName: Blessed
+			Blessed: {
+				DisplayName: Blessed
+				Tooltip: +{0} life regen while held
+			}
+
 			Brave.DisplayName: Brave
 			Commanding.DisplayName: Commanding
 			Domineering.DisplayName: Domineering
 			Impatient.DisplayName: Impatient
-			Invigorating.DisplayName: Invigorating
 			Perfectionist.DisplayName: Perfectionist
 			Reckless.DisplayName: Reckless
+			Invigorating.DisplayName: Invigorating
 			Refreshing.DisplayName: Refreshing
 			Revitalizing.DisplayName: Revitalizing
+			StaminaRegen.Tooltip: +{0}% stamina recovery speed
 			Sadistic.DisplayName: Sadistic
 			Tenacious.DisplayName: Tenacious
 			Undisciplined.DisplayName: Undisciplined

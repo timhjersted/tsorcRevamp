@@ -22,8 +22,8 @@ namespace tsorcRevamp.Items.Potions
             Item.height = 18;
             Item.maxStack = 9999;
             Item.value = 1000;
-            Item.useAnimation = 90;
             Item.useTime = 90;
+            Item.useAnimation = Item.useTime;
             Item.useTurn = true;
             Item.rare = ItemRarityID.Blue;
 
@@ -58,8 +58,8 @@ namespace tsorcRevamp.Items.Potions
             if (player.itemTime == 0)
             {
                 player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
-                player.AddBuff(ModContent.BuffType<Crippled>(), 90);
-                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 90);
+                player.AddBuff(ModContent.BuffType<Crippled>(), Item.useTime);
+                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), Item.useTime);
             }
 
             if (player.itemTime < (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 2)

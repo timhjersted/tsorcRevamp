@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items
     {
         public static float BotCSoulDropAmplifier = 20f;
         public static float BotCMaxHPLossPercentage = 20f;
-        public static float FlaskMaxManaScaling = 5f;
+        public static float FlaskMaxManaScaling = 15f;
         public static float BotCMagicDamageAmplifier = 20f;
         public static float BotCMagicAttackSpeedAmplifier = 15f;
         public static float MaxMinionDamageReduction = 90f;
@@ -135,13 +135,13 @@ namespace tsorcRevamp.Items
                     if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                     {
                         player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse = true;
-                        Main.NewText("You have become the Bearer of the Curse", 200, 60, 40);
+                        Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.Darksign.Enabled"), 200, 60, 40);
 
                     }
                     else
                     {
                         player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse = false;
-                        Main.NewText("The curse has been lifted", 200, 60, 40);
+                        Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.Darksign.Disabled"), 200, 60, 40);
 
                     }
                 }

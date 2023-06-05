@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items
@@ -62,7 +63,7 @@ namespace tsorcRevamp.Items
             if (ttindex != -1)
             {// if we find one
              //insert the extra tooltip line
-                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "", $"Current max: {(player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP)}"));
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Record", Language.GetTextValue("Mods.tsorcRevamp.Items.PurgingStone.Record") + player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP));
             }
         }
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Microsoft.Xna.Framework.Color lightColor, Microsoft.Xna.Framework.Color alphaColor, ref float rotation, ref float scale, int whoAmI)

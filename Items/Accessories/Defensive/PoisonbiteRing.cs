@@ -1,6 +1,8 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
 {

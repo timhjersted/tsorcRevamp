@@ -1,18 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
 {
     [AutoloadEquip(EquipType.HandsOn)]
     public class MythrilGlove : ModItem
     {
+        public static float LifeThreshold = 30f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold, Buffs.GreatMagicShield.DefenseIncrease, Buffs.GreatMagicShield.DamagePenalty, Buffs.GreatMagicShield.Slowness);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Casts and sustains Wall when wearer is critically wounded" +
-                               "\nWall gives +50 defense" +
-                               "\nDoes not stack with Fog, Barrier or Shield spells"); */
         }
 
         public override void SetDefaults()
@@ -26,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            if ((player.statLife <= (player.statLifeMax2 * 0.30f)) && !(player.HasBuff(ModContent.BuffType<Buffs.MagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.MagicBarrier>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicBarrier>())))
+            if ((player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f)) && !(player.HasBuff(ModContent.BuffType<Buffs.MagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.MagicBarrier>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicBarrier>())))
             {
                 player.AddBuff(ModContent.BuffType<Buffs.GreatMagicShield>(), 1, false);
             }

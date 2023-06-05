@@ -4,6 +4,8 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using tsorcRevamp.Prefixes;
+using Terraria.Localization;
+using Humanizer;
 
 namespace tsorcRevamp.Items
 {
@@ -42,10 +44,10 @@ namespace tsorcRevamp.Items
             if (!item.social && item.prefix > 0) {
                 string tooltipText = null;
 
-                if (item.prefix == ModContent.PrefixType<Blessed>()) { tooltipText = "+1 life regen while held"; }
-                if (item.prefix == ModContent.PrefixType<Refreshing>()) { tooltipText = "+4% stamina recovery speed"; }
-                if (item.prefix == ModContent.PrefixType<Revitalizing>()) { tooltipText = "+6% stamina recovery speed"; }
-                if (item.prefix == ModContent.PrefixType<Invigorating>()) { tooltipText = "+8% stamina recovery speed"; }
+                if (item.prefix == ModContent.PrefixType<Blessed>()) { tooltipText = Language.GetTextValue("Mods.tsorcRevamp.Prefixes.Blessed.Tooltip").FormatWith(Blessed.BlessedLifeRegen); }
+                if (item.prefix == ModContent.PrefixType<Refreshing>()) { tooltipText = Language.GetTextValue("Mods.tsorcRevamp.Prefixes.StaminaRegen.Tooltip").FormatWith(Refreshing.RefreshingPower); }
+                if (item.prefix == ModContent.PrefixType<Revitalizing>()) { tooltipText = Language.GetTextValue("Mods.tsorcRevamp.Prefixes.StaminaRegen.Tooltip").FormatWith(Revitalizing.RevitalizingPower); }
+                if (item.prefix == ModContent.PrefixType<Invigorating>()) { tooltipText = Language.GetTextValue("Mods.tsorcRevamp.Prefixes.StaminaRegen.Tooltip").FormatWith(Invigorating.InvigoratingPower); }
                 
                 if (tooltipText != null) {
                     TooltipLine line = new TooltipLine(Mod, "tsorcRevamp:Prefix", tooltipText) { IsModifier = true };
@@ -64,7 +66,8 @@ namespace tsorcRevamp.Items
             blessed = reader.ReadByte();
         }
 
-        public override void UpdateAccessory(Item item, Player player, bool hideVisual) {
+        public override void UpdateAccessory(Item item, Player player, bool hideVisual) 
+        {
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += refreshing;
         }
     }

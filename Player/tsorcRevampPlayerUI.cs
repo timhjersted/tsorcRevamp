@@ -5,7 +5,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 using TerraUI.Objects;
-using tsorcRevamp.Items;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp
 {

@@ -12,11 +12,11 @@ using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.DataStructures;
 using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {

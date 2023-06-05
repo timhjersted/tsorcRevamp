@@ -1,13 +1,15 @@
 ﻿using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Potions
 {
     public class GreenBlossom : ModItem
     {
+        public static float StaminaRegen = 30f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StaminaRegen);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Increases stamina recovery rate by 30%");
         }
 
         public override void SetDefaults()

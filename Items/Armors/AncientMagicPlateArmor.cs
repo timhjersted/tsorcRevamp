@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Armors
 {

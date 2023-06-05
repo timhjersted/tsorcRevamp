@@ -1,23 +1,22 @@
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Accessories.Magic;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class ManaShield : ModItem
     {
 
+        public static float damageResistance = 35f;
         public static int manaCost = 100;
-        public static int regenDelay = 1000;
-        public static float damageResistance = 0.35f;
+        public static int regenDelay = 17;
+        public static float BadDmgMultiplier = 25f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(damageResistance, manaCost, regenDelay, BadDmgMultiplier);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Focuses the user's mana into a protective shield" +
-                                $"\nReduces incoming damage by {damageResistance * 100}%, but drains {manaCost} mana per hit" +
-                                "\nInhibits both natural and artificial mana regen" +
-                                $"\n[c/ffbf00:Useful for those who do not specialize in magic]" +
-                                $"\nReduces ranged, magic summon damage by 25% multiplicatively"); */
         }
 
         public override void SetDefaults()
@@ -41,9 +40,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Ranged) *= 0.75f;
-            player.GetDamage(DamageClass.Magic) *= 0.75f;
-            player.GetDamage(DamageClass.Summon) *= 0.75f;
+            player.GetDamage(DamageClass.Ranged) *= 1f - BadDmgMultiplier / 100f;
+            player.GetDamage(DamageClass.Magic) *= 1f - BadDmgMultiplier / 100f;
+            player.GetDamage(DamageClass.Summon) *= 1f - BadDmgMultiplier / 100f;
             //Iterate through the five main accessory slots
             for (int i = 3; i < (8 + player.extraAccessorySlots); i++)
             {
@@ -57,7 +56,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.GetModPlayer<tsorcRevampPlayer>().manaShield = 1;
             if (player.statMana >= manaCost)
             {
-                player.endurance += damageResistance;
+                player.endurance += damageResistance / 100f;
             }
         }
     }

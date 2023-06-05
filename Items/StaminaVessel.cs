@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items
@@ -33,7 +34,7 @@ namespace tsorcRevamp.Items
         {
             Player player = Main.LocalPlayer;
 
-            tooltips.Insert(4, new TooltipLine(Mod, "", $"Consumed so far: {(player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax - 100) / 5}"));
+            tooltips.Insert(4, new TooltipLine(Mod, "UsedCounter", Language.GetTextValue("Mods.tsorcRevamp.Items.StaminaVessel.UsedCounter") + (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax - 100) / 5));
 
         }
 

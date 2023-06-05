@@ -22,15 +22,15 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 			// These lines facilitate the trail drawing
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-            Main.projFrames[Projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 8;
         }
 
 		public override void SetDefaults()
 		{
 			Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
             Projectile.aiStyle = -1;
-			Projectile.width = 50; // The width of your projectile
-			Projectile.height = 50; // The height of your projectile
+			Projectile.width = 54; // The width of your projectile
+			Projectile.height = 54; // The height of your projectile
 			Projectile.friendly = true; // Deals damage to enemies
 			Projectile.penetrate = -1; // Infinite pierce
 			Projectile.DamageType = DamageClass.Magic;
@@ -80,7 +80,11 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             {
                 Dust.NewDust(Projectile.Center, 2, 2, DustID.PoisonStaff, 0, 0, 150, default, 0.5f);
             }
-		}
+        }
+        public override bool? CanDamage()
+        {
+            return false;
+        }
         public override bool PreDraw(ref Color lightColor)
         {
             if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().EssenceThief > 8)

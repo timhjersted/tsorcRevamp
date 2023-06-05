@@ -10,6 +10,7 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Armors.Summon;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 

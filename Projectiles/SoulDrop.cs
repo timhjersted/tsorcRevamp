@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -52,7 +53,7 @@ namespace tsorcRevamp.Projectiles
                                 {
                                     if(Main.myPlayer == Main.player[i].whoAmI)
                                     {
-                                        Main.player[i].QuickSpawnItem(Main.player[i].GetSource_DropAsItem(), ModContent.ItemType<Items.DarkSoul>(), (int)Projectile.ai[0]);
+                                        Main.player[i].QuickSpawnItem(Main.player[i].GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), (int)Projectile.ai[0]);
 
                                     }
                                     Projectile.Kill();
@@ -94,7 +95,7 @@ namespace tsorcRevamp.Projectiles
             }
 
 
-            Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/DarkSoul", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Materials/DarkSoul", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             int frameHeight = texture.Height / 4;
 
 

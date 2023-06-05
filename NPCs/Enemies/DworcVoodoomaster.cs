@@ -4,6 +4,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items;
 using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -70,17 +71,17 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 33, 1, 1, 2));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 35));
             npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 22));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 25));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 32));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BattlefrontPotion>(), 25));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 32));
             npcLoot.Add(ItemDropRule.Common(ItemID.FlaskofFire, 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 20));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 25));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 25));
             //npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.BossItems.CursedSkull>(), 50));
             //npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.BandOfCosmicPower>(), 50));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 3, 5));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 4));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.CharcoalPineResin>(), 4));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BloodredMossClump>(), 5, 5, 9));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 3, 5));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 4));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 4));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 5, 5, 9));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 5, 1));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 14));
         }

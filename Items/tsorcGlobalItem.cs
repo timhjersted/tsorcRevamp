@@ -10,6 +10,9 @@ using Terraria.ModLoader;
 using Terraria.Utilities;
 using tsorcRevamp.UI;
 using Terraria.ModLoader.Config;
+using Terraria.Localization;
+using tsorcRevamp.Items.Debug;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items
 {
@@ -26,7 +29,7 @@ namespace tsorcRevamp.Items
             {
                 if (tsorcRevampWorld.BossAlive)
                 {
-                    Main.NewText("Can not be used while a boss is alive!", Color.Yellow);
+                    Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.UnusableDuringBoos"), Color.Yellow);
                     return false;
                 }
             }
@@ -55,7 +58,7 @@ namespace tsorcRevamp.Items
                     if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.RetinazerV2>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SpazmatismV2>()))
                     {
                         //Triad
-                        UsefulFunctions.BroadcastText("The Triad has spotted you", Color.MediumPurple);
+                        UsefulFunctions.BroadcastText(Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MechanicalEye.OnUseText1"), Color.MediumPurple);
                         NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y - 1000, ModContent.NPCType<NPCs.Bosses.Cataluminance>());
                         NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X - 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
                         NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X + 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
@@ -64,12 +67,12 @@ namespace tsorcRevamp.Items
                     }
                     else
                     {
-                        UsefulFunctions.BroadcastText("The Triad already has you in their sights...", Color.MediumPurple);
+                        UsefulFunctions.BroadcastText(Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MechanicalEye.OnUseText2"), Color.MediumPurple);
                     }
                 }
                 else
                 {
-                    UsefulFunctions.BroadcastText("The Triad only awakens at night...", Color.MediumPurple);
+                    UsefulFunctions.BroadcastText(Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MechanicalEye.OnUseText3"), Color.MediumPurple);
                 }
                 return false;
             }
@@ -112,7 +115,7 @@ namespace tsorcRevamp.Items
         
         public override bool CanEquipAccessory(Item item, Player player, int slot, bool modded)
         {
-            if(item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0 && !player.HasItem(ModContent.ItemType<Weapons.DebugTome>()))
+            if(item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0 && !player.HasItem(ModContent.ItemType<DebugTome>()))
             {
                 if (item.type != ItemID.CreativeWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
                 {
@@ -126,15 +129,14 @@ namespace tsorcRevamp.Items
         {
             if (hasSoulRecipe.Contains(item.type))
             {
-                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "RecipeTooltip", $"[i:{ModContent.ItemType<DarkSoul>()}][c/66fc03:Dark Soul recipe material]"));
+                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "RecipeTooltip", $"[i:{ModContent.ItemType<DarkSoul>()}]" + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.RecipeTooltip")));
             }
 
             if (item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0)
             {
                 if (item.type != ItemID.CreativeWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
                 {
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "These wings have been [c/383838:cursed] by a ferocious [c/009400:Hunter]"));
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "They can not be used until it is defeated"));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.WingsDisabled")));
                 }
             }
             
@@ -143,50 +145,47 @@ namespace tsorcRevamp.Items
             {
                 if (item.type == ItemID.ObsidianSkinPotion)
                 {
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "No Quick Buff", "Your supply of these is finite, so they are never used by Quick Buff"));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "No Quick Buff", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ObsidianSkinPotion")));
                 }
 
                 if (item.createWall > 0)
                 {
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "[c/fc1c03:Can not be placed in adventure mode!]"));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.TileDisabled")));
                 }
 
                 if(item.createTile > -1)
                 {
                     if (tsorcRevamp.PlaceAllowed.Contains(item.createTile) || tsorcRevamp.CrossModTiles.Contains(item.createTile) || tsorcRevamp.PlaceAllowedModTiles.Contains(item.createTile))
                     {
-                        tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Enabled", "[c/1cfc03:Can be placed in adventure mode!]"));
+                        tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Enabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.TileEnabled")));
                     }
                     else
                     {
-                        tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "[c/fc1c03:Can not be placed in adventure mode!]"));
+                        tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.TileDisabled")));
                     }
                 }
 
                 if (item.type == ItemID.DirtRod)
                 {
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "[c/fc1c03:This item is disabled in adventure mode!]."));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ItemDisabled")));
                 }
 
                 if (item.type == ItemID.Picksaw && !tsorcRevampWorld.SuperHardMode)
                 {
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] by [c/aa00ff:Attraidies]"));
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "The only thing that will break it is his death..."));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.AttradiesCursed")));
                 }
 
                 if (tsorcRevamp.RestrictedHooks.Contains(item.type) && !NPC.downedBoss3)
                 {
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] and can't be used yet"));
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "You can see a strange [c/878787:skull] symbol glowing on its surface..."));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Cursed")));
                 }
                 if(item.type == ItemID.SlimySaddle && !NPC.downedBoss2)
                 {
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] by the [c/701070:corruption] and can't be used yet"));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.CorruptionCursed")));
                 }
                 if (item.type == ItemID.QueenSlimeMountSaddle && !NPC.downedMechBoss3)
                 {
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "This item has been [c/383838:cursed] by a ferocious [c/009400:Hunter]"));
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", "It can not be used until it is defeated"));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.WingsDisabled")));
                 }
             }
         }

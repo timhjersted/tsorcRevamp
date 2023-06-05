@@ -1,16 +1,18 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Potions
 {
     public class BattlefrontPotion : ModItem
     {
+        public static float DamageCritIncrease = 12f;
+        public static float Thorns = 200f;
+        public static float DRDecrease = 8f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageCritIncrease, Thorns, DRDecrease);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases damage by 15% and critical strike chance by 15%" +
-                               "\nGrants enhanced Thorns and the Battle potion effect" +
-                               "\nDoes not stack with Demon Drug, Armor Drug, or Strength Potions."); */
         }
 
         public override void SetDefaults()

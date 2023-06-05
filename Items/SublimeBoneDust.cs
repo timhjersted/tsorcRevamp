@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items
@@ -34,8 +35,8 @@ namespace tsorcRevamp.Items
             {
                 player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain += 20;
                 player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain += 40;
-                Main.NewText("Estus Flask potency increased! Heal per charge: " + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain, Color.OrangeRed);
-                Main.NewText("Cerulean Flask potency increased! Heal per charge: " + Main.LocalPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain, Color.RoyalBlue);
+                Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.SublimeBoneDust.EstusFlaskPotency") + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain, Color.OrangeRed);
+                Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.SublimeBoneDust.CeruleanFlaskPotency") + Main.LocalPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain, Color.RoyalBlue);
                 return true;
             }
 

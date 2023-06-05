@@ -4,6 +4,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -124,7 +125,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #endregion
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.WhiteTitanite>(), 1, 3, 5));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<WhiteTitanite>(), 1, 3, 5));
         }
     }
 }

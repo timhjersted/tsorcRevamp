@@ -105,7 +105,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.CharcoalPineResin>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 10));
             //npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 100));
             npcLoot.Add(ItemDropRule.Common(ItemID.RegenerationPotion, 50));
             npcLoot.Add(ItemDropRule.Common(ItemID.BattlePotion, 50));

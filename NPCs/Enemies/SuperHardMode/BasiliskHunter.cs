@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -628,7 +629,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.CursedSoul>(), 1, 3, 6));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 1, 3, 6));
             npcLoot.Add(new CommonDrop(ItemID.GreaterHealingPotion, 100, 1, 1, 8));
         }
     }

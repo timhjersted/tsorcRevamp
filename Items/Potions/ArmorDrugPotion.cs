@@ -1,17 +1,17 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Potions
 {
     public class ArmorDrugPotion : ModItem
     {
+        public static int Defense = 25;
+        public static float DRIncrease = 12f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Defense, DRIncrease);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Armor Drug");
-            /* Tooltip.SetDefault("Increases defense by 25 and damage reduction by 15" +
-                               "\nDoes not stack with Demon Drug, Strength, or Battlefront Potions."); */
-
         }
 
         public override void SetDefaults()

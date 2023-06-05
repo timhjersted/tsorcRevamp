@@ -16,6 +16,7 @@ using Terraria.ModLoader.Config;
 using System.Linq;
 using Terraria.UI.Gamepad;
 using tsorcRevamp.Items.VanillaItems;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp
 {
@@ -57,7 +58,12 @@ namespace tsorcRevamp
         public int curseDecayTimer = 0;
         public int powerfulCurseDecayTimer = 0;
 
+        public bool BrokenSpirit;
+
         public int SoulVessel = 0;
+        public float MaxManaAmplifier;
+
+        public int MagicPlatingStacks = 0;
 
         public bool ChloranthyRing1 = false;
         public bool ChloranthyRing2 = false;
@@ -310,6 +316,8 @@ namespace tsorcRevamp
             ChloranthyRing2 = false;
             WolfRing = false;
 
+            BrokenSpirit = false;
+
             MythrilOrichalcumCritDamage = false; 
             ChallengersGloveCritDamage = false;
             WhipCritHitboxSize = 1;
@@ -321,6 +329,7 @@ namespace tsorcRevamp
             IceboundMythrilAegis = false;
 
             Celestriad = false;
+            MaxManaAmplifier = 0f;
 
             DragoonBoots = false;
             OldWeapon = false;
@@ -1314,6 +1323,14 @@ namespace tsorcRevamp
             if (DragoonHorn && (((Player.gravDir == 1f) && (Player.velocity.Y > 0)) || ((Player.gravDir == -1f) && (Player.velocity.Y < 0))))
             {
                 Player.GetDamage(DamageClass.Melee) *= 1.5f;
+            }
+            if (BrokenSpirit)
+            {
+                Player.noKnockback = false;
+            }
+            if (MaxManaAmplifier > 0f)
+            {
+                Player.statManaMax2 = (int)(Player.statManaMax2 * (1f + MaxManaAmplifier / 100f));
             }
         }
 

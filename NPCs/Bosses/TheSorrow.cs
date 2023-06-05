@@ -8,6 +8,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Bosses

@@ -1,15 +1,16 @@
 ﻿using Terraria.ID;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Potions
 {
     public class BoostPotion : ModItem
     {
+        public static float MovementSpeedMultiplier = 20f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MovementSpeedMultiplier);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Multiplies your movement speed by 20%");
-
         }
 
         public override void SetDefaults()

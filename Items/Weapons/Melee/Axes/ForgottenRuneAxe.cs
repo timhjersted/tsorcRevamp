@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Axes
 {

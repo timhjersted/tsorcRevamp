@@ -6,6 +6,7 @@ using Terraria.DataStructures;
 using Microsoft.Xna.Framework;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using System.Collections.Generic;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
@@ -13,6 +14,10 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
     public class OrbOfDeception : ModItem
     {
         public static Color FilledColor = Color.YellowGreen;
+        public static float OrbDmgMod = 125f;
+        public static float OrbReturnDmgMod = 150f;
+        public static float DmgLossOnPierce = 5f;
+        public static float FilledOrbDmgMod = 160f;
         public override void SetStaticDefaults()
         {
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 8));
@@ -24,8 +29,8 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.height = 32;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.channel = false;
-            Item.useAnimation = 25;
-            Item.useTime = 25;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
             Item.damage = 20;
             Item.mana = 25;
             Item.knockBack = 8;

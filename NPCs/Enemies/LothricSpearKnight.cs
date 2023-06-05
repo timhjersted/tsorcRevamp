@@ -7,6 +7,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Tools;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -944,7 +945,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(hmCondition);
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Items.Potions.RadiantLifegem>(), 3, 1, 2));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.SpikedIronShield>(), 20));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.MagicBarrierScroll>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<MagicBarrierScroll>(), 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.LostUndeadSoul>(), 5));
             npcLoot.Add(ItemDropRule.Common(ItemID.LifeforcePotion, 6));
             npcLoot.Add(ItemDropRule.Common(ItemID.EndurancePotion, 6));

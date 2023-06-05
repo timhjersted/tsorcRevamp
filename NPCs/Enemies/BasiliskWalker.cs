@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -294,7 +295,7 @@ namespace tsorcRevamp.NPCs.Enemies
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnFailedConditions(new CommonDrop(ItemID.HealingPotion, 15, 1, 1, 3));
             npcLoot.Add(hmCondition);
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BloodredMossClump>(), 3));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 3));
             npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 25, 1, 1, 3));
         }
     }

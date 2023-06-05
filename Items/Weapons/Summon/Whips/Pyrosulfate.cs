@@ -3,10 +3,11 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-	public class Pyrosulfate : ModItem
+    public class Pyrosulfate : ModItem
 	{
 		public static float SummonTagDamage = 6;
 		public static float SummonTagCrit = 9;

@@ -8,10 +8,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
-	[LegacyName("InterstellarVesselControls")]
+    [LegacyName("InterstellarVesselControls")]
     [Autoload(true)]
     public class InterstellarVesselGauntlet : ModItem
 	{

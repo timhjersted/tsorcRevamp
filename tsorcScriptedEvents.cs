@@ -9,9 +9,10 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.ModLoader.Config;
-using tsorcRevamp.Items;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Lore;
 
 namespace tsorcRevamp
 {
@@ -213,19 +214,19 @@ namespace tsorcRevamp
 
             //ANCIENT DEMON (FORGOTTEN CITY, CLOSE TO FIRE TEMPLE)
             ScriptedEvent AncientDemon = new ScriptedEvent(new Vector2(5317, 1800), 25, ModContent.NPCType<NPCs.Bosses.AncientDemon>(), DustID.GoldFlame, true, true, true, "What did you expect to find here human?... Your hubris will be your undoing...", Color.MediumPurple, false);
-            AncientDemon.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 1, 5000 });
+            AncientDemon.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 5000 });
 
             //ANCIENT OOLACILE DEMON (EARLY-GAME)
             ScriptedEvent AODE = new ScriptedEvent(new Vector2(5652, 971), 27, ModContent.NPCType<NPCs.Bosses.AncientOolacileDemon>(), DustID.GoldFlame, true, true, true, "You foolish human... pitiful arrogance...", Color.MediumPurple, false);
-            AODE.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 1, 1500 });
+            AODE.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
             
             //GOBLIN SUMMONER IN WMF
             ScriptedEvent GoblinWizardWMF = new ScriptedEvent(new Vector2(7153, 411), 20, NPCID.GoblinSummoner, DustID.MagicMirror, true, true, false, "You're arrogant, Red. You were a fool to come here...", Color.MediumPurple, false);
-            GoblinWizardWMF.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 1, 1500 });
+            GoblinWizardWMF.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
 
             //GOBLIN SUMMONER IN THE CLOUDS (WMF)
             ScriptedEvent GoblinWizardClouds = new ScriptedEvent(new Vector2(7822, 118), 40, NPCID.GoblinSummoner, DustID.MagicMirror, true, false, false, "You think you're clever, Red?", Color.MediumPurple, false);
-            GoblinWizardClouds.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 1, 1500 });
+            GoblinWizardClouds.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
 
             //ICE GOLEM WYVERN COMBO
             List<int> Golem2EnemyTypeList = new List<int>() { NPCID.WyvernHead, NPCID.IceGolem };
@@ -338,7 +339,7 @@ namespace tsorcRevamp
             {
                 DunledingAmbush.SetCustomStats((int?)(player.statLifeMax2 * .5f), null, (int?)(player.statLifeMax2 * 0.10f) + 25); //damage doesn't double for Expert
             }
-            DunledingAmbush.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DodgerollMemo>() }, new List<int>() { 1 }, true);
+            DunledingAmbush.SetCustomDrops(new List<int>() { ModContent.ItemType<DodgerollMemo>() }, new List<int>() { 1 }, true);
 
 
             //ALIEN AMBUSH

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Tools;
 
 
 namespace tsorcRevamp.Tiles
@@ -84,7 +85,7 @@ namespace tsorcRevamp.Tiles
             //SOUL SKULLS - They are 2x2, so use 2, 2 in the rectangle. In TEdit, these are SlimeBlock-PinkSlimeBlock(facing left) and PinkSlimeBlock-SlimeBlock(facing right)
 
             //Earth temple, by the first altar
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4248, 984, 2, 2), ModContent.ItemType<Items.GreatMagicMirror>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4248, 984, 2, 2), ModContent.ItemType<GreatMagicMirror>(), 1));
 
             //Giant Tree, bottom left by roots.
             //SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(2542, 1486, 2, 2), ModContent.ItemType<Items.Accessories.SoulReaper2>(), 1, ModContent.BuffType<Buffs.Revitalizing>()));
@@ -99,7 +100,7 @@ namespace tsorcRevamp.Tiles
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3931, 1300, 2, 2), ModContent.ItemType<Items.Humanity>(), 3));
 
             //Jumping puzzle in mountain maze
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3533, 417, 2, 2), ModContent.ItemType<Items.GreatMagicMirror>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3533, 417, 2, 2), ModContent.ItemType<GreatMagicMirror>(), 1));
 
             //Under the familiar bridge
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4652, 899, 2, 2), ModContent.ItemType<Items.Potions.GreenBlossom>(), 3));
@@ -114,7 +115,7 @@ namespace tsorcRevamp.Tiles
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4810, 1819, 2, 2), ModContent.ItemType<Items.Weapons.Melee.Broadswords.RuneBlade>(), 1, PrefixID.Legendary));
 
             //WoF summoning pedestal
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3397, 1827, 2, 2), ModContent.ItemType<Items.PowerWithin>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3397, 1827, 2, 2), ModContent.ItemType<PowerWithin>(), 1));
 
             //Underworld, in ceiling left of WoF summoning pedestal above lava
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3235, 1839, 2, 2), ItemID.HeartreachPotion, 9));

@@ -9,6 +9,8 @@ using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Whips;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {

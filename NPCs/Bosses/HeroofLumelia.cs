@@ -12,6 +12,7 @@ using tsorcRevamp.Items.Potions;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.DataStructures;
 using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Items.Tools;
 
 namespace tsorcRevamp.NPCs.Bosses
 {

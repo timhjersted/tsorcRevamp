@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Accessories.Magic
 {

@@ -6,6 +6,8 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Weapons.Magic.Tomes;
+using tsorcRevamp.Projectiles.Enemy.Okiku;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -114,7 +116,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             speedX *= num51;
                             speedY *= num51;
                             //(int) (14f * npc.scale);
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.Okiku.PhasedMatterBlast>();//44;//0x37; //14;
+                            int type = ModContent.ProjectileType<PhasedMatterBlast>();//44;//0x37; //14;
                             int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, antiMatterBlastDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 150;
                             //Main.projectile[num54].aiStyle = 9;
@@ -431,7 +433,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.HolyWarElixir>()));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Ice3Tome>(), 10));
         }
     }
 }

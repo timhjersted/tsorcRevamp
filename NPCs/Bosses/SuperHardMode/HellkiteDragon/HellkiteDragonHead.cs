@@ -12,6 +12,7 @@ using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 {

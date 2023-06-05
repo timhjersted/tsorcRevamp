@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.DataStructures;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -738,9 +739,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #endregion
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.GuardianSoul>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<GuardianSoul>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BossItems.DarkMirror>()));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.DarkSoul>(), 1, 5000, 5000));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 5000, 5000));
         }
 
         public override void FindFrame(int currentFrame)

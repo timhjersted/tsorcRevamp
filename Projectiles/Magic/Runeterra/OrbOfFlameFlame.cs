@@ -16,12 +16,13 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
+            Main.projFrames[Projectile.type] = 8;
         }
         public override void SetDefaults()
         {
-			Projectile.width = 16;
-            Projectile.height = 16;
-            Projectile.scale = 1.5f;
+            Projectile.width = 20;
+            Projectile.height = 32;
+            Projectile.scale = 1f;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = 1;
             Projectile.timeLeft = 900;
@@ -29,6 +30,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             Projectile.friendly = true;
             Projectile.tileCollide = false;
         }
+
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
@@ -41,7 +43,6 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             float projSpeed = 5f;
 
             NPC closestNPC = FindClosestNPC(maxDetectRadius);
-            Visuals();
             if (closestNPC == null || Projectile.timeLeft >= 780)
             {
                 currentAngle += (angularSpeed / (50f * 0.001f + 1f));
@@ -52,11 +53,40 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 
                 Projectile.velocity = Projectile.rotation.ToRotationVector2();
 
+                int IdleFrameSpeed = 5;
+                Projectile.frameCounter++;
+
+                if (Projectile.frameCounter >= IdleFrameSpeed)
+                {
+                    Projectile.frameCounter = 0;
+                    Projectile.frame++;
+
+                    if (Projectile.frame >= Main.projFrames[Projectile.type] / 2)
+                    {
+                        Projectile.frame = 0;
+                    }
+                }
+
                 return;
             }
 
             Projectile.velocity = (closestNPC.Center - Projectile.Center).SafeNormalize(Vector2.Zero) * projSpeed;
-            Projectile.rotation = Projectile.velocity.ToRotation();
+            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            int frameSpeed = 5;
+
+            Projectile.frameCounter++;
+
+            if (Projectile.frameCounter >= frameSpeed)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+
+                if (Projectile.frame >= Main.projFrames[Projectile.type] || Projectile.frame <= Main.projFrames[Projectile.type] / 2)
+                {
+                    Projectile.frame = 4;
+                }
+            }
+            Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 0.78f);
         }
 
         public NPC FindClosestNPC(float maxDetectDistance)
@@ -81,11 +111,6 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             }
             return closestNPC;
         }
-        private void Visuals()
-        {
-            Lighting.AddLight(Projectile.Center, Color.Firebrick.ToVector3() * 0.78f);
-        }
-
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];

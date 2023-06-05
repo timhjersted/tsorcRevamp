@@ -5,6 +5,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -99,9 +100,9 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 5, 10);
-            IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<Items.WhiteTitanite>(), 1, 5, 10);
-            IItemDropRule drop3 = ItemDropRule.Common(ModContent.ItemType<Items.BlueTitanite>(), 1, 5, 10);
+            IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 5, 10);
+            IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<WhiteTitanite>(), 1, 5, 10);
+            IItemDropRule drop3 = ItemDropRule.Common(ModContent.ItemType<BlueTitanite>(), 1, 5, 10);
 
             SuperHardmodeRule SHM = new();
             IItemDropRule condition = new LeadingConditionRule(SHM);

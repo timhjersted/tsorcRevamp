@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -139,7 +140,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Ranged.Thrown.RoyalThrowingSpear>(), 4, 25, 35));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Weapons.Ranged.Thrown.EphemeralThrowingSpear>(), 5, 25, 30, 2));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.HealingElixir>(), 5, 1, 1, 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.EphemeralDust>(), 1, 3, 9));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<EphemeralDust>(), 1, 3, 9));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 35));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 35));
             npcLoot.Add(new CommonDrop(ItemID.HunterPotion, 100, 1, 1, 8));

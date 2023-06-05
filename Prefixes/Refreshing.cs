@@ -6,7 +6,8 @@ namespace tsorcRevamp.Prefixes
 {
     public class Refreshing : ModPrefix
     {
-        public virtual float _power => 0.04f;
+        public static float RefreshingPower = 4f;
+        public virtual float _power => RefreshingPower / 100f;
 
         public override float RollChance(Item item) //we don't want players getting it naturally
         {
@@ -32,11 +33,15 @@ namespace tsorcRevamp.Prefixes
         }
     }
 
-    public class Revitalizing : Refreshing {
-        public override float _power => 0.06f;
+    public class Revitalizing : Refreshing
+    {
+        public static float RevitalizingPower = 6f;
+        public override float _power => RevitalizingPower / 100f;
     }
 
-    public class Invigorating : Refreshing {
-        public override float _power => 0.08f;
+    public class Invigorating : Refreshing
+    {
+        public static float InvigoratingPower = 8f;
+        public override float _power => InvigoratingPower / 100f;
     }
 }

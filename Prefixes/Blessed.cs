@@ -6,6 +6,7 @@ namespace tsorcRevamp.Prefixes
 {
     public class Blessed : ModPrefix
     {
+        public static float BlessedLifeRegen = 1f;
         private readonly byte _power;
 
         public override float RollChance(Item item) //we don't want players getting it naturally
@@ -41,7 +42,7 @@ namespace tsorcRevamp.Prefixes
 
         public override void ModifyValue(ref float valueMult)
         {
-            float multiplier = 1f + 0.1f * _power;
+            float multiplier = BlessedLifeRegen + 0.1f * _power;
             valueMult *= multiplier;
         }
     }

@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static tsorcRevamp.SpawnHelper;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -57,7 +58,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             npcLoot.Add(ItemDropRule.Common(ItemID.Torch, 20, 10, 30));
             npcLoot.Add(ItemDropRule.Common(ItemID.ThrowingKnife, 1, 20, 50));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.DeadChicken>(), 25));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DeadChicken>(), 25));
         }
 
 

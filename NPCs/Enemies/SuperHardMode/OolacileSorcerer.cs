@@ -6,6 +6,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -413,13 +414,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>()));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RedTitanite>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 30));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.CursedSoul>(), 2));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 100, 1, 1, 5));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.StrengthPotion>(), 100, 1, 1, 5));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 100, 1, 1, 5));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 100, 1, 1, 5));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 2));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<CrimsonPotion>(), 100, 1, 1, 5));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<StrengthPotion>(), 100, 1, 1, 5));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<ShockwavePotion>(), 100, 1, 1, 5));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<BattlefrontPotion>(), 100, 1, 1, 5));
             npcLoot.Add(new CommonDrop(ItemID.BloodMoonStarter, 100, 1, 1, 5));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 4));
         }

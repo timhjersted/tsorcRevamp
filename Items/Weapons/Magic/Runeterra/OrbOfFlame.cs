@@ -9,16 +9,18 @@ using System.Collections.Generic;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Projectiles.Ranged.Runeterra;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
     [Autoload(true)]
     public class OrbOfFlame : ModItem
     {
-        public static Color FilledColor = Color.YellowGreen;
+        public static Color FilledColor = Color.PaleVioletRed;
         public static float MagicSunder = 20f;
         public override void SetStaticDefaults()
         {
+            Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 8));
         }
 
         public override void SetDefaults()
@@ -27,8 +29,8 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.height = 32;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.channel = false;
-            Item.useAnimation = 25;
-            Item.useTime = 25;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
             Item.damage = 60;
             Item.mana = 50;
             Item.knockBack = 8;

@@ -42,7 +42,7 @@ namespace tsorcRevamp.NPCs.Bosses
         float damageCounter;
         float lastTimer = 1;
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {/*
+        {
             if(damageCounter == 0)
             {
                 thisWatch = new Stopwatch();
@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 damageCounter += damageDone;
             }
-            lastTimer = (float)thisWatch.Elapsed.TotalSeconds;*/
+            lastTimer = (float)thisWatch.Elapsed.TotalSeconds;
         }
 
         public override void AI()

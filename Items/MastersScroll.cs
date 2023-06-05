@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items
@@ -34,12 +35,12 @@ namespace tsorcRevamp.Items
                 if (Main.GameMode == 1)
                 {
                     Main.GameMode = 2;
-                    Main.NewText("Master Mode has been enabled, enjoy your extra accessory slot!", Color.DarkRed);
+                    Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.MastersScroll.Enabled"), Color.DarkRed);
                 }
                 else
                 {
                     Main.GameMode = 1;
-                    Main.NewText("Master Mode has been disabled, the cost was simply too great....\nCoward! Your resolve must be lacking.", Color.DarkRed);
+                    Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.MastersScroll.Disabled"), Color.DarkRed);
                 }
             }
             else

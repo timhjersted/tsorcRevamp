@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -516,9 +517,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 3, 6));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 3, 6));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 1, 1, 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FlameOfTheAbyss>(), 1, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FlameOfTheAbyss>(), 1, 1, 2));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 6));
         }
 

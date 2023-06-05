@@ -1,6 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 {
@@ -35,7 +36,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
         {
             if (exploded)
             {
-                modifiers.SourceDamage *= 3;
+                modifiers.SourceDamage *= DetonationSignal.BonusContactDamage / 100f;
             }
         }
     }

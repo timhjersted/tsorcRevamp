@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 {

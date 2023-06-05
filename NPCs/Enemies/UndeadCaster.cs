@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using static tsorcRevamp.SpawnHelper;
 
@@ -95,7 +96,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.SpellTome, 20));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.DeadChicken>(), 25));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DeadChicken>(), 25));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.AttraidiesRelic>(), 100, 1, 1, 10));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WandOfFire>(), 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WandOfDarkness>(), 20));

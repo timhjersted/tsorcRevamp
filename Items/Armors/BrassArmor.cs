@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 using static Terraria.ModLoader.PlayerDrawLayer;
 
 namespace tsorcRevamp.Items.Armors

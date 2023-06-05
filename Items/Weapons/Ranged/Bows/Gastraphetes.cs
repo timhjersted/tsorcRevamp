@@ -1,6 +1,7 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Bows
 {

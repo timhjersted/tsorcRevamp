@@ -7,9 +7,9 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
-using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp
 {
@@ -247,7 +247,7 @@ namespace tsorcRevamp
                     {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeaponGlowmask];
                     }
-                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.LightOfDawn>())
+                    if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.Tomes.LightOfDawn>())
                     {
                         texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Magic/LightOfDawnCrystal", ReLogic.Content.AssetRequestMode.ImmediateLoad);
                     }
@@ -288,7 +288,7 @@ namespace tsorcRevamp
                         Color drawColor = Color.White;
 
                         //Idk why this was necessary, but it was
-                        if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.LightOfDawn>())
+                        if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.Tomes.LightOfDawn>())
                         {
                             originOffset.X += 10; 
                             Color baseColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));

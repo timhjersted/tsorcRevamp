@@ -14,6 +14,7 @@ using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items;
 using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
+using tsorcRevamp.Items.Tools;
 
 namespace tsorcRevamp.NPCs.Bosses
 {

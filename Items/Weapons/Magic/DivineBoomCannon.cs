@@ -1,6 +1,7 @@
 ﻿using Terraria.ID;
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Lore;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {

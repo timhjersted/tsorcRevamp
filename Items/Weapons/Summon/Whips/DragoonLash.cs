@@ -2,10 +2,11 @@ using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-	public class DragoonLash: ModItem
+    public class DragoonLash: ModItem
 	{
 		public const int BaseDamage = 90;
 		public override void SetStaticDefaults()

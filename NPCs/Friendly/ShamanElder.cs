@@ -6,7 +6,8 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using tsorcRevamp.Items.Accessories;
-using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Items.Weapons.Magic.Tomes;
+using tsorcRevamp.Items.BossItems;
 using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Friendly
@@ -240,7 +241,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
  
-            shop.Add(new Item(ModContent.ItemType<Items.BossRematchTome>()) { 
+            shop.Add(new Item(ModContent.ItemType<BossRematchTome>()) { 
                 shopCustomPrice = 5,  
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId 
             });

@@ -7,6 +7,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Utilities;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -189,12 +190,12 @@ namespace tsorcRevamp.NPCs.Friendly
 
 
 
-            shop.Add(new Item(ModContent.ItemType<Items.ForgottenIceBowScroll>()) {
+            shop.Add(new Item(ModContent.ItemType<ForgottenIceBowScroll>()) {
                 shopCustomPrice = 5000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
 
-            shop.Add(new Item(ModContent.ItemType<Items.ForgottenThunderBowScroll>()) {
+            shop.Add(new Item(ModContent.ItemType<ForgottenThunderBowScroll>()) {
                 shopCustomPrice = 5000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.SuperHardMode));

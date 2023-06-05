@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -457,7 +458,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 25));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BloodredMossClump>(), 2, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 2, 1, 2));
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofNight, 3));
             npcLoot.Add(hmCondition);

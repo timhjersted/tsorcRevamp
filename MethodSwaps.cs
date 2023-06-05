@@ -31,6 +31,7 @@ using Terraria.WorldBuilding;
 using System.ComponentModel.Design;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp
 {
@@ -576,7 +577,7 @@ namespace tsorcRevamp
                 tsorcRevampPlayer modPlayer = Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>();
                 foreach (Item ingredient in r.requiredItem)
                 {
-                    if (ingredient.type == ModContent.ItemType<Items.DarkSoul>())
+                    if (ingredient.type == ModContent.ItemType<DarkSoul>())
                     {
 
                         //a recipe with souls will only be craftable if you have enough souls, even if theyre in soul slot

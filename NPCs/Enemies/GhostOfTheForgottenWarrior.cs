@@ -4,6 +4,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -51,7 +53,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void OnKill()
         {
             if (Main.rand.NextBool(10)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.Thrown.EphemeralThrowingSpear>(), Main.rand.Next(15, 26));
-            if (Main.rand.NextBool(30)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>());
+            if (Main.rand.NextBool(30)) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<GreatMagicShieldScroll>());
         }
 
         #region Spawn
@@ -151,7 +153,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.GoldenKey, 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.EphemeralDust>(), 1, 2, 4));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<EphemeralDust>(), 1, 2, 4));
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofNight));
             npcLoot.Add(hmCondition);

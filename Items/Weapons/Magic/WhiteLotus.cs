@@ -5,8 +5,10 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
     class WhiteLotus : ModItem {
 
         public override void SetStaticDefaults() {

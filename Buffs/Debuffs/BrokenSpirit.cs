@@ -13,7 +13,7 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.noKnockback = false;
+            player.GetModPlayer<tsorcRevampPlayer>().BrokenSpirit = true;
         }
     }
 }

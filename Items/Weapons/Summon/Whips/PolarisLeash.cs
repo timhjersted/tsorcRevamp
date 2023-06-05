@@ -3,10 +3,11 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-	public class PolarisLeash : ModItem
+    public class PolarisLeash : ModItem
 	{
 		public const int BaseDamage = 66;
 		public static float SummonTagDamage = 6;

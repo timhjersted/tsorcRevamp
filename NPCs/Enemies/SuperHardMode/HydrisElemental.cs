@@ -4,6 +4,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -97,7 +98,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.DyingWindShard>(), 100, 1, 1, 50));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<DyingWindShard>(), 100, 1, 1, 50));
         }
     }
 }

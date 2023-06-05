@@ -8,10 +8,10 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
-using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Accessories;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends

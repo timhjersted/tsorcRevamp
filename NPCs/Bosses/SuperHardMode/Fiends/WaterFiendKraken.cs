@@ -15,6 +15,7 @@ using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Items.Weapons.Melee;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 {

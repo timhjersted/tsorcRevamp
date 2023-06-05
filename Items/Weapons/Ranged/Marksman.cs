@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -35,8 +36,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<Items.FlameOfTheAbyss>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<Items.CursedSoul>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<Materials.FlameOfTheAbyss>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<Materials.CursedSoul>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
             recipe.AddTile(TileID.DemonAltar);
 

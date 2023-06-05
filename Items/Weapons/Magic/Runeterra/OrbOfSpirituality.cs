@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using Terraria.Audio;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
@@ -24,8 +25,8 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.height = 32;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.channel = false;
-            Item.useAnimation = 25;
-            Item.useTime = 25;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
             Item.damage = 220;
             Item.mana = 100;
             Item.knockBack = 8;

@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Tools;
 
 namespace tsorcRevamp.Buffs
 {
@@ -13,7 +14,7 @@ namespace tsorcRevamp.Buffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.statDefense += 10;
+            player.statDefense += MagicShieldScroll.DefenseIncrease;
             Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.MagicShield>(), 0, 0, player.whoAmI);
         }
     }

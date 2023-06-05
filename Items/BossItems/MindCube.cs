@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Lore;
 using tsorcRevamp.NPCs.Bosses.Okiku.FirstForm;
 using tsorcRevamp.NPCs.Bosses.Okiku.SecondForm;
 using tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm;

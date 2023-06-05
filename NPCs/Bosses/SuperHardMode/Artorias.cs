@@ -10,9 +10,9 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Armors.Summon;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode

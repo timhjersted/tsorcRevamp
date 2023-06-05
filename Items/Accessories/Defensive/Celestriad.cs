@@ -3,25 +3,22 @@ using Microsoft.Xna.Framework;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Accessories.Magic;
+using tsorcRevamp.Items.Materials;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class Celestriad : ModItem
     {
-
+        public static float damageResistance = 35f;
         public static int manaCost = 90;
-        public static int regenDelay = 800;
-        public static float damageResistance = 0.35f;
-
-
+        public static float MaxManaPercentIncrease = 100f;
+        public static float StaminaRegen = 15f;
+        public static int regenDelay = 13;
+        public static float BadDmgMultiplier = 25f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(damageResistance, manaCost, MaxManaPercentIncrease, StaminaRegen, regenDelay, BadDmgMultiplier);
         public override void SetStaticDefaults()
-        {
-            /* Tooltip.SetDefault("[c/ffbf00:Focuses the user's mana into a protective shield]" +
-                                $"\nMana Shield reduces incoming damage by {damageResistance * 100}%, but drains {manaCost} mana per hit" +
-                                "\nInhibits both natural and artificial mana regen for a period of time" +
-                                "\n[c/00ffd4:Doubles max mana and decreases stamina usage by 15%]" +
-                                "\nReduces ranged, magic and summon damage by 25% multiplicatively"); */
-                                
+        {                 
         }
 
         public override void SetDefaults()
@@ -48,11 +45,11 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.15f;
-            player.statManaMax2 = (int)(player.statManaMax2 * 2f);
-            player.GetDamage(DamageClass.Ranged) *= 0.75f;
-            player.GetDamage(DamageClass.Magic) *= 0.75f;
-            player.GetDamage(DamageClass.Summon) *= 0.75f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += StaminaRegen / 100f;
+            player.GetModPlayer<tsorcRevampPlayer>().MaxManaAmplifier += MaxManaPercentIncrease;
+            player.GetDamage(DamageClass.Ranged) *= 1f - BadDmgMultiplier / 100f;
+            player.GetDamage(DamageClass.Magic) *= 1f - BadDmgMultiplier / 100f;
+            player.GetDamage(DamageClass.Summon) *= 1f - BadDmgMultiplier / 100f;
 
             //Iterate through the five main accessory slots
             for (int i = 3; i < (8 + player.extraAccessorySlots); i++)
@@ -67,7 +64,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.GetModPlayer<tsorcRevampPlayer>().manaShield = 2;
             if (player.statMana >= manaCost)
             {
-                player.endurance += damageResistance; 
+                player.endurance += damageResistance / 100f; 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, DustID.AncientLight, player.velocity.X, player.velocity.Y, 150, Color.White, 0.5f);
                 Main.dust[dust].noGravity = true;
             }

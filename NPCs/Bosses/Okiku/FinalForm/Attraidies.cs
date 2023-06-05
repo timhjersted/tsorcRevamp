@@ -17,6 +17,10 @@ using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Ranged.Guns;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Weapons.Magic.Tomes;
+using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Items.Lore;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 {

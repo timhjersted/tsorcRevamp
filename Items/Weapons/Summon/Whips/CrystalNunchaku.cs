@@ -3,10 +3,11 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-	public class CrystalNunchaku : ModItem
+    public class CrystalNunchaku : ModItem
 	{
 		public static float MaxSummonTagScalingDamage = 25;
         public static float MinSummonTagScalingDamage = 0;

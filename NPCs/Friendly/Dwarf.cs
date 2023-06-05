@@ -8,7 +8,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Utilities;
-using tsorcRevamp.Items;
+using tsorcRevamp.Items.Tools;
 
 namespace tsorcRevamp.NPCs.Friendly
 {

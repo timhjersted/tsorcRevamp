@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {

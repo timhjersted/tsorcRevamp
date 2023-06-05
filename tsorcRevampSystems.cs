@@ -6,7 +6,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
-using tsorcRevamp.Items;
+using tsorcRevamp.Items.Tools;
 using tsorcRevamp.UI;
 using Terraria.Localization;
 using System;

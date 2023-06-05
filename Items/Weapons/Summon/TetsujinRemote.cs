@@ -4,10 +4,11 @@ using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-	public class TetsujinRemote : ModItem
+    public class TetsujinRemote : ModItem
 	{
 		public override void SetStaticDefaults()
 		{

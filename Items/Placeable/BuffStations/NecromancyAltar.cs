@@ -2,12 +2,13 @@ using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Tiles.BuffStations;
 
 namespace tsorcRevamp.Items.Placeable.BuffStations
 {
-	public class NecromancyAltar : ModItem
+    public class NecromancyAltar : ModItem
 	{
 		public override void SetStaticDefaults() 
 		{

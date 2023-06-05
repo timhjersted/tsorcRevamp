@@ -15,6 +15,9 @@ using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.BossItems;
+using tsorcRevamp.Items.Lore;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {

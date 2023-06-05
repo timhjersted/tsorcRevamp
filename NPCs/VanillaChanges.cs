@@ -11,6 +11,9 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Pets;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Lore;
 
 namespace tsorcRevamp.NPCs
 {
@@ -5761,12 +5764,12 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.PossessedArmor && Main.rand.NextBool(50) && !Main.expertMode)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>());
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Tools.GreatMagicShieldScroll>());
             }
 
             if ((npc.type == NPCID.PossessedArmor || npc.type == NPCID.Wraith) && Main.rand.NextBool(25) && Main.expertMode)
             {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.GreatMagicShieldScroll>());
+                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Tools.GreatMagicShieldScroll>());
             }
 
             if (npc.type == NPCID.Shark && Main.rand.NextBool(20))

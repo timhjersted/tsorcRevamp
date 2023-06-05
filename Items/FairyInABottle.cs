@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items
 {
@@ -28,7 +29,7 @@ namespace tsorcRevamp.Items
         public override bool? UseItem(Player player)
         {
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Friendly.FreedFairy>());
-            UsefulFunctions.BroadcastText("Check your minimap to find them!", Color.HotPink);
+            UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("Items.FairyInABottle.Guide"), Color.HotPink);
             return true;
         }
     }

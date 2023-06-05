@@ -1,11 +1,15 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Potions
 {
     public class DemonDrugPotion : ModItem
     {
+        public static float DmgMultiplier = 22f;
+        public static int BadDefense = 15;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMultiplier, BadDefense);
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Demon Drug");

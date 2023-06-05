@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items
 {
@@ -97,7 +99,7 @@ namespace tsorcRevamp.Items
         {
             Player player = Main.LocalPlayer;
 
-            tooltips.Insert(11, new TooltipLine(Mod, "", $"Current max: {(player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP)}"));
+            tooltips.Insert(11, new TooltipLine(Mod, "CurrentMax", Language.GetTextValue("Mods.tsorcRevamp.Items.PurgingStone.Record") + player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP));
 
         }
     }

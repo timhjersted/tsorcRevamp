@@ -3,13 +3,15 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-	public class DetonationSignal : ModItem
-	{
-		public static float SummonTagScalingDamage = 150f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagScalingDamage);
+    public class DetonationSignal : ModItem
+    {
+        public static float SummonTagScalingDamage = 150f;
+        public static float BonusContactDamage = 300f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagScalingDamage, BonusContactDamage);
         public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao

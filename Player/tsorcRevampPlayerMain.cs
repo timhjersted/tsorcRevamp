@@ -31,6 +31,8 @@ using tsorcRevamp.Items.Accessories.Summon;
 using tsorcRevamp.Items.Accessories.Expert;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Armors;
+using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp
 {
@@ -347,9 +349,9 @@ namespace tsorcRevamp
                     Items.Accessories.Magic.CelestialCloak.hitchances += 1;
                 }
             }
-            if (Main.rand.NextBool(9) & MagicPlating.MagicPlatingStacks <= 22 & Player.HasBuff(ModContent.BuffType<MagicPlating>()))
+            if (Main.rand.NextBool(9) & MagicPlatingStacks <= 22 & Player.HasBuff(ModContent.BuffType<MagicPlating>()))
             {
-                MagicPlating.MagicPlatingStacks += 7;
+                MagicPlatingStacks += 7;
             }
         }
 
@@ -863,7 +865,7 @@ namespace tsorcRevamp
             }
             if(Player.HasBuff(ModContent.BuffType<MagicPlating>()))
             {
-                MagicPlating.MagicPlatingStacks = 0;
+                MagicPlatingStacks = 0;
             }
         }
 
@@ -1082,8 +1084,8 @@ namespace tsorcRevamp
                 if (Player.statMana >= Items.Accessories.Defensive.ManaShield.manaCost)
                 {
                     Player.statMana -= Items.Accessories.Defensive.ManaShield.manaCost;
-                    Player.manaRegenDelay = Items.Accessories.Defensive.ManaShield.regenDelay;
-                    Player.maxRegenDelay = Items.Accessories.Defensive.ManaShield.regenDelay;
+                    Player.manaRegenDelay = Items.Accessories.Defensive.ManaShield.regenDelay * 60;
+                    Player.maxRegenDelay = Items.Accessories.Defensive.ManaShield.regenDelay * 60;
                 }
             }
             if (manaShield == 2)
@@ -1091,8 +1093,8 @@ namespace tsorcRevamp
                 if (Player.statMana >= Items.Accessories.Defensive.Celestriad.manaCost)
                 {
                     Player.statMana -= Items.Accessories.Defensive.Celestriad.manaCost;
-                    Player.manaRegenDelay = Items.Accessories.Defensive.Celestriad.regenDelay;
-                    Player.maxRegenDelay = Items.Accessories.Defensive.Celestriad.regenDelay;
+                    Player.manaRegenDelay = Items.Accessories.Defensive.Celestriad.regenDelay * 60;
+                    Player.maxRegenDelay = Items.Accessories.Defensive.Celestriad.regenDelay * 60;
                 }
             }
             // stamina shield code

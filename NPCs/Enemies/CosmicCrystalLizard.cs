@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -1033,11 +1034,11 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.DarkSoul>(), 1, 500, 1000));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.EternalCrystal>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 500, 1000));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<EternalCrystal>()));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<SoulSiphonPotion>(), 5, 1, 2, 4));
             npcLoot.Add(new CommonDrop(ItemID.EndurancePotion, 5, 1, 1, 4));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.EternalCrystal>(), 5, 1, 1, 3));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<EternalCrystal>(), 5, 1, 1, 3));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>()));
         }
     }

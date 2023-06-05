@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static tsorcRevamp.SpawnHelper;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -46,7 +47,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.IronShield>(), 30));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Spears.OldHalberd>(), 30));
             npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 5));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.DeadChicken>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DeadChicken>(), 10));
         }
 
         #region Spawn

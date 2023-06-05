@@ -11,6 +11,7 @@ using tsorcRevamp.Projectiles;
 using Terraria.DataStructures;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -444,8 +445,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RichMahogany, 1, 3, 5));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.BloodredMossClump>(), 1, 3, 5));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.CharcoalPineResin>(), 5));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 1, 3, 5));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 5));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.GreenBlossom>()));
         }
     }

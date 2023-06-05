@@ -972,8 +972,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
-            player.statDefense += (int)ApplyScaling(25);
-            player.endurance += ApplyScaling(0.15f);
+            player.statDefense += (int)ApplyScaling(ArmorDrugPotion.Defense);
+            player.endurance += ApplyScaling(ArmorDrugPotion.DRIncrease / 100f);
         }
     }
 
@@ -987,9 +987,9 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int ScalingFactor => 30;
         public override void PotionEffect(Player player)
         {
-            player.GetDamage(DamageClass.Generic) += ApplyScaling(0.15f);
-            player.GetCritChance(DamageClass.Generic) += ApplyScaling(15);
-            player.thorns += ApplyScaling(2f);
+            player.GetDamage(DamageClass.Generic) += ApplyScaling(BattlefrontPotion.DamageCritIncrease / 100f);
+            player.GetCritChance(DamageClass.Generic) += ApplyScaling(BattlefrontPotion.DamageCritIncrease);
+            player.thorns += ApplyScaling(BattlefrontPotion.Thorns / 100f);
             player.enemySpawns = true;
         }
     }
@@ -1004,7 +1004,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
-            player.moveSpeed *= (1.0f + ApplyScaling(0.2f));
+            player.moveSpeed *= (1.0f + ApplyScaling(BoostPotion.MovementSpeedMultiplier / 100f));
         }
     }
 

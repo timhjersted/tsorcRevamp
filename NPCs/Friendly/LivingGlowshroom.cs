@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -275,7 +276,7 @@ namespace tsorcRevamp.NPCs.Friendly
         public override void OnKill()
         {
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GlowingMushroom);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 3);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 3);
         }
     }
 }

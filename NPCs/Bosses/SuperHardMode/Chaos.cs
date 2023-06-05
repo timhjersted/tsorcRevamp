@@ -7,11 +7,12 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Armors.Summon;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Weapons.Ranged.Bows;
 

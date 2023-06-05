@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
 {

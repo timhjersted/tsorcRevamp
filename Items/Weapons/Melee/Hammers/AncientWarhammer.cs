@@ -2,6 +2,7 @@
 using Terraria.ModLoader;
 using Terraria;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Hammers
 {

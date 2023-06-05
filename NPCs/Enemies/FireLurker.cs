@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -205,11 +206,11 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 12));
             npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 100, 1, 1, 30));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 20));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.CharcoalPineResin>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 10));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 4));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 16));
-            IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<Items.RedTitanite>(), 1, 1, 2);
-            IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<Items.FlameOfTheAbyss>());
+            IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 1, 2);
+            IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<FlameOfTheAbyss>());
             SuperHardmodeRule SHM = new();
             IItemDropRule condition = new LeadingConditionRule(SHM);
             condition.OnSuccess(drop);

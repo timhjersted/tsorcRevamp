@@ -5,6 +5,7 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {

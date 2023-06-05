@@ -5,6 +5,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -491,7 +492,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Ammo.TeslaBolt>(), 1, 200, 230));
-            npcLoot.Add(ItemDropRule.OneFromOptions(1, ModContent.ItemType<Items.CompactFrame>(), ModContent.ItemType<Items.DestructionElement>()));
+            npcLoot.Add(ItemDropRule.OneFromOptions(1, ModContent.ItemType<CompactFrame>(), ModContent.ItemType<DestructionElement>()));
         }
     }
 }

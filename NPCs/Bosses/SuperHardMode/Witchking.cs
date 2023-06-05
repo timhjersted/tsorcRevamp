@@ -6,7 +6,6 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Buffs.Debuffs;
@@ -17,6 +16,7 @@ using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {

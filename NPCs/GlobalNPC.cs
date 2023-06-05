@@ -29,6 +29,7 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Sentry;
 using tsorcRevamp.Projectiles.Summon.Whips;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs
 {

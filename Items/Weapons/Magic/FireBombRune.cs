@@ -1,6 +1,8 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -26,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.value = PriceByRarity.LightPurple_6;
             Item.width = 20;
             Item.mana = 50;
-            Item.shoot = ModContent.ProjectileType<Projectiles.FireBombBall>();
+            Item.shoot = ModContent.ProjectileType<FireBombBall>();
         }
         public override void AddRecipes()
         {

@@ -3,10 +3,11 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-	public class TerraFall : ModItem
+    public class TerraFall : ModItem
 	{
 		public const int BaseDamage = 115;
         public static float MinSummonTagDamage = 5;
