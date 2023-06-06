@@ -58,7 +58,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            SoundEngine.PlaySound(SoundID.Item131, player.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/Orb_Cast") with { Volume = 0.5f }, player.Center);
         }
 
         public override void AI()
@@ -76,7 +76,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                             StateTimer = 0f;
 							EssenceThiefTimer = 0;
                             Projectile.ResetLocalNPCHitImmunity();
-                            SoundEngine.PlaySound(SoundID.Item131, player.Center);
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/Orb_Return") with { Volume = 0.5f }, Projectile.Center);
                             break;
                         }
 					break;
@@ -89,7 +89,10 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 						{
                             if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief >= 9)
                             {
-                                SoundEngine.PlaySound(SoundID.Item72, player.Center);
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/Orb_Full") with { Volume = 0.5f }, player.Center);
+                            } else
+                            {
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/Orb_Returned") with { Volume = 0.5f }, player.Center);
                             }
                             Projectile.Kill();
                         }
@@ -134,7 +137,11 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                 player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
                 if (hit.Crit)
                 {
-                    player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
+                    player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1; 
+					SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/Orb_Hit_Crit") with { Volume = 0.5f }, player.Center);
+                } else
+				{
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/Orb_Hit") with { Volume = 0.5f }, player.Center);
                 }
 				EssenceThiefTimer = 1;
             }

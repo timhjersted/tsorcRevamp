@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void SetDefaults()
         {
             Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
-            Projectile.width = 54; // The width of your projectile
+            Projectile.width = 64; // The width of your projectile
             Projectile.height = 54; // The height of your projectile
             Projectile.friendly = true; // Deals damage to enemies
             Projectile.penetrate = -1; // Infinite pierce

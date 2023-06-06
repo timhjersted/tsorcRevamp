@@ -1481,7 +1481,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedCritChance}
-					{$CommonItemTooltip.WhipCritHitboxSize@1}
+					{$CommonItemTooltip.Summon.WhipCritHitbox@1}
 					'''
 			}
 
@@ -7963,17 +7963,17 @@ Mods: {
 				Name3: Kothurn
 				Name4: Okjorn
 				Name5: Rulik
-				Name6: norbirn
+				Name6: Norbirn
 				Name7: Joulni
 				Name8: Norta
 				Name9: Biffidor
 				Name10: Koroin
 				Name11: Uorin
-				Quote1: "Here to serve."
-				Quote2: "I could use some ale..."
-				Quote3: "Can't wait until the next break."
-				Quote4: "Hi' ho!"
-				Quote5: "Nothing to report."
+				Quote1: Here to serve.
+				Quote2: I could use some ale...
+				Quote3: Can't wait until the next break.
+				Quote4: Hi' ho!
+				Quote5: Nothing to report.
 
 				TownNPCMood: {
 					Content: I am content.
@@ -7998,38 +7998,38 @@ Mods: {
 			EmeraldHerald: {
 				DisplayName: Emerald Herald
 				Name1: Jade
-				FirstEncounter: 
+				FirstEncounter:
 					'''
 					Are you the one I was sent to warn? My name is Jade, I am not of this world. I was sent here to warn you of the dangers posed by Attraidies, the Mindflayer King.
 					He has grown mighty in power and seeks to destroy not only your world, but also mine and many others.
 					'''
-				HasShard: 
+				HasShard:
 					'''
 					Is that a shard you've found? Here, let me see it.
-					So that I may help you. To see light, to see hope… However faint it might be…
+					So that I may help you. To see light, to see hopeï¿½ However faint it might beï¿½
 					'''
-				RewardTip: "Listen to everything I have to say and I may give you a reward."
-				AttraidiesTip: "Seek misery. For misery will lead you to greater, stronger souls. You will never defeat Attraidies with a soul so frail and palid."
-				Tip1: "Forge your souls in the flames of sacred altars and make their power your own."
-				Tip2: "If you ever chance upon a weapon befallen the terrible curse of poor craftsmanship, bring it to me and I shall bless it."
-				Tip3: "I hope you have a keen eye, for this is a land brimming with secrets..."
-				Tip4: "The near-constant use of potions will prove vital on your journey, especially when attempting to retrieve lost souls."
-				Tip5: "A pickaxe or sticky bomb can be used to break blocks that are 1 width wide. Stone gates need switches to open. If in doubt, give it a whack."
-				Tip6: "Dark souls have special properties. On death, you will drop all your souls and have one chance to recover them. Die before this and they are gone for good."
-				Tip7: "On your journey you will encounter unlit bonfires, light them and enjoy the peaceful respite they provide. You can nuse them as checkpoints and storage."
-				Tip8: "You can stash excess ammo, weapons and armor in the safes and piggy banks found at save points and bonfires."
-				Tip9: "Stronger pickaxes can be used to open gates of strong ore."
-				Tip10: "And finally... I'm not sure what it means, but I was told to tell you to read something called 'The Game Manual' for more information. I get the feeling you know where to find it."
-				ReceiveGift: "Take this with you. May it ease your journey."
-				Luck: "Good luck."
-				Gift: "If you ever need more, you may roast some over the flames of a bonfire. Farewell."
-				BotCGift: "Bearer of the Curse, these lifegems and Starlight Shards will no doubt prove to be invaluable on your journey. Farewell."
-				EasterEgg: "Bearer... Seek... Seek... Lest..."
-				button1: "Bless"
-				button2v1: "Seek knowledge..."
-				button2v2: "Recieve gift"
-				button2v3: "Give Shard"
-				BringShards: "If you happen to find another Estus Flask Shard, bring it to me. So that I may ease your burden."
+				RewardTip: Listen to everything I have to say and I may give you a reward.
+				AttraidiesTip: Seek misery. For misery will lead you to greater, stronger souls. You will never defeat Attraidies with a soul so frail and palid.
+				Tip1: Forge your souls in the flames of sacred altars and make their power your own.
+				Tip2: If you ever chance upon a weapon befallen the terrible curse of poor craftsmanship, bring it to me and I shall bless it.
+				Tip3: I hope you have a keen eye, for this is a land brimming with secrets...
+				Tip4: The near-constant use of potions will prove vital on your journey, especially when attempting to retrieve lost souls.
+				Tip5: A pickaxe or sticky bomb can be used to break blocks that are 1 width wide. Stone gates need switches to open. If in doubt, give it a whack.
+				Tip6: Dark souls have special properties. On death, you will drop all your souls and have one chance to recover them. Die before this and they are gone for good.
+				Tip7: On your journey you will encounter unlit bonfires, light them and enjoy the peaceful respite they provide. You can nuse them as checkpoints and storage.
+				Tip8: You can stash excess ammo, weapons and armor in the safes and piggy banks found at save points and bonfires.
+				Tip9: Stronger pickaxes can be used to open gates of strong ore.
+				Tip10: And finally... I'm not sure what it means, but I was told to tell you to read something called 'The Game Manual' for more information. I get the feeling you know where to find it.
+				ReceiveGift: Take this with you. May it ease your journey.
+				Luck: Good luck.
+				Gift: If you ever need more, you may roast some over the flames of a bonfire. Farewell.
+				BotCGift: Bearer of the Curse, these lifegems and Starlight Shards will no doubt prove to be invaluable on your journey. Farewell.
+				EasterEgg: Bearer... Seek... Seek... Lest...
+				button1: Bless
+				button2v1: Seek knowledge...
+				button2v2: Recieve gift
+				button2v3: Give Shard
+				BringShards: If you happen to find another Estus Flask Shard, bring it to me. So that I may ease your burden.
 				EstusUpgrade: "Estus Flask size increased! Max charges: "
 				CeruleanUpgrade: "Cerulean Flask size increased! Max charges: "
 
@@ -8056,8 +8056,8 @@ Mods: {
 			FreedFairy: {
 				DisplayName: Freed Fairy
 				Name1: Freed Fairy
-				Quote1: "Thank you for freeing me! Have this [c/aa9911:glowing thing] I recovered from the bottom of the spring"
-				Button: "Accept"
+				Quote1: Thank you for freeing me! Have this [c/aa9911:glowing thing] I recovered from the bottom of the spring
+				Button: Accept
 
 				TownNPCMood: {
 					Content: I am content.
@@ -8078,21 +8078,110 @@ Mods: {
 					Princess_LovesNPC: I like {NPCName}.
 				}
 			}
-			
+
 			LivingGlowshroom: {
 				DisplayName: Living Glowshroom
 				DisplayName2: ???
 				DisplayName3: FleeingFungi
 			}
+
 			LivingShroom: {
 				DisplayName: Living Shroom
 				DisplayName2: ???
 				DisplayName3: FleeingFungi
-
 			}
 
 			ShamanElder: {
 				DisplayName: Shaman Elder
+				Name1: Alo
+				Name2: Dakota
+				Name3: Esadowa
+				Name4: Kai
+				Name5: Koda
+				Name6: Lonato
+				Name7: Micah
+				Name8: Taregan
+				Quote1:
+					'''
+					Man and animal once lived in harmony, until one day a particular tribe grew a sickness of the mind. 
+					This tribe, known as the Takers, came to dominate the world, exterminating all other ways of being...
+					'''
+				Quote2: Arapaho once told me that all plants are our brothers and sisters. They talk to us and if we listen, we can hear them.
+				Quote3: I am an animist, like the indigenous tribe who once lived in these lands were, before they were wiped out by the Takers.
+				Quote4Part1: "You must never forget "
+				Quote4Part2: ", you are not separate from nature. You are one with the whole universe."
+				Quote5Part1: "The world is not a pyramid, "
+				Quote5Part2: ", nor is man the top of it. The world is a web, and every strand of the web is connected."
+				Quote6: Civilized man has grown a great sickness of the mind -- thinks he is superior to all creation. Thinks the world was made for him!
+				Quote7: Apache said it is better to have less thunder in the mouth and more lightning in the hand.
+				Quote8: Tuscarora once said they are not dead who live in the hearts they leave behind.
+				PreAttradies1: "[c/ffbf00:If you are able to defeat Attraidies, come and find me at my home beyond the Western Sea.] I will have something for you..."
+				PreAttraidies2: "[c/ffbf00:In some time I will leave Ashen Peak and return to my home beyond the Western Sea.] Come find me there..."
+				button2v1: Ask about The Abyss
+				button2v2: Continue...
+				AdvModeSHMQuote1:
+					'''
+					Red, it is as I feared. By killing Attraidies, a portal from
+					               the Abyss was opened, unleashing even more oppressive forces upon the world.
+					               The ancestors tell me that the portal can be closed, but
+					               you must first defeat the 3 Elemental Fiends: one of
+					               [c/2f8ee0:Water], one of [c/2d9e2b:Earth], and one of [c/f53d0a:Fire].
+					               You must also defeat 4 more lords of the Abyss:
+					               [c/ffbf00:Artorias], [c/00ffd4:Blight], [c/aa00ff:The Wyvern Mage Shadow], and [c/18ffe2:Seath the Scaleless].
+					'''
+				AdvModeSHMQuote2:
+					'''
+					My heart despairs for you, Red. It will not be easy. But if you succeed, you will have the strength
+					               to face the final lord, who has tended the flame of the Abyss since the world began.
+					               To the ancestors, he was known as [c/ff6618:Gwyn, Lord of Cinder].
+					               Gwyn's old tomb is buried somewhere beneath the Western sea, but he will surely kill you
+					if you have not yet gathered the strength obtained from the other lords of the Abyss.
+					'''
+				AdvModeSHMQuote3:
+					'''
+					Have you seen the [c/ffbf00:Lihzahrd Gates] scattered across this world? They will lead you towards your goal.
+					               I would start with the one deep inside the Great Chasm, which leads to the Old One's Tree.
+					               There is another, to the East of Elengad's Desert Ruins. The rest, I'm sure you will find. The ancestors will help guide you.
+					'''
+				AdvModeSHMQuote4:
+					'''
+					There is one thing you should know about [c/ffbf00:Artorias], and another dark being that now stalks these lands,
+					               known as the [c/383838:Witchking].
+					               Both The Witchking and Artorias are protected by dark spells, making them practically invincible, but I have heard that
+					               [c/f53d0a:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic.
+					               [c/fcff00:The Barrow Blade] may just be strong enough to shatter their protection...
+					'''
+				AdvModeSHMQuote5: Good luck, Red.
+				SandboxSHMQuote1:
+					'''
+					To close the seal to the Abyss, you must defeat the 6 lords of The Abyss:
+					               [c/ffbf00:Artorias], [c/00ffd4:The Blight], [c/aa00ff:The Wyvern Mage Shadow],
+					               [c/fcff00:Chaos], and [c/18ffe2:Seath the Scaleless].
+					               With a lord soul from each of these
+					               beings you will be able to summon the final lord -
+					               [c/ff6618:Gwyn, Lord of Cinder].
+					'''
+				SandboxSHMQuote2:
+					'''
+					To craft the summoning item for each
+					               lord, you will need to return to eight familiar places
+					               and collect a unique item from an enemy you will find there:
+					               [c/424bf5:The Western Ocean], [c/888888:The Underground], [c/b942f5:The Corruption],
+					               [c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/eb4034:The Underworld], and [c/42f2f5:The Eastern Ocean].
+					'''
+				SandboxSHMQuote3:
+					'''
+					Defeating [c/ffbf00:Artorias], however, will not be possible without a little knowledge.
+					               To find him, you must seek out the [c/383838:Witchking] and restore the strange ring he drops.
+					               He will sometimes appear at night, and more often deeper\nunderground, especially in dungeons.
+					               The most assured way to find him, however, is to enter the Abyss yourself using the Covanent of Artorias ring.
+					'''
+				SandboxSHMQuote4:
+					'''
+					Both The [c/383838:Witchking] and [c/ffbf00:Artorias] are protected by dark spells, but I have heard that
+					               [c/cffffa:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic.
+					               Such a blade may just be strong enough to shatter their protection...
+					'''
 
 				TownNPCMood: {
 					Content: I am content.
@@ -8116,6 +8205,18 @@ Mods: {
 
 			SolaireOfAstora: {
 				DisplayName: Warrior of Sunlight
+				Name1: Solaire
+				Quote1: Dark Souls possess great powers, but also great responsibilities.
+				Quote2: Praise the sun!
+				Quote3: Oh, hello there. I will stay behind, to gaze at the sun. The sun is a wondrous body. Like a magnificent father! If only I could be so grossly incandescent!
+				Quote5: Of course, we are not the only ones engaged in this.
+				Quote6: Would you like to buy some of my wares?
+				Quote7:
+					'''
+					The way I see it, our fates appear to be intertwined. In a land brimming with Hollows, could that really be mere chance? 
+					So, what do you say? Why not help one another on this lonely journey?
+					'''
+				Praise: You have done well, indeed you have. You've a strong arm, strong faith, and most importantly, a strong heart.
 
 				TownNPCMood: {
 					Content: I am content.
@@ -8139,6 +8240,18 @@ Mods: {
 
 			TibianArcher: {
 				DisplayName: Tibian Archer
+				Name1: Elane
+				Name2: Legola
+				Name3: Galuna
+				Name4: Enalea
+				Quote1: I am the local fletcher. I sell bows, crossbows and ammunition. Do you need anything?
+				Quote2: Tibia, a green island. It is wonderful to walk into the forests and to hunt with a bow there.
+				Quote3: I am paladin and fletcher.
+				Quote4: We are feared warriors and good marksmen.
+				Quote5: Hello. Would you like to buy some of my wares?
+				Quote6: Please show respect to Eloise. I don't want to have to hurt you.
+				Quote7: Amazons and dworcs are a real threat.
+				Quote8: I'm far from home, but this isn't so bad.
 
 				TownNPCMood: {
 					Content: I am content.
@@ -8162,6 +8275,25 @@ Mods: {
 
 			TibianMage: {
 				DisplayName: Tibian Mage
+				Name1: Asima
+				Name2: Lea
+				Name3: Padreaia
+				Name4: Loria
+				Name5: Lungelen
+				Name6: Lily
+				Name7: Sandra
+				Name8: Tibra
+				Name9: Astera Tiger
+				Quote1: Time is a force we sorcerers will master one day.
+				Quote2: Any sorcerer dedicates their whole life to the study of the arcane arts.
+				Quote3: Come back some time later and I may have new items in my collection.
+				Quote4: Sorry, I only sell spells to sorcerers.
+				Quote5: I could tell you much about all sorcerer spells, but you won't understand it. Anyway, feel free to ask me.
+				Quote6: I'll teach you a very seldom spell.
+				Quote7: Many call themselves a sorcerer, but only a few truly understand what that means.
+				Quote8: Sorcerers are destructive. Their power lies in destruction and pain.
+				Quote9: Welcome to our humble guild, wanderer. May I be of any assistance to you?
+				Quote10: Attraidies visited this town once. The bottle he drank from is still enchanted with some of his power.
 
 				TownNPCMood: {
 					Content: I am content.
@@ -8185,8 +8317,14 @@ Mods: {
 
 			UndeadMerchant: {
 				DisplayName: Undead Merchant
-
-				Name1 : Uldred
+				Name1: Uldred
+				Quote1: Well, now... You seem to have your wits about you, hmm? Then you are a welcome customer! I trade for souls. Everything's for sale! Nee hee hee hee hee!
+				Quote2: I hope you've brought plenty of souls? Nee hee hee hee hee!
+				Quote3: Oh, there you are. Where have you been hiding? I guessed you'd hopped the twig for certain. Bah, shows what I know! Nee hee hee hee!
+				Quote4: Oh? Still not popped your clogs?
+				Quote5: Oh, there you are. Still keeping your marbles all together? Then, go ahead, don't be a nitwit. Never hurts to splurge when your days are numbered! Nee hee hee hee hee!
+				Quote6: Eh? I'm not here to chit-chat. We talk business, or we talk nothing at all.
+				Quote7: "[c/ffbf00:If our paths cross again, I may have new items for sale. Don't ask where I got'em!]"
 
 				TownNPCMood: {
 					Content: I am content.
