@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -84,7 +85,7 @@ namespace tsorcRevamp.NPCs.Friendly
             // The npc starts in the asleep state, waiting for a player to enter range
             if (AI_State == State_Asleep)
             {
-                NPC.GivenName = "???";
+                NPC.GivenName = Language.GetTextValue("Mods.tsorcRevamp.NPCs.LivingShroom.DisplayName2");
                 // TargetClosest sets npc.target to the player.whoAmI of the closest player. the faceTarget parameter means that npc.direction will automatically be 1 or -1 if the targeted player is to the right or left. This is also automatically flipped if npc.confused
                 NPC.TargetClosest(true);
                 AI_Timer++;
@@ -106,7 +107,7 @@ namespace tsorcRevamp.NPCs.Friendly
             }
             else if (AI_State == State_Jump)
             {
-                NPC.GivenName = "Fleeing Fungi";
+                NPC.GivenName = Language.GetTextValue("Mods.tsorcRevamp.NPCs.LivingShroom.DisplayName3");
                 AI_Timer++;
                 if (AI_Timer == 1)
                 {

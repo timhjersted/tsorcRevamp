@@ -26,8 +26,10 @@ namespace tsorcRevamp.NPCs.Friendly
             NPCID.Sets.HatOffsetY[NPC.type] = 4;
         }
 
-        public static List<string> Names = new List<string> {
-            "Elane", "Legola", "Galuna", "Enalea"
+        public static List<string> Names = new List<string> 
+        {
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianArcher.Name1"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianArcher.Name2"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianArcher.Name3"),
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianArcher.Name4")
         };
 
         public override List<string> SetNPCNameList() {
@@ -53,14 +55,14 @@ namespace tsorcRevamp.NPCs.Friendly
         public override string GetChat()
         {
             WeightedRandom<string> chat = new WeightedRandom<string>();
-            chat.Add("I am the local fletcher. I sell bows, crossbows and ammunition. Do you need anything?");
-            chat.Add("Tibia, a green island. It is wonderful to walk into the forests and to hunt with a bow there.");
-            chat.Add("I am paladin and fletcher.");
-            chat.Add("We are feared warriors and good marksmen.");
-            chat.Add("Hello. Would you like to buy some of my wares?");
-            chat.Add("Please show respect to Eloise. I don't want to have to hurt you.");
-            chat.Add("Amazons and dworcs are a real threat.");
-            chat.Add("I'm far from home, but this isn't so bad.");
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianArcher.Quote1"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianArcher.Quote2"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianArcher.Quote3"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianArcher.Quote4"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianArcher.Quote5"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianArcher.Quote6"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianArcher.Quote7"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianArcher.Quote8"));
             return chat;
         }
 
@@ -127,6 +129,12 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.FrostburnArrowCrate>()) {
                 shopCustomPrice = 12,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+            shop.Add(new Item(ModContent.ItemType<Items.Accessories.Ranged.InfinityEdge>())
+            {
+                shopCustomPrice = 1300,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 

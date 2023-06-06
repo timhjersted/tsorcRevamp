@@ -15,8 +15,11 @@ namespace tsorcRevamp.NPCs.Friendly
     [AutoloadHead]
     class ShamanElder : ModNPC
     {
-        public static List<string> Names = new List<string> {
-            "Alo", "Dakota", "Esadowa", "Kai", "Koda", "Lonato", "Micah", "Taregan"
+        public static List<string> Names = new List<string> 
+        {
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Name1"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Name2"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Name3"),
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Name4"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Name5"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Name6"),
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Name7"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Name8")
         };
         public override void SetStaticDefaults()
         {
@@ -77,18 +80,18 @@ namespace tsorcRevamp.NPCs.Friendly
         public override string GetChat()
         {
             WeightedRandom<string> chat = new WeightedRandom<string>();
-            chat.Add("Man and animal once lived in harmony, until one day a particular tribe grew a sickness of the mind. This tribe, known as the Takers, came to dominate the world, exterminating all other ways of being...");
-            chat.Add("Arapaho once told me that all plants are our brothers and sisters. They talk to us and if we listen, we can hear them.");
-            chat.Add("I am an animist, like the indigenous tribe who once lived in these lands were, before they were wiped out by the Takers.");
-            chat.Add("You must never forget " + Main.LocalPlayer.name + ", you are not separate from nature. You are one with the whole universe.");
-            chat.Add("The world is not a pyramid, " + Main.LocalPlayer.name + ", nor is man the top of it. The world is a web, and every strand of the web is connected.");
-            chat.Add("Civilized man has grown a great sickness of the mind -- thinks he is superior to all creation. Thinks the world was made for him!");
-            chat.Add("Apache said it is better to have less thunder in the mouth and more lightning in the hand.");
-            chat.Add("Tuscarora once said they are not dead who live in the hearts they leave behind.");
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Quote1"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Quote2"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Quote3"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Quote4Part1") + Main.LocalPlayer.name + Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Quote4Part2"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Quote5Part1") + Main.LocalPlayer.name + Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Quote5Part2"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Quote6"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Quote7"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Quote8"));
             if (!tsorcRevampWorld.SuperHardMode && !tsorcRevampWorld.TheEnd)
             {
-                chat.Add("[c/ffbf00:If you are able to defeat Attraidies, come and find me at my home beyond the Western Sea.] I will have something for you...");
-                chat.Add("[c/ffbf00:In some time I will leave Ashen Peak and return to my home beyond the Western Sea.] Come find me there...");
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.PreAttradies1"));
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.PreAttraidies2"));
             }
             return chat;
         }
@@ -99,11 +102,11 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 if (chatState == 0)
                 {
-                    button2 = "Ask about The Abyss";
+                    button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.button2v1");
                 }
                 else
                 {
-                    button2 = "Continue...";
+                    button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.button2v2");
                 }
             }
         }
@@ -123,48 +126,32 @@ namespace tsorcRevamp.NPCs.Friendly
                     //This chain of chat messages is for adventure mode!
                     if (chatState == 0)
                     {
-                        Main.npcChatText = "Red, it is as I feared. By killing Attraidies, a portal from" +
-                                        "\nthe Abyss was opened, unleashing even more oppressive forces upon the world." +
-                                        "\nThe ancestors tell me that the portal can be closed, but" +
-                                        "\nyou must first defeat the 3 Elemental Fiends: one of" +
-                                        "\n[c/2f8ee0:Water], one of [c/2d9e2b:Earth], and one of [c/f53d0a:Fire]." +
-                                        "\nYou must also defeat 4 more lords of the Abyss:" +
-                                        "\n[c/ffbf00:Artorias], [c/00ffd4:Blight], [c/aa00ff:The Wyvern Mage Shadow], and [c/18ffe2:Seath the Scaleless]."; //[c/fcff00:Chaos]
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.AdvModeSHMQuote1"); //[c/fcff00:Chaos]
                         chatState = 1;
                         return;
                     }
                     if (chatState == 1)
                     {
-                        Main.npcChatText = "My heart despairs for you, Red. It will not be easy. But if you succeed, you will have the strength " +
-                                        "to face the final lord, who has tended the flame of the Abyss since the world began." +
-                                        "\nTo the ancestors, he was known as [c/ff6618:Gwyn, Lord of Cinder]. " +
-                                        "\nGwyn's old tomb is buried somewhere beneath the Western sea, but he will surely kill you " +
-                                        "if you have not yet gathered the strength obtained from the other lords of the Abyss.";
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.AdvModeSHMQuote2");
                         chatState = 2;
                         return;
                     }
                     if (chatState == 2)
                     {
-                        Main.npcChatText = "Have you seen the [c/ffbf00:Lihzahrd Gates] scattered across this world? They will lead you towards your goal." +
-                                        "\nI would start with the one deep inside the Great Chasm, which leads to the Old One's Tree." +
-                                        "\nThere is another, to the East of Elengad's Desert Ruins. The rest, I'm sure you will find. The ancestors will help guide you.";
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.AdvModeSHMQuote3");
                         chatState = 3;
                         return;
                     }
                     if (chatState == 3)
                     {
-                        Main.npcChatText = "There is one thing you should know about [c/ffbf00:Artorias], and another dark being that now stalks these lands," +
-                                    "\nknown as the [c/383838:Witchking]." +
-                                    "\nBoth The Witchking and Artorias are protected by dark spells, making them practically invincible, but I have heard that " +
-                                    "\n[c/f53d0a:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic." + //fierce\nmagic.
-                                    "\n[c/fcff00:The Barrow Blade] may just be strong enough to shatter their protection...";
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.AdvModeSHMQuote4");
                         chatState = 4;
                         return;
                     }
 
                     if (chatState == 4)
                     {
-                        Main.npcChatText = "Good luck, Red.";
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.AdvModeSHMQuote5");
 
                         chatState = 0;
                     }
@@ -174,32 +161,19 @@ namespace tsorcRevamp.NPCs.Friendly
                     //This chain of chat messages is for sandbox mode!
                     if (chatState == 0)
                     {
-                        Main.npcChatText = "To close the seal to the Abyss, you must defeat the 6 lords of The Abyss:" +
-                                        "\n[c/ffbf00:Artorias], [c/00ffd4:The Blight], [c/aa00ff:The Wyvern Mage Shadow], " +
-                                        "\n[c/fcff00:Chaos], and [c/18ffe2:Seath the Scaleless]." +
-                                        "\nWith a lord soul from each of these" +
-                                        "\nbeings you will be able to summon the final lord - " +
-                                        "\n[c/ff6618:Gwyn, Lord of Cinder].";
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.SandboxSHMQuote1");
                         chatState = 1;
                         return;
                     }
                     if (chatState == 1)
                     {
-                        Main.npcChatText = "To craft the summoning item for each " +
-                                        "lord, you will need to return to eight familiar places " +
-                                        "and collect a unique item from an enemy you will find there: " +
-                                        "[c/424bf5:The Western Ocean], [c/888888:The Underground], [c/b942f5:The Corruption], " +
-                                        "\n[c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/eb4034:The Underworld], and [c/42f2f5:The Eastern Ocean].";
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.SandboxSHMQuote2");
                         chatState = 2;
                         return;
                     }
                     if (chatState == 2)
                     {
-                        Main.npcChatText = "Defeating [c/ffbf00:Artorias], however, will not be possible without a little knowledge." +
-                                    //"Without it I fear you may stand little chance against these terrors... " +
-                                    "\nTo find him, you must seek out the [c/383838:Witchking] and restore the strange ring he drops." +
-                                    "\nHe will sometimes appear at night, and more often deeper\nunderground, especially in dungeons." +
-                                    "\nThe most assured way to find him, however, is to enter the Abyss yourself using the Covanent of Artorias ring.";
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.SandboxSHMQuote3");
                         chatState = 3;
                         return;
                     }
@@ -207,9 +181,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
                     if (chatState == 3)
                     {
-                        Main.npcChatText = "Both The [c/383838:Witchking] and [c/ffbf00:Artorias] are protected by dark spells, but I have heard that" +
-                                    "\n[c/cffffa:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic. " +
-                                    "\nSuch a blade may just be strong enough to shatter their protection...";
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.SandboxSHMQuote4");
 
                         chatState = 0;
                     }

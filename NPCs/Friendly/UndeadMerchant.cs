@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Friendly
             NPCID.Sets.HatOffsetY[NPC.type] = 4;
         }
         public override List<string> SetNPCNameList() {
-            return new List<string> { "Uldred" };
+            return new List<string> { Language.GetTextValue("Mods.tsorcRevamp.NPCs.UndeadMerchant.Name1") };
         }
         public override void SetDefaults()
         {
@@ -47,13 +47,13 @@ namespace tsorcRevamp.NPCs.Friendly
         public override string GetChat()
         {
             WeightedRandom<string> chat = new WeightedRandom<string>();
-            chat.Add("Well, now... You seem to have your wits about you, hmm? Then you are a welcome customer! I trade for souls. Everything's for sale! Nee hee hee hee hee!", 1.5);
-            chat.Add("I hope you've brought plenty of souls? Nee hee hee hee hee!");
-            chat.Add("Oh, there you are. Where have you been hiding? I guessed you'd hopped the twig for certain. Bah, shows what I know! Nee hee hee hee!");
-            chat.Add("Oh? Still not popped your clogs?");
-            chat.Add("Oh, there you are. Still keeping your marbles all together? Then, go ahead, don't be a nitwit. Never hurts to splurge when your days are numbered! Nee hee hee hee hee!");
-            chat.Add("Eh? I'm not here to chit-chat. We talk business, or we talk nothing at all.");
-            chat.Add("[c/ffbf00:If our paths cross again, I may have new items for sale. Don't ask where I got'em!]");
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.UndeadMerchant.Quote1"), 1.5);
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.UndeadMerchant.Quote2"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.UndeadMerchant.Quote3"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.UndeadMerchant.Quote4"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.UndeadMerchant.Quote5"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.UndeadMerchant.Quote6"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.UndeadMerchant.Quote7"));
 
             return chat;
         }

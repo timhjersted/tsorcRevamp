@@ -703,6 +703,11 @@ namespace tsorcRevamp
         public static float SharpenedMeleeArmorPen = 50f;
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
+            if (modifiers.DamageType == DamageClass.Ranged)
+            {
+                modifiers.NonCritDamage -= Items.Accessories.Ranged.InfinityEdge.NonCritDmgReduction / 100f;
+                modifiers.CritDamage += Items.Accessories.Ranged.InfinityEdge.CritDmgIncrease / 100f;
+            }
             if (Player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread)
             {
                 modifiers.DamageVariationScale *= 0;
@@ -1072,6 +1077,7 @@ namespace tsorcRevamp
                 Dust.NewDustDirect(Player.Center, 10, 10, DustID.FlameBurst, 0.5f, 0.5f, 0, Color.Firebrick, 0.5f);
             }
         }
+
 
         //On hit, subtract the mana cost and disable natural mana regen for a short period
         //The latter is absolutely necessary, because natural mana regen scales with your base mana

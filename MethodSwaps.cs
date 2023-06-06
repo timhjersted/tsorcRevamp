@@ -146,7 +146,6 @@ namespace tsorcRevamp
             if(currentItem.type == ItemID.NecromanticScroll)
             {
                 self.GetDamage(DamageClass.Summon) -= 0.1f;
-                self.maxMinions--;
                 modPlayer.SummonTagDuration += SummonTagDurationBoost / 100f;
             }
             if(currentItem.type == ItemID.HerculesBeetle)
@@ -159,7 +158,6 @@ namespace tsorcRevamp
             {
                 self.GetKnockback(DamageClass.Summon) -= 2f;
                 self.GetDamage(DamageClass.Summon) -= 0.15f;
-                self.maxMinions--;
                 self.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength += SummonTagStrengthBoost / 100f;
                 modPlayer.SummonTagDuration += SummonTagDurationBoost / 100f;
             }

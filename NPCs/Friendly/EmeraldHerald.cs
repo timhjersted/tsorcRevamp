@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 
@@ -20,7 +21,7 @@ namespace tsorcRevamp.NPCs.Friendly
         public override List<string> SetNPCNameList()
         {
             List<string> list = new List<string>();
-            list.Add("Jade");
+            list.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Name1"));
             return list;
         }
 
@@ -52,8 +53,7 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
 
-                chat.Add("Are you the one I was sent to warn? My name is Jade, I am not of this world. I was sent here to warn you of the dangers posed by Attraidies, the Mindflayer King." +
-                    "\nHe has grown mighty in power and seeks to destroy not only your world, but also mine and many others.");
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.FirstEncounter"));
                 player.GetModPlayer<tsorcRevampPlayer>().FirstEncounter = true;
             }
 
@@ -62,26 +62,24 @@ namespace tsorcRevamp.NPCs.Friendly
                 if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 6)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
-                    chat.Add("Is that a shard you've found? Here, let me see it." + "\nSo that I may help you. To see light, to see hope… However faint it might be…");
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.HasShard"));
                 }
                 else
                 {
                     if (!player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
-                        chat.Add("Listen to everything I have to say and I may give you a reward.", 4);
+                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.RewardTip"), 4);
                     }
                     if (!tsorcRevampWorld.SuperHardMode)
                     {
-                        chat.Add("Seek misery. For misery will lead you to greater, stronger souls. You will never defeat Attraidies with a soul so frail and palid.");
+                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.AttradiesTip"));
                     }
-                    chat.Add("Forge your souls in the flames of sacred altars and make" +
-                        "\ntheir power your own.");
-                    chat.Add("If you ever chance upon a weapon befallen the terrible curse of poor craftsmanship, bring it to me and I shall bless it.");
-                    chat.Add("I hope you have a keen eye, for this is a land brimming with secrets...");
-                    chat.Add("The near-constant use of potions will prove vital on your" +
-                        "\njourney, especially when attempting to retrieve lost souls.");
-                    chat.Add("Bearer... Seek... Seek... Lest...", 0.05); // Easter egg. A classic DS2 meme. Rare dialogue.
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip1"));
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip2"));
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip3"));
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip4"));
+                    chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.EasterEgg"), 0.05); // Easter egg. A classic DS2 meme. Rare dialogue.
                 }
             }
 
@@ -94,11 +92,11 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             Player player = Main.LocalPlayer;
 
-            button = "Bless";
+            button = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button1");
 
-            if (chatState == 0 || chatState == 1 || chatState == 2 || chatState == 3 || chatState == 4 || chatState == 5 || chatState == 6 || chatState == 7) { button2 = "Seek knowledge..."; }
-            if (chatState == 8 || chatState == 9) { button2 = "Recieve gift"; }
-            if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 6) { button2 = "Give Shard"; }
+            if (chatState == 0 || chatState == 1 || chatState == 2 || chatState == 3 || chatState == 4 || chatState == 5 || chatState == 6 || chatState == 7) { button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v1"); }
+            if (chatState == 8 || chatState == 9) { button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v2"); }
+            if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 6) { button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v3"); }
 
         }
 
@@ -119,7 +117,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 6)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item37); // Reforge/Anvil sound
-                    Main.npcChatText = $"If you happen to find another Estus Flask Shard, bring it to me. So that I may ease your burden.";
+                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.BringShards");
                     int ShardItemIndex = Main.LocalPlayer.FindItem(ModContent.ItemType<Items.EstusFlaskShard>());
 
                     if (Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 6)
@@ -131,35 +129,33 @@ namespace tsorcRevamp.NPCs.Friendly
 
                         if (Main.netMode != NetmodeID.Server)
                         {
-                            Main.NewText("Estus Flask size increased! Max charges: " + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax, Color.OrangeRed);
-                            Main.NewText("Cerulean Flask size increased! Max charges: " + Main.LocalPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax, Color.RoyalBlue);
+                            Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.EstusUpgrade") + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax, Color.OrangeRed);
+                            Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.CeruleanUpgrade") + Main.LocalPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax, Color.RoyalBlue);
                         }
                     }
                     return;
                 }
                 if (chatState == 0) //if you click while in state 0 (greeting)
                 {
-                    Main.npcChatText = "A pickaxe or sticky bomb can be used to break blocks that are 1 width wide. Stone gates need switches to open. If in doubt, give it a whack."; //show this text
+                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip5"); //show this text
                     chatState = 1; //move to state 1
                     return;
                 }
                 if (chatState == 1) //if you click while on the first page of text
                 {
-                    Main.npcChatText = "Dark souls have special properties. On death, you will drop all your souls and have one chance to recover them." +
-                        "\nDie before this and they are gone for good.";
+                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip6");
                     chatState = 2; //move to state 2
                     return;
                 }
                 if (chatState == 2) //if you click while on the second page of text
                 {
-                    Main.npcChatText = "On your journey you will encounter unlit bonfires, light them and enjoy the peaceful respite they provide. You can" +
-                        "\nuse them as checkpoints and storage.";
+                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip7");
                     chatState = 3; //move to state 3, etc
                     return;
                 }
                 if (chatState == 3)
                 {
-                    Main.npcChatText = "You can stash excess ammo, weapons and armor in the safes and piggy banks found at save points and bonfires.";
+                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip8");
                     chatState = 5;
                     return;
                 }
@@ -171,14 +167,13 @@ namespace tsorcRevamp.NPCs.Friendly
 				}*/
                 if (chatState == 5)
                 {
-                    Main.npcChatText = "Stronger pickaxes can be used to open gates of strong ore.";
+                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip9");
                     chatState = 6;
                     return;
                 }
                 if (chatState == 6)
                 {
-                    Main.npcChatText = "And finally... I'm not sure what it means, but I was told to tell you to read something called 'The Game Manual' for more information. I get the feeling you know where to" +
-                        "\nfind it.";
+                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip10");
                     chatState = 7;
                     return;
                 }
@@ -188,20 +183,20 @@ namespace tsorcRevamp.NPCs.Friendly
 
                     if (!player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift)
                     {
-                        Main.npcChatText = "Take this with you. May it ease your journey.";
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.ReceiveGift");
                         if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) { chatState = 9; }
                         else { chatState = 8; }
                     }
                     else
                     {
-                        Main.npcChatText = "Good luck.";
+                        Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Luck");
                         chatState = 0;
                     }
                     return;
                 }
                 if (chatState == 8)
                 {
-                    Main.npcChatText = "If you ever need more, you may roast some over the flames of a bonfire. Farewell.";
+                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Gift");
                     player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift = true;
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);
@@ -215,7 +210,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 }
                 if (chatState == 9)
                 {
-                    Main.npcChatText = "Bearer of the Curse, these lifegems and Starlight Shards will no doubt prove to be invaluable on your journey. Farewell.";
+                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.BotCGift");
                     player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift = true;
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);

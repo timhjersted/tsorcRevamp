@@ -27,8 +27,11 @@ namespace tsorcRevamp.NPCs.Friendly
             NPCID.Sets.HatOffsetY[NPC.type] = 4;
         }
 
-        public static List<string> Names = new List<string> {
-            "Asima", "Lea", "Padreia", "Loria", "Lungelen", "Lily", "Sandra", "Tibra", "Astera Tiger"
+        public static List<string> Names = new List<string> 
+        {
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Name1"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Name2"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Name3"),
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Name4"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Name5"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Name6"),
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Name7"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Name8"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Name9")
         };
 
         public override List<string> SetNPCNameList() {
@@ -54,16 +57,16 @@ namespace tsorcRevamp.NPCs.Friendly
         public override string GetChat()
         {
             WeightedRandom<string> chat = new WeightedRandom<string>();
-            chat.Add("Time is a force we sorcerers will master one day.");
-            chat.Add("Any sorcerer dedicates their whole life to the study of the arcane arts.");
-            chat.Add("Come back some time later and I may have new items in my collection.");
-            chat.Add("Sorry, I only sell spells to sorcerers.");
-            chat.Add("I could tell you much about all sorcerer spells, but you won't understand it. Anyway, feel free to ask me.");
-            chat.Add("I'll teach you a very seldom spell.");
-            chat.Add("Many call themselves a sorcerer, but only a few truly understand what that means.");
-            chat.Add("Sorcerers are destructive. Their power lies in destruction and pain.");
-            chat.Add("Welcome to our humble guild, wanderer. May I be of any assistance to you?");
-            chat.Add("Attraidies visited this town once. The bottle he drank from is still enchanted with some of his power.");
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Quote1"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Quote2"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Quote3"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Quote4"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Quote5"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Quote6"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Quote7"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Quote8"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Quote9"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.TibianMage.Quote10"));
             return chat;
         }
 

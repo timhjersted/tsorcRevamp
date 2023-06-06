@@ -723,7 +723,6 @@ namespace tsorcRevamp.NPCs
             if (projectile.DamageType == DamageClass.Summon) //minion damage, whip damage unaffected
             {
                 modifiers.SourceDamage *= 0.8f;
-                modifiers.CritDamage *= 1.25f;
             }
             #region Individual Whip debuff effects
             #region Modded Whips

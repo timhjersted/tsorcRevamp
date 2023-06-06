@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Friendly
         public override List<string> SetNPCNameList()
         {
             List<string> list = new List<string>();
-            list.Add("Freed Fairy");
+            list.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.FreedFairy.Name1"));
             return list;
         }
 
@@ -78,12 +78,12 @@ namespace tsorcRevamp.NPCs.Friendly
         #region Chat
         public override string GetChat()
         {
-            return "Thank you for freeing me! Have this [c/aa9911:glowing thing] I recovered from the bottom of the spring";
+            return Language.GetTextValue("Mods.tsorcRevamp.NPCs.FreedFairy.Quote1");
         }
         #endregion
         public override void SetChatButtons(ref string button, ref string button2)
         {
-            button = Language.GetTextValue("Accept");
+            button = Language.GetTextValue("Mods.tsorcRevamp.NPCs.FreedFairy.Button");
         }
 
         bool droppedCrystallineShard = false;

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 
@@ -12,8 +13,12 @@ namespace tsorcRevamp.NPCs.Friendly
     [AutoloadHead]
     class DwarvenGuard : ModNPC
     {
-        public static List<string> Names = new List<string> {
-            "Urbur", "Bafarm", "Kothurn", "Okjorn", "Rulik", "Norbirn", "Joulni", "Norta", "Biffidor", "Koroin", "Uorin"
+        public static List<string> Names = new List<string> 
+        {
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name1"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name2"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name3"), 
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name4"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name5"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name6"),
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name7"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name8"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name9"),
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name10"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name11")
         };
 
         public override void SetStaticDefaults()
@@ -54,11 +59,11 @@ namespace tsorcRevamp.NPCs.Friendly
         public override string GetChat()
         {
             WeightedRandom<string> chat = new WeightedRandom<string>();
-            chat.Add("Here to serve.");
-            chat.Add("I could use some ale...");
-            chat.Add("Can't wait until the next break.");
-            chat.Add("Hi' ho!");
-            chat.Add("Nothing to report");
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Quote1"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Quote2"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Quote3"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Quote4"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Quote5"));
             return chat;
         }
         #endregion

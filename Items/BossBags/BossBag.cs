@@ -267,8 +267,8 @@ namespace tsorcRevamp.Items.BossBags
             //no expert-exclusive item yet
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.LionheartGunblade>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Magic.GemBox>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Tools.LampTome>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 2, 2));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<LampTome>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>(), 1, 2, 2));
         }
     }
     public class SerrisBag : BossBag
@@ -281,8 +281,8 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             //no expert-exclusive item yet
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.DemonDrugPotion>(), 1, 3, 7));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.ArmorDrugPotion>(), 1, 3, 7));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DemonDrugPotion>(), 1, 3, 7));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ArmorDrugPotion>(), 1, 3, 7));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<MagicBarrierScroll>()));
         }
     }
@@ -298,7 +298,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.HerosCrest>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GreatMagicShieldScroll>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<MagicBarrierScroll>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 4, 4));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>(), 1, 4, 4));
         }
     }
     public class MindflayerIllusionBag : BossBag
@@ -311,7 +311,7 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             //won't get an expert-exclusive item, just a part of Attraidies
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BossItems.MindflayerIllusionRelic>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<MindflayerIllusionRelic>()));
         }
     }
     public class AttraidiesBag : BossBag
@@ -324,7 +324,7 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.AuraOfDecay>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Magic.Tomes.BloomShards>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloomShards>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Summon.ShatteredReflection>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.SeveringDusk>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.Guns.PyroclasticFlow>()));
@@ -497,7 +497,7 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            //no expert-exclusive item yet
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.MorgulBlade>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.WitchkingsSword>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.Summon.WitchkingHelmet>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.Summon.WitchkingTop>()));

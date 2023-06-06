@@ -60,6 +60,10 @@ namespace tsorcRevamp
 
         public bool BrokenSpirit;
 
+        public int MaxMinionTurretMultiplier;
+
+        public bool InfinityEdge;
+
         public int SoulVessel = 0;
         public float MaxManaAmplifier;
 
@@ -312,6 +316,8 @@ namespace tsorcRevamp
 
             HasShadowSickle = false;
 
+            InfinityEdge = false;
+
             ChloranthyRing1 = false;
             ChloranthyRing2 = false;
             WolfRing = false;
@@ -324,6 +330,8 @@ namespace tsorcRevamp
 
             SummonTagStrength = 1f;
             SummonTagDuration = 1f;
+
+            MaxMinionTurretMultiplier = 1;
 
             MythrilBulwark = false; 
             IceboundMythrilAegis = false;
@@ -1332,6 +1340,8 @@ namespace tsorcRevamp
             {
                 Player.statManaMax2 = (int)(Player.statManaMax2 * (1f + MaxManaAmplifier / 100f));
             }
+            Player.maxMinions *= MaxMinionTurretMultiplier;
+            Player.maxTurrets *= MaxMinionTurretMultiplier;
         }
 
         public override void PostUpdateRunSpeeds()

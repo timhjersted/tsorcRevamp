@@ -28,8 +28,9 @@ namespace tsorcRevamp.NPCs.Friendly
             NPCID.Sets.AttackAverageChance[NPC.type] = 10;
             NPCID.Sets.HatOffsetY[NPC.type] = 4;
         }
-        public override List<string> SetNPCNameList() {
-            return new List<string> { "Solaire" };
+        public override List<string> SetNPCNameList() 
+        {
+            return new List<string> { Language.GetTextValue("Mods.tsorcRevamp.NPCs.SolaireOfAstora.Name1") };
         }
 
         public override void SetDefaults()
@@ -63,15 +64,15 @@ namespace tsorcRevamp.NPCs.Friendly
         public override string GetChat()
         {
             WeightedRandom<string> chat = new WeightedRandom<string>();
-            chat.Add("Dark Souls possess great powers, but also great responsibilities.");
-            chat.Add("Praise the sun!");
-            chat.Add("Oh, hello there. I will stay behind, to gaze at the sun. The sun is a wondrous body. Like a magnificent father! If only I could be so grossly incandescent!");
-            chat.Add("Of course, we are not the only ones engaged in this.");
-            chat.Add("Would you like to buy some of my wares?");
-            chat.Add("The way I see it, our fates appear to be intertwined. In a land brimming with Hollows, could that really be mere chance? So, what do you say? Why not help one another on this lonely journey?");
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.SolaireOfAstora.Quote1"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.SolaireOfAstora.Quote2"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.SolaireOfAstora.Quote3"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.SolaireOfAstora.Quote4"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.SolaireOfAstora.Quote5"));
+            chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.SolaireOfAstora.Quote6"));
             if (tsorcRevampWorld.TheEnd)
             {
-                chat.Add("You have done well, indeed you have. You've a strong arm, strong faith, and most importantly, a strong heart.", 1.5);
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.SolaireOfAstora.Praise"), 1.5);
             }
             return chat;
         }

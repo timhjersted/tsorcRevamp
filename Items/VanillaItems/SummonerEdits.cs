@@ -121,7 +121,6 @@ namespace tsorcRevamp.Items.VanillaItems
                 int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
                 if (ttindex != -1)
                 {
-                    tooltips.RemoveAt(ttindex);
                     tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagDurationBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.NecromanticScroll").FormatWith(MethodSwaps.SummonTagDurationBoost)));
                 }
                 int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
@@ -135,7 +134,6 @@ namespace tsorcRevamp.Items.VanillaItems
                 int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
                 if (ttindex != -1)
                 {
-                    tooltips.RemoveAt(ttindex);
                     tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagStrengthDurationBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.PapyrusScarab").FormatWith(MethodSwaps.SummonTagStrengthBoost, MethodSwaps.SummonTagDurationBoost)));
                 }
                 int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");

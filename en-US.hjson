@@ -32,13 +32,13 @@ Mods: {
 			BotCNoHeal: Doesn't heal the [c/6d8827:Bearer of the Curse]
 
 			Generic: {
-				LifeRegenBoost: Increases life regeneration by {0}
+				LifeRegen: Increases life regeneration by {0}
 				BadDefense: Decreases defense by {0}
-				DmgMultiplier: Increases damage by {0}% multiplicatively
-				BadDmgMultiplier: Decreases damage by {0}% multiplicatively
+				DmgMult: Increases damage by {0}% multiplicatively
+				BadDmgMult: Decreases damage by {0}% multiplicatively
 				AtkSpeed: Increases attack speed by {0}%
 				StaminaRegen: Increases stamina regeneration rate by {0}%
-				DRStatBoost: Increases damage reduction by {0}%
+				DRStatBooost: Increases damage reduction by {0}%
 				DRStatPenalty: Decreases damage reduction by {0}%
 				Duration: "{0} seconds duration"
 				Cooldown: "{0} seconds cooldown"
@@ -58,7 +58,10 @@ Mods: {
 				Doubled: (doubled for melee)
 			}
 
-			Ranged.CriticalDmg: Increases ranged critical strike damage by {0}%
+			Ranged: {
+				CritDmg: Increases ranged critical strike damage by {0}%
+				NonCritDmg: Decreases ranged non-critical strike damage by {0}%
+			}
 
 			Magic: {
 				ManaRegenBoost: Increases mana regeneration by {0}
@@ -72,8 +75,8 @@ Mods: {
 				WhipDmg: Increases whip damage by {0}%
 				WhipCritDmg: Increases the damage of whip crits by {0}%
 				WhipCritHitbox: Increases the Whip Tip Crit Hitbox Size to {0}x
-				SummonTagStrength: Increases Summon Tag Damage and Armor Penetration by {0}%
-				SummonTagDuration: Increases the duration of Summon Tag effects by {0}%
+				TagStrength: Increases Summon Tag Damage and Armor Penetration by {0}%
+				TagDuration: Increases the duration of Summon Tag effects by {0}%
 				BotCSummonTagDoubleBuffCount: Fully charged whip debuff counts as 2
 				ChargedWhip: Stats of this whip scale with how long you've charged it
 				ChargedWhipSummonTagDmg: "{0}-{1} summon tag damage"
@@ -81,6 +84,7 @@ Mods: {
 				ChargedWhipAtkSpeed: Gain {0}-{1}% summon attack speed upon striking an enemy
 				ImprovedWhipCC: Performs better against multiple targets than most whips
 				SummonTagArmorPen: "{0} summon tag armor penetration"
+				BadDmgMultiplier: Decreases summon damage by {0}% multiplicatively
 			}
 		}
 
@@ -144,12 +148,12 @@ Mods: {
 					The full power of this blade has been sealed by the embodiment of chaos
 					Defeat it to fully unlock its power!
 					'''
-				HerculesBeetle: "{$CommonItemTooltip.SummonTagStrength}"
-				NecromanticScroll: "{$CommonItemTooltip.SummonTagDuration}"
+				HerculesBeetle: "{$CommonItemTooltip.Summon.TagStrength}"
+				NecromanticScroll: "{$CommonItemTooltip.Summon.TagDuration}"
 				PapyrusScarab:
 					'''
-					{$CommonItemTooltip.SummonTagStrength}
-					{$CommonItemTooltip.SummonTagDuration@1}
+					{$CommonItemTooltip.Summon.TagStrength}
+					{$CommonItemTooltip.Summon.TagDuration@1}
 					'''
 				FlinxFurChainedSetBonus: "{$CommonItemTooltip.IncreasesMaxMinionsBy}"
 				AngelWings: "[c/ffbf00:You will discover these in time...]"
@@ -1538,7 +1542,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.IncreasesMaxMinionsBy}
 					Decreases Whip range by {1}%
-					Increases your minion's critical strike chance for each minion slot you have
+					Increases your summon critical strike chance for each minion slot you have
 					"A magical substance found only in the Crystalline Dimension"
 					'''
 				CriticalStrikeChance: "Current Increase: "
@@ -6454,6 +6458,24 @@ Mods: {
 				DisplayName: Portly Plate Greaves
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeSpeed}"
 			}
+
+			MorgulBlade: {
+				DisplayName: Morgul Blade
+				Tooltip:
+					'''
+					Doubles your maximum amount of minions and sentries
+					{$CommonItemTooltip.Summon.BadDmgMultiplier}
+					'''
+			}
+
+			InfinityEdge: {
+				DisplayName: Infinity Edge
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Ranged.CritDmg}
+					{$CommonItemTooltip.Ranged.NonCritDmg@1}
+					'''
+			}
 		}
 
 		Buffs: {
@@ -7936,6 +7958,22 @@ Mods: {
 
 			DwarvenGuard: {
 				DisplayName: Dwarven Guard
+				Name1: Urbur
+				Name2: Bafarm
+				Name3: Kothurn
+				Name4: Okjorn
+				Name5: Rulik
+				Name6: norbirn
+				Name7: Joulni
+				Name8: Norta
+				Name9: Biffidor
+				Name10: Koroin
+				Name11: Uorin
+				Quote1: "Here to serve."
+				Quote2: "I could use some ale..."
+				Quote3: "Can't wait until the next break."
+				Quote4: "Hi' ho!"
+				Quote5: "Nothing to report."
 
 				TownNPCMood: {
 					Content: I am content.
@@ -7959,6 +7997,41 @@ Mods: {
 
 			EmeraldHerald: {
 				DisplayName: Emerald Herald
+				Name1: Jade
+				FirstEncounter: 
+					'''
+					Are you the one I was sent to warn? My name is Jade, I am not of this world. I was sent here to warn you of the dangers posed by Attraidies, the Mindflayer King.
+					He has grown mighty in power and seeks to destroy not only your world, but also mine and many others.
+					'''
+				HasShard: 
+					'''
+					Is that a shard you've found? Here, let me see it.
+					So that I may help you. To see light, to see hope… However faint it might be…
+					'''
+				RewardTip: "Listen to everything I have to say and I may give you a reward."
+				AttraidiesTip: "Seek misery. For misery will lead you to greater, stronger souls. You will never defeat Attraidies with a soul so frail and palid."
+				Tip1: "Forge your souls in the flames of sacred altars and make their power your own."
+				Tip2: "If you ever chance upon a weapon befallen the terrible curse of poor craftsmanship, bring it to me and I shall bless it."
+				Tip3: "I hope you have a keen eye, for this is a land brimming with secrets..."
+				Tip4: "The near-constant use of potions will prove vital on your journey, especially when attempting to retrieve lost souls."
+				Tip5: "A pickaxe or sticky bomb can be used to break blocks that are 1 width wide. Stone gates need switches to open. If in doubt, give it a whack."
+				Tip6: "Dark souls have special properties. On death, you will drop all your souls and have one chance to recover them. Die before this and they are gone for good."
+				Tip7: "On your journey you will encounter unlit bonfires, light them and enjoy the peaceful respite they provide. You can nuse them as checkpoints and storage."
+				Tip8: "You can stash excess ammo, weapons and armor in the safes and piggy banks found at save points and bonfires."
+				Tip9: "Stronger pickaxes can be used to open gates of strong ore."
+				Tip10: "And finally... I'm not sure what it means, but I was told to tell you to read something called 'The Game Manual' for more information. I get the feeling you know where to find it."
+				ReceiveGift: "Take this with you. May it ease your journey."
+				Luck: "Good luck."
+				Gift: "If you ever need more, you may roast some over the flames of a bonfire. Farewell."
+				BotCGift: "Bearer of the Curse, these lifegems and Starlight Shards will no doubt prove to be invaluable on your journey. Farewell."
+				EasterEgg: "Bearer... Seek... Seek... Lest..."
+				button1: "Bless"
+				button2v1: "Seek knowledge..."
+				button2v2: "Recieve gift"
+				button2v3: "Give Shard"
+				BringShards: "If you happen to find another Estus Flask Shard, bring it to me. So that I may ease your burden."
+				EstusUpgrade: "Estus Flask size increased! Max charges: "
+				CeruleanUpgrade: "Cerulean Flask size increased! Max charges: "
 
 				TownNPCMood: {
 					Content: I am content.
@@ -7982,6 +8055,9 @@ Mods: {
 
 			FreedFairy: {
 				DisplayName: Freed Fairy
+				Name1: Freed Fairy
+				Quote1: "Thank you for freeing me! Have this [c/aa9911:glowing thing] I recovered from the bottom of the spring"
+				Button: "Accept"
 
 				TownNPCMood: {
 					Content: I am content.
@@ -8002,9 +8078,18 @@ Mods: {
 					Princess_LovesNPC: I like {NPCName}.
 				}
 			}
+			
+			LivingGlowshroom: {
+				DisplayName: Living Glowshroom
+				DisplayName2: ???
+				DisplayName3: FleeingFungi
+			}
+			LivingShroom: {
+				DisplayName: Living Shroom
+				DisplayName2: ???
+				DisplayName3: FleeingFungi
 
-			LivingGlowshroom.DisplayName: Living Glowshroom
-			LivingShroom.DisplayName: Living Shroom
+			}
 
 			ShamanElder: {
 				DisplayName: Shaman Elder
@@ -8100,6 +8185,8 @@ Mods: {
 
 			UndeadMerchant: {
 				DisplayName: Undead Merchant
+
+				Name1 : Uldred
 
 				TownNPCMood: {
 					Content: I am content.
