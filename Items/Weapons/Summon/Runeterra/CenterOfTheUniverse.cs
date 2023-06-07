@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 0.5f;
         }
         public override void SetDefaults()
         {

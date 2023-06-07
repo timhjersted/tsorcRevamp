@@ -298,7 +298,7 @@ namespace tsorcRevamp
                 33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
                 128, 269, 470, 378, 240, 560, ModContent.TileType<EmptyTrophyTile>(), 617, //all mannequins, target dummy, trophies and relics
-                162, 127, 320, 380, 624, //thin ice (breakable kind), Ice Rod's ice, seaweed/herb planters, abigail's flower
+                162, 127, 320, 624, //thin ice (breakable kind), Ice Rod's ice, seaweed/herb planters, abigail's flower
                 28, 51, 52, 62, 115, 205, 382, 528, //pots, cobwebs, all cuttable vines
                 31, 32, 69, 352, 53, 112, 116, 234, //orbs/hearts, all thorns, all sands
                 165, 178, 185, 186, 187, 233, 530, 2311, 238, //all ambient objects (background breakables), QB Larva, Plantera Bulb
@@ -318,7 +318,7 @@ namespace tsorcRevamp
                 33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
                 128, 269, 470, 378, 240, 560, ModContent.TileType<EmptyTrophyTile>(), 617, //all mannequins, target dummy, trophies and relics
-                320, 380, //thin ice (breakable kind), seaweed/herb planters, all sands
+                320, //thin ice (breakable kind), seaweed/herb planters, all sands
                 27, 215, 42, 621, 506, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle), Slice of Cake, Bast Statue
             };
             #endregion

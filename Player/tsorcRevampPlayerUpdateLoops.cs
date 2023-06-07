@@ -17,6 +17,8 @@ using System.Linq;
 using Terraria.UI.Gamepad;
 using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Accessories.Ranged;
+using tsorcRevamp.Items.Armors.Melee;
 
 namespace tsorcRevamp
 {
@@ -63,9 +65,12 @@ namespace tsorcRevamp
         public int MaxMinionTurretMultiplier;
 
         public bool InfinityEdge;
+        public bool BoneRing;
 
         public int SoulVessel = 0;
         public float MaxManaAmplifier;
+        public bool CelestialCloak;
+        public int CelestialCloakHitChances = 0;
 
         public int MagicPlatingStacks = 0;
 
@@ -87,6 +92,8 @@ namespace tsorcRevamp
         public bool MeleeArmorVamp10 = false;
         public bool NUVamp = false;
         public bool HasShadowSickle = false;
+        public bool MagmaArmor;
+        public bool PortlyPlateArmor;
 
         public bool OldWeapon = false;
 
@@ -317,6 +324,7 @@ namespace tsorcRevamp
             HasShadowSickle = false;
 
             InfinityEdge = false;
+            BoneRing = false;
 
             ChloranthyRing1 = false;
             ChloranthyRing2 = false;
@@ -338,10 +346,13 @@ namespace tsorcRevamp
 
             Celestriad = false;
             MaxManaAmplifier = 0f;
+            CelestialCloak = false;
 
             DragoonBoots = false;
             OldWeapon = false;
             Miakoda = false;
+            MagmaArmor = false;
+            PortlyPlateArmor = false;
 
             WaspPower = false;
 
@@ -1170,7 +1181,6 @@ namespace tsorcRevamp
 
             }
 
-
             #region Soul Siphon Dusts
 
 
@@ -1262,7 +1272,8 @@ namespace tsorcRevamp
             if (REDUCE != 0)
             {
                 REDUCE = 1f - REDUCE;
-                Player.statDefense *= REDUCE;
+                Player.statDefense *= 0;
+                Player.endurance = 0;
             }
             #endregion
             #region boss zen
@@ -1339,6 +1350,10 @@ namespace tsorcRevamp
             if (MaxManaAmplifier > 0f)
             {
                 Player.statManaMax2 = (int)(Player.statManaMax2 * (1f + MaxManaAmplifier / 100f));
+            }
+            if (CelestialCloak)
+            {
+                Player.thorns += 0.1f + (Player.statManaMax2 / 50f);
             }
             Player.maxMinions *= MaxMinionTurretMultiplier;
             Player.maxTurrets *= MaxMinionTurretMultiplier;

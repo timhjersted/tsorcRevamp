@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Armors.Melee
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1500);
             recipe.AddTile(TileID.DemonAltar);
 
-            //recipe.Register();
+            recipe.Register();
         }
     }
 }

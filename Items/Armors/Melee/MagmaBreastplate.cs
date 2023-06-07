@@ -3,17 +3,18 @@ using Microsoft.Xna.Framework;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Armors.Melee
 {
     [AutoloadEquip(EquipType.Body)]
     public class MagmaBreastplate : ModItem
     {
+        public static float MeleeDmg = 20f;
+        public static int OnHitDmg = 3;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeDmg, OnHitDmg);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases melee damage by 15%" +
-                "\nSet bonus: Increases melee damage by 10% multiplicatively" +
-                "\nGrants the Magma Stone effect"); */
         }
         public override void SetDefaults()
         {
@@ -25,7 +26,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.15f;
+            player.GetDamage(DamageClass.Melee) += MeleeDmg / 100f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -33,8 +34,8 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetDamage(DamageClass.Melee) *= 1.1f;
-            player.magmaStone = true;
+            player.GetModPlayer<tsorcRevampPlayer>().MagmaArmor = true;
+            player.buffImmune[BuffID.OnFire] = true;
 
             if (Main.rand.NextBool(3))
             {

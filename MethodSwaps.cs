@@ -32,6 +32,7 @@ using System.ComponentModel.Design;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.VanillaItems;
 
 namespace tsorcRevamp
 {
@@ -188,7 +189,7 @@ namespace tsorcRevamp
             }
             if (self.GetManaCost(sItem) > 0 && self.manaRegenDelay < self.maxRegenDelay && sItem.DamageType != DamageClass.Magic)
             {
-                self.manaRegenDelay = (int)self.maxRegenDelay * 10;
+                self.manaRegenDelay = MeleeEdits.ManaDelay;
             }
         }
 

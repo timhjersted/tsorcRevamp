@@ -10,15 +10,12 @@ using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Buffs.Debuffs;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Items.VanillaItems;
 
 namespace tsorcRevamp.Projectiles
 {
     class tsorcGlobalProjectile : GlobalProjectile
     {
-        static readonly int ManaBase1 = 20;
-        static readonly int ManaBase2 = 10;
-        static readonly int ManaBase3 = 25;
-        static readonly int ManaDelay = 1200;
         /*
         public override bool InstancePerEntity => true;
         public float UniqueIdentifier = -1;
@@ -72,31 +69,10 @@ namespace tsorcRevamp.Projectiles
                     Main.NewText("a");
                 }
             }*/
-
-            Player player = Main.player[Main.myPlayer];
-            int manaCost1 = (int)(ManaBase1 * player.manaCost);
-            int manaCost2 = (int)(ManaBase2 * player.manaCost);
-            int manaCost3 = (int)(ManaBase3 * player.manaCost);
-
+            Player player = Main.player[projectile.owner];
             if (projectile.type == ProjectileID.CrystalDart)
             {
                 projectile.damage = 1 + player.GetWeaponDamage(player.HeldItem);
-            }
-
-            if (projectile.type == ProjectileID.IceBolt | projectile.type == ProjectileID.EnchantedBeam | projectile.type == ProjectileID.SwordBeam | projectile.type == ProjectileID.FrostBoltSword | projectile.type == ProjectileID.Starfury)
-            {
-                player.statMana -= manaCost1;
-                player.manaRegenDelay = ManaDelay;
-            }
-            if (projectile.type == ProjectileID.LightsBane | projectile.type == ProjectileID.BladeOfGrass)
-            {
-                player.statMana -= manaCost2;
-                player.manaRegenDelay = ManaDelay;
-            }
-            if (projectile.type == ProjectileID.Meowmere | projectile.type == ProjectileID.StarWrath)
-            {
-                player.statMana -= manaCost3;
-                player.manaRegenDelay = ManaDelay;
             }
         }
         public override bool PreAI(Projectile projectile)

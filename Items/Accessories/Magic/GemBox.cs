@@ -7,6 +7,8 @@ namespace tsorcRevamp.Items.Accessories.Magic
 {
     public class GemBox : ModItem
     {
+        public static float AtkSpeed = 100f;
+        public static float BadDmgMult = 30f;
         public override void SetStaticDefaults()
         {
         }
@@ -22,8 +24,8 @@ namespace tsorcRevamp.Items.Accessories.Magic
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetDamage(DamageClass.Magic) *= 0.7f;
-            player.GetAttackSpeed(DamageClass.Magic) *= 2f;
+            player.GetAttackSpeed(DamageClass.Magic) += AtkSpeed / 100f;
+            player.GetDamage(DamageClass.Magic) *= 1f - BadDmgMult / 100f;
         }
     }
 }

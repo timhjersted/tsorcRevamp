@@ -323,6 +323,11 @@ namespace tsorcRevamp
 
         public override void ModifyHurt(ref Player.HurtModifiers modifiers) 
         {
+            float REDUCE = CheckReduceDefense(Player.position, Player.width, Player.height, Player.fireWalk);
+            if (REDUCE != 0) 
+            {
+            }
+            modifiers.FinalDamage.ApplyTo(modifiers.SourceDamage.Base);
             Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s  
             if (Player.HasBuff(ModContent.BuffType<Rejuvenation>()))
             {
@@ -337,16 +342,10 @@ namespace tsorcRevamp
 
         public override void OnHitAnything(float x, float y, Entity victim)
         {
-            bool hasCelestialCloak = false;
-            for (int i = 3; i < 8 + Player.extraAccessorySlots; i++) {
-                if (Player.armor[i].type == ModContent.ItemType<Items.Accessories.Magic.CelestialCloak>()) {
-                    hasCelestialCloak = true;
-                    break;
-                }
-            }
-            if (hasCelestialCloak) {
-                if (Main.rand.NextBool(30)) {
-                    Items.Accessories.Magic.CelestialCloak.hitchances += 1;
+            if (CelestialCloak) {
+                if (Main.rand.NextBool(30)) 
+                {
+                    CelestialCloakHitChances += 1;
                 }
             }
             if (Main.rand.NextBool(9) & MagicPlatingStacks <= 22 & Player.HasBuff(ModContent.BuffType<MagicPlating>()))
@@ -545,6 +544,10 @@ namespace tsorcRevamp
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            if (MagmaArmor && target.HasBuff(BuffID.OnFire) || target.HasBuff(BuffID.OnFire3))
+            {
+                target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
+            }
             if (MeleeArmorVamp10)
             {
                 if (Main.rand.NextBool(10))
@@ -627,6 +630,10 @@ namespace tsorcRevamp
 
         public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
         {
+            if (MagmaArmor && target.HasBuff(BuffID.OnFire) || target.HasBuff(BuffID.OnFire3))
+            {
+                target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
+            }
             if (MiakodaFull)
             { //Miakoda Full Moon
                 if (MiakodaEffectsTimer > Items.Pets.MiakodaFull.HealCooldown * 60)
@@ -1085,6 +1092,7 @@ namespace tsorcRevamp
         //This means you can tank until your mana bar is exhausted, then have to back off for a bit and actually dodge
         public override void OnHurt(Player.HurtInfo info)
         {
+            
             if (manaShield == 1)
             {
                 if (Player.statMana >= Items.Accessories.Defensive.ManaShield.manaCost)

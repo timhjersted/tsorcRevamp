@@ -10,14 +10,14 @@ using ReLogic.Content;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using Terraria.DataStructures;
 using System.Collections.Generic;
+using ReLogic.Utilities;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
 {
 
     public class OrbOfFlameOrbIdle : ModProjectile
     {
-
-		public override void SetStaticDefaults()
+        public override void SetStaticDefaults()
 		{
 			// These lines facilitate the trail drawing
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
@@ -42,10 +42,50 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             Player player = Main.player[Projectile.owner];
         }
 
+        SlotId SoundSlotID;
+        bool soundPaused;
+        bool playedSound = false;
+        ActiveSound OrbSound;
+        public int SoundCD = 0;
         public override void AI()
 		{
 			Player player = Main.player[Projectile.owner];
             player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, player.direction * -1.9f);
+            if (!playedSound && Main.rand.NextBool(1200))
+            {
+                playedSound = true;
+                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/OrbAmbient") with { Volume = 1f }, player.Center); //can give funny pitch hehe
+            }
+            if (!playedSound)
+            {
+                if (OrbSound == null)
+                {
+                    SoundEngine.TryGetActiveSound(SoundSlotID, out OrbSound);
+                }
+                else
+                {
+                    if (SoundEngine.AreSoundsPaused && !soundPaused)
+                    {
+                        OrbSound.Pause();
+                        soundPaused = true;
+                    }
+                    else if (!SoundEngine.AreSoundsPaused && soundPaused)
+                    {
+                        OrbSound.Resume();
+                        soundPaused = false;
+                    }
+                    OrbSound.Position = Projectile.Center;
+                }
+            }
+            if (playedSound)
+            {
+                SoundCD++;
+                if (SoundCD >= 300)
+                {
+                    playedSound = false;
+                    SoundCD = 0;
+                }
+            }
             if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] > 0 || player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbFilled>()] > 0)
             {
                 Projectile.Kill();
@@ -79,6 +119,21 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             } else
             {
                 Dust.NewDust(Projectile.Center, 2, 2, DustID.PoisonStaff, 0, 0, 150, default, 0.5f);
+            }
+        }
+        public override void Kill(int timeLeft)
+        {
+            if (OrbSound == null)
+            {
+                SoundEngine.TryGetActiveSound(SoundSlotID, out OrbSound);
+                if (OrbSound != null)
+                {
+                    OrbSound.Stop();
+                }
+            }
+            else
+            {
+                OrbSound.Stop();
             }
         }
         public override bool? CanDamage()

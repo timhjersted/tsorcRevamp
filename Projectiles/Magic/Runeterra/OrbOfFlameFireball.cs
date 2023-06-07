@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         {
             Player player = Main.player[Projectile.owner];
             player.AddBuff(ModContent.BuffType<OrbOfFlameFireballCooldown>(), 7 * 60);
-            SoundEngine.PlaySound(SoundID.Item45, player.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/FireballCast") with { Volume = 1f }, player.Center);
         }
 
         public override void AI()
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         {
             Player player = Main.player[Projectile.owner];
 			target.AddBuff(ModContent.BuffType<SunderedDebuff>(), 5 * 60);
-            SoundEngine.PlaySound(SoundID.Item62, target.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/FireballHit") with { Volume = 1f }, player.Center);
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {

@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 25000;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TonberryBanner>();
-
+            NPC.rarity = 9;
             if (tsorcRevampWorld.SuperHardMode)
             {
                 NPC.lifeMax = 3360;

@@ -32,7 +32,6 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         }
 
         SlotId SoundSlotID;
-        SoundStyle TornadoSoundStyle = SoundID.DD2_BookStaffTwisterLoop;
         bool soundPaused;
         bool playedSound = false;
         ActiveSound TornadoSound;

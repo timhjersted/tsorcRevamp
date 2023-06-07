@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,9 +9,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Head)]
     public class MagmaHelmet : ModItem
     {
+        public static float Crit = 9f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Crit);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Increase melee critical strike chance by 10%");
         }
         public override void SetDefaults()
         {
@@ -22,7 +24,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += 10;
+            player.GetCritChance(DamageClass.Melee) += Crit;
         }
         public override void AddRecipes()
         {

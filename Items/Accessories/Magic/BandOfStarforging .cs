@@ -14,8 +14,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
         public static float MaxManaPercentIncrease = 100f;
         public static int ManaRegen = 50;
         public static float ManaRegenDelay = 150f;
-        public static float ManaCostReduction = 10f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen, MaxManaPercentIncrease, ManaRegen, ManaRegenDelay, ManaCostReduction);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen, MaxManaPercentIncrease, ManaRegen, ManaRegenDelay);
         public override void SetStaticDefaults()
         {
         }
@@ -48,7 +47,6 @@ namespace tsorcRevamp.Items.Accessories.Magic
             player.GetModPlayer<tsorcRevampPlayer>().MaxManaAmplifier += MaxManaPercentIncrease;
             player.manaRegenBonus += ManaRegen;
             player.manaRegenDelayBonus += ManaRegenDelay / 100f;
-            player.manaCost -= ManaCostReduction / 100f;
         }
 
     }

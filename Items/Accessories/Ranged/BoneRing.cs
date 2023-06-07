@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,10 +10,10 @@ namespace tsorcRevamp.Items.Accessories.Ranged
 
     public class BoneRing : ModItem
     {
+        public static float RangedDmgCrit = 5f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(RangedDmgCrit);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("+8% Ranged damage" +
-                                "\n+8% Ranged critical strike chance"); */
         }
         public override void SetDefaults()
         {
@@ -37,8 +38,9 @@ namespace tsorcRevamp.Items.Accessories.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Ranged) += 0.08f;
-            player.GetCritChance(DamageClass.Ranged) += 8;
+            player.GetDamage(DamageClass.Ranged) += RangedDmgCrit / 100f;
+            player.GetCritChance(DamageClass.Ranged) += RangedDmgCrit;
+            player.GetModPlayer<tsorcRevampPlayer>().BoneRing = true;
         }
 
     }

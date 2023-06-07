@@ -15,6 +15,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 
     public class OrbOfFlameOrbFilled : ModProjectile
     {
+        public int HitTimer = 0;
         private enum AIState
         {
             LaunchingForward,
@@ -59,7 +60,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             Player player = Main.player[Projectile.owner];
             player.Heal((int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(player.statManaMax2 / 50) + 5);
             player.GetModPlayer<tsorcRevampPlayer>().EssenceThief = 0;
-            SoundEngine.PlaySound(SoundID.Item104, player.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbCast") with { Volume = 1f }, player.Center);
         }
 
         public override void AI()
@@ -74,8 +75,9 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                         {
                             CurrentAIState = AIState.Retracting;
                             StateTimer = 0f;
+                            HitTimer = 0;
                             Projectile.ResetLocalNPCHitImmunity();
-                            SoundEngine.PlaySound(SoundID.Item104, player.Center);
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbReturn") with { Volume = 1f }, Projectile.Center);
                             break;
                         }
                         break;
@@ -83,9 +85,9 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                 case AIState.Retracting:
                     {
                         Projectile.velocity = unitVectorTowardsPlayer;
-
                         if (Projectile.Hitbox.Intersects(player.Hitbox))
                         {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbReturned") with { Volume = 1f }, player.Center);
                             Projectile.Kill();
                         }
                         break;
@@ -121,6 +123,18 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            if (HitTimer == 0)
+            {
+                if (hit.Crit)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FullOrbCrit") with { Volume = 1f }, Projectile.Center);
+                }
+                else
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FullOrbHit") with { Volume = 1f }, Projectile.Center);
+                }
+                HitTimer = 1;
+            }
             Projectile.damage = (int)(Projectile.damage * (1f - OrbOfDeception.DmgLossOnPierce / 100f));
         }
 

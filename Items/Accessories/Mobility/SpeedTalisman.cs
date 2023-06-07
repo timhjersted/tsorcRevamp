@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -7,11 +8,11 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 {
     public class SpeedTalisman : ModItem
     {
+        public static float AtkSpeed = 8f;
+        public static float MoveSpeed = 15f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed, MoveSpeed);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("15% increased movement speed" +
-                                "\n20% increased melee speed" +
-                                "\nGrants autoswing to melee weapons and whips"); */
         }
 
         public override void SetDefaults()
@@ -37,8 +38,9 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.15f;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.2f;
+            player.moveSpeed += MoveSpeed / 100f;
+            player.GetAttackSpeed(DamageClass.Generic) += AtkSpeed / 100f;
+            player.GetAttackSpeed(DamageClass.Melee) += AtkSpeed / 100f;
             player.autoReuseGlove = true;
         }
 

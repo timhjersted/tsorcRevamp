@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,9 +9,11 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Legs)]
     public class MagmaGreaves : ModItem
     {
+        public static float MoveSpeed = 18f;
+        public static float MeleeSpeed = 18f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, MeleeSpeed);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Increases movement and melee speed by 18%");
         }
         public override void SetDefaults()
         {
@@ -22,8 +25,8 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.18f;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.18f;
+            player.moveSpeed += MoveSpeed / 100f;
+            player.GetAttackSpeed(DamageClass.Melee) += MeleeSpeed / 100f;
         }
         public override void AddRecipes()
         {

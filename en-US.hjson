@@ -38,23 +38,23 @@ Mods: {
 				BadDmgMult: Decreases damage by {0}% multiplicatively
 				AtkSpeed: Increases attack speed by {0}%
 				StaminaRegen: Increases stamina regeneration rate by {0}%
-				DRStatBooost: Increases damage reduction by {0}%
-				DRStatPenalty: Decreases damage reduction by {0}%
+				DRStat: Increases damage reduction by {0}%
+				BadDRStat: Decreases damage reduction by {0}%
 				Duration: "{0} seconds duration"
 				Cooldown: "{0} seconds cooldown"
-				CriticalDmg: Critical strikes deal {0}% more damage
+				CritDmg: Critical strikes deal {0}% more damage
 				LifeThreshold: "If life falls below {0}%: "
 				Slowness: Slows down movement by {0}%
 				Thorns: Increases thorns by {0}
 				SoulDropsBoost: Increases the amount of souls dropped by fallen creatures by {0}%
 				ConsumableSoulDropsBoost: Increases the chance of consumable soul drops by {0}%
 				MeleeWhipDmg: Increases melee and whip damage by {0}%
-				MoveSpeedMultiplier: Increases your movement speed multiplicatively by {0}%
+				MoveSpeedMult: Increases your movement speed multiplicatively by {0}%
 			}
 
 			Melee: {
 				ArmorPenPercent: Increases melee armor penetration by {0}%
-				FlatDmgBoost: Increases melee damage by {0} flat
+				FlatDmg: Increases melee damage by {0} flat
 				Doubled: (doubled for melee)
 			}
 
@@ -64,9 +64,12 @@ Mods: {
 			}
 
 			Magic: {
-				ManaRegenBoost: Increases mana regeneration by {0}
+				ManaRegen: Increases mana regeneration by {0}
 				ManaRegenDelay: Decreases mana regeneration delay by {0}%
-				DmgMultiplier: Increases magic damage by {0}% multiplicatively
+				AtkSpeed: Increases magic attack speed by {0}%
+				DmgMult: Increases magic damage by {0}% multiplicatively
+				BadDmgMult: Decreases magic damage by {0}% multiplicatively
+				ArmorPen: Increases magic armor penetration by {0}
 			}
 
 			Summon: {
@@ -79,12 +82,18 @@ Mods: {
 				TagDuration: Increases the duration of Summon Tag effects by {0}%
 				BotCSummonTagDoubleBuffCount: Fully charged whip debuff counts as 2
 				ChargedWhip: Stats of this whip scale with how long you've charged it
-				ChargedWhipSummonTagDmg: "{0}-{1} summon tag damage"
-				ChargedWhipSummonTagCrit: "{0}-{1}% summon tag critical strike chance"
+				ChargedWhipTagDmg: "{0}-{1} summon tag damage"
+				ChargedWhipTagCrit: "{0}-{1}% summon tag critical strike chance"
 				ChargedWhipAtkSpeed: Gain {0}-{1}% summon attack speed upon striking an enemy
-				ImprovedWhipCC: Performs better against multiple targets than most whips
-				SummonTagArmorPen: "{0} summon tag armor penetration"
-				BadDmgMultiplier: Decreases summon damage by {0}% multiplicatively
+				WhipCC: Performs better against multiple targets than most whips
+				TagArmorPen: "{0} summon tag armor penetration"
+				BadDmgMult:
+					'''
+					Decreases summon damage by {0}% multiplicatively
+					Tag Damage is unaffected
+					'''
+				SlotsRequired: Uses {0} minion slots
+				PercentOfASlot: Uses {0}% of a minion slot
 			}
 		}
 
@@ -717,7 +726,7 @@ Mods: {
 					'''
 					Inherits the Star Cloaks effect and grants {$CommonItemTooltip.PercentIncreasedDamageCritChance}
 					Magic Imbues no longer need to go on cooldown
-					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.IncreasedManaRegen@2} and grants an additional
+					{$CommonItemTooltip.Generic.LifeThreshold@1}{$CommonItemTooltip.Magic.ManaRegen@2} and grants an additional
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
 					'''
 			}
@@ -773,7 +782,6 @@ Mods: {
 					{$CommonItemTooltip.IncreasesMaxManaByPercent@1}
 					{$CommonItemTooltip.Magic.ManaRegenBoost@2}
 					{$CommonItemTooltip.Magic.ManaRegenDelay@3}
-					{$CommonItemTooltip.PercentReducedManaCost@4}
 					'''
 			}
 
@@ -1270,53 +1278,41 @@ Mods: {
 
 			AquamarineRing: {
 				DisplayName: Aquamarine Ring
-				Tooltip:
-					'''
-					5% increased magic damage
-					+40 mana
-					'''
+				Tooltip: "{$CommonItemTooltip.Magic.ArmorPen}"
 			}
 
 			CelestialCloak: {
 				DisplayName: Celestial Cloak
 				Tooltip:
 					'''
-					Increases max mana by 40
-					Reduces mana usage by 16%
-					Automatically use mana potions when needed
-					Increases pickup range for mana stars
-					Restores mana when damaged
+					{$CommonItemTooltip.IncreasesMaxManaBy}
+					{$CommonItemTooltip.PercentReducedManaCost@1}
 					Grants a thorns effects scaling with max mana
 					Small chance to spawn falling mana stars when hitting an enemy
 					Their damage scales with max mana
 					Mana stars restore mana when collected
+					Automatically use mana potions when needed
+					Increases pickup range for mana stars
+					Restores mana when damaged
 					'''
 			}
 
 			EnchantedWizardsHat: {
 				DisplayName: Enchanted Wizard's Hat
-				Tooltip:
-					'''
-					Increases magic damage by 13% multiplicatively
-					+80 max Mana
-					'''
+				Tooltip: "{$CommonItemTooltip.Magic.DmgMult}"
 			}
 
 			EssenceOfMana: {
 				DisplayName: Essence of Mana
-				Tooltip:
-					'''
-					{$CommonItemTooltip.IncreasesMaxManaByPercent}
-					{$CommonItemTooltip.PercentReducedManaCost@1}
-					'''
+				Tooltip: "{$CommonItemTooltip.IncreasesMaxManaByPercent}"
 			}
 
 			GemBox: {
 				DisplayName: Gem Box
 				Tooltip:
 					'''
-					Doubles magic attack speed
-					Reduces magic damage by 30% multiplicatively
+					{$CommonItemTooltip.Magic.AtkSpeed}
+					{$CommonItemTooltip.Magic.BadDmgMult@1}
 					Some spells cannot benefit from this.
 					'''
 			}
@@ -1371,8 +1367,8 @@ Mods: {
 				DisplayName: Molten Ring
 				Tooltip:
 					'''
-
-					+10% Melee Damage and Magma Stone effect
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					Grants Magma Stone and Inferno Potion effects
 					'''
 			}
 
@@ -1380,7 +1376,7 @@ Mods: {
 				DisplayName: Boots Of Haste
 				Tooltip:
 					'''
-					Multiplies your movement speed by 10%
+					{$CommonItemTooltip.Generic.MoveSpeedMult}
 					Inherits Hermes Boots effect
 					'''
 			}
@@ -1435,9 +1431,9 @@ Mods: {
 				DisplayName: Speed Talisman
 				Tooltip:
 					'''
-					15% increased movement speed
-					20% increased melee speed
-					Grants autoswing to melee weapons and whips
+					{$CommonItemTooltip.Generic.AtkSpeed}{$CommonItemTooltip.Melee.Doubled}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
+					{$CommonItemTooltip.MeleeWhipAutoswing}
 					'''
 			}
 
@@ -1494,8 +1490,8 @@ Mods: {
 				DisplayName: Bone Ring
 				Tooltip:
 					'''
-					+8% Ranged damage
-					+8% Ranged critical strike chance
+					{$CommonItemTooltip.PercentIncreasedRangedDamageCritChance}
+					Violently flings defeated enemies' bones around 
 					'''
 			}
 
@@ -2133,20 +2129,25 @@ Mods: {
 				DisplayName: Magma Breastplate
 				Tooltip:
 					'''
-					Increases melee damage by 15%
-					Set bonus: Increases melee damage by 10% multiplicatively
-					Grants the Magma Stone effect
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					Set bonus: Hitting burning enemies ignites them
+					Ignited enemies take {1} more damage each hit and burn horribly
+					Cannot be set on fire
 					'''
 			}
 
 			MagmaGreaves: {
 				DisplayName: Magma Greaves
-				Tooltip: Increases movement and melee speed by 18%
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
+					'''
 			}
 
 			MagmaHelmet: {
 				DisplayName: Magma Helmet
-				Tooltip: Increase melee critical strike chance by 10%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
 			}
 
 			ShadowCloakGreaves: {
@@ -6448,9 +6449,16 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasedLifeRegen@1}
-					{$CommonItemTooltip.KnockbackImmunity}
-					{$CommonItemTooltip.LifeThreshold@2}{$CommonItemTooltip.IncreasedLifeRegen@3}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.Generic.LifeRegen@1}
+					{$CommonItemTooltip.NoKnockback}
+					{$CommonItemTooltip.Generic.LifeThreshold@2}{$CommonItemTooltip.Generic.LifeRegen@3}
+					'''
+				SetBonus:
+					'''
+					Allows you to damage enemies by rolling through them
+					{0} melee damage
+					{1}% critical strike chance
+					Insane knockback
 					'''
 			}
 
@@ -6464,7 +6472,7 @@ Mods: {
 				Tooltip:
 					'''
 					Doubles your maximum amount of minions and sentries
-					{$CommonItemTooltip.Summon.BadDmgMultiplier}
+					{$CommonItemTooltip.Summon.BadDmgMult}
 					'''
 			}
 
@@ -7220,6 +7228,11 @@ Mods: {
 				DisplayName: Spinal Tap Debuff
 				Description: ""
 			}
+
+			Ignited: {
+				DisplayName: Ignited
+				Description: Mods.tsorcRevamp.Buffs.Ignited.Description
+			}
 		}
 
 		Projectiles: {
@@ -7723,6 +7736,7 @@ Mods: {
 			OrbOfDeceptionOrbIdle.DisplayName: Orb Of Deception Orb Idle
 			OrbOfFlameOrbIdle.DisplayName: Orb Of Flame Orb Idle
 			OrbOfSpiritualityOrbIdle.DisplayName: Orb Of Spirituality Orb Idle
+			PortlyPlateRollHitbox.DisplayName: Portly Plate Roll Hitbox
 		}
 
 		NPCs: {

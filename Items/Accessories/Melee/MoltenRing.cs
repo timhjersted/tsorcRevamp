@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,9 +10,10 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
     public class MoltenRing : ModItem
     {
+        public static float MeleeDmg = 10f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeDmg);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("\n+10% Melee Damage and Magma Stone effect");
         }
 
         public override void SetDefaults()
@@ -36,8 +38,9 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.Melee) += MeleeDmg / 100f;
             player.magmaStone = true;
+            player.inferno = true;
         }
 
     }

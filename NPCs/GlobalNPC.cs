@@ -30,6 +30,7 @@ using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Sentry;
 using tsorcRevamp.Projectiles.Summon.Whips;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Armors.Melee;
 
 namespace tsorcRevamp.NPCs
 {
@@ -94,6 +95,7 @@ namespace tsorcRevamp.NPCs
         public static double expertScale = 2;
 
         public bool DarkInferno;
+        public bool Ignited;
         public bool CrimsonBurn;
         public bool ToxicCatDrain;
         public bool ResetToxicCatBlobs;
@@ -116,6 +118,7 @@ namespace tsorcRevamp.NPCs
         public override void ResetEffects(NPC npc)
         {
             DarkInferno = false;
+            Ignited = false;
             CrimsonBurn = false;
             ToxicCatDrain = false;
             ResetToxicCatBlobs = false;
@@ -675,6 +678,10 @@ namespace tsorcRevamp.NPCs
 
         public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers)
         {
+            if (Ignited)
+            {
+                modifiers.FlatBonusDamage += MagmaBreastplate.OnHitDmg;
+            }
             if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().ConditionOverload)
             {
                 int debuffCounter = 1;
@@ -1129,6 +1136,12 @@ namespace tsorcRevamp.NPCs
 
         public override void UpdateLifeRegen(NPC npc, ref int damage)
         {
+            if (Ignited)
+            {
+                int DoTPerS = 20;
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
             if (Venomized)
             {
                 int DoTPerS = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)ToxicShot.BaseDamage) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)ToxicShot.BaseDamage);
@@ -1680,6 +1693,13 @@ namespace tsorcRevamp.NPCs
                 Main.player[projectile.owner].AddBuff(ModContent.BuffType<CrystalShield>(), 4 * 60);
             }
             #endregion
+            if (hit.DamageType == DamageClass.Ranged && damageDone > npc.life && modPlayer.BoneRing)
+            {
+                Projectile.NewProjectile(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner);
+                Projectile.NewProjectile(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner);
+                Projectile.NewProjectile(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner);
+                Projectile.NewProjectile(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner);
+            }
                 if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>()))
             {
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetToxicCatBlobs = true;

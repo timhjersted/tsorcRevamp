@@ -8,15 +8,10 @@ namespace tsorcRevamp.Items.Accessories.Magic
 {
     public class EssenceOfMana : ModItem
     {
-        public static float PercentMaxManaAmplifier = 50f;
-        public static float ManaCostReduction = 9f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PercentMaxManaAmplifier, ManaCostReduction);
+        public static float PercentMaxManaAmplifier = 100f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PercentMaxManaAmplifier);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Essence of Mana");
-            /* Tooltip.SetDefault("Increases max mana by 50%" +
-                "\nReduces mana usage by 9%"); */
-
         }
 
         public override void SetDefaults()
@@ -41,7 +36,6 @@ namespace tsorcRevamp.Items.Accessories.Magic
         public override void UpdateEquip(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().MaxManaAmplifier += PercentMaxManaAmplifier;
-            player.manaCost -= ManaCostReduction / 100f;
         }
 
     }

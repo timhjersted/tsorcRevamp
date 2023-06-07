@@ -1,5 +1,8 @@
+using Microsoft.CodeAnalysis;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -9,54 +12,76 @@ namespace tsorcRevamp.Items.VanillaItems
 {
     class MeleeEdits : GlobalItem
     {
-        static readonly int ManaBase1 = 20;
-        static readonly int ManaBase2 = 10;
-        static readonly int ManaBase3 = 25;
-        static readonly int ManaDelay = 1200;
+        public static int ManaBase1 = 40;
+        public static int ManaBase2 = 20;
+        public static int ManaBase3 = 50;
+        public static int ManaDelay = 720;
         public override void SetDefaults(Item item)
         {
-            //Lunar items
             if (item.type == ItemID.DayBreak)
             {
-                item.mana = 44;
+                item.mana = 88;
             }
             if (item.type == ItemID.Terrarian)
             {
-                item.mana = 20;
-            }
-            if(item.type == ItemID.PiercingStarlight)
-            {
-                item.damage = 50;
+                item.mana = 40;
             }
             if (item.type == ItemID.NightsEdge)
             {
-                item.mana = 10;
+                item.mana = 25;
             }
             if (item.type == ItemID.TrueNightsEdge)
             {
                 item.damage = 85;
-                item.mana = 15;
+                item.mana = 35;
             }
             if (item.type == ItemID.Excalibur)
             {
-                item.mana = 8;
+                item.mana = 24;
             }
             if (item.type == ItemID.TrueExcalibur)
             {
                 item.damage = 75;
-                item.mana = 12;
+                item.mana = 30;
             }
             if (item.type == ItemID.TerraBlade)
             {
-                item.mana = 20;
+                item.mana = 40;
             }
             if (item.type == ItemID.TheHorsemansBlade)
             {
                 item.damage = 200;
                 item.useTime = 20;
                 item.useAnimation = 20;
-                item.mana = 12;
+                item.mana = 25;
             }
+            if (item.type == ItemID.PiercingStarlight)
+            {
+                item.damage = 50;
+            }
+        }
+        public override bool Shoot(Item item, Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            int manaCost1 = (int)(ManaBase1 * player.manaCost);
+            int manaCost2 = (int)(ManaBase2 * player.manaCost);
+            int manaCost3 = (int)(ManaBase3 * player.manaCost);
+
+            if (item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand | item.type == ItemID.Starfury)
+            {
+                player.statMana -= manaCost1;
+                player.manaRegenDelay = ManaDelay;
+            }
+            if (item.type == ItemID.LightsBane | item.type == ItemID.BladeofGrass)
+            {
+                player.statMana -= manaCost2;
+                player.manaRegenDelay = ManaDelay;
+            }
+            if (item.type == ItemID.Meowmere | item.type == ItemID.StarWrath)
+            {
+                player.statMana -= manaCost3;
+                player.manaRegenDelay = ManaDelay;
+            }
+            return base.Shoot(item, player, source, position, velocity, type, damage, knockback);
         }
         public override bool CanShoot(Item item, Player player)
         {

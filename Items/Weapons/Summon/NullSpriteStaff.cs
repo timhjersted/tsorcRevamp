@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 0.75f;
         }
         public override void SetDefaults()
         {

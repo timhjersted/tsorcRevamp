@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,11 +9,10 @@ namespace tsorcRevamp.Items.Accessories.Mobility
     [AutoloadEquip(EquipType.Shoes)]
     public class BootsOfHaste : ModItem
     {
+        public static float MoveSpeedMult = 25f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeedMult);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Multiplies your movement speed by 10%\n" +
-                "Inherits Hermes Boots effect"); */
-
         }
 
         public override void SetDefaults()
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         public override void UpdateEquip(Player player)
         {
             player.accRunSpeed = 6;
-            player.moveSpeed *= 1.1f;
+            player.moveSpeed *= 1f + MoveSpeedMult / 100f;
         }
     }
 }

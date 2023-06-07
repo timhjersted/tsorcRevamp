@@ -10,6 +10,7 @@ using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Accessories.Magic;
 using tsorcRevamp.Items.Armors.Magic;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
@@ -87,6 +88,16 @@ namespace tsorcRevamp.Items.VanillaItems
 
 
             Player player = Main.LocalPlayer;
+
+            if (ItemID.Sets.StaffMinionSlotsRequired[item.type] > 1f)
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, LanguageUtils.GetTextValue("CommonItemTooltip.Summon.SlotsRequired", ItemID.Sets.StaffMinionSlotsRequired[item.type]));
+            }
+
+            if (ItemID.Sets.StaffMinionSlotsRequired[item.type] < 1f)
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, LanguageUtils.GetTextValue("CommonItemTooltip.Summon.PercentOfASlot", ItemID.Sets.StaffMinionSlotsRequired[item.type] * 100f));
+            }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.healLife > 0)
             {

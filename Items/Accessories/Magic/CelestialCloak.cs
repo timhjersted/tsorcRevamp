@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using tsorcRevamp.Items.Materials;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Accessories.Magic
 {
@@ -13,7 +14,9 @@ namespace tsorcRevamp.Items.Accessories.Magic
     })]
     public class CelestialCloak : ModItem
     {
-        public static int hitchances = 0;
+        public static int MaxMana = 40;
+        public static float ManaCost = 20f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost);
 
         public override void SetStaticDefaults()
         {
@@ -49,18 +52,20 @@ namespace tsorcRevamp.Items.Accessories.Magic
             Vector2 starmove2 = new Vector2(-4, 20);
             Vector2 starmove3 = new Vector2(0, 20);
 
-            player.statManaMax2 += 40;
-            player.manaCost -= 0.16f;
+            player.statManaMax2 += MaxMana;
+            player.manaCost -= ManaCost / 100f;
+            player.starCloakItem = player.starCloakItem_manaCloakOverrideItem = new Item(ItemID.ManaCloak);
             player.manaFlower = true;
             player.manaMagnet = true;
             player.magicCuffs = true;
-            player.thorns += 0.1f + (player.statManaMax2 / 50f);
-            if (hitchances >= 1)
+            player.starCloakItem_manaCloakOverrideItem = Item;
+            player.GetModPlayer<tsorcRevampPlayer>().CelestialCloak = true;
+            if (player.GetModPlayer<tsorcRevampPlayer>().CelestialCloakHitChances >= 1)
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector1, starmove1, ProjectileID.ManaCloakStar, player.statManaMax2 / 5, 2f, Main.myPlayer);
                 Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector2, starmove2, ProjectileID.ManaCloakStar, player.statManaMax2 / 5, 2f, Main.myPlayer);
                 Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector3, starmove3, ProjectileID.ManaCloakStar, player.statManaMax2 / 5, 2f, Main.myPlayer);
-                hitchances -= 1;
+                player.GetModPlayer<tsorcRevampPlayer>().CelestialCloakHitChances -= 1;
             }
         }
 

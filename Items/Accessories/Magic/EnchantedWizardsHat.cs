@@ -9,11 +9,9 @@ namespace tsorcRevamp.Items.Accessories.Magic
     [LegacyName("GrandWizardsHat")]
     public class EnchantedWizardsHat : ModItem
     {
+        public static float DmgMult = 15f;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Enchanted Wizard's Hat");
-            /* Tooltip.SetDefault("Increases magic damage by 13% multiplicatively" +
-                "\n+80 max Mana"); */
         }
 
         public override void SetDefaults()
@@ -39,8 +37,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Magic) *= 1.13f;
-            player.statManaMax2 += 80;
+            player.GetDamage(DamageClass.Magic) *= 1f + DmgMult / 100f;
         }
 
     }
