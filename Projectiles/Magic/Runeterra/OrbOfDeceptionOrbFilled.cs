@@ -128,10 +128,10 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             {
                 if (hit.Crit)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FullOrbCrit") with { Volume = 1f }, Projectile.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbCrit") with { Volume = 1f }, Projectile.Center);
                 } else
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FullOrbHit") with { Volume = 1f }, Projectile.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbHit") with { Volume = 1f }, Projectile.Center);
                 }
                 HitTimer = 1;
             }

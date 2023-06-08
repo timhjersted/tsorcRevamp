@@ -95,7 +95,7 @@ namespace tsorcRevamp.Projectiles
             }
 
 
-            Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Materials/DarkSoul", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Materials/SoulOfDark", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             int frameHeight = texture.Height / 4;
 
 

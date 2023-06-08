@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 	{
 		public float angularSpeed2 = 0.03f;
 		public float currentAngle2 = 0;
-
+        public override string Texture => "tsorcRevamp/Projectiles/Summon/Runeterra/InterstellarVesselShip";
         public override void SetStaticDefaults()
 		{
             //Main.projFrames[Projectile.type] = 2;
@@ -264,9 +264,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 		public static Texture2D texture;
 		public static Texture2D glowTexture;
-		public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-			if (additiveContext)
+            base.PreDraw(ref lightColor);
+            if (additiveContext)
 			{
 				Main.spriteBatch.End();
 				Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
