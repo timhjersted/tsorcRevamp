@@ -31,9 +31,9 @@ namespace tsorcRevamp.Projectiles.VFX
             Projectile.scale = 1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 999;
-        }        
+        }
 
-        string filterIndex;
+        public string filterIndex;
 
         float effectTimer = 0;
         bool initialized = false;
@@ -56,6 +56,7 @@ namespace tsorcRevamp.Projectiles.VFX
                     {
                         Filters.Scene.Activate(currentIndex, Projectile.Center).GetShader().UseTargetPosition(Projectile.Center);
                         filterIndex = currentIndex;
+                        tsorcRevampWorld.boundShaders.Add(filterIndex);
                         initialized = true;
                         break;
                     }
@@ -111,6 +112,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 //Set its 'useimage' to this so that it doesn't hold onto a reference to the soon to be disposed rendertarget
                 Filters.Scene[filterIndex].GetShader().UseOpacity(0).UseImage(tsorcRevamp.tNoiseTexture1);
                 Filters.Scene[filterIndex].Deactivate();
+                tsorcRevampWorld.boundShaders.Remove(filterIndex);
             }
             if (lightningTarget != null && !lightningTarget.IsDisposed)
             {

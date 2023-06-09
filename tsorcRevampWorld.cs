@@ -18,6 +18,7 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.Textures;
 using tsorcRevamp.Tiles;
 using Terraria.Localization;
+using Terraria.Graphics.Effects;
 
 namespace tsorcRevamp
 {
@@ -52,6 +53,7 @@ namespace tsorcRevamp
             CustomMap = false;
             //Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
+            boundShaders = new List<string>();
             initialized = false;
             NewSlain = new();
             tsorcScriptedEvents.InitializeScriptedEvents();
@@ -1135,6 +1137,8 @@ namespace tsorcRevamp
 
             HandleDevKeys();
 
+            CleanUpScreenShaders();
+
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 tsorcScriptedEvents.ScriptedEventCheck();
@@ -1199,6 +1203,30 @@ namespace tsorcRevamp
             }
         }
 
+        //Clean up 'orphaned' screen shaders whose host projectile died in mysterious ways before it could do so itself
+
+        public static List<string> boundShaders = new List<string>();
+        public static void CleanUpScreenShaders()
+        {
+            for(int i = 0; i < 16; i++)
+            {
+                string currentIndex = "tsorcRevamp:shockwave" + i;
+                if (Filters.Scene[currentIndex] != null && !boundShaders.Contains(currentIndex))
+                {
+                    Filters.Scene[currentIndex].GetShader().UseOpacity(0).UseImage(tsorcRevamp.tNoiseTexture1);
+                    Filters.Scene[currentIndex].Deactivate();
+                }
+            }
+            for (int i = 0; i < 16; i++)
+            {
+                string currentIndex = "tsorcRevamp:realitycrack" + i;
+                if (Filters.Scene[currentIndex] != null && !boundShaders.Contains(currentIndex))
+                {
+                    Filters.Scene[currentIndex].GetShader().UseOpacity(0).UseImage(tsorcRevamp.tNoiseTexture1);
+                    Filters.Scene[currentIndex].Deactivate();
+                }
+            }
+        }
         public override void OnWorldUnload() {
             tsorcRevamp.NearbySoapstone = null;
         }

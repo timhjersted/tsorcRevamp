@@ -93,7 +93,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 NPC.Center = PrimeCeilingPoint + new Vector2(0, -200);
                 for(int i = 0; i < Main.maxPlayers; i++)
                 {
-                    if (Main.player[i].active && NPC.Distance(Main.player[i].Center) < 350)
+                    if (Main.player[i].active && NPC.Distance(Main.player[i].Center) < 550)
                     {
                         activated = true;
                         if(Main.tile[5000, 1106].IsActuated)

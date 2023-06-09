@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.VFX
         }
         
 
-        string filterIndex;
+        public string filterIndex;
 
         float effectTimer = 0;
         bool initialized = false;
@@ -51,6 +51,7 @@ namespace tsorcRevamp.Projectiles.VFX
                     {
                         Filters.Scene.Activate(currentIndex, Projectile.Center).GetShader().UseTargetPosition(Projectile.Center);
                         filterIndex = currentIndex;
+                        tsorcRevampWorld.boundShaders.Add(filterIndex);
                         initialized = true;
                         break;
                     }
@@ -60,6 +61,7 @@ namespace tsorcRevamp.Projectiles.VFX
                     {
                         Filters.Scene[currentIndex] = new Filter(new ScreenShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TriadShockwave", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "TriadShockwavePass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
                         filterIndex = currentIndex;
+                        tsorcRevampWorld.boundShaders.Add(filterIndex);
                         initialized = true;
                         break;
                     }
@@ -128,6 +130,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex].IsActive())
                 {
                     Filters.Scene[filterIndex].Deactivate();
+                    tsorcRevampWorld.boundShaders.Remove(filterIndex);
                 }
             }
             return base.PreKill(timeLeft);
