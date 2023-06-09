@@ -418,6 +418,37 @@ namespace tsorcRevamp
         }
 
         ///<summary> 
+        ///Sets the camera of all players to focus on the selected point
+        ///Moves toward it gradually to make it less jarring
+        ///</summary>         
+        ///<param name="target">The target point</param>
+        ///<param name="progress">What percent of the way the camera has moved toward the new point</param>
+        ///<param name="lerpRate">The speed at which the camera moves toward it</param>
+        public static void SetAllCameras(Vector2 target, ref float progress, float lerpRate = 0.07f)
+        {
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active && !Main.player[i].dead)
+                {
+                    Main.player[i].immuneTime = 10;
+                    tsorcRevampPlayer modPlayer = Main.player[i].GetModPlayer<tsorcRevampPlayer>();
+                    modPlayer.OverrideCamera = true;
+                    modPlayer.newScreenPosition = target;
+                    modPlayer.progress = progress;
+                }
+            }
+            if (progress < 1)
+            {
+                progress += lerpRate;
+            }
+            else
+            {
+                progress = 1;
+            }
+        }
+
+
+        ///<summary> 
         ///Returns a vector pointing from a source, to a target, with a speed.
         ///Simplifies basic projectile, enemy dash, etc aiming calculations to a single call.
         ///If "ballistic" is true it adjusts for gravity. Default is 0.1f, may be stronger or weaker for some projectiles though.

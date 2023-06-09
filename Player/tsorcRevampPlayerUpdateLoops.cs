@@ -1699,6 +1699,7 @@ namespace tsorcRevamp
 
         public override void PostUpdate()
         {
+
             if ((Player.HasBuff(ModContent.BuffType<MagicWeapon>()) || Player.HasBuff(ModContent.BuffType<GreatMagicWeapon>()) || Player.HasBuff(ModContent.BuffType<CrystalMagicWeapon>())) && Player.meleeEnchant > 0)
             {
                 int buffIndex = 0;
@@ -1783,6 +1784,19 @@ namespace tsorcRevamp
             float x = (float)Main.maxTilesX / 4200f;
             x *= x;
             return (float)((double)(player.position.Y / 16f - (60f + 10f * x)) / (Main.worldSurface / 6.0)) < 1f;
+        }
+
+        public bool OverrideCamera;
+        public Vector2 newScreenPosition;
+        public float progress;
+        public override void ModifyScreenPosition()
+        {
+            if (OverrideCamera)
+            {
+                Main.screenPosition = newScreenPosition = Vector2.Lerp(Main.screenPosition, newScreenPosition - Main.ScreenSize.ToVector2() / 2f, progress);
+                OverrideCamera = false;
+                progress = 0;
+            }
         }
     }
 }

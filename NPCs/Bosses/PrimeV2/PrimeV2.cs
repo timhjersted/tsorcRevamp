@@ -103,8 +103,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         break;
                     }
                 }
+
+                if (!activated)
+                {
+                    return;
+                }
             }
-            base.AI();
+            base.AI();            
 
             if (introTimer >= introDuration)
             {
@@ -191,10 +196,21 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         /// <summary>
         /// Controls what this boss does during its intro
         /// </summary>
+        float progress = 0;
         public override void HandleIntro()
         {
-            NPC.Center = PrimeCeilingPoint + Vector2.Lerp(new Vector2(0, -200), Vector2.Zero, (float)Math.Pow((float)introTimer / (float)introDuration, 4f));
-            if(introTimer == 0)
+            float percent = (float)Math.Pow((float)introTimer / ((float)introDuration - 30), 4f);
+            if(percent > 1)
+            {
+                percent = 1;
+            }
+            NPC.Center = PrimeCeilingPoint + Vector2.Lerp(new Vector2(0, -200), Vector2.Zero, percent);
+
+            UsefulFunctions.SetAllCameras(NPC.Center, ref progress);
+
+            
+
+            if (introTimer == 0)
             {
                 BeamNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeBeam>(), ai1: NPC.whoAmI);
                 IonNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeIon>(), ai1: NPC.whoAmI);
@@ -204,9 +220,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 SeverNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeWelder>(), ai1: NPC.whoAmI);
             }
 
-            if(introTimer == introDuration)
+            if (introTimer == introDuration - 30)
             {
-                //TODO: Turn on the lights
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -355,6 +370,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         /// </summary>
         public override void HandleDeath()
         {
+            UsefulFunctions.SetAllCameras(NPC.Center, ref progress);
+
             if (deathAnimationProgress % 20 == 0)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -425,6 +442,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public override void PhaseTransition()
         {
             NPC.Center = Vector2.Lerp(PrimeCeilingPoint, PrimeCenterPoint, (float)Math.Pow((float)(phaseTransitionDuration - phaseTransitionTimeRemaining) / phaseTransitionDuration, 4f));
+            UsefulFunctions.SetAllCameras(NPC.Center, ref progress);
             NPC.velocity *= 0.95f;
             Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2CircularEdge(100, 100), DustID.ShadowbeamStaff, Main.rand.NextVector2Circular(10, 10), Scale: 5);
             ActuateBottomHalf();
