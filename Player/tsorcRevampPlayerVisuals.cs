@@ -474,6 +474,10 @@ namespace tsorcRevamp
             return true;
         }
 
+
+        public static Texture2D meterFull;
+        public static Texture2D powerfulMeterFull;
+        public static Texture2D meterEmpty;
         protected override void Draw(ref PlayerDrawSet drawInfo)
         {
             tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
@@ -594,9 +598,9 @@ namespace tsorcRevamp
                 if ((cursePercentage > 0.01f || powerfulCursePercentage > 0.01f) && !drawPlayer.dead) //0f wasn't working because aparently the minimum % it sits at is 0.01f, so dumb
                 {
                     float abovePlayer = 82f; //how far above the player should the bar be?
-                    Texture2D meterFull = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/CurseMeter_full");
-                    Texture2D powerfulMeterFull = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/CurseMeter_powerfulFull");
-                    Texture2D meterEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/CurseMeter_empty");
+                    UsefulFunctions.EnsureLoaded(meterFull, "tsorcRevamp/Textures/CurseMeter_full");
+                    UsefulFunctions.EnsureLoaded(meterFull, "tsorcRevamp/Textures/CurseMeter_powerfulFull");
+                    UsefulFunctions.EnsureLoaded(meterFull, "tsorcRevamp/Textures/CurseMeter_empty");
 
 
                     //this is the position on the screen. it should remain relatively constant unless the window is resized

@@ -209,7 +209,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 if (moveTimer <= baseCooldown + 45)
                 {
-                    pickedTrajectory = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 18);
+                    pickedTrajectory = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 18);
 
                     //Don't fall
                     if (NPC.velocity.Y > 0)
@@ -343,7 +343,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (moveTimer % 15 == 0)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 7), ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);                        
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 7), ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);                        
                     }
 
                     if (moveTimer % 15 == 7)

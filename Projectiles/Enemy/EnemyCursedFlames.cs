@@ -74,7 +74,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                     {
                         velocity = 5;
                     }
-                    Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.player[(int)Projectile.ai[1]].Center, velocity);
+                    Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, Main.player[(int)Projectile.ai[1]].Center, velocity);
                 }
             }
         }

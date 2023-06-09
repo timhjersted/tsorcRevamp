@@ -60,7 +60,7 @@ namespace tsorcRevamp.Projectiles
                         {
                             Main.projectile[i].friendly = true;
                             Main.projectile[i].hostile = false;
-                            Main.projectile[i].velocity = UsefulFunctions.GenerateTargetingVector(Main.projectile[i].Center, GetTarget(), reflectionSpeed);
+                            Main.projectile[i].velocity = UsefulFunctions.Aim(Main.projectile[i].Center, GetTarget(), reflectionSpeed);
                             Main.projectile[i].CritChance = 100;
                             Main.projectile[i].damage *= 2;
                         }
@@ -72,7 +72,7 @@ namespace tsorcRevamp.Projectiles
                             {
                                 ai1 = 1;
                             }
-                            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, UsefulFunctions.GenerateTargetingVector(Projectile.Center, GetTarget(), 1), Main.projectile[i].type, Main.projectile[i].damage * 2, Main.projectile[i].knockBack, Projectile.owner, 0, ai1);
+                            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, UsefulFunctions.Aim(Projectile.Center, GetTarget(), 1), Main.projectile[i].type, Main.projectile[i].damage * 2, Main.projectile[i].knockBack, Projectile.owner, 0, ai1);
                         }
 
                         if (Main.netMode != NetmodeID.Server)

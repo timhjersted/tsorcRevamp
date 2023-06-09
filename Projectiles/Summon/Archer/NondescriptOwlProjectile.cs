@@ -259,7 +259,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer {
                                 ChangeAnimationState(AnimationStates.Shooting);
                                 if (Projectile.owner == Main.myPlayer && Projectile.frame == ANIM_SHOOT_SPECIAL_ARROW_RELEASE - 2) {
                                     AI_Timer = attackRate;
-                                    Vector2 aim = UsefulFunctions.GenerateTargetingVector(Projectile.Center, new(currentClosestNPC_X, posY), 12);
+                                    Vector2 aim = UsefulFunctions.Aim(Projectile.Center, new(currentClosestNPC_X, posY), 12);
                                     int projectileType = ModContent.ProjectileType<OwlsArrow>();
                                     int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, aim, projectileType, Projectile.damage, Projectile.knockBack, Main.myPlayer);
                                     Main.projectile[p].timeLeft = 300;

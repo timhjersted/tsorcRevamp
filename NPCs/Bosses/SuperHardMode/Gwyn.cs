@@ -380,7 +380,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     //Counts up each tick. Used to space out shots
                     if (DarkBeadShotTimer >= 12 && DarkBeadShotCounter < 2)
                     {
-                        Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 7);
+                        Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 7);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.ArtoriasDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center); //acid flame
                         DarkBeadShotTimer = 0;
@@ -729,7 +729,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         NPC.netUpdate = true;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 9);
+                            Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 9);
                             breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.1f, Pitch = 0.2f }, NPC.Center);
@@ -1204,7 +1204,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item103 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //flame thrower
                             }
 
-                            Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].OldPos(9), 9);
+                            Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].OldPos(9), 9);
                             breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
 
                             //Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X + (5 * npc.direction), npc.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
@@ -1555,7 +1555,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                         if (moveTimer <= baseCooldown + 45)
                         {
-                            pickedTrajectory = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 18);
+                            pickedTrajectory = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 18);
 
                             //Don't fall
                             if (NPC.velocity.Y > 0)
@@ -1689,7 +1689,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         {   //jumping gravity ball attack
                             if (moveTimer % 15 == 0 && !swordDead)
                             {                               
-                                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 2), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGravity4Ball>(), tridentDamage, 0.5f, Main.myPlayer); //2 was 7
+                                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGravity4Ball>(), tridentDamage, 0.5f, Main.myPlayer); //2 was 7
                                 Lighting.AddLight(NPC.Center, Color.MediumPurple.ToVector3() * 0.5f);
                             }
                             //jumping gaibon fire ball attack

@@ -139,7 +139,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 12);
+                    Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 12);
                     breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.CursedDragonsBreath>(), dragonsBreathDamage, 0f, Main.myPlayer);
                     NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
@@ -179,7 +179,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                 if (hitCounter > 6 || (NPC.life < NPC.lifeMax / 10 && Main.rand.NextBool(400)))
                 {
-                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 15);
+                    NPC.velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 15);
                     NPC.netUpdate = true;
                     hitCounter = 0;
                     for (int i = 0; i < 50; i++)

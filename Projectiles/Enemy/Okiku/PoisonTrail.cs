@@ -44,6 +44,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         float timer = 0;
         float fixedSpeed = 1;
         public bool FinalStandMode = false;
+        Vector2 trailVelocity;
         List<Vector2> trailVelocities;
         public override void AI()
         {
@@ -176,6 +177,37 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 else
                 {
                     Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
+                    if (trailVelocity == Vector2.Zero)
+                    {
+                        if (target != null)
+                        {
+                            trailVelocity = UsefulFunctions.Aim(trailPositions[trailPositions.Count / 2], target.Center, 15f);
+                        }
+                    }
+                    else
+                    {
+                        //These *must* be done one then the other. Otherwise adding velocities in between adding new trail points can cause new trail points to be added infinitely.
+                        for (int i = 0; i < trailPositions.Count; i++)
+                        {
+                            trailPositions[i] += trailVelocity.RotatedBy(MathHelper.Pi  * (-0.5 + ((float)i / (float) trailPositions.Count)));
+                        }
+
+                        for (int i = 0; i < trailPositions.Count; i++)
+                        {
+                            if (i < trailPositions.Count - 1 && Vector2.Distance(trailPositions[i], trailPositions[i + 1]) > 20 && trailPositions.Count < trailPointLimit)
+                            {
+                                trailPositions.Insert(i + 1, (trailPositions[i] + trailPositions[i + 1]) / 2f);
+                                trailRotations.Insert(i + 1, (trailRotations[i] + trailRotations[i + 1]) / 2f);
+                                trailVelocities.Insert(i + 1, (trailVelocities[i] + trailVelocities[i + 1]) / 2f);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /*
+         * Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
                     if (timer < timerLimit + 30)
                     {
                         if (target != null)
@@ -205,10 +237,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                             }
                         }
                     }
-                }
-            }
-        }
-        
+         */
 
         public override float CollisionWidthFunction(float progress)
         {

@@ -27,9 +27,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             Projectile.tileCollide = false;
 
             trailWidth = 25;
-            trailPointLimit = 150;
+            trailPointLimit = 300;
             trailYOffset = 30;
-            trailMaxLength = 150;
+            trailMaxLength = 300;
             NPCSource = false;
             collisionPadding = 0;
             collisionEndPadding = 1;
@@ -39,15 +39,23 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
         public override void AI()
         {
+            if (Projectile.timeLeft == 487)
+            {
+                Main.NewText(Projectile.timeLeft);
+            }
             base.AI();
             Lighting.AddLight(Projectile.Center, Color.Purple.ToVector3());
 
             if ((int)Projectile.ai[0] < 0)
             {
+                trailMaxLength = 700;
                 //Let them move slow for a second to telegraph before accelerating off
-                if (Projectile.timeLeft < 540)
+                if (Projectile.timeLeft < 570)
                 {
-                    Projectile.velocity *= 1.05f;
+                    if (Projectile.velocity.Length() < 40)
+                    {
+                        Projectile.velocity *= 1.05f;
+                    }
                 }
             }
             else

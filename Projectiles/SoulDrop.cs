@@ -62,7 +62,7 @@ namespace tsorcRevamp.Projectiles
                             }
                             else if(distance < 200 * 200)
                             {
-                                Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.player[i].Center, 7);
+                                Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, Main.player[i].Center, 7);
                             }
                         }
                         else

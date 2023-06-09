@@ -149,7 +149,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                 if (hitCounter > 6 || (NPC.life < NPC.lifeMax / 10 && Main.rand.NextBool(400)))
                 {
-                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 15);
+                    NPC.velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 15);
                     NPC.netUpdate = true;
                     hitCounter = 0;
                     for (int i = 0; i < 50; i++)

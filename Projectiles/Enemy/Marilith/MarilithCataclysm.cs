@@ -68,7 +68,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 }
                 float time = dist / 22;
 
-                Vector2 targetVel = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target.Center + (target.velocity * time), 22);
+                Vector2 targetVel = UsefulFunctions.Aim(Projectile.Center, target.Center + (target.velocity * time), 22);
                 Projectile.velocity = Vector2.Lerp(Projectile.velocity, targetVel, 0.013f);
             }
 

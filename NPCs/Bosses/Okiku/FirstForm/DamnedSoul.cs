@@ -158,7 +158,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                         }
                         else
                         {
-                            Vector2 vel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 5);
+                            Vector2 vel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 5);
                             vel += Main.player[NPC.target].velocity / Main.rand.NextFloat(0, 3); //Mildly predictive, with a random strength between 0 and 1/3rd
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, vel, ModContent.ProjectileType<ObscureShot>(), ObscureShotDamage, 0f, Main.myPlayer);
                         }

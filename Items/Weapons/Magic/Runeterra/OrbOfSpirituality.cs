@@ -79,7 +79,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             if (DashingTimer > 0)
             {
                 SoundEngine.PlaySound(SoundID.Item104, player.Center);
-                player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.MouseWorld, 15f);
+                player.velocity = UsefulFunctions.Aim(player.Center, Main.MouseWorld, 15f);
                 player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDash>(), 1 * 60);
                 player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>(), 20 * 60);
                 if (Main.GameUpdateCount % 5 == 0)

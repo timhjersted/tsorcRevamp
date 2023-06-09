@@ -7737,6 +7737,11 @@ Mods: {
 			OrbOfFlameOrbIdle.DisplayName: Orb Of Flame Orb Idle
 			OrbOfSpiritualityOrbIdle.DisplayName: Orb Of Spirituality Orb Idle
 			PortlyPlateRollHitbox.DisplayName: Portly Plate Roll Hitbox
+			PrimeBeam.DisplayName: Prime Beam
+			PrimeDeathLaser.DisplayName: Prime Death Laser
+			PrimeRapidBeam.DisplayName: Prime Rapid Beam
+			PrimeSaw.DisplayName: Prime Saw
+			IonBomb.DisplayName: Ion Bomb
 		}
 
 		NPCs: {
@@ -8372,6 +8377,14 @@ Mods: {
 			ParasyticWormBody.DisplayName: Parasytic Worm
 			ParasyticWormHead.DisplayName: Parasytic Worm
 			ParasyticWormTail.DisplayName: Parasytic Worm
+			PrimeBeam.DisplayName: Prime Beam
+			PrimeBuzzsaw.DisplayName: Prime Buzzsaw
+			PrimeGatling.DisplayName: Prime Gatling
+			PrimeIon.DisplayName: Prime Ion
+			PrimeLauncher.DisplayName: Prime Launcher
+			PrimeV2.DisplayName: Prime V2
+			PrimeWelder.DisplayName: Prime Welder
+			HullBreachMissile.DisplayName: Hull Breach Missile
 		}
 
 		Prefixes: {
@@ -8624,5 +8637,7 @@ Mods: {
 			SorrowDowned: Sorrow has been defeated
 			SHM3Downed: Three Guardians of the Abyss slain
 		}
+
+		Conditons.SHM9Downed: Mods.tsorcRevamp.Conditons.SHM9Downed
 	}
 }

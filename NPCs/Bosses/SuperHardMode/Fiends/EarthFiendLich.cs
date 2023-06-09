@@ -116,7 +116,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             {
                 if (Main.rand.NextBool(90))
                 {
-                    Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 9);
+                    Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 9);
                     projVector += Main.rand.NextVector2Circular(20, 20);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
@@ -124,7 +124,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 }
                 if (Main.rand.NextBool(20))
                 {
-                    Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 13);
+                    Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 13);
                     projVector += Main.rand.NextVector2Circular(10, 10);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.TheOracle>(), oracleDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);

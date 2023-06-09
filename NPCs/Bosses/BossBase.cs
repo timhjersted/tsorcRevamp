@@ -177,7 +177,7 @@ namespace tsorcRevamp.NPCs.Bosses
         /// </summary>
         public Vector2 TargetVector
         {
-            get => UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 1);
+            get => UsefulFunctions.Aim(NPC.Center, Target.Center, 1);
         }
 
         /// <summary>
@@ -209,6 +209,26 @@ namespace tsorcRevamp.NPCs.Bosses
         /// Stores how far it is into its transition between attacks
         /// </summary>
         public int phaseTransitionTimeRemaining;
+
+        public bool inPhaseTransition
+        {
+            get => phaseTransitionTimeRemaining > 0;
+        }
+
+        public bool inIntro
+        {
+            get => introTimer < introDuration;
+        }
+
+        public bool dying
+        {
+            get => deathAnimationProgress > 0;
+        }
+
+        public bool aiPaused
+        {
+            get => inIntro || inPhaseTransition || dying;
+        }
 
         /// <summary>
         /// Stores how far it is into its death animation

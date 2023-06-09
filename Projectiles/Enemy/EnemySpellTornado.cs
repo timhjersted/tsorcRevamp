@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             maxSpeed = 7;
             if (Main.player[(int)Projectile.ai[0]] != null || Main.player[(int)Projectile.ai[0]].active)
             {
-                Projectile.velocity += UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.player[(int)Projectile.ai[0]].Center, 0.3f);
+                Projectile.velocity += UsefulFunctions.Aim(Projectile.Center, Main.player[(int)Projectile.ai[0]].Center, 0.3f);
                 if (Projectile.velocity.X > maxSpeed)
                 {
                     Projectile.velocity.X = maxSpeed;

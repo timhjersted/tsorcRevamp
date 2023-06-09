@@ -123,9 +123,12 @@ namespace tsorcRevamp.Projectiles.VFX
 
         public override bool PreKill(int timeLeft)
         {
-            if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex].IsActive())
+            if (filterIndex != null)
             {
-                Filters.Scene[filterIndex].Deactivate();
+                if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex].IsActive())
+                {
+                    Filters.Scene[filterIndex].Deactivate();
+                }
             }
             return base.PreKill(timeLeft);
         }

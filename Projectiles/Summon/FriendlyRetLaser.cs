@@ -68,7 +68,7 @@ namespace tsorcRevamp.Projectiles.Summon
                 {
                     rotDirection = 1;
                 }
-                Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target.Center, 1);
+                Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, target.Center, 1);
             }
             base.AI();
         }

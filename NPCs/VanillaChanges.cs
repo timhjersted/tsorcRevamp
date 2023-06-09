@@ -5216,7 +5216,7 @@ namespace tsorcRevamp.NPCs
                     {
                         PrimeLaserCooldown -= 100; //150
                     }
-                    Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
+                    Vector2 projVel = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center, 1);
                     Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedLaser>(), 40, 0, Main.myPlayer, npc.target, npc.whoAmI);
                 }
             }
@@ -5236,7 +5236,7 @@ namespace tsorcRevamp.NPCs
 
                         if (destroyerChargeTimer > -180 && destroyerChargeTimer <= 740 && destroyerChargeTimer % 120 == 0 && laserToggle)
                         {
-                            Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(220, 220), 1);
+                            Vector2 projVel = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(220, 220), 1);
                             Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 80, 0, Main.myPlayer, 2000 + npc.target, npc.whoAmI);
                         }
                     }
@@ -5255,7 +5255,7 @@ namespace tsorcRevamp.NPCs
                     {
                         if (destroyerChargeTimer == 0)
                         {
-                            Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center + (Main.player[npc.target].velocity * 45), 1);
+                            Vector2 projVel = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center + (Main.player[npc.target].velocity * 45), 1);
 
                             int style = -1;
 
@@ -5284,7 +5284,7 @@ namespace tsorcRevamp.NPCs
 
                     if (Main.GameUpdateCount % 150 == 0 && (destroyerAttackIndex == 0 || destroyerAttackIndex == 2))
                     {
-                        Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
+                        Vector2 projVel = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center, 1);
                         if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.Pi / 6f && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.Pi / 6f)
                         {
                             Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, 1000 + npc.target, npc.whoAmI);
@@ -5326,7 +5326,7 @@ namespace tsorcRevamp.NPCs
                                     {
                                         destroyerTargetLerp += 0.001f;
                                     }
-                                    npc.velocity = Vector2.Lerp(npc.velocity, UsefulFunctions.GenerateTargetingVector(npc.Center, targetPoint, 15), destroyerTargetLerp);
+                                    npc.velocity = Vector2.Lerp(npc.velocity, UsefulFunctions.Aim(npc.Center, targetPoint, 15), destroyerTargetLerp);
                                 }
                             }
                             //Don't do anything until it's set up
@@ -5500,7 +5500,7 @@ namespace tsorcRevamp.NPCs
                                     NPC thisNPC = Main.npc[i];
                                     if(thisNPC.type == NPCID.TheDestroyerBody)
                                     {
-                                        sum += UsefulFunctions.GenerateTargetingVector(thisNPC.Center, Main.player[npc.target].Center, 5);
+                                        sum += UsefulFunctions.Aim(thisNPC.Center, Main.player[npc.target].Center, 5);
                                         count++;
                                     }
                                 }

@@ -871,7 +871,7 @@ namespace tsorcRevamp
                                 }
                             }
 
-                            Player.velocity += UsefulFunctions.GenerateTargetingVector(new Vector2(4484, 355) * 16, Player.Center, 20);
+                            Player.velocity += UsefulFunctions.Aim(new Vector2(4484, 355) * 16, Player.Center, 20);
                             if (TextCooldown <= 0)
                             {
                                 UsefulFunctions.BroadcastText("A strong forcefield expels you from the ruins!", Color.Purple);
@@ -1412,11 +1412,11 @@ namespace tsorcRevamp
                 {
                     NPC marilith = Main.npc[marilithIndex.Value];
 
-                    Player.velocity -= UsefulFunctions.GenerateTargetingVector(Player.Center, marilith.Center, 0.25f);
+                    Player.velocity -= UsefulFunctions.Aim(Player.Center, marilith.Center, 0.25f);
 
                     if (Player.HasBuff<MarilithHold>())
                     {
-                        Player.velocity = -UsefulFunctions.GenerateTargetingVector(Player.Center, marilith.Center, 4f);
+                        Player.velocity = -UsefulFunctions.Aim(Player.Center, marilith.Center, 4f);
                     }
 
                     /*

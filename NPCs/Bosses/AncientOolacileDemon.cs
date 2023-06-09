@@ -337,7 +337,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item103 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center); //flame thrower
                     }
 
-                    Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].OldPos(9), 9);
+                    Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].OldPos(9), 9);
                     breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
 
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y - 40f, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);

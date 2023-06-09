@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 if (Main.GameUpdateCount % 240 == 0 && (Main.player[NPC.target].DistanceSQ(NPC.Center) < 887100))
                 {
-                    Vector2 projVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 1);
+                    Vector2 projVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedLaser>(), 20, 0, Main.myPlayer, NPC.target, NPC.whoAmI);
                 }
 

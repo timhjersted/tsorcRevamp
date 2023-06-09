@@ -117,7 +117,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             {
                 if (NPC.ai[0] >= 5 && NPC.ai[2] < 3)
                 {
-                    Vector2 projectileVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 2);
+                    Vector2 projectileVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projectileVelocity.X, projectileVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
 
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
@@ -162,7 +162,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 }
                 NPC.position = Pt.position + Diff;
 
-                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Pt.Center, 12);
+                NPC.velocity = UsefulFunctions.Aim(NPC.Center, Pt.Center, 12);
             }
 
             //end of W1k's Death code            

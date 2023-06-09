@@ -647,11 +647,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 p.velocity += gravCounter;
                 if (distance < 1900)
                 {
-                    p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, NPC.Center, pullSpeed * strengthFactor).RotatedBy(MathHelper.ToRadians(25));
+                    p.velocity += UsefulFunctions.Aim(p.Center, NPC.Center, pullSpeed * strengthFactor).RotatedBy(MathHelper.ToRadians(25));
                 }
                 else
                 {
-                    p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, NPC.Center, pullSpeed * 10 * strengthFactor);
+                    p.velocity += UsefulFunctions.Aim(p.Center, NPC.Center, pullSpeed * 10 * strengthFactor);
                 }
 
                 //If they're within the dust ring in the center, then damage them rapidly. Calculate the damage such that it increases to counter player defense or damage reduction.
@@ -824,7 +824,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //If not close to the chosen point, accelerate toward it. Within 200 units is close enough.
                 if (Vector2.DistanceSquared(NPC.Center, targetPoint) > 200)
                 {
-                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, targetPoint, 30 - ((AttackModeCounter - 180) / 2));
+                    NPC.velocity = UsefulFunctions.Aim(NPC.Center, targetPoint, 30 - ((AttackModeCounter - 180) / 2));
                 }
                 else
                 {
@@ -865,7 +865,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.noGravity = true;
                     ChargingParticleEffect((int)AttackModeCounter - 240, 20);
 
-                    slamVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 20);
+                    slamVelocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 20);
 
                     //Do not change X velocity if it would cause dark cloud to change directions mid-slam
                     if ((slamVelocity.X > 0 && NPC.velocity.X >= 0) || (slamVelocity.X < 0 && NPC.velocity.X <= 0))
@@ -1106,7 +1106,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 distance = Vector2.Distance(p.Center, NPC.Center);
                 if (distance > confinedBlastsRadius)
                 {
-                    p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, NPC.Center, pullSpeed * 5 * (AttackModeCounter / 300));
+                    p.velocity += UsefulFunctions.Aim(p.Center, NPC.Center, pullSpeed * 5 * (AttackModeCounter / 300));
 
                     //If more than 5 seconds have passed, damage them when outside the range
                     if (AttackModeCounter > 300)
@@ -1382,7 +1382,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 nextWarpPoint = Target.Center + Main.rand.NextVector2CircularEdge(slashesWarpRadius, slashesWarpRadius);
                 DarkCloudParticleEffect(6);
-                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 17);
+                NPC.velocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 17);
             }
 
             for (int i = 0; i < 50; i++)
@@ -1665,9 +1665,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (AttackModeCounter % 300 == 299)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 14).RotatedBy(MathHelper.ToRadians(10)), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 16), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 14).RotatedBy(MathHelper.ToRadians(-10)), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 14).RotatedBy(MathHelper.ToRadians(10)), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 16), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 14).RotatedBy(MathHelper.ToRadians(-10)), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
             }
         }
 
@@ -1725,7 +1725,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 dustPos.Y -= 500;
 
                 Dust newDust = Dust.NewDustDirect(dustPos, 3000, 1500, DustID.ShadowbeamStaff, 0, 0, Scale: 2);
-                newDust.velocity = UsefulFunctions.GenerateTargetingVector(newDust.position, NPC.position, 40);
+                newDust.velocity = UsefulFunctions.Aim(newDust.position, NPC.position, 40);
             }
             if (phaseChangeCounter <= 180)
             {
@@ -1914,7 +1914,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     for (int i = 0; i < 2; i++)
                     {
                         Vector2 thisPos = NPC.Center + startPos + Main.rand.NextVector2Circular(50, 50);
-                        Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
+                        Vector2 thisVel = UsefulFunctions.Aim(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
                         Dust.NewDustPerfect(thisPos, DustID.FireworkFountain_Blue, thisVel).noGravity = true;
                     }
                     DarkCloudParticleEffect(-2, 1);
@@ -1933,11 +1933,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 antimatTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.Guns.AntimatRifle>()).Texture);
             }
-            float targetPoint = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 1).ToRotation();
+            float targetPoint = UsefulFunctions.Aim(NPC.Center, Target.Center, 1).ToRotation();
             if (!Main.gamePaused && (AttackModeCounter % 3 == 0))
             {
                 Vector2 thisPos = NPC.Center + new Vector2(0, 128).RotatedBy(targetPoint - MathHelper.PiOver2) + Main.rand.NextVector2Circular(32, 32);
-                Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
+                Vector2 thisVel = UsefulFunctions.Aim(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
                 Dust.NewDustPerfect(thisPos, DustID.FireworkFountain_Red, thisVel, 100, default, 0.5f).noGravity = true;
             }
 

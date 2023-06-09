@@ -214,7 +214,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (MoveTimer % 90 == 30)
                 {
                     NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 21);
+                    NPC.velocity = UsefulFunctions.Aim(NPC.Center, target.Center, 21);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>(), FireJetDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
@@ -240,7 +240,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (MoveTimer % 70 == 30 && MoveTimer > 71)
                 {
                     NPC.rotation = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
-                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15);
+                    NPC.velocity = UsefulFunctions.Aim(NPC.Center, target.Center, 15);
                     NPC.netUpdate = true;
                 }
             }
@@ -269,7 +269,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient) {
                         Vector2 offset = new Vector2(-50, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.CursedMalestrom>(), CursedMalestromDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.CursedMalestrom>(), CursedMalestromDamage, 0.5f, Main.myPlayer);
                     }
                 }
             }
@@ -285,7 +285,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         float angle = -MathHelper.Pi / 3;
                         for (int i = 0; i < 3; i++)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 4).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazCursedFireball>(), CursedFireballDamage, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.Aim(NPC.Center, target.Center, 4).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazCursedFireball>(), CursedFireballDamage, 0.5f, Main.myPlayer);
                             angle += MathHelper.Pi / 3;
                         }
                     }
@@ -383,7 +383,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.MaliciousGaze>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI, 1);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.MaliciousGaze>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI, 1);
                     }
                 }
 
@@ -417,7 +417,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             if (finalStandTimer % 80 == 59)
             {
-                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 25);
+                NPC.velocity = UsefulFunctions.Aim(NPC.Center, target.Center, 25);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>(), FireJetDamage, 0.5f, Main.myPlayer, NPC.whoAmI);

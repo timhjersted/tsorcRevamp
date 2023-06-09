@@ -160,7 +160,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                     {
                         Vector2 dir = Main.rand.NextVector2CircularEdge(250, 250);
                         Vector2 dustPos = NPC.Center + dir;
-                        Vector2 dustVel = UsefulFunctions.GenerateTargetingVector(dustPos, NPC.Center, 12);
+                        Vector2 dustVel = UsefulFunctions.Aim(dustPos, NPC.Center, 12);
                         Dust.NewDustPerfect(dustPos, DustID.Firework_Blue, dustVel, 200).noGravity = true;
                     }
                     projCooldown--;

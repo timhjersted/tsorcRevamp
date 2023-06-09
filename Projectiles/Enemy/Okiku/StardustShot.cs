@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Vector2 targetVector = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.player[(int)Projectile.ai[0]].Center, 5);
+                    Vector2 targetVector = UsefulFunctions.Aim(Projectile.Center, Main.player[(int)Projectile.ai[0]].Center, 5);
 
                     targetVector += Main.rand.NextVector2Circular(2, 2);
                     targetVector.Normalize();

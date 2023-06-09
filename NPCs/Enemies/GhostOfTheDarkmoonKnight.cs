@@ -123,7 +123,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (Main.rand.NextBool(400))
                 {
                     charging = true;
-                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 10);
+                    NPC.velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 10);
                     NPC.netUpdate = true;
                 }
                 if (charging == true)

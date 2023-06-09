@@ -94,7 +94,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (MoveTimer % chargeDelay == 0)
             {
                 SoundEngine.PlaySound(SoundID.Item20 with { Volume = 1 }, NPC.Center);
-                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 20);
+                NPC.velocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 20);
             }
 
             //45 frames after dashing, slow to a stop

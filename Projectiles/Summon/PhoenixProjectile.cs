@@ -304,7 +304,7 @@ namespace tsorcRevamp.Projectiles.Summon
 
 					if (Main.GameUpdateCount % (30 / (1 + ragestacks / 10)) == 0)
 					{
-						Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, targetCenter, speed * (1.3f + ((float)ragestacks / 80)));
+						Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, targetCenter, speed * (1.3f + ((float)ragestacks / 80)));
 					}
 					//Projectile.velocity = (Projectile.velocity * (inertia - 1) + direction) / inertia;
 				}

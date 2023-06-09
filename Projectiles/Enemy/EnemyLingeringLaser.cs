@@ -93,7 +93,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                         if (FiringTimeLeft > 30)
                         {
                             float lastLength = simulatedVelocity.LengthSquared();
-                            simulatedVelocity += UsefulFunctions.GenerateTargetingVector(target, targetPlayer.Center, 0.5f);
+                            simulatedVelocity += UsefulFunctions.Aim(target, targetPlayer.Center, 0.5f);
                             if (simulatedVelocity.HasNaNs())
                             {
                                 simulatedVelocity = Vector2.Zero;
@@ -109,7 +109,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                         target += simulatedVelocity;
 
                         //Update projectile aim to aim at target point
-                        Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target, 1);
+                        Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, target, 1);
                     }
                     else
                     {
@@ -144,7 +144,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                     {
                         Projectile.Kill();
                     }
-                    Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target, 1);
+                    Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, target, 1);
 
                     //Failsafe 2. If it is firing and the projectile's angle is too close to the "safe angle", don't fire. This stops lasers from sweeping across the safe area as the destroyer moves relative to it.
                     if ((UsefulFunctions.CompareAngles(Projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.Pi / 6f || UsefulFunctions.CompareAngles(-Projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.Pi / 6f))
@@ -172,7 +172,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                         initialTarget = targetPlayer.Center;
                     }
 
-                    target = UsefulFunctions.GenerateTargetingVector(Projectile.Center, initialTarget, 1);
+                    target = UsefulFunctions.Aim(Projectile.Center, initialTarget, 1);
                     target.Normalize();
                     target *= 300;
 
@@ -186,7 +186,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                     }
 
                     target += initialTarget;
-                    Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target, 1);
+                    Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, target, 1);
 
                     //Failsafe. If the boss charges *through* the circle, it causes the lasers to go haywire. This turns them off if that happens.
                     if (Projectile.Distance(target) < 400 || Projectile.Distance(targetPlayer.Center) < 400)

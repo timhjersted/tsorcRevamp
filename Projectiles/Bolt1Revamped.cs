@@ -115,7 +115,7 @@ namespace tsorcRevamp.Projectiles
                         if (distance < 142)
                         {
                             NPC newTarget = Main.npc[i];
-                            Vector2 direction = UsefulFunctions.GenerateTargetingVector(target.Center, newTarget.Center, 1);
+                            Vector2 direction = UsefulFunctions.Aim(target.Center, newTarget.Center, 1);
                             Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, direction, ModContent.ProjectileType<BoltChaining>(), (int)(Projectile.damage * 0.5f), 0.5f, Projectile.owner, Projectile.ai[0] + 1, distance);
 
                             //Each bolt can only spawn one other bolt per hit. We could make later upgrades able to spawn more

@@ -263,7 +263,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.IncineratingGaze>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.IncineratingGaze>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI);
                     }
                 }
             }
@@ -316,7 +316,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.RetPiercingLaser>(), PiercingGazeDamage, 0.5f, Main.myPlayer, target.whoAmI, NPC.whoAmI);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.RetPiercingLaser>(), PiercingGazeDamage, 0.5f, Main.myPlayer, target.whoAmI, NPC.whoAmI);
                     }
                     aimingDown = !aimingDown;
                 }
@@ -354,7 +354,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     baseRadius = 0.3f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.RetPiercingLaser>(), PiercingGazeDamage, 0.5f, Main.myPlayer, target.whoAmI + 1000, NPC.whoAmI);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.RetPiercingLaser>(), PiercingGazeDamage, 0.5f, Main.myPlayer, target.whoAmI + 1000, NPC.whoAmI);
                     }
                 }
             }
@@ -372,7 +372,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //Charge
                 if (MoveTimer % 90 == 15)
                 {
-                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15);
+                    NPC.velocity = UsefulFunctions.Aim(NPC.Center, target.Center, 15);
                     NPC.netUpdate = true;
                 }
 
@@ -445,7 +445,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     baseRadius = 0.3f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(100, 0).RotatedBy(NPC.velocity.ToRotation()), UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.RetPiercingLaser>(), PiercingGazeDamage, 0.5f, Main.myPlayer, target.whoAmI, NPC.whoAmI);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(100, 0).RotatedBy(NPC.velocity.ToRotation()), UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.RetPiercingLaser>(), PiercingGazeDamage, 0.5f, Main.myPlayer, target.whoAmI, NPC.whoAmI);
                     }
                     aimingDown = !aimingDown;
                 }
@@ -495,7 +495,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     baseRadius = 0.3f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(40, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 12) + target.velocity / 2f, ModContent.ProjectileType<Projectiles.Enemy.Triad.RetDeathLaser>(), DeathLaserDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(40, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.Aim(NPC.Center, target.Center, 12) + target.velocity / 2f, ModContent.ProjectileType<Projectiles.Enemy.Triad.RetDeathLaser>(), DeathLaserDamage, 0.5f, Main.myPlayer);
                     }
                 }
             }
@@ -557,7 +557,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.IncineratingGaze>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.IncineratingGaze>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI);
                     }
                 }
 

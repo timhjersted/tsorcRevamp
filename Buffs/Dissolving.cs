@@ -56,7 +56,7 @@ namespace tsorcRevamp.Buffs
 
                 float speedMod = Vector2.Distance(dust.position, npc.Center);
                 speedMod /= 12;
-                dust.velocity = UsefulFunctions.GenerateTargetingVector(dust.position, npc.Center, speedMod);
+                dust.velocity = UsefulFunctions.Aim(dust.position, npc.Center, speedMod);
 
                 return base.PreAI(npc);
             }

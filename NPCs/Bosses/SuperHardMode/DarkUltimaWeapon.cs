@@ -107,7 +107,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Launch toward the player
                 if (AttackModeCounter == 120)
                 {
-                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center + new Vector2(0, -62), Target.Center, 25);
+                    NPC.velocity = UsefulFunctions.Aim(NPC.Center + new Vector2(0, -62), Target.Center, 25);
                 }
 
                 //Rotate as it flies
@@ -122,7 +122,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     //If not close to the Dark Cloud, accelerate toward it until close enough to teleport into its hands.
                     if (Vector2.Distance(NPC.Center, HolderDarkCloud.Center) > 100)
                     {
-                        NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, HolderDarkCloud.Center, 25);
+                        NPC.velocity = UsefulFunctions.Aim(NPC.Center, HolderDarkCloud.Center, 25);
                     }
                     else
                     {
@@ -146,47 +146,47 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Swing as dark cloud fires off a projectile
                 if (AttackModeCounter >= 300 && AttackModeCounter < 530)
                 {
-                    NPC.rotation = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 1).ToRotation() + MathHelper.ToRadians(45);
+                    NPC.rotation = UsefulFunctions.Aim(NPC.Center, Target.Center, 1).ToRotation() + MathHelper.ToRadians(45);
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     if (AttackModeCounter == 302)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.Aim(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
                     if (AttackModeCounter == 305)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.Aim(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
                     if (AttackModeCounter == 308)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(-45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.Aim(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(-45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
 
                     if (AttackModeCounter == 422)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(90)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.Aim(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(90)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
                     if (AttackModeCounter == 425)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.Aim(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
                     if (AttackModeCounter == 428)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.Aim(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
 
                     if (AttackModeCounter == 522)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.Aim(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
                     if (AttackModeCounter == 525)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.Aim(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
                     if (AttackModeCounter == 528)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(-45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -62), UsefulFunctions.Aim(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(-45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
                 }
 

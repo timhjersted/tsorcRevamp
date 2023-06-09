@@ -79,38 +79,39 @@ namespace tsorcRevamp.NPCs.Friendly
             }
         }
 
-        public override void ModifyActiveShop(string shopName, Item[] items)
-        {/*
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.MysteriousIdol>());
+        public override void ModifyActiveShop(string shopName, Item[] shop)
+        {
+            int nextSlot = 0;
+            shop[nextSlot].SetDefaults(ModContent.ItemType<Items.MysteriousIdol>());
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.MeteorShot);
+            shop[nextSlot].SetDefaults(ItemID.MeteorShot);
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.WoodenArrow);
+            shop[nextSlot].SetDefaults(ItemID.WoodenArrow);
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.Torch);
+            shop[nextSlot].SetDefaults(ItemID.Torch);
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.ManaPotion);
+            shop[nextSlot].SetDefaults(ItemID.ManaPotion);
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.HealingPotion);
+            shop[nextSlot].SetDefaults(ItemID.HealingPotion);
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.PurificationPowder);
+            shop[nextSlot].SetDefaults(ItemID.PurificationPowder);
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.NightOwlPotion);
+            shop[nextSlot].SetDefaults(ItemID.NightOwlPotion);
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.BottledWater);
+            shop[nextSlot].SetDefaults(ItemID.BottledWater);
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.GlowingMushroom);
+            shop[nextSlot].SetDefaults(ItemID.GlowingMushroom);
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.FamiliarWig);
+            shop[nextSlot].SetDefaults(ItemID.FamiliarWig);
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.PoisonedKnife);
+            shop[nextSlot].SetDefaults(ItemID.PoisonedKnife);
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.Grenade);
+            shop[nextSlot].SetDefaults(ItemID.Grenade);
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.CosmicWatch>());
+            shop[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.CosmicWatch>());
             nextSlot++;
-            shop.item[nextSlot].SetDefaults(ItemID.TinkerersWorkshop);
-            nextSlot++;*/
+            shop[nextSlot].SetDefaults(ItemID.TinkerersWorkshop);
+            nextSlot++;
         }
 
         public override void HitEffect(NPC.HitInfo hit)

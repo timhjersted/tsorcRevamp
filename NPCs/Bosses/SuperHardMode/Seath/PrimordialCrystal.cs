@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
             else
             {
-                Vector2 dustVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.npc[seathID.Value].Center, 24);
+                Vector2 dustVel = UsefulFunctions.Aim(NPC.Center, Main.npc[seathID.Value].Center, 24);
                 dustVel = dustVel.RotatedByRandom(MathHelper.ToRadians(12));
                 Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 67, dustVel.X, dustVel.Y, 250, Color.White, 2f).noGravity = true;
                 Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 68, dustVel.X, dustVel.Y, 250, Color.White, 2f).noGravity = true;

@@ -2683,7 +2683,7 @@ namespace tsorcRevamp.NPCs
                     }
 
                     //Calculate a vector aiming at the player. This is purely for the npc's sprite visuals, so it can use the much simpler aiming code.
-                    Vector2 aimVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, projectileVelocity);
+                    Vector2 aimVector = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center, projectileVelocity);
 
                     if (Math.Abs(aimVector.Y) > Math.Abs(aimVector.X) * 2f) // target steeply above/below NPC
                     {

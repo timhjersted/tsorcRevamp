@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (dashCounter > 150 && Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
             {
-                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 15);
+                NPC.velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 15);
                 dashCounter = 0;
             }
         }

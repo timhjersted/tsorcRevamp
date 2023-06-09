@@ -118,7 +118,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             //Apply the shader, caching it as well
             if (AuraEffect == null)
             {
-                if (Projectile.ai[0] == 1)
+                if (Projectile.ai[0] <= 1)
                 {
                     AuraEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/RetAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
                 }
@@ -129,6 +129,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 if (Projectile.ai[0] == 2)
                 {
                     AuraEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                }
+
+                if(AuraEffect == null)
+                {
+                    Projectile.Kill();
+                    return;
                 }
             }
 

@@ -106,7 +106,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (AttackModeCounter == AttackModeLimit)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 7), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage / 2, 0.5f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage / 2, 0.5f, Main.myPlayer);
             }
         }
 
@@ -153,7 +153,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<DarkUltimaWeapon>(), ai0: NPC.whoAmI, ai2: DarkCloud.DarkCloudAttackID.TeleportingSlashes);
                 }
-                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 17);
+                NPC.velocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 17);
             }
 
             if (AttackModeCounter == 240)
@@ -263,11 +263,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 antimatTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.Guns.AntimatRifle>()).Texture);
             }
-            float targetPoint = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 1).ToRotation();
+            float targetPoint = UsefulFunctions.Aim(NPC.Center, Target.Center, 1).ToRotation();
             if (!Main.gamePaused && (AttackModeCounter % 3 == 0))
             {
                 Vector2 thisPos = NPC.Center + new Vector2(0, 128).RotatedBy(targetPoint - MathHelper.PiOver2) + Main.rand.NextVector2Circular(32, 32);
-                Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
+                Vector2 thisVel = UsefulFunctions.Aim(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
                 Dust.NewDustPerfect(thisPos, DustID.FireworkFountain_Red, thisVel, 100, default, 0.5f).noGravity = true;
             }
 

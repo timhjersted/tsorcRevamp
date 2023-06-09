@@ -322,7 +322,20 @@ namespace tsorcRevamp
         {
             return (float)Math.Sin(source * MathHelper.PiOver2);
         }
-        
+
+        ///<summary> 
+        ///Loads a texture, and ensures it stays loaded
+        ///</summary>
+        ///<param name="texture">The texture object</param>
+        ///<param name="path">The path</param>
+        public static void EnsureLoaded(Texture2D texture, string path)
+        {
+            if(texture == null || texture.IsDisposed)
+            {
+                texture = (Texture2D)ModContent.Request<Texture2D>(path);
+            }
+        }
+
         ///<summary> 
         ///Returns the closest living player to a point
         ///</summary>         
@@ -397,7 +410,7 @@ namespace tsorcRevamp
         ///<param name="source">The start point of the vector</param>
         ///<param name="target">The end point it is aiming towards</param>
         ///<param name="speed">The length of the resulting vector</param>
-        public static Vector2 GenerateTargetingVector(Vector2 source, Vector2 target, float speed)
+        public static Vector2 Aim(Vector2 source, Vector2 target, float speed)
         {
             Vector2 distance = target - source;
             distance.Normalize();
@@ -536,7 +549,7 @@ namespace tsorcRevamp
             {
                 if (fallback)
                 {
-                    return GenerateTargetingVector(source, target, speed);
+                    return Aim(source, target, speed);
                 }
                 else
                 {
@@ -805,7 +818,7 @@ namespace tsorcRevamp
             Vector2 impactPos = target + vTarget * eta;
 
             //Generate a vector with length 'acceleration' pointing at that future location
-            Vector2 fixedAcceleration = GenerateTargetingVector(actor.Center, impactPos, acceleration);
+            Vector2 fixedAcceleration = Aim(actor.Center, impactPos, acceleration);
             
             //If distance or acceleration is 0 it will have nans, this deals with that
             if (fixedAcceleration.HasNaNs())
@@ -877,6 +890,23 @@ namespace tsorcRevamp
             }
 
             return;
+        }
+
+        ///<summary> 
+        ///Checks if at least one of a given projectile exists
+        ///</summary>
+        ///<param name="type">The type of projectile to find</param>
+        public static bool AnyProjectile(int type)
+        {
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].type == type && Main.projectile[i].active)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         ///<summary> 

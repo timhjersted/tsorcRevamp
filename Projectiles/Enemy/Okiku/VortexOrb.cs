@@ -90,7 +90,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                     Player closestPlayer = UsefulFunctions.GetClosestPlayer(Projectile.Center);
                     if (closestPlayer != null)
                     {
-                        Vector2 projVel = UsefulFunctions.GenerateTargetingVector(Projectile.Center, closestPlayer.Center, 1);
+                        Vector2 projVel = UsefulFunctions.Aim(Projectile.Center, closestPlayer.Center, 1);
                         if (Projectile.ai[1] == 3)
                         {
                             if (attraidiesPoint == Vector2.Zero)
@@ -103,7 +103,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                                     }
                                 }
                             }
-                            projVel = UsefulFunctions.GenerateTargetingVector(Projectile.Center, attraidiesPoint, 1);
+                            projVel = UsefulFunctions.Aim(Projectile.Center, attraidiesPoint, 1);
                         }
                         Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, 1);
                         chargeTime = 0;

@@ -40,12 +40,22 @@ namespace tsorcRevamp.Items.Debug
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
-            Main.NewText(player.position / 16);
-            //NPC.NewNPC(Item.GetSource_FromThis(), (int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, ModContent.NPCType<NPCs.Special.AbyssPortal>(), ai0: 1);
-            Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), Main.MouseWorld, Main.rand.NextVector2CircularEdge(1,1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 10, 0, player.whoAmI, 700, 60);
+            Main.NewText(player.Center / 16);
+            for(int i = 0; i < 50; i++)
+            {
+                Dust.NewDustPerfect(player.Center + new Vector2(25 - i, 0), DustID.ShadowbeamStaff, Vector2.Zero);
+                Dust.NewDustPerfect(player.Center + new Vector2(0, 25 - i), DustID.ShadowbeamStaff, Vector2.Zero);
+            }
+
+            
+
+            //NPCs.Bosses.PrimeV2.PrimeV2.ActuatePrimeArena();
+
+            NPC.NewNPC(Item.GetSource_FromThis(), (int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, ModContent.NPCType<NPCs.Bosses.PrimeV2.PrimeV2>());
+            //Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), Main.MouseWorld, Main.rand.NextVector2CircularEdge(1,1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 10, 0, player.whoAmI, 700, 60);
 
             //Uncomment this to make the debug tome max out your perma potions
-            return false;
+            //return false;
 
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             foreach(KeyValuePair<Terraria.ModLoader.Config.ItemDefinition, int> k in modPlayer.consumedPotions)
@@ -59,7 +69,6 @@ namespace tsorcRevamp.Items.Debug
         //For multiplayer testing, because I only have enough hands for one keyboard. Makes the player holding it float vaguely near the next other player.
         public override void UpdateInventory(Player player)
         {
-
             if (player.name == "MPTestDummy")
             {
                 if (player.whoAmI == 0)

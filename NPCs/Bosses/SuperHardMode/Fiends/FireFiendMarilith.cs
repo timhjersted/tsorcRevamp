@@ -263,13 +263,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                     {
                         Vector2 lightningCenter = new Vector2(Main.rand.Next(3107, 3350), 1682) * 16;
                         float distance = Vector2.Distance(lightningCenter, Target.Center);
-                        Vector2 lightningVector = UsefulFunctions.GenerateTargetingVector(lightningCenter, Target.Center, distance / 30);
+                        Vector2 lightningVector = UsefulFunctions.Aim(lightningCenter, Target.Center, distance / 30);
                         lightningVector += Target.velocity;
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), lightningCenter, lightningVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
                     }
 
                     Vector2 fireballCenter = new Vector2(Main.rand.Next(3107, 3350), 1687) * 16;
-                    Vector2 fireballVector = UsefulFunctions.GenerateTargetingVector(fireballCenter, Target.Center, 10);
+                    Vector2 fireballVector = UsefulFunctions.Aim(fireballCenter, Target.Center, 10);
                     fireballVector += Target.velocity * Main.rand.NextFloat(0, 1);
                     Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), fireballCenter, fireballVector, ModContent.ProjectileType<MarilithFireball>(), fireBallDamage, 0, Main.myPlayer, 0, Target.whoAmI);
 
@@ -300,7 +300,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             if(MoveTimer % 60 == 0)
             {
                 float distance = NPC.Distance(Target.Center);
-                targetVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, distance / 30);
+                targetVector = UsefulFunctions.Aim(NPC.Center, Target.Center, distance / 30);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
                 
                 
@@ -347,7 +347,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 {
                     MoveCounter = 15;
                 }
-                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, new Vector2(3228, 1731) * 16, MoveCounter / 2);
+                NPC.velocity = UsefulFunctions.Aim(NPC.Center, new Vector2(3228, 1731) * 16, MoveCounter / 2);
             }
             else
             {
@@ -404,7 +404,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
                     if (MoveTimer % 120 == 0)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 1), ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 1), ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
                     }
                 }
 

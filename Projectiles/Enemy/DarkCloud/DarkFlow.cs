@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
                 initialized = true;
             }
             //Could these all be one line? Sure. Would make it even more obnoxious to figure out what it does, though
-            Vector2 target = UsefulFunctions.GenerateTargetingVector(Projectile.Center, darkCloud.Center, 8);
+            Vector2 target = UsefulFunctions.Aim(Projectile.Center, darkCloud.Center, 8);
             Projectile.velocity = target;
             Projectile.velocity += (2.2f * ((initialDistance - distance) / initialDistance) * target.RotatedBy(MathHelper.ToRadians(90)));
 

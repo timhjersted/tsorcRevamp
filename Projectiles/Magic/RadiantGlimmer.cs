@@ -62,13 +62,13 @@ namespace tsorcRevamp.Projectiles.Magic
             }
 
             //Home in on the mouse
-            Vector2 nextVel = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.MouseWorld, 1f);
+            Vector2 nextVel = UsefulFunctions.Aim(Projectile.Center, Main.MouseWorld, 1f);
             float dist = Vector2.Distance(Projectile.Center, targetPoint);
             if ((Projectile.velocity + nextVel).Length() < 20 && dist > 16)
             {
                 
                 Projectile.velocity += nextVel;
-                Projectile.velocity = Vector2.Lerp(Projectile.velocity, UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.MouseWorld, Math.Min(dist / 20, 20)), 0.2f);
+                Projectile.velocity = Vector2.Lerp(Projectile.velocity, UsefulFunctions.Aim(Projectile.Center, Main.MouseWorld, Math.Min(dist / 20, 20)), 0.2f);
             }
 
             Player player = Main.player[Projectile.owner];
@@ -128,7 +128,7 @@ namespace tsorcRevamp.Projectiles.Magic
                         //Main.dust[dustArray[dustIndex]].active = false;
                         dustArray[dustIndex] = dust.dustIndex;
                         Main.dust[dustArray[dustIndex]] = dust;
-                        dustRotationArray[dustIndex] = UsefulFunctions.GenerateTargetingVector(Projectile.Center, dust.position, 1).ToRotation();
+                        dustRotationArray[dustIndex] = UsefulFunctions.Aim(Projectile.Center, dust.position, 1).ToRotation();
                         dustDistanceArray[dustIndex] = radius;
                         dustActiveArray[dustIndex] = true;
                         dustIndex++;
@@ -151,7 +151,7 @@ namespace tsorcRevamp.Projectiles.Magic
                 if (Main.npc[i].active && !Main.npc[i].friendly && Main.npc[i].Center.Distance(Projectile.Center) < radius)
                 {
                     Vector2 dustOffset = Main.rand.NextVector2Circular(radius, radius);
-                    Dust.NewDustPerfect(Projectile.Center + dustOffset, DustID.PurificationPowder, UsefulFunctions.GenerateTargetingVector(Projectile.Center + dustOffset, Main.npc[i].Center, Main.rand.NextFloat(0.01f, 4f))); ;
+                    Dust.NewDustPerfect(Projectile.Center + dustOffset, DustID.PurificationPowder, UsefulFunctions.Aim(Projectile.Center + dustOffset, Main.npc[i].Center, Main.rand.NextFloat(0.01f, 4f))); ;
                 }
             }
             

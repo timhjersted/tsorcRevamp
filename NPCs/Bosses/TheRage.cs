@@ -243,7 +243,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 12);
+                    Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 12);
                     breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f); if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireTrailsDamage, 0f, Main.myPlayer);

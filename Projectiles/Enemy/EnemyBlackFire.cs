@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 {
                     if (Vector2.Distance(Projectile.Center, Main.player[i].Center) < 300)
                     {
-                        Vector2 vectorDiff = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.player[i].Center, 1);
+                        Vector2 vectorDiff = UsefulFunctions.Aim(Projectile.Center, Main.player[i].Center, 1);
                         double angleDiff = UsefulFunctions.CompareAngles(Projectile.velocity, vectorDiff);
 
                         if (angleDiff > MathHelper.Pi / 2)

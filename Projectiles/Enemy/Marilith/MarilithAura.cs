@@ -56,7 +56,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
                 if (marl.MoveIndex == 2)
                 {
-                    Vector2 playerVector = UsefulFunctions.GenerateTargetingVector(marl.NPC.Center, Main.LocalPlayer.Center, 2);
+                    Vector2 playerVector = UsefulFunctions.Aim(marl.NPC.Center, Main.LocalPlayer.Center, 2);
                     if (marl.MoveTimer < 120)
                     {
                         targetVector = Vector2.Lerp(targetVector, playerVector, marl.MoveTimer / 120f);

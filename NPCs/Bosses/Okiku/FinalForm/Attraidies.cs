@@ -374,7 +374,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             {
                 SoundEngine.PlaySound(SoundID.Item20 with { Volume = 1 }, NPC.Center);
                 StartAura(0.15f);
-                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 20);
+                NPC.velocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 20);
                 if(Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<PoisonTrail>(), PoisonTrailDamage, 1, Main.myPlayer, 1, NPC.whoAmI);
@@ -392,16 +392,16 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 {
                     if(Phase >= 2 && AttackTimer % (chargeDelay * 2) == 45)
                     {
-                        for(int i = 0; i < 4; i++)
+                        for(int i = 0; i < 8; i++)
                         {
-                            Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / 4f);
+                            Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / 8f);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<StardustShot>(), StardustLaserDamage, 1, Main.myPlayer, NPC.target, 120);
 
                         }
                     }
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0; i < 20; i++)
                     {
-                        Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / 10f);
+                        Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / 20f);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<EnemyAttraidiesBlackFire>(), BlackFireDamage, -1, Main.myPlayer, -1);
                     }
                 }
@@ -657,7 +657,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 {
                     if (Main.player[i] != null && Main.player[i].active && Main.player[i].Center.Distance(NPC.Center) > 1000)
                     {
-                        Main.player[i].velocity = UsefulFunctions.GenerateTargetingVector(Main.player[i].Center, NPC.Center, 10);
+                        Main.player[i].velocity = UsefulFunctions.Aim(Main.player[i].Center, NPC.Center, 10);
                         Main.player[i].AddBuff(BuffID.Electrified, 100);
                     }
                 }
@@ -776,7 +776,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 {
                     if (Main.player[i] != null && Main.player[i].active && Main.player[i].Center.Distance(NPC.Center) > 1000)
                     {
-                        Main.player[i].velocity = UsefulFunctions.GenerateTargetingVector(Main.player[i].Center, NPC.Center, 10);
+                        Main.player[i].velocity = UsefulFunctions.Aim(Main.player[i].Center, NPC.Center, 10);
                         Main.player[i].AddBuff(BuffID.Electrified, 100);
                     }
                 }
@@ -1245,7 +1245,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             if(deathTimer == 150)
             {
                 SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/EvilLaugh") with { Volume = 2, PlayOnlyIfFocused = false, MaxInstances = 0 });
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
             }
 
             //Spawn distortion lightning effects

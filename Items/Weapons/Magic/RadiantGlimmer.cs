@@ -69,7 +69,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Magic.RadiantGlimmer>()] == 0)
             {
                 dustArray[dustIndex] = Dust.NewDustPerfect(UsefulFunctions.GetPlayerHandOffset(player) + Main.rand.NextVector2CircularEdge(6, 6), DustID.PurificationPowder, Vector2.Zero, 0, default, 0.75f).dustIndex;
-                dustRotationArray[dustIndex] = UsefulFunctions.GenerateTargetingVector(player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, 0), Main.dust[dustArray[dustIndex]].position, 1).ToRotation();
+                dustRotationArray[dustIndex] = UsefulFunctions.Aim(player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, 0), Main.dust[dustArray[dustIndex]].position, 1).ToRotation();
                 dustActiveArray[dustIndex] = true;
                 dustIndex++;
                 if (dustIndex >= 100)

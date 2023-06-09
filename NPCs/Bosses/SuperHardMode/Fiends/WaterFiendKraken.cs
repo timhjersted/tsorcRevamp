@@ -129,11 +129,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             if (ChargeTimer >= 500)
             {
                 int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, 29, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 5);
-                Main.dust[dust].velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.dust[dust].position, 5);
+                Main.dust[dust].velocity = UsefulFunctions.Aim(NPC.Center, Main.dust[dust].position, 5);
             }
             if (ChargeTimer == 600)
             {
-                chargeVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 19);
+                chargeVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 19);
                 charging = true;
             }
             if (charging)
@@ -144,7 +144,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 //Check if it's passed the player by at least 500 units while charging, and if so stop
                 if (Vector2.Distance(NPC.Center, Target.Center) > 500)
                 {
-                    Vector2 vectorDiff = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 1);
+                    Vector2 vectorDiff = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1);
                     double angleDiff = UsefulFunctions.CompareAngles(NPC.velocity, vectorDiff);
 
                     if (angleDiff > MathHelper.Pi / 2)
@@ -193,21 +193,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                     }
                     if (projectileType < 6)
                     {
-                        Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 10);
+                        Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 10);
                         projVector = projVector.RotatedBy(offset);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedirectingShark>(), cursedFlamesDamage, 0f, Main.myPlayer, 0, NPC.target);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     }
                     if (projectileType >= 6 && projectileType != 9)
                     {
-                        Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 5);
+                        Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 5);
                         projVector = projVector.RotatedBy(offset);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, NPC.target, 1f);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     }
                     if (projectileType == 9)
                     {
-                        Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 12);
+                        Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 12);
                         projVector = projVector.RotatedBy(offset);
                         projVector += (Main.player[NPC.target].velocity / 2);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
@@ -287,20 +287,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
                 if (projType < 5)
                 {
-                    Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 10);
+                    Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 10);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedirectingShark>(), cursedFlamesDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                 }
                 if (projType >= 5 && projType < 8)
                 {
 
-                    Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 5);
+                    Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 5);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, NPC.target, 1f);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                 }
                 if (projType >= 8)
                 {
-                    Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 15);
+                    Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 15);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                 }
@@ -386,7 +386,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             }
             MoveCounter++;
             int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, 29, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 5);
-            Main.dust[dust].velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.dust[dust].position, 5);
+            Main.dust[dust].velocity = UsefulFunctions.Aim(NPC.Center, Main.dust[dust].position, 5);
             if (MoveCounter > 60)
             {
                 if (NPC.Center.Y < ArenaCenter.Y)
@@ -449,7 +449,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             if (MoveCounter % cursedFlameCooldown == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 projCenter = Main.rand.NextVector2CircularEdge(cursedRadius, cursedRadius) + NPC.Center;
-                Vector2 projVector = UsefulFunctions.GenerateTargetingVector(projCenter, Main.player[NPC.target].Center, 10);
+                Vector2 projVector = UsefulFunctions.Aim(projCenter, Main.player[NPC.target].Center, 10);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), projCenter.X, projCenter.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedirectingShark>(), cursedFlamesDamage, 0f, Main.myPlayer, 1, NPC.target);
             }
 

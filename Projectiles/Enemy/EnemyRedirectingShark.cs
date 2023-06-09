@@ -68,7 +68,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 timer--;
                 Projectile.velocity = Vector2.Zero;
-                Vector2 targetingVector = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.player[(int)Projectile.ai[1]].Center, 1);
+                Vector2 targetingVector = UsefulFunctions.Aim(Projectile.Center, Main.player[(int)Projectile.ai[1]].Center, 1);
                 Projectile.rotation = targetingVector.ToRotation();
                 if (timer == 0)
                 {

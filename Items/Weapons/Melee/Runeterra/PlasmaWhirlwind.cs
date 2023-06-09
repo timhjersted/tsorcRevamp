@@ -70,7 +70,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     if (DashingTimer > 0)
                     {
                         SoundEngine.PlaySound(SoundID.Item104, player.Center);
-                        player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, other.Center, 15f);
+                        player.velocity = UsefulFunctions.Aim(player.Center, other.Center, 15f);
                         player.AddBuff(ModContent.BuffType<Invincible>(), 2 * 60);
                         player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), 5 * 60);
                         player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>(), 20 * 60);

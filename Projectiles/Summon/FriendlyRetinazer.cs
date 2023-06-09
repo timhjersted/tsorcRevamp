@@ -120,7 +120,7 @@ namespace tsorcRevamp.Projectiles.Summon
         {
 			if (target != null && target.active && target.Distance(Projectile.Center) < 1000)
 			{
-				Vector2 projVel = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target.Center, 1);
+				Vector2 projVel = UsefulFunctions.Aim(Projectile.Center, target.Center, 1);
 				Projectile.rotation = projVel.ToRotation();
 				if (Main.GameUpdateCount % 240 == 0) {
 					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, projVel, ModContent.ProjectileType<Projectiles.Summon.FriendlyRetLaser>(), Projectile.damage * 4, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);
@@ -283,7 +283,7 @@ namespace tsorcRevamp.Projectiles.Summon
 				if (distance > 35)
 				{
 					accelerationMagnitude = 0.7f + flyingTime / 60;
-					acceleration = UsefulFunctions.GenerateTargetingVector(Projectile.Center, targetCenter, accelerationMagnitude);
+					acceleration = UsefulFunctions.Aim(Projectile.Center, targetCenter, accelerationMagnitude);
 					if(distance < 100)
                     {
 						acceleration *= 5;
@@ -301,7 +301,7 @@ namespace tsorcRevamp.Projectiles.Summon
                 }
                 else
 				{
-					Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, targetCenter, 1).RotatedBy(0);
+					Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, targetCenter, 1).RotatedBy(0);
 					Projectile.Center = targetCenter;
                 }
 			}

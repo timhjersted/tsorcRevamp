@@ -328,7 +328,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     baseRadius = .4f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 1);
                     }
                 }
             }
@@ -340,7 +340,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     baseRadius = .3f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 0);
                     }
                 }
             }
@@ -377,7 +377,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
                     if (MoveTimer % 150 == 30 && MoveTimer > 76)
                     {
-                        NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 15);
+                        NPC.velocity = UsefulFunctions.Aim(NPC.Center, target.Center, 15);
                         NPC.netUpdate = true;
                     }
                 }
@@ -477,7 +477,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.BlindingGaze>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI, 2);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.BlindingGaze>(), 0, 0.5f, Main.myPlayer, NPC.whoAmI, 2);
                     }
                 }
 
@@ -549,7 +549,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if(Vector2.Distance(NPC.Center, Main.player[i].Center) > 1350)
                     {
-                        Main.player[i].velocity = UsefulFunctions.GenerateTargetingVector(Main.player[i].Center, NPC.Center, 6);
+                        Main.player[i].velocity = UsefulFunctions.Aim(Main.player[i].Center, NPC.Center, 6);
                     }
                 }
             }
@@ -594,7 +594,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.GenerateTargetingVector(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 10);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(60, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 10);
                     }
                 }
                 if (finalStandTimer % 20 == 0)

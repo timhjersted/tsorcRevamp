@@ -238,7 +238,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (DarkBeadShotTimer >= 82 && DarkBeadShotCounter < 2)
                 {
                     poisonTimer = 1f;
-                    Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 7f);
+                    Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 7f);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.ArtoriasDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item80 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center); //acid flame
 

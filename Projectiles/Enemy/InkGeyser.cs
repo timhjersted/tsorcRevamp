@@ -38,7 +38,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
                 if (Main.GameUpdateCount % 5 == 0)
                 {
-                    Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, targetPos, 12);
+                    Vector2 projVelocity = UsefulFunctions.Aim(Projectile.Center, targetPos, 12);
                     projVelocity = projVelocity.RotatedBy(Main.rand.NextFloat(-0.1f, 0.1f));
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, projVelocity, ModContent.ProjectileType<Projectiles.Enemy.InkJet>(), Projectile.damage, 0, Projectile.owner);
                 }

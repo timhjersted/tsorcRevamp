@@ -186,7 +186,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.velocity.X = 0f;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 9);
+                    Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 9);
                     breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreathCollides>(), cursedBreathDamage, 0f, Main.myPlayer);
                     NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack

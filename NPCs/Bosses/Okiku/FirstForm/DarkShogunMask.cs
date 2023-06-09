@@ -161,7 +161,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                             }
                             if (distance > 500)
                             {
-                                Main.player[i].velocity = UsefulFunctions.GenerateTargetingVector(Main.player[i].Center, NPC.Center, 5);
+                                Main.player[i].velocity = UsefulFunctions.Aim(Main.player[i].Center, NPC.Center, 5);
                             }
                         }
                     }
@@ -189,7 +189,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                     {
                         speed = 2f;
                     }
-                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, speed);                   
+                    NPC.velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, speed);                   
                 }
 
                 if (NPC.life <= 1000)

@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 if (playerStamina.staminaResourceCurrent > 30)
                 {
                     playerStamina.staminaResourceCurrent -= 30;
-                    player.velocity = UsefulFunctions.GenerateTargetingVector(player.Center, Main.MouseWorld, 30);
+                    player.velocity = UsefulFunctions.Aim(player.Center, Main.MouseWorld, 30);
                     player.immuneTime = 30;
                     dashTimer = 20;
                     if (Main.netMode != NetmodeID.SinglePlayer)

@@ -240,7 +240,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         for (int i = 0; i < 10; i++)
                         {
                             Vector2 position = NPC.Center + new Vector2(0, 80).RotatedBy(i * MathHelper.Pi / 5);
-                            Vector2 velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 8);
+                            Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 8);
                             int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)position.X, (int)position.Y, ModContent.NPCType<NPCs.Enemies.GaibonFireball>(), ai0: burningSphereDamage, ai1: velocity.X, ai2: velocity.Y, Target: NPC.target);
                             Main.npc[spawned].damage = burningSphereDamage;
                             Main.npc[spawned].velocity = new Vector2(0, 8);
@@ -271,7 +271,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (Timer > chargeTime)
                     {
-                        dustVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 0.75f);
+                        dustVel = UsefulFunctions.Aim(NPC.Center, Target.Center, 0.75f);
                     }
 
                     dustVel.Normalize();
@@ -465,7 +465,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (targetPoint != Vector2.Zero)
             {
                 accelerationMagnitude = 0.7f + flyingTime / 60;
-                acceleration = UsefulFunctions.GenerateTargetingVector(NPC.Center, targetPoint, accelerationMagnitude);
+                acceleration = UsefulFunctions.Aim(NPC.Center, targetPoint, accelerationMagnitude);
                 if (!acceleration.HasNaNs())
                 {
                     NPC.velocity += acceleration;

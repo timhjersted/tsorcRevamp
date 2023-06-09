@@ -138,7 +138,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     Vector2 dir = Main.rand.NextVector2CircularEdge(ARENA_WIDTH, ARENA_HEIGHT);
                     Vector2 dustPos = new Vector2(ArenaCenter.X, ArenaCenter.Y + 336) + dir;
-                    Vector2 dustVel = GenerateTargetingVector(ArenaCenter, dustPos, 16);
+                    Vector2 dustVel = Aim(ArenaCenter, dustPos, 16);
                     Dust.NewDustPerfect(dustPos, 235, dustVel, 200).noGravity = true;
                 }
             }

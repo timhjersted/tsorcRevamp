@@ -164,7 +164,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     }
 
                     //Generate the velocity vector
-                    Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(startPos, Main.player[NPC.target].Center, speed);
+                    Vector2 projVelocity = UsefulFunctions.Aim(startPos, Main.player[NPC.target].Center, speed);
 
                     //Rotate it by the initial rotation
                     projVelocity = projVelocity.RotatedBy(startRotation);
@@ -206,7 +206,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                         float projectileSpeed = 4f;
                         Vector2 startPos = NPC.Center;
                         startPos.Y -= 220;
-                        Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(startPos, Main.player[NPC.target].Center, projectileSpeed);
+                        Vector2 projVelocity = UsefulFunctions.Aim(startPos, Main.player[NPC.target].Center, projectileSpeed);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), startPos.X, startPos.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>(), lightningDamage, 0f, Main.myPlayer);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
@@ -300,7 +300,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 }
             }
 
-            NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 13);
+            NPC.velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 13);
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
             TeleportTimer = 0;

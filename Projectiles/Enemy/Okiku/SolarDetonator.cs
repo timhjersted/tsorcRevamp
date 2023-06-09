@@ -132,9 +132,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 700, 60);
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 16; i++)
                 {
-                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(12, 0).RotatedBy( (MathHelper.PiOver2 / 8f) + i * MathHelper.TwoPi / 8f), ModContent.ProjectileType<SolarBlast>(), Projectile.damage, .5f, Main.myPlayer);
+                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(12, 0).RotatedBy( (MathHelper.PiOver2 / 16f) + i * MathHelper.TwoPi / 16f), ModContent.ProjectileType<SolarBlast>(), Projectile.damage, .5f, Main.myPlayer);
                 }
             }
 
