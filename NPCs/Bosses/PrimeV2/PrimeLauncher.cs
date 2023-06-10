@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.width = 20;
             NPC.damage = 53;
             NPC.defense = 0;
-            NPC.lifeMax = 15000;
+            NPC.lifeMax = 7500;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.value = 0;
@@ -72,6 +72,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         float rotationTarget;
         float rotationSpeed;
+        float rotationOffset = MathHelper.PiOver4;
         bool counterClockwise;
 
         public Vector2 Offset = new Vector2(200, 70);
@@ -91,54 +92,83 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 Offset = new Vector2(600, 0).RotatedBy(4 * MathHelper.TwoPi / 5f);
             }
 
+            rotationTarget = rotationOffset  + MathHelper.Pi;
+            if (!damaged)
+            {
+                rotationTarget += (NPC.Center - Target.Center).ToRotation() + MathHelper.PiOver2;
+            }
+
+            if(damaged && active)
+            {
+                rotationTarget += (NPC.Center - Target.Center).ToRotation() + MathHelper.PiOver2 - MathHelper.Pi;
+
+            }
             Vector2 targetRotation = rotationTarget.ToRotationVector2();
             Vector2 currentRotation = NPC.rotation.ToRotationVector2();
             Vector2 nextRotationVector = Vector2.Lerp(currentRotation, targetRotation, rotationSpeed);
             NPC.rotation = nextRotationVector.ToRotation();
 
+            float rotationDiff = Math.Abs(rotationTarget - NPC.rotation);
+            if (rotationDiff < 0.4f || Math.Abs(rotationDiff - MathHelper.TwoPi) < 0.4f)
+            {
+                rotationOffset *= -1;
+            }
+
             if (active)
             {
-                if (phase == 0)
+                if (!damaged)
                 {
-                    //Sweep back and forth across the player
-                    if(!UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeBeam>()))
+                    if ((Main.GameUpdateCount % 90) % 10 == 0 && Main.GameUpdateCount % 90 <= 20)
                     {
-                        counterClockwise = true;
-                        //NewProjectile Prime Beam, telegraph time 60f, duration ActiveDuration
-                    }
-
-                    if (counterClockwise)
-                    {
-                        rotationTarget = (NPC.Center - Target.Center).ToRotation() + MathHelper.Pi / 3f;
-                    }
-                    else
-                    {
-                        rotationTarget = (NPC.Center - Target.Center).ToRotation() - MathHelper.Pi / 3f;
-                    }
-
-                    if (Math.Abs(rotationTarget - NPC.rotation) < 0.5f)
-                    {
-                        counterClockwise = !counterClockwise;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HullBreachMissile>(), ai0: Target.whoAmI);
+                        }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     }
                 }
                 else
                 {
-                    //Spam stationary wide beams around the target player
-                    if(Main.GameUpdateCount % 60 == 0)
+                    if (Main.GameUpdateCount % 30 == 0)
                     {
-                        NPC.rotation = (NPC.Center - Target.Center).ToRotation() + Main.rand.NextFloat(-0.5f, 0.5f);
-                        //NewProjectile FastBeam, telegraph time 30f, duration 15f
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HullBreachMissile>(), ai0: Target.whoAmI, ai1: 1);
+                        }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     }
                 }
             }
             else
             {
-
+                if (!damaged)
+                {
+                    if (Main.GameUpdateCount % 180 == 0)
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HullBreachMissile>(), ai0: Target.whoAmI);
+                        }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                    }
+                }
+                else
+                {
+                    if (Main.GameUpdateCount % 45 == 0)
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HullBreachMissile>(), ai0: Target.whoAmI, ai1: 2);
+                        }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                    }
+                }
             }
         }
+
         public override bool CheckDead()
         {
-            if (((PrimeV2)primeHost.ModNPC).Phase == 1)
+            if (((PrimeV2)primeHost.ModNPC).dying)
             {
                 return true;
             }
@@ -146,12 +176,14 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 NPC.life = 1;
                 damaged = true;
+                rotationOffset = MathHelper.Pi / 3f;
+                rotationSpeed = 0.05f;
                 NPC.dontTakeDamage = true;
                 return false;
             }
         }
 
-        static Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
+        public static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             //Draw metal bones

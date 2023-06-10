@@ -218,6 +218,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 GatlingNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeGatling>(), ai1: NPC.whoAmI);
                 LauncherNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeLauncher>(), ai1: NPC.whoAmI);
                 SeverNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeWelder>(), ai1: NPC.whoAmI);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
+                if (Main.tile[5080, 1100].TileType == TileID.Glass)
+                {
+                    ActuatePrimeArena();
+                }
             }
 
             if (introTimer == introDuration - 30)
@@ -227,8 +232,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 {
                     //Spawn a shockwave
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 1100, 60);
-                    //TODO: Roar
                 }
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
             }
         }       
         
@@ -244,6 +249,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 int totalLife = BeamNPC.life + IonNPC.life + BuzzsawNPC.life + GatlingNPC.life + LauncherNPC.life + SeverNPC.life;
                 if(totalLife <= 6)
                 {
+                    ActuateBottomHalf();
                     BeamNPC.life = NPC.lifeMax;
                     BeamNPC.lifeMax = NPC.lifeMax;
                     IonNPC.life = NPC.lifeMax;
@@ -266,7 +272,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         }
 
         public static void ActuatePrimeArena()
-        {//Turn the top row of glass into platforms
+        {
+            //Turn the top row of glass into platforms
             for (int x = 4991; x < 5153; x++)
             {
                 if (Main.tile[x, 1100].TileType == TileID.Glass || Main.tile[x, 1100].TileType == 0)
@@ -275,7 +282,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     {
                         Main.tile[x, 1100].ResetToType(TileID.Platforms);
                         Main.tile[x, 1100].TileFrameX = 0;
-                        Main.tile[x, 1100].TileFrameY = 524;
+                        Main.tile[x, 1100].TileFrameY = 522;
                     }
                 }
                 else if (Main.tile[x, 1100].TileType == TileID.Platforms)
@@ -322,14 +329,14 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         {
                             Main.tile[x, y].ResetToType(TileID.Platforms);
                             Main.tile[x, y].TileFrameX = 0;
-                            Main.tile[x, y].TileFrameY = 524;
+                            Main.tile[x, y].TileFrameY = 522;
                             WorldGen.Reframe(x, y);
                         }
                         else if (Main.tile[x + 1, y].TileType == TileID.Platforms)
                         {
                             Main.tile[x, y].ResetToType(TileID.Platforms);
                             Main.tile[x, y].TileFrameX = 0;
-                            Main.tile[x, y].TileFrameY = 524;
+                            Main.tile[x, y].TileFrameY = 522;
                             WorldGen.Reframe(x, y);
                         }
                     }
@@ -421,6 +428,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
             }
 
+            if(deathAnimationProgress == deathAnimationDuration - 1)
+            {
+                ActuateBottomHalf();
+            }
+
             //The base class handles actually killing the NPC when the timer runs out
             base.HandleDeath();
         }
@@ -465,15 +477,51 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         /// <summary>
         /// Override this to add custom VFX to your boss
         /// </summary>
+        public static Texture2D texture;
+        public static Texture2D eyeTexture;
+        int frameIndex;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             //Scale it up a little
+
+            UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeV2");
+            UsefulFunctions.EnsureLoaded(ref eyeTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/Bone_Eyes");
+
+            if (inIntro)
+            {
+                frameIndex = 1;
+            }
+
+            if (!aiPaused)
+            {
+                NPC.frameCounter++;
+                if (NPC.frameCounter > 20)
+                {
+                    NPC.frameCounter = 0;
+                    frameIndex++;
+                    if (frameIndex >= 2)
+                    {
+                        frameIndex = 0;
+                    }
+                }
+            }
+
+            Rectangle sourceRectangle = new Rectangle(0, frameIndex * (texture.Height / 6), texture.Width, texture.Height / 6);
+            Vector2 drawOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
+            Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, 0, drawOrigin, 1f, SpriteEffects.None, 0);
+
+            Rectangle eyeRectangle = new Rectangle(0, 0, eyeTexture.Width, eyeTexture.Height / 3);
+            Vector2 eyeOrigin = new Vector2(eyeRectangle.Width * 0.5f, eyeRectangle.Height * 0.5f);
+            Main.EntitySpriteDraw(eyeTexture, NPC.Center - Main.screenPosition - new Vector2(-2, 1), eyeRectangle, Color.White, 0, eyeOrigin, 1f, SpriteEffects.None, 0);
+
+
+
             //Glowmask for the eyes
             if (introTimer >= introDuration)
             {
                 LightPrimeArena();
             }
-            return base.PreDraw(spriteBatch, screenPos, drawColor);
+            return false;
         }
                 
 

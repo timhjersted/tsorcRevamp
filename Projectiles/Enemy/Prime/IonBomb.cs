@@ -75,10 +75,51 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             }
         }
 
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            if(Projectile.Distance(targetHitbox.Center.ToVector2()) < 300 && DetonationTime == DetonationProgress + 1)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(BuffID.Electrified, 300);
+        }
+
+
+        public override bool PreKill(int timeLeft)
+        {
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 700, 60);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 400, 45);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 220, 35);
+
+                float rotation = Main.rand.NextFloat(0, MathHelper.TwoPi);
+                for (int i = 0; i < 7; i++)
+                {
+                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(12, 0).RotatedBy(rotation + (MathHelper.PiOver2 / 7f) + i * MathHelper.TwoPi / 7f), ModContent.ProjectileType<Marilith.MarilithLightning>(), Projectile.damage, .5f, Main.myPlayer);
+                }
+            }
+
+            for (int i = 0; i < 50; i++)
+            {
+                Vector2 dustVel = Main.rand.NextVector2Circular(28, 28);
+                Dust.NewDustPerfect(Projectile.Center, DustID.FireworkFountain_Blue, dustVel, 250, Color.White, 1.3f).noGravity = true;
+            }
+            return true;
+        }
+
         float effectTimer;
         float starRotation;
         public static Effect CoreEffect;
-        public void DrawCore()
+        public static ArmorShaderData data;
+        public override bool PreDraw(ref Color lightColor)
         {
 
             Vector3 hslColor1 = Main.rgbToHsl(Color.Cyan);
@@ -139,80 +180,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-        }
-
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            if(Projectile.Distance(targetHitbox.Center.ToVector2()) < 300 && DetonationTime == DetonationProgress + 1)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        
-        public override void OnHitPlayer(Player target, Player.HurtInfo info)
-        {
-            target.AddBuff(BuffID.Electrified, 300);
-        }
-
-
-        public override bool PreKill(int timeLeft)
-        {
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 700, 60);
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 400, 45);
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 220, 35);
-
-                float rotation = Main.rand.NextFloat(0, MathHelper.TwoPi);
-                for (int i = 0; i < 7; i++)
-                {
-                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(12, 0).RotatedBy(rotation + (MathHelper.PiOver2 / 7f) + i * MathHelper.TwoPi / 7f), ModContent.ProjectileType<Marilith.MarilithLightning>(), Projectile.damage, .5f, Main.myPlayer);
-                }
-            }
-
-            for (int i = 0; i < 50; i++)
-            {
-                Vector2 dustVel = Main.rand.NextVector2Circular(28, 28);
-                Dust.NewDustPerfect(Projectile.Center, DustID.FireworkFountain_Blue, dustVel, 250, Color.White, 1.3f).noGravity = true;
-            }
-            return true;
-        }
-
-        public static ArmorShaderData data;
-        public override bool PreDraw(ref Color lightColor)
-        {
-            /*
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-            //data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer);
-
-            //Apply the shader, caching it as well
-            //if (data == null)
-            {
-                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/SolarDetonation", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "SolarDetonationShaderPass");
-            }
-
-            //Pass the size parameter in through the "saturation" variable, because there isn't a "size" one
-            data.UseSaturation(0.05f * (size / maxSize));
-            data.UseOpacity(1 - detonationPercent);
-
-            //Apply the shader
-            data.Apply(null);
-
-            Rectangle recsize = new Rectangle(0, 0, tsorcRevamp.tNoiseTexture1.Width, tsorcRevamp.tNoiseTexture1.Height);
-
-            //Draw the rendertarget with the shader
-            Main.spriteBatch.Draw(tsorcRevamp.tNoiseTexture1, Projectile.Center - Main.screenPosition - new Vector2(recsize.Width, recsize.Height) / 2 * 2.5f, recsize, Color.White, 0, Vector2.Zero, 2.5f, SpriteEffects.None, 0);
-
-            //Restart the spritebatch so the shader doesn't get applied to the rest of the game
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
-            */
-
-            DrawCore();
 
             return false;
         }

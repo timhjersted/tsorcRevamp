@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
             FollowHost = true;
             LaserOrigin = Main.npc[HostIdentifier].Center;
-            FiringDuration = 605;
+            FiringDuration = 505;
             TelegraphTime = 60;
             MaxCharge = 60;
             LaserLength = 5000;

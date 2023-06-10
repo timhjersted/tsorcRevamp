@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.width = 20;
             NPC.damage = 53;
             NPC.defense = 20;
-            NPC.lifeMax = 15000;
+            NPC.lifeMax = 7500;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.value = 0;
@@ -72,7 +72,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         {            
             int WeldDamage = 40;
             Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 1.5f);
-            UsefulFunctions.SmoothHoming(NPC, primeHost.Center + Offset, 0.1f, 50, primeHost.velocity);
+            UsefulFunctions.SmoothHoming(NPC, primeHost.Center + Offset, 0.2f, 50, primeHost.velocity);
+            NPC.rotation = 0;
 
             if (((PrimeV2)primeHost.ModNPC).aiPaused)
             {
@@ -100,9 +101,10 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
         }
 
-        static Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
+        public static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeWelder");
             //Draw metal bones
             //Draw shadow trail (and maybe normal trail?)
             if (active)

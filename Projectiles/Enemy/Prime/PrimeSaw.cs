@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             Projectile.tileCollide = true;
             Projectile.hostile = true;
             Projectile.timeLeft = 9999;
-            Projectile.scale = 4;
+            Projectile.scale = 1.5f;
         }
 
         int timer = 0;
@@ -54,6 +54,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
                 }
             }
         }
+
+        //TODO: OnFire OnHitPlayer
+
+        public override bool PreKill(int timeLeft)
+        {
+            return base.PreKill(timeLeft);
+        }
+
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             //Allow the projectile to bounce
@@ -80,23 +88,55 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             return false;
         }
 
+
+
+        public static Texture2D sawTexture;
+        public static ArmorShaderData data;
         public override bool PreDraw(ref Color lightColor)
         {
+            Projectile.width = 60;
+            Projectile.height = 60;
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Main.instance.LoadProjectile(Projectile.type);
-            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            lightColor = Color.DeepSkyBlue;
+            UsefulFunctions.EnsureLoaded(ref sawTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeSawBlade");
+
+            Projectile.frame++;
+            if (Projectile.frame >= 8)
+            {
+                Projectile.frame = 0;
+            }
+
+            if (data == null)
+            {
+                data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
+            }
+
+
+            data.UseColor(Color.OrangeRed);
+            data.Apply(null);
+
+            lightColor = Color.White;
+
+
+            int frameHeight = TextureAssets.Projectile[Projectile.type].Value.Height / 8;
+            int startY = frameHeight * Projectile.frame;
+            Rectangle sourceRectangle = new Rectangle(0, startY, TextureAssets.Projectile[Projectile.type].Value.Width, frameHeight);
 
             // Redraw the projectile with the color not influenced by light
-            Vector2 drawOrigin = new Vector2(texture.Width * 0.5f, Projectile.height * 0.5f);
-            for (int k = 0; k < Projectile.oldPos.Length; k++)
+            Vector2 drawOrigin = new Vector2(TextureAssets.Projectile[Projectile.type].Value.Width * 0.5f, Projectile.height * 0.5f);
+            for (int k = Projectile.oldPos.Length - 1; k > 0; k--)
             {
                 Vector2 drawPos = (Projectile.oldPos[k] - Main.screenPosition) + drawOrigin + new Vector2(0f, Projectile.gfxOffY);
                 Color color = Projectile.GetAlpha(lightColor) * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
-                Main.EntitySpriteDraw(texture, drawPos, null, color, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value, drawPos + new Vector2(0, 4), sourceRectangle, color, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
             }
 
-            return true;
+            Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value, Projectile.Center - Main.screenPosition + new Vector2(0, 4), sourceRectangle, lightColor, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+
+            return false;
         }
     }
 }

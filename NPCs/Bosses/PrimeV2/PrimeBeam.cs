@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.width = 20;
             NPC.damage = 53;
             NPC.defense = 0;
-            NPC.lifeMax = 15000;
+            NPC.lifeMax = 7500;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.value = 0;
@@ -106,7 +106,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 if (phase == 0)
                 {
                     //Sweep back and forth across the player
-                    if (!UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeBeam>()))
+                    if (((PrimeV2)primeHost.ModNPC).MoveTimer == 10)
                     {
                         counterClockwise = true;
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeBeam>(), BeamDamage, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
@@ -179,7 +179,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
         }
 
-        static Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
+        public static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             //Draw metal bones

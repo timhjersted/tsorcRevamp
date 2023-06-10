@@ -328,11 +328,11 @@ namespace tsorcRevamp
         ///</summary>
         ///<param name="texture">The texture object</param>
         ///<param name="path">The path</param>
-        public static void EnsureLoaded(Texture2D texture, string path)
+        public static void EnsureLoaded(ref Texture2D texture, string path)
         {
             if(texture == null || texture.IsDisposed)
             {
-                texture = (Texture2D)ModContent.Request<Texture2D>(path);
+                texture = (Texture2D)ModContent.Request<Texture2D>(path, ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
         }
 
