@@ -1031,13 +1031,32 @@ namespace tsorcRevamp
                         }
                     }
                 }
-                if (player.statMana > (player.GetManaCost(player.HeldItem) * 3) && !Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>()))
+                if (player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() && player.statMana > (player.GetManaCost(player.HeldItem) * 3) && !Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>()))
                 {
-                    if (thisOrbOfSpirituality != null)
+                    player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDash>(), OrbOfSpirituality.DashBuffDuration * 60);
+                    player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>(), OrbOfSpirituality.DashCD * 60);
+                    player.statMana -= (player.GetManaCost(player.HeldItem) * 3);
+                }
+                if (player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDash>()) && DashCD <= 0f && Dashes > 0)
+                {
+                    SpiritRushTimer = 0.3f;
+                    DashCD = 1f;
+                    if (DashSoundStyle == 0)
                     {
-                        thisOrbOfSpirituality.DashingTimer = 0.5f;
-                        player.statMana -= (player.GetManaCost(player.HeldItem) * 3);
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash1") with { Volume = 1f }, player.Center);
+                        DashSoundStyle += 1;
+                    } else
+                    if (DashSoundStyle == 1)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash2") with { Volume = 1f }, player.Center);
+                        DashSoundStyle += 1;
+                    } else
+                    if (DashSoundStyle == 2)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash3") with { Volume = 1f }, player.Center);
+                        DashSoundStyle = 0;
                     }
+                    Dashes--;
                 }
                 if (Main.keyState.IsKeyDown(Keys.LeftShift) && !Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
                 {

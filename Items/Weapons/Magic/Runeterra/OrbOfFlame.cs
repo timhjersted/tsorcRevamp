@@ -18,6 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
     {
         public static Color FilledColor = Color.PaleVioletRed;
         public static float MagicSunder = 20f;
+        public static int FireballCD = 4;
         public override void SetStaticDefaults()
         {
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 8));
@@ -31,12 +32,12 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.channel = false;
             Item.useAnimation = 20;
             Item.useTime = 20;
-            Item.damage = 60;
-            Item.mana = 50;
+            Item.damage = 80;
+            Item.mana = 40;
             Item.knockBack = 8;
             Item.UseSound = null;
             Item.rare = ItemRarityID.LightRed;
-            Item.shootSpeed = 20f;
+            Item.shootSpeed = OrbOfDeception.ShootSpeed;
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = PriceByRarity.LightRed_4;
@@ -46,17 +47,13 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] != 0 || player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbFilled>()] != 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] != 0)
             {
                 type = ModContent.ProjectileType<OrbOfFlameFlame>();
             }
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbFilled>()] == 0 && player.GetModPlayer<tsorcRevampPlayer>().EssenceThief < 9)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] == 0 && player.GetModPlayer<tsorcRevampPlayer>().EssenceThief < 9)
             {
                 type = ModContent.ProjectileType<OrbOfFlameOrb>();
-            }
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] == 0 && player.GetModPlayer<tsorcRevampPlayer>().EssenceThief >= 9)
-            {
-                type = ModContent.ProjectileType<OrbOfFlameOrbFilled>();
             }
             if (player.altFunctionUse == 2)
             {
@@ -76,7 +73,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void HoldItem(Player player)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbFilled>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbIdle>()] == 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbIdle>()] == 0)
             {
                 Projectile.NewProjectile(Projectile.InheritSource(player), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbOfFlameOrbIdle>(), 0, 0);
             }

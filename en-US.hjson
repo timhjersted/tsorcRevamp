@@ -7233,6 +7233,16 @@ Mods: {
 				DisplayName: Ignited
 				Description: Mods.tsorcRevamp.Buffs.Ignited.Description
 			}
+
+			Charmed: {
+				DisplayName: Charmed
+				Description: Mods.tsorcRevamp.Buffs.Charmed.Description
+			}
+
+			Heatstroke: {
+				DisplayName: Heatstroke
+				Description: Mods.tsorcRevamp.Buffs.Heatstroke.Description
+			}
 		}
 
 		Projectiles: {

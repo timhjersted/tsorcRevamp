@@ -7,16 +7,19 @@ using tsorcRevamp.Buffs.Runeterra.Magic;
 using Terraria.Audio;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Items.Materials;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
     [Autoload(true)]
     public class OrbOfSpirituality : ModItem
     {
-        public float DashingTimer = 0f;
         public static Color FilledColor = Color.YellowGreen;
+        public static int DashBuffDuration = 15;
+        public static int DashCD = 60;
         public override void SetStaticDefaults()
         {
+            Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 8));
         }
 
         public override void SetDefaults()
@@ -27,12 +30,12 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.channel = false;
             Item.useAnimation = 20;
             Item.useTime = 20;
-            Item.damage = 220;
-            Item.mana = 100;
+            Item.damage = 330;
+            Item.mana = 60;
             Item.knockBack = 8;
             Item.UseSound = null;
             Item.rare = ItemRarityID.Cyan;
-            Item.shootSpeed = 20f;
+            Item.shootSpeed = OrbOfDeception.ShootSpeed;
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = PriceByRarity.Cyan_9;
@@ -42,17 +45,14 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] != 0 || player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrbFilled>()] != 0)
+            Item.mana = 60;
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] != 0)
             {
                 type = ModContent.ProjectileType<OrbOfSpiritualityFlame>();
             }
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrbFilled>()] == 0 && player.GetModPlayer<tsorcRevampPlayer>().EssenceThief < 9)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] == 0 && player.GetModPlayer<tsorcRevampPlayer>().EssenceThief < 9)
             {
                 type = ModContent.ProjectileType<OrbOfSpiritualityOrb>();
-            }
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] == 0 && player.GetModPlayer<tsorcRevampPlayer>().EssenceThief >= 9)
-            {
-                type = ModContent.ProjectileType<OrbOfSpiritualityOrbFilled>();
             }
             if (player.altFunctionUse == 2)
             {
@@ -72,20 +72,9 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void HoldItem(Player player)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrbFilled>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrbIdle>()] == 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrbIdle>()] == 0)
             {
                 Projectile.NewProjectile(Projectile.InheritSource(player), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbOfSpiritualityOrbIdle>(), 0, 0);
-            }
-            if (DashingTimer > 0)
-            {
-                SoundEngine.PlaySound(SoundID.Item104, player.Center);
-                player.velocity = UsefulFunctions.Aim(player.Center, Main.MouseWorld, 15f);
-                player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDash>(), 1 * 60);
-                player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>(), 20 * 60);
-                if (Main.GameUpdateCount % 5 == 0)
-                {
-                    Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.One, ModContent.ProjectileType<OrbOfSpiritualityFlameNoMana>(), Item.damage, Item.knockBack, Main.myPlayer);
-                }
             }
         }
         public override bool AltFunctionUse(Player player)
@@ -105,10 +94,6 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void UpdateInventory(Player player)
         {
-            if (Main.GameUpdateCount % 1 == 0)
-            {
-                DashingTimer -= 0.0167f;
-            }
         }
         public override void AddRecipes()
         {

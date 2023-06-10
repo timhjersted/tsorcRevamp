@@ -51,7 +51,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 		{
 			Player player = Main.player[Projectile.owner];
             player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, player.direction * -1.9f);
-            if (!playedSound && Main.rand.NextBool(1200))
+            if (!playedSound && Main.rand.NextBool(10))
             {
                 playedSound = true;
                 SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/OrbAmbient") with { Volume = 1f }, player.Center); //can give funny pitch hehe
@@ -76,9 +76,6 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                     }
                     OrbSound.Position = Projectile.Center;
                 }
-            }
-            if (playedSound)
-            {
                 SoundCD++;
                 if (SoundCD >= 300)
                 {
@@ -86,7 +83,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                     SoundCD = 0;
                 }
             }
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] > 0 || player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbFilled>()] > 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] > 0)
             {
                 Projectile.Kill();
             }

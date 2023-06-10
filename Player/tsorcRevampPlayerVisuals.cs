@@ -249,7 +249,7 @@ namespace tsorcRevamp
                     }
                     if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.Tomes.LightOfDawn>())
                     {
-                        texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Magic/LightOfDawnCrystal", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+                        texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Magic/Tomes/LightOfDawnCrystal", ReLogic.Content.AssetRequestMode.ImmediateLoad);
                     }
                     if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.SeveringDusk>())
                     {

@@ -119,6 +119,99 @@ namespace tsorcRevamp
             On_Player.UpdateEquips += On_Player_UpdateEquips;
 
             On_WorldGen.KillTile_ShouldDropSeeds += On_WorldGen_KillTile_ShouldDropSeeds;
+
+            On_Player.UpdateManaRegen += On_Player_UpdateManaRegen;
+        }
+
+        private static void On_Player_UpdateManaRegen(On_Player.orig_UpdateManaRegen orig, Player self)
+        {
+            if (self.nebulaLevelMana > 0)
+            {
+                int num = 6;
+                self.nebulaManaCounter += self.nebulaLevelMana;
+                if (self.nebulaManaCounter >= num)
+                {
+                    self.nebulaManaCounter -= num;
+                    self.statMana++;
+                    if (self.statMana >= self.statManaMax2)
+                    {
+                        self.statMana = self.statManaMax2;
+                    }
+                }
+            }
+            else
+            {
+                self.nebulaManaCounter = 0;
+            }
+            if (self.manaRegenBuff && self.manaRegenDelay > 20f)
+            {
+                //self.manaRegenDelay = 20f;//this is what it usually gives and it breaks any sort of longer mana regen delays
+                self.manaRegenDelayBonus += 1f; //this mostly has the same effect for usual mana regen delay applied by magic weapons
+            }
+            if (self.manaRegenDelay > 0f)
+            {
+                self.manaRegenDelay -= 1f;
+                self.manaRegenDelay -= self.manaRegenDelayBonus;
+                if (self.IsStandingStillForSpecialEffects || self.grappling[0] >= 0 || self.manaRegenBuff)
+                {
+                    self.manaRegenDelay -= 1f;
+                }
+                if (self.usedArcaneCrystal)
+                {
+                    self.manaRegenDelay -= 0.05f;
+                }
+            }
+            if (self.manaRegenDelay <= 0f)
+            {
+                self.manaRegenDelay = 0f;
+                self.manaRegen = self.statManaMax2 / 3 + 1 + self.manaRegenBonus;
+                if (self.IsStandingStillForSpecialEffects || self.grappling[0] >= 0 || self.manaRegenBuff)
+                {
+                    self.manaRegen += self.statManaMax2 / 3;
+                }
+                if (self.usedArcaneCrystal)
+                {
+                    self.manaRegen += self.statManaMax2 / 50;
+                }
+                float num2 = (float)self.statMana / (float)self.statManaMax2 * 0.8f + 0.2f;
+                if (self.manaRegenBuff)
+                {
+                    num2 = 1f;
+                }
+                self.manaRegen = (int)((double)((float)self.manaRegen * num2) * 1.15);
+            }
+            else
+            {
+                self.manaRegen = 0;
+            }
+            self.manaRegenCount += self.manaRegen;
+            while (self.manaRegenCount >= 120)
+            {
+                bool flag = false;
+                self.manaRegenCount -= 120;
+                if (self.statMana < self.statManaMax2)
+                {
+                    self.statMana++;
+                    flag = true;
+                }
+                if (self.statMana < self.statManaMax2)
+                {
+                    continue;
+                }
+                if (self.whoAmI == Main.myPlayer && flag)
+                {
+                    SoundEngine.PlaySound(SoundID.MaxMana);
+                    for (int i = 0; i < 5; i++)
+                    {
+                        int num3 = Dust.NewDust(self.position, self.width, self.height, 45, 0f, 0f, 255, default(Color), (float)Main.rand.Next(20, 26) * 0.1f);
+                        Main.dust[num3].noLight = true;
+                        Main.dust[num3].noGravity = true;
+                        Dust obj = Main.dust[num3];
+                        obj.velocity *= 0.5f;
+                    }
+                }
+                self.statMana = self.statManaMax2;
+            }
         }
 
         private static bool On_WorldGen_KillTile_ShouldDropSeeds(On_WorldGen.orig_KillTile_ShouldDropSeeds orig, int x, int y)
@@ -478,7 +571,7 @@ namespace tsorcRevamp
             //fix for auto-acceleration post-dash with a high max speed
             if (wasInDash && self.dashDelay > 0 && self.eocDash <= 0)
             {
-				//we are no longer mid-dash; it must've just ended this frame.
+				//we are no longer mid-dash; it must've just ended self frame.
 				//(we have just passed below 12 / above -12 velocity, and our speed now equals our max speed)
                 
                 //eocDash seems to be a SoC dash hit timer. not sure what it's used for...
@@ -501,14 +594,14 @@ namespace tsorcRevamp
 			//fix for not being able to dash until stopping with a high max speed
 			if (wasInDash && Math.Abs(self.velocity.X) > 17)
 			{
-				//our speed has gone above 16.9. the dash is not doing this - in fact the dash continuously slows you down even without friction. we should end it.
-				self.dashDelay = 20; //different dashes have different cooldowns (i think Tabi & SoC have 30), but this is the most conservative one. It will never be *worse* than the regular dash.
+				//our speed has gone above 16.9. the dash is not doing self - in fact the dash continuously slows you down even without friction. we should end it.
+				self.dashDelay = 20; //different dashes have different cooldowns (i think Tabi & SoC have 30), but self is the most conservative one. It will never be *worse* than the regular dash.
 			}
 
 		}
 
 		//The reason the dungeon code is getting inserted here isn't because it has anything to do with ZonePurity
-		//It's just because this is a function that has the player as a parameter, and is called in UpdateBiomes *after* ZoneDungeon is set but before it is used.
+		//It's just because self is a function that has the player as a parameter, and is called in UpdateBiomes *after* ZoneDungeon is set but before it is used.
 		private static bool Player_InZonePurity(Terraria.On_Player.orig_InZonePurity orig, Player self)
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && NPC.downedBoss3)
@@ -1057,7 +1150,7 @@ namespace tsorcRevamp
             }
         }
 
-        //Generic "use item" code. Since items can be any or all of the 3 categories at once, this handles all of it.
+        //Generic "use item" code. Since items can be any or all of the 3 categories at once, self handles all of it.
         private static void UsePotion(Item item, Player player)
         {
             if(item.UseSound != null)
@@ -1393,7 +1486,7 @@ namespace tsorcRevamp
                 self.immuneAlpha = 255;
             }
             //self.UpdateGraveyard(now: true);
-            //im reflecting this. i dont even care any more.
+            //im reflecting self. i dont even care any more.
             //if you dont want it to lag, stop dying.
             //im exhausted okay? im tired. im so tired. i never stop being tired.
             Assembly tml = self.GetType().Assembly;
@@ -1486,10 +1579,10 @@ namespace tsorcRevamp
                         {
                             if (Main.tile[i + self.SpawnX, j + self.SpawnY] != null)
                             {
-                                Tile thisTile = Main.tile[i + self.SpawnX, j + self.SpawnY];
-                                if (thisTile.HasTile)
+                                Tile selfTile = Main.tile[i + self.SpawnX, j + self.SpawnY];
+                                if (selfTile.HasTile)
                                 {
-                                    if (thisTile.TileType == TileID.Beds || thisTile.TileType == ModContent.TileType<Tiles.BonfireCheckpoint>())
+                                    if (selfTile.TileType == TileID.Beds || selfTile.TileType == ModContent.TileType<Tiles.BonfireCheckpoint>())
                                     {
                                         return true;
                                     }
@@ -1510,7 +1603,7 @@ namespace tsorcRevamp
                 {
                     return;
                 }
-                //bool flag = false; this bool was used to check for moon lord's core
+                //bool flag = false; self bool was used to check for moon lord's core
                 bool flag2 = false;
                 bool flag3 = false;
                 bool flag4 = false;
@@ -1662,17 +1755,17 @@ namespace tsorcRevamp
         {
             orig(self, gameTime);
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
-            tsorcRevamp thisMod = (tsorcRevamp)mod;
+            tsorcRevamp selfMod = (tsorcRevamp)mod;
 
             if (Main.mouseLeftRelease)
             {
-                thisMod.UICooldown = false;
+                selfMod.UICooldown = false;
             }
 
             if (Main.menuMode == 0)
             {
                 string musicModDir = Main.SavePath + "\\Mods\\tsorcMusic.tmod";
-                //This goes here so that it runs *after* the first reload has finished and the game has transitioned back to the main menu.
+                //self goes here so that it runs *after* the first reload has finished and the game has transitioned back to the main menu.
                 //Do *not* want to initiate a second reload in the middle of the first.
                 if (tsorcRevamp.ReloadNeeded)
                 {
@@ -1686,7 +1779,7 @@ namespace tsorcRevamp
                     typeof(ModLoader).GetMethod("Reload", BindingFlags.NonPublic | BindingFlags.Static).Invoke(default, new object[] { });
                 }
 
-                //Only display this if necessary
+                //Only display self if necessary
                 else if (!File.Exists(musicModDir) || tsorcRevamp.MusicNeedsUpdate)
                 {
                     String musicText = "";
@@ -1764,7 +1857,7 @@ namespace tsorcRevamp
 
             else
             {
-                thisMod.worldButtonClicked = false;
+                selfMod.worldButtonClicked = false;
             }
         }
 
@@ -1827,8 +1920,8 @@ namespace tsorcRevamp
                         Vector2 dustVel = npc.velocity + Main.rand.NextVector2Circular(14, 14);
 
                         Dust.NewDustPerfect(npc.Center, DustID.Torch, dustVel, Scale: 6).noGravity = true;
-                        Dust thisDust = Dust.NewDustPerfect(npc.Center, 130, dustVel * 2f, Scale: 3.5f);
-                        thisDust.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
+                        Dust selfDust = Dust.NewDustPerfect(npc.Center, 130, dustVel * 2f, Scale: 3.5f);
+                        selfDust.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
                     }
 
                     npc.life = 0;

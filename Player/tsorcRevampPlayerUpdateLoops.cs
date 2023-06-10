@@ -102,6 +102,10 @@ namespace tsorcRevamp
         public float WhipCritHitboxSize = 1f;
 
         public int EssenceThief = 0;
+        public int Dashes = 3;
+        public float SpiritRushTimer = 0f;
+        public int DashSoundStyle = 0;
+        public float DashCD = 0f;
 
         public float CrystalNunchakuDefenseDamage;
 

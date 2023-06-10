@@ -15,7 +15,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 
     public class OrbOfSpiritualityOrb : ModProjectile
     {
-        public int EssenceThiefTimer1 = 0;
+        public int HitTimer = 0;
+		public bool Full = false;
         private enum AIState
 		{
 			LaunchingForward,
@@ -37,14 +38,14 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 			// These lines facilitate the trail drawing
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-            Main.projFrames[Projectile.type] = 9;
+            Main.projFrames[Projectile.type] = 8;
         }
 
 		public override void SetDefaults()
 		{
 			Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
-			Projectile.width = 50; // The width of your projectile
-			Projectile.height = 50; // The height of your projectile
+			Projectile.width = 106; // The width of your projectile
+			Projectile.height = 62; // The height of your projectile
 			Projectile.friendly = true; // Deals damage to enemies
 			Projectile.penetrate = -1; // Infinite pierce
 			Projectile.DamageType = DamageClass.Magic; // Deals melee damage
@@ -55,18 +56,21 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 
 		}
 
-
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            SoundEngine.PlaySound(SoundID.Item131, player.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbCast") with { Volume = 1f }, player.Center);
+			if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief > 8)
+			{
+				Full = true;
+            }
         }
 
         public override void AI()
 		{
 			Player player = Main.player[Projectile.owner];
 
-            Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(player.Center).SafeNormalize(Vector2.Zero) * 30f;
+			Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(player.Center).SafeNormalize(Vector2.Zero) * OrbOfDeception.ShootSpeed;
             switch (CurrentAIState)
 			{
 				case AIState.LaunchingForward:
@@ -75,9 +79,9 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 						{
 							CurrentAIState = AIState.Retracting;
                             StateTimer = 0f;
-							EssenceThiefTimer1 = 0;
+							HitTimer = 0;
                             Projectile.ResetLocalNPCHitImmunity();
-                            SoundEngine.PlaySound(SoundID.Item131, player.Center);
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbReturn") with { Volume = 1f }, Projectile.Center);
                             break;
                         }
 					break;
@@ -85,67 +89,24 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 				case AIState.Retracting:
 				{
                         Projectile.velocity = unitVectorTowardsPlayer;
-
                         if (Projectile.Hitbox.Intersects(player.Hitbox))
 						{
-                            if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief >= 9)
+                            if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief > 8 && !Full)
                             {
-                                SoundEngine.PlaySound(SoundID.Item72, player.Center);
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbFull") with { Volume = 1f }, player.Center);
+                            } else
+                            {
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbReturned") with { Volume = 1f }, player.Center);
                             }
+							if (Full)
+							{
+								player.GetModPlayer<tsorcRevampPlayer>().EssenceThief -= 9;
+							}
                             Projectile.Kill();
                         }
 					break;
 				}
-			}
-			Visuals();
-        }
-        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-            modifiers.SourceDamage *= 1.25f;
-            if (CurrentAIState == AIState.Retracting)
-            {
-                modifiers.SourceDamage *= 1.5f;
             }
-            modifiers.HitDirectionOverride = (Main.player[Projectile.owner].Center.X < target.Center.X) ? 1 : (-1);
-        }
-
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            Player player = Main.player[Projectile.owner];
-            if (EssenceThiefTimer1 == 0)
-            {
-                player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
-                if (hit.Crit)
-                {
-                    player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
-                }
-                EssenceThiefTimer1 = 1;
-            }
-            Projectile.damage = (int)(Projectile.damage * 0.95f);
-        }
-
-        public override bool PreDraw(ref Color lightColor)
-		{
-			Vector2 playerArmPosition = Main.GetPlayerArmPosition(Projectile);
-
-			if (CurrentAIState == AIState.LaunchingForward)
-			{
-				Texture2D projectileTexture = TextureAssets.Projectile[Projectile.type].Value;
-				Vector2 drawOrigin = new Vector2(projectileTexture.Width * 0.5f, Projectile.height * 0.5f);
-				SpriteEffects spriteEffects = SpriteEffects.None;
-				if (Projectile.spriteDirection == -1)
-					spriteEffects = SpriteEffects.FlipHorizontally;
-				for (int k = 0; k < Projectile.oldPos.Length && k < StateTimer; k++)
-				{
-					Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + drawOrigin + new Vector2(0f, Projectile.gfxOffY);
-					Color color = Projectile.GetAlpha(lightColor) * ((float)(Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
-					Main.spriteBatch.Draw(projectileTexture, drawPos, null, color, Projectile.rotation, drawOrigin, Projectile.scale - k / (float)Projectile.oldPos.Length / 3, spriteEffects, 0f);
-				}
-			}
-			return true;
-		}
-        private void Visuals()
-        {
             int frameSpeed = 5;
 
             Projectile.frameCounter++;
@@ -161,8 +122,75 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                 }
             }
 
+            Projectile.rotation = Projectile.velocity.ToRotation();
+
             Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 0.78f);
-            Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
+			if (Full)
+            {
+                Dust.NewDust(Projectile.Center, 2, 2, DustID.PoisonStaff, 0, 0, 150, default, 0.5f);
+            } else
+            {
+                Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
+            }
         }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+		{
+			modifiers.SourceDamage *= OrbOfDeception.OrbDmgMod / 100f;
+			if (Full)
+			{
+				modifiers.SourceDamage *= OrbOfDeception.FilledOrbDmgMod / 100f;
+			}
+			if (CurrentAIState  == AIState.Retracting)
+			{
+				modifiers.SourceDamage *= OrbOfDeception.OrbReturnDmgMod / 100f;
+            }
+            modifiers.HitDirectionOverride = (Main.player[Projectile.owner].Center.X < target.Center.X) ? 1 : (-1);
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            Player player = Main.player[Projectile.owner];
+			if (HitTimer == 0)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
+                if (hit.Crit)
+                {
+                    player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1; 
+					SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbCrit") with { Volume = 1f }, player.Center);
+                } else
+				{
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbHit") with { Volume = 1f }, player.Center);
+                }
+				if (Full)
+                {
+                    player.Heal((int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(player.statManaMax2 / 50) + 5);
+                }
+				HitTimer = 1;
+            }
+			Projectile.damage = (int)(Projectile.damage * (1f - OrbOfDeception.DmgLossOnPierce / 100f));
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+			if (Full)
+			{
+                lightColor = OrbOfSpirituality.FilledColor;
+            }
+            if (CurrentAIState == AIState.LaunchingForward)
+			{
+				Texture2D projectileTexture = TextureAssets.Projectile[Projectile.type].Value;
+				Vector2 drawOrigin = new Vector2(projectileTexture.Width * 0.5f, Projectile.height * 0.5f);
+				SpriteEffects spriteEffects = SpriteEffects.None;
+				if (Projectile.spriteDirection == -1)
+					spriteEffects = SpriteEffects.FlipHorizontally;
+				for (int k = 0; k < Projectile.oldPos.Length && k < StateTimer; k++)
+				{
+					Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + drawOrigin + new Vector2(0f, Projectile.gfxOffY);
+					Color color = Projectile.GetAlpha(lightColor) * ((float)(Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
+					Main.spriteBatch.Draw(projectileTexture, drawPos, null, color, Projectile.rotation, drawOrigin, Projectile.scale - k / (float)Projectile.oldPos.Length / 3, spriteEffects, 0f);
+				}
+			}
+			return true;
+		}
     }
 }

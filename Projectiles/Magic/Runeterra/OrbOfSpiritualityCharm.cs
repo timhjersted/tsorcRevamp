@@ -6,6 +6,9 @@ using Terraria.ModLoader;
 using Terraria.DataStructures;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using Terraria.Audio;
+using Microsoft.Xna.Framework.Graphics;
+using System.Security.Cryptography.X509Certificates;
+using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
 {
@@ -33,40 +36,66 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 			Projectile.tileCollide = false;
 			Projectile.aiStyle = -1;
 		}
-
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            player.AddBuff(ModContent.BuffType<OrbOfSpiritualityCharmCooldown>(), 5 * 60);
-            SoundEngine.PlaySound(SoundID.Item78, player.Center);
+            player.AddBuff(ModContent.BuffType<OrbOfSpiritualityCharmCooldown>(), OrbOfFlame.FireballCD * 60);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/CharmCast") with { Volume = 1f }, player.Center);
+            Projectile.velocity *= 0.75f;
         }
-
+        public int frameSpeed = 5;
+        SpriteEffects effects = SpriteEffects.None;
         public override void AI()
 		{
 			Player player = Main.player[Projectile.owner];
             Projectile.rotation = Projectile.velocity.ToRotation();
-            Visuals();
-		}
-
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            Player player = Main.player[Projectile.owner];
-			target.AddBuff(ModContent.BuffType<SunderedDebuff>(), 7 * 60);
-            SoundEngine.PlaySound(SoundID.Item76, target.Center);
-        }
-        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-            modifiers.SourceDamage *= 2.5f;
-            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 1000, 450);
-        }
-
-        public override bool PreDraw(ref Color lightColor)
-		{
-			return true;
-		}
-        private void Visuals()
-        {
-            int frameSpeed = 5;
+            if (Projectile.velocity.X < 0) 
+            {
+                Projectile.rotation -= MathHelper.Pi;
+            }
+            switch (Projectile.frame)
+            {
+                case 0:
+                    {
+                        frameSpeed = 5;
+                        break;
+                    }
+                case 1:
+                    {
+                        frameSpeed = 4;
+                        break;
+                    }
+                case 2:
+                    {
+                        frameSpeed = 3;
+                        break;
+                    }
+                case 3:
+                    {
+                        frameSpeed = 2;
+                        break;
+                    }
+                case 4:
+                    {
+                        frameSpeed = 2;
+                        break;
+                    }
+                case 5:
+                    {
+                        frameSpeed = 2;
+                        break;
+                    }
+                case 6:
+                    {
+                        frameSpeed = 3;
+                        break;
+                    }
+                case 7:
+                    {
+                        frameSpeed = 4;
+                        break;
+                    }
+            }
 
             Projectile.frameCounter++;
 
@@ -84,5 +113,21 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 0.78f);
             Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
         }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            Player player = Main.player[Projectile.owner];
+			target.AddBuff(ModContent.BuffType<Charmed>(), 7 * 60);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/CharmHit") with { Volume = 1f }, player.Center);
+        }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            modifiers.SourceDamage *= 2.5f;
+            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 1000, 450);
+        }
+        public override bool PreDraw(ref Color lightColor)
+        {
+            return true;
+		}
     }
 }

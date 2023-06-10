@@ -109,6 +109,8 @@ namespace tsorcRevamp.NPCs
         public bool Soulstruck;
         public bool PhazonCorruption;
 
+        public bool Sundered;
+
         public bool Venomized;
         public bool Electrified;
         public bool Irradiated;
@@ -160,6 +162,7 @@ namespace tsorcRevamp.NPCs
             markedByDarkHarvest = false;
             markedByKaleidoscope = false;
             CrystalNunchakuScalingDamage = 0f;
+            Sundered = false;
             Scorched = false;
             Shocked = false;
             Sunburnt = false;
@@ -678,6 +681,10 @@ namespace tsorcRevamp.NPCs
 
         public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers)
         {
+            if (Sundered && modifiers.DamageType == DamageClass.Magic)
+            {
+                modifiers.FinalDamage *= 1f + OrbOfFlame.MagicSunder / 100f;
+            }
             if (Ignited)
             {
                 modifiers.FlatBonusDamage += MagmaBreastplate.OnHitDmg;
@@ -707,7 +714,7 @@ namespace tsorcRevamp.NPCs
                     {
                         debuffCounter++;
                     }
-                    if (buffType == ModContent.BuffType<SunderedDebuff>())
+                    if (buffType == ModContent.BuffType<Charmed>())
                     {
                         debuffCounter++;
                     }

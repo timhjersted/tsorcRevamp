@@ -9,6 +9,7 @@ using Terraria.GameContent;
 using ReLogic.Content;
 using Terraria.DataStructures;
 using tsorcRevamp.Buffs.Runeterra.Magic;
+using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
 {
@@ -42,21 +43,27 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            player.AddBuff(ModContent.BuffType<OrbOfFlameFireballCooldown>(), 7 * 60);
+            player.AddBuff(ModContent.BuffType<OrbOfFlameFireballCooldown>(), OrbOfFlame.FireballCD * 60);
             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/FireballCast") with { Volume = 1f }, player.Center);
+            Projectile.velocity *= 0.75f;
         }
 
         public override void AI()
 		{
 			Player player = Main.player[Projectile.owner];
             Projectile.rotation = Projectile.velocity.ToRotation();
+            if (Projectile.velocity.X < 0)
+            {
+                Projectile.spriteDirection = -1;
+                Projectile.rotation -= MathHelper.Pi;
+            }
             Visuals();
 		}
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
-			target.AddBuff(ModContent.BuffType<SunderedDebuff>(), 5 * 60);
+			target.AddBuff(ModContent.BuffType<Charmed>(), 5 * 60);
             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/FireballHit") with { Volume = 2f }, player.Center);
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)

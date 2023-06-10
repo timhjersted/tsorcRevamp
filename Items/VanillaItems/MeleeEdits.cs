@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.Terrarian)
             {
-                item.mana = 40;
+                item.mana = ManaBase1;
             }
             if (item.type == ItemID.NightsEdge)
             {
@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.TerraBlade)
             {
-                item.mana = 40;
+                item.mana = ManaBase1;
             }
             if (item.type == ItemID.TheHorsemansBlade)
             {
@@ -55,52 +55,22 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.useAnimation = 20;
                 item.mana = 25;
             }
+            if (item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand | item.type == ItemID.Starfury)
+            {
+                item.mana = ManaBase1;
+            }
+            if (item.type == ItemID.LightsBane | item.type == ItemID.BladeofGrass)
+            {
+                item.mana = ManaBase2;
+            }
+            if (item.type == ItemID.Meowmere | item.type == ItemID.StarWrath)
+            {
+                item.mana = ManaBase3;
+            }
             if (item.type == ItemID.PiercingStarlight)
             {
                 item.damage = 50;
             }
-        }
-        public override bool Shoot(Item item, Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-        {
-            int manaCost1 = (int)(ManaBase1 * player.manaCost);
-            int manaCost2 = (int)(ManaBase2 * player.manaCost);
-            int manaCost3 = (int)(ManaBase3 * player.manaCost);
-
-            if (item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand | item.type == ItemID.Starfury)
-            {
-                player.statMana -= manaCost1;
-                player.manaRegenDelay = ManaDelay;
-            }
-            if (item.type == ItemID.LightsBane | item.type == ItemID.BladeofGrass)
-            {
-                player.statMana -= manaCost2;
-                player.manaRegenDelay = ManaDelay;
-            }
-            if (item.type == ItemID.Meowmere | item.type == ItemID.StarWrath)
-            {
-                player.statMana -= manaCost3;
-                player.manaRegenDelay = ManaDelay;
-            }
-            return base.Shoot(item, player, source, position, velocity, type, damage, knockback);
-        }
-        public override bool CanShoot(Item item, Player player)
-        {
-            int manaCost1 = (int)(ManaBase1 * player.manaCost);
-            int manaCost2 = (int)(ManaBase2 * player.manaCost);
-            int manaCost3 = (int)(ManaBase3 * player.manaCost);
-            if ((item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand | item.type == ItemID.Starfury) & player.statMana < manaCost1)
-            {
-                return false;
-            }
-            if ((item.type == ItemID.LightsBane | item.type == ItemID.BladeofGrass) & player.statMana < manaCost2)
-            {
-                return false;
-            }
-            if ((item.type == ItemID.Meowmere | item.type == ItemID.StarWrath) & player.statMana < manaCost3)
-            {
-                return false;
-            }
-            return true;
         }
         public override bool? UseItem(Item item, Player player)
         {
@@ -132,21 +102,6 @@ namespace tsorcRevamp.Items.VanillaItems
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
             Player player = Main.player[Main.myPlayer];
-            int manaCost1 = (int)(ManaBase1 * player.manaCost);
-            int manaCost2 = (int)(ManaBase2 * player.manaCost);
-            int manaCost3 = (int)(ManaBase3 * player.manaCost);
-            if (item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand | item.type == ItemID.Starfury)
-            {
-                tooltips.Insert(6, new TooltipLine(Mod, "ManaCost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaCost1") + manaCost1 + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaCost2")));
-            }
-            if (item.type == ItemID.LightsBane | item.type == ItemID.BladeofGrass)
-            {
-                tooltips.Insert(6, new TooltipLine(Mod, "ManaCost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaCost1") + manaCost2 + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaCost2")));
-            }
-            if (item.type == ItemID.Meowmere | item.type == ItemID.StarWrath)
-            {
-                tooltips.Insert(5, new TooltipLine(Mod, "ManaCost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaCost1") + manaCost3 + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaCost2")));
-            }
         }
     }
 }

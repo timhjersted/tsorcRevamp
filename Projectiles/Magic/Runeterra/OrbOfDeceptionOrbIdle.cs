@@ -57,7 +57,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                 playedSound = true;
                 SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbAmbient") with { Volume = 1f }, player.Center); //can give funny pitch hehe
             }
-            if (!playedSound)
+            if (playedSound)
             {
                 if (OrbSound == null)
                 {
@@ -77,9 +77,6 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                     }
                     OrbSound.Position = Projectile.Center;
                 }
-            }
-            if (playedSound)
-            {
                 SoundCD++;
                 if (SoundCD >= 480)
                 {
@@ -87,7 +84,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                     SoundCD = 0;
                 }
             }
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrb>()] > 0 || player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrbFilled>()] > 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrb>()] > 0)
             {
                 Projectile.Kill();
             }
