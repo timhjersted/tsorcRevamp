@@ -138,6 +138,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
                 if (seekingPlayer)
                 {
+                    NPC.velocity.Y = 0;
                     NPC.Center = new Vector2(NPC.Center.X, MathHelper.Lerp(NPC.Center.Y, Target.Center.Y, 0.05f));
                     if(Math.Abs(NPC.Center.Y - Target.Center.Y) < 10)
                     {
@@ -149,11 +150,16 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
                 if(!seekingPlayer)
                 {
-                    NPC.velocity = new Vector2(7, 0);
+                    NPC.velocity.X = 7;
 
                     if (movingLeft)
                     {
                         NPC.velocity.X = -7;
+                    }
+
+                    if (damaged)
+                    {
+                        NPC.velocity.Y = 12 * (float)Math.Sin(Main.GameUpdateCount / 20f);
                     }
                 }
             }

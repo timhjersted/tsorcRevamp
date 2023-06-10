@@ -85,7 +85,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (((PrimeV2)primeHost.ModNPC).Phase == 1)
             {
-                Offset = new Vector2(600, 0).RotatedBy(3 * MathHelper.TwoPi / 5f);
+                Offset = new Vector2(1200, 0).RotatedBy(3 * MathHelper.TwoPi / 5f);
             }
 
             NPC.rotation = (Target.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;

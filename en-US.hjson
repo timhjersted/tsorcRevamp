@@ -7752,6 +7752,7 @@ Mods: {
 			PrimeRapidBeam.DisplayName: Prime Rapid Beam
 			PrimeSaw.DisplayName: Prime Saw
 			IonBomb.DisplayName: Ion Bomb
+			MoltenWeld.DisplayName: Molten Weld
 		}
 
 		NPCs: {
@@ -8395,6 +8396,7 @@ Mods: {
 			PrimeV2.DisplayName: Prime V2
 			PrimeWelder.DisplayName: Prime Welder
 			HullBreachMissile.DisplayName: Hull Breach Missile
+			PrimeSiege.DisplayName: Prime Siege
 		}
 
 		Prefixes: {

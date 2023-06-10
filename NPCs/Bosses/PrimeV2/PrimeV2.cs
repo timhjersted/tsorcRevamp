@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.height = 100;
             NPC.damage = 50;
             NPC.defense = 35;
-            NPC.HitSound = SoundID.NPCHit1;
+            NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.lifeMax = 15000;
             NPC.timeLeft = 22500;
@@ -87,7 +87,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         bool activated;
         public override void AI()
         {
-            PrimeCeilingPoint = new Vector2(81048, 16224);
+            PrimeCeilingPoint = new Vector2(81048, 16424);
             if (!activated)
             {
                 NPC.Center = PrimeCeilingPoint + new Vector2(0, -200);
@@ -216,7 +216,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 IonNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeIon>(), ai1: NPC.whoAmI);
                 BuzzsawNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeBuzzsaw>(), ai1: NPC.whoAmI);
                 GatlingNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeGatling>(), ai1: NPC.whoAmI);
-                LauncherNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeLauncher>(), ai1: NPC.whoAmI);
+                LauncherNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeSiege>(), ai1: NPC.whoAmI);
                 SeverNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeWelder>(), ai1: NPC.whoAmI);
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
                 if (Main.tile[5080, 1100].TileType == TileID.Glass)

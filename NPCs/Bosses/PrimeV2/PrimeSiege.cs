@@ -13,7 +13,7 @@ using System;
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
     [AutoloadBossHead]
-    class PrimeLauncher : ModNPC
+    class PrimeSiege : ModNPC
     {
         public override void SetStaticDefaults()
         {
@@ -73,7 +73,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         float rotationTarget;
         float rotationSpeed;
         float rotationOffset = MathHelper.PiOver4;
-        bool counterClockwise;
 
         public Vector2 Offset = new Vector2(200, 70);
         public override void AI()
@@ -89,7 +88,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
             if (((PrimeV2)primeHost.ModNPC).Phase == 1)
             {
-                Offset = new Vector2(600, 0).RotatedBy(4 * MathHelper.TwoPi / 5f);
+                Offset = new Vector2(1200, 0).RotatedBy(4 * MathHelper.TwoPi / 5f);
             }
 
             rotationTarget = rotationOffset  + MathHelper.Pi;
@@ -143,7 +142,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (!damaged)
                 {
-                    if (Main.GameUpdateCount % 180 == 0)
+                    if (Main.GameUpdateCount % 450 == 0)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -154,7 +153,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
                 else
                 {
-                    if (Main.GameUpdateCount % 45 == 0)
+                    if (Main.GameUpdateCount % 60 == 0)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {

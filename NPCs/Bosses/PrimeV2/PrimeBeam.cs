@@ -79,7 +79,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public int cooldown = 60;
         public override void AI()
         {
-            
+            Offset = new Vector2(-604, 250);
+
             int BeamDamage = 40;
             Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 1.5f);
             UsefulFunctions.SmoothHoming(NPC, primeHost.Center + Offset, 0.1f, 50, primeHost.velocity);
@@ -93,7 +94,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (((PrimeV2)primeHost.ModNPC).Phase == 1)
             {
-                Offset = new Vector2(600, 0).RotatedBy(2 * MathHelper.TwoPi / 5f);
+                Offset = new Vector2(1200, 0).RotatedBy(2 * MathHelper.TwoPi / 5f);
             }
 
             Vector2 targetRotation = rotationTarget.ToRotationVector2();

@@ -66,26 +66,47 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         int phase;
         bool damaged;
-
+        float angle;
         public Vector2 Offset = new Vector2(-810, 250);
         public override void AI()
         {            
             int WeldDamage = 40;
             Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 1.5f);
-            UsefulFunctions.SmoothHoming(NPC, primeHost.Center + Offset, 0.2f, 50, primeHost.velocity);
-            NPC.rotation = 0;
 
             if (((PrimeV2)primeHost.ModNPC).aiPaused)
             {
+                UsefulFunctions.SmoothHoming(NPC, primeHost.Center + Offset, 0.2f, 50, primeHost.velocity);
                 NPC.rotation = MathHelper.PiOver2;
                 return;
 
             }
             if (((PrimeV2)primeHost.ModNPC).Phase == 1)
             {
-                Offset = new Vector2(600, 0);
+                Offset = new Vector2(1200, 0);
+            }
+
+            NPC.rotation = (Target.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
+            if (!UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.Enemy.Prime.MoltenWeld>()))
+            {
+                if(Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.MoltenWeld>(), WeldDamage, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                }
+            }
+
+            if (active)
+            {
+                UsefulFunctions.SmoothHoming(NPC, Target.Center, 0.3f, 8f, bufferZone: false);
+            }
+            else
+            {
+                angle += 0.01f;
+                UsefulFunctions.SmoothHoming(NPC, Target.Center + new Vector2(400, 0).RotatedBy(angle), 0.3f, 5f);
+                Dust.NewDustPerfect(Target.Center + new Vector2(400, 0).RotatedBy(angle), DustID.ShadowbeamStaff, Main.rand.NextVector2Circular(10, 10));
             }
         }
+
+
         public override bool CheckDead()
         {
             if (((PrimeV2)primeHost.ModNPC).Phase == 1)

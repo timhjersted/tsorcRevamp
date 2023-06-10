@@ -71,7 +71,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         bool damaged;
 
 
-        public Vector2 Offset = new Vector2(604, 200);
+        public Vector2 Offset = new Vector2(604, 250);
         int cooldown;
         public override void AI()
         {
@@ -87,7 +87,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (((PrimeV2)primeHost.ModNPC).Phase == 1)
             {
-                Offset = new Vector2(600, 0).RotatedBy(MathHelper.TwoPi / 5f);
+                Offset = new Vector2(1200, 0).RotatedBy(MathHelper.TwoPi / 5f);
             }
 
 
