@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.width = 20;
             NPC.damage = 53;
             NPC.defense = 0;
-            NPC.lifeMax = 7500;
+            NPC.lifeMax = PrimeV2.PrimeArmHealth;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.value = 0;
@@ -41,6 +41,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.timeLeft = 99999;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
+            NPC.damage = 0;
         }
         const float TRAIL_LENGTH = 12;
 
@@ -175,11 +176,19 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 NPC.life = 1;
                 damaged = true;
-                rotationOffset = MathHelper.Pi / 3f;
-                rotationSpeed = 0.05f;
                 NPC.dontTakeDamage = true;
                 return false;
             }
+        }
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            PrimeV2.PrimeDamageShare(NPC.whoAmI, damageDone);
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            PrimeV2.PrimeDamageShare(NPC.whoAmI, damageDone);
         }
 
         public static Texture2D texture;

@@ -239,15 +239,17 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         
         public override void HandleLife()
         {
+            NPC.dontTakeDamage = true;
             if (inIntro)
             {
                 return;
             }
-            if(Phase == 0)
+
+            int totalLife = BeamNPC.life + IonNPC.life + BuzzsawNPC.life + GatlingNPC.life + LauncherNPC.life + SeverNPC.life;
+            if (Phase == 0)
             {
-                NPC.dontTakeDamage = true;
-                int totalLife = BeamNPC.life + IonNPC.life + BuzzsawNPC.life + GatlingNPC.life + LauncherNPC.life + SeverNPC.life;
-                if(totalLife <= 6)
+                int totalLifeMax = BeamNPC.lifeMax + IonNPC.lifeMax + BuzzsawNPC.lifeMax + GatlingNPC.lifeMax + LauncherNPC.lifeMax + SeverNPC.lifeMax;
+                if (totalLife < totalLifeMax / 2)
                 {
                     ActuateBottomHalf();
                     BeamNPC.life = NPC.lifeMax;
@@ -265,12 +267,40 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     NextPhase();
                 }
             }
-            else
+
+            if(totalLife <= 6)
             {
+                NPC.life = 1;
                 NPC.dontTakeDamage = false;
             }
         }
 
+        public static int PrimeArmHealth = 15000;
+        public static void PrimeDamageShare(int thisNPC, int damage)
+        {
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].active && i != thisNPC)
+                {
+                    int type = Main.npc[i].type;
+                    if (type == ModContent.NPCType<PrimeBeam>() ||
+                        type == ModContent.NPCType<PrimeBuzzsaw>() ||
+                        type == ModContent.NPCType<PrimeGatling>() ||
+                        type == ModContent.NPCType<PrimeIon>() ||
+                        type == ModContent.NPCType<PrimeSiege>() ||
+                        type == ModContent.NPCType<PrimeWelder>())
+                    {
+                        Main.npc[i].life -= damage / 4;
+                        CombatText.NewText(Main.npc[i].Hitbox, CombatText.DamagedHostile, damage / 4);
+
+                        if (Main.npc[i].life < 1)
+                        {
+                            Main.npc[i].life = 1;
+                        }
+                    }
+                }
+            }
+        }
         public static void ActuatePrimeArena()
         {
             //Turn the top row of glass into platforms

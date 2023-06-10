@@ -55,7 +55,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             }
         }
 
-        //TODO: OnFire OnHitPlayer
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(BuffID.OnFire, 300);
+        }
 
         public override bool PreKill(int timeLeft)
         {

@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             NPCSource = true;
             trailCollision = true;
             collisionFrequency = 5;
-            noFadeOut = true;
+            noFadeOut = false;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 

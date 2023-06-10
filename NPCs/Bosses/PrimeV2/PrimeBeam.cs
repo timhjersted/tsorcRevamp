@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.width = 20;
             NPC.damage = 53;
             NPC.defense = 0;
-            NPC.lifeMax = 7500;
+            NPC.lifeMax = PrimeV2.PrimeArmHealth;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.value = 0;
@@ -41,6 +41,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.timeLeft = 99999;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
+            NPC.damage = 0;
         }
         const float TRAIL_LENGTH = 12;
 
@@ -81,7 +82,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         {
             Offset = new Vector2(-604, 250);
 
-            int BeamDamage = 40;
+            int BeamDamage = 150;
             Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 1.5f);
             UsefulFunctions.SmoothHoming(NPC, primeHost.Center + Offset, 0.1f, 50, primeHost.velocity);
             rotationSpeed = 0.03f;
@@ -110,7 +111,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     if (((PrimeV2)primeHost.ModNPC).MoveTimer == 10)
                     {
                         counterClockwise = true;
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeBeam>(), BeamDamage, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
                     }
 
                     if (counterClockwise)
@@ -167,7 +168,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         }
         public override bool CheckDead()
         {
-            if (((PrimeV2)primeHost.ModNPC).Phase == 1)
+            if (((PrimeV2)primeHost.ModNPC).dying)
             {
                 return true;
             }
@@ -178,6 +179,16 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 NPC.dontTakeDamage = true;
                 return false;
             }
+        }
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            PrimeV2.PrimeDamageShare(NPC.whoAmI, damageDone);
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            PrimeV2.PrimeDamageShare(NPC.whoAmI, damageDone);
         }
 
         public static Texture2D texture;

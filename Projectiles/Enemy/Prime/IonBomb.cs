@@ -59,7 +59,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             if(DetonationProgress == 30 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 240, 25);
-                newCenter = Main.player[(int)Projectile.ai[0]].Center + Main.rand.NextVector2CircularEdge(200, 200);
+                if (Projectile.ai[1] == 0)
+                {
+                    newCenter = Main.player[(int)Projectile.ai[0]].Center + Main.rand.NextVector2CircularEdge(200, 200);
+                }
+                else
+                {
+                    newCenter = Main.player[(int)Projectile.ai[0]].Center + Main.rand.NextVector2CircularEdge(700, 700);
+                }
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), newCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 240, 25);
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), newCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 240, 25);
             }
@@ -71,14 +78,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
             if (DetonationProgress > 45)
             {
-                UsefulFunctions.DustRing(Projectile.Center, 300, DustID.FireworkFountain_Blue, 1 + (int)(2 * detonationPercent * detonationPercent), 15 * detonationPercent * detonationPercent);
+                UsefulFunctions.DustRing(Projectile.Center, 500, DustID.FireworkFountain_Blue, 1 + (int)(2 * detonationPercent * detonationPercent), 15 * detonationPercent * detonationPercent);
             }
         }
 
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if(Projectile.Distance(targetHitbox.Center.ToVector2()) < 300 && DetonationTime == DetonationProgress + 1)
+            if(Projectile.Distance(targetHitbox.Center.ToVector2()) < 500 && DetonationTime == DetonationProgress + 1)
             {
                 return true;
             }
@@ -96,14 +103,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 700, 60);
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 400, 45);
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 220, 35);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 900, 60);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 600, 45);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 270, 35);
 
                 float rotation = Main.rand.NextFloat(0, MathHelper.TwoPi);
-                for (int i = 0; i < 7; i++)
+                for (int i = 0; i < 4; i++)
                 {
-                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(12, 0).RotatedBy(rotation + (MathHelper.PiOver2 / 7f) + i * MathHelper.TwoPi / 7f), ModContent.ProjectileType<Marilith.MarilithLightning>(), Projectile.damage, .5f, Main.myPlayer);
+                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(12, 0).RotatedBy(rotation + (MathHelper.PiOver2 / 4f) + i * MathHelper.TwoPi / 4f), ModContent.ProjectileType<Marilith.MarilithLightning>(), Projectile.damage / 2, .5f, Main.myPlayer);
                 }
             }
 

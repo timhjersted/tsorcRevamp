@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.width = 20;
             NPC.damage = 53;
             NPC.defense = 0;
-            NPC.lifeMax = 7500;
+            NPC.lifeMax = PrimeV2.PrimeArmHealth;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.value = 0;
@@ -41,6 +41,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.timeLeft = 99999;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
+            NPC.damage = 0;
         }
         const float TRAIL_LENGTH = 12;
 
@@ -75,7 +76,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         int cooldown;
         public override void AI()
         {
-            int LaserDamage = 40;
+            int LaserDamage = 100;
             Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 1.5f);
             UsefulFunctions.SmoothHoming(NPC, primeHost.Center + Offset, 0.1f, 50, primeHost.velocity);
 
@@ -108,9 +109,9 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         {
                             cooldown = (int)(cooldown * 0.965);
                             Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 10f);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage, 0.5f, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity * 0.8f, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage, 0.5f, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity * 0.66f, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity * 0.8f, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity * 0.66f, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
                         }
                     }
                     else
@@ -120,7 +121,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         {
                             Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 6f);
                             velocity = velocity.RotatedBy(Main.rand.NextFloat(-1, 1));
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
                         }
                     }
                 }
@@ -132,16 +133,16 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         if (Main.GameUpdateCount % 90 == 45)
                         {
                             Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 8.5f);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
                         }
                     }
                     else
                     {
                         if (Main.GameUpdateCount % 90 == 45)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7.5f).RotatedBy(Main.rand.NextFloat(-1, 1)), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage, 0.5f, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7.5f).RotatedBy(Main.rand.NextFloat(-1, 1)), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage, 0.5f, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7.5f).RotatedBy(Main.rand.NextFloat(-1, 1)), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7.5f).RotatedBy(Main.rand.NextFloat(-1, 1)), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7.5f).RotatedBy(Main.rand.NextFloat(-1, 1)), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7.5f).RotatedBy(Main.rand.NextFloat(-1, 1)), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
                         }
                     }
                 }
@@ -149,7 +150,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         }
         public override bool CheckDead()
         {
-            if (((PrimeV2)primeHost.ModNPC).Phase == 1)
+            if (((PrimeV2)primeHost.ModNPC).dying)
             {
                 return true;
             }
@@ -160,6 +161,16 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 NPC.dontTakeDamage = true;
                 return false;
             }
+        }
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            PrimeV2.PrimeDamageShare(NPC.whoAmI, damageDone);
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            PrimeV2.PrimeDamageShare(NPC.whoAmI, damageDone);
         }
 
         public static Texture2D texture;
