@@ -3,6 +3,7 @@ sampler uImage0 : register(s0);
 float time; //Causes the flames to flow with time
 float splitAngle; //How wide (in radians) the angle of fire is
 float rotation; //Rotates the fire
+float length; //The maximum length
 
 //I precomputed what values I could, to save on instruction count
 float rotationMinusPI;
@@ -42,16 +43,21 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     
     //Make it taper off on the edges    
     float edgeDistance = min(min(abs(angle - rotationMinusPI), abs(angle - rotationMinusPI + TWOPI)), min(abs(splitAnglePlusRotationMinusPI - angle), abs(angle - RotationMinus2PIMinusSplitAngleMinusPI)));
-    if (abs(edgeDistance) < .311)
+    if (abs(edgeDistance) < 0.311)
     {
-        intensity = lerp(0.0, intensity, edgeDistance / .311);
+        intensity = lerp(0.0, intensity, edgeDistance / 0.311);
     }    
     
     //Make it taper off near the source
     //Currently can't fit it with the instruction count limit...
-    if (dist < .02)
+    if (dist < 0.02)
     {
-        //intensity = lerp(0.0, intensity, dist / .02);
+        intensity = lerp(0.0, intensity, dist / 0.02);
+    }
+    
+    if (dist > length)
+    {
+        intensity = lerp(intensity, 0, min((dist - length) * 10, 1));
     }
 
     //Scale 'intensity' into the RGB channels. Values are fine-tuned to turn noise into a fire-like effect.
@@ -62,6 +68,6 @@ technique FireWaveShader
 {
     pass FireWaveShaderPass
     {
-        PixelShader = compile ps_2_0 PixelShaderFunction();
+        PixelShader = compile ps_3_0 PixelShaderFunction();
     }
 }

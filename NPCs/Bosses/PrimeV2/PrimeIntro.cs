@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
 
 
-            if (Main.tile[5000, 1106].IsActuated)
+            if (!Main.tile[5000, 1106].IsActuated)
             {
                 PrimeV2.ActuateBottomHalf();
             }

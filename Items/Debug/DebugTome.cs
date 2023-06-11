@@ -51,8 +51,8 @@ namespace tsorcRevamp.Items.Debug
 
             //NPCs.Bosses.PrimeV2.PrimeV2.ActuatePrimeArena();
 
-            //NPC.NewNPC(Item.GetSource_FromThis(), (int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, ModContent.NPCType<NPCs.Bosses.PrimeV2.PrimeV2>());
-            Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), Main.MouseWorld, Main.rand.NextVector2CircularEdge(1,1), ModContent.ProjectileType<Projectiles.Enemy.Marilith.SyntheticFirestorm>(), 10, 0, player.whoAmI, 700, 60);
+            NPC.NewNPC(Item.GetSource_FromThis(), (int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, ModContent.NPCType<NPCs.Bosses.PrimeV2.PrimeV2>());
+            //Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), Main.MouseWorld, Main.rand.NextVector2CircularEdge(1,1), ModContent.ProjectileType<Projectiles.Enemy.Marilith.SyntheticFirestorm>(), 10, 0, player.whoAmI, 700, 60);
 
             //Uncomment this to make the debug tome max out your perma potions
             //return false;

@@ -250,7 +250,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 int totalLifeMax = BeamNPC.lifeMax + IonNPC.lifeMax + BuzzsawNPC.lifeMax + GatlingNPC.lifeMax + LauncherNPC.lifeMax + SeverNPC.lifeMax;
                 if (totalLife < totalLifeMax / 2)
                 {
-                    ActuateBottomHalf();
                     NextPhase();
                 }
             }
@@ -397,6 +396,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 {
                     Wiring.ActuateForced(x, 1106);
                 }
+
+                for(int y = 1106; y < 1180; y++)
+                {
+                    Main.tile[x, y].LiquidAmount = 0;
+                }
             }
         }
 
@@ -457,11 +461,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
             }
 
-            if(deathAnimationProgress == deathAnimationDuration - 1)
-            {
-                ActuateBottomHalf();
-            }
-
             //The base class handles actually killing the NPC when the timer runs out
             base.HandleDeath();
         }
@@ -485,7 +484,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.Center = Vector2.Lerp(PrimeCeilingPoint, PrimeCenterPoint, (float)Math.Pow((float)(phaseTransitionDuration - phaseTransitionTimeRemaining) / phaseTransitionDuration, 4f));
             UsefulFunctions.SetAllCameras(NPC.Center, ref progress);
 
-            if (phaseTransitionTimeRemaining == phaseTransitionDuration)
+            if (phaseTransitionTimeRemaining  == 1)
             {
                 if (Main.tile[5152, 1106].TileType == TileID.Glass)
                 {
@@ -495,6 +494,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 1100, 80);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Marilith.SyntheticFirestorm>(), 50, 0, Main.myPlayer, 1100, 80);
                 }
             }
         }

@@ -40,17 +40,26 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         float explosionTime = 4000;
         public override void AI()
         {
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.PrimeV2.PrimeV2>()))
+            {
+                Projectile.active = false;
+            }
             maxSize = 1200;
-            Projectile.rotation += 0.02f;
+            Projectile.rotation -= 0.003f;
             if(Projectile.rotation > MathHelper.TwoPi)
             {
                 Projectile.rotation -= MathHelper.TwoPi;
             }
+            if(Projectile.rotation < 0)
+            {
+                Projectile.rotation += MathHelper.TwoPi;
+            }
 
             float distance = Vector2.Distance(truePosition, Main.LocalPlayer.Center);
-            if (distance < size && UsefulFunctions.CompareAngles(Vector2.Normalize(truePosition - Main.LocalPlayer.Center), Projectile.rotation.ToRotationVector2()) > MathHelper.Pi - angle / 2f)
+            float angleBetween = (float)UsefulFunctions.CompareAngles(Vector2.Normalize(truePosition - Main.LocalPlayer.Center), Projectile.rotation.ToRotationVector2());
+            if (distance < size && Math.Abs(angleBetween - MathHelper.Pi) < angle / 2.85f)
             {
-                Main.NewText("Colliding! " + size);
+                Main.NewText("Colliding! " + (angleBetween - MathHelper.Pi));
             }
             explosionTime = 4000;
             if(truePosition == Vector2.Zero)
@@ -60,8 +69,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
             Projectile.Center = Main.LocalPlayer.Center;
             Projectile.timeLeft = 2;
-            Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
-
             
             
             if (size < maxSize)
@@ -95,8 +102,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         {
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/SyntheticFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            //if (effect == null)
+            {
+                effect = new Effect(Main.graphics.GraphicsDevice, Mod.GetFileBytes("Effects/SyntheticFirestorm"));
+                //effect = ModContent.Request<Effect>("tsorcRevamp/Effects/SyntheticFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
 
             angle = MathHelper.TwoPi / 6f;
             float shaderRotation = Projectile.rotation + (MathHelper.Pi - angle / 2f);
@@ -104,6 +114,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             effect.Parameters["splitAngle"].SetValue(angle);
             effect.Parameters["rotation"].SetValue(shaderRotation);
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 312);
+            effect.Parameters["length"].SetValue(.15f * size / maxSize);
 
 
             effect.Parameters["rotationMinusPI"].SetValue(shaderRotation - MathHelper.Pi);
