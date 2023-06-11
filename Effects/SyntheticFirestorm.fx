@@ -1,22 +1,15 @@
 sampler uImage0 : register(s0);
-sampler uImage1 : register(s1);
-float time;
-float2 textureSize;
-float2 effectSize;
-float splitAngle;
-float rotation;
-float width;
-float4 effectColor;
 
-//Precomputed values to save on instruction count
-float RotationMinus2PIMinusSplitAngle;
-float splitAnglePlusRotation;
-float splitAnglePlusRotationMinusPI;
+float time; //Causes the flames to flow with time
+float splitAngle; //How wide (in radians) the angle of fire is
+float rotation; //Rotates the fire
+
+//I precomputed what values I could, to save on instruction count
 float rotationMinusPI;
-float RotationMinus2PIMinusSplitAngleMinusPI; //Peak self-documenting code. Even this comment isn't required. You already know why this exists in the exact form it does here.
-float OneThirdMinusTwoPiMinusSplit;
-float rotationOverTwoPi;
+float splitAnglePlusRotationMinusPI;
+float RotationMinus2PIMinusSplitAngleMinusPI; 
 
+//Various constants
 const float PI = 3.141592;
 const float TWOPI = 6.283184;
 const float INVERSETWOPI = 0.1591549;
@@ -32,13 +25,10 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     float dist = distance(coords, float2(0.5, 0.5));    
     
     //Convert uv from rectangular to polar coordinates
-    float2 samplePoint = float2(dist - time, mad(angle, INVERSETWOPI, rotationOverTwoPi));
+    float2 samplePoint = float2(dist - time, angle * INVERSETWOPI);
     
     //Calculate how intense a pixel should be based on the noise generator
     float intensity = tex2D(uImage0, samplePoint).r;
-    
-    
-    
     
     //Only draw a slice with angles between 'rotation' and 'splitAngle'. The final && is to stop it from going doing a fucky wucky when it crosses the 2Pi > 0 border.    
     if (angle > splitAnglePlusRotationMinusPI)
@@ -58,11 +48,13 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     }    
     
     //Make it taper off near the source
+    //Currently can't fit it with the instruction count limit...
     if (dist < .02)
     {
         //intensity = lerp(0.0, intensity, dist / .02);
     }
 
+    //Scale 'intensity' into the RGB channels. Values are fine-tuned to turn noise into a fire-like effect.
     return float4(pow(intensity, 4.5), pow(intensity, 4.8) * dist, 0, 1) * 100;
 }
 
