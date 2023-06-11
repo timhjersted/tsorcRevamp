@@ -103,7 +103,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             shaderRotation %= MathHelper.TwoPi;
             effect.Parameters["splitAngle"].SetValue(angle);
             effect.Parameters["rotation"].SetValue(shaderRotation);
-            effect.Parameters["time"].SetValue((float)(Main.timeForVisualEffects % 4096) / 4096);
+            effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 312);
+
+
+            effect.Parameters["rotationMinusPI"].SetValue(shaderRotation - MathHelper.Pi);
+            effect.Parameters["splitAnglePlusRotationMinusPI"].SetValue(shaderRotation + angle - MathHelper.Pi);
+            effect.Parameters["RotationMinus2PIMinusSplitAngleMinusPI"].SetValue((shaderRotation - (MathHelper.TwoPi - angle)) - MathHelper.Pi);
 
             //Apply the shader
             effect.CurrentTechnique.Passes[0].Apply();
