@@ -86,7 +86,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                     Projectile.frame = 4;
                 }
             }
-            Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 0.78f);
+            Lighting.AddLight(Projectile.Center, Color.Pink.ToVector3() * 1f);
+            Dust.NewDust(Projectile.Center, 2, 2, DustID.VenomStaff, 0, 0, 150, default, 0.5f);
         }
 
         public NPC FindClosestNPC(float maxDetectDistance)

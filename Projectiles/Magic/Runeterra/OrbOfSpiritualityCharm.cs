@@ -27,6 +27,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 		{
 			Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
 			Projectile.width = 66; // The width of your projectile
+            Projectile.scale = 1.2f;
 			Projectile.height = 28; // The height of your projectile
 			Projectile.friendly = true; // Deals damage to enemies
 			Projectile.penetrate = 1;
@@ -110,8 +111,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                 }
             }
 
-            Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 0.78f);
-            Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
+            Lighting.AddLight(Projectile.Center, Color.Pink.ToVector3() * 1.5f);
+            Dust.NewDust(Projectile.Center, 2, 2, DustID.VenomStaff, 0, 0, 150, default, 0.5f);
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

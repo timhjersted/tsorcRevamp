@@ -7,14 +7,13 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using System.Collections.Generic;
 
-namespace tsorcRevamp.Projectiles.Swords.Runeterra
+namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
     public class NightbringerWindWall: ModProjectile
     {
         public override void SetStaticDefaults()
         {
-            Main.projFrames[Projectile.type] = 7;
-            // DisplayName.SetDefault("Nightbringer Firewall");
+            Main.projFrames[Projectile.type] = 8;
         }
         public override void SetDefaults()
         {
@@ -71,7 +70,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
                     Projectile.frame = 0;
                 }
             }
-            Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
+            Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 5f);
         }
     }
 }

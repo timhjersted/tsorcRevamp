@@ -1070,7 +1070,7 @@ namespace tsorcRevamp
                 if (Main.keyState.IsKeyDown(Keys.LeftShift))
                 {
                     SoundEngine.PlaySound(SoundID.Item100, player.Center);
-                    Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), player.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<Projectiles.Swords.Runeterra.NightbringerWindWall>(), 0, 0, Main.myPlayer);
+                    Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), player.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<Projectiles.Melee.Runeterra.NightbringerWindWall>(), 0, 0, Main.myPlayer);
                     Player.AddBuff(ModContent.BuffType<NightbringerWindwallCooldown>(), 30 * 60);
                 }
             }

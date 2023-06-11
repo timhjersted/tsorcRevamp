@@ -16,6 +16,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
         public override void Update(NPC npc, ref int buffIndex)
         {
             npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Sundered = true;
+            Dust.NewDust(npc.VisualPosition, npc.width, npc.height, DustID.Torch, 0, 0, 0, default, 0.5f);
         }
     }
 }

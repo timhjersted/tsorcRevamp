@@ -1,4 +1,3 @@
-using tsorcRevamp.Projectiles.Swords.Runeterra;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -6,6 +5,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using Terraria.DataStructures;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Melee.Runeterra;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {

@@ -123,14 +123,14 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             }
 
             Projectile.rotation = Projectile.velocity.ToRotation();
-
-            Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 0.78f);
 			if (Full)
             {
                 Dust.NewDust(Projectile.Center, 2, 2, DustID.PoisonStaff, 0, 0, 150, default, 0.5f);
+                Lighting.AddLight(Projectile.Center, OrbOfDeception.FilledColor.ToVector3() * 2f);
             } else
             {
                 Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
+                Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 2f);
             }
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)

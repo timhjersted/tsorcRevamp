@@ -11,6 +11,7 @@ using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using Terraria.DataStructures;
 using System.Collections.Generic;
 using ReLogic.Utilities;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
 {
@@ -51,7 +52,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 		{
 			Player player = Main.player[Projectile.owner];
             player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, player.direction * -1.9f);
-            if (!playedSound && Main.rand.NextBool(10))
+            if (!playedSound && Main.rand.NextBool(1200) && !player.HasBuff(ModContent.BuffType<InCombat>()))
             {
                 playedSound = true;
                 SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/OrbAmbient") with { Volume = 1f }, player.Center); //can give funny pitch hehe
@@ -109,13 +110,14 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                 }
             }
 
-            Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 0.78f);
-            if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief < 9)
+            if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief > 8)
             {
-                Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
+                Dust.NewDust(Projectile.Center, 2, 2, DustID.RedTorch, 0, 0, 150, default, 0.5f);
+                Lighting.AddLight(Projectile.Center, OrbOfFlame.FilledColor.ToVector3() * 2f);
             } else
             {
-                Dust.NewDust(Projectile.Center, 2, 2, DustID.PoisonStaff, 0, 0, 150, default, 0.5f);
+                Dust.NewDust(Projectile.Center, 2, 2, DustID.Torch, 0, 0, 150, default, 0.5f);
+                Lighting.AddLight(Projectile.Center, Color.Firebrick.ToVector3() * 2f);
             }
         }
         public override void Kill(int timeLeft)

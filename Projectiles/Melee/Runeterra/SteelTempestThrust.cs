@@ -6,11 +6,11 @@ using Terraria.Enums;
 using Terraria.ModLoader;
 using Terraria.DataStructures;
 
-namespace tsorcRevamp.Projectiles.Swords.Runeterra
+namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
-	public class PlasmaWhirlwindThrust : ModProjectile
+	public class SteelTempestThrust : ModProjectile
 	{
-		public int steeltempesthittimer2 = 0;
+		public int steeltempesthittimer = 0;
 		public const int FadeInDuration = 7;
 		public const int FadeOutDuration = 4;
 
@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 6;
-			// DisplayName.SetDefault("Plasma Whirlwind Thrust");
+			// DisplayName.SetDefault("Steel Tempest Thrust");
         }
 
 
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 			Projectile.tileCollide = false;
-			Projectile.scale = 0.85f;
+			Projectile.scale = 0.7f;
 			Projectile.DamageType = DamageClass.Melee;
 			Projectile.ownerHitCheck = true;
 			Projectile.usesLocalNPCImmunity = true;
@@ -45,9 +45,9 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			Projectile.extraUpdates = 1; 
 			Projectile.timeLeft = 360;
 			Projectile.hide = true;
-            Projectile.width = 140;
-            Projectile.height = 136;
-        }
+			Projectile.width = 110;
+			Projectile.height = 104;
+		}
 		public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
@@ -64,7 +64,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			if (Timer >= TotalDuration)
 			{
 				Projectile.Kill();
-				steeltempesthittimer2 = 0;
+				steeltempesthittimer = 0;
 				return;
 			}
 			else
@@ -82,12 +82,12 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 
 			SetVisualOffsets();
 			Visuals();
-        }
+		}
 
-        private void SetVisualOffsets()
+		private void SetVisualOffsets()
 		{
-			const int HalfSpriteWidth = 164 / 2;
-			const int HalfSpriteHeight = 160 / 2;
+			const int HalfSpriteWidth = 158 / 2;
+			const int HalfSpriteHeight = 148 / 2;
 
 			int HalfProjWidth = Projectile.width / 2;
 			int HalfProjHeight = Projectile.height / 2;
@@ -113,20 +113,20 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 		{
 			Vector2 start = Projectile.Center;
-			Vector2 end = start + Projectile.velocity * 12f;
+			Vector2 end = start + Projectile.velocity * 6f;
 			float collisionPoint = 0f;
 			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
 		}
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Player player = Main.player[Projectile.owner];
-            if (steeltempesthittimer2 == 0)
+			Player player = Main.player[Projectile.owner];
+            if (steeltempesthittimer == 0)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks += 1;
-                steeltempesthittimer2 = 1;
-                if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks == 2)
+				player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks += 1;
+				steeltempesthittimer = 1;
+				if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks == 2)
                 {
-                    SoundEngine.PlaySound(SoundID.Item60, player.Center);
+					SoundEngine.PlaySound(SoundID.Item71, player.Center);
                 }
             }
         }

@@ -9,9 +9,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
 
-namespace tsorcRevamp.Projectiles.Swords.Runeterra
+namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
-    public class PlasmaWhirlwindTornado : ModProjectile
+    public class NightbringerTornado : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         }
         public override void SetDefaults()
         {
-            Projectile.width = 80;
+            Projectile.width = 90;
             Projectile.height = 180;
             Projectile.aiStyle = -1;
             Projectile.friendly = true;
@@ -32,7 +32,6 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         }
 
         SlotId SoundSlotID;
-        SoundStyle TornadoSoundStyle = SoundID.DD2_BookStaffTwisterLoop;
         bool soundPaused;
         bool playedSound = false;
         ActiveSound TornadoSound;
@@ -43,13 +42,13 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 2f);
             Projectile.localNPCHitCooldown = (int)(5.5f / (0.5f + (player.GetTotalAttackSpeed(DamageClass.Melee) / 2f)));
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             modifiers.SourceDamage *= 2;
         }
+
         public override void AI()
         {
             if (!playedSound)
@@ -75,26 +74,21 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
                     TornadoSound.Position = Projectile.Center;
                 }
             }
-            int dustID = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.CoralTorch, Scale: 2);
+            int dustID = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, Scale:2);
             Main.dust[dustID].noGravity = true;
         }
         public override void Kill(int timeLeft)
         {
             if (Projectile.timeLeft < 2)
             {
-                if (TornadoSound != null && TornadoSound.IsPlaying)
-                {
-                    TornadoSound.Stop();
-                }
+                TornadoSound.Stop();
             }
         }
+
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            target.AddBuff(BuffID.OnFire3, 600);
             Projectile.damage = (int)(Projectile.damage * 0.95f); //Multihit penalty
-            if (target.type == NPCID.TheDestroyer | target.type == NPCID.TheDestroyerBody | target.type == NPCID.TheDestroyerTail)
-            {
-                Projectile.damage = (int)(Projectile.damage * 0.95f);
-            }
         }
         public override bool PreDraw(ref Color lightColor)
         {
@@ -118,8 +112,8 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
             {
                 for (var i = 0; i < numrings*2; i++) //some weird stuff going on with ring offset i think. multiplying numrings by 2 to make it taller for now
                 {
-                    float _xscale = ((ringScale.X * i/2) * 0.1f) + 0.005f * i; //controls how wide each individual ring will be
-                    float _yscale = 0.5f; //controls how tall each individual ring will be
+                    float _xscale = ((ringScale.X * i/2) * 0.1f) + 0.01f * i; //controls how wide each individual ring will be
+                    float _yscale = 0.4f; //controls how tall each individual ring will be
                     var _offset = (Math.Sin(Projectile.timeLeft / 6 + i / 4) * 24) * _xscale; //this is how the rings gain a wave effect
                     var _dist = 2f + (float)i * 2.5f; //distance between each ring
                     float _rot = (-numrings) + i; //the rotation of a given ring to make it look just a little more dynamic
@@ -130,7 +124,7 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
                     vec.Y -= _dist; //apply ring separation
                     var frameIndex = (currentFrame + i / 2) % Main.projFrames[Projectile.type]; //get frame index to draw
                     var sourceRect = new Rectangle(frameIndex * 128, 0, 127, 128); //the frame itself
-                    var col = new Color(0.498f, 1f, 0.831f, 0.3f); //color
+                    var col = new Color(0.886f, 0.345f, 0.133f, 0.3f); //color
                     //draw the ring
                     Main.spriteBatch.Draw(tex, Projectile.Center + vec - Main.screenPosition, sourceRect, col, _rot * Math.Sign(Projectile.velocity.X), new Vector2(64, 64), ringScale + new Vector2(_xscale, _yscale), SpriteEffects.None, 0);
                 }

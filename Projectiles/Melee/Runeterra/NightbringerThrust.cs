@@ -7,7 +7,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace tsorcRevamp.Projectiles.Swords.Runeterra
+namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
 	public class NightbringerThrust : ModProjectile
 	{

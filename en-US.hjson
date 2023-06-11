@@ -6038,7 +6038,7 @@ Mods: {
 				DisplayName: Urumi
 				Tooltip:
 					'''
-					{$CommonItemTooltip.SummonTagArmorPen}
+					{$CommonItemTooltip.Summon.TagArmorPen}
 					{$CommonItemTooltip.PercentSummonTagCritChance@1}
 					Ignores a substantial amount of defense
 					{$CommonItemTooltip.Whips}

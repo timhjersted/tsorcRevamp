@@ -11,6 +11,7 @@ using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using Terraria.DataStructures;
 using System.Collections.Generic;
 using ReLogic.Utilities;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
 {
@@ -53,11 +54,11 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 		{
 			Player player = Main.player[Projectile.owner];
             player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, player.direction * -1.9f);
-            if (!playedSound1 && !playedSound2 && Main.rand.NextBool(2000))
+            if (!playedSound1 && !playedSound2 && Main.rand.NextBool(2000) && !player.HasBuff(ModContent.BuffType<InCombat>()))
             {
                 playedSound1 = true;
                 SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbAmbient1") with { Volume = 1f }, player.Center); //can give funny pitch hehe
-            } else if (!playedSound1 && !playedSound2 && Main.rand.NextBool(2000))
+            } else if (!playedSound1 && !playedSound2 && Main.rand.NextBool(2000) && !player.HasBuff(ModContent.BuffType<InCombat>()))
             {
                 playedSound2 = true;
                 SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbAmbient2") with { Volume = 1f }, player.Center); //can give funny pitch hehe
@@ -122,13 +123,15 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                 }
             }
 
-            Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 0.78f);
-            if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief < 9)
-            {
-                Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
-            } else
+            Lighting.AddLight(Projectile.Center, Color.Pink.ToVector3() * 2f);
+            if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief > 8)
             {
                 Dust.NewDust(Projectile.Center, 2, 2, DustID.PoisonStaff, 0, 0, 150, default, 0.5f);
+                Lighting.AddLight(Projectile.Center, Color.GreenYellow.ToVector3() * 2f);
+            } else
+            {
+                Dust.NewDust(Projectile.Center, 2, 2, DustID.VenomStaff, 0, 0, 150, default, 0.5f);
+                Lighting.AddLight(Projectile.Center, OrbOfSpirituality.FilledColor.ToVector3() * 2f);
             }
         }
         public override void Kill(int timeLeft)

@@ -304,9 +304,9 @@ namespace tsorcRevamp
 
         private static Item On_Player_PickupItem(On_Player.orig_PickupItem orig, Player self, int playerIndex, int worldItemArrayIndex, Item itemToPickUp)
         {
-            if (itemToPickUp.type == ItemID.Star || itemToPickUp.type == ItemID.SugarPlum || itemToPickUp.type == ItemID.SoulCake || itemToPickUp.type == ItemID.ManaCloakStar && self.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if ((itemToPickUp.type == ItemID.Star || itemToPickUp.type == ItemID.SugarPlum || itemToPickUp.type == ItemID.SoulCake || itemToPickUp.type == ItemID.ManaCloakStar) && self.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                SoundEngine.PlaySound(SoundID.Item7, new Vector2((int)self.position.X, (int)self.position.Y));
+                SoundEngine.PlaySound(SoundID.Grab, new Vector2((int)self.position.X, (int)self.position.Y));
                 self.statMana += self.statManaMax2 / 25;
                 self.ManaEffect(self.statManaMax2 / 25);
                 if (self.statMana > self.statManaMax2)
