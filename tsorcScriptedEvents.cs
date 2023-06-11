@@ -145,6 +145,7 @@ namespace tsorcRevamp
             SlograAndGaibonFight,
             SerrisFight,
             MarilithFight,
+            PrimeFight,
             KrakenFight,
             GwynTombVision,
             AbyssPortal,
@@ -283,6 +284,9 @@ namespace tsorcRevamp
 
             //MARILITH 
             ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(3235, 1770), 100, ModContent.NPCType<MarilithIntro>(), DustID.RedTorch, false, true, true, "default", Color.Red, false, MarilithCustomCondition);
+
+            //SKELETRON PRIME
+            ScriptedEvent PrimeEvent = new ScriptedEvent(new Vector2(5090, 1103), 75, ModContent.NPCType<NPCs.Bosses.PrimeV2.PrimeIntro>(), DustID.RedTorch, false, false, true, "default", Color.Gray, false, PrimeCustomCondition);
 
             //KRAKEN
             ScriptedEvent KrakenEvent = new ScriptedEvent(new Vector2(1821, 1702), 30, ModContent.NPCType<WaterFiendKraken>(), DustID.MagicMirror, true, true, true, "The Water Fiend rises!", Color.Blue, false, SuperHardModeCustomCondition);
@@ -459,6 +463,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.SlograAndGaibonFight, SlograAndGaibonEvent},
                 {ScriptedEventType.SerrisFight, SerrisEvent},
                 {ScriptedEventType.MarilithFight, MarilithEvent},
+                {ScriptedEventType.PrimeFight, PrimeEvent},
                 {ScriptedEventType.KrakenFight, KrakenEvent},
                 {ScriptedEventType.AbyssPortal, AbyssPortalEvent},
                 {ScriptedEventType.GwynTombVision, GwynsTombEvent},
@@ -608,6 +613,18 @@ namespace tsorcRevamp
                 return true;
             }
         }
+        public static bool PrimeCustomCondition()
+        {            
+            if (/*tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.PrimeV2.PrimeV2>())) ||*/ NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.PrimeV2.PrimeV2>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.PrimeV2.PrimeIntro>()))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         public static bool GwynsTombVisionCustomCondition()
         {
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>())) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Special.GwynBossVision>()))
@@ -1172,9 +1189,12 @@ namespace tsorcRevamp
                             }
                             if (distance < EnabledEvents[i].radius && !Main.player[index].dead)
                             {
-                                for (int j = 0; j < 100; j++)
+                                if (EnabledEvents[i].visible)
                                 {
-                                    Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
+                                    for (int j = 0; j < 100; j++)
+                                    {
+                                        Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
+                                    }
                                 }
                                 RunningEvents.Add(EnabledEvents[i]);
                                 EnabledEvents.RemoveAt(i);

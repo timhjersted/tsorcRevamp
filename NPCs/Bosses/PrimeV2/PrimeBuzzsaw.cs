@@ -68,7 +68,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         bool active
         {
-            get => ((PrimeV2)primeHost.ModNPC).MoveIndex == 2;
+            get => primeHost != null && ((PrimeV2)primeHost.ModNPC).MoveIndex == 2;
         }
         int phase
         {
@@ -84,9 +84,18 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public Vector2 Offset = new Vector2(600, 200);
         public override void AI()
         {
-            int SawDamage = 120;
             NPC.rotation = 0;
-            Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 1.5f);
+            int SawDamage = 120;
+
+            if (primeHost == null || primeHost.active == false || primeHost.type != ModContent.NPCType<PrimeV2>())
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 500, 60);
+                }
+                NPC.active = false;
+                return;
+            }
 
             if (Prime.aiPaused)
             {
@@ -197,7 +206,14 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         int sawFrame;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            Lighting.AddLight(NPC.Center, TorchID.Bone);
+            if (!active)
+            {
+                Lighting.AddLight(NPC.Center, TorchID.Bone);
+            }
+            else
+            {
+                Lighting.AddLight(NPC.Center, TorchID.Orange);
+            }
 
             UsefulFunctions.EnsureLoaded(ref sawTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeSawBlade");
             UsefulFunctions.EnsureLoaded(ref holderTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeBuzzsaw");

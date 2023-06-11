@@ -81,12 +81,19 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             };
         }
 
-        public Vector2 PrimeCeilingPoint = new Vector2(81048, 16224);
-        public Vector2 PrimeCenterPoint = new Vector2(81048, 17664);
+        public static Vector2 PrimeCeilingPoint = new Vector2(81048, 16224);
+        public static Vector2 PrimeCenterPoint = new Vector2(81048, 17664);
 
         bool activated;
         public override void AI()
         {
+            if (despawning)
+            {
+                if (Main.tile[5152, 1106].TileType != TileID.Glass)
+                {
+                    ActuateBottomHalf();
+                }
+            }
             PrimeCeilingPoint = new Vector2(81048, 16424);
             if (!activated)
             {
@@ -96,10 +103,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     if (Main.player[i].active && NPC.Distance(Main.player[i].Center) < 550)
                     {
                         activated = true;
-                        if(Main.tile[5000, 1106].IsActuated)
-                        {
-                            ActuateBottomHalf();
-                        }
                         break;
                     }
                 }
@@ -111,7 +114,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
             base.AI();            
 
-            if (introTimer >= introDuration)
+            if (!aiPaused)
             {
 
                 if (Phase == 0)
@@ -219,10 +222,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 LauncherNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeSiege>(), ai1: NPC.whoAmI);
                 SeverNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeWelder>(), ai1: NPC.whoAmI);
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
-                if (Main.tile[5080, 1100].TileType == TileID.Glass)
-                {
-                    ActuatePrimeArena();
-                }
             }
 
             if (introTimer == introDuration - 30)
@@ -252,18 +251,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 if (totalLife < totalLifeMax / 2)
                 {
                     ActuateBottomHalf();
-                    BeamNPC.life = NPC.lifeMax;
-                    BeamNPC.lifeMax = NPC.lifeMax;
-                    IonNPC.life = NPC.lifeMax;
-                    IonNPC.lifeMax = NPC.lifeMax;
-                    BuzzsawNPC.life = NPC.lifeMax;
-                    BuzzsawNPC.lifeMax = NPC.lifeMax;
-                    GatlingNPC.life = NPC.lifeMax;
-                    GatlingNPC.lifeMax = NPC.lifeMax;
-                    LauncherNPC.life = NPC.lifeMax;
-                    LauncherNPC.lifeMax = NPC.lifeMax;
-                    SeverNPC.life = NPC.lifeMax;
-                    SeverNPC.lifeMax = NPC.lifeMax;
                     NextPhase();
                 }
             }
@@ -272,6 +259,14 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 NPC.life = 1;
                 NPC.dontTakeDamage = false;
+            }
+        }
+
+        public override void BossHeadSlot(ref int index)
+        {
+            if (!activated)
+            {
+                index = -1;
             }
         }
 
@@ -351,8 +346,12 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             //Turn the random obstructive tin bricks into platforms and delete the chains
             for (int x = 4983; x < 5159; x++)
             {
-                for (int y = 1015; y < 1156; y++)
+                for (int y = 1000; y < 1156; y++)
                 {
+                    if(Main.tile[x, y].TileType == TileID.Torches)
+                    {
+                        Main.tile[x, y].ClearTile();
+                    }
                     if (Main.tile[x, y].TileType == TileID.TinBrick)
                     {
                         if (Main.tile[x - 1, y].TileType == TileID.Platforms)
@@ -485,22 +484,18 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         {
             NPC.Center = Vector2.Lerp(PrimeCeilingPoint, PrimeCenterPoint, (float)Math.Pow((float)(phaseTransitionDuration - phaseTransitionTimeRemaining) / phaseTransitionDuration, 4f));
             UsefulFunctions.SetAllCameras(NPC.Center, ref progress);
-            NPC.velocity *= 0.95f;
-            Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2CircularEdge(100, 100), DustID.ShadowbeamStaff, Main.rand.NextVector2Circular(10, 10), Scale: 5);
-            ActuateBottomHalf();
+
             if (phaseTransitionTimeRemaining == phaseTransitionDuration)
             {
+                if (Main.tile[5152, 1106].TileType == TileID.Glass)
+                {
+                    ActuateBottomHalf();
+                }
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 1100, 80);
                 }
-
-                BeamNPC.dontTakeDamage = false;
-                IonNPC.dontTakeDamage = false;
-                BuzzsawNPC.dontTakeDamage = false;
-                GatlingNPC.dontTakeDamage = false;
-                LauncherNPC.dontTakeDamage = false;
-                SeverNPC.dontTakeDamage = false;
             }
         }
 
@@ -509,6 +504,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         /// </summary>
         public static Texture2D texture;
         public static Texture2D eyeTexture;
+        public static Texture2D boneTexture;
         int frameIndex;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
@@ -516,6 +512,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeV2");
             UsefulFunctions.EnsureLoaded(ref eyeTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/Bone_Eyes");
+            UsefulFunctions.EnsureLoaded(ref boneTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/Arm_Bone_2");
 
             if (inIntro)
             {

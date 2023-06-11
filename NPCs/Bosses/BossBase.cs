@@ -317,9 +317,10 @@ namespace tsorcRevamp.NPCs.Bosses
         #region Core functions
 
         //Override this to add stuff directly to its AI itself
+        public bool despawning;
         public override void AI()
         {
-            despawnHandler.TargetAndDespawn(NPC.whoAmI);
+            despawning = despawnHandler.TargetAndDespawn(NPC.whoAmI);
             HandleLife();
             Rotate();
 

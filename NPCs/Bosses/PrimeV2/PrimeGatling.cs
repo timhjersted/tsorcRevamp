@@ -29,8 +29,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         {
             NPC.npcSlots = 10;
             NPC.aiStyle = -1;
-            NPC.height = 40;
-            NPC.width = 20;
+            NPC.width = 35;
+            NPC.height = 60;
             NPC.damage = 53;
             NPC.defense = 0;
             NPC.lifeMax = PrimeV2.PrimeArmHealth;
@@ -62,7 +62,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         bool active
         {
-            get => ((PrimeV2)primeHost.ModNPC).MoveIndex == 3;
+            get => primeHost != null && ((PrimeV2)primeHost.ModNPC).MoveIndex == 3;
         }
         int phase
         {
@@ -77,7 +77,17 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public override void AI()
         {
             int LaserDamage = 100;
-            Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 1.5f);
+
+            if (primeHost == null || primeHost.active == false || primeHost.type != ModContent.NPCType<PrimeV2>())
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 500, 60);
+                }
+                NPC.active = false;
+                return;
+            }
+
             UsefulFunctions.SmoothHoming(NPC, primeHost.Center + Offset, 0.1f, 50, primeHost.velocity);
 
             if (((PrimeV2)primeHost.ModNPC).aiPaused)
@@ -88,7 +98,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (((PrimeV2)primeHost.ModNPC).Phase == 1)
             {
-                Offset = new Vector2(1200, 0).RotatedBy(MathHelper.TwoPi / 5f);
+                Offset = new Vector2(1200, 0).RotatedBy(-MathHelper.PiOver2 - MathHelper.Pi / 5f);
             }
 
 
@@ -176,6 +186,18 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            Lighting.AddLight(NPC.Center, TorchID.Cursed);
+
+            drawColor.A = 255;
+            drawColor = Color.Lerp(drawColor, Color.GreenYellow, 0.15f);
+            drawColor = Color.Lerp(drawColor, Color.White, 0.25f);
+
+            UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeGatling");
+            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+            Vector2 drawOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
+            Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, drawOrigin, 1f, SpriteEffects.None, 0);
+
+
             //Draw metal bones
             //Draw shadow trail (and maybe normal trail?)
             if (active)
@@ -190,7 +212,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 //Draw normal version
             }
-            return true;
+            return false;
         }
 
         public override void OnKill()

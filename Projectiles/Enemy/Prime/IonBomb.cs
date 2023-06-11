@@ -78,14 +78,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
             if (DetonationProgress > 45)
             {
-                UsefulFunctions.DustRing(Projectile.Center, 500, DustID.FireworkFountain_Blue, 1 + (int)(2 * detonationPercent * detonationPercent), 15 * detonationPercent * detonationPercent);
+                UsefulFunctions.DustRing(Projectile.Center, 400, DustID.FireworkFountain_Blue, 1 + (int)(2 * detonationPercent * detonationPercent), 15 * detonationPercent * detonationPercent);
             }
         }
 
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if(Projectile.Distance(targetHitbox.Center.ToVector2()) < 500 && DetonationTime == DetonationProgress + 1)
+            if(Projectile.Distance(targetHitbox.Center.ToVector2()) < 400 && DetonationTime == DetonationProgress + 1)
             {
                 return true;
             }
@@ -101,6 +101,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
         public override bool PreKill(int timeLeft)
         {
+            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom"), Projectile.Center);
+
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 900, 60);

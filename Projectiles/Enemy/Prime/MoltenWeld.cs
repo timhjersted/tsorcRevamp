@@ -30,15 +30,16 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             Projectile.friendly = false;
             Projectile.hide = true;
 
-            trailWidth = 45;
             trailPointLimit = 150;
             trailMaxLength = 9999999;
-            collisionPadding = 50;
+            collisionPadding = 2;
+            collisionFrequency = 2;
+            trailWidth = 25;
             NPCSource = true;
             trailCollision = true;
-            collisionFrequency = 5;
+            collisionFrequency = 2;
             noFadeOut = false;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/MoltenWeld", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         public override void AI()
@@ -70,14 +71,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
                 //Don't add new trail segments if it has not travelled far enough
                 if (Vector2.Distance(lastPosition, HostEntity.Center) > 1f)
                 {
-                    lastPosition = HostEntity.Center;
+                    lastPosition = HostEntity.Center + new Vector2(0, 42);
                     trailPositions.Add(HostEntity.Center);
                     trailRotations.Add(HostEntity.velocity.ToRotation());
                 }
 
                 if (trailPositions.Count > 2)
                 {
-                    trailPositions[trailPositions.Count - 1] = HostEntity.Center;
+                    trailPositions[trailPositions.Count - 1] = HostEntity.Center + new Vector2(0, 42);
                     trailRotations[trailRotations.Count - 1] = HostEntity.velocity.ToRotation();
 
                     trailCurrentLength = CalculateLength();
@@ -121,7 +122,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
         public override float CollisionWidthFunction(float progress)
         {
-            return 25;
+            return 10;
         }
 
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
@@ -131,24 +132,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
         public override void SetEffectParameters(Effect effect)
         {
-            collisionFrequency = 2;
-            visualizeTrail = false;
-            collisionPadding = 8;
-            collisionEndPadding = trailPositions.Count / 24;
-            trailWidth = 25;
+            collisionEndPadding = trailPositions.Count / 8;
 
             //Shifts its color slightly over time
             Vector3 hslColor = Main.rgbToHsl(Color.OrangeRed);
             hslColor.X += 0.03f * (float)Math.Cos(Main.timeForVisualEffects / 25f);
             Color rgbColor = Main.hslToRgb(hslColor);
 
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
-            effect.Parameters["fadeOut"].SetValue(0.85f);
-            effect.Parameters["finalStand"].SetValue(0);
-            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-            effect.Parameters["shaderColor"].SetValue(rgbColor.ToVector4());
-            effect.Parameters["shaderColor2"].SetValue(new Color(0.2f, 0.7f, 1f).ToVector4());
-            effect.Parameters["length"].SetValue(trailCurrentLength);
+
+            effect = customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/MoltenWeld", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+
+            effect.Parameters["effectColor"].SetValue(new Vector4(1.0f, 0.3f, 0.05f, 1));
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
 
