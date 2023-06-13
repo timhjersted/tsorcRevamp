@@ -43,6 +43,7 @@ namespace tsorcRevamp.Projectiles.Spears
             pOwner.itemTime = pOwner.itemAnimation;
             Projectile.position.X = ownercenter.X - (float)(Projectile.width / 2);
             Projectile.position.Y = ownercenter.Y - (float)(Projectile.height / 2);
+            Projectile.width = 75;
 
             if (!pOwner.frozen)
             {

@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 15;
             Item.useTime = 15;
-            Item.shootSpeed = 8;
+            Item.shootSpeed = 12;
 
             Item.height = 40;
             Item.width = 40;
