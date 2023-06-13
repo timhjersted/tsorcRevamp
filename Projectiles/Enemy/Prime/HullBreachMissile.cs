@@ -75,7 +75,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
                 {
                     if (homingDelay > 30)
                     {
-                        UsefulFunctions.SmoothHoming(NPC, target.Center, 0.5f, 8, target.velocity, false);
+                        UsefulFunctions.SmoothHoming(NPC, target.Center, 0.3f, 5, target.velocity, false);
                     }
                 }
                 else
@@ -86,7 +86,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
                     }
                     else
                     {
-                        UsefulFunctions.SmoothHoming(NPC, target.Center, 0.01f, 7, target.velocity, false);
+                        UsefulFunctions.SmoothHoming(NPC, target.Center, 0.01f, 5, target.velocity, false);
                     }
                     NPC.velocity.X *= 0.98f;
                 }

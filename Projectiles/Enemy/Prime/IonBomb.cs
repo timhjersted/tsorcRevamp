@@ -59,17 +59,22 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             if(DetonationProgress == 30 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 240, 25);
-                if (Projectile.ai[1] == 0)
+                float randomRadius = 200;
+
+                if(Projectile.ai[1] == 1)
                 {
-                    newCenter = Main.player[(int)Projectile.ai[0]].Center + Main.rand.NextVector2CircularEdge(200, 200);
+                    randomRadius = 400;
                 }
-                else
+                else if (Projectile.ai[1] == 2)
                 {
-                    newCenter = Main.player[(int)Projectile.ai[0]].Center + Main.rand.NextVector2CircularEdge(700, 700);
+                    randomRadius = 0;
                 }
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), newCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 240, 25);
+
+                newCenter = Main.player[(int)Projectile.ai[0]].Center + Main.rand.NextVector2CircularEdge(randomRadius, randomRadius);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), newCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 120, 25);
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), newCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 240, 25);
             }
+
             if (DetonationProgress == 40 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.Center = newCenter;
@@ -78,14 +83,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
             if (DetonationProgress > 45)
             {
-                UsefulFunctions.DustRing(Projectile.Center, 400, DustID.FireworkFountain_Blue, 1 + (int)(2 * detonationPercent * detonationPercent), 15 * detonationPercent * detonationPercent);
+                UsefulFunctions.DustRing(Projectile.Center, 300, DustID.FireworkFountain_Blue, 1 + (int)(2 * detonationPercent * detonationPercent), 15 * detonationPercent * detonationPercent);
             }
         }
 
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if(Projectile.Distance(targetHitbox.Center.ToVector2()) < 400 && DetonationTime == DetonationProgress + 1)
+            if(Projectile.Distance(targetHitbox.Center.ToVector2()) < 300 && DetonationTime == DetonationProgress + 1)
             {
                 return true;
             }

@@ -102,7 +102,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (((PrimeV2)primeHost.ModNPC).Phase == 1)
             {
-                Offset = new Vector2(1200, 0).RotatedBy(2 * MathHelper.TwoPi / 5f);
+                Offset = new Vector2(1200, 0).RotatedBy(0);
             }
 
             Vector2 targetRotation = rotationTarget.ToRotationVector2();
@@ -143,7 +143,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     {
                         NPC.rotation = (NPC.Center - Target.Center).ToRotation() + Main.rand.NextFloat(-0.5f, 0.5f);
                         //NewProjectile FastBeam, telegraph time 30f, duration 15f
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>(), BeamDamage, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
                     }
                 }
             }
@@ -151,24 +151,27 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (damaged)
                 {
-                    //Spam stationary wide beams around the target player
-                    if (Main.GameUpdateCount % 300 == 0)
+                    if (Main.GameUpdateCount % 300 == 140)
                     {
-                        NPC.rotation = (NPC.Center - Target.Center).ToRotation() + Main.rand.NextFloat(-0.5f, 0.5f);
-                        //NewProjectile FastBeam, telegraph time 30f, duration 15f
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>(), BeamDamage, 0.5f, Main.myPlayer);
+                        rotationTarget = (NPC.Center - Target.Center).ToRotation() + Main.rand.NextFloat(-0.5f, 0.5f);
+                        rotationSpeed = 0.05f;
+                    }
+                    //Spam stationary wide beams around the target player
+                    if (Main.GameUpdateCount % 300 == 200)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
                     }
                 }
                 else
                 {
-                    if (Main.GameUpdateCount % 300 > 239)
+                    if (Main.GameUpdateCount % 600 > 239 && Main.GameUpdateCount % 600 < 300)
                     {
                         rotationTarget = (Target.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
                         NPC.rotation = (Target.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
                     }
-                    if (Main.GameUpdateCount % 300 == 299)
+                    if (Main.GameUpdateCount % 600 == 299)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 1), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>(), BeamDamage, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 1), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
                     }
                 }
             }
@@ -186,6 +189,10 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 NPC.dontTakeDamage = true;
                 return false;
             }
+        }
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
+            PrimeV2.PrimeProjectileBalancing(ref projectile);
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)

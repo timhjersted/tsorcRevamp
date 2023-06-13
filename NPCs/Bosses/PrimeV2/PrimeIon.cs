@@ -108,14 +108,16 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 {
                     if (damaged)
                     {
-                        if (Main.GameUpdateCount % 150 < 3)
+                        if (Main.GameUpdateCount % 200 == 0)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 5), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 5), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1); //An ai1 of 1 means a wider random spread
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 5), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 2); //An ai1 of 2 means teleport right on the player
                         }
                     }
                     else
                     {
-                        if (Main.GameUpdateCount % 90 == 0)
+                        if (Main.GameUpdateCount % 120 == 0)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 5), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI);
                         }
@@ -126,14 +128,15 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     if (damaged)
                     {
 
-                        if (Main.GameUpdateCount % 360 < 2)
+                        if (Main.GameUpdateCount % 600 == 100)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 5), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1);                           
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 5), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 5), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 2);                           
                         }
                     }
                     else
                     {
-                        if (Main.GameUpdateCount % 300 == 150)
+                        if (Main.GameUpdateCount % 400 == 150)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 5), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI);
                         }
@@ -154,6 +157,10 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 NPC.dontTakeDamage = true;
                 return false;
             }
+        }
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
+            PrimeV2.PrimeProjectileBalancing(ref projectile);
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)

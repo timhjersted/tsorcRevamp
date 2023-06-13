@@ -127,7 +127,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (!damaged)
                 {
-                    if ((Main.GameUpdateCount % 90) % 10 == 0 && Main.GameUpdateCount % 90 <= 20)
+                    if ((Main.GameUpdateCount % 120) % 10 == 0 && Main.GameUpdateCount % 120 <= 20)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -138,7 +138,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
                 else
                 {
-                    if (Main.GameUpdateCount % 30 == 0)
+                    if (Main.GameUpdateCount % 40 == 0)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -152,18 +152,18 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (!damaged)
                 {
-                    if (Main.GameUpdateCount % 450 == 0)
+                    if (Main.GameUpdateCount % 550 == 0)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HullBreachMissile>(), ai0: Target.whoAmI);
                         }
-                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.6f }, NPC.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.8f }, NPC.Center);
                     }
                 }
                 else
                 {
-                    if (Main.GameUpdateCount % 60 == 0)
+                    if (Main.GameUpdateCount % 75 == 0)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -188,6 +188,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 NPC.dontTakeDamage = true;
                 return false;
             }
+        }
+
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
+            PrimeV2.PrimeProjectileBalancing(ref projectile);
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)

@@ -127,7 +127,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     else
                     {
                         //Just spam shots everywhere
-                        if (Main.GameUpdateCount % 5 == 0)
+                        if (Main.GameUpdateCount % 10 == 0)
                         {
                             Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 6f);
                             velocity = velocity.RotatedBy(Main.rand.NextFloat(-1, 1));
@@ -171,6 +171,10 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 NPC.dontTakeDamage = true;
                 return false;
             }
+        }
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
+            PrimeV2.PrimeProjectileBalancing(ref projectile);
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)

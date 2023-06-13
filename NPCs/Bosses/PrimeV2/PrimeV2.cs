@@ -38,7 +38,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.width = 100;
             NPC.height = 100;
             NPC.damage = 50;
-            NPC.defense = 35;
+            NPC.defense = 999999;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.lifeMax = 15000;
@@ -84,6 +84,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public static Vector2 PrimeCeilingPoint = new Vector2(81048, 16224);
         public static Vector2 PrimeCenterPoint = new Vector2(81048, 17664);
 
+        int fireChargeTimer = 0;
         bool activated;
         public override void AI()
         {
@@ -125,6 +126,21 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 {
                     NPC.Center = PrimeCenterPoint;
                 }                
+            }
+
+            if(Phase == 1)
+            {
+                fireChargeTimer++;
+                //TODO: Fire chargeup VFX
+                if(fireChargeTimer == 180)
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 500, 80);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Marilith.SyntheticFirestorm>(), 50, 0, Main.myPlayer, 1100, 80);
+                    }
+                }
             }
         }
 
@@ -238,16 +254,18 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         
         public override void HandleLife()
         {
-            NPC.dontTakeDamage = true;
             if (inIntro)
             {
                 return;
             }
 
             int totalLife = BeamNPC.life + IonNPC.life + BuzzsawNPC.life + GatlingNPC.life + LauncherNPC.life + SeverNPC.life;
+            NPC.life = totalLife;
             if (Phase == 0)
             {
                 int totalLifeMax = BeamNPC.lifeMax + IonNPC.lifeMax + BuzzsawNPC.lifeMax + GatlingNPC.lifeMax + LauncherNPC.lifeMax + SeverNPC.lifeMax;
+                NPC.lifeMax = totalLifeMax;
+
                 if (totalLife < totalLifeMax / 2)
                 {
                     NextPhase();
@@ -257,7 +275,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             if(totalLife <= 6)
             {
                 NPC.life = 1;
-                NPC.dontTakeDamage = false;
             }
         }
 
@@ -277,12 +294,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 if (Main.npc[i].active && i != thisNPC)
                 {
                     int type = Main.npc[i].type;
-                    if (type == ModContent.NPCType<PrimeBeam>() ||
+                    if (Main.npc[i].life != 1 && (
+                        type == ModContent.NPCType<PrimeBeam>() ||
                         type == ModContent.NPCType<PrimeBuzzsaw>() ||
                         type == ModContent.NPCType<PrimeGatling>() ||
                         type == ModContent.NPCType<PrimeIon>() ||
                         type == ModContent.NPCType<PrimeSiege>() ||
-                        type == ModContent.NPCType<PrimeWelder>())
+                        type == ModContent.NPCType<PrimeWelder>()))
                     {
                         Main.npc[i].life -= damage / 4;
                         CombatText.NewText(Main.npc[i].Hitbox, CombatText.DamagedHostile, damage / 4);
@@ -295,6 +313,15 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
             }
         }
+
+        public static void PrimeProjectileBalancing(ref Projectile projectile)
+        {
+            if (projectile.type == ProjectileID.RainbowRodBullet || projectile.type == ProjectileID.HallowStar)
+            {
+                projectile.damage /= 2;
+            }
+        }
+
         public static void ActuatePrimeArena()
         {
             //Turn the top row of glass into platforms
@@ -465,14 +492,9 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             base.HandleDeath();
         }
 
-        /// <summary>
-        /// Override this to make the boss do things while transitioning between attacks
-        /// In this example, it spawns some dust
-        /// </summary>
         public override void AttackTransition()
         {
-            NPC.velocity *= 0.95f;
-            Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2CircularEdge(100, 100), DustID.ShadowbeamStaff, Main.rand.NextVector2Circular(10, 10), Scale: 3);
+            //TODO: Maybe make its aura flash once I add that??
         }
 
         /// <summary>
@@ -486,7 +508,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (phaseTransitionTimeRemaining  == 1)
             {
-                if (Main.tile[5152, 1106].TileType == TileID.Glass)
+                if (!Main.tile[5152, 1106].IsActuated)
                 {
                     ActuateBottomHalf();
                 }

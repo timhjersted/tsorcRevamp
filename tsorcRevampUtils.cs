@@ -430,7 +430,8 @@ namespace tsorcRevamp
             {
                 if (Main.player[i].active && !Main.player[i].dead)
                 {
-                    Main.player[i].immuneTime = 10;
+                    Main.player[i].immuneTime = 60;
+                    Main.player[i].immune = true;
                     tsorcRevampPlayer modPlayer = Main.player[i].GetModPlayer<tsorcRevampPlayer>();
                     modPlayer.OverrideCamera = true;
                     modPlayer.newScreenPosition = target;

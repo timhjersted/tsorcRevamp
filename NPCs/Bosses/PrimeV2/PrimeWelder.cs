@@ -106,7 +106,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (active)
             {
-                UsefulFunctions.SmoothHoming(NPC, Target.Center, 0.3f, 8f, bufferZone: false);
+                UsefulFunctions.SmoothHoming(NPC, Target.Center, 0.2f, 7f, bufferZone: false);
             }
             else
             {
@@ -130,6 +130,10 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 NPC.dontTakeDamage = true;
                 return false;
             }
+        }
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
+            PrimeV2.PrimeProjectileBalancing(ref projectile);
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)

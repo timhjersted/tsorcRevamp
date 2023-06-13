@@ -74,7 +74,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             Player closest = UsefulFunctions.GetClosestPlayer(Projectile.Center);
             if (closest != null)
             {
-                Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, closest.Center, 25);
+                Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, closest.Center, 15);
             }
             else
             {

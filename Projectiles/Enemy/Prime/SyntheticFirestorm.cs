@@ -55,12 +55,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 Projectile.rotation += MathHelper.TwoPi;
             }
 
-            float distance = Vector2.Distance(truePosition, Main.LocalPlayer.Center);
-            float angleBetween = (float)UsefulFunctions.CompareAngles(Vector2.Normalize(truePosition - Main.LocalPlayer.Center), Projectile.rotation.ToRotationVector2());
-            if (distance < size && Math.Abs(angleBetween - MathHelper.Pi) < angle / 2.85f)
-            {
-                Main.NewText("Colliding! " + (angleBetween - MathHelper.Pi));
-            }
+            
             explosionTime = 4000;
             if(truePosition == Vector2.Zero)
             {
@@ -82,18 +77,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             //behindNPCsAndTiles.Add(index);
         }
 
-        //Circular collision
+        //Custom collision
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            float distance = Vector2.Distance(truePosition, targetHitbox.Center.ToVector2());
-            if (distance < size)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            float distance = Vector2.Distance(truePosition, Main.LocalPlayer.Center);
+            float angleBetween = (float)UsefulFunctions.CompareAngles(Vector2.Normalize(truePosition - Main.LocalPlayer.Center), Projectile.rotation.ToRotationVector2());
+            return distance < size && Math.Abs(angleBetween - MathHelper.Pi) < angle / 2.85f;
         }
 
         public static Effect effect;
@@ -102,10 +91,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         {
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-            //if (effect == null)
+            if (effect == null)
             {
                 effect = new Effect(Main.graphics.GraphicsDevice, Mod.GetFileBytes("Effects/SyntheticFirestorm"));
-                //effect = ModContent.Request<Effect>("tsorcRevamp/Effects/SyntheticFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
             angle = MathHelper.TwoPi / 6f;
@@ -116,7 +104,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 312);
             effect.Parameters["length"].SetValue(.15f * size / maxSize);
 
-
+            //I precompute many values once here so that I don't have to calculate them for every single pixel in the shader. Enormous performance save.
             effect.Parameters["rotationMinusPI"].SetValue(shaderRotation - MathHelper.Pi);
             effect.Parameters["splitAnglePlusRotationMinusPI"].SetValue(shaderRotation + angle - MathHelper.Pi);
             effect.Parameters["RotationMinus2PIMinusSplitAngleMinusPI"].SetValue((shaderRotation - (MathHelper.TwoPi - angle)) - MathHelper.Pi);
@@ -137,14 +125,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if (Main.expertMode)
-            {
-                target.AddBuff(BuffID.OnFire, 450, false);
-            }
-            else
-            {
-                target.AddBuff(BuffID.OnFire, 900, false);
-            }
+            target.AddBuff(BuffID.OnFire, 300, false);
         }
     }
 }

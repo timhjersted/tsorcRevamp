@@ -118,7 +118,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 25f), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeSaw>(), SawDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 12f), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeSaw>(), SawDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
                             }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
                         }
@@ -130,7 +130,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 15f), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeSaw>(), SawDamage / 4, 0.5f, Main.myPlayer, 1, NPC.whoAmI);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 11f), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeSaw>(), SawDamage / 4, 0.5f, Main.myPlayer, 1, NPC.whoAmI);
                             }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
                         }
@@ -139,8 +139,9 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
             else
             {
+                drawOffset = Vector2.Zero;
                 //Simply sweep left and right, stopping to realign with the player after each pass
-                if(Math.Abs(NPC.Center.X - Target.Center.X) > 700)
+                if(Math.Abs(NPC.Center.X - Target.Center.X) > 800)
                 {
                     seekingPlayer = true;
                 }
@@ -159,11 +160,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
                 if(!seekingPlayer)
                 {
-                    NPC.velocity.X = 7;
+                    NPC.velocity.X = 5;
 
                     if (movingLeft)
                     {
-                        NPC.velocity.X = -7;
+                        NPC.velocity.X = -5;
                     }
 
                     if (damaged)
@@ -186,6 +187,10 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 NPC.dontTakeDamage = true;
                 return false;
             }
+        }
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
+            PrimeV2.PrimeProjectileBalancing(ref projectile);
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
@@ -266,7 +271,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 int startY = frameHeight * sawFrame;
                 Rectangle sawSourceRectangle = new Rectangle(0, startY, sawTexture.Width, frameHeight);
                 Vector2 sawDrawOrigin = new Vector2(sawSourceRectangle.Width * 0.5f, sawSourceRectangle.Height * 0.5f);
-                Main.EntitySpriteDraw(sawTexture, NPC.Center - Main.screenPosition + new Vector2(0, 44) - new Vector2(0, 16), sawSourceRectangle, sawColor, 0, sawDrawOrigin, 1.5f, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(sawTexture, NPC.Center - Main.screenPosition + new Vector2(0, 44) - new Vector2(0, 16) + drawOffset, sawSourceRectangle, sawColor, 0, sawDrawOrigin, 1.5f, SpriteEffects.None, 0);
 
                 UsefulFunctions.RestartSpritebatch(ref spriteBatch);
             }
