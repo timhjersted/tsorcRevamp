@@ -65,7 +65,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 }
             }
 
-            Projectile.rotation -= 0.003f;
+            Projectile.rotation -= 0.005f;
 
             if (fadeIn < 120)
             {
