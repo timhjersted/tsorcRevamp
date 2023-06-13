@@ -1134,7 +1134,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             for (int i = 0; i < auraColors.Count; i++)
             {
                 //Pass relevant data to the shader via these parameters
-                effect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+                effect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureTurbulent.Width);
                 effect.Parameters["effectSize"].SetValue(baseRectangle.Size());
                 Color primaryColor = auraColors[i];
                 Color secondColor;
@@ -1164,7 +1164,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 //Apply the shader
                 effect.CurrentTechnique.Passes[0].Apply();
 
-                Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, NPC.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.TwoPi * (float)i / (float)auraColors.Count, baseOrigin, NPC.scale, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, NPC.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.TwoPi * (float)i / (float)auraColors.Count, baseOrigin, NPC.scale, SpriteEffects.None, 0);
             }
         }
 

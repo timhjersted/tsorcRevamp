@@ -32,7 +32,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.height = 60;
             NPC.damage = 53;
             NPC.defense = 0;
-            NPC.lifeMax = PrimeV2.PrimeArmHealth;
+            NPC.lifeMax = TheMachine.PrimeArmHealth;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.value = 0;
@@ -61,11 +61,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         bool active
         {
-            get => primeHost != null && ((PrimeV2)primeHost.ModNPC).MoveIndex == 1;
+            get => primeHost != null && ((TheMachine)primeHost.ModNPC).MoveIndex == 1;
         }
         int phase
         {
-            get => ((PrimeV2)primeHost.ModNPC).Phase;
+            get => ((TheMachine)primeHost.ModNPC).Phase;
         }
 
         bool damaged;
@@ -76,7 +76,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         {
             int ionDamage = 200;
 
-            if (primeHost == null || primeHost.active == false || primeHost.type != ModContent.NPCType<PrimeV2>())
+            if (primeHost == null || primeHost.active == false || primeHost.type != ModContent.NPCType<TheMachine>())
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -89,64 +89,77 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             UsefulFunctions.SmoothHoming(NPC, primeHost.Center + Offset, 0.1f, 50, primeHost.velocity);
 
 
-            if (((PrimeV2)primeHost.ModNPC).aiPaused)
+            if (((TheMachine)primeHost.ModNPC).aiPaused)
             {
                 NPC.rotation = MathHelper.PiOver2;
                 return;
             }
 
-            if (((PrimeV2)primeHost.ModNPC).Phase == 1)
+            if (((TheMachine)primeHost.ModNPC).Phase == 1)
             {
                 Offset = new Vector2(1200, 0).RotatedBy(3 * MathHelper.TwoPi / 5f);
             }
 
             NPC.rotation = (Target.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
 
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (active)
             {
-                if (active)
+                if (damaged)
                 {
-                    if (damaged)
+                    if (Main.GameUpdateCount % 200 == 0)
                     {
-                        if (Main.GameUpdateCount % 200 == 0)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 5), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 5), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1); //An ai1 of 1 means a wider random spread
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 5), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 2); //An ai1 of 2 means teleport right on the player
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1); //An ai1 of 1 means a wider random spread
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 2); //An ai1 of 2 means teleport right on the player
                         }
-                    }
-                    else
-                    {
-                        if (Main.GameUpdateCount % 120 == 0)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 5), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI);
-                        }
+                        auraBonus = 0.2f;
                     }
                 }
                 else
                 {
-                    if (damaged)
+                    if (Main.GameUpdateCount % 120 == 0)
                     {
-
-                        if (Main.GameUpdateCount % 600 == 100)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 5), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 5), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 2);                           
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI);
                         }
-                    }
-                    else
-                    {
-                        if (Main.GameUpdateCount % 400 == 150)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 5), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI);
-                        }
+                        auraBonus = 0.2f;
                     }
                 }
             }
+            else
+            {
+                if (damaged)
+                {
+                    if (Main.GameUpdateCount % 600 == 100)
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 2);
+                        }
+                        auraBonus = 0.2f;
+                    }
+                }
+                else
+                {
+                    if (Main.GameUpdateCount % 400 == 150)
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI);
+                        }
+                        auraBonus = 0.2f;
+                    }
+                }
+            }
+            
         }
         public override bool CheckDead()
         {
-            if (((PrimeV2)primeHost.ModNPC).dying)
+            if (((TheMachine)primeHost.ModNPC).dying)
             {
                 return true;
             }
@@ -160,23 +173,26 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            PrimeV2.PrimeProjectileBalancing(ref projectile);
+            TheMachine.PrimeProjectileBalancing(ref projectile);
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            PrimeV2.PrimeDamageShare(NPC.whoAmI, damageDone);
+            TheMachine.PrimeDamageShare(NPC.whoAmI, damageDone);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            PrimeV2.PrimeDamageShare(NPC.whoAmI, damageDone);
+            TheMachine.PrimeDamageShare(NPC.whoAmI, damageDone);
         }
 
+        float auraBonus;
         public static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Lighting.AddLight(NPC.Center, TorchID.Ice);
+            TheMachine.DrawMachineAura(Color.Cyan, active, NPC, auraBonus);
+            auraBonus *= 0.8f;
 
             drawColor = Color.Lerp(drawColor, Color.Cyan, 0.15f);
             drawColor = Color.Lerp(drawColor, Color.White, 0.25f);

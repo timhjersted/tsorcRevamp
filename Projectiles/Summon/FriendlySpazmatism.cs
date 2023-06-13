@@ -357,7 +357,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			Color rgbColor = Main.hslToRgb(hslColor);
 
 			//Pass relevant data to the shader via these parameters
-			spazEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+			spazEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureTurbulent.Width);
 			spazEffect.Parameters["effectSize"].SetValue(auraSourceRectangle.Size());
 			spazEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
 			spazEffect.Parameters["ringProgress"].SetValue(0.1f);
@@ -368,7 +368,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			//Apply the shader
 			spazEffect.CurrentTechnique.Passes[0].Apply();
 
-			Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, Projectile.Center - Main.screenPosition, auraSourceRectangle, Color.White, 0, auraOrigin, 1, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, Projectile.Center - Main.screenPosition, auraSourceRectangle, Color.White, 0, auraOrigin, 1, SpriteEffects.None, 0);
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 

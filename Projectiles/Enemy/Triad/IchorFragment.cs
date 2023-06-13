@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
         public override void SetEffectParameters(Effect effect)
         {
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture2);
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTextureSplotchy);
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
             effect.Parameters["shaderColor"].SetValue(Color.Gold.ToVector4());

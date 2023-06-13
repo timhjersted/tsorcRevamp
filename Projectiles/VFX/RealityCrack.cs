@@ -110,7 +110,7 @@ namespace tsorcRevamp.Projectiles.VFX
             if (Main.netMode != NetmodeID.Server && filterIndex != null && Filters.Scene[filterIndex].IsActive())
             {
                 //Set its 'useimage' to this so that it doesn't hold onto a reference to the soon to be disposed rendertarget
-                Filters.Scene[filterIndex].GetShader().UseOpacity(0).UseImage(tsorcRevamp.tNoiseTexture1);
+                Filters.Scene[filterIndex].GetShader().UseOpacity(0).UseImage(tsorcRevamp.tNoiseTextureTurbulent);
                 Filters.Scene[filterIndex].Deactivate();
                 tsorcRevampWorld.boundShaders.Remove(filterIndex);
             }
@@ -183,7 +183,7 @@ namespace tsorcRevamp.Projectiles.VFX
                         {
                             scale = 1;
                         }
-                        DrawLightning(tsorcRevamp.tNoiseTexture2, branches[i][j],
+                        DrawLightning(tsorcRevamp.tNoiseTextureSplotchy, branches[i][j],
                                 branches[i][j + 1], new Rectangle(0, 0, 10, 4), branchLengths[i][j], branchAngles[i][j], scale * 1, Color.White);
                     }
                 }

@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.height = 60;
             NPC.damage = 53;
             NPC.defense = 0;
-            NPC.lifeMax = PrimeV2.PrimeArmHealth;
+            NPC.lifeMax = TheMachine.PrimeArmHealth;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.value = 0;
@@ -62,11 +62,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         bool active
         {
-            get => primeHost != null && ((PrimeV2)primeHost.ModNPC).MoveIndex == 3;
+            get => primeHost != null && ((TheMachine)primeHost.ModNPC).MoveIndex == 3;
         }
         int phase
         {
-            get => ((PrimeV2)primeHost.ModNPC).Phase;
+            get => ((TheMachine)primeHost.ModNPC).Phase;
         }
 
         bool damaged;
@@ -78,7 +78,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         {
             int LaserDamage = 100;
 
-            if (primeHost == null || primeHost.active == false || primeHost.type != ModContent.NPCType<PrimeV2>())
+            if (primeHost == null || primeHost.active == false || primeHost.type != ModContent.NPCType<TheMachine>())
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -90,13 +90,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             UsefulFunctions.SmoothHoming(NPC, primeHost.Center + Offset, 0.1f, 50, primeHost.velocity);
 
-            if (((PrimeV2)primeHost.ModNPC).aiPaused)
+            if (((TheMachine)primeHost.ModNPC).aiPaused)
             {
                 NPC.rotation = MathHelper.PiOver2;
                 return;
             }
 
-            if (((PrimeV2)primeHost.ModNPC).Phase == 1)
+            if (((TheMachine)primeHost.ModNPC).Phase == 1)
             {
                 Offset = new Vector2(1200, 0).RotatedBy(-MathHelper.PiOver2 - MathHelper.Pi / 5f);
             }
@@ -104,18 +104,18 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             NPC.rotation = (NPC.Center - Target.Center).ToRotation() + MathHelper.PiOver2;
 
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (active)
             {
-                if (active)
+                if (!damaged)
                 {
-                    if (!damaged)
+                    if (cooldown <= 15)
                     {
-                        if(cooldown <= 15)
-                        {
-                            cooldown = 15;
-                        }
-                        //Fire increasingly fast bursts of 3 projectiles
-                        if (Main.GameUpdateCount % cooldown == cooldown - 1)
+                        cooldown = 15;
+                    }
+                    //Fire increasingly fast bursts of 3 projectiles
+                    if (Main.GameUpdateCount % cooldown == cooldown - 1)
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             cooldown = (int)(cooldown * 0.965);
                             Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 10f);
@@ -123,44 +123,58 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity * 0.8f, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity * 0.66f, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
                         }
+                        auraBonus = 0.1f;
                     }
-                    else
+                }
+                else
+                {
+                    //Just spam shots everywhere
+                    if (Main.GameUpdateCount % 10 == 0)
                     {
-                        //Just spam shots everywhere
-                        if (Main.GameUpdateCount % 10 == 0)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 6f);
                             velocity = velocity.RotatedBy(Main.rand.NextFloat(-1, 1));
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
                         }
+                        auraBonus = 0.1f;
                     }
                 }
-                else
+            }
+            else
+            {
+                if (!damaged)
                 {
-                    if (!damaged)
+                    cooldown = 60;
+                    if (Main.GameUpdateCount % 90 == 45)
                     {
-                        cooldown = 60;
-                        if (Main.GameUpdateCount % 90 == 45)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 8.5f);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
                         }
+                        auraBonus = 0.1f;
                     }
-                    else
+                }
+                else
+                {
+                    if (Main.GameUpdateCount % 90 == 45)
                     {
-                        if (Main.GameUpdateCount % 90 == 45)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7.5f).RotatedBy(Main.rand.NextFloat(-1, 1)), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7.5f).RotatedBy(Main.rand.NextFloat(-1, 1)), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7.5f).RotatedBy(Main.rand.NextFloat(-1, 1)), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
                         }
+                        auraBonus = 0.1f;
                     }
                 }
             }
+            
         }
         public override bool CheckDead()
         {
-            if (((PrimeV2)primeHost.ModNPC).dying)
+            if (((TheMachine)primeHost.ModNPC).dying)
             {
                 return true;
             }
@@ -174,23 +188,26 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            PrimeV2.PrimeProjectileBalancing(ref projectile);
+            TheMachine.PrimeProjectileBalancing(ref projectile);
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            PrimeV2.PrimeDamageShare(NPC.whoAmI, damageDone);
+            TheMachine.PrimeDamageShare(NPC.whoAmI, damageDone);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            PrimeV2.PrimeDamageShare(NPC.whoAmI, damageDone);
+            TheMachine.PrimeDamageShare(NPC.whoAmI, damageDone);
         }
 
+        float auraBonus;
         public static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Lighting.AddLight(NPC.Center, TorchID.Cursed);
+            TheMachine.DrawMachineAura(Color.GreenYellow, active, NPC, auraBonus);
+            auraBonus *= 0.8f;
 
             drawColor.A = 255;
             drawColor = Color.Lerp(drawColor, Color.GreenYellow, 0.15f);

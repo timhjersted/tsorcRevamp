@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.height = 60;
             NPC.damage = 53;
             NPC.defense = 0;
-            NPC.lifeMax = PrimeV2.PrimeArmHealth;
+            NPC.lifeMax = TheMachine.PrimeArmHealth;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.value = 0;
@@ -62,11 +62,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         bool active
         {
-            get => primeHost != null && ((PrimeV2)primeHost.ModNPC).MoveIndex == 4;
+            get => primeHost != null && ((TheMachine)primeHost.ModNPC).MoveIndex == 4;
         }
         int phase
         {
-            get => ((PrimeV2)primeHost.ModNPC).Phase;
+            get => ((TheMachine)primeHost.ModNPC).Phase;
         }
 
         bool damaged;
@@ -78,7 +78,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public Vector2 Offset = new Vector2(200, 70);
         public override void AI()
         {
-            if (primeHost == null || primeHost.active == false || primeHost.type != ModContent.NPCType<PrimeV2>())
+            if (primeHost == null || primeHost.active == false || primeHost.type != ModContent.NPCType<TheMachine>())
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -91,12 +91,12 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             UsefulFunctions.SmoothHoming(NPC, primeHost.Center + Offset, 0.1f, 50, primeHost.velocity);
             rotationSpeed = 0.03f;
 
-            if (((PrimeV2)primeHost.ModNPC).aiPaused)
+            if (((TheMachine)primeHost.ModNPC).aiPaused)
             {
                 NPC.rotation = MathHelper.PiOver2;
                 return;
             }
-            if (((PrimeV2)primeHost.ModNPC).Phase == 1)
+            if (((TheMachine)primeHost.ModNPC).Phase == 1)
             {
                 Offset = new Vector2(1200, 0).RotatedBy(4 * MathHelper.TwoPi / 5f);
             }
@@ -134,6 +134,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                             NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HullBreachMissile>(), ai0: Target.whoAmI);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.6f }, NPC.Center);
+                        auraBonus = 0.1f;
                     }
                 }
                 else
@@ -145,6 +146,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                             NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HullBreachMissile>(), ai0: Target.whoAmI, ai1: 1);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.6f }, NPC.Center);
+                        auraBonus = 0.1f;
                     }
                 }
             }
@@ -159,6 +161,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                             NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HullBreachMissile>(), ai0: Target.whoAmI);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.8f }, NPC.Center);
+                        auraBonus = 0.2f;
                     }
                 }
                 else
@@ -170,6 +173,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                             NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HullBreachMissile>(), ai0: Target.whoAmI, ai1: 2);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.6f }, NPC.Center);
+                        auraBonus = 0.2f;
                     }
                 }
             }
@@ -177,7 +181,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public override bool CheckDead()
         {
-            if (((PrimeV2)primeHost.ModNPC).dying)
+            if (((TheMachine)primeHost.ModNPC).dying)
             {
                 return true;
             }
@@ -192,25 +196,29 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            PrimeV2.PrimeProjectileBalancing(ref projectile);
+            TheMachine.PrimeProjectileBalancing(ref projectile);
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            PrimeV2.PrimeDamageShare(NPC.whoAmI, damageDone);
+            TheMachine.PrimeDamageShare(NPC.whoAmI, damageDone);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            PrimeV2.PrimeDamageShare(NPC.whoAmI, damageDone);
+            TheMachine.PrimeDamageShare(NPC.whoAmI, damageDone);
         }
 
+        float auraBonus;
         public static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Lighting.AddLight(NPC.Center, TorchID.Orange);
             drawColor = Color.Lerp(drawColor, Color.OrangeRed, 0.25f);
             drawColor = Color.Lerp(drawColor, Color.White, 0.25f);
+
+            TheMachine.DrawMachineAura(Color.Orange, active, NPC, auraBonus);
+            auraBonus *= 0.8f;
 
 
             UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeSiege");

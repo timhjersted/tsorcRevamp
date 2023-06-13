@@ -136,7 +136,7 @@ namespace tsorcRevamp.Projectiles
             collisionPadding = trailPositions.Count / 8;
             visualizeTrail = false;
             timeFactor++;
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture1);
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTextureTurbulent);
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
 

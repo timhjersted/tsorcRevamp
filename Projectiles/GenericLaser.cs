@@ -330,7 +330,7 @@ namespace tsorcRevamp.Projectiles
             LaserShader.Parameters["FadeOut"].SetValue(fadePercent);
             LaserShader.Parameters["SecondaryColor"].SetValue(Color.White.ToVector3());
             LaserShader.Parameters["ProjectileSize"].SetValue(new Vector2(Distance, modifiedSize));
-            LaserShader.Parameters["TextureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+            LaserShader.Parameters["TextureSize"].SetValue(tsorcRevamp.tNoiseTextureTurbulent.Width);
 
             //Calculate where to draw it
             Rectangle sourceRectangle = new Rectangle(0, 0, (int)Distance, (int)(modifiedSize));
@@ -340,7 +340,7 @@ namespace tsorcRevamp.Projectiles
             LaserShader.CurrentTechnique.Passes[0].Apply();
 
             //Draw the laser
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.velocity.ToRotation(), origin, Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.velocity.ToRotation(), origin, Projectile.scale, SpriteEffects.None, 0);
 
             return false;
         }

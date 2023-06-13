@@ -224,7 +224,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
                 Vector2 targetingOrigin = new Vector2(0, targetingSourceRectangle.Height / 2);
 
-                Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, Projectile.Center - Main.screenPosition, targetingSourceRectangle, Color.White, Projectile.rotation, targetingOrigin, Projectile.scale, targetingSpriteEffects, 0);
+                Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, Projectile.Center - Main.screenPosition, targetingSourceRectangle, Color.White, Projectile.rotation, targetingOrigin, Projectile.scale, targetingSpriteEffects, 0);
             }
 
             Main.spriteBatch.End();
@@ -276,7 +276,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
 
 
             Main.spriteBatch.End();

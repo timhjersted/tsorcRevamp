@@ -615,7 +615,7 @@ namespace tsorcRevamp
         }
         public static bool PrimeCustomCondition()
         {            
-            if (/*tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.PrimeV2.PrimeV2>())) ||*/ NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.PrimeV2.PrimeV2>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.PrimeV2.PrimeIntro>()))
+            if (/*tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.PrimeV2.PrimeV2>())) ||*/ NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.PrimeV2.PrimeIntro>()))
             {
                 return false;
             }

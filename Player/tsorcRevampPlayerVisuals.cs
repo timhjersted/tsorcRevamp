@@ -861,8 +861,7 @@ namespace tsorcRevamp
                     }
             }
 
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
         }
 
         public static Effect catEffect;
@@ -887,7 +886,7 @@ namespace tsorcRevamp
 
 
             //Pass relevant data to the shader via these parameters
-            catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureWavy.Width);
             catEffect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
             catEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
             catEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
@@ -899,7 +898,7 @@ namespace tsorcRevamp
             //Apply the shader
             catEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, drawInfo.drawPlayer.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureWavy, drawInfo.drawPlayer.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, 1, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
@@ -909,7 +908,7 @@ namespace tsorcRevamp
 
 
             //Pass relevant data to the shader via these parameters
-            catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureWavy.Width);
             catEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
             catEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
             catEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
@@ -919,7 +918,7 @@ namespace tsorcRevamp
             //Apply the shader
             catEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.PiOver2, baseOrigin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureWavy, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.PiOver2, baseOrigin, 1, SpriteEffects.None, 0);
         }
 
         public static Effect attraidiesEffect;
@@ -939,7 +938,7 @@ namespace tsorcRevamp
             }
 
             //Pass relevant data to the shader via these parameters
-            attraidiesEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+            attraidiesEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureTurbulent.Width);
             attraidiesEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
 
             attraidiesEffect.Parameters["effectColor1"].SetValue(UsefulFunctions.ShiftColor(auraColor, effectTimer / 25f).ToVector4());
@@ -953,7 +952,7 @@ namespace tsorcRevamp
             //Apply the shader
             attraidiesEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.TwoPi, baseOrigin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.TwoPi, baseOrigin, 1, SpriteEffects.None, 0);
         }
 
         float fadeValue = 0;
@@ -1008,7 +1007,7 @@ namespace tsorcRevamp
             
 
             //Pass relevant data to the shader via these parameters
-            retEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+            retEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureTurbulent.Width);
             retEffect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
             retEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
             retEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
@@ -1019,7 +1018,7 @@ namespace tsorcRevamp
             //Apply the shader
             retEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, drawInfo.drawPlayer.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, 1, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
@@ -1029,7 +1028,7 @@ namespace tsorcRevamp
 
 
             //Pass relevant data to the shader via these parameters
-            retEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+            retEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureTurbulent.Width);
             retEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
             retEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
             retEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
@@ -1040,7 +1039,7 @@ namespace tsorcRevamp
             //Apply the shader
             retEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, 0, baseOrigin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, 0, baseOrigin, 1, SpriteEffects.None, 0);
         }
 
 
@@ -1079,7 +1078,7 @@ namespace tsorcRevamp
             Color rgbColor = Main.hslToRgb(hslColor);
 
             //Pass relevant data to the shader via these parameters
-            spazEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+            spazEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureTurbulent.Width);
             spazEffect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
             spazEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
             spazEffect.Parameters["ringProgress"].SetValue(modPlayer.effectIntensity);
@@ -1090,7 +1089,7 @@ namespace tsorcRevamp
             //Apply the shader
             spazEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, drawInfo.drawPlayer.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, 1, SpriteEffects.None, 0);
         }        
 
         void DrawTripleThreatAura(PlayerDrawSet drawInfo)
@@ -1121,7 +1120,7 @@ namespace tsorcRevamp
             }
 
             //Pass relevant data to the shader via these parameters
-            attraidiesEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+            attraidiesEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureTurbulent.Width);
             attraidiesEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
             attraidiesEffect.Parameters["effectColor1"].SetValue(spazColor.ToVector4());
             attraidiesEffect.Parameters["effectColor2"].SetValue(retColor.ToVector4());
@@ -1134,18 +1133,18 @@ namespace tsorcRevamp
             //Apply the shader
             attraidiesEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, (float)Main.timeForVisualEffects / 25f, baseOrigin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, (float)Main.timeForVisualEffects / 25f, baseOrigin, 1, SpriteEffects.None, 0);
 
 
             attraidiesEffect.Parameters["effectColor1"].SetValue(UsefulFunctions.ShiftColor(retColor, effectTimer / 25f).ToVector4());
             attraidiesEffect.Parameters["effectColor2"].SetValue(UsefulFunctions.ShiftColor(catColor, effectTimer / 25f).ToVector4());
             attraidiesEffect.CurrentTechnique.Passes[0].Apply();
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, ((float)Main.timeForVisualEffects / 25f) + MathHelper.TwoPi / 3f, baseOrigin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, ((float)Main.timeForVisualEffects / 25f) + MathHelper.TwoPi / 3f, baseOrigin, 1, SpriteEffects.None, 0);
 
             attraidiesEffect.Parameters["effectColor1"].SetValue(UsefulFunctions.ShiftColor(catColor, effectTimer / 25f).ToVector4());
             attraidiesEffect.Parameters["effectColor2"].SetValue(UsefulFunctions.ShiftColor(spazColor, effectTimer / 25f).ToVector4());
             attraidiesEffect.CurrentTechnique.Passes[0].Apply();
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, ((float)Main.timeForVisualEffects / 25f) + MathHelper.TwoPi / 1.5f, baseOrigin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, drawInfo.drawPlayer.Center - Main.screenPosition, baseRectangle, Color.White, ((float)Main.timeForVisualEffects / 25f) + MathHelper.TwoPi / 1.5f, baseOrigin, 1, SpriteEffects.None, 0);
         }
     }
 }

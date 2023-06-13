@@ -246,7 +246,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             //Shifts its color slightly over time
             Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, ꙮ, intensity);
 
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture1);
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTextureTurbulent);
             effect.Parameters["fadeOut"].SetValue(trueFadeOut);
             effect.Parameters["time"].SetValue(timeFactor / 100f);
             effect.Parameters["shaderColor"].SetValue(rgbColor.ToVector4());

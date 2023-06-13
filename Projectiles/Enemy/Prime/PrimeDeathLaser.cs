@@ -65,10 +65,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
         public override void SetEffectParameters(Effect effect)
         {
             collisionEndPadding = trailPositions.Count / 3;
-            collisionPadding = trailPositions.Count / 8;
+            collisionPadding = trailPositions.Count / 5;
             visualizeTrail = false;
             timeFactor++;
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture1);
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTextureTurbulent);
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
 

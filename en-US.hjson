@@ -8399,6 +8399,7 @@ Mods: {
 			HullBreachMissile.DisplayName: Hull Breach Missile
 			PrimeSiege.DisplayName: Prime Siege
 			PrimeIntro.DisplayName: Prime Intro
+			TheMachine.DisplayName: The Machine
 		}
 
 		Prefixes: {

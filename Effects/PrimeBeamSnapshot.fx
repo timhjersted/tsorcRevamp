@@ -4,7 +4,6 @@ float time; //Causes the flames to flow with time
 float splitAngle; //How wide (in radians) the angle of fire is
 float rotation; //Rotates the fire
 float length; //The maximum length
-float opacity; //Multiplies the output by this to let it fade in
 
 //I precomputed what values I could, to save on instruction count
 float rotationMinusPI;
@@ -62,7 +61,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     }
 
     //Scale 'intensity' into the RGB channels. Values are fine-tuned to turn noise into a fire-like effect.
-    return float4(pow(intensity, 4.5), pow(intensity, 4.8) * dist, 0, 1) * 100 * opacity;
+    return float4(pow(intensity, 4.5), pow(intensity, 4.8) * dist, 0, 1) * 100;
 }
 
 technique FireWaveShader

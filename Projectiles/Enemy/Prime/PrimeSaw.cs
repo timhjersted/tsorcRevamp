@@ -18,9 +18,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
         public override void SetDefaults()
         {
-            Projectile.penetrate = 6;
-            Projectile.width = 16;
-            Projectile.height = 16;
+            Projectile.penetrate = -1;
+            Projectile.width = 58;
+            Projectile.height = 58;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
             Projectile.hostile = true;
@@ -97,15 +97,18 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
         public static ArmorShaderData data;
         public override bool PreDraw(ref Color lightColor)
         {
-            Projectile.width = 60;
-            Projectile.height = 60;
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             UsefulFunctions.EnsureLoaded(ref sawTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeSawBlade");
 
-            Projectile.frame++;
-            if (Projectile.frame >= 8)
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter == 2)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+            }
+            if (Projectile.frame >= 4)
             {
                 Projectile.frame = 0;
             }
@@ -122,20 +125,28 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             lightColor = Color.White;
 
 
-            int frameHeight = TextureAssets.Projectile[Projectile.type].Value.Height / 8;
+            int frameHeight = sawTexture.Height / 4;
             int startY = frameHeight * Projectile.frame;
-            Rectangle sourceRectangle = new Rectangle(0, startY, TextureAssets.Projectile[Projectile.type].Value.Width, frameHeight);
+            Rectangle sourceRectangle = new Rectangle(0, startY, sawTexture.Width, frameHeight);
 
             // Redraw the projectile with the color not influenced by light
-            Vector2 drawOrigin = new Vector2(TextureAssets.Projectile[Projectile.type].Value.Width * 0.5f, Projectile.height * 0.5f);
-            for (int k = Projectile.oldPos.Length - 1; k > 0; k--)
+            Vector2 drawOrigin = new Vector2(sawTexture.Width * 0.5f, sawTexture.Height * 0.25f);
+            int shadowFrame = Projectile.frame;
+            for (int k = Projectile.oldPos.Length - 1; k >= 0; k--)
             {
-                Vector2 drawPos = (Projectile.oldPos[k] - Main.screenPosition) + drawOrigin + new Vector2(0f, Projectile.gfxOffY);
+                Vector2 drawPos = (Projectile.oldPos[k] - Main.screenPosition + Projectile.Size / 2f);
+                Rectangle shadowRectangle = new Rectangle(0, frameHeight * shadowFrame, sawTexture.Width, frameHeight);
                 Color color = Projectile.GetAlpha(lightColor) * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
-                Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value, drawPos + new Vector2(0, 4), sourceRectangle, color, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(sawTexture, drawPos + new Vector2(0, 44), shadowRectangle, color, 0, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
+
+                shadowFrame--;
+                if(shadowFrame < 0)
+                {
+                    shadowFrame = 3;
+                }
             }
 
-            Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value, Projectile.Center - Main.screenPosition + new Vector2(0, 4), sourceRectangle, lightColor, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(sawTexture, Projectile.Center - Main.screenPosition + new Vector2(0, 44), sourceRectangle, lightColor, 0, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
 
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
 

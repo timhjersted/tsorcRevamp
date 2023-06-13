@@ -158,7 +158,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			trailWidth = 45;
 			trailMaxLength = 500;
 
-			effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture3);
+			effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTextureWavy);
 			effect.Parameters["length"].SetValue(trailCurrentLength);
 			float hostVel = 0;
 			hostVel = Projectile.velocity.Length();

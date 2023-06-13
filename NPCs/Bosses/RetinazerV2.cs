@@ -942,7 +942,7 @@ namespace tsorcRevamp.NPCs.Bosses
             Color rgbColor = Main.hslToRgb(hslColor);
 
             //Pass relevant data to the shader via these parameters
-            effect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+            effect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureTurbulent.Width);
             effect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
             effect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
             effect.Parameters["ringProgress"].SetValue(ringCollapse);
@@ -953,7 +953,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //Apply the shader
             effect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, NPC.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, NPC.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, NPC.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, NPC.scale, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
@@ -963,7 +963,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
             //Pass relevant data to the shader via these parameters
-            effect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture1.Width);
+            effect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureTurbulent.Width);
             effect.Parameters["effectSize"].SetValue(baseRectangle.Size());
             effect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
             effect.Parameters["ringProgress"].SetValue(baseRadius);
@@ -974,7 +974,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //Apply the shader
             effect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture1, NPC.Center - Main.screenPosition, baseRectangle, Color.White, 0, baseOrigin, NPC.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, NPC.Center - Main.screenPosition, baseRectangle, Color.White, 0, baseOrigin, NPC.scale, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
@@ -1030,7 +1030,7 @@ namespace tsorcRevamp.NPCs.Bosses
             Vector2 starOrigin = starRectangle.Size() / 2f;
 
             //Pass relevant data to the shader via these parameters
-            TransformationEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            TransformationEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureWavy.Width);
             TransformationEffect.Parameters["effectSize"].SetValue(starRectangle.Size());
             TransformationEffect.Parameters["effectColor"].SetValue(rgbColor1.ToVector4());
             TransformationEffect.Parameters["ringProgress"].SetValue(0.5f);
@@ -1040,13 +1040,13 @@ namespace tsorcRevamp.NPCs.Bosses
             //Apply the shader
             TransformationEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, NPC.Center - Main.screenPosition, starRectangle, Color.White, starRotation, starOrigin, NPC.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureWavy, NPC.Center - Main.screenPosition, starRectangle, Color.White, starRotation, starOrigin, NPC.scale, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //Pass relevant data to the shader via these parameters
-            TransformationEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            TransformationEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureWavy.Width);
             TransformationEffect.Parameters["effectSize"].SetValue(starRectangle.Size());
             TransformationEffect.Parameters["effectColor"].SetValue(rgbColor2.ToVector4());
             TransformationEffect.Parameters["ringProgress"].SetValue(0.5f);
@@ -1056,7 +1056,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //Apply the shader
             TransformationEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, NPC.Center - Main.screenPosition, starRectangle, Color.White, -starRotation, starOrigin, NPC.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureWavy, NPC.Center - Main.screenPosition, starRectangle, Color.White, -starRotation, starOrigin, NPC.scale, SpriteEffects.None, 0);
 
 
 
@@ -1098,7 +1098,7 @@ namespace tsorcRevamp.NPCs.Bosses
             Vector2 starOrigin = starRectangle.Size() / 2f;
 
             //Pass relevant data to the shader via these parameters
-            TransformationEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            TransformationEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureWavy.Width);
             TransformationEffect.Parameters["effectSize"].SetValue(starRectangle.Size());
             TransformationEffect.Parameters["effectColor"].SetValue(rgbColor1.ToVector4());
             TransformationEffect.Parameters["ringProgress"].SetValue(0.5f);
@@ -1108,13 +1108,13 @@ namespace tsorcRevamp.NPCs.Bosses
             //Apply the shader
             TransformationEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, NPC.Center - Main.screenPosition, starRectangle, Color.White, starRotation, starOrigin, NPC.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureWavy, NPC.Center - Main.screenPosition, starRectangle, Color.White, starRotation, starOrigin, NPC.scale, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //Pass relevant data to the shader via these parameters
-            TransformationEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTexture3.Width);
+            TransformationEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureWavy.Width);
             TransformationEffect.Parameters["effectSize"].SetValue(starRectangle.Size());
             TransformationEffect.Parameters["effectColor"].SetValue(rgbColor2.ToVector4());
             TransformationEffect.Parameters["ringProgress"].SetValue(0.5f);
@@ -1124,7 +1124,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //Apply the shader
             TransformationEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTexture3, NPC.Center - Main.screenPosition, starRectangle, Color.White, -starRotation, starOrigin, NPC.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureWavy, NPC.Center - Main.screenPosition, starRectangle, Color.White, -starRotation, starOrigin, NPC.scale, SpriteEffects.None, 0);
 
 
 

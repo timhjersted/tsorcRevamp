@@ -151,9 +151,10 @@ namespace tsorcRevamp
         public static bool NearbySoapstoneMouse;
         public static float NearbySoapstoneMouseDistance;
 
-        public static Texture2D tNoiseTexture1;
-        public static Texture2D tNoiseTexture2;
-        public static Texture2D tNoiseTexture3;
+        public static Texture2D tNoiseTextureTurbulent;
+        public static Texture2D tNoiseTextureSplotchy;
+        public static Texture2D tNoiseTextureWavy;
+        public static Texture2D tNoiseTextureCircuit;
 
         public override void Load()
         {
@@ -231,9 +232,10 @@ namespace tsorcRevamp
             CatShockwaveEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TriadShockwave", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             Filters.Scene["tsorcRevamp:CatShockwave"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(CatShockwaveEffect), "TriadShockwavePass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
 
-            tNoiseTexture1 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/TurbulentNoise1", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            tNoiseTexture2 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/TurbulentNoise2", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            tNoiseTexture3 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/TurbulentNoise3", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            tNoiseTextureTurbulent = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/TurbulentNoise1", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            tNoiseTextureSplotchy = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/TurbulentNoise2", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            tNoiseTextureWavy = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/TurbulentNoise3", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            tNoiseTextureCircuit = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/CircuitNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
 
             //AttraidiesEffect = Instance.GetEffect("Effects/ScreenFilters/AttraidiesShader");
             //Filters.Scene["tsorcRevamp:AttraidiesShader"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(AttraidiesEffect), "AttraidiesShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
@@ -991,9 +993,9 @@ namespace tsorcRevamp
             TextureAssets.Sun = ModContent.Request<Texture2D>("Terraria/Images/Sun", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             TextureAssets.Sun2 = ModContent.Request<Texture2D>("Terraria/Images/Sun2");
             TextureAssets.Sun3 = ModContent.Request<Texture2D>("Terraria/Images/Sun3");
-            tNoiseTexture1 = null;
-            tNoiseTexture2 = null;
-            tNoiseTexture3 = null;
+            tNoiseTextureTurbulent = null;
+            tNoiseTextureSplotchy = null;
+            tNoiseTextureWavy = null;
 
             for (int i = 0; i < TextureAssets.Moon.Length; i++)
             {

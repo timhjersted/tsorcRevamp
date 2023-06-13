@@ -1213,7 +1213,7 @@ namespace tsorcRevamp
                 string currentIndex = "tsorcRevamp:shockwave" + i;
                 if (Filters.Scene[currentIndex] != null && !boundShaders.Contains(currentIndex))
                 {
-                    Filters.Scene[currentIndex].GetShader().UseOpacity(0).UseImage(tsorcRevamp.tNoiseTexture1);
+                    Filters.Scene[currentIndex].GetShader().UseOpacity(0).UseImage(tsorcRevamp.tNoiseTextureTurbulent);
                     Filters.Scene[currentIndex].Deactivate();
                 }
             }
@@ -1222,7 +1222,7 @@ namespace tsorcRevamp
                 string currentIndex = "tsorcRevamp:realitycrack" + i;
                 if (Filters.Scene[currentIndex] != null && !boundShaders.Contains(currentIndex))
                 {
-                    Filters.Scene[currentIndex].GetShader().UseOpacity(0).UseImage(tsorcRevamp.tNoiseTexture1);
+                    Filters.Scene[currentIndex].GetShader().UseOpacity(0).UseImage(tsorcRevamp.tNoiseTextureTurbulent);
                     Filters.Scene[currentIndex].Deactivate();
                 }
             }

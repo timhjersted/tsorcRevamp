@@ -55,21 +55,21 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (!Main.tile[5000, 1106].IsActuated)
             {
-                PrimeV2.ActuateBottomHalf();
+                TheMachine.ActuateBottomHalf();
             }
 
             if (Main.tile[5080, 1100].TileType == TileID.Glass)
             {
-                PrimeV2.ActuatePrimeArena();
+                TheMachine.ActuatePrimeArena();
             }
 
-            NPC.Center = PrimeV2.PrimeCeilingPoint + new Vector2(0, -200);
+            NPC.Center = TheMachine.PrimeCeilingPoint + new Vector2(0, -200);
             
             for(int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].Distance(NPC.Center) < 550 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<PrimeV2>());
+                    NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<TheMachine>());
                     NPC.active = false;
                     NPC.netUpdate = true;
                 }
@@ -81,7 +81,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public static Texture2D eyeTexture;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeV2");
+            UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/TheMachine");
             UsefulFunctions.EnsureLoaded(ref eyeTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/Bone_Eyes");
 
             Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height / 6);

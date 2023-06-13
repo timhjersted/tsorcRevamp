@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -14,7 +15,7 @@ using Terraria.ModLoader.Config;
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
     [AutoloadBossHead]
-    class PrimeV2 : BossBase
+    class TheMachine : BossBase
     {
         public override void SetStaticDefaults()
         {
@@ -26,6 +27,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
             };
             NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+            NPCID.Sets.MustAlwaysDraw[NPC.type] = true;
         }
 
         public override void SetDefaults()
@@ -45,6 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.timeLeft = 22500;
             NPC.value = 600000;
             despawnHandler = new NPCDespawnHandler("The Machine's temple falls silent once more...", Color.DarkGray, DustID.Torch);
+            NPC.friendly = false;
 
             //You can also specify BossBase specific values here
             introDuration = 120;
@@ -88,6 +91,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         bool activated;
         public override void AI()
         {
+            NPC.friendly = false;
             if (despawning)
             {
                 if (Main.tile[5152, 1106].TileType != TileID.Glass)
@@ -134,16 +138,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 //TODO: Fire chargeup VFX
                 if(fireChargeTimer == 180)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 500, 80);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Marilith.SyntheticFirestorm>(), 50, 0, Main.myPlayer, 1100, 80);
                     }
                 }
             }
         }
-
 
         public static void LightPrimeArena()
         {
@@ -225,33 +226,67 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
             NPC.Center = PrimeCeilingPoint + Vector2.Lerp(new Vector2(0, -200), Vector2.Zero, percent);
 
-            UsefulFunctions.SetAllCameras(NPC.Center, ref progress);
-
-            
+            UsefulFunctions.SetAllCameras(NPC.Center, ref progress);            
 
             if (introTimer == 0)
             {
-                BeamNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeBeam>(), ai1: NPC.whoAmI);
-                IonNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeIon>(), ai1: NPC.whoAmI);
-                BuzzsawNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeBuzzsaw>(), ai1: NPC.whoAmI);
-                GatlingNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeGatling>(), ai1: NPC.whoAmI);
-                LauncherNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeSiege>(), ai1: NPC.whoAmI);
-                SeverNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeWelder>(), ai1: NPC.whoAmI);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    BeamNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeBeam>(), ai1: NPC.whoAmI);
+                    IonNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeIon>(), ai1: NPC.whoAmI);
+                    BuzzsawNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeBuzzsaw>(), ai1: NPC.whoAmI);
+                    GatlingNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeGatling>(), ai1: NPC.whoAmI);
+                    LauncherNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeSiege>(), ai1: NPC.whoAmI);
+                    SeverNPC = NPC.NewNPCDirect(NPC.GetSource_FromThis(), NPC.Center, ModContent.NPCType<PrimeWelder>(), ai1: NPC.whoAmI);
+                    NPC.netUpdate = true;
+                }
+
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
             }
 
             if (introTimer == introDuration - 30)
             {
-
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    //Spawn a shockwave
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 1100, 60);
                 }
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
+                SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
             }
-        }       
-        
+        }
+
+        public bool AllPartsValid()
+        {
+            if(BeamNPC != null && BeamNPC.active && IonNPC != null && IonNPC.active && BuzzsawNPC != null && BuzzsawNPC.active && GatlingNPC != null && GatlingNPC.active && LauncherNPC != null && LauncherNPC.active && SeverNPC != null && SeverNPC.active &&
+                BeamNPC.type == ModContent.NPCType<PrimeBeam>() && IonNPC.type == ModContent.NPCType<PrimeIon>() && BuzzsawNPC.type == ModContent.NPCType<PrimeBuzzsaw>() && 
+                GatlingNPC.type == ModContent.NPCType<PrimeGatling>() && LauncherNPC.type == ModContent.NPCType<PrimeSiege>() && SeverNPC.type == ModContent.NPCType<PrimeWelder>())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(BeamNPC.whoAmI);
+            writer.Write(IonNPC.whoAmI);
+            writer.Write(BuzzsawNPC.whoAmI);
+            writer.Write(GatlingNPC.whoAmI);
+            writer.Write(LauncherNPC.whoAmI);
+            writer.Write(SeverNPC.whoAmI);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            BeamNPC = Main.npc[reader.ReadInt32()];
+            IonNPC = Main.npc[reader.ReadInt32()];
+            BuzzsawNPC = Main.npc[reader.ReadInt32()];
+            GatlingNPC = Main.npc[reader.ReadInt32()];
+            LauncherNPC = Main.npc[reader.ReadInt32()];
+            SeverNPC = Main.npc[reader.ReadInt32()];
+        }
+
+        bool finalStand;
         public override void HandleLife()
         {
             if (inIntro)
@@ -259,22 +294,27 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 return;
             }
 
-            int totalLife = BeamNPC.life + IonNPC.life + BuzzsawNPC.life + GatlingNPC.life + LauncherNPC.life + SeverNPC.life;
-            NPC.life = totalLife;
-            if (Phase == 0)
+            if(AllPartsValid() && !finalStand)
             {
-                int totalLifeMax = BeamNPC.lifeMax + IonNPC.lifeMax + BuzzsawNPC.lifeMax + GatlingNPC.lifeMax + LauncherNPC.lifeMax + SeverNPC.lifeMax;
-                NPC.lifeMax = totalLifeMax;
-
-                if (totalLife < totalLifeMax / 2)
-                {
-                    NextPhase();
-                }
+                NPC.life = 35000 + BeamNPC.life + IonNPC.life + BuzzsawNPC.life + GatlingNPC.life + LauncherNPC.life + SeverNPC.life;
+                NPC.lifeMax = 35000 + BeamNPC.lifeMax + IonNPC.lifeMax + BuzzsawNPC.lifeMax + GatlingNPC.lifeMax + LauncherNPC.lifeMax + SeverNPC.lifeMax;
+            }
+            
+            if (Phase == 0 && NPC.life < NPC.lifeMax / 1.8f)
+            {
+                NextPhase();                
             }
 
-            if(totalLife <= 6)
+            if(NPC.life <= 35006 && !finalStand)
             {
-                NPC.life = 1;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 0, 80);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Marilith.SyntheticFirestorm>(), 50, 0, Main.myPlayer, 1);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Marilith.SyntheticFirestorm>(), 50, 0, Main.myPlayer, 2);
+                }
+                finalStand = true;
+                NPC.defense = 0;
             }
         }
 
@@ -312,6 +352,16 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     }
                 }
             }
+        }
+
+        public override bool? CanBeHitByItem(Player player, Item item)
+        {
+            return base.CanBeHitByItem(player, item);
+        }
+
+        public override bool? CanBeHitByProjectile(Projectile projectile)
+        {
+            return base.CanBeHitByProjectile(projectile);
         }
 
         public static void PrimeProjectileBalancing(ref Projectile projectile)
@@ -439,54 +489,84 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         {
             UsefulFunctions.SetAllCameras(NPC.Center, ref progress);
 
-            if (deathAnimationProgress % 20 == 0)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (deathAnimationProgress % 7 == 0)
+                {
+                    Vector2 randomPoint = Main.rand.NextVector2Circular(20, 20);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 400, 40);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));                    
+                }
+
+                if (deathAnimationProgress % 12 == 0)
+                {
+                    Vector2 randomPoint = Main.rand.NextVector2Circular(20, 20);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), BeamNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 400, 40);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), BeamNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
+
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), IonNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 400, 40);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), IonNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
+
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), BuzzsawNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 400, 40);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), BuzzsawNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
+
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), GatlingNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 400, 40);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), GatlingNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
+
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), LauncherNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 400, 40);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), LauncherNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
+
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), SeverNPC.Center + randomPoint * 3, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 400, 40);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), SeverNPC.Center + randomPoint, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Main.DiscoColor));
+                }
+            }
+
+            if (deathAnimationProgress == deathAnimationDuration - 1)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(100, 100), Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 1100, 40);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(100, 100), Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 1100, 40);
+                    //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 4, UsefulFunctions.ColorToFloat(Color.White));
+
+                    //Having to write this was punishment for my hubris and lack of foresight (not just putting these in an array I can loop through)
+                    if (BeamNPC != null && BeamNPC.active)
+                    {
+                        BeamNPC.StrikeInstantKill();
+                        BeamNPC.netUpdate = true;
+                    }
+
+                    if (IonNPC != null && IonNPC.active)
+                    {
+                        IonNPC.StrikeInstantKill();
+                        IonNPC.netUpdate = true;
+                    }
+
+                    if (BuzzsawNPC != null && BuzzsawNPC.active)
+                    {
+                        BuzzsawNPC.StrikeInstantKill();
+                        BuzzsawNPC.netUpdate = true;
+                    }
+
+                    if (GatlingNPC != null && GatlingNPC.active)
+                    {
+                        GatlingNPC.StrikeInstantKill();
+                        GatlingNPC.netUpdate = true;
+                    }
+
+                    if (LauncherNPC != null && LauncherNPC.active)
+                    {
+                        LauncherNPC.StrikeInstantKill();
+                        LauncherNPC.netUpdate = true;
+                    }
+
+                    if (SeverNPC != null && SeverNPC.active)
+                    {
+                        SeverNPC.StrikeInstantKill();
+                        SeverNPC.netUpdate = true;
+                    }
                 }
             }
 
-            //Having to write this was punishment for my hubris and lack of foresight (not just putting these in an array I can loop through)
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                if (BeamNPC != null && BeamNPC.active)
-                {
-                    BeamNPC.StrikeInstantKill();
-                    BeamNPC.netUpdate = true;
-                }
-
-                if (IonNPC != null && IonNPC.active)
-                {
-                    IonNPC.StrikeInstantKill();
-                    IonNPC.netUpdate = true;
-                }
-
-                if (BuzzsawNPC != null && BuzzsawNPC.active)
-                {
-                    BuzzsawNPC.StrikeInstantKill();
-                    BuzzsawNPC.netUpdate = true;
-                }
-
-                if (GatlingNPC != null && GatlingNPC.active)
-                {
-                    GatlingNPC.StrikeInstantKill();
-                    GatlingNPC.netUpdate = true;
-                }
-
-                if (LauncherNPC != null && LauncherNPC.active)
-                {
-                    LauncherNPC.StrikeInstantKill();
-                    LauncherNPC.netUpdate = true;
-                }
-
-                if (SeverNPC != null && SeverNPC.active)
-                {
-                    SeverNPC.StrikeInstantKill();
-                    SeverNPC.netUpdate = true;
-                }
-            }
+            
 
             //The base class handles actually killing the NPC when the timer runs out
             base.HandleDeath();
@@ -503,7 +583,23 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         /// </summary>
         public override void PhaseTransition()
         {
-            NPC.Center = Vector2.Lerp(PrimeCeilingPoint, PrimeCenterPoint, (float)Math.Pow((float)(phaseTransitionDuration - phaseTransitionTimeRemaining) / phaseTransitionDuration, 4f));
+            float percent = (float)Math.Pow(((float)phaseTransitionDuration - (float)phaseTransitionTimeRemaining) / ((float)phaseTransitionDuration - 30f), 4f);
+            if (percent > 1)
+            {
+                percent = 1;
+            }
+            NPC.Center = Vector2.Lerp(PrimeCeilingPoint, PrimeCenterPoint, percent);
+
+            if (phaseTransitionDuration - phaseTransitionTimeRemaining == phaseTransitionDuration - 30f)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 1100, 60);
+                }
+                SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
+            }
+
+
             UsefulFunctions.SetAllCameras(NPC.Center, ref progress);
 
             if (phaseTransitionTimeRemaining  == 1)
@@ -516,7 +612,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 1100, 80);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Marilith.SyntheticFirestorm>(), 50, 0, Main.myPlayer, 1100, 80);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Marilith.SyntheticFirestorm>(), 50, 0, Main.myPlayer, 0);
                 }
             }
         }
@@ -531,8 +627,9 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             //Scale it up a little
+            DrawMachineAura(Color.White, true, NPC);
 
-            UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeV2");
+            UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/TheMachine");
             UsefulFunctions.EnsureLoaded(ref eyeTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/Bone_Eyes");
             UsefulFunctions.EnsureLoaded(ref boneTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/Arm_Bone_2");
 
@@ -555,24 +652,94 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
             }
 
+            //Main head
             Rectangle sourceRectangle = new Rectangle(0, frameIndex * (texture.Height / 6), texture.Width, texture.Height / 6);
             Vector2 drawOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
             Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, 0, drawOrigin, 1f, SpriteEffects.None, 0);
 
+            //Glowmask for the eyes
             Rectangle eyeRectangle = new Rectangle(0, 0, eyeTexture.Width, eyeTexture.Height / 3);
             Vector2 eyeOrigin = new Vector2(eyeRectangle.Width * 0.5f, eyeRectangle.Height * 0.5f);
-            Main.EntitySpriteDraw(eyeTexture, NPC.Center - Main.screenPosition - new Vector2(-2, 1), eyeRectangle, Color.White, 0, eyeOrigin, 1f, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(eyeTexture, NPC.Center - Main.screenPosition - new Vector2(.5f, 0), eyeRectangle, Color.White, 0, eyeOrigin, 1f, SpriteEffects.None, 0);
 
+            //Shield bubble
 
-
-            //Glowmask for the eyes
             if (introTimer >= introDuration)
             {
                 LightPrimeArena();
             }
             return false;
         }
-                
+
+        public static Effect effect;
+        public static void DrawMachineAura(Color rgbColor, bool active, NPC npc, float auraBonus = 0)
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            float effectIntensity = 0;
+            int? machineIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<TheMachine>());
+            if(machineIndex != null && active)
+            {
+                effectIntensity = 1;
+                int effectTimer = ((TheMachine)(Main.npc[machineIndex.Value].ModNPC)).MoveTimer;
+                if(effectTimer > 540)
+                {
+                    effectIntensity = 1f - ((effectTimer - 540f) / 60f);
+                }
+
+                if (effectTimer < 20)
+                {
+                    effectIntensity = effectTimer  / 20f;
+                }
+            }
+
+            float timeFactor = -1;
+            if(npc.type == ModContent.NPCType<TheMachine>())
+            {
+                timeFactor = 1;
+                effectIntensity = 1.5f;
+                if (npc.life < 35006){
+                    rgbColor = Color.OrangeRed;
+                }
+                auraBonus = -.2f;
+            }
+
+            //Apply the shader, caching it as well
+            if (effect == null)
+            {
+                effect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+
+            float colorIntensity = 0.25f;
+            if (active)
+            {
+                colorIntensity = .25f + (.75f * effectIntensity) + auraBonus;
+                rgbColor = Color.Lerp(Color.Gray, rgbColor, effectIntensity);
+            }
+            else
+            {
+                rgbColor = Color.Gray;
+            }
+
+            Rectangle sourceRectangle = new Rectangle(0, 0, 300 + (int)(50 * (effectIntensity + auraBonus)), 300 + (int)(50 * (effectIntensity + auraBonus)));
+            Vector2 origin = sourceRectangle.Size() / 2f;
+
+            //Pass relevant data to the shader via these parameters
+            effect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureCircuit.Width);
+            effect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
+            effect.Parameters["effectColor"].SetValue(rgbColor.ToVector4() * colorIntensity);
+            effect.Parameters["ringProgress"].SetValue(0.4f + .25f * effectIntensity + auraBonus);
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * timeFactor);
+
+            //Apply the shader
+            effect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureCircuit, npc.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, npc.scale, SpriteEffects.None, 0);
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+        }
+
 
         public override void BossLoot(ref string name, ref int potionType)
         {
