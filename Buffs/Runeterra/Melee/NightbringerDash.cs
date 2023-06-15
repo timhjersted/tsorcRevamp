@@ -1,28 +1,39 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
+using tsorcRevamp.Projectiles.Melee.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra.Melee
 {
     public class NightbringerDash : ModBuff
     {
-        public override LocalizedText Description => base.Description.WithFormatArgs(PlasmaWhirlwindDash.MeleeDamage, PlasmaWhirlwindDash.PercentHealthDamage, PlasmaWhirlwindDash.HealthDamageCap);
+        public Vector2 DashVelocity;
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }
+
         public override void Update(Player player, ref int buffIndex)
         {
             var dust = Dust.NewDustDirect(player.position, player.width, player.height, DustID.Torch, Scale: 3f);
             dust.noGravity = true;
 
-            if (player.HeldItem.type == ModContent.ItemType<Nightbringer>())
+            player.immune = true;
+
+            if (player.buffTime[buffIndex] == (int)(PlasmaWhirlwind.DashDuration * 60 * 2))
             {
-                player.GetDamage(DamageClass.Melee) += PlasmaWhirlwindDash.MeleeDamage / 100f;
-                player.GetModPlayer<tsorcRevampPlayer>().SweepingBladeDamage = true;
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoCast") with { Volume = 1f }, player.Center);
+                DashVelocity = player.DirectionTo(player.GetModPlayer<tsorcRevampPlayer>().SweepingBladePosition) * 17;
+                Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<NightbringerDashHitbox>(), Nightbringer.BaseDamage, 0, player.whoAmI);
+                DashHitbox.OriginalCritChance = SteelTempest.CritChance;
+            }
+            if (player.buffTime[buffIndex] >= (int)(PlasmaWhirlwind.DashDuration * 60))
+            {
+                player.velocity = DashVelocity;
             }
         }
     }

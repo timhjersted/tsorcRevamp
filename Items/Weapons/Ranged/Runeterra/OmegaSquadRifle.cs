@@ -9,7 +9,6 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
-    [Autoload(true)]
     public class OmegaSquadRifle : ModItem
     {
         public const int BaseDamage = 220;

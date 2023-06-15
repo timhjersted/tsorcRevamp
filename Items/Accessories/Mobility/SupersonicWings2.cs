@@ -11,12 +11,6 @@ namespace tsorcRevamp.Items.Accessories.Mobility
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Supersonic Wings II");
-            /* Tooltip.SetDefault("+60% supersonic movement speed and virtually limitless flight" +
-                                "\nPlus all the previous abilities of Supersonic Wings and Improved Bundle of Balloons" +
-                                "\nDoes not work if Hermes Boots or Spectre Boots are equipped." +
-                                "\nCompatible with Dragoon Boots and Dragoon Gear." +
-                                "\nImproved Bundle of Balloons effect can be toggled by hiding the accessory."); */
         }
 
         public override void SetDefaults()
@@ -94,7 +88,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             player.jumpSpeedBoost = 3.2f;
             player.wingTimeMax = 1200;
 
-            if (!hideVisual) {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().DisableSupersonicWings2ExtraJumps) {
                 player.hasJumpOption_Cloud = true;
                 player.hasJumpOption_Blizzard = true;
                 player.hasJumpOption_Sandstorm = true;

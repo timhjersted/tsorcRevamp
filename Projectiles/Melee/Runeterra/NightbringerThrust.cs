@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
 	public class NightbringerThrust : ModProjectile
 	{
-		public int steeltempesthittimer3 = 0;
+		public bool Hit = false;
 		public const int FadeInDuration = 7;
 		public const int FadeOutDuration = 4;
 
@@ -38,9 +38,8 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 			Projectile.tileCollide = false;
-			Projectile.scale = 1f; 
-			Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 20;
+			Projectile.scale = 1f;
+            Projectile.usesOwnerMeleeHitCD = true;
             Projectile.DamageType = DamageClass.Melee;
 			Projectile.ownerHitCheck = true; 
 			Projectile.extraUpdates = 1; 
@@ -63,7 +62,6 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 			if (Timer >= TotalDuration)
 			{
 				Projectile.Kill();
-				steeltempesthittimer3 = 0;
 				return;
 			}
 			else
@@ -80,58 +78,16 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 
             Projectile.rotation = Projectile.velocity.ToRotation();
 
-            SetVisualOffsets();
-            Visuals();
-        }
+            const int HalfSpriteWidth = 244 / 2;//needs adjustments for sprite
+            const int HalfSpriteHeight = 50 / 2;
 
-		private void SetVisualOffsets()
-		{
-			const int HalfSpriteWidth = 244 / 2;//needs adjustments for sprite
-			const int HalfSpriteHeight = 50 / 2;
+            int HalfProjWidth = Projectile.width / 2;
+            int HalfProjHeight = Projectile.height / 2;
 
-			int HalfProjWidth = Projectile.width / 2;
-			int HalfProjHeight = Projectile.height / 2;
+            DrawOriginOffsetX = 0;
+            DrawOffsetX = -(HalfSpriteWidth - HalfProjWidth);
+            DrawOriginOffsetY = -(HalfSpriteHeight - HalfProjHeight);
 
-			DrawOriginOffsetX = 0;
-			DrawOffsetX = -(HalfSpriteWidth - HalfProjWidth);
-			DrawOriginOffsetY = -(HalfSpriteHeight - HalfProjHeight);
-		}
-
-		public override bool ShouldUpdatePosition()
-		{
-			return false;
-		}
-
-		public override void CutTiles()
-		{
-			DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
-			Vector2 start = Projectile.Center;
-			Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
-			Utils.PlotTileLine(start, end, CollisionWidth, DelegateMethods.CutTiles);
-		}
-
-		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-		{
-			Vector2 start = Projectile.Center;
-			Vector2 end = start + Projectile.velocity * 15f;
-			float collisionPoint = 0f;
-			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
-		}
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-			Player player = Main.player[Projectile.owner];
-            if (steeltempesthittimer3 == 0)
-            {
-				player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks += 1;
-				steeltempesthittimer3 = 1;
-				if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks == 2)
-                {
-					SoundEngine.PlaySound(SoundID.Item74, player.Center);
-                }
-            }
-        }
-        private void Visuals()
-        {
             float frameSpeed = 3f;
 
             Projectile.frameCounter++;
@@ -148,6 +104,26 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             }
             Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
         }
+		public override bool ShouldUpdatePosition()
+		{
+			return false;
+		}
+
+		public override void CutTiles()
+		{
+			DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+			Vector2 start = Projectile.Center;
+			Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
+			Utils.PlotTileLine(start, end, CollisionWidth, DelegateMethods.CutTiles);
+		}
+
+		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+		{
+			Vector2 start = Projectile.Center;
+			Vector2 end = start + Projectile.velocity * 17f;
+			float collisionPoint = 0f;
+			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
+		}
         public static Texture2D texture;
         public static Texture2D glowTexture;
         public override bool PreDraw(ref Color lightColor)
@@ -177,6 +153,29 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 
 
             return false;
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            Player player = Main.player[Projectile.owner];
+            if (!Hit)
+            {
+                Hit = true;
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/ThrustHit") with { Volume = 1f }, player.Center);
+            }
+        }
+        public override void Kill(int timeLeft)
+        {
+            Player player = Main.player[Projectile.owner];
+            player.itemAnimation = 0;
+            player.itemTime = 0;
+            if (Hit)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks += 1;
+                if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoReady") with { Volume = 1f }, player.Center);
+                }
+            }
         }
     }
 }

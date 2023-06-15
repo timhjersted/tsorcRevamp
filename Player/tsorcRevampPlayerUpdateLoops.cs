@@ -66,11 +66,11 @@ namespace tsorcRevamp
 
         public bool InfinityEdge;
         public bool BoneRing;
+        public bool CelestialCloak;
+        public int CelestialCloakHitChances = 0;
 
         public int SoulVessel = 0;
         public float MaxManaAmplifier;
-        public bool CelestialCloak;
-        public int CelestialCloakHitChances = 0;
 
         public int MagicPlatingStacks = 0;
 
@@ -101,11 +101,14 @@ namespace tsorcRevamp
         public bool ChallengersGloveCritDamage = false;
         public float WhipCritHitboxSize = 1f;
 
+        public int SteelTempestStacks = 0;
+        public Vector2 SweepingBladePosition;
+
         public int EssenceThief = 0;
-        public int Dashes = 3;
+        public int SpiritRushCharges = 3;
         public float SpiritRushTimer = 0f;
-        public int DashSoundStyle = 0;
-        public float DashCD = 0f;
+        public int SpiritRushSoundStyle = 0;
+        public float SpiritRushCooldown = 0f;
 
         public float CrystalNunchakuDefenseDamage;
 
@@ -122,10 +125,6 @@ namespace tsorcRevamp
         public bool MythrilBulwark = false;
         public bool IceboundMythrilAegis = false;
 
-        public bool SweepingBladeDamage = false;
-
-        public int SteelTempestStacks = 0;
-        public int CritCounter = 0;
 
         public bool InterstellarBoost = false;
         public float MinionCircleRadius = 50;
@@ -392,7 +391,6 @@ namespace tsorcRevamp
             DarkmoonCloak = false;
             manaShield = 0;
             staminaShield = 0;
-            SweepingBladeDamage = false;
 
             ConditionOverload = false;
             supersonicLevel = 0;

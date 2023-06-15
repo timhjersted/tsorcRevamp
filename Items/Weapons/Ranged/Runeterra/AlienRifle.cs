@@ -9,7 +9,6 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
-    [Autoload(true)]
     public class AlienRifle : ModItem
     {
         public const int BaseDamage = 60;

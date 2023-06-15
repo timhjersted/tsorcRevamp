@@ -10,6 +10,7 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -53,7 +54,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.knockBackResist = 0;
             NPC.lavaImmune = true;
             NPC.boss = true;
-            despawnHandler = new NPCDespawnHandler("An ancient demon decides to show you mercy ...", Color.Gold, DustID.GoldFlame);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.AncientDemon.DespawnHandler"), Color.Gold, DustID.GoldFlame);
         }
 
         NPCDespawnHandler despawnHandler;

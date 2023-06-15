@@ -10,7 +10,6 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
-    [Autoload(true)]
     public class OrbOfDeception : ModItem
     {
         public static Color FilledColor = Color.YellowGreen;

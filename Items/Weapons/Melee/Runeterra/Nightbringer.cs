@@ -5,48 +5,40 @@ using Terraria.Audio;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using Terraria.DataStructures;
-using tsorcRevamp.Buffs;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Projectiles.Melee.Runeterra;
+using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using Terraria.Localization;
+using Humanizer;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
     [Autoload(true)]
     public class Nightbringer: ModItem
     {
-        public int AttackSpeedScalingDuration;
-        public float DashingTimer = 0f;
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Nightbringer");
-            /* Tooltip.SetDefault("Thrusts on right click, cooldown scales down with attack speed" +
-                "\nGain a stack of Steel Tempest upon thrusting any enemy" +
-                "\nUpon reaching 2 stacks, the next right click will release a chaotic tempest" +
-                "\nHover your mouse over an enemy and press Special Ability to dash through the enemy" +
-                "\nThis grants you brief invulnerability and a huge melee damage boost" +
-                "\nPress Shift + Special Ability to create a stationary firewall which blocks most enemy projectiles for 5 seconds" +
-                "\n'Harmony is a lie told to force Obedience'"); */
-        }
+        public int SwingSoundStyle = 0;
+        public float SwingSoundVolume = 0.25f;
+        public const int BaseDamage = 220;
+        public int AttackSpeedScalingDuration = 240;
+        public const int DashCooldown = 6;
+        public const int WindwallDuration = 5;
+        public const int WindwallCooldown = 30;
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Cyan;
             Item.value = Item.buyPrice(1, 0, 0, 0);
-            Item.damage = 220;
-            Item.crit = 6;
-            Item.width = 52;
-            Item.height = 54;
+            Item.damage = BaseDamage;
+            Item.crit = SteelTempest.CritChance;
+            Item.width = 94;
+            Item.height = 110;
             Item.knockBack = 5f;
-            Item.autoReuse = true;
-            Item.maxStack = 1;
-            Item.scale = 0.9f;
+            Item.scale = 1f;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 20;
             Item.useTime = 20;
-            Item.noUseGraphic = false;
-            Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.shootSpeed = 5f;
-            Item.useTurn = false;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
@@ -56,39 +48,19 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         }
         public override void HoldItem(Player player)
         {
-            AttackSpeedScalingDuration = (int)(3 / player.GetTotalAttackSpeed(DamageClass.Melee) * 60); //3 seconds divided by player's melee speed
+            AttackSpeedScalingDuration = (int)(4 / player.GetTotalAttackSpeed(DamageClass.Melee) * 60); //3 seconds divided by player's melee speed
             if (AttackSpeedScalingDuration <= 80)
             {
                 AttackSpeedScalingDuration = 80; //1.33 seconds minimum
             }
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                NPC other = Main.npc[i];
-                Vector2 MouseHitboxSize = new Vector2(1000000, 1000000);
-
-                if (other.active & !other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(player.Center) <= 400 & !player.HasBuff(ModContent.BuffType<NightbringerDashCooldown>()))
-                {
-                    if (DashingTimer > 0)
-                    {
-                        SoundEngine.PlaySound(SoundID.Item104, player.Center);
-                        player.velocity = UsefulFunctions.Aim(player.Center, other.Center, 15f);
-                        player.AddBuff(ModContent.BuffType<Invincible>(), 2 * 60);
-                        player.AddBuff(ModContent.BuffType<NightbringerDash>(), 5 * 60);
-                        player.AddBuff(ModContent.BuffType<NightbringerDashCooldown>(), 20 * 60);
-                    }
-                    break;
-                }
-            }
             if (Main.mouseLeft)
             {
-                //player.altFunctionUse = 1;
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noUseGraphic = false;
                 Item.noMelee = false;
-                //Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             }
             Vector2 playerCenter = new Vector2(-13, 0);
-            if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
+            if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2 && player.ownedProjectileCounts[ModContent.ProjectileType<NightbringerTornado>()] < 1)
             {
                 Dust.NewDust(player.TopLeft + playerCenter, 50, 50, DustID.DesertTorch, Scale: 2);
             }
@@ -101,99 +73,119 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noUseGraphic = false;
                 Item.noMelee = false;
-                //Item.shoot = ModContent.ProjectileType<SteelTempestTornado>();
                 player.AddBuff(ModContent.BuffType<NightbringerThrustCooldown>(), AttackSpeedScalingDuration);
-                //player.GetModPlayer<tsorcRevampPlayer>().steeltempest = 0;
-                //player.altFunctionUse = 1;
             }
             else
             if (player.altFunctionUse == 2 && player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2)
             {
-
                 Item.useStyle = ItemUseStyleID.Rapier;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
                 player.AddBuff(ModContent.BuffType<NightbringerThrustCooldown>(), AttackSpeedScalingDuration);
-                //Item.shoot = ModContent.ProjectileType<SteelTempestThrust>();
-                //player.altFunctionUse = 1;
+            }
+            if (player.altFunctionUse == 2 && player.HasBuff(ModContent.BuffType<NightbringerDash>()))
+            {
+                Item.useStyle = ItemUseStyleID.Shoot;
+                Item.noUseGraphic = true;
+                Item.noMelee = true;
+            }
+        }
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (SwingSoundStyle == 1) //Shoot will always run before this can occur, so they have to be incremented by 1
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/SwingHit1") with { Volume = SwingSoundVolume }, player.Center);
+            }
+            else
+            if (SwingSoundStyle == 2)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/SwingHit2") with { Volume = SwingSoundVolume }, player.Center);
+            }
+            else
+            if (SwingSoundStyle == 0)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/SwingHit3") with { Volume = SwingSoundVolume }, player.Center);
             }
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.altFunctionUse != 2) //shoot Nothing
             {
+                if (SwingSoundStyle == 0)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Swing1") with { Volume = SwingSoundVolume }, player.Center);
+                    SwingSoundStyle += 1;
+                }
+                else
+                if (SwingSoundStyle == 1)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Swing2") with { Volume = SwingSoundVolume }, player.Center);
+                    SwingSoundStyle += 1;
+                }
+                else
+                if (SwingSoundStyle == 2)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Swing3") with { Volume = SwingSoundVolume }, player.Center);
+                    SwingSoundStyle = 0;
+                }
                 return true;
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2)
+            if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2 && !player.HasBuff(ModContent.BuffType<NightbringerDash>()))
             {
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<NightbringerThrust>(), damage, 10, player.whoAmI);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Thrust") with { Volume = 1f }, player.Center);
+                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<NightbringerThrust>(), damage, knockback * 2, player.whoAmI);
             }
-            else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
+            else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2 && player.HasBuff(ModContent.BuffType<NightbringerDash>()))
             {
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<NightbringerTornado>(), damage, 10, player.whoAmI);
-                player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks = 0;
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Thrust") with { Volume = 1f }, player.Center);
+                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<NightbringerSpin>(), damage, knockback * 2, player.whoAmI);
+            }
+            else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2 && !player.HasBuff(ModContent.BuffType<NightbringerDash>()))
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoCast") with { Volume = 1f }, player.Center);
+                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<NightbringerTornado>(), damage, knockback * 2, player.whoAmI);
+            }
+            else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2 && player.HasBuff(ModContent.BuffType<NightbringerDash>()))
+            {
+                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<NightbringerSpin>(), damage, knockback * 2, player.whoAmI);
+                Projectile.NewProjectile(source, position, Vector2.Zero, ModContent.ProjectileType<NightbringerTornado>(), damage, knockback * 2, player.whoAmI);
             }
             return false;
-
-            /*if (Main.mouseRight & !Main.mouseLeft & player.GetModPlayer<tsorcRevampPlayer>().steeltempest >= 2 & !player.HasBuff(ModContent.BuffType<SteelTempestThrustCooldown>()))
-            {
-                player.altFunctionUse = 2;
-                Item.useStyle = ItemUseStyleID.Swing;
-                Item.noUseGraphic = false;
-                Item.noMelee = false;
-                Item.shoot = ModContent.ProjectileType<SteelTempestTornado>();
-                player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
-                player.GetModPlayer<tsorcRevampPlayer>().steeltempest = 0;
-            }
-            else
-            if (Main.mouseRight & !Main.mouseLeft & player.altFunctionUse == 2 & !player.HasBuff(ModContent.BuffType<SteelTempestThrustCooldown>()))
-            {
-                player.altFunctionUse = 2;
-                Item.useStyle = ItemUseStyleID.Rapier;
-                Item.noUseGraphic = true;
-                Item.noMelee = true;
-                player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
-                Item.shoot = ModContent.ProjectileType<SteelTempestThrust>();
-            }
-            if (Main.mouseLeft)
-            {
-                player.altFunctionUse = 1;
-                Item.useStyle = ItemUseStyleID.Swing;
-                Item.noUseGraphic = false;
-                Item.noMelee = false;
-                Item.useTurn = false;
-                Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
-            }*/
         }
-        public override void UpdateInventory(Player player)
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            if (Main.GameUpdateCount % 1 == 0)
+            var SpecialAbilityKey = tsorcRevamp.specialAbility.GetAssignedKeys();
+            string SpecialAbilityString = SpecialAbilityKey.Count > 0 ? SpecialAbilityKey[0] : "Special Ability: <NOT BOUND>";
+            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip3");
+            if (ttindex1 != -1)
             {
-                DashingTimer -= 0.0167f;
+                tooltips.RemoveAt(ttindex1);
+                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.PlasmaWhirlwind.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.PlasmaWhirlwind.Keybind2")));
             }
-        }
-
-        /*public override bool CanUseItem(Player player)
-        {
-            if (player.altFunctionUse != 2 || !player.HasBuff(ModContent.BuffType<NightbringerThrustCooldown>()))
+            int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip5");
+            if (ttindex2 != -1)
             {
-                return true;
+                tooltips.RemoveAt(ttindex2);
+                tooltips.Insert(ttindex2, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.Nightbringer.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.Nightbringer.Keybind2")));
+            }
+            if (Main.keyState.IsKeyDown(Keys.LeftShift))
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", Language.GetTextValue("Mods.tsorcRevamp.Items.Nightbringer.Details").FormatWith((float)AttackSpeedScalingDuration / 60f, PlasmaWhirlwind.PercentHealthDamage, PlasmaWhirlwind.HealthDamageCap, DashCooldown, WindwallDuration, WindwallCooldown)));
+                }
             }
             else
             {
-                return false;
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Shift", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Details")));
+                }
             }
         }
-
-        public override bool CanShoot(Player player)
-        {
-            if (player.altFunctionUse == 2)
-            {
-                return true;
-            } return false;
-        }*/
-
         public override bool AltFunctionUse(Player player)
         {
             if (!player.HasBuff(ModContent.BuffType<NightbringerThrustCooldown>()))
@@ -204,6 +196,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 return false;
             }
         }
+
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

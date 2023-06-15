@@ -13,7 +13,6 @@ using tsorcRevamp.Items.Materials;
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
     [LegacyName("InterstellarVesselControls")]
-    [Autoload(true)]
     public class InterstellarVesselGauntlet : ModItem
 	{
 		public static List<InterstellarVesselShip> projectiles = null;

@@ -36,6 +36,14 @@ namespace tsorcRevamp
         [DefaultValue(false)]
         public bool DisableAutomaticQuickMana { get; set; }
 
+        [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(false)]
+        public bool DisableDragoonGreavesDoubleJump { get; set; }
+
+        [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(false)]
+        public bool DisableSupersonicWings2ExtraJumps { get; set; }
+
 
         [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.Visual")]
 

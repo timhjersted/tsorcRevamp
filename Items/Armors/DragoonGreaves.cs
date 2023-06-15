@@ -21,7 +21,10 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.hasJumpOption_Unicorn = true;
+            if (!ModContent.GetInstance<tsorcRevampConfig>().DisableDragoonGreavesDoubleJump)
+            {
+                player.hasJumpOption_Unicorn = true; 
+            }
             player.jumpBoost = true;
             player.maxMinions += 2;
         }

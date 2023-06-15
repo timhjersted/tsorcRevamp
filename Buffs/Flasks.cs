@@ -70,32 +70,32 @@ namespace tsorcRevamp.Buffs
         {
             if (type == BuffID.WeaponImbuePoison)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", PoisonFlaskDMG);
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", PoisonFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueFire)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", FireFlaskDMG);
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", FireFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueGold)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", GoldFlaskDMG);
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", GoldFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueConfetti)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", ConfettiFlaskDMG);
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", ConfettiFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueCursedFlames)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", CursedFlaskDMG);
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", CursedFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueIchor)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedMeleeAndWhipDamage", IchorFlaskDMG);
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", IchorFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueVenom)

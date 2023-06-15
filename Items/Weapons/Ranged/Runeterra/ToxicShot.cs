@@ -9,7 +9,6 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
-    [Autoload(true)]
     public class ToxicShot : ModItem
     {
         public const int BaseDamage = 20;

@@ -13,7 +13,6 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
-    [Autoload(true)]
     public class OrbOfFlame : ModItem
     {
         public static Color FilledColor = Color.PaleVioletRed;

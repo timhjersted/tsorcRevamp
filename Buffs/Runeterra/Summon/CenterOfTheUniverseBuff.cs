@@ -33,12 +33,6 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
                 player.DelBuff(buffIndex);
                 buffIndex--;
             }
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().CritCounter == 3)
-            {
-                player.GetModPlayer<tsorcRevampPlayer>().CritCounter = 0;
-            }
-
             if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
                 player.statMana -= 1;

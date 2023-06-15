@@ -65,12 +65,9 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			if (distance <= (owner.GetModPlayer<tsorcRevampPlayer>().MinionCircleRadius + 34f))
 			{
 				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+            }
+            return false;
+        }
 
 
 		private bool CheckActive(Player owner)

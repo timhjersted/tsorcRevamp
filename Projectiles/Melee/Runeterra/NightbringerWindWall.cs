@@ -1,11 +1,10 @@
 using Terraria;
-using System;
 using Microsoft.Xna.Framework;
-using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Collections.Generic;
+using tsorcRevamp.Items.Weapons.Melee.Runeterra;
+using Terraria.Audio;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
@@ -23,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.friendly = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 5 * 60;
+            Projectile.timeLeft = Nightbringer.WindwallDuration * 60;
             Projectile.DamageType = DamageClass.Default;
         }
         public override void OnSpawn(IEntitySource source)
@@ -31,11 +30,12 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Player player = Main.player[Projectile.owner];
             Vector2 unitVectorTowardsMouse = player.Center.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * player.direction);
             player.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoReady") with { Volume = 1f }, player.Center);
         }
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            if (Main.GameUpdateCount % 15 == 0)
+            if (Projectile.timeLeft == Nightbringer.WindwallDuration * 60 - 15)
             {
                 Projectile.velocity = Vector2.Zero;
             }
@@ -52,10 +52,6 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
                     }
                 }
             }
-            Visuals();
-        }
-        private void Visuals()
-        {
             float frameSpeed = 5f;
 
             Projectile.frameCounter++;

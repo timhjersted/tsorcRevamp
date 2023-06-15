@@ -12,7 +12,6 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
-    [Autoload(true)]
     public class ScorchingPoint : ModItem
     {
         public static List<ScorchingPointFireball> projectiles = null;

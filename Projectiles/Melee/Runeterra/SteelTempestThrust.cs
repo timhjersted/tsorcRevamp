@@ -1,16 +1,14 @@
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.Audio;
 using Terraria.Enums;
 using Terraria.ModLoader;
-using Terraria.DataStructures;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
 	public class SteelTempestThrust : ModProjectile
 	{
-		public int steeltempesthittimer = 0;
+		public bool Hit = false;
 		public const int FadeInDuration = 7;
 		public const int FadeOutDuration = 4;
 
@@ -26,7 +24,6 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 		public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 6;
-			// DisplayName.SetDefault("Steel Tempest Thrust");
         }
 
 
@@ -41,17 +38,13 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 			Projectile.DamageType = DamageClass.Melee;
 			Projectile.ownerHitCheck = true;
 			Projectile.usesLocalNPCImmunity = true;
-			Projectile.localNPCHitCooldown = 20;
+			Projectile.localNPCHitCooldown = 60;
 			Projectile.extraUpdates = 1; 
 			Projectile.timeLeft = 360;
 			Projectile.hide = true;
 			Projectile.width = 110;
 			Projectile.height = 104;
 		}
-		public override void OnSpawn(IEntitySource source)
-        {
-            Player player = Main.player[Projectile.owner];
-        }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             modifiers.SourceDamage *= 2;
@@ -64,7 +57,6 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 			if (Timer >= TotalDuration)
 			{
 				Projectile.Kill();
-				steeltempesthittimer = 0;
 				return;
 			}
 			else
@@ -80,23 +72,22 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 
 			Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 - MathHelper.PiOver4 * Projectile.spriteDirection;
 
-			SetVisualOffsets();
-			Visuals();
-		}
+            const int HalfSpriteWidth = 158 / 2;
+            const int HalfSpriteHeight = 148 / 2;
 
-		private void SetVisualOffsets()
-		{
-			const int HalfSpriteWidth = 158 / 2;
-			const int HalfSpriteHeight = 148 / 2;
+            int HalfProjWidth = Projectile.width / 2;
+            int HalfProjHeight = Projectile.height / 2;
 
-			int HalfProjWidth = Projectile.width / 2;
-			int HalfProjHeight = Projectile.height / 2;
+            DrawOriginOffsetX = 0;
+            DrawOffsetX = -(HalfSpriteWidth - HalfProjWidth);
+            DrawOriginOffsetY = -(HalfSpriteHeight - HalfProjHeight);
 
-			DrawOriginOffsetX = 0;
-			DrawOffsetX = -(HalfSpriteWidth - HalfProjWidth);
-			DrawOriginOffsetY = -(HalfSpriteHeight - HalfProjHeight);
-		}
-
+            Projectile.frame = (int)((Timer / 28f) * 6f);
+            if (Timer > 28f)
+            {
+                Projectile.frame = 0;
+            }
+        }
 		public override bool ShouldUpdatePosition()
 		{
 			return false;
@@ -120,37 +111,25 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
 			Player player = Main.player[Projectile.owner];
-            if (steeltempesthittimer == 0)
+            if (!Hit)
             {
-				player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks += 1;
-				steeltempesthittimer = 1;
-				if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks == 2)
-                {
-					SoundEngine.PlaySound(SoundID.Item71, player.Center);
-                }
+				Hit = true;
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/ThrustHit") with { Volume = 1f }, player.Center);
             }
         }
-        private void Visuals()
+        public override void Kill(int timeLeft)
         {
-			Projectile.frame = (int)((Timer / 28f) * 6f);
-			if (Timer > 28f)
-			{
-				Projectile.frame = 0;
-			}
-            /*float frameSpeed = 7f;
-
-            Projectile.frameCounter++;
-
-            if (Projectile.frameCounter >= frameSpeed)
+            Player player = Main.player[Projectile.owner];
+			player.itemAnimation = 0;
+			player.itemTime = 0;
+            if (Hit)
             {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
-
-                if (Projectile.frame >= Main.projFrames[Projectile.type])
+                player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks += 1;
+                if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
                 {
-                    Projectile.frame = 0;
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoReady") with { Volume = 1f }, player.Center);
                 }
-            }*/
+            }
         }
     }
 }

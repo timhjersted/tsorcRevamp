@@ -1,10 +1,8 @@
 using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ReLogic.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
@@ -13,9 +11,12 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
     public class SteelTempestTornado : ModProjectile
     {
+        public bool Hit = false;
+        public const int baseTimeLeft = 180;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 8;
+            ProjectileID.Sets.NoMeleeSpeedVelocityScaling[Projectile.type] = true;
         }
         public override void SetDefaults()
         {
@@ -25,69 +26,37 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.friendly = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 300;
-            Projectile.DamageType = DamageClass.Melee;
+            Projectile.timeLeft = baseTimeLeft;
+            Projectile.DamageType = DamageClass.MeleeNoSpeed;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 5;
         }
-
-        SlotId SoundSlotID;
-        SoundStyle TornadoSoundStyle = SoundID.DD2_BookStaffTwisterLoop;
-        bool soundPaused;
-        bool playedSound = false;
-        ActiveSound TornadoSound;
         private static int numrings = 24;
         private static Vector2 ringScale = new Vector2(0.2f);
         private int frameTimer;
         private int currentFrame;
-        public override void OnSpawn(IEntitySource source)
-        {
-            Player player = Main.player[Projectile.owner];
-            Projectile.localNPCHitCooldown = (int)(5.5f / (0.5f + player.GetTotalAttackSpeed(DamageClass.Melee) / 2f));
-        }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             modifiers.SourceDamage *= 2;
         }
-
         public override void AI()
         {
-            if (!playedSound)
-            {
-                playedSound = true;
-                SoundSlotID = SoundEngine.PlaySound(SoundID.DD2_BookStaffTwisterLoop, Projectile.Center); //can give funny pitch hehe
-                if (TornadoSound == null)
-                {
-                    SoundEngine.TryGetActiveSound(SoundSlotID, out TornadoSound);
-                }
-                else
-                {
-                    if (SoundEngine.AreSoundsPaused && !soundPaused)
-                    {
-                        TornadoSound.Pause();
-                        soundPaused = true;
-                    }
-                    else if (!SoundEngine.AreSoundsPaused && soundPaused)
-                    {
-                        TornadoSound.Resume();
-                        soundPaused = false;
-                    }
-                    TornadoSound.Position = Projectile.Center;
-                }
-            }
+            Player player = Main.player[Projectile.owner];
             int dustID = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, Scale: 2);
             Main.dust[dustID].noGravity = true;
-        }
-        public override void Kill(int timeLeft)
-        {
-            if (Projectile.timeLeft < 2)
+            if (Projectile.timeLeft == baseTimeLeft - 40)
             {
-                TornadoSound.Stop();
+                player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks = 0;
             }
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Projectile.damage = (int)(Projectile.damage * 0.95f); //Multihit penalty
+            if (!Hit)
+            {
+                Hit = true;
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoHit") with { Volume = 1f }, target.Center);
+            }
         }
         public override bool PreDraw(ref Color lightColor)
         {

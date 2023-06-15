@@ -20,9 +20,9 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
             if (Main.GameUpdateCount % 1 == 0)
             {
                 player.GetModPlayer<tsorcRevampPlayer>().SpiritRushTimer -= 0.0167f;
-                player.GetModPlayer<tsorcRevampPlayer>().DashCD -= 0.0167f;
+                player.GetModPlayer<tsorcRevampPlayer>().SpiritRushCooldown -= 0.0167f;
             }
-            if (player.GetModPlayer<tsorcRevampPlayer>().DashCD > 0f)
+            if (player.GetModPlayer<tsorcRevampPlayer>().SpiritRushCooldown > 0f)
             {
                 player.immune = true;
             }
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
             }
             if (player.buffTime[buffIndex] == 1)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().Dashes = 3;
+                player.GetModPlayer<tsorcRevampPlayer>().SpiritRushCharges = 3;
             }
         }
     }

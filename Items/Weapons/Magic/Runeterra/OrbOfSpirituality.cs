@@ -11,7 +11,6 @@ using Terraria.DataStructures;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
-    [Autoload(true)]
     public class OrbOfSpirituality : ModItem
     {
         public static Color FilledColor = Color.YellowGreen;

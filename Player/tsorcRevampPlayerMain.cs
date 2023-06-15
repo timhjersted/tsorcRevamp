@@ -727,12 +727,6 @@ namespace tsorcRevamp
             {
                 modifiers.CritDamage += Player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationDamageScaling * AmmoReservationRangedCritDamage / 100f;
             }
-
-            if (Player.GetModPlayer<tsorcRevampPlayer>().SweepingBladeDamage)
-            {
-                modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * PlasmaWhirlwindDash.PercentHealthDamage / 100f, PlasmaWhirlwindDash.HealthDamageCap);
-            }
-
             if (OldWeapon)
             {
                 float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
@@ -986,10 +980,6 @@ namespace tsorcRevamp
 
            if (tsorcRevamp.specialAbility.JustReleased)
             {
-                PlasmaWhirlwind thisPlasmaWhirlwind = Player.HeldItem.ModItem as PlasmaWhirlwind;
-                Nightbringer thisNightbringer = Player.HeldItem.ModItem as Nightbringer;
-                OrbOfSpirituality thisOrbOfSpirituality = Player.HeldItem.ModItem as OrbOfSpirituality;
-
                 bool holdingControls = Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>()|| Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>();
                 bool hasBuff = Player.HasBuff(ModContent.BuffType<InterstellarCommander>()) || Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
                 if (!holdingControls && hasBuff && !(Main.keyState.IsKeyDown(Keys.LeftShift)))
@@ -1007,28 +997,28 @@ namespace tsorcRevamp
                         minionPacket.Send();
                     }
                 }
-
-                //Only run this update loop if the player is holding one of these
-                if (thisPlasmaWhirlwind != null || thisNightbringer != null)
-                {
-                    player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
-                }
-
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC other = Main.npc[i];
-                    Vector2 MouseHitbox = new Vector2(25, 25);
+                    Vector2 MouseHitbox = new Vector2(100, 100);
 
-                    if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitbox)) & other.Distance(Player.Center) <= 400 && (!Player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()) || !Player.HasBuff(ModContent.BuffType<NightbringerDashCooldown>())))
+                    if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitbox)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<PlasmaWhirlwind>())
                     {
-                        if (thisPlasmaWhirlwind != null)
-                        {
-                            thisPlasmaWhirlwind.DashingTimer = 0.2f;
-                        }
-                        if (thisNightbringer != null)
-                        {
-                            thisNightbringer.DashingTimer = 0.2f;
-                        }
+                        SweepingBladePosition = other.Center;
+                        player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2) + 1); //the +1 is necessary here to update the dash velocity correctly, it gives the dash buff for twice the intended duration of the dash because the player needs immunity for a little longer than the dash lasts to make it reliable
+                    } //cooldown is added by On-Hit in the dash projectile hitbox
+                    if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitbox)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<NightbringerDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<Nightbringer>())
+                    {
+                        SweepingBladePosition = other.Center;
+                        player.AddBuff(ModContent.BuffType<NightbringerDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2) + 1); //the +1 is necessary here to update the dash velocity correctly, it gives the dash buff for twice the intended duration of the dash because the player needs immunity for a little longer than the dash lasts to make it reliable
+                    } //cooldown is added by On-Hit in the dash projectile hitbox
+                }
+                if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<Nightbringer>() && !Player.HasBuff(ModContent.BuffType<NightbringerWindwallCooldown>()))
+                {
+                    if (Main.keyState.IsKeyDown(Keys.LeftShift))
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), player.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<Projectiles.Melee.Runeterra.NightbringerWindWall>(), 0, 0, Main.myPlayer);
+                        Player.AddBuff(ModContent.BuffType<NightbringerWindwallCooldown>(), 30 * 60);
                     }
                 }
                 if (player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() && player.statMana > (player.GetManaCost(player.HeldItem) * 3) && !Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>()))
@@ -1037,41 +1027,32 @@ namespace tsorcRevamp
                     player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>(), OrbOfSpirituality.DashCD * 60);
                     player.statMana -= (player.GetManaCost(player.HeldItem) * 3);
                 }
-                if (player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDash>()) && DashCD <= 0f && Dashes > 0)
+                if (player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDash>()) && SpiritRushCooldown <= 0f && SpiritRushCharges > 0)
                 {
                     SpiritRushTimer = 0.3f;
-                    DashCD = 1f;
-                    if (DashSoundStyle == 0)
+                    SpiritRushCooldown = 1f;
+                    if (SpiritRushSoundStyle == 0)
                     {
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash1") with { Volume = 1f }, player.Center);
-                        DashSoundStyle += 1;
+                        SpiritRushSoundStyle += 1;
                     } else
-                    if (DashSoundStyle == 1)
+                    if (SpiritRushSoundStyle == 1)
                     {
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash2") with { Volume = 1f }, player.Center);
-                        DashSoundStyle += 1;
+                        SpiritRushSoundStyle += 1;
                     } else
-                    if (DashSoundStyle == 2)
+                    if (SpiritRushSoundStyle == 2)
                     {
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash3") with { Volume = 1f }, player.Center);
-                        DashSoundStyle = 0;
+                        SpiritRushSoundStyle = 0;
                     }
-                    Dashes--;
+                    SpiritRushCharges--;
                 }
                 if (Main.keyState.IsKeyDown(Keys.LeftShift) && !Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
                 {
                     SoundEngine.PlaySound(SoundID.Item61, player.Center);
                     Projectile.NewProjectile(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Ranged.Runeterra.NuclearMushroom>(), player.GetWeaponDamage(player.HeldItem), player.GetWeaponKnockback(player.HeldItem), Main.myPlayer);
                     Player.AddBuff(ModContent.BuffType<NuclearMushroomCooldown>(), 5 * 60);
-                }
-            }
-            if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<Nightbringer>() && !Player.HasBuff(ModContent.BuffType<NightbringerWindwallCooldown>()))
-            {
-                if (Main.keyState.IsKeyDown(Keys.LeftShift))
-                {
-                    SoundEngine.PlaySound(SoundID.Item100, player.Center);
-                    Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), player.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<Projectiles.Melee.Runeterra.NightbringerWindWall>(), 0, 0, Main.myPlayer);
-                    Player.AddBuff(ModContent.BuffType<NightbringerWindwallCooldown>(), 30 * 60);
                 }
             }
 

@@ -1373,7 +1373,7 @@ namespace tsorcRevamp
         {
             get
             {
-                return new Condition("Mods.tsorcRevamp.Conditons.SHM9Downed", () => SHMDowned >= 9);
+                return new Condition("Mods.tsorcRevamp.Conditions.SHM9Downed", () => SHMDowned >= 9);
             }
         }
 
