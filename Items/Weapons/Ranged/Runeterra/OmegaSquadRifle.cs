@@ -6,12 +6,15 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Items.Materials;
+using System.CodeDom;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
     public class OmegaSquadRifle : ModItem
     {
         public const int BaseDamage = 220;
+        public const int ShroomCooldown = 5;
+        public const int ShroomBonusCritChance = 100;
         public override void SetStaticDefaults()
         {
             ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
@@ -22,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         {
             Item.width = 62;
             Item.height = 22;
-            Item.rare = ItemRarityID.Cyan;
+            Item.rare = ItemRarityID.Red;
             Item.value = Item.buyPrice(1, 0, 0, 0);
             Item.useTime = 22;
             Item.useAnimation = 22;
@@ -63,19 +66,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override void HoldItem(Player player)
         {
-            if (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()))
+            if (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
             {
-                if (!player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
-                {
-                    player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
-                }
+                player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
             }
-            if (player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
-            {
-                //nothing
-            }
-            else
-            if (player.itemAnimation > 14 && (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>())))
+            if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoost>())) //Scouts Boots 2 blocks Scouts Boost 1 and its cooldown so this won't occur then
             {
                 player.velocity *= 0.92f;
             }

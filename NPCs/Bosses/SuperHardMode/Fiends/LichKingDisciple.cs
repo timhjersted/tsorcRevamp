@@ -12,6 +12,7 @@ using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Items.Weapons.Melee;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 {
@@ -89,7 +90,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
                 if (holdTimer <= 0)
                 {
-                    UsefulFunctions.BroadcastText("The Lich King's Disciple emanates a miasma of Ichor around him!", 199, 21, 133);//medium violet red
+                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.LichKingDisciple.Aura"), 199, 21, 133);//medium violet red
                     holdTimer = 9000;
                 }
 

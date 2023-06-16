@@ -2,10 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
-using tsorcRevamp.Buffs.Runeterra.Ranged;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using static Humanizer.In;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
@@ -13,7 +11,6 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 	{
 		public override void SetStaticDefaults()
 		{
-			// DisplayName.SetDefault("Nuclear Mushroom");
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5; // The length of old position to be recorded
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // The recording mode
             Main.projFrames[Projectile.type] = 3;
@@ -31,23 +28,14 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 			Projectile.ignoreWater = true;
 			Projectile.tileCollide = false;
             Projectile.knockBack = 0f;
+            Projectile.ContinuouslyUpdateDamageStats = true;
 		}
         public override void OnSpawn(IEntitySource source)
         {
             Player owner = Main.player[Projectile.owner];
-            Projectile.CritChance = owner.GetWeaponCrit(owner.HeldItem) + 100;
+            //Insert Sound
         }
         public override void AI()
-        {
-            Visuals();
-        }
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            Player owner = Main.player[Projectile.owner];
-            SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, Projectile.Center);
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearMushroomExplosion>(), Projectile.damage / 2, Projectile.knockBack * 10, Projectile.owner);
-        }
-        private void Visuals()
         {
             int frameSpeed = 5;
 
@@ -66,6 +54,12 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 
             // Some visuals here
             Lighting.AddLight(Projectile.Center, Color.GreenYellow.ToVector3() * 1f);
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            Player owner = Main.player[Projectile.owner];
+            SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, Projectile.Center);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearMushroomExplosion>(), Projectile.damage / 2, Projectile.knockBack * 10, Projectile.owner);
         }
     }
 }

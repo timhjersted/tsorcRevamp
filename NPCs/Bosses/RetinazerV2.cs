@@ -13,6 +13,7 @@ using Terraria.Graphics.Effects;
 using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.DataStructures;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -129,7 +130,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 NPC.Center = Main.player[NPC.target].Center + new Vector2(-1000, 0);
                 NPC.netUpdate = true;
-                UsefulFunctions.BroadcastText("Retinazer Closes In...");
+                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.RetinazerV2.ClosesIn"));
             }
 
             if (MoveList == null)
@@ -186,7 +187,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 baseRadius = 0.5f;
                 if (MoveTimer == 1)
                 {
-                    UsefulFunctions.BroadcastText("Scorching heat radiates from Retinazer's hull...", Color.OrangeRed);
+                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.RetinazerV2.Warning"), Color.OrangeRed);
                 }
 
                 rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;

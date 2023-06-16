@@ -6,12 +6,18 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Items.Materials;
+using System.CodeDom;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
     public class AlienRifle : ModItem
     {
         public const int BaseDamage = 60;
+        public const int BlindingLaserCooldown = 5;
+        public const float BlindingLaserDmgMult = 3;
+        public const int BlindingLaserBonusCritChance = 100;
+        public const float BlindingLaserPercentHPDmg = 0.001f;
+        public const int BlindingLaserHPDmgCap = 450;
         public override void SetStaticDefaults()
         {
             ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
@@ -73,18 +79,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override void HoldItem(Player player)
         {
-            if (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()))
+            if (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
             {
-                if (!player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
-                {
-                    player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
-                }
+                player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
             }
-            if (player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
-            {
-                //nothing
-            } else 
-            if (player.itemAnimation > 14 && (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>())))
+            if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoost>())) //Scouts Boots 2 blocks Scouts Boost 1 and its cooldown so this won't occur then
             {
                 player.velocity *= 0.92f;
             }

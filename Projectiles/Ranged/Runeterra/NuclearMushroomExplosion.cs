@@ -3,8 +3,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
-using Terraria.DataStructures;
-using static Humanizer.In;
 using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
@@ -13,7 +11,6 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 	{
 		public override void SetStaticDefaults()
 		{
-			// DisplayName.SetDefault("Nuclear Mushroom Explosion");
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5; // The length of old position to be recorded
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // The recording mode
             Main.projFrames[Projectile.type] = 16;
@@ -32,23 +29,10 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 			Projectile.tileCollide = false;
             Projectile.usesIDStaticNPCImmunity = true;
             Projectile.idStaticNPCHitCooldown = 8;
-		}
-        public override void OnSpawn(IEntitySource source)
-        {
-            Player owner = Main.player[Projectile.owner];
-            //already gains crit chance from the projectile that spawns it
+            Projectile.ContinuouslyUpdateDamageStats = true;
         }
 
         public override void AI()
-        {
-            Visuals();
-        }
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[Projectile.owner];
-            target.AddBuff(ModContent.BuffType<IrradiatedByShroomDebuff>(), 10 * 60);
-        }
-        private void Visuals()
         {
             int frameSpeed = 5;
 
@@ -67,6 +51,11 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 
             // Some visuals here
             Lighting.AddLight(Projectile.Center, Color.GreenYellow.ToVector3() * 10f);
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[Projectile.owner];
+            target.AddBuff(ModContent.BuffType<IrradiatedByShroomDebuff>(), 10 * 60);
         }
     }
 }

@@ -10,6 +10,7 @@ using static tsorcRevamp.UsefulFunctions;
 using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.DataStructures;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -44,7 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.width = NPC.height = 40;
             NPC.npcSlots = 50;
             NPC.knockBackResist = 0f;
-            despawnHandler = new NPCDespawnHandler("You have fallen before the Lord of Cinder...", Color.OrangeRed, 6);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.SoulOfCinder.DespawnHandler"), Color.OrangeRed, 6);
         }
 
         private float AI_State
@@ -199,7 +200,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 InterruptCurrentPhase();
                 AI_State = (float)States.BulletHell;
                 BulletHell = true;
-                Main.NewText("prepare for die");
+                Main.NewText(LanguageUtils.GetTextValue("NPCs.SoulOfCinder.BulletHell"));
             }
 
 

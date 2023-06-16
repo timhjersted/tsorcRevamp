@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.mana = 60;
             Item.knockBack = 8;
             Item.UseSound = null;
-            Item.rare = ItemRarityID.Cyan;
+            Item.rare = ItemRarityID.Red;
             Item.shootSpeed = OrbOfDeception.ShootSpeed;
             Item.noUseGraphic = true;
             Item.noMelee = true;
@@ -44,7 +44,6 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            Item.mana = 60;
             if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] != 0)
             {
                 type = ModContent.ProjectileType<OrbOfSpiritualityFlame>();

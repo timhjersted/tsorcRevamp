@@ -9,6 +9,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 {
@@ -155,7 +156,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
         public string GetConditionDescription()
         {
-            return "Drops if the mage is dead";
+            return LanguageUtils.GetTextValue("NPCs.GhostDragonHead.Condition");
         }
     }
 }

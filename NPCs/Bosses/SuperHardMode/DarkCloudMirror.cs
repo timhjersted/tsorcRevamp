@@ -8,6 +8,7 @@ using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Enemy.DarkCloud;
 using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -287,7 +288,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 52, 0.2f, 0.2f, 200, default(Color), 3f);
             Dust.NewDust(NPC.position, NPC.width, NPC.height, 52, 0.2f, 0.2f, 200, default(Color), 3f);
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 52, 0.2f, 0.2f, 200, default(Color), 3f);
-            UsefulFunctions.BroadcastText("Just a reflection...", Color.Blue);
+            UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.DarkCloudMirror.Broadcast"), Color.Blue);
         }
 
         #region Debuffs

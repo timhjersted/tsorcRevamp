@@ -16,6 +16,7 @@ using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 {
@@ -54,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.noTileCollide = false;
             NPC.behindTiles = true;
             NPC.value = 670000;
-            despawnHandler = new NPCDespawnHandler("Seath consumes your soul...", Color.Cyan, DustID.BlueFairy);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.SeathTheScalelessHead.DespawnHandler"), Color.Cyan, DustID.BlueFairy);
         }
 
 
@@ -98,8 +99,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
             if (Main.hardMode && P.townNPCs > 2f && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Artorias>())) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<SeathTheScalelessHead>())) && !Main.dayTime && Main.rand.NextBool(1000))
             {
-                UsefulFunctions.BroadcastText("The village is under attack!", 175, 75, 255);
-                UsefulFunctions.BroadcastText("Seath the Scaleless has come to destroy all...", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.SeathTheScaleless.Spawn"), 175, 75, 255);
                 return 1;
             }
             return 0;
@@ -228,7 +228,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                         {
                             secondCrystalSpawned = true;
                         }
-                        UsefulFunctions.BroadcastText("Seath calls upon a Primordial Crystal...", Color.Cyan);
+                        UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.SeathTheScaleless.Crystal"), Color.Cyan);
                     }
 
                     if (!finalCrystalsSpawned && NPC.life <= (NPC.lifeMax / 6))
@@ -239,7 +239,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                             Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
                         }
                         finalCrystalsSpawned = true;
-                        UsefulFunctions.BroadcastText("Seath calls upon his final Primordial Crystals...", Color.Cyan);
+                        UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.SeathTheScaleless.FinalCrystal"), Color.Cyan);
                     }
                 }
             }

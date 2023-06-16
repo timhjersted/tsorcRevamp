@@ -61,7 +61,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             if (!Hit)
             {
                 Hit = true;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoHit") with { Volume = 1f }, target.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/TornadoHit") with { Volume = 1f }, target.Center);
             }
         }
         public override bool PreDraw(ref Color lightColor)
@@ -87,6 +87,11 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
                 for (var i = 0; i < numrings*2; i++) //some weird stuff going on with ring offset i think. multiplying numrings by 2 to make it taller for now
                 {
                     float _xscale = ((ringScale.X * i/2) * 0.1f) + 0.005f * i; //controls how wide each individual ring will be
+                    if (Projectile.velocity == Vector2.Zero)
+                    {
+                        _xscale += 0.1f;
+                        Projectile.width = 120;
+                    }
                     float _yscale = 0.5f; //controls how tall each individual ring will be
                     var _offset = (Math.Sin(Projectile.timeLeft / 6 + i / 4) * 24) * _xscale; //this is how the rings gain a wave effect
                     var _dist = 2f + (float)i * 2.5f; //distance between each ring

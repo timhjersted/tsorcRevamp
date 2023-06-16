@@ -15,6 +15,7 @@ using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items;
 using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
 using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -65,7 +66,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.knockBackResist = 0;
             NPC.value = 150000;
 
-            despawnHandler = new NPCDespawnHandler("Death claims you at last...", Color.DarkMagenta, DustID.Demonite);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.Death.DespawnHandler"), Color.DarkMagenta, DustID.Demonite);
         }
 
 

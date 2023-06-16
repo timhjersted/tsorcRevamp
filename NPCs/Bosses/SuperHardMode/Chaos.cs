@@ -15,6 +15,7 @@ using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Weapons.Ranged.Bows;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -50,7 +51,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.value = 670000;
             NPC.boss = true;
             NPC.lavaImmune = true;
-            despawnHandler = new NPCDespawnHandler("Chaos tears you asunder...", Color.Yellow, DustID.GoldFlame);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.Chaos.DespawnHandler"), Color.Yellow, DustID.GoldFlame);
 
         }
 
@@ -99,7 +100,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 if (holdTimer2 <= 0)
                 {
-                    UsefulFunctions.BroadcastText("Chaos rips your wings and fractures your armor!", 255, 255, 0); //yellow
+                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Chaos.Heal1"), 255, 255, 0); //yellow
                     holdTimer2 = 9000;
                 }
 
@@ -109,7 +110,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.defense = 9999;
                 if (holdTimer <= 0)
                 {
-                    UsefulFunctions.BroadcastText("Chaos is protected by unseen powers -- you're too far away!", 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Chaos.Heal2"), 175, 75, 255);
                     holdTimer = 200;
                 }
                 else
@@ -424,11 +425,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         if (chaosHealed == 0)
                         {
-                            UsefulFunctions.BroadcastText("Chaos has begun to heal itself...", Color.Yellow);
+                            UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Chaos.Rips"), Color.Yellow);
                         }
                         else
                         {
-                            UsefulFunctions.BroadcastText("Chaos continues to heal itself...", Color.Yellow);
+                            UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Chaos.OutOfRange"), Color.Yellow);
                         }
                         NPC.life += NPC.lifeMax / 6;
                         if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;

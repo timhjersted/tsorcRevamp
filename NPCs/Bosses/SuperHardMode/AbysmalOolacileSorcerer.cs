@@ -13,6 +13,7 @@ using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -55,7 +56,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.value = 430000;
             NPC.width = 28;
             NPC.knockBackResist = 0f;
-            despawnHandler = new NPCDespawnHandler("The Abysmal Oolacile Sorcerer has shattered your mind...", Color.DarkRed, DustID.Firework_Red);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.DespawnHandler"), Color.DarkRed, DustID.Firework_Red);
         }
         public float DarkBeadShotTimer
         {
@@ -365,7 +366,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region Gore
         public override void OnKill()
         {
-            UsefulFunctions.BroadcastText("A darkness has been lifted from the world...", 150, 150, 150);
+            UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.Defeated"), 150, 150, 150);
             if (!Main.dedServ)
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Oolacile Sorcerer Gore 1").Type, 1f);

@@ -10,6 +10,7 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.Serris
 {
@@ -56,7 +57,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             }
             else
             {
-                despawnHandler = new NPCDespawnHandler("Serris returns to the depths of its temple...", Color.Cyan, DustID.Firework_Blue);
+                despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.SerrisX.DespawnHandler"), Color.Cyan, DustID.Firework_Blue);
             }
         }
 

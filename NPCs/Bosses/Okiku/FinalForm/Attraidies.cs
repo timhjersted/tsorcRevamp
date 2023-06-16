@@ -21,6 +21,7 @@ using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Items.Lore;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 {
@@ -60,7 +61,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             NPC.value = 600000;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0;
-            despawnHandler = new NPCDespawnHandler("With your death a dark shadow falls over the world...", Color.DarkMagenta, DustID.PurpleCrystalShard);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.Attradies.DespawnHandler"), Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
 
         public int ShadowOrbDamage = 35;
@@ -142,7 +143,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         {
             if (!initialized)
             {
-                UsefulFunctions.BroadcastText("I am impressed you've made it this far, Red. But I'm done playing games. It's time to end this...", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Quote"), 175, 75, 255);
                 InitializeMoves();
                 if (!Main.tile[1365,280].IsActuated)
                 {
@@ -263,8 +264,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                     ClearObstructiveProjectiles();
                     NPC.Center = Target.Center + new Vector2(0, -600);
                     NPC.dontTakeDamage = true;
-                    UsefulFunctions.BroadcastText("You feel the dark power of Attraidies flare...", Color.Purple);
-                    UsefulFunctions.BroadcastText("And the power of the Earth uplift you from below, giving you the strength to finish him!", Color.Green);
+                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Thought"), Color.Purple);
+                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Flight"), Color.Green);
                     transitionTimer = 120;
                 }
                 if (NPC.life == 1)
@@ -502,7 +503,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 clockwise = 1;
                 if (Phase != 2)
                 {
-                    UsefulFunctions.BroadcastText("You suddenly feel weightless...", Color.DeepSkyBlue);
+                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Weightless"), Color.DeepSkyBlue);
                 }
 
                 if (Phase != 0)
@@ -1334,9 +1335,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             if (!tsorcRevampWorld.SuperHardMode)
             {
 
-                UsefulFunctions.BroadcastText("A portal from The Abyss has been opened!", new Color(255, 255, 60));
-                UsefulFunctions.BroadcastText("Artorias, the Ancient Knight of the Abyss has entered this world!...", new Color(255, 255, 60));
-                UsefulFunctions.BroadcastText("You must seek out the Shaman Elder, beyond the Western Sea...", new Color(249, 202, 12));
+                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Portal"), new Color(255, 255, 60));
+                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Artorias"), new Color(255, 255, 60));
+                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Hint"), new Color(249, 202, 12));
 
                 Main.hardMode = true;
                 tsorcRevampWorld.SuperHardMode = true;
@@ -1346,8 +1347,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             else
             {
 
-                UsefulFunctions.BroadcastText("The portal from The Abyss remains open...", new Color(255, 255, 60));
-                UsefulFunctions.BroadcastText("You must seek out the Shaman Elder, beyond the Western Sea...", new Color(249, 202, 12));
+                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.AbyssOpen"), new Color(255, 255, 60));
+                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Hint"), new Color(249, 202, 12));
 
                 tsorcRevampWorld.SuperHardMode = true;
                 Main.hardMode = true;

@@ -13,6 +13,7 @@ using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -54,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.friendly = false;
             NPC.alpha = 255;
             NPC.boss = true;
-            despawnHandler = new NPCDespawnHandler("Inevitable", new Color(255, 50, 50), DustID.Firework_Blue);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.Blight.DespawnHandler"), new Color(255, 50, 50), DustID.Firework_Blue);
         }
 
         int phantomSeekerDamage = 58;
@@ -394,7 +395,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.defense = 9999;
                 if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
                 {
-                    Main.NewText("Blight encloses itself in impenetrable light -- you're too far away!", 45, 75, 255);
+                    Main.NewText(LanguageUtils.GetTextValue("NPCs.Blight.OutOfRange"), 45, 75, 255);
                     holdTimer = 200;
                 }
             }

@@ -15,11 +15,10 @@ using Humanizer;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
-    [Autoload(true)]
     public class PlasmaWhirlwind : ModItem
     {
         public int SwingSoundStyle = 0;
-        public float SwingSoundVolume = 0.25f;
+        public float SwingSoundVolume = 0.3f;
         public const int BaseDamage = 60;
         public int AttackSpeedScalingDuration = 240;
         public const float DashDuration = 0.2f;
@@ -96,17 +95,17 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         {
             if (SwingSoundStyle == 1) //Shoot will always run before this can occur, so they have to be incremented by 1
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/SwingHit1") with { Volume = SwingSoundVolume }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/SwingHit1") with { Volume = SwingSoundVolume }, player.Center);
             }
             else
             if (SwingSoundStyle == 2)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/SwingHit2") with { Volume = SwingSoundVolume }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/SwingHit2") with { Volume = SwingSoundVolume }, player.Center);
             }
             else
             if (SwingSoundStyle == 0)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/SwingHit3") with { Volume = SwingSoundVolume }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/SwingHit3") with { Volume = SwingSoundVolume }, player.Center);
             }
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -115,19 +114,19 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             {
                 if (SwingSoundStyle == 0)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Swing1") with { Volume = SwingSoundVolume }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Swing1") with { Volume = SwingSoundVolume }, player.Center);
                     SwingSoundStyle += 1;
                 }
                 else
                 if (SwingSoundStyle == 1)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Swing2") with { Volume = SwingSoundVolume }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Swing2") with { Volume = SwingSoundVolume }, player.Center);
                     SwingSoundStyle += 1;
                 }
                 else
                 if (SwingSoundStyle == 2)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Swing3") with { Volume = SwingSoundVolume }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Swing3") with { Volume = SwingSoundVolume }, player.Center);
                     SwingSoundStyle = 0;
                 }
                 return true;
@@ -135,22 +134,24 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 
             if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2 && !player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDash>()))
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Thrust") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Thrust") with { Volume = 1f }, player.Center);
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<PlasmaWhirlwindThrust>(), damage, knockback * 2, player.whoAmI);
             }
             else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2 && player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDash>()))
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Thrust") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Spin") with { Volume = 1f }, player.Center);
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<PlasmaWhirlwindSpin>(), damage, knockback * 2, player.whoAmI);
             }
             else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2 && !player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDash>()))
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoCast") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/TornadoCast") with { Volume = 1f }, player.Center);
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<PlasmaWhirlwindTornado>(), damage, knockback * 2, player.whoAmI);
             }
             else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2 && player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDash>()))
             {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Spin") with { Volume = 1f }, player.Center);
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<PlasmaWhirlwindSpin>(), damage, knockback * 2, player.whoAmI);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/TornadoCast") with { Volume = 1f }, player.Center);
                 Projectile.NewProjectile(source, position, Vector2.Zero, ModContent.ProjectileType<PlasmaWhirlwindTornado>(), damage, knockback * 2, player.whoAmI);
             }
             return false;

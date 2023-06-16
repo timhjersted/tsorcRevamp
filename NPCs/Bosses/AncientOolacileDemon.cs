@@ -11,6 +11,7 @@ using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Potions.PermanentPotions;
 using tsorcRevamp.Items.Accessories.Mobility;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -55,7 +56,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.knockBackResist = 0.0f;
             NPC.lavaImmune = true;
             NPC.boss = true;
-            despawnHandler = new NPCDespawnHandler("The ancient Oolacile Demon decides to show mercy ...", Color.Gold, DustID.GoldFlame);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.AncientOolacileDemon.DespawnHandler"), Color.Gold, DustID.GoldFlame);
 
             //alt code: if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EaterofWorldsHead))
             if (NPC.downedBoss1)

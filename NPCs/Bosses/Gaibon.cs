@@ -15,6 +15,7 @@ using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Summon;
 using Terraria.DataStructures;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -622,7 +623,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public string GetConditionDescription()
         {
-            return "Drops if Slogra is dead";
+            return LanguageUtils.GetTextValue("NPCs.Gaibon.Condition");
         }
     }
 }

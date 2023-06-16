@@ -5,6 +5,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.Serris
 {
@@ -52,7 +53,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             }
             else
             {
-                despawnHandler = new NPCDespawnHandler("Serris retreats to the depths of its temple...", Color.Cyan, DustID.Firework_Blue);
+                despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.SerrisHead.DespawnHandler"), Color.Cyan, DustID.Firework_Blue);
             }
         }
         int distortionDamage = 45;
@@ -212,7 +213,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             Main.npc[Previous].active = false;
             if (!(NPC.CountNPCS(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) > 1))
             {
-                UsefulFunctions.BroadcastText("Serris has transformed!", Color.Cyan);
+                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Serris.Transform"), Color.Cyan);
                 NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + (float)(NPC.width / 2)), (int)(NPC.position.Y + (float)NPC.height), ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>(), 0);
             }
             if (!Main.dedServ)

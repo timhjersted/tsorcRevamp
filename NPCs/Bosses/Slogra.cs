@@ -12,6 +12,7 @@ using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -49,7 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.4f;
             NPC.value = 130000;
-            despawnHandler = new NPCDespawnHandler("Slogra returns to the depths...", Color.DarkGreen, DustID.Demonite);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.Slogra.DespawnHandler"), Color.DarkGreen, DustID.Demonite);
 
         }
 
@@ -508,7 +509,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public string GetConditionDescription()
         {
-            return "Drops if Gaibon is dead";
+            return LanguageUtils.GetTextValue("NPCs.Slogra.Condition");
         }
     }
 }

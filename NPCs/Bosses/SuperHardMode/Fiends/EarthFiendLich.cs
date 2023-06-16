@@ -13,6 +13,7 @@ using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 {
@@ -55,7 +56,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             NPC.lavaImmune = true;
             NPC.boss = true;
             NPC.value = 600000;
-            despawnHandler = new NPCDespawnHandler("Earth Fiend Lich returns to the ground...", Color.DarkGreen, DustID.GreenFairy);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.EarthFiendLich.DespawnHandler"), Color.DarkGreen, DustID.GreenFairy);
 
         }
         public float ProjectileTimer
@@ -104,7 +105,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 
                 if (holdTimer <= 0)
                 {
-                    UsefulFunctions.BroadcastText("The Lich King emanates the heat of the Earth's magma core!", 255, 255, 0); //yellow
+                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.EarthFiendLich.Heat"), 255, 255, 0); //yellow
                     holdTimer = 12000;
                 }
 

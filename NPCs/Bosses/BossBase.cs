@@ -62,7 +62,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.lifeMax = 325000;
             NPC.timeLeft = 22500;
             NPC.value = 600000;
-            despawnHandler = new NPCDespawnHandler("Water Fiend Kraken submerges into the depths...", Color.DeepSkyBlue, 180);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.BossBase.Despawnhandler"), Color.DeepSkyBlue, 180);
             */
         }
 

@@ -10,6 +10,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -45,7 +46,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.lifeMax = 325000;
             NPC.timeLeft = 22500;
             NPC.value = 600000;
-            despawnHandler = new NPCDespawnHandler("Example Boss returns to the default dimension...", Color.Cyan, 180);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.ExampleBoss.DespawnHandler"), Color.Cyan, 180);
 
             //You can also specify BossBase specific values here
             introDuration = 120;

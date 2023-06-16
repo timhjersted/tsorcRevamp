@@ -14,6 +14,7 @@ using Terraria.DataStructures;
 using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
 {
@@ -57,7 +58,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             NPC.behindTiles = true;
             NPC.boss = true;
             NPC.value = 113490;
-            despawnHandler = new NPCDespawnHandler("The Jungle Wyvern departs to seek its next prey...", Color.GreenYellow, DustID.GreenFairy);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.JungleWyvernHead.DespawnHandler"), Color.GreenYellow, DustID.GreenFairy);
         }
 
 

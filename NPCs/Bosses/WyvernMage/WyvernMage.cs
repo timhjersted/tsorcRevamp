@@ -11,6 +11,7 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 {
@@ -51,7 +52,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             NPC.lavaImmune = true;
             NPC.boss = true;
             NPC.value = 150000;
-            despawnHandler = new NPCDespawnHandler("The Wyvern Mage stands victorious...", Color.DarkCyan, DustID.Demonite);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.WyvernMage.DespawnHandler"), Color.DarkCyan, DustID.Demonite);
             nextWarpPoint = Main.rand.NextVector2CircularEdge(320, 320);
         }
 
@@ -119,7 +120,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
                 if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
                 {
-                    Main.NewText("The Wyvern Mage emits a a chilling wave of frost! The cold is unbearable!", 235, 199, 23);//deep yellow
+                    Main.NewText(LanguageUtils.GetTextValue("NPCs.WyvernMage.FrostWave"), 235, 199, 23);//deep yellow
                     holdTimer = 12000;
                 }
 
@@ -214,7 +215,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
                 if (NPC.life <= 16000 && lifeTimer < 1 || NPC.life <= 12000 && lifeTimer < 2 || NPC.life <= 8000 && lifeTimer < 3 || NPC.life <= 4000 && lifeTimer < 4 || NPC.life <= 2000 && lifeTimer < 5)
                 {
-                    UsefulFunctions.BroadcastText("The Wyvern Mage summons the Archdeacons!", 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.WyvernMage.Archdeacons"), 175, 75, 255);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -416,7 +417,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
         public string GetConditionDescription()
         {
-            return "Drops if his wyvern is dead";
+            return LanguageUtils.GetTextValue("NPCs.WyvernMage.Condition");
         }
     }
 }

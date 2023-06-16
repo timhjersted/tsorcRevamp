@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.DataStructures;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 {
@@ -50,7 +51,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0f;
             NPC.npcSlots = 6f;
-            despawnHandler = new NPCDespawnHandler("You've been slain at the hand of Attraidies...", Color.DarkMagenta, DustID.PurpleCrystalShard);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.DarkDragonMask.DespawnHandler"), Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
 
         public int ObscureDropDamage = 60;
@@ -156,7 +157,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
                     if (Main.netMode != NetmodeID.Server && Main.myPlayer == NPC.target)
                     {
                         //This one can stay a NewText because it already checks != server and does need to run only for that one player
-                        Main.NewText("What a horrible night to have your Gravitation buff dispelled...", 150, 150, 150);
+                        Main.NewText(LanguageUtils.GetTextValue("NPCs.DarkDragonMask.NoGravitaion"), 150, 150, 150);
                     }
                     break;
                 }
@@ -192,7 +193,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<ThirdForm.Okiku>(), 0);
-                UsefulFunctions.BroadcastText("??????????????????? A booming laughter echoes all around you!", new Color(175, 75, 255));
+                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.DarkDragonMask.Laughter"), new Color(175, 75, 255));
             }
         }
 

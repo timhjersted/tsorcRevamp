@@ -17,6 +17,7 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -54,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.value = 1500000;
             NPC.knockBackResist = 0f;
             NPC.boss = true;
-            despawnHandler = new NPCDespawnHandler("You are subsumed by your shadow...", Color.Blue, DustID.ShadowbeamStaff);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.DarkCloud.DespawnHandler"), Color.Blue, DustID.ShadowbeamStaff);
         }
 
         #region Damage variables
@@ -241,7 +242,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                     if (i == (ActiveMoveList.Count - 1) && Main.netMode != NetmodeID.Server)
                     {
-                        Main.NewText("Move failed to set! NextAttackMode " + NextAttackMode + "ActiveMoveList.Count" + ActiveMoveList.Count);
+                        Main.NewText(LanguageUtils.GetTextValue("NPCs.DarkCloud.MoveFailed") + NextAttackMode + "ActiveMoveList.Count" + ActiveMoveList.Count);
                     }
                 }
 
@@ -671,7 +672,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     //This lets us bypass the fact that all hitboxes are square, and simply cause damage if the player is within a the dust ring radius
                     //https://en.wikipedia.org/wiki/Spaghettification
                     p.immuneTime = 0;
-                    p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + " was spaghettified."), (int)damage, 1);
+                    p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + LanguageUtils.GetTextValue("NPCs.DarkCloud.Spaghetti")), (int)damage, 1);
                 }
             }
 
@@ -1123,7 +1124,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         }
 
                         p.immuneTime = 0;
-                        p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + " was torn apart by tidal forces."), (int)damage, 1);
+                        p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + LanguageUtils.GetTextValue("NPCs.DarkCloud.TidalForces")), (int)damage, 1);
                     }
                 }
             }
@@ -1540,7 +1541,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                     damage += (int)Math.Ceiling((float)p.statDefense * 0.5f);
                                 }
 
-                                p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + " was shattered."), (int)damage, 1);
+                                p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + LanguageUtils.GetTextValue("NPCs.DarkCloud.Shattered")), (int)damage, 1);
                             }
                         }
                     }
@@ -2102,7 +2103,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     ActuatePyramid();
                 }
             }
-            UsefulFunctions.BroadcastText("You have subsumed your shadow...", Color.Blue);
+            UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.DarkCloud.Defeated"), Color.Blue);
         }
 
         #region Debuffs

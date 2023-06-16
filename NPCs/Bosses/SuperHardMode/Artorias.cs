@@ -14,6 +14,7 @@ using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -47,7 +48,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.value = 700000;
             NPC.boss = true;
             NPC.lavaImmune = true;
-            despawnHandler = new NPCDespawnHandler("Artorias, the Abysswalker stands victorious...", Color.Gold, DustID.GoldFlame);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.Artorias.DespawnHandler"), Color.Gold, DustID.GoldFlame);
         }
 
         public int poisonStrikeDamage = 60;
@@ -184,7 +185,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 if (holdTimer <= 0)
                 {
-                    UsefulFunctions.BroadcastText("Artorias is protected by a magical barrier. Only the Shaman Elder knows how to break it!", 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Artorias.Protection"), 175, 75, 255);
                     holdTimer = 12000;
                 }
 
@@ -399,7 +400,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                         if (Main.rand.NextBool(30))
                         {
-                            UsefulFunctions.BroadcastText("Artorias opens the abyss!", 75, 75, 255);
+                            UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Artorias.Open"), 75, 75, 255);
                         }
                         for (int pcy = 0; pcy < 3; pcy++)
                         {
@@ -667,7 +668,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (!defenseBroken)
             {
                 //Only a fabled blade can break this shield!
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Immune!", true, false);
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LanguageUtils.GetTextValue("NPCs.Artorias.Immune"), true, false);
                 modifiers.SetMaxDamage(1);
             }
         }
@@ -679,7 +680,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (!defenseBroken)
             {
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Immune!", true, false);
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LanguageUtils.GetTextValue("NPCs.Artorias.Immune"), true, false);
                 modifiers.SetMaxDamage(1);
             }
         }

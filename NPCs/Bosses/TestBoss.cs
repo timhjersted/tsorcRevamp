@@ -5,6 +5,7 @@ using System.Diagnostics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -63,11 +64,11 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.defense = 0;
             if (damageCounter > 0)
             {
-                UsefulFunctions.BroadcastText("DPS: " + damageCounter / thisWatch.Elapsed.TotalSeconds);
+                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.TestBoss.DPS") + damageCounter / thisWatch.Elapsed.TotalSeconds);
             }
             if (watchTimer == 1)
             {
-                UsefulFunctions.BroadcastText("DPS measuring ended. DPS at the final hit: " + damageCounter / lastTimer);
+                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.TestBoss.End") + damageCounter / lastTimer);
                 damageCounter = 0;
             }
             if (watchTimer > 0)

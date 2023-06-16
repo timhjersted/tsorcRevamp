@@ -10,6 +10,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Projectiles.Enemy;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -53,7 +54,7 @@ namespace tsorcRevamp.NPCs.Bosses
             DrawOffsetY = +70;
             NPC.width = 140;
             NPC.height = 60;
-            despawnHandler = new NPCDespawnHandler("The Sorrow claims you...", Color.DarkCyan, 29);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.TheSorrow.DespawnHandler"), Color.DarkCyan, 29);
         }
 
         //npc.ai[0] = damage taken counter
@@ -172,7 +173,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     //announce proximity debuffs once
                     if (!announcedDebuffs)
                     {
-                        UsefulFunctions.BroadcastText("The Sorrow emits a chilling cold from its body. The loss of your family lashes your heart with grief!", 235, 199, 23);//deep yellow
+                        UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.TheSorrow.Chill"), 235, 199, 23);//deep yellow
                         announcedDebuffs = true;
                     }
                 }
@@ -556,7 +557,7 @@ namespace tsorcRevamp.NPCs.Bosses
             hitTime = 0;
             if (NPC.ai[0] > (NPC.lifeMax / 10))
             {
-                UsefulFunctions.BroadcastText("The Sorrow has taken damage too fast, its natural defenses activate...", Color.Orange);
+                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.TheSorrow.Enrage"), Color.Orange);
 
                 NPC.ai[3] = 1; //begin inisibility/high defense state
                 for (int i = 0; i < 50; i++)

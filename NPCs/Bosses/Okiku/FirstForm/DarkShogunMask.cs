@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.DataStructures;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 {
@@ -50,7 +51,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             NPC.noGravity = true;
             NPC.knockBackResist = 0f;
             NPC.value = 50000;
-            despawnHandler = new NPCDespawnHandler("You've been slain at the hand of Attraidies...", Color.DarkMagenta, 54);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.DarkShogunMask.DespawnHandler"), Color.DarkMagenta, 54);
         }
         public override void FindFrame(int frameHeight)
         {
@@ -107,7 +108,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 
             if (!initiate)
             {
-                UsefulFunctions.BroadcastText("You are a fool, Red. You think you can defeat me?...", new Color(175, 75, 255));
+                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.DarkShogunMask.Quote"), new Color(175, 75, 255));
                 RotSpeed = 0.015f;
                 NPC.alpha = 255;
                 initiate = true;

@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 {
@@ -228,7 +229,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
         public string GetConditionDescription()
         {
-            return "Drops if the mage is dead";
+            return LanguageUtils.GetTextValue("NPCs.MechaDragonHead.Condition");
         }
     }
 }

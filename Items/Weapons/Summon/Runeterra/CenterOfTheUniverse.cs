@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             Item.noUseGraphic = true;
             Item.useTurn = false;
             Item.value = Item.buyPrice(0, 30, 0, 0);
-            Item.rare = ItemRarityID.LightPurple;
+            Item.rare = ItemRarityID.Red;
             Item.UseSound = SoundID.Item113;
 
             Item.noMelee = true;

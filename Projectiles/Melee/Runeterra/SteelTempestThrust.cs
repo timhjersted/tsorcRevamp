@@ -114,7 +114,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             if (!Hit)
             {
 				Hit = true;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/ThrustHit") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/ThrustHit") with { Volume = 1f }, target.Center);
             }
         }
         public override void Kill(int timeLeft)

@@ -336,7 +336,7 @@ namespace tsorcRevamp
             }
             if (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienRifle>() | Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>() && !Main.player[Main.myPlayer].HasBuff(ModContent.BuffType<ScoutsBoost2>()))
             {
-                Player.AddBuff(ModContent.BuffType<ScoutsBoostCooldown>(), 3 * 60);
+                Player.AddBuff(ModContent.BuffType<ScoutsBoostCooldown>(), ToxicShot.ScoutsBoostOnHitCooldown * 60);
             }
         }
 
@@ -1013,13 +1013,11 @@ namespace tsorcRevamp
                         player.AddBuff(ModContent.BuffType<NightbringerDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2) + 1); //the +1 is necessary here to update the dash velocity correctly, it gives the dash buff for twice the intended duration of the dash because the player needs immunity for a little longer than the dash lasts to make it reliable
                     } //cooldown is added by On-Hit in the dash projectile hitbox
                 }
-                if (tsorcRevamp.specialAbility.Current && Player.HeldItem.type == ModContent.ItemType<Nightbringer>() && !Player.HasBuff(ModContent.BuffType<NightbringerWindwallCooldown>()))
+                if (Main.keyState.IsKeyDown(Keys.LeftShift) && Player.HeldItem.type == ModContent.ItemType<Nightbringer>() && !Player.HasBuff(ModContent.BuffType<NightbringerFirewallCooldown>()))
                 {
-                    if (Main.keyState.IsKeyDown(Keys.LeftShift))
-                    {
-                        Projectile.NewProjectile(Projectile.GetSource_NaturalSpawn(), player.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<Projectiles.Melee.Runeterra.NightbringerWindWall>(), 0, 0, Main.myPlayer);
-                        Player.AddBuff(ModContent.BuffType<NightbringerWindwallCooldown>(), 30 * 60);
-                    }
+                    Projectile Firewall = Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), player.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<Projectiles.Melee.Runeterra.NightbringerFirewall>(), player.HeldItem.damage / 3, 0, Main.myPlayer);
+                    Firewall.OriginalCritChance = SteelTempest.CritChance;
+                    Player.AddBuff(ModContent.BuffType<NightbringerFirewallCooldown>(), 30 * 60);
                 }
                 if (player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() && player.statMana > (player.GetManaCost(player.HeldItem) * 3) && !Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>()))
                 {
@@ -1048,19 +1046,19 @@ namespace tsorcRevamp
                     }
                     SpiritRushCharges--;
                 }
+                if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2Cooldown>()) && (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienRifle>() | Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>()))
+                {
+                    player.AddBuff(ModContent.BuffType<ScoutsBoost2>(), ToxicShot.ScoutsBoost2Duration * 60);
+                    player.AddBuff(ModContent.BuffType<ScoutsBoost2Cooldown>(), ToxicShot.ScoutsBoost2Cooldown * 60);
+                }
                 if (Main.keyState.IsKeyDown(Keys.LeftShift) && !Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
                 {
-                    SoundEngine.PlaySound(SoundID.Item61, player.Center);
-                    Projectile.NewProjectile(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Ranged.Runeterra.NuclearMushroom>(), player.GetWeaponDamage(player.HeldItem), player.GetWeaponKnockback(player.HeldItem), Main.myPlayer);
-                    Player.AddBuff(ModContent.BuffType<NuclearMushroomCooldown>(), 5 * 60);
+                    Projectile Shroom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Ranged.Runeterra.NuclearMushroom>(), player.GetWeaponDamage(player.HeldItem), player.GetWeaponKnockback(player.HeldItem), Main.myPlayer);
+                    Shroom.OriginalCritChance = 100;
+                    Player.AddBuff(ModContent.BuffType<NuclearMushroomCooldown>(), OmegaSquadRifle.ShroomCooldown * 60);
                 }
             }
 
-            if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2Cooldown>()) && tsorcRevamp.specialAbility.Current && (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienRifle>() | Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>()))
-            {
-                player.AddBuff(ModContent.BuffType<ScoutsBoost2>(), 5 * 60);
-                player.AddBuff(ModContent.BuffType<ScoutsBoost2Cooldown>(), 25 * 60);
-            }
 
 
             if (tsorcRevamp.specialAbility.Current && (Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>() || Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() || Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>()))

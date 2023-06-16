@@ -3095,8 +3095,8 @@ Mods: {
 				Selected: "Currently selected boss: "
 				Forbidden: Can not summon a second boss while one is alive!
 				Duo1: Slogra and Gaibon
-				Attraidies1: Attradies First Phase
-				Attraidies2: Attradies Final Form
+				Attraidies1: Attraidies First Phase
+				Attraidies2: Attraidies Final Form
 			}
 
 			BraveWarriorSoul: {
@@ -7282,6 +7282,11 @@ Mods: {
 				DisplayName: Heatstroke
 				Description: Mods.tsorcRevamp.Buffs.Heatstroke.Description
 			}
+
+			NightbringerFirewallCooldown: {
+				DisplayName: Nightbringer Firewall Cooldown
+				Description: Mods.tsorcRevamp.Buffs.NightbringerFirewallCooldown.Description
+			}
 		}
 
 		Projectiles: {
@@ -7797,6 +7802,7 @@ Mods: {
 			PlasmaWhirlwindSpin.DisplayName: Plasma Whirlwind Spin
 			NightbringerSpin.DisplayName: Nightbringer Spin
 			NightbringerDashHitbox.DisplayName: Nightbringer Dash Hitbox
+			NightbringerFirewall.DisplayName: Nightbringer Firewall
 		}
 
 		NPCs: {
@@ -7810,32 +7816,138 @@ Mods: {
 				DespawnHandler: The ancient Oolacile Demon decides to show mercy ...
 			}
 
-			Cataluminance.DisplayName: Cataluminance v1.08
-			Death.DisplayName: Death
-			ExampleBoss.DisplayName: Example Boss
-			EarthFiendLich.DisplayName: Earth Fiend Lich
-			FireFiendMarilith.DisplayName: Fire Fiend Marilith
-			LichKingDisciple.DisplayName: Lich King Disciple
+			Cataluminance: {
+				DisplayName: Cataluminance v1.08
+				Despawnhandler: The Triad returns to the skies...
+				ClosesIn: Cataluminance Closes In...
+				Desperation: The Triad prepares to take you down with them...
+				Light: Hallowed light begins to rip through the air...
+			}
+
+			RetinazerV2: {
+				DisplayName: Retinazer v2.05
+				ClosesIn: Retinazer Closes In...
+				Warning: Scorching heat radiates from Retinazer's hull...
+			}
+
+			SpazmatismV2.DisplayName: Spazmatism v2.15
+
+			Death: {
+				DisplayName: Death
+				Despawnhandler: Death claims you at last...
+			}
+
+			PrimeBeam.DisplayName: Prime Beam
+			PrimeBuzzsaw.DisplayName: Prime Buzzsaw
+			PrimeGatling.DisplayName: Prime Gatling
+			PrimeIon.DisplayName: Prime Ion
+			PrimeLauncher.DisplayName: Prime Launcher
+			PrimeV2.DisplayName: Prime V2
+			PrimeWelder.DisplayName: Prime Welder
+			HullBreachMissile.DisplayName: Hull Breach Missile
+			PrimeSiege.DisplayName: Prime Siege
+			PrimeIntro.DisplayName: Prime Intro
+
+			TheMachine: {
+				DisplayName: The Machine
+				DespawnHandler: The Machine's temple falls silent once more...
+			}
+
+			ExampleBoss: {
+				DisplayName: Example Boss
+				DespawnHandler: Example Boss returns to the default dimension...
+			}
+
+			FireFiendMarilith: {
+				DisplayName: Fire Fiend Marilith
+				DespawnHandler: Fire Fiend Marilith descends to the underworld...
+				Abyss: The abyss permiates the arena, without protection you will not survive...
+			}
+
+			MarilithDeath.DisplayName: Fire Fiend Marilith
+			MarilithIntro.DisplayName: ?????
+
+			EarthFiendLich: {
+				DisplayName: Earth Fiend Lich
+				DespawnHandler: Earth Fiend Lich returns to the ground...
+				Heat: The Lich King emanates the heat of the Earth's magma core!
+			}
+
+			LichKingDisciple: {
+				DisplayName: Lich King Disciple
+				Aura: The Lich King's Disciple emanates a miasma of Ichor around him!
+			}
+
 			LichKingSerpentBody.DisplayName: Lich King Serpent
 			LichKingSerpentHead.DisplayName: Lich King Serpent
 			LichKingSerpentTail.DisplayName: Lich King Serpent
-			MarilithDeath.DisplayName: Fire Fiend Marilith
-			MarilithIntro.DisplayName: ?????
-			WaterFiendKraken.DisplayName: Water Fiend Kraken
-			Gaibon.DisplayName: Gaibon
-			HeroofLumelia.DisplayName: Hero of Lumelia
+
+			WaterFiendKraken: {
+				DisplayName: Water Fiend Kraken
+				DespawnHandler: Water Fiend Kraken submerges into the depths...
+			}
+
+			Gaibon: {
+				DisplayName: Gaibon
+				Condition: Drops if Slogra is dead
+			}
+
+			Slogra: {
+				DisplayName: Slogra, Lost Soul of the Depths
+				DespawnHandler: Slogra returns to the depths...
+				Condition: Drops if Gaibon is dead
+			}
+
+			HeroofLumelia: {
+				DisplayName: Hero of Lumelia
+				DespawnHandler: The hero of Lumelia stands victorious...
+				Spawn: "'You killed my brother!' A hero from Lumelia has come to kill you for slaying his kin... "
+				Archers1: Archers nearby!
+				Archers2: Archers in the trees!
+			}
+
 			JungleWyvernBody.DisplayName: Ancient Jungle Wyvern
 			JungleWyvernBody2.DisplayName: Ancient Jungle Wyvern
 			JungleWyvernBody3.DisplayName: Ancient Jungle Wyvern
-			JungleWyvernHead.DisplayName: Ancient Jungle Wyvern
+
+			JungleWyvernHead: {
+				DisplayName: Ancient Jungle Wyvern
+				DespawnHandler: The Jungle Wyvern departs to seek its next prey...
+			}
+
 			JungleWyvernLegs.DisplayName: Ancient Jungle Wyvern
 			JungleWyvernTail.DisplayName: Ancient Jungle Wyvern
-			Attraidies.DisplayName: Attraidies
+
+			Attraidies: {
+				DisplayName: Attraidies
+				DespawnHandler: With your death a dark shadow falls over the world...
+				Quote: I am impressed you've made it this far, Red. But I'm done playing games. It's time to end this...
+				Thought: You feel the dark power of Attraidies flare...
+				Flight: And the power of the Earth uplift you from below, giving you the strength to finish him!
+				Weightless: You suddenly feel weightless...
+				Portal: A portal from The Abyss has been opened!
+				Artorias: Artorias, the Ancient Knight of the Abyss has entered this world!...
+				Hint: You must seek out the Shaman Elder, beyond the Western Sea...
+				AbyssOpen: The portal from The Abyss remains open...
+			}
+
 			AttraidiesFragment.DisplayName: Attraidies Fragment
 			AttraidiesMimic.DisplayName: Attraidies
 			DamnedSoul.DisplayName: Damned Soul
-			DarkShogunMask.DisplayName: Mindflayer King
-			DarkDragonMask.DisplayName: Attraidies
+
+			DarkShogunMask: {
+				DisplayName: Mindflayer King
+				DespawnHandler: You've been slain at the hand of Attraidies...
+				Quote: You are a fool, Red. You think you can defeat me?...
+			}
+
+			DarkDragonMask: {
+				DisplayName: Attraidies
+				DespawnHandler: You've been slain at the hand of Attraidies...
+				NoGravitaion: What a horrible night to have your Gravitation buff dispelled...
+				Laughter: ??????????????????? A booming laughter echoes all around you!
+			}
+
 			ShadowDragonBody.DisplayName: Shadow Dragon
 			ShadowDragonBody2.DisplayName: Shadow Dragon
 			ShadowDragonBody3.DisplayName: Shadow Dragon
@@ -7843,58 +7955,213 @@ Mods: {
 			ShadowDragonLegs.DisplayName: Shadow Dragon
 			ShadowDragonTail.DisplayName: Shadow Dragon
 			BrokenOkiku.DisplayName: Mindflayer Illusion
-			Okiku.DisplayName: Mindflayer Illusion
-			RetinazerV2.DisplayName: Retinazer v2.05
+
+			Okiku: {
+				DisplayName: Mindflayer Illusion
+				DespawnHandler: You've been slain at the hand of Attraidies...
+				Quote: You've done well, Red. But it's not over yet.
+				NoGravitation: What a horrible night to have your Gravitation buff dispelled...
+			}
+
 			SerrisBody.DisplayName: Serris
-			SerrisHead.DisplayName: Serris
+
+			SerrisHead: {
+				DisplayName: Serris
+				DespawnHandler: Serris retreats to the depths of its temple...
+				Transform: Serris has transformed!
+			}
+
 			SerrisTail.DisplayName: Serris
-			SerrisX.DisplayName: Serris-X
-			Slogra.DisplayName: Slogra, Lost Soul of the Depths
-			SpazmatismV2.DisplayName: Spazmatism v2.15
-			AbysmalOolacileSorcerer.DisplayName: Abysmal Oolacile Sorcerer
-			Artorias.DisplayName: Artorias
-			Blight.DisplayName: Blight
-			Chaos.DisplayName: Chaos
-			DarkCloud.DisplayName: Dark Cloud
-			DarkCloudMirror.DisplayName: Dark Cloud Mirror
+
+			SerrisX: {
+				DisplayName: Serris-X
+				DespawnHandler: Serris returns to the depths of its temple...
+			}
+
+			AbysmalOolacileSorcerer: {
+				DisplayName: Abysmal Oolacile Sorcerer
+				DespawnHandler: The Abysmal Oolacile Sorcerer has shattered your mind...
+				Defeated: A darkness has been lifted from the world...
+			}
+
+			Artorias: {
+				DisplayName: Artorias
+				DespawnHandler: Artorias, the Abysswalker stands victorious...
+				Protection: Artorias is protected by a magical barrier. Only the Shaman Elder knows how to break it!
+				Open: Artorias opens the abyss!
+				Immune: Immune!
+			}
+
+			Blight: {
+				DisplayName: Blight
+				DespawnHandler: Inevitable
+				OutofRange: Blight encloses itself in impenetrable light -- you're too far away!
+			}
+
+			Chaos: {
+				DisplayName: Chaos
+				DespawnHandler: Chaos tears you asunder...
+				Heal1: Chaos has begun to heal itself...
+				Heal2: Chaos continues to heal itself...
+				Rips: Chaos rips your wings and fractures your armor!
+				OutOfRange: Chaos is protected by unseen powers -- you're too far away!
+			}
+
+			DarkCloud: {
+				DisplayName: Dark Cloud
+				DespawnHandler: You are subsumed by your shadow...
+				MoveFailed: "Move failed to set! NextAttackMode "
+				Spaghetti: " was spaghettified."
+				TidalFoces: " was torn apart by tidal forces."
+				Shattered: " was shattered."
+				Defeated: You have subsumed your shadow...
+			}
+
+			DarkCloudMirror: {
+				DisplayName: Dark Cloud Mirror
+				Broadcast: Just a reflection...
+			}
+
 			DarkUltimaWeapon.DisplayName: Dark Ultima Weapon
 			GhostDragonBody.DisplayName: Ghost Wyvern
 			GhostDragonBody2.DisplayName: Ghost Wyvern
 			GhostDragonBody3.DisplayName: Ghost Wyvern
-			GhostDragonHead.DisplayName: Ghost Wyvern
+
+			GhostDragonHead: {
+				DisplayName: Ghost Wyvern
+				Condition: Drops if the mage is dead
+			}
+
 			GhostDragonLegs.DisplayName: Ghost Wyvern
 			GhostDragonTail.DisplayName: Ghost Wyvern
 			MageShadow.DisplayName: Mage Shadow
-			WyvernMageShadow.DisplayName: Wyvern Mage Shadow
-			Gwyn.DisplayName: Gwyn, Lord of Cinder
+
+			WyvernMageShadow: {
+				DisplayName: Wyvern Mage Shadow
+				espawnHandler: The Wyvern Mage's imprisoned shadow breaks free...
+				Condition: Drops if his wyvern is dead
+			}
+
+			Gwyn: {
+				DisplayName: Gwyn, Lord of Cinder
+				DespawnHandler: You have fallen before the Lord of Cinder...
+				SwordShattered: Gwyn's sword has shattered! Gwyn's defenses have been weakened!
+				RainOfDeath: Gwyn's rain of death has strengthened!
+				Fury: Gwyn's fury increases!
+				Protected: Gwyn is protected by the soul of cinder -- you're too far away!
+				RainsDeath: Gwyn rains down death!
+				TidalWave: Gwyn summons a tidal wave of death!
+				Challenge: Face me!
+				GiveUp: Just let go, Red. Submit to your fate!
+			}
+
+			SoulOfCinder: {
+				DisplayName: Gwyn, Lord of Cinder
+				BulletHell: prepare for die
+			}
+
+			SwordOfLordGwyn.DisplayName: Sword of Lord Gwyn
 			HellkiteDragonBody.DisplayName: Hellkite Dragon
 			HellkiteDragonBody2.DisplayName: Hellkite Dragon
 			HellkiteDragonBody3.DisplayName: Hellkite Dragon
-			HellkiteDragonHead.DisplayName: Hellkite Dragon
+
+			HellkiteDragonHead: {
+				DisplayName: Hellkite Dragon
+				DespawnHandler: The Hellkite Dragon claims its prey...
+			}
+
 			HellkiteDragonLegs.DisplayName: Hellkite Dragon
 			HellkiteDragonTail.DisplayName: Hellkite Dragon
 			PrimordialCrystal.DisplayName: Primordial Crystal
 			SeathTheScalelessBody.DisplayName: Seath the Scaleless
 			SeathTheScalelessBody2.DisplayName: Seath the Scaleless
 			SeathTheScalelessBody3.DisplayName: Seath the Scaleless
-			SeathTheScalelessHead.DisplayName: Seath the Scaleless
+
+			SeathTheScalelessHead: {
+				DisplayName: Seath the Scaleless
+				DespawnHandler: Seath consumes your soul...
+				Spawn:
+					'''
+					The village is under attack!
+					Seath the Scaleless has come to destroy all...
+					'''
+				Crystal: Seath calls upon a Primordial Crystal...
+				FinalCrystal: Seath calls upon his final Primordial Crystals...
+			}
+
 			SeathTheScalelessLegs.DisplayName: Seath the Scaleless
 			SeathTheScalelessTail.DisplayName: Seath the Scaleless
-			SoulOfCinder.DisplayName: Gwyn, Lord of Cinder
-			SwordOfLordGwyn.DisplayName: Sword of Lord Gwyn
-			Witchking.DisplayName: Witchking
-			TestBoss.DisplayName: Test Boss
-			TheHunter.DisplayName: The Hunter
-			TheHunterChild.DisplayName: The Hunter's child
-			TheRage.DisplayName: The Rage
-			TheSorrow.DisplayName: The Sorrow
+
+			Witchking: {
+				DisplayName: Witchking
+				DespawnHandler: The Witchking claims another victim...
+				Immune: Immune!
+			}
+
+			TestBoss: {
+				DisplayName: Test Boss
+				DPS: "DPS: "
+				End: "DPS measuring ended. DPS at the final hit: "
+			}
+
+			TheHunter: {
+				DisplayName: The Hunter
+				DespawnHandler: The Hunter seeks its next prey...
+				Child: The Hunter has decided to feed you to its child. It's fully camouflaged!
+				Enrage: The Hunter has taken damage too fast, its natural defenses activate...
+			}
+
+			TheHunterChild: {
+				DisplayName: The Hunter's child
+				DespawnHandler: The Hunter's child has experienced the thrill of their first kill...
+			}
+
+			TheRage: {
+				DisplayName: The Rage
+				DespawnHandler: The Rage is satisfied...
+				HeatWave: The Rage emits a scorching heat wave from its body! Your lungs are on fire!
+				Enrage: The Rage has taken damage too fast, its natural defenses activate...
+			}
+
+			TheSorrow: {
+				DisplayName: The Sorrow
+				DespawnHandler: The Sorrow claims you...
+				Chill: The Sorrow emits a chilling cold from its body. The loss of your family lashes your heart with grief!
+				Enrage: The Sorrow has taken damage too fast, its natural defenses activate...
+			}
+
 			MechaDragonBody.DisplayName: Wyvern Mage Disciple
 			MechaDragonBody2.DisplayName: Wyvern Mage Disciple
 			MechaDragonBody3.DisplayName: Wyvern Mage Disciple
-			MechaDragonHead.DisplayName: Wyvern Mage Disciple
+
+			MechaDragonHead: {
+				DisplayName: Wyvern Mage Disciple
+				Condition: Drops if the mage is dead
+			}
+
 			MechaDragonLegs.DisplayName: Wyvern Mage Disciple
 			MechaDragonTail.DisplayName: Wyvern Mage Disciple
-			WyvernMage.DisplayName: Wyvern Mage
+
+			WyvernMage: {
+				DisplayName: Wyvern Mage
+				DespawnHandler: The Wyvern Mage stands victorious...
+				FrostWave: The Wyvern Mage emits a a chilling wave of frost! The cold is unbearable!
+				Archdeacons: The Wyvern Mage summons the Archdeacons!
+				Condition: Drops if his wyvern is dead
+			}
+
+			AbyssPortal.DisplayName: Abyssal Fissure
+			AttraidiesApparition.DisplayName: Attraidies
+			Faraam.DisplayName: Faraam
+			GwynBossVision.DisplayName: Gwyn Boss Vision
+			LeonhardPhase1.DisplayName: ???
+			IchorGlob.DisplayName: Ichor Glob
+			IchorMissile.DisplayName: Ichor Missile
+			NamelessKing.DisplayName: Nameless King
+			ParasyticWormBody.DisplayName: Parasytic Worm
+			ParasyticWormHead.DisplayName: Parasytic Worm
+			ParasyticWormTail.DisplayName: Parasytic Worm
+			Bonfirefly.DisplayName: Bonfirefly
 			AbandonedStump.DisplayName: Abandoned Stump
 			Archdeacon.DisplayName: Archdeacon
 			ArmoredWraith.DisplayName: Unarmored Wraith
@@ -8197,7 +8464,7 @@ Mods: {
 				Quote6: Civilized man has grown a great sickness of the mind -- thinks he is superior to all creation. Thinks the world was made for him!
 				Quote7: Apache said it is better to have less thunder in the mouth and more lightning in the hand.
 				Quote8: Tuscarora once said they are not dead who live in the hearts they leave behind.
-				PreAttradies1: "[c/ffbf00:If you are able to defeat Attraidies, come and find me at my home beyond the Western Sea.] I will have something for you..."
+				PreAttraidies1: "[c/ffbf00:If you are able to defeat Attraidies, come and find me at my home beyond the Western Sea.] I will have something for you..."
 				PreAttraidies2: "[c/ffbf00:In some time I will leave Ashen Peak and return to my home beyond the Western Sea.] Come find me there..."
 				button2v1: Ask about The Abyss
 				button2v2: Continue...
@@ -8427,30 +8694,6 @@ Mods: {
 					Princess_LovesNPC: I like {NPCName}.
 				}
 			}
-
-			AbyssPortal.DisplayName: Abyssal Fissure
-			AttraidiesApparition.DisplayName: Attraidies
-			Bonfirefly.DisplayName: Bonfirefly
-			Faraam.DisplayName: Faraam
-			GwynBossVision.DisplayName: Gwyn Boss Vision
-			LeonhardPhase1.DisplayName: ???
-			IchorGlob.DisplayName: Ichor Glob
-			IchorMissile.DisplayName: Ichor Missile
-			NamelessKing.DisplayName: Nameless King
-			ParasyticWormBody.DisplayName: Parasytic Worm
-			ParasyticWormHead.DisplayName: Parasytic Worm
-			ParasyticWormTail.DisplayName: Parasytic Worm
-			PrimeBeam.DisplayName: Prime Beam
-			PrimeBuzzsaw.DisplayName: Prime Buzzsaw
-			PrimeGatling.DisplayName: Prime Gatling
-			PrimeIon.DisplayName: Prime Ion
-			PrimeLauncher.DisplayName: Prime Launcher
-			PrimeV2.DisplayName: Prime V2
-			PrimeWelder.DisplayName: Prime Welder
-			HullBreachMissile.DisplayName: Hull Breach Missile
-			PrimeSiege.DisplayName: Prime Siege
-			PrimeIntro.DisplayName: Prime Intro
-			TheMachine.DisplayName: The Machine
 		}
 
 		Prefixes: {

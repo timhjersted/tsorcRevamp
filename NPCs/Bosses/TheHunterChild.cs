@@ -6,6 +6,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -44,7 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses
             DrawOffsetY = +70;
             NPC.width = 140;
             NPC.height = 60;
-            despawnHandler = new NPCDespawnHandler("The Hunter's child has experienced the thrill of their first kill...", Color.Green, 89);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.TheHunterChild.DespawnHandler"), Color.Green, 89);
         }
 
         int hitTime = 0;

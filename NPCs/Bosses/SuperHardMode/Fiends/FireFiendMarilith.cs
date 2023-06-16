@@ -19,6 +19,7 @@ using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 {
@@ -61,7 +62,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             NPC.lavaImmune = true;
             NPC.boss = true;
             NPC.value = 600000;
-            despawnHandler = new NPCDespawnHandler("Fire Fiend Marilith descends to the underworld...", Color.OrangeRed, DustID.FireworkFountain_Red);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.FireFiendMarilith.DespawnHandler"), Color.OrangeRed, DustID.FireworkFountain_Red);
         }
         int holdBallDamage = 50;
         int fireBallDamage = 45;
@@ -167,7 +168,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
                         if (!hasCovenant && !displayedWarning)
                         {
-                            UsefulFunctions.BroadcastText("The abyss permiates the arena, without protection you will not survive...", Color.Purple);
+                            UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.FireFiendMarilith.Abyss"), Color.Purple);
                             displayedWarning = true;
                         }
                     }

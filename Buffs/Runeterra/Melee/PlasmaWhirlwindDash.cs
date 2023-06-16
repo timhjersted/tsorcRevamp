@@ -26,7 +26,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
 
             if (player.buffTime[buffIndex] == (int)(PlasmaWhirlwind.DashDuration * 60 * 2))
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoCast") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Dash") with { Volume = 1f }, player.Center);
                 DashVelocity = player.DirectionTo(player.GetModPlayer<tsorcRevampPlayer>().SweepingBladePosition) * 17;
                 Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaWhirlwindDashHitbox>(), PlasmaWhirlwind.BaseDamage, 0, player.whoAmI);
                 DashHitbox.OriginalCritChance = SteelTempest.CritChance;

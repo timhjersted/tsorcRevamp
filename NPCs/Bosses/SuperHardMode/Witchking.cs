@@ -17,6 +17,7 @@ using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -56,7 +57,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.knockBackResist = 0.0f;
             NPC.boss = true;
             AnimationType = NPCID.PossessedArmor;
-            despawnHandler = new NPCDespawnHandler("The Witchking claims another victim...", Color.Purple, DustID.PurpleTorch);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.Witchking.DespawnHandler"), Color.Purple, DustID.PurpleTorch);
         }
 
         float poisonStrikeTimer = 0;
@@ -631,7 +632,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (!defenseBroken)
             {
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Immune!", true, false);
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LanguageUtils.GetTextValue("NPCs.Witchking.Immune"), true, false);
                 modifiers.SetMaxDamage(1);
             }
         }
@@ -643,7 +644,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (!defenseBroken)
             {
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Immune!", true, false);
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LanguageUtils.GetTextValue("NPCs.Witchking.Immune"), true, false);
                 modifiers.SetMaxDamage(1);
             }
         }

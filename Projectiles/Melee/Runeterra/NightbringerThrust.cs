@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Enums;
 using Terraria.ModLoader;
-using Terraria.ID;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Microsoft.Xna.Framework.Graphics;
@@ -27,10 +26,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 12;
-            // DisplayName.SetDefault("Nightbringer Thrust");
         }
-
-
         public override void SetDefaults()
 		{
 			Projectile.Size = new Vector2(18);
@@ -136,15 +132,8 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             {
                 spriteEffects = SpriteEffects.FlipVertically;
             }
-
-            //if (texture == null || texture.IsDisposed)
-            {
-                texture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            }
-            //if (glowTexture == null || glowTexture.IsDisposed)
-            {
-                glowTexture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            }
+            texture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            glowTexture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             int frameHeight = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
             int startY = frameHeight * Projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
@@ -160,7 +149,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             if (!Hit)
             {
                 Hit = true;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/ThrustHit") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/ThrustHit") with { Volume = 1f }, player.Center);
             }
         }
         public override void Kill(int timeLeft)
@@ -173,7 +162,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
                 player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks += 1;
                 if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoReady") with { Volume = 1f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/TornadoReady") with { Volume = 1f }, player.Center);
                 }
             }
         }

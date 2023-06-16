@@ -13,6 +13,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.DataStructures;
 using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -50,7 +51,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0f;
             NPC.rarity = 4;
-            despawnHandler = new NPCDespawnHandler("The hero of Lumelia stands victorious...", Color.Gold, DustID.GoldFlame);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.HeroofLumelia.DespawnHandler"), Color.Gold, DustID.GoldFlame);
         }
         
 
@@ -81,7 +82,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.NextBool(500)) { UsefulFunctions.BroadcastText("A hero from Lumelia has come to kill you for unleashing darkness upon the world... ", 175, 75, 255); return 1; }//why tim xD -- haha, no more preHM spawn with the new lore
             //if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.NextBool(350)) { UsefulFunctions.BroadcastText("A hero from Lumelia has come seeking justice for their slain brother, Aaron...", 175, 75, 255); return 1; }
             //if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneSnow && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.NextBool(300)) { Main.NewText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying Aaron... ", 175, 75, 255); return 1; }
-            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneDesert && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>())) && !(P.ZoneCorrupt || P.ZoneCrimson) && !P.ZoneBeach && Main.rand.NextBool(500)) { UsefulFunctions.BroadcastText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying his kin... ", 175, 75, 255); return 1; }
+            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneDesert && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>())) && !(P.ZoneCorrupt || P.ZoneCrimson) && !P.ZoneBeach && Main.rand.NextBool(500)) { UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.HeroofLumelia.Spawn"), 175, 75, 255); return 1; }
 
             return 0;
         }
@@ -590,7 +591,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (Main.rand.NextBool(4))
                     {
-                        UsefulFunctions.BroadcastText("Archers nearby!", 175, 75, 255);
+                        UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.HeroofLumelia.Archers1"), 175, 75, 255);
                     }
 
                     for (int pcy = 0; pcy < 10; pcy++)
@@ -612,7 +613,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (Main.rand.NextBool(4))
                     {
-                        UsefulFunctions.BroadcastText("Archers in the trees!", 175, 75, 255);
+                        UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.HeroofLumelia.Archers2"), 175, 75, 255);
                     }
 
                     for (int pcy = 0; pcy < 12; pcy++)

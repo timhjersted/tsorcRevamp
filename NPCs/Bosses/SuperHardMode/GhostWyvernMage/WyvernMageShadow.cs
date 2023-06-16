@@ -13,6 +13,7 @@ using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 {
@@ -53,7 +54,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.value = 660000;
             NPC.width = 28;
             NPC.knockBackResist = 0f;
-            despawnHandler = new NPCDespawnHandler("The Wyvern Mage's imprisoned shadow breaks free...", Color.DarkCyan, DustID.Demonite);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.WyvernMageShadow.DespawnHandler"), Color.DarkCyan, DustID.Demonite);
         }
 
         int mageShadowTimer = 0;
@@ -362,7 +363,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
         public string GetConditionDescription()
         {
-            return "Drops if his wyvern is dead";
+            return LanguageUtils.GetTextValue("NPCs.WyvernMageShadow.Condition");
         }
     }
 }

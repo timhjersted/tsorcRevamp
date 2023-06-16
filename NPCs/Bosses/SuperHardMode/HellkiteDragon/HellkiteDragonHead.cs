@@ -13,6 +13,7 @@ using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 {
@@ -57,7 +58,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.value = 250000;
             NPC.lavaImmune = true;
             Color textColor = new Color(175, 75, 255);
-            despawnHandler = new NPCDespawnHandler("The Hellkite Dragon claims its prey...", textColor, 174);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.HellkiteDragonHead.DespawnHandler"), textColor, 174);
 
             if (tsorcRevampWorld.SuperHardMode)
             {

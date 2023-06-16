@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
@@ -9,6 +10,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
     class PlasmaWhirlwindDashHitbox : ModProjectile
     {
+        public bool Hit = false;
         public override void SetDefaults()
         {
             Projectile.width = Player.defaultWidth;
@@ -34,6 +36,11 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>(), PlasmaWhirlwind.DashCooldown * 60);
+            if (!Hit)
+            {
+                Hit = true;
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/DashHit") with { Volume = 1f }, target.Center);
+            }
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {

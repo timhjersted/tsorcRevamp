@@ -16,6 +16,7 @@ using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 {
@@ -54,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             NPC.lavaImmune = true;
             NPC.boss = true;
             NPC.value = 600000;
-            despawnHandler = new NPCDespawnHandler("Water Fiend Kraken submerges into the depths...", Color.DeepSkyBlue, 180);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.WaterFiendKraken.DespawnHandler"), Color.DeepSkyBlue, 180);
             InitializeMoves();
         }
 

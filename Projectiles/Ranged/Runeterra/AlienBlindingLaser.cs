@@ -6,6 +6,7 @@ using Terraria.DataStructures;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using System;
 using tsorcRevamp.NPCs;
+using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
@@ -13,7 +14,6 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 	{
 		public override void SetStaticDefaults()
 		{
-			// DisplayName.SetDefault("Alien Blinding Laser");
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5; // The length of old position to be recorded
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // The recording mode
 		}
@@ -37,14 +37,13 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             var player = Main.player[Projectile.owner];
-            player.AddBuff(ModContent.BuffType<AlienBlindingLaserCooldown>(), 5 * 60);
-			Projectile.CritChance += 100;
+            player.AddBuff(ModContent.BuffType<AlienBlindingLaserCooldown>(), AlienRifle.BlindingLaserCooldown * 60);
+			Projectile.CritChance += AlienRifle.BlindingLaserBonusCritChance;
         }
 
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            //Dust.NewDust(Projectile.Center + new Vector2(0, -5), 10, 10, DustID.Demonite, 0, 0, 0, Color.HotPink, 0.75f);
 		}
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
@@ -54,8 +53,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-			modifiers.SourceDamage *= 3f;
-            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 1000, 450);
+			modifiers.SourceDamage *= AlienRifle.BlindingLaserDmgMult;
+            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * AlienRifle.BlindingLaserPercentHPDmg, AlienRifle.BlindingLaserHPDmgCap);
         }
     }
 }

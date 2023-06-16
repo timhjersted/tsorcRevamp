@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs.Friendly
             chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Quote8"));
             if (!tsorcRevampWorld.SuperHardMode && !tsorcRevampWorld.TheEnd)
             {
-                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.PreAttradies1"));
+                chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.PreAttraidies1"));
                 chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.PreAttraidies2"));
             }
             return chat;

@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             if (!Hit)
             {
                 Hit = true;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Thrust") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/SpinHit") with { Volume = 1f }, player.Center);
             }
         }
         public override void Kill(int timeLeft)
@@ -48,7 +48,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             if (Hit && player.ownedProjectileCounts[ModContent.ProjectileType<NightbringerTornado>()] < 1)
             {
                 player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks = 2;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoReady") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/TornadoReady") with { Volume = 1f }, player.Center);
             }
         }
         public override void AI()

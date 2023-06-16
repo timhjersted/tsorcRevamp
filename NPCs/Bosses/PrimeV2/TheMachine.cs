@@ -11,6 +11,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
@@ -46,7 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.lifeMax = 15000;
             NPC.timeLeft = 22500;
             NPC.value = 600000;
-            despawnHandler = new NPCDespawnHandler("The Machine's temple falls silent once more...", Color.DarkGray, DustID.Torch);
+            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.TheMachine.DespawnHandler"), Color.DarkGray, DustID.Torch);
             NPC.friendly = false;
 
             //You can also specify BossBase specific values here
