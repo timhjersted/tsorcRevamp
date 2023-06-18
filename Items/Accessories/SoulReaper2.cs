@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,13 +9,11 @@ namespace tsorcRevamp.Items.Accessories
 {
     public class SoulReaper2 : ModItem
     {
+        public static int ConsSoulChanceAmp = 50;
+        public static int SoulsRequired = 7000;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ConsSoulChanceAmp);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Soul Reaper II");
-            /* Tooltip.SetDefault("Greatly increases Dark Soul pick-up range and" +
-                               "\nincreases consumable soul drop chance by 50%" +
-                               "\nLashes out with a sickle in retaliation" +
-                               "\nGives off an eerie aura"); */
         }
 
         public override void SetDefaults()
@@ -29,7 +28,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulsRequired);
             recipe.AddIngredient(ModContent.ItemType<SoulReaper>(), 1);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -39,7 +38,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void UpdateEquip(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().SoulReaper += 10;
-            player.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult += 10; //50% increase
+            player.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult += ConsSoulChanceAmp / 5;
             player.GetModPlayer<tsorcRevampPlayer>().SoulSickle = true;
 
 

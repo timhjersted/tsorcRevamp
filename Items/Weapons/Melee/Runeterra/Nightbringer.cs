@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
     public class Nightbringer: ModItem
     {
         public int SwingSoundStyle = 0;
-        public float SwingSoundVolume = 0.35f;
+        public float SwingSoundVolume = 0.3f;
         public const int BaseDamage = 220;
         public int AttackSpeedScalingDuration = 240;
         public const int DashCooldown = 6;

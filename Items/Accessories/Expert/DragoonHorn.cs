@@ -1,15 +1,16 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class DragoonHorn : ModItem
     {
+        public static float MeleeDmgMult = 50f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeDmgMult);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Horn inhabited by the spirit of a dragon." +
-                                "\n50% increased melee damage if falling."); */
         }
 
         public override void SetDefaults()

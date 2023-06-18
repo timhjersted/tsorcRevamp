@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
@@ -8,6 +9,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class CovenantOfArtorias : ModItem
     {
+        public static float StatMult = 7f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StatMult);
         public override void SetStaticDefaults()
         {
         }
@@ -33,12 +36,12 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Generic) *= 1.07f;
-            player.GetCritChance(DamageClass.Generic) *= 1.07f;
-            player.GetCritChance(DamageClass.Generic) += 7;
-            player.moveSpeed *= 1.07f;
-            player.GetAttackSpeed(DamageClass.Generic) *= 1.07f;
-            player.GetAttackSpeed(DamageClass.Melee) *= 1.07f;
+            player.GetDamage(DamageClass.Generic) *= 1f + StatMult / 100f;
+            player.GetCritChance(DamageClass.Generic) += StatMult;
+            player.GetCritChance(DamageClass.Generic) *= 1f + StatMult / 100f;
+            player.moveSpeed *= 1f + StatMult / 100f;
+            player.GetAttackSpeed(DamageClass.Generic) *= 1f + StatMult / 100f;
+            player.GetAttackSpeed(DamageClass.Melee) *= 1f + StatMult / 100f;
             player.lavaImmune = true;
             player.noKnockback = true;
             player.fireWalk = true;

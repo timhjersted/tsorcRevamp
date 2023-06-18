@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
@@ -8,16 +10,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class GreyWolfRing : ModItem
     {
+        public static int AbyssDef = 12;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AbyssDef, BandOfPhenomenalCosmicPower.LifeRegen, BandOfPhenomenalCosmicPower.MaxManaIncrease, BandOfPhenomenalCosmicPower.ManaRegen, BandOfPhenomenalCosmicPower.ManaRegenDelay);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("One of the rings worn by Artorias." +
-                                "\nInherits Ring of Clarity immunities" +
-                                "\nPress the Wolf Ring key to increase life regen and damage taken temporarily" +
-                                "\nRemoves the life regen if hit during the effect and puts it on a long cooldown" +
-                                "\n+12 defense within the Abyss" +
-                                "\nGrants Magma Stone and Acid Venom imbue effect" +
-                                "\nIncreases life regeneration by 4 and maximum mana by 100" +
-                                "\nImbue effect can be toggled by hiding the accessory."); */
         }
 
         public override void SetDefaults()
@@ -47,13 +43,13 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.GetModPlayer<tsorcRevampPlayer>().WolfRing = true;
 
             //Band of Phenomenal Cosmic Power inheritance
-            player.statManaMax2 += 100;
-            player.lifeRegen += 4;
-            player.manaRegenBonus += 35;
-            player.manaRegenDelayBonus += 1.3f;
+            player.statManaMax2 += BandOfPhenomenalCosmicPower.MaxManaIncrease;
+            player.lifeRegen += BandOfPhenomenalCosmicPower.LifeRegen;
+            player.manaRegenBonus += BandOfPhenomenalCosmicPower.ManaRegen;
+            player.manaRegenDelayBonus += BandOfPhenomenalCosmicPower.ManaRegenDelay / 100f;
 
             //Ring of Clarity inheritance
-            player.GetDamage(DamageClass.Generic) += 0.03f;
+            player.GetDamage(DamageClass.Generic) += RingOfClarity.Dmg / 100f;
             player.noKnockback = true;
             player.fireWalk = true;
             player.buffImmune[BuffID.OnFire] = true;
@@ -69,14 +65,24 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             //Wolf Ring inheritance
             if (Main.bloodMoon)
             { // Apparently this is the flag used in the Abyss?
-                player.statDefense += 12;
+                player.statDefense += WolfRing.AbyssDef;
             }
-
-            player.magmaStone = true;
         }
 
-        public override void UpdateAccessory(Player player, bool hideVisual) {
+        public override void UpdateAccessory(Player player, bool hideVisual) 
+        {
             if (!hideVisual) player.AddBuff(BuffID.WeaponImbueVenom, 1, false);
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            var WolfRingKey = tsorcRevamp.WolfRing.GetAssignedKeys();
+            string WolfRingString = WolfRingKey.Count > 0 ? WolfRingKey[0] : "Wolf Ring: <NOT BOUND>";
+            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip2");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.WolfRing.Keybind1") + WolfRingString + Language.GetTextValue("Mods.tsorcRevamp.Items.WolfRing.Keybind2")));
+            }
         }
     }
 }

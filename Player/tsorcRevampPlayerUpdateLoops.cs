@@ -39,12 +39,12 @@ namespace tsorcRevamp
 
         public bool SilverSerpentRing = false;
         public bool SoulSerpentRing = false;
-        public bool DragonStone = false;
+        public bool DragonStoneImmunity = false;
+        public static bool DragonStonePotency = false;
         public int SoulReaper = 5;
         public bool TornWings = false;
         public bool Crippled = false;
 
-        public bool DuskCrownRing = false;
         public bool Celestriad = false;
         public bool UndeadTalisman = false;
         public bool WolfRing = false;
@@ -314,15 +314,17 @@ namespace tsorcRevamp
         {
             SilverSerpentRing = false;
             SoulSerpentRing = false;
-            DragonStone = false;
+            DragonStoneImmunity = false;
+            if (Main.netMode == NetmodeID.Server || Main.netMode == NetmodeID.SinglePlayer)
+            {
+                DragonStonePotency = false;
+            }
             SoulReaper = 5;
 
             DragoonBoots = false;
             //player.eocDash = 0;
             Player.armorEffectDrawShadowEOCShield = false;
             UndeadTalisman = false;
-
-            DuskCrownRing = false;
 
             HasShadowSickle = false;
 
@@ -1343,7 +1345,7 @@ namespace tsorcRevamp
             }
             if (DragoonHorn && (((Player.gravDir == 1f) && (Player.velocity.Y > 0)) || ((Player.gravDir == -1f) && (Player.velocity.Y < 0))))
             {
-                Player.GetDamage(DamageClass.Melee) *= 1.5f;
+                Player.GetDamage(DamageClass.Melee) *= 1f + Items.Accessories.Expert.DragoonHorn.MeleeDmgMult / 100f;
             }
             if (BrokenSpirit)
             {

@@ -12,6 +12,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public static float DamageReduction = 5f;
         public static float Thorns = 1f;
+        public static int SoulCost = 4000;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageReduction, Thorns);
         public override void SetStaticDefaults()
         {
@@ -40,7 +41,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ObsidianShield);
             recipe.AddIngredient(ModContent.ItemType<SpikedIronShield>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

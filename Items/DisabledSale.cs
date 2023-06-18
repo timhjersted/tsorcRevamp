@@ -9,7 +9,6 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults() 
         {
-            // Tooltip.SetDefault("This sale has been deemed illegal! As such, I cannot sell it to you.");
         }
 
         public override void SetDefaults() {

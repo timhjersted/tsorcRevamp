@@ -1,23 +1,26 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class BlueTearstoneRing : ModItem
     {
+        public static float LifeThreshold = 40f;
+        public static int Defense = 25;
+        public static float DR = 9f;
+        public static int BadMeleeDmg = 200;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold, Defense, DR, BadMeleeDmg);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("The rare gem called tearstone has the uncanny ability to sense imminent death." +
-                                "\nThis blue tearstone from Catarina boosts the defense of its wearer by 12 and reduces damage taken by 8%" +
-                                "\n when life falls below 33%. This also reduces melee damage by 200%."); */
         }
 
         public override void SetDefaults()
         {
             Item.width = 24;
             Item.height = 24;
-            Item.defense = 8;
+            Item.defense = 15;
             Item.accessory = true;
             Item.value = PriceByRarity.Red_10;
             Item.rare = ItemRarityID.Red;
@@ -26,11 +29,11 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            if (player.statLife <= (player.statLifeMax2 / 3))
+            if (player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f))
             {
-                player.statDefense += 12;
-                player.endurance = 0.08f;
-                player.GetDamage(DamageClass.Melee) -= 2f;
+                player.statDefense += Defense;
+                player.endurance = DR / 100f;
+                player.GetDamage(DamageClass.Melee) -= BadMeleeDmg / 100;
             }
         }
 

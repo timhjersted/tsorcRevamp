@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -10,11 +11,11 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
     public class IronShield : ModItem
     {
+        public static float DR = 4f;
+        public static float BadMoveSpeedMult = 5f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DR, BadMoveSpeedMult, SpikedIronShield.SoulCost);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Reduces damage taken by 4% " +
-                                "\nbut also reduces movement speed by 10%" +
-                                "\nCan be upgraded with 500 Dark Souls."); */
         }
 
         public override void SetDefaults()
@@ -29,8 +30,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.endurance += 0.04f;
-            player.moveSpeed *= 0.9f;
+            player.endurance += DR / 100f;
+            player.moveSpeed *= 1f - BadMoveSpeedMult / 100f;
         }
 
         public override void AddRecipes()

@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,21 +10,17 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
     public class ChloranthyRing2 : ModItem
     {
+        public static float StaminaRecoverySpeed = 25f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StaminaRecoverySpeed);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Chloranthy Ring II");
-            /* Tooltip.SetDefault("Increases Stamina recovery speed by 25%" +
-                               "\n[c/ffbf00:Further enhances your agility and evasiveness when dodge rolling]" +
-                               "\n[c/ffbf00:Grants the Black Belt's effect & superior mid-air dexterity]" +
-                               "\nThis ring is named for its decorative green" +
-                               "\nblossom. Its luster has now been fully restored." +
-                               "\n+4 defense"); */
         }
 
         public override void SetDefaults()
         {
             Item.width = 34;
             Item.height = 28;
+            Item.defense = 4;
             Item.accessory = true;
             Item.value = PriceByRarity.LightRed_4;
             Item.expert = true;
@@ -40,9 +37,8 @@ namespace tsorcRevamp.Items.Accessories.Expert
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.25f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += StaminaRecoverySpeed / 100f;
             player.GetModPlayer<tsorcRevampPlayer>().StaminaReaper = 6;
-            player.statDefense += 4;
             player.blackBelt = true;
             player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2 = true;
         }

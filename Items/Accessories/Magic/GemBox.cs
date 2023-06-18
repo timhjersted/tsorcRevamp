@@ -1,6 +1,7 @@
 ﻿using System;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Magic
@@ -9,6 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
     {
         public static float AtkSpeed = 100f;
         public static float BadDmgMult = 30f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed, BadDmgMult);
         public override void SetStaticDefaults()
         {
         }

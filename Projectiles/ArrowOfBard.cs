@@ -10,7 +10,6 @@ namespace tsorcRevamp.Projectiles
         public override string Texture => "tsorcRevamp/Items/Ammo/ArrowOfBard";
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Arrow of Bard");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
@@ -23,7 +22,6 @@ namespace tsorcRevamp.Projectiles
             Projectile.penetrate = 2;
             Projectile.damage = 500;
             Projectile.DamageType = DamageClass.Ranged;
-            Projectile.scale = (float)1;
             Projectile.tileCollide = true;
             Projectile.width = 5;
             AIType = ProjectileID.WoodenArrowFriendly;

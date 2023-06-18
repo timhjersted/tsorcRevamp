@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
     public class PlasmaWhirlwind : ModItem
     {
         public int SwingSoundStyle = 0;
-        public float SwingSoundVolume = 0.3f;
+        public float SwingSoundVolume = 0.25f;
         public const int BaseDamage = 60;
         public int AttackSpeedScalingDuration = 240;
         public const float DashDuration = 0.2f;

@@ -10,8 +10,6 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("The shard of an Estus Flask" +
-                             "\nTake it to the Emerald Herald to increase flask uses"); */
         }
 
         public override void SetDefaults()

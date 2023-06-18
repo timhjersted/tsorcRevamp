@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
     public class DragoonLash: ModItem
 	{
-		public const int BaseDamage = 90;
+		public const int BaseDamage = 95;
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao

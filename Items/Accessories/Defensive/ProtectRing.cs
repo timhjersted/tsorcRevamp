@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.AdamantiteBar, 1);
-            //recipe.AddIngredient(ItemID.Emerald, 1);
+            recipe.AddIngredient(ItemID.Emerald, 1);
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);

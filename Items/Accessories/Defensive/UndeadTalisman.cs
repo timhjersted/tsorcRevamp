@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -7,10 +8,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class UndeadTalisman : ModItem
     {
+        public static int FlatDR = 15;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(FlatDR);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Reduces damage from undead by 15");
-
         }
 
         public override void SetDefaults()

@@ -35,6 +35,12 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
             {
                 player.velocity = DashVelocity;
             }
+            if (player.velocity.X > 0)
+            {
+                player.direction = 1;
+            }
+            else
+            { player.direction = -1; }
         }
     }
 }

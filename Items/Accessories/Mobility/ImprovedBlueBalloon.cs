@@ -4,16 +4,16 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using tsorcRevamp.Items.Materials;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Accessories.Mobility
 {
     public class ImprovedBlueBalloon : ModItem
     {
+        public static float JumpSpeed = 40f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(JumpSpeed);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Improved Cloud in a Balloon");
-            /* Tooltip.SetDefault("Allows the holder to double jump" +
-                                "\nIncreases jump height + 40% jump speed"); */
         }
 
         public override void SetDefaults()
@@ -59,7 +59,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void UpdateEquip(Player player)
         {
-            player.jumpSpeedBoost += 0.4f;
+            player.jumpSpeedBoost += JumpSpeed / 100f;
             player.jumpBoost = true;
             player.hasJumpOption_Cloud = true;
         }

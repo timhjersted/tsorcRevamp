@@ -4,12 +4,18 @@ using Terraria.Audio;
 using Terraria.ModLoader;
 using System;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
+using tsorcRevamp.Projectiles.VFX;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
 	public class NightbringerSpin : ModProjectile
 	{
         public bool Hit = false;
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[Projectile.type] = 9;
+        }
         public override void SetDefaults()
 		{
 			Projectile.aiStyle = -1; 
@@ -160,6 +166,20 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             player.heldProj = Projectile.whoAmI;
             player.SetDummyItemTime(2);
             player.itemRotation = MathHelper.WrapAngle(Projectile.rotation);
+            int frameSpeed = 5;
+
+            Projectile.frameCounter++;
+
+            if (Projectile.frameCounter >= frameSpeed)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
+                {
+                    Projectile.frame = 0;
+                }
+            }
         }
         public override void CutTiles()
         {
@@ -178,7 +198,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             }*/
             Player owner = Main.player[Projectile.owner];
             float distance = Vector2.Distance(owner.MountedCenter, targetHitbox.Center.ToVector2());
-            if (distance <= (300))
+            if (distance <= (240))
             {
                 return true;
             }

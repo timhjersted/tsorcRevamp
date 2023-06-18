@@ -1,5 +1,7 @@
+using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 using Terraria;
-using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Expert
@@ -8,11 +10,6 @@ namespace tsorcRevamp.Items.Accessories.Expert
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Steel Boots made for Dragoons.\n" +
-                                "No damage from falling.\n" +
-                                "Faster Jump, which also results in a higher jump.\n" +
-                                "Press the Dragoon Boots key to toggle high jump (default Z)"); */
-
         }
 
         public override void SetDefaults()
@@ -28,6 +25,17 @@ namespace tsorcRevamp.Items.Accessories.Expert
         {
             player.noFallDmg = true;
             Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().DragoonBoots = true;
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            var DragoonBoots = tsorcRevamp.toggleDragoonBoots.GetAssignedKeys();
+            string DragoonBootsString = DragoonBoots.Count > 0 ? DragoonBoots[0] : "Dragoon Boots: <NOT BOUND>";
+            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip3");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.DragoonBoots.Keybind1") + DragoonBootsString + Language.GetTextValue("Mods.tsorcRevamp.Items.DragoonBoots.Keybind2")));
+            }
         }
 
     }

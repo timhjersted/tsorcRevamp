@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Expert
@@ -8,16 +9,10 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
     public class ChloranthyRing : ModItem
     {
+        public static float StaminaRecoverySpeed = 15f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StaminaRecoverySpeed);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Chloranthy Ring I");
-            /* Tooltip.SetDefault("Increases Stamina recovery speed by 15%," +
-                                "\n[c/ffbf00:Enhances your agility and evasiveness when dodge rolling]" +
-                               "\nIncreases Stamina Droplet pickup range" +  
-                               "\nThis old ring is named for its decorative green" +
-                               "\nblossom, but its luster is long since faded" +
-                               "\n+2 defense"); */
-
                                // [c/ffbf00:text] is a great yellow for highlights
         }
 
@@ -25,6 +20,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
         {
             Item.width = 34;
             Item.height = 28;
+            Item.defense = 2;
             Item.accessory = true;
             Item.value = PriceByRarity.LightRed_4;
             Item.expert = true;
@@ -32,9 +28,8 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
         public override void UpdateEquip(Player player)
         {
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.15f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += StaminaRecoverySpeed / 100f;
             player.GetModPlayer<tsorcRevampPlayer>().StaminaReaper = 4;
-            player.statDefense += 2;
             player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1 = true;
         }
 

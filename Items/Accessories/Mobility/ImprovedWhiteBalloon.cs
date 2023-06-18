@@ -4,16 +4,16 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using tsorcRevamp.Items.Materials;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Accessories.Mobility
 {
     public class ImprovedWhiteBalloon : ModItem
     {
+        public static float JumpSpeed = 60f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(JumpSpeed);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Improved Blizzard in a Balloon");
-            /* Tooltip.SetDefault("Allows the holder to double jump" +
-                                "\nIncreases jump height + 60% jump speed"); */
         }
 
         public override void SetDefaults()
@@ -59,7 +59,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void UpdateEquip(Player player)
         {
-            player.jumpSpeedBoost += 0.6f;
+            player.jumpSpeedBoost += JumpSpeed / 100f;
             player.jumpBoost = true;
             player.hasJumpOption_Blizzard = true;
         }

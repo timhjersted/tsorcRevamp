@@ -12,10 +12,6 @@ namespace tsorcRevamp.Items.Accessories.Mobility
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Supersonic movement speed, rocket boots effect, knockback protection, and water-walking if moving fast enough." +
-                                "\nDoes not work if Hermes Boots or Spectre Boots are equipped." +
-                                "\nSpeed boost is multiplied by movement speed boosts." +
-                                "\nCan be upgraded eventually with Angel Wings & 20000 Dark Souls."); */
         }
 
         public override void SetDefaults()
@@ -52,7 +48,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         public override void UpdateEquip(Player player)
         {
             player.noKnockback = true;
-            player.moveSpeed += 0.2f;
+            player.moveSpeed += 0.2f; //???? higher tiers ain't got any movement speed
             player.rocketBoots = 2;
 
             bool restricted = false;

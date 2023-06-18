@@ -10,8 +10,6 @@ namespace tsorcRevamp.Items
 
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Summons a mindflayer illusion from the legion army of Attraidies!" +
-                                "\n\"[c/00ffd4:You feel compelled to try this...]\""); */
         }
         public override void SetDefaults()
         {

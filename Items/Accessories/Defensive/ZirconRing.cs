@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -7,9 +8,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class ZirconRing : ModItem
     {
+        public static float MaxLifeIncrease = 20f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxLifeIncrease);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Increases maximum life by 20%");
         }
 
         public override void SetDefaults()
@@ -35,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.statLifeMax2 += (player.statLifeMax2 / 5);
+            player.statLifeMax2 += (int)(player.statLifeMax2 * MaxLifeIncrease / 100f);
         }
     }
 }

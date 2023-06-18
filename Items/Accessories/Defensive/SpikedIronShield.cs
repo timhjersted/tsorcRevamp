@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -7,17 +8,15 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
 
     [AutoloadEquip(EquipType.Shield)]
-
     public class SpikedIronShield : ModItem
     {
-
+        public static float Thorns = 100f;
+        public static float DR = 4f;
+        public static float BadMoveSpeedMult = 5f;
+        public static int SoulCost = 2000;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Thorns, DR, BadMoveSpeedMult, AncientDemonShield.SoulCost);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("'Everyone will stay away from you'" +
-                             "\nReduces damage taken by 4% and gives thorns buff" +
-                             "\nbut also reduces movement speed by 5%" +
-                             "\nCan be upgraded with an Obsidian Shield and 5000 Dark Souls"); */
-
         }
 
         public override void SetDefaults()
@@ -32,15 +31,15 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.thorns += 1f;
-            player.endurance += 0.04f;
-            player.moveSpeed *= 0.95f;
+            player.thorns += Thorns / 100f;
+            player.endurance += DR / 100f;
+            player.moveSpeed *= 1f - BadMoveSpeedMult / 100f;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<IronShield>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

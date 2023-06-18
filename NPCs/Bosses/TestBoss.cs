@@ -29,7 +29,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.noGravity = true;
             NPC.knockBackResist = 0;
             NPC.value = 1;
-
         }
 
 
@@ -61,7 +60,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void AI()
         {
-            NPC.defense = 0;
             if (damageCounter > 0)
             {
                 UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.TestBoss.DPS") + damageCounter / thisWatch.Elapsed.TotalSeconds);

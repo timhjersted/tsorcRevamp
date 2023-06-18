@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class BurningAura : ModItem
     {
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BurningStone.DamageIncrease);
         public override void SetStaticDefaults()
         {
         }
@@ -22,7 +25,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "killcount", $"Current count: {((tsorcRevampWorld.NewSlain == null) ? 0 : tsorcRevampWorld.NewSlain.Count)}"));
+            tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "killcount", LanguageUtils.GetTextValue("Items.BurningStone.Count") + ((tsorcRevampWorld.NewSlain == null) ? 0 : tsorcRevampWorld.NewSlain.Count)));
             base.ModifyTooltips(tooltips);
         }
         public override void UpdateEquip(Player player)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Materials;
@@ -9,10 +10,10 @@ namespace tsorcRevamp.Items.Accessories
 {
     public class DragoonCloak : ModItem
     {
+        public static float LifeThreshold = LightCloak.LifeThreshold + DarkmoonCloak.LifeThreshold + DarkCloak.LifeThreshold / 3;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Combines the effects of the Dark, Light and Darkmoon Cloak into one all-powerful protective cloak." +
-                                 "\nA large amount of Dark Souls were used to preserve each cloak's potency."); */
         }
 
         public override void SetDefaults()
@@ -45,19 +46,19 @@ namespace tsorcRevamp.Items.Accessories
             Lighting.AddLight(i2, j2, 0.92f, 0.8f, 0.65f);
 
             player.GetModPlayer<tsorcRevampPlayer>().DarkmoonCloak = true;
-            player.lifeRegen += 3;
+            player.lifeRegen += LightCloak.LifeRegen1;
             player.starCloakItem = new Item(ItemID.StarCloak);
-            player.GetCritChance(DamageClass.Generic) += 5;
-            player.GetDamage(DamageClass.Generic) += 0.05f;
+            player.GetCritChance(DamageClass.Generic) += DarkmoonCloak.DamageAndCritIncrease1;
+            player.GetDamage(DamageClass.Generic) += DarkmoonCloak.DamageAndCritIncrease1 / 100f;
 
 
-            if (player.statLife <= (player.statLifeMax2 / 5 * 2))
+            if (player.statLife <= (int)(player.statLifeMax2 * (LifeThreshold / 100f)))
             {
-                player.lifeRegen += 8;
-                player.statDefense += 10;
-                player.manaRegenBonus += 5;
-                player.GetCritChance(DamageClass.Generic) += 10;
-                player.GetDamage(DamageClass.Generic) += 0.1f;
+                player.lifeRegen += LightCloak.LifeRegen2 - LightCloak.LifeRegen1;
+                player.statDefense += DarkCloak.Defense2;
+                player.manaRegenBonus += DarkmoonCloak.ManaRegenBonus;
+                player.GetCritChance(DamageClass.Generic) += DarkmoonCloak.DamageAndCritIncrease2;
+                player.GetDamage(DamageClass.Generic) += DarkmoonCloak.DamageAndCritIncrease2 / 100f;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 245, Color.White, 1.0f);
                 Main.dust[dust].noGravity = true;

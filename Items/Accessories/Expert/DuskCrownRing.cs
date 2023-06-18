@@ -6,12 +6,12 @@ namespace tsorcRevamp.Items.Accessories.Expert
     [AutoloadEquip(EquipType.HandsOn)]
     public class DuskCrownRing : ModItem
     {
+        public static float MagicDmg = 100f;
+        public static int MagicCrit = 50;
+        public static int LifeRegen = 7;
+        public static float BadMaxLife = 50f;
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth." +
-                                "\n[c/ffbf00:The ringstone doubles magic damage and boosts magic crit by 50%,]" +
-                                "\n[c/ffbf00:at the cost of 50% max HP.]" +
-                                "Your previous max HP is restored when the ring is removed."); */
         }
 
         public override void SetDefaults()
@@ -26,16 +26,10 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
         public override void UpdateEquip(Player player)
         {
-            player.statLifeMax2 /= 2;
-            player.GetDamage(DamageClass.Magic) *= 2;
-            player.GetCritChance(DamageClass.Magic) += 50;
-            player.GetModPlayer<tsorcRevampPlayer>().DuskCrownRing = true;
-
-        }
-
-        public override bool CanEquipAccessory(Player player, int slot, bool modded)
-        {
-            return !(Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().DuskCrownRing);
+            player.statLifeMax2 = (int)(player.statLifeMax2 * (1f - BadMaxLife / 100f));
+            player.GetDamage(DamageClass.Magic) += MagicDmg / 100f;
+            player.GetCritChance(DamageClass.Magic) += MagicCrit;
+            player.lifeRegen += LifeRegen;
         }
     }
 }

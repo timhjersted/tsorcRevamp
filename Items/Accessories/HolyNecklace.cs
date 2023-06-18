@@ -9,7 +9,6 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Emits blue light, longer invincibility and starcloak effect.");
         }
 
         public override void SetDefaults()
@@ -25,19 +24,11 @@ namespace tsorcRevamp.Items.Accessories
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<FrozenStarlight>(), 1);
-            recipe.AddIngredient(ItemID.StarCloak, 1);
-            recipe.AddIngredient(ItemID.CrossNecklace, 1);
+            recipe.AddIngredient(ItemID.StarVeil);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-
-            Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(ModContent.ItemType<FrozenStarlight>(), 1);
-            recipe2.AddIngredient(ItemID.StarVeil, 1);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
-            recipe2.AddTile(TileID.DemonAltar);
-            recipe2.Register();
         }
 
         public override void UpdateEquip(Player player)

@@ -8,6 +8,7 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class SmoughArmor : ModItem
     {
+        public static int StaminaShieldCost = 40;
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Smough's Armor");

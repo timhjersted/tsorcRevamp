@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,11 +10,10 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 {
     public class ImprovedBundleofBalloons : ModItem
     {
+        public static float JumpSpeed = 120f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(JumpSpeed);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Improved Bundle of Balloons");
-            /* Tooltip.SetDefault("Allows the holder to quadruple jump" +
-                                "\nIncreases jump height + 120% jump speed"); */
         }
 
         public override void SetDefaults()
@@ -70,7 +70,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 
         public override void UpdateEquip(Player player)
         {
-            player.jumpSpeedBoost += 1.2f;
+            player.jumpSpeedBoost += JumpSpeed / 100f;
             player.jumpBoost = true;
             player.hasJumpOption_Cloud = true;
             player.hasJumpOption_Blizzard = true;

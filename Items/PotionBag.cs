@@ -12,13 +12,7 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Can store up to 28 potions" +
-                               "\nSupports Quick Buff/Heal/Mana hotkeys as well as permanent potions!" +
-                               "\n\"[c/C92CD1:Favorite]\" valuable potions in the pouch with Alt+Click" +
-                               "\n[c/C92CD1:Favorited potions] are not consumed by Quick Buff" +
-                               "\nPotions are stored per character instead of per-bag, similar to a piggy bank"); */
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(10, 9));
-
         }
 
         public override void SetDefaults()

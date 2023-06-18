@@ -7,7 +7,6 @@ namespace tsorcRevamp.Items.Ammo
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("The power source for strange machines from beyond the sky");
         }
         public override void SetDefaults()
         {

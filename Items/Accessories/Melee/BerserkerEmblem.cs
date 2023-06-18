@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -7,9 +8,10 @@ namespace tsorcRevamp.Items.Accessories.Melee
 {
     public class BerserkerEmblem : ModItem
     {
+        public static float MeleeDmgCrit = 12f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeDmgCrit);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("11% increased melee damage and crit");
         }
 
         public override void SetDefaults()
@@ -35,8 +37,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.11f;
-            player.GetCritChance(DamageClass.Melee) += 11;
+            player.GetDamage(DamageClass.Melee) += MeleeDmgCrit / 100f;
+            player.GetCritChance(DamageClass.Melee) += MeleeDmgCrit;
         }
     }
 }

@@ -273,7 +273,7 @@ namespace tsorcRevamp
             {
                 return true;
             }
-            if (DragonStone)
+            if (DragonStoneImmunity)
             {
                 int NT = Main.npc[damageSource.SourceNPCIndex].type;
                 if (NT == 2 || NT == 6 || NT == 34 || NT == 42 || NT == 48 || NT == 49 || NT == 51 || NT == 60 || NT == 61 || NT == 62 || NT == 66 || NT == 75 || NT == 87 || NT == 88 || NT == 89 || NT == 90 || NT == 91 || NT == 92 || NT == 93 || NT == 94 || NT == 112 || NT == 122 || NT == 133 || NT == 137
@@ -774,7 +774,7 @@ namespace tsorcRevamp
             }
             if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
             {
-                modifiers.TargetDamageMultiplier *= 1.05f;
+                modifiers.TargetDamageMultiplier *= 1f + Items.Accessories.Expert.BurningStone.DamageIncrease / 100f;
             }
             if (critLevel != 0)
             {
@@ -820,7 +820,7 @@ namespace tsorcRevamp
                     || npc.type == NPCID.SkeletronHead
                     /* || NT == mod.NPCType("MagmaSkeleton") || NT == mod.NPCType("Troll") || NT == mod.NPCType("HeavyZombie") || NT == mod.NPCType("IceSkeleton") || NT == mod.NPCType("IrateBones")*/)
                 {
-                    modifiers.FinalDamage.Flat -= 15;
+                    modifiers.FinalDamage.Flat -= Items.Accessories.Defensive.UndeadTalisman.FlatDR;
                 }
             }
 
@@ -832,19 +832,9 @@ namespace tsorcRevamp
             //They don't because that requires getting the inventory item casuing this effect. I'll do it later if I remember.
             if (Player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
             {
-                if (!Main.hardMode)
+                for (int b = 0; b < 8; b++)
                 {
-                    for (int b = 0; b < 8; b++)
-                    {
-                        Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
-                    }
-                }
-                else
-                {
-                    for (int b = 0; b < 12; b++)
-                    {
-                        Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
-                    }
+                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.SourceDamage, 4f, 0, 0, 0);
                 }
             }
 
@@ -879,19 +869,9 @@ namespace tsorcRevamp
         {
             if (Player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
             {
-                if (!Main.hardMode)
+                for (int b = 0; b < 8; b++)
                 {
-                    for (int b = 0; b < 8; b++)
-                    {
-                        Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
-                    }
-                }
-                else
-                {
-                    for (int b = 0; b < 12; b++)
-                    {
-                        Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
-                    }
+                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.SourceDamage, 4f, 0, 0, 0);
                 }
             }
 
@@ -927,14 +907,7 @@ namespace tsorcRevamp
             {
                 if (proj.type == ProjectileID.SkeletonBone || proj.type == ProjectileID.Skull)
                 {
-                    if (!Main.expertMode)
-                    {
-                        modifiers.FinalDamage.Flat -= 8;
-                    }
-                    if (Main.expertMode)
-                    {
-                        modifiers.FinalDamage.Flat -= 4;
-                    }
+                    modifiers.FinalDamage.Flat -= Items.Accessories.Defensive.UndeadTalisman.FlatDR;
                 }
             }
         }

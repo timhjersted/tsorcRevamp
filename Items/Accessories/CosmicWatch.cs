@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Accessories
 {
@@ -9,8 +10,6 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Use this item to push time foward" +
-                                "\nto the beginning of night or to the beginning of day"); */
         }
 
         public override void SetDefaults()
@@ -43,9 +42,9 @@ namespace tsorcRevamp.Items.Accessories
                 Main.time = 0;
                 if (Main.dayTime)
                 {
-                    Main.NewText("You shift time forward and a new day begins...", 175, 75, 255);
+                    Main.NewText(LanguageUtils.GetTextValue("Items.CosmicWatch.Day"), 175, 75, 255);
                 }
-                else Main.NewText("You shift time forward and a new night begins...", 175, 75, 255);
+                else Main.NewText(LanguageUtils.GetTextValue("Items.CosmicWatch.Night"), 175, 75, 255);
             }
 
             if (Main.netMode != NetmodeID.SinglePlayer && (player.whoAmI == Main.LocalPlayer.whoAmI))

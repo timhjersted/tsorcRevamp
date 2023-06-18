@@ -7,13 +7,10 @@ namespace tsorcRevamp.Items.Ammo
 {
     public class CruelArrow : ModItem
     {
+        public static int Pierce = 1;
+        public static float DmgMult = 8;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Cruel Arrow");
-            /* Tooltip.SetDefault("An arrow fashioned to kill lost and forgotten souls...\n" +
-                                "Does 8x greater damage to some enemies\n" +
-                                "Pierces once"); */
-
         }
 
         public override void SetDefaults()

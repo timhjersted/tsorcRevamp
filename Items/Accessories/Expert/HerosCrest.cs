@@ -1,11 +1,13 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
+﻿using Terraria;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Expert;
 public class HerosCrest : ModItem
 {
+    public static float StatMult = 6f;
+    public static float Luck = 60f;
+    public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StatMult, Luck);
     public override void SetStaticDefaults()
     {
     }
@@ -31,12 +33,12 @@ public class HerosCrest : ModItem
         public override void PostUpdateEquips()
         {
             if (!HerosCrest) return;
-            Player.GetDamage(DamageClass.Generic) *= 1.06f;
-            Player.GetCritChance(DamageClass.Generic) += 6;
-            Player.GetCritChance(DamageClass.Generic) *= 1.06f;
-            Player.statLifeMax2 = (int)(Player.statLifeMax2 * 1.06f);
-            Player.statDefense *= 1.06f;
-            Player.luck += 0.6f;
+            Player.GetDamage(DamageClass.Generic) *= 1f + StatMult / 100f;
+            Player.GetCritChance(DamageClass.Generic) += StatMult;
+            Player.GetCritChance(DamageClass.Generic) *= 1f + StatMult / 100f;
+            Player.statLifeMax2 = (int)(Player.statLifeMax2 * (1f + StatMult / 100f));
+            Player.statDefense *= 1f + StatMult / 100f;
+            Player.luck += Luck / 100f;
         }
         public override void ResetEffects()
         {

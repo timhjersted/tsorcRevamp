@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
@@ -8,10 +9,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class CrackedDragonStone : ModItem
     {
+        public static float Dmg = 3f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("[c/ffbf00:Provides immunity to catching on fire, burning, frostbite and becoming chilled]" +
-                                "\nAlso raises damage dealt by 3% and prevents knockback"); */
         }
 
         public override void SetDefaults()
@@ -25,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Generic) += 0.03f;
+            player.GetDamage(DamageClass.Generic) += Dmg / 100f;
             player.noKnockback = true;
             player.fireWalk = true;
             player.buffImmune[BuffID.OnFire] = true;

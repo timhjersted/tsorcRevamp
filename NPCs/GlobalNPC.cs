@@ -31,6 +31,7 @@ using tsorcRevamp.Projectiles.Summon.Sentry;
 using tsorcRevamp.Projectiles.Summon.Whips;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Armors.Melee;
+using tsorcRevamp.Items.Accessories.Expert;
 
 namespace tsorcRevamp.NPCs
 {
@@ -115,7 +116,6 @@ namespace tsorcRevamp.NPCs
         public bool Electrified;
         public bool Irradiated;
         public bool IrradiatedByShroom;
-
 
         public override void ResetEffects(NPC npc)
         {
@@ -681,6 +681,14 @@ namespace tsorcRevamp.NPCs
 
         public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers)
         {
+            if (npc.HasBuff(BuffID.BetsysCurse) && tsorcRevampPlayer.DragonStonePotency)
+            {
+                modifiers.Defense -= 40 * DragonStone.Potency - 40;
+            }
+            if (npc.HasBuff(BuffID.Ichor) && tsorcRevampPlayer.DragonStonePotency)
+            {
+                modifiers.Defense -= 15 * DragonStone.Potency - 15;
+            }
             if (Sundered && modifiers.DamageType == DamageClass.Magic)
             {
                 modifiers.FinalDamage *= 1f + OrbOfFlame.MagicSunder / 100f;
@@ -1140,12 +1148,135 @@ namespace tsorcRevamp.NPCs
             return base.PreNPCLoot(npc);
         }
         */
-
         public override void UpdateLifeRegen(NPC npc, ref int damage)
         {
+            #region Dragon Stone Potency for Vanilla Buffs
+            if (npc.HasBuff(BuffID.OnFire) && tsorcRevampPlayer.DragonStonePotency)
+            {
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                int DoTPerS = 4 * DragonStone.Potency - 4;
+                if (npc.HasBuff(BuffID.Oiled))
+                {
+                    DoTPerS += 25 * DragonStone.Potency;
+                }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+            if (npc.HasBuff(BuffID.OnFire3) && tsorcRevampPlayer.DragonStonePotency)
+            {
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                int DoTPerS = 15 * DragonStone.Potency - 15;
+                if (npc.HasBuff(BuffID.Oiled))
+                {
+                    DoTPerS += 25 * DragonStone.Potency;
+                }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+            if (npc.HasBuff(BuffID.CursedInferno) && tsorcRevampPlayer.DragonStonePotency)
+            {
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                int DoTPerS = 24 * DragonStone.Potency - 24;
+                if (npc.HasBuff(BuffID.Oiled))
+                {
+                    DoTPerS += 25 * DragonStone.Potency;
+                }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+            if (npc.HasBuff(BuffID.Frostburn) && tsorcRevampPlayer.DragonStonePotency)
+            {
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                int DoTPerS = 8 * DragonStone.Potency - 8;
+                if (npc.HasBuff(BuffID.Oiled))
+                {
+                    DoTPerS += 25 * DragonStone.Potency;
+                }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+            if (npc.HasBuff(BuffID.Frostburn2) && tsorcRevampPlayer.DragonStonePotency)
+            {
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                int DoTPerS = 25 * DragonStone.Potency - 25;
+                if (npc.HasBuff(BuffID.Oiled))
+                {
+                    DoTPerS += 25 * DragonStone.Potency;
+                }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+            if (npc.HasBuff(BuffID.ShadowFlame) && tsorcRevampPlayer.DragonStonePotency)
+            {
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                int DoTPerS = 15 * DragonStone.Potency - 15;
+                if (npc.HasBuff(BuffID.Oiled))
+                {
+                    DoTPerS += 25 * DragonStone.Potency;
+                }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+            if (npc.HasBuff(BuffID.Poisoned) && tsorcRevampPlayer.DragonStonePotency)
+            {
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                int DoTPerS = 6 * DragonStone.Potency - 6;
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+            if (npc.HasBuff(BuffID.Venom) && tsorcRevampPlayer.DragonStonePotency)
+            {
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                int DoTPerS = 30 * DragonStone.Potency - 30;
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+            #endregion
             if (Ignited)
             {
                 int DoTPerS = 20;
+                if (tsorcRevampPlayer.DragonStonePotency)
+                {
+                    DoTPerS *= DragonStone.Potency;
+                }
+                if (npc.HasBuff(BuffID.Oiled))
+                {
+                    if(tsorcRevampPlayer.DragonStonePotency)
+                    {
+                        DoTPerS += 25 * DragonStone.Potency;
+                    } else 
+                    {
+                        DoTPerS += 25; 
+                    }
+                }
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
                 npc.lifeRegen -= DoTPerS * 2;
                 damage += DoTPerS;
             }
@@ -1205,6 +1336,20 @@ namespace tsorcRevamp.NPCs
                 {
                     npc.lifeRegen = 0;
                 }
+                if (tsorcRevampPlayer.DragonStonePotency)
+                {
+                    DoTPerS *= DragonStone.Potency;
+                }
+                if (npc.HasBuff(BuffID.Oiled))
+                {
+                    if (tsorcRevampPlayer.DragonStonePotency)
+                    {
+                        DoTPerS += 25 * DragonStone.Potency;
+                    } else
+                    {
+                        DoTPerS += 25;
+                    }
+                }
                 npc.lifeRegen -= DoTPerS * 2;
                 damage += DoTPerS;
 
@@ -1226,6 +1371,10 @@ namespace tsorcRevamp.NPCs
                 {
                     npc.lifeRegen = 0;
                 }
+                if (tsorcRevampPlayer.DragonStonePotency)
+                {
+                    DoTPerS *= DragonStone.Potency;
+                }
                 npc.lifeRegen -= DoTPerS * 2;
                 damage = DoTPerS;
 
@@ -1242,6 +1391,21 @@ namespace tsorcRevamp.NPCs
                 if (npc.lifeRegen > 0)
                 {
                     npc.lifeRegen = 0;
+                }
+                if (tsorcRevampPlayer.DragonStonePotency)
+                {
+                    DoTPerS *= DragonStone.Potency;
+                }
+                if (npc.HasBuff(BuffID.Oiled))
+                {
+                    if (tsorcRevampPlayer.DragonStonePotency)
+                    {
+                        DoTPerS += 25 * DragonStone.Potency;
+                    }
+                    else
+                    {
+                        DoTPerS += 25;
+                    }
                 }
                 npc.lifeRegen -= DoTPerS * 2;
                 if (Main.hardMode) npc.lifeRegen -= DoTPerS * 2 * 2; //this is additive to the one in pre-hm.....so it's tripled, not doubled

@@ -135,7 +135,8 @@ namespace tsorcRevamp.Prefixes
 		}
 		public override void SetStats(ref float damageMult, ref float knockbackMult, ref float useTimeMult, ref float scaleMult, ref float shootSpeedMult, ref float manaMult, ref int critBonus)
 		{
-			useTimeMult *= 1f - 0.25f;
+			useTimeMult *= 1f - 0.3f;
+			scaleMult *= 1f - 0.3f;
 		}
 
 		public override void ModifyValue(ref float valueMult)
@@ -244,7 +245,7 @@ namespace tsorcRevamp.Prefixes
 		}
 		public override void SetStats(ref float damageMult, ref float knockbackMult, ref float useTimeMult, ref float scaleMult, ref float shootSpeedMult, ref float manaMult, ref int critBonus)
 		{
-			useTimeMult *= 1f - 0.3f;
+			useTimeMult *= 1f - 0.5f;
 		}
 
 		public override void ModifyValue(ref float valueMult)

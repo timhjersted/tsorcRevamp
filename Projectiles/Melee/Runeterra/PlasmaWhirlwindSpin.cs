@@ -10,13 +10,17 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 	public class PlasmaWhirlwindSpin : ModProjectile
 	{
         public bool Hit = false;
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[Projectile.type] = 7;
+        }
         public override void SetDefaults()
 		{
 			Projectile.aiStyle = -1; 
 			Projectile.friendly = true;
 			Projectile.penetrate = -1;
 			Projectile.tileCollide = false;
-			Projectile.scale = 0.85f;
+			Projectile.scale = 1f;
 			Projectile.DamageType = DamageClass.Melee;
 			Projectile.ownerHitCheck = true;
             Projectile.usesOwnerMeleeHitCD = true;
@@ -54,7 +58,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Vector2 mountedCenter = player.MountedCenter + new Vector2(-player.width - 5, 0);
+            Vector2 mountedCenter = player.MountedCenter;
             float num = 50f;
             float num9 = 2f;
             float num10 = 20f;
@@ -160,6 +164,20 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             player.heldProj = Projectile.whoAmI;
             player.SetDummyItemTime(2);
             player.itemRotation = MathHelper.WrapAngle(Projectile.rotation);
+            int frameSpeed = 5;
+
+            Projectile.frameCounter++;
+
+            if (Projectile.frameCounter >= frameSpeed)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
+                {
+                    Projectile.frame = 0;
+                }
+            }
         }
         public override void CutTiles()
         {
@@ -178,7 +196,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             }*/
             Player owner = Main.player[Projectile.owner];
             float distance = Vector2.Distance(owner.MountedCenter, targetHitbox.Center.ToVector2());
-            if (distance <= (260))
+            if (distance <= (190))
             {
                 return true;
             }

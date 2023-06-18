@@ -170,6 +170,10 @@ namespace tsorcRevamp.Items.VanillaItems
                 {
                     scaleDelta = -0.2f;
                 }
+                else if (item.prefix == ModContent.PrefixType<Tenacious>())
+                {
+                    scaleDelta = -0.3f;
+                }
                 else
                     switch (item.prefix)
                 {

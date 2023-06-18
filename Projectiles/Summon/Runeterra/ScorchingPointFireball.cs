@@ -96,8 +96,9 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Projectile.Center = owner.Center + offset;
 			Projectile.velocity = Projectile.rotation.ToRotationVector2();
 
-			Visuals();
-		}
+			Projectile.rotation = currentAngle * -1f;
+            Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
+        }
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 		{
 			float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
@@ -138,29 +139,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			return true;
 		}
-		private void Visuals()
-		{
-
-			Projectile.rotation = currentAngle * -1f;
-
-			/*float frameSpeed = 4f;
-
-			Projectile.frameCounter++;
-
-			if (Projectile.frameCounter >= frameSpeed)
-			{
-				Projectile.frameCounter = 0;
-				Projectile.frame++;
-
-				if (Projectile.frame >= Main.projFrames[Projectile.type])
-				{
-					Projectile.frame = 0;
-				}
-			}*/
-
-			Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
-		}
-
 		Vector2 samplePointOffset1;
 		Vector2 samplePointOffset2;
 		public override void SetEffectParameters(Effect effect)

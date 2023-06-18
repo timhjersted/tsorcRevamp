@@ -9,9 +9,6 @@ namespace tsorcRevamp.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Accessory that emits blue light." +
-                "\nAlso works in vanity slots"); */
-
         }
         public override void SetDefaults()
         {

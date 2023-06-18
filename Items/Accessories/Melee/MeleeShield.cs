@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -10,11 +11,19 @@ namespace tsorcRevamp.Items.Accessories.Melee
     {
         //all the melee shields have a lot in common, so i use an abstract class from which they inherit values
         //i dont feel like writing the same thing 4 times. does it make the code less readable? yeah. i dont give a shit
+        public virtual int Defense
+        {
+            get;
+        }
+        public virtual float DamageReduction
+        {
+            get;
+        }
+        public static int NonMeleeBadDmgMult = 100;
+        public static float BadMoveSpeedMult = 20f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageReduction, NonMeleeBadDmgMult, BadMoveSpeedMult);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("For melee warriors only" +
-                                "\nGrants immunity to knockback and fire blocks" +
-                                "\nReduces movement speed by 20% and increased mana cost by 7%"); */
         }
         public override void SetDefaults()
         {
@@ -26,10 +35,14 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void UpdateEquip(Player player)
         {
             player.buffImmune[BuffID.Burning] = true;
-            player.moveSpeed *= 0.8f;
+            player.moveSpeed *= 1f - BadMoveSpeedMult / 100f;
             player.noKnockback = true;
             player.fireWalk = true;
-            player.manaCost += 0.7f;
+            player.endurance += DamageReduction / 100f;
+            player.GetDamage(DamageClass.Magic) -= NonMeleeBadDmgMult / 100;
+            player.GetDamage(DamageClass.Ranged) -= NonMeleeBadDmgMult / 100;
+            player.GetDamage(DamageClass.Summon) -= NonMeleeBadDmgMult / 100;
+            player.GetDamage(DamageClass.Throwing) -= NonMeleeBadDmgMult / 100;
         }
         public override bool CanEquipAccessory(Player player, int slot, bool modded)
         {
@@ -46,29 +59,16 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
     public class GazingShield : MeleeShield
     {
-
+        public override float DamageReduction => 6f;
+        public override int Defense => 6;
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
         }
-
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
-            int ttindex = tooltips.FindLastIndex(t => t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
-            if (ttindex != -1)
-            {// if we find one
-             //insert the extra tooltip line
-                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "",
-                "Plus 6% damage reduction" +
-                "\nReduces Ranged, Magic and Summoner Damage by 85%. +70% mana cost"));
-            }
-        }
-
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.defense = 6;
+            Item.defense = Defense;
             Item.value = PriceByRarity.LightRed_4;
             Item.rare = ItemRarityID.LightRed;
         }
@@ -77,11 +77,6 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void UpdateEquip(Player player)
         {
             base.UpdateEquip(player);
-            player.endurance += 0.06f;
-            player.GetDamage(DamageClass.Melee) += 0f;
-            player.GetDamage(DamageClass.Magic) -= 0.85f;
-            player.GetDamage(DamageClass.Ranged) -= 0.85f;
-            player.GetDamage(DamageClass.Summon) -= 0.85f;
         }
 
         public override void AddRecipes()
@@ -100,27 +95,16 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
     public class BeholderShield : MeleeShield
     {
+        public override float DamageReduction => 8f;
+        public override int Defense => 15;
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
         }
-
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
-            int ttindex = tooltips.FindLastIndex(t => t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
-            if (ttindex != -1)
-            {// if we find one
-             //insert the extra tooltip line
-                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "",
-                "Plus 8% damage reduction" +
-                "\nReduces Ranged, Magic and Summoner Damage by 150%. +70% mana cost"));
-            }
-        }
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.defense = 15;
+            Item.defense = Defense;
             Item.value = PriceByRarity.Pink_5;
             Item.rare = ItemRarityID.Pink;
         }
@@ -128,11 +112,6 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void UpdateEquip(Player player)
         {
             base.UpdateEquip(player);
-            player.endurance += 0.08f;
-            player.GetDamage(DamageClass.Melee) += 0f;
-            player.GetDamage(DamageClass.Magic) -= 1.5f;
-            player.GetDamage(DamageClass.Ranged) -= 1.5f;
-            player.GetDamage(DamageClass.Summon) -= 1.5f;
         }
 
         public override void AddRecipes()
@@ -150,28 +129,17 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
     public class BeholderShield2 : MeleeShield
     {
+        public override float DamageReduction => 10f;
+        public override int Defense => 24;
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Beholder Shield II");
             base.SetStaticDefaults();
         }
-
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
-            int ttindex = tooltips.FindLastIndex(t => t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
-            if (ttindex != -1)
-            {// if we find one
-             //insert the extra tooltip line
-                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "",
-                "Plus immunity to On Fire and 10% damage reduction" +
-                "\nReduces Ranged, Magic and Summoner Damage by 150%. +70% mana cost"));
-            }
-        }
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.defense = 24;
+            Item.defense = Defense;
             Item.value = PriceByRarity.Cyan_9;
             Item.rare = ItemRarityID.Cyan;
         }
@@ -179,11 +147,6 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void UpdateEquip(Player player)
         {
             base.UpdateEquip(player);
-            player.endurance += 0.1f;
-            player.GetDamage(DamageClass.Melee) += 0f;
-            player.GetDamage(DamageClass.Magic) -= 1.5f;
-            player.GetDamage(DamageClass.Ranged) -= 1.5f;
-            player.GetDamage(DamageClass.Summon) -= 1.5f;
             player.buffImmune[BuffID.OnFire] = true;
         }
 
@@ -203,19 +166,16 @@ namespace tsorcRevamp.Items.Accessories.Melee
 
     public class EnchantedBeholderShield2 : MeleeShield
     {
+        public override float DamageReduction => 12f;
+        public override int Defense => 33;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Enchanted Beholder Shield II");
-            /* Tooltip.SetDefault("A legendary shield for melee warriors only" +
-                "\nGrants immunity to knockback and nearly all debuffs, plus 12% damage reduction" +
-                "\nReduces Ranged, Magic and Summoner Damage by 300%. +70% mana cost" +
-                "\nReduces movement speed by 20%"); */
         }
 
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.defense = 33;
+            Item.defense = Defense;
             Item.value = PriceByRarity.Red_10;
             Item.rare = ItemRarityID.Red;
         }
@@ -223,22 +183,9 @@ namespace tsorcRevamp.Items.Accessories.Melee
         public override void UpdateEquip(Player player)
         {
             base.UpdateEquip(player);
-            player.endurance += 0.12f;
-            player.GetDamage(DamageClass.Melee) += 0f;
-            player.GetDamage(DamageClass.Magic) -= 3f;
-            player.GetDamage(DamageClass.Ranged) -= 3f;
-            player.GetDamage(DamageClass.Summon) -= 3f;
-            player.buffImmune[BuffID.Poisoned] = true;
-            player.buffImmune[BuffID.Darkness] = true;
-            player.buffImmune[BuffID.Cursed] = true;
             player.buffImmune[BuffID.OnFire] = true;
-            player.buffImmune[BuffID.Bleeding] = true;
-            player.buffImmune[BuffID.Confused] = true;
-            player.buffImmune[BuffID.Slow] = true;
-            player.buffImmune[BuffID.Weak] = true;
-            player.buffImmune[BuffID.Silenced] = true;
-            player.buffImmune[BuffID.BrokenArmor] = true;
             player.buffImmune[BuffID.CursedInferno] = true;
+            player.buffImmune[BuffID.Ichor] = true;
         }
 
         public override void AddRecipes()

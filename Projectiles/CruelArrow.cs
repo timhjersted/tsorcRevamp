@@ -1,6 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Ammo;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -14,31 +15,31 @@ namespace tsorcRevamp.Projectiles
             Projectile.friendly = true;
             Projectile.height = 10;
             Projectile.damage = 10;
-            Projectile.penetrate = 2;
+            Projectile.penetrate = 1 + Items.Ammo.CruelArrow.Pierce;
             Projectile.DamageType = DamageClass.Ranged;
-            Projectile.scale = (float)1;
             Projectile.tileCollide = true;
             Projectile.width = 5;
         }
 
 
-        public void OnHitNPC(Player P, NPC npc, int damage, float KB, bool crit)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            if (npc.type == ModContent.NPCType<NPCs.Enemies.GhostoftheForgottenKnight>()) damage *= 8;
-            if (npc.type == ModContent.NPCType<NPCs.Enemies.GhostOfTheForgottenWarrior>()) damage *= 8;
-            if (npc.type == ModContent.NPCType<NPCs.Enemies.DemonSpirit>()) damage *= 8;
-            if (npc.type == ModContent.NPCType<NPCs.Enemies.CrazedDemonSpirit>()) damage *= 8;
-            if (npc.type == ModContent.NPCType<NPCs.Enemies.BarrowWight>()) damage *= 8;
-            if (npc.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>()) damage *= 8;
-            if (npc.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightPhantom>()) damage *= 8;
-            if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()) damage *= 8;
-            if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>()) damage *= 8;
-            if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody>()) damage *= 8;
-            if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody2>()) damage *= 8;
-            if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody3>()) damage *= 8;
-            if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonLegs>()) damage *= 8;
-            if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonTail>()) damage *= 8;
-            if (npc.type == ModContent.NPCType<NPCs.Enemies.GhostOfTheDarkmoonKnight>()) damage *= 8;
+            if (target.type == ModContent.NPCType<NPCs.Enemies.GhostoftheForgottenKnight>() ||
+                target.type == ModContent.NPCType<NPCs.Enemies.GhostOfTheForgottenWarrior>() ||
+                target.type == ModContent.NPCType<NPCs.Enemies.DemonSpirit>() ||
+                target.type == ModContent.NPCType<NPCs.Enemies.CrazedDemonSpirit>() ||
+                target.type == ModContent.NPCType<NPCs.Enemies.BarrowWight>() ||
+                target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>() ||
+                target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightPhantom>() ||
+                target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>() ||
+                target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>() ||
+                target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody>() ||
+                target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody2>() ||
+                target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody3>() ||
+                target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonLegs>() ||
+                target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonTail>() ||
+                target.type == ModContent.NPCType<NPCs.Enemies.GhostOfTheDarkmoonKnight>())
+                modifiers.SourceDamage *= Items.Ammo.CruelArrow.DmgMult;
         }
 
         public override void Kill(int timeLeft)

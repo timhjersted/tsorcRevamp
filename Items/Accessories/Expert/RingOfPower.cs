@@ -1,16 +1,17 @@
+using rail;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class RingOfPower : ModItem
     {
+        public static float Crit = 25f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Crit);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A great ring of power gifted to men." +
-                                "\nCasts darkness and battle potion effects on wearer." +
-                                "\n+25% crit chance. "); */
         }
 
         public override void SetDefaults()
@@ -24,10 +25,9 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
         public override void UpdateEquip(Player player)
         {
-            player.noKnockback = true;
-            player.AddBuff(BuffID.Darkness, 500, false);
-            player.AddBuff(BuffID.Battle, 500, false);
-            player.GetCritChance(DamageClass.Generic) += 25;
+            player.AddBuff(BuffID.Darkness, 2, false);
+            player.AddBuff(BuffID.Battle, 2, false);
+            player.GetCritChance(DamageClass.Generic) += Crit;
         }
 
     }

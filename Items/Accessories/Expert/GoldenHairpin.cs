@@ -1,12 +1,17 @@
 ﻿using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class GoldenHairpin : ModItem
     {
-        public static int ammoType = 0;
+        public int AmmoType = 0;
+        public float DmgMult = 20f;
+        public const int SwitchTiming = 7; //every X seconds
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMult, SwitchTiming);
         public override void SetStaticDefaults()
         {
 
@@ -24,25 +29,47 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
         public override void UpdateEquip(Player player)
         {
-            if (Main.GameUpdateCount % 420 == 0)
+            AmmoType++;
+            switch (AmmoType)
             {
-                ammoType++;
-            }
-            if (ammoType == 0)
-            {
-                player.arrowDamage *= 1.2f;
-            }
-            if (ammoType == 1)
-            {
-                player.bulletDamage *= 1.2f;
-            }
-            if (ammoType == 2)
-            {
-                player.specialistDamage *= 1.2f;
-            }
-            if (ammoType >= 3)
-            {
-                ammoType = 0;
+                case SwitchTiming * 60 * 0:
+                    {
+                        player.arrowDamage *= 1f + DmgMult / 100f;
+                        SoundEngine.PlaySound(SoundID.Item102 with { Volume = 3f });
+                        break;
+                    }
+                case int Arrow when (Arrow > 0 && Arrow <= SwitchTiming * 60 - 1):
+                    {
+                        player.arrowDamage *= 1f + DmgMult / 100f;
+                        break;
+                    }
+                case SwitchTiming * 60 * 1:
+                    {
+                        player.bulletDamage *= 1f + DmgMult / 100f;
+                        SoundEngine.PlaySound(SoundID.Item149 with { Volume = 3f });
+                        break;
+                    }
+                case int Bullet when (Bullet > SwitchTiming * 60 * 1 && Bullet <= SwitchTiming * 60 * 2 - 1):
+                    {
+                        player.bulletDamage *= 1f + DmgMult / 100f;
+                        break;
+                    }
+                case SwitchTiming * 60 * 2:
+                    {
+                        player.specialistDamage *= 1f + DmgMult / 100f;
+                        SoundEngine.PlaySound(SoundID.Item14 with { Volume = 3f });
+                        break;
+                    }
+                case int Specialist when (Specialist >= SwitchTiming * 60 * 2 && Specialist <= SwitchTiming * 60 * 3 - 1):
+                    {
+                        player.specialistDamage *= 1f + DmgMult / 100f;
+                        break;
+                    }
+                case int Reset when (Reset > SwitchTiming * 60 * 3):
+                    {
+                        AmmoType = -1;
+                        break;
+                    }
             }
         }
     }

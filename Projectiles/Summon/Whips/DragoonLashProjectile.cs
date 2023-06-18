@@ -130,7 +130,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.damage = (int)(Projectile.damage * 0.8f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
             if (owner.GetModPlayer<tsorcRevampPlayer>().DragoonLashHitTimer <= 0)
             {
-                owner.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer = 1f;
+                owner.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer += 0.7f;
                 owner.GetModPlayer<tsorcRevampPlayer>().DragoonLashHitTimer = 0.07f;//3 ticks, supposed to stop you from spawning fire for every single enemy hit and only spawn one max
             }
 

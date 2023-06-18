@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,12 +9,10 @@ namespace tsorcRevamp.Items.Accessories
 {
     public class SoulReaper : ModItem
     {
+        public static int ConsSoulChance = 25;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ConsSoulChance, SoulReaper2.SoulsRequired);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases Dark Soul pick-up range and increases" +
-                                "\nconsumable soul drop chance by 25%" +
-                                "\nGives off a faint glow" +
-                                "\nCan be upgraded with 7000 Dark Souls"); */
         }
 
         public override void SetDefaults()
@@ -37,7 +36,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void UpdateEquip(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().SoulReaper += 5;
-            player.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult += 5; //25% increase
+            player.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult += ConsSoulChance / 5;
 
             Lighting.AddLight(player.Center, 0.45f, 0.3f, 0.5f);
 

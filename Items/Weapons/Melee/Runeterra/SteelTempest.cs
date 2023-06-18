@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
     public class SteelTempest: ModItem
     {
         public int SwingSoundStyle = 0;
-        public float SwingSoundVolume = 0.2f;
+        public float SwingSoundVolume = 0.15f;
         public const int CritChance = 6;
         public int AttackSpeedScalingDuration = 240;
         public override void SetDefaults()

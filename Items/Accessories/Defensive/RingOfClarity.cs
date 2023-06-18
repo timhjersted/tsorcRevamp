@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
@@ -8,11 +9,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     class RingOfClarity : ModItem
     {
+        public static int LifeRegen = 2;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CrackedDragonStone.Dmg, LifeRegen);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Immunity to On Fire, Burning, Chilled, Cursed Inferno, Ichor," +
-                               " Gravitation, Bleeding, Poisoned and knockback" +
-                               "\nIncreases damage dealt by 3% and life regeneration by 2"); */
         }
         public override void SetDefaults()
         {
@@ -53,8 +53,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.buffImmune[BuffID.Poisoned] = true;
             player.buffImmune[ModContent.BuffType<Frostbite>()] = true;
 
-            player.GetDamage(DamageClass.Generic) += 0.03f;
-            player.lifeRegen += 2;
+            player.GetDamage(DamageClass.Generic) += CrackedDragonStone.Dmg / 100f;
+            player.lifeRegen += LifeRegen;
         }
     }
 }

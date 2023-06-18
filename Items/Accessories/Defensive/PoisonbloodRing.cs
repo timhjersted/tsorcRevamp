@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -7,12 +8,10 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class PoisonbloodRing : ModItem
     {
+        public static int LifeRegen = 1;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("One of the infamous bite rings commissioned by Sir Arstor of Carim." +
-                                "\nDespite the dreadful rumors surrounding its creation, this ring is an unmistakable asset," +
-                                "\ndue to its ability to prevent bleeding and becoming poisoned." +
-                                "\nIncreases life regeneration by 1"); */
         }
 
         public override void SetDefaults()
@@ -40,7 +39,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             player.buffImmune[BuffID.Poisoned] = true;
             player.buffImmune[BuffID.Bleeding] = true;
-            player.lifeRegen += 1;
+            player.lifeRegen += LifeRegen;
         }
 
     }

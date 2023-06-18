@@ -12,15 +12,6 @@ namespace tsorcRevamp.Items
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Ash-colored stone encasing a skull" +
-                                "\nSecret treasure of Arstor, the Earl of Carim" +
-                                "\nAbsorbs curse build-up and breaks curse, restoring your max HP to 500" +
-                                "\nCan not be used while potion sickness is active, and inflicts it" +
-                                "\nHumans are helpless against curses, and can only redirect their influence" +
-                                "\nThe Purging Stone does not dispel curses, but receives them as a surrogate" +
-                                "\nThe stone itself was once a person or some other being" +
-                                "\nWon't increase max HP over the maximum achieved " +
-                                "\nvia Life Crystals or Life Fruit"); */
         }
 
         public override void SetDefaults()

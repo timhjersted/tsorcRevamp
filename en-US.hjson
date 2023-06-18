@@ -5,6 +5,7 @@ Mods: {
 			AggroBoost: Enemies are more likely to target you
 			SetBonus: "Set Bonus: "
 			NoKnockback: Grants immunity to knockback
+			ObsidianShield: "{$CommonItemTooltip.NoKnockback} and fire blocks"
 			ForBotCOnly: " for the [c/6d8827:Bearer of the Curse]"
 			UniqueBarrier: Does not stack with other barrier or shield spells
 			NonConsumable: Item is non-consumable
@@ -31,37 +32,52 @@ Mods: {
 				'''
 			CorruptionCursed: This item has been [c/383838:cursed] by the [c/701070:corruption] and can't be used yet
 			BotCNoHeal: Doesn't heal the [c/6d8827:Bearer of the Curse]
-
-			Generic: {
-				LifeRegen: Increases life regeneration by {0}
-				BadDefense: Decreases defense by {0}
-				DmgMult: Increases damage by {0}% multiplicatively
-				BadDmgMult: Decreases damage by {0}% multiplicatively
-				AtkSpeed: Increases attack speed by {0}%
-				StaminaRegen: Increases stamina regeneration rate by {0}%
-				DRStat: Increases damage reduction by {0}%
-				BadDRStat: Decreases damage reduction by {0}%
-				Duration: "{0} seconds duration"
-				Cooldown: "{0} seconds cooldown"
-				CritDmg: Critical strikes deal {0}% more damage
-				LifeThreshold: "If life falls below {0}%: "
-				Slowness: Slows down movement by {0}%
-				Thorns: Increases thorns by {0}
-				SoulDropsBoost: Increases the amount of souls dropped by fallen creatures by {0}%
-				ConsumableSoulDropsBoost: Increases the chance of consumable soul drops by {0}%
-				MeleeWhipDmg: Increases melee and whip damage by {0}%
-				MoveSpeedMult: Increases your movement speed multiplicatively by {0}%
-			}
+			DSPickUpRange: " increases Dark Soul pick-up range"
+			VanityFunction: Also works in vanity slots
+			DragoonGearCompatible: Compatible with Dragoon Boots and Dragoon Gear.
+			BootsDisableThis: Does not work if Hermes Boots or Spectre Boots are equipped.
+			OnFire: On Fire
+			CursedInferno: Cursed Inferno
+			Ichor: Ichor
+			NoFallDmg: Grants immunity to fall damage
+			LifeRegen: Increases life regeneration by {0}
+			BadDefense: Decreases defense by {0}
+			DmgMult: Increases damage by {0}% multiplicatively
+			BadDmgMult: Decreases damage by {0}% multiplicatively
+			AtkSpeed: Increases attack speed by {0}%
+			StaminaRegen: Increases stamina regeneration rate by {0}%
+			StaminaRecovery: Increases stamina recovery speed by {0}%
+			DRStat: Increases damage reduction by {0}%
+			BadDRStat: Decreases damage reduction by {0}%
+			Duration: "{0} seconds duration"
+			Cooldown: "{0} seconds cooldown"
+			CritDmg: Critical strikes deal {0}% more damage
+			LifeThreshold: "If life falls below {0}%: "
+			Slowness: Slows down movement by {0}%
+			Thorns: Increases thorns by {0}
+			SoulDrops: Increases the amount of souls dropped by fallen creatures by {0}%
+			ConsSoulDrops: Increases the chance of consumable soul drops by {0}%
+			MeleeWhipDmg: Increases melee and whip damage by {0}%
+			MoveSpeedMult: Increases your movement speed multiplicatively by {0}%
+			BadMoveSpeedMult: Decreases your movement speed multiplicatively by {0}%
+			JumpSpeed: Increases jump speed by {0}%
+			NonMeleeBadDmg: Decreases non-melee damage by {0}%
+			Luck: Increases luck by {0}%
+			BadMaxLife: Decreases maximum life by {0}%
 
 			Melee: {
 				ArmorPenPercent: Increases melee armor penetration by {0}%
 				FlatDmg: Increases melee damage by {0} flat
 				Doubled: (doubled for melee)
+				BadDmg: Decreases melee damage dealt by {0}%
+				Only: For melee warriors only
+				DmgCrit: Increases melee damage and critical strike chance by {0}%
 			}
 
 			Ranged: {
 				CritDmg: Increases ranged critical strike damage by {0}%
 				NonCritDmg: Decreases ranged non-critical strike damage by {0}%
+				FlatDmg: Increases ranged damage by {0} flat
 			}
 
 			Magic: {
@@ -719,6 +735,8 @@ Mods: {
 					Use this item to push time foward
 					to the beginning of night or to the beginning of day
 					'''
+				Day: You shift time forward and a new day begins...
+				Night: You shift time forward and a new night begins...
 			}
 
 			DarkmoonCloak: {
@@ -727,7 +745,7 @@ Mods: {
 					'''
 					Inherits the Star Cloaks effect and grants {$CommonItemTooltip.PercentIncreasedDamageCritChance}
 					Magic Imbues no longer need to go on cooldown
-					{$CommonItemTooltip.Generic.LifeThreshold@1}{$CommonItemTooltip.Magic.ManaRegen@2} and grants an additional
+					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.Magic.ManaRegen@2} and grants an additional
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
 					'''
 			}
@@ -746,9 +764,9 @@ Mods: {
 				DisplayName: Band of Cosmic Power
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Generic.LifeRegenBoost}
+					{$CommonItemTooltip.LifeRegen}
 					{$CommonItemTooltip.IncreasesMaxManaBy@1}
-					{$CommonItemTooltip.Magic.ManaRegenBoost@2}
+					{$CommonItemTooltip.Magic.ManaRegen@2}
 					{$CommonItemTooltip.Magic.ManaRegenDelay@3}
 					'''
 			}
@@ -757,9 +775,9 @@ Mods: {
 				DisplayName: Band of Great Cosmic Power
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Generic.LifeRegenBoost}
+					{$CommonItemTooltip.LifeRegen}
 					{$CommonItemTooltip.IncreasesMaxManaBy@1}
-					{$CommonItemTooltip.Magic.ManaRegenBoost@2}
+					{$CommonItemTooltip.Magic.ManaRegen@2}
 					{$CommonItemTooltip.Magic.ManaRegenDelay@3}
 					'''
 			}
@@ -768,9 +786,9 @@ Mods: {
 				DisplayName: Band of Phenomenal Cosmic Power
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Generic.LifeRegenBoost}
+					{$CommonItemTooltip.LifeRegen}
 					{$CommonItemTooltip.IncreasesMaxManaBy@1}
-					{$CommonItemTooltip.Magic.ManaRegenBoost@2}
+					{$CommonItemTooltip.Magic.ManaRegen@2}
 					{$CommonItemTooltip.Magic.ManaRegenDelay@3}
 					'''
 			}
@@ -779,9 +797,9 @@ Mods: {
 				DisplayName: Band Of Starforging
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Generic.LifeRegenBoost}
+					{$CommonItemTooltip.LifeRegen}
 					{$CommonItemTooltip.IncreasesMaxManaByPercent@1}
-					{$CommonItemTooltip.Magic.ManaRegenBoost@2}
+					{$CommonItemTooltip.Magic.ManaRegen@2}
 					{$CommonItemTooltip.Magic.ManaRegenDelay@3}
 					'''
 			}
@@ -811,18 +829,9 @@ Mods: {
 				Tooltip:
 					'''
 					The rare gem called tearstone has the uncanny ability to sense imminent death.
-					This blue tearstone from Catarina boosts the defense of its wearer by 12 and reduces damage taken by 8%
-					 when life falls below 33%. This also reduces melee damage by 200%.
-					'''
-			}
-
-			BlueTearstoneRing2: {
-				DisplayName: Blue Tearstone Ring II
-				Tooltip:
-					'''
-					The rare gem called tearstone has the uncanny ability to sense imminent death.
-					This enchanted blue tearstone from Catarina boosts the defense of its wearer by 25 and reduces damage taken by 9%
-					 when life falls below 33%. This also reduces melee damage by 200%.
+					{$CommonItemTooltip.LifeThreshold}{$CommonItemTooltip.IncreasesDefenseBy@1} and
+					{$CommonItemTooltip.DRStat@2}
+					{$CommonItemTooltip.Melee.BadDmg@3}
 					'''
 			}
 
@@ -831,10 +840,10 @@ Mods: {
 				Tooltip:
 					'''
 					[c/ffbf00:Focuses the user's mana into a protective shield]
-					{$CommonItemTooltip.Generic.DRStatBoost}, but drains {1} mana per hit
+					{$CommonItemTooltip.DRStatBoost}, but drains {1} mana per hit
 					[c/00ffd4:{$CommonItemTooltip.IncreasesMaxManaByPercent@2}]
-					[c/00ffd4:{$CommonItemTooltip.Generic.StaminaRegen@3}]
-					Inhibits both natural and artificial mana regen after being hit({$CommonItemTooltip.Generic.Duration@4})
+					[c/00ffd4:{$CommonItemTooltip.StaminaRegen@3}]
+					Inhibits both natural and artificial mana regen after being hit({$CommonItemTooltip.Duration@4})
 					Reduces ranged, magic and summon damage by {5}% multiplicatively
 					'''
 			}
@@ -847,13 +856,13 @@ Mods: {
 					[c/ffbf00:The Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous in this realm.]
 					[c/00ffd4:Grants immunity to particular dangers caused by the Abyss and foes empowered by it, such as Crippled, Poisoned, On Fire and Oiled]
 					Also grants protection from lava, knockback, Blackened Flames and fire blocks, but increases enemy spawn rates.
-					Increases damage, critical strike chance, movement and attack speed(melee speed bonus doubled) by 7% multiplicatively
+					Increases damage, critical strike chance, movement and attack speed{$CommonItemTooltip.Melee.Doubled} by {0}% multiplicatively
 					'''
 			}
 
 			DarkCloak: {
 				DisplayName: Dark Cloak
-				Tooltip: "[c/ffbf00:Dark Cloak gives +10 defense when life falls below 40%]"
+				Tooltip: "[c/ffbf00:{$CommonItemTooltip.LifeThreshold}{$CommonItemTooltip.IncreasesDefenseBy@1}]"
 			}
 
 			GreyWolfRing: {
@@ -862,12 +871,14 @@ Mods: {
 					'''
 					One of the rings worn by Artorias.
 					Inherits Ring of Clarity immunities
-					Press the Wolf Ring key to increase life regen and damage taken temporarily
+					Press Wolf Ring to massively increase life regen and damage taken temporarily
 					Removes the life regen if hit during the effect and puts it on a long cooldown
-					+12 defense within the Abyss
-					Grants Magma Stone and Acid Venom imbue effect
-					Increases life regeneration by 4 and maximum mana by 100
-					Increases mana regen by 35 and mana regen delay by 1.3
+					{$CommonItemTooltip.IncreasesDefenseBy} within the Abyss
+					Grants Acid Venom imbue effect
+					{$CommonItemTooltip.LifeRegen@1}
+					{$CommonItemTooltip.IncreasesMaxManaBy@2}
+					{$CommonItemTooltip.Magic.ManaRegen@3}
+					{$CommonItemTooltip.Magic.ManaRegenDelay@4}
 					Imbue effect can be toggled by hiding the accessory.
 					'''
 			}
@@ -876,9 +887,9 @@ Mods: {
 				DisplayName: Iron Shield
 				Tooltip:
 					'''
-					Reduces damage taken by 4% 
-					but also reduces movement speed by 10%
-					Can be upgraded with 500 Dark Souls.
+					{$CommonItemTooltip.DRStat}
+					{$CommonItemTooltip.BadMoveSpeedMult@1}
+					Can be upgraded with {2} Dark Souls.
 					'''
 			}
 
@@ -886,8 +897,8 @@ Mods: {
 				DisplayName: Light Cloak
 				Tooltip:
 					'''
-					Light Cloak grants 3 increased life regeneration
-					When life falls below 40%, increases life regeneration by 11 total
+					{$CommonItemTooltip.LifeRegen}
+					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.LifeRegen@2}
 					'''
 			}
 
@@ -896,8 +907,8 @@ Mods: {
 				Tooltip:
 					'''
 					Focuses the user's mana into a protective shield
-					{$CommonItemTooltip.Generic.DRStatBoost}, but drains {1} mana per hit
-					Inhibits both natural and artificial mana regen after being hit({$CommonItemTooltip.Generic.Duration@2})
+					{$CommonItemTooltip.DRStatBoost}, but drains {1} mana per hit
+					Inhibits both natural and artificial mana regen after being hit({$CommonItemTooltip.Duration@2})
 					[c/ffbf00:Useful for those who do not specialize in magic]
 					Reduces ranged, magic and summon damage by {3}% multiplicatively
 					'''
@@ -907,10 +918,10 @@ Mods: {
 				DisplayName: Mythril Glove
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Generic.LifeThreshold}Casts and sustains Wall
+					{$CommonItemTooltip.LifeThreshold}Casts and sustains Wall
 					{$CommonItemTooltip.IncreasesDefenseBy@1}
-					{$CommonItemTooltip.Generic.BadDamageMultiplier@2}
-					{$CommonItemTooltip.Generic.Slowness@3}
+					{$CommonItemTooltip.BadDamageMultiplier@2}
+					{$CommonItemTooltip.Slowness@3}
 					{$CommonItemTooltip.UniqueBarrier}
 					'''
 			}
@@ -932,7 +943,7 @@ Mods: {
 					One of the infamous bite rings commissioned by Sir Arstor of Carim.
 					Despite the dreadful rumors surrounding its creation, this ring is an unmistakable asset,
 					due to its ability to prevent bleeding and becoming poisoned.
-					Increases life regeneration by 1
+					{$CommonItemTooltip.LifeRegen}
 					'''
 			}
 
@@ -949,8 +960,10 @@ Mods: {
 				DisplayName: Ring Of Clarity
 				Tooltip:
 					'''
-					Immunity to On Fire, Burning, Chilled, Cursed Inferno, Ichor, Gravitation, Bleeding, Poisoned and knockback
-					Increases damage dealt by 3% and life regeneration by 2
+					Immunity to {CommonItemTooltip.Onfire}, Burning, Chilled, {$CommonItemTooltip.CursedInferno}, {$CommonItemTooltip.Ichor}, 
+					Gravitation, Bleeding, Poisoned and knockback
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					{$CommonItemTooltip.LifeRegen@1}
 					'''
 			}
 
@@ -969,15 +982,16 @@ Mods: {
 				Tooltip:
 					'''
 					'Everyone will stay away from you'
-					Reduces damage taken by 4% and increases thorns by 100%
-					but also reduces movement speed by 5%
-					Can be upgraded with an Obsidian Shield and 5000 Dark Souls
+					{$CommonItemTooltip.DRStat@1}
+					{$CommonItemTooltip.Thorns}
+					{$CommonItemTooltip.BadMoveSpeedMult@2}
+					Can be upgraded with an Obsidian Shield and {3} Dark Souls
 					'''
 			}
 
 			UndeadTalisman: {
 				DisplayName: Undead Talisman
-				Tooltip: Reduces damage from undead by 15
+				Tooltip: "Reduces damage from undead by {0}"
 			}
 
 			WolfRing: {
@@ -985,17 +999,19 @@ Mods: {
 				Tooltip:
 					'''
 					One of the rings worn by Artorias.
-					Press the Wolf Ring key to increase life regen and damage taken temporarily
+					Press Wolf Ring to massively increase life regen and damage taken temporarily
 					Removes the life regen if hit during the effect and puts it on a long cooldown
-					+12 defense within the Abyss
+					{$CommonItemTooltip.IncreasesDefenseBy} within the Abyss
 					Grants Acid Venom imbue effect
 					Imbue effect can be toggled by hiding the accessory.
 					'''
+				Keybind1: "Press "
+				Keybind2: " to massively increase life regen and damage taken temporarily"
 			}
 
 			ZirconRing: {
 				DisplayName: Zircon Ring
-				Tooltip: Increases maximum life by 20%
+				Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeByPercent}"
 			}
 
 			DragoonCloak: {
@@ -1003,6 +1019,7 @@ Mods: {
 				Tooltip:
 					'''
 					Combines the effects of the Dark, Light and Darkmoon Cloak into one all-powerful protective cloak.
+					Life Threshold for empowered effects is {0}%
 					A large amount of Dark Souls were used to preserve each cloak's potency.
 					'''
 			}
@@ -1012,9 +1029,17 @@ Mods: {
 				Tooltip:
 					'''
 					Changes the phases of the Moon 
-					Can trigger blood moons. 
-					Provides 10 defense when equipped.
+					Can trigger blood moons
 					'''
+				P1: Moon Phase is now Full
+				P2: Moon Phase is now Last Gibbous
+				P3: Moon Phase is now Last Quarter
+				P4: Moon Phase is now Last Crescent
+				P5: Moon Phase is now New
+				P6: Moon Phase is now First Crescent
+				P7: Moon Phase is now First Quarter
+				P8: Moon Phase is now First Gibbous
+				BloodMoon: The Blood moon has risen...
 			}
 
 			BurningAura: {
@@ -1024,7 +1049,7 @@ Mods: {
 					An array of meteorite shards, floating in a slow orbit
 					Passively launches homing fireballs at nearby enemies
 					Fireballs scale in power with each boss you kill
-					Burning foes take 5% more damage from other attacks
+					Burning foes take {0}% more damage from other attacks
 					'''
 			}
 
@@ -1035,20 +1060,20 @@ Mods: {
 					A chunk of meteorite, glowing with heat
 					Rolling summons a barrage of homing fireballs
 					Fireballs scale in power with each boss you kill
-					Burning foes take 5% more damage from other attacks
+					Burning foes take {0}% more damage from other attacks
 					'''
+				Count: "Current count: "
 			}
 
 			ChloranthyRing: {
 				DisplayName: Chloranthy Ring I
 				Tooltip:
 					'''
-					Increases Stamina recovery speed by 15%,
+					{$CommonItemTooltip.StaminaRecovery}
 					[c/ffbf00:Enhances your agility and evasiveness when dodge rolling]
 					Increases Stamina Droplet pickup range
-					This old ring is named for its decorative green
-					blossom, but its luster is long since faded
-					+2 defense
+					This old ring is named for its decorative green blossom, 
+					but its luster is long since faded
 					'''
 			}
 
@@ -1056,12 +1081,11 @@ Mods: {
 				DisplayName: Chloranthy Ring II
 				Tooltip:
 					'''
-					Increases Stamina recovery speed by 25%
+					{$CommonItemTooltip.StaminaRecovery}
 					[c/ffbf00:Further enhances your agility and evasiveness when dodge rolling]
 					[c/ffbf00:Grants the Black Belt's effect & superior mid-air dexterity]
-					This ring is named for its decorative green
-					blossom. Its luster has now been fully restored.
-					+4 defense
+					This ring is named for its decorative green blossom. 
+					Its luster has now been fully restored.
 					'''
 			}
 
@@ -1095,7 +1119,8 @@ Mods: {
 				Tooltip:
 					'''
 					[c/ffbf00:Provides immunity to catching on fire, burning, frostbite and becoming chilled]
-					Also raises damage dealt by 3% and prevents knockback
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					{$CommonItemTooltip.NoKnockback}
 					'''
 			}
 
@@ -1104,42 +1129,39 @@ Mods: {
 				Tooltip:
 					'''
 					Unique shield of a nameless knight
-					[c/ffbf00:Reduces incoming damage by 75% when not attacking or 25% when attacking, but drains 75 stamina per hit]
-					Holding the shield also prevents knockback and protects against fire but reduces stamina regen by 15%
-					Getting hit while low on stamina will stagger you and only reduce damage taken by 5%
+					[c/ffbf00:{$CommonItemTooltip.DrStat} when not attacking or {2}% when attacking, but drains {3} stamina per hit]
+					{$CommonItemTooltip.NoKnockback} and protects against {$CommonItemTooltip.OnFire} but reduces stamina regen by {4}%
+					{$CommonItemTooltip.DRStat@1} if you can't afford the stamina cost
 					'''
 			}
 
 			DragonStone: {
 				DisplayName: Dragon Stone
-				Tooltip:
-					'''
-					Imbues swords with fire, raises damage dealt by 5% and provides immunity to
-					most flying creatures, lava, catching on fire, knockback, and fire blocks.
-					Fire imbue effect can be toggled by hiding the accessory.
-					'''
+				Tooltip: Increases the Potency of most Debuffs on enemies by {0}x
 			}
 
 			DragoonBoots: {
 				DisplayName: Dragoon Boots
 				Tooltip:
 					'''
-					Steel Boots made for Dragoons.
-					No damage from falling.
+					Steel Boots made for Dragoons
+					{$CommonItemTooltip.NoFallDmg}
 					Faster Jump, which also results in a higher jump.
-					Press the Dragoon Boots key to toggle high jump (default Z)
+					Press Dragoon Boots to toggle high jump
 					'''
+				Keybind1: "Press "
+				Keybind2: " to toggle high jump"
 			}
 
 			DragoonGear: {
 				DisplayName: Dragoon Gear
 				Tooltip:
 					'''
-					Gear worn by Dragoons.
-					50% increased melee damage if falling.
-					No damage from falling.
+					Gear worn by Dragoons
+					Increases melee damage by {0}% multiplicatively while falling
+					{$CommonItemTooltip.NoFallDmg}
 					Faster Jump, which also results in a higher jump.
-					Press the Dragoon Boots key to toggle high jump (default Z)
+					Press Dragoon Boots to toggle high jump
 					'''
 			}
 
@@ -1148,7 +1170,7 @@ Mods: {
 				Tooltip:
 					'''
 					Horn inhabited by the spirit of a dragon.
-					50% increased melee damage if falling.
+					Increases melee damage by {0}% multiplicatively while falling
 					'''
 			}
 
@@ -1157,8 +1179,10 @@ Mods: {
 				Tooltip:
 					'''
 					This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth.
-					[c/ffbf00:The ringstone doubles magic damage and boosts magic crit by 50%,]
-					[c/ffbf00:at the cost of 50% max HP.]Your previous max HP is restored when the ring is removed.
+					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicDamage}]
+					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicCrit@1}]
+					[c/ffbf00:{$CommonItemTooltip.LifeRegen@2}]
+					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@3}.] Your previous max HP is restored when the ring is removed.
 					'''
 			}
 
@@ -1166,21 +1190,9 @@ Mods: {
 				DisplayName: Golden Hairpin
 				Tooltip:
 					'''
-					Increases either arrow, bullet or specialist damage by 20% multiplicatively
+					Increases either arrow, bullet or specialist damage by {0}% multiplicatively
 					Ammo type is decided by a timer that picks one of the three regularly
-					Switches every 7 seconds
-					'''
-			}
-
-			HealingDuskCrownRing: {
-				DisplayName: Healing Dusk Crown Ring
-				Tooltip:
-					'''
-					This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth.
-					The ringstone doubles magic damage and boosts magic crit by 50%,
-					but at the cost of 50% max HP. 
-					Your previous max HP is restored when the ring is removed. 
-					Healing enchantment provides +7 Life Regen.
+					Plays a sound to indicate the switch every {1} seconds
 					'''
 			}
 
@@ -1217,7 +1229,7 @@ Mods: {
 					'''
 					The great Ring of Artorias.
 					Once held strength too great for this world to bear.
-					[c/ffbf00:It now grants immunity to Powerful Curse Buildup, Slow and Freezing.]
+					[c/ffbf00:It now grants immunity to Powerful Curse Buildup, Blackout and Freezing.]
 					'''
 			}
 
@@ -1227,7 +1239,7 @@ Mods: {
 					'''
 					A great ring of power gifted to men.
 					Casts darkness and battle potion effects on wearer.
-					+25% crit chance. 
+					{$CommonItemTooltip.PercentIncreasedCritChance}
 					'''
 			}
 
@@ -1240,7 +1252,7 @@ Mods: {
 					Walking on air follows hovering controls
 					Press hotkey to toggle speed levels and featherfall
 					Provide immunity to all fire and lava damage, as well as perfect sight and hunting abilities.
-					Also provide immunity to knockback
+					{$CommonItemTooltip.NoKnockback}
 					'''
 			}
 
@@ -1249,7 +1261,7 @@ Mods: {
 				Tooltip:
 					'''
 					Lights up the cursor of you and your allies when equipped
-					Also works in vanity slots
+					{$CommonItemTooltipVanityFunction}
 					'''
 			}
 
@@ -1258,7 +1270,7 @@ Mods: {
 				Tooltip:
 					'''
 					Accessory that emits blue light.
-					Also works in vanity slots
+					{$CommonItemTooltipVanityFunction}
 					'''
 			}
 
@@ -1266,8 +1278,8 @@ Mods: {
 				DisplayName: Hero's Crest
 				Tooltip:
 					'''
-					Damage, crit chance, life, and defense
-					increased by 6% multiplicatively. Luck increased by 0.6
+					Increases damage dealt, critical strike chance, maximum life, 
+					and defense by {0}% multiplicatively. {$CommonItemTooltip.Luck@1}
 					"Proof of the hero's accomplishments"
 					'''
 			}
@@ -1318,13 +1330,32 @@ Mods: {
 					'''
 			}
 
+			BerserkerEmblem: {
+				DisplayName: Berserker Emblem
+				Tooltip: "{$CommonItemTooltip.Melee.DmgCrit}"
+			}
+
+			GazingShield: {
+				DisplayName: Gazing Shield
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Melee.Only}
+					{$CommonItemTooltip.ObsidianShield}
+					{$CommonItemTooltip.DRStat}
+					{$CommonItemTooltip.NonMeleeBadDmg@1}
+					{$CommonItemTooltip.BadMoveSpeedMult@2}
+					'''
+			}
+
 			BeholderShield: {
 				DisplayName: Beholder Shield
 				Tooltip:
 					'''
-					For melee warriors only
-					Grants immunity to knockback and fire blocks
-					Reduces movement speed by 20% and increased mana cost by 7%
+					{$CommonItemTooltip.Melee.Only}
+					{$CommonItemTooltip.ObsidianShield}
+					{$CommonItemTooltip.DRStat}
+					{$CommonItemTooltip.NonMeleeBadDmg@1}
+					{$CommonItemTooltip.BadMoveSpeedMult@2}
 					'''
 			}
 
@@ -1332,15 +1363,12 @@ Mods: {
 				DisplayName: Beholder Shield II
 				Tooltip:
 					'''
-					For melee warriors only
-					Grants immunity to knockback and fire blocks
-					Reduces movement speed by 20% and increased mana cost by 7%
+					{$CommonItemTooltip.Melee.Only}
+					{$CommonItemTooltip.ObsidianShield} plus {$CommonItemTooltip.OnFire}
+					{$CommonItemTooltip.DRStat}
+					{$CommonItemTooltip.NonMeleeBadDmg@1}
+					{$CommonItemTooltip.BadMoveSpeedMult@2}
 					'''
-			}
-
-			BerserkerEmblem: {
-				DisplayName: Berserker Emblem
-				Tooltip: 11% increased melee damage and crit
 			}
 
 			EnchantedBeholderShield2: {
@@ -1348,19 +1376,10 @@ Mods: {
 				Tooltip:
 					'''
 					A legendary shield for melee warriors only
-					Grants immunity to knockback and nearly all debuffs, plus 12% damage reduction
-					Reduces Ranged, Magic and Summoner Damage by 300%. +70% mana cost
-					Reduces movement speed by 20%
-					'''
-			}
-
-			GazingShield: {
-				DisplayName: Gazing Shield
-				Tooltip:
-					'''
-					For melee warriors only
-					Grants immunity to knockback and fire blocks
-					Reduces movement speed by 20% and increased mana cost by 7%
+					{$CommonItemTooltip.ObsidianShield} plus {$CommonItemTooltip.OnFire}, {$CommonItemTooltip.CursedInferno} and {$CommonItemTooltip.Ichor}
+					{$CommonItemTooltip.DRStat}
+					{$CommonItemTooltip.NonMeleeBadDmg@1}
+					{$CommonItemTooltip.BadMoveSpeedMult@2}
 					'''
 			}
 
@@ -1377,7 +1396,7 @@ Mods: {
 				DisplayName: Boots Of Haste
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Generic.MoveSpeedMult}
+					{$CommonItemTooltip.MoveSpeedMult}
 					Inherits Hermes Boots effect
 					'''
 			}
@@ -1387,7 +1406,8 @@ Mods: {
 				Tooltip:
 					'''
 					Allows the holder to double jump
-					Increases jump height + 40% jump speed
+					Increases jump height
+					{$CommonItemTooltip.JumpSpeed}
 					'''
 			}
 
@@ -1396,7 +1416,8 @@ Mods: {
 				Tooltip:
 					'''
 					Allows the holder to quadruple jump
-					Increases jump height + 120% jump speed
+					Increases jump height
+					{$CommonItemTooltip.JumpSpeed}
 					'''
 			}
 
@@ -1405,7 +1426,8 @@ Mods: {
 				Tooltip:
 					'''
 					Allows the holder to double jump
-					Increases jump height + 50% jump speed
+					Increases jump height
+					{$CommonItemTooltip.JumpSpeed}
 					Grants immunity to fall damage
 					'''
 			}
@@ -1415,7 +1437,8 @@ Mods: {
 				Tooltip:
 					'''
 					Allows the holder to double jump
-					Increases jump height + 60% jump speed
+					Increases jump height
+					{$CommonItemTooltip.JumpSpeed}
 					'''
 			}
 
@@ -1424,7 +1447,8 @@ Mods: {
 				Tooltip:
 					'''
 					Allows the holder to double jump
-					Increases jump height + 80% jump speed
+					Increases jump height
+					{$CommonItemTooltip.JumpSpeed}
 					'''
 			}
 
@@ -1432,7 +1456,7 @@ Mods: {
 				DisplayName: Speed Talisman
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Generic.AtkSpeed}{$CommonItemTooltip.Melee.Doubled}
+					{$CommonItemTooltip.AtkSpeed}{$CommonItemTooltip.Melee.Doubled}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
 					{$CommonItemTooltip.MeleeWhipAutoswing}
 					'''
@@ -1443,9 +1467,9 @@ Mods: {
 				Tooltip:
 					'''
 					Supersonic movement speed, rocket boots effect, knockback protection, and water-walking if moving fast enough.
-					Does not work if Hermes Boots or Spectre Boots are equipped.
 					Speed boost is multiplied by movement speed boosts.
 					Can be upgraded eventually with Angel Wings & 20000 Dark Souls.
+					{$CommonItemTooltip.BootsDisableThis}
 					'''
 			}
 
@@ -1453,11 +1477,10 @@ Mods: {
 				DisplayName: Supersonic Wings
 				Tooltip:
 					'''
-					+20% supersonic movement speed, flight, rocket boots effect, 
-					fire-walk skill, knockback protection, and water-walking if moving fast enough.
-					Does not work if Hermes Boots or Spectre Boots are equipped.
-					Speed boost is multiplied by movement speed boosts.
-					Compatible with Dragoon Boots and Dragoon Gear.
+					Moderate supersonic movement speed, flight, fire-walk skill,
+					plus all the previous abilities of Supersonic Boots.
+					{$CommonItemTooltip.DragoonGearCompatible}
+					{$CommonItemTooltip.BootsDisableThis}
 					'''
 			}
 
@@ -1465,10 +1488,10 @@ Mods: {
 				DisplayName: Supersonic Wings II
 				Tooltip:
 					'''
-					+60% supersonic movement speed and virtually limitless flight
-					Plus all the previous abilities of Supersonic Wings and Improved Bundle of Balloons
-					Does not work if Hermes Boots or Spectre Boots are equipped.
-					Compatible with Dragoon Boots and Dragoon Gear.
+					Awesome supersonic movement speed, virtually limitless flight,
+					plus all the previous abilities of Supersonic Wings and Improved Bundle of Balloons
+					{$CommonItemTooltip.DragoonGearCompatible}
+					{$CommonItemTooltip.BootsDisableThis}
 					'''
 			}
 
@@ -1483,7 +1506,11 @@ Mods: {
 
 			ArchmenEmblem: {
 				DisplayName: Archmen Emblem
-				Tooltip: 15% increased ranged damage + 5 flat and increased arrow speed
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedRangedDamage}
+					{$CommonItemTooltip.Ranged.FlatDmg@1} and increases arrow speed
+					'''
 			}
 
 			BoneRing: {
@@ -1499,10 +1526,10 @@ Mods: {
 				DisplayName: Soul Reaper
 				Tooltip:
 					'''
-					Increases Dark Soul pick-up range and increases
-					consumable soul drop chance by 25%
+					Moderately{$CommonItemTooltip.DSPickUpRange}
+					{$CommonItemTooltip.ConsSoulDrops}
 					Gives off a faint glow
-					Can be upgraded with 7000 Dark Souls
+					Can be upgraded with {1} Dark Souls
 					'''
 			}
 
@@ -1510,8 +1537,8 @@ Mods: {
 				DisplayName: Soul Reaper II
 				Tooltip:
 					'''
-					Greatly increases Dark Soul pick-up range and
-					increases consumable soul drop chance by 50%
+					Greatly{$CommonItemTooltip.DSPickUpRange}
+					{$CommonItemTooltip.ConsSoulDrops}
 					Lashes out with a sickle in retaliation
 					Gives off an eerie aura
 					'''
@@ -3725,7 +3752,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.IncreasesDefenseBy}
-					{$CommonItemTooltip.Generic.DRStatBoost@1}
+					{$CommonItemTooltip.DRStatBoost@1}
 					Does not stack with Demon Drug, Strength, or Battlefront Potions.
 					'''
 			}
@@ -3735,15 +3762,15 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance}
-					{$CommonItemTooltip.Generic.Thorns@1} and grants the Battle potion effect
-					{$CommonItemTooltip.Generic.DRStatPenalty@2}
+					{$CommonItemTooltip.Thorns@1} and grants the Battle potion effect
+					{$CommonItemTooltip.DRStatPenalty@2}
 					Does not stack with Demon Drug, Armor Drug, or Strength Potions.
 					'''
 			}
 
 			BoostPotion: {
 				DisplayName: Boost Potion
-				Tooltip: "{$CommonItemTooltip.Generic.MoveSpeedMultiplier}"
+				Tooltip: "{$CommonItemTooltip.MoveSpeedMultiplier}"
 			}
 
 			ChickenGlowingMushroomSkewer: {
@@ -3789,8 +3816,8 @@ Mods: {
 				DisplayName: Demon Drug
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Generic.DmgMultiplier}
-					{$CommonItemTooltip.Generic.BadDefense@1}
+					{$CommonItemTooltip.DmgMultiplier}
+					{$CommonItemTooltip.BadDefense@1}
 					Does not stack with Armor Drug, Strength, or Battlefront Potions.
 					'''
 			}
@@ -3814,7 +3841,7 @@ Mods: {
 
 			GreenBlossom: {
 				DisplayName: Green Blossom
-				Tooltip: "{$CommonItemTooltip.Generic.StaminaRegen}"
+				Tooltip: "{$CommonItemTooltip.StaminaRegen}"
 			}
 
 			HealingElixir: {
@@ -6196,18 +6223,18 @@ Mods: {
 				DisplayName: Steel Tempest
 				Tooltip:
 					'''
-					<right> to thrust
-					Gain a stack of [c/2f4f4f:Steel Tempest] upon thrusting an enemy
-					Upon reaching 2 stacks, the next right click will release a Tornado
+					<right> to [c/708090:thrust]
+					Gain a stack of [c/2f4f4f:Steel Tempest] upon [c/708090:thrusting] an enemy
+					Upon reaching 2 stacks, the next <right> will release a [c/708090:tornado]
 					[c/708090:'Death is like the wind, always by my side']
 					'''
 				Details:
 					'''
-					Each Thrust can only grant 1 [c/2f4f4f:Steel Tempest] stack at maximum
-					Releasing a Tornado consumes all [c/2f4f4f:Steel Tempest] stacks
-					Melee Speed reduces Thrust Cooldown (capped at 1.33 seconds)
-					Current Thrust Cooldown: {0} seconds
-					Thrusts and Tornadoes deal double damage
+					Each [c/708090:thrust] can only grant 1 [c/2f4f4f:Steel Tempest] stack at maximum
+					Releasing a [c/708090:Tornado] consumes all [c/2f4f4f:Steel Tempest] stacks
+					Melee Speed reduces [c/708090:thrust cooldown] (capped at 1.33 seconds)
+					Current [c/708090:thrust Cooldown]: {0} seconds
+					[c/708090:Thrusts] and [c/708090:tornadoes] deal double damage
 					'''
 			}
 
@@ -6215,27 +6242,27 @@ Mods: {
 				DisplayName: Plasma Whirlwind
 				Tooltip:
 					'''
-					<right> to Thrust
-					Gain a stack of [c/2f4f4f:Steel Tempest] upon thrusting an enemy
-					Upon reaching 2 stacks, the next right click will release a Plasma Whirlwind
+					<right> to [c/708090:thrust]
+					Gain a stack of [c/2f4f4f:Steel Tempest] upon [c/708090:thrusting] an enemy
+					Upon reaching 2 stacks, the next <right> will release a [c/708090:tornado]
 					{$Items.PlasmaWhirlwind.Keybind1}Special Ability{$Items.PlasmaWhirlwind.Keybind2}
-					<right>ing while dashing will release a Spinning Slash
+					<right>ing while [c/00ffff:dashing] will release a [c/00ffff:Spinning Slash]
 					[c/00ffff:'A companion on this Odyssey']
 					'''
 				Keybind1: "Hover your mouse over an enemy and press "
-				Keybind2: " to dash through the enemy"
+				Keybind2: " to [c/00ffff:dash through] the enemy"
 				Details:
 					'''
-					Dash Cooldown is applied to the enemy({3} seconds)
-					Hitting enemies with Spinning Slash will max out [c/2f4f4f:Steel Tempest]
-					Spinning Slash deals quadruple damage
-					Spinning Slash can release a stationary Plasma Whirlwind
-					Spinning Slash and Dash deal bonus {1}% max health damage on-hit, up to {2}
-					Each Thrust can only grant 1 [c/2f4f4f:Steel Tempest] stack at maximum
-					Releasing a Plasma Whirlwind consumes all [c/2f4f4f:Steel Tempest] stacks
-					Melee Speed reduces Thrust Cooldown (capped at 1.33 seconds)
-					Current Thrust Cooldown: {0} seconds
-					Thrusts and Tornadoes deal double damage
+					[c/00ffff:Dash cooldown] is applied to the enemy({3} seconds)
+					Hitting enemies with [c/00ffff:Spinning Slash] will max out [c/2f4f4f:Steel Tempest]
+					[c/00ffff:Spinning Slash] deals quadruple damage
+					[c/00ffff:Spinning Slash] can release a stationary [c/708090:tornado]
+					[c/00ffff:Spinning Slash] and [c/00ffff:dash] deal bonus {1}% max health damage on-hit, up to {2}
+					Each [c/708090:thrust] can only grant 1 [c/2f4f4f:Steel Tempest] stack at maximum
+					Releasing a [c/708090:tornado] consumes all [c/2f4f4f:Steel Tempest] stacks
+					Melee Speed reduces [c/708090:thrust cooldown] (capped at 1.33 seconds)
+					Current [c/708090:thrust cooldown]: {0} seconds
+					[c/708090:Thrusts] and [c/708090:tornadoes] deal double damage
 					'''
 			}
 
@@ -6243,29 +6270,29 @@ Mods: {
 				DisplayName: Nightbringer
 				Tooltip:
 					'''
-					<right> to Thrust
-					Gain a stack of [c/2f4f4f:Steel Tempest] upon thrusting an enemy
-					Upon reaching 2 stacks, the next right click will release a Chaotic Tempest
+					<right> to [c/2f4f4f:thrust]
+					Gain a stack of [c/2f4f4f:Steel Tempest] upon [c/2f4f4f:thrusting] an enemy
+					Upon reaching 2 stacks, the next <right> will release a [c/2f4f4f:tornado]
 					{$Items.PlasmaWhirlwind.Keybind1}Special Ability{$Items.PlasmaWhirlwind.Keybind2}
-					<right>ing while dashing will release a Spinning Slash
+					<right>ing while [c/00ffff:dashing] will release a [c/00ffff:Spinning Slash]
 					{$Items.Nightbringer.Keybind1}Special Ability{$Items.Nightbringer.Keybind2}
 					[c/ff4500:'Harmony is a lie told to force Obedience']
 					'''
 				Keybind1: "Press Shift + "
-				Keybind2: " to create a stationary Firewall"
+				Keybind2: " to create a stationary [c/ff4500:Firewall]"
 				Details:
 					'''
-					Firewall blocks most enemy projectiles for {4} seconds({$CommonItemTooltip.Generic.Cooldown@5})
-					Dash Cooldown is applied to the enemy({3} seconds)
-					Hitting enemies with Spinning Slash will max out [c/2f4f4f:Steel Tempest]
-					Spinning Slash deals quadruple damage
-					Spinning Slash can release a stationary Plasma Whirlwind
-					Spinning Slash and Dash deal bonus {1}% max health damage on-hit, up to {2}
-					Each Thrust can only grant 1 [c/2f4f4f:Steel Tempest] stack at maximum
-					Releasing a Plasma Whirlwind consumes all [c/2f4f4f:Steel Tempest] stacks
-					Melee Speed reduces Thrust Cooldown (capped at 1.33 seconds)
-					Current Thrust Cooldown: {0} seconds
-					Thrusts and Tornadoes deal double damage
+					[c/ff4500:Firewall] blocks most enemy projectiles for {4} seconds({$CommonItemTooltip.Cooldown@5})
+					[c/00ffff:Dash cooldown] is applied to the enemy({3} seconds)
+					Hitting enemies with [c/00ffff:Spinning Slash] will max out [c/2f4f4f:Steel Tempest]
+					[c/00ffff:Spinning Slash] deals quadruple damage
+					[c/00ffff:Spinning Slash] can release a stationary [c/708090:tornado]
+					[c/00ffff:Spinning Slash] and [c/00ffff:dash] deal bonus {1}% max health damage on-hit, up to {2}
+					Each [c/708090:thrust] can only grant 1 [c/2f4f4f:Steel Tempest] stack at maximum
+					Releasing a [c/708090:tornado] consumes all [c/2f4f4f:Steel Tempest] stacks
+					Melee Speed reduces [c/708090:thrust cooldown] (capped at 1.33 seconds)
+					Current [c/708090:thrust cooldown]: {0} seconds
+					[c/708090:Thrusts] and [c/708090:tornadoes] deal double damage
 					'''
 			}
 
@@ -6488,9 +6515,9 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.Generic.LifeRegen@1}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeRegen@1}
 					{$CommonItemTooltip.NoKnockback}
-					{$CommonItemTooltip.Generic.LifeThreshold@2}{$CommonItemTooltip.Generic.LifeRegen@3}
+					{$CommonItemTooltip.LifeThreshold@2}{$CommonItemTooltip.LifeRegen@3}
 					'''
 				SetBonus:
 					'''
@@ -6570,7 +6597,7 @@ Mods: {
 
 			Boost: {
 				DisplayName: Boost
-				Description: "{$CommonItemTooltip.Generic.MoveSpeedMultiplier}"
+				Description: "{$CommonItemTooltip.MoveSpeedMultiplier}"
 			}
 
 			BossZenBuff: {
@@ -6746,8 +6773,8 @@ Mods: {
 				Description:
 					'''
 					{$CommonItemTooltip.IncreasesDefenseBy}
-					{$CommonItemTooltip.Generic.BadDmgMultiplier@1}
-					{$CommonItemTooltip.Generic.Slowness@2}
+					{$CommonItemTooltip.BadDmgMultiplier@1}
+					{$CommonItemTooltip.Slowness@2}
 					'''
 			}
 
@@ -6758,7 +6785,7 @@ Mods: {
 
 			GreenBlossom: {
 				DisplayName: Green Blossom
-				Description: "{$CommonItemTooltip.Generic.StaminaRegen}"
+				Description: "{$CommonItemTooltip.StaminaRegen}"
 			}
 
 			HealingElixirCooldown: {
@@ -6920,8 +6947,8 @@ Mods: {
 				Description: You cannot thrust until this runs out
 			}
 
-			NightbringerWindwallCooldown: {
-				DisplayName: Windwall Cooldown
+			NightbringerFirewallCooldown: {
+				DisplayName: Nightbringer Firewall Cooldown
 				Description: You cannot windwall until this runs out
 			}
 
@@ -7281,11 +7308,6 @@ Mods: {
 			Heatstroke: {
 				DisplayName: Heatstroke
 				Description: Mods.tsorcRevamp.Buffs.Heatstroke.Description
-			}
-
-			NightbringerFirewallCooldown: {
-				DisplayName: Nightbringer Firewall Cooldown
-				Description: Mods.tsorcRevamp.Buffs.NightbringerFirewallCooldown.Description
 			}
 		}
 

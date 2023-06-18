@@ -10,9 +10,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("One of the infamous bite rings commissioned by Sir Arstor of Carim" +
-                                "\nDespite the dreadful rumors surrounding its creation, this ring" +
-                                "\nis an unmistakable asset, due to its ability to prevent bleeding."); */
         }
 
         public override void SetDefaults()

@@ -9,8 +9,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Ring Of The Blue Eye");
-            // Tooltip.SetDefault("Bones fly out in retaliation when player is hurt");
         }
         public override void SetDefaults()
         {

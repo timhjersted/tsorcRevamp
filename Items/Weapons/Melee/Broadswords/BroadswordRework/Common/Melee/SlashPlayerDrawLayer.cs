@@ -4,9 +4,11 @@ using ReLogic.Content;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.TextureColors;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities;
+using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 
 namespace  tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
 
@@ -104,8 +106,16 @@ public class SlashPlayerDrawLayer : PlayerDrawLayer
 
 		var itemTextureAsset = TextureAssets.Item[item.type];
 		var color = Lighting.GetColor(position.ToTileCoordinates()).MultiplyRGB(TextureColorSystem.GetAverageColor(itemTextureAsset)) * alphaGradient.GetValue(useProgress);
+		if (item.type == ModContent.ItemType<SteelTempest>())
+		{
+			color = Lighting.GetColor(position.ToTileCoordinates()).MultiplyRGB(Color.WhiteSmoke) * alphaGradient.GetValue(useProgress);
+        }
+        if (item.type == ModContent.ItemType<PlasmaWhirlwind>())
+        {
+            color = Lighting.GetColor(position.ToTileCoordinates()).MultiplyRGB(Color.Aqua) * alphaGradient.GetValue(useProgress);
+        }
 
-		// Drawing
-		drawInfo.DrawDataCache.Add(new DrawData(tex, position - Main.screenPosition, sourceRectangle, color, rotation, origin, scale, effect, 0));
+        // Drawing
+        drawInfo.DrawDataCache.Add(new DrawData(tex, position - Main.screenPosition, sourceRectangle, color, rotation, origin, scale, effect, 0));
 	}
 }
