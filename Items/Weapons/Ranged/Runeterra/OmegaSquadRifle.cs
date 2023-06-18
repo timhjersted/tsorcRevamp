@@ -6,12 +6,15 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Items.Materials;
-using System.CodeDom;
+using Terraria.Audio;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
     public class OmegaSquadRifle : ModItem
     {
+        public int ShootSoundStyle = 0;
+        public float ShootSoundVolume = 0.5f;
         public const int BaseDamage = 220;
         public const int ShroomCooldown = 5;
         public const int ShroomBonusCritChance = 100;
@@ -64,17 +67,45 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                 type = ModContent.ProjectileType<RadioactiveBlindingLaser>();
             }
         }
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            if (player.altFunctionUse != 2)
+            {
+                if (ShootSoundStyle == 0)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/Shot1") with { Volume = ShootSoundVolume }, player.Center);
+                    ShootSoundStyle += 1;
+                }
+                else
+                if (ShootSoundStyle == 1)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/Shot2") with { Volume = ShootSoundVolume }, player.Center);
+                    ShootSoundStyle += 1;
+                }
+                else
+                if (ShootSoundStyle == 2)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/Shot3") with { Volume = ShootSoundVolume }, player.Center);
+                    ShootSoundStyle = 0;
+                }
+            }
+            else
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/BlindingLaserShot") with { Volume = ShootSoundVolume * 2 }, player.Center);
+            }
+            return true;
+        }
         public override void HoldItem(Player player)
         {
-            if (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
+            if (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldownOmega>()) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2Omega>()))
             {
-                player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
+                player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1); //ScoutsBoost buff itself does nto play any sounds in it's code so I didn't need to make an Omega version
             }
             if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoost>())) //Scouts Boots 2 blocks Scouts Boost 1 and its cooldown so this won't occur then
             {
                 player.velocity *= 0.92f;
             }
-            else if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()))
+            else if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoostCooldownOmega>()))
             {
                 player.velocity *= 0.01f;
             }
@@ -109,7 +140,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ModContent.ItemType<AlienRifle>());
+            recipe.AddIngredient(ModContent.ItemType<AlienGun>());
             recipe.AddIngredient(ItemID.LunarBar, 12);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);

@@ -960,7 +960,7 @@ Mods: {
 				DisplayName: Ring Of Clarity
 				Tooltip:
 					'''
-					Immunity to {CommonItemTooltip.Onfire}, Burning, Chilled, {$CommonItemTooltip.CursedInferno}, {$CommonItemTooltip.Ichor}, 
+					Immunity to {$CommonItemTooltip.Onfire}, Burning, Chilled, {$CommonItemTooltip.CursedInferno}, {$CommonItemTooltip.Ichor}, 
 					Gravitation, Bleeding, Poisoned and knockback
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.LifeRegen@1}
@@ -991,7 +991,7 @@ Mods: {
 
 			UndeadTalisman: {
 				DisplayName: Undead Talisman
-				Tooltip: "Reduces damage from undead by {0}"
+				Tooltip: Reduces damage from undead by {0}
 			}
 
 			WolfRing: {
@@ -6310,8 +6310,8 @@ Mods: {
 					'''
 			}
 
-			AlienRifle: {
-				DisplayName: Alien Rifle
+			AlienGun: {
+				DisplayName: Alien Gun
 				Tooltip:
 					'''
 					Converts seeds into Alien Lasers and allows you to gather Seeds from grass
@@ -7019,6 +7019,21 @@ Mods: {
 
 			ScoutsBoostCooldown: {
 				DisplayName: Scouts Boost Cooldown
+				Description: Movement bonus nullified
+			}
+
+			ScoutsBoost2Omega: {
+				DisplayName: Scouts Boost2 Omega
+				Description: Multiplies movement speed by 40% and stamina regen by 20%
+			}
+
+			ScoutsBoost2CooldownOmega: {
+				DisplayName: Scouts Boost2 Cooldown Omega
+				Description: You cannot trigger the movement speed bonus again until this runs out
+			}
+
+			ScoutsBoostCooldownOmega: {
+				DisplayName: Scouts Boost Cooldown Omega
 				Description: Movement bonus nullified
 			}
 

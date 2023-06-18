@@ -7,6 +7,7 @@ using tsorcRevamp.Buffs.Runeterra.Ranged;
 using System;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
+using Terraria.Audio;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
@@ -38,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             var player = Main.player[Projectile.owner];
-            player.AddBuff(ModContent.BuffType<RadioactiveBlindingLaserCooldown>(), AlienRifle.BlindingLaserCooldown * 60);
+            player.AddBuff(ModContent.BuffType<RadioactiveBlindingLaserCooldown>(), AlienGun.BlindingLaserCooldown * 60);
 			Projectile.CritChance += 100;
         }
 
@@ -48,14 +49,15 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/BlindingLaserHit") with { Volume = 1f }, target.Center);
             target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[Projectile.owner];
             target.AddBuff(ModContent.BuffType<IrradiatedDebuff>(), 2 * 60);
             target.AddBuff(BuffID.Confused, 2 * 60);
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            modifiers.SourceDamage *= AlienRifle.BlindingLaserDmgMult;
-            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * AlienRifle.BlindingLaserPercentHPDmg, AlienRifle.BlindingLaserHPDmgCap);
+            modifiers.SourceDamage *= AlienGun.BlindingLaserDmgMult;
+            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * AlienGun.BlindingLaserPercentHPDmg, AlienGun.BlindingLaserHPDmgCap);
         }
     }
 }

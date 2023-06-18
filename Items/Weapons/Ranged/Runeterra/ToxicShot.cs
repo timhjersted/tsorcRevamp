@@ -6,11 +6,15 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Items.Materials;
+using Terraria.DataStructures;
+using Terraria.Audio;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
     public class ToxicShot : ModItem
     {
+        public int ShootSoundStyle = 0;
+        public float ShootSoundVolume = 0.5f;
         public const int BaseDamage = 20;
         public const int ScoutsBoostOnHitCooldown = 3;
         public const int ScoutsBoost2Duration = 5;
@@ -43,6 +47,27 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public override Vector2? HoldoutOffset()
         {
             return new Vector2(+7f, -9f);
+        }
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            if (ShootSoundStyle == 0)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot1") with { Volume = ShootSoundVolume }, player.Center);
+                ShootSoundStyle += 1;
+            }
+            else
+            if (ShootSoundStyle == 1)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot2") with { Volume = ShootSoundVolume }, player.Center);
+                ShootSoundStyle += 1;
+            }
+            else
+            if (ShootSoundStyle == 2)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot3") with { Volume = ShootSoundVolume }, player.Center);
+                ShootSoundStyle = 0;
+            }
+            return true;
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {

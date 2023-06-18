@@ -49,7 +49,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.manaRegenDelayBonus += BandOfPhenomenalCosmicPower.ManaRegenDelay / 100f;
 
             //Ring of Clarity inheritance
-            player.GetDamage(DamageClass.Generic) += RingOfClarity.Dmg / 100f;
+            player.GetDamage(DamageClass.Generic) += CrackedDragonStone.Dmg / 100f;
             player.noKnockback = true;
             player.fireWalk = true;
             player.buffImmune[BuffID.OnFire] = true;

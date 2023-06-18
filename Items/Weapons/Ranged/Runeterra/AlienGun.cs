@@ -6,12 +6,15 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Items.Materials;
-using System.CodeDom;
+using Terraria.Audio;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
-    public class AlienRifle : ModItem
+    public class AlienGun : ModItem
     {
+        public int ShootSoundStyle = 0;
+        public float ShootSoundVolume = 1f;
         public const int BaseDamage = 60;
         public const int BlindingLaserCooldown = 5;
         public const float BlindingLaserDmgMult = 3;
@@ -76,6 +79,33 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             {
                 player.altFunctionUse = 1;
             }
+        }
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            if (player.altFunctionUse != 2)
+            {
+                if (ShootSoundStyle == 0)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot1") with { Volume = ShootSoundVolume }, player.Center);
+                    ShootSoundStyle += 1;
+                }
+                else
+                if (ShootSoundStyle == 1)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot2") with { Volume = ShootSoundVolume }, player.Center);
+                    ShootSoundStyle += 1;
+                }
+                else
+                if (ShootSoundStyle == 2)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot3") with { Volume = ShootSoundVolume }, player.Center);
+                    ShootSoundStyle = 0;
+                }
+            } else
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/BlindingLaserShot") with { Volume = ShootSoundVolume * 2 }, player.Center);
+            }
+            return true;
         }
         public override void HoldItem(Player player)
         {

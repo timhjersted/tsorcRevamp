@@ -216,7 +216,7 @@ namespace tsorcRevamp
 
         private static bool On_WorldGen_KillTile_ShouldDropSeeds(On_WorldGen.orig_KillTile_ShouldDropSeeds orig, int x, int y)
         {
-            if (Main.rand.NextBool(2) && (Main.LocalPlayer.HasItem(ModContent.ItemType<ToxicShot>()) || Main.LocalPlayer.HasItem(ModContent.ItemType<AlienRifle>()) || Main.LocalPlayer.HasItem(ModContent.ItemType<OmegaSquadRifle>())))
+            if (Main.rand.NextBool(2) && (Main.LocalPlayer.HasItem(ModContent.ItemType<ToxicShot>()) || Main.LocalPlayer.HasItem(ModContent.ItemType<AlienGun>()) || Main.LocalPlayer.HasItem(ModContent.ItemType<OmegaSquadRifle>())))
             {
                 return true;
             }

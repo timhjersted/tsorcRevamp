@@ -20,6 +20,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public float SwingSoundVolume = 0.15f;
         public const int CritChance = 6;
         public int AttackSpeedScalingDuration = 240;
+        public override void SetStaticDefaults()
+        {
+        }
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Green;

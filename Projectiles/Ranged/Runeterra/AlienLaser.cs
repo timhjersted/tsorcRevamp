@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.NPCs;
+using Terraria.Audio;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
@@ -31,13 +32,20 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 
             AIType = ProjectileID.Bat;
 		}
-
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            if (hit.Crit)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/ShotCrit") with { Volume = 0.5f }, target.Center);
+            }
+            else
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/ShotHit") with { Volume = 0.5f }, target.Center);
+            }
             target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[Projectile.owner];
             target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 2 * 60);
         }

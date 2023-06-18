@@ -1289,7 +1289,7 @@ namespace tsorcRevamp.NPCs
 
             if (Electrified)
             {
-                int DoTPerS = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)AlienRifle.BaseDamage) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)AlienRifle.BaseDamage);
+                int DoTPerS = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)AlienGun.BaseDamage) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)AlienGun.BaseDamage);
                 npc.lifeRegen -= DoTPerS * 2;
                 damage += DoTPerS;
             }

@@ -334,9 +334,13 @@ namespace tsorcRevamp
                 Player.ClearBuff(ModContent.BuffType<Rejuvenation>());
                 Player.AddBuff(ModContent.BuffType<RejuvenationCooldown>(), 40 * 60);
             }
-            if (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienRifle>() | Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>() && !Main.player[Main.myPlayer].HasBuff(ModContent.BuffType<ScoutsBoost2>()))
+            if (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienGun>() && !Main.player[Main.myPlayer].HasBuff(ModContent.BuffType<ScoutsBoost2>()))
             {
                 Player.AddBuff(ModContent.BuffType<ScoutsBoostCooldown>(), ToxicShot.ScoutsBoostOnHitCooldown * 60);
+            }
+            if (Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>() && !Main.player[Main.myPlayer].HasBuff(ModContent.BuffType<ScoutsBoost2Omega>()))
+            {
+                Player.AddBuff(ModContent.BuffType<ScoutsBoostCooldownOmega>(), ToxicShot.ScoutsBoostOnHitCooldown * 60);
             }
         }
 
@@ -1019,10 +1023,15 @@ namespace tsorcRevamp
                     }
                     SpiritRushCharges--;
                 }
-                if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2Cooldown>()) && (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienRifle>() | Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>()))
+                if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2Cooldown>()) && (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienGun>()))
                 {
                     player.AddBuff(ModContent.BuffType<ScoutsBoost2>(), ToxicShot.ScoutsBoost2Duration * 60);
                     player.AddBuff(ModContent.BuffType<ScoutsBoost2Cooldown>(), ToxicShot.ScoutsBoost2Cooldown * 60);
+                }
+                if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2CooldownOmega>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
+                {
+                    player.AddBuff(ModContent.BuffType<ScoutsBoost2Omega>(), ToxicShot.ScoutsBoost2Duration * 60);
+                    player.AddBuff(ModContent.BuffType<ScoutsBoost2CooldownOmega>(), ToxicShot.ScoutsBoost2Cooldown * 60);
                 }
                 if (Main.keyState.IsKeyDown(Keys.LeftShift) && !Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
                 {

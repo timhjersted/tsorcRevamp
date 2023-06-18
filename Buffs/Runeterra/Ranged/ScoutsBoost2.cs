@@ -1,5 +1,7 @@
 ﻿using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra.Ranged
 {
@@ -13,8 +15,16 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
 
         public override void Update(Player player, ref int buffIndex)
         {
+            if (player.buffTime[buffIndex] == ToxicShot.ScoutsBoost2Duration * 60 - 1)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/SuperBuffCast") with { Volume = 1f }, player.Center);
+            }
             player.moveSpeed *= 1.4f;
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.2f;
+            if (player.buffTime[buffIndex] == 1)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/SuperBuffEnd") with { Volume = 1f }, player.Center);
+            }
         }
     }
 }
