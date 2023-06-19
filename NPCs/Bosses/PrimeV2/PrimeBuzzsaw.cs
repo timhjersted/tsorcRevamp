@@ -30,9 +30,9 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         {
             NPC.npcSlots = 10;
             NPC.aiStyle = -1;
-            NPC.width = 38;
-            NPC.height = 120;
-            NPC.damage = 53;
+            NPC.width = 70;
+            NPC.height = 150;
+            NPC.damage = 0;
             NPC.defense = 20;
             NPC.lifeMax = TheMachine.PrimeArmHealth;
             NPC.HitSound = SoundID.NPCHit4;
@@ -84,6 +84,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public override void AI()
         {
             NPC.rotation = 0;
+            NPC.damage = 60;
             int SawDamage = 120;
 
             if (primeHost == null || primeHost.active == false || primeHost.type != ModContent.NPCType<TheMachine>())

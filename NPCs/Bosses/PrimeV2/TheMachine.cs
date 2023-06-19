@@ -148,7 +148,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
                 if(fireChargeTimer >= 120)
                 {
-                    phase2Rotation -= 0.005f;
+                    phase2Rotation -= 0.007f;
                 }
             }
         }
@@ -373,9 +373,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public static void PrimeProjectileBalancing(ref Projectile projectile)
         {
-            if (projectile.type == ProjectileID.RainbowRodBullet || projectile.type == ProjectileID.HallowStar)
+            if (projectile.type == ProjectileID.HallowStar)
             {
-                projectile.damage /= 2;
+               projectile.damage = (int)(projectile.damage * 0.7f);
+            }
+            if (projectile.type == ProjectileID.RainbowRodBullet)
+            {
+                projectile.damage = (int)(projectile.damage * 0.9f);
             }
         }
 
@@ -584,6 +588,19 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             //The base class handles actually killing the NPC when the timer runs out
             base.HandleDeath();
+        }
+
+        public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
+        {
+            modifiers.FinalDamage *= 1.5f;
+        }
+
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
+            if(projectile.DamageType == DamageClass.Melee)
+            {
+                modifiers.FinalDamage *= 1.5f;
+            }
         }
 
         public override void AttackTransition()

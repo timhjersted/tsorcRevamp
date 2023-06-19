@@ -65,7 +65,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 }
             }
 
-            Projectile.rotation -= 0.005f;
+            Projectile.rotation -= 0.007f;
 
             if (fadeIn < 120)
             {
@@ -93,8 +93,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Projectile.Center = Main.LocalPlayer.Center;
             Projectile.timeLeft = 2;
 
-
-            UsefulFunctions.DustRing(truePosition, size + 600, DustID.ShadowbeamStaff, 20, 3);
             if (size < maxSize)
             {
                 size += 10f;            

@@ -27,9 +27,9 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         {
             NPC.npcSlots = 10;
             NPC.aiStyle = -1;
-            NPC.width = 35;
-            NPC.height = 60;
-            NPC.damage = 53;
+            NPC.width = 150;
+            NPC.height = 150;
+            NPC.damage = 0;
             NPC.defense = 0;
             NPC.lifeMax = TheMachine.PrimeArmHealth;
             NPC.HitSound = SoundID.NPCHit4;
@@ -39,7 +39,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.timeLeft = 99999;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.damage = 0;
         }
         const float TRAIL_LENGTH = 12;
 

@@ -83,14 +83,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
             if (DetonationProgress > 45)
             {
-                UsefulFunctions.DustRing(Projectile.Center, 300, DustID.FireworkFountain_Blue, 1 + (int)(2 * detonationPercent * detonationPercent), 15 * detonationPercent * detonationPercent);
+                UsefulFunctions.DustRing(Projectile.Center, 230, DustID.FireworkFountain_Blue, 1 + (int)(2 * detonationPercent * detonationPercent), 15 * detonationPercent * detonationPercent);
             }
         }
 
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if(Projectile.Distance(targetHitbox.Center.ToVector2()) < 300 && DetonationTime == DetonationProgress + 1)
+            if(Projectile.Distance(targetHitbox.Center.ToVector2()) < 230 && DetonationTime == DetonationProgress + 1)
             {
                 return true;
             }
@@ -124,7 +124,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             for (int i = 0; i < 50; i++)
             {
                 Vector2 dustVel = Main.rand.NextVector2Circular(28, 28);
-                Dust.NewDustPerfect(Projectile.Center, DustID.FireworkFountain_Blue, dustVel, 250, Color.White, 1.3f).noGravity = true;
+                Dust.NewDustPerfect(Projectile.Center, DustID.FireworkFountain_Blue, dustVel, 200, Color.White, 1.3f).noGravity = true;
             }
             return true;
         }
