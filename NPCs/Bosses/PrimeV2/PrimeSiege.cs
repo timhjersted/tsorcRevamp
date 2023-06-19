@@ -12,7 +12,6 @@ using System;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
-    [AutoloadBossHead]
     class PrimeSiege : ModNPC
     {
         public override void SetStaticDefaults()
@@ -93,7 +92,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (((TheMachine)primeHost.ModNPC).aiPaused)
             {
-                NPC.rotation = MathHelper.PiOver2;
                 return;
             }
             if (((TheMachine)primeHost.ModNPC).Phase == 1)
@@ -115,7 +113,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             Vector2 targetRotation = rotationTarget.ToRotationVector2();
             Vector2 currentRotation = NPC.rotation.ToRotationVector2();
             Vector2 nextRotationVector = Vector2.Lerp(currentRotation, targetRotation, rotationSpeed);
-            NPC.rotation = nextRotationVector.ToRotation();
+            NPC.rotation = 0;
 
             float rotationDiff = Math.Abs(rotationTarget - NPC.rotation);
             if (rotationDiff < 0.4f || Math.Abs(rotationDiff - MathHelper.TwoPi) < 0.4f)
@@ -131,10 +129,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HullBreachMissile>(), ai0: Target.whoAmI);
+                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HomingMissile>(), ai0: Target.whoAmI);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.6f }, NPC.Center);
                         auraBonus = 0.1f;
+                        reloadProgress = 0;
                     }
                 }
                 else
@@ -143,10 +142,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HullBreachMissile>(), ai0: Target.whoAmI, ai1: 1);
+                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HomingMissile>(), ai0: Target.whoAmI, ai1: 1);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.6f }, NPC.Center);
                         auraBonus = 0.1f;
+                        reloadProgress = 0;
                     }
                 }
             }
@@ -158,10 +158,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HullBreachMissile>(), ai0: Target.whoAmI);
+                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HomingMissile>(), ai0: Target.whoAmI);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.8f }, NPC.Center);
                         auraBonus = 0.2f;
+                        reloadProgress = 0;
                     }
                 }
                 else
@@ -170,10 +171,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HullBreachMissile>(), ai0: Target.whoAmI, ai1: 2);
+                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Projectiles.Enemy.Prime.HomingMissile>(), ai0: Target.whoAmI, ai1: 2);
                         }
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.6f }, NPC.Center);
                         auraBonus = 0.2f;
+                        reloadProgress = 0;
                     }
                 }
             }
@@ -187,6 +189,14 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
             else
             {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                }
+                UsefulFunctions.SimpleGore(NPC, "Siege_Damaged_1");
+                UsefulFunctions.SimpleGore(NPC, "Siege_Damaged_2");
                 NPC.life = 1;
                 damaged = true;
                 NPC.dontTakeDamage = true;
@@ -209,6 +219,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             TheMachine.PrimeDamageShare(NPC.whoAmI, damageDone);
         }
 
+        //Controls what reload sprite to use, rounded to an int
+        float reloadProgress;
         float auraBonus;
         public static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -220,32 +232,30 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             TheMachine.DrawMachineAura(Color.Orange, active, NPC, auraBonus);
             auraBonus *= 0.8f;
 
+            //Scroll up by 5 sprites over a period of 40 frames. Left as an unsimplified fraction for clarity.
+            reloadProgress += 5f / 40f;
+            if(reloadProgress > 5)
+            {
+                reloadProgress = 5;
+            }
+
 
             UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeSiege");
-            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+            Rectangle sourceRectangle = new Rectangle(0, (texture.Height / 12) * (int)reloadProgress, texture.Width, texture.Height / 12);
+            if (damaged)
+            {
+                sourceRectangle.Y += texture.Height / 2;
+            }
             Vector2 drawOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
             Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, drawOrigin, 1f, SpriteEffects.None, 0);
 
-            //Draw metal bones
-            //Draw shadow trail (and maybe normal trail?)
-            if (active)
-            {
-                //Draw aura
-            }
-            if (damaged)
-            {
-                //Draw damaged version
-            }
-            else
-            {
-                //Draw normal version
-            }
             return false;
         }
 
         public override void OnKill()
         {
-            //Explosion
+            UsefulFunctions.SimpleGore(NPC, "Siege_Destroyed_1");
+            UsefulFunctions.SimpleGore(NPC, "Siege_Destroyed_2");
         }
 
         public override bool CheckActive()

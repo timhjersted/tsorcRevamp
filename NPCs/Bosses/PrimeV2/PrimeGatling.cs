@@ -12,12 +12,11 @@ using System;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
-    [AutoloadBossHead]
     class PrimeGatling : ModNPC
     {
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 1;
+            Main.npcFrameCount[NPC.type] = 12;
             NPCID.Sets.TrailCacheLength[NPC.type] = (int)TRAIL_LENGTH;    //The length of old position to be recorded
             NPCID.Sets.TrailingMode[NPC.type] = 1;
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
@@ -92,17 +91,17 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (((TheMachine)primeHost.ModNPC).aiPaused)
             {
-                NPC.rotation = MathHelper.PiOver2;
                 return;
             }
 
             if (((TheMachine)primeHost.ModNPC).Phase == 1)
             {
-                Offset = new Vector2(1200, 0).RotatedBy(-MathHelper.PiOver2 - MathHelper.Pi / 5f);
+                Offset = new Vector2(1200, 0).RotatedBy(-MathHelper.Pi / 5f);
             }
 
 
             NPC.rotation = (NPC.Center - Target.Center).ToRotation() + MathHelper.PiOver2;
+            Vector2 shotOffset = NPC.rotation.ToRotationVector2().RotatedBy(MathHelper.PiOver2) * 54;
 
             if (active)
             {
@@ -119,9 +118,9 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         {
                             cooldown = (int)(cooldown * 0.965);
                             Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 10f);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity * 0.8f, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity * 0.66f, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + shotOffset, velocity, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + shotOffset, velocity * 0.8f, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + shotOffset, velocity * 0.66f, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
                         }
                         auraBonus = 0.1f;
                     }
@@ -135,7 +134,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         {
                             Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 6f);
                             velocity = velocity.RotatedBy(Main.rand.NextFloat(-1, 1));
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + shotOffset, velocity, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
                         }
                         auraBonus = 0.1f;
                     }
@@ -151,7 +150,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 velocity = UsefulFunctions.Aim(NPC.Center, Target.Center, 8.5f);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + shotOffset, velocity, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
                         }
                         auraBonus = 0.1f;
                     }
@@ -162,9 +161,9 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7.5f).RotatedBy(Main.rand.NextFloat(-1, 1)), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7.5f).RotatedBy(Main.rand.NextFloat(-1, 1)), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7.5f).RotatedBy(Main.rand.NextFloat(-1, 1)), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + shotOffset, UsefulFunctions.Aim(NPC.Center, Target.Center, 7.5f).RotatedBy(Main.rand.NextFloat(-1, 1)), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + shotOffset, UsefulFunctions.Aim(NPC.Center, Target.Center, 7.5f).RotatedBy(Main.rand.NextFloat(-1, 1)), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + shotOffset, UsefulFunctions.Aim(NPC.Center, Target.Center, 7.5f).RotatedBy(Main.rand.NextFloat(-1, 1)), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeDeathLaser>(), LaserDamage / 4, 0.5f, Main.myPlayer);
                         }
                         auraBonus = 0.1f;
                     }
@@ -180,6 +179,15 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
             else
             {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                }
+                UsefulFunctions.SimpleGore(NPC, "Gatling_Damaged_1");
+                UsefulFunctions.SimpleGore(NPC, "Gatling_Damaged_2");
+                UsefulFunctions.SimpleGore(NPC, "Gatling_Damaged_3");
                 NPC.life = 1;
                 damaged = true;
                 NPC.dontTakeDamage = true;
@@ -205,6 +213,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeGatling");
             Lighting.AddLight(NPC.Center, TorchID.Cursed);
             TheMachine.DrawMachineAura(Color.GreenYellow, active, NPC, auraBonus);
             auraBonus *= 0.8f;
@@ -213,10 +222,28 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             drawColor = Color.Lerp(drawColor, Color.GreenYellow, 0.15f);
             drawColor = Color.Lerp(drawColor, Color.White, 0.25f);
 
-            UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeGatling");
-            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
-            Vector2 drawOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
-            Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, drawOrigin, 1f, SpriteEffects.None, 0);
+            int frameTime = 3;
+            if (active)
+            {
+                frameTime = 2;
+            }
+
+            NPC.frame.Height = texture.Height / 12;
+            if (NPC.frameCounter % frameTime == 0)
+            {
+                NPC.frame.Y += texture.Height / 12;
+                if (NPC.frame.Y >= texture.Height / 2)
+                {
+                    NPC.frame.Y = 0;
+                }
+            }
+
+            if (damaged)
+            {
+                NPC.frame.Y += texture.Height / 2;
+            }
+            Vector2 drawOrigin = new Vector2(NPC.frame.Width * 0.5f, NPC.frame.Height * 0.5f);
+            Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, NPC.frame, drawColor, NPC.rotation, drawOrigin, 1f, SpriteEffects.None, 0);
 
 
             //Draw metal bones
@@ -238,7 +265,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public override void OnKill()
         {
-            //Explosion
+            UsefulFunctions.SimpleGore(NPC, "Gatling_Destroyed_1");
+            UsefulFunctions.SimpleGore(NPC, "Gatling_Destroyed_2");
         }
 
         public override bool CheckActive()

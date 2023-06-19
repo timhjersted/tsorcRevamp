@@ -156,7 +156,7 @@ namespace tsorcRevamp.Projectiles
             Color rgbColor = UsefulFunctions.ShiftColor(shaderColor, (float)Main.timeForVisualEffects, 0.03f);
 
 
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTextureWavy);
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseWavy);
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["finalStand"].SetValue(0);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);

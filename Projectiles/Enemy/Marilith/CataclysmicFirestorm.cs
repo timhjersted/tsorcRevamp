@@ -120,10 +120,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             //Apply the shader
             data.Apply(null);
 
-            Rectangle recsize = new Rectangle(0, 0, tsorcRevamp.tNoiseTextureTurbulent.Width, tsorcRevamp.tNoiseTextureTurbulent.Height);
+            Rectangle recsize = new Rectangle(0, 0, tsorcRevamp.NoiseTurbulent.Width, tsorcRevamp.NoiseTurbulent.Height);
 
             //Draw the rendertarget with the shader
-            Main.spriteBatch.Draw(tsorcRevamp.tNoiseTextureTurbulent, truePosition - Main.screenPosition - new Vector2(recsize.Width, recsize.Height) / 2 * 2.5f, recsize, Color.White, 0, Vector2.Zero, 2.5f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tsorcRevamp.NoiseTurbulent, truePosition - Main.screenPosition - new Vector2(recsize.Width, recsize.Height) / 2 * 2.5f, recsize, Color.White, 0, Vector2.Zero, 2.5f, SpriteEffects.None, 0);
 
             //Restart the spritebatch so the shader doesn't get applied to the rest of the game
             Main.spriteBatch.End();

@@ -324,6 +324,20 @@ namespace tsorcRevamp
         }
 
         ///<summary> 
+        ///Spawns a piece of gore simply
+        ///Checks dedserv and calculates the randomness, reducing how much we have to type
+        ///</summary>         
+        ///<param name="npc">A float between 0 and 1</param>
+        public static void SimpleGore(NPC npc, string path, float scale = 1, float speed = 6)
+        {
+            if (!Main.dedServ)
+            {
+                Vector2 vel = Main.rand.NextVector2Circular(speed, speed);
+                Gore.NewGore(npc.GetSource_Death(), npc.position, vel, npc.ModNPC.Mod.Find<ModGore>(path).Type, scale);
+            }
+        }
+
+        ///<summary> 
         ///Loads a texture, and ensures it stays loaded
         ///</summary>
         ///<param name="texture">The texture object</param>

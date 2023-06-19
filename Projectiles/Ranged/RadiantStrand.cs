@@ -60,7 +60,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             Color shaderColor = Main.hslToRgb((float)(Main.timeForVisualEffects / 100f) % 1, 1, 0.5f);
             Color rgbColor = shaderColor;
 
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTextureTurbulent);
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);
             effect.Parameters["fadeOut"].SetValue(0.5f);
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 100f);
             effect.Parameters["shaderColor"].SetValue(rgbColor.ToVector4());

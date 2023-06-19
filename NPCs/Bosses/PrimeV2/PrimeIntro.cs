@@ -82,15 +82,10 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/TheMachine");
-            UsefulFunctions.EnsureLoaded(ref eyeTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/Bone_Eyes");
 
-            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height / 6);
+            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height / 7);
             Vector2 drawOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
             Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, 0, drawOrigin, 1f, SpriteEffects.None, 0);
-
-            Rectangle eyeRectangle = new Rectangle(0, 0, eyeTexture.Width, eyeTexture.Height / 3);
-            Vector2 eyeOrigin = new Vector2(eyeRectangle.Width * 0.5f, eyeRectangle.Height * 0.5f);
-            Main.EntitySpriteDraw(eyeTexture, NPC.Center - Main.screenPosition - new Vector2(-2, 1), eyeRectangle, Color.White, 0, eyeOrigin, 1f, SpriteEffects.None, 0);
 
             return false;
         }

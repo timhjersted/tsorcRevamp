@@ -14,7 +14,6 @@ using Terraria.Graphics.Shaders;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
-    [AutoloadBossHead]
     class PrimeBuzzsaw : ModNPC
     {
         public override void SetStaticDefaults()
@@ -122,7 +121,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 32), UsefulFunctions.Aim(NPC.Center, Target.Center, 12f), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeSaw>(), SawDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 62), UsefulFunctions.Aim(NPC.Center, Target.Center, 12f), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeSaw>(), SawDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
                             }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
                             auraBonus = 0.2f;
@@ -135,7 +134,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 32), UsefulFunctions.Aim(NPC.Center, Target.Center, 11f), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeSaw>(), SawDamage / 4, 0.5f, Main.myPlayer, 1, NPC.whoAmI);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, 62), UsefulFunctions.Aim(NPC.Center, Target.Center, 11f), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeSaw>(), SawDamage / 4, 0.5f, Main.myPlayer, 1, NPC.whoAmI);
                             }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
                             auraBonus = 0.2f;
@@ -188,6 +187,14 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
             else
             {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                }
+                UsefulFunctions.SimpleGore(NPC, "Buzzsaw_Damaged_1");
+                UsefulFunctions.SimpleGore(NPC, "Buzzsaw_Damaged_2");
                 NPC.life = 1;
                 damaged = true;
                 NPC.dontTakeDamage = true;
@@ -211,12 +218,12 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public static Texture2D holderTexture;
         public static Texture2D sawTexture;
+        public static Texture2D glowmask;
         public static ArmorShaderData data;
-        public static ArmorShaderData data2;
         int sawFrameCounter;
         int sawFrame;
-        float sawRotation;
         float auraBonus;
+        float lerpPercent;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (!active)
@@ -230,9 +237,27 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             UsefulFunctions.EnsureLoaded(ref sawTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeSawBlade");
             UsefulFunctions.EnsureLoaded(ref holderTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeBuzzsaw");
+            UsefulFunctions.EnsureLoaded(ref glowmask, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeBuzzsaw_Glowmask");
 
             TheMachine.DrawMachineAura(Color.OrangeRed, active, NPC, auraBonus);
             auraBonus *= 0.8f;
+
+            //Glowmask lerp percent
+            if (active)
+            {
+                if (Prime.MoveTimer < 160)
+                {
+                    lerpPercent = Prime.MoveTimer / 160f;
+                }
+                else
+                {
+                    lerpPercent = 1;
+                }
+            }
+            else
+            {
+                lerpPercent *= 0.95f;
+            }
 
             //Draw metal bones
 
@@ -257,69 +282,51 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 {
                     data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
                 }
-                if (data2 == null)
-                {
-                    data2 = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.ReflectiveMetalDye), Main.LocalPlayer);
-                }
 
-                Color sawColor = Color.White;
-                if (active)
+                Color sawColor = Color.Lerp(Color.White, Color.OrangeRed, lerpPercent);
+                if (lerpPercent > 0.05f)
                 {
-                    if (Prime.MoveTimer < 160)
-                    {
-                        sawColor = Color.Lerp(Color.White, Color.OrangeRed, Prime.MoveTimer / 160f);
-
-                        data.UseColor(Color.Lerp(Color.Black, Color.OrangeRed, Prime.MoveTimer / 160f));
-                        data.Apply(null);
-                    }
+                    data.UseColor(Color.Lerp(Color.Black, Color.OrangeRed, lerpPercent));
+                    data.Apply(null);
                 }
 
                 int frameHeight = sawTexture.Height / 4;
                 int startY = frameHeight * sawFrame;
                 Rectangle sawSourceRectangle = new Rectangle(0, startY, sawTexture.Width, frameHeight);
                 Vector2 sawDrawOrigin = new Vector2(sawSourceRectangle.Width * 0.5f, sawSourceRectangle.Height * 0.5f);
-                Main.EntitySpriteDraw(sawTexture, NPC.Center - Main.screenPosition + new Vector2(0, 44) - new Vector2(0, 16) + drawOffset, sawSourceRectangle, sawColor, 0, sawDrawOrigin, 1.3f, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(sawTexture, NPC.Center - Main.screenPosition + new Vector2(0, 62) - new Vector2(0, 16) + drawOffset, sawSourceRectangle, sawColor, 0, sawDrawOrigin, 1.3f, SpriteEffects.None, 0);
 
                 UsefulFunctions.RestartSpritebatch(ref spriteBatch);
             }
 
 
             //Draw shadow trail (and maybe normal trail?)
-            
+
+            Rectangle sourceRectangle = new Rectangle(0, 0, holderTexture.Width, holderTexture.Height / 2);
             if (damaged)
             {
-                //Draw damaged version
+                sourceRectangle.Y = holderTexture.Height / 2;
             }
-            //else
-            {
-                float lerpPercent = 0;
-                //Draw normal version
-                if (active)
-                {
-                    if (Prime.MoveTimer < 160) {
-                        lerpPercent = Prime.MoveTimer / 160f;
-                    }
-                    else
-                    {
-                        lerpPercent = 1;
-                    }
-                }
 
-                Rectangle sourceRectangle = new Rectangle(0, 0, holderTexture.Width, holderTexture.Height / 2);
-                Vector2 drawOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
-                Main.EntitySpriteDraw(holderTexture, NPC.Center - Main.screenPosition - new Vector2(0, 16), sourceRectangle, Color.White * (1 - lerpPercent), 0, drawOrigin, 1.5f, SpriteEffects.None, 0);
 
-                Rectangle moltenRectangle = new Rectangle(0, holderTexture.Height / 2, holderTexture.Width, holderTexture.Height / 2);
-                Vector2 moltenOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
-                Main.EntitySpriteDraw(holderTexture, NPC.Center - Main.screenPosition - new Vector2(0, 16), moltenRectangle, Color.White * lerpPercent, 0, moltenOrigin, 1.5f, SpriteEffects.None, 0);
-            }
+            Vector2 drawOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
+            Main.EntitySpriteDraw(holderTexture, NPC.Center - Main.screenPosition - new Vector2(0, 16), sourceRectangle, drawColor, 0, drawOrigin, 1f, SpriteEffects.None, 0);
+
+
+
+            //Draw glowmask
+            Rectangle glowmaskRectangle = new Rectangle(0, 0, glowmask.Width, glowmask.Height);
+            Vector2 glowmaskOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
+            Main.EntitySpriteDraw(glowmask, NPC.Center - Main.screenPosition - new Vector2(0, 16), glowmaskRectangle, Color.White * lerpPercent, 0, glowmaskOrigin, 1f, SpriteEffects.None, 0);
 
             return false;
         }
 
         public override void OnKill()
         {
-            //Explosion
+            UsefulFunctions.SimpleGore(NPC, "Buzzsaw_Destroyed_1");
+            UsefulFunctions.SimpleGore(NPC, "Buzzsaw_Destroyed_2");
+            UsefulFunctions.SimpleGore(NPC, "Buzzsaw_Destroyed_3");
         }
 
         public override bool CheckActive()

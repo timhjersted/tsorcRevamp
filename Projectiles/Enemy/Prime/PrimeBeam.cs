@@ -39,16 +39,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             LaserTextureBody = new Rectangle(0, 26, 30, 30);
             LaserTextureTail = new Rectangle(0, 58, 30, 24);
             LaserSound = SoundID.Item12 with { Volume = 0.5f };
-            
-
             LaserDebuffs = new List<int>(); 
             DebuffTimers = new List<int>();
-
-            CastLight = false;
-
             LaserDebuffs.Add(BuffID.OnFire);
             DebuffTimers.Add(300);
-
+            LaserName = "Prime Beam";
+            LineDust = true;
+            LaserDust = DustID.OrangeTorch;
+            CastLight = true;
             Additive = true;
         }
 
@@ -58,11 +56,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             {
                 Projectile.velocity = (Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2).ToRotationVector2();
             }
-
-            LaserName = "Prime Beam";
-
-            LineDust = true;
-            LaserDust = DustID.OrangeTorch;
 
             base.AI();
         }
@@ -141,7 +134,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             LaserShader.Parameters["FadeOut"].SetValue(fadePercent);
             LaserShader.Parameters["SecondaryColor"].SetValue(Color.White.ToVector3());
             LaserShader.Parameters["ProjectileSize"].SetValue(new Vector2(Distance, modifiedSize));
-            LaserShader.Parameters["TextureSize"].SetValue(tsorcRevamp.tNoiseTextureTurbulent.Width);
+            LaserShader.Parameters["TextureSize"].SetValue(tsorcRevamp.NoiseTurbulent.Width);
 
             //Calculate where to draw it
             Rectangle sourceRectangle = new Rectangle(0, 0, (int)Distance, (int)(modifiedSize));
@@ -151,7 +144,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             LaserShader.CurrentTechnique.Passes[0].Apply();
 
             //Draw the laser
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.velocity.ToRotation(), origin, Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.velocity.ToRotation(), origin, Projectile.scale, SpriteEffects.None, 0);
 
             return false;
         }

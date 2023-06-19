@@ -198,12 +198,12 @@ namespace tsorcRevamp.Projectiles.Spears
                 float opacity = 0.5f * ((float)Math.Pow(1f - (float)i / (float)drawCap, 0.5f));
                 data.UseOpacity(opacity * scaleDown);
                 data.Apply(null);
-                Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, lastPositions[lastPositions.Count - i - 1] - Main.screenPosition, sourceRectangle, Color.White, lastRotations[lastRotations.Count - i - 1], origin, Projectile.scale, spriteEffects, 0);
+                Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, lastPositions[lastPositions.Count - i - 1] - Main.screenPosition, sourceRectangle, Color.White, lastRotations[lastRotations.Count - i - 1], origin, Projectile.scale, spriteEffects, 0);
             }
 
             data.UseOpacity(scaleDown);
             data.Apply(null);
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
 
             return false;
         }

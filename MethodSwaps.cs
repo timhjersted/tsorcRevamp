@@ -121,6 +121,13 @@ namespace tsorcRevamp
             On_WorldGen.KillTile_ShouldDropSeeds += On_WorldGen_KillTile_ShouldDropSeeds;
 
             On_Player.UpdateManaRegen += On_Player_UpdateManaRegen;
+
+            //Terraria.On_Main.DrawMenu += On_Main_DrawMenu;
+        }
+
+        private static void On_Main_DrawMenu(On_Main.orig_DrawMenu orig, Main self, GameTime gameTime)
+        {
+            throw new NotImplementedException();
         }
 
         private static void On_Player_UpdateManaRegen(On_Player.orig_UpdateManaRegen orig, Player self)

@@ -175,7 +175,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             hslColor.X += 0.03f * (float)Math.Cos(timeFactor / 25f);
             Color rgbColor = Main.hslToRgb(hslColor);
 
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTextureWavy);
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseWavy);
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["finalStand"].SetValue(FinalStandMode.ToInt());
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);

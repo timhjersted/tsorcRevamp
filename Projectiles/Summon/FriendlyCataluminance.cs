@@ -385,7 +385,7 @@ namespace tsorcRevamp.Projectiles.Summon
 
 
 			//Pass relevant data to the shader via these parameters
-			catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureWavy.Width);
+			catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseWavy.Width);
 			catEffect.Parameters["effectSize"].SetValue(auraSourceRectangle.Size());
 			catEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
 			catEffect.Parameters["ringProgress"].SetValue(0.1f);
@@ -397,7 +397,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			//Apply the shader
 			catEffect.CurrentTechnique.Passes[0].Apply();
 
-			Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureWavy, Projectile.Center - Main.screenPosition, auraSourceRectangle, Color.White, 0, auraOrigin, 1, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, Projectile.Center - Main.screenPosition, auraSourceRectangle, Color.White, 0, auraOrigin, 1, SpriteEffects.None, 0);
 
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
@@ -407,7 +407,7 @@ namespace tsorcRevamp.Projectiles.Summon
 
 
 			//Pass relevant data to the shader via these parameters
-			catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureWavy.Width);
+			catEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseWavy.Width);
 			catEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
 			catEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
 			catEffect.Parameters["ringProgress"].SetValue(0.1f);
@@ -417,7 +417,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			//Apply the shader
 			catEffect.CurrentTechnique.Passes[0].Apply();
 
-			Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureWavy, Projectile.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.PiOver2, baseOrigin, 1, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, Projectile.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.PiOver2, baseOrigin, 1, SpriteEffects.None, 0);
 
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);

@@ -39,46 +39,62 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             trailCollision = true;
             collisionFrequency = 2;
             noFadeOut = false;
+            deathSpeed = 1f / 600f;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/MoltenWeld", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
+        int lifeTimer;
         public override void AI()
         {
+            lifeTimer++;
+            if (hostNPC != null && Projectile.ai[0] == 1)
+            {
+                if(lifeTimer == 0)
+                {
+                    hostNPC = null;
+                }
+            }
+
+            hostOffset = new Vector2(0, 72);
             trailPointLimit = 300;
             Projectile.timeLeft++;
             if (!initialized)
             {
+                lifeTimer = -60;
                 Initialize();
             }
+            noFadeOut = false;
 
-            if ((!HostEntityValid() || Projectile.timeLeft < 1f / deathSpeed || dying) && !noFadeOut)
+            if ((!HostEntityValid() || dying) && !noFadeOut)
             {
                 dying = true;
                 hostNPC = null;
-
-                deathProgress += deathSpeed;
-                if (deathProgress > 1)
+                if (lifeTimer > 600)
                 {
                     deathProgress = 1;
                     Projectile.Kill();
                 }
-                fadeOut = 1f - deathProgress;
+                if(lifeTimer > 540)
+                {
+                    fadeOut = 1f - ((lifeTimer - 540f) / 60f);
+                    trailCollision = false;
+                }
             }
             else
             {
                 Projectile.Center = HostEntity.Center;
 
                 //Don't add new trail segments if it has not travelled far enough
-                if (Vector2.Distance(lastPosition, HostEntity.Center) > 1f)
+                if (Vector2.Distance(lastPosition, HostEntity.Center + hostOffset) > 1f)
                 {
-                    lastPosition = HostEntity.Center + new Vector2(0, 42);
-                    trailPositions.Add(HostEntity.Center);
+                    lastPosition = HostEntity.Center + hostOffset;
+                    trailPositions.Add(HostEntity.Center + new Vector2(0, 72));
                     trailRotations.Add(HostEntity.velocity.ToRotation());
                 }
 
                 if (trailPositions.Count > 2)
                 {
-                    trailPositions[trailPositions.Count - 1] = HostEntity.Center + new Vector2(0, 42);
+                    trailPositions[trailPositions.Count - 1] = HostEntity.Center + hostOffset;
                     trailRotations[trailRotations.Count - 1] = HostEntity.velocity.ToRotation();
 
                     trailCurrentLength = CalculateLength();
@@ -120,6 +136,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             }
         }
 
+        
+
         public override float CollisionWidthFunction(float progress)
         {
             return 10;
@@ -133,16 +151,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
         public override void SetEffectParameters(Effect effect)
         {
             collisionEndPadding = trailPositions.Count / 8;
-
-            //Shifts its color slightly over time
-            Vector3 hslColor = Main.rgbToHsl(Color.OrangeRed);
-            hslColor.X += 0.03f * (float)Math.Cos(Main.timeForVisualEffects / 25f);
-            Color rgbColor = Main.hslToRgb(hslColor);
-
-
-            effect = customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/MoltenWeld", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-
-            effect.Parameters["effectColor"].SetValue(new Vector4(1.0f, 0.3f, 0.05f, 1));
+            if (Projectile.ai[0] == 1)
+            {
+                effect.Parameters["start"].SetValue(0.2f);
+                effect.Parameters["end"].SetValue(0.8f);
+            }
+            effect.Parameters["effectColor"].SetValue(new Vector4(1.0f, 0.3f, 0.05f, 1) * (float)Math.Pow(fadeOut, 0.3f));
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
 

@@ -1,0 +1,46 @@
+﻿using Terraria.ID;
+using Terraria.ModLoader;
+using Terraria;
+using tsorcRevamp.Items.Materials;
+
+namespace tsorcRevamp.Items.Weapons.Ranged.Flamethrowers
+{
+    class Meltdown : ModItem
+    {
+
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
+        }
+        public override void SetDefaults()
+        {
+            Item.width = 54;
+            Item.height = 16;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 30;
+            Item.useTime = 5;
+            Item.damage = 66;
+            Item.knockBack = 2;
+            Item.autoReuse = true;
+            Item.UseSound = SoundID.Item34;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.shootSpeed = 9;
+            Item.useAmmo = AmmoID.Gel;
+            Item.noMelee = true;
+            Item.value = PriceByRarity.LightPurple_6;
+            Item.DamageType = DamageClass.Ranged;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Freezethrower>();
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.Flamethrower, 1);
+            recipe.AddIngredient(ItemID.SoulofNight, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
+        }
+    }
+}

@@ -12,12 +12,11 @@ using System;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
-    [AutoloadBossHead]
     class PrimeBeam : ModNPC
     {
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 1;
+            Main.npcFrameCount[NPC.type] = 4;
             NPCID.Sets.TrailCacheLength[NPC.type] = (int)TRAIL_LENGTH;    //The length of old position to be recorded
             NPCID.Sets.TrailingMode[NPC.type] = 1;
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
@@ -96,13 +95,12 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if(((TheMachine)primeHost.ModNPC).aiPaused)
             {
-                NPC.rotation = MathHelper.PiOver2;
                 return;
             }
 
             if (((TheMachine)primeHost.ModNPC).Phase == 1)
             {
-                Offset = new Vector2(1200, 0).RotatedBy(0);
+                Offset = new Vector2(1200, 0).RotatedBy(3 * MathHelper.TwoPi / 5f);
             }
 
             Vector2 targetRotation = rotationTarget.ToRotationVector2();
@@ -112,13 +110,16 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (active)
             {
-                if (phase == 0)
+                if (!damaged)
                 {
                     //Sweep back and forth across the player
                     if (((TheMachine)primeHost.ModNPC).MoveTimer == 10)
                     {
                         counterClockwise = true;
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                        }
                     }
 
                     if (counterClockwise)
@@ -137,13 +138,14 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
                 else
                 {
-                    NPC.rotation = (Target.Center - NPC.Center).ToRotation();
                     //Spam stationary wide beams around the target player
                     if (Main.GameUpdateCount % 60 == 0)
                     {
-                        NPC.rotation = (NPC.Center - Target.Center).ToRotation() + Main.rand.NextFloat(-0.5f, 0.5f);
-                        //NewProjectile FastBeam, telegraph time 30f, duration 15f
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                        rotationTarget = (NPC.Center - Target.Center).ToRotation() + Main.rand.NextFloat(-0.25f, 0.25f) + MathHelper.PiOver2;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, (NPC.rotation + MathHelper.PiOver2).ToRotationVector2(), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai0: 1, ai1: NPC.whoAmI);
+                        }
                     }
                 }
             }
@@ -153,13 +155,16 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 {
                     if (Main.GameUpdateCount % 300 == 140)
                     {
-                        rotationTarget = (NPC.Center - Target.Center).ToRotation() + Main.rand.NextFloat(-0.5f, 0.5f);
-                        rotationSpeed = 0.05f;
+                        rotationTarget = (NPC.Center - Target.Center).ToRotation() + Main.rand.NextFloat(-0.25f, 0.25f) + MathHelper.PiOver2;
+                        rotationSpeed = 0.1f;
                     }
                     //Spam stationary wide beams around the target player
                     if (Main.GameUpdateCount % 300 == 200)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, (NPC.rotation + MathHelper.PiOver2).ToRotationVector2(), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                        }
                     }
                 }
                 else
@@ -167,11 +172,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     if (Main.GameUpdateCount % 600 > 239 && Main.GameUpdateCount % 600 < 300)
                     {
                         rotationTarget = (Target.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
-                        NPC.rotation = (Target.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
                     }
                     if (Main.GameUpdateCount % 600 == 299)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 1), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 1), ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>(), BeamDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                        }
                     }
                 }
             }
@@ -184,6 +191,14 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
             else
             {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                }
+                UsefulFunctions.SimpleGore(NPC, "Beam_Damaged_1");
+                UsefulFunctions.SimpleGore(NPC, "Beam_Damaged_2");
                 NPC.life = 1;
                 damaged = true;
                 NPC.dontTakeDamage = true;
@@ -206,39 +221,48 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         }
 
         public static Texture2D texture;
+        public static Texture2D glowmask;
+        public static Texture2D firingGlowmask;
+        public float firingChargeup;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Lighting.AddLight(NPC.Center, TorchID.Red);
-            TheMachine.DrawMachineAura(Color.Red, active, NPC);
-
-            drawColor = Color.Lerp(drawColor, Color.Red, 0.45f);
-            drawColor = Color.Lerp(drawColor, Color.White, 0.25f);
+            TheMachine.DrawMachineAura(Color.Red, active, NPC, 0.2f);
 
             UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeBeam");
-            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
-            Vector2 drawOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
-            Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, drawOrigin, 1f, SpriteEffects.None, 0);
+            UsefulFunctions.EnsureLoaded(ref glowmask, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeBeam_Glowmask");
+            UsefulFunctions.EnsureLoaded(ref firingGlowmask, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeBeam_GlowmaskBeam");
 
-            //Draw metal bones
-            //Draw shadow trail (and maybe normal trail?)
-            if (active)
-            {
-                //Draw aura
-            }
+            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height / 2);
             if (damaged)
             {
-                //Draw damaged version
+                sourceRectangle.Y += texture.Height / 2;
+            }
+            Vector2 drawOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
+            Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, drawOrigin, 1f, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(glowmask, NPC.Center - Main.screenPosition, sourceRectangle, Color.White, NPC.rotation, drawOrigin, 1f, SpriteEffects.None, 0);
+
+            if (UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeRapidBeam>()) || UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeBeam>()))
+            {
+                firingChargeup += 1 / 30f;
             }
             else
             {
-                //Draw normal version
+                firingChargeup -= 1 / 30f;
             }
+            firingChargeup = Math.Clamp(firingChargeup, 0, 1);
+
+            Main.EntitySpriteDraw(firingGlowmask, NPC.Center - Main.screenPosition, sourceRectangle, Color.White * firingChargeup, NPC.rotation, drawOrigin, 1f, SpriteEffects.None, 0);
+
             return false;
         }
 
         public override void OnKill()
         {
-            //Explosion
+            UsefulFunctions.SimpleGore(NPC, "Beam_Destroyed_1");
+            UsefulFunctions.SimpleGore(NPC, "Beam_Destroyed_2");
+            UsefulFunctions.SimpleGore(NPC, "Beam_Destroyed_3");
+            UsefulFunctions.SimpleGore(NPC, "Beam_Destroyed_4");
         }
 
         public override bool CheckActive()

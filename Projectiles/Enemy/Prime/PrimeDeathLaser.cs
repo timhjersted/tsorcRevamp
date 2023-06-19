@@ -68,7 +68,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             collisionPadding = trailPositions.Count / 5;
             visualizeTrail = false;
             timeFactor++;
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTextureTurbulent);
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
 

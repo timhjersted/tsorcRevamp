@@ -94,7 +94,7 @@ namespace tsorcRevamp.Projectiles.Magic
 
             //Shifts its color slightly over time
 
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTextureTurbulent);
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);
             effect.Parameters["fadeOut"].SetValue(0.5f);
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 100f);
             effect.Parameters["shaderColor"].SetValue(rgbColor.ToVector4());

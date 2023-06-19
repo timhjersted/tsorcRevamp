@@ -11,7 +11,6 @@ using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
-    [AutoloadBossHead]
     class PrimeIon : ModNPC
     {
         public override void SetStaticDefaults()
@@ -91,13 +90,12 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (((TheMachine)primeHost.ModNPC).aiPaused)
             {
-                NPC.rotation = MathHelper.PiOver2;
                 return;
             }
 
             if (((TheMachine)primeHost.ModNPC).Phase == 1)
             {
-                Offset = new Vector2(1200, 0).RotatedBy(3 * MathHelper.TwoPi / 5f);
+                Offset = new Vector2(1200, 0).RotatedBy(-MathHelper.PiOver2 - MathHelper.Pi / 11f);
             }
 
             NPC.rotation = (Target.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
@@ -108,6 +106,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 {
                     if (Main.GameUpdateCount % 200 == 0)
                     {
+                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot"), NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1);
@@ -121,6 +120,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 {
                     if (Main.GameUpdateCount % 120 == 0)
                     {
+                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot"), NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI);
@@ -135,6 +135,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 {
                     if (Main.GameUpdateCount % 600 == 100)
                     {
+                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot"), NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI, 1);
@@ -147,6 +148,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 {
                     if (Main.GameUpdateCount % 400 == 150)
                     {
+                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot"), NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 9), ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), ionDamage / 4, 0.5f, Main.myPlayer, Target.whoAmI);
@@ -165,6 +167,15 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
             else
             {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                }
+                UsefulFunctions.SimpleGore(NPC, "Ion_Damaged_1");
+                UsefulFunctions.SimpleGore(NPC, "Ion_Damaged_1");
+                UsefulFunctions.SimpleGore(NPC, "Ion_Damaged_1");
                 NPC.life = 1;
                 damaged = true;
                 NPC.dontTakeDamage = true;
@@ -188,19 +199,32 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         float auraBonus;
         public static Texture2D texture;
+        public static Texture2D glowmask;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            Lighting.AddLight(NPC.Center, TorchID.Ice);
+            Lighting.AddLight(NPC.Center, TorchID.Blue);
             TheMachine.DrawMachineAura(Color.Cyan, active, NPC, auraBonus);
             auraBonus *= 0.8f;
 
-            drawColor = Color.Lerp(drawColor, Color.Cyan, 0.15f);
-            drawColor = Color.Lerp(drawColor, Color.White, 0.25f);
+            if(Main.timeForVisualEffects % 3 == 0)
+            {
+                NPC.frameCounter++;
+                if(NPC.frameCounter >= 4)
+                {
+                    NPC.frameCounter = 0;
+                }
+            }
 
             UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeIon");
-            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+            UsefulFunctions.EnsureLoaded(ref glowmask, "tsorcRevamp/NPCs/Bosses/PrimeV2/PrimeIon_Glowmask");
+            Rectangle sourceRectangle = new Rectangle(0, (int)NPC.frameCounter * texture.Height / 8, texture.Width, texture.Height / 8);
+            if (damaged)
+            {
+                sourceRectangle.Y += texture.Height / 2;
+            }
             Vector2 drawOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
             Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, NPC.rotation, drawOrigin, 1f, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(glowmask, NPC.Center - Main.screenPosition, sourceRectangle, Color.White, NPC.rotation, drawOrigin, 1f, SpriteEffects.None, 0);
 
             //Draw metal bones
             //Draw shadow trail (and maybe normal trail?)
@@ -221,7 +245,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public override void OnKill()
         {
-            //Explosion
+            UsefulFunctions.SimpleGore(NPC, "Ion_Destroyed_1");
+            UsefulFunctions.SimpleGore(NPC, "Ion_Destroyed_2");
         }
 
         public override bool CheckActive()

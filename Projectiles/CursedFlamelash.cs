@@ -120,7 +120,7 @@ namespace tsorcRevamp.Projectiles
             }
             collisionEndPadding = trailPositions.Count / 2;
 
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTextureWavy);
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseWavy);
             effect.Parameters["length"].SetValue(trailCurrentLength);
             effect.Parameters["samplePointOffset1"].SetValue(samplePointOffset1);
             effect.Parameters["samplePointOffset2"].SetValue(samplePointOffset2);

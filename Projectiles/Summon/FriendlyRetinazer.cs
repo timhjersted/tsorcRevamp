@@ -384,7 +384,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			Color rgbColor = Main.hslToRgb(hslColor);
 
 			//Pass relevant data to the shader via these parameters
-			retEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureTurbulent.Width);
+			retEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseTurbulent.Width);
 			retEffect.Parameters["effectSize"].SetValue(auraSourceRectangle.Size());
 			retEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
 			retEffect.Parameters["ringProgress"].SetValue(0.1f);
@@ -395,7 +395,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			//Apply the shader
 			retEffect.CurrentTechnique.Passes[0].Apply();
 
-			Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, Projectile.Center - Main.screenPosition, auraSourceRectangle, Color.White, 0, auraOrigin, 1, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, Projectile.Center - Main.screenPosition, auraSourceRectangle, Color.White, 0, auraOrigin, 1, SpriteEffects.None, 0);
 
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
@@ -405,7 +405,7 @@ namespace tsorcRevamp.Projectiles.Summon
 
 
 			//Pass relevant data to the shader via these parameters
-			retEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureTurbulent.Width);
+			retEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseTurbulent.Width);
 			retEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
 			retEffect.Parameters["effectColor"].SetValue(rgbColor.ToVector4());
 			retEffect.Parameters["ringProgress"].SetValue(0.1f);
@@ -416,7 +416,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			//Apply the shader
 			retEffect.CurrentTechnique.Passes[0].Apply();
 
-			Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, Projectile.Center - Main.screenPosition, baseRectangle, Color.White, 0, baseOrigin, 1, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, Projectile.Center - Main.screenPosition, baseRectangle, Color.White, 0, baseOrigin, 1, SpriteEffects.None, 0);
 
 
 

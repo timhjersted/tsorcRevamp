@@ -47,11 +47,15 @@ namespace tsorcRevamp.Items.Debug
                 Dust.NewDustPerfect(player.Center + new Vector2(0, 25 - i), DustID.ShadowbeamStaff, Vector2.Zero);
             }
 
-            
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, player.Center);
+
+            Projectile.NewProjectile(source, player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+            Projectile.NewProjectile(source, player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+
 
             //NPCs.Bosses.PrimeV2.PrimeV2.ActuatePrimeArena();
 
-            NPC.NewNPC(Item.GetSource_FromThis(), (int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>());
+            //NPC.NewNPC(Item.GetSource_FromThis(), (int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>());
             //Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), Main.MouseWorld, Main.rand.NextVector2CircularEdge(1,1), ModContent.ProjectileType<Projectiles.Enemy.Marilith.SyntheticFirestorm>(), 10, 0, player.whoAmI, 700, 60);
 
             //Uncomment this to make the debug tome max out your perma potions

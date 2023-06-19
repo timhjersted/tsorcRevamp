@@ -50,7 +50,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     }    
     
     //Make it taper off near the source
-    //Currently can't fit it with the instruction count limit...
+    //This pushed it past the ps_2_0 instruction limit
     if (dist < 0.02)
     {
         intensity = lerp(0.0, intensity, dist / 0.02);

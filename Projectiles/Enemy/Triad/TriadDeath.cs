@@ -167,7 +167,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             Vector2 origin = sourceRectangle.Size() / 2f;
 
             //Pass relevant data to the shader via these parameters
-            AuraEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureWavy.Width);
+            AuraEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseWavy.Width);
             AuraEffect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
             AuraEffect.Parameters["effectColor"].SetValue(AuraColor.ToVector3());
             AuraEffect.Parameters["ringProgress"].SetValue(effectTimer / 360f);
@@ -177,7 +177,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             //Apply the shader
             AuraEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureWavy, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, 1, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
@@ -222,7 +222,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             Vector2 starOrigin = starRectangle.Size() / 2f;
 
             //Pass relevant data to the shader via these parameters
-            lightEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureWavy.Width);
+            lightEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseWavy.Width);
             lightEffect.Parameters["effectSize"].SetValue(starRectangle.Size());
             lightEffect.Parameters["effectColor"].SetValue(rgbColor1.ToVector4());
             lightEffect.Parameters["ringProgress"].SetValue(0.5f);
@@ -232,13 +232,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             //Apply the shader
             lightEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureWavy, Projectile.Center - Main.screenPosition, starRectangle, Color.White, starRotation, starOrigin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, Projectile.Center - Main.screenPosition, starRectangle, Color.White, starRotation, starOrigin, 1, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //Pass relevant data to the shader via these parameters
-            lightEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureWavy.Width);
+            lightEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseWavy.Width);
             lightEffect.Parameters["effectSize"].SetValue(starRectangle.Size());
             lightEffect.Parameters["effectColor"].SetValue(rgbColor2.ToVector4());
             lightEffect.Parameters["ringProgress"].SetValue(0.5f);
@@ -248,7 +248,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             //Apply the shader
             lightEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureWavy, Projectile.Center - Main.screenPosition, starRectangle, Color.White, -starRotation, starOrigin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, Projectile.Center - Main.screenPosition, starRectangle, Color.White, -starRotation, starOrigin, 1, SpriteEffects.None, 0);
 
 
 

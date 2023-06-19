@@ -7,10 +7,13 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Items;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
@@ -122,7 +125,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (!aiPaused)
             {
-
                 if (Phase == 0)
                 {
                     NPC.Center = PrimeCeilingPoint;
@@ -143,6 +145,10 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 500, 80);
                     }
+                }
+                if(fireChargeTimer >= 120)
+                {
+                    phase2Rotation -= 0.005f;
                 }
             }
         }
@@ -524,6 +530,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (deathAnimationProgress == deathAnimationDuration - 1)
             {
+                NPC.StrikeNPC(NPC.CalculateHitInfo(999999, 1, true, 0), false, false);
+                NPC.downedMechBoss3 = true;
+                NPC.downedMechBossAny = true;
+                UsefulFunctions.SimpleGore(NPC, "TheMachine_Destroyed_1");
+                UsefulFunctions.SimpleGore(NPC, "TheMachine_Destroyed_2");
+                UsefulFunctions.SimpleGore(NPC, "TheMachine_Destroyed_3");
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     //Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 4, UsefulFunctions.ColorToFloat(Color.White));
@@ -618,52 +631,49 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
         }
 
-        /// <summary>
-        /// Override this to add custom VFX to your boss
-        /// </summary>
         public static Texture2D texture;
-        public static Texture2D eyeTexture;
-        public static Texture2D boneTexture;
-        int frameIndex;
+        public static Texture2D phase2Texture;
+        float phase2Warmup;
+        float phase2Rotation;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            //Scale it up a little
-            DrawMachineAura(Color.White, true, NPC);
+            DrawMachineAura(Color.Gray * 0.8f, true, NPC);
 
             UsefulFunctions.EnsureLoaded(ref texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/TheMachine");
-            UsefulFunctions.EnsureLoaded(ref eyeTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/Bone_Eyes");
-            UsefulFunctions.EnsureLoaded(ref boneTexture, "tsorcRevamp/NPCs/Bosses/PrimeV2/Arm_Bone_2");
+            UsefulFunctions.EnsureLoaded(ref phase2Texture, "tsorcRevamp/NPCs/Bosses/PrimeV2/TheMachine_Phase2");
 
-            if (inIntro)
+
+            int phaseFrame = 0;
+            if(phaseTransitionDuration - phaseTransitionTimeRemaining < 30)
             {
-                frameIndex = 1;
+                phaseFrame = (int)(5 * ((phaseTransitionDuration - phaseTransitionTimeRemaining) / 30f));
             }
 
-            if (!aiPaused)
+            if(Phase != 0)
             {
-                NPC.frameCounter++;
-                if (NPC.frameCounter > 20)
-                {
-                    NPC.frameCounter = 0;
-                    frameIndex++;
-                    if (frameIndex >= 2)
-                    {
-                        frameIndex = 0;
-                    }
-                }
+                phaseFrame = 6;
             }
 
-            //Main head
-            Rectangle sourceRectangle = new Rectangle(0, frameIndex * (texture.Height / 6), texture.Width, texture.Height / 6);
+            Rectangle sourceRectangle = new Rectangle(0, phaseFrame * (texture.Height / 7), texture.Width, texture.Height / 7);
             Vector2 drawOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
-            Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, 0, drawOrigin, 1f, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, 0, drawOrigin, 1.2f, SpriteEffects.None, 0);
 
-            //Glowmask for the eyes
-            Rectangle eyeRectangle = new Rectangle(0, 0, eyeTexture.Width, eyeTexture.Height / 3);
-            Vector2 eyeOrigin = new Vector2(eyeRectangle.Width * 0.5f, eyeRectangle.Height * 0.5f);
-            Main.EntitySpriteDraw(eyeTexture, NPC.Center - Main.screenPosition - new Vector2(.5f, 0), eyeRectangle, Color.White, 0, eyeOrigin, 1f, SpriteEffects.None, 0);
+            if (Phase != 0)
+            {
+                phase2Warmup += 1 / 60f;
+                if(phase2Warmup > 1)
+                {
+                    phase2Warmup = 1;
+                }
+                Rectangle phase2Rectangle = new Rectangle(0, 0, phase2Texture.Width, phase2Texture.Height / 2);
+                Vector2 phase2Origin = new Vector2(phase2Rectangle.Width * 0.5f, phase2Rectangle.Height * 0.5f);
+                Main.EntitySpriteDraw(phase2Texture, NPC.Center - Main.screenPosition, phase2Rectangle, Color.White, phase2Rotation, phase2Origin, 1f, SpriteEffects.None, 0);
+                phase2Rectangle.Y += phase2Texture.Height / 2;
+                Main.EntitySpriteDraw(phase2Texture, NPC.Center - Main.screenPosition, phase2Rectangle, Color.White * phase2Warmup, phase2Rotation, phase2Origin, 1.2f, SpriteEffects.None, 0);
+            }
 
-            //Shield bubble
+
+            DrawEnergyShield();
 
             if (introTimer >= introDuration)
             {
@@ -696,18 +706,20 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
 
             float timeFactor = -1;
+            float scaleFactor = 4;
             if(npc.type == ModContent.NPCType<TheMachine>())
             {
                 timeFactor = 1;
-                effectIntensity = 1.5f;
-                if (npc.life < 35006){
+                scaleFactor = 3;
+                effectIntensity = 1.0f;
+                if (npc.life <= 35006){
                     rgbColor = Color.OrangeRed;
                 }
                 auraBonus = -.2f;
             }
 
             //Apply the shader, caching it as well
-            if (effect == null)
+            //if (effect == null)
             {
                 effect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
@@ -723,24 +735,57 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 rgbColor = Color.Gray;
             }
 
-            Rectangle sourceRectangle = new Rectangle(0, 0, 300 + (int)(50 * (effectIntensity + auraBonus)), 300 + (int)(50 * (effectIntensity + auraBonus)));
+            Rectangle sourceRectangle = new Rectangle(0, 0, 300 + (int)(70 * (effectIntensity + auraBonus)), 300 + (int)(70 * (effectIntensity + auraBonus)));
             Vector2 origin = sourceRectangle.Size() / 2f;
 
             //Pass relevant data to the shader via these parameters
-            effect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureCircuit.Width);
+            effect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseMarble.Width);
             effect.Parameters["effectSize"].SetValue(sourceRectangle.Size());
-            effect.Parameters["effectColor"].SetValue(rgbColor.ToVector4() * colorIntensity);
+            effect.Parameters["effectColor"].SetValue(rgbColor.ToVector4() * colorIntensity * 0.3f);
             effect.Parameters["ringProgress"].SetValue(0.4f + .25f * effectIntensity + auraBonus);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * timeFactor);
+
+            effect.Parameters["scaleFactor"].SetValue(scaleFactor);
 
             //Apply the shader
             effect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureCircuit, npc.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, npc.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseMarble, npc.Center - Main.screenPosition, sourceRectangle, Color.White, 0, origin, npc.scale, SpriteEffects.None, 0);
 
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
         }
 
+        public static Effect shieldEffect;
+        void DrawEnergyShield()
+        {
+            return;
+            if (shieldEffect == null)
+            {
+                shieldEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/SimpleRing", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            
+            
+            
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+        }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TheMachineBag>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedFocusingLens>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedIncinerator>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedMachiningTools>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedDronePart>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Lore.CrestOfSteel>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.HallowedBar, 1, 25, 40));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofFright, 1, 20, 40));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.SkeletronPrimeMask, 7));
+            npcLoot.Add(notExpertCondition);
+        }
 
         public override void BossLoot(ref string name, ref int potionType)
         {

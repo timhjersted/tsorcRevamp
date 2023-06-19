@@ -227,7 +227,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             Vector2 baseOrigin = baseRectangle.Size() / 2f;
 
             //Pass relevant data to the shader via these parameters
-            effect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureTurbulent.Width);
+            effect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseTurbulent.Width);
             effect.Parameters["effectSize"].SetValue(baseRectangle.Size());
             effect.Parameters["effectColor1"].SetValue(rgbColor.ToVector4());
             effect.Parameters["effectColor2"].SetValue(rgbColor.ToVector4());
@@ -240,7 +240,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             //Apply the shader
             effect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, NPC.Center - Main.screenPosition, baseRectangle, Color.White, 0, baseOrigin, NPC.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, NPC.Center - Main.screenPosition, baseRectangle, Color.White, 0, baseOrigin, NPC.scale, SpriteEffects.None, 0);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 

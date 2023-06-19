@@ -6550,6 +6550,41 @@ Mods: {
 					{$CommonItemTooltip.Ranged.NonCritDmg@1}
 					'''
 			}
+
+			IonicFury: {
+				DisplayName: Ionic Fury
+				Tooltip: ""
+			}
+
+			TheMachineBag: {
+				DisplayName: The Machine Bag
+				Tooltip: ""
+			}
+
+			DamagedDronePart: {
+				DisplayName: Damaged Drone Part
+				Tooltip: ""
+			}
+
+			DamagedFocusingLens: {
+				DisplayName: Damaged Focusing Lens
+				Tooltip: ""
+			}
+
+			DamagedIncinerator: {
+				DisplayName: Damaged Incinerator
+				Tooltip: ""
+			}
+
+			DamagedMachiningTools: {
+				DisplayName: Damaged Machining Tools
+				Tooltip: ""
+			}
+
+			Meltdown: {
+				DisplayName: Meltdown
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -7840,6 +7875,7 @@ Mods: {
 			NightbringerSpin.DisplayName: Nightbringer Spin
 			NightbringerDashHitbox.DisplayName: Nightbringer Dash Hitbox
 			NightbringerFirewall.DisplayName: Nightbringer Firewall
+			HomingMissileTrail.DisplayName: Homing Missile Trail
 		}
 
 		NPCs: {
@@ -8731,6 +8767,8 @@ Mods: {
 					Princess_LovesNPC: I like {NPCName}.
 				}
 			}
+
+			HomingMissile.DisplayName: Homing Missile
 		}
 
 		Prefixes: {

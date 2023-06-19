@@ -12,7 +12,6 @@ using System;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
-    [AutoloadBossHead]
     class PrimeWelder : ModNPC
     {
         public override void SetStaticDefaults()
@@ -101,22 +100,75 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
 
             NPC.rotation = (Target.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
-            if (!UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.Enemy.Prime.MoltenWeld>()))
+            if ((!damaged && !UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.Enemy.Prime.MoltenWeld>())) || (damaged && Main.GameUpdateCount % 60 == 0))
             {
+                float aiZero = 0;
+                if (damaged)
+                {
+                    aiZero = 1;
+                }
                 if(Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.MoltenWeld>(), WeldDamage / 4, 0.5f, Main.myPlayer, ai1: NPC.whoAmI);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.MoltenWeld>(), WeldDamage / 4, 0.5f, Main.myPlayer, ai0: aiZero, ai1: NPC.whoAmI);
                 }
             }
 
-            if (active)
+
+            if (damaged)
             {
-                UsefulFunctions.SmoothHoming(NPC, Target.Center, 0.2f, 7f, bufferZone: false);
+                angle += 0.01f;
+                if (Main.GameUpdateCount % 60 == 0)
+                {
+                    float speed = 9;
+                    Vector2 targetPoint;
+                    if (active)
+                    {
+                        targetPoint = Target.Center;
+                    }
+                    else
+                    {
+                        speed = 7;
+                        targetPoint = Target.Center + new Vector2(400, 0).RotatedBy(angle);
+                    }
+                    Vector2 distance = targetPoint - NPC.Center;
+
+                    NPC.velocity = Vector2.Zero;
+                    if (Math.Abs(distance.X) > Math.Abs(distance.Y))
+                    {
+                        if (distance.X > 0)
+                        {
+                            NPC.velocity.X = speed;
+                        }
+                        else
+                        {
+                            NPC.velocity.X = -speed;
+                        }
+                    }
+                    else
+                    {
+                        if (distance.Y > 0)
+                        {
+                            NPC.velocity.Y = speed;
+                        }
+                        else
+                        {
+                            NPC.velocity.Y = -speed;
+                        }
+                    }
+                }
             }
             else
             {
-                angle += 0.01f;
-                UsefulFunctions.SmoothHoming(NPC, Target.Center + new Vector2(400, 0).RotatedBy(angle), 0.3f, 5f);
+
+                if (active)
+                {
+                    UsefulFunctions.SmoothHoming(NPC, Target.Center, 0.1f, 7f, bufferZone: false);
+                }
+                else
+                {
+                    angle += 0.01f;
+                    UsefulFunctions.SmoothHoming(NPC, Target.Center + new Vector2(400, 0).RotatedBy(angle), 0.3f, 5f);
+                }
             }
         }
 
@@ -129,6 +181,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
             else
             {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, NPC.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+                }
+                UsefulFunctions.SimpleGore(NPC, "Welder_Damaged_2");
                 NPC.life = 1;
                 damaged = true;
                 NPC.dontTakeDamage = true;
@@ -158,19 +217,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             TheMachine.DrawMachineAura(Color.DarkOrange, active, NPC);
 
-            //Draw metal bones
-            //Draw shadow trail
-
+            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height / 2);
+            Vector2 drawOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
             if (damaged)
             {
-                //Draw damaged version
+                sourceRectangle.Y += texture.Height / 2;
             }
-            //else
-            {
-                Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
-                Vector2 drawOrigin = new Vector2(sourceRectangle.Width * 0.5f, sourceRectangle.Height * 0.5f);
-                Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, 0, drawOrigin, 1f, SpriteEffects.None, 0);
-            }
+            Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, 0, drawOrigin, 1f, SpriteEffects.None, 0);
 
             DrawSpark();
             return false;
@@ -181,8 +234,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         float starRotation;
         void DrawSpark()
         {
-
-
             Vector3 hslColor1 = Main.rgbToHsl(Color.White);
             Vector3 hslColor2 = Main.rgbToHsl(Color.OrangeRed);
             hslColor1.X += 0.03f * (float)Math.Cos(Main.timeForVisualEffects / 25f);
@@ -194,7 +245,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //Apply the shader, caching it as well
-            //if (effect == null)
+            if (CoreEffect == null)
             {
                 CoreEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatFinalStandAttack", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
@@ -208,7 +259,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             Vector2 starOrigin = starRectangle.Size() / 2f;
 
             //Pass relevant data to the shader via these parameters
-            CoreEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureWavy.Width);
+            CoreEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseWavy.Width);
             CoreEffect.Parameters["effectSize"].SetValue(starRectangle.Size());
             CoreEffect.Parameters["effectColor"].SetValue(rgbColor1.ToVector4());
             CoreEffect.Parameters["ringProgress"].SetValue(0.5f);
@@ -218,13 +269,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             //Apply the shader
             CoreEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureWavy, NPC.Center - Main.screenPosition + new Vector2(0, 42), starRectangle, Color.White, starRotation, starOrigin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, NPC.Center - Main.screenPosition + new Vector2(0, 72), starRectangle, Color.White, starRotation, starOrigin, 1, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //Pass relevant data to the shader via these parameters
-            CoreEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureWavy.Width);
+            CoreEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseWavy.Width);
             CoreEffect.Parameters["effectSize"].SetValue(starRectangle.Size());
             CoreEffect.Parameters["effectColor"].SetValue(rgbColor2.ToVector4());
             CoreEffect.Parameters["ringProgress"].SetValue(0.5f);
@@ -234,14 +285,15 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             //Apply the shader
             CoreEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureWavy, NPC.Center - Main.screenPosition + new Vector2(0, 42), starRectangle, Color.White, -starRotation, starOrigin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, NPC.Center - Main.screenPosition + new Vector2(0, 72), starRectangle, Color.White, -starRotation, starOrigin, 1, SpriteEffects.None, 0);
 
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
         }
 
         public override void OnKill()
         {
-            //Explosion
+            UsefulFunctions.SimpleGore(NPC, "Welder_Destroyed_1");
+            UsefulFunctions.SimpleGore(NPC, "Welder_Destroyed_2");
         }
 
         public override bool CheckActive()

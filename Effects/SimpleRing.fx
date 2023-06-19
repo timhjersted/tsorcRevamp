@@ -1,74 +1,69 @@
-sampler silhouetteTexture : register(s0);
-sampler noiseTexture : register(s1);
-float textureSize;
-float2 effectSize;
-float4 effectColor;
-float time;
-float ringProgress;
-float fadePercent;
-float scaleFactor;
+sampler uImage0 : register(s0);
 
+float time; //Causes the flames to flow with time
+float splitAngle; //How wide (in radians) the angle of fire is
+float rotation; //Rotates the fire
+float length; //The maximum length
+float opacity; //Multiplies the output by this to let it fade in
+float4 shaderColor;
+
+//I precomputed what values I could, to save on instruction count
+float rotationMinusPI;
+float splitAnglePlusRotationMinusPI;
+float RotationMinus2PIMinusSplitAngleMinusPI;
+
+//Various constants
+const float PI = 3.141592;
+const float TWOPI = 6.283184;
+const float INVERSETWOPI = 0.1591549;
+const float4 empty = float4(0, 0, 0, 0);
 
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
-    //Set scale
-    float scale = 1;
-    if (scaleFactor != 0)
-    {
-        scale = scaleFactor;
-    }
-    
-    //Invert this so that 'full' is the default
-    float fade = 1 - fadePercent;
-    
-    //Normalize pixel coordinates (from 0 to 1) and compensate for effect size distortion
-    float2 uv = coords * textureSize;
-    uv.x = uv.x / effectSize.x;
-    uv.y = uv.y / effectSize.y;
-    
-    //Compress it so it doesn't bump into the edges of the drawing area
-    float progress = ringProgress * 0.7;
-    
+    //Convert uv from rectangular to polar coordinates
+    float2 dir = coords - float2(0.5, 0.5);
+    float angle = atan2(dir.y, dir.x);
+        
     //Calculate how close the current pixel is to the center line of the screen
-    float distanceIntensity = distance(uv, float2(0.5, 0.5)) * 2;
-    
-    //Calculate how close the current pixel is from a ring of radius 'ringProgress'
-    float ringDistance = 1 - abs(progress - distanceIntensity);
-    
-    //Check whether the pixel is inside or outside the ring
-    if (distanceIntensity < progress)
-    {
-        //If inside, fade out quickly with distance
-        ringDistance = pow(ringDistance, 16);
-    }
-    else
-    {
-        //If outside, trail off slower
-        ringDistance = pow(ringDistance, 6);
-    }
+    float dist = distance(coords, float2(0.5, 0.5));
     
     //Convert uv from rectangular to polar coordinates
-    float2 dir = uv - float2(0.5, 0.5);
-    float angle = atan2(dir.y, dir.x) / (3.141592 * 2);
-    float2 samplePoint = float2(distanceIntensity, angle);
+    float2 samplePoint = float2(dist - time, angle * INVERSETWOPI);
     
-    //Stretch it so it looks good
-    samplePoint = samplePoint * scale * 50 / effectSize;
-    samplePoint.y = samplePoint.y * 3;
+    //Calculate how intense a pixel should be based on the noise generator
+    float intensity = tex2D(uImage0, samplePoint).r;
     
-    //Offset it based on time to create the flowing effect
-    samplePoint.x = samplePoint.x - (time * 0.05);
+    //Only draw a slice with angles between 'rotation' and 'splitAngle'. The final && is to stop it from going doing a fucky wucky when it crosses the 2Pi > 0 border.    
+    if (angle > splitAnglePlusRotationMinusPI)
+    {
+        return empty;
+    }
+    if (angle < rotationMinusPI && angle > RotationMinus2PIMinusSplitAngleMinusPI)
+    {
+        return empty;
+    }
+    
+    //Make it taper off on the edges    
+    float edgeDistance = min(min(abs(angle - rotationMinusPI), abs(angle - rotationMinusPI + TWOPI)), min(abs(splitAnglePlusRotationMinusPI - angle), abs(angle - RotationMinus2PIMinusSplitAngleMinusPI)));
+    if (abs(edgeDistance) < 0.311)
+    {
+        intensity = lerp(0.0, intensity, edgeDistance / 0.311);
+    }
+    
+    //Make it taper off near the source
+    if (dist < 0.02)
+    {
+        intensity = lerp(0.0, intensity, dist / 0.02);
+    }
+    
+    if (dist > length)
+    {
+        intensity = lerp(intensity, 0, min((dist - length) * 10, 1));
+    }
 
-    //Get the noise texture at that point
-    float sampleIntensity = tex2D(noiseTexture, samplePoint).r;
-    
-    //Intensify it
-    sampleIntensity = pow(sampleIntensity, 2);
-    
-    //Mix it all together and output it
-    return effectColor * fade * sampleIntensity * 2.75 * ringDistance / distanceIntensity;
+    //Scale 'intensity'
+    return intensity * shaderColor * opacity;
 }
-
 
 technique SimpleRing
 {

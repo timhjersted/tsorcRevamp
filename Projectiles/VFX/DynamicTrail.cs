@@ -165,6 +165,11 @@ namespace tsorcRevamp.Projectiles.VFX
         }
 
         /// <summary>
+        /// An offset from the host
+        /// </summary>
+        public Vector2 hostOffset = Vector2.Zero;
+
+        /// <summary>
         /// The list storing all the points on the trail
         /// </summary>
         public List<Vector2> trailPositions;
@@ -324,8 +329,8 @@ namespace tsorcRevamp.Projectiles.VFX
                 {
                     trailPositions = new List<Vector2>();
                     trailRotations = new List<float>();
-                    trailPositions.Add(HostEntity.Center);
-                    trailPositions.Add(HostEntity.Center);
+                    trailPositions.Add(HostEntity.Center + hostOffset);
+                    trailPositions.Add(HostEntity.Center + hostOffset);
                     trailRotations.Add(HostEntity.velocity.ToRotation());
                     trailRotations.Add(HostEntity.velocity.ToRotation());
                     return 0;

@@ -162,7 +162,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             Vector2 starOrigin = starRectangle.Size() / 2f;
 
             //Pass relevant data to the shader via these parameters
-            CoreEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureWavy.Width);
+            CoreEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseWavy.Width);
             CoreEffect.Parameters["effectSize"].SetValue(starRectangle.Size());
             CoreEffect.Parameters["effectColor"].SetValue(rgbColor1.ToVector4());
             CoreEffect.Parameters["ringProgress"].SetValue(0.5f);
@@ -172,13 +172,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             //Apply the shader
             CoreEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureWavy, Projectile.Center - Main.screenPosition, starRectangle, Color.White, starRotation, starOrigin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, Projectile.Center - Main.screenPosition, starRectangle, Color.White, starRotation, starOrigin, 1, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //Pass relevant data to the shader via these parameters
-            CoreEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureWavy.Width);
+            CoreEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseWavy.Width);
             CoreEffect.Parameters["effectSize"].SetValue(starRectangle.Size());
             CoreEffect.Parameters["effectColor"].SetValue(rgbColor2.ToVector4());
             CoreEffect.Parameters["ringProgress"].SetValue(0.5f);
@@ -188,7 +188,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             //Apply the shader
             CoreEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureWavy, Projectile.Center - Main.screenPosition, starRectangle, Color.White, -starRotation, starOrigin, 1, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, Projectile.Center - Main.screenPosition, starRectangle, Color.White, -starRotation, starOrigin, 1, SpriteEffects.None, 0);
 
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
 

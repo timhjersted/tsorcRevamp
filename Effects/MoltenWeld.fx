@@ -1,6 +1,8 @@
 matrix WorldViewProjection;
 float4 effectColor;
-float time;
+float start;
+float end;
+float widthPower;
 
 struct VertexShaderInput
 {
@@ -31,15 +33,30 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     // Normalize pixel coordinates (from 0 to 1) and compensate for projectile size distortion
     float2 uv = input.TextureCoordinates;
     
+    float widthPow = 5;
+    if (widthPower != 0)
+    {
+        widthPow = widthPower;
+    }
+    
+    
     //Calculate how close the current pixel is to the center line of the screen
     float intensity = 1.0 - abs(uv.y - 0.5);
     
     //Raise it to the power of 4, resulting in sharply increased intensity at the center that trails off smoothly
-    intensity = pow(intensity, 5.0);
+    intensity = pow(intensity, widthPow);
 
     //Scale the start and end based on the scaleDown variable
     float startPercent = 0.2;
-    float endPercent = 0.95;        
+    if (start != 0)
+    {
+        startPercent = start;
+    }
+    float endPercent = 0.95;
+    if (end != 0)
+    {
+        endPercent = end;
+    }
 
     //Make the laser trail off at the start
     if (uv.x < startPercent)

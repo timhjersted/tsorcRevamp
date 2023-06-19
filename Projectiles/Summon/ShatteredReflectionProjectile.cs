@@ -158,7 +158,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			}
 
 			//Pass relevant data to the shader via these parameters
-			attraidiesEffect.Parameters["textureSize"].SetValue(tsorcRevamp.tNoiseTextureTurbulent.Width);
+			attraidiesEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseTurbulent.Width);
 			attraidiesEffect.Parameters["effectSize"].SetValue(baseRectangle.Size());
 
 			attraidiesEffect.Parameters["effectColor1"].SetValue(UsefulFunctions.ShiftColor(color, effectTimer / 25f).ToVector4());
@@ -172,7 +172,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			//Apply the shader
 			attraidiesEffect.CurrentTechnique.Passes[0].Apply();
 
-			Main.EntitySpriteDraw(tsorcRevamp.tNoiseTextureTurbulent, Projectile.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.TwoPi, baseOrigin, 1, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, Projectile.Center - Main.screenPosition, baseRectangle, Color.White, MathHelper.TwoPi, baseOrigin, 1, SpriteEffects.None, 0);
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 			return false;

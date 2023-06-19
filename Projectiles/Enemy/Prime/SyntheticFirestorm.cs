@@ -56,7 +56,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 initialized = true;
                 if(Projectile.ai[0] == 0)
                 {
-                    Projectile.rotation = MathHelper.PiOver2;
+                    Projectile.rotation = -MathHelper.PiOver2;
                 }
                 for(int i = 0; i < Main.maxProjectiles; i++)
                 {
@@ -135,7 +135,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             effect.Parameters["splitAngle"].SetValue(angle);
             effect.Parameters["rotation"].SetValue(shaderRotation);
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 312);
-            effect.Parameters["length"].SetValue(.15f * size / maxSize);
+            effect.Parameters["length"].SetValue(.35f * size / maxSize);
             float opacity = 1;
             if (fadeIn < 110)
             {
@@ -156,10 +156,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             //Apply the shader
             effect.CurrentTechnique.Passes[0].Apply();
 
-            Rectangle recsize = new Rectangle(0, 0, tsorcRevamp.tNoiseTextureTurbulent.Width, tsorcRevamp.tNoiseTextureTurbulent.Height);
+            Rectangle recsize = new Rectangle(0, 0, tsorcRevamp.NoiseTurbulent.Width, tsorcRevamp.NoiseTurbulent.Height);
+            Vector2 origin = new Vector2(recsize.Width * 0.5f, recsize.Height * 0.5f);
 
             //Draw the rendertarget with the shader
-            Main.spriteBatch.Draw(tsorcRevamp.tNoiseTextureTurbulent, truePosition - Main.screenPosition - new Vector2(recsize.Width, recsize.Height) / 2 * 2.5f, recsize, Color.White, 0, Vector2.Zero, 2.5f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tsorcRevamp.NoiseTurbulent, truePosition - Main.screenPosition, recsize, Color.White, 0, origin, 4.5f, SpriteEffects.None, 0);
 
             //Restart the spritebatch so the shader doesn't get applied to the rest of the game
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
