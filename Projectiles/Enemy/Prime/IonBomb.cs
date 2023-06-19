@@ -212,9 +212,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
                 Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, Projectile.Center - Main.screenPosition, ringRectangle, Color.White, MathHelper.PiOver2 - 0.35f, ringOrigin, 1, SpriteEffects.None);
                 Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, Projectile.Center - Main.screenPosition, ringRectangle, Color.White, MathHelper.Pi + MathHelper.PiOver2 - 0.35f, ringOrigin, 1, SpriteEffects.None);
-
-
-
             }
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
             return false;

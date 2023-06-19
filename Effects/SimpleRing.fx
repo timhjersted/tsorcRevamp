@@ -61,6 +61,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     }
     
     intensity = lerp(intensity, 0, pow(min(abs(dist - length) * 10, 1), .4));
+    //return intensity * float4(1,1,1,1);
     
     return intensity * shaderColor;
 }

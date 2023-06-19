@@ -775,19 +775,74 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
         }
 
+        float shieldRotation;
         public static Effect shieldEffect;
         void DrawEnergyShield()
         {
-            return;
-            if (shieldEffect == null)
+            //if (shieldEffect == null)
             {
                 shieldEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/SimpleRing", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
+
+            shieldRotation += 0.01f;
+            int partCount = 0;
+            if(BeamNPC != null && BeamNPC.life > 1)
+            {
+                partCount++;
+            }
+            if (IonNPC != null && IonNPC.life > 1)
+            {
+                partCount++;
+            }
+            if (LauncherNPC != null && LauncherNPC.life > 1)
+            {
+                partCount++;
+            }
+            if (GatlingNPC != null && GatlingNPC.life > 1)
+            {
+                partCount++;
+            }
+            if (BuzzsawNPC != null && BuzzsawNPC.life > 1)
+            {
+                partCount++;
+            }
+            if (SeverNPC != null && SeverNPC.life > 1)
+            {
+                partCount++;
+            }
+
+            Color effectColor = Color.White;
+            if(Phase != 0)
+            {
+                effectColor = Color.OrangeRed;
+            }
+
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-            
-            
-            
+
+            Rectangle ringRectangle = new Rectangle(0, 0, 1200, 1200);
+            Vector2 ringOrigin = ringRectangle.Size() / 2f;
+
+            float shaderAngle = MathHelper.Pi / 3f;
+            float shaderRotation = 0;
+            shieldEffect.Parameters["textureToSizeRatio"].SetValue(tsorcRevamp.NoiseWavy.Size() / ringRectangle.Size());
+            shieldEffect.Parameters["shaderColor"].SetValue(effectColor.ToVector4());
+            shieldEffect.Parameters["splitAngle"].SetValue(shaderAngle);
+            shieldEffect.Parameters["rotation"].SetValue(shaderRotation);
+            shieldEffect.Parameters["length"].SetValue(.1f);
+            shieldEffect.Parameters["firstEdge"].SetValue(.15f);
+            shieldEffect.Parameters["secondEdge"].SetValue(.115f);
+
+            //Precomputed
+            shieldEffect.Parameters["rotationMinusPI"].SetValue(shaderRotation - MathHelper.Pi);
+            shieldEffect.Parameters["splitAnglePlusRotationMinusPI"].SetValue(shaderRotation + shaderAngle - MathHelper.Pi);
+            shieldEffect.Parameters["RotationMinus2PIMinusSplitAngleMinusPI"].SetValue((shaderRotation - (MathHelper.TwoPi - shaderAngle)) - MathHelper.Pi);
+            shieldEffect.CurrentTechnique.Passes[0].Apply();
+
+            for (int i = 0; i < partCount; i++)
+            {
+                Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, NPC.Center - Main.screenPosition, ringRectangle, Color.White, MathHelper.PiOver2 + shieldRotation + i * MathHelper.TwoPi / 6f, ringOrigin, 1, SpriteEffects.None);
+            }
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
         }
 
