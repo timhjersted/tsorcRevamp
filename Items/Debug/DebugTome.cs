@@ -49,8 +49,7 @@ namespace tsorcRevamp.Items.Debug
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, player.Center);
 
-            Projectile.NewProjectile(source, player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
-            Projectile.NewProjectile(source, player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0f, Main.myPlayer, 300, 25);
+            Projectile.NewProjectile(source, Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.IonBomb>(), 0, 0f, Main.myPlayer);
 
 
             //NPCs.Bosses.PrimeV2.PrimeV2.ActuatePrimeArena();

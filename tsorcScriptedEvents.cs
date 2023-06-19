@@ -1308,8 +1308,15 @@ namespace tsorcRevamp
                     }
                     else
                     {
-                        //UsefulFunctions.BroadcastText("Resetting event");
-                        QueuedEvents[i].eventCooldownTimer = 900;
+                        //Add a delay before the event circle reactivates
+                        QueuedEvents[i].eventCooldownTimer = 300;
+
+                        //Longer in multiplayer
+                        if(Main.netMode != NetmodeID.SinglePlayer)
+                        {
+                            QueuedEvents[i].eventCooldownTimer = 600;
+                        }
+
                         EnabledEvents.Add(QueuedEvents[i]);
                         QueuedEvents.Remove(QueuedEvents[i]);
                     }

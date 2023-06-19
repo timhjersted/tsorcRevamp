@@ -3,12 +3,13 @@ sampler uImage0 : register(s0);
 float2 textureToSizeRatio;
 float2 effectSize;
 float2 textureSize;
+float scale;
+float time; //Causes the flames to flow with time
 float splitAngle; //How wide (in radians) the angle of fire is
 float rotation; //Rotates the fire
 float length; //The maximum length
+float opacity; //Multiplies the output by this to let it fade in
 float4 shaderColor;
-float firstEdge;
-float secondEdge;
 
 //I precomputed what values I could, to save on instruction count
 float rotationMinusPI;
@@ -32,10 +33,11 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     //Calculate how close the current pixel is to the center line of the screen
     float dist = distance(adjCoords, float2(0.5, 0.5));
     
-    //Calculate how intense a pixel should be based on the noise generator
-   // float intensity = tex2D(uImage0, samplePoint).r;
+    //Convert uv from rectangular to polar coordinates
+    float2 samplePoint = float2(dist - time, angle * INVERSETWOPI);
     
-    float intensity = 1;
+    //Calculate how intense a pixel should be based on the noise generator
+    float intensity = tex2D(uImage0, samplePoint).r;
     
     //Only draw a slice with angles between 'rotation' and 'splitAngle'. The final && is to stop it from going doing a fucky wucky when it crosses the 2Pi > 0 border.    
     if (angle > splitAnglePlusRotationMinusPI)
@@ -49,20 +51,25 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     
     //Make it taper off on the edges    
     float edgeDistance = min(min(abs(angle - rotationMinusPI), abs(angle - rotationMinusPI + TWOPI)), min(abs(splitAnglePlusRotationMinusPI - angle), abs(angle - RotationMinus2PIMinusSplitAngleMinusPI)));
-    if (abs(edgeDistance) < firstEdge)
+    if (abs(edgeDistance) < 0.311)
     {
-        intensity = lerp(0.0, intensity, edgeDistance / firstEdge);
+        intensity = lerp(0.0, intensity, edgeDistance / 0.311);
     }
     
     //Make it taper off near the source
-    if (dist < secondEdge)
+    if (dist < 0.02)
     {
-        intensity = lerp(0.0, intensity, dist / secondEdge);
+        intensity = lerp(0.0, intensity, dist / 0.02);
     }
     
-    intensity = lerp(intensity, 0, pow(min(abs(dist - length) * 10, 1), .4));
-    
-    return intensity * shaderColor;
+    if (dist > length)
+    {
+        intensity = lerp(intensity, 0, min((dist - length) * 10, 1));
+    }
+    return intensity * float4(0, 0.3, 0.9, 1);
+
+    //Scale 'intensity'
+    return intensity * shaderColor * opacity;
 }
 
 technique SimpleRing

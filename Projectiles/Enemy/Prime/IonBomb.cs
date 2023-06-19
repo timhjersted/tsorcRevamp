@@ -80,11 +80,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
                 Projectile.Center = newCenter;
                 Projectile.netUpdate = true;
             }
-
-            if (DetonationProgress > 45)
-            {
-                UsefulFunctions.DustRing(Projectile.Center, 230, DustID.FireworkFountain_Blue, 1 + (int)(2 * detonationPercent * detonationPercent), 15 * detonationPercent * detonationPercent);
-            }
         }
 
 
@@ -110,9 +105,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 900, 60);
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 600, 45);
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 270, 35);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 0);
 
                 float rotation = Main.rand.NextFloat(0, MathHelper.TwoPi);
                 for (int i = 0; i < 4; i++)
@@ -131,11 +124,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
         float effectTimer;
         float starRotation;
+        public static Effect RingEffect;
         public static Effect CoreEffect;
-        public static ArmorShaderData data;
         public override bool PreDraw(ref Color lightColor)
         {
-
             Vector3 hslColor1 = Main.rgbToHsl(Color.Cyan);
             Vector3 hslColor2 = Main.rgbToHsl(Color.Navy);
             hslColor1.X += 0.03f * (float)Math.Cos(effectTimer / 25f);
@@ -147,8 +139,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            //Apply the shader, caching it as well
-            //if (effect == null)
+            //Cache shaders
+            if (CoreEffect == null)
             {
                 CoreEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatFinalStandAttack", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
@@ -190,8 +182,41 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
             Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, Projectile.Center - Main.screenPosition, starRectangle, Color.White, -starRotation, starOrigin, 1, SpriteEffects.None, 0);
 
-            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+            if (DetonationProgress > 45)
+            {
+                if (RingEffect == null)
+                {
+                    RingEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/SimpleRing", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                }
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
+                Rectangle ringRectangle = new Rectangle(0, 0, 1200, 1200);
+                Vector2 ringOrigin = ringRectangle.Size() / 2f;
+
+                float shaderAngle = MathHelper.Pi * 1.2f * ((float)DetonationProgress) / DetonationTime;
+                float shaderRotation = 0;
+                RingEffect.Parameters["textureToSizeRatio"].SetValue(tsorcRevamp.NoiseWavy.Size() / ringRectangle.Size());
+                RingEffect.Parameters["shaderColor"].SetValue(Color.Blue.ToVector3());
+                RingEffect.Parameters["splitAngle"].SetValue(shaderAngle);
+                RingEffect.Parameters["rotation"].SetValue(shaderRotation);
+                RingEffect.Parameters["length"].SetValue(.2f);
+                RingEffect.Parameters["firstEdge"].SetValue(.25f);
+                RingEffect.Parameters["secondEdge"].SetValue(.015f);
+
+                //Precomputed
+                RingEffect.Parameters["rotationMinusPI"].SetValue(shaderRotation - MathHelper.Pi);
+                RingEffect.Parameters["splitAnglePlusRotationMinusPI"].SetValue(shaderRotation + shaderAngle - MathHelper.Pi);
+                RingEffect.Parameters["RotationMinus2PIMinusSplitAngleMinusPI"].SetValue((shaderRotation - (MathHelper.TwoPi - shaderAngle)) - MathHelper.Pi);
+                RingEffect.CurrentTechnique.Passes[0].Apply();
+
+                Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, Projectile.Center - Main.screenPosition, ringRectangle, Color.White, MathHelper.PiOver2 - 0.35f, ringOrigin, 1, SpriteEffects.None);
+                Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, Projectile.Center - Main.screenPosition, ringRectangle, Color.White, MathHelper.Pi + MathHelper.PiOver2 - 0.35f, ringOrigin, 1, SpriteEffects.None);
+
+
+
+            }
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
             return false;
         }
     }
