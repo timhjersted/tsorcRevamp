@@ -1309,7 +1309,7 @@ namespace tsorcRevamp
                     else
                     {
                         //UsefulFunctions.BroadcastText("Resetting event");
-                        QueuedEvents[i].eventCooldownTimer = 300;
+                        QueuedEvents[i].eventCooldownTimer = 900;
                         EnabledEvents.Add(QueuedEvents[i]);
                         QueuedEvents.Remove(QueuedEvents[i]);
                     }
