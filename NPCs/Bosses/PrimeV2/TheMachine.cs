@@ -363,7 +363,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
             }
         }
-
+        
+        //TODO: Remove
         public override bool? CanBeHitByItem(Player player, Item item)
         {
             return base.CanBeHitByItem(player, item);
@@ -596,6 +597,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             modifiers.FinalDamage *= 1.5f;
+
+            if (!finalStand)
+            {
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LanguageUtils.GetTextValue("NPCs.Artorias.Immune"), true, false);
+            }
         }
 
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
@@ -603,6 +609,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             if(projectile.DamageType == DamageClass.Melee)
             {
                 modifiers.FinalDamage *= 1.5f;
+            }
+
+            if (!finalStand)
+            {
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LanguageUtils.GetTextValue("NPCs.Artorias.Immune"), true, false);
             }
         }
 

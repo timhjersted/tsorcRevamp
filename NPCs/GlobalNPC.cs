@@ -117,6 +117,11 @@ namespace tsorcRevamp.NPCs
         public bool Irradiated;
         public bool IrradiatedByShroom;
 
+        public int boredTimer;
+        public int teleportCountdown;
+        public Vector2 nextTeleportLocation;
+        public NPCDespawnHandler DespawnHandler;
+
         public override void ResetEffects(NPC npc)
         {
             DarkInferno = false;

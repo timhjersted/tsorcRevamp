@@ -669,9 +669,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (!defenseBroken)
             {
-                //Only a fabled blade can break this shield!
                 if(textCooldown == 0)
                 {
+                    //Only a fabled blade can break this shield!
                     UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Artorias.BarrowBladeHint"));
                     textCooldown = 5;
                 }
@@ -691,6 +691,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (!defenseBroken)
             {
+                if (textCooldown == 0)
+                {
+                    //Only a fabled blade can break this shield!
+                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Artorias.BarrowBladeHint"));
+                    textCooldown = 5;
+                }
+                else
+                {
+                    textCooldown--;
+                }
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LanguageUtils.GetTextValue("NPCs.Artorias.Immune"), true, false);
                 modifiers.SetMaxDamage(1);
             }

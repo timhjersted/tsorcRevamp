@@ -8063,6 +8063,7 @@ Mods: {
 				DespawnHandler: Artorias, the Abysswalker stands victorious...
 				Protection: Artorias is protected by a magical barrier. Only the Shaman Elder knows how to break it!
 				Open: Artorias opens the abyss!
+				BarrowBladeHint: Only a fabled blade can break this shield!
 				Immune: Immune!
 			}
 
