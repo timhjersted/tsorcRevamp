@@ -7876,6 +7876,7 @@ Mods: {
 			NightbringerDashHitbox.DisplayName: Nightbringer Dash Hitbox
 			NightbringerFirewall.DisplayName: Nightbringer Firewall
 			HomingMissileTrail.DisplayName: Homing Missile Trail
+			ExplosionFlash.DisplayName: Explosion Flash
 		}
 
 		NPCs: {

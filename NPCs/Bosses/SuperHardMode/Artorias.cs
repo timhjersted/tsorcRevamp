@@ -658,6 +658,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.defense = 0;
             }
         }
+
+        int textCooldown;
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             if (//item.type == ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() doesn't work since Barrow Blade only damages with its projectile now, put that into its projectile below
@@ -668,6 +670,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (!defenseBroken)
             {
                 //Only a fabled blade can break this shield!
+                if(textCooldown == 0)
+                {
+                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Artorias.BarrowBladeHint"));
+                    textCooldown = 5;
+                }
+                else
+                {
+                    textCooldown--;
+                }
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LanguageUtils.GetTextValue("NPCs.Artorias.Immune"), true, false);
                 modifiers.SetMaxDamage(1);
             }
