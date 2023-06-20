@@ -72,6 +72,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<TheMachine>());
                     NPC.active = false;
                     NPC.netUpdate = true;
+                    break;
                 }
             }
         }

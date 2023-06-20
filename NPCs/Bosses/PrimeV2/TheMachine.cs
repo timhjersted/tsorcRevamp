@@ -107,7 +107,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             if (!activated)
             {
                 NPC.Center = PrimeCeilingPoint + new Vector2(0, -200);
-                for(int i = 0; i < Main.maxPlayers; i++)
+                for (int i = 0; i < Main.maxPlayers; i++)
                 {
                     if (Main.player[i].active && NPC.Distance(Main.player[i].Center) < 550)
                     {
@@ -121,7 +121,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     return;
                 }
             }
-            base.AI();            
+            base.AI();
 
             if (!aiPaused)
             {
@@ -132,21 +132,21 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 else
                 {
                     NPC.Center = PrimeCenterPoint;
-                }                
+                }
             }
 
-            if(Phase == 1)
+            if (Phase == 1)
             {
                 fireChargeTimer++;
                 //TODO: Fire chargeup VFX
-                if(fireChargeTimer == 180)
+                if (fireChargeTimer == 180)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 500, 80);
                     }
                 }
-                if(fireChargeTimer >= 120)
+                if (fireChargeTimer >= 120)
                 {
                     phase2Rotation -= 0.007f;
                 }
@@ -227,13 +227,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public override void HandleIntro()
         {
             float percent = (float)Math.Pow((float)introTimer / ((float)introDuration - 30), 4f);
-            if(percent > 1)
+            if (percent > 1)
             {
                 percent = 1;
             }
             NPC.Center = PrimeCeilingPoint + Vector2.Lerp(new Vector2(0, -200), Vector2.Zero, percent);
 
-            UsefulFunctions.SetAllCameras(NPC.Center, ref progress);            
+            UsefulFunctions.SetAllCameras(NPC.Center, ref progress);
 
             if (introTimer == 0)
             {
@@ -263,8 +263,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public bool AllPartsValid()
         {
-            if(BeamNPC != null && BeamNPC.active && IonNPC != null && IonNPC.active && BuzzsawNPC != null && BuzzsawNPC.active && GatlingNPC != null && GatlingNPC.active && LauncherNPC != null && LauncherNPC.active && SeverNPC != null && SeverNPC.active &&
-                BeamNPC.type == ModContent.NPCType<PrimeBeam>() && IonNPC.type == ModContent.NPCType<PrimeIon>() && BuzzsawNPC.type == ModContent.NPCType<PrimeBuzzsaw>() && 
+            if (BeamNPC != null && BeamNPC.active && IonNPC != null && IonNPC.active && BuzzsawNPC != null && BuzzsawNPC.active && GatlingNPC != null && GatlingNPC.active && LauncherNPC != null && LauncherNPC.active && SeverNPC != null && SeverNPC.active &&
+                BeamNPC.type == ModContent.NPCType<PrimeBeam>() && IonNPC.type == ModContent.NPCType<PrimeIon>() && BuzzsawNPC.type == ModContent.NPCType<PrimeBuzzsaw>() &&
                 GatlingNPC.type == ModContent.NPCType<PrimeGatling>() && LauncherNPC.type == ModContent.NPCType<PrimeSiege>() && SeverNPC.type == ModContent.NPCType<PrimeWelder>())
             {
                 return true;
@@ -301,18 +301,18 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 return;
             }
 
-            if(AllPartsValid() && !finalStand)
+            if (AllPartsValid() && !finalStand)
             {
                 NPC.life = 35000 + BeamNPC.life + IonNPC.life + BuzzsawNPC.life + GatlingNPC.life + LauncherNPC.life + SeverNPC.life;
                 NPC.lifeMax = 35000 + BeamNPC.lifeMax + IonNPC.lifeMax + BuzzsawNPC.lifeMax + GatlingNPC.lifeMax + LauncherNPC.lifeMax + SeverNPC.lifeMax;
             }
-            
+
             if (Phase == 0 && NPC.life < NPC.lifeMax / 1.8f)
             {
-                NextPhase();                
+                NextPhase();
             }
 
-            if(NPC.life <= 35006 && !finalStand)
+            if (NPC.life <= 35006 && !finalStand)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -363,7 +363,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
             }
         }
-        
+
         //TODO: Remove
         public override bool? CanBeHitByItem(Player player, Item item)
         {
@@ -379,7 +379,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         {
             if (projectile.type == ProjectileID.HallowStar)
             {
-               projectile.damage = (int)(projectile.damage * 0.7f);
+                projectile.damage = (int)(projectile.damage * 0.7f);
             }
             if (projectile.type == ProjectileID.RainbowRodBullet)
             {
@@ -389,6 +389,19 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public static void ActuatePrimeArena()
         {
+            SoundEngine.PlaySound(SoundID.Shatter);
+            //Remove droppable items (lanterns and crystal shards) from the center of the arena
+            for (int x = 5047; x < 5080; x++)
+            {
+                for (int y = 1086; y < 1116; y++)
+                {
+                    if (Main.tile[x,y].TileType == TileID.HangingLanterns || Main.tile[x, y].TileType == TileID.Crystals)
+                    {
+                        Main.tile[x, y].ClearTile();
+                    }
+                }
+            }
+
             //Turn the top row of glass into platforms
             for (int x = 4991; x < 5153; x++)
             {
@@ -431,6 +444,15 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                             Wiring.ActuateForced(x, y);
                         }
                     }
+                }
+            }
+
+            //Clear the water out of the little room to the left (it draws on top of the fire, which looks super jank and bad)
+            for (int x = 4935; x < 5025; x++)
+            {
+                for (int y = 1094; y < 1112; y++)
+                {
+                    Main.tile[x, y].LiquidAmount = 0;
                 }
             }
 

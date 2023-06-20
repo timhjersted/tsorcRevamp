@@ -144,7 +144,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
-            if(NPC.velocity.X < 0)
+            if(NPC.velocity.X < 0 && NPC.ai[0] != 2)
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }

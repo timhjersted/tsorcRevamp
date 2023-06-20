@@ -515,6 +515,7 @@ namespace tsorcRevamp
                 EnabledEvents.Add(eventValuePair.Value);
             }
 
+            QueuedEvents = new List<ScriptedEvent>();
             RunningEvents = new List<ScriptedEvent>();
             DisabledEvents = new List<ScriptedEvent>();
             NetworkEvents = new List<NetworkEvent>();
