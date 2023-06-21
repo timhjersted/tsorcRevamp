@@ -23,6 +23,28 @@ namespace tsorcRevamp.Buffs
                 player.GetDamage(DamageClass.Summon) *= 1f - player.manaSickReduction;
                 player.GetDamage(DamageClass.Throwing) *= 1f - player.manaSickReduction;
             }
+
+            if (type == BuffID.AmmoReservation)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationPotion = true;
+            }
+
+            if (type == BuffID.Tipsy)
+            {
+                player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
+            }
+
+            if (type == BuffID.Sharpened)
+            {
+                player.GetArmorPenetration(DamageClass.Melee) -= 12f;
+                player.GetModPlayer<tsorcRevampPlayer>().Sharpened = true;
+            }
+
+            if (type == BuffID.AmmoBox)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().AmmoBox = true;
+            }
+
             if (type == BuffID.SolarShield1)
             {
                 player.endurance += -0.2f + SolarDR1 / 100f;
@@ -59,6 +81,26 @@ namespace tsorcRevamp.Buffs
             if (type == BuffID.ManaSickness)
             {
                 tip = LanguageUtils.GetTextValue("Buffs.VanillaBuffs.ManaSickness", (int)(100 * Main.LocalPlayer.manaSickReduction));
+            }
+
+            if (type == BuffID.AmmoReservation)
+            {
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.Ranged.CritDmg", tsorcRevampPlayer.AmmoReservationRangedCritDamage);
+            }
+
+            if (type == BuffID.Tipsy)
+            {
+                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.Summon.WhipDmg", 10);
+            }
+
+            if (type == BuffID.Sharpened)
+            {
+                tip = LanguageUtils.GetTextValue("Items.VanillaItems.SharpeningStation", tsorcRevampPlayer.SharpenedMeleeArmorPen);
+            }
+
+            if (type == BuffID.AmmoBox)
+            {
+                tip += "\n" + LanguageUtils.GetTextValue("Items.VanillaItems.AmmoBox");
             }
 
             if (type == BuffID.SolarShield1)

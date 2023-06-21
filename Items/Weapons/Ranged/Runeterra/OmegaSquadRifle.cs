@@ -8,16 +8,21 @@ using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Items.Materials;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using Terraria.Localization;
+using Humanizer;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
     public class OmegaSquadRifle : ModItem
     {
         public int ShootSoundStyle = 0;
-        public float ShootSoundVolume = 0.5f;
-        public const int BaseDamage = 220;
+        public float ShootSoundVolume = 0.3f;
+        public const int BaseDamage = 330;
         public const int ShroomCooldown = 5;
         public const int ShroomBonusCritChance = 100;
+        public static int ShroomSetupTime = 3;
         public override void SetStaticDefaults()
         {
             ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
@@ -55,14 +60,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             }
             if (type == ProjectileID.PoisonDartBlowgun)
             {
-                damage *= 4;
-                damage /= 3;
+                damage *= ToxicShot.PoisonDartDmgMult;
             }
             if (player.altFunctionUse == 2)
             {
                 if (type == ProjectileID.Seed)
                 {
-                    damage /= 2;
+                    damage *= AlienGun.BlindingLaserSeedDmgMult;
                 }
                 type = ModContent.ProjectileType<RadioactiveBlindingLaser>();
             }
@@ -101,7 +105,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             {
                 player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1); //ScoutsBoost buff itself does nto play any sounds in it's code so I didn't need to make an Omega version
             }
-            if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoost>())) //Scouts Boots 2 blocks Scouts Boost 1 and its cooldown so this won't occur then
+            if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoost>())) //Scouts Boost 2 blocks Scouts Boost 1 and its cooldown so this won't occur then
             {
                 player.velocity *= 0.92f;
             }
@@ -119,6 +123,39 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             if (Main.mouseLeft)
             {
                 player.altFunctionUse = 1;
+            }
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            var SpecialAbilityKey = tsorcRevamp.specialAbility.GetAssignedKeys();
+            string SpecialAbilityString = SpecialAbilityKey.Count > 0 ? SpecialAbilityKey[0] : "Special Ability: <NOT BOUND>";
+            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip5");
+            if (ttindex1 != -1)
+            {
+                tooltips.RemoveAt(ttindex1);
+                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.ToxicShot.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.ToxicShot.Keybind2")));
+            }
+            int ttindex2 = tooltips.FindIndex(t => (t.Name == "Tooltip7"));
+            if (ttindex2 != -1)
+            {
+                tooltips.RemoveAt(ttindex2);
+                tooltips.Insert(ttindex2, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.OmegaSquadRifle.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.OmegaSquadRifle.Keybind2")));
+            }
+            if (Main.keyState.IsKeyDown(Keys.LeftShift))
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", Language.GetTextValue("Mods.tsorcRevamp.Items.OmegaSquadRifle.Details").FormatWith(ShroomSetupTime, AlienGun.BlindingLaserDmgMult, AlienGun.BlindingLaserBonusCritChance, AlienGun.BlindingLaserPercentHPDmg, AlienGun.BlindingLaserHPDmgCap, ToxicShot.ScoutsBoostMoveSpeedMult, ToxicShot.ScoutsBoostStaminaRegenMult, ToxicShot.ScoutsBoostOnHitCooldown, ToxicShot.ScoutsBoost2Duration, AlienGun.BlindingLaserSeedDmgMult, ShroomCooldown)));
+                }
+            }
+            else
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Shift", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Details")));
+                }
             }
         }
         public override bool AltFunctionUse(Player player)

@@ -8,6 +8,10 @@ using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Items.Materials;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using Terraria.Localization;
+using Humanizer;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
@@ -16,6 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public int ShootSoundStyle = 0;
         public float ShootSoundVolume = 1f;
         public const int BaseDamage = 60;
+        public static int BlindingLaserSeedDmgMult = 2;
         public const int BlindingLaserCooldown = 5;
         public const float BlindingLaserDmgMult = 3;
         public const int BlindingLaserBonusCritChance = 100;
@@ -58,13 +63,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             }
             if (type == ProjectileID.PoisonDartBlowgun)
             {
-                damage *= 2;
+                damage *= ToxicShot.PoisonDartDmgMult;
             }
             if (player.altFunctionUse == 2)
             {
                 if (type == ProjectileID.Seed)
                 {
-                    damage *= 2;
+                    damage *= BlindingLaserSeedDmgMult;
                 }
                 type = ModContent.ProjectileType<AlienBlindingLaser>();
             }
@@ -107,13 +112,40 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             }
             return true;
         }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            var SpecialAbilityKey = tsorcRevamp.specialAbility.GetAssignedKeys();
+            string SpecialAbilityString = SpecialAbilityKey.Count > 0 ? SpecialAbilityKey[0] : "Special Ability: <NOT BOUND>";
+            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip5");
+            if (ttindex1 != -1)
+            {
+                tooltips.RemoveAt(ttindex1);
+                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.ToxicShot.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.ToxicShot.Keybind2")));
+            }
+            if (Main.keyState.IsKeyDown(Keys.LeftShift))
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", Language.GetTextValue("Mods.tsorcRevamp.Items.ToxicShot.Details").FormatWith(BlindingLaserDmgMult, BlindingLaserBonusCritChance, BlindingLaserPercentHPDmg, BlindingLaserHPDmgCap, ToxicShot.ScoutsBoostMoveSpeedMult, ToxicShot.ScoutsBoostStaminaRegenMult, ToxicShot.ScoutsBoostOnHitCooldown, ToxicShot.ScoutsBoost2Duration, BlindingLaserSeedDmgMult, BlindingLaserCooldown)));
+                }
+            }
+            else
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Shift", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Details")));
+                }
+            }
+        }
         public override void HoldItem(Player player)
         {
             if (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
             {
                 player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
             }
-            if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoost>())) //Scouts Boots 2 blocks Scouts Boost 1 and its cooldown so this won't occur then
+            if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoost>())) //Scouts Boost 2 blocks Scouts Boost 1 and its cooldown so this won't occur then
             {
                 player.velocity *= 0.92f;
             }

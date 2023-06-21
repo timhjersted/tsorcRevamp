@@ -4,16 +4,18 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
 	public class NuclearMushroom: ModProjectile
 	{
+        public bool Activated;
 		public override void SetStaticDefaults()
 		{
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5; // The length of old position to be recorded
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // The recording mode
-            Main.projFrames[Projectile.type] = 3;
+            Main.projFrames[Projectile.type] = 12;
         }
 
 		public override void SetDefaults()
@@ -35,6 +37,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         {
             Player owner = Main.player[Projectile.owner];
             Projectile.damage = 0;
+            Activated = false;
             BuiltSoundStyle = Main.rand.Next(1, 4);
             if (BuiltSoundStyle == 1)
             {
@@ -51,18 +54,31 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         }
         public override void AI()
         {
-            int frameSpeed = 15;
+            int frameSpeed;
 
             Projectile.frameCounter++;
 
-            if (Projectile.frameCounter >= frameSpeed)
+            if (!Activated)
             {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
+                frameSpeed = 17;
 
+                if (Projectile.frameCounter >= frameSpeed && Projectile.frame < Main.projFrames[Projectile.type] - 3)
+                {
+                    Projectile.frameCounter = 0;
+                    Projectile.frame++;
+                }
+            }
+            else if (Activated)
+            {
+                frameSpeed = 10;
+                if (Projectile.frameCounter >= frameSpeed)
+                {
+                    Projectile.frameCounter = 0;
+                    Projectile.frame++;
+                }
                 if (Projectile.frame >= Main.projFrames[Projectile.type])
                 {
-                    Projectile.frame = 0;
+                    Projectile.frame = 9;
                 }
             }
 
@@ -71,10 +87,11 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         }
         public override bool? CanDamage()
         {
-            if (Projectile.timeLeft > 100 * 60 - 3 * 60)
+            if (Projectile.timeLeft > 100 * 60 - OmegaSquadRifle.ShroomSetupTime * 60)
             {
                 return false;
             }
+            Activated = true;
             return null;
         }
         public int BoomSoundStyle;

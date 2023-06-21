@@ -8,6 +8,10 @@ using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Items.Materials;
 using Terraria.DataStructures;
 using Terraria.Audio;
+using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using Terraria.Localization;
+using Humanizer;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
@@ -15,10 +19,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
     {
         public int ShootSoundStyle = 0;
         public float ShootSoundVolume = 0.5f;
+        public static float ScoutsBoostMoveSpeedMult = 20f;
+        public static float ScoutsBoostStaminaRegenMult = 10f;
         public const int BaseDamage = 20;
         public const int ScoutsBoostOnHitCooldown = 3;
         public const int ScoutsBoost2Duration = 5;
         public const int ScoutsBoost2Cooldown = 25;
+        public static int PoisonDartDmgMult = 2;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PoisonDartDmgMult);
         public override void SetStaticDefaults()
         {
             ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
@@ -77,7 +85,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             }
             if (type == ProjectileID.PoisonDartBlowgun)
             {
-                damage *= 2;
+                damage *= PoisonDartDmgMult;
             }
         }
         public override void HoldItem(Player player)
@@ -86,13 +94,40 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             {
                 player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
             }
-            if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoost>())) //Scouts Boots 2 blocks Scouts Boost 1 and its cooldown so this won't occur then
+            if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoost>())) //Scouts Boost 2 blocks Scouts Boost 1 and its cooldown so this won't occur then
             {
                 player.velocity *= 0.92f;
             }
             else if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()))
             {
                 player.velocity *= 0.01f;
+            }
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            var SpecialAbilityKey = tsorcRevamp.specialAbility.GetAssignedKeys();
+            string SpecialAbilityString = SpecialAbilityKey.Count > 0 ? SpecialAbilityKey[0] : "Special Ability: <NOT BOUND>";
+            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip5");
+            if (ttindex1 != -1)
+            {
+                tooltips.RemoveAt(ttindex1);
+                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.ToxicShot.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.ToxicShot.Keybind2")));
+            }
+            if (Main.keyState.IsKeyDown(Keys.LeftShift))
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", Language.GetTextValue("Mods.tsorcRevamp.Items.ToxicShot.Details").FormatWith(ScoutsBoostMoveSpeedMult, ScoutsBoostStaminaRegenMult, ScoutsBoostOnHitCooldown, ScoutsBoost2Duration)));
+                }
+            }
+            else
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Shift", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Details")));
+                }
             }
         }
 

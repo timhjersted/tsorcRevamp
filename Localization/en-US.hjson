@@ -135,7 +135,7 @@ Mods: {
 					OnUseText3: The Triad only awakens at night...
 				}
 
-				SharpeningStation: "{$CommonItemTooltip.MeleeArmorPenPercent}"
+				SharpeningStation: "{$CommonItemTooltip.Melee.ArmorPenPercent}"
 				GoldenGi: "{$CommonItemTooltip.FlatMeleeDamageBoost}"
 				ManaCost1: "Requires "
 				ManaCost2: " mana to cast projectile"
@@ -960,7 +960,7 @@ Mods: {
 				DisplayName: Ring Of Clarity
 				Tooltip:
 					'''
-					Immunity to {$CommonItemTooltip.Onfire}, Burning, Chilled, {$CommonItemTooltip.CursedInferno}, {$CommonItemTooltip.Ichor}, 
+					Immunity to {$CommonItemTooltip.OnFire}, Burning, Chilled, {$CommonItemTooltip.CursedInferno}, {$CommonItemTooltip.Ichor}, 
 					Gravitation, Bleeding, Poisoned and knockback
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.LifeRegen@1}
@@ -3770,7 +3770,7 @@ Mods: {
 
 			BoostPotion: {
 				DisplayName: Boost Potion
-				Tooltip: "{$CommonItemTooltip.MoveSpeedMultiplier}"
+				Tooltip: "{$CommonItemTooltip.MoveSpeedMult}"
 			}
 
 			ChickenGlowingMushroomSkewer: {
@@ -6301,12 +6301,25 @@ Mods: {
 				Tooltip:
 					'''
 					Converts seeds into Toxic Shots and allows you to gather Seeds from grass
-					Toxic Shots apply a short burst of venom and home into enemies
-					Also uses all darts as ammo, but Poison Darts deal double damage
-					Stops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise
-					Grants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily
-					Press Special Ability to gain an even higher temporary boost and remove the movement penalties
+					Toxic Shots apply a short burst of Venom and home into enemies
+					Also uses all darts as ammo, but Poison Darts deal {0}x damage
+					Inhibits player movement conditionally whilst being used
+					May grant a movement speed and stamina regen boost whilst being held
+					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
 					'That's gotta sting'
+					'''
+				Keybind1: "Press "
+				Keybind2: " to fully activate Scouts Boost"
+				Details: 
+					'''
+					Venom applied by Toxic Shots scales with ranged damage and critical strike chance
+					Grants Scouts Boost passively while being held:{$CommonItemTooltip.MoveSpeedMult} and,
+					multiplicatively increases stamina regeneration by {1}%
+					Scouts Boost is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@2}
+					Using the weapon with Scouts Boost active passively will slow you down
+					Using it when Scouts Boost is on cooldown will root you briefly
+					Activated Ability removes movement penalties unconditionally for {$CommonItemTooltip.Duration@3}
+					Activated Ability doubles the movement speed and stamina regeneration boosts
 					'''
 			}
 
@@ -6315,13 +6328,26 @@ Mods: {
 				Tooltip:
 					'''
 					Converts seeds into Alien Lasers and allows you to gather Seeds from grass
-					Alien Lasers apply a short burst of Electrified home into enemies
-					Also uses all darts as ammo, but Poison Darts deal double damage
-					Stops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise
-					Grants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily
-					Press Special Ability to gain an even higher temporary boost and remove the movement penalties
-					Right click to shoot a homing blinding shot which inflicts confusion
+					Alien Lasers apply a short burst of Electrified and home into enemies
+					Also uses all darts as ammo, but Poison Darts deal {0}x damage
+					Inhibits player movement conditionally whilst being used
+					May grant a movement speed and stamina regen boost whilst being held
+					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
+					Right click to shoot a homing Blinding Laser which inflicts confusion
 					'Armed and ready'
+					'''
+				Details: 
+					'''
+					Blinding Laser deals {0}x damage, multiplied by {8} again while using Seeds as ammunition({$CommonItemTooltip.Cooldown@9})
+					Blinding Laser gains {1}% bonus critical strike chance and {2}% max health damage on-hit, up to {3}
+					Electrification applied by Alien Lasers scales with ranged damage and critical strike chance
+					Grants Scouts Boost passively while being held:{$CommonItemTooltip.MoveSpeedMult@4} and,
+					multiplicatively increases stamina regeneration by {5}%
+					Scouts Boost is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@6}
+					Using the weapon with Scouts Boost active passively will slow you down
+					Using it when Scouts Boost is on cooldown will root you briefly
+					Activated Ability removes movement penalties unconditionally for {$CommonItemTooltip.Duration@7}
+					Activated Ability doubles the movement speed and stamina regeneration boosts
 					'''
 			}
 
@@ -6330,14 +6356,33 @@ Mods: {
 				Tooltip:
 					'''
 					Converts seeds into Radioactive Darts and allows you to gather Seeds from grass
-					Radioactive Darts apply a short burst of Irradiated home into enemies
-					Also uses all darts as ammo, but Poison Darts deal double damage
-					Stops players movement for a fraction of the weapon's usetime if recently hurt, slows otherwise
-					Grants movement speed and stamina regen boost whilst being held that gets removed upon taking damage temporarily
-					Press Special Ability to gain an even higher temporary boost and remove the movement penalties
-					Right click to shoot a homing blinding dart which inflicts confusion
-					Press Shift and Special Ability to drop a Nuclear Mushroom
+					Radioactive Darts apply a short burst of Radiation and home into enemies
+					Also uses all darts as ammo, but Poison Darts deal {0}x damage
+					Inhibits player movement conditionally whilst being used
+					May grant a movement speed and stamina regen boost whilst being held
+					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
+					Right click to shoot a homing Blinding Laser which inflicts confusion
+					{$Items.OmegaSquadRifle.Keybind1}Special Ability{$Items.OmegaSquadRifle.Keybind2}
 					'There's a mushroom out there with your name on it'
+					'''
+				Keybind1: "Press Shift and "
+				Keybind2: " to drop a Nuclear Mushroom"
+				Details: 
+					'''
+					Nuclear Mushroom needs {0} seconds to arm itself after being dropped({$CommonItemTooltip.Cooldown@10})
+					The explosion resulting form the Mushroom deals massive damage and applies an even stronger Radiation
+					Multiple moshrooms exploding at once will not increase damage dealt
+					Radiation applied from the Mushroom's explosion stacks with that of Radioactive Darts
+					Blinding Laser deals {1}x damage, multiplied by {9} again while using Seeds as ammunition({$CommonItemTooltip.Cooldown@11})
+					Blinding Laser gains {2}% bonus critical strike chance and {3}% max health damage on-hit, up to {4}
+					Radiation applied by Alien Lasers scales with ranged damage and critical strike chance
+					Grants Scouts Boost passively while being held:{$CommonItemTooltip.MoveSpeedMult@5} and,
+					multiplicatively increases stamina regeneration by {6}%
+					Scouts Boost is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@7}
+					Using the weapon with Scouts Boost active passively will slow you down
+					Using it when Scouts Boost is on cooldown will root you briefly
+					Activated Ability removes movement penalties unconditionally for {$CommonItemTooltip.Duration@8}
+					Activated Ability doubles the movement speed and stamina regeneration boosts
 					'''
 			}
 
@@ -6632,7 +6677,7 @@ Mods: {
 
 			Boost: {
 				DisplayName: Boost
-				Description: "{$CommonItemTooltip.MoveSpeedMultiplier}"
+				Description: "{$CommonItemTooltip.MoveSpeedMult}"
 			}
 
 			BossZenBuff: {

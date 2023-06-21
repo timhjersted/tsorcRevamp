@@ -19,8 +19,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/SuperBuffCast") with { Volume = 1f }, player.Center);
             }
-            player.moveSpeed *= 1.4f;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.2f;
+            player.moveSpeed *= 1f + ToxicShot.ScoutsBoostMoveSpeedMult * 2f / 100f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1f + ToxicShot.ScoutsBoostStaminaRegenMult * 2f / 100f;
             if (player.buffTime[buffIndex] == 1)
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/SuperBuffEnd") with { Volume = 1f }, player.Center);
