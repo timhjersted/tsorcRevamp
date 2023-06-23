@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Enums;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -13,15 +14,11 @@ namespace tsorcRevamp.Projectiles.Ranged
     {
         public override void SetDefaults()
         {
-            Projectile.width = 194;
-            Projectile.height = 194;
-            DrawOriginOffsetX = -96;
-            DrawOriginOffsetY = 94;
-            Main.projFrames[Projectile.type] = 7;
+            Projectile.width = 2;
+            Projectile.height = 2;
             Projectile.hostile = false;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
-            Projectile.scale = 2;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.light = 1;
             Projectile.tileCollide = false;
@@ -42,6 +39,7 @@ namespace tsorcRevamp.Projectiles.Ranged
         float maxSize = 1200;
         bool initialized = false;
         float fadeIn;
+        float trueSize;
         public override void AI()
         {
             if (dying)
@@ -101,6 +99,20 @@ namespace tsorcRevamp.Projectiles.Ranged
 
             Projectile.timeLeft = 2;
 
+            trueSize = (float)Math.Pow((UsefulFunctions.GetFirstCollision(Projectile.Center, Projectile.rotation.ToRotationVector2(), ignoreNPCs: true) - Projectile.Center).Length() / 600f, 0.5f);
+            if(trueSize > 1)
+            {
+                trueSize = 1;
+            }
+            Main.NewText(trueSize);
+
+            Vector2 unit = Projectile.rotation.ToRotationVector2();
+            Vector2 endpoint = Projectile.Center + trueSize * (unit * (400 + (size / 6f)));
+            DelegateMethods.v3_1 = Color.OrangeRed.ToVector3();
+            Utils.PlotTileLine(Projectile.Center, endpoint, 32, DelegateMethods.CastLight);
+            DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+            Utils.PlotTileLine(Projectile.Center, endpoint, 32, DelegateMethods.CutTiles);
+
             if (fadeIn < 30)
             {
                 fadeIn++;
@@ -118,7 +130,7 @@ namespace tsorcRevamp.Projectiles.Ranged
         {
             float distance = Vector2.Distance(truePosition, targetHitbox.Center.ToVector2());
             float angleBetween = (float)UsefulFunctions.CompareAngles(Vector2.Normalize(truePosition - targetHitbox.Center.ToVector2()), Projectile.rotation.ToRotationVector2());
-            return distance < 400 + (size / 6f) && Math.Abs(angleBetween - MathHelper.Pi) < angle / 2.85f;
+            return distance < trueSize * (400 + (size / 6f)) && Math.Abs(angleBetween - MathHelper.Pi) < angle / 2.85f;
         }
 
         public static Effect effect;
@@ -161,7 +173,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             Vector2 origin = new Vector2(recsize.Width * 0.5f, recsize.Height * 0.5f);
 
             //Draw the rendertarget with the shader
-            Main.spriteBatch.Draw(tsorcRevamp.NoiseTurbulent, truePosition - Main.screenPosition, recsize, Color.White, Projectile.rotation + (MathHelper.Pi - angle / 2f), origin, 4.5f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tsorcRevamp.NoiseTurbulent, truePosition - Main.screenPosition, recsize, Color.White, Projectile.rotation + (MathHelper.Pi - angle / 2f), origin, trueSize * 4.5f, SpriteEffects.None, 0);
 
             //Restart the spritebatch so the shader doesn't get applied to the rest of the game
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
