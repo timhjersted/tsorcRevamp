@@ -884,10 +884,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TheMachineBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedFocusingLens>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedIncinerator>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedMachiningTools>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedDronePart>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedMechanicalScrap>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Lore.CrestOfSteel>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.HallowedBar, 1, 25, 40));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofFright, 1, 20, 40));

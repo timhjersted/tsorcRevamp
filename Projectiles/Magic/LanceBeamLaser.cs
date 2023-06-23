@@ -7,7 +7,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Prime
+namespace tsorcRevamp.Projectiles.Magic
 {
 
     public class LanceBeamLaser : GenericLaser
@@ -58,19 +58,49 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
         }
         public override void AI()
         {
-            if (owner != null && !owner.dead)
-            {
-                Projectile.velocity = (Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2).ToRotationVector2();
-            }
 
             base.AI();
+
+            if(owner == null || owner.dead)
+            {
+                Projectile.Kill();
+                return;
+            }
+
+            if (!owner.channel || owner.noItems || owner.CCed || owner.statMana <= 0)
+            {
+                if (Projectile.timeLeft > 30)
+                {
+                    Projectile.timeLeft = 30;
+                }
+            }
+            else
+            {
+                Projectile.timeLeft++;
+
+                if (FiringTimeLeft > 0)
+                {
+                    FiringTimeLeft++;
+                }
+                if (Main.GameUpdateCount % 2 == 0)
+                {
+                    owner.statMana--;
+                }
+                owner.manaRegenDelay = 180;
+            }
+
+            if (owner != null && !owner.dead && owner.whoAmI == Main.myPlayer)
+            {
+                Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, Main.MouseWorld, 1);
+                Projectile.Center += Projectile.velocity * 30;
+            }
         }
 
         public override Vector2 GetOrigin()
         {
             if (owner != null && !owner.dead)
             {
-                return owner.Center + new Vector2(30, 0).RotatedBy(Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2);
+                return owner.Center;
             }
             else
             {
@@ -79,6 +109,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             }
         }
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(BuffID.OnFire, 300);
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.OnFire, 300);
         }

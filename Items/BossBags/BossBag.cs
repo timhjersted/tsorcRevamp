@@ -266,10 +266,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.IonicFury>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfSteel>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DamagedFocusingLens>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DamagedMachiningTools>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DamagedIncinerator>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DamagedDronePart>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DamagedMechanicalScrap>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.MechanicalBatteryPiece));
             itemLoot.Add(ItemDropRule.Common(ItemID.HallowedBar, 1, 20, 35));
             itemLoot.Add(ItemDropRule.Common(ItemID.SoulofFright, 1, 25, 40));
