@@ -42,6 +42,8 @@ namespace tsorcRevamp.Projectiles.Ranged
         float trueSize;
         public override void AI()
         {
+            Projectile.timeLeft = 2;
+
             if (dying)
             {
                 fadeIn--;
@@ -82,29 +84,22 @@ namespace tsorcRevamp.Projectiles.Ranged
                     if (Main.GameUpdateCount % 60 == 0)
                     {
                         gelStack.stack--;
-                        if (gelStack.stack == 0)
+                        if (gelStack.stack <= 0)
                         {
+                            Projectile.damage = 0;
+                            dying = true;
                             gelStack.TurnToAir();
                         }
                     }
                 }
             }
-            
-            if (!owner.channel || owner.noItems || owner.CCed || owner.statMana <= 0)
-            {
-                Projectile.damage = 0;
-                dying = true;
-                return;
-            }
 
-            Projectile.timeLeft = 2;
 
             trueSize = (float)Math.Pow((UsefulFunctions.GetFirstCollision(Projectile.Center, Projectile.rotation.ToRotationVector2(), ignoreNPCs: true) - Projectile.Center).Length() / 600f, 0.5f);
             if(trueSize > 1)
             {
                 trueSize = 1;
             }
-            Main.NewText(trueSize);
 
             Vector2 unit = Projectile.rotation.ToRotationVector2();
             Vector2 endpoint = Projectile.Center + trueSize * (unit * (400 + (size / 6f)));
@@ -112,6 +107,14 @@ namespace tsorcRevamp.Projectiles.Ranged
             Utils.PlotTileLine(Projectile.Center, endpoint, 32, DelegateMethods.CastLight);
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
             Utils.PlotTileLine(Projectile.Center, endpoint, 32, DelegateMethods.CutTiles);
+
+
+            if (!owner.channel || owner.noItems || owner.CCed)
+            {
+                Projectile.damage = 0;
+                dying = true;
+                return;
+            }
 
             if (fadeIn < 30)
             {
@@ -157,6 +160,8 @@ namespace tsorcRevamp.Projectiles.Ranged
             if(fadeIn < 30)
             {
                 MathHelper.Lerp(0.01f, 1, fadeIn / 30f);
+                opacity *= fadeIn / 30f;
+                opacity *= fadeIn / 30f;
             }
 
             effect.Parameters["opacity"].SetValue(opacity * 5);
