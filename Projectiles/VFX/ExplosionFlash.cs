@@ -159,12 +159,11 @@ namespace tsorcRevamp.Projectiles.VFX
             }
 
             starRotation = 0;
-            Rectangle starRectangle = new Rectangle(0, 0, 4048, 4048);
-            if (Projectile.ai[0] == 1)
-            {
-                starRectangle.Width = (int)(starRectangle.Width * 0.5f);
-                starRectangle.Height = (int)(starRectangle.Height * 0.5f);
-            }
+            Rectangle starRectangle = new Rectangle(0, 0, 3000, 3000);
+
+            starRectangle.Width = (int)(starRectangle.Width * (Projectile.ai[0] / 600f));
+            starRectangle.Height = (int)(starRectangle.Height * (Projectile.ai[0] / 600f));
+
             float effectFactor = (float)Math.Pow((360f - effectTimer) / 360f, 14);
             starRectangle.Width = (int)(starRectangle.Width * effectFactor);
             starRectangle.Height = (int)(starRectangle.Height * effectFactor);

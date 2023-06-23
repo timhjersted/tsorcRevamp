@@ -446,6 +446,7 @@ namespace tsorcRevamp
                 Player.wingTime = Player.wingTimeMax;
             }
 
+
             //No more Distorted debuff
             Player.buffImmune[BuffID.VortexDebuff] = true;
 
@@ -800,6 +801,11 @@ namespace tsorcRevamp
 
         public override void PreUpdateBuffs()
         {
+            //Gives the DPS meter effect for free
+            //Do not ask why it is called "accDreamCatcher"
+            //This has to go here for it to work. Don't ask me why either. I value my sanity too much to go check.
+            Player.accDreamCatcher = true;
+
             if (chestBank >= 0)
             {
                 DoPortableChest<SafeProjectile>(ref chestBank, ref chestBankOpen);
@@ -947,6 +953,11 @@ namespace tsorcRevamp
                 PowerfulCurseLevel = 1; //Not sure why 1 is the default
             }
         }
+        
+        //public override void UpdateEquips()
+        //{
+            //base.UpdateEquips();
+        //}
         public override void PostUpdateEquips()
         {
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)

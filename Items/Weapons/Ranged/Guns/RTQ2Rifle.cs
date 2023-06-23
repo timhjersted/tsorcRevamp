@@ -2,6 +2,7 @@
 using Terraria.ModLoader;
 using Terraria;
 using tsorcRevamp.Items.Materials;
+using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 {
@@ -31,6 +32,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Item.useAmmo = AmmoID.Bullet;
             Item.DamageType = DamageClass.Ranged;
             Item.knockBack = 1f;
+        }
+
+        public override Vector2? HoldoutOffset()
+        {
+            return base.HoldoutOffset();
         }
 
         public override void AddRecipes()

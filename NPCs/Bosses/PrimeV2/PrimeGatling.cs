@@ -229,15 +229,15 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             if (NPC.frameCounter % frameTime == 0)
             {
                 NPC.frame.Y += texture.Height / 12;
-                if (NPC.frame.Y >= texture.Height / 2)
+                if (!damaged && NPC.frame.Y >= texture.Height / 2)
                 {
                     NPC.frame.Y = 0;
                 }
-            }
 
-            if (damaged)
-            {
-                NPC.frame.Y += texture.Height / 2;
+                if (damaged && NPC.frame.Y >= texture.Height)
+                {
+                    NPC.frame.Y = texture.Height / 2;
+                }
             }
             Vector2 drawOrigin = new Vector2(NPC.frame.Width * 0.5f, NPC.frame.Height * 0.5f);
             Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition, NPC.frame, drawColor, NPC.rotation, drawOrigin, 1f, SpriteEffects.None, 0);

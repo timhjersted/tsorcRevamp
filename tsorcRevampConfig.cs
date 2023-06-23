@@ -130,7 +130,7 @@ namespace tsorcRevamp
         [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.Sound")]
 
         [BackgroundColor(60, 140, 80, 192)]
-        [DefaultValue(100)]
+        [DefaultValue(5)]
         public uint MiakodaVolume { get; set; }
 
         [BackgroundColor(60, 140, 80, 192)]

@@ -1761,8 +1761,11 @@ Mods: {
 					+30% melee speed
 					The legends of Arradius spoke of the one who would wear this
 					You are a master of all forces, the protector of Earth, the Hero of the age.
-					Set Bonus: Harmonized with the four elements: fire, water, earth and air, including +2 life regen and flight
-					Boosts damage, crit chance and movement speed by 30%
+					Set Bonus:
+					Harmonized with the four elements: fire, water, earth and air, including +2 life regen and flight
+					Boosts damage, crit chance and movement speed by 30%, boosts regen and flight
+					Provides immunity to drowning and invulnerability to lava
+					Retains this set bonus even if only one or two pieces of the armor are upgraded to their supreme form
 					'''
 			}
 
@@ -6310,7 +6313,7 @@ Mods: {
 					'''
 				Keybind1: "Press "
 				Keybind2: " to fully activate Scouts Boost"
-				Details: 
+				Details:
 					'''
 					Venom applied by Toxic Shots scales with ranged damage and critical strike chance
 					Grants Scouts Boost passively while being held:{$CommonItemTooltip.MoveSpeedMult} and,
@@ -6336,7 +6339,7 @@ Mods: {
 					Right click to shoot a homing Blinding Laser which inflicts confusion
 					'Armed and ready'
 					'''
-				Details: 
+				Details:
 					'''
 					Blinding Laser deals {0}x damage, multiplied by {8} again while using Seeds as ammunition({$CommonItemTooltip.Cooldown@9})
 					Blinding Laser gains {1}% bonus critical strike chance and {2}% max health damage on-hit, up to {3}
@@ -6367,7 +6370,7 @@ Mods: {
 					'''
 				Keybind1: "Press Shift and "
 				Keybind2: " to drop a Nuclear Mushroom"
-				Details: 
+				Details:
 					'''
 					Nuclear Mushroom needs {0} seconds to arm itself after being dropped({$CommonItemTooltip.Cooldown@10})
 					The explosion resulting form the Mushroom deals massive damage and applies an even stronger Radiation
@@ -6598,37 +6601,57 @@ Mods: {
 
 			IonicFury: {
 				DisplayName: Ionic Fury
-				Tooltip: ""
+				Tooltip:
+					'''
+					A mysterious power source, radiating unstable energy
+					Periodically emits self-teleporting explosives that stick to enemies
+					'''
 			}
 
 			TheMachineBag: {
-				DisplayName: The Machine Bag
-				Tooltip: ""
+				DisplayName: Treasure Bag (The Machine)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
-			DamagedDronePart: {
-				DisplayName: Damaged Drone Part
-				Tooltip: ""
-			}
-
-			DamagedFocusingLens: {
-				DisplayName: Damaged Focusing Lens
-				Tooltip: ""
-			}
-
-			DamagedIncinerator: {
-				DisplayName: Damaged Incinerator
-				Tooltip: ""
-			}
-
-			DamagedMachiningTools: {
-				DisplayName: Damaged Machining Tools
-				Tooltip: ""
+			DamagedMechanicalScrap: {
+				DisplayName: Damaged Mechanical Scrap
+				Tooltip: 
+					'''
+					A pile of damaged but partially intact scrap metal. Perhaps it can be repaired...
+					'''
 			}
 
 			Meltdown: {
 				DisplayName: Meltdown
-				Tooltip: ""
+				Tooltip: 
+				'''
+				Fires an intense jet of flame
+				Its damage is more intense closer to the source
+				'''
+			}
+
+			LanceBeam: {
+				DisplayName: Lance Beam
+				Tooltip: "A beam weapon that can fire a continuous laser"
+			}
+
+			Shrapnel: {
+				DisplayName: Shrapnel
+				Tooltip: "A buzzsaw, capable of devastating damage at close range"
+			}
+
+			PhotonicDownpour: {
+				DisplayName: Photonic Downpour
+				Tooltip: 
+				'''
+				A fully operational drone control system
+				Can support enough combat drones to make even an Engi blush
+				'''
+			}
+
+			DarkMagicRing: {
+				DisplayName: Dark Magic Ring
+				Tooltip: "A dark relic that can summon a forgotten seeker."
 			}
 		}
 
@@ -7404,6 +7427,11 @@ Mods: {
 				DisplayName: Heatstroke
 				Description: Mods.tsorcRevamp.Buffs.Heatstroke.Description
 			}
+
+			PhotonicDownpourBuff: {
+				DisplayName: Photonic Downpour Buff
+				Description: "The combat drone will fight for you"
+			}
 		}
 
 		Projectiles: {
@@ -7922,6 +7950,8 @@ Mods: {
 			NightbringerFirewall.DisplayName: Nightbringer Firewall
 			HomingMissileTrail.DisplayName: Homing Missile Trail
 			ExplosionFlash.DisplayName: Explosion Flash
+			FriendlyIonBomb.DisplayName: Friendly Ion Bomb
+			PhotonicDownpourProjectile.DisplayName: Photonic Downpour Projectile
 		}
 
 		NPCs: {

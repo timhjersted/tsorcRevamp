@@ -25,6 +25,50 @@ namespace tsorcRevamp.Items.Armors
             player.manaCost -= 0.14f;
             player.manaRegenBonus += 10;
         }
+
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            //Lets it work with mix-and-match sets, so upgrading one piece doesn't fuck people over
+            //The way it works is that the head checks if the others are valid. If the head isn't on, the chest checks. If that isn't on either, then the greaves check.
+            //This way only one of them ever applies it at a time.
+
+            if(body.type == ModContent.ItemType<DragoonArmor>() || body.type == ModContent.ItemType<DragoonArmor2>())
+            {
+                if (legs.type == ModContent.ItemType<DragoonGreaves>() || legs.type == ModContent.ItemType<DragoonGreaves2>())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public override void UpdateArmorSet(Player player)
+        {
+            ApplyDragoonSetBonus(player);
+        }
+        public override void ArmorSetShadows(Player player)
+        {
+            player.armorEffectDrawShadow = true;
+        }
+
+        //It's set up like this to enable mix and matching (and to keep all its stat changes in one place)
+        public static void ApplyDragoonSetBonus(Player player)
+        {
+            Main.NewText("A");
+            player.lavaImmune = true;
+            player.fireWalk = true;
+            player.breath = 9999999;
+            player.waterWalk = true;
+            player.noKnockback = true;
+            player.GetDamage(DamageClass.Generic) += 0.3f;
+            player.GetCritChance(DamageClass.Generic) += 30;
+            player.moveSpeed += 0.3f;
+            player.lifeRegen += 2;
+            //player.wings = 34; // looks like Jim's Wings
+            //player.wingsLogic = 34;
+            player.wingTimeMax = 180;
+        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

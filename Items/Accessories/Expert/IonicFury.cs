@@ -23,12 +23,11 @@ namespace tsorcRevamp.Items.Accessories.Expert
         public override void UpdateEquip(Player player)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.SetAuraState(tsorcAuraState.Poison);
-            modPlayer.effectRadius = 250f;
+            modPlayer.SetAuraState(tsorcAuraState.Ion);
 
             if (Main.GameUpdateCount % 180 == 0 && player.whoAmI == Main.myPlayer)
             {
-                Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.AuraOfDecay>(), 5 * 60, 0, Main.myPlayer, player.whoAmI);
+                Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Main.rand.NextVector2CircularEdge(7, 7), ModContent.ProjectileType<Projectiles.Accessories.FriendlyIonBomb>(), 200, 0, Main.myPlayer, player.whoAmI);
             }
         }
 

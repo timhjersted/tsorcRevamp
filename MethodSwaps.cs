@@ -104,6 +104,8 @@ namespace tsorcRevamp
 
             Terraria.On_Main.DrawCachedProjs += Main_DrawCachedProjs;
 
+            On_Main.DrawPlayers_BehindNPCs += DrawPlayerAuras;
+
             On_Recipe.CollectItemsToCraftWithFrom += Recipe_CollectItemsToCraftWithFrom;
 
             On_Player.PickupItem += On_Player_PickupItem;
@@ -123,6 +125,12 @@ namespace tsorcRevamp
             On_Player.UpdateManaRegen += On_Player_UpdateManaRegen;
 
             //Terraria.On_Main.DrawMenu += On_Main_DrawMenu;
+        }
+
+        private static void DrawPlayerAuras(On_Main.orig_DrawPlayers_BehindNPCs orig, Main self)
+        {
+
+            orig(self);
         }
 
         private static void On_Main_DrawMenu(On_Main.orig_DrawMenu orig, Main self, GameTime gameTime)

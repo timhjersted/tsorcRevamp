@@ -31,23 +31,27 @@ namespace tsorcRevamp.Items.Armors
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return head.type == ModContent.ItemType<DragoonHelmet>() && legs.type == ModContent.ItemType<DragoonGreaves>();
+            //If the tier 1 head is on, it will handle the set bonus.
+            //Applying it again here would make it apply twice.
+            if(head.type == ModContent.ItemType<DragoonHelmet>())
+            {
+                return false;
+            }
+            
+            //If the head has been upgraded, check if the greaves are valid. If so, apply the set bonus.
+            if (head.type == ModContent.ItemType<DragoonHelmet2>())
+            {
+                if (legs.type == ModContent.ItemType<DragoonGreaves>() || legs.type == ModContent.ItemType<DragoonGreaves2>())
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.lavaImmune = true;
-            player.fireWalk = true;
-            player.breath = 9999999;
-            player.waterWalk = true;
-            player.noKnockback = true;
-            player.GetDamage(DamageClass.Generic) += 0.3f;
-            player.GetCritChance(DamageClass.Generic) += 30;
-            player.moveSpeed += 0.3f;
-            player.lifeRegen += 2;
-            //player.wings = 34; // looks like Jim's Wings
-            //player.wingsLogic = 34;
-            player.wingTimeMax = 180;
-
+            DragoonHelmet.ApplyDragoonSetBonus(player);
         }
         public override void ArmorSetShadows(Player player)
         {

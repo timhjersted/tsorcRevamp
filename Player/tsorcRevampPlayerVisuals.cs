@@ -727,6 +727,7 @@ namespace tsorcRevamp
     public enum tsorcAuraState
     {
         None,
+        Ion,
         Poison,
         Nebula,
         TripleThreat,
@@ -859,7 +860,49 @@ namespace tsorcRevamp
                         DrawTripleThreatAura(drawInfo);
                         break;
                     }
+                case tsorcAuraState.Ion:
+                    {
+                        DrawIonAura(drawInfo);
+                        break;
+                    }
             }
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+        }
+
+        float ionRotation = 0;
+        public static Effect IonEffect;
+        void DrawIonAura(PlayerDrawSet drawInfo)
+        {
+            if (IonEffect == null)
+            {
+                IonEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/SimpleRing", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;                
+            }
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            Rectangle ringRectangle = new Rectangle(0, 0, 1200, 1200);
+            Vector2 ringOrigin = ringRectangle.Size() / 2f;
+
+            float shaderAngle = MathHelper.Pi * 0.6f;
+            ionRotation += 0.01f;
+            ionRotation = 0;
+            IonEffect.Parameters["textureToSizeRatio"].SetValue(tsorcRevamp.NoiseWavy.Size() / ringRectangle.Size());
+            IonEffect.Parameters["shaderColor"].SetValue(Color.Blue.ToVector3());
+            IonEffect.Parameters["splitAngle"].SetValue(shaderAngle);
+            IonEffect.Parameters["rotation"].SetValue(ionRotation);
+            IonEffect.Parameters["length"].SetValue(.2f);
+            IonEffect.Parameters["firstEdge"].SetValue(.25f);
+            IonEffect.Parameters["secondEdge"].SetValue(.015f);
+
+            //Precomputed
+            IonEffect.Parameters["rotationMinusPI"].SetValue(ionRotation - MathHelper.Pi);
+            IonEffect.Parameters["splitAnglePlusRotationMinusPI"].SetValue(ionRotation + shaderAngle - MathHelper.Pi);
+            IonEffect.Parameters["RotationMinus2PIMinusSplitAngleMinusPI"].SetValue((ionRotation - (MathHelper.TwoPi - shaderAngle)) - MathHelper.Pi);
+            IonEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, drawInfo.drawPlayer.Center - Main.screenPosition, ringRectangle, Color.White, MathHelper.PiOver2 - 0.35f, ringOrigin, 1, SpriteEffects.None);
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, drawInfo.drawPlayer.Center - Main.screenPosition, ringRectangle, Color.White, MathHelper.Pi + MathHelper.PiOver2 - 0.35f, ringOrigin, 1, SpriteEffects.None);
 
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
         }
