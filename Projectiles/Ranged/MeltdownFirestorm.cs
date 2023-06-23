@@ -70,7 +70,9 @@ namespace tsorcRevamp.Projectiles.Ranged
                     Projectile.rotation = UsefulFunctions.Aim(Projectile.Center, Main.MouseWorld, 1).ToRotation();
                     Projectile.direction = Main.MouseWorld.X > Projectile.Center.X ? 1 : -1;
                     Vector2 rotDir = Projectile.rotation.ToRotationVector2();
-                    if(Projectile.direction == -1)
+                    Projectile.Center = owner.Center + rotDir * 30;
+                    truePosition = owner.Center + rotDir * 30;
+                    if (Projectile.direction == -1)
                     {
                         rotDir *= -1;
                     }
@@ -78,8 +80,6 @@ namespace tsorcRevamp.Projectiles.Ranged
                     owner.ChangeDir(Projectile.direction);
                     owner.itemTime = 2; // Set item time to 2 frames while we are used
                     owner.itemAnimation = 2; // Set item animation time to 2 frames while we are used
-                    Projectile.Center = owner.Center;
-                    truePosition = owner.Center;
 
                     if (Main.GameUpdateCount % 60 == 0)
                     {
