@@ -6620,10 +6620,7 @@ Mods: {
 
 			Meltdown: {
 				DisplayName: Meltdown
-				Tooltip:
-					'''
-					Fires an intense jet of piercing flame
-					'''
+				Tooltip: Fires an intense jet of piercing flame
 			}
 
 			LanceBeam: {

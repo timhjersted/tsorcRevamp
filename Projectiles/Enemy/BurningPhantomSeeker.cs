@@ -66,7 +66,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void PostDraw(Color lightColor)
         {
-
             Texture2D MyTexture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<Projectiles.Comet>()];
             Rectangle fromrect = new Rectangle(0, 0, this.Projectile.width, this.Projectile.height);
             Vector2 PC;

@@ -68,14 +68,14 @@ namespace tsorcRevamp.Projectiles.Ranged
                 {
 
                     Projectile.rotation = UsefulFunctions.Aim(Projectile.Center, Main.MouseWorld, 1).ToRotation();
-                    owner.itemRotation = Projectile.rotation;
-                    Projectile.direction = Main.MouseWorld.X > owner.position.X ? 1 : -1;
-                    owner.ChangeDir(Projectile.direction);
-                    if (owner.direction == -1)
+                    Projectile.direction = Main.MouseWorld.X > Projectile.Center.X ? 1 : -1;
+                    Vector2 rotDir = Projectile.rotation.ToRotationVector2();
+                    if(Projectile.direction == -1)
                     {
-                        owner.itemRotation += MathHelper.Pi;
+                        rotDir *= -1;
                     }
-                    //owner.heldProj = Projectile.whoAmI; // Update player's held projectile
+                    owner.itemRotation = rotDir.ToRotation();
+                    owner.ChangeDir(Projectile.direction);
                     owner.itemTime = 2; // Set item time to 2 frames while we are used
                     owner.itemAnimation = 2; // Set item animation time to 2 frames while we are used
                     Projectile.Center = owner.Center;
