@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 
         public override Vector2? HoldoutOffset()
         {
-            return base.HoldoutOffset();
+            return new Vector2(-6, -6);
         }
 
         public override void AddRecipes()

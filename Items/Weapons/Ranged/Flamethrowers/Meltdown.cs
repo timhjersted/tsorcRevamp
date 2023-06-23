@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Flamethrowers
             Item.height = 16;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 30;
-            Item.useTime = 5;
+            Item.useTime = 30;
             Item.damage = 66;
             Item.knockBack = 2;
             Item.autoReuse = true;
@@ -29,7 +29,21 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Flamethrowers
             Item.noMelee = true;
             Item.value = PriceByRarity.LightPurple_6;
             Item.DamageType = DamageClass.Ranged;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Freezethrower>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Ranged.MeltdownFirestorm>();
+            Item.channel = true;
+        }
+
+        //Only one allowed at a time
+        public override bool CanUseItem(Player player)
+        {
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Ranged.MeltdownFirestorm>()] == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public override void AddRecipes()

@@ -44,9 +44,14 @@ namespace tsorcRevamp.Projectiles.Accessories
                 if (targetIndex.HasValue)
                 {
                     targetNPC = Main.npc[targetIndex.Value];
+                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), targetNPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Projectile.owner, 120, 25);
+                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), targetNPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Projectile.owner, 240, 25);
                 }
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), targetNPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Projectile.owner, 120, 25);
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), targetNPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Projectile.owner, 240, 25);
+                else
+                {
+                    Projectile.Center = new Vector2(0, 0);
+                    Projectile.Kill();
+                }
             }
 
             if (targetNPC != null)

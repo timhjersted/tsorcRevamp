@@ -18,10 +18,10 @@ namespace tsorcRevamp.Projectiles.Magic
         {
             Projectile.width = 10;
             Projectile.height = 10;
-            Projectile.friendly = false;
-            Projectile.hostile = true;
+            Projectile.friendly = true;
+            Projectile.hostile = false;
             Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
+            Projectile.tileCollide = true;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.timeLeft = 999;
 
@@ -32,8 +32,8 @@ namespace tsorcRevamp.Projectiles.Magic
             MaxCharge = 60;
             LaserLength = 5000;
             LaserColor = Color.Red;
-            TileCollide = false;
-            LaserSize = 1.3f;
+            TileCollide = true;
+            LaserSize = 1.0f;
             LaserTexture = TransparentTextureHandler.TransparentTextureType.RedLaserTransparent;
             LaserTextureHead = new Rectangle(0, 0, 30, 24);
             LaserTextureBody = new Rectangle(0, 26, 30, 30);
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles.Magic
             LaserDebuffs.Add(BuffID.OnFire);
             DebuffTimers.Add(300);
             LaserName = "Lance Beam";
-            LineDust = true;
+            LineDust = false;
             LaserDust = DustID.OrangeTorch;
             CastLight = true;
             Additive = true;
@@ -58,7 +58,6 @@ namespace tsorcRevamp.Projectiles.Magic
         }
         public override void AI()
         {
-
             base.AI();
 
             if(owner == null || owner.dead)
@@ -67,32 +66,48 @@ namespace tsorcRevamp.Projectiles.Magic
                 return;
             }
 
+            if (FiringTimeLeft > 0  && Main.GameUpdateCount % 9 == 0)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/LaserLoopable") with { Volume = 0.5f }, Projectile.Center);
+            }
+
             if (!owner.channel || owner.noItems || owner.CCed || owner.statMana <= 0)
             {
-                if (Projectile.timeLeft > 30)
+                Projectile.damage = 0;
+
+                if (IsAtMaxCharge)
                 {
-                    Projectile.timeLeft = 30;
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/LaserFadeout") with { Volume = 0.5f }, Projectile.Center);
+                }
+                Projectile.timeLeft--;
+                if (Projectile.timeLeft > 10)
+                {
+                    Projectile.timeLeft = 10;
+                }
+                if (FiringTimeLeft > 10)
+                {
+                    FiringTimeLeft = 10;
                 }
             }
             else
             {
                 Projectile.timeLeft++;
+                owner.manaRegenDelay = 180;
 
                 if (FiringTimeLeft > 0)
                 {
                     FiringTimeLeft++;
+                    if (Main.GameUpdateCount % 2 == 0)
+                    {
+                        owner.statMana--;
+                    }
                 }
-                if (Main.GameUpdateCount % 2 == 0)
-                {
-                    owner.statMana--;
-                }
-                owner.manaRegenDelay = 180;
             }
 
             if (owner != null && !owner.dead && owner.whoAmI == Main.myPlayer)
             {
                 Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, Main.MouseWorld, 1);
-                Projectile.Center += Projectile.velocity * 30;
+                Projectile.Center += Projectile.velocity * 00;
             }
         }
 

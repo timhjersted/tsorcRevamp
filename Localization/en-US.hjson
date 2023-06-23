@@ -6615,43 +6615,39 @@ Mods: {
 
 			DamagedMechanicalScrap: {
 				DisplayName: Damaged Mechanical Scrap
-				Tooltip: 
-					'''
-					A pile of damaged but partially intact scrap metal. Perhaps it can be repaired...
-					'''
+				Tooltip: A pile of damaged but partially intact scrap metal. Perhaps it can be repaired...
 			}
 
 			Meltdown: {
 				DisplayName: Meltdown
-				Tooltip: 
-				'''
-				Fires an intense jet of flame
-				Its damage is more intense closer to the source
-				'''
+				Tooltip:
+					'''
+					Fires an intense jet of piercing flame
+					'''
 			}
 
 			LanceBeam: {
 				DisplayName: Lance Beam
-				Tooltip: "A beam weapon that can fire a continuous laser"
+				Tooltip: A beam weapon that can fire a continuous laser
 			}
 
 			Shrapnel: {
 				DisplayName: Shrapnel
-				Tooltip: "A buzzsaw, capable of devastating damage at close range"
+				Tooltip: A buzzsaw, capable of devastating damage at close range
 			}
 
 			PhotonicDownpour: {
 				DisplayName: Photonic Downpour
-				Tooltip: 
-				'''
-				A fully operational drone control system
-				Can support enough combat drones to make even an Engi blush
-				'''
+				Tooltip:
+					'''
+					A fully operational drone control system
+					Can support enough combat drones to make even an Engi blush
+					'''
 			}
 
 			DarkMagicRing: {
 				DisplayName: Dark Magic Ring
-				Tooltip: "A dark relic that can summon a forgotten seeker."
+				Tooltip: A dark relic that can summon a forgotten seeker.
 			}
 		}
 
@@ -7430,7 +7426,7 @@ Mods: {
 
 			PhotonicDownpourBuff: {
 				DisplayName: Photonic Downpour Buff
-				Description: "The combat drone will fight for you"
+				Description: The combat drone will fight for you
 			}
 		}
 
@@ -7952,6 +7948,9 @@ Mods: {
 			ExplosionFlash.DisplayName: Explosion Flash
 			FriendlyIonBomb.DisplayName: Friendly Ion Bomb
 			PhotonicDownpourProjectile.DisplayName: Photonic Downpour Projectile
+			PhotonicDownpourLaser.DisplayName: Photonic Downpour Laser
+			LanceBeamLaser.DisplayName: Lance Beam Laser
+			MeltdownFirestorm.DisplayName: Meltdown Firestorm
 		}
 
 		NPCs: {
