@@ -7948,6 +7948,7 @@ Mods: {
 			PhotonicDownpourLaser.DisplayName: Photonic Downpour Laser
 			LanceBeamLaser.DisplayName: Lance Beam Laser
 			MeltdownFirestorm.DisplayName: Meltdown Firestorm
+			ShrapnelSaw.DisplayName: Shrapnel Saw
 		}
 
 		NPCs: {

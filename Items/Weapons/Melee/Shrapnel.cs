@@ -9,12 +9,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
 {
     public class Shrapnel : ModItem
     {
-
-        public override void SetStaticDefaults()
-        {
-            // Tooltip.SetDefault("Expel a close-range blast of searing noxious gas");
-        }
-
         public override void SetDefaults()
         {
             Item.damage = 160;
@@ -38,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.rare = ItemRarityID.Yellow;
             Item.maxStack = 1;
             Item.UseSound = SoundID.Item1;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Spears.FetidExhaust>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Melee.ShrapnelSaw>();
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -48,11 +42,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
                 return false;
             }
             return base.Shoot(player, source, position, velocity, type, damage, knockback);
-        }
-
-        public override void HoldItem(Player player)
-        {
-            player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.Spazmatism);
         }
 
         public override void AddRecipes()
