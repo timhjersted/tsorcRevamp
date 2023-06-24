@@ -3,19 +3,17 @@ using Microsoft.Xna.Framework;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Armors.Melee
 {
     [AutoloadEquip(EquipType.Body)]
     public class DarkKnightArmor : ModItem
     {
+        public static float Dmg = 17f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("\nOne of the fiercest armors for melee warriors" +
-                "\nIncreases melee damage by 15%" +
-                "\nSet Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active" +
-                "\nDefense is not affected by this" +
-                "\nSmall chance to regain life from melee strikes while Holy Dodge is active"); */
         }
 
         public override void SetDefaults()
@@ -29,11 +27,11 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.15f;
+            player.GetDamage(DamageClass.Melee) += Dmg / 100f;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.GetDamage(DamageClass.Melee) += 0.15f;
+                player.GetDamage(DamageClass.Melee) += Dmg / 100f;
             }
         }
 

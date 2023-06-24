@@ -1,15 +1,21 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors.Summon
 {
     [AutoloadEquip(EquipType.Legs)]
     public class WitchkingBottoms : ModItem
-    {    
+    {
+        public static float Dmg = 15f;
+        public static int MinionSlot = 1;
+        public static int SentrySlot = 1;
+        public static float MoveSpeed = 44f;
+        public static float TagDuration = 40f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MinionSlot, SentrySlot, MoveSpeed, TagDuration);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("+20% minion damage\nIncreases your max number of minions and turrets by 1\n+44% movement speed");
         }
         public override void SetDefaults()
         {
@@ -21,10 +27,11 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.2f;
-            player.maxMinions += 1;
-            player.maxTurrets += 1;
-            player.moveSpeed += 0.44f;
+            player.GetDamage(DamageClass.Summon) += Dmg / 100f;
+            player.maxMinions += MinionSlot;
+            player.maxTurrets += SentrySlot;
+            player.moveSpeed += MoveSpeed / 100f;
+            player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration += TagDuration / 100f;
         }
     }
 }

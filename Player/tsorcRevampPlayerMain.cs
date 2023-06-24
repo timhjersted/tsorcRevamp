@@ -33,6 +33,9 @@ using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Armors.Summon;
+using tsorcRevamp.Buffs.Summon.WhipDebuffs;
+using tsorcRevamp.Buffs.Armor;
 
 namespace tsorcRevamp
 {
@@ -346,10 +349,40 @@ namespace tsorcRevamp
 
         public override void OnHitAnything(float x, float y, Entity victim)
         {
-            if (CelestialCloak) {
-                if (Main.rand.NextBool(30)) 
+            if (Shunpo && Player.titaniumStormCooldown >= 0)
+            {
+                Player.titaniumStormCooldown = 10;
+                Player.AddBuff(BuffID.TitaniumStorm, 10 * 60);
+                if (Player.ownedProjectileCounts[ProjectileID.TitaniumStormShard] < 15)
                 {
-                    CelestialCloakHitChances += 1;
+                    Player.ownedProjectileCounts[ProjectileID.TitaniumStormShard]++;
+                    Projectile.NewProjectile(Player.GetSource_OnHit(victim), Player.Center, Vector2.Zero, ProjectileID.TitaniumStormShard, 50, 15f, Player.whoAmI);
+                } else
+                {
+                    int buffIndex = 0;
+                    foreach (int buffType in Player.buffType)
+                    {
+                        if (buffType == ModContent.BuffType<ShunpoDashCooldown>())
+                        {
+                            Player.buffTime[buffIndex] -= 20;
+                        }
+                        buffIndex++;
+                    }
+                }
+            }
+            if (CelestialCloak) 
+            {
+                if (Main.rand.NextBool(20))
+                {
+                    Vector2 starvector1 = new Vector2(-40, -200) + victim.Center;
+                    Vector2 starvector2 = new Vector2(40, -200) +victim.Center;
+                    Vector2 starvector3 = new Vector2(0, -200) + victim.Center;
+                    Vector2 starmove1 = new Vector2(+4, 20);
+                    Vector2 starmove2 = new Vector2(-4, 20);
+                    Vector2 starmove3 = new Vector2(0, 20);
+                    Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector1, starmove1, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
+                    Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector2, starmove2, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
+                    Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector3, starmove3, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
                 }
             }
             if (Main.rand.NextBool(9) & MagicPlatingStacks <= 22 & Player.HasBuff(ModContent.BuffType<MagicPlating>()))
@@ -638,6 +671,11 @@ namespace tsorcRevamp
             {
                 target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
             }
+            if (DemonPower && hit.DamageType == (DamageClass.SummonMeleeSpeed) && hit.Crit)
+            {
+                Projectile WhipCritBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center - new Vector2(0, target.height / 2), Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, (int)Main.player[proj.owner].GetTotalDamage(DamageClass.Summon).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, proj.owner);
+                WhipCritBoom.ArmorPenetration = 10;
+            }
             if (MiakodaFull)
             { //Miakoda Full Moon
                 if (MiakodaEffectsTimer > Items.Pets.MiakodaFull.HealCooldown * 60)
@@ -712,6 +750,7 @@ namespace tsorcRevamp
         }
         public static float AmmoReservationRangedCritDamage = 10f;
         public static float SharpenedMeleeArmorPen = 50f;
+        public static float MythrilOcrichalcumCritDmg = 25f;
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             if (modifiers.DamageType == DamageClass.Ranged)
@@ -738,7 +777,7 @@ namespace tsorcRevamp
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().MythrilOrichalcumCritDamage)
             {
-                modifiers.CritDamage += 0.25f;
+                modifiers.CritDamage += MythrilOcrichalcumCritDmg / 100f;
             }
         }
 
@@ -924,6 +963,12 @@ namespace tsorcRevamp
             {
                 DragoonBootsEnable = !DragoonBootsEnable;
             }
+            if (tsorcRevamp.Shunpo.JustReleased && player.GetModPlayer<tsorcRevampPlayer>().Shunpo && !player.HasBuff(ModContent.BuffType<ShunpoDashCooldown>()))
+            {
+                player.AddBuff(ModContent.BuffType<ShunpoDash>(), (int)(ShunpoDash.ShunpoDashDuration * 60 * 2));
+                ShunpoTimer = ShunpoDash.ShunpoDashDuration;
+                player.AddBuff(ModContent.BuffType<ShunpoDashCooldown>(), ShunpoDash.Cooldown * 60);
+            }
             if (tsorcRevamp.reflectionShiftKey.JustPressed)
             {
                 if (ReflectionShiftEnabled)
@@ -996,11 +1041,11 @@ namespace tsorcRevamp
                     Firewall.OriginalCritChance = SteelTempest.CritChance;
                     Player.AddBuff(ModContent.BuffType<NightbringerFirewallCooldown>(), 30 * 60);
                 }
-                if (player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() && player.statMana > (player.GetManaCost(player.HeldItem) * 3) && !Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>()))
+                if (player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() && player.statMana >= (player.GetManaCost(player.HeldItem) * OrbOfSpirituality.DashCostMultiplier) && !Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>()))
                 {
                     player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDash>(), OrbOfSpirituality.DashBuffDuration * 60);
                     player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>(), OrbOfSpirituality.DashCD * 60);
-                    player.statMana -= (player.GetManaCost(player.HeldItem) * 3);
+                    player.statMana -= player.GetManaCost(player.HeldItem) * OrbOfSpirituality.DashCostMultiplier;
                 }
                 if (player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDash>()) && SpiritRushCooldown <= 0f && SpiritRushCharges > 0)
                 {

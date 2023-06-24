@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,8 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Legs)]
     public class MirkwoodElvenLeggings : ModItem
     {
+        public static float MoveSpeed = 35f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
         public override void SetStaticDefaults()
         {
         }
@@ -22,7 +25,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.35f;
+            player.moveSpeed += MoveSpeed;
             player.jumpBoost = true;
         }
 

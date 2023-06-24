@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,8 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Legs)]
     public class FighterGreaves : ModItem
     {
+        public static float MoveSpeed = 12f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
         public override void SetStaticDefaults()
         {
         }
@@ -22,9 +25,7 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.hasJumpOption_Santank = true;
-            player.moveSpeed += 0.12f;
-            player.jumpBoost = true;
+            player.moveSpeed += MoveSpeed / 100f;
         }
 
         public override void AddRecipes()

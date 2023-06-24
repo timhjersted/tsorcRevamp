@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,8 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Head)]
     public class MirkwoodElvenBlondeHairStyle : ModItem
     {
+        public static float CritChance = 21f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -22,7 +25,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         public override void UpdateEquip(Player player)
         {
             player.detectCreature = true;
-            player.GetCritChance(DamageClass.Ranged) += 21;
+            player.GetCritChance(DamageClass.Ranged) += CritChance;
         }
         public override void AddRecipes()
         {

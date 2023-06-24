@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,9 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Legs)]
     public class ShadowCloakGreaves : ModItem
     {
+        public static float MoveSpeed = 7f;
+        public static float AtkSpeed = 9f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, AtkSpeed);
         public override void SetStaticDefaults()
         {
         }
@@ -22,8 +26,8 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.07f;
-            player.GetAttackSpeed(DamageClass.Generic) += 0.09f;
+            player.moveSpeed += MoveSpeed / 100f;
+            player.GetAttackSpeed(DamageClass.Generic) += AtkSpeed / 100f;
         }
 
         public override void AddRecipes()

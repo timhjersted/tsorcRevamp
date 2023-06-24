@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,7 +10,12 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Head)]
     class DwarvenKnightHelmet : ModItem
     {
-
+        public static float Dmg = 7f;
+        public static float TagStrength = 20f;
+        public static float CritChance = 11f;
+        public static int MinionSlots = 1;
+        public static int SentrySlots = 1;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, TagStrength, MinionSlots, SentrySlots, CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -23,13 +29,15 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.07f;
-            player.GetDamage(DamageClass.Summon).Flat += 2f;
+            player.GetDamage(DamageClass.Summon) += Dmg / 100f;
+            player.GetCritChance(DamageClass.Summon) += CritChance;
+            player.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength += TagStrength / 100f;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.GetDamage(DamageClass.Summon) += 0.07f;
-                player.GetDamage(DamageClass.Summon).Flat += 2f;
+                player.GetDamage(DamageClass.Summon) += Dmg / 100f;
+                player.GetCritChance(DamageClass.Summon) += CritChance;
+                player.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength += TagStrength / 100f;
             }
         }
 
@@ -42,8 +50,8 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             player.onHitDodge = true;
 
-            player.maxMinions += 1;
-            player.maxTurrets += 1;
+            player.maxMinions += MinionSlots;
+            player.maxTurrets += SentrySlots;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {

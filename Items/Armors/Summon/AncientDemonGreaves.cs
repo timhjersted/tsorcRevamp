@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,9 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Legs)]
     public class AncientDemonGreaves : ModItem
     {
+        public static float MoveSpeed = 25f;
+        public static int MinionSlots = 1;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MinionSlots, MoveSpeed);
         public override void SetStaticDefaults()
         {
         }
@@ -23,8 +27,8 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.25f;
-            player.maxMinions += 1;
+            player.moveSpeed += MoveSpeed / 100f;
+            player.maxMinions += MinionSlots;
         }
 
         public override void AddRecipes()

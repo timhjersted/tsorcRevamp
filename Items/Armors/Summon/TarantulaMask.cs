@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,12 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Head)]
     public class TarantulaMask : ModItem
     {
+        public static float Dmg = 12f;
+        public static float CritChance = 20f;
+        public static float SummonTagStrength = 33f;
+        public static int MinionSlot = 1;
+        public static int TurretSlot = 1;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MinionSlot, TurretSlot, tsorcRevampPlayer.MythrilOcrichalcumCritDmg, CritChance, SummonTagStrength);
         public override void SetStaticDefaults()
         {
         }
@@ -21,7 +28,9 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.12f;
+            player.GetDamage(DamageClass.Summon) += Dmg / 100f;
+            player.GetCritChance(DamageClass.Summon) += CritChance;
+            player.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength += SummonTagStrength / 100f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -29,8 +38,8 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.maxMinions += 2;
-            player.maxTurrets += 2;
+            player.maxMinions += MinionSlot;
+            player.maxTurrets += TurretSlot;
             player.GetModPlayer<tsorcRevampPlayer>().MythrilOrichalcumCritDamage = true;
         }
         public override void AddRecipes()

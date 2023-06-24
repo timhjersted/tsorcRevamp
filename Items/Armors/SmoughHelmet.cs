@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,10 +9,10 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class SmoughHelmet : ModItem 
     {
+        public static float Dmg = 15f;
+        public override LocalizedText Tooltip => base.Tooltip;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Smough's Helmet");
-            // Tooltip.SetDefault("Increases damage dealt by 15%");
         }
         public override void SetDefaults()
         {
@@ -23,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Generic) += 0.15f;
+            player.GetDamage(DamageClass.Generic) += Dmg;
         }
         public override void AddRecipes()
         {

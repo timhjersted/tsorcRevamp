@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,10 +9,10 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Legs)]
     public class OldChainGreaves : ModItem
     {
+        public static float MoveSpeed = 12f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("+12% movement speed" +
-                "\nCan be bought"); */
         }
         public override void SetDefaults()
         {
@@ -24,7 +25,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.12f;
+            player.moveSpeed += MoveSpeed / 100f;
         }
         public override void AddRecipes()
         {

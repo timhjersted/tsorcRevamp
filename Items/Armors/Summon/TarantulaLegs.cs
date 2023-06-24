@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,9 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Legs)]
     public class TarantulaLegs : ModItem
     {
+        public static int MinionSlots = 1;
+        public static float MoveSpeed = 22f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MinionSlots, MoveSpeed);
         public override void SetStaticDefaults()
         {
         }
@@ -21,8 +25,8 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.maxMinions += 1;
-            player.moveSpeed += 0.22f;
+            player.maxMinions += MinionSlots;
+            player.moveSpeed += MoveSpeed / 100f;
         }
         public override void AddRecipes()
         {

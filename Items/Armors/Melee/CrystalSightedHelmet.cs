@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,6 +10,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Head)]
     public class CrystalSightedHelmet : ModItem
     {
+        public static float Dmg = 19f;
+        public static float AtkSpeed = 11f;
+        public static float LifeThreshold = 40f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, AtkSpeed, LifeThreshold, tsorcRevampPlayer.MythrilOcrichalcumCritDmg);
         public override void SetStaticDefaults()
         {
         }
@@ -29,16 +34,16 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.19f;
+            player.GetDamage(DamageClass.Melee) += Dmg / 100f;
         }
 
         public override void UpdateArmorSet(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().MythrilOrichalcumCritDamage = true;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.12f;
-            if (player.statLife <= (player.statLifeMax2 / 5 * 2))
+            player.GetAttackSpeed(DamageClass.Melee) += AtkSpeed / 100f;
+            if (player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f))
             {
-                player.GetAttackSpeed(DamageClass.Melee) += 0.12f;
+                player.GetAttackSpeed(DamageClass.Melee) += AtkSpeed / 100f;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 42, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 105, Color.Aqua, 1.0f);
                 Main.dust[dust].noGravity = true;

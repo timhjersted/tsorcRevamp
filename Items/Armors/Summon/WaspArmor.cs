@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,9 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Body)]
     public class WaspArmor : ModItem
     {
+        public static float Dmg = 25f;
+        public static int MinionSlot = 1;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MinionSlot);
         public override void SetStaticDefaults()
         {
         }
@@ -21,8 +25,8 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.25f;
-            player.maxMinions += 1;
+            player.GetDamage(DamageClass.Summon) += Dmg / 100f;
+            player.maxMinions += MinionSlot;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {

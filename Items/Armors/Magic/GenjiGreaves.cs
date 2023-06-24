@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,9 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Legs)]
     public class GenjiGreaves : ModItem
     {
+        public static float MoveSpeed = 15f;
+        public static int MaxMana = 100;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, MaxMana);
         public override void SetStaticDefaults()
         {
         }
@@ -21,7 +25,8 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.15f;
+            player.moveSpeed += MoveSpeed / 100f;
+            player.statManaMax2 += MaxMana;
         }
         public override void AddRecipes()
         {

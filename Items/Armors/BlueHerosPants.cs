@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,10 +9,13 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Legs)]
     public class BlueHerosPants : ModItem
     {
+        public static float MoveSpeed = 11f;
+        public static int MinionSlots = 1;
+        public static float MaxStamina = 11f;
+        public static float StaminaRegen = 11f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, MinionSlots, MaxStamina, StaminaRegen);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Blue Hero's Pants");
-            // Tooltip.SetDefault("Worn by the hero himself!\nIncreases max minions by 1");
         }
         public override void SetDefaults()
         {
@@ -23,7 +27,10 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.maxMinions += 1;
+            player.moveSpeed += MoveSpeed / 100f;
+            player.maxMinions += MinionSlots;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + StaminaRegen / 100f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1f + MaxStamina / 100f;
         }
         public override void AddRecipes()
         {

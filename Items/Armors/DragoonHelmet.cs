@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,12 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class DragoonHelmet : ModItem
     {
+        public static int SoulCost = 24000;
+        public static int MaxMana = 140;
+        public static float ManaCost = 14f;
+        public static int ManaRegen = 9;
+        public static float CritChance = 30f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost, ManaRegen, CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -21,9 +28,9 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.statManaMax2 += 120;
-            player.manaCost -= 0.14f;
-            player.manaRegenBonus += 10;
+            player.statManaMax2 += MaxMana;
+            player.manaCost -= ManaCost / 100f;
+            player.manaRegenBonus += ManaRegen;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -55,19 +62,16 @@ namespace tsorcRevamp.Items.Armors
         //It's set up like this to enable mix and matching (and to keep all its stat changes in one place)
         public static void ApplyDragoonSetBonus(Player player)
         {
-            Main.NewText("A");
             player.lavaImmune = true;
             player.fireWalk = true;
             player.breath = 9999999;
             player.waterWalk = true;
             player.noKnockback = true;
-            player.GetDamage(DamageClass.Generic) += 0.3f;
-            player.GetCritChance(DamageClass.Generic) += 30;
-            player.moveSpeed += 0.3f;
-            player.lifeRegen += 2;
+            player.GetCritChance(DamageClass.Generic) += CritChance;
             //player.wings = 34; // looks like Jim's Wings
             //player.wingsLogic = 34;
-            player.wingTimeMax = 180;
+            //player.wingTimeMax = 180;
+            player.ignoreWater = true;
         }
         public override void AddRecipes()
         {
@@ -77,7 +81,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.SoulofMight, 10);
             recipe.AddIngredient(ItemID.SoulofSight, 10);
             recipe.AddIngredient(ItemID.SoulofFright, 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 24000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

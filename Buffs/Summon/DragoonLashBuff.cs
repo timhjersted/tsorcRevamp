@@ -16,7 +16,6 @@ namespace tsorcRevamp.Buffs.Summon
 			player.GetAttackSpeed(DamageClass.Summon) += 0.33f;
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.DragoonLashFireBreathTimer += 0.0167f;
-            modPlayer.DragoonLashHitTimer -= 0.0167f;
         }
     }
 }

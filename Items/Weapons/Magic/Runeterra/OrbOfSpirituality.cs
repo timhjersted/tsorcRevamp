@@ -4,10 +4,12 @@ using Terraria;
 using tsorcRevamp.Projectiles.Magic.Runeterra;
 using Microsoft.Xna.Framework;
 using tsorcRevamp.Buffs.Runeterra.Magic;
-using Terraria.Audio;
-using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Items.Materials;
 using Terraria.DataStructures;
+using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using Terraria.Localization;
+using Humanizer;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
@@ -16,6 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         public static Color FilledColor = Color.YellowGreen;
         public static int DashBuffDuration = 15;
         public static int DashCD = 60;
+        public static int DashCostMultiplier = 4;
         public override void SetStaticDefaults()
         {
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 8));
@@ -90,8 +93,33 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
                 return false;
             }
         }
-        public override void UpdateInventory(Player player)
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
+            Player player = Main.LocalPlayer;
+            var SpecialAbilityKey = tsorcRevamp.specialAbility.GetAssignedKeys();
+            string SpecialAbilityString = SpecialAbilityKey.Count > 0 ? SpecialAbilityKey[0] : "Special Ability: <NOT BOUND>";
+            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip5");
+            if (ttindex1 != -1)
+            {
+                tooltips.RemoveAt(ttindex1);
+                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.ToxicShot.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.ToxicShot.Keybind2")));
+            }
+            if (Main.keyState.IsKeyDown(Keys.LeftShift))
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", Language.GetTextValue("Mods.tsorcRevamp.Items.OrbOfSpirituality.Details").FormatWith(OrbOfDeception.OrbDmgMod - 100f, (OrbOfDeception.OrbReturnDmgMod * OrbOfDeception.OrbDmgMod) / 100f - 100f, OrbOfDeception.EssenceThiefOnKillChance, OrbOfDeception.FilledOrbDmgMod - 100f, OrbOfFlame.FireballDmgMod / 100f, OrbOfFlame.FireballCD, OrbOfFlame.FireballHPPercentDmg, OrbOfFlame.FireballHPDmgCap, OrbOfFlame.MagicSunder, DashBuffDuration, DashCD, (int)(Item.mana * player.manaCost * DashCostMultiplier))));
+                }
+            }
+            else
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Shift", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Details")));
+                }
+            }
         }
         public override void AddRecipes()
         {

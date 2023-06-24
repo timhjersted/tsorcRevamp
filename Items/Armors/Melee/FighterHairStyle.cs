@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,9 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Head)]
     public class FighterHairStyle : ModItem
     {
+        public static float CritChance = 17f;
+        public static float Dmg = 24f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -21,7 +25,8 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += 17;
+            player.GetCritChance(DamageClass.Melee) += CritChance;
+            player.GetDamage(DamageClass.Melee) += Dmg / 100f;
         }
 
         public override void AddRecipes()

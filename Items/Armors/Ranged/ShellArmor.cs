@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,10 +9,10 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Body)]
     class ShellArmor : ModItem
     {
+        public static float Dmg = 15f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Armor made from the shell of a legendary creature" +
-                "\nIncreases ranged damage by 15%"); */
         }
 
         public override void SetDefaults()
@@ -34,7 +35,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Ranged) += 0.15f;
+            player.GetDamage(DamageClass.Ranged) += Dmg / 100f;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,11 +10,11 @@ namespace tsorcRevamp.Items.Armors
     public class SmoughArmor : ModItem
     {
         public static int StaminaShieldCost = 40;
+        public static float BadAtkSpeed = 30f;
+        public static float CritChance = 100f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BadAtkSpeed, CritChance);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Smough's Armor");
-            /* Tooltip.SetDefault("Increases the effectiveness of the Dragon Crest Shield" +
-                "\nSet Bonus: Decreases all attack speed by 50% multiplicatively but grants 100% increased critical strike chance"); */
         }
         public override void SetDefaults()
         {
@@ -34,8 +35,8 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateArmorSet(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().SmoughAttackSpeedReduction = true;
-            player.GetAttackSpeed(DamageClass.Generic) /= 2;
-            player.GetCritChance(DamageClass.Generic) += 100;
+            player.GetAttackSpeed(DamageClass.Generic) *= 1f - BadAtkSpeed / 100f;
+            player.GetCritChance(DamageClass.Generic) += CritChance;
         }
         public override void AddRecipes()
         {

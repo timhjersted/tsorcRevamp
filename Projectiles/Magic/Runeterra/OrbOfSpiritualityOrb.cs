@@ -1,12 +1,10 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
-using ReLogic.Content;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using Terraria.DataStructures;
 
@@ -15,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 
     public class OrbOfSpiritualityOrb : ModProjectile
     {
-        public int HitTimer = 0;
+        public bool Hit = false;
 		public bool Full = false;
         private enum AIState
 		{
@@ -79,7 +77,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 						{
 							CurrentAIState = AIState.Retracting;
                             StateTimer = 0f;
-							HitTimer = 0;
+							Hit = false;
                             Projectile.ResetLocalNPCHitImmunity();
                             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbReturn") with { Volume = 1f }, Projectile.Center);
                             break;
@@ -151,22 +149,23 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
-			if (HitTimer == 0)
+			if (!Hit)
             {
                 player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
                 if (hit.Crit)
                 {
-                    player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1; 
+                    player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 2; 
 					SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbCrit") with { Volume = 1f }, player.Center);
                 } else
-				{
+                {
+                    player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbHit") with { Volume = 1f }, player.Center);
                 }
 				if (Full)
                 {
                     player.Heal((int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(player.statManaMax2 / 50) + 5);
                 }
-				HitTimer = 1;
+				Hit = true;
             }
 			Projectile.damage = (int)(Projectile.damage * (1f - OrbOfDeception.DmgLossOnPierce / 100f));
         }

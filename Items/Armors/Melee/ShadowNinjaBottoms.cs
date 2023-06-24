@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,9 +9,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Legs)]
     class ShadowNinjaBottoms : ModItem
     {
+        public static float MoveSpeed = 33f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("+33% Move Speed");
         }
 
         public override void SetDefaults()
@@ -23,7 +25,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.33f;
+            player.moveSpeed += MoveSpeed / 100f;
         }
 
         public override void AddRecipes()

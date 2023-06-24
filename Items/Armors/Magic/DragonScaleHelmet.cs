@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,6 +10,9 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Head)]
     public class DragonScaleHelmet : ModItem
     {
+        public static int MaxMana = 80;
+        public static float CritChance = 22f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -22,8 +26,8 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.statManaMax2 += 80;
-            player.GetCritChance(DamageClass.Magic) += 22;
+            player.statManaMax2 += MaxMana;
+            player.GetCritChance(DamageClass.Magic) += CritChance;
         }
         public override void AddRecipes()
         {

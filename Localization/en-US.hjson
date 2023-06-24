@@ -40,8 +40,18 @@ Mods: {
 			CursedInferno: Cursed Inferno
 			Ichor: Ichor
 			NoFallDmg: Grants immunity to fall damage
+			HolyDodge: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
+			TitaniumBonus: Attacking generates a defensive barrier of titanium shards
+			ShunpoKeybind1: "Press "
+			ShunpoKeybind2: " to dash towards the cursor and briefly become immune"
+			ShunpoCD:
+				'''
+				Shunpo has {$CommonItemTooltip.Cooldown}
+				Hitting enemies after maxing out the defensive barrier reduces Shunpo's current Cooldown
+				'''
 			LifeRegen: Increases life regeneration by {0}
 			BadDefense: Decreases defense by {0}
+			BadDmg: Decreases damage dealt by {0}%
 			DmgMult: Increases damage by {0}% multiplicatively
 			BadDmgMult: Decreases damage by {0}% multiplicatively
 			AtkSpeed: Increases attack speed by {0}%
@@ -64,6 +74,9 @@ Mods: {
 			NonMeleeBadDmg: Decreases non-melee damage by {0}%
 			Luck: Increases luck by {0}%
 			BadMaxLife: Decreases maximum life by {0}%
+			DefenseCap: Defense is capped at {0}
+			FlatDmg: Increases damage dealt by {0} flat
+			MaxStamina: Increases maximum stamina by {0}%
 
 			Melee: {
 				ArmorPenPercent: Increases melee armor penetration by {0}%
@@ -71,7 +84,6 @@ Mods: {
 				Doubled: (doubled for melee)
 				BadDmg: Decreases melee damage dealt by {0}%
 				Only: For melee warriors only
-				DmgCrit: Increases melee damage and critical strike chance by {0}%
 			}
 
 			Ranged: {
@@ -91,7 +103,7 @@ Mods: {
 
 			Summon: {
 				WhipKnockback: Increases whip knockback
-				AtkSpeed: Increases whip attack speed by {0}%
+				AtkSpeed: Increases summon attack speed by {0}%
 				WhipDmg: Increases whip damage by {0}%
 				WhipCritDmg: Increases the damage of whip crits by {0}%
 				WhipCritHitbox: Increases the Whip Tip Crit Hitbox Size to {0}x
@@ -111,6 +123,9 @@ Mods: {
 					'''
 				SlotsRequired: Uses {0} minion slots
 				PercentOfASlot: Uses {0}% of a minion slot
+				MinionSentrySlot: Increases maximum minions by {0} and sentries by {1}
+				FlatDmg: Increases summon damage by {0} flat
+				CritChance: Increases summon crit chance by {0}%
 			}
 		}
 
@@ -1645,7 +1660,8 @@ Mods: {
 				Tooltip:
 					'''
 					A treasure from ancient Plains of Havoc
-					Increases crit by 13% and adds 2 minion slots
+					{$CommonItemTooltip.PercentIncreasedCritChance}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
 					'''
 			}
 
@@ -1654,8 +1670,8 @@ Mods: {
 				Tooltip:
 					'''
 					Fueled by a magical gem in the chest
-					Increases all attack speed by 12%(doubled for melee)
-					Set Bonus: Chance to gain stacks upon damaging anything
+					{$CommonItemTooltip.AtkSpeed}{$CommonItemTooltip.Melee.Doubled}
+					{$CommonItemTooltip.SetBonus}Chance to gain stacks upon damaging anything
 					Collect stacks to gain up to 28% damage reduction against the next hit
 					'''
 			}
@@ -1665,7 +1681,7 @@ Mods: {
 				Tooltip:
 					'''
 					The long forgotten greaves
-					Increases movement speed by 19%
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					'''
 			}
 
@@ -1707,8 +1723,12 @@ Mods: {
 				Tooltip:
 					'''
 					Worn by the hero himself!
-					+40 Mana
-					Can be upgraded eventually with 5 Souls of Sight and 40,000 Dark Souls
+					{$CommonItemTooltip.IncreasesMaxManaBy}
+					{$CommonItemTooltip.PercentReducedManaCost@1}
+					{$CommonItemTooltip.Magic.ManaRegen@2}
+					{$CommonItemTooltip.SetBonus}Grants extended breath & swimming skills
+					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
+					Can be upgraded eventually with {5} Souls of Sight and {4} Dark Souls
 					'''
 			}
 
@@ -1717,7 +1737,10 @@ Mods: {
 				Tooltip:
 					'''
 					Worn by the hero himself!
-					Increases max minions by 1
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy1}
+					{$CommonItemTooltip.MaxStamina@2}
+					{$CommonItemTooltip.StaminaRegen@3}
 					'''
 			}
 
@@ -1725,9 +1748,9 @@ Mods: {
 				DisplayName: Blue Hero's Shirt
 				Tooltip:
 					'''
-					Set Bonus: Grants extended breath & swimming skills
-					+9% damage, crit, melee and movement speed, -8% mana costs, 20% less chance to consume ammo
-					+3 life regen speed, faster movement & hunter vision while in water
+					Worn by the hero himself!
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					'''
 			}
 
@@ -1735,22 +1758,37 @@ Mods: {
 				DisplayName: Brass Armor
 				Tooltip:
 					'''
-					Grants immunity to knockback
-					Set Bonus: Grants 10% damage reduction + Paladin Shield effect
+					{$CommonItemTooltip.NoKnockback}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.DRStat}
+					Grants Paladins Shield effect
 					'''
 			}
 
 			BrassGreaves: {
 				DisplayName: Brass Greaves
-				Tooltip: Increases movement speed by 18%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
 			}
 
 			BrassHelmet: {
 				DisplayName: Brass Helmet
 				Tooltip:
 					'''
-					Decreases damage dealt by 15%
-					Increases life regen by 4
+					{$CommonItemTooltip.BadDmg}
+					{$CommonItemTooltip.LifeRegen@1}
+					'''
+			}
+
+			DragoonHelmet: {
+				DisplayName: Dragoon Helmet
+				Tooltip:
+					'''
+					{$CommonItemTooltip.IncreasesMaxManaBy}
+					{$CommonItemTooltip.PercentReducedManaCost@1}
+					{$CommonItemTooltip.Magic.ManaRegen@2}
+					{$CommonItemTooltip.SetBonus}Harmonized with the four elements: fire, water, earth and air
+					Provides immunity to drowning and invulnerability to lava
+					{$CommonItemTooltip.PercentIncreasedCritChance@3}
+					Retains this set bonus even if only one or two pieces of the armor are upgraded to their supreme form
 					'''
 			}
 
@@ -1758,14 +1796,36 @@ Mods: {
 				DisplayName: Dragoon Armor
 				Tooltip:
 					'''
-					+30% melee speed
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					The legends of Arradius spoke of the one who would wear this
 					You are a master of all forces, the protector of Earth, the Hero of the age.
-					Set Bonus:
-					Harmonized with the four elements: fire, water, earth and air, including +2 life regen and flight
-					Boosts damage, crit chance and movement speed by 30%, boosts regen and flight
-					Provides immunity to drowning and invulnerability to lava
-					Retains this set bonus even if only one or two pieces of the armor are upgraded to their supreme form
+					'''
+			}
+
+			DragoonGreaves: {
+				DisplayName: Dragoon Greaves
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					Grants an extra double jump and Shiny Red Balloon effect
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					{$CommonItemTooltip.MaxStamina@2}
+					{$CommonItemTooltip.StaminaRegen@3}
+					'''
+			}
+
+			DragoonHelmet2: {
+				DisplayName: Supreme Dragoon Helmet
+				Tooltip:
+					'''
+					{$CommonItemTooltip.IncreasesMaxManaBy}
+					{$CommonItemTooltip.PercentReducedManaCost@1}
+					{$CommonItemTooltip.Magic.ManaRegen@2}
+					Grants Philosopher's Stone effect
+					{$CommonItemTooltip.LifeRegen@4}
+					{$CommonItemTooltip.SetBonus}Harmonized with the four elements: fire, water, earth and air
+					{$CommonItemTooltip.PercentIncreasedCritChance@3}
 					'''
 			}
 
@@ -1776,16 +1836,9 @@ Mods: {
 					A reforged upgrade to the legendary Dragoon Armor.
 					You are a master of all forces, the protector of Earth, the Hero of the age.
 					The powers of the Dragoon Cloak are embedded within its blue-plated chest piece.
-					Dragoon Cloak effects kick in at 40% life.
-					'''
-			}
-
-			DragoonGreaves: {
-				DisplayName: Dragoon Greaves
-				Tooltip:
-					'''
-					Grants an extra double jump and Shiny Red Balloon effect
-					Increases your max number of minions by 2
+					The potency of the Dragoon Cloak effects is {0}%, with the same life threshold
+					{$CommonItemTooltip.PercentIncreasedDamage@2}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@3}
 					'''
 			}
 
@@ -1793,29 +1846,11 @@ Mods: {
 				DisplayName: Supreme Dragoon Greaves
 				Tooltip:
 					'''
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					Grants an extra double jump and Shiny Red Balloon effect
-					Increases your max number of minions by 3
-					'''
-			}
-
-			DragoonHelmet: {
-				DisplayName: Dragoon Helmet
-				Tooltip:
-					'''
-					+120 Mana, reduces mana costs by 14%
-					Increases mana regeneration by 10
-					'''
-			}
-
-			DragoonHelmet2: {
-				DisplayName: Supreme Dragoon Helmet
-				Tooltip:
-					'''
-					Increases maximum mana by 200 and decreases mana costs by 17%
-					Increases mana regeneration by 15
-					Grants Philosopher's Stone effect
-					Set Bonus: Harmonized with the four elements: fire, water, earth and air, including +5 life regen and flight
-					Boosts damage, crit chance, melee and movement speed by 38%
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					{$CommonItemTooltip.MaxStamina@2}
+					{$CommonItemTooltip.StaminaRegen@3}
 					'''
 			}
 
@@ -1843,8 +1878,8 @@ Mods: {
 				DisplayName: Ankor Wat Chestplate
 				Tooltip:
 					'''
-					Increases magic critical strike chance by 15%
-					Set Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
+					{$CommonItemTooltip.PercentIncreasedMacigCritChance}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.HolyDodge}
 					Defense and maximum mana are not affected by this
 					'''
 			}
@@ -1853,14 +1888,19 @@ Mods: {
 				DisplayName: Ankor Wat Helmet
 				Tooltip:
 					'''
-					Increases max mana by 120
-					Reduces mana costs by 8% and increases mana regen by 8
+					{$CommonItemTooltip.IncreasesMaxManayBy}
+					{$CommonItemTooltip.PercentReducedManaCost@1}
+					{$CommonItemTooltip.Magic.ManaRegen@2}
 					'''
 			}
 
 			AnkorWatLeggings: {
 				DisplayName: Ankor Wat Leggings
-				Tooltip: Increases magic damage by 15% and movement speed by 10%
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
+					'''
 			}
 
 			DragonScaleGreaves: {
@@ -1868,8 +1908,8 @@ Mods: {
 				Tooltip:
 					'''
 					Known to be treasured by assassins.
-					Increases movement speed by 25%
-					Decreases mana costs by 17%
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					{$CommonItemTooltip.PercentReducedManaCost@1}
 					'''
 			}
 
@@ -1878,8 +1918,8 @@ Mods: {
 				Tooltip:
 					'''
 					It is made of razor sharp dragon scales.
-					Increases magic critical strike chance by 22%
-					Increases maximum mana by 80
+					{$CommonItemTooltip.PercentIncreasedMagicCritChance}
+					{$CommonItemTooltip.IncreasesMaxManaBy@1}
 					'''
 			}
 
@@ -1888,12 +1928,13 @@ Mods: {
 				Tooltip:
 					'''
 					A powerful magic/low defense set chosen by skilled Paladins with a taste for high risk/reward combat
-					Increases magic damage by 22%
-					Increases thorns by 100%
-					Set bonus: Increases mana regen by 6
-					Darkmoon Cloak skill activates when life falls below 25%
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					{$CommonItemTooltip.Thorns@1}
+					{$CommonItemTooltip.Magic.ManaRegen@2}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@5}
+					{$CommonItemTooltip.LifeThreshold@3}Dragonscale Cloak Ability activates
 					This doubles mana regen provided by this armor set, Star Cloak effect and 
-					increases magic critical strike chance and damage by another 11%
+					{$CommonItemTooltip.PercentIncreasedMagicDamageCritChance@4}
 					'''
 			}
 
@@ -1902,8 +1943,11 @@ Mods: {
 				Tooltip:
 					'''
 					Armor from the East, enchanted with magic forces
-					-12% mana cost
-					Set bonus: +20% Magic Crit, +100 mana, +6 Mana Regen
+					{$CommonItemTooltip.PercentReducedManaCost}
+					{$CommonItemTooltip.Magic.ManaRegen@1}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.TitaniumBonus}
+					{$CommonItemTooltip.ShunpoKeybind1}Shunpo{$CommonItemTooltip.ShunpoKeybind2}
+					{$CommonItemTooltip.ShunpoCD@2}
 					'''
 			}
 
@@ -1912,7 +1956,8 @@ Mods: {
 				Tooltip:
 					'''
 					Armor from the East
-					+15% movement.
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					{$CommonItemTooltip.IncreasesMaxManaBy@1}
 					'''
 			}
 
@@ -1921,21 +1966,26 @@ Mods: {
 				Tooltip:
 					'''
 					Armor from the East
-					+25% magic damage
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					{$CommonItemTooltip.PercentIncreasedMagicCritChance@1}
 					'''
 			}
 
 			MimeticHat: {
 				DisplayName: Mimetic Hat
-				Tooltip: Increases your max mana by 80 and reduces mana costs by 16%
+				Tooltip:
+					'''
+					{$CommonItemTooltip.IncreasesMaxManayBy}
+					{$CommonItemTooltip.PercentReducedManaCost@1}
+					'''
 			}
 
 			MimeticPants: {
 				DisplayName: Mimetic Pants
 				Tooltip:
 					'''
-					Increases movement speed by 10%
-					15% increased magic critical strike chance
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					{$CommonItemTooltip.PercentIncreasedMagicCritChance@1}
 					'''
 			}
 
@@ -1943,29 +1993,30 @@ Mods: {
 				DisplayName: Mimetic Suit
 				Tooltip:
 					'''
-					Increases magic damage by 11%
-					Increases mana regen by 7
-					Set Bonus: Burning Mana Skill activates when life falls below 50%, 
-					doubling mana regen bonus and mana cost reductions provided by this armor set
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					{$CommonItemTooltip.Magic.ManaRegen@1}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@2}Activates Burning Mana Skill:
+					Doubling mana regen bonus and mana cost reductions provided by this armor set
 					'''
 			}
 
 			RedClothHat: {
 				DisplayName: Red Cloth Hat
-				Tooltip: Increases magic crit by 5%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMagicCritChance}"
 			}
 
 			RedClothPants: {
 				DisplayName: Red Cloth Pants
-				Tooltip: Increases movement speed by 6%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
 			}
 
 			RedClothTunic: {
 				DisplayName: Red Cloth Tunic
 				Tooltip:
 					'''
-					Increases magic damage by 2 flat
-					Set bonus: Increases max mana by 40, decreases mana costs by 5%
+					{$CommonItemTooltip.Magic.FlatDmg}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasesMaxManaBy@1}
+					{$CommonItemTooltip.PercentReducedManaCost@2}
 					A Mystic Robe will also proc this set bonus
 					'''
 			}
@@ -1974,20 +2025,21 @@ Mods: {
 				DisplayName: RTQ2 Chestplate
 				Tooltip:
 					'''
-					Increases magic critical strike chance by 7%
-					Set Bonus: +10% magic attack speed, meteorite set bonus
-					Emergency shield kicks in when life is less than 40%, increasing defense by 15
+					{$CommonItemTooltip.PercentIncreasedMagicCritChance}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.Magic.AtkSpeed@1}, meteorite set bonus
+					{$CommonItemTooltip.LifeThreshold@2}Emergency Shield kicks:
+					{$CommonItemTooltip.IncreasesDefenseBy@3}
 					'''
 			}
 
 			RTQ2Helmet: {
 				DisplayName: RTQ2 Helmet
-				Tooltip: Increases magic damage by 27%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMagicDamage}"
 			}
 
 			RTQ2Leggings: {
 				DisplayName: RTQ2 Leggings
-				Tooltip: Increases movement speed by 13%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
 			}
 
 			MaskOfTheChild: {
@@ -2010,8 +2062,8 @@ Mods: {
 				Tooltip:
 					'''
 					A lost prince's armor.
-					11% increased melee speed
-					Set bonus: Increases melee damage by 3 flat
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.Melee.FlatDmg@1}
 					A Gi will also proc this set bonus
 					'''
 			}
@@ -2021,7 +2073,7 @@ Mods: {
 				Tooltip:
 					'''
 					A lost prince's greaves.
-					Increases movement speed by 11%
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					'''
 			}
 
@@ -2030,24 +2082,24 @@ Mods: {
 				Tooltip:
 					'''
 					It is the famous Helmet of the Stars.
-					Increases melee crit chance by 4%
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
 			}
 
 			BlackBeltGiPants: {
 				DisplayName: Black Belt Gi Pants
-				Tooltip: +28% Move Speed
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
 			}
 
 			BlackBeltGiTop: {
 				DisplayName: Black Belt Gi Top
 				Tooltip:
 					'''
-					+20% melee damage
-					Set Bonus: +20% Melee Speed
-					Zen meditation adds amazing +13 life regen
-					Defense is capped at 30
-					Damage reduction is converted into movement speed
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
+					{$CommonItemTooltip.LifeRegen@3}
+					{$CommonItemTooltip.DefenseCap@2}
+					Damage reduction is converted into movement speed(1 : {4})
 					'''
 			}
 
@@ -2056,7 +2108,7 @@ Mods: {
 				Tooltip:
 					'''
 					You are a master of the zen arts, at one with the Tao
-					+7% melee crit
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
 			}
 
@@ -2065,7 +2117,7 @@ Mods: {
 				Tooltip:
 					'''
 					Crystal armor vibrates with a mysterious energy
-					Increases melee critical strike chance by 23%
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
 			}
 
@@ -2074,9 +2126,10 @@ Mods: {
 				Tooltip:
 					'''
 					Dazzling armor cut from crystal
-					Increases melee damage by 10%
-					Set Bonus: Increases critical strike damage by 25%
-					Increases damage reduction by 5%, doubled when under 40% life
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@3}
+					{$CommonItemTooltip.DRStat@1}
+					{$CommonItemTooltip.LifeThreshold@2}Damage Reduction provided by the set is doubled
 					'''
 			}
 
@@ -2085,7 +2138,7 @@ Mods: {
 				Tooltip:
 					'''
 					Dazzling armor cut from crystal.
-					Increases movement speed by 21%
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					'''
 			}
 
@@ -2094,9 +2147,10 @@ Mods: {
 				Tooltip:
 					'''
 					Dazzling armor cut from crystal
-					Increases melee damage by 19%
-					Set Bonus: Increases critical strike damage by 25%
-					Increases melee speed by 12%, doubled when under 40% life
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@3}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
+					{$CommonItemTooltip.LifeThreshold@2}Melee Speed provided by the set is doubled
 					'''
 			}
 
@@ -2104,10 +2158,9 @@ Mods: {
 				DisplayName: Dark Knight Armor
 				Tooltip:
 					'''
-
 					One of the fiercest armors for melee warriors
-					Increases melee damage by 15%
-					Set Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.HolyDodge}
 					Defense is not affected by this
 					Small chance to regain life from melee strikes while Holy Dodge is active
 					'''
@@ -2118,13 +2171,14 @@ Mods: {
 				Tooltip:
 					'''
 					Forsaken by the one who turned Paladin.
-					Increases movement and melee speed by 17%
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					'''
 			}
 
 			DarkKnightHelmet: {
 				DisplayName: Dark Knight Helmet
-				Tooltip: Increases melee critical strike chance by 15%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
 			}
 
 			FighterBreastplate: {
@@ -2132,8 +2186,10 @@ Mods: {
 				Tooltip:
 					'''
 					Adept at close combat
-					+20% melee speed
-					Set Bonus: +25% Melee damage
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.TitaniumBonus}
+					{$CommonItemTooltip.ShunpoKeybind1}Shunpo{$CommonItemTooltip.ShunpoKeybind2}
+					{$CommonItemTooltip.ShunpoCD@1}
 					'''
 			}
 
@@ -2142,7 +2198,7 @@ Mods: {
 				Tooltip:
 					'''
 					Adept at close combat
-					Adds double jump and jump boost, +12% movement speed
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					'''
 			}
 
@@ -2151,7 +2207,7 @@ Mods: {
 				Tooltip:
 					'''
 					Adept at close combat
-					+17% melee crit
+					{$CommonItemTooltip.PercentIncreasedMeleeDamageCritChance}
 					'''
 			}
 
@@ -2184,55 +2240,69 @@ Mods: {
 				DisplayName: Shadow Cloak Greaves
 				Tooltip:
 					'''
-					7% increased movement speed
-					Increases all attack speed by 9%
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					{$CommonItemTooltip.AtkSpeed@1}
 					'''
 			}
 
 			ShadowCloakPlateHelm: {
 				DisplayName: Shadow Cloak Helm
-				Tooltip: Increases critical strike chance by 18%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedCritChance}"
 			}
 
 			ShadowCloakPlateMail: {
 				DisplayName: Shadow Cloak Plate Mail
 				Tooltip:
 					'''
-					Increases damage by 8%
-					Set bonus: Grants Double Jump Skill
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					{$CommonItemTooltip.SetBonus}Grants Double Jump Skill
 					Increases movement speed and acceleration
-					Makes the player panic when below 50% maximum life
+					{$CommonItemTooltip.LifeThreshold@1}Makes the player panic
 					'''
 			}
 
 			ShadowNinjaBottoms: {
 				DisplayName: Shadow Ninja Bottoms
-				Tooltip: +33% Move Speed
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
 			}
 
 			ShadowNinjaMask: {
 				DisplayName: Shadow Ninja Mask
 				Tooltip:
 					'''
-					+30% Melee Crit
-					Set bonus: +30% Melee Speed, +30 rapid life regen
-					Defense is capped at 40
-					Damage reduction is converted into movement speed
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.DefenseCap@2}
+					Damage reduction is converted into movement speed(1 : {4})
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
+					{$CommonItemTooltip.LifeRegen@3}
+					'''
+			}
+
+			ShadowNinjaMask2: {
+				DisplayName: Shadow Ninja Mask II
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage@1}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.DefenseCap@3}
+					Damage reduction is converted into movement speed(1 : {5})
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
+					{$CommonItemTooltip.LifeRegen@4}
 					'''
 			}
 
 			ShadowNinjaTop: {
 				DisplayName: Shadow Ninja Top
-				Tooltip: +30% Melee damage
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
 			}
 
 			PowerArmorNUGreaves: {
 				DisplayName: Power Armor NU Greaves
 				Tooltip:
 					'''
-					Increases movement speed by 40%
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					Allows you to walk on liquids, adds an extra jump and jump boost
-					Also grants immunity to knockback
+					{$CommonItemTooltip.NoKnockback}
 					'''
 			}
 
@@ -2240,8 +2310,10 @@ Mods: {
 				DisplayName: Power Armor NU Helmet
 				Tooltip:
 					'''
-					20% Increased Melee Damage
-					Increases critical strike chance by 17%
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.PercentIncreasedRangedDamage@1}
+					{$CommonItemTooltip.PercentIncreasedMagicDamage@2}
+					{$CommonItemTooltip.PercentIncreasedCritChance@3}
 					Longer Breath
 					'''
 			}
@@ -2251,16 +2323,23 @@ Mods: {
 				Tooltip:
 					'''
 					A powerful armor forged by the god of chaos.
-					Increases ranged damage by 17% and magic damage by 9%
-					Reduces chance of consuming ammo by 20%, increases max mana by 80 and decreases mana costs by 10%
-					Set Bonus: +20% attack speed(doubled for melee), +8 life regen/15 in water
-					Increases maximum stamina and stamina regen by 15%
+					{$CommonItemTooltip.PercentChanceToSaveAmmo}
+					{$CommonItemTooltip.PercentReducedManaCost@1}
+					{$CommonItemTooltip.IncreasesMaxManaBy@2}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.AtkSpeed@3}{$CommonItemTooltip.Melee.Doubled}
+					{$CommonItemTooltip.LifeRegen@4}, doubled if submerged
+					{$CommonItemTooltip.StaminaRegen@5}
+					{$CommonItemTooltip.MaxStamina@6}
 					'''
 			}
 
 			ArcherOfLumeliaHairStyle: {
 				DisplayName: Archer of Lumelia Hairstyle
-				Tooltip: Gifted with bows, repeaters, and other long range weapons
+				Tooltip:
+					'''
+					Gifted with bows, repeaters, and other long range weapons
+					{$CommonItemTooltip.PercentIncreasedRangedCritChance}
+					'''
 			}
 
 			ArcherOfLumeliaPants: {
@@ -2268,7 +2347,7 @@ Mods: {
 				Tooltip:
 					'''
 					Gifted with bows, repeaters, and other long range weapons
-					+13% movement speed
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					'''
 			}
 
@@ -2277,8 +2356,11 @@ Mods: {
 				Tooltip:
 					'''
 					Gifted with lethal archery abilities
-					25% chance not to consume ammo.
-					Set Bonus: +23% Ranged Crit, +15% Ranged Damage
+					{$CommonItemTooltip.PercentIncreasedRangedDamage}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.TitaniumBonus}
+					{$CommonItemTooltip.ShunpoKeybind1}Shunpo{$CommonItemTooltip.ShunpoKeybind2}
+					{$CommonItemTooltip.ShunpoCD@1}
+					{$CommonItemTooltip.PercentChanceToSaveAmmo@2}
 					'''
 			}
 
@@ -2286,19 +2368,19 @@ Mods: {
 				DisplayName: Leather Armor
 				Tooltip:
 					'''
-					Increases ranged damage by 2 flat
-					Set bonus: 20% less chance to consume ammo
+					{$CommonItemTooltip.Ranged.FlatDmg}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.PercentChanceToSaveAmmo@1}
 					'''
 			}
 
 			LeatherGreaves: {
 				DisplayName: Leather Greaves
-				Tooltip: Increases movement speed by 9%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
 			}
 
 			LeatherHelmet: {
 				DisplayName: Leather Helmet
-				Tooltip: Increases ranged crit by 8%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedRangedCritChance}"
 			}
 
 			MirkwoodElvenBlondeHairStyle: {
@@ -2307,7 +2389,7 @@ Mods: {
 					'''
 					Gifted with ranged combat. High defense not necessary
 					With eyes of a hunter you can spot enemies in the dark
-					Increases ranged critical strike chance by 21%
+					{$CommonItemTooltip.PercentIncreasedRangedCritChance}
 					'''
 			}
 
@@ -2316,10 +2398,10 @@ Mods: {
 				Tooltip:
 					'''
 					Gifted with healing. High defense not necessary.
-					25% chance not to consume ammo
-					Increases ranged damage by 19%
-					Set Bonus: Increases critical strike damage by 25%
-					Increases life regeneration by 4
+					{$CommonItemTooltip.PercentIncreasedRangedDamage}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@2}
+					{$CommonItemTooltip.LifeRegen@1}
+					{$CommonItemTooltip.PercentChanceToSaveAmmo@3}
 					'''
 			}
 
@@ -2328,7 +2410,7 @@ Mods: {
 				Tooltip:
 					'''
 					Gifted with ranged combat. High defense not necessary.
-					+35% Movement Speed and Jump Boost
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed} and Jump Boost
 					'''
 			}
 
@@ -2337,7 +2419,7 @@ Mods: {
 				Tooltip:
 					'''
 					Armor made from the shell of a legendary creature
-					Increases ranged damage by 15%
+					{$CommonItemTooltip.PercentIncreasedRangedDamage}
 					'''
 			}
 
@@ -2346,7 +2428,7 @@ Mods: {
 				Tooltip:
 					'''
 					Armor made from the shell of a legendary creature
-					+15% movement speed
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					'''
 			}
 
@@ -2355,9 +2437,9 @@ Mods: {
 				Tooltip:
 					'''
 					Armor made from the shell of a legendary creature
-					Increases ranged critical strike chance by 16%
-					Set Bonus: Ranged Critical Strike Chance is doubled under 50% life
-					Reduces chance to consume ammo by 25%
+					{$CommonItemTooltip.PercentIncreasedRangedCritChance}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@1}Doubled ranged critical strike chance
+					{$CommonItemTooltip.PercentChanceToSaveAmmo@2}
 					'''
 			}
 
@@ -2365,8 +2447,8 @@ Mods: {
 				DisplayName: The Unforseeable
 				Tooltip:
 					'''
-					Increases ranged damage by 15%
-					Increases life regen by 2
+					{$CommonItemTooltip.PercentIncreasedRangedDamage}
+					{$CommonItemTooltip.LifeRegen@1}
 					'''
 			}
 
@@ -2374,44 +2456,49 @@ Mods: {
 				DisplayName: The Unknowable
 				Tooltip:
 					'''
-					25% chance to not consume ammo
-					Increases ranged critical strike chance by 17%
-					Set Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
+					{$CommonItemTooltip.PercentIncreasedRangedCritChance@1}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.HolyDodge}
 					Defense and ammo consumption chance are not affected by this
+					{$CommonItemTooltip.PercentChanceToSaveAmmo}
 					'''
 			}
 
 			TheUntouchable: {
 				DisplayName: The Untouchable
-				Tooltip: Increases movement speed by 13%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
 			}
 
 			TriceratopsBody: {
 				DisplayName: Triceratops Body
 				Tooltip:
 					'''
-					Increases ranged damage by 3 flat
-					Set Bonus: Increases specialist damage by 20% multiplicatively
-					Reduces chance to consume ammo by 25%
+					{$CommonItemTooltip.Ranged.FlatDmg}
+					{$CommonItemTooltip.SetBonus}Increases specialist damage by {1}% multiplicatively
+					{$CommonItemTooltip.PercentChanceToSaveAmmo@2}
 					'''
 			}
 
 			TriceratopsHead: {
 				DisplayName: Triceratops Head
-				Tooltip: Increases ranged critical strike chance by 12%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedRangedCritChance}"
 			}
 
 			TriceratopsLegs: {
 				DisplayName: Triceratops Legs
-				Tooltip: Increases movement speed by 14%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
 			}
 
 			RedHerosHat: {
-				DisplayName: Red Hero's hat
+				DisplayName: Red Hero's Hat
 				Tooltip:
 					'''
-					Skill: Longer invincibility after being hit, +80 max mana
-					Can be upgraded to it's master form with 80,000 Dark Souls
+					{$CommonItemTooltip.IncreasesMaxManaBy}
+					{$CommonItemTooltip.PercentReducedManaCost@1}
+					{$CommonItemTooltip.Magic.ManaRegen@2}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.ObsidianShield} and Lava resistance
+					Plus extended breath, water and lava walk, & swim
+					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
+					Can be upgraded to its master form with {4} Dark Souls
 					'''
 			}
 
@@ -2420,7 +2507,10 @@ Mods: {
 				Tooltip:
 					'''
 					Worn by the hero himself!
-					Increases your max number of minions by 2
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy1}
+					{$CommonItemTooltip.MaxStamina@2}
+					{$CommonItemTooltip.StaminaRegen@3}
 					'''
 			}
 
@@ -2429,22 +2519,8 @@ Mods: {
 				Tooltip:
 					'''
 					The legendary clothes of the master.
-					Set bonus: Lava resistance, fire block & knockback immunity
-					Plus extended breath, water and lava walk, & swim
-					Boosts damage, crit, melee and movement speed by 14%
-					Reduces mana costs by 11%
-					+3 life regen while in lava & +2 in water
-					'''
-			}
-
-			ShadowNinjaMask2: {
-				DisplayName: Shadow Ninja Mask II
-				Tooltip:
-					'''
-					+30% Melee Crit
-					Set Bonus: +30% to all damage, melee speed, crit chance and +30 rapid life regen
-					Defense is capped at 60
-					Damage reduction is converted into movement speed
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					'''
 			}
 
@@ -2453,7 +2529,7 @@ Mods: {
 				Tooltip:
 					'''
 					Increases the effectiveness of the Dragon Crest Shield
-					Set Bonus: Decreases all attack speed by 50% multiplicatively but grants 100% increased critical strike chance
+					Set Bonus: Decreases all attack speed by {0}% multiplicatively but grants {1}% increased critical strike chance
 					'''
 			}
 
@@ -2464,7 +2540,7 @@ Mods: {
 
 			SmoughHelmet: {
 				DisplayName: Smough's Helmet
-				Tooltip: Increases damage dealt by 15%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedDamage}"
 			}
 
 			SnarbolaxArmor: {
@@ -2486,19 +2562,19 @@ Mods: {
 				DisplayName: Studded Leather Armor
 				Tooltip:
 					'''
-					Increases damage by 2 flat
-					Set bonus: Increases all attack speed by 15%
+					{$CommonItemTooltip.FlatDmg}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.AtkSpeed@1}
 					'''
 			}
 
 			StuddedLeatherGreaves: {
 				DisplayName: Studded Leather Greaves
-				Tooltip: Increases movement speed by 15%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
 			}
 
 			StuddedLeatherHelmet: {
 				DisplayName: Studded Leather Helmet
-				Tooltip: Increases crit chance by 5%
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedCritChance}"
 			}
 
 			AncientDemonArmor: {
@@ -2506,9 +2582,11 @@ Mods: {
 				Tooltip:
 					'''
 					Forged by those who brave Annihilation
-					Increases whip damage by 16%
-					Set bonus: Increases whip range by 30%
-					Increases summon attack speed by 25%, this gets doubled when under 50% life
+					{$CommonItemTooltip.Summon.WhipDmg}
+					{$CommonItemTooltip.Summon.TagDuration@1}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasesWhipRangeByPercent@2}
+					{$CommonItemTooltip.Summon.AtkSpeed@3}
+					{$CommonItemTooltip.LifeThreshold@4}Whip Tip Crits trigger nasty explosions
 					'''
 			}
 
@@ -2516,8 +2594,8 @@ Mods: {
 				DisplayName: Ancient Demon Greaves
 				Tooltip:
 					'''
-					Increases movement speed by 22%
-					Increases your max number of minions by 1
+					{$CommonItemTooltip.IncreasesMaxMinionsBy}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
 					'''
 			}
 
@@ -2526,7 +2604,7 @@ Mods: {
 				Tooltip:
 					'''
 					You hear an evil whispering from inside
-					Increases minion damage by 22%
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					'''
 			}
 
@@ -2534,8 +2612,8 @@ Mods: {
 				DisplayName: Dwarven Armor
 				Tooltip:
 					'''
-					Increases your max number of minions by 1
-					Increases minion damage by 10%
+					{$CommonItemTooltip.IncreasesMaxMinionsBy}
+					{$CommonItemTooltip.PercentIncreasedSummonDamage@1}
 					'''
 			}
 
@@ -2543,10 +2621,12 @@ Mods: {
 				DisplayName: Dwarven Crusader Helmet
 				Tooltip:
 					'''
-					Increases whip damage and summon attack speed by 16%
-					Set Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
+					{$CommonItemTooltip.Summon.WhipDmg}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.HolyDodge}
 					Defense, minion slots and whip range are not affected by this
-					Increases whip range by 30% and life regen by 3
+					{$CommonItemTooltip.IncreasesWhipRangeByPercent@3}
+					{$CommonItemTooltip.Summon.AtkSpeed@1}
+					{$CommonItemTooltip.LifeRegen@4}
 					'''
 			}
 
@@ -2554,8 +2634,8 @@ Mods: {
 				DisplayName: Dwarven Greaves
 				Tooltip:
 					'''
-					Increases your max number of minions by 1
-					Increases movement speed by 19%
+					{$CommonItemTooltip.IncreasesMaxMinionsBy}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
 					'''
 			}
 
@@ -2563,10 +2643,12 @@ Mods: {
 				DisplayName: Dwarven Knight Helmet
 				Tooltip:
 					'''
-					Increases minion damage by 7% and 2 flat
-					Set Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.CritChance@4}
+					{$CommonItemTooltip.Summon.TagStrength@1}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.HolyDodge}
 					Defense, minion and turret slots are not affected by this
-					Increases your max number of minions and turrets by 1
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasesMaxMinionsBy@2}
 					'''
 			}
 
@@ -2574,8 +2656,8 @@ Mods: {
 				DisplayName: Old Chain Armor
 				Tooltip:
 					'''
-					+1 flat minion damage
-					Set Bonus: Increases your max number of minions by 1
+					{$CommonItemTooltip.Summon.FlatDmg}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasesMaxMinionsBy}
 					Can be bought
 					A Flinx Fur Coat will also proc this set bonus
 					'''
@@ -2585,7 +2667,7 @@ Mods: {
 				DisplayName: Old Chain Coif
 				Tooltip:
 					'''
-					+9% summon attack speed
+					{$CommonItemTooltip.Summon.AtkSpeed}
 					Can be bought
 					'''
 			}
@@ -2594,7 +2676,7 @@ Mods: {
 				DisplayName: Old Chain Greaves
 				Tooltip:
 					'''
-					+12% movement speed
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					Can be bought
 					'''
 			}
@@ -2603,8 +2685,8 @@ Mods: {
 				DisplayName: Tarantula Carapace
 				Tooltip:
 					'''
-					Increases minion damage by 20%
-					Increases your max number of minions by 1
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
 					'''
 			}
 
@@ -2612,9 +2694,11 @@ Mods: {
 				DisplayName: Tarantula Helmet
 				Tooltip:
 					'''
-					Increases whip damage by 25%
-					Set Bonus: Increases whip range by 30% and summon attack speed by 29%
-					Increases critical strike damage by 25%
+					{$CommonItemTooltip.Summon.WhipDmg}
+					{$CommonItemTooltip.Summon.TagDuration@4}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
+					{$CommonItemTooltip.Summon.AtkSpeed@2}
+					{$CommonItemTooltip.CritDmg@3}
 					'''
 			}
 
@@ -2622,8 +2706,8 @@ Mods: {
 				DisplayName: Tarantula Legs
 				Tooltip:
 					'''
-					Increases your max number of minions by 1
-					Increases movement speed by 22%
+					{$CommonItemTooltip.IncreasesMaxMinionsBy}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
 					'''
 			}
 
@@ -2631,9 +2715,11 @@ Mods: {
 				DisplayName: Tarantula Mask
 				Tooltip:
 					'''
-					Increases minion damage by 12%
-					Set Bonus: Increases your max number of minions and turrets by 2
-					Increases critical strike damage by 25%
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.CritChance@4}
+					{$CommonItemTooltip.Summon.TagStrength@5}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.Summon.MinionSentrySlot@1}
+					{$CommonItemTooltip.CritDmg@3}
 					'''
 			}
 
@@ -2641,9 +2727,9 @@ Mods: {
 				DisplayName: Wasp Armor
 				Tooltip:
 					'''
-					Increases minion damage by 25%
-					Increases your max number of minions by 1
-					Set Bonus: Increases hornet minions pierce by 5 and increases stinger movement speed
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					{$CommonItemTooltip.SetBonus}Increases hornet minions pierce by 5 and increases stinger movement speed
 					'''
 			}
 
@@ -2651,8 +2737,8 @@ Mods: {
 				DisplayName: Wasp Greaves
 				Tooltip:
 					'''
-					Increases movement speed by 20%
-					Increases your max number of turrets by 2
+					{$CommonItemTooltip.IncreasesMaxSentriesBy}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
 					'''
 			}
 
@@ -2660,8 +2746,9 @@ Mods: {
 				DisplayName: Wasp Helmet
 				Tooltip:
 					'''
-					Increases minion damage by 2 flat
-					Increases your max number of minions by 1
+					{$CommonItemTooltip.Summon.TagStrength}
+					{$CommonItemTooltip.Summon.CritChance@2}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
 					'''
 			}
 
@@ -2669,9 +2756,10 @@ Mods: {
 				DisplayName: Witchking Bottoms
 				Tooltip:
 					'''
-					+20% minion damage
-					Increases your max number of minions and turrets by 1
-					+44% movement speed
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.Summon.MinionSentrySlot@1}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@3}
+					{$CommonItemTooltip.Summon.TagDuration@4}
 					'''
 			}
 
@@ -2679,8 +2767,10 @@ Mods: {
 				DisplayName: Witchking Helmet
 				Tooltip:
 					'''
-					+20% minion damage
-					Increases your max number of minions and turrets by 1
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.MinionSentrySlot@1}
+					{$CommonItemTooltip.Summon.CritChance@3}
+					{$CommonItemTooltip.Summon.TagStrength@4}
 					'''
 			}
 
@@ -2688,10 +2778,13 @@ Mods: {
 				DisplayName: Witchking Top
 				Tooltip:
 					'''
-					+20% minion damage
-					Increases your max number of minions and turrets by 1
-					Set Bonus: Increases your max number of minions and turrets by 1
-					+30% whip range, +25% summon attack speed
+					{$CommonItemTooltip.PercentIncreasedSummonDamage@4}
+					{$CommonItemTooltip.Summon.MinionSentrySlot@5}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.Summon.MinionSentrySlot}
+					{$CommonItemTooltip.Summon.AtkSpeed@2}
+					{$CommonItemTooltip.IncreasesWhipRangeByPercent@3}
+					Witchking's Sword now inflicts 2 random whip debuffs each swing
+					It also scales with whip damage and range instead of melee stats
 					'''
 			}
 
@@ -2699,7 +2792,7 @@ Mods: {
 				DisplayName: Symbol Of Avarice
 				Tooltip:
 					'''
-					{$CommonItemTooltip.IncreasedSoulDrops}
+					{$CommonItemTooltip.SoulDrops}
 					but the curse of the branded also [c/FF0000:drains HP].
 					'''
 			}
@@ -6227,14 +6320,14 @@ Mods: {
 				Tooltip:
 					'''
 					<right> to [c/708090:thrust]
-					Gain a stack of [c/2f4f4f:Steel Tempest] upon [c/708090:thrusting] an enemy
+					Gain a stack of [c/708090:Steel Tempest] upon [c/708090:thrusting] an enemy
 					Upon reaching 2 stacks, the next <right> will release a [c/708090:tornado]
 					[c/708090:'Death is like the wind, always by my side']
 					'''
 				Details:
 					'''
-					Each [c/708090:thrust] can only grant 1 [c/2f4f4f:Steel Tempest] stack at maximum
-					Releasing a [c/708090:Tornado] consumes all [c/2f4f4f:Steel Tempest] stacks
+					Each [c/708090:thrust] can only grant 1 [c/708090:Steel Tempest] stack at maximum
+					Releasing a [c/708090:Tornado] consumes all [c/708090:Steel Tempest] stacks
 					Melee Speed reduces [c/708090:thrust cooldown] (capped at 1.33 seconds)
 					Current [c/708090:thrust Cooldown]: {0} seconds
 					[c/708090:Thrusts] and [c/708090:tornadoes] deal double damage
@@ -6246,7 +6339,7 @@ Mods: {
 				Tooltip:
 					'''
 					<right> to [c/708090:thrust]
-					Gain a stack of [c/2f4f4f:Steel Tempest] upon [c/708090:thrusting] an enemy
+					Gain a stack of [c/708090:Steel Tempest] upon [c/708090:thrusting] an enemy
 					Upon reaching 2 stacks, the next <right> will release a [c/708090:tornado]
 					{$Items.PlasmaWhirlwind.Keybind1}Special Ability{$Items.PlasmaWhirlwind.Keybind2}
 					<right>ing while [c/00ffff:dashing] will release a [c/00ffff:Spinning Slash]
@@ -6257,12 +6350,12 @@ Mods: {
 				Details:
 					'''
 					[c/00ffff:Dash cooldown] is applied to the enemy({3} seconds)
-					Hitting enemies with [c/00ffff:Spinning Slash] will max out [c/2f4f4f:Steel Tempest]
+					Hitting enemies with [c/00ffff:Spinning Slash] will max out [c/708090:Steel Tempest]
 					[c/00ffff:Spinning Slash] deals quadruple damage
 					[c/00ffff:Spinning Slash] can release a stationary [c/708090:tornado]
 					[c/00ffff:Spinning Slash] and [c/00ffff:dash] deal bonus {1}% max health damage on-hit, up to {2}
-					Each [c/708090:thrust] can only grant 1 [c/2f4f4f:Steel Tempest] stack at maximum
-					Releasing a [c/708090:tornado] consumes all [c/2f4f4f:Steel Tempest] stacks
+					Each [c/708090:thrust] can only grant 1 [c/708090:Steel Tempest] stack at maximum
+					Releasing a [c/708090:tornado] consumes all [c/708090:Steel Tempest] stacks
 					Melee Speed reduces [c/708090:thrust cooldown] (capped at 1.33 seconds)
 					Current [c/708090:thrust cooldown]: {0} seconds
 					[c/708090:Thrusts] and [c/708090:tornadoes] deal double damage
@@ -6273,9 +6366,9 @@ Mods: {
 				DisplayName: Nightbringer
 				Tooltip:
 					'''
-					<right> to [c/2f4f4f:thrust]
-					Gain a stack of [c/2f4f4f:Steel Tempest] upon [c/2f4f4f:thrusting] an enemy
-					Upon reaching 2 stacks, the next <right> will release a [c/2f4f4f:tornado]
+					<right> to [c/708090:thrust]
+					Gain a stack of [c/708090:Steel Tempest] upon [c/708090:thrusting] an enemy
+					Upon reaching 2 stacks, the next <right> will release a [c/708090:tornado]
 					{$Items.PlasmaWhirlwind.Keybind1}Special Ability{$Items.PlasmaWhirlwind.Keybind2}
 					<right>ing while [c/00ffff:dashing] will release a [c/00ffff:Spinning Slash]
 					{$Items.Nightbringer.Keybind1}Special Ability{$Items.Nightbringer.Keybind2}
@@ -6287,12 +6380,12 @@ Mods: {
 					'''
 					[c/ff4500:Firewall] blocks most enemy projectiles for {4} seconds({$CommonItemTooltip.Cooldown@5})
 					[c/00ffff:Dash cooldown] is applied to the enemy({3} seconds)
-					Hitting enemies with [c/00ffff:Spinning Slash] will max out [c/2f4f4f:Steel Tempest]
+					Hitting enemies with [c/00ffff:Spinning Slash] will max out [c/708090:Steel Tempest]
 					[c/00ffff:Spinning Slash] deals quadruple damage
 					[c/00ffff:Spinning Slash] can release a stationary [c/708090:tornado]
 					[c/00ffff:Spinning Slash] and [c/00ffff:dash] deal bonus {1}% max health damage on-hit, up to {2}
-					Each [c/708090:thrust] can only grant 1 [c/2f4f4f:Steel Tempest] stack at maximum
-					Releasing a [c/708090:tornado] consumes all [c/2f4f4f:Steel Tempest] stacks
+					Each [c/708090:thrust] can only grant 1 [c/708090:Steel Tempest] stack at maximum
+					Releasing a [c/708090:tornado] consumes all [c/708090:Steel Tempest] stacks
 					Melee Speed reduces [c/708090:thrust cooldown] (capped at 1.33 seconds)
 					Current [c/708090:thrust cooldown]: {0} seconds
 					[c/708090:Thrusts] and [c/708090:tornadoes] deal double damage
@@ -6303,26 +6396,26 @@ Mods: {
 				DisplayName: Toxic Shot
 				Tooltip:
 					'''
-					Converts seeds into Toxic Shots and allows you to gather Seeds from grass
-					Toxic Shots apply a short burst of Venom and home into enemies
+					Converts seeds into [c/ba55d3:Toxic Shots] and allows you to gather Seeds from grass
+					[c/ba55d3:Toxic Shots] apply a short burst of [c/ba55d3:Venom] and home into enemies
 					Also uses all darts as ammo, but Poison Darts deal {0}x damage
-					Inhibits player movement conditionally whilst being used
-					May grant a movement speed and stamina regen boost whilst being held
+					[c/32cd32:Inhibits player movement conditionally] whilst being used
+					[c/32cd32:May grant a movement speed and stamina regen boost] whilst being held
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
-					'That's gotta sting'
+					[c/ba55d3:'That's gotta sting']
 					'''
 				Keybind1: "Press "
-				Keybind2: " to fully activate Scouts Boost"
+				Keybind2: " to fully activate [c/32cd32:Scouts Boost]"
 				Details:
 					'''
 					Venom applied by Toxic Shots scales with ranged damage and critical strike chance
-					Grants Scouts Boost passively while being held:{$CommonItemTooltip.MoveSpeedMult} and,
+					Grants [c/32cd32:Scouts Boost] passively while being held:{$CommonItemTooltip.MoveSpeedMult} and,
 					multiplicatively increases stamina regeneration by {1}%
-					Scouts Boost is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@2}
-					Using the weapon with Scouts Boost active passively will slow you down
-					Using it when Scouts Boost is on cooldown will root you briefly
-					Activated Ability removes movement penalties unconditionally for {$CommonItemTooltip.Duration@3}
-					Activated Ability doubles the movement speed and stamina regeneration boosts
+					[c/32cd32:Scouts Boost] is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@2}
+					Using the weapon with [c/32cd32:Scouts Boost] active passively will slow you down
+					Using it when [c/32cd32:Scouts Boost] is on cooldown will root you briefly
+					[c/32cd32:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.Duration@3}
+					[c/32cd32:Activated Ability] doubles the movement speed and stamina regeneration boosts
 					'''
 			}
 
@@ -6330,27 +6423,27 @@ Mods: {
 				DisplayName: Alien Gun
 				Tooltip:
 					'''
-					Converts seeds into Alien Lasers and allows you to gather Seeds from grass
-					Alien Lasers apply a short burst of Electrified and home into enemies
+					Converts seeds into [c/00ffff:Alien Lasers] and allows you to gather Seeds from grass
+					[c/00ffff:Alien Lasers] apply a short burst of [c/00ffff:Electrified] and home into enemies
 					Also uses all darts as ammo, but Poison Darts deal {0}x damage
-					Inhibits player movement conditionally whilst being used
-					May grant a movement speed and stamina regen boost whilst being held
+					[c/32cd32:Inhibits player movement conditionally] whilst being used
+					[c/32cd32:May grant a movement speed and stamina regen boost] whilst being held
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
-					Right click to shoot a homing Blinding Laser which inflicts confusion
-					'Armed and ready'
+					<right> to shoot a homing [c/00ffff:Blinding Laser] which inflicts confusion
+					[c/00ffff:'Armed and ready']
 					'''
 				Details:
 					'''
-					Blinding Laser deals {0}x damage, multiplied by {8} again while using Seeds as ammunition({$CommonItemTooltip.Cooldown@9})
-					Blinding Laser gains {1}% bonus critical strike chance and {2}% max health damage on-hit, up to {3}
-					Electrification applied by Alien Lasers scales with ranged damage and critical strike chance
-					Grants Scouts Boost passively while being held:{$CommonItemTooltip.MoveSpeedMult@4} and,
+					[c/00ffff:Blinding Laser] deals {0}x damage, multiplied by {8} again while using Seeds as ammunition({$CommonItemTooltip.Cooldown@9})
+					[c/00ffff:Blinding Laser] gains {1}% bonus critical strike chance and {2}% max health damage on-hit, up to {3}
+					[c/00ffff:Electrification] applied by [c/00ffff:Alien Lasers] scales with ranged damage and critical strike chance
+					Grants [c/32cd32:Scouts Boost] passively while being held:{$CommonItemTooltip.MoveSpeedMult@4} and,
 					multiplicatively increases stamina regeneration by {5}%
-					Scouts Boost is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@6}
-					Using the weapon with Scouts Boost active passively will slow you down
-					Using it when Scouts Boost is on cooldown will root you briefly
-					Activated Ability removes movement penalties unconditionally for {$CommonItemTooltip.Duration@7}
-					Activated Ability doubles the movement speed and stamina regeneration boosts
+					[c/32cd32:Scouts Boost] is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@6}
+					Using the weapon with [c/32cd32:Scouts Boost] active passively will slow you down
+					Using it when [c/32cd32:Scouts Boost] is on cooldown will root you briefly
+					[c/32cd32:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.Duration@7}
+					[c/32cd32:Activated Ability] doubles the movement speed and stamina regeneration boosts
 					'''
 			}
 
@@ -6358,34 +6451,34 @@ Mods: {
 				DisplayName: Omega Squad Rifle
 				Tooltip:
 					'''
-					Converts seeds into Radioactive Darts and allows you to gather Seeds from grass
-					Radioactive Darts apply a short burst of Radiation and home into enemies
+					Converts seeds into [c/adff2f:Radioactive Darts] and allows you to gather Seeds from grass
+					[c/adff2f:Radioactive Darts] apply a short burst of [c/adff2f:Radiation] and home into enemies
 					Also uses all darts as ammo, but Poison Darts deal {0}x damage
-					Inhibits player movement conditionally whilst being used
-					May grant a movement speed and stamina regen boost whilst being held
+					[c/32cd32:Inhibits player movement conditionally] whilst being used
+					[c/32cd32:May grant a movement speed and stamina regen boost] whilst being held
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
-					Right click to shoot a homing Blinding Laser which inflicts confusion
+					<right> to shoot a homing [c/00ffff:Blinding Laser] which inflicts confusion
 					{$Items.OmegaSquadRifle.Keybind1}Special Ability{$Items.OmegaSquadRifle.Keybind2}
-					'There's a mushroom out there with your name on it'
+					[c/adff2f:'There's a mushroom out there with your name on it']
 					'''
 				Keybind1: "Press Shift and "
-				Keybind2: " to drop a Nuclear Mushroom"
+				Keybind2: " to drop a [c/adff2f:Nuclear Mushroom]"
 				Details:
 					'''
-					Nuclear Mushroom needs {0} seconds to arm itself after being dropped({$CommonItemTooltip.Cooldown@10})
-					The explosion resulting form the Mushroom deals massive damage and applies an even stronger Radiation
-					Multiple moshrooms exploding at once will not increase damage dealt
-					Radiation applied from the Mushroom's explosion stacks with that of Radioactive Darts
-					Blinding Laser deals {1}x damage, multiplied by {9} again while using Seeds as ammunition({$CommonItemTooltip.Cooldown@11})
-					Blinding Laser gains {2}% bonus critical strike chance and {3}% max health damage on-hit, up to {4}
-					Radiation applied by Alien Lasers scales with ranged damage and critical strike chance
-					Grants Scouts Boost passively while being held:{$CommonItemTooltip.MoveSpeedMult@5} and,
+					[c/adff2f:Nuclear Mushroom] needs {0} seconds to arm itself after being dropped({$CommonItemTooltip.Cooldown@9})
+					The explosion resulting from the [c/adff2f:Nuclear Mushroom] deals massive damage and applies an even stronger [c/adff2f:Radiation]
+					Multiple [c/adff2f:Nuclear Mushrooms] exploding at once will not increase damage dealt
+					[c/adff2f:Radiation] applied from the [c/adff2f:Nuclear Mushroom's] explosion stacks with that of [c/adff2f:Radioactive Darts]
+					[c/00ffff:Blinding Laser] deals {1}x damage, multiplied by {9} again while using Seeds as ammunition({$CommonItemTooltip.Cooldown@10})
+					[c/00ffff:Blinding Laser] gains {2}% bonus critical strike chance and {3}% max health damage on-hit, up to {4}
+					[c/adff2f:Radiation] applied by [c/adff2f:Radioactive Darts] scales with ranged damage and critical strike chance
+					Grants [c/32cd32:Scouts Boost] passively while being held:{$CommonItemTooltip.MoveSpeedMult@5} and,
 					multiplicatively increases stamina regeneration by {6}%
-					Scouts Boost is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@7}
-					Using the weapon with Scouts Boost active passively will slow you down
-					Using it when Scouts Boost is on cooldown will root you briefly
-					Activated Ability removes movement penalties unconditionally for {$CommonItemTooltip.Duration@8}
-					Activated Ability doubles the movement speed and stamina regeneration boosts
+					[c/32cd32:Scouts Boost] is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@7}
+					Using the weapon with [c/32cd32:Scouts Boost] active passively will slow you down
+					Using it when [c/32cd32:Scouts Boost] is on cooldown will root you briefly
+					[c/32cd32:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.Duration@8}
+					[c/32cd32:Activated Ability] doubles the movement speed and stamina regeneration boosts
 					'''
 			}
 
@@ -6393,12 +6486,20 @@ Mods: {
 				DisplayName: Orb of Deception
 				Tooltip:
 					'''
-					Throws a magical Orb which will return to you after a certain distance and deal 125% damage
-					Casts homing flames while the Orb is sent out which restore half their mana cost on-hit
-					The Orb deals 218% damage on the way back
-					Gathers stacks of Essence Thief on most Orb hits and sometimes kills, doubled on crits
-					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal 200/300% damage
-					Heal scales with maximum mana and magic damage
+					Throws a [c/87cefa:magical Orb] which will return to you after a certain distance
+					Casts homing flames while the [c/87cefa:Orb] is sent out
+					Gathers stacks of [c/87cefa:Essence Thief] on [c/87cefa:Orb] hits and kills
+					Upon reaching 9 stacks, the next [c/87cefa:Orb] cast will consume 9 stacks, [c/87cefa:heal you and deal massive damage]
+					[c/87cefa:'Unleashed, but in control']
+					'''
+				Details:
+					'''
+					The [c/87cefa:Orb] deals {0}% more damage and {1}% on top of that on the way back
+					Homing flames restore half of their mana cost on-hit
+					Only the first [c/87cefa:Orb] hit and the first hit once it starts returning grant [c/87cefa:Essence Thief] stacks
+					Gain 2 [c/87cefa:Essence Thief] stacks if those crit
+					Also has a {2}% chance to gain an [c/87cefa:Essence Thief] stack on enemy kills
+					A full [c/87cefa:Orb] will deal {3}% bonus damage and its heal scales with maximum mana and magic damage
 					'''
 			}
 
@@ -6406,13 +6507,24 @@ Mods: {
 				DisplayName: Orb of Flame
 				Tooltip:
 					'''
-					Throws a magical Orb which will return to you after a certain distance and deal 125% damage
-					Casts homing flames while the Orb is sent out which restore half their mana cost on-hit
-					The Orb deals 218% damage on the way back
-					Gathers stacks of Essence Thief on most Orb hits and sometimes kills, doubled on crits
-					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal 200/300% damage
-					Heal scales with maximum mana and magic damage
-					Right click to cast a fireball which sunders enemies, increasing their vulnerability to magic damage
+					Throws a flaming [c/87cefa:Orb] which will return to you after a certain distance
+					Casts homing flames while the Orb is sent out
+					Gathers stacks of [c/87cefa:Essence Thief] on [c/87cefa:Orb] hits and kills
+					Upon reaching 9 stacks, the next Orb cast will consume 9 stacks, [c/87cefa:heal you and deal massive damage]
+					<right> to cast a [c/ff7f50:Fireball] which sunders enemies, increasing their vulnerability to magic damage
+					[c/ff7f50:'There's beauty in even the most painful memories']
+					'''
+				Details:
+					'''
+					[c/ff7f50:Fireball] deals {4}x damage({$CommonItemTooltip.Cooldown@5}) and {6}% max health damage on-hit, up to {7}
+					[c/ff7f50:Sunder] increases magic damage taken by {8}%
+					Homing flames will prioritize [c/ff7f50:sundered] targets
+					The [c/87cefa:Orb] deals {0}% more damage and {1}% on top of that on the way back
+					Homing flames restore half of their mana cost on-hit
+					Only the first [c/87cefa:Orb] hit and the first hit once it starts returning grant [c/87cefa:Essence Thief] stacks
+					Gain 2 [c/87cefa:Essence Thief] stacks if those crit
+					Also has a {2}% chance to gain an [c/87cefa:Essence Thief] stack on enemy kills
+					A full [c/87cefa:Orb] will deal {3}% bonus damage and its heal scales with maximum mana and magic damage
 					'''
 			}
 
@@ -6420,14 +6532,31 @@ Mods: {
 				DisplayName: Orb of Spirituality
 				Tooltip:
 					'''
-					Throws a magical Orb which will return to you after a certain distance and deal 125% damage
-					Casts homing flames while the Orb is sent out which restore half their mana cost on-hit
-					The Orb deals 218% damage on the way back
-					Gathers stacks of Essence Thief on most Orb hits and sometimes kills, doubled on crits
-					Upon reaching 9 stacks, the next Orb cast will consume all stacks, heal you and deal 200/300% damage
-					Heal scales with maximum mana and magic damage
-					Right click to cast a charm which sunders enemies, increasing their vulnerability to magic damage
-					Press Special Ability to dash towards the mouse, casting homing flames along the way
+					Throws a spiritual [c/87cefa:Orb] which will return to you after a certain distance
+					Casts homing flames while the Orb is sent out
+					Gathers stacks of [c/87cefa:Essence Thief] on [c/87cefa:Orb] hits and kills
+					Upon reaching 9 stacks, the next [c/87cefa:Orb] cast will consume 9 stacks, [c/87cefa:heal you and deal massive damage]
+					<right> to cast a [c/ff7f50:Charm] which sunders enemies, increasing their vulnerability to magic damage
+					{$Items.OrbOfSpirituality.Keybind1}Special Ability{$Items.OrbOfSpirituality.Keybind2}
+					[c/ff00ff:'Everything finds its way to the Spirit Realm eventually,]
+					[c/ff00ff:our opponents seem eager to get there quickly']
+					'''
+				Keybind1: "Press "
+				Keybind2: " to [c/ff00ff:dash towards the cursor], casting homing flames along the way"
+				Details:
+					'''
+					Using [c/ff00ff:Special Ability] grants you a buff for {$CommonItemTooltip.Duration@9},
+					which will allow you to [c/ff00ff:dash up to 3 times]({$CommonItemTooltip.Cooldown@10})
+					Homing flames spawned by [c/ff00ff:dashing] do not restore mana, [c/ff00ff:Special Ability] costs {11} mana to cast
+					[c/ff7f50:Charm] deals {4}x damage({$CommonItemTooltip.Cooldown@5}) and {6}% max health damage on-hit, up to {7}
+					[c/ff7f50:Sunder] increases magic damage taken by {8}%
+					Homing flames will prioritize [c/ff7f50:sundered] targets
+					The [c/87cefa:Orb] deals {0}% more damage and {1}% on top of that on the way back
+					Homing flames restore half of their mana cost on-hit
+					Only the first [c/87cefa:Orb] hit and the first hit once it starts returning grant [c/87cefa:Essence Thief] stacks
+					Gain 2 [c/87cefa:Essence Thief] stacks if those crit
+					Also has a {2}% chance to gain an [c/87cefa:Essence Thief] stack on enemy kills
+					A filled [c/87cefa:Orb] will deal {3}% bonus damage and its heal scales with maximum mana and magic damage
 					'''
 			}
 
@@ -7425,6 +7554,16 @@ Mods: {
 				DisplayName: Photonic Downpour Buff
 				Description: The combat drone will fight for you
 			}
+
+			ShunpoDash: {
+				DisplayName: Shunpo Dash
+				Description: Mods.tsorcRevamp.Buffs.ShunpoDash.Description
+			}
+
+			ShunpoDashCooldown: {
+				DisplayName: Shunpo Dash Cooldown
+				Description: Mods.tsorcRevamp.Buffs.ShunpoDashCooldown.Description
+			}
 		}
 
 		Projectiles: {
@@ -7949,6 +8088,7 @@ Mods: {
 			LanceBeamLaser.DisplayName: Lance Beam Laser
 			MeltdownFirestorm.DisplayName: Meltdown Firestorm
 			ShrapnelSaw.DisplayName: Shrapnel Saw
+			EssenceThiefDelivery.DisplayName: Essence Thief Delivery
 		}
 
 		NPCs: {
@@ -8885,6 +9025,7 @@ Mods: {
 			"Special Ability.DisplayName": Special Ability
 			"Wolf Ring.DisplayName": Wolf Ring
 			"Wings of Seath speed toggle.DisplayName": Wings of Seath speed toggle
+			Shunpo.DisplayName: Shunpo
 		}
 
 		Configs: {

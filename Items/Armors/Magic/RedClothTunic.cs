@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,9 +10,12 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Body)]
     public class RedClothTunic : ModItem
     {
+        public static int FlatDmg = 2;
+        public static int MaxMana = 40;
+        public static float ManaCost = 5f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(FlatDmg, MaxMana, ManaCost);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Increases magic damage by 2 flat\nSet bonus: Increases max mana by 50, decreases mana costs by 5%");
         }
         public override void SetDefaults()
         {
@@ -24,7 +28,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Magic).Flat += 2;
+            player.GetDamage(DamageClass.Magic).Flat += FlatDmg;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -32,8 +36,8 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.statManaMax2 += 40;
-            player.manaCost -= 0.05f;
+            player.statManaMax2 += MaxMana;
+            player.manaCost -= ManaCost / 100f;
         }
         public override void AddRecipes()
         {

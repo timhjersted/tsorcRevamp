@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,12 +10,11 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Body)]
     public class AncientGoldenArmor : ModItem
     {
+        public static float AtkSpeed = 11f;
+        public static int FlatDmg = 3;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed, FlatDmg);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A lost prince's armor." +
-                "\n11% increased melee speed" +
-                "\nSet bonus: Increases melee damage by 3 flat" +
-                "\nA gi will also proc this set bonus"); */
         }
         public override void SetDefaults()
         {
@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Melee) += 0.11f;
+            player.GetAttackSpeed(DamageClass.Melee) += AtkSpeed / 100f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetDamage(DamageClass.Melee).Flat += 3f;
+            player.GetDamage(DamageClass.Melee).Flat += FlatDmg;
         }
         public override void AddRecipes()
         {

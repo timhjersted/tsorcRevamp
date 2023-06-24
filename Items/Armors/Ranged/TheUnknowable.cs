@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,12 +9,11 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Head)]
     public class TheUnknowable : ModItem
     {
+        public static int AmmoChance = 25; //changing this number has no effect since an ammo consumption chance stat doesn't exist
+        public static float CritChance = 15f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AmmoChance, CritChance);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("25% chance to not consume ammo" +
-                "\nIncreases ranged critical strike chance by 17%" +
-                "\nSet Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active" +
-                "\nDefense and ammo consumption chance are not affected by this"); */
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
         }
         public override void SetDefaults()
@@ -32,19 +32,18 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.ammoCost75 = true;
-
-            player.GetCritChance(DamageClass.Ranged) += 17;
+            player.GetCritChance(DamageClass.Ranged) += CritChance;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.GetCritChance(DamageClass.Ranged) += 17;
+                player.GetCritChance(DamageClass.Ranged) += CritChance;
             }
         }
 
         public override void UpdateArmorSet(Player player)
         {
             player.onHitDodge = true;
+            player.ammoCost75 = true;
         }
 
         public override void AddRecipes()

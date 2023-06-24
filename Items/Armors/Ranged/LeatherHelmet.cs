@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -10,9 +11,10 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Head)]
     public class LeatherHelmet : ModItem
     {
+        public static float CritChance = 8f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Increases ranged crit by 8%");
         }
         public override void SetDefaults()
         {
@@ -24,7 +26,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Ranged) += 8f;
+            player.GetCritChance(DamageClass.Ranged) += CritChance;
         }
         public override void AddRecipes()
         {

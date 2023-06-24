@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -10,10 +11,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Head)]
     public class AncientGoldenHelmet : ModItem
     {
+        public static float CritChance = 6f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("It is the famous Helmet of the Stars." +
-                "\nIncreases melee crit chance by 4%"); */
         }
         public override void SetDefaults()
         {
@@ -25,7 +26,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += 6;
+            player.GetCritChance(DamageClass.Melee) += CritChance;
         }
         public override void AddRecipes()
         {

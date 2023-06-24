@@ -4,6 +4,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
 {
@@ -36,10 +37,10 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             Player player = Main.player[Projectile.owner];
             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/FireCast") with { Volume = 0.5f }, player.Center);
         }
+        public float maxDetectRadius = 500f;
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            float maxDetectRadius = 500f;
             float projSpeed = 5f;
 
             NPC closestNPC = FindClosestNPC(maxDetectRadius);
@@ -99,6 +100,21 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             for (int k = 0; k < Main.maxNPCs; k++)
             {
                 NPC target = Main.npc[k];
+                if (target.CanBeChasedBy() && target.GetGlobalNPC<tsorcRevampGlobalNPC>().Sundered)
+                {
+                    float sqrDistanceToTarget = Vector2.DistanceSquared(target.Center, Projectile.Center);
+
+                    if (sqrDistanceToTarget < sqrMaxDetectDistance * 1.25f)
+                    {
+                        sqrMaxDetectDistance = sqrDistanceToTarget;
+                        closestNPC = target;
+                    }
+                    return closestNPC;
+                }
+            }
+            for (int k = 0; k < Main.maxNPCs; k++)
+            {
+                NPC target = Main.npc[k];
                 if (target.CanBeChasedBy())
                 {
                     float sqrDistanceToTarget = Vector2.DistanceSquared(target.Center, Projectile.Center);
@@ -111,6 +127,15 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                 }
             }
             return closestNPC;
+        }
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            NPC closestNPC = FindClosestNPC(maxDetectRadius);
+            if (closestNPC != null && closestNPC.Hitbox.Equals(targetHitbox) && closestNPC.Hitbox.Intersects(projHitbox))
+            {
+                return base.Colliding(projHitbox, targetHitbox);
+            }
+            return false;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

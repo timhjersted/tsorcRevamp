@@ -13,6 +13,7 @@ using Terraria.ModLoader.Config;
 using Terraria.Localization;
 using tsorcRevamp.Items.Debug;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.Items
 {

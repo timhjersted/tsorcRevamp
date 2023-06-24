@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,10 +9,15 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Legs)]
     public class RedHerosPants : ModItem
     {
+        public static int SoulCost = 13000;
+        public static float MoveSpeed = 20f;
+        public static int MinionSlots = 2;
+        public static float MaxStamina = 15f;
+        public static float StaminaRegen = 15f;
+        public static int SoulCost2 = 1;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, MinionSlots, MaxStamina, StaminaRegen);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Red Hero's Pants");
-            // Tooltip.SetDefault("Worn by the hero himself!\nIncreases your max number of minions by 2");
         }
         public override void SetDefaults()
         {
@@ -23,14 +29,17 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.maxMinions += 2;
+            player.moveSpeed += MoveSpeed / 100f;
+            player.maxMinions += MinionSlots;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + StaminaRegen / 100f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1f + MaxStamina / 100f;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BlueHerosPants>());
-            recipe.AddIngredient(ItemID.SoulofFright, 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 13000);
+            recipe.AddIngredient(ItemID.SoulofFright, SoulCost2);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

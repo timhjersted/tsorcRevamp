@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,9 +9,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Head)]
     public class DarkKnightHelmet : ModItem
     {
+        public static float CritChance = 17f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Increases melee critical strike chance by 15%");
         }
         public override void SetDefaults()
         {
@@ -23,11 +25,11 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += 15;
+            player.GetCritChance(DamageClass.Melee) += CritChance;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.GetCritChance(DamageClass.Melee) += 15;
+                player.GetCritChance(DamageClass.Melee) += CritChance;
             }
         }
 

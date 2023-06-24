@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,12 +9,11 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Body)]
     public class OldChainArmor : ModItem
     {
+        public static int FlatDmg = 1;
+        public static int MinionSlots = 1;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(FlatDmg, MinionSlots);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("+1 flat minion damage" +
-                "\nSet Bonus: Increases your max number of minions by 1" +
-                "\nCan be bought" +
-                "\nA Flinx Fur Coat will also proc this set bonus"); */
         }
         public override void SetDefaults()
         {
@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon).Flat += 1;
+            player.GetDamage(DamageClass.Summon).Flat += FlatDmg;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateArmorSet(Player player)
         {
-            player.maxMinions += 1;
+            player.maxMinions += MinionSlots;
         }
         public override void AddRecipes()
         {

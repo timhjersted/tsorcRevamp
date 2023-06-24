@@ -2,8 +2,10 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Accessories;
+using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Armors
@@ -11,6 +13,10 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class DragoonArmor2 : ModItem
     {
+        public static float DragoonCloakEfficiency = 60f;
+        public static float Dmg = 32f;
+        public static float MeleeSpeed = 32f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DragoonCloakEfficiency, DragoonCloak.LifeThreshold, Dmg, MeleeSpeed);
         public override string Texture => "tsorcRevamp/Items/Armors/DragoonArmor";
         public override void SetStaticDefaults()
         {
@@ -27,17 +33,21 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
+            player.GetDamage(DamageClass.Generic) += Dmg / 100f;
+            player.GetAttackSpeed(DamageClass.Melee) += MeleeSpeed / 100f;
             player.starCloakItem = new Item(ItemID.StarCloak);
-            player.GetCritChance(DamageClass.Generic) += 3;
-            player.GetDamage(DamageClass.Generic) += 0.05f;
+            player.lifeRegen += (int)(LightCloak.LifeRegen1 * DragoonCloakEfficiency / 100f);
+            player.GetCritChance(DamageClass.Generic) += DarkmoonCloak.DamageAndCritIncrease1 * DragoonCloakEfficiency / 100f;
+            player.GetDamage(DamageClass.Generic) += DarkmoonCloak.DamageAndCritIncrease1 * DragoonCloakEfficiency / 100f;
 
-            if (player.statLife <= (player.statLifeMax2 / 5 * 2))
+            player.GetModPlayer<tsorcRevampPlayer>().DarkmoonCloak = true;
+            if (player.statLife <= (player.statLifeMax2 * DragoonCloak.LifeThreshold / 100f))
             {
-                player.lifeRegen += 6;
-                player.statDefense += 10;
-                player.manaRegenBonus += 5;
-                player.GetCritChance(DamageClass.Generic) += 3;
-                player.GetDamage(DamageClass.Generic) += 0.05f;
+                player.lifeRegen += (int)(LightCloak.LifeRegen2 * DragoonCloakEfficiency / 100f);
+                player.statDefense += (int)(DarkCloak.Defense2 * DragoonCloakEfficiency / 100f);
+                player.manaRegenBonus += (int)(DarkmoonCloak.ManaRegenBonus * DragoonCloakEfficiency / 100f);
+                player.GetCritChance(DamageClass.Generic) += DarkmoonCloak.DamageAndCritIncrease2 * DragoonCloakEfficiency / 100f;
+                player.GetDamage(DamageClass.Generic) += DarkmoonCloak.DamageAndCritIncrease2 * DragoonCloakEfficiency / 100f;
                 int dust = Dust.NewDust(new Vector2(player.position.X, player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 150, Color.White, 0.5f);
                 Main.dust[dust].noGravity = true;
             }

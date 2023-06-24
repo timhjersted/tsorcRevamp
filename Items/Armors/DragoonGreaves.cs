@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,12 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Legs)]
     public class DragoonGreaves : ModItem
     {
+        public static int SoulCost = 26000;
+        public static float MoveSpeed = 30f;
+        public static int MinionSlots = 2;
+        public static float MaxStamina = 18f;
+        public static float StaminaRegen = 18f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, MinionSlots, MaxStamina, StaminaRegen);
         public override void SetStaticDefaults()
         {
         }
@@ -48,12 +55,15 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
+            player.moveSpeed += MoveSpeed / 100f;
             if (!ModContent.GetInstance<tsorcRevampConfig>().DisableDragoonGreavesDoubleJump)
             {
                 player.hasJumpOption_Unicorn = true; 
             }
             player.jumpBoost = true;
-            player.maxMinions += 2;
+            player.maxMinions += MinionSlots;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + StaminaRegen / 100f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1f + MaxStamina / 100f;
         }
         public override void AddRecipes()
         {
@@ -63,7 +73,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.SoulofMight, 10);
             recipe.AddIngredient(ItemID.SoulofSight, 10);
             recipe.AddIngredient(ItemID.SoulofFright, 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 26000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -3,17 +3,17 @@ using Microsoft.Xna.Framework;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Armors.Magic
 {
     [AutoloadEquip(EquipType.Body)]
     public class AnkorWatChestplate : ModItem
     {
+        public static float CritChance = 14f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases magic critical strike chance by 15%" +
-                "\nSet Bonus: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active" +
-                "\nDefense and maximum mana are not affected by this"); */
         }
         public override void SetDefaults()
         {
@@ -25,11 +25,11 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Magic) += 15;
+            player.GetCritChance(DamageClass.Magic) += CritChance;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.GetCritChance(DamageClass.Magic) += 15;
+                player.GetCritChance(DamageClass.Magic) += CritChance;
             }
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)

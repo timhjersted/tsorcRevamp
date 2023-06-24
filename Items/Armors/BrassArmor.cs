@@ -1,10 +1,9 @@
 ﻿using System;
 using Terraria;
-using Terraria.Enums;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
-using static Terraria.ModLoader.PlayerDrawLayer;
 
 namespace tsorcRevamp.Items.Armors
 {
@@ -12,9 +11,10 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class BrassArmor : ModItem
     {
+        public static float DR = 10f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DR);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Grants immunity to knockback\nSet Bonus: Grants 10% damage reduction + Paladin Shield effect");
         }
 
         public override void SetDefaults()
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.endurance += 0.1f;
+            player.endurance += DR / 100f;
             if ((float)player.statLife > ((float)player.statLifeMax2 * 0.25f))
             {
                 player.hasPaladinShield = true; 

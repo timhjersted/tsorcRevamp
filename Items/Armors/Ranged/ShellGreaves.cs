@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,10 +9,10 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Legs)]
     class ShellGreaves : ModItem
     {
+        public static float MoveSpeed = 15f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Armor made from the shell of a legendary creature" +
-                "\n+15% movement speed"); */
         }
 
         public override void SetDefaults()
@@ -34,7 +35,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.15f;
+            player.moveSpeed += MoveSpeed / 100f;
         }
     }
 }

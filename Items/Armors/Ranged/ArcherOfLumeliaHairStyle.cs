@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,8 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Head)]
     public class ArcherOfLumeliaHairStyle : ModItem
     {
+        public static float CritChance = 23f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -19,6 +22,10 @@ namespace tsorcRevamp.Items.Armors.Ranged
             Item.defense = 1;
             Item.rare = ItemRarityID.Lime;
             Item.value = PriceByRarity.fromItem(Item);
+        }
+        public override void UpdateEquip(Player player)
+        {
+            player.GetCritChance(DamageClass.Ranged) += CritChance;
         }
         public override void AddRecipes()
         {

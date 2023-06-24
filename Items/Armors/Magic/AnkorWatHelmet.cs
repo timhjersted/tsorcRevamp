@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,10 +9,12 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Head)]
     public class AnkorWatHelmet : ModItem
     {
+        public static int MaxMana = 100;
+        public static float ManaCost = 6f;
+        public static int ManaRegen = 5;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost, ManaRegen);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases max mana by 120" +
-                "\nReduces mana costs by 8% and increases mana regen by 4"); */
         }
         public override void SetDefaults()
         {
@@ -23,15 +26,15 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.statManaMax2 += 120;
+            player.statManaMax2 += MaxMana;
 
-            player.manaCost -= 0.08f;
-            player.manaRegenBonus += 8;
+            player.manaCost -= ManaCost / 100f;
+            player.manaRegenBonus += ManaRegen;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.manaCost -= 0.08f;
-                player.manaRegen += 4;
+                player.manaCost -= ManaCost / 100f;
+                player.manaRegen += ManaRegen;
             }
         }
         public override void AddRecipes()

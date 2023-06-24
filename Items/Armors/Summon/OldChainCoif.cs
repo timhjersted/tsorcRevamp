@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,10 +9,10 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Head)]
     public class OldChainCoif : ModItem
     {
+        public static float AtkSpeed = 9f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("+9% summon attack speed" +
-                "\nCan be bought"); */
         }
         public override void SetDefaults()
         {
@@ -24,7 +25,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateEquip(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Summon) += 0.09f;
+            player.GetAttackSpeed(DamageClass.Summon) += AtkSpeed / 100f;
         }
         public override void AddRecipes()
         {

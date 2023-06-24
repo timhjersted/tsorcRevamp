@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,6 +10,8 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Head)]
     public class AncientDemonHelmet : ModItem
     {
+        public static float Dmg = 22f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
         public override void SetStaticDefaults()
         {
         }
@@ -24,7 +27,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.22f;
+            player.GetDamage(DamageClass.Summon) += Dmg / 100f;
         }
 
 

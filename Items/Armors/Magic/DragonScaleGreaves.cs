@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,6 +10,9 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Legs)]
     public class DragonScaleGreaves : ModItem
     {
+        public static float MoveSpeed = 25f;
+        public static float ManaCost = 17f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, ManaCost);
         public override void SetStaticDefaults()
         {
         }
@@ -22,8 +26,8 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.25f;
-            player.manaCost -= 0.17f;
+            player.moveSpeed += MoveSpeed / 100f;
+            player.manaCost -= ManaCost / 100f;
         }
         public override void AddRecipes()
         {

@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,8 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class ShadowCloakPlateHelm : ModItem
     {
+        public static float CritChance = 18f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -21,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Generic) += 18;
+            player.GetCritChance(DamageClass.Generic) += CritChance;
         }
         public override void AddRecipes()
         {

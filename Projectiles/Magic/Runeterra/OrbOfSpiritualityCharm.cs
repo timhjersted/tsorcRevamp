@@ -6,8 +6,6 @@ using Terraria.ModLoader;
 using Terraria.DataStructures;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using Terraria.Audio;
-using Microsoft.Xna.Framework.Graphics;
-using System.Security.Cryptography.X509Certificates;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
@@ -45,7 +43,6 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             Projectile.velocity *= 0.75f;
         }
         public int frameSpeed = 5;
-        SpriteEffects effects = SpriteEffects.None;
         public override void AI()
 		{
 			Player player = Main.player[Projectile.owner];
@@ -126,9 +123,5 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             modifiers.SourceDamage *= 2.5f;
             modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 1000, 450);
         }
-        public override bool PreDraw(ref Color lightColor)
-        {
-            return true;
-		}
     }
 }

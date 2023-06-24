@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
@@ -7,9 +8,10 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Legs)]
     public class StuddedLeatherGreaves : ModItem
     {
+        public static float MoveSpeed = 15f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Increases movement speed by 15%");
         }
         public override void SetDefaults()
         {
@@ -21,7 +23,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.15f;
+            player.moveSpeed += MoveSpeed / 100f;
         }
     }
 }

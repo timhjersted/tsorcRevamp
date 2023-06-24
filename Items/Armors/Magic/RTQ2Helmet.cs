@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,10 +9,10 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Head)]
     public class RTQ2Helmet : ModItem
     {
+        public static float Dmg = 27f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("RTQ2 Helmet");
-            // Tooltip.SetDefault("Increases magic damage by 27%");
         }
         public override void SetDefaults()
         {
@@ -23,7 +24,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Magic) += 0.27f;
+            player.GetDamage(DamageClass.Magic) += Dmg / 100f;
         }
         public override void AddRecipes()
         {

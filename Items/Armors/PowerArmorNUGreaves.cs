@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,12 +9,10 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Legs)]
     public class PowerArmorNUGreaves : ModItem
     {
+        public static float MoveSpeed = 40f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Power Armor NU Greaves");
-            /* Tooltip.SetDefault("Increases movement speed by 40%" +
-                "\nAllows you to walk on liquids, adds an extra jump and jump boost" +
-                "\nAlso grants immunity to knockback"); */
         }
         public override void SetDefaults()
         {
@@ -25,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.4f;
+            player.moveSpeed += MoveSpeed / 100f;
             player.waterWalk = true;
             player.noKnockback = true;
             player.hasJumpOption_Santank = true;

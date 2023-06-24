@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -10,10 +11,11 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Body)]
     public class LeatherArmor : ModItem
     {
+        public static int FlatDmg = 2;
+        public static int AmmoChance = 20;  //changing this number has no effect since an ammo consumption chance stat doesn't exist
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(FlatDmg, AmmoChance);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases ranged damage by 2 flat" +
-                "\nSet bonus: 20% less chance to consume ammo"); */
         }
         public override void SetDefaults()
         {
@@ -25,7 +27,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Ranged).Flat += 2;
+            player.GetDamage(DamageClass.Ranged).Flat += FlatDmg;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {

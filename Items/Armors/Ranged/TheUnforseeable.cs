@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,10 +9,11 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Body)]
     public class TheUnforseeable : ModItem
     {
+        public static float Dmg = 16f;
+        public static int LifeRegen = 2;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, LifeRegen);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases ranged damage by 15%" +
-                "\nIncreases life regen by 2"); */
         }
 
         public override void SetDefaults()
@@ -25,13 +27,13 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Ranged) += 0.15f;
-            player.lifeRegen += 2;
+            player.GetDamage(DamageClass.Ranged) += Dmg;
+            player.lifeRegen += LifeRegen;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.GetDamage(DamageClass.Ranged) += 0.15f;
-                player.lifeRegen += 2;
+                player.GetDamage(DamageClass.Ranged) += Dmg;
+                player.lifeRegen += LifeRegen;
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,6 +10,13 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Body)]
     public class AncientDemonArmor : ModItem
     {
+        public static float WhipDmg = 16f;
+        public static float TagDuration = 25f;
+        public static float WhipRange = 30f;
+        public static float AtkSpeed = 16f;
+        public static float LifeThreshold = 50f;
+        public const int ExplosionBaseDmg = 20;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(WhipDmg, TagDuration, WhipRange, AtkSpeed, LifeThreshold);
         public override void SetStaticDefaults()
         {
             ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = false;
@@ -24,7 +32,8 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.16f;
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += WhipDmg / 100f;
+            player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration += TagDuration / 100f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -33,12 +42,12 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateArmorSet(Player player)
         {
-            player.whipRangeMultiplier += 0.3f;
-            player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
+            player.whipRangeMultiplier += WhipRange / 100f;
+            player.GetAttackSpeed(DamageClass.Summon) += AtkSpeed / 100f;
 
-            if (player.statLife <= (player.statLifeMax2 / 2))
+            if (player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f))
             {
-                player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
+                player.GetModPlayer<tsorcRevampPlayer>().DemonPower = true;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Green, 1.0f);
                 Main.dust[dust].noGravity = true;

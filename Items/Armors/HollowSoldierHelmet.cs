@@ -11,7 +11,6 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
-            // Tooltip.SetDefault("Nullifies the negative stamina regen of the Dragon Crest Shield");
         }
         public override void SetDefaults()
         {

@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,10 +9,10 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Legs)]
     public class RTQ2Leggings : ModItem
     {
+        public static float MoveSpeed = 13f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("RTQ2 Leggings");
-            // Tooltip.SetDefault("Increases movement speed by 13%");
         }
         public override void SetDefaults()
         {
@@ -23,8 +24,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Magic).Flat += 4;
-            player.moveSpeed += 0.13f;
+            player.moveSpeed += MoveSpeed / 100f;
         }
         public override void AddRecipes()
         {

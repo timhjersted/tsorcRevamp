@@ -45,13 +45,6 @@ namespace tsorcRevamp.Items.Accessories.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            Vector2 starvector1 = new Vector2(-40, -200) + player.Center;
-            Vector2 starvector2 = new Vector2(40, -200) + player.Center;
-            Vector2 starvector3 = new Vector2(0, -200) + player.Center;
-            Vector2 starmove1 = new Vector2(+4, 20);
-            Vector2 starmove2 = new Vector2(-4, 20);
-            Vector2 starmove3 = new Vector2(0, 20);
-
             player.statManaMax2 += MaxMana;
             player.manaCost -= ManaCost / 100f;
             player.starCloakItem = player.starCloakItem_manaCloakOverrideItem = new Item(ItemID.ManaCloak);
@@ -60,13 +53,6 @@ namespace tsorcRevamp.Items.Accessories.Magic
             player.magicCuffs = true;
             player.starCloakItem_manaCloakOverrideItem = Item;
             player.GetModPlayer<tsorcRevampPlayer>().CelestialCloak = true;
-            if (player.GetModPlayer<tsorcRevampPlayer>().CelestialCloakHitChances >= 1)
-            {
-                Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector1, starmove1, ProjectileID.ManaCloakStar, player.statManaMax2 / 5, 2f, Main.myPlayer);
-                Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector2, starmove2, ProjectileID.ManaCloakStar, player.statManaMax2 / 5, 2f, Main.myPlayer);
-                Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector3, starmove3, ProjectileID.ManaCloakStar, player.statManaMax2 / 5, 2f, Main.myPlayer);
-                player.GetModPlayer<tsorcRevampPlayer>().CelestialCloakHitChances -= 1;
-            }
         }
 
     }

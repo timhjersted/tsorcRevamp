@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,13 +10,12 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Head)]
     class ShellHelmet : ModItem
     {
-
+        public static float CritChance = 16f;
+        public static float LifeThreshold = 50f;
+        public static int AmmoChance = 20;  //changing this number has no effect since an ammo consumption chance stat doesn't exist
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance, LifeThreshold, AmmoChance);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Armor made from the shell of a legendary creature" +
-                "\nIncreases ranged critical strike chance by 16%" +
-                "\nSet Bonus: Ranged Critical Strike Chance is doubled under 50% life" +
-                "\nReduces chance to consume ammo by 25%"); */
         }
         public override void SetDefaults()
         {
@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Ranged) += 16;
+            player.GetCritChance(DamageClass.Ranged) += CritChance;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -37,13 +37,14 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateArmorSet(Player player)
         {
-            if (player.statLife <= (player.statLifeMax2 / 2))
+            if (player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f))
             {
                 player.GetCritChance(DamageClass.Ranged) += player.GetWeaponCrit(player.HeldItem);
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Black, 1.0f);
                 Main.dust[dust].noGravity = true;
             }
+            player.ammoCost80 = true;
         }
 
         public override void AddRecipes()

@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,13 +9,12 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class DragoonArmor : ModItem
     {
+        public static int SoulCost = 30000;
+        public static float Dmg = 30f;
+        public static float MeleeSpeed = 30f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MeleeSpeed);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("+30% melee speed" +
-                "\nThe legends of Arradius spoke of the one who would wear this" +
-                "\nYou are a master of all forces, the protector of Earth, the Hero of the age." +
-                "\nSet Bonus: Harmonized with the four elements: fire, water, earth and air, including +2 life regen and flight" +
-                "\nBoosts damage, crit chance and movement speed by 30%"); */
         }
         public override void SetDefaults()
         {
@@ -27,7 +27,8 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Melee) += 0.3f;
+            player.GetAttackSpeed(DamageClass.Melee) += Dmg / 100f;
+            player.GetDamage(DamageClass.Generic) += MeleeSpeed / 100f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -65,7 +66,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.SoulofMight, 10);
             recipe.AddIngredient(ItemID.SoulofSight, 10);
             recipe.AddIngredient(ItemID.SoulofFright, 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

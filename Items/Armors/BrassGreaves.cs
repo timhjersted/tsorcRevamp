@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,9 +10,10 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Legs)]
     public class BrassGreaves : ModItem
     {
+        public static float MoveSpeed = 18f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Increases movement speed by 18%");
         }
 
         public override void SetDefaults()
@@ -24,7 +26,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.18f;
+            player.moveSpeed += MoveSpeed / 100f;
         }
         public override void AddRecipes()
         {

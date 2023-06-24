@@ -4,16 +4,17 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Buffs.Summon;
+using tsorcRevamp.Buffs.Summon.WhipDebuffs;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     class WitchkingsSword : ModItem
     {
-
+        public static int DebuffDuration = 5;
+        public static int TagDuration = 4;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Witchking's Sword");
-            // Tooltip.SetDefault("May inflict multiple debuffs");
         }
         public override void SetDefaults()
         {
@@ -32,36 +33,168 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.value = PriceByRarity.Red_10;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
-
+        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
+        {
+            if (player.GetModPlayer<tsorcRevampPlayer>().WitchPower)
+            {
+                Item.DamageType = DamageClass.SummonMeleeSpeed;
+                Item.scale = player.whipRangeMultiplier;
+            } else 
+            { 
+                Item.DamageType = DamageClass.Melee; 
+                Item.scale = 1;
+            }
+        }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (Main.rand.NextBool(3))
+            if (player.GetModPlayer<tsorcRevampPlayer>().WitchPower) 
             {
-                target.AddBuff(BuffID.OnFire3, 5 * 60, false);
+                int buffSelection = Main.rand.Next(19 + 1);
+                for (int i = 0; i < 2; i++)
+                {
+                    switch (buffSelection)
+                    {
+                        case 0:
+                            {
+                                target.AddBuff(ModContent.BuffType<LeatherWhipDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 1:
+                            {
+                                target.AddBuff(ModContent.BuffType<SnapthornDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                player.AddBuff(BuffID.ThornWhipPlayerBuff, (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 2:
+                            {
+                                target.AddBuff(ModContent.BuffType<SpinalTapDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 3:
+                            {
+                                target.AddBuff(ModContent.BuffType<FirecrackerDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 4:
+                            {
+                                target.AddBuff(ModContent.BuffType<CoolWhipDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                player.AddBuff(BuffID.CoolWhipPlayerBuff, (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 5:
+                            {
+                                target.AddBuff(ModContent.BuffType<DurendalDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                player.AddBuff(BuffID.SwordWhipPlayerBuff, (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 6:
+                            {
+                                target.AddBuff(ModContent.BuffType<DarkHarvestDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                player.AddBuff(BuffID.ScytheWhipPlayerBuff, (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 7:
+                            {
+                                target.AddBuff(ModContent.BuffType<MorningStarDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 8:
+                            {
+                                target.AddBuff(ModContent.BuffType<KaleidoscopeDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 9:
+                            {
+                                target.AddBuff(ModContent.BuffType<UrumiDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 10:
+                            {
+                                target.AddBuff(ModContent.BuffType<EnchantedWhipDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 11:
+                            {
+                                target.AddBuff(ModContent.BuffType<DominatrixDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 12:
+                            {
+                                player.GetModPlayer<tsorcRevampPlayer>().SearingLashStacks = 4;
+                                target.AddBuff(ModContent.BuffType<SearingLashDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 13:
+                            {
+                                target.AddBuff(ModContent.BuffType<CrystalNunchakuDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * 15 * 60));
+                                break;
+                            }
+                        case 14:
+                            {
+                                target.AddBuff(ModContent.BuffType<PyrosulfateDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 15:
+                            {
+                                player.GetModPlayer<tsorcRevampPlayer>().NightsCrackerStacks = 4;
+                                target.AddBuff(ModContent.BuffType<NightsCrackerDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                player.AddBuff(ModContent.BuffType<NightsCrackerBuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 16:
+                            {
+                                player.AddBuff(ModContent.BuffType<PolarisLeashBuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * 10 * 60));
+                                break;
+                            }
+                        case 17:
+                            {
+                                target.AddBuff(ModContent.BuffType<DragoonLashDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                player.AddBuff(ModContent.BuffType<DragoonLashBuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                player.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer += 0.7f;
+                                break;
+                            }
+                        case 18:
+                            {
+                                player.GetModPlayer<tsorcRevampPlayer>().TerraFallStacks = 4;
+                                target.AddBuff(ModContent.BuffType<TerraFallDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                player.AddBuff(ModContent.BuffType<TerraFallBuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 19:
+                            {
+                                target.AddBuff(ModContent.BuffType<DetonationSignalDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                    }
+                }
             }
             if (Main.rand.NextBool(3))
             {
-                target.AddBuff(BuffID.ShadowFlame, 5 * 60, false);
+                target.AddBuff(BuffID.OnFire3, DebuffDuration * 60, false);
             }
             if (Main.rand.NextBool(3))
             {
-                target.AddBuff(BuffID.CursedInferno, 5 * 60, false);
+                target.AddBuff(BuffID.ShadowFlame, DebuffDuration * 60, false);
             }
             if (Main.rand.NextBool(3))
             {
-                target.AddBuff(BuffID.BetsysCurse, 5 * 60, false);
+                target.AddBuff(BuffID.CursedInferno, DebuffDuration * 60, false);
             }
             if (Main.rand.NextBool(3))
             {
-                target.AddBuff(BuffID.Ichor, 5 * 60, false);
+                target.AddBuff(BuffID.BetsysCurse, DebuffDuration * 60, false);
             }
             if (Main.rand.NextBool(3))
             {
-                target.AddBuff(ModContent.BuffType<CrimsonBurn>(), 5 * 60, false);
+                target.AddBuff(BuffID.Ichor, DebuffDuration * 60, false);
             }
             if (Main.rand.NextBool(3))
             {
-                target.AddBuff(ModContent.BuffType<DarkInferno>(), 5 * 60, false);
+                target.AddBuff(ModContent.BuffType<CrimsonBurn>(), DebuffDuration * 60, false);
+            }
+            if (Main.rand.NextBool(3))
+            {
+                target.AddBuff(ModContent.BuffType<DarkInferno>(), DebuffDuration * 60, false);
             }
         }
         public override void MeleeEffects(Player player, Rectangle rectangle)

@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,9 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Legs)]
     public class WaspGreaves : ModItem
     {
+        public static int SentrySlot = 2;
+        public static float MoveSpeed = 20f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SentrySlot, MoveSpeed);
         public override void SetStaticDefaults()
         {
         }
@@ -21,8 +25,8 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.2f;
-            player.maxTurrets += 2;
+            player.moveSpeed += MoveSpeed;
+            player.maxTurrets += SentrySlot;
         }
         public override void AddRecipes()
         {

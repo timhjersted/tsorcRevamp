@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,9 +9,10 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Legs)]
     public class TheUntouchable : ModItem
     {
+        public static float MoveSpeed = 13f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Increases movement speed by 13%");
         }
         public override void SetDefaults()
         {
@@ -23,11 +25,11 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.13f;
+            player.moveSpeed += MoveSpeed;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.moveSpeed += 0.13f;
+                player.moveSpeed += MoveSpeed;
             }
         }
 

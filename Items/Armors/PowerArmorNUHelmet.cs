@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,12 +9,13 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class PowerArmorNUHelmet : ModItem
     {
+        public static float MeleeDmg = 20f;
+        public static float RangedDmg = 24f;
+        public static float MagicDmg = 11f;
+        public static float CritChance = 17f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeDmg, RangedDmg, MagicDmg, CritChance);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Power Armor NU Helmet");
-            /* Tooltip.SetDefault("20% Increased Melee Damage" +
-                "\nIncreases critical strike chance by 17%" +
-                "\nLonger Breath"); */
         }
         public override void SetDefaults()
         {
@@ -25,8 +27,10 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.2f;
-            player.GetCritChance(DamageClass.Generic) += 17;
+            player.GetDamage(DamageClass.Melee) += MeleeDmg / 100f;
+            player.GetDamage(DamageClass.Ranged) += RangedDmg / 100f;
+            player.GetDamage(DamageClass.Magic) += MagicDmg / 100f;
+            player.GetCritChance(DamageClass.Generic) += CritChance;
             player.breath = 10800;
         }
         public override void AddRecipes()

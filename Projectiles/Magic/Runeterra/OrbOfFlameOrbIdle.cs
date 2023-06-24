@@ -1,14 +1,9 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
-using Terraria.GameContent;
-using ReLogic.Content;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
-using Terraria.DataStructures;
 using System.Collections.Generic;
 using ReLogic.Utilities;
 using tsorcRevamp.Buffs.Debuffs;
@@ -37,12 +32,6 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 			Projectile.DamageType = DamageClass.Magic;
 			Projectile.tileCollide = false;
 		}
-
-        public override void OnSpawn(IEntitySource source)
-        {
-            Player player = Main.player[Projectile.owner];
-        }
-
         SlotId SoundSlotID;
         bool soundPaused;
         bool playedSound = false;

@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
@@ -7,10 +8,11 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class StuddedLeatherArmor : ModItem
     {
+        public static int FlatDmg = 2;
+        public static float AtkSpeed = 15f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(FlatDmg, AtkSpeed);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases damage by 2 flat" +
-                "\nSet bonus: Increases all attack speed by 15%"); */
         }
         public override void SetDefaults()
         {
@@ -22,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Generic).Flat += 2f;
+            player.GetDamage(DamageClass.Generic).Flat += FlatDmg;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -30,7 +32,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Generic) += 0.15f;
+            player.GetAttackSpeed(DamageClass.Generic) += AtkSpeed / 100f;
         }
     }
 }

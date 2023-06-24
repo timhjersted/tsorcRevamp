@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,9 +9,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Body)]
     class ShadowNinjaTop : ModItem
     {
+        public static float MeleeDmg = 30f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeDmg);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("+30% Melee damage");
         }
         public override void SetDefaults()
         {
@@ -22,7 +24,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.3f;
+            player.GetDamage(DamageClass.Melee) += MeleeDmg / 100f;
         }
         public override void AddRecipes()
         {

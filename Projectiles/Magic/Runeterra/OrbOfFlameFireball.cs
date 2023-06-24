@@ -1,12 +1,9 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
-using Terraria.GameContent;
-using ReLogic.Content;
 using Terraria.DataStructures;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
@@ -57,27 +54,6 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                 Projectile.spriteDirection = -1;
                 Projectile.rotation -= MathHelper.Pi;
             }
-            Visuals();
-		}
-
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            Player player = Main.player[Projectile.owner];
-			target.AddBuff(ModContent.BuffType<Charmed>(), 5 * 60);
-            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/FireballHit") with { Volume = 6f }, player.Center);
-        }
-        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-            modifiers.SourceDamage += 2.5f;
-            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 1000, 450);
-        }
-
-        public override bool PreDraw(ref Color lightColor)
-		{
-			return true;
-		}
-        private void Visuals()
-        {
             int frameSpeed = 5;
 
             Projectile.frameCounter++;
@@ -96,5 +72,22 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             Lighting.AddLight(Projectile.Center, Color.Firebrick.ToVector3() * 1.5f);
             Dust.NewDust(Projectile.Center, 2, 2, DustID.Torch, 0, 0, 150, default, 0.5f);
         }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            Player player = Main.player[Projectile.owner];
+			target.AddBuff(ModContent.BuffType<Charmed>(), 5 * 60);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/FireballHit") with { Volume = 6f }, player.Center);
+        }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            modifiers.SourceDamage += OrbOfFlame.FireballDmgMod / 100f;
+            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * OrbOfFlame.FireballHPPercentDmg, OrbOfFlame.FireballHPDmgCap);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+		{
+			return true;
+		}
     }
 }

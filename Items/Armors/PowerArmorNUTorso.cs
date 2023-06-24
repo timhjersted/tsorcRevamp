@@ -3,20 +3,23 @@ using Microsoft.Xna.Framework;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Body)]
     public class PowerArmorNUTorso : ModItem
     {
+        public static int AmmoChance = 20; //changing this number has no effect
+        public static float ManaCost = 10f;
+        public static int MaxMana = 80;
+        public static float AtkSpeed = 20f;
+        public static int LifeRegen = 8;
+        public static float StaminaRegen = 15f;
+        public static float MaxStaminaPercent = 15f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AmmoChance, ManaCost, MaxMana, AtkSpeed, LifeRegen, StaminaRegen, MaxStaminaPercent);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Power Armor NU Torso");
-            /* Tooltip.SetDefault("A powerful armor forged by the god of chaos." +
-                "\nIncreases ranged damage by 17% and magic damage by 9%" +
-                "\nReduces chance of consuming ammo by 20%, increases max mana by 80 and decreases mana costs by 10%" +
-                "\nSet Bonus: +20% attack speed(doubled for melee), +8 life regen/15 in water" +
-                "\nIncreases maximum stamina and stamina regen by 15%"); */
         }
         public override void SetDefaults()
         {
@@ -28,11 +31,9 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Ranged) += 0.17f;
-            player.GetDamage(DamageClass.Magic) += 0.09f;
             player.ammoCost80 = true;
-            player.manaCost -= 0.1f;
-            player.statManaMax2 += 80;
+            player.manaCost -= ManaCost;
+            player.statManaMax2 += MaxMana;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -40,17 +41,17 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Generic) += 0.2f;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.2f;
+            player.GetAttackSpeed(DamageClass.Generic) += AtkSpeed / 100f;
+            player.GetAttackSpeed(DamageClass.Melee) += AtkSpeed / 100f;
 
-            player.lifeRegen += 8;
+            player.lifeRegen += LifeRegen;
 
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1.15f;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1.15f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + StaminaRegen / 100f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1f + MaxStaminaPercent / 100f;
 
-            if (player.wet)
+            if (player.wet || player.lavaWet)
             {
-                player.lifeRegen += 7;
+                player.lifeRegen += LifeRegen;
             }
             int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 39, (player.velocity.X) + (player.direction * 2), player.velocity.Y, 100, Color.SpringGreen, 1.0f);
             Main.dust[dust].noGravity = true;

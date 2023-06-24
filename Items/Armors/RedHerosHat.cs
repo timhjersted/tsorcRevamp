@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,11 +9,15 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class RedHerosHat : ModItem
     {
+        public static int SoulCost = 12000;
+        public static int MaxMana = 80;
+        public static float ManaCost = 11f;
+        public static int ManaRegen = 7;
+        public static float CritChance = 20f;
+        public static int SoulCost2 = 1;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost, ManaRegen, CritChance, DragoonHelmet.SoulCost + DragoonArmor.SoulCost + DragoonGreaves.SoulCost);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Red Hero's hat");
-            /* Tooltip.SetDefault("Skill: Longer invincibility after being hit, +80 max mana" +
-                "\nCan be upgraded to it's master form with 80,000 Dark Souls"); */
         }
         public override void SetDefaults()
         {
@@ -24,15 +29,31 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.longInvince = true;
-            player.statManaMax2 += 80;
+            player.statManaMax2 += MaxMana;
+            player.manaCost -= ManaCost / 100f;
+            player.manaRegenBonus += ManaRegen;
+        }
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            return body.type == ModContent.ItemType<RedHerosShirt>() && legs.type == ModContent.ItemType<RedHerosPants>();
+        }
+        public override void UpdateArmorSet(Player player)
+        {
+            player.lavaRose = true;
+            player.fireWalk = true;
+            player.accFlipper = true;
+            player.accDivingHelm = true;
+            player.waterWalk = true;
+            player.noKnockback = true;
+            player.GetCritChance(DamageClass.Generic) += CritChance;
+            player.ignoreWater = true;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BlueHerosHat>());
-            recipe.AddIngredient(ItemID.SoulofFright, 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 12000);
+            recipe.AddIngredient(ItemID.SoulofFright, SoulCost2);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

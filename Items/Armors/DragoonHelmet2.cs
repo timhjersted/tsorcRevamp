@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -10,6 +11,12 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class DragoonHelmet2 : ModItem
     {
+        public static int MaxMana = 200;
+        public static float ManaCost = 17f;
+        public static int ManaRegen = 11;
+        public static float CritChance = 32f;
+        public static int LifeRegen = 4;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost, ManaRegen, CritChance, LifeRegen);
         public override string Texture => "tsorcRevamp/Items/Armors/DragoonHelmet";
         public override void SetStaticDefaults()
         {
@@ -26,10 +33,11 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.statManaMax2 += 200;
-            player.manaCost -= 0.17f;
-            player.manaRegenBonus += 15;
+            player.statManaMax2 += MaxMana;
+            player.manaCost -= ManaCost / 100f;
+            player.manaRegenBonus += ManaRegen;
             player.pStone = true;
+            player.lifeRegen += LifeRegen;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -44,17 +52,12 @@ namespace tsorcRevamp.Items.Armors
             player.breath = 9999999;
             player.waterWalk = true;
             player.noKnockback = true;
-            player.GetDamage(DamageClass.Generic) += 0.38f;
-            player.GetCritChance(DamageClass.Generic) += 38;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.38f;
-            player.moveSpeed += 0.38f;
-            player.lifeRegen += 5;
-            player.GetModPlayer<tsorcRevampPlayer>().DarkmoonCloak = true;
+            player.GetCritChance(DamageClass.Generic) += CritChance;
 
             //player.wings = 34; // looks like Jim's Wings
             //player.wingsLogic = 34;
-            player.wingTimeMax = 180;
-
+            //player.wingTimeMax = 180;
+            player.ignoreWater = true;
         }
 
         public override bool WingUpdate(Player player, bool inUse)

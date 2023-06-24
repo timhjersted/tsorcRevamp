@@ -1,5 +1,7 @@
-﻿using Terraria;
+﻿using rail;
+using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors.Summon
@@ -7,10 +9,16 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Body)]
     public class WitchkingTop : ModItem
     {
+        public static int SetBonusMinionBoost = 1;
+        public static int SetBonusSentryBoost = 1;
+        public static float AtkSpeed = 25f;
+        public static float WhipRange = 30f;
+        public static float Dmg = 15f;
+        public static int MinionBoost = 1;
+        public static int SentryBoost = 1;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SetBonusMinionBoost, SetBonusSentryBoost, AtkSpeed, WhipRange, Dmg, MinionBoost, SentryBoost);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("+20% minion damage\nIncreases your max number of minions and turrets by 1" +
-                "\nSet Bonus: Increases your max number of minions and turrets by 1\n+30% whip range, +25% summon attack speed"); */
         }
         public override void SetDefaults()
         {
@@ -28,10 +36,11 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateArmorSet(Player player)
         {
-            player.maxMinions += 1;
-            player.maxTurrets += 1;
-            player.GetAttackSpeed(DamageClass.Summon) += 0.25f;
-            player.whipRangeMultiplier += 0.3f;
+            player.maxMinions += SetBonusMinionBoost;
+            player.maxTurrets += SetBonusSentryBoost;
+            player.GetAttackSpeed(DamageClass.Summon) += AtkSpeed / 100f;
+            player.whipRangeMultiplier += WhipRange / 100f;
+            player.GetModPlayer<tsorcRevampPlayer>().WitchPower = true;
 
             int i2 = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;
             int j2 = (int)(player.position.Y + 2f) / 16;
@@ -40,9 +49,9 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.2f;
-            player.maxMinions += 1;
-            player.maxTurrets += 1;
+            player.GetDamage(DamageClass.Summon) += Dmg / 100f;
+            player.maxMinions += MinionBoost;
+            player.maxTurrets += SentryBoost;
         }
     }
 }

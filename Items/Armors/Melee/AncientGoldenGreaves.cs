@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,10 +10,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Legs)]
     public class AncientGoldenGreaves : ModItem
     {
+        public static float MoveSpeed = 11f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A lost prince's greaves." +
-                "\nIncreases movement speed by 11%"); */
         }
         public override void SetDefaults()
         {
@@ -24,7 +25,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.11f;
+            player.moveSpeed += MoveSpeed / 100f;
         }
         public override void AddRecipes()
         {

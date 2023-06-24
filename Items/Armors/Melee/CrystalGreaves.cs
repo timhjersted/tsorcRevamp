@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,13 +9,15 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Legs)]
     public class CrystalGreaves : ModItem
     {
+        public static float MoveSpeed = 21f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
         public override void SetStaticDefaults()
         {
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.21f;
+            player.moveSpeed += MoveSpeed / 100f;
         }
 
         public override void SetDefaults()

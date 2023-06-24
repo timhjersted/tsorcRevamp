@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,9 +9,10 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Legs)]
     public class AncientMagicPlateGreaves : ModItem
     {
+        public static float MoveSpeed = 19f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("The long forgotten greaves\nIncreases movement speed by 19%");
         }
 
         public override void SetDefaults()
@@ -24,7 +26,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.19f;
+            player.moveSpeed += MoveSpeed / 100f;
         }
 
         public override void AddRecipes()

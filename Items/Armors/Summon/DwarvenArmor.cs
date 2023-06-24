@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,9 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Body)]
     class DwarvenArmor : ModItem
     {
+        public static int MinionSlots = 1;
+        public static float Dmg = 10f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MinionSlots, Dmg);
         public override void SetStaticDefaults()
         {
         }
@@ -21,13 +25,13 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.maxMinions += 1;
+            player.maxMinions += MinionSlots;
 
-            player.GetDamage(DamageClass.Summon) += 0.1f;
+            player.GetDamage(DamageClass.Summon) += Dmg / 100f;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.GetDamage(DamageClass.Summon) += 0.1f;
+                player.GetDamage(DamageClass.Summon) += Dmg / 100f;
             }
         }
         public override void AddRecipes()

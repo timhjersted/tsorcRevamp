@@ -39,8 +39,6 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1.2f;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1.2f;
 
             int dust = Dust.NewDust(new Vector2((float)player.position.X - 5, (float)player.position.Y), player.width + 10, player.height, 77, player.velocity.X, -2, 180, default, 1.25f);
             Main.dust[dust].noGravity = true;

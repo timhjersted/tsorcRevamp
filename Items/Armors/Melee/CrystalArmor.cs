@@ -1,5 +1,7 @@
-﻿using Terraria;
+﻿using Newtonsoft.Json.Serialization;
+using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,12 +10,14 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Body)]
     public class CrystalArmor : ModItem
     {
+        public static float CritChance = 28f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += 23f;
+            player.GetCritChance(DamageClass.Melee) += CritChance;
         }
         public override void SetDefaults()
         {

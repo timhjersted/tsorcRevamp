@@ -32,6 +32,7 @@ using tsorcRevamp.Projectiles.Summon.Whips;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Items.Accessories.Expert;
+using tsorcRevamp.Projectiles.Magic.Runeterra;
 
 namespace tsorcRevamp.NPCs
 {
@@ -76,8 +77,6 @@ namespace tsorcRevamp.NPCs
         public bool CrystalNunchakuProc = false;
         public float CrystalNunchakuUpdateTick = 0f;
         public float CrystalNunchakuScalingDamage = 0f;
-
-        public float DragoonLashFireBreathTimer = 0f;
 
         public bool Scorched;
         public bool Shocked;
@@ -468,12 +467,18 @@ namespace tsorcRevamp.NPCs
         public override void OnKill(NPC npc)
         {
             Player LocalPlayer = Main.LocalPlayer;
-            if(npc.active && !npc.friendly && (LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfDeception>() || LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfFlame>() || LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>()) && Main.rand.NextBool(9))
+            if (npc.active && !npc.friendly && LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfDeception>() && Main.rand.NextBool((int)(100f / OrbOfDeception.EssenceThiefOnKillChance)))
             {
-                LocalPlayer.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ModContent.ProjectileType<EssenceThiefDelivery>(), 0, 0, LocalPlayer.whoAmI, 0);
+            } else if (npc.active && !npc.friendly && LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfFlame>() && Main.rand.NextBool((int)(100f / OrbOfDeception.EssenceThiefOnKillChance)))
+            {
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ModContent.ProjectileType<EssenceThiefDelivery>(), 0, 0, LocalPlayer.whoAmI, 1);
+            } else if (npc.active && !npc.friendly && LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() && Main.rand.NextBool((int)(100f / OrbOfDeception.EssenceThiefOnKillChance)))
+            {
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ModContent.ProjectileType<EssenceThiefDelivery>(), 0, 0, LocalPlayer.whoAmI, 2);
             }
 
-            if(npc.type == NPCID.Golem && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if (npc.type == NPCID.Golem && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 UsefulFunctions.BroadcastText("Somewhere in the sky a forcefield collapses...", Color.Cyan);
             }
@@ -741,7 +746,6 @@ namespace tsorcRevamp.NPCs
                 modifiers.ScalingBonusDamage += CrystalNunchakuScalingDamage; //in case you want to add an effect that affects summon tag damage, don't forget to include it here
             }
         }
-
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             Player projectileOwner = Main.player[projectile.owner];
@@ -797,41 +801,41 @@ namespace tsorcRevamp.NPCs
             #region Vanilla Whips
             if (markedByLeatherWhip)
             {
-                SummonTagFlatDamage += 4f;
+                SummonTagFlatDamage += SummonerEdits.LeatherWhipTagDmg;
             }
             if (markedBySnapthorn)
             {
-                SummonTagFlatDamage += 6f;
+                SummonTagFlatDamage += SummonerEdits.SnapthornTagDmg;
             }
             if (markedBySpinalTap)
             {
-                SummonTagFlatDamage += 7f;
+                SummonTagFlatDamage += SummonerEdits.SpinalTapTagDmg;
             }
             if(markedByFirecracker)
             {
-                SummonTagScalingDamage += SummonerEdits.FirecrackerScalingDamage / 100f;
+                SummonTagScalingDamage += SummonerEdits.FirecrackerScalingDmg / 100f;
             }
             if (markedByCoolWhip)
             {
-                SummonTagFlatDamage += 6f;
+                SummonTagFlatDamage += SummonerEdits.CoolWhipTagDmg;
             }
             if (markedByDurendal)
             {
-                SummonTagFlatDamage += 9f;
+                SummonTagFlatDamage += SummonerEdits.DurendalTagDmg;
             }
             if (markedByMorningStar)
             {
-                SummonTagFlatDamage += SummonerEdits.MorningStarTagDamage;
-                BaseSummonTagCriticalStrikeChance += SummonerEdits.MorningStarTagCriticalStrikeChance;
+                SummonTagFlatDamage += SummonerEdits.MorningStarTagDmg;
+                BaseSummonTagCriticalStrikeChance += SummonerEdits.MorningStarTagCritChance;
             }
             if (markedByDarkHarvest)
             {
-                SummonTagFlatDamage += 10f;
+                SummonTagFlatDamage += SummonerEdits.DarkHarvestTagDmg;
             }
             if (markedByKaleidoscope)
             {
-                SummonTagFlatDamage += SummonerEdits.KaleidoscopeTagDamage;
-                BaseSummonTagCriticalStrikeChance += SummonerEdits.KaleidoscopeTagCriticalStrikeChance;
+                SummonTagFlatDamage += SummonerEdits.KaleidoscopeTagDmg;
+                BaseSummonTagCriticalStrikeChance += SummonerEdits.KaleidoscopeTagCritChance;
             }
             #endregion
             #endregion
@@ -951,8 +955,8 @@ namespace tsorcRevamp.NPCs
                 }
                 if (markedByDarkHarvest)
                 {
-                    int num6 = Projectile.NewProjectile(projectile.GetSource_FromThis(), npc.Center, Vector2.Zero, ProjectileID.ScytheWhipProj, (int)(10f * SummonTagDamageMultiplier), 0f, projectile.owner);
-                    Main.projectile[num6].localNPCImmunity[npc.netID] = -1;
+                    Projectile DarkHarvestProj = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), npc.Center, Vector2.Zero, ProjectileID.ScytheWhipProj, (int)(10f * SummonTagDamageMultiplier), 0f, projectile.owner);
+                    DarkHarvestProj.localNPCImmunity[npc.whoAmI] = -1;
                     Projectile.EmitBlackLightningParticles(npc);
                 }
                 if (markedByKaleidoscope)
@@ -996,10 +1000,10 @@ namespace tsorcRevamp.NPCs
             if (markedByDragoonLash && (projectile.IsMinionOrSentryRelated || ProjectileID.Sets.IsAWhip[projectile.type])) //has to be outside of the main if since this is supposed to also be procced on whip-hit
             {
                 int WhipDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(DragoonLash.BaseDamage);
-                if (DragoonLashFireBreathTimer >= 1)
+                if (projectileOwner.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer >= 1)
                 {
                     Projectile.NewProjectile(Projectile.GetSource_None(), projectileOwner.Center, (npc.Center - projectileOwner.Center) * 0.1f, ProjectileID.Flamelash, WhipDamage, 1f, Main.myPlayer);
-                    DragoonLashFireBreathTimer = 0;
+                    projectileOwner.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer = 0;
                 }
             }
             #endregion
@@ -1851,7 +1855,7 @@ namespace tsorcRevamp.NPCs
             if (projectile.type == ProjectileID.ScytheWhip)
             {
                 npc.AddBuff(ModContent.BuffType<DarkHarvestDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
-                player.AddBuff(BuffID.SwordWhipPlayerBuff, (int)(4 * 60 * modPlayer.SummonTagDuration));
+                player.AddBuff(BuffID.ScytheWhipPlayerBuff, (int)(4 * 60 * modPlayer.SummonTagDuration));
             }
             if (projectile.type == ProjectileID.RainbowWhip)
             {

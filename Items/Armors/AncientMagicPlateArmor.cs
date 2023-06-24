@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Items.Materials;
@@ -9,11 +10,10 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class AncientMagicPlateArmor : ModItem
     {
+        public static float AtkSpeed = 12f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Fueled by a magical gem in the chest\nIncreases all attack speed by 12%(doubled for melee)" +
-                               "\nSet Bonus: Chance to gain stacks upon damaging anything" +
-                               "\nCollect stacks to gain up to 28% damage reduction against the next hit"); */
         }
         public override void SetDefaults()
         {
@@ -25,8 +25,8 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Generic) += 0.12f;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.12f;
+            player.GetAttackSpeed(DamageClass.Generic) += AtkSpeed / 100f;
+            player.GetAttackSpeed(DamageClass.Melee) += AtkSpeed / 100f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {

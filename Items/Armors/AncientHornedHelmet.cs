@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,9 +9,11 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class AncientHornedHelmet : ModItem
     {
+        public static float CritChance = 13f;
+        public static int MaxMinions = 2;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance, MaxMinions);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("A treasure from ancient Plains of Havoc\nIncreases crit by 13% and adds 2 minion slots");
         }
 
         public override void SetDefaults()
@@ -24,8 +27,8 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Generic) += 13;
-            player.maxMinions += 2;
+            player.GetCritChance(DamageClass.Generic) += CritChance;
+            player.maxMinions += MaxMinions;
         }
         public override void AddRecipes()
         {

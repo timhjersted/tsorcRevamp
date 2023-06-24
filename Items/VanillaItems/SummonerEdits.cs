@@ -43,19 +43,70 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 35;
             }
         }
-        public static float MorningStarTagDamage = 4;
-        public static float MorningStarTagCriticalStrikeChance = 6;
-        public static float KaleidoscopeTagDamage = 10;
-        public static float KaleidoscopeTagCriticalStrikeChance = 5;
-        public static float FirecrackerScalingDamage = 100f;
+        public static int LeatherWhipTagDmg = 4;
+        public static int SnapthornTagDmg = 6;
+        public static int SpinalTapTagDmg = 7;
+        public static float FirecrackerScalingDmg = 100f;
+        public static int CoolWhipTagDmg = 6;
+        public static int DurendalTagDmg = 9;
+        public static int DarkHarvestTagDmg = 10;
+        public static float MorningStarTagDmg = 4;
+        public static float MorningStarTagCritChance = 6;
+        public static float KaleidoscopeTagDmg = 10;
+        public static float KaleidoscopeTagCritChance = 5;
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
+            if (item.type == ItemID.BlandWhip)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", Language.GetTextValue("CommonItemTooltip.SummonTagDamage").FormatWith(LeatherWhipTagDmg)));
+                }
+            }
+            if (item.type == ItemID.ThornWhip)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", Language.GetTextValue("CommonItemTooltip.SummonTagDamage").FormatWith(SnapthornTagDmg)));
+                }
+            }
+            if (item.type == ItemID.BoneWhip)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", Language.GetTextValue("CommonItemTooltip.SummonTagDamage").FormatWith(SpinalTapTagDmg)));
+                }
+            }
+            if (item.type == ItemID.CoolWhip)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", Language.GetTextValue("CommonItemTooltip.SummonTagDamage").FormatWith(CoolWhipTagDmg)));
+                }
+            }
             if (item.type == ItemID.FireWhip)
             {
                 int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip2");
                 if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "TagNerfed", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.Firecracker").FormatWith(FirecrackerScalingDamage)));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "TagNerfed", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.Firecracker").FormatWith(FirecrackerScalingDmg)));
+                }
+            }
+            if (item.type == ItemID.SwordWhip)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.RemoveAt(ttindex);
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", Language.GetTextValue("CommonItemTooltip.SummonTagDamage").FormatWith(DurendalTagDmg)));
                 }
             }
             if (item.type == ItemID.MaceWhip)
@@ -64,12 +115,20 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MorningStar").FormatWith(MorningStarTagDamage, MorningStarTagCriticalStrikeChance)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MorningStar").FormatWith(MorningStarTagDmg, MorningStarTagCritChance)));
                 }
                 int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
                 if (ttindex1 != -1)
                 {
                     tooltips.RemoveAt(ttindex1);
+                }
+            }
+            if (item.type == ItemID.ScytheWhip)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", Language.GetTextValue("CommonItemTooltip.SummonTagDamage").FormatWith(DarkHarvestTagDmg)));
                 }
             }
             if (item.type == ItemID.RainbowWhip)
@@ -78,7 +137,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.Kaleidoscope").FormatWith(KaleidoscopeTagDamage, KaleidoscopeTagCriticalStrikeChance)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "TagNerfed", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.Kaleidoscope").FormatWith(KaleidoscopeTagDmg, KaleidoscopeTagCritChance)));
                 }
                 int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
                 if (ttindex1 != -1)

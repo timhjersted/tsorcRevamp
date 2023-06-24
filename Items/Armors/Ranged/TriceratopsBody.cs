@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,6 +9,10 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Body)]
     public class TriceratopsBody : ModItem
     {
+        public static int FlatDmg = 3;
+        public static float SpecialistDmgMult = 20f;
+        public static int AmmoChance = 25; //changing this number has no effect since an ammo consumption chance stat doesn't exist
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(FlatDmg, SpecialistDmgMult, AmmoChance);
         public override void SetStaticDefaults()
         {
         }
@@ -22,7 +27,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Ranged).Flat += 3;
+            player.GetDamage(DamageClass.Ranged).Flat += FlatDmg;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -31,7 +36,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateArmorSet(Player player)
         {
-            player.specialistDamage *= 1.2f;
+            player.specialistDamage *= 1f + SpecialistDmgMult / 100f;
             player.ammoCost75 = true;
         }
         public override void AddRecipes()

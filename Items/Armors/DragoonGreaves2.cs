@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -10,6 +11,11 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Legs)]
     public class DragoonGreaves2 : ModItem
     {
+        public static float MoveSpeed = 32f;
+        public static int MinionSlots = 3;
+        public static float MaxStamina = 20f;
+        public static float StaminaRegen = 20f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, MinionSlots, MaxStamina, StaminaRegen);
         public override string Texture => "tsorcRevamp/Items/Armors/DragoonGreaves";
         public override void SetStaticDefaults()
         {
@@ -26,12 +32,15 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
+            player.moveSpeed += MoveSpeed / 100f;
             if (!ModContent.GetInstance<tsorcRevampConfig>().DisableDragoonGreavesDoubleJump)
             {
                 player.hasJumpOption_Unicorn = true;
             }
             player.jumpBoost = true;
-            player.maxMinions += 3;
+            player.maxMinions += MinionSlots;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + StaminaRegen / 100f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1f + MaxStamina / 100f;
         }
 
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)

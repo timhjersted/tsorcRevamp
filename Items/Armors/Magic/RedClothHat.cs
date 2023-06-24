@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,10 +10,11 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Head)]
     public class RedClothHat : ModItem
     {
+        public static float CritChance = 5f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
-            // Tooltip.SetDefault("Increases magic crit by 5%");
         }
         public override void SetDefaults()
         {
@@ -24,7 +26,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Magic) += 5;
+            player.GetCritChance(DamageClass.Magic) += CritChance;
         }
         public override void AddRecipes()
         {

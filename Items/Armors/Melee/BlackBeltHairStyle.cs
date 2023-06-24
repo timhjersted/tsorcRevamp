@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,10 +9,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Head)]
     public class BlackBeltHairStyle : ModItem
     {
+        public static float CritChance = 5f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("You are a master of the zen arts, at one with the Tao" +
-                "\n+7% melee crit"); */
         }
 
         public override void SetDefaults()
@@ -25,7 +26,7 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += 7;
+            player.GetCritChance(DamageClass.Melee) += CritChance;
         }
 
         public override void ArmorSetShadows(Player player)

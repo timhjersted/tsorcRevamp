@@ -4,18 +4,21 @@ using Terraria;
 using tsorcRevamp.Projectiles.Magic.Runeterra;
 using Terraria.DataStructures;
 using Microsoft.Xna.Framework;
-using tsorcRevamp.Buffs.Runeterra.Melee;
 using System.Collections.Generic;
-using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Magic;
-using tsorcRevamp.Projectiles.Ranged.Runeterra;
 using tsorcRevamp.Items.Materials;
+using Microsoft.Xna.Framework.Input;
+using Terraria.Localization;
+using Humanizer;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
     public class OrbOfFlame : ModItem
     {
         public static Color FilledColor = Color.PaleVioletRed;
+        public static float FireballDmgMod = 250f;
+        public const float FireballHPPercentDmg = 0.001f;
+        public static int FireballHPDmgCap = 450;
         public static float MagicSunder = 20f;
         public static int FireballCD = 4;
         public override void SetStaticDefaults()
@@ -90,6 +93,25 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             else
             {
                 return false;
+            }
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            if (Main.keyState.IsKeyDown(Keys.LeftShift))
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", Language.GetTextValue("Mods.tsorcRevamp.Items.OrbOfFlame.Details").FormatWith(OrbOfDeception.OrbDmgMod - 100f, (OrbOfDeception.OrbReturnDmgMod * OrbOfDeception.OrbDmgMod) / 100f - 100f, OrbOfDeception.EssenceThiefOnKillChance, OrbOfDeception.FilledOrbDmgMod - 100f, FireballDmgMod / 100f, FireballCD, FireballHPPercentDmg, FireballHPDmgCap, MagicSunder)));
+                }
+            }
+            else
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Shift", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Details")));
+                }
             }
         }
         public override void AddRecipes()

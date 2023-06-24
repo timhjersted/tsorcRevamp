@@ -67,7 +67,6 @@ namespace tsorcRevamp
         public bool InfinityEdge;
         public bool BoneRing;
         public bool CelestialCloak;
-        public int CelestialCloakHitChances = 0;
 
         public int SoulVessel = 0;
         public float MaxManaAmplifier;
@@ -98,6 +97,8 @@ namespace tsorcRevamp
         public bool OldWeapon = false;
 
         public bool MythrilOrichalcumCritDamage = false;
+        public bool Shunpo = false;
+        public float ShunpoTimer = 0;
         public bool ChallengersGloveCritDamage = false;
         public float WhipCritHitboxSize = 1f;
 
@@ -113,7 +114,6 @@ namespace tsorcRevamp
         public float CrystalNunchakuDefenseDamage;
 
         public float DragoonLashFireBreathTimer = 0f;
-        public float DragoonLashHitTimer = 0f;
 
         public float SearingLashStacks;
         public float NightsCrackerStacks;
@@ -130,6 +130,8 @@ namespace tsorcRevamp
         public float MinionCircleRadius = 50;
 
         public bool WaspPower = false;
+        public bool DemonPower = false;
+        public bool WitchPower = false;
 
         public bool HollowSoldierAgility = false;
         public bool SmoughShieldSkills = false;
@@ -337,7 +339,8 @@ namespace tsorcRevamp
 
             BrokenSpirit = false;
 
-            MythrilOrichalcumCritDamage = false; 
+            MythrilOrichalcumCritDamage = false;
+            Shunpo = false;
             ChallengersGloveCritDamage = false;
             WhipCritHitboxSize = 1;
 
@@ -360,6 +363,8 @@ namespace tsorcRevamp
             PortlyPlateArmor = false;
 
             WaspPower = false;
+            DemonPower = false;
+            WitchPower = false;
 
             HollowSoldierAgility = false;
             SmoughShieldSkills = false;
@@ -1348,6 +1353,11 @@ namespace tsorcRevamp
                 }
             }
             #endregion
+
+            if(Player.GetModPlayer<tsorcRevampPlayer>().WitchPower)
+            {
+
+            }
 
             if (DragoonBoots && DragoonBootsEnable)
             {

@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,13 +9,14 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Head)]
     class ShadowNinjaMask : ModItem
     {
-
+        public static float MeleeCrit = 30f;
+        public static float MeleeSpeed = 30f;
+        public static int MaxDefense = 40;
+        public static int LifeRegen = 30;
+        public static float DRToMoveSpeedRatio = 1.5f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeCrit, MeleeSpeed, MaxDefense, LifeRegen, DRToMoveSpeedRatio);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("+30% Melee Crit" +
-                "\nSet bonus: +30% Melee Speed, +30 rapid life regen" +
-                "\nDefense is capped at 40" +
-                "\nDamage reduction is converted into movement speed"); */
         }
         public override void SetDefaults()
         {
@@ -31,19 +33,19 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += 30;
+            player.GetCritChance(DamageClass.Melee) += MeleeCrit;
         }
 
         public override void UpdateArmorSet(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Melee) += 0.3f;
-            if (player.statDefense >= 40)
+            player.GetAttackSpeed(DamageClass.Melee) += MeleeSpeed / 100f;
+            if (player.statDefense > MaxDefense)
             {
                 player.statDefense *= 0;
-                player.statDefense += 40;
+                player.statDefense += MaxDefense;
             }
-            player.lifeRegen += 30;
-            player.moveSpeed += player.endurance;
+            player.lifeRegen += LifeRegen;
+            player.moveSpeed += player.endurance * DRToMoveSpeedRatio;
             player.endurance = 0f;
         }
         public override void AddRecipes()

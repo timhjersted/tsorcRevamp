@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,12 +9,11 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class BlueHerosShirt : ModItem
     {
+        public static float Dmg = 30f;
+        public static float MeleeSpeed = 30f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MeleeSpeed);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Blue Hero's Shirt");
-            /* Tooltip.SetDefault("Set Bonus: Grants extended breath & swimming skills" +
-                "\n+9% damage, crit, melee and movement speed, -8% mana costs, 20% less chance to consume ammo" +
-                "\n+3 life regen speed, faster movement & hunter vision while in water"); */
         }
         public override void SetDefaults()
         {
@@ -23,27 +23,10 @@ namespace tsorcRevamp.Items.Armors
             Item.rare = ItemRarityID.LightPurple;
             Item.value = PriceByRarity.fromItem(Item);
         }
-        public override bool IsArmorSet(Item head, Item body, Item legs)
+        public override void UpdateEquip(Player player)
         {
-            return head.type == ModContent.ItemType<BlueHerosHat>() && legs.type == ModContent.ItemType<BlueHerosPants>();
-        }
-        public override void UpdateArmorSet(Player player)
-        {
-            player.accFlipper = true;
-            player.accDivingHelm = true;
-            player.GetDamage(DamageClass.Generic) += 0.09f;
-            player.GetCritChance(DamageClass.Generic) += 9;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.09f;
-            player.moveSpeed += 0.09f;
-            player.manaCost -= 0.08f;
-            player.ammoCost80 = true;
-
-            if (player.wet)
-            {
-                player.lifeRegen += 3;
-                player.detectCreature = true;
-                player.moveSpeed *= 5f;
-            }
+            player.GetAttackSpeed(DamageClass.Melee) += Dmg / 100f;
+            player.GetDamage(DamageClass.Generic) += MeleeSpeed / 100f;
         }
         public override void AddRecipes()
         {

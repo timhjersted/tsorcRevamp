@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,10 +9,11 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Legs)]
     public class MimeticPants : ModItem
     {
+        public static float MoveSpeed = 10f;
+        public static float CritChance = 15f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, CritChance);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases movement speed by 10%" +
-                "\n15% increased magic critical strike chance"); */
         }
         public override void SetDefaults()
         {
@@ -23,8 +25,8 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.1f;
-            player.GetCritChance(DamageClass.Magic) += 15;
+            player.moveSpeed += MoveSpeed / 100f;
+            player.GetCritChance(DamageClass.Magic) += CritChance;
         }
         public override void AddRecipes()
         {

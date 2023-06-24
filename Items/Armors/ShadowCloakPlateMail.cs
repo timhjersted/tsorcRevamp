@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,6 +10,9 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class ShadowCloakPlateMail : ModItem
     {
+        public static float Dmg = 8f;
+        public static float LifeThreshold = 50f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, LifeThreshold);
         public override void SetStaticDefaults()
         {
         }
@@ -24,7 +28,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Generic) += 0.08f;
+            player.GetDamage(DamageClass.Generic) += Dmg / 100f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -32,7 +36,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateArmorSet(Player player)
         {
-            if (player.statLife <= (player.statLifeMax2 / 2))
+            if (player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f))
             {
                 player.panic = true;
 

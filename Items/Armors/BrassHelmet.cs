@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,10 +10,12 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class BrassHelmet : ModItem
     {
+        public static float BadDmg = 15f;
+        public static int LifeRegen = 4;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BadDmg, LifeRegen);
         public override void SetStaticDefaults()
         {
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
-            // Tooltip.SetDefault("Decreases damage dealt by 15%\nIncreases life regen by 4");
         }
 
         public override void SetDefaults()
@@ -26,8 +29,8 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Generic) -= 0.15f;
-            player.lifeRegen += 4;
+            player.GetDamage(DamageClass.Generic) -= BadDmg;
+            player.lifeRegen += LifeRegen;
         }
         public override void AddRecipes()
         {

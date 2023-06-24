@@ -2,17 +2,19 @@
 using Terraria.ModLoader;
 using Terraria;
 using tsorcRevamp.Items.Materials;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Body)]
     public class HollowSoldierBreastplate : ModItem
     {
+        public static float DmgMult = 15f;
+        public static float MaxStamina = 10f;
+        public static float StaminaRegen = 10f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMult, MaxStamina, StaminaRegen);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Increases damage dealt by 10% multiplicatively" +
-                "\nSet Bonus: Nullifies life regen, increases damage dealt by 15% multiplicatively again" +
-                "\nIncreases maximum stamina and stamina regen by 10%"); */
         }
         public override void SetDefaults()
         {
@@ -33,9 +35,9 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateArmorSet(Player player)
         {
             player.lifeRegen = 0;
-            player.GetDamage(DamageClass.Generic) *= 1.15f;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1.1f;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1.1f;
+            player.GetDamage(DamageClass.Generic) *= 1f + DmgMult / 100f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + MaxStamina / 100f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1f + StaminaRegen / 100f;
         }
         public override void AddRecipes()
         {

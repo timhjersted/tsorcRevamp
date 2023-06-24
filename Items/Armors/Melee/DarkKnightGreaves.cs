@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,10 +9,11 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Legs)]
     public class DarkKnightGreaves : ModItem
     {
+        public static float MoveSpeed = 17f;
+        public static float MeleeSpeed = 10f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, MeleeSpeed);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Forsaken by the one who turned Paladin." +
-                "\nIncreases movement and melee speed by 17%"); */
         }
         public override void SetDefaults()
         {
@@ -24,13 +26,13 @@ namespace tsorcRevamp.Items.Armors.Melee
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 0.17f;
-            player.GetAttackSpeed(DamageClass.Melee) += 0.17f;
+            player.moveSpeed += MoveSpeed / 100f;
+            player.GetAttackSpeed(DamageClass.Melee) += MeleeSpeed / 100f;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.moveSpeed += 0.17f;
-                player.GetAttackSpeed(DamageClass.Melee) += 0.17f;
+                player.moveSpeed += MoveSpeed / 100f;
+                player.GetAttackSpeed(DamageClass.Melee) += MeleeSpeed / 100f;
             }
         }
 

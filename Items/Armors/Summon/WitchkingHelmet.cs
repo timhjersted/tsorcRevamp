@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors.Summon
@@ -7,9 +8,14 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Head)]
     public class WitchkingHelmet : ModItem
     {
+        public static float Dmg = 15f;
+        public static int MinionSlot = 1;
+        public static int SentrySlot = 1;
+        public static float CritChance = 30f;
+        public static float TagStrength = 40f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MinionSlot, SentrySlot, CritChance, TagStrength);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("+20% minion damage\nIncreases your max number of minions and turrets by 1");
         }
         public override void SetDefaults()
         {
@@ -21,9 +27,11 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) += 0.2f;
-            player.maxMinions += 1;
-            player.maxTurrets += 1;
+            player.GetDamage(DamageClass.Summon) += Dmg / 100f;
+            player.maxMinions += MinionSlot;
+            player.maxTurrets += SentrySlot;
+            player.GetCritChance(DamageClass.Summon) += CritChance;
+            player.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength += TagStrength / 100f;
         }
         public override void ArmorSetShadows(Player player)
         {
