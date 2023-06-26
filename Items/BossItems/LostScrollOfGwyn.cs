@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -10,13 +11,6 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Lost Scroll of Gwyn");
-            /* Tooltip.SetDefault("Used to summon Gwyn, Lord of Cinder. \n" +
-                "Gwyn may prove impossible to defeat unless you have defeated 7 guardians of the Abyss:\n" +
-                "Artorias, Seath, the Lich King, Kraken, Marilith, the Blight, and the Wyvern Mage Shadow. \n" +
-                //"And beseech thee. Succeed Lord Gwyn, and inheriteth the Fire of our world. \n" +
-                //"Thou shall endeth this eternal twilight, and avert further Undead sacrifices.\"\n" +
-                "Only the true warrior of the age will survive this fight. "); */
         }
 
         public override void SetDefaults()
@@ -43,7 +37,7 @@ namespace tsorcRevamp.Items.BossItems
             //}
             else
             {
-                UsefulFunctions.BroadcastText("Defeat me, and you shall inherit the fire of this world... ", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.LostScrollOfGwyn.Summon"), 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>());
             }
             return true;
@@ -53,7 +47,7 @@ namespace tsorcRevamp.Items.BossItems
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>(), 1);
-            //recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>(), 1);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
             recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);

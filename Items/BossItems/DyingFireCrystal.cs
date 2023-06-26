@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -12,7 +13,6 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("The fading Crystal of Fire. \n" + "Will summon Marilith. \n" + "Item is non-consumable");
         }
 
         public override void SetDefaults()
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-            UsefulFunctions.BroadcastText("Fire Fiend Maralith erupts from a pillar of dark flame", Color.OrangeRed);
+            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.DyingFireCrystal.Summon"), Color.OrangeRed);
 
             int offset = 50 * 16;
             int effectOffset = 65;

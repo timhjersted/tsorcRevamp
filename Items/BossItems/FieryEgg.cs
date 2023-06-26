@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -9,7 +10,6 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Summons The Rage \n" + "You must sacrifice this at the Demon Altar \n" + "within the Cathedral in the Underworld");
         }
 
         public override void SetDefaults()
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.BossItems
             }
             else if (!player.ZoneUnderworldHeight)
             {
-                UsefulFunctions.BroadcastText("You can only use this in the Underworld.");
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.FieryEgg.WrongLocation"));
             }
             else
             {

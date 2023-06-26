@@ -11,6 +11,7 @@ using tsorcRevamp.Projectiles.Summon.Whips;
 using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -46,7 +47,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (item.Name.Contains("Axe") || item.Name.Contains("axe") || item.Name.Contains("saw") || (item.type == ItemID.BloodLustCluster) || (item.type == ItemID.SawtoothShark) || (item.type == ItemID.Drax)
                 || (item.type == ItemID.ShroomiteDiggingClaw) || item.ModItem.Name.Contains("Axe") || item.ModItem.Name.Contains("Halberd") && !item.ModItem.Name.Contains("Pick") && !item.Name.Contains("Pick"))
             {
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.Weakness"), false, false);
                 modifiers.FinalDamage *= 2; //I never want to see or hear the word "axe" again in my life
                 if (modifiers.GetDamage(item.damage, false) < 10)
                 {
@@ -59,7 +60,7 @@ namespace tsorcRevamp.NPCs.Enemies
                  || item.type == ModContent.ItemType<ForgottenRisingSun>() || item.type == ModContent.ItemType<MagmaTooth>()
                  || item.type == ItemID.FieryGreatsword || item.type == ItemID.MoltenHamaxe || item.type == ItemID.MoltenPickaxe || item.type == ModContent.ItemType<SunBlade>())
             {
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.Weakness"), false, false);
                 modifiers.FinalDamage *= 2;
                 if (modifiers.GetDamage(item.damage, false) < 10)
                 {
@@ -91,7 +92,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     modifiers.FinalDamage += 10 - modifiers.GetDamage(projectile.damage, false);
                 }
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.Weakness"), false, false);
                 if (Main.rand.NextBool(30) && resindropped < 1)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ModContent.ItemType<CharcoalPineResin>());
@@ -123,7 +124,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>()));
             npcLoot.Add(ItemDropRule.Common(ItemID.Wood));
             npcLoot.Add(ItemDropRule.Common(ItemID.Wood, 3));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.GreenBlossom>(), 8));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<GreenBlossom>(), 8));
         }
     }
 }

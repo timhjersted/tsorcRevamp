@@ -39,7 +39,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
             return false;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes() 
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.FlowerPacketWhite);
             recipe.AddIngredient(ItemID.ShroomiteBar, 3);

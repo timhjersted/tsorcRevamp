@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Bosses
             DrawOffsetY = +70;
             NPC.width = 140;
             NPC.height = 60;
-            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.TheHunter.DespawnHandler"), Color.Green, 89);
+            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.TheHunter.DespawnHandler"), Color.Green, 89);
         }
 
         int hitTime = 0;
@@ -130,7 +130,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {        
                 if (holdTimer <= 0)
                 {
-                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.TheHunter.Child"), 235, 199, 23);//deep yellow
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.TheHunter.Child"), 235, 199, 23);//deep yellow
                     holdTimer = 9000;
                 }
                 
@@ -504,7 +504,7 @@ namespace tsorcRevamp.NPCs.Bosses
             hitTime = 0;
             if (NPC.ai[0] > (NPC.lifeMax / 10))
             {
-                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.TheHunter.Enrage"), Color.Orange);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.TheHunter.Enrage"), Color.Orange);
 
                 NPC.ai[3] = 1;
                 Color color = new Color();

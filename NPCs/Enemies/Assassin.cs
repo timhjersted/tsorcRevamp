@@ -4,6 +4,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -34,7 +35,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             AnimationType = NPCID.SkeletonArcher;
         }
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Ammo.ArrowOfBard>(), 6, 3, 5));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion,25));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 25));
@@ -67,7 +69,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (Main.rand.NextBool(3))
                 {
-                    UsefulFunctions.BroadcastText("An assassin is tracking your position...", 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Assassin.Track"), 175, 75, 255);
                 }
 
                 return 1f;
@@ -77,7 +79,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (Main.rand.NextBool(3))
                 {
-                    UsefulFunctions.BroadcastText("You hear a bow draw...", 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Assassin.Draw"), 175, 75, 255);
                 }
                 return 1f;
             }
@@ -86,7 +88,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (Main.rand.NextBool(3))
                 {
-                    UsefulFunctions.BroadcastText("You hear foot steps...", 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Assassin.Steps"), 175, 75, 255);
                 }
                 return 1f;
             }
@@ -95,7 +97,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (Main.rand.NextBool(3))
                 {
-                    UsefulFunctions.BroadcastText("An assassin is tracking your position...", 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Assassin.Track"), 175, 75, 255);
                 }
                 return 1f;
             }
@@ -106,7 +108,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (Main.rand.NextBool(3))
                 {
-                    UsefulFunctions.BroadcastText("You are being hunted...", 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Assassin.Hunt"), 175, 75, 255);
                 }
                 return 1f;
             }

@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -9,7 +10,6 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Summons the Jungle Wyvern \n" + "An ancient beast that once guarded an advanced civilization, \n" + "long since forgotten. To this day, it watches over the lost \n" + "city, ripping to shreds any traveler who should discover it.");
         }
 
         public override void SetDefaults()
@@ -34,15 +34,15 @@ namespace tsorcRevamp.Items.BossItems
             }
             if (Main.dayTime)
             {
-                UsefulFunctions.BroadcastText("The ancient Jungle Wyvern remains deep in slumber... Retry at night.", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.JungleFeather.WrongTime"), 175, 75, 255);
             }
             else if (!player.ZoneRockLayerHeight)
             {
-                UsefulFunctions.BroadcastText("The ancient Jungle Wyvern must be summoned underground.", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.JungleFeather.WrongLocation"), 175, 75, 255);
             }
             else
             {
-                UsefulFunctions.BroadcastText("A rumbling thunder shakes the ground below you... ", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.JungleFeather.Summon"), 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>());
             }
             return true;

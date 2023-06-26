@@ -8,8 +8,6 @@ namespace tsorcRevamp.Items.Materials
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Flame of the Abyss");
-            // Tooltip.SetDefault("Dropped from a fallen soul that has traveled through the abyss.");
         }
 
         public override void SetDefaults()

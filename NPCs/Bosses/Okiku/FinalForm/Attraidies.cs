@@ -61,7 +61,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             NPC.value = 600000;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0;
-            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.Attradies.DespawnHandler"), Color.DarkMagenta, DustID.PurpleCrystalShard);
+            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.Attradies.DespawnHandler"), Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
 
         public int ShadowOrbDamage = 35;
@@ -143,7 +143,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         {
             if (!initialized)
             {
-                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Quote"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Attraidies.Quote"), 175, 75, 255);
                 InitializeMoves();
                 if (!Main.tile[1365,280].IsActuated)
                 {
@@ -264,8 +264,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                     ClearObstructiveProjectiles();
                     NPC.Center = Target.Center + new Vector2(0, -600);
                     NPC.dontTakeDamage = true;
-                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Thought"), Color.Purple);
-                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Flight"), Color.Green);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Attraidies.Thought"), Color.Purple);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Attraidies.Flight"), Color.Green);
                     transitionTimer = 120;
                 }
                 if (NPC.life == 1)
@@ -503,7 +503,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 clockwise = 1;
                 if (Phase != 2)
                 {
-                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Weightless"), Color.DeepSkyBlue);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Attraidies.Weightless"), Color.DeepSkyBlue);
                 }
 
                 if (Phase != 0)
@@ -1335,9 +1335,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             if (!tsorcRevampWorld.SuperHardMode)
             {
 
-                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Portal"), new Color(255, 255, 60));
-                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Artorias"), new Color(255, 255, 60));
-                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Hint"), new Color(249, 202, 12));
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Attraidies.Portal"), new Color(255, 255, 60));
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Attraidies.Artorias"), new Color(255, 255, 60));
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Attraidies.Hint"), new Color(249, 202, 12));
 
                 Main.hardMode = true;
                 tsorcRevampWorld.SuperHardMode = true;
@@ -1347,8 +1347,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             else
             {
 
-                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.AbyssOpen"), new Color(255, 255, 60));
-                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Attraidies.Hint"), new Color(249, 202, 12));
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Attraidies.AbyssOpen"), new Color(255, 255, 60));
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Attraidies.Hint"), new Color(249, 202, 12));
 
                 tsorcRevampWorld.SuperHardMode = true;
                 Main.hardMode = true;

@@ -10,10 +10,6 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Tome of Slogra and Gaibon");
-            /* Tooltip.SetDefault("Summons the nocturnal beast known as Slogra, a reptilian creature who fights alongside the demon \n" +
-                "known as Gaibon. Not much is known of Gaibon, though it is legend that Slogra was once a man,  \n" +
-                "whose rings he wore finally consumed him until the man was gone and only his lost soul remained"); */
         }
 
         public override void SetDefaults()
@@ -45,13 +41,13 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void AddRecipes()
         {
-            //if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
                 Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(ItemID.SpellTome, 1);
                 recipe.AddIngredient(ItemID.MeteoriteBar, 3);
                 recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
                 recipe.AddTile(TileID.DemonAltar);
+                recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
                 
                 recipe.Register();
             }

@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -84,14 +85,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (tsorcRevampWorld.SuperHardMode && Dungeon && Main.rand.NextBool(60))
 
             {
-                UsefulFunctions.BroadcastText("A Taurus Knight is close... ", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.TaurusKnight.Nearby"), 175, 75, 255);
                 return 1;
             }
 
             if (tsorcRevampWorld.SuperHardMode && InHell && Main.rand.NextBool(30))
 
             {
-                UsefulFunctions.BroadcastText("A Taurus Knight is close... ", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.TaurusKnight.Nearby"), 175, 75, 255);
                 return 1;
             }
 

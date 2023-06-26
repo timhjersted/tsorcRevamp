@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,12 +9,11 @@ namespace tsorcRevamp.Items.Tools
     [LegacyName("ShieldTome", "GreatMagicBarrierTome", "greatmagicbarrier")]
     public class GreatMagicBarrierScroll : ModItem
     {
+        public static int Duration = 30;
+        public static int Cooldown = 150;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Buffs.GreatMagicBarrier.Defense, Duration, Cooldown);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Great Magic Barrier");
-            /* Tooltip.SetDefault("A lost legendary scroll\n" +
-                                "[c/ffbf00:Casts Great Magic Barrier on the player, raising defense by 60 for 30 seconds]\n" +
-                                "2 minute cooldown. Does not stack with other barrier or shield spells"); */
         }
         public override void SetDefaults()
         {
@@ -47,8 +47,8 @@ namespace tsorcRevamp.Items.Tools
 
         public override bool? UseItem(Player player)
         {
-            player.AddBuff(ModContent.BuffType<Buffs.GreatMagicBarrier>(), 1800, false);
-            player.AddBuff(ModContent.BuffType<Buffs.ShieldCooldown>(), 9000); //2 minutes and 30 seconds (2 min downtime)
+            player.AddBuff(ModContent.BuffType<Buffs.GreatMagicBarrier>(), Duration * 60, false);
+            player.AddBuff(ModContent.BuffType<Buffs.ShieldCooldown>(), Cooldown * 60);
             return true;
         }
         public override bool CanUseItem(Player player)

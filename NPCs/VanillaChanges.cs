@@ -14,6 +14,7 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Lore;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs
 {
@@ -4287,17 +4288,17 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.GoblinTinkerer)
             {
-                npc.GivenName = "Elijah";
+                npc.GivenName = LaUtils.GetTextValue("NPCs.GoblinTinkerer.GivenName");
                 return true;
             }
             if (npc.type == NPCID.Mechanic)
             {
-                npc.GivenName = "Asha";
+                npc.GivenName = LaUtils.GetTextValue("NPCs.Mechanic.GivenName");
                 return true;
             }
             if (npc.type == NPCID.Wizard)
             {
-                npc.GivenName = "Araz";
+                npc.GivenName = LaUtils.GetTextValue("NPCs.Wizard.GivenName");
                 return true;
             }
 
@@ -5159,7 +5160,7 @@ namespace tsorcRevamp.NPCs
                     {
                         if (npc.type == NPCID.WallofFlesh)
                         {
-                            Main.NewText("The Wall's rage is satisfied...", Color.OrangeRed);
+                            Main.NewText(LaUtils.GetTextValue("NPCs.WallOfFlesh.DespawnHandler"), Color.OrangeRed);
                         }
                         npc.life = 0;
                         npc.HitEffect();
@@ -5488,7 +5489,7 @@ namespace tsorcRevamp.NPCs
                                 destroyerAttackIndex++;
                                 if (destroyerAttackIndex == 3)
                                 {
-                                    UsefulFunctions.BroadcastText("The Destroyer's hull begins glowing fiercely...", Color.OrangeRed);
+                                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.TheDestroyer.HullGlow"), Color.OrangeRed);
                                 }
                             }
                             if (Main.GameUpdateCount % 60 == 0)
@@ -5651,7 +5652,7 @@ namespace tsorcRevamp.NPCs
 
             if(npc.type == NPCID.PrimeLaser)
             {
-                UsefulFunctions.BroadcastText("WARNING: Laser power redirected......", Color.Red);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.SkeletronPrime.Warning"), Color.Red);
                 PrimeLaserCooldown = 500;
             }
 

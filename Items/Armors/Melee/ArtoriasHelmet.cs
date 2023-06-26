@@ -1,39 +1,37 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.Items.Armors
+namespace tsorcRevamp.Items.Armors.Melee
 {
     [LegacyName("HelmetOfArtorias")]
     [AutoloadEquip(EquipType.Head)]
     public class ArtoriasHelmet : ModItem
     {
+        public static float CritChanceMult = 24f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChanceMult);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Artorias' Helmet");
-            /* Tooltip.SetDefault("Enchanted helmet of Artorias." +
-                "\nGrants the effect of the Cross Necklace" +
-                "\nIncreases your critical strike chance by 30%" +
-                "\nDecreases mana costs by 13%"); */
         }
         public override void SetDefaults()
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 20;
+            Item.defense = 37;
             Item.rare = ItemRarityID.Purple;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
-            player.longInvince = true;
-            player.GetCritChance(DamageClass.Generic) += 30;
-            player.manaCost -= 0.13f;
+            player.GetCritChance(DamageClass.Melee) += CritChanceMult;
+            player.GetCritChance(DamageClass.Melee) *= 1f + CritChanceMult / 100f;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.BeetleHelmet);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);

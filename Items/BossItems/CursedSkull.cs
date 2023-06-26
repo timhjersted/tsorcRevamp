@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -13,11 +14,6 @@ namespace tsorcRevamp.Items.BossItems
         public override string Texture => "tsorcRevamp/Items/BossItems/DeathBringer";
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Summons Skeletron, the First of the Dead." +
-                                "\nYou must use this at the demon altar in the ancient temple ruins" +
-                                "\nBut be warned, this battle will not be easy..." +
-                                "\nItem is not consumed so you can retry the fight until victory."); */
-
         }
         public override void SetDefaults()
         {
@@ -30,7 +26,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-            UsefulFunctions.BroadcastText("Skeletron has awoken!", 175, 75, 255);
+            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.CursedSkull.Summon"), 175, 75, 255);
             NPC.NewNPC(player.GetSource_ItemUse(Item), (int)player.position.X - 1070, (int)player.position.Y - 150, NPCID.SkeletronHead, 0);
 
             return true;
@@ -46,7 +42,7 @@ namespace tsorcRevamp.Items.BossItems
                 }
                 else
                 {
-                    UsefulFunctions.BroadcastText("This item can only be used in the ancient temple ruins at night...", 220, 180, 180);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.CursedSkull.Wrong"), 220, 180, 180);
                     return false;
                 }
             }
@@ -59,7 +55,7 @@ namespace tsorcRevamp.Items.BossItems
                 }
                 else
                 {
-                    UsefulFunctions.BroadcastText("This item can only be used at night...", 220, 180, 180);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.CursedSkull.WrongTime"), 220, 180, 180);
                     return false;
                 }
             }

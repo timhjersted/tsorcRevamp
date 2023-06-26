@@ -10,9 +10,6 @@ namespace tsorcRevamp.Items.Weapons.Throwing
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Black Firebomb");
-            /* Tooltip.SetDefault("Explodes, dealing fire damage in a small area" +
-                               "\nSets the ground and enemies alight"); */
         }
         public override void SetDefaults()
         {

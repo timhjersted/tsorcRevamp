@@ -33,6 +33,7 @@ using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.VanillaItems;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp
 {
@@ -1209,9 +1210,9 @@ namespace tsorcRevamp
             }
             if(item.type == ModContent.ItemType<Items.Potions.SupremeManaPotion>())
             {
-                player.AddBuff(BuffID.ManaSickness, 180);
+                player.AddBuff(BuffID.ManaSickness, SupremeManaPotion.SicknessDuration * 60);
                 if (Main.myPlayer == player.whoAmI)
-                    player.ManaEffect(400);
+                    player.ManaEffect(SupremeManaPotion.Mana);
             }
 
             if (item.buffType > 0)

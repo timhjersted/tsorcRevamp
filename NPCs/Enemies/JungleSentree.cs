@@ -12,6 +12,7 @@ using Terraria.DataStructures;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -90,7 +91,7 @@ namespace tsorcRevamp.NPCs.Enemies
         // Our AI here makes our NPC sit waiting for a player to enter range then spawns minions to attack.
         public override void AI()
         {
-            NPC.GivenName = "???";
+            NPC.GivenName = LaUtils.GetTextValue("NPCs.JungleSentree.GivenName1");
             // The npc starts in the asleep state, waiting for a player to enter range
             if (AI_State == State_Asleep)
             {
@@ -136,7 +137,7 @@ namespace tsorcRevamp.NPCs.Enemies
             // In this state, begin to spawn babies.
             else if (AI_State == State_Angered)
             {
-                NPC.GivenName = "Jungle Sentree";
+                NPC.GivenName = LaUtils.GetTextValue("NPCs.JungleSentree.GivenName2");
                 //int randomness = Main.rand.Next(3);
                 spawntimer++;
                 if (NPC.life > NPC.lifeMax / 3)
@@ -357,7 +358,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (item.Name.Contains("Axe") || item.Name.Contains("axe") || item.Name.Contains("saw") || (item.type == ItemID.BloodLustCluster) || (item.type == ItemID.SawtoothShark) || (item.type == ItemID.Drax)
                 || (item.type == ItemID.ShroomiteDiggingClaw) || item.ModItem.Name.Contains("Axe") || item.ModItem.Name.Contains("Halberd") && !item.ModItem.Name.Contains("Pick") && !item.Name.Contains("Pick"))
             {
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.Weakness"), false, false);
                 modifiers.FinalDamage *= 2; //I never want to see or hear the word "axe" again in my life
                 if (modifiers.GetDamage(item.damage, false) < 20)
                 {
@@ -376,7 +377,7 @@ namespace tsorcRevamp.NPCs.Enemies
                  || item.type == ModContent.ItemType<ForgottenRisingSun>() || item.type == ModContent.ItemType<MagmaTooth>()
                  || item.type == ItemID.FieryGreatsword || item.type == ItemID.MoltenHamaxe || item.type == ItemID.MoltenPickaxe || item.type == ModContent.ItemType<SunBlade>())
             {
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.Weakness"), false, false);
                 modifiers.FinalDamage *= 2;
                 if (modifiers.GetDamage(item.damage, false) < 20)
                 {
@@ -406,7 +407,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 projectile.type == ModContent.ProjectileType<DevilSickle>() || projectile.type == ModContent.ProjectileType<RedLaserBeam>() ||
                 (projectile.DamageType == DamageClass.Melee && player.meleeEnchant == 3))
             {
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.Weakness"), false, false);
                 modifiers.FinalDamage *= 2;
                 if (modifiers.GetDamage(projectile.damage, false) < 20)
                 {
@@ -443,7 +444,8 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RichMahogany, 1, 3, 5));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 1, 3, 5));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 5));

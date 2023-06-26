@@ -60,7 +60,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.value = 600000;
             NPC.aiStyle = -1;
 
-            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.Cataluminance.DespawnHandler"), Color.Cyan, 180);
+            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.Cataluminance.DespawnHandler"), Color.Cyan, 180);
             InitializeMoves();
         }
 
@@ -182,7 +182,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 NPC.Center = target.Center + new Vector2(0, -1000);
                 NPC.netUpdate = true;
-                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Cataluminance.ClosesIn"));
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Cataluminance.ClosesIn"));
             }
 
             if (testAttack != -1)
@@ -251,7 +251,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (finalStandTimer == 0 && finalStandLevel == 0)
                 {
-                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Cataluminance.Desperation"), Color.Cyan);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Cataluminance.Desperation"), Color.Cyan);
                     UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.CataluminanceTrail>());
                 }
 
@@ -271,7 +271,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     finalStandDelay = -60;
                     finalStandTimer = 0;
                     finalStandLevel = 2;
-                    UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.Cataluminance.Light"), Color.DeepPink);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Cataluminance.Light"), Color.DeepPink);
                 }
 
                 finalStandTimer++;

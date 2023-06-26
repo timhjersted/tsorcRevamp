@@ -2,7 +2,7 @@
 
 namespace tsorcRevamp.Utilities
 {
-    public static class LanguageUtils
+    public static class LaUtils
     {
         public static string GetTextValue(string key)
         {

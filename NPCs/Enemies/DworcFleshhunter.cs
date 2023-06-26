@@ -40,7 +40,8 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         //oh sweet jesus why do you drop so many potions - lol
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
             npcLoot.Add(ItemDropRule.Common(ItemID.BattlePotion, 50));
             npcLoot.Add(ItemDropRule.Common(ItemID.WaterWalkingPotion, 30));
             npcLoot.Add(ItemDropRule.Common(ItemID.SwiftnessPotion, 50));

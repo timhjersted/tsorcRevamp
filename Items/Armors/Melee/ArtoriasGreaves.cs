@@ -4,13 +4,15 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.Items.Armors
+namespace tsorcRevamp.Items.Armors.Melee
 {
+    [LegacyName("GreavesOfArtorias")]
     [AutoloadEquip(EquipType.Legs)]
-    public class PowerArmorNUGreaves : ModItem
+    public class ArtoriasGreaves : ModItem
     {
+        public static float AtkSpeedMult = 24f;
         public static float MoveSpeed = 40f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeedMult, MoveSpeed);
         public override void SetStaticDefaults()
         {
         }
@@ -18,23 +20,21 @@ namespace tsorcRevamp.Items.Armors
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 4;
-            Item.rare = ItemRarityID.Lime;
+            Item.defense = 43;
+            Item.rare = ItemRarityID.Purple;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
+            player.GetAttackSpeed(DamageClass.Melee) *= 1f + AtkSpeedMult / 100f;
             player.moveSpeed += MoveSpeed / 100f;
-            player.waterWalk = true;
-            player.noKnockback = true;
-            player.hasJumpOption_Santank = true;
-            player.jumpBoost = true;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SoulofMight, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ItemID.BeetleLeggings);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

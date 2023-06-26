@@ -2,10 +2,12 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
-    class Flasks : GlobalItem
+    class FlaskItems : GlobalItem
     {
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
@@ -14,35 +16,35 @@ namespace tsorcRevamp.Items.VanillaItems
                 || item.type == ItemID.FlaskofIchor
                 )
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", "Increases melee and whip damage by 10%"));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LaUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", Flasks.IchorFlaskDMG)));
             }
             if (item.type == ItemID.FlaskofGold)
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", "Increases melee and whip damage by 15%"));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LaUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", Flasks.GoldFlaskDMG)));
             }
             if (item.type == ItemID.FlaskofParty)
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", "Increases melee and whip damage by 17%"));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LaUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", Flasks.ConfettiFlaskDMG)));
             }
             if (item.type == ItemID.FlaskofFire)
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", "Increases melee and whip damage by 12%"));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LaUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", Flasks.FireFlaskDMG)));
             }
             if (item.type == ItemID.FlaskofFire)
             {
-                tooltips.Insert(4, new TooltipLine(Mod, "", "All fire damage does 2x damage to woody enemies"));
+                tooltips.Insert(4, new TooltipLine(Mod, "", LaUtils.GetTextValue("CommonItemTooltip.FireDamage")));
             }
             if (item.type == ItemID.FlaskofCursedFlames)
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", "Increases melee and whip damage by 16%"));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LaUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", Flasks.CursedFlaskDMG)));
             }
             if (item.type == ItemID.FlaskofVenom)
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", "Increases melee critical strike chance by 8%, increases whip damage by 8% multiplicatively"));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LaUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", Flasks.VenomFlaskDMGCrit, Buffs.Flasks.VenomFlaskDMGCrit)));
             }
             if (item.type == ItemID.FlaskofNanites)
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", "Increases melee critical strike chance by 14%, increases whip damage by 14% multiplicatively"));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LaUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", Flasks.NanitesFlaskDMGCrit, Buffs.Flasks.NanitesFlaskDMGCrit)));
             }
         }
         public override void AddRecipes()

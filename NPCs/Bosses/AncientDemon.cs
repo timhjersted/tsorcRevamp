@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.knockBackResist = 0;
             NPC.lavaImmune = true;
             NPC.boss = true;
-            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.AncientDemon.DespawnHandler"), Color.Gold, DustID.GoldFlame);
+            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.AncientDemon.DespawnHandler"), Color.Gold, DustID.GoldFlame);
         }
 
         NPCDespawnHandler despawnHandler;

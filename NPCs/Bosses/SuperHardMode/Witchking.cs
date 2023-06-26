@@ -18,6 +18,7 @@ using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
+using Terraria.UI;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -57,7 +58,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.knockBackResist = 0.0f;
             NPC.boss = true;
             AnimationType = NPCID.PossessedArmor;
-            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.Witchking.DespawnHandler"), Color.Purple, DustID.PurpleTorch);
+            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.Witchking.DespawnHandler"), Color.Purple, DustID.PurpleTorch);
         }
 
         float poisonStrikeTimer = 0;
@@ -632,7 +633,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (!defenseBroken)
             {
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LanguageUtils.GetTextValue("NPCs.Witchking.Immune"), true, false);
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.Witchking.Immune"), true, false);
                 modifiers.SetMaxDamage(1);
             }
         }
@@ -644,7 +645,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (!defenseBroken)
             {
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LanguageUtils.GetTextValue("NPCs.Witchking.Immune"), true, false);
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.Witchking.Immune"), true, false);
                 modifiers.SetMaxDamage(1);
             }
         }
@@ -681,9 +682,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonAdventureModeRule, ModContent.ItemType<BrokenStrangeMagicRing>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<WitchkingsSword>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<WitchkingHelmet>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<WitchkingTop>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<WitchkingBottoms>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BewitchedTitanite>(), 1, 15, 20));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CovenantOfArtorias>()));
             npcLoot.Add(notExpertCondition);
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));

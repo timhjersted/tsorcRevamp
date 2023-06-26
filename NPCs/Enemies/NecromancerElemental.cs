@@ -113,7 +113,8 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
             npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationBand, 10));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 10));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 20));

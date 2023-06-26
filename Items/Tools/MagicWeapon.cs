@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -7,6 +8,9 @@ namespace tsorcRevamp.Items.Tools
 {
     public class MagicWeapon : ModItem
     {
+        public static int Duration = 60;
+        public static int Cooldown = 120;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(tsorcGlobalItem.BonusDamage1, Duration, Cooldown);
         public override void SetStaticDefaults()
         {
         }
@@ -25,7 +29,6 @@ namespace tsorcRevamp.Items.Tools
             Item.useTime = 34;
             Item.useAnimation = 34;
             Item.value = 15000;
-
         }
 
         public override void AddRecipes() //recipe/progression subject to change
@@ -43,11 +46,11 @@ namespace tsorcRevamp.Items.Tools
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-            player.AddBuff(ModContent.BuffType<Buffs.MagicWeapon>(), 3600); //60s
+            player.AddBuff(ModContent.BuffType<Buffs.MagicWeapon>(), Duration * 60);
 
             if (!modPlayer.DarkmoonCloak)
             {
-                player.AddBuff(ModContent.BuffType<Buffs.MagicImbueCooldown>(), 7200);
+                player.AddBuff(ModContent.BuffType<Buffs.MagicImbueCooldown>(), Cooldown * 60);
             }
 
             return true;

@@ -30,8 +30,8 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Generic) += CritChance;
-            player.GetDamage(DamageClass.Generic) += Dmg / 100f;
+            player.GetCritChance(DamageClass.Melee) += CritChance;
+            player.GetDamage(DamageClass.Melee) += Dmg / 100f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {

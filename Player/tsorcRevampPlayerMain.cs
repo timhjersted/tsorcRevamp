@@ -36,6 +36,7 @@ using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Buffs.Summon.WhipDebuffs;
 using tsorcRevamp.Buffs.Armor;
+using tsorcRevamp.Projectiles.Melee.Runeterra;
 
 namespace tsorcRevamp
 {
@@ -1002,72 +1003,41 @@ namespace tsorcRevamp
 
            if (tsorcRevamp.specialAbility.JustReleased)
             {
-                bool holdingControls = Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>()|| Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>();
-                bool hasBuff = Player.HasBuff(ModContent.BuffType<InterstellarCommander>()) || Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
-                if (!holdingControls && hasBuff && !(Main.keyState.IsKeyDown(Keys.LeftShift)))
-                {
-                    player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
-
-                    //Every time the player releases the button, sync this info to everyone else
-                    if (Main.netMode == NetmodeID.MultiplayerClient)
-                    {
-                        ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                        minionPacket.Write(tsorcPacketID.SyncMinionRadius);
-                        minionPacket.Write((byte)Player.whoAmI);
-                        minionPacket.Write(MinionCircleRadius);
-                        minionPacket.Write(InterstellarBoost);
-                        minionPacket.Send();
-                    }
-                }
+                #region Sweeping Blade
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC other = Main.npc[i];
-                    Vector2 MouseHitbox = new Vector2(100, 100);
+                    Vector2 MouseHitboxSize = new Vector2(100, 100);
 
-                    if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitbox)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<PlasmaWhirlwind>())
+                    if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<PlasmaWhirlwind>())
                     {
-                        SweepingBladePosition = other.Center;
-                        player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2) + 1); //the +1 is necessary here to update the dash velocity correctly, it gives the dash buff for twice the intended duration of the dash because the player needs immunity for a little longer than the dash lasts to make it reliable
+                        SweepingBladeVelocity = player.DirectionTo(other.Center) * 17;
+                        player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Dash") with { Volume = 1f }, player.Center);
+                        Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaWhirlwindDashHitbox>(), PlasmaWhirlwind.BaseDamage, 0, player.whoAmI);
+                        DashHitbox.OriginalCritChance = SteelTempest.CritChance;
                     } //cooldown is added by On-Hit in the dash projectile hitbox
-                    if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitbox)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<NightbringerDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<Nightbringer>())
+                    if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<NightbringerDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<Nightbringer>())
                     {
-                        SweepingBladePosition = other.Center;
-                        player.AddBuff(ModContent.BuffType<NightbringerDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2) + 1); //the +1 is necessary here to update the dash velocity correctly, it gives the dash buff for twice the intended duration of the dash because the player needs immunity for a little longer than the dash lasts to make it reliable
+                        SweepingBladeVelocity = player.DirectionTo(other.Center) * 17;
+                        player.AddBuff(ModContent.BuffType<NightbringerDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/Dash") with { Volume = 1f }, player.Center);
+                        Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<NightbringerDashHitbox>(), Nightbringer.BaseDamage, 0, player.whoAmI);
+                        DashHitbox.OriginalCritChance = SteelTempest.CritChance;
                     } //cooldown is added by On-Hit in the dash projectile hitbox
                 }
+                #endregion
+
+                #region Firewall
                 if (Main.keyState.IsKeyDown(Keys.LeftShift) && Player.HeldItem.type == ModContent.ItemType<Nightbringer>() && !Player.HasBuff(ModContent.BuffType<NightbringerFirewallCooldown>()))
                 {
                     Projectile Firewall = Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), player.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<Projectiles.Melee.Runeterra.NightbringerFirewall>(), player.HeldItem.damage / 3, 0, Main.myPlayer);
                     Firewall.OriginalCritChance = SteelTempest.CritChance;
                     Player.AddBuff(ModContent.BuffType<NightbringerFirewallCooldown>(), 30 * 60);
                 }
-                if (player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() && player.statMana >= (player.GetManaCost(player.HeldItem) * OrbOfSpirituality.DashCostMultiplier) && !Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>()))
-                {
-                    player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDash>(), OrbOfSpirituality.DashBuffDuration * 60);
-                    player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>(), OrbOfSpirituality.DashCD * 60);
-                    player.statMana -= player.GetManaCost(player.HeldItem) * OrbOfSpirituality.DashCostMultiplier;
-                }
-                if (player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDash>()) && SpiritRushCooldown <= 0f && SpiritRushCharges > 0)
-                {
-                    SpiritRushTimer = 0.3f;
-                    SpiritRushCooldown = 1f;
-                    if (SpiritRushSoundStyle == 0)
-                    {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash1") with { Volume = 1f }, player.Center);
-                        SpiritRushSoundStyle += 1;
-                    } else
-                    if (SpiritRushSoundStyle == 1)
-                    {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash2") with { Volume = 1f }, player.Center);
-                        SpiritRushSoundStyle += 1;
-                    } else
-                    if (SpiritRushSoundStyle == 2)
-                    {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash3") with { Volume = 1f }, player.Center);
-                        SpiritRushSoundStyle = 0;
-                    }
-                    SpiritRushCharges--;
-                }
+                #endregion
+
+                #region Scouts Boost
                 if (!(Main.keyState.IsKeyDown(Keys.LeftShift)) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2Cooldown>()) && (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienGun>()))
                 {
                     player.AddBuff(ModContent.BuffType<ScoutsBoost2>(), ToxicShot.ScoutsBoost2Duration * 60);
@@ -1084,6 +1054,60 @@ namespace tsorcRevamp
                     Shroom.OriginalCritChance = 100;
                     Player.AddBuff(ModContent.BuffType<NuclearMushroomCooldown>(), OmegaSquadRifle.ShroomCooldown * 60);
                 }
+                #endregion
+
+                #region Spirit Rush
+                if (player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() && player.statMana >= (player.GetManaCost(player.HeldItem) * OrbOfSpirituality.DashCostMultiplier) && !Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDashCooldown>()) && !Player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDash>()))
+                {
+                    player.AddBuff(ModContent.BuffType<OrbOfSpiritualityDash>(), OrbOfSpirituality.DashBuffDuration * 60);
+                    player.statMana -= player.GetManaCost(player.HeldItem) * OrbOfSpirituality.DashCostMultiplier;
+                }
+                if (player.HasBuff(ModContent.BuffType<OrbOfSpiritualityDash>()) && SpiritRushCooldown <= 0f && SpiritRushCharges > 0)
+                {
+                    SpiritRushVelocity = player.DirectionTo(Main.MouseWorld) * 20f;
+                    SpiritRushTimer = 0.3f;
+                    SpiritRushCooldown = 1f;
+                    if (SpiritRushSoundStyle == 0)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash1") with { Volume = 1f }, player.Center);
+                        SpiritRushSoundStyle += 1;
+                    }
+                    else
+                    if (SpiritRushSoundStyle == 1)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash2") with { Volume = 1f }, player.Center);
+                        SpiritRushSoundStyle += 1;
+                    }
+                    else
+                    if (SpiritRushSoundStyle == 2)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash3") with { Volume = 1f }, player.Center);
+                        SpiritRushSoundStyle = 0;
+                    }
+                    SpiritRushCharges--;
+                }
+                #endregion
+
+                #region Interstellar Boost
+                bool holdingControls = Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() || Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>();
+                bool hasBuff = Player.HasBuff(ModContent.BuffType<InterstellarCommander>()) || Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
+                if (!holdingControls && hasBuff && !(Main.keyState.IsKeyDown(Keys.LeftShift)))
+                {
+                    player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
+
+                    //Every time the player releases the button, sync this info to everyone else
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                    {
+                        ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                        minionPacket.Write(tsorcPacketID.SyncMinionRadius);
+                        minionPacket.Write((byte)Player.whoAmI);
+                        minionPacket.Write(MinionCircleRadius);
+                        minionPacket.Write(InterstellarBoost);
+                        minionPacket.Send();
+                    }
+                }
+                #endregion
+
             }
 
 

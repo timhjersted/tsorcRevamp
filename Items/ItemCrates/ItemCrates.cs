@@ -28,8 +28,6 @@ namespace tsorcRevamp.Items.ItemCrates
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A crate containing 100 Wooden Arrows" +
-                                "\n{$CommonItemTooltip.RightClickToOpen}"); */
         }
         public override void RightClick(Player player)
         {
@@ -41,8 +39,6 @@ namespace tsorcRevamp.Items.ItemCrates
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A crate containing 100 Crossbow Bolts" +
-                                "\n{$CommonItemTooltip.RightClickToOpen}"); */
         }
         public override void RightClick(Player player)
         {
@@ -54,8 +50,6 @@ namespace tsorcRevamp.Items.ItemCrates
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A crate containing 100 Throwing Axes" +
-                                "\n{$CommonItemTooltip.RightClickToOpen}"); */
         }
         public override void RightClick(Player player)
         {
@@ -67,8 +61,6 @@ namespace tsorcRevamp.Items.ItemCrates
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A crate containing 100 Throwing Spears" +
-                                "\n{$CommonItemTooltip.RightClickToOpen}"); */
         }
         public override void RightClick(Player player)
         {
@@ -80,8 +72,6 @@ namespace tsorcRevamp.Items.ItemCrates
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A crate containing 100 Gel" +
-                                "\n{$CommonItemTooltip.RightClickToOpen}"); */
         }
         public override void RightClick(Player player)
         {
@@ -93,8 +83,6 @@ namespace tsorcRevamp.Items.ItemCrates
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A crate containing 100 Throwing Knives" +
-                                "\n{$CommonItemTooltip.RightClickToOpen}"); */
         }
         public override void RightClick(Player player)
         {
@@ -106,8 +94,6 @@ namespace tsorcRevamp.Items.ItemCrates
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A crate containing 100 Royal Throwing Spears" +
-                                "\n{$CommonItemTooltip.RightClickToOpen}"); */
         }
         public override void RightClick(Player player)
         {
@@ -119,8 +105,6 @@ namespace tsorcRevamp.Items.ItemCrates
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A crate containing 100 Frostburn Arrows" +
-                                "\n{$CommonItemTooltip.RightClickToOpen}"); */
         }
         public override void RightClick(Player player)
         {
@@ -176,9 +160,6 @@ namespace tsorcRevamp.Items.ItemCrates
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A crate containing 1000 soul coins" +
-                                "\nGiven as weregild for an item that no longer exists" +
-                                "\n{$CommonItemTooltip.RightClickToOpen}"); */
         }
         public override void RightClick(Player player)
         {
@@ -191,8 +172,6 @@ namespace tsorcRevamp.Items.ItemCrates
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A crate containing 100 Meteor Bullets" +
-                                "\n{$CommonItemTooltip.RightClickToOpen}"); */
         }
         public override void RightClick(Player player)
         {
@@ -204,8 +183,6 @@ namespace tsorcRevamp.Items.ItemCrates
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A crate containing 100 Unholy Arrows" +
-                                "\n{$CommonItemTooltip.RightClickToOpen}"); */
         }
         public override void RightClick(Player player)
         {

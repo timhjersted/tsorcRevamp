@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -10,11 +11,6 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Wing of the Ghost Wyvern");
-            /* Tooltip.SetDefault("Frees the Wyvern Mage's Shadow from its Glass Prison.\n" +
-                "The Wyvern Mage once created a shadow form of himself, cursed by the powers of the Abyss\n" +
-                "It was so hideous that the Mage imprisoned his shadow self in a massive glass cage, enchanted by dark magic\n"); */
-
         }
 
         public override void SetDefaults()
@@ -39,12 +35,12 @@ namespace tsorcRevamp.Items.BossItems
             }
             if (Main.dayTime)
             {
-                UsefulFunctions.BroadcastText("The Ghost Wyvern is not present in this dimension... Retry at night.", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.WingOfTheGhostWyvern.WrongTime"), 175, 75, 255);
                 return false;
             }
             else
             {
-                UsefulFunctions.BroadcastText("You think death is the end? You haven't begun to understand my powers, Red... ", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.WingOfTheGhostWyvern.Summon"), 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>());
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>());
             }

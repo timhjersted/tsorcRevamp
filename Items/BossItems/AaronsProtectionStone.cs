@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -31,7 +32,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-            UsefulFunctions.BroadcastText("A Gate has been opened. The Great Wall has passed into this dimension!... ", 175, 75, 255);
+            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.AaronsProtectionStone.Summon"), 175, 75, 255);
             NPC.SpawnWOF(new Vector2(player.position.X - (1070), player.position.Y - 150));
             return true;
         }

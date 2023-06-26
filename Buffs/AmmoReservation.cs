@@ -19,7 +19,7 @@ namespace tsorcRevamp.Buffs
         {
             if (type == BuffID.AmmoReservation)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.IncreasedRangedCriticalDamage", tsorcRevampPlayer.AmmoReservationRangedCritDamage);
+                tip += "\n" + LaUtils.GetTextValue("CommonItemTooltip.IncreasedRangedCriticalDamage", tsorcRevampPlayer.AmmoReservationRangedCritDamage);
             }
         }
     }

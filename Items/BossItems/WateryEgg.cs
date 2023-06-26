@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -9,7 +10,6 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Summons The Sorrow \n" + "Must be used near the ocean");
         }
 
         public override void SetDefaults()
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.BossItems
             }
             else if (!zoneJ)
             {
-                UsefulFunctions.BroadcastText("You can only use this in the Ocean.");
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.WateryEgg.WrongLocation"));
             }
             else
             {

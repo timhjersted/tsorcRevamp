@@ -1,8 +1,10 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -11,7 +13,6 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("The fading Crystal of Water. \n" + "Will summon Kraken. \n" + "Item is non-consumable");
         }
 
         public override void SetDefaults()
@@ -29,7 +30,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-            //UsefulFunctions.BroadcastText("Water Fiend Kraken emerges from the depths", Color.DeepSkyBlue);
+            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.DyingWaterCrystal.Summon"), Color.DeepSkyBlue);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<WaterFiendKraken>());
             return true;
         }

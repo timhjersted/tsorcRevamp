@@ -1,8 +1,10 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Accessories.Expert
 {
@@ -26,9 +28,9 @@ namespace tsorcRevamp.Items.Accessories.Expert
             Item.expert = true;
             Item.value = PriceByRarity.Cyan_9;
         }
-
         public override void UpdateEquip(Player player)
         {
+            Rectangle PlayerRect = Utils.CenteredRectangle(player.Center, player.Size);
             AmmoType++;
             switch (AmmoType)
             {
@@ -36,6 +38,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
                     {
                         player.arrowDamage *= 1f + DmgMult / 100f;
                         SoundEngine.PlaySound(SoundID.Item102 with { Volume = 3f });
+                        CombatText.NewText(PlayerRect, Color.BurlyWood, LaUtils.GetTextValue("Items.GoldenHairpin.Bow"));
                         break;
                     }
                 case int Arrow when (Arrow > 0 && Arrow <= SwitchTiming * 60 - 1):
@@ -47,6 +50,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
                     {
                         player.bulletDamage *= 1f + DmgMult / 100f;
                         SoundEngine.PlaySound(SoundID.Item149 with { Volume = 3f });
+                        CombatText.NewText(PlayerRect, Color.BurlyWood, LaUtils.GetTextValue("Items.GoldenHairpin.Gun"));
                         break;
                     }
                 case int Bullet when (Bullet > SwitchTiming * 60 * 1 && Bullet <= SwitchTiming * 60 * 2 - 1):
@@ -58,6 +62,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
                     {
                         player.specialistDamage *= 1f + DmgMult / 100f;
                         SoundEngine.PlaySound(SoundID.Item14 with { Volume = 3f });
+                        CombatText.NewText(PlayerRect, Color.BurlyWood, LaUtils.GetTextValue("Items.GoldenHairpin.Specialist"));
                         break;
                     }
                 case int Specialist when (Specialist >= SwitchTiming * 60 * 2 && Specialist <= SwitchTiming * 60 * 3 - 1):

@@ -1060,10 +1060,10 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
-            player.statDefense += (int)ApplyScaling(15);
-            player.GetDamage(DamageClass.Generic) += ApplyScaling(0.1f);
-            player.GetAttackSpeed(DamageClass.Generic) += ApplyScaling(0.15f);
-            player.GetAttackSpeed(DamageClass.Melee) += ApplyScaling(0.15f);
+            player.statDefense += (int)ApplyScaling(StrengthPotion.Defense);
+            player.GetDamage(DamageClass.Generic) += ApplyScaling(StrengthPotion.DamageBoost / 100f);
+            player.GetAttackSpeed(DamageClass.Generic) += ApplyScaling(StrengthPotion.AttackSpeedBoost / 100f);
+            player.GetAttackSpeed(DamageClass.Melee) += ApplyScaling(StrengthPotion.AttackSpeedBoost / 100f);
         }
     }
 

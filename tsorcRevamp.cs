@@ -1621,7 +1621,7 @@ namespace tsorcRevamp
                     (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()))), // Downed variable (the one keeping track the boss has been defeated once)
                     0,
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.WitchkingBag>(), ModContent.ItemType<BrokenStrangeMagicRing>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.WitchkingsSword>(), ModContent.ItemType<Items.Armors.Summon.WitchkingHelmet>(), ModContent.ItemType<Items.Armors.Summon.WitchkingTop>(), ModContent.ItemType<Items.Armors.Summon.WitchkingBottoms>(),
+                    new List<int> { ModContent.ItemType<Items.BossBags.WitchkingBag>(), ModContent.ItemType<BrokenStrangeMagicRing>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.WitchkingsSword>(), ModContent.ItemType<Items.Armors.Summon.WitchkingHelmet>(), ModContent.ItemType<Items.Armors.Summon.WitchkingRobe>(), ModContent.ItemType<Items.Armors.Summon.WitchkingPants>(),
                     ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<Items.BossItems.DarkMirror>(), ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>() }, // List containing all the loot to show in the bestiary
                     $"Found in his lair deep underground, shrouded in extreme darkness.", // Guide to fight the boss
                     "");

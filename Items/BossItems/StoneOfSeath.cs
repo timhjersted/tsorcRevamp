@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -10,12 +11,6 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Stone of Seath");
-            /* Tooltip.SetDefault("Summons Seath the Scaleless, a great dragon granted the title of Duke by Lord Gwyn for his \n" +
-                "assistance in defeating the Everlasting Dragons and given a fragment of a Lord Soul. Seath \n" +
-                "was driven insane during his research on the Scales of Immortality, which he could never \n" +
-                "obtain. Ironically, he is now an immortal himself, a true Undead by means of his research \n" +
-                "into the Primordial Crystal, which he stole from the dragons when he defected."); */
         }
 
         public override void SetDefaults()
@@ -43,7 +38,7 @@ namespace tsorcRevamp.Items.BossItems
         public override bool? UseItem(Player player)
         {
 
-            UsefulFunctions.BroadcastText("Thy death will only fuel my immortality, Red... ", 175, 75, 255);
+            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.StoneOfSeath.Summon"), 175, 75, 255);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>());
             return true;
         }

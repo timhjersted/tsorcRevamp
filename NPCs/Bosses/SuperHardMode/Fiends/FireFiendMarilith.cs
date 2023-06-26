@@ -62,7 +62,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             NPC.lavaImmune = true;
             NPC.boss = true;
             NPC.value = 600000;
-            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.FireFiendMarilith.DespawnHandler"), Color.OrangeRed, DustID.FireworkFountain_Red);
+            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.FireFiendMarilith.DespawnHandler"), Color.OrangeRed, DustID.FireworkFountain_Red);
         }
         int holdBallDamage = 50;
         int fireBallDamage = 45;
@@ -168,7 +168,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
                         if (!hasCovenant && !displayedWarning)
                         {
-                            UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.FireFiendMarilith.Abyss"), Color.Purple);
+                            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.FireFiendMarilith.Abyss"), Color.Purple);
                             displayedWarning = true;
                         }
                     }

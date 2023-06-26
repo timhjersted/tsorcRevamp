@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -7,11 +8,11 @@ namespace tsorcRevamp.Items.Potions
 {
     class SupremeManaPotion : ModItem
     {
+        public static int Mana = 400;
+        public static int SicknessDuration = 3;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Mana, SicknessDuration);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Restores 400 mana" +
-                "\nApplies 3 seconds of mana sickness" +
-                "\nOnly usable through quick mana"); */
         }
         public override void SetDefaults()
         {
@@ -25,7 +26,7 @@ namespace tsorcRevamp.Items.Potions
         }
         public override bool? UseItem(Player player)    
         {
-            player.statMana += 400;
+            player.statMana += Mana;
             return true;
         }
         public override void AddRecipes()

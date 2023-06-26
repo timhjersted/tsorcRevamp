@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.BossItems
             {
                 if (!UsefulFunctions.IsPointWithinEllipse(player.Center, SoulOfCinder.ARENA_LOCATION_ADVENTURE, SoulOfCinder.ARENA_WIDTH, SoulOfCinder.ARENA_HEIGHT))
                 {
-                    UsefulFunctions.BroadcastText("This item must be used within the Tomb of Gwyn.", Color.Firebrick);
+                    UsefulFunctions.BroadcastText("This item must be used within the Tomb of Gwyn.", Color.Firebrick); //don't forget the lang file entries
                     CanUse = false;
                 }
             }

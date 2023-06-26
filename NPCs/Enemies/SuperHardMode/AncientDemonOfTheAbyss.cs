@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -44,7 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AncientDemonOfTheAbyssBanner>();
-            despawnHandler = new NPCDespawnHandler("A demon of the abyss has absorbed you into its flesh ...", Color.Gold, DustID.GoldFlame);
+            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.AncientDemonOfTheAbyss.DespawnHandler"), Color.Gold, DustID.GoldFlame);
         }
 
         NPCDespawnHandler despawnHandler;

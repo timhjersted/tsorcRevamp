@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             NPC.lavaImmune = true;
             NPC.boss = true;
             NPC.value = 600000;
-            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.WaterFiendKraken.DespawnHandler"), Color.DeepSkyBlue, 180);
+            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.WaterFiendKraken.DespawnHandler"), Color.DeepSkyBlue, 180);
             InitializeMoves();
         }
 

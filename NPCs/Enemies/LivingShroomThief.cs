@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -72,7 +73,7 @@ namespace tsorcRevamp.NPCs.Enemies
             // The npc starts in the asleep state, waiting for a player to enter range
             if (AI_State == State_Asleep)
             {
-                NPC.GivenName = "???";
+                NPC.GivenName = LaUtils.GetTextValue("NPCs.LivingShroomThief.GivenName1");
                 // TargetClosest sets npc.target to the player.whoAmI of the closest player. the faceTarget parameter means that npc.direction will automatically be 1 or -1 if the targeted player is to the right or left. This is also automatically flipped if npc.confused
                 NPC.TargetClosest(true);
                 AI_Timer++;
@@ -92,7 +93,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             else if (AI_State == State_Jump)
             {
-                NPC.GivenName = "Fungi Felon";
+                NPC.GivenName = LaUtils.GetTextValue("NPCs.LivingShroomThief.GivenName2");
                 AI_Timer++;
                 if (AI_Timer == 1)
                 {
@@ -337,7 +338,8 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
             npcLoot.Add(ItemDropRule.Common(ItemID.Mushroom, 1, 1, 3));
             npcLoot.Add(ItemDropRule.Common(ItemID.ThrowingKnife, 1, 20, 50));
         }

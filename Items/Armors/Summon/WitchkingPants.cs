@@ -2,13 +2,15 @@
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Armors.Summon
 {
+    [LegacyName("WitchkingBottoms")]
     [AutoloadEquip(EquipType.Legs)]
-    public class WitchkingBottoms : ModItem
+    public class WitchkingPants : ModItem
     {
-        public static float Dmg = 15f;
+        public static float Dmg = 17f;
         public static int MinionSlot = 1;
         public static int SentrySlot = 1;
         public static float MoveSpeed = 44f;
@@ -32,6 +34,16 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.maxTurrets += SentrySlot;
             player.moveSpeed += MoveSpeed / 100f;
             player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration += TagDuration / 100f;
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.SpookyLeggings);
+            recipe.AddIngredient(ModContent.ItemType<BewitchedTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
         }
     }
 }

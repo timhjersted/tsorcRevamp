@@ -9,7 +9,6 @@ namespace tsorcRevamp.Items.Materials
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("A shard of the fading Crystal of Wind.");
         }
 
         public override void SetDefaults()
@@ -26,7 +25,7 @@ namespace tsorcRevamp.Items.Materials
         {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Chaos", LanguageUtils.GetTextValue("Items.DyingWindShard.chaos")));
+                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Chaos", LaUtils.GetTextValue("Items.DyingWindShard.Chaos")));
             }
         }
     }

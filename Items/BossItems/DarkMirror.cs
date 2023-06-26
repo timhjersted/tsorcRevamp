@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -39,21 +40,11 @@ namespace tsorcRevamp.Items.BossItems
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                tooltips.Add(new TooltipLine(Mod, "DarkMirrorAdventure",
-                "You look into the mirror and see your reflection looking back at you... \n" +
-                "As you continue to gaze into the mirror, the background behind \n" +
-                "your reflection comes into focus, revealing a dark pyramid... \n" +
-                "Use the mirror at night to continue looking into the eyes of your reflection...  \n" +
-                "Or throw it away and rid yourself of this dark relic..."));
+                tooltips.Add(new TooltipLine(Mod, "DarkMirrorAdventure", LaUtils.GetTextValue("Items.DarkMirror.AdvMode")));
             }
             else
             {
-                tooltips.Add(new TooltipLine(Mod, "DarkMirrorDefault",
-                "You look into the mirror and see your reflection looking back at you... \n" +
-                "As you continue to gaze into the mirror, the background behind \n" +
-                "your reflection becomes murky, as if peering into a dark abyss... \n" +
-                "Use the mirror to continue looking into the eyes of your reflection...  \n" +
-                "Or throw it away and rid yourself of this dark relic..."));
+                tooltips.Add(new TooltipLine(Mod, "DarkMirrorDefault", LaUtils.GetTextValue("Items.DarkMirror.NonAdv")));
             }
         }
 
@@ -62,7 +53,7 @@ namespace tsorcRevamp.Items.BossItems
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>());
-                UsefulFunctions.BroadcastText("Your shadow self has manifested from your darkest fears...", Color.Blue);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.DarkMirror.Summon"), Color.Blue);
                 return true;
             }
             else
@@ -102,7 +93,7 @@ namespace tsorcRevamp.Items.BossItems
             {
                 if (player.itemTime == 0)
                 {
-                    UsefulFunctions.BroadcastText("The mirror's shadow engulfs you...", Color.Blue);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.DarkMirror.Engulf"), Color.Blue);
                     player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
                 }
                 else if (player.itemTime == (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)

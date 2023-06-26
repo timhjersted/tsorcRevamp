@@ -9,6 +9,7 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -454,7 +455,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void OnKill()
         {
 
-            UsefulFunctions.BroadcastText("A lost spirit has been freed from its curse...", 175, 75, 255);
+            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.CrazedDemonSpirit.Death"), 175, 75, 255);
 
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
             if (NPC.life <= 0)

@@ -436,7 +436,7 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Gore
         public override void OnKill()
         {
-
+            //don't forger text in lang files
             //UsefulFunctions.BroadcastText("A lost spirit has been freed from its curse...", 175, 75, 255);
             if (NPC.life <= 0)
             {

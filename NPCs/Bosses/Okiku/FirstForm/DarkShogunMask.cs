@@ -51,7 +51,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             NPC.noGravity = true;
             NPC.knockBackResist = 0f;
             NPC.value = 50000;
-            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.DarkShogunMask.DespawnHandler"), Color.DarkMagenta, 54);
+            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.DarkShogunMask.DespawnHandler"), Color.DarkMagenta, 54);
         }
         public override void FindFrame(int frameHeight)
         {
@@ -108,7 +108,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 
             if (!initiate)
             {
-                UsefulFunctions.BroadcastText(LanguageUtils.GetTextValue("NPCs.DarkShogunMask.Quote"), new Color(175, 75, 255));
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.DarkShogunMask.Quote"), new Color(175, 75, 255));
                 RotSpeed = 0.015f;
                 NPC.alpha = 255;
                 initiate = true;

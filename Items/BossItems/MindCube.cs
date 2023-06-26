@@ -15,9 +15,6 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Summons Attraidies, the Mindflayer King \n" +
-                "This is it. The final battle. \n" +
-                "[c/ffbf00:To find the light and dark shards needed to craft this in adventure mode... Seek the Dark Tower of Attraidies.]"); */
         }
 
         public override void SetDefaults()

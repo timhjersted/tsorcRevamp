@@ -19,7 +19,7 @@ namespace tsorcRevamp.Buffs
         }
         public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
-            tip = LanguageUtils.GetTextValue("CommonItemTooltip.Generic.DRStatBoost", Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().MagicPlatingStacks) + LanguageUtils.GetTextValue("Buffs.MagicPlating.Description");
+            tip = LaUtils.GetTextValue("CommonItemTooltip.Generic.DRStatBoost", Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().MagicPlatingStacks) + LaUtils.GetTextValue("Buffs.MagicPlating.Description");
         }
     }
 }

@@ -11,9 +11,6 @@ namespace tsorcRevamp.Items.Pets
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("RTQ2");
-            /* Tooltip.SetDefault("Vanity pet" +
-                                "\nIt's cute, but not fluffy."); */
         }
         public override void SetDefaults()
         {

@@ -11,6 +11,10 @@ using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Buffs.Debuffs;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items.VanillaItems;
+using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Buffs.Runeterra.Ranged;
+using tsorcRevamp.NPCs;
+using Terraria.Audio;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -276,6 +280,46 @@ namespace tsorcRevamp.Projectiles
             if (projectile.type >= ProjectileID.MonkStaffT3 && projectile.type <= ProjectileID.DD2BetsyArrow || projectile.type == ProjectileID.DD2SquireSonicBoom)
             {
                 target.AddBuff(BuffID.BetsysCurse, 10 * 60);
+            }
+
+            if (projectile.type == ProjectileID.PoisonDartBlowgun && player.HeldItem.type == ModContent.ItemType<ToxicShot>())
+            {
+                if (hit.Crit)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/ShotCrit") with { Volume = 0.5f }, target.Center);
+                }
+                else
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/ShotHit") with { Volume = 0.5f }, target.Center);
+                }
+                target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[projectile.owner];
+                target.AddBuff(ModContent.BuffType<VenomDebuff>(), 2 * 60);
+            }
+            if (projectile.type == ProjectileID.PoisonDartBlowgun && player.HeldItem.type == ModContent.ItemType<AlienGun>())
+            {
+                if (hit.Crit)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/ShotCrit") with { Volume = 0.5f }, target.Center);
+                }
+                else
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/ShotHit") with { Volume = 0.5f }, target.Center);
+                }
+                target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[projectile.owner];
+                target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 2 * 60);
+            }
+            if (projectile.type == ProjectileID.PoisonDartBlowgun && player.HeldItem.type == ModContent.ItemType<ToxicShot>())
+            {
+                if (hit.Crit)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShotCrit") with { Volume = 0.5f }, target.Center);
+                }
+                else
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShotHit") with { Volume = 0.5f }, target.Center);
+                }
+                target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[projectile.owner];
+                target.AddBuff(ModContent.BuffType<IrradiatedDebuff>(), 2 * 60);
             }
         }
 

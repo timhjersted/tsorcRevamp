@@ -8,7 +8,6 @@ namespace tsorcRevamp.Items.Debug
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Grants damage reduction");
         }
 
         public override void SetDefaults()

@@ -1,6 +1,8 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -9,7 +11,6 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Summons The Hunter \n" + "You must sacrifice this at a Demon Altar in the Jungle far to the West");
         }
 
         public override void SetDefaults()
@@ -34,7 +35,7 @@ namespace tsorcRevamp.Items.BossItems
             }
             else if (!zoneJ)
             {
-                UsefulFunctions.BroadcastText("You can only use this in the Jungle.");
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.GrassyEgg.WrongLocation"));
             }
             else
             {

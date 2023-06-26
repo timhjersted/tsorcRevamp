@@ -25,19 +25,19 @@ namespace tsorcRevamp.Buffs.Debuffs
             {
                 if (player.statLifeMax <= 100)
                 {
-                    Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseText1"));
+                    Main.NewText(LaUtils.GetTextValue("Buffs.Curse.CurseText1"));
                 }
 
                 if (player.statLifeMax >= 200)
                 {
                     player.statLifeMax -= 100;
-                    Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", 100));
+                    Main.NewText(LaUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", 100));
                 }
                 else
                 {
                     int lifeLoss = player.statLifeMax - 100;
                     player.statLife -= lifeLoss;
-                    Main.NewText(LanguageUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", lifeLoss));
+                    Main.NewText(LaUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", lifeLoss));
                 }
 
                 player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel = 0; // Reset to 0

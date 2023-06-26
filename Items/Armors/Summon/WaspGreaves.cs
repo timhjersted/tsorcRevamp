@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Legs)]
     public class WaspGreaves : ModItem
     {
-        public static int SentrySlot = 2;
+        public static int SentrySlot = 1;
         public static float MoveSpeed = 20f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SentrySlot, MoveSpeed);
         public override void SetStaticDefaults()

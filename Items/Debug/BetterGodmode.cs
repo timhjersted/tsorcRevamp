@@ -20,7 +20,6 @@ namespace tsorcRevamp.Items.Debug
 
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("For testing purposes only \n\"For when God Mode just isnt enough...\"");
         }
 
         public override void UpdateEquip(Player player)

@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,13 +9,11 @@ namespace tsorcRevamp.Items.Tools
     [LegacyName("BarrierTome", "MagicBarrier")]
     public class MagicBarrierScroll : ModItem
     {
+        public static int Duration = 20;
+        public static int Cooldown = 60;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Buffs.MagicBarrier.DefenseIncrease, Duration, Cooldown);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Magic Barrier");
-            /* Tooltip.SetDefault("A lost scroll for artisans\n" +
-                                "[c/ffbf00:Casts Magic Barrier on the user, which adds 20 defense for 20 seconds]\n" +
-                                "\nDoes not stack with other barrier or shield spells"); */
-
         }
         public override void SetDefaults()
         {
@@ -48,8 +47,8 @@ namespace tsorcRevamp.Items.Tools
 
         public override bool? UseItem(Player player)
         {
-            player.AddBuff(ModContent.BuffType<Buffs.MagicBarrier>(), 1200, false);
-            // Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.position.X + (float)(player.width / 2), player.position.Y + (float)(player.height / 2), 0f, 0f, mod.ProjectileType("Barrier"), 0, 0f, player.whoAmI, 0f, 0f);
+            player.AddBuff(ModContent.BuffType<Buffs.MagicBarrier>(), Duration * 60, false);
+            player.AddBuff(ModContent.BuffType<Buffs.ShieldCooldown>(), Cooldown * 60);
             return true;
         }
         public override bool CanUseItem(Player player)

@@ -58,7 +58,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             NPC.behindTiles = true;
             NPC.boss = true;
             NPC.value = 113490;
-            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.JungleWyvernHead.DespawnHandler"), Color.GreenYellow, DustID.GreenFairy);
+            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.JungleWyvernHead.DespawnHandler"), Color.GreenYellow, DustID.GreenFairy);
         }
 
 

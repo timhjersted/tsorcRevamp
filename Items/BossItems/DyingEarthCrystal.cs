@@ -1,8 +1,10 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -11,7 +13,6 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("The fading Crystal of Earth. \n" + "Will summon Lich. \n" + "Item is non-consumable");
         }
 
         public override void SetDefaults()
@@ -29,7 +30,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-            //UsefulFunctions.BroadcastText("Earth Fiend Lich ascends from the ground", Color.GreenYellow);
+            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.DyingEarthCrystal.Summon"), Color.GreenYellow);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<EarthFiendLich>());
             return true;
         }

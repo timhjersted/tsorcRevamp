@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.DataStructures;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -39,7 +40,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 100000;
             //npc.boss = true;
             NPC.lavaImmune = true;
-            despawnHandler = new NPCDespawnHandler("Knight of Gwyn stands victorious...", Color.Gold, DustID.GoldFlame);
+            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.KnightOfGwyn.DespawnHandler"), Color.Gold, DustID.GoldFlame);
         }
 
         public int holdBallDamage = 20;

@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -44,7 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.RedKnightBanner>();
-            despawnHandler = new NPCDespawnHandler("The Red Knight has slain you...", Color.Red, DustID.RedTorch);
+            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.RedKnight.DespawnHandler"), Color.Red, DustID.RedTorch);
 
             if (!Main.hardMode)
             {

@@ -25,12 +25,12 @@ namespace tsorcRevamp.Buffs
         {
             if (type == BuffID.Sharpened)
             {
-                tip = LanguageUtils.GetTextValue("Items.VanillaItems.SharpeningStation", tsorcRevampPlayer.SharpenedMeleeArmorPen);
+                tip = LaUtils.GetTextValue("Items.VanillaItems.SharpeningStation", tsorcRevampPlayer.SharpenedMeleeArmorPen);
             }
 
             if (type == BuffID.AmmoBox)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("Items.VanillaItems.AmmoBox");
+                tip += "\n" + LaUtils.GetTextValue("Items.VanillaItems.AmmoBox");
             }
         }
 

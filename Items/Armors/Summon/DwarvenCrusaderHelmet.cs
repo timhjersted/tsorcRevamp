@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public static float WhipDmg = 16f;
         public static float AtkSpeed = 8f;
-        public static float TagDuration = 15f;
+        public static float TagDuration = 18f;
         public static float WhipRange = 30f;
         public static int LifeRegen = 3;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(WhipDmg, AtkSpeed, TagDuration, WhipRange, LifeRegen);
@@ -22,7 +22,8 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void SetDefaults()
         {
-            Item.height = Item.width = 18;
+            Item.width = 22;
+            Item.height = 28;
             Item.defense = 9;
             Item.rare = ItemRarityID.Yellow;
             Item.value = PriceByRarity.fromItem(Item);
@@ -36,26 +37,25 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             player.GetDamage(DamageClass.SummonMeleeSpeed) += WhipDmg / 100f;
             player.GetAttackSpeed(DamageClass.Summon) += AtkSpeed / 100f;
+            player.whipRangeMultiplier += WhipRange;
+            player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration += TagDuration / 100f;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
                 player.GetDamage(DamageClass.SummonMeleeSpeed) += WhipDmg / 100f;
                 player.GetAttackSpeed(DamageClass.Summon) += AtkSpeed / 100f;
+                player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration += TagDuration / 100f;
             }
         }
         public override void UpdateArmorSet(Player player)
         {
             player.onHitDodge = true;
 
-            player.whipRangeMultiplier += WhipRange;
-            player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration += TagDuration / 100f;
-
             player.lifeRegen += LifeRegen;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
                 player.lifeRegen += LifeRegen;
-                player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration += TagDuration / 100f;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 42, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 105, Color.Gold, 1.0f);
                 Main.dust[dust].noGravity = true;

@@ -8,6 +8,7 @@ using tsorcRevamp.Projectiles.Enemy;
 using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Potions;
 using Terraria.DataStructures;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -379,7 +380,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             Player player = Main.player[NPC.target];
-            UsefulFunctions.BroadcastText("The Attraidies Illusion has been vanquished...", 190, 140, 150);
+            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.AttraidiesIllusion.Death"), 190, 140, 150);
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {

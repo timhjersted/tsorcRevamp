@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     class DwarvenKnightHelmet : ModItem
     {
         public static float Dmg = 7f;
-        public static float TagStrength = 20f;
+        public static float TagStrength = 18f;
         public static float CritChance = 11f;
         public static int MinionSlots = 1;
         public static int SentrySlots = 1;
@@ -22,7 +22,8 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override void SetDefaults()
         {
-            Item.height = Item.width = 18;
+            Item.width = 22;
+            Item.height = 26;
             Item.defense = 8;
             Item.rare = ItemRarityID.Yellow;
             Item.value = PriceByRarity.fromItem(Item);
@@ -32,6 +33,8 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.GetDamage(DamageClass.Summon) += Dmg / 100f;
             player.GetCritChance(DamageClass.Summon) += CritChance;
             player.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength += TagStrength / 100f;
+            player.maxMinions += MinionSlots;
+            player.maxTurrets += SentrySlots;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
@@ -49,9 +52,6 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void UpdateArmorSet(Player player)
         {
             player.onHitDodge = true;
-
-            player.maxMinions += MinionSlots;
-            player.maxTurrets += SentrySlots;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {

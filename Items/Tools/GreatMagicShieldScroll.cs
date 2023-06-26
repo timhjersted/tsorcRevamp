@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -8,19 +9,15 @@ namespace tsorcRevamp.Items.Tools
     [LegacyName("WallTome")]
     public class GreatMagicShieldScroll : ModItem
     {
+        public static int Duration = 25;
+        public static int Cooldown = 600;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Duration, Cooldown, Buffs.GreatMagicShield.DefenseIncrease, Buffs.GreatMagicShield.DamagePenalty, Buffs.GreatMagicShield.Slowness);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Great Magic Shield");
-            /* Tooltip.SetDefault("An incantation that casts a Great Magic Shield around the player" +
-                               "\nRaises defense by 25 for 25 seconds" +
-                               "\nDoes not stack with other barrier or shield spells" +
-                               "\nReduces damage dealt by 20% and movement speed by 15%" +
-                               "\nCannot be used again for 10 minutes after wearing off"); */
         }
 
         public override void SetDefaults()
         {
-            Item.stack = 1;
             Item.width = 28;
             Item.height = 30;
             Item.maxStack = 1;
@@ -33,7 +30,6 @@ namespace tsorcRevamp.Items.Tools
             Item.useTime = 35;
             Item.useAnimation = 35;
             Item.value = 8000;
-
         }
 
         public override void AddRecipes()
@@ -49,8 +45,8 @@ namespace tsorcRevamp.Items.Tools
 
         public override bool? UseItem(Player player)
         {
-            player.AddBuff(ModContent.BuffType<Buffs.GreatMagicShield>(), 1500, false);
-            player.AddBuff(ModContent.BuffType<Buffs.ShieldCooldown>(), 37500); //10 minutes and 25 seconds (10 min downtime)
+            player.AddBuff(ModContent.BuffType<Buffs.GreatMagicShield>(), Duration * 60, false);
+            player.AddBuff(ModContent.BuffType<Buffs.ShieldCooldown>(), Cooldown * 60); //10 minutes and 25 seconds (10 min downtime)
             return true;
         }
         public override bool CanUseItem(Player player)

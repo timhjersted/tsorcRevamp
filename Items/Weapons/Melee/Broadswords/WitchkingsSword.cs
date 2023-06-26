@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
@@ -43,6 +46,17 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             { 
                 Item.DamageType = DamageClass.Melee; 
                 Item.scale = 1;
+            }
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().WitchPower)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", Language.GetTextValue("Mods.tsorcRevamp.Items.WitchkingsSword.Empowered")));
+                }
             }
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)

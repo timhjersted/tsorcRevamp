@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -10,7 +11,6 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Summons a Hellkite Dragon from the sky...");
         }
 
         public override void SetDefaults()
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.BossItems
         {
             if (Main.dayTime)
             {
-                UsefulFunctions.BroadcastText("Nothing happens... Retry at night.", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.HellkiteStone.WrongTime"), 175, 75, 255);
                 return false;
             }
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()))

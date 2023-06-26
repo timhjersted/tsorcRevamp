@@ -70,42 +70,42 @@ namespace tsorcRevamp.Buffs
         {
             if (type == BuffID.WeaponImbuePoison)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", PoisonFlaskDMG);
+                tip += "\n" + LaUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", PoisonFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueFire)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", FireFlaskDMG);
+                tip += "\n" + LaUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", FireFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueGold)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", GoldFlaskDMG);
+                tip += "\n" + LaUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", GoldFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueConfetti)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", ConfettiFlaskDMG);
+                tip += "\n" + LaUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", ConfettiFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueCursedFlames)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", CursedFlaskDMG);
+                tip += "\n" + LaUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", CursedFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueIchor)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", IchorFlaskDMG);
+                tip += "\n" + LaUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", IchorFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueVenom)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", VenomFlaskDMGCrit, VenomFlaskDMGCrit);
+                tip += "\n" + LaUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", VenomFlaskDMGCrit, VenomFlaskDMGCrit);
             }
 
             if (type == BuffID.WeaponImbueNanites)
             {
-                tip += "\n" + LanguageUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", NanitesFlaskDMGCrit, NanitesFlaskDMGCrit);
+                tip += "\n" + LaUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", NanitesFlaskDMGCrit, NanitesFlaskDMGCrit);
             }
         }
 

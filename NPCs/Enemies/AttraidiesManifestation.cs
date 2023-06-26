@@ -7,6 +7,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -334,7 +335,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void OnKill()
         {
 
-            UsefulFunctions.BroadcastText("The Attraidies Illusion has been defeated...", 150, 150, 150);
+            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.AttraidiesManifestation.Death"), 150, 150, 150);
             if (!Main.dedServ)
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Mindflayer Gore 1").Type, 1f);

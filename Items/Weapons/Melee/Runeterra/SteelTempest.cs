@@ -52,12 +52,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             {
                 AttackSpeedScalingDuration = 80; //1.33 seconds minimum
             }
-            if (Main.mouseLeft)
-            {
-                Item.useStyle = ItemUseStyleID.Swing;
-                Item.noUseGraphic = false;
-                Item.noMelee = false;
-            }
             Vector2 playerCenter = new Vector2(-13, 0);
             if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2 && player.ownedProjectileCounts[ModContent.ProjectileType<SteelTempestTornado>()] < 1)
             {
@@ -82,28 +76,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/SwingHit3") with { Volume = SwingSoundVolume }, player.Center);
             }
         }
-
-        public override void UseStyle(Player player, Rectangle heldItemFrame)
-        {
-            if (player.altFunctionUse == 2 && player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
-            {
-                Item.useStyle = ItemUseStyleID.Swing;
-                Item.noUseGraphic = false;
-                Item.noMelee = false;
-                player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
-            } else
-            if (player.altFunctionUse == 2 && player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2)
-            {
-                Item.useStyle = ItemUseStyleID.Rapier;
-                Item.noUseGraphic = true;
-                Item.noMelee = true; 
-                player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
-            }
-        }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.altFunctionUse != 2) //shoot Nothing
             {
+                Item.useStyle = ItemUseStyleID.Swing;
+                Item.noUseGraphic = false;
+                Item.noMelee = false;
                 if (SwingSoundStyle == 0)
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Swing1") with { Volume = SwingSoundVolume }, player.Center);
@@ -126,15 +105,23 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 
             if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2)
             {
+                Item.useStyle = ItemUseStyleID.Rapier;
+                Item.noUseGraphic = true;
+                Item.noMelee = true;
+                player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Thrust") with { Volume = 1f }, player.Center);
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<SteelTempestThrust>(), damage, 7, player.whoAmI);
             }
             else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
             {
+                Item.useStyle = ItemUseStyleID.Swing;
+                Item.noUseGraphic = false;
+                Item.noMelee = false;
+                player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoCast") with { Volume = 1f }, player.Center);
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<SteelTempestTornado>(), damage, 7, player.whoAmI);
             }
-            return false;
+            return true;
         }
         public override bool AltFunctionUse(Player player)
         {

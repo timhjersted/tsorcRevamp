@@ -3,7 +3,6 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Tiles.BuffStations;
 
 namespace tsorcRevamp.Items.Placeable.BuffStations

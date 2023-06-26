@@ -36,6 +36,7 @@ Mods: {
 			VanityFunction: Also works in vanity slots
 			DragoonGearCompatible: Compatible with Dragoon Boots and Dragoon Gear.
 			BootsDisableThis: Does not work if Hermes Boots or Spectre Boots are equipped.
+			FireDamage: "All fire damage does 2x damage to woody enemies"
 			OnFire: On Fire
 			CursedInferno: Cursed Inferno
 			Ichor: Ichor
@@ -49,6 +50,8 @@ Mods: {
 				Shunpo has {$CommonItemTooltip.Cooldown}
 				Hitting enemies after maxing out the defensive barrier reduces Shunpo's current Cooldown
 				'''
+			BonusMagicDmg: "Adds {0}% of bonus magic damage"
+			UniqueImbue: Not compatible with other weapon imbues
 			LifeRegen: Increases life regeneration by {0}
 			BadDefense: Decreases defense by {0}
 			BadDmg: Decreases damage dealt by {0}%
@@ -84,6 +87,9 @@ Mods: {
 				Doubled: (doubled for melee)
 				BadDmg: Decreases melee damage dealt by {0}%
 				Only: For melee warriors only
+				DmgMult: Increases melee damage by {0}% multiplicatively
+				CritMult: Increases melee critical srtike chance by {0}% multiplicatively
+				AtkSpeedMult: Increases melee speed by {0}% multiplicatively
 			}
 
 			Ranged: {
@@ -1209,6 +1215,9 @@ Mods: {
 					Ammo type is decided by a timer that picks one of the three regularly
 					Plays a sound to indicate the switch every {1} seconds
 					'''
+				Bow: Archery!
+				Gun: Shooting!
+				Specialist: Specialty Time!
 			}
 
 			IceboundMythrilAegis: {
@@ -1690,9 +1699,9 @@ Mods: {
 				Tooltip:
 					'''
 					Enchanted armor of Artorias of the Abyss.
-					Increases your damage dealt by 21% and life regeneration by 8
-					Grants knockback and fall damage immunity
-					Set Bonus: Increases maximum stamina and it's regeneration by 20%
+					{$CommonItemTooltip.Melee.DmgMult}
+					{$CommonItemTooltip.SetBonus}WIP
+					Something about a spinny slash like Beyblade let it rip
 					'''
 			}
 
@@ -1701,9 +1710,8 @@ Mods: {
 				Tooltip:
 					'''
 					Enchanted armor of Artorias.
-					Increases maximum mana by 100
-					Increases your movement speed by 50%
-					Increases your attack speed by 24%(doubled for melee)
+					{$CommonItemTooltip.Melee.AtkSpeedMult}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
 					'''
 			}
 
@@ -1712,9 +1720,7 @@ Mods: {
 				Tooltip:
 					'''
 					Enchanted helmet of Artorias.
-					Grants the effect of the Cross Necklace
-					Increases your critical strike chance by 30%
-					Decreases mana costs by 13%
+					{$CommonItemTooltip.Melee.CritMult}
 					'''
 			}
 
@@ -2296,43 +2302,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
 			}
 
-			PowerArmorNUGreaves: {
-				DisplayName: Power Armor NU Greaves
-				Tooltip:
-					'''
-					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
-					Allows you to walk on liquids, adds an extra jump and jump boost
-					{$CommonItemTooltip.NoKnockback}
-					'''
-			}
-
-			PowerArmorNUHelmet: {
-				DisplayName: Power Armor NU Helmet
-				Tooltip:
-					'''
-					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.PercentIncreasedRangedDamage@1}
-					{$CommonItemTooltip.PercentIncreasedMagicDamage@2}
-					{$CommonItemTooltip.PercentIncreasedCritChance@3}
-					Longer Breath
-					'''
-			}
-
-			PowerArmorNUTorso: {
-				DisplayName: Power Armor NU Torso
-				Tooltip:
-					'''
-					A powerful armor forged by the god of chaos.
-					{$CommonItemTooltip.PercentChanceToSaveAmmo}
-					{$CommonItemTooltip.PercentReducedManaCost@1}
-					{$CommonItemTooltip.IncreasesMaxManaBy@2}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.AtkSpeed@3}{$CommonItemTooltip.Melee.Doubled}
-					{$CommonItemTooltip.LifeRegen@4}, doubled if submerged
-					{$CommonItemTooltip.StaminaRegen@5}
-					{$CommonItemTooltip.MaxStamina@6}
-					'''
-			}
-
 			ArcherOfLumeliaHairStyle: {
 				DisplayName: Archer of Lumelia Hairstyle
 				Tooltip:
@@ -2622,10 +2591,10 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Summon.WhipDmg}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.HolyDodge}
-					Defense, minion slots and whip range are not affected by this
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@3}
 					{$CommonItemTooltip.Summon.AtkSpeed@1}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.HolyDodge}
+					Defense, minion slots and whip range are not affected by this
 					{$CommonItemTooltip.LifeRegen@4}
 					'''
 			}
@@ -2646,9 +2615,9 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.Summon.CritChance@4}
 					{$CommonItemTooltip.Summon.TagStrength@1}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@2}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.HolyDodge}
 					Defense, minion and turret slots are not affected by this
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasesMaxMinionsBy@2}
 					'''
 			}
 
@@ -2696,9 +2665,9 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.WhipDmg}
 					{$CommonItemTooltip.Summon.TagDuration@4}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
+					{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
 					{$CommonItemTooltip.Summon.AtkSpeed@2}
-					{$CommonItemTooltip.CritDmg@3}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@3}
 					'''
 			}
 
@@ -2718,8 +2687,8 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.Summon.CritChance@4}
 					{$CommonItemTooltip.Summon.TagStrength@5}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.Summon.MinionSentrySlot@1}
-					{$CommonItemTooltip.CritDmg@3}
+					{$CommonItemTooltip.Summon.MinionSentrySlot@1}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@3}
 					'''
 			}
 
@@ -2752,12 +2721,12 @@ Mods: {
 					'''
 			}
 
-			WitchkingBottoms: {
-				DisplayName: Witchking Bottoms
+			WitchkingPants: {
+				DisplayName: Witchking Pants
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.Summon.MinionSentrySlot@1}
+					{$CommonItemTooltip.Summon.MinionSentrySlot@1}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@3}
 					{$CommonItemTooltip.Summon.TagDuration@4}
 					'''
@@ -2774,17 +2743,15 @@ Mods: {
 					'''
 			}
 
-			WitchkingTop: {
-				DisplayName: Witchking Top
+			WitchkingRobe: {
+				DisplayName: Witchking Robe
 				Tooltip:
 					'''
-					{$CommonItemTooltip.PercentIncreasedSummonDamage@4}
-					{$CommonItemTooltip.Summon.MinionSentrySlot@5}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.Summon.MinionSentrySlot}
-					{$CommonItemTooltip.Summon.AtkSpeed@2}
-					{$CommonItemTooltip.IncreasesWhipRangeByPercent@3}
-					Witchking's Sword now inflicts 2 random whip debuffs each swing
-					It also scales with whip damage and range instead of melee stats
+					{$CommonItemTooltip.PercentIncreasedSummonDamage@2}
+					{$CommonItemTooltip.Summon.MinionSentrySlot@3}
+					{$CommonItemTooltip.Summon.AtkSpeed}
+					{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
+					{$CommonItemTooltip.SetBonus}Empowers the Witchking Sword
 					'''
 			}
 
@@ -2986,6 +2953,7 @@ Mods: {
 					Said to protect the one who carries it in times of despair
 					[c/00ffd4:It's true use may reveal itself in time...or at a particular location...]
 					'''
+				Summon: "A Gate has been opened. The Great Wall has passed into this dimension!... "
 			}
 
 			AbysmalStone: {
@@ -3005,6 +2973,7 @@ Mods: {
 					You must fight this battle on the surface.
 					The Blight cannot be fought with the Covenant of Artorias ring equipped.
 					'''
+				Angery: '''"You will be destroyed"'''
 			}
 
 			CursedSkull: {
@@ -3016,11 +2985,32 @@ Mods: {
 					But be warned, this battle will not be easy...
 					Item is not consumed so you can retry the fight until victory.
 					'''
+				Summon: Skeletron has awoken!
+				Wrong: This item can only be used in the ancient temple ruins at night...
+				WrongTime: This item can only be used at night...
 			}
 
 			DarkMirror: {
 				DisplayName: Dark Mirror
 				Tooltip: ""
+				AdvMode:
+					'''
+					You look into the mirror and see your reflection looking back at you...
+					As you continue to gaze into the mirror, the background behind
+					your reflection comes into focus, revealing a dark pyramid...
+					Use the mirror at night to continue looking into the eyes of your reflection...
+					Or throw it away and rid yourself of this dark relic...
+					'''
+				NonAdv:
+					'''
+					You look into the mirror and see your reflection looking back at you...
+					As you continue to gaze into the mirror, the background behind
+					your reflection becomes murky, as if peering into a dark abyss...
+					Use the mirror to continue looking into the eyes of your reflection...
+					Or throw it away and rid yourself of this dark relic...
+					'''
+				Summon: Your shadow self has manifested from your darkest fears...
+				Engulf: The mirror's shadow engulfs you...
 			}
 
 			DeathBringer: {
@@ -3036,6 +3026,7 @@ Mods: {
 					Will summon Lich. 
 					Item is non-consumable
 					'''
+				Summon: Earth Fiend Lich ascends from the ground
 			}
 
 			DyingFireCrystal: {
@@ -3046,6 +3037,7 @@ Mods: {
 					Will summon Marilith. 
 					Item is non-consumable
 					'''
+				Summon: Fire Fiend Maralith erupts from a pillar of dark flame
 			}
 
 			DyingWaterCrystal: {
@@ -3056,6 +3048,7 @@ Mods: {
 					Will summon Kraken. 
 					Item is non-consumable
 					'''
+				Summon: Water Fiend Kraken emerges from the depths
 			}
 
 			DyingWindCrystal: {
@@ -3075,6 +3068,7 @@ Mods: {
 					You must sacrifice this at the Demon Altar 
 					within the Cathedral in the Underworld
 					'''
+				WrongLocation: You can only use this in the Underworld.
 			}
 
 			GrassyEgg: {
@@ -3084,11 +3078,13 @@ Mods: {
 					Summons The Hunter 
 					You must sacrifice this at a Demon Altar in the Jungle far to the West
 					'''
+				WrongLocation: You can only use this in the Jungle.
 			}
 
 			HellkiteStone: {
 				DisplayName: Hellkite Stone
 				Tooltip: Summons a Hellkite Dragon from the sky...
+				WrongTime: Nothing happens... Retry at night.
 			}
 
 			JungleFeather: {
@@ -3100,6 +3096,9 @@ Mods: {
 					long since forgotten. To this day, it watches over the lost 
 					city, ripping to shreds any traveler who should discover it.
 					'''
+				WrongTime: The ancient Jungle Wyvern remains deep in slumber... Retry at night.
+				WrongLocation: The ancient Jungle Wyvern must be summoned underground.
+				Summon: "A rumbling thunder shakes the ground below you... "
 			}
 
 			LostScrollOfGwyn: {
@@ -3111,6 +3110,7 @@ Mods: {
 					Artorias, Seath, the Lich King, Kraken, Marilith, the Blight, and the Wyvern Mage Shadow. 
 					Only the true warrior of the age will survive this fight. 
 					'''
+				Summon: "Defeat me, and you shall inherit the fire of this world... "
 			}
 
 			MindCube: {
@@ -3152,6 +3152,7 @@ Mods: {
 					obtain. Ironically, he is now an immortal himself, a true Undead by means of his research 
 					into the Primordial Crystal, which he stole from the dragons when he defected.
 					'''
+				Summon: "Thy death will only fuel my immortality, Red... "
 			}
 
 			StrangeMagicRing: {
@@ -3180,6 +3181,7 @@ Mods: {
 					Summons The Sorrow 
 					Must be used near the ocean
 					'''
+				WrongLocation: You can only use this in the Ocean.
 			}
 
 			WingOfTheFallen: {
@@ -3191,6 +3193,8 @@ Mods: {
 					If you cannot defeat the Wyvern Mage after several tries, it would be wise
 					to return later when you've become stronger and possess greater abilities.
 					'''
+				WrongTime: The Wyvern Mage is not present in this dimension... Retry at night.
+				Summon: "It was a mistake to summon me... "
 			}
 
 			WingOfTheGhostWyvern: {
@@ -3200,8 +3204,9 @@ Mods: {
 					Frees the Wyvern Mage's Shadow from its Glass Prison.
 					The Wyvern Mage once created a shadow form of himself, cursed by the powers of the Abyss
 					It was so hideous that the Mage imprisoned his shadow self in a massive glass cage, enchanted by dark magic
-
 					'''
+				WrongTime: The Ghost Wyvern is not present in this dimension... Retry at night.
+				Summon: You think death is the end? You haven't begun to understand my powers, Red...
 			}
 
 			BossRematchTome: {
@@ -3500,6 +3505,16 @@ Mods: {
 			Epilogue: {
 				DisplayName: Epilogue
 				Tooltip: This item is from the future, and its text is obscured. You will have to progress further in your adventure to reveal it...
+				Obscured:
+					'''
+					[c/ffbf00:Congratulations! You have unlocked the true ending of the game!]
+					               Having defeated Gwyn, the portal that Attraidies opened at the moment of his death has closed.
+					               At last, you can finally feel the energies of the corruption losing their hold on the world,
+					               the darkness receding back into the earth, growing in harmony with the light once again.
+					               You think of Asha, waiting for you, and rejoice upon the thought of your return home.
+					               You take a moment to think about all that you have been through... Forever you shall be known
+					               as the hero of the age. Centuries from now, elders will be telling your story. The story of Red Cloud.
+					'''
 			}
 
 			EssenceOfTerraria: {
@@ -3524,7 +3539,7 @@ Mods: {
 				DisplayName: Eternal Crystal
 				Tooltip:
 					'''
-					[i:5643][c/4949c2:A mysterious crystal][i:5643]
+					[c/4949c2:A mysterious crystal]
 					Looking into it is like peering into the infinite expanse of [c/4949c2:space]
 					'''
 			}
@@ -4330,7 +4345,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.IncreasesDefenseBy@1}
-					{$CommonItemTooltip.AttackSpeed@2}{$CommonItemTooltip.Melee2x}
+					{$CommonItemTooltip.AtkSpeed@2}{$CommonItemTooltip.Melee.Doubled}
 					Does not stack with Demon Drug, Armor Drug, or Battlefront Potions
 					'''
 			}
@@ -4339,8 +4354,8 @@ Mods: {
 				DisplayName: Supreme Mana Potion
 				Tooltip:
 					'''
-					Restores 400 mana
-					Applies 3 seconds of mana sickness
+					{$CommonItemTooltip.RestoresMana}
+					Applies {1} seconds of mana sickness
 					Only usable through quick mana
 					'''
 			}
@@ -4457,6 +4472,15 @@ Mods: {
 			TheEnd: {
 				DisplayName: The End
 				Tooltip: This item is from the future, and its text is obscured. You will have to progress further in your adventure to reveal it...
+				Obscured:
+					'''
+					As the burning remains of the Mindflayer King lay before you, you look up and out to the horizon.
+					               You feel relieved, but notice your heart is still not at peace. Attraidies was known for his games.
+					               Even in death you suspect his sway over the world has not ended.
+					               You remember the magic spell that he put on Aaron and wonder if he cast the same spell on himself...
+					               [c/00ffd4:Looking down, you notice a drill lying in the ashes, still hot to the touch...]
+					               [c/ffbf00:Congratulations on beating the game! We hope you enjoyed it!- Tim Hjersted & the Revamp Team]
+					'''
 			}
 
 			VillageMirror: {
@@ -4565,9 +4589,9 @@ Mods: {
 					'''
 					Imbues melee weapons with crystalline magic,
 					allowing for incredible magic damage scaling
-					Adds 100% of bonus magic damage
-					Lasts 1 minute, 2 minute cooldown
-					Not compatible with other weapon imbues
+					{$CommonItemTooltip.BonusMagicDmg}
+					{$CommonItemTooltip.Duration@1}, {$CommonItemTooltip.Cooldown@2}
+					{$CommonItemTooltip.UniqueImbue}
 					'''
 			}
 
@@ -4729,8 +4753,8 @@ Mods: {
 				Tooltip:
 					'''
 					A lost legendary scroll
-					[c/ffbf00:Casts Great Magic Barrier on the player, raising defense by 60 for 30 seconds]
-					2 minute cooldown. Does not stack with other barrier or shield spells
+					[c/ffbf00:Casts Great Magic Barrier on the player, raising defense by {0} for {1} seconds]
+					{$CommonItemTooltip.Cooldown@2}. {$CommonItemTooltip.UniqueBarrier}
 					'''
 			}
 
@@ -4739,10 +4763,10 @@ Mods: {
 				Tooltip:
 					'''
 					An incantation that casts a Great Magic Shield around the player
-					Raises defense by 25 for 25 seconds
-					Does not stack with other barrier or shield spells
-					Reduces damage dealt by 20% and movement speed by 15%
-					Cannot be used again for 10 minutes after wearing off
+					Raises defense by {2} for {0} seconds
+					{$CommonItemTooltip.UniqueBarrier}
+					Reduces damage dealt by {3}% and movement speed by {4}%
+					{$CommonItemTooltip.Cooldown@1}
 					'''
 			}
 
@@ -4752,9 +4776,9 @@ Mods: {
 					'''
 					Imbues melee weapons with powerful magic,
 					allowing for greater magic damage scaling
-					Adds 75% of bonus magic damage
-					Lasts 1 minute, 2 minute cooldown
-					Not compatible with other weapon imbues
+					{$CommonItemTooltip.BonusMagicDmg}
+					{$CommonItemTooltip.Duration@1}, {$CommonItemTooltip.Cooldown@2}
+					{$CommonItemTooltip.UniqueImbue}
 					'''
 			}
 
@@ -4831,9 +4855,8 @@ Mods: {
 				Tooltip:
 					'''
 					A lost scroll for artisans
-					[c/ffbf00:Casts Magic Barrier on the user, which adds 20 defense for 20 seconds]
-
-					Does not stack with other barrier or shield spells
+					[c/ffbf00:Casts Magic Barrier on the user, which adds {0} defense for {1} seconds]
+					{CommonItemTooltip.Cooldown@2}. {CommonItemTooltip.UniqueBarrier}
 					'''
 			}
 
@@ -4855,9 +4878,9 @@ Mods: {
 					'''
 					Imbues melee weapons with magic,
 					allowing for weak magic damage scaling
-					Adds 50% of bonus magic damage
-					Lasts 1 minute, 2 minute cooldown
-					Not compatible with other weapon imbues
+					{$CommonItemTooltip.BonusMagicDmg}
+					{$CommonItemTooltip.Duration@1}, {$CommonItemTooltip.Cooldown@2}
+					{$CommonItemTooltip.UniqueImbue}
 					'''
 			}
 
@@ -5304,6 +5327,11 @@ Mods: {
 			WitchkingsSword: {
 				DisplayName: Witchking's Sword
 				Tooltip: May inflict multiple debuffs
+				Empowered:
+					'''
+					Inflicts 2 random whip debuffs each hit
+					Scales with whip damage and range instead of melee stats
+					'''
 			}
 
 			YianBlade: {
@@ -5560,9 +5588,9 @@ Mods: {
 				DisplayName: Old Halberd
 				Tooltip:
 					'''
-					Does random damage from 0 to 35
+					Does random damage from 0 to {0}
 					Maximum damage is increased by damage modifiers.
-					Left-click to stab like a spear, right-click to swing
+					<right> to stab like a spear
 					'''
 			}
 
@@ -6545,7 +6573,7 @@ Mods: {
 				Keybind2: " to [c/ff00ff:dash towards the cursor], casting homing flames along the way"
 				Details:
 					'''
-					Using [c/ff00ff:Special Ability] grants you a buff for {$CommonItemTooltip.Duration@9},
+					Using [c/ff00ff:Special Ability] grants you a buff({$CommonItemTooltip.Duration@9}),
 					which will allow you to [c/ff00ff:dash up to 3 times]({$CommonItemTooltip.Cooldown@10})
 					Homing flames spawned by [c/ff00ff:dashing] do not restore mana, [c/ff00ff:Special Ability] costs {11} mana to cast
 					[c/ff7f50:Charm] deals {4}x damage({$CommonItemTooltip.Cooldown@5}) and {6}% max health damage on-hit, up to {7}
@@ -6774,6 +6802,62 @@ Mods: {
 			DarkMagicRing: {
 				DisplayName: Dark Magic Ring
 				Tooltip: A dark relic that can summon a forgotten seeker.
+			}
+
+			TheMachineTrophy: {
+				DisplayName: The Machine Trophy
+				Tooltip: ""
+			}
+
+			ShamanHood: {
+				DisplayName: Shaman Hood
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Summon.WhipDmg}
+					{$CommonItemTooltip.Summon.TagDuration@4}
+					{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
+					{$CommonItemTooltip.Summon.AtkSpeed@2}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.TitaniumBonus}
+					{$CommonItemTooltip.ShunpoKeybind1}Shunpo{$CommonItemTooltip.ShunpoKeybind2}
+					{$CommonItemTooltip.ShunpoCD@3}
+					'''
+			}
+
+			ShamanMask: {
+				DisplayName: Shaman Mask
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.CritChance@4}
+					{$CommonItemTooltip.Summon.TagStrength@5}
+					{$CommonItemTooltip.Summon.MinionSentrySlot@1}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.TitaniumBonus}
+					{$CommonItemTooltip.ShunpoKeybind1}Shunpo{$CommonItemTooltip.ShunpoKeybind2}
+					{$CommonItemTooltip.ShunpoCD@3}
+					'''
+			}
+
+			ShamanPants: {
+				DisplayName: Shaman Pants
+				Tooltip:
+					'''
+					{$CommonItemTooltip.IncreasesMaxMinionsBy}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
+					'''
+			}
+
+			ShamanShirt: {
+				DisplayName: Shaman Shirt
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					'''
+			}
+
+			BewitchedTitanite: {
+				DisplayName: Bewitched Titanite
+				Tooltip: ""
 			}
 		}
 
@@ -7143,13 +7227,13 @@ Mods: {
 			}
 
 			OrbOfSpiritualityDash: {
-				DisplayName: Spirit Rush Cooldown
-				Description: You cannot dash until this runs out
+				DisplayName: Spirit Rush
+				Description: You're on the hunt!
 			}
 
 			OrbOfSpiritualityDashCooldown: {
 				DisplayName: Spirit Rush Cooldown
-				Description: You cannot dash until this runs out
+				Description: You cannot reactivate Spirit Rush until this runs out
 			}
 
 			SunderedDebuff: {
@@ -8089,9 +8173,20 @@ Mods: {
 			MeltdownFirestorm.DisplayName: Meltdown Firestorm
 			ShrapnelSaw.DisplayName: Shrapnel Saw
 			EssenceThiefDelivery.DisplayName: Essence Thief Delivery
+			SpiritRushVisual.DisplayName: Spirit Rush Visual
 		}
 
 		NPCs: {
+			GoblinTinkerer.GivenName: Elijah
+			Mechanic.GivenName: Asha
+			Wizard.GivenName: Araz
+			WallOfFlesh.DespawnHandler: The Wall's rage is satisfied...
+			TheDestroyer.HullGlow: The Destroyer's hull begins glowing fiercely...
+			SkeletronPrime.Warning: WARNING: Laser power redirected......
+			EmpressOfLight.Forcefield: Somewhere in the sky a forcefield collapses...
+			SHM.BossDeath: The portal to The Abyss widens, and its denizens grow stronger...
+			Player.AllDied: All players have been defeated at least once!
+
 			AncientDemon: {
 				DisplayName: Ancient Demon
 				DespawnHandler: An ancient demon decides to show you mercy ...
@@ -8449,19 +8544,39 @@ Mods: {
 			ParasyticWormHead.DisplayName: Parasytic Worm
 			ParasyticWormTail.DisplayName: Parasytic Worm
 			Bonfirefly.DisplayName: Bonfirefly
-			AbandonedStump.DisplayName: Abandoned Stump
+			AbandonedStump: {
+				DisplayName: Abandoned Stump
+				BestiaryDescription: "Stumped on what to write for this tbh"
+				GivenName1: "???"
+				GivenName2: "Abandoned Stump"
+			}
 			Archdeacon.DisplayName: Archdeacon
 			ArmoredWraith.DisplayName: Unarmored Wraith
-			Assassin.DisplayName: Assassin
-			AttraidiesIllusion.DisplayName: Attraidies Illusion
-			AttraidiesManifestation.DisplayName: Attraidies Manifestation
+			Assassin: {
+				DisplayName: Assassin
+				Track: "An assassin is tracking your position..."
+				Draw: "You hear a bow draw..."
+				Steps: "You hear foot steps..."
+				Hunt: "You are being hunted..."
+			}
+			AttraidiesIllusion: {
+				DisplayName: Attraidies Illusion
+				Death: "The Attraidies Illusion has been defeated..."
+			}
+			AttraidiesManifestation: {
+				DisplayName: Attraidies Manifestation
+				Death: "The Attraidies Manifestation has been vanquished..."
+			}
 			BarrowWight.DisplayName: Barrow Wight
 			BasiliskShifter.DisplayName: Basilisk Shifter
 			BasiliskWalker.DisplayName: Basilisk Walker
 			BlackKnight.DisplayName: Black Knight
 			CloudBat.DisplayName: Cloud Bat
 			CosmicCrystalLizard.DisplayName: Cosmic Crystal Lizard
-			CrazedDemonSpirit.DisplayName: Crazed Demon Spirit
+			CrazedDemonSpirit: {
+				DisplayName: Crazed Demon Spirit
+				Death: "A lost spirit has been freed from its curse..."
+			}
 			DarkElfMage.DisplayName: Dark Elf Mage
 			DemonElemental.DisplayName: Demon Elemental
 			DemonSpirit.DisplayName: Demon Spirit
@@ -8483,21 +8598,32 @@ Mods: {
 			HollowSoldier.DisplayName: Hollow Soldier
 			HollowWarrior.DisplayName: Hollow Warrior
 			HumanityPhantom.DisplayName: Humanity Phantom
-			JungleSentree.DisplayName: Jungle Sentree
+			JungleSentree: {
+				DisplayName: Jungle Sentree
+				GivenName1: "???"
+				GivenName2: "Jungle Sentree"
+			}
 			JungleWyvernJuvenileBody.DisplayName: Jungle Wyvern Juvenile
 			JungleWyvernJuvenileBody2.DisplayName: Jungle Wyvern Juvenile
 			JungleWyvernJuvenileBody3.DisplayName: Jungle Wyvern Juvenile
 			JungleWyvernJuvenileHead.DisplayName: Jungle Wyvern Juvenile
 			JungleWyvernJuvenileLegs.DisplayName: Jungle Wyvern Juvenile
 			JungleWyvernJuvenileTail.DisplayName: Jungle Wyvern Juvenile
-			LivingShroomThief.DisplayName: Living Shroom Thief
+			LivingShroomThief: {
+				DisplayName: Living Shroom Thief
+				GivenName1: "???"
+				GivenName2: "Fungi Felon"
+			}
 			LothricBlackKnight.DisplayName: Lothric Black Knight
 			LothricKnight.DisplayName: Lothric Knight
 			LothricSpearKnight.DisplayName: Lothric Spear Knight
 			ManHunter.DisplayName: Man Hunter
 			MarilithSeeker.DisplayName: Marilith Seeker
 			MarilithSpiritTwin.DisplayName: Marilith Spirit Twin
-			MindflayerIllusion.DisplayName: Mindflayer Illusion
+			MindflayerIllusion: {
+				DisplayName: Mindflayer Illusion
+				Destroy: "Hahahahaha! I'm going to destroy you, Red..."
+			}
 			MindflayerKingServant.DisplayName: Mindflayer King Servant
 			MindflayerServant.DisplayName: Mindflayer Servant
 			MutantToad.DisplayName: Mutant Toad
@@ -8508,14 +8634,27 @@ Mods: {
 			PrimeLaserProbe.DisplayName: Laser Probe
 			QuaraHydromancer.DisplayName: Quara Hydromancer
 			RedCloudHunter.DisplayName: Red Cloud Hunter
-			RedKnight.DisplayName: Red Knight
+			RedKnight: {
+				DisplayName: Red Knight
+				DepsawnHandler: "The Red Knight has slain you..."
+			}
 			ResentfulSeedling.DisplayName: Resentful Seedling
-			RingedKnight.DisplayName: Ringed Knight
+			Weakness: "Weakness!"
+			WeakSpot: "Weak spot!"
+			RingedKnight: {
+				DisplayName: Ringed Knight
+			}
+
 			ShadowMage.DisplayName: Shadow Mage
 			SnowOwl.DisplayName: Snow Owl
 			StoneGolem.DisplayName: Stone Golem
 			Abysswalker.DisplayName: Dworc Abysswalker
-			AncientDemonOfTheAbyss.DisplayName: Ancient Demon of the Abyss
+
+			AncientDemonOfTheAbyss: {
+				DisplayName: Ancient Demon of the Abyss
+				Despawnhandler: A demon of the abyss has absorbed you into its flesh ...
+			}
+
 			BarrowWightNemesis.DisplayName: Barrow Wight Nemesis
 			BarrowWightPhantom.DisplayName: Barrow Wight Phantom
 			BasiliskHunter.DisplayName: Basilisk Hunter
@@ -8525,21 +8664,47 @@ Mods: {
 			DarkBloodKnight.DisplayName: Dark Blood Knight
 			DarkKnight.DisplayName: Dark Knight
 			DemonWheel.DisplayName: Demon Wheel
-			GreatRedKnight.DisplayName: Great Red Knight
+
+			GreatRedKnight: {
+				DisplayName: Great Red Knight
+				Hunt: A Great Red Knight of the Abyss is now hunting you...
+				Destroy: A Great Red Knight of the Abyss has come to destroy you..
+			}
+
 			GuardianCorruptor.DisplayName: Guardian Corruptor
 			HydrisElemental.DisplayName: Hydris Elemental
 			HydrisNecromancer.DisplayName: Hydris Necromancer
 			IceSkeleton.DisplayName: Ice Skeleton
-			KnightOfGwyn.DisplayName: Knight Of Gwyn
+
+			KnightOfGwyn: {
+				DisplayName: Knight Of Gwyn
+				DespawnHandler: Knight of Gwyn stands victorious...
+			}
+
 			ManOfWar.DisplayName: Man Of War
 			OolacileDemon.DisplayName: Ephemeral Oolacile Demon
-			OolacileKnight.DisplayName: Oolacile Knight
-			OolacileSorcerer.DisplayName: Oolacile Sorcerer
+
+			OolacileKnight: {
+				DisplayName: Oolacile Knight
+				Intent: An ancient warrior has come to banish you from existence...
+				Hunt: You are being hunted...
+			}
+
+			OolacileSorcerer: {
+				DisplayName: Oolacile Sorcerer
+				Defeated: The sorcerer of Oolacile has been defeated...
+			}
+
 			SerpentOfTheAbyssBody.DisplayName: Serpent of the Abyss
 			SerpentOfTheAbyssHead.DisplayName: Serpent of the Abyss
 			SerpentOfTheAbyssTail.DisplayName: Serpent of the Abyss
 			SlograII.DisplayName: Slogra
-			TaurusKnight.DisplayName: Taurus Knight
+
+			TaurusKnight: {
+				DisplayName: Taurus Knight
+				Nearby: A Taurus Knight is close...
+			}
+
 			Tetsujin.DisplayName: Tetsujin
 			VampireBat.DisplayName: Vampire Bat
 			TibianAmazon.DisplayName: Tibian Amazon
@@ -8547,7 +8712,13 @@ Mods: {
 			Tonberry.DisplayName: Tonberry
 			UndeadCaster.DisplayName: Undead Caster
 			ViciousSpit.DisplayName: Vicious Spit
-			Warlock.DisplayName: Warlock
+
+			Warlock: {
+				DisplayName: Warlock
+				Near: "A Warlock is near... "
+				Hunt: "A Warlock is hunting you... "
+			}
+
 			WaterSpirit.DisplayName: Water Spirit
 			Chicken.DisplayName: Chicken
 

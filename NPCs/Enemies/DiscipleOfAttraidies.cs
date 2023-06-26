@@ -203,7 +203,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.frame.Y = 0;
             }
         }
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.HealingElixir>(), 1, 1, 3));
         }
         public override void HitEffect(NPC.HitInfo hit)

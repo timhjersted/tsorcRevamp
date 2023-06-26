@@ -8,7 +8,6 @@ namespace tsorcRevamp.Items.Materials
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("The essence of slain dragons.\nA rare and valuable material.");
         }
 
         public override void SetDefaults()

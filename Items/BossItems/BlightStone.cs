@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Items.BossItems
             if (player.ZoneOverworldHeight && !Main.bloodMoon && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>()))
             {
                 NPC.SpawnOnPlayer(Main.myPlayer, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>());
-                UsefulFunctions.BroadcastText("\"You will be destroyed\"", 255, 50, 50);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.BlightStone.Angery"), 255, 50, 50);
                 return true;
             }
             else

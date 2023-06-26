@@ -483,7 +483,7 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.DragonStone>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BossItems.HellkiteStone>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HellkiteStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Spears.HiRyuuSpear>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 22, 28));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Shortswords.BarrowBlade>()));
@@ -517,9 +517,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.MorgulBlade>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.WitchkingsSword>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.Summon.WitchkingHelmet>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.Summon.WitchkingTop>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.Summon.WitchkingBottoms>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BewitchedTitanite>(), 1, 20, 30));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.CovenantOfArtorias>()));
         }
     }

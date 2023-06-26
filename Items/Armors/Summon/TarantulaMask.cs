@@ -31,6 +31,8 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.GetDamage(DamageClass.Summon) += Dmg / 100f;
             player.GetCritChance(DamageClass.Summon) += CritChance;
             player.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength += SummonTagStrength / 100f;
+            player.maxMinions += MinionSlot;
+            player.maxTurrets += TurretSlot;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -38,8 +40,6 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.maxMinions += MinionSlot;
-            player.maxTurrets += TurretSlot;
             player.GetModPlayer<tsorcRevampPlayer>().MythrilOrichalcumCritDamage = true;
         }
         public override void AddRecipes()

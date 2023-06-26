@@ -9,6 +9,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.DataStructures;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -90,28 +91,28 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (Jungle && tsorcRevampWorld.SuperHardMode && AboveEarth && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(20))
 
             {
-                UsefulFunctions.BroadcastText("An ancient warrior has come to banish you from existence...", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.OolacileKnight.Intent"), 175, 75, 255);
                 return 1;
             }
 
             if (Dungeon && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(15))
 
             {
-                UsefulFunctions.BroadcastText("You are being hunted...", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.OolacileKnight.Hunt"), 175, 75, 255);
                 return 1;
             }
 
             if (Meteor && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(20))
 
             {
-                UsefulFunctions.BroadcastText("You are being hunted...", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.OolacileKnight.Hunt"), 175, 75, 255);
                 return 1;
             }
 
             if (Dungeon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(30))
 
             {
-                UsefulFunctions.BroadcastText("You are being hunted...", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.OolacileKnight.Hunt"), 175, 75, 255);
                 return 1;
             }
 

@@ -102,7 +102,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             if (ttindex1 != -1)
             {
                 tooltips.RemoveAt(ttindex1);
-                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.ToxicShot.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.ToxicShot.Keybind2")));
+                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.OrbOfSpirituality.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.OrbOfSpirituality.Keybind2")));
             }
             if (Main.keyState.IsKeyDown(Keys.LeftShift))
             {

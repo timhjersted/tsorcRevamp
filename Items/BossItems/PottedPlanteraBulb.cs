@@ -9,7 +9,6 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Summons Plantera");
         }
 
         public override void SetDefaults()

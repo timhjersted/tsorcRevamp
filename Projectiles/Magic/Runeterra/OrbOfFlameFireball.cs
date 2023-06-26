@@ -84,10 +84,5 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             modifiers.SourceDamage += OrbOfFlame.FireballDmgMod / 100f;
             modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * OrbOfFlame.FireballHPPercentDmg, OrbOfFlame.FireballHPDmgCap);
         }
-
-        public override bool PreDraw(ref Color lightColor)
-		{
-			return true;
-		}
     }
 }

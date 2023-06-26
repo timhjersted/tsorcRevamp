@@ -91,12 +91,12 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (ItemID.Sets.StaffMinionSlotsRequired[item.type] > 1f)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, LanguageUtils.GetTextValue("CommonItemTooltip.Summon.SlotsRequired", ItemID.Sets.StaffMinionSlotsRequired[item.type]));
+                SimpleGlobalModTooltip(Mod, tooltips, LaUtils.GetTextValue("CommonItemTooltip.Summon.SlotsRequired", ItemID.Sets.StaffMinionSlotsRequired[item.type]));
             }
 
             if (ItemID.Sets.StaffMinionSlotsRequired[item.type] < 1f)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, LanguageUtils.GetTextValue("CommonItemTooltip.Summon.PercentOfASlot", ItemID.Sets.StaffMinionSlotsRequired[item.type] * 100f));
+                SimpleGlobalModTooltip(Mod, tooltips, LaUtils.GetTextValue("CommonItemTooltip.Summon.PercentOfASlot", ItemID.Sets.StaffMinionSlotsRequired[item.type] * 100f));
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.healLife > 0)

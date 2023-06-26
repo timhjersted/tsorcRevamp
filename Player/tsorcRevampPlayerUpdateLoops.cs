@@ -103,13 +103,14 @@ namespace tsorcRevamp
         public float WhipCritHitboxSize = 1f;
 
         public int SteelTempestStacks = 0;
-        public Vector2 SweepingBladePosition;
+        public Vector2 SweepingBladeVelocity;
 
         public int EssenceThief = 0;
         public int SpiritRushCharges = 3;
         public float SpiritRushTimer = 0f;
         public int SpiritRushSoundStyle = 0;
         public float SpiritRushCooldown = 0f;
+        public Vector2 SpiritRushVelocity;
 
         public float CrystalNunchakuDefenseDamage;
 

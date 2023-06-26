@@ -54,41 +54,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             {
                 AttackSpeedScalingDuration = 80; //1.33 seconds minimum
             }
-            if (Main.mouseLeft)
-            {
-                Item.useStyle = ItemUseStyleID.Swing;
-                Item.noUseGraphic = false;
-                Item.noMelee = false;
-            }
             Vector2 playerCenter = new Vector2(-13, 0);
             if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2 && player.ownedProjectileCounts[ModContent.ProjectileType<PlasmaWhirlwindTornado>()] < 1)
             {
                 Dust.NewDust(player.TopLeft + playerCenter, 50, 50, DustID.ApprenticeStorm, Scale: 1);
-            }
-        }
-
-        public override void UseStyle(Player player, Rectangle heldItemFrame)
-        {
-            if (player.altFunctionUse == 2 && player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
-            {
-                Item.useStyle = ItemUseStyleID.Swing;
-                Item.noUseGraphic = false;
-                Item.noMelee = false;
-                player.AddBuff(ModContent.BuffType<PlasmaWhirlwindThrustCooldown>(), AttackSpeedScalingDuration);
-            }
-            else
-            if (player.altFunctionUse == 2 && player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2)
-            {
-                Item.useStyle = ItemUseStyleID.Rapier;
-                Item.noUseGraphic = true;
-                Item.noMelee = true;
-                player.AddBuff(ModContent.BuffType<PlasmaWhirlwindThrustCooldown>(), AttackSpeedScalingDuration);
-            }
-            if (player.altFunctionUse == 2 && player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDash>()))
-            {
-                Item.useStyle = ItemUseStyleID.Shoot;
-                Item.noUseGraphic = true;
-                Item.noMelee = true;
             }
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
@@ -112,6 +81,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         {
             if (player.altFunctionUse != 2) //shoot Nothing
             {
+                Item.useStyle = ItemUseStyleID.Swing;
+                Item.noUseGraphic = false;
+                Item.noMelee = false;
                 if (SwingSoundStyle == 0)
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Swing1") with { Volume = SwingSoundVolume }, player.Center);
@@ -134,27 +106,41 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 
             if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2 && !player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDash>()))
             {
+                Item.useStyle = ItemUseStyleID.Rapier;
+                Item.noUseGraphic = true;
+                Item.noMelee = true;
+                player.AddBuff(ModContent.BuffType<PlasmaWhirlwindThrustCooldown>(), AttackSpeedScalingDuration);
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Thrust") with { Volume = 1f }, player.Center);
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<PlasmaWhirlwindThrust>(), damage, knockback * 2, player.whoAmI);
             }
             else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2 && player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDash>()))
             {
+                Item.useStyle = ItemUseStyleID.Shoot;
+                Item.noUseGraphic = true;
+                Item.noMelee = true;
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Spin") with { Volume = 1f }, player.Center);
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<PlasmaWhirlwindSpin>(), damage, knockback * 2, player.whoAmI);
             }
             else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2 && !player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDash>()))
             {
+                Item.useStyle = ItemUseStyleID.Swing;
+                Item.noUseGraphic = false;
+                Item.noMelee = false;
+                player.AddBuff(ModContent.BuffType<PlasmaWhirlwindThrustCooldown>(), AttackSpeedScalingDuration);
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/TornadoCast") with { Volume = 1f }, player.Center);
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<PlasmaWhirlwindTornado>(), damage, knockback * 2, player.whoAmI);
             }
             else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2 && player.HasBuff(ModContent.BuffType<PlasmaWhirlwindDash>()))
             {
+                Item.useStyle = ItemUseStyleID.Shoot;
+                Item.noUseGraphic = true;
+                Item.noMelee = true;
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Spin") with { Volume = 1f }, player.Center);
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<PlasmaWhirlwindSpin>(), damage, knockback * 2, player.whoAmI);
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/TornadoCast") with { Volume = 1f }, player.Center);
                 Projectile.NewProjectile(source, position, Vector2.Zero, ModContent.ProjectileType<PlasmaWhirlwindTornado>(), damage, knockback * 2, player.whoAmI);
             }
-            return false;
+            return true;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

@@ -50,7 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.4f;
             NPC.value = 130000;
-            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.Slogra.DespawnHandler"), Color.DarkGreen, DustID.Demonite);
+            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.Slogra.DespawnHandler"), Color.DarkGreen, DustID.Demonite);
 
         }
 
@@ -509,7 +509,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public string GetConditionDescription()
         {
-            return LanguageUtils.GetTextValue("NPCs.Slogra.Condition");
+            return LaUtils.GetTextValue("NPCs.Slogra.Condition");
         }
     }
 }

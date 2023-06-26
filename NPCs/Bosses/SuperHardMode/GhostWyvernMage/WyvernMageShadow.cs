@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.value = 660000;
             NPC.width = 28;
             NPC.knockBackResist = 0f;
-            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.WyvernMageShadow.DespawnHandler"), Color.DarkCyan, DustID.Demonite);
+            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.WyvernMageShadow.DespawnHandler"), Color.DarkCyan, DustID.Demonite);
         }
 
         int mageShadowTimer = 0;
@@ -363,7 +363,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
         public string GetConditionDescription()
         {
-            return LanguageUtils.GetTextValue("NPCs.WyvernMageShadow.Condition");
+            return LaUtils.GetTextValue("NPCs.WyvernMageShadow.Condition");
         }
     }
 }

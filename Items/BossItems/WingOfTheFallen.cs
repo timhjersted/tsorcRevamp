@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -35,11 +36,11 @@ namespace tsorcRevamp.Items.BossItems
         {
             if (Main.dayTime)
             {
-                UsefulFunctions.BroadcastText("The Wyvern Mage is not present in this dimension... Retry at night.", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.WingOfTheFallen.WrongTime"), 175, 75, 255);
             }
             else
             {
-                UsefulFunctions.BroadcastText("It was a mistake to summon me... ", 175, 75, 255);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.WingOfTheFallen.Summon"), 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>());
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>());
             }

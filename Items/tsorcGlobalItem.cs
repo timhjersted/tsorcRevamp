@@ -384,7 +384,9 @@ namespace tsorcRevamp.Items
                 target.AddBuff(BuffID.BetsysCurse, 600);
             }
         }
-
+        public static float BonusDamage1 = 50f;
+        public static float BonusDamage2 = 75f;
+        public static float BonusDamage3 = 100f;
         public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
@@ -396,7 +398,7 @@ namespace tsorcRevamp.Items
 
                 if (modPlayer.MagicWeapon)
                 {
-                    float bonusDamage = ((player.GetDamage(DamageClass.Magic).Additive * player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * .5f;
+                    float bonusDamage = ((player.GetDamage(DamageClass.Magic).Additive * player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * BonusDamage1 / 100f;
                     if (bonusDamage >= 0)
                     {
                         player.GetDamage(DamageClass.Melee) += bonusDamage; 
@@ -404,7 +406,7 @@ namespace tsorcRevamp.Items
                 }
                 if (modPlayer.GreatMagicWeapon)
                 {
-                    float bonusDamage = ((player.GetDamage(DamageClass.Magic).Additive * player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * .75f;
+                    float bonusDamage = ((player.GetDamage(DamageClass.Magic).Additive * player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * BonusDamage2 / 100f;
                     if (bonusDamage >= 0)
                     {
                         player.GetDamage(DamageClass.Melee) += bonusDamage; 
@@ -412,7 +414,7 @@ namespace tsorcRevamp.Items
                 }
                 if (modPlayer.CrystalMagicWeapon)
                 {
-                    float bonusDamage = (player.GetDamage(DamageClass.Magic).Additive * player.GetDamage(DamageClass.Magic).Multiplicative) * 1f;
+                    float bonusDamage = (player.GetDamage(DamageClass.Magic).Additive * player.GetDamage(DamageClass.Magic).Multiplicative) * BonusDamage3 / 100f;
                     if (bonusDamage >= 0)
                     {
                         player.GetDamage(DamageClass.Melee) += bonusDamage;

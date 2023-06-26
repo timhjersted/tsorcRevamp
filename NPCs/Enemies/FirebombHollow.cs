@@ -96,14 +96,16 @@ namespace tsorcRevamp.NPCs.Enemies
             return chance;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 2, 4));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Throwing.Firebomb>(), 1, 3, 6));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 15));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 5));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>()));
 
-            int[] armorIDs = new int[] {
+            int[] armorIDs = new int[] 
+            {
                 ModContent.ItemType<Items.Armors.Magic.RedClothHat>(),
                 ModContent.ItemType<Items.Armors.Magic.RedClothTunic>(),
                 ModContent.ItemType<Items.Armors.Magic.RedClothPants>(),

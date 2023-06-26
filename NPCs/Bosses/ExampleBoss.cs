@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.lifeMax = 325000;
             NPC.timeLeft = 22500;
             NPC.value = 600000;
-            despawnHandler = new NPCDespawnHandler(LanguageUtils.GetTextValue("NPCs.ExampleBoss.DespawnHandler"), Color.Cyan, 180);
+            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.ExampleBoss.DespawnHandler"), Color.Cyan, 180);
 
             //You can also specify BossBase specific values here
             introDuration = 120;

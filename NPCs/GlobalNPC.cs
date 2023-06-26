@@ -33,6 +33,7 @@ using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Items.Accessories.Expert;
 using tsorcRevamp.Projectiles.Magic.Runeterra;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs
 {
@@ -480,7 +481,7 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.Golem && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                UsefulFunctions.BroadcastText("Somewhere in the sky a forcefield collapses...", Color.Cyan);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.EmpressOfLight.Forcefield"), Color.Cyan);
             }
             if (npc.boss)
             {
@@ -549,7 +550,7 @@ namespace tsorcRevamp.NPCs
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()) /*|| npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()) gwyn CLOSES the abyss portal!*/
                         {
-                            UsefulFunctions.BroadcastText("The portal to The Abyss widens, and its denizens grow stronger...", Color.Orange);
+                            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.SHM.BossDeath"), Color.Orange);
                         }
 
                         if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)
@@ -2710,7 +2711,7 @@ namespace tsorcRevamp.NPCs
                 {
                     if (despawnText != null)
                     {
-                        UsefulFunctions.BroadcastText("All players have been defeated at least once!", Color.Yellow);
+                        UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Player.AllDied"), Color.Yellow);
                         UsefulFunctions.BroadcastText(despawnText, despawnTextColor);
                     }
                     despawnTime = 240;

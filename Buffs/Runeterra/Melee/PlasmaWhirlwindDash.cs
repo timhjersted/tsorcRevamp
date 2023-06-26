@@ -10,7 +10,6 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
 {
     public class PlasmaWhirlwindDash : ModBuff
     {
-        public Vector2 DashVelocity;
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;
@@ -24,16 +23,9 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
 
             player.immune = true;
 
-            if (player.buffTime[buffIndex] == (int)(PlasmaWhirlwind.DashDuration * 60 * 2))
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Dash") with { Volume = 1f }, player.Center);
-                DashVelocity = player.DirectionTo(player.GetModPlayer<tsorcRevampPlayer>().SweepingBladePosition) * 17;
-                Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaWhirlwindDashHitbox>(), PlasmaWhirlwind.BaseDamage, 0, player.whoAmI);
-                DashHitbox.OriginalCritChance = SteelTempest.CritChance;
-            }
             if (player.buffTime[buffIndex] >= (int)(PlasmaWhirlwind.DashDuration * 60))
             {
-                player.velocity = DashVelocity;
+                player.velocity = player.GetModPlayer<tsorcRevampPlayer>().SweepingBladeVelocity;
             }
             if (player.velocity.X > 0)
             {

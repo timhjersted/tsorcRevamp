@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -7,15 +8,12 @@ namespace tsorcRevamp.Items.Tools
 {
     public class CrystalMagicWeapon : ModItem
     {
+
+        public static int Duration = 60;
+        public static int Cooldown = 120;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(tsorcGlobalItem.BonusDamage3, Duration, Cooldown);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Crystal Magic Weapon");
-            /* Tooltip.SetDefault("Imbues melee weapons with crystalline magic,\n" +
-                                "allowing for incredible magic damage scaling" +
-                                "\nAdds 100% of bonus magic damage" +
-                                "\nLasts 1 minute, 2 minute cooldown" +
-                                "\nNot compatible with other weapon imbues"); */
-
         }
 
         public override void SetDefaults()
@@ -32,7 +30,6 @@ namespace tsorcRevamp.Items.Tools
             Item.useTime = 34;
             Item.useAnimation = 34;
             Item.value = PriceByRarity.Cyan_9;
-
         }
 
         public override void AddRecipes() //recipe/progression subject to change
@@ -50,11 +47,11 @@ namespace tsorcRevamp.Items.Tools
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-            player.AddBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>(), 3600); //60s
+            player.AddBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>(), Duration * 60);
 
             if (!modPlayer.DarkmoonCloak)
             {
-                player.AddBuff(ModContent.BuffType<Buffs.MagicImbueCooldown>(), 7200);
+                player.AddBuff(ModContent.BuffType<Buffs.MagicImbueCooldown>(), Cooldown * 60);
             }
 
             return true;
