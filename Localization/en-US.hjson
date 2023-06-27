@@ -372,7 +372,7 @@ Mods: {
 				}
 
 				SharpeningStation: "{$CommonItemTooltip.Melee.ArmorPenPercent}"
-				GoldenGi: "{$CommonItemTooltip.FlatMeleeDamageBoost}"
+				GoldenGi: "{$CommonItemTooltip.Melee.FlatDmg}"
 				ManaCost1: "Requires "
 				ManaCost2: " mana to cast projectile"
 				AmmoReservationPotion: "{$IncreasedRangedCriticalDamage}"
@@ -7055,8 +7055,8 @@ Mods: {
 					'''
 			}
 
-			ShamanShirt: {
-				DisplayName: Shaman Shirt
+			ShamanCloak: {
+				DisplayName: Shaman Cloak
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
@@ -7860,7 +7860,7 @@ Mods: {
 
 			ShunpoDashCooldown: {
 				DisplayName: Shunpo Dash Cooldown
-				Description: Mods.tsorcRevamp.Buffs.ShunpoDashCooldown.Description
+				Description: You cannot dash again until this runs out
 			}
 		}
 

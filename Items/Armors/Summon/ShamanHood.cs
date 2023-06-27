@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == ModContent.ItemType<ShamanShirt>() && legs.type == ModContent.ItemType<ShamanPants>();
+            return body.type == ModContent.ItemType<ShamanCloak>() && legs.type == ModContent.ItemType<ShamanPants>();
         }
         public override void UpdateArmorSet(Player player)
         {

@@ -7,7 +7,7 @@ using tsorcRevamp.Items.Materials;
 namespace tsorcRevamp.Items.Armors.Summon
 {
     [AutoloadEquip(EquipType.Body)]
-    public class ShamanShirt : ModItem
+    public class ShamanCloak : ModItem
     {
         public static float Dmg = 24f;
         public static int MinionSlots = 1;
