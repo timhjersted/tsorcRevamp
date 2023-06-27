@@ -21,6 +21,7 @@ The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside t
 ⚠️ PROJECT STATUS: BETA
 ------------------------------------------
 The game is fairly polished up to the end of the main story (defeating Attraidies). Development is currently focused on balancing and revamping the sizeable post-Attraidies content, especially the bosses. We recommend waiting to play this third chapter when we're out of beta, unless you'd like to be a part of the journey to 1.0. 
+The mod has been made fully translatable through localization files, if you're interested in making it more accessible to your fellow speakers, please join the discord and ask MarfMaster for details. 
 
 
 ✅ DISCORD

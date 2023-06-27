@@ -13,6 +13,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Placeable;
 using tsorcRevamp.NPCs.Special;
 using tsorcRevamp.UI;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Tiles
 {
@@ -411,7 +412,7 @@ namespace tsorcRevamp.Tiles
             {
                 var player = Main.LocalPlayer;
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/bonfire-lit") with { Volume = 0.2f }, player.Center);
-                UsefulFunctions.BroadcastText("Bonfire lit, spawn point set!", 250, 110, 90);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("UI.BonfireLit"), 250, 110, 90);
 
                 int spawnX = (int)((player.position.X + player.width / 2.0) / 16.0);
                 int spawnY = (int)((player.position.Y + player.height) / 16.0);
@@ -421,7 +422,7 @@ namespace tsorcRevamp.Tiles
                 if (tsorcRevampWorld.LitBonfireList == null || tsorcRevampWorld.LitBonfireList.Count == 0)
                 {
                     tsorcRevampWorld.LitBonfireList = new List<Vector2>();
-                    UsefulFunctions.BroadcastText("Open your minimap to instantly teleport to any bonfire in the world", Color.Orange);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("UI.BonfireTP"), Color.Orange);
                 }
 
                 tsorcRevampWorld.LitBonfireList.Add(new Vector2(i, j));

@@ -5,6 +5,7 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.NPCs.Bosses;
 using Terraria;
 using tsorcRevamp.Projectiles.Summon;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp {
 
@@ -59,7 +60,7 @@ namespace tsorcRevamp {
     public class SuperHardmodeRule : IItemDropRuleCondition, IProvideItemConditionDescription {
         public bool CanDrop(DropAttemptInfo info) => tsorcRevampWorld.SuperHardMode;
         public bool CanShowItemDropInUI() => true;
-        public string GetConditionDescription() => "[c/ff9999:Only drops in Super Hardmode]";
+        public string GetConditionDescription() => LaUtils.GetTextValue("DropRules.SHMOnly");
     }
 
     public class FirstBagRule : IItemDropRuleCondition, IProvideItemConditionDescription {
@@ -70,7 +71,7 @@ namespace tsorcRevamp {
 
         public bool CanShowItemDropInUI() => true;
 
-        public virtual string GetConditionDescription() => "[c/ff9999: Only drops from the first opened specific Bag";
+        public virtual string GetConditionDescription() => LaUtils.GetTextValue("DropRules.FisrtBagOnly");
     }
 
     public class CursedRule : IItemDropRuleCondition, IProvideItemConditionDescription {
@@ -81,7 +82,7 @@ namespace tsorcRevamp {
 
         public bool CanShowItemDropInUI() => true;
 
-        public virtual string GetConditionDescription() => "[c/ff9999: Only drops when the player is a Bearer of the Curse";
+        public virtual string GetConditionDescription() => LaUtils.GetTextValue("DropRules.BotCOnly");
     }
 
     public class FirstBagCursedRule : FirstBagRule {
@@ -90,19 +91,19 @@ namespace tsorcRevamp {
             return modPlayer.BearerOfTheCurse & base.CanDrop(info);
         }
 
-        public override string GetConditionDescription() => "[c/ff9999: Only drops from the first opened specific Bag while the player is a Bearer of the Curse";
+        public override string GetConditionDescription() => LaUtils.GetTextValue("DropRules.FirstBagBotCOnly");
     }
 
     public class AdventureModeRule : IItemDropRuleCondition, IProvideItemConditionDescription {
         public bool CanDrop(DropAttemptInfo info) => ModContent.GetInstance<tsorcRevampConfig>().AdventureMode;
         public bool CanShowItemDropInUI() => true;
-        public string GetConditionDescription() => "[c/ff9999:Only drops in Adventure Mode]";
+        public string GetConditionDescription() => LaUtils.GetTextValue("DropRules.AdvModeOnly");
     }
 
     public class NonAdventureModeRule : IItemDropRuleCondition, IProvideItemConditionDescription {
         public bool CanDrop(DropAttemptInfo info) => !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode;
         public bool CanShowItemDropInUI() => true;
-        public string GetConditionDescription() => "[c/ff9999:Only drops in Non-Adventure Mode]";
+        public string GetConditionDescription() => LaUtils.GetTextValue("DropRules.SandboxModeOnly");
     }
     public class NonExpertFirstKillRule : IItemDropRuleCondition, IProvideItemConditionDescription
     {
@@ -113,6 +114,6 @@ namespace tsorcRevamp {
 
         public bool CanShowItemDropInUI() => true;
 
-        public virtual string GetConditionDescription() => "[c/ff9999: Only drops on the first kill outside of Expert Mode";
+        public virtual string GetConditionDescription() => LaUtils.GetTextValue("DropRules.NonExpertFirstKill");
     }
 }

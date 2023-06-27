@@ -37,6 +37,7 @@ using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Buffs.Summon.WhipDebuffs;
 using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Projectiles.Melee.Runeterra;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp
 {
@@ -56,7 +57,7 @@ namespace tsorcRevamp
                 { 232, 4 } //wooden spike, in case tim decides to use them
             };
 
-            SoulSlot = new UIItemSlot(Vector2.Zero, 52, ItemSlot.Context.InventoryItem, "Dark Souls", null, SoulSlotCondition, DrawSoulSlotBackground, null, null, false, true);
+            SoulSlot = new UIItemSlot(Vector2.Zero, 52, ItemSlot.Context.InventoryItem, LaUtils.GetTextValue("UI.DarkSouls"), null, SoulSlotCondition, DrawSoulSlotBackground, null, null, false, true);
             SoulSlot.BackOpacity = 0.8f;
             SoulSlot.Item = new Item();
             SoulSlot.Item.SetDefaults(0, true);
@@ -430,22 +431,22 @@ namespace tsorcRevamp
                 if (NPC.AnyNPCs(NPCID.LunarTowerSolar))
                 {
                     NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;
-                    UsefulFunctions.BroadcastText("The Solar Pillar returns to full strength...", Color.OrangeRed);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.SolarPillar"), Color.OrangeRed);
                 }
                 if (NPC.AnyNPCs(NPCID.LunarTowerStardust))
                 {
                     NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
-                    UsefulFunctions.BroadcastText("The Stardust Pillar returns to full strength...", Color.Cyan);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.StardustPillar"), Color.Cyan);
                 }
                 if (NPC.AnyNPCs(NPCID.LunarTowerVortex))
                 {
                     NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
-                    UsefulFunctions.BroadcastText("The Vortex Pillar returns to full strength...", Color.Teal);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.VortexPillar"), Color.Teal);
                 }
                 if (NPC.AnyNPCs(NPCID.LunarTowerNebula))
                 {
                     NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
-                    UsefulFunctions.BroadcastText("The Nebula Pillar returns to full strength...", Color.Pink);
+                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.NebulaPillar"), Color.Pink);
                 }
             }
         }

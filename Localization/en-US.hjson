@@ -36,10 +36,11 @@ Mods: {
 			VanityFunction: Also works in vanity slots
 			DragoonGearCompatible: Compatible with Dragoon Boots and Dragoon Gear.
 			BootsDisableThis: Does not work if Hermes Boots or Spectre Boots are equipped.
-			FireDamage: "All fire damage does 2x damage to woody enemies"
+			FireDamage: All fire damage does 2x damage to woody enemies
 			OnFire: On Fire
 			CursedInferno: Cursed Inferno
 			Ichor: Ichor
+			Limited: Your supply of these is finite, so they are never used by Quick Buff
 			NoFallDmg: Grants immunity to fall damage
 			HolyDodge: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
 			TitaniumBonus: Attacking generates a defensive barrier of titanium shards
@@ -50,7 +51,7 @@ Mods: {
 				Shunpo has {$CommonItemTooltip.Cooldown}
 				Hitting enemies after maxing out the defensive barrier reduces Shunpo's current Cooldown
 				'''
-			BonusMagicDmg: "Adds {0}% of bonus magic damage"
+			BonusMagicDmg: Adds {0}% of bonus magic damage
 			UniqueImbue: Not compatible with other weapon imbues
 			LifeRegen: Increases life regeneration by {0}
 			BadDefense: Decreases defense by {0}
@@ -62,7 +63,6 @@ Mods: {
 			StaminaRecovery: Increases stamina recovery speed by {0}%
 			DRStat: Increases damage reduction by {0}%
 			BadDRStat: Decreases damage reduction by {0}%
-			Duration: "{0} seconds duration"
 			Cooldown: "{0} seconds cooldown"
 			CritDmg: Critical strikes deal {0}% more damage
 			LifeThreshold: "If life falls below {0}%: "
@@ -135,9 +135,224 @@ Mods: {
 			}
 		}
 
+		DeathText: {
+			01: The dodgeroll makes you immune to attacks. Mastering it is necessary for survival!
+			02: Glowing green skulls often hold important secrets...
+			03: The dodgeroll keybind can be changed in Controls. Try Left Shift, R or whatever works for you.
+			04: You can dodge mid-air to avoid attacks and reverse your momentum instantly...
+			05: Crystal shards often hint at secrets, chests or hidden paths nearby...
+			06: Using potions during normal combat is often necessary to survive
+			07: Losing souls on death can be disabled in the config
+			08: Enemies in certain dark areas drop Humanity, which can restore HP lost to curses
+			09: Item tooltips often have information vital to your survival...
+			10: Check if any of your items can be upgraded with Dark Souls
+			11: Progression clues can be found on unique items dropped by bosses
+			12: If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction
+			13: Soapstones offer many important hints
+			14: If you go above 100% crit chance, you have a chance to multicrit, allowing you to deal 4 or more times the damage.
+			15: Hitting enemies with the tip of a whip will always result in a crit
+			16: Teal Pressure Pads can only be activated with small projectiles
+			17: Some vanilla recipes have been removed. You must find these items in the world by exploring
+			18: Get a bad modifier on a weapon? Talk to Jade, the Emerald Herald. She can remove it with her Blessing
+			19: You may encounter bosses before you can defeat them. If in doubt, come back when you're stronger
+			20: Play with the Recipe Browser mod to easily see what your loot can be transformed into
+			21: Welcome to the Dark Souls of Terraria
+			22: The Chloranthy Ring massively improves your dodgeroll, allowing superior evasion...
+			23: Teal pressure plates must be hit with a small projectile to activate
+			24: Use a Recipe Browser mod to investigate any item that says it's a "Dark Souls recipe material".
+			25: Remember to dodgeroll
+			26: I am so fucking mad
+			27: Grey Stone Gates cannot be broken and must be opened by a lever or switch
+			WallDeathReason: " was consumed by The Wall of Flesh"
+			BotC1: Bearer of the Curse mode can be disabled at any time...
+			BotC2: Bearer of the Curse mode is intended for experienced players
+			IWantToRemoveThisCaptainObviousShit: Avoid getting hit by enemy attacks
+			TotallyNotMeantToBeToxic: Get Good :)
+			HeavyRoll: Heavy roll you got there!
+			BossDeath1: Don't give up! Some bosses might take several tries to defeat
+			BossDeath2: Certain bosses can be fought earlier than necessary. If you're struggling, try waiting until you're more powerful.
+			DarkCloud: You can't outrun your shadow
+			Tonberry: (O_O;)
+			Marilith: Some powerful attacks can only be avoided by dodgerolling!
+			ChloranthyRingTip: The Chloranthy Ring massively improves your dodgeroll, allowing even more evasion...
+			Tip: "Tip: "
+		}
+
+		Events: {
+			EoC: The Eye sees you!
+			EoW: The Eater of Worlds is ready to feed!
+			EoL: The Empress of Light awakens!
+			LichKing: The Lich King awakens!
+			Hunter: The hunt begins...
+			Rage: The Rage awakens!
+			AncientDemon: What did you expect to find here human?... Your hubris will be your undoing...
+			AncientOolacileDemon: You foolish human... pitiful arrogance...
+			GoblinSummoner1: You're arrogant, Red. You were a fool to come here...
+			GoblinSummoner2: You think you're clever, Red?
+			IceGolemWyvern: !!!
+			IceGolem: !
+			KingSlime: King Slime appears!
+			HeroOfLumelia: "'You killed my brother, Red! ... You've unleashed hell upon this world!' A hero from Lumelia has come seeking justice... "
+			FireLurker: A cursed Fire Lurker appears...
+			RedKnight1: A Red Knight appears...
+			RedKnight2: A Red Knight appears...
+			JungleWyvern: You have disturbed the Ancient Wyvern of the Forgotten City!
+			SeathTheScaleless: Seath the Scaleless rises!
+			WyvernMage: You impress me Red! But this is where your journey ends...
+			SlograAndGaibon: Slogra and Gaibon have risen from the depths!
+			Serris: The Serris Triplets have been enraged!
+			Marilith: default
+			TheMachine: default
+			WaterFiendKraken: The Water Fiend rises!
+			GwynTombVisions: default
+			AbyssPortal: default
+			Gwyn: Gwyn has awoken to bring your journey to its final end...
+			AbysmalOolacileSorcerer: The Abysmal Oolacile Sorcerer shall now disembowel you...
+			Witchking: The Witchking has been waiting for you...
+			Blight: The Blight surfaces from the ocean!
+			Chaos: Chaos has entered this dimension!
+			WyvernMageShadow: The Wyvern Mage has been freed from its cage!
+			DarkCloud: Your shadow self has manifested from your darkest fears...
+			Artorias: Artorias, the Abysswalker arrives to tear you from this plane...
+			BlackKnight: A Black Knight appears from the shadows...
+			SorrowAttraidies: '''[c/D3D3D3:Attraidies:] "See if you can handle this."'''
+			TwinEaters: Twin Eaters surface from the depths!
+			DunlendingAmbush: Ambush!
+			AlienAmbush: Alien life form detected
+			FirebombHollowAmbush: Ambush!
+			Leonhard1: You hear footsteps...
+			HollowAmbush1: Ambush!
+			GoblinAmbush1: Ambush!
+			ShadowMageAmbush: Ambush!
+			BridgeAmbush1: Ambush!
+			LothricAmbush1: Ambush!
+			LothricAmbush2: Ambush!
+			HellkiteDragon: The village is under attack! A Hellkite Dragon has come to feed...
+		}
+
+		UI: {
+			Souls: Souls
+			StaminaUse: "Stamine Use: "
+			14: "14"
+			StaminaRegenReduction:
+				'''
+
+				Natural regen is [c/bb9999:reduced] while in use
+				'''
+			StaminaRegenNullification:
+				'''
+
+				Natural regen is [c/ff9955:disabled] while in use
+				'''
+			PerSecond: / second
+			DarkSouls: Dark Souls
+			Soapstone: If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction
+			BonfireLit: Bonfire lit, spawn point set!
+			BonfireTP: Open your minimap to instantly teleport to any bonfire in the world
+			AdvModeAutoEnabled: Custom map detected. Adventure Mode auto-enabled.
+			AdvModeAutoDisabled: Randomly-generated map detected. Adventure Mode auto-disabled.
+			SelectMarker: Click to select map marker. Click on the map to place a marker.
+			EraseMarkers: Click to begin erasing markers.
+			StopEditMarkers: Click to stop editing markers.
+			ClickToHide: " Click to Hide"
+			ClickToShow: " Click to Show  "
+			UpdateMusic: "Updating Music Mod: "
+			GetMusic: Click here to get the Story of Red Cloud Music Mod!
+			MusicNewUpdate: Music mod update available, click here to download! (Will restart the game!)
+			MusicFail: Music Mod Download Failed, click to retry...
+			AdvMapDownloadProgress: "Adventure Map Download In Progress: "
+			AdvMapUpdated: Adventure Map Update Complete!
+			Bless: Place an item here to bless
+			SelectWorld: Select World Type:
+			TSORCMap: New Story of Red Cloud Adventure Map
+			VanillaMap: New Vanilla Map
+			Back: Back
+			SpawnSet: Spawn point set!
+			SpawnRemoved: Spawn point removed!
+		}
+
+		World: {
+			InitiateTheEnd:
+				'''
+				The portal from The Abyss has closed!
+				The world has been healed. Attraidies' sway over the world has finally ended!
+				'''
+			FinalGuardian:
+				'''
+				You have vanquished the final guardian...
+				The portal from The Abyss remains closed. All is at peace...
+				'''
+			TPToBonfire: Teleport to Bonfire Checkpoint
+			NoTPCombat: Can not teleport while in combat!
+			NoTPBoss: Can not teleport while a boss is alive!
+			AbyssalFissure: Abyssal Fissure
+			DropSouls1: "Dropping "
+			DropsSouls2: souls
+			MonolithLocked:
+				'''
+				The power of this monolith is bound to Attraidies
+				Defeating him and returning here may allow you to release it...
+				'''
+		}
+
+		DropRules: {
+			SHMOnly: "[c/ff9999:Only drops in Super Hardmode]"
+			FirstBagOnly: "[c/ff9999: Only drops from the first opened specific Bag"
+			BotCOnly: "[c/ff9999: Only drops when the player is a Bearer of the Curse"
+			FirstBagBotCOnly: "[c/ff9999: Only drops from the first opened specific Bag while the player is a Bearer of the Curse"
+			AdvModeOnly: "[c/ff9999:Only drops in Adventure Mode]"
+			SandboxModeOnly: "[c/ff9999:Only drops outside ofAdventure Mode]"
+			NonExpertFirstKill: "[c/ff9999: Only drops on the first kill outside of Expert Mode"
+		}
+
+		Quest: {
+			Start: Quest started!
+			Surface: Disqualified: You touched the surface!
+			Teleport: Disqualified: Teleporting is not allowed!
+			Finish: You finished the quest!
+		}
+
+		EoLForcefield: {
+			Grapple: Your grapple strains against the force, but...!
+			Snap: Your grapple suddenly snaps!!
+			Expelled: A strong forcefield expels you from the ruins!
+		}
+
+		BossChecklist: {
+			LeonhardDesc: Explore.
+			SlograAndGaibonName: Slogra and Gaibon
+			SlograAndGaibonDesc: Found in the depths of the Meteor Temple.
+			JungleWyvernDesc: Found in the depths of the Forgotten City.
+			TheRageDesc: Found in the depths of the Hallowed Caverns.
+			TheSorrowDesc: Found in the depths of the Frozen Ocean.
+			WyvernMageDesc: Found high atop a mountain in a great fortress.
+			TheHunterDesc: Found deep below the Desert Ruins.
+			SerrisName: Serris
+			SerrisDesc: ???
+			DeathDesc: ???
+			AttraidiesName: Attraidies
+			AttraidiesDesc: Gather all the Crests in order to craft the Mind Cube.
+			RealAttradiesName: Attraidies (Real)
+			RealAttraidiesDesc: Use the Mindflayer Illusion Relic dropped by Attraidies' illusion.
+			HellkiteDragonDesc: Often sighted roaming the skies above the Village, searching for its next meal.
+			WaterFiendKrakenDesc: Seek out the lihzahrd gate in the Great Chasm.
+			EarthFiendLichDesc: Seek out the lihzahrd gate below the Western Ocean.
+			WitchkingDesc: Found in his lair deep underground, shrouded in extreme darkness.
+			ArtoriasDesc: The Abyss pervades the tunnels east of the Forgotten City.
+			SeathTheScalelessDesc: Seek out the lihzahrd gate below the Eastern Ocean.
+			AbysmalOolacileSorcererDesc: Seek out the lihzahrd gate below the Lihzahrd Temple.
+			FireFiendMarilithDesc: Seek out the lihzahrd gate in the Western Desert.
+			BlightName: Blight
+			BlightDesc: The fissure on the Frozen Ocean churns with the energy of the abyss.
+			DarkCloudName: Dark Cloud
+			DarkCloudDesc: The ancient pyramid grows dark once more.
+			GwynName: Gwyn, Lord of Cinder
+			GwynDesc: Seek the tomb below the Western Ocean.
+		}
+
 		Items: {
 			VanillaItems: {
-				ObsidianSkinPotion: Your supply of these is finite, so they are never used by Quick Buff
+				ObsidianSkinPotion: "{$CommonItemTooltip.Limited}"
 				SuspiciousLookingEye:
 					'''
 					Item is not consumed so that you can retry the fight on defeat
@@ -864,7 +1079,7 @@ Mods: {
 					{$CommonItemTooltip.DRStatBoost}, but drains {1} mana per hit
 					[c/00ffd4:{$CommonItemTooltip.IncreasesMaxManaByPercent@2}]
 					[c/00ffd4:{$CommonItemTooltip.StaminaRegen@3}]
-					Inhibits both natural and artificial mana regen after being hit({$CommonItemTooltip.Duration@4})
+					Inhibits both natural and artificial mana regen after being hit({$CommonItemTooltip.SecondDuration@4})
 					Reduces ranged, magic and summon damage by {5}% multiplicatively
 					'''
 			}
@@ -929,7 +1144,7 @@ Mods: {
 					'''
 					Focuses the user's mana into a protective shield
 					{$CommonItemTooltip.DRStatBoost}, but drains {1} mana per hit
-					Inhibits both natural and artificial mana regen after being hit({$CommonItemTooltip.Duration@2})
+					Inhibits both natural and artificial mana regen after being hit({$CommonItemTooltip.SecondDuration@2})
 					[c/ffbf00:Useful for those who do not specialize in magic]
 					Reduces ranged, magic and summon damage by {3}% multiplicatively
 					'''
@@ -2751,7 +2966,7 @@ Mods: {
 					{$CommonItemTooltip.Summon.MinionSentrySlot@3}
 					{$CommonItemTooltip.Summon.AtkSpeed}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
-					{$CommonItemTooltip.SetBonus}Empowers the Witchking Sword
+					{$CommonItemTooltip.SetBonus}Empowers the Witchking's Sword
 					'''
 			}
 
@@ -2788,11 +3003,11 @@ Mods: {
 				DisplayName: Bloodred Moss Clump
 				Tooltip:
 					'''
-					[c/ffbf00:Heals 30 HP, with only 5 seconds of potion sickness.]
+					[c/ffbf00:{$CommonItemTooltip.RestoresLife}, with only {1} seconds of potion sickness.]
 					[c/ffbf00:Removes bleeding and poisoned.]
 					A supply of these may be essential for exploring some areas.
 					Can still be used to remove poison and bleeding while under the
-					effect of potion sickness. However, it will not heal any HP.
+					effect of potion sickness or being the [c/6d8827:Bearer of the Curse]. However, it will not heal any HP.
 					'''
 			}
 
@@ -3259,9 +3474,9 @@ Mods: {
 				Tooltip:
 					'''
 					Black charcoal-like pine resin
-					Consume to imbue melee weapons with fire for 4 minutes
+					Consume to imbue melee weapons with fire({$CommonItemTooltip.SecondDuration})
 					Particularly effective against woody enemies
-					+10% melee damage
+					{$CommonItemTooltip.MeleeWhipDmg@1}
 					'''
 			}
 
@@ -3403,8 +3618,8 @@ Mods: {
 				DisplayName: Dead Chicken
 				Tooltip:
 					'''
-					Can be cooked at a cooking pot to make 1 Cooked Chicken
-					Cooked chicken heals 100 HP and has 30 seconds of potion cooldown. Wow! Tasty!
+					Can be cooked at a cooking pot
+					Cooked chicken heals {0} HP and inflicts only {1} seconds of potion cooldown. Wow! Tasty!
 					'''
 			}
 
@@ -3794,7 +4009,7 @@ Mods: {
 					Miakoda is an indigenous name that means "Power of the Moon".
 					{$CommonItemTooltip.DamageMultiplier}
 					Crescent Moon Form - Imbues weapons with Crescent Moonlight
-					when you hit a crit ({$CommonItemTooltip.Duration@2}, {$CommonItemTooltip.Cooldown@3})
+					when you hit a crit ({$CommonItemTooltip.SecondDuration@2}, {$CommonItemTooltip.Cooldown@3})
 					{$CommonItemTooltip.DamageMultiplier@1} while weapon imbue is active again
 					Can switch between forms at an altar
 					'''
@@ -3822,7 +4037,7 @@ Mods: {
 					who has vowed to help you find your wife and defeat Attraidies.
 					Miakoda is an indigenous name that means "Power of the Moon".
 					New Moon Form - Imbues weapons with Midas when you hit a crit,
-					boosting enemy coin drops ({$CommonItemTooltip.Duration@3}, {$CommonItemTooltip.Cooldown@4})
+					boosting enemy coin drops ({$CommonItemTooltip.SecondDuration@3}, {$CommonItemTooltip.Cooldown@4})
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}, stacking with the boost
 					While boost is active, gain the following bonuses:
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
@@ -3888,9 +4103,9 @@ Mods: {
 				DisplayName: Chicken Glowing Mushroom Skewer
 				Tooltip:
 					'''
-					Heals 150 HP and applies 30 seconds of Potion Sickness
-					Potion sickness is only 20 seconds with the Philosopher's Stone effect
-					Gives Well Fed buff for 15 minutesWhile the [c/6d8827:Bearer of the Curse] wont be healed by this,
+					{$CommonItemTooltip.RestoresLife} and applies {2} seconds of Potion Sickness
+					Gives Well Fed buff for {$CommonItemTooltip.SecondDuration@1}
+					While the [c/6d8827:Bearer of the Curse] wont be healed by this,
 					they still gain some healing items' other effects such as buffs
 					'''
 			}
@@ -3899,19 +4114,14 @@ Mods: {
 				DisplayName: Chicken Mushroom Skewer
 				Tooltip:
 					'''
-					Heals 125 HP and applies 30 seconds of Potion Sickness
-					Potion sickness is only 25 seconds with the Philosopher's Stone effect
-					Gives Well Fed buff for 10 minutes
+					{$CommonItemTooltip.RestoresLife} and applies {2} seconds of Potion Sickness
+					Gives Well Fed buff for {$CommonItemTooltip.SecondDuration@1}
 					'''
 			}
 
 			CookedChicken: {
 				DisplayName: Cooked Chicken
-				Tooltip:
-					'''
-					Heals 100 HP and applies 30 seconds of Potion Sickness
-					Potion sickness is only 20 seconds with the Philosopher's Stone effect
-					'''
+				Tooltip: Inflicts {0} seconds of Potion Sickness
 			}
 
 			CrimsonPotion: {
@@ -3937,9 +4147,8 @@ Mods: {
 				DisplayName: Glowing Mushroom Skewer
 				Tooltip:
 					'''
-					Heals 65 HP and applies 30 seconds of Potion Sickness
-					Potion sickness is only 15 seconds with the Philosopher's Stone effect
-					Gives Well Fed buff for 5 minutes
+					{$CommonItemTooltip.RestoresLife} and applies {2} seconds of Potion Sickness
+					Gives Well Fed buff for {$CommonItemTooltip.SecondDuration@1}
 					While the [c/6d8827:Bearer of the Curse] wont be healed by this,
 					they still gain some healing items' other effects such as buffs
 					'''
@@ -3947,7 +4156,7 @@ Mods: {
 
 			GreaterRestorationPotion: {
 				DisplayName: Greater Restoration Potion
-				Tooltip: Applies 40 seconds of Potion Sickness
+				Tooltip: Applies {0} seconds of Potion Sickness
 			}
 
 			GreenBlossom: {
@@ -3969,8 +4178,8 @@ Mods: {
 				Tooltip:
 					'''
 					Will make you invincible.
-					Cannot be used again for 60 seconds after wearing off.
-					Your supply of these is finite, so they are never used by Quick Buff
+					Cannot be used again for {0} seconds after wearing off.
+					{$CommonItemTooltip.Limited}
 					'''
 			}
 
@@ -3982,32 +4191,32 @@ Mods: {
 					Gradually restores a small amount of HP
 					Often found near abandoned corpses,
 					as if it were what remains of the soul
-					Restores 90 HP over the course of 12 seconds
-					Inflicts potion sickness
+					{$CommonItemTooltip.RestoresLife}({$CommonItemTooltip.SecondDuration@1})
 					'''
+				Sickness: Inflicts potion sickness({$CommonItemTooltip.SecondDuration})
 			}
 
 			StarlightShard: {
 				DisplayName: Starlight Shard
 				Tooltip:
 					'''
-					Restores 1% of maximum mana per second for 12 seconds
 					Scales with bonus mana regen and mana regen delay penalties,
 					alike to the Cerulean Flask
 					Does not inflict Mana Sickness
 					'''
+				Restoration: Restores {0}% of maximum mana per second for {1} seconds
 			}
 
 			MushroomSkewer: {
 				DisplayName: Mushroom Skewer
 				Tooltip:
 					'''
-					Heals 55 HP and applies 30 seconds of Potion Sickness
-					Potion sickness is only 15 seconds with the Philosopher's Stone effect
-					Gives Well Fed buff for 2 minutes
+					{$CommonItemTooltip.RestoresLife} and applies {2} seconds of Potion Sickness
+					Gives Exquisitely Stuffed buff for {$CommonItemTooltip.SecondDuration@1}
 					While the [c/6d8827:Bearer of the Curse] wont be healed by this,
 					they still gain some healing items' other effects such as buffs
 					'''
+				Sickness: Potion sickness is only {0} with the Philosopher's Stone effect
 			}
 
 			PermanentWellFed: {
@@ -4309,14 +4518,13 @@ Mods: {
 				DisplayName: Radiant Lifegem
 				Tooltip:
 					'''
-
 					Stone made up of crystallized souls
 					Gradually restores HP
 					The dull glimmer of these mysterious
 					stones brightens with the passage of time
-					Restores 140 HP over the course of 14 seconds
-					Inflicts potions sickness
+					{$CommonItemTooltip.RestoresLife}({$CommonItemTooltip.SecondDuration@1})
 					'''
+				Sickness: Inflicts potion sickness({$CommonItemTooltip.SecondDuration})
 			}
 
 			ShockwavePotion: {
@@ -4411,6 +4619,7 @@ Mods: {
 					A mysterious coin formed out of dark souls
 					Used as a currency among certain merchants
 					'''
+				Plural: Soul Coins
 			}
 
 			SoulOfArtorias: {
@@ -4590,7 +4799,7 @@ Mods: {
 					Imbues melee weapons with crystalline magic,
 					allowing for incredible magic damage scaling
 					{$CommonItemTooltip.BonusMagicDmg}
-					{$CommonItemTooltip.Duration@1}, {$CommonItemTooltip.Cooldown@2}
+					{$CommonItemTooltip.SecondDuration@1}, {$CommonItemTooltip.Cooldown@2}
 					{$CommonItemTooltip.UniqueImbue}
 					'''
 			}
@@ -4777,7 +4986,7 @@ Mods: {
 					Imbues melee weapons with powerful magic,
 					allowing for greater magic damage scaling
 					{$CommonItemTooltip.BonusMagicDmg}
-					{$CommonItemTooltip.Duration@1}, {$CommonItemTooltip.Cooldown@2}
+					{$CommonItemTooltip.SecondDuration@1}, {$CommonItemTooltip.Cooldown@2}
 					{$CommonItemTooltip.UniqueImbue}
 					'''
 			}
@@ -4856,7 +5065,7 @@ Mods: {
 					'''
 					A lost scroll for artisans
 					[c/ffbf00:Casts Magic Barrier on the user, which adds {0} defense for {1} seconds]
-					{CommonItemTooltip.Cooldown@2}. {CommonItemTooltip.UniqueBarrier}
+					{$CommonItemTooltip.Cooldown@2}. {$CommonItemTooltip.UniqueBarrier}
 					'''
 			}
 
@@ -4867,7 +5076,7 @@ Mods: {
 					A lost beginner's scroll
 					[c/ffbf00:Casts Magic Shield on the player]
 					[c/ffbf00:{$CommonItemTooltip.IncreasesDefenseBy}
-					{$CommonItemTooltip.Duration@1}]
+					{$CommonItemTooltip.SecondDuration@1}]
 					{$CommonItemToltip.UniqueBarrier}
 					'''
 			}
@@ -4879,7 +5088,7 @@ Mods: {
 					Imbues melee weapons with magic,
 					allowing for weak magic damage scaling
 					{$CommonItemTooltip.BonusMagicDmg}
-					{$CommonItemTooltip.Duration@1}, {$CommonItemTooltip.Cooldown@2}
+					{$CommonItemTooltip.SecondDuration@1}, {$CommonItemTooltip.Cooldown@2}
 					{$CommonItemTooltip.UniqueImbue}
 					'''
 			}
@@ -6442,7 +6651,7 @@ Mods: {
 					[c/32cd32:Scouts Boost] is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@2}
 					Using the weapon with [c/32cd32:Scouts Boost] active passively will slow you down
 					Using it when [c/32cd32:Scouts Boost] is on cooldown will root you briefly
-					[c/32cd32:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.Duration@3}
+					[c/32cd32:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.SecondDuration@3}
 					[c/32cd32:Activated Ability] doubles the movement speed and stamina regeneration boosts
 					'''
 			}
@@ -6470,7 +6679,7 @@ Mods: {
 					[c/32cd32:Scouts Boost] is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@6}
 					Using the weapon with [c/32cd32:Scouts Boost] active passively will slow you down
 					Using it when [c/32cd32:Scouts Boost] is on cooldown will root you briefly
-					[c/32cd32:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.Duration@7}
+					[c/32cd32:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.SecondDuration@7}
 					[c/32cd32:Activated Ability] doubles the movement speed and stamina regeneration boosts
 					'''
 			}
@@ -6505,7 +6714,7 @@ Mods: {
 					[c/32cd32:Scouts Boost] is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@7}
 					Using the weapon with [c/32cd32:Scouts Boost] active passively will slow you down
 					Using it when [c/32cd32:Scouts Boost] is on cooldown will root you briefly
-					[c/32cd32:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.Duration@8}
+					[c/32cd32:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.SecondDuration@8}
 					[c/32cd32:Activated Ability] doubles the movement speed and stamina regeneration boosts
 					'''
 			}
@@ -6573,7 +6782,7 @@ Mods: {
 				Keybind2: " to [c/ff00ff:dash towards the cursor], casting homing flames along the way"
 				Details:
 					'''
-					Using [c/ff00ff:Special Ability] grants you a buff({$CommonItemTooltip.Duration@9}),
+					Using [c/ff00ff:Special Ability] grants you a buff({$CommonItemTooltip.SecondDuration@9}),
 					which will allow you to [c/ff00ff:dash up to 3 times]({$CommonItemTooltip.Cooldown@10})
 					Homing flames spawned by [c/ff00ff:dashing] do not restore mana, [c/ff00ff:Special Ability] costs {11} mana to cast
 					[c/ff7f50:Charm] deals {4}x damage({$CommonItemTooltip.Cooldown@5}) and {6}% max health damage on-hit, up to {7}
@@ -6857,6 +7066,11 @@ Mods: {
 
 			BewitchedTitanite: {
 				DisplayName: Bewitched Titanite
+				Tooltip: ""
+			}
+
+			TheMachineRelicItem: {
+				DisplayName: The Machine Relic Item
 				Tooltip: ""
 			}
 		}
@@ -8186,6 +8400,10 @@ Mods: {
 			EmpressOfLight.Forcefield: Somewhere in the sky a forcefield collapses...
 			SHM.BossDeath: The portal to The Abyss widens, and its denizens grow stronger...
 			Player.AllDied: All players have been defeated at least once!
+			SolarPillar: The Solar Pillar returns to full strength...
+			StardustPillar: The Stardust Pillar returns to full strength...
+			VortexPillar: The Vortex Pillar returns to full strength...
+			NebulaPillar: The Nebula Pillar returns to full strength...
 
 			AncientDemon: {
 				DisplayName: Ancient Demon
@@ -8544,39 +8762,47 @@ Mods: {
 			ParasyticWormHead.DisplayName: Parasytic Worm
 			ParasyticWormTail.DisplayName: Parasytic Worm
 			Bonfirefly.DisplayName: Bonfirefly
+
 			AbandonedStump: {
 				DisplayName: Abandoned Stump
-				BestiaryDescription: "Stumped on what to write for this tbh"
-				GivenName1: "???"
-				GivenName2: "Abandoned Stump"
+				BestiaryDescription: Stumped on what to write for this tbh
+				GivenName1: ???
+				GivenName2: Abandoned Stump
 			}
+
 			Archdeacon.DisplayName: Archdeacon
 			ArmoredWraith.DisplayName: Unarmored Wraith
+
 			Assassin: {
 				DisplayName: Assassin
-				Track: "An assassin is tracking your position..."
-				Draw: "You hear a bow draw..."
-				Steps: "You hear foot steps..."
-				Hunt: "You are being hunted..."
+				Track: An assassin is tracking your position...
+				Draw: You hear a bow draw...
+				Steps: You hear foot steps...
+				Hunt: You are being hunted...
 			}
+
 			AttraidiesIllusion: {
 				DisplayName: Attraidies Illusion
-				Death: "The Attraidies Illusion has been defeated..."
+				Death: The Attraidies Illusion has been defeated...
 			}
+
 			AttraidiesManifestation: {
 				DisplayName: Attraidies Manifestation
-				Death: "The Attraidies Manifestation has been vanquished..."
+				Death: The Attraidies Manifestation has been vanquished...
 			}
+
 			BarrowWight.DisplayName: Barrow Wight
 			BasiliskShifter.DisplayName: Basilisk Shifter
 			BasiliskWalker.DisplayName: Basilisk Walker
 			BlackKnight.DisplayName: Black Knight
 			CloudBat.DisplayName: Cloud Bat
 			CosmicCrystalLizard.DisplayName: Cosmic Crystal Lizard
+
 			CrazedDemonSpirit: {
 				DisplayName: Crazed Demon Spirit
-				Death: "A lost spirit has been freed from its curse..."
+				Death: A lost spirit has been freed from its curse...
 			}
+
 			DarkElfMage.DisplayName: Dark Elf Mage
 			DemonElemental.DisplayName: Demon Elemental
 			DemonSpirit.DisplayName: Demon Spirit
@@ -8598,32 +8824,38 @@ Mods: {
 			HollowSoldier.DisplayName: Hollow Soldier
 			HollowWarrior.DisplayName: Hollow Warrior
 			HumanityPhantom.DisplayName: Humanity Phantom
+
 			JungleSentree: {
 				DisplayName: Jungle Sentree
-				GivenName1: "???"
-				GivenName2: "Jungle Sentree"
+				GivenName1: ???
+				GivenName2: Jungle Sentree
 			}
+
 			JungleWyvernJuvenileBody.DisplayName: Jungle Wyvern Juvenile
 			JungleWyvernJuvenileBody2.DisplayName: Jungle Wyvern Juvenile
 			JungleWyvernJuvenileBody3.DisplayName: Jungle Wyvern Juvenile
 			JungleWyvernJuvenileHead.DisplayName: Jungle Wyvern Juvenile
 			JungleWyvernJuvenileLegs.DisplayName: Jungle Wyvern Juvenile
 			JungleWyvernJuvenileTail.DisplayName: Jungle Wyvern Juvenile
+
 			LivingShroomThief: {
 				DisplayName: Living Shroom Thief
-				GivenName1: "???"
-				GivenName2: "Fungi Felon"
+				GivenName1: ???
+				GivenName2: Fungi Felon
 			}
+
 			LothricBlackKnight.DisplayName: Lothric Black Knight
 			LothricKnight.DisplayName: Lothric Knight
 			LothricSpearKnight.DisplayName: Lothric Spear Knight
 			ManHunter.DisplayName: Man Hunter
 			MarilithSeeker.DisplayName: Marilith Seeker
 			MarilithSpiritTwin.DisplayName: Marilith Spirit Twin
+
 			MindflayerIllusion: {
 				DisplayName: Mindflayer Illusion
-				Destroy: "Hahahahaha! I'm going to destroy you, Red..."
+				Destroy: Hahahahaha! I'm going to destroy you, Red...
 			}
+
 			MindflayerKingServant.DisplayName: Mindflayer King Servant
 			MindflayerServant.DisplayName: Mindflayer Servant
 			MutantToad.DisplayName: Mutant Toad
@@ -8634,17 +8866,16 @@ Mods: {
 			PrimeLaserProbe.DisplayName: Laser Probe
 			QuaraHydromancer.DisplayName: Quara Hydromancer
 			RedCloudHunter.DisplayName: Red Cloud Hunter
+
 			RedKnight: {
 				DisplayName: Red Knight
-				DepsawnHandler: "The Red Knight has slain you..."
-			}
-			ResentfulSeedling.DisplayName: Resentful Seedling
-			Weakness: "Weakness!"
-			WeakSpot: "Weak spot!"
-			RingedKnight: {
-				DisplayName: Ringed Knight
+				DepsawnHandler: The Red Knight has slain you...
 			}
 
+			ResentfulSeedling.DisplayName: Resentful Seedling
+			Weakness: Weakness!
+			WeakSpot: Weak spot!
+			RingedKnight.DisplayName: Ringed Knight
 			ShadowMage.DisplayName: Shadow Mage
 			SnowOwl.DisplayName: Snow Owl
 			StoneGolem.DisplayName: Stone Golem

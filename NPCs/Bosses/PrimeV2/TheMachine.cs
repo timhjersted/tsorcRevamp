@@ -14,6 +14,8 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Placeable.Relics;
+using tsorcRevamp.Items.Placeable.Trophies;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
@@ -890,6 +892,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofFright, 1, 20, 40));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.SkeletronPrimeMask, 7));
             npcLoot.Add(notExpertCondition);
+            npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<TheMachineRelicItem>())); 
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheMachineTrophy>(), 10));
         }
 
         public override void BossLoot(ref string name, ref int potionType)

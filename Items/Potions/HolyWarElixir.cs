@@ -1,15 +1,17 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Potions
 {
     class HolyWarElixir : ModItem
     {
+        public static int Duration = 10;
+        public static int Cooldown = 60;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Cooldown);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Will make you invincible.\nCannot be used again for 60 seconds after wearing off.\n" +
-                "Your supply of these is finite, so they are never used by Quick Buff"); */
         }
 
         public override void SetDefaults()
@@ -27,7 +29,7 @@ namespace tsorcRevamp.Items.Potions
             Item.value = 0;
             Item.width = 14;
             Item.buffType = ModContent.BuffType<Buffs.Invincible>();
-            Item.buffTime = 600;
+            Item.buffTime = Duration * 60;
         }
 
         public override bool CanUseItem(Player player)
@@ -41,7 +43,7 @@ namespace tsorcRevamp.Items.Potions
 
         public override bool? UseItem(Player player)
         {
-            player.AddBuff(ModContent.BuffType<Buffs.ElixirCooldown>(), 4200);
+            player.AddBuff(ModContent.BuffType<Buffs.ElixirCooldown>(), (Cooldown + Duration) * 60);
             return base.UseItem(player);
         }
     }

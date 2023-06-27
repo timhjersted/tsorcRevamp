@@ -8,10 +8,10 @@ namespace tsorcRevamp.Items.Potions
 {
     class HealingElixir : ModItem
     {
+        public static int Duration = 10;
+        public static int Cooldown = 20;
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Heals the player of a multitude of debuffs" +
-                                "\nGrants the rapid healing buff"); */
         }
         public override void SetDefaults()
         {
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Potions
             Item.rare = ItemRarityID.LightRed;
             Item.value = 1000;
             Item.buffType = BuffID.RapidHealing; // If deemed too strong, we can make our own slightly weaker regen buff, but these are pretty rare.
-            Item.buffTime = 600; // 10 seconds = 30HP healed every 10 seconds, but can be used in parallel with heals that cause potion sickness.
+            Item.buffTime = Duration * 60; // 10 seconds = 30HP healed every 10 seconds, but can be used in parallel with heals that cause potion sickness.
         }
 
         public override bool CanUseItem(Player player)
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Potions
         }
         public override bool? UseItem(Player player)
         {
-            player.AddBuff(ModContent.BuffType<Buffs.HealingElixirCooldown>(), 1200); //20s
+            player.AddBuff(ModContent.BuffType<Buffs.HealingElixirCooldown>(), Cooldown * 60);
             int buffIndex = 0;
 
             foreach (int buffType in player.buffType)
@@ -56,6 +56,7 @@ namespace tsorcRevamp.Items.Potions
                     || (buffType == BuffID.Slow)
                     || (buffType == BuffID.Weak)
                     || (buffType == BuffID.CursedInferno)
+                    || (buffType == BuffID.Ichor)
                     )
                 {
                     player.buffTime[buffIndex] = 0;

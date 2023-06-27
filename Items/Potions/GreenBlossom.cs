@@ -7,6 +7,7 @@ namespace tsorcRevamp.Items.Potions
     public class GreenBlossom : ModItem
     {
         public static float StaminaRegen = 30f;
+        public static int Duration = 240;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StaminaRegen);
         public override void SetStaticDefaults()
         {
@@ -26,7 +27,7 @@ namespace tsorcRevamp.Items.Potions
             Item.rare = ItemRarityID.Blue;
             Item.value = 5000;
             Item.buffType = ModContent.BuffType<Buffs.GreenBlossom>();
-            Item.buffTime = 14400;
+            Item.buffTime = Duration * 60;
         }
     }
 }

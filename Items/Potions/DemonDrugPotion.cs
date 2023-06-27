@@ -9,12 +9,10 @@ namespace tsorcRevamp.Items.Potions
     {
         public static float DmgMultiplier = 22f;
         public static int BadDefense = 15;
+        public static int Duration = 480;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMultiplier, BadDefense);
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Demon Drug");
-            /* Tooltip.SetDefault("Multiplies damage by 22%, lowers defense by 15\n" +
-                               "Does not stack with Armor Drug, Strength, or Battlefront Potions."); */
         }
 
         public override void SetDefaults()
@@ -31,7 +29,7 @@ namespace tsorcRevamp.Items.Potions
             Item.rare = ItemRarityID.Blue;
             Item.value = 300000;
             Item.buffType = ModContent.BuffType<Buffs.DemonDrug>();
-            Item.buffTime = 28800;
+            Item.buffTime = Duration * 60;
         }
         public override bool? UseItem(Player player)
         {

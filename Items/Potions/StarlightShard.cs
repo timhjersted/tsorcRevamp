@@ -1,7 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Humanizer;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
@@ -10,6 +13,8 @@ namespace tsorcRevamp.Items.Potions
 {
     class StarlightShard : ModItem
     {
+        public static float BaseDuration = 12f;
+        public static float BaseRestorationPercent = 1f;
         public override void SetStaticDefaults()
         {
         }
@@ -103,10 +108,10 @@ namespace tsorcRevamp.Items.Potions
                 }
                 if (player.manaRegenBuff)
                 {
-                    player.AddBuff(ModContent.BuffType<Buffs.StarlightShardRestoration>(), (int)(12f * 60f * (1.5f + player.manaRegenDelayBonus)));
+                    player.AddBuff(ModContent.BuffType<Buffs.StarlightShardRestoration>(), (int)(BaseDuration * 60f * (1.5f + player.manaRegenDelayBonus)));
                 } else
                 {
-                    player.AddBuff(ModContent.BuffType<Buffs.StarlightShardRestoration>(), (int)(12f * 60f * (1f + player.manaRegenDelayBonus)));
+                    player.AddBuff(ModContent.BuffType<Buffs.StarlightShardRestoration>(), (int)(BaseDuration * 60f * (1f + player.manaRegenDelayBonus)));
                 }
 
                 //if (Main.mouseItem == null) // Not sure why but seems like it's not null if you're using something
@@ -119,6 +124,17 @@ namespace tsorcRevamp.Items.Potions
                 if (Main.mouseItem.stack == 1) Main.mouseItem.TurnToAir();
                 else Main.mouseItem.stack--;
                 //}
+            }
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            Player player = Main.LocalPlayer;
+            float RestorationPercentPerSecond = BaseRestorationPercent * (1f + ((float)player.manaRegenBonus / 10f));
+            int RestorationDuration = (int)(BaseDuration * ((player.manaRegenBuff ? 1.5f : 1f) + player.manaRegenDelayBonus));
+            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+            if (ttindex != -1)
+            {
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "Formatting", Language.GetTextValue("Mods.tsorcRevamp.Items.StarlightShard.Restoration").FormatWith(RestorationPercentPerSecond, RestorationDuration)));
             }
         }
 

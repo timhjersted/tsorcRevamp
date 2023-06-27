@@ -106,11 +106,11 @@ namespace tsorcRevamp.Items.BossItems
                 }
                 if (keys[index].Type == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>())
                 {
-                    selectedBoss = Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.Attradies1");
+                    selectedBoss = Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.Attraidies1");
                 }
                 if (keys[index].Type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())
                 {
-                    selectedBoss = Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.Attradies2");
+                    selectedBoss = Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.Attraidies2");
                 }
 
                 UsefulFunctions.BroadcastText(Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.Selected") + selectedBoss);

@@ -19,6 +19,8 @@ using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Accessories.Ranged;
 using tsorcRevamp.Items.Armors.Melee;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp
 {
@@ -284,33 +286,33 @@ namespace tsorcRevamp
         public static List<string> DeathTextList
 
          = new List<string>() {
-             "The dodgeroll makes you immune to attacks. Mastering it is necessary for survival!",
-             "Glowing green skulls often hold important secrets...",
-             "The dodgeroll keybind can be changed in Controls. Try Left Shift, R or whatever works for you.",
-             "You can dodge mid-air to avoid attacks and reverse your momentum instantly...",
-             "Crystal shards often hint at secrets, chests or hidden paths nearby...",
-             "Using potions during normal combat is often necessary to survive",
-             "Losing souls on death can be disabled in the config",
-             "Enemies in certain dark areas drop Humanity, which can restore HP lost to curses",
-             "Item tooltips often have information vital to your survival...",
-             "Check if any of your items can be upgraded with Dark Souls",
-             "Progression clues can be found on unique items dropped by bosses",
-             "If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction",
-             "Signs offer many important hints",
-             "If you go above 100% crit chance, you have a chance to multicrit, allowing you to deal 4 or more times the damage.",
-             "Hitting enemies with the tip of a whip will always result in a crit",
-             "Teal Pressure Pads can only be activated with ranged attacks",
-             "Some vanilla recipes have been removed. You must find these items in the world by exploring",
-             "Get a bad modifier on a weapon? Talk to Jade, the Emerald Herald. She can remove it with her Blessing",
-             //"Grey Stone Gates cannot be broken and must be opened by a lever or switch",
-             "You may encounter bosses before you can defeat them. If in doubt, come back when you're stronger",
-             "Play with the Recipe Browser mod to easily see what your loot can be transformed into",
-             "Welcome to the Dark Souls of Terraria",
-             "The Chloranthy Ring massively improves your dodgeroll, allowing superior evasion...",
-             "Teal pressure plates must be hit with a ranged weapon to activate",
-             "Use a Recipe Browser mod to investigate any item that says it's a \"Dark Souls recipe material\".",
-             "Remember to dodgeroll",
-             "I am so fucking mad"
+             LaUtils.GetTextValue("DeathText.01"),
+             LaUtils.GetTextValue("DeathText.02"),
+             LaUtils.GetTextValue("DeathText.03"),
+             LaUtils.GetTextValue("DeathText.04"),
+             LaUtils.GetTextValue("DeathText.05"),
+             LaUtils.GetTextValue("DeathText.06"),
+             LaUtils.GetTextValue("DeathText.07"),
+             LaUtils.GetTextValue("DeathText.08"),
+             LaUtils.GetTextValue("DeathText.09"),
+             LaUtils.GetTextValue("DeathText.10"),
+             LaUtils.GetTextValue("DeathText.11"),
+             LaUtils.GetTextValue("DeathText.12"),
+             LaUtils.GetTextValue("DeathText.13"),
+             LaUtils.GetTextValue("DeathText.14"),
+             LaUtils.GetTextValue("DeathText.15"),
+             LaUtils.GetTextValue("DeathText.16"),
+             LaUtils.GetTextValue("DeathText.17"),
+             LaUtils.GetTextValue("DeathText.18"),
+             LaUtils.GetTextValue("DeathText.19"),
+             LaUtils.GetTextValue("DeathText.20"),
+             LaUtils.GetTextValue("DeathText.21"),
+             LaUtils.GetTextValue("DeathText.22"),
+             LaUtils.GetTextValue("DeathText.23"),
+             LaUtils.GetTextValue("DeathText.24"),
+             LaUtils.GetTextValue("DeathText.25"),
+             LaUtils.GetTextValue("DeathText.26"),
+             LaUtils.GetTextValue("DeathText.27")
             };
 
         public override void ResetEffects()
@@ -763,7 +765,7 @@ namespace tsorcRevamp
             //64x32 rectangle to start the quest
             if (Collision.CheckAABBvAABBCollision(Player.position, new Vector2(Player.width, Player.height), new Vector2(72, 492) * 16, new Vector2(64, 32) * 16) && !startedQuest) {
                 startedQuest = true;
-                Main.NewText("Quest started!");
+                Main.NewText(LaUtils.GetTextValue("Quest.Start"));
             }
             if (Player.whoAmI != Main.myPlayer)
                 return;
@@ -782,7 +784,7 @@ namespace tsorcRevamp
 
             if (touchedSurface) {
                 startedQuest = false;
-                Main.NewText("Disqualified: You touched the surface!");
+                Main.NewText(LaUtils.GetTextValue("Quest.Surface"));
             }
 
             //teleporting through a one block thick wall horizontally with a
@@ -794,12 +796,12 @@ namespace tsorcRevamp
             //just dont do that, i guess? its kinda hard anyway
             if (Vector2.Distance(Player.OldPos(1), Player.position) > 36f) {
                 startedQuest = false;
-                Main.NewText("Disqualified: Teleporting is not allowed!");
+                Main.NewText(LaUtils.GetTextValue("Quest.Teleport"));
             }
 
             //{7909, 1081} is the underwater observatory's top left corner, and {320, 119} is its rectangular size
             if (Collision.CheckAABBvAABBCollision(Player.position, new Vector2(Player.width, Player.height), new Vector2(7909, 1081) * 16, new Vector2(320, 119) * 16)) {
-                Main.NewText("You finished the quest!");
+                Main.NewText(LaUtils.GetTextValue("Quest.Finish"));
                 Player.QuickSpawnItem(Player.GetSource_GiftOrReward(), ItemID.RodofDiscord);
                 finishedQuest = true;
             }
@@ -875,14 +877,14 @@ namespace tsorcRevamp
                                     FieldTimer++;
                                     if (FieldTimer == 1)
                                     {
-                                        UsefulFunctions.BroadcastText("Your grapple strains against the force, but...!", Color.Orange);
+                                        UsefulFunctions.BroadcastText(LaUtils.GetTextValue("EoLForcefield.Grapple"), Color.Orange);
                                         TextCooldown = 350;
                                     }
                                     if (FieldTimer >= 340)
                                     {
                                         Player.velocity += new Vector2(0, -15);
                                         Player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 30);
-                                        UsefulFunctions.BroadcastText("Your grapple suddenly snaps!!", Color.Red);
+                                        UsefulFunctions.BroadcastText(LaUtils.GetTextValue("EoLForceField.Snap"), Color.Red);
                                     }
                                 }
                             }
@@ -890,7 +892,7 @@ namespace tsorcRevamp
                             Player.velocity += UsefulFunctions.Aim(new Vector2(4484, 355) * 16, Player.Center, 20);
                             if (TextCooldown <= 0)
                             {
-                                UsefulFunctions.BroadcastText("A strong forcefield expels you from the ruins!", Color.Purple);
+                                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("EoLForcefield.Expelled"), Color.Purple);
                                 TextCooldown = 240;
                             }
                         }
@@ -946,7 +948,7 @@ namespace tsorcRevamp
                 {
                     CombatText.NewText(Player.Hitbox, CombatText.DamagedFriendly, 999999999, true);
                 }
-                Player.KillMe(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(Player.name + " was consumed by The Wall."), 999999999, 1);
+                Player.KillMe(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(Player.name + LaUtils.GetTextValue("DeathText.WallDeathReason")), 999999999, 1);
             }
 
             if (!Player.HasBuff(ModContent.BuffType<CurseBuildup>()))
@@ -986,22 +988,22 @@ namespace tsorcRevamp
                 #region Lifegem Healing and Starlight Shard Restoration
 
 
-                if (LifegemHealing) // 90 hp over 12 seconds
+                if (LifegemHealing)
                 {
                     healingTimer++;
 
-                    if (healingTimer == 8)
+                    if (healingTimer == Lifegem.HealingDivisor)
                     {
                         Player.statLife += 1;
                         healingTimer = 0;
                     }
                 }
 
-                if (RadiantLifegemHealing) // 140 hp over 14 seconds
+                if (RadiantLifegemHealing)
                 {
                     healingTimer++;
 
-                    if (healingTimer == 6)
+                    if (healingTimer == RadiantLifegem.HealingDivisor)
                     {
                         Player.statLife += 1;
                         healingTimer = 0;
@@ -1015,7 +1017,7 @@ namespace tsorcRevamp
 
                 if (StarlightShardRestoration) //Restores 1% of maximum mana over 12 seconds by default
                 {
-                    restorationTimer += (float)Player.statManaMax2 / 6000f * (1f + ((float)Player.manaRegenBonus / 10f)); //1% of maximum mana per second, since there are 60 ticks per second, manaregenbonuses are usually in the double digits so this is insane scaling
+                    restorationTimer += (float)Player.statManaMax2 / (100f * 60f) * (1f + ((float)Player.manaRegenBonus / 10f)); //1% of maximum mana per second, since there are 60 ticks per second, manaregenbonuses are usually in the double digits so this is insane scaling
 
                     if (restorationTimer >= 10f)
                     {
@@ -1551,11 +1553,11 @@ namespace tsorcRevamp
             {
                 if (Main.rand.NextBool())
                 {
-                    text = "Bearer of the Curse mode can be disabled at any time...";
+                    text = LaUtils.GetTextValue("DeathText.BotC1");
                 }
                 else
                 {
-                    text = "Bearer of the Curse mode is intended for experienced players";
+                    text = LaUtils.GetTextValue("DeathText.BotC2");
                 }
             }
 
@@ -1563,11 +1565,11 @@ namespace tsorcRevamp
             {
                 if (Main.rand.NextBool(20))
                 {
-                    text = "Avoid getting hit by enemy attacks";
+                    text = LaUtils.GetTextValue("DeathText.IWantToRemoveThisCaptainObviousShit");
                 }
                 if (Main.rand.NextBool(100))
                 {
-                    text = "Get Good :)";
+                    text = LaUtils.GetTextValue("DeathText.TotallyNotMenatToBeToxic");
                 }
             }
 
@@ -1575,7 +1577,7 @@ namespace tsorcRevamp
             {
                 if (Main.rand.NextBool(10))
                 {
-                    text = "Heavy roll you got there!";
+                    text = LaUtils.GetTextValue("DeathText.HeavyRoll");
                 }
             }
 
@@ -1594,7 +1596,7 @@ namespace tsorcRevamp
             {
                 if (Main.rand.NextBool())
                 {
-                    text = "Don't give up! Some bosses might take several tries to defeat";
+                    text = LaUtils.GetTextValue("DeathText.BossDeath1");
                 }
                 else if (Main.rand.NextBool() && (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>() || 
                     Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.SpazmatismV2>() || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Cataluminance>()
@@ -1602,12 +1604,12 @@ namespace tsorcRevamp
                     || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()
                     || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>()))
                 {
-                    text = "Certain bosses can be fought earlier than necessary. If you're struggling, try waiting until you're more powerful.";
+                    text = LaUtils.GetTextValue("DeathText.BossDeath2");
                 }
 
                 if (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>())
                 {
-                    text = "You can't outrun your shadow";
+                    text = LaUtils.GetTextValue("DeathText.DarkCloud");
                 }
 
                 //If you want to add custom text for other bosses, stick it here using the line above as a template
@@ -1615,14 +1617,14 @@ namespace tsorcRevamp
 
             if (projectile != null && projectile.type == ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>() && projectile.damage > 999)
             {
-                text = "(O_O;)";
+                text = LaUtils.GetTextValue("DeathText.Tonberry");
             }
 
             if (projectile != null && projectile.type == ModContent.ProjectileType<Projectiles.Enemy.Marilith.CataclysmicFirestorm>())
             {                
                 if (Main.rand.NextBool())
                 {
-                    text = "Some powerful attacks can only be avoided by dodgerolling!";
+                    text = LaUtils.GetTextValue("DeathText.Marilith");
                 }
                 else
                 {
@@ -1637,12 +1639,12 @@ namespace tsorcRevamp
                     }
                     if (!hasRing)
                     {
-                        text = "The Chloranthy Ring massively improves your dodgeroll, allowing even more evasion...";
+                        text = LaUtils.GetTextValue("DeathText.ChloranthyRingTip");
                     }
                 }
             }
 
-            return "Tip: " + text;
+            return LaUtils.GetTextValue("DeathText.Tip") + text;
         }
 
         public override void UpdateDead()

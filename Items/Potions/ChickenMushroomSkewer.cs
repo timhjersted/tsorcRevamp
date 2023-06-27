@@ -1,5 +1,8 @@
-﻿using Terraria;
+﻿using Humanizer;
+using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -7,11 +10,13 @@ namespace tsorcRevamp.Items.Potions
 {
     class ChickenMushroomSkewer : ModItem
     {
+        public static int Healing = 125;
+        public static int BaseSickness = 30;
+        public static int ExquisitelyStuffedDuration = 600;
+        public static int PhilosophersStoneEfficiency = 3;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Healing, ExquisitelyStuffedDuration, BaseSickness);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Heals 125 HP and applies 30 seconds of Potion Sickness\n"
-                + "Potion sickness is only 25 seconds with the Philosopher's Stone effect\n"
-                + "Gives Well Fed buff for 10 minutes"); */
         }
 
         public override void SetDefaults()
@@ -42,18 +47,30 @@ namespace tsorcRevamp.Items.Potions
         {
             if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                player.statLife += 125;
+                player.statLife += Healing;
                 if (player.statLife > player.statLifeMax2)
                 {
                     player.statLife = player.statLifeMax2;
                 }
-                player.HealEffect(125, true);
-                player.AddBuff(BuffID.PotionSickness, player.pStone ? 1200 : 1800);
+                player.HealEffect(Healing, true);
+                player.AddBuff(BuffID.PotionSickness, player.pStone ? BaseSickness * 60 / 4 * 3 / PhilosophersStoneEfficiency : BaseSickness * 60);
             }
-            player.AddBuff(BuffID.WellFed, 36000); //10 min
+            player.AddBuff(BuffID.WellFed3, ExquisitelyStuffedDuration * 60);
             return true;
         }
-
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            int Sickness = BaseSickness;
+            if (Main.LocalPlayer.pStone)
+            {
+                Sickness = BaseSickness / 4 * 3 / PhilosophersStoneEfficiency;
+            }
+            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+            if (ttindex != -1)
+            {
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Formatting", Language.GetTextValue("Mods.tsorcRevamp.Items.MushroomSkewer.Sickness").FormatWith(Sickness)));
+            }
+        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

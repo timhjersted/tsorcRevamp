@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -7,9 +8,11 @@ namespace tsorcRevamp.Items.Potions
 {
     class GreaterRestorationPotion : ModItem
     {
+        public static int Healing = 125;
+        public static int Sickness = 40;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Sickness);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Applies 40 seconds of Potion Sickness");
         }
         public override void SetDefaults()
         {
@@ -20,7 +23,7 @@ namespace tsorcRevamp.Items.Potions
             Item.useTime = 15;
             Item.maxStack = 9999;
             Item.potion = true;
-            Item.healLife = 125;
+            Item.healLife = Healing;
             Item.rare = ItemRarityID.Green;
             Item.consumable = true;
             Item.value = 10000;
@@ -28,12 +31,12 @@ namespace tsorcRevamp.Items.Potions
         }
         public override void GetHealLife(Player player, bool quickHeal, ref int healValue)
         {
-            healValue = 125;
+            healValue = Healing;
         }
         public override bool? UseItem(Player player)
         {
             player.ClearBuff(BuffID.PotionSickness);
-            player.AddBuff(BuffID.PotionSickness, 2400);
+            player.AddBuff(BuffID.PotionSickness, Sickness * 60);
             return base.UseItem(player);
         }
         public override void AddRecipes()

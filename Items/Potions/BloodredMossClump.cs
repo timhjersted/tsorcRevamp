@@ -1,12 +1,15 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Potions
 {
     class BloodredMossClump : ModItem
     {
-
+        public static int Healing = 30;
+        public static int Sickness = 5;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Healing, Sickness);
         public override void SetStaticDefaults()
         {
         }
@@ -40,13 +43,13 @@ namespace tsorcRevamp.Items.Potions
 
             if (!player.HasBuff(BuffID.PotionSickness) && !player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                player.statLife += 30;
+                player.statLife += Healing;
                 if (player.statLife > player.statLifeMax2)
                 {
                     player.statLife = player.statLifeMax2;
                 }
-                player.HealEffect(30, true);
-                player.AddBuff(BuffID.PotionSickness, 300);
+                player.HealEffect(Healing, true);
+                player.AddBuff(BuffID.PotionSickness, player.pStone ? Sickness * 60 / 4 * 3 : Sickness * 60);
             }
             return true;
         }

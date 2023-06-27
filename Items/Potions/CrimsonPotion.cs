@@ -6,9 +6,9 @@ namespace tsorcRevamp.Items.Potions
 {
     public class CrimsonPotion : ModItem
     {
+        public static int Duration = 300;
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Enemies within a ten tile radius are inflicted with \nCrimson Burn, which quickly drains life");
         }
         public override void SetDefaults()
         {
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Potions
             Item.rare = ItemRarityID.Blue;
             Item.value = 1000;
             Item.buffType = ModContent.BuffType<Buffs.CrimsonDrain>();
-            Item.buffTime = 18000;
+            Item.buffTime = Duration * 60;
         }
         public override void AddRecipes()
         {

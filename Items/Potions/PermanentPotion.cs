@@ -9,6 +9,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs;
+using tsorcRevamp.Items.VanillaItems;
 
 namespace tsorcRevamp.Items.Potions.PermanentPotions
 {
@@ -469,8 +470,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.meleeEnchant = 8;
-            player.GetDamage(DamageClass.Melee) += ApplyScaling(0.1f);
-            player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(0.1f);
+            player.GetDamage(DamageClass.Melee) += ApplyScaling(Flasks.PoisonFlaskDMG / 100f);
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(Flasks.PoisonFlaskDMG / 100f);
         }
     }
 
@@ -495,8 +496,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.meleeEnchant = 4;
-            player.GetDamage(DamageClass.Melee) += ApplyScaling(0.15f);
-            player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(0.15f);
+            player.GetDamage(DamageClass.Melee) += ApplyScaling(Flasks.GoldFlaskDMG / 100f);
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(Flasks.GoldFlaskDMG / 100f);
         }
     }
 
@@ -521,8 +522,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.meleeEnchant = 7;
-            player.GetDamage(DamageClass.Melee) += ApplyScaling(0.17f);
-            player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(0.17f);
+            player.GetDamage(DamageClass.Melee) += ApplyScaling(Flasks.ConfettiFlaskDMG / 100f);
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(Flasks.ConfettiFlaskDMG / 100f);
         }
     }
 
@@ -547,8 +548,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.meleeEnchant = 3;
-            player.GetDamage(DamageClass.Melee) += ApplyScaling(0.12f);
-            player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(0.12f);
+            player.GetDamage(DamageClass.Melee) += ApplyScaling(Flasks.FireFlaskDMG / 100f);
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(Flasks.FireFlaskDMG / 100f);
         }
     }
 
@@ -573,8 +574,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.meleeEnchant = 2;
-            player.GetDamage(DamageClass.Melee) += ApplyScaling(0.16f);
-            player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(0.16f);
+            player.GetDamage(DamageClass.Melee) += ApplyScaling(Flasks.CursedFlaskDMG / 100f);
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(Flasks.CursedFlaskDMG / 100f);
         }
     }
 
@@ -599,8 +600,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.meleeEnchant = 5;
-            player.GetDamage(DamageClass.Melee) += ApplyScaling(0.1f);
-            player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(0.1f);
+            player.GetDamage(DamageClass.Melee) += ApplyScaling(Flasks.IchorFlaskDMG / 100f);
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(Flasks.IchorFlaskDMG / 100f);
         }
     }
     public class PermanentVenomImbuement : PermanentPotion
@@ -624,8 +625,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.meleeEnchant = 1;
-            player.GetCritChance(DamageClass.Melee) += ApplyScaling(8f);
-            player.GetDamage(DamageClass.SummonMeleeSpeed) *= (1f + ApplyScaling(0.08f));
+            player.GetCritChance(DamageClass.Melee) += ApplyScaling(Flasks.VenomFlaskDMGCrit);
+            player.GetDamage(DamageClass.SummonMeleeSpeed) *= (1f + ApplyScaling(Flasks.VenomFlaskDMGCrit / 100f));
         }
     }
 
@@ -650,8 +651,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.meleeEnchant = 6;
-            player.GetCritChance(DamageClass.Melee) += ApplyScaling(14f);
-            player.GetDamage(DamageClass.SummonMeleeSpeed) *= (1f + ApplyScaling(0.14f));
+            player.GetCritChance(DamageClass.Melee) += ApplyScaling(Flasks.NanitesFlaskDMGCrit);
+            player.GetDamage(DamageClass.SummonMeleeSpeed) *= (1f + ApplyScaling(Flasks.NanitesFlaskDMGCrit / 100f));
         }
     }
 
@@ -1032,8 +1033,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
-            player.GetDamage(DamageClass.Generic) *= (1.0f + ApplyScaling(0.22f));
-            player.statDefense -= 15;
+            player.GetDamage(DamageClass.Generic) *= (1.0f + ApplyScaling(DemonDrugPotion.DmgMultiplier / 100f));
+            player.statDefense -= (int)ApplyScaling(DemonDrugPotion.BadDefense);
         }
     }
 
@@ -1129,7 +1130,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetKnockback(DamageClass.Summon) += ApplyScaling(0.5f);
             player.moveSpeed += ApplyScaling(0.2f);
             player.pickSpeed -= ApplyScaling(0.05f);
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(0.05f);
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(VanillaItems.MinorEdits.BotCWellFedStaminaRegen / 100f);
         }
     }
 
@@ -1161,7 +1162,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetKnockback(DamageClass.Summon) += ApplyScaling(0.75f);
             player.moveSpeed += ApplyScaling(0.30f);
             player.pickSpeed += ApplyScaling(0.1f);
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(0.1f);
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(VanillaItems.MinorEdits.BotCPlentySatisfiedStaminaRegen / 100f);
         }
     }
 
@@ -1172,7 +1173,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => BuffID.WellFed3;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetWellFed;
         public override bool CanScale => true;
-        public override int ScalingFactor => 9;
+        public override int ScalingFactor => 14;
         public override float EffectPotency {
             get {
                 float potency = (float)ConsumedAmount / (float)ScalingFactor;
@@ -1191,7 +1192,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetKnockback(DamageClass.Summon) += ApplyScaling(1f);
             player.moveSpeed += ApplyScaling(0.4f);
             player.pickSpeed -= ApplyScaling(0.15f);
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(0.15f);
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(VanillaItems.MinorEdits.BotCExquisitelyStuffedStaminaRegen / 100f);
         }
     }
     public class PermanentGreenBlossom : PermanentPotion
@@ -1204,7 +1205,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(0.3f);
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += ApplyScaling(Items.Potions.GreenBlossom.StaminaRegen / 100f);
         }
     }
     public class PermanentLuckPotion : PermanentPotion

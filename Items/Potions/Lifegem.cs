@@ -1,7 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Humanizer;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
@@ -10,6 +13,11 @@ namespace tsorcRevamp.Items.Potions
 {
     class Lifegem : ModItem
     {
+        public static int DurationInSeconds = 12;
+        public static int HealingDivisor = 8;
+        public static int TotalHPRestoration = DurationInSeconds * 60 / HealingDivisor;
+        public static int SicknessBaseDuration = 60;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(TotalHPRestoration, DurationInSeconds);
         public override void SetStaticDefaults()
         {
         }
@@ -105,8 +113,8 @@ namespace tsorcRevamp.Items.Potions
                     }
                 }
 
-                player.AddBuff(ModContent.BuffType<Buffs.LifegemHealing>(), 12 * 60);
-                player.AddBuff(BuffID.PotionSickness, player.pStone ? (30 * 60) : (60 * 60));
+                player.AddBuff(ModContent.BuffType<Buffs.LifegemHealing>(), DurationInSeconds * 60);
+                player.AddBuff(BuffID.PotionSickness, player.pStone ? (SicknessBaseDuration * 60 / 4 * 3) : (SicknessBaseDuration * 60));
 
                 //if (Main.mouseItem == null) // Not sure why but seems like it's not null if you're using something
                 //{
@@ -137,6 +145,19 @@ namespace tsorcRevamp.Items.Potions
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             spriteBatch.Draw(texture, new Vector2(Item.position.X - Main.screenPosition.X + Item.width * 0.5f, Item.position.Y - Main.screenPosition.Y + Item.height - texture.Height * 0.5f + 2f),
                 new Rectangle(0, 0, texture.Width, texture.Height), color, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0);
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            int Sickness = SicknessBaseDuration;
+            if (Main.LocalPlayer.pStone)
+            {
+                Sickness = SicknessBaseDuration / 4 * 3;
+            }
+            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip4");
+            if (ttindex != -1)
+            {
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Formatting", Language.GetTextValue("Mods.tsorcRevamp.Items.Lifegem.Sickness").FormatWith(Sickness)));
+            }
         }
         public override void AddRecipes()
         {

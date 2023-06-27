@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Projectiles.Summon.Whips;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp
 {
@@ -281,7 +282,7 @@ namespace tsorcRevamp
                 if (item.ammo != AmmoID.None) return; //ammo does not consume stamina
                 if (item.type == ItemID.EoCShield) return;
                 StringBuilder tipToAdd = new();
-                tipToAdd.Append("Stamina Use: ");
+                tipToAdd.Append(LaUtils.GetTextValue("UI.StaminaUse"));
 
                 int preModificationLength = tipToAdd.Length;
 
@@ -316,7 +317,7 @@ namespace tsorcRevamp
                 #region unique cases
                 //it's just harpoon. seriously, what IS this weapon? i dont understand.
                 if (item.type == ItemID.Harpoon) {
-                    tipToAdd.Append("14");
+                    tipToAdd.Append(LaUtils.GetTextValue("UI.14"));
                 }
                 #endregion
 
@@ -345,14 +346,14 @@ namespace tsorcRevamp
 
                 #region drain per frame tooltips
                 if (drainPerFrame != 0f) {
-                    tipToAdd.Append($" + {drainPerFrame * 60} / second");
+                    tipToAdd.Append($" + {drainPerFrame * 60} " + LaUtils.GetTextValue("UI.PerSecond"));
                 }
 
                 if (inhibitsRegen) {
-                    tipToAdd.Append("\nNatural regen is [c/bb9999:reduced] while in use");
+                    tipToAdd.Append(LaUtils.GetTextValue("UI.StaminaRegenReduction"));
                 }
                 if (preventsRegen) {
-                    tipToAdd.Append("\nNatural regen is [c/ff9955:disabled] while in use");
+                    tipToAdd.Append(LaUtils.GetTextValue("UI.StaminaRegenNullification"));
                 }
                 #endregion
                 int ttindex = tooltips.FindLastIndex(t => t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));

@@ -6,6 +6,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.UI
 {
@@ -85,7 +86,7 @@ namespace tsorcRevamp.UI
                 player.FindSpawn();
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Main.NewText("Spawn point set!", 255, 240, 20);
+                    Main.NewText(LaUtils.GetTextValue("UI.SpawnSet"), 255, 240, 20);
                 }
             }
             else
@@ -93,7 +94,7 @@ namespace tsorcRevamp.UI
                 player.RemoveSpawn();
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Main.NewText("Spawn point removed!", 150, 140, 0);
+                    Main.NewText(LaUtils.GetTextValue("UI.SpawnRemoved"), 150, 140, 0);
                 }
             }
         }

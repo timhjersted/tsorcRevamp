@@ -2,12 +2,15 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Potions
 {
     public class CharcoalPineResin : ModItem
     {
+        public static int Duration = 240;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Duration, Buffs.Flasks.FireFlaskDMG);
         public override void SetStaticDefaults()
         {
         }
@@ -26,7 +29,7 @@ namespace tsorcRevamp.Items.Potions
             Item.value = 500;
             Item.consumable = true;
             Item.buffType = BuffID.WeaponImbueFire;
-            Item.buffTime = 14400;
+            Item.buffTime = Duration * 60;
         }
 
         public override bool? UseItem(Player player)

@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Chat;
 using tsorcRevamp.NPCs.Friendly;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.UI
 {
@@ -151,7 +152,7 @@ namespace tsorcRevamp.UI
             }
             else
             {
-                string message = "Place an item here to bless";
+                string message = LaUtils.GetTextValue("UI.Bless");
                 ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, message, new Vector2(slotX + 50, slotY), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
             }
         }

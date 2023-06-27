@@ -1,10 +1,12 @@
-﻿using Terraria.ModLoader;
+﻿using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.Items.Materials
 {
     class DeadChicken : ModItem
     {
-
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CookedChicken.Healing, CookedChicken.BaseSickness);
         public override void SetStaticDefaults()
         {
         }

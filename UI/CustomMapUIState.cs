@@ -13,7 +13,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
-
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.UI
 {
@@ -42,7 +42,7 @@ namespace tsorcRevamp.UI
                 VAlign = 0f,
             };
 
-            tsorcUICenteredTextButton selectorBackground = new tsorcUICenteredTextButton("Select World Type:", .85f, true)
+            tsorcUICenteredTextButton selectorBackground = new tsorcUICenteredTextButton(LaUtils.GetTextValue("UI.SelectWorld"), .85f, true)
             {
                 Width = StyleDimension.FromPercent(1f),
                 Height = StyleDimension.FromPixels(330),
@@ -52,7 +52,7 @@ namespace tsorcRevamp.UI
             };
 
 
-            newCustomMap = new tsorcUICenteredTextButton("New Story of Red Cloud Adventure Map", .85f, true)
+            newCustomMap = new tsorcUICenteredTextButton(LaUtils.GetTextValue("UI.TSORCMap"), .85f, true)
             {
                 Width = StyleDimension.FromPercent(1f),
                 Height = StyleDimension.FromPixels(100),
@@ -65,7 +65,7 @@ namespace tsorcRevamp.UI
             newCustomMap.OnLeftMouseDown += CustomMapSelected;
 
 
-            tsorcUICenteredTextButton newVanillaMap = new tsorcUICenteredTextButton("New Vanilla Map", .85f, true)
+            tsorcUICenteredTextButton newVanillaMap = new tsorcUICenteredTextButton(LaUtils.GetTextValue("UI.VanillaMap"), .85f, true)
             {
                 Width = StyleDimension.FromPercent(1f),
                 Height = StyleDimension.FromPixels(100),
@@ -81,7 +81,7 @@ namespace tsorcRevamp.UI
             selectorBackground.Append(newCustomMap);
             selectorBackground.Append(newVanillaMap);
 
-            tsorcUICenteredTextButton backButton = new tsorcUICenteredTextButton("Back", .85f, true)
+            tsorcUICenteredTextButton backButton = new tsorcUICenteredTextButton(LaUtils.GetTextValue("UI.Back"), .85f, true)
             {
                 Width = StyleDimension.FromPercent(1f),
                 Height = StyleDimension.FromPixels(80),

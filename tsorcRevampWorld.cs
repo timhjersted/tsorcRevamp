@@ -19,6 +19,7 @@ using tsorcRevamp.Textures;
 using tsorcRevamp.Tiles;
 using Terraria.Localization;
 using Terraria.Graphics.Effects;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp
 {
@@ -929,7 +930,7 @@ namespace tsorcRevamp
                     //Stuff that should be done by every client that joins
                     if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                     {
-                        UsefulFunctions.BroadcastText("Custom map detected. Adventure Mode auto-enabled.", Color.GreenYellow);
+                        UsefulFunctions.BroadcastText(LaUtils.GetTextValue("UI.AdvModeAutoEnabled"), Color.GreenYellow);
                         ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = true;
                     }
                     if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
@@ -1020,7 +1021,7 @@ namespace tsorcRevamp
                     //Stuff that should only be done if they're *not* on the custom map
                     if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                     {
-                        UsefulFunctions.BroadcastText("Randomly-generated map detected. Adventure Mode auto-disabled.", Color.GreenYellow);
+                        UsefulFunctions.BroadcastText(LaUtils.GetTextValue("UI.AdvModeAutoDisabled"), Color.GreenYellow);
                         ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = false;
                     }
                 }
@@ -1237,13 +1238,11 @@ namespace tsorcRevamp
             Color c = new Color(255f, 255f, 60f);
             if (tsorcRevampWorld.SuperHardMode)
             {
-                UsefulFunctions.BroadcastText("The portal from The Abyss has closed!", c);
-                UsefulFunctions.BroadcastText("The world has been healed. Attraidies' sway over the world has finally ended!", c);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("World.InitiateTheEnd"), c);
             }
             else
             {
-                UsefulFunctions.BroadcastText("You have vanquished the final guardian...", c);
-                UsefulFunctions.BroadcastText("The portal from The Abyss remains closed. All is at peace...", c);
+                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("World.FinalGuardian"), c);
             }
 
             //These are outside of the if statements just so players can still disable hardmode or superhardmode if they happen to activate them again.

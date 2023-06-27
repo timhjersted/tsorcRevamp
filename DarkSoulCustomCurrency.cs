@@ -2,6 +2,7 @@
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp
 {
@@ -17,7 +18,7 @@ namespace tsorcRevamp
             {
                 Language.GetTextValue("LegacyTooltip.50"),
                 price,
-                "Soul Coins"
+                LaUtils.GetTextValue("Items.SoulCoin.Plural")
             });
         }
     }

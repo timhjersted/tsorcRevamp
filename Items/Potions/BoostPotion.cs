@@ -8,6 +8,7 @@ namespace tsorcRevamp.Items.Potions
     public class BoostPotion : ModItem
     {
         public static float MovementSpeedMultiplier = 20f;
+        public static int Duration = 300;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MovementSpeedMultiplier);
         public override void SetStaticDefaults()
         {
@@ -27,7 +28,7 @@ namespace tsorcRevamp.Items.Potions
             Item.rare = ItemRarityID.Blue;
             Item.value = 5000;
             Item.buffType = ModContent.BuffType<Buffs.Boost>();
-            Item.buffTime = 18000;
+            Item.buffTime = Duration * 60;
         }
         public override void AddRecipes()
         {
