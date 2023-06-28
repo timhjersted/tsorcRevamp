@@ -1,7 +1,7 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Armors
+namespace tsorcRevamp.Items.Vanity
 {
     [AutoloadEquip(EquipType.Legs)]
     public class SnarbolaxGreaves : ModItem

@@ -1,10 +1,10 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Armors
+namespace tsorcRevamp.Items.Vanity
 {
-    [AutoloadEquip(EquipType.Legs)]
-    public class AlucardJackboots : ModItem
+    [AutoloadEquip(EquipType.Head)]
+    public class AlucardWig : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -14,8 +14,8 @@ namespace tsorcRevamp.Items.Armors
         public override void SetDefaults()
         {
             Item.vanity = true;
-            Item.width = 18;
-            Item.height = 18;
+            Item.width = 26;
+            Item.height = 20;
             Item.rare = ItemRarityID.Expert;
             Item.value = PriceByRarity.fromItem(Item);
         }

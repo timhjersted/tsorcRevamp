@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Armors
+namespace tsorcRevamp.Items.Vanity
 {
     [AutoloadEquip(EquipType.Head)]
     public class SnipedStrangerHat : ModItem
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return body.type == ModContent.ItemType<Items.Armors.SnarbolaxArmor>() && legs.type == ModContent.ItemType<Items.Armors.SnarbolaxGreaves>();
+            return body.type == ModContent.ItemType<SnarbolaxArmor>() && legs.type == ModContent.ItemType<SnarbolaxGreaves>();
         }
 
         public override void ArmorSetShadows(Player player)

@@ -19,6 +19,7 @@ using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Items.Lore;
+using tsorcRevamp.Items.Vanity;
 
 namespace tsorcRevamp.Items.BossBags
 {
@@ -267,6 +268,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.IonicFury>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfSteel>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DamagedMechanicalScrap>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheMachineMask>(), 7));
             itemLoot.Add(ItemDropRule.Common(ItemID.MechanicalBatteryPiece));
             itemLoot.Add(ItemDropRule.Common(ItemID.HallowedBar, 1, 20, 35));
             itemLoot.Add(ItemDropRule.Common(ItemID.SoulofFright, 1, 25, 40));

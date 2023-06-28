@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Armors
+namespace tsorcRevamp.Items.Vanity
 {
     [AutoloadEquip(EquipType.Body)]
     public class JOI3Chassis : ModItem
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Armors
             {
                 return;
             }
-            EquipLoader.AddEquipTexture(Mod, "tsorcRevamp/Items/Armors/JOI3Chassis_Legs", EquipType.Legs, this, "JOI3Chassis_Legs");
+            EquipLoader.AddEquipTexture(Mod, "tsorcRevamp/Items/Vanity/JOI3Chassis_Legs", EquipType.Legs, this, "JOI3Chassis_Legs");
         }
         public override void SetMatch(bool male, ref int equipSlot, ref bool robes)
         {
