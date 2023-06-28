@@ -15,6 +15,7 @@ using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Placeable.Trophies;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -1029,7 +1030,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ItemID.SpazmatismTrophy, 10, 1, 1));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SpazmatismTrophy>(), 10));
         }
 
         //TODO: Copy vanilla death effects

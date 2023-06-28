@@ -253,7 +253,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ItemID.MechanicalWheelPiece));
             itemLoot.Add(ItemDropRule.Common(ItemID.HallowedBar, 1, 20, 35));
             itemLoot.Add(ItemDropRule.Common(ItemID.SoulofSight, 1, 25, 40));
-            itemLoot.Add(ItemDropRule.Common(ItemID.TwinMask, 7));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheTriadMask>(), 7));
         }
     }
     public class TheMachineBag : BossBag
@@ -268,11 +268,10 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.IonicFury>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfSteel>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DamagedMechanicalScrap>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheMachineMask>(), 7));
             itemLoot.Add(ItemDropRule.Common(ItemID.MechanicalBatteryPiece));
             itemLoot.Add(ItemDropRule.Common(ItemID.HallowedBar, 1, 20, 35));
             itemLoot.Add(ItemDropRule.Common(ItemID.SoulofFright, 1, 25, 40));
-            itemLoot.Add(ItemDropRule.Common(ItemID.SkeletronPrimeMask, 7));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheMachineMask>(), 7));
         }
     }
     public class WyvernMageBag : BossBag

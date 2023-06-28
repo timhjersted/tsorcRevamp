@@ -892,7 +892,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Lore.CrestOfSteel>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.HallowedBar, 1, 25, 40));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofFright, 1, 20, 40));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.SkeletronPrimeMask, 7));
             npcLoot.Add(notExpertCondition);
             npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<TheMachineRelicItem>())); 
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheMachineTrophy>(), 10));

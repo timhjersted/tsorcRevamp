@@ -14,6 +14,7 @@ using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.DataStructures;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Items.Placeable.Trophies;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -1153,7 +1154,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ItemID.RetinazerTrophy, 10, 1, 1));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RetinazerTrophy>(), 10));
         }
 
         //TODO: Copy vanilla death effects
