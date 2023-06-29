@@ -7578,17 +7578,17 @@ Mods: {
 			}
 
 			ScoutsBoost2Omega: {
-				DisplayName: Scouts Boost2 Omega
+				DisplayName: Scouts Boost II
 				Description: "{$CommonItemTooltip.MoveSpeedMult} and stamina regen by {1}%"
 			}
 
 			ScoutsBoost2CooldownOmega: {
-				DisplayName: Scouts Boost2 Cooldown Omega
+				DisplayName: Scouts Boost II Cooldown
 				Description: You cannot trigger the movement speed bonus again until this runs out
 			}
 
 			ScoutsBoostCooldownOmega: {
-				DisplayName: Scouts Boost Cooldown Omega
+				DisplayName: Scouts Boost Cooldown
 				Description: Movement bonus nullified
 			}
 
