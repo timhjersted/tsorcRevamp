@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.Audio;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 
@@ -7,6 +8,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
 {
     public class ScoutsBoost2 : ModBuff
     {
+        public override LocalizedText Description => base.Description.WithFormatArgs(ToxicShot.ScoutsBoostMoveSpeedMult * 2, ToxicShot.ScoutsBoostStaminaRegenMult * 2);
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = false;

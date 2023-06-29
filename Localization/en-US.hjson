@@ -3670,7 +3670,7 @@ Mods: {
 					[c/00ffd4:of the dodgeroll!] I'll be fine as long as I don't run out of stamina..."
 					Judging by how bandits were in possession of this note, I guess it
 					didn't go too well for them. Perhaps I can make good use of this technique?
-					[c/ffbf00:[Press Left Alt to roll. Try rebinding it to Left Shift, R, or something new.]
+					[c/ffbf00:Press Left Alt to roll. Try rebinding it to Left Shift, R, or something new.]
 					'''
 			}
 
@@ -7559,12 +7559,12 @@ Mods: {
 
 			ScoutsBoost: {
 				DisplayName: Scouts Boost
-				Description: Multiplies movement speed by 20% and stamina regen by 10%
+				Description: "{$CommonItemTooltip.MoveSpeedMult} and stamina regen by {1}%"
 			}
 
 			ScoutsBoost2: {
 				DisplayName: Scouts Boost II
-				Description: Multiplies movement speed by 40% and stamina regen by 20%
+				Description: "{$CommonItemTooltip.MoveSpeedMult} and stamina regen by {1}%"
 			}
 
 			ScoutsBoost2Cooldown: {
@@ -7579,7 +7579,7 @@ Mods: {
 
 			ScoutsBoost2Omega: {
 				DisplayName: Scouts Boost2 Omega
-				Description: Multiplies movement speed by 40% and stamina regen by 20%
+				Description: "{$CommonItemTooltip.MoveSpeedMult} and stamina regen by {1}%"
 			}
 
 			ScoutsBoost2CooldownOmega: {
