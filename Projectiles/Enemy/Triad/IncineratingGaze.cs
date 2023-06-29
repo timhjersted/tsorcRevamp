@@ -166,6 +166,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             }
         }
 
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            base.OnHitNPC(target, hit, damageDone);
+        }
+
         public static ArmorShaderData data;
         public static ArmorShaderData targetingData;
         public override bool PreDraw(ref Color lightColor)

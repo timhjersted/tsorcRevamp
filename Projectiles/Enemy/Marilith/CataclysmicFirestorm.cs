@@ -62,24 +62,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 Projectile.Kill();
                 return;
             }
-
-            /*
-            for (int j = 0; j < dustCount; j++)
-            {
-                Vector2 dir = Main.rand.NextVector2CircularEdge(size, size);
-                Vector2 dustPos = truePosition + dir;
-                if (EnemyGenericLaser.FastContainsPoint(screenRect, dustPos))
-                {
-                    dir.Normalize();
-                    Vector2 dustVel = dir;
-                    Dust d = Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 0.5f);
-                    d.noGravity = true;
-                    if (!Main.rand.NextBool(4))
-                    {
-                        d.noLight = true;
-                    }
-                }
-            }*/
         }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
@@ -121,9 +103,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             data.Apply(null);
 
             Rectangle recsize = new Rectangle(0, 0, tsorcRevamp.NoiseTurbulent.Width, tsorcRevamp.NoiseTurbulent.Height);
+            Vector2 origin = recsize.Size() / 2;
 
             //Draw the rendertarget with the shader
-            Main.spriteBatch.Draw(tsorcRevamp.NoiseTurbulent, truePosition - Main.screenPosition - new Vector2(recsize.Width, recsize.Height) / 2 * 2.5f, recsize, Color.White, 0, Vector2.Zero, 2.5f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tsorcRevamp.NoiseTurbulent, truePosition - Main.screenPosition, recsize, Color.White, 0, origin, 2.5f * 4, SpriteEffects.None, 0);
 
             //Restart the spritebatch so the shader doesn't get applied to the rest of the game
             Main.spriteBatch.End();

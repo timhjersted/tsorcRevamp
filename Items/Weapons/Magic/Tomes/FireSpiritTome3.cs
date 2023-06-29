@@ -42,7 +42,6 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<FireSpiritTome2>(), 1);
-            recipe.AddIngredient(ItemID.InfernoFork, 1);
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 45000);
             recipe.AddTile(TileID.DemonAltar);
@@ -53,20 +52,9 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             recipe2.AddIngredient(ModContent.ItemType<FireSpiritTome2>(), 1);
             recipe2.AddIngredient(ItemID.FragmentSolar, 10);
             recipe2.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 45000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
             recipe2.AddTile(TileID.DemonAltar);
-
-            recipe2.Register(); 
-            
-            Recipe recipe3 = CreateRecipe();
-            recipe3.AddIngredient(ModContent.ItemType<FireSpiritTome2>(), 1);
-            recipe3.AddIngredient(ItemID.InfernoFork, 1);
-            recipe3.AddIngredient(ItemID.FragmentSolar, 10);
-            recipe3.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
-            recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
-            recipe3.AddTile(TileID.DemonAltar);
-
-            recipe3.Register();
+            recipe2.Register();
         }
     }
 }

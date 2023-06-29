@@ -185,8 +185,6 @@ namespace tsorcRevamp.Projectiles
         float timeFactor = 0;
         public override void SetEffectParameters(Effect effect)
         {
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/BlackFireball", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/BlackFireball", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             collisionEndPadding = trailPositions.Count / 3;
             collisionPadding = trailPositions.Count / 8;
             visualizeTrail = false;

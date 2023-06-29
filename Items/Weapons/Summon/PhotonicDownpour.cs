@@ -35,8 +35,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
 
 			Item.noMelee = true;
 			Item.DamageType = DamageClass.Summon;
-			Item.buffType = ModContent.BuffType<Buffs.Summon.TripleThreatBuff>();
-			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.FriendlyRetinazer>();
+			Item.buffType = ModContent.BuffType<Buffs.Summon.PhotonicDownpourBuff>();
+			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.PhotonicDownpourLaserDrone>();
 		}
 
 		int triadType;
@@ -45,27 +45,39 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			// Here you can change where the minion is spawned. Most vanilla minions spawn at the cursor position
 			position = Main.MouseWorld;
 
-			if(triadType == 0)
-            {
-				type = ModContent.ProjectileType<Projectiles.Summon.FriendlyRetinazer>();
-            }
-			if (triadType == 1)
+			if (Main.MouseWorld.Distance(player.Center) > 300)
 			{
-				type = ModContent.ProjectileType<Projectiles.Summon.FriendlySpazmatism>();
-			}
-			if (triadType == 2)
-			{
-				type = ModContent.ProjectileType<Projectiles.Summon.FriendlyCataluminance>();
-			}
-
-			triadType++;
-			if(triadType == 3)
-            {
-				triadType = 0;
+				type = ModContent.ProjectileType<Projectiles.Summon.PhotonicDownpourLaserDrone>();
             }
+			else
+			{
+				type = ModContent.ProjectileType<Projectiles.Summon.PhotonicDownpourDefenseDrone>();
+			}
 		}
 
-		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        public override void HoldItem(Player player)
+        {
+			if (Main.myPlayer == player.whoAmI)
+			{
+				float minionCount = 0;
+				for (int i = 0; i < Main.maxProjectiles; i++)
+				{
+					if (Main.projectile[i].active && Main.projectile[i].minion && Main.projectile[i].owner == player.whoAmI)
+					{
+						minionCount += Main.projectile[i].minionSlots;
+					}
+				}
+				if (minionCount < player.maxMinions) {
+					int dustType = DustID.CursedTorch;
+					if (Main.MouseWorld.Distance(player.Center) < 300)
+					{
+						dustType = DustID.Torch;
+					}
+					UsefulFunctions.DustRing(Main.MouseWorld, 70, dustType, 15);
+				} }
+        }
+
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
 		{
 			// This is needed so the buff that keeps your minion alive and allows you to despawn it properly applies
 			player.AddBuff(Item.buffType, 2);
@@ -80,12 +92,9 @@ namespace tsorcRevamp.Items.Weapons.Summon
 		public override void AddRecipes()
 		{
 			Recipe recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<DamagedRemote>());
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
-			recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 5);
-			recipe.AddIngredient(ItemID.SoulofMight, 5);
+			recipe.AddIngredient(ModContent.ItemType<DamagedMechanicalScrap>());
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
 			recipe.AddIngredient(ItemID.SoulofFright, 5);
-			recipe.AddIngredient(ItemID.SoulofSight, 5);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();

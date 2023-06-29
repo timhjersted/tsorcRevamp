@@ -25,7 +25,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
 
     //Make the fire more intense close to the edge of the radius, tapering off with distance
     float distanceFactor = 0;
-    float textureSize = 4096;
+    float textureSize = 1024;
     float projectileWidth = 140;
     
         
@@ -39,33 +39,38 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
 
     //distanceFactor = pow(abs(distanceFactor), 45.0);
     float2 samplePos = float2(0, 0);
+    float timeFactor = uTime / 7;
+    
+    float2 heightNoise;    
+    heightNoise.x = timeFactor * .25;
+    heightNoise.y = coords.y * 0.25;
+    float edgeFade = 1;
+    
     //Left
     if (uSaturation == 0) {
         samplePos.x = -1;
-        distanceFactor = 1 - (coords.x * textureSize / projectileWidth);
+        distanceFactor = 1.2 - (coords.x * textureSize / projectileWidth);
     }
     //Right
     if (uSaturation == 1) {
         samplePos.x = 1;
-        distanceFactor = coords.x * textureSize / projectileWidth;
+        distanceFactor = coords.x * textureSize / projectileWidth + .2;
     }
+    
     //Top (evil)
-
-    float timeFactor = uTime / 7;
     float cloudProgress = 0;
-    if (uSaturation == 2) {
+    if (uSaturation == 2 || uSaturation == 4)
+    {
         timeFactor = uSecondaryColor.z / 500;
+        heightNoise.y = timeFactor * .25;
+        heightNoise.x = coords.x * 0.25;
 
-        distanceFactor = 1 - (coords.y * textureSize / projectileWidth);
-
+        distanceFactor = 1.1 - (coords.y * textureSize / projectileWidth);
         samplePos.y = -1;
+
 
         if (uSecondaryColor.y > 0) {
             cloudProgress = uSecondaryColor.y / 300;
-            distanceFactor = lerp(distanceFactor, 14 * pow((distanceFactor * (coords.y * textureSize / projectileWidth)), 2), cloudProgress);
-            //timeFactor = lerp(uTime / 7, uTime / 37, cloudProgress);
-            //samplePos.y = lerp(0, -1, cloudProgress);
-            //samplePos.x = lerp(-1, 0, cloudProgress);
         }
 
 
@@ -78,27 +83,57 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     //Bottom
     if (uSaturation == 3) {
         samplePos.y = 1;
-        distanceFactor = coords.y * textureSize / projectileWidth;
+        distanceFactor = coords.y * textureSize / projectileWidth + .2;
+        heightNoise.y = timeFactor * .25;
+        heightNoise.x = coords.x * 0.25;
     }
-
-    samplePos *= timeFactor;
+    
+    
+    samplePos *= frac(timeFactor);
     samplePos += coords;
     samplePos = frac(samplePos);
 
     //distanceFactor *= 60;
     //Calculate how intense a pixel should be based on the noise generator
+    
     float intensity = tex2D(uImage0, samplePos).r;
     intensity = pow(intensity, 1.8);
+    
+    float flameHeight = tex2D(uImage0, heightNoise).r;
+    distanceFactor = 3 * pow(distanceFactor, 1 / pow(flameHeight, 2));    
 
+    float fadeFactor;
+    float fadeLimit;
+    if (uSaturation >= 2)
+    {
+        fadeLimit = 4.087;
+        fadeFactor = coords.x;
+    }
+    else
+    {
+        fadeLimit = 1.805;
+        fadeFactor = coords.y;
+    }
+    
+    if (fadeFactor < .1)
+    {
+        distanceFactor *= pow(fadeFactor / .1, 9);
+    }
+    
+    if (fadeFactor > fadeLimit)
+    {
+        distanceFactor *= pow(1 - (fadeFactor - fadeLimit) / .1, 9);
+    }
+    
     //Calculate and output the final color of the pixel    
     //distanceFactor = distanceFactor * 2.5f;
     //return float4(distanceFactor, intensity, 1, 0.5);
 
-    float r = 2 * pow(intensity, 1) * 1.5f * pow(distanceFactor, 1.5);
-    float g = 2 * pow(intensity, 2.0) * distanceFactor * distanceFactor;
-    float b = 2 * pow(intensity, 3.0) * 0.15f * distanceFactor * distanceFactor;
+    float r = 2 * pow(intensity, 1) * .5f * pow(distanceFactor, 2);
+    float g = 2 * pow(intensity, 2.0) * 0.2 * pow(distanceFactor, 3);
+    float b = 2 * pow(intensity, 3.0) * 1.15f * pow(distanceFactor, 3);
 
-    float3 final = lerp(float3(r, g, b), float3(1, 1, 1) * pow(intensity, 1.5) * distanceFactor, cloudProgress);
+    float3 final = lerp(float3(r, g, b), float3(1, 1, 1) * pow(intensity, 1.5) * distanceFactor * distanceFactor, cloudProgress);
 
     return float4(final, 1) * 2 * (uSecondaryColor.x / 100.0);
 }

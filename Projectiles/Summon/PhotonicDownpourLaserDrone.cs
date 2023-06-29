@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -15,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Summon
 	// Its attack pattern is simple: If an enemy is in range of 43 tiles, it will fly to it and deal contact damage
 	// If the player targets a certain NPC with right-click, it will fly through tiles to it
 	// If it isn't attacking, it will float near the player with minimal movement
-	public class PhotonicDownpourProjectile : ModProjectile
+	public class PhotonicDownpourLaserDrone : ModProjectile
 	{
 		public override void SetStaticDefaults()
 		{
@@ -31,7 +32,6 @@ namespace tsorcRevamp.Projectiles.Summon
 
 		public sealed override void SetDefaults()
 		{
-			Main.projFrames[Projectile.type] = 2;
 			Projectile.width = 40;
 			Projectile.height = 50;
 			Projectile.tileCollide = false; // Makes the minion go through tiles freely
@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			Projectile.friendly = true; // Only controls if it deals damage to enemies on contact (more on that later)
 			Projectile.minion = true; // Declares this as a minion (has many effects)
 			Projectile.DamageType = DamageClass.Summon; // Declares the damage type (needed for it to deal damage)
-			Projectile.minionSlots = 2f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
+			Projectile.minionSlots = 1f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
 			Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
 
 			Projectile.usesLocalNPCImmunity = true;
@@ -68,6 +68,9 @@ namespace tsorcRevamp.Projectiles.Summon
 
 			if (!indexSet)
 			{
+				targetOffset = Main.rand.NextVector2Circular(150, 150);
+				Projectile.netUpdate = true;
+
 				for (int i = 0; i < Main.maxProjectiles; i++)
 				{
 					if (Main.projectile[i].active && Main.projectile[i].type == Projectile.type && Main.projectile[i].owner == Projectile.owner && Main.projectile[i].whoAmI != Projectile.whoAmI)
@@ -76,7 +79,7 @@ namespace tsorcRevamp.Projectiles.Summon
 					}
 				}
 
-				for (int i = 0; i < 6; i++)
+				for (int i = 0; i < 12; i++)
 				{
 					if (foundIndicies.Contains(i))
 					{
@@ -99,30 +102,20 @@ namespace tsorcRevamp.Projectiles.Summon
 			GeneralBehavior(owner, out Vector2 vectorToIdlePosition, out float distanceToIdlePosition);
 			SearchForTargets(owner, out bool foundTarget, out float distanceFromTarget);
 			Movement(foundTarget, distanceFromTarget, distanceToIdlePosition, vectorToIdlePosition);
-			Attack();
 			Visuals();
 			
 		}
-
-		private void Attack()
+        public override void SendExtraAI(BinaryWriter writer)
         {
-			if (target != null && target.active && target.Distance(Projectile.Center) < 1000)
-			{
-				Vector2 projVel = UsefulFunctions.Aim(Projectile.Center, target.Center, 1);
-				if (Main.GameUpdateCount % 240 == 0) {
-					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, projVel, ModContent.ProjectileType<Projectiles.Summon.FriendlyRedLaser>(), Projectile.damage * 4, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);
-				}
+			writer.WriteVector2(targetOffset);
+        }
 
-				if (Main.GameUpdateCount % 240 >= 180 && Main.GameUpdateCount % 240 <= 220 && Main.GameUpdateCount % 3 == 0)
-				{
-					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, target.velocity + projVel * 10, ModContent.ProjectileType<Projectiles.Summon.FriendlyDragonsBreath>(), Projectile.damage / 4, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);
-				}
-
-				if (Main.GameUpdateCount % 60 < 15 && Main.GameUpdateCount % 4 == 0)
-                {
-					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, target.velocity + projVel * 17, ModContent.ProjectileType<Projectiles.Summon.FriendlyTetsujinLaser>(), Projectile.damage, 0, Main.myPlayer, target.whoAmI, Projectile.whoAmI);					
-				}
-			}
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+			targetOffset = reader.ReadVector2();
+        }
+        private void Attack()
+        {
 		}
 
 		// This is the "active check", makes sure the minion is alive while the player is alive, and despawns if not
@@ -130,12 +123,12 @@ namespace tsorcRevamp.Projectiles.Summon
 		{
 			if (owner.dead || !owner.active)
 			{
-				owner.ClearBuff(ModContent.BuffType<Buffs.Summon.TetsujinBuff>());
+				owner.ClearBuff(ModContent.BuffType<Buffs.Summon.PhotonicDownpourBuff>());
 
 				return false;
 			}
 
-			if (owner.HasBuff(ModContent.BuffType<Buffs.Summon.TetsujinBuff>()))
+			if (owner.HasBuff(ModContent.BuffType<Buffs.Summon.PhotonicDownpourBuff>()))
 			{
 				Projectile.timeLeft = 2;
 			}
@@ -252,13 +245,6 @@ namespace tsorcRevamp.Projectiles.Summon
 				}
 			}
 
-			float angle = 0;
-			if(owner.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.TetsujinProjectile>()] > 0)
-            {
-				angle = (Main.GameUpdateCount / 120f) + (int)(Main.GameUpdateCount / 480f) + MathHelper.TwoPi * (Projectile.ai[0] / owner.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.TetsujinProjectile>()]);
-
-			}
-			targetCenter += new Vector2(300, 0).RotatedBy(angle);
 
 			// friendly needs to be set to true so the minion can deal contact damage
 			// friendly needs to be set to false so it doesn't damage things like target dummies while idling
@@ -268,39 +254,34 @@ namespace tsorcRevamp.Projectiles.Summon
 
 		}
 
-		Vector2 acceleration = Vector2.Zero;
-		float accelerationMagnitude = 5f / 60f; //Jerk is change in acceleration
-		float topSpeed = 10;
-		float flyingTime = 0;
+		Vector2 targetOffset;
+		int firingCountdown = 30;
 		private void Movement(bool foundTarget, float distanceFromTarget, float distanceToIdlePosition, Vector2 vectorToIdlePosition)
 		{
 			if (foundTarget)
 			{
-				float distance = Vector2.Distance(Projectile.Center, targetCenter);
-				if (distance > 35)
+				if (firingCountdown > 0)
 				{
-					accelerationMagnitude = 0.7f + flyingTime / 60;
-					acceleration = UsefulFunctions.Aim(Projectile.Center, targetCenter, accelerationMagnitude);
-					if(distance < 100)
-                    {
-						acceleration *= 5;
-                    }
-
-					if (!acceleration.HasNaNs())
+					firingCountdown--;
+					if (firingCountdown <= 0)
 					{
-						Projectile.velocity += acceleration;
+						if (Projectile.owner == Main.myPlayer)
+						{
+							Vector2 projVel = UsefulFunctions.Aim(Projectile.Center, targetCenter, 33) + target.velocity / 2f;
+							Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, projVel, ModContent.ProjectileType<PhotonicDownpourLaser>(), Projectile.damage, 0, Projectile.owner);
+							targetOffset = Main.rand.NextVector2CircularEdge(200, 200);
+							Projectile.netUpdate = true;
+						}
 					}
-					if (Projectile.velocity.Length() > topSpeed)
-					{
-						Projectile.velocity.Normalize();
-						Projectile.velocity *= topSpeed;
-					}
-                }
-                else
+				}
+				else
 				{
-					Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, targetCenter, 1).RotatedBy(0);
-					Projectile.Center = targetCenter;
-                }
+					UsefulFunctions.SmoothHoming(Projectile, targetCenter + targetOffset, 2f, 40);
+					if (Projectile.Distance(targetCenter + targetOffset) < 80)
+					{
+						firingCountdown = 30;
+					}
+				}
 			}
 			else
 			{
@@ -340,62 +321,24 @@ namespace tsorcRevamp.Projectiles.Summon
 
 		private void Visuals()
 		{
-			// So it will lean slightly towards the direction it's moving
-			Projectile.rotation = Projectile.velocity.X * 0.1f;
-
-			// This is a simple "loop through all frames from top to bottom" animation
-			int frameSpeed = 5;
-
-			
-
-
-			if (Projectile.velocity.Y < 0)
-			{
-				Projectile.frameCounter++;
-
-				if (Projectile.frameCounter >= frameSpeed)
-				{
-					Projectile.frameCounter = 0;
-					Projectile.frame++;
-
-					if (Projectile.frame >= Main.projFrames[Projectile.type])
-					{
-						Projectile.frame = 0;
-					}
-				}
-
-				if (Projectile.direction == -1)
-				{
-					int dust = Dust.NewDust(Projectile.Center + new Vector2(Projectile.direction == 1 ? Projectile.width * 0.5f : +15, -22), Projectile.width / 8, Projectile.height / 2, 15, Projectile.velocity.X, Projectile.velocity.Y + 6f, 150, Color.Blue, 1f);
-					Main.dust[dust].noGravity = false;
-				}
-				if (Projectile.direction == 1)
-				{
-					int dust = Dust.NewDust(Projectile.Center + new Vector2(Projectile.direction == -1 ? Projectile.width * -0.5f : -26, -22), Projectile.width / 8, Projectile.height / 2, 15, Projectile.velocity.X, Projectile.velocity.Y + 6f, 150, Color.Blue, 1f);
-					Main.dust[dust].noGravity = false;
-				}
-			}
-
-			// Some visuals here
-			Lighting.AddLight(Projectile.Center, Color.OrangeRed.ToVector3() * 0.78f);
+			Projectile.rotation = UsefulFunctions.Aim(Projectile.Center, targetCenter, 1).ToRotation() + MathHelper.PiOver2;
 		}
 
+		public static Texture2D glowmask;
         public override bool PreDraw(ref Color lightColor)
-        {
+		{
+			UsefulFunctions.EnsureLoaded(ref glowmask, Texture + "Glowmask");
 			SpriteEffects spriteEffects = SpriteEffects.None;
-			if (Projectile.direction == 1)
-			{
-				spriteEffects = SpriteEffects.FlipHorizontally;
-			}
 
-			int frameHeight = ((Texture2D)TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
-			int startY = frameHeight * Projectile.frame;
-			Rectangle sourceRectangle = new Rectangle(0, startY, TextureAssets.Projectile[Projectile.type].Value.Width, frameHeight);
+			Rectangle sourceRectangle = new Rectangle(0, 0, TextureAssets.Projectile[Projectile.type].Value.Width, TextureAssets.Projectile[Projectile.type].Value.Height);
 			Vector2 origin = sourceRectangle.Size() / 2f;
 			Color drawColor = Projectile.GetAlpha(lightColor);			
 			Main.EntitySpriteDraw(TextureAssets.Projectile[Projectile.type].Value,
 				Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
 				sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
+			Main.EntitySpriteDraw(glowmask,
+				Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+				sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
 
 			return false;
 		}

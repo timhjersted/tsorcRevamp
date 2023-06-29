@@ -100,6 +100,28 @@ namespace tsorcRevamp.Projectiles.Accessories
         public static Effect CoreEffect;
         public override bool PreDraw(ref Color lightColor)
         {
+
+            //if (RingEffect == null)
+            {
+                RingEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/LightningLine", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            Rectangle ringRectangle2 = new Rectangle(0, 0, 1200, 1200);
+            Vector2 ringOrigin2 = ringRectangle2.Size() / 2f;
+
+            RingEffect.Parameters["textureToSizeRatio"].SetValue(tsorcRevamp.NoiseVoronoi.Size() / ringRectangle2.Size());
+            RingEffect.Parameters["shaderColor"].SetValue(Color.Blue.ToVector3());
+            RingEffect.Parameters["active"].SetValue(-1);
+
+            RingEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseVoronoi, Projectile.Center - Main.screenPosition, ringRectangle2, Color.White, 0, ringOrigin2, 1, SpriteEffects.None);
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+
+            return false;
+
             Vector3 hslColor1 = Main.rgbToHsl(Color.Cyan);
             Vector3 hslColor2 = Main.rgbToHsl(Color.Navy);
             hslColor1.X += 0.03f * (float)Math.Cos(effectTimer / 25f);

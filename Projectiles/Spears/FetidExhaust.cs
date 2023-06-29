@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.Enums;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -99,6 +100,10 @@ namespace tsorcRevamp.Projectiles.Spears
             DelegateMethods.v3_1 = colorVector;
 
             Utils.PlotTileLine(startPoint, endpoint, 100, DelegateMethods.CastLight);
+
+            DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+            DelegateMethods.tileCutIgnore = TileID.Sets.TileCutIgnore.None;
+            Utils.PlotTileLine(startPoint, endpoint, 100, DelegateMethods.CutTiles);
         }
         private void UpdatePlayerVisuals(Player player)
         {
@@ -180,7 +185,7 @@ namespace tsorcRevamp.Projectiles.Spears
             Rectangle sourceRectangle = new Rectangle(0, 0, (int)laserWidth, 150);
             data.UseTargetPosition(new Vector2(laserWidth, 150));
             data.UseColor(Color.GreenYellow);
-            data.UseSaturation(timeFactor * 0.02f);
+            data.UseSaturation(timeFactor * 0.08f);
 
             //Apply the shader
 

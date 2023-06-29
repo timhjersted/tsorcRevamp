@@ -48,13 +48,13 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     }
     
     //Convert uv from rectangular to polar coordinates
-    float2 dir = uv - float2(0.5, 0.5);
+    float2 dir = coords - float2(0.5, 0.5);
     float angle = atan2(dir.y, dir.x) / (3.141592 * 2);
     float2 samplePoint = float2(distanceIntensity, angle);
     
     //Stretch it so it looks good
-    samplePoint = samplePoint * scale * 50 / effectSize;
-    samplePoint.y = samplePoint.y * 3;
+    samplePoint = samplePoint * scale;
+    samplePoint.y = samplePoint.y * 30;
     
     //Offset it based on time to create the flowing effect
     samplePoint.x = samplePoint.x - (time * 0.05);

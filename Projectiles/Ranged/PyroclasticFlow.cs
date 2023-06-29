@@ -92,7 +92,6 @@ namespace tsorcRevamp.Projectiles.Ranged
                 trailWidth = 250;
             }
             trailMaxLength = 1500;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/SolarBlast", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);
             effect.Parameters["fadeOut"].SetValue(fadeOut); 
             effect.Parameters["time"].SetValue(timeFactor);

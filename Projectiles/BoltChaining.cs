@@ -49,6 +49,7 @@ namespace tsorcRevamp.Projectiles
             DelegateMethods.v3_1 = Color.Cyan.ToVector3() * 0.25f;            
             Utils.PlotTileLine(Projectile.Center, Projectile.Center + lightingVector * Projectile.ai[1], 1, DelegateMethods.CastLight);
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+            DelegateMethods.tileCutIgnore = TileID.Sets.TileCutIgnore.None;
             Vector2 unit = Projectile.velocity;
 
             Utils.PlotTileLine(Projectile.Center, Projectile.Center + lightingVector * Projectile.ai[1], 100, DelegateMethods.CutTiles);

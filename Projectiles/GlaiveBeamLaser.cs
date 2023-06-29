@@ -352,6 +352,7 @@ namespace tsorcRevamp.Projectiles
             if (Charge == MAX_CHARGE)
             {
                 DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+                DelegateMethods.tileCutIgnore = TileID.Sets.TileCutIgnore.None;
                 Vector2 unit = Projectile.velocity;
                 Utils.PlotTileLine(Projectile.Center, Projectile.Center + unit * Distance, (Projectile.width + 16) * Projectile.scale, DelegateMethods.CutTiles);
             }

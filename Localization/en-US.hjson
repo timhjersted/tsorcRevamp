@@ -7004,6 +7004,8 @@ Mods: {
 				Tooltip:
 					'''
 					A fully operational drone control system
+					Click close to the player to spawn a defense drone
+					Click far from the player to spawn a laser drone
 					Can support enough combat drones to make even an Engi blush
 					'''
 			}
@@ -7076,6 +7078,31 @@ Mods: {
 
 			TheMachineMask: {
 				DisplayName: The Machine Mask
+				Tooltip: ""
+			}
+
+			TheTriadRelicItem: {
+				DisplayName: The Triad Relic Item
+				Tooltip: ""
+			}
+
+			CataluminanceTrophy: {
+				DisplayName: Cataluminance Trophy
+				Tooltip: ""
+			}
+
+			RetinazerTrophy: {
+				DisplayName: Retinazer Trophy
+				Tooltip: ""
+			}
+
+			SpazmatismTrophy: {
+				DisplayName: Spazmatism Trophy
+				Tooltip: ""
+			}
+
+			TheTriadMask: {
+				DisplayName: The Triad Mask
 				Tooltip: ""
 			}
 		}
@@ -8393,6 +8420,9 @@ Mods: {
 			ShrapnelSaw.DisplayName: Shrapnel Saw
 			EssenceThiefDelivery.DisplayName: Essence Thief Delivery
 			SpiritRushVisual.DisplayName: Spirit Rush Visual
+			DefenseDroneFire.DisplayName: Defense Drone Fire
+			PhotonicDownpourDefenseDrone.DisplayName: Photonic Downpour Defense Drone
+			PhotonicDownpourLaserDrone.DisplayName: Photonic Downpour Laser Drone
 		}
 
 		NPCs: {
@@ -8421,7 +8451,7 @@ Mods: {
 			}
 
 			Cataluminance: {
-				DisplayName: Cataluminance v1.08
+				DisplayName: Cataluminance v2.02
 				Despawnhandler: The Triad returns to the skies...
 				ClosesIn: Cataluminance Closes In...
 				Desperation: The Triad prepares to take you down with them...
@@ -8429,12 +8459,12 @@ Mods: {
 			}
 
 			RetinazerV2: {
-				DisplayName: Retinazer v2.05
+				DisplayName: Retinazer v3.08
 				ClosesIn: Retinazer Closes In...
 				Warning: Scorching heat radiates from Retinazer's hull...
 			}
 
-			SpazmatismV2.DisplayName: Spazmatism v2.15
+			SpazmatismV2.DisplayName: Spazmatism v3.11
 
 			Death: {
 				DisplayName: Death

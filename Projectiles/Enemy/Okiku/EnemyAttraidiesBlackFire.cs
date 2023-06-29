@@ -39,10 +39,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
         public override void AI()
         {
-            if (Projectile.timeLeft == 487)
-            {
-                Main.NewText(Projectile.timeLeft);
-            }
             base.AI();
             Lighting.AddLight(Projectile.Center, Color.Purple.ToVector3());
 
@@ -181,8 +177,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         float timeFactor = 0;
         public override void SetEffectParameters(Effect effect)
         {
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/BlackFireball", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/BlackFireball", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             collisionEndPadding = trailPositions.Count / 3;
             collisionPadding = trailPositions.Count / 8;
             visualizeTrail = false;

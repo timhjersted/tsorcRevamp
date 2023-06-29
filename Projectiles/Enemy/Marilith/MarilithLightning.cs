@@ -64,17 +64,16 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             LaserName = "Fractoemissive Discharge";
 
             CastLight = true;
+
+            Projectile.friendly = true;
+            TileCollide = false;
+            segmentCount = 40;
         }
 
         public static SoundStyle ThunderSoundStyle = new SoundStyle("Terraria/Sounds/Thunder_0");
         public SoundStyle ThunderSound = new SoundStyle("Terraria/Sounds/Thunder_0");
         public override void AI()
         {
-            if (Projectile.ai[0] == 1)
-            {
-                TileCollide = false;
-                segmentCount = 40;
-            }
             System.Diagnostics.Stopwatch thisWatch = new System.Diagnostics.Stopwatch();
             thisWatch.Start();
             if (IsAtMaxCharge)
@@ -92,57 +91,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
 
             Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
-            int dustSpawned = 0;
 
             //Dust along lightning lines
             
             if (FiringTimeLeft == 28)
             {
-                int dustCount = 4;
-                if (branches != null && branches.Count > 0)
-                {
-                    float pitch = Main.rand.NextFloat(-0.2f, 0.2f);
-                    //Collision.
-                    //Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f, Pitch = pitch }, branches[0][0]);
-                    //Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f, Pitch = pitch }, branches[0][branches[0].Count / 2]);
-                    //Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f, Pitch = pitch }, branches[0][branches[0].Count - 1]);
-
-                    for (int i = 0; i < branches.Count; i++)
-                    {
-                        if (branches[i].Count > 0)
-                        {
-                            if (FastContainsPoint(screenRect, branches[i][0]) || i == 0)
-                            {
-                                for (int j = 0; j < branches[i].Count - 1; j++)
-                                {
-
-                                    Vector2 diff = branches[i][j + 1] - branches[i][j];
-                                    diff /= dustCount;
-                                    float lerpPercent = 0.8f * ((float)j / ((float)branches[i].Count - 1f));
-
-                                    float scale = 1.7f;
-                                    if (i == 0)
-                                    {
-                                        scale = 2.2f;
-                                        lerpPercent = 0;
-                                    }
-
-                                    
-                                    for (int k = 0; k < dustCount; k++)
-                                    {
-                                        dustSpawned++;
-                                        Dust thisDust = Dust.NewDustPerfect(branches[i][j] + diff * k, DustID.AncientLight, Scale: scale);
-                                        thisDust.noLight = true;
-                                        thisDust.noGravity = true;
-                                        thisDust.velocity = Vector2.Zero;
-                                        thisDust.rotation = Main.rand.NextFloatDirection();
-                                        thisDust.color = Color.Lerp(Color.White, Color.DarkBlue, lerpPercent);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f });
             }
 
             if (FiringTimeLeft == 28)
@@ -249,8 +203,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 {
                     initialAngle -= Main.rand.NextFloat(0.1f, 1.4f);
                 }
-
-                //initialAngle *= -1;
             }
 
             currentBranch.Add(Vector2.Zero);
@@ -333,9 +285,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
         public int displayDuration = 0;
 
+        public RenderTarget2D tempTarget;
         public RenderTarget2D lightningTarget;
-        Vector2 storedPosition;
-        public static ArmorShaderData data;
         public override bool PreDraw(ref Color lightColor)
         {
             //Don't draw anything if it hasn't generated the branches
@@ -354,59 +305,91 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 color = Color.Gray * 0.5f;
             }
 
-            //Calculate how far offset the current screen position is from where it was when it was drawn
-            Vector2 offset = storedPosition - Main.screenPosition;
-
             //Restart the spritebatch so the shader can be applied to it
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            //data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer);
-
             //Apply the shader, caching it as well
-            if(data == null)
+            if(lightningEffect == null)
             {
-                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/LightningShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "LightningShaderPass");
+                lightningEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/LightningLine", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
-            //The shader uses "saturation" variable to tell what percent of the lightning to draw, from 0 to 1
-            data.UseSaturation((float)Charge / MaxCharge);
-            //It uses the TargetPosition variable to tell it the starting point of the lightning it crops relative to
-            data.UseTargetPosition((Projectile.position - Main.screenPosition) / Main.ScreenSize.ToVector2());
+            lightningEffect.Parameters["shaderColor"].SetValue(Color.Blue.ToVector3());
+            if (IsAtMaxCharge)
+            {
+                lightningEffect.Parameters["active"].SetValue(1);
+                lightningEffect.Parameters["fadeOut"].SetValue(FiringTimeLeft / 28f);
+            }
+            else
+            {
+                lightningEffect.Parameters["active"].SetValue(.2f);
+                lightningEffect.Parameters["fadeOut"].SetValue(1);
+            }
+            lightningEffect.Parameters["noiseTex"].SetValue(tsorcRevamp.NoiseVoronoi);
+            lightningEffect.Parameters["mulColor"].SetValue(color.R / 255f);
 
-            //Apply the shader
-            data.Apply(null);
+            lightningEffect.CurrentTechnique.Passes[0].Apply();
 
             //Draw the rendertarget with the shader
-            Main.spriteBatch.Draw(lightningTarget, offset, new Rectangle(0, 0, lightningTarget.Width, lightningTarget.Height), color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-            
+            float rotato = (branches[0][branches[0].Count - 1] - branches[0][0]).ToRotation();
+            Rectangle drawRect = new Rectangle(0, 0, (int)(lightningTarget.Width * 2 * Charge / MaxCharge), lightningTarget.Height);
+            if (IsAtMaxCharge || Projectile.ai[0] == 1 || Charge / MaxCharge > 0.5f)
+            {
+                drawRect.Width = lightningTarget.Width;
+            }
+            Main.spriteBatch.Draw(lightningTarget, branches[0][0] - Main.screenPosition, drawRect, color, rotato, new Vector2(lightningXOffset, lightningTarget.Height / 2), 1, SpriteEffects.None, 0);
+
             //Restart the spritebatch so the shader doesn't get applied to the rest of the game
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
 
             return false;
         }
-        
+
+        Vector2 lightningMaxDimensions = new Vector2(2500, 1000);
+        public static Effect lightningEffect;
+        public static Effect blurEffect;
         public void CreateRenderTarget()
         {
+            //Potential better version of this: Rotate them just like is done when drawing them, and calcualte their max X and Y offset of every single branch node
+            //Probably an unnecessary optimization, but an option for if it does become necessary in the future
+            lightningMaxDimensions.X = 0;
+            for(int i = 0; i < branches.Count - 1; i++)
+            {
+                if (branches[i].Count > 2)
+                {
+                    float dist = branches[0][0].Distance(branches[i][branches[i].Count - 1]) + 100;
+                    if (lightningMaxDimensions.X < dist)
+                    {
+                        lightningMaxDimensions.X = dist;
+                    }
+                }
+            }
+            //Main.NewText(lightningMaxDimensions.X);
+
             //Store a reference to the graphics device to simplify code
             GraphicsDevice device = Main.graphics.GraphicsDevice;
 
             //Create a rendertarget. Instead of drawing all 200 lightning branches every frame, we will draw them once and store the results in this.
             //Once that is done, we can simply draw this one rendertarget to display the full lightning strike
-            lightningTarget = new RenderTarget2D(device, device.PresentationParameters.BackBufferWidth * 2, device.PresentationParameters.BackBufferHeight * 2, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
+            tempTarget = new RenderTarget2D(device, (int)lightningMaxDimensions.X, (int)lightningMaxDimensions.Y, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
 
             //Set the device target to the new rendertarget
-            device.SetRenderTarget(lightningTarget);
+            device.SetRenderTarget(tempTarget);
 
             //Clear it, so that whatever was previously stored on the backbuffer (like other lightning) doesn't get put in this target
             device.Clear(Color.Transparent);
 
             //Start a new "default" texture-sorted spritebatch
-            Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend);
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
-            //Activate the living ocean shader to make it look nicer
-            GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.LivingOceanDye), Main.LocalPlayer).Apply();
+            //Activate the shader to draw it properly
+            if (lightningEffect == null)
+            {
+                lightningEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/LightningLine", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+            lightningEffect.Parameters["active"].SetValue(-2);
+            lightningEffect.CurrentTechnique.Passes[0].Apply();
 
             //Draw the lightning
             DrawSegments();
@@ -414,13 +397,41 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             //End the spritebatch
             Main.spriteBatch.End();
 
-            //Store the current screen position at time of drawing so it can be used to calculate where to draw the lightning later
-            storedPosition = Main.screenPosition;
-
             //Re-set the old bindings
-            //If I do this instead, then everything drawn *before* the lightning (tiles, backrounds, etc) is blacked out this frame
-            //device.SetRenderTargets(bindings);
             device.SetRenderTarget(null);
+
+            //Then draw it to a second rendertarget to blur it by applying a second shader in the process
+            lightningTarget = new RenderTarget2D(device, (int)lightningMaxDimensions.X, (int)lightningMaxDimensions.Y, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
+            device.SetRenderTarget(lightningTarget);
+            device.Clear(Color.Transparent);
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+
+            if (blurEffect == null)
+            {
+                blurEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/BlurEffect", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+            blurEffect.CurrentTechnique.Passes[0].Apply();
+            
+            Main.spriteBatch.Draw(tempTarget, Vector2.Zero, new Rectangle(0, 0, tempTarget.Width, tempTarget.Height), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tempTarget, Vector2.Zero, new Rectangle(0, 0, tempTarget.Width, tempTarget.Height), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tempTarget, Vector2.Zero, new Rectangle(0, 0, tempTarget.Width, tempTarget.Height), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tempTarget, Vector2.Zero, new Rectangle(0, 0, tempTarget.Width, tempTarget.Height), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+
+
+            Main.spriteBatch.End();
+
+            device.SetRenderTarget(null);
+
+
+            //Clean up the temp target to free up memory
+            if (tempTarget != null && !tempTarget.IsDisposed)
+            {
+                tempTarget.Dispose();
+            }
+            if (tempTarget != null)
+            {
+                tempTarget = null;
+            }
         }
 
         public void DrawPrims()
@@ -521,30 +532,27 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 {
                     for (int j = 0; j < branches[i].Count - 1; j++)
                     {
-                        float scale = 0.7f;
-                        if (i == 0)
-                        {
-                            scale = 1;
-                        }
                         DrawLightning(TransparentTextureHandler.TransparentTextures[LaserTexture], branches[i][j],
-                                branches[i][j + 1], LaserTextureBody, branchLengths[i][j], branchAngles[i][j], scale, LaserColor);
+                                branchLengths[i][j], branchAngles[i][j]);
                     }
                 }
             }
         }
 
-        public void DrawLightning(Texture2D texture, Vector2 start, Vector2 unit, Rectangle bodyRect, float distance, float rotation = 0f, float scale = 1f, Color color = default)
+        float lightningXOffset = 50;
+        public void DrawLightning(Texture2D texture, Vector2 start, float distance, float rotation = 0f)
         {
-            float i = 0;
-            Vector2 diff = unit - start;
-            diff.Normalize();
+            float rotato = (branches[0][branches[0].Count - 1] - branches[0][0]).ToRotation();
+            start -= branches[0][0];
+            start = start.RotatedBy(-rotato);
+            start.X += lightningXOffset;
+            start.Y += lightningMaxDimensions.Y / 2;
 
-            Vector2 startPos = start - diff * 3;
-            for (; i <= distance; i += (bodyRect.Height) * scale)
-            {
-                Vector2 drawStart = startPos + i * diff;               
-                Main.EntitySpriteDraw(texture, drawStart - Main.screenPosition, bodyRect, color, rotation + MathHelper.PiOver2, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);                
-            }
+            float drawScale = 1.5f;
+            Rectangle drawRect = new Rectangle(0, 0, (int)(distance * 1.4f / drawScale) , 12);
+            Vector2 drawOrigin = drawRect.Size() / 2;
+            drawOrigin.X = distance / drawScale;
+            Main.EntitySpriteDraw(texture, start, drawRect, Color.White, rotation - rotato, drawOrigin, drawScale, 0, 0);
         }
 
         public override void Kill(int timeLeft)
@@ -552,6 +560,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             if (lightningTarget != null && !lightningTarget.IsDisposed)
             {
                 lightningTarget.Dispose();
+            }
+            if (lightningTarget != null)
+            {
+                lightningTarget = null;
             }
         }
 
@@ -612,6 +624,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             }
 
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+            DelegateMethods.tileCutIgnore = TileID.Sets.TileCutIgnore.None;
 
             if (branches.Count > 0)
             {

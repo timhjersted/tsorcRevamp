@@ -719,6 +719,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+            DelegateMethods.tileCutIgnore = TileID.Sets.TileCutIgnore.None;
 
             if (branches.Count > 0)
             {

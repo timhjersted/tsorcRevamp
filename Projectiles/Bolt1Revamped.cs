@@ -75,6 +75,7 @@ namespace tsorcRevamp.Projectiles
 
             //Cut plants
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+            DelegateMethods.tileCutIgnore = TileID.Sets.TileCutIgnore.None;
             Utils.PlotTileLine(startpoint, endpoint, 100, DelegateMethods.CutTiles);
 
 

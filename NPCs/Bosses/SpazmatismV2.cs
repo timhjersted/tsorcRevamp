@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 6;
+            Main.npcFrameCount[NPC.type] = 8;
             NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
             {
                 SpecificallyImmuneTo = new int[] {
@@ -490,6 +490,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (transformationTimer > 240)
             {
+                UsefulFunctions.SimpleGore(NPC, "Spazmatism_Gore_1");
                 transformed = true;
             }
         }
@@ -707,6 +708,24 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
+
+        public override bool? CanBeHitByProjectile(Projectile projectile)
+        {
+            if (deathTimer > 0)
+            {
+                return false;
+            }
+            return base.CanBeHitByProjectile(projectile);
+        }
+
+        public override bool? CanBeHitByItem(Player player, Item item)
+        {
+            if (deathTimer > 0)
+            {
+                return false;
+            }
+            return base.CanBeHitByItem(player, item);
+        }
         private void InitializeMoves(List<int> validMoves = null)
         {
             MoveList = new List<SpazMove> {
@@ -1036,6 +1055,8 @@ namespace tsorcRevamp.NPCs.Bosses
         //TODO: Copy vanilla death effects
         public override void OnKill()
         {
+            UsefulFunctions.SimpleGore(NPC, "Spazmatism_Gore_2");
+            UsefulFunctions.SimpleGore(NPC, "Spazmatism_Gore_3");
             if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:SpazShockwave"].IsActive())
             {
                 Filters.Scene["tsorcRevamp:SpazShockwave"].Deactivate();

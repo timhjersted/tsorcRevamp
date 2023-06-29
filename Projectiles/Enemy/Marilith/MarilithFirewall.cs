@@ -69,9 +69,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
 
-                int width = (int)(140);
-                int longLength = (int)(252 );
-                int shortLength = (int)(106);
+                int width = 140;
+                int longLength = 268;
+                int shortLength = 122;
                 //Left
                 if (Projectile.ai[0] == 0) 
                 {
@@ -168,7 +168,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         {
             
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //Apply the shader, caching it as well
             //if (data == null)
@@ -192,13 +192,36 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
-            Rectangle sourceRectangle = new Rectangle(0, 0, Projectile.width, Projectile.height);
+            Rectangle sourceRectangle = new Rectangle(0, 0, (int)(Projectile.width), Projectile.height);
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = sourceRectangle.Size() / 2f;
+            float rotation = Projectile.rotation;
 
-            Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
-            
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, drawPosition, sourceRectangle, Color.White, rotation, origin, Projectile.scale, spriteEffects, 0);
+
+            rotation += MathHelper.Pi;
+            if (Projectile.ai[0] == 0)
+            {
+                drawPosition.X -= 140;
+            }
+            if (Projectile.ai[0] == 1)
+            {
+                drawPosition.X += 140;
+            }
+            if (Projectile.ai[0] == 3)
+            {
+                drawPosition.Y += 140;// - 240 * (1 - (cloudProgress / 300f));
+            }
+            if (Projectile.ai[0] == 2)
+            {
+                rotation -= MathHelper.Pi;
+                drawPosition.Y -= 140;
+                spriteEffects = SpriteEffects.FlipVertically;
+            }
+
+            Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, drawPosition, sourceRectangle, Color.White, rotation, origin, Projectile.scale, spriteEffects, 0);
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
 
             return false;
         }

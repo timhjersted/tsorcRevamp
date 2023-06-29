@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 6;
+            Main.npcFrameCount[NPC.type] = 8;
             NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
             {
                 SpecificallyImmuneTo = new int[] {
@@ -566,7 +566,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //Recoil
                 if (laserCountdown == 376)
                 {
-                    NPC.StrikeNPC(NPC.CalculateHitInfo(999999, 1, true, 0), false, false);
+                    NPC.StrikeNPC(NPC.CalculateHitInfo(999, 1, true, 0), false, false);
                     NPC.velocity += new Vector2(7, 0).RotatedBy(NPC.rotation - MathHelper.PiOver2);
                 }
             }
@@ -628,6 +628,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (transformationTimer > 240)
             {
+                UsefulFunctions.SimpleGore(NPC, "Retinazer_Gore_1");
                 transformed = true;
             }
 
@@ -752,8 +753,15 @@ namespace tsorcRevamp.NPCs.Bosses
             return true;
         }
 
+        /*
+        public override bool? CanBeHitByProjectile(Projectile projectile)
+        {
+            return base.CanBeHitByProjectile(projectile);
+        }*/
+
         void HandleDeath()
         {
+            //NPC.ShowNameOnHover = false;
             NPC.dontTakeDamage = true;
             NPC.velocity *= 0.95f;
 
@@ -822,7 +830,27 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
         }
-        
+
+        public override bool? CanBeHitByProjectile(Projectile projectile)
+        {
+            if(deathTimer > 0)
+            {
+                 return false;
+            }
+
+            return base.CanBeHitByProjectile(projectile);
+        }
+
+        public override bool? CanBeHitByItem(Player player, Item item)
+        {
+            if (deathTimer > 0)
+            {
+                return false;
+            }
+
+            return base.CanBeHitByItem(player, item);
+        }
+
         public override bool CheckDead()
         {
             if (deathTimer > 0)
@@ -1160,7 +1188,9 @@ namespace tsorcRevamp.NPCs.Bosses
         //TODO: Copy vanilla death effects
         public override void OnKill()
         {
-            //Just to be sure
+            UsefulFunctions.SimpleGore(NPC, "Retinazer_Gore_2");
+            UsefulFunctions.SimpleGore(NPC, "Retinazer_Gore_3");
+
             if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:RetShockwave"].IsActive())
             {
                 Filters.Scene["tsorcRevamp:RetShockwave"].Deactivate();

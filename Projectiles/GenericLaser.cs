@@ -823,22 +823,11 @@ namespace tsorcRevamp.Projectiles
         public override void CutTiles()
         {
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+            DelegateMethods.tileCutIgnore = TileID.Sets.TileCutIgnore.None;
             Vector2 unit = Projectile.velocity;
-
-            //PlotTileLine keeps throwing an error, no clue why
-            if(Projectile.type == ModContent.ProjectileType<Projectiles.Enemy.Prime.PrimeBeam>())
-            {
-                return;
-            }
-
-            //This randomly fails for the first laser fired. No clue why, the error is in vanilla code.
-            try {
-                Utils.PlotTileLine(Projectile.Center, Projectile.Center + unit * Distance, (Projectile.width + 16) * Projectile.scale, DelegateMethods.CutTiles);
-            }
-            catch
-            {
-
-            }
+            DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+            DelegateMethods.tileCutIgnore = TileID.Sets.TileCutIgnore.None;
+            Utils.PlotTileLine(Projectile.Center, Projectile.Center + unit * Distance, (Projectile.width + 16) * Projectile.scale, DelegateMethods.CutTiles);
         }
     }
 }

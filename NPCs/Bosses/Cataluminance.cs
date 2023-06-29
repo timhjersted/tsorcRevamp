@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 6;
+            Main.npcFrameCount[NPC.type] = 8;
             NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
             {
                 SpecificallyImmuneTo = new int[] 
@@ -797,6 +797,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (transformationTimer > 240)
             {
                 UsefulFunctions.BroadcastText("The Triad has transformed...", Color.DeepPink);
+                UsefulFunctions.SimpleGore(NPC, "Cataluminance_Gore_1");
                 transformed = true;
             }
         }
@@ -1252,6 +1253,8 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void OnKill()
         {
+            UsefulFunctions.SimpleGore(NPC, "Cataluminance_Gore_2");
+            UsefulFunctions.SimpleGore(NPC, "Cataluminance_Gore_3");
             if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:CatShockwave"].IsActive())
             {
                 Filters.Scene["tsorcRevamp:CatShockwave"].Deactivate();

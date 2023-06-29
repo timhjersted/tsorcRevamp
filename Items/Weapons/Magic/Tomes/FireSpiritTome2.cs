@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<FireSpiritTome>(), 1);
             recipe.AddIngredient(ModContent.ItemType<ExplosionRune>(), 1);
-            recipe.AddIngredient(ItemID.LunarTabletFragment, 1);
+            recipe.AddIngredient(ItemID.InfernoFork, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
             recipe.AddTile(TileID.DemonAltar);
 

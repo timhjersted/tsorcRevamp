@@ -36,10 +36,10 @@ namespace tsorcRevamp.Projectiles.Ranged
         bool dying = false;
         float size = 0;
         Vector2 truePosition;
-        float maxSize = 1200;
+        float maxSize = 2700;
         bool initialized = false;
         float fadeIn;
-        float trueSize;
+        float trueSize = 1;
         public override void AI()
         {
             Projectile.timeLeft = 2;
@@ -67,8 +67,8 @@ namespace tsorcRevamp.Projectiles.Ranged
                 else
                 {
 
-                    Projectile.rotation = UsefulFunctions.Aim(Projectile.Center, Main.MouseWorld, 1).ToRotation();
-                    Projectile.direction = Main.MouseWorld.X > Projectile.Center.X ? 1 : -1;
+                    Projectile.rotation = UsefulFunctions.Aim(owner.Center, Main.MouseWorld, 1).ToRotation();
+                    Projectile.direction = Main.MouseWorld.X > owner.Center.X ? 1 : -1;
                     Vector2 rotDir = Projectile.rotation.ToRotationVector2();
                     Projectile.Center = owner.Center + rotDir * 30;
                     truePosition = owner.Center + rotDir * 30;
@@ -95,7 +95,16 @@ namespace tsorcRevamp.Projectiles.Ranged
             }
 
 
-            trueSize = (float)Math.Pow((UsefulFunctions.GetFirstCollision(Projectile.Center, Projectile.rotation.ToRotationVector2(), ignoreNPCs: true) - Projectile.Center).Length() / 600f, 0.5f);
+
+            float newTrueSize = (float)Math.Pow((UsefulFunctions.GetFirstCollision(Projectile.Center, Projectile.rotation.ToRotationVector2(), ignoreNPCs: true) - Projectile.Center).Length() / 600f, 0.5f);
+            if(newTrueSize < trueSize)
+            {
+                trueSize = newTrueSize;
+            }
+            else if(newTrueSize > trueSize + 0.01)
+            {
+                trueSize += 0.01f;
+            }
             if(trueSize > 1)
             {
                 trueSize = 1;
@@ -106,6 +115,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             DelegateMethods.v3_1 = Color.OrangeRed.ToVector3();
             Utils.PlotTileLine(Projectile.Center, endpoint, 32, DelegateMethods.CastLight);
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+            DelegateMethods.tileCutIgnore = TileID.Sets.TileCutIgnore.None;
             Utils.PlotTileLine(Projectile.Center, endpoint, 32, DelegateMethods.CutTiles);
 
 
@@ -133,7 +143,7 @@ namespace tsorcRevamp.Projectiles.Ranged
         {
             float distance = Vector2.Distance(truePosition, targetHitbox.Center.ToVector2());
             float angleBetween = (float)UsefulFunctions.CompareAngles(Vector2.Normalize(truePosition - targetHitbox.Center.ToVector2()), Projectile.rotation.ToRotationVector2());
-            return distance < trueSize * (400 + (size / 6f)) && Math.Abs(angleBetween - MathHelper.Pi) < angle / 2.85f;
+            return distance < trueSize * (600 + (size / 6f)) && Math.Abs(angleBetween - MathHelper.Pi) < angle / 2.85f;
         }
 
         public static Effect effect;
@@ -178,7 +188,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             Vector2 origin = new Vector2(recsize.Width * 0.5f, recsize.Height * 0.5f);
 
             //Draw the rendertarget with the shader
-            Main.spriteBatch.Draw(tsorcRevamp.NoiseTurbulent, truePosition - Main.screenPosition, recsize, Color.White, Projectile.rotation + (MathHelper.Pi - angle / 2f), origin, trueSize * 4.5f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tsorcRevamp.NoiseTurbulent, truePosition - Main.screenPosition, recsize, Color.White, Projectile.rotation + (MathHelper.Pi - angle / 2f), origin, trueSize * trueSize * 7.5f, SpriteEffects.None, 0);
 
             //Restart the spritebatch so the shader doesn't get applied to the rest of the game
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);

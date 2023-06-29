@@ -14,7 +14,7 @@ namespace tsorcRevamp.Buffs.Summon
 		public override void Update(Player player, ref int buffIndex)
 		{
 			// If the minions exist reset the buff time, otherwise remove the buff from the player
-			if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.TetsujinProjectile>()] > 0)
+			if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.PhotonicDownpourDefenseDrone>()] > 0 || player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.PhotonicDownpourLaserDrone>()] > 0)
 			{
 				player.buffTime[buffIndex] = 18000;
 			}

@@ -69,8 +69,8 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     float2 samplePoint = uv;
     
     //Zoom in on the noise texture, then shift it over time to make it appear to be flowing    
-    samplePoint /= 20;
-    samplePoint.x = (samplePoint.x + time * 0.05) * 1;
+    samplePoint /= 4;
+    samplePoint.x = (samplePoint.x + time * .1) * 1;
     
     //Compress it vertically
     samplePoint.y = samplePoint.y / 2;

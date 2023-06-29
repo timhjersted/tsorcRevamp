@@ -96,6 +96,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 		public override void CutTiles()
 		{
 			DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+			DelegateMethods.tileCutIgnore = Terraria.ID.TileID.Sets.TileCutIgnore.None;
 			Vector2 start = Projectile.Center;
 			Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
 			Utils.PlotTileLine(start, end, CollisionWidth, DelegateMethods.CutTiles);

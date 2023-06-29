@@ -105,7 +105,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 900, 45);
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 600, 30);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 300, 20);
 
                 float rotation = Main.rand.NextFloat(0, MathHelper.TwoPi);
                 for (int i = 0; i < 4; i++)
@@ -146,10 +148,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             }
 
             starRotation += 0.02f;
-            Rectangle starRectangle = new Rectangle(0, 0, 400, 400);
+            Rectangle starRectangle = new Rectangle(0, 0, 600, 600);
             float attackFadePercent = (float)Math.Pow(detonationPercent, .2) / 2f;
-            starRectangle.Width = 150 + (int)(starRectangle.Width * (1 - Math.Pow(detonationPercent, .3)));
-            starRectangle.Height = 150 + (int)(starRectangle.Height * (1 - Math.Pow(detonationPercent, .3)));
+            starRectangle.Width = (int)(starRectangle.Width * (Math.Pow(detonationPercent, .3)));
+            starRectangle.Height = (int)(starRectangle.Height * (Math.Pow(detonationPercent, .3)));
 
             Vector2 starOrigin = starRectangle.Size() / 2f;
 

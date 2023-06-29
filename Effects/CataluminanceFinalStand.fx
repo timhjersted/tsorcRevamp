@@ -30,7 +30,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     float4 laserColor = float4(0.2, 0.6, 0.1, 1.0);
     float4 white = float4(1.0,1.0,1.0,1.0);
 
-    float textureSize = 4096;
+    float textureSize = 1024;
     
     // Normalize pixel coordinates (from 0 to 1) and compensate for projectile size distortion
     float2 uv = coords * textureSize;

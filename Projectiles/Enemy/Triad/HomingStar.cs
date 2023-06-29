@@ -215,6 +215,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         int ꙮ; //Note: ​​̵̲̹̞͘​̶̝̥̰̓͐̽​̶̛͍͌̑​̴̜͉̀​̵̨̦̜̈́̕​̴̞̰̖̆​̸̒͜​̸͚̖͌̎​̸̝̊͠​̵̩̒͗͝​̵̟̩͐
         public override void SetEffectParameters(Effect effect)
         {
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             float intensity = 0.07f;
             float trueFadeOut = fadeOut;
             Color shaderColor;
@@ -248,7 +250,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);
             effect.Parameters["fadeOut"].SetValue(trueFadeOut);
-            effect.Parameters["time"].SetValue(timeFactor / 100f);
+            effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 25);
             effect.Parameters["shaderColor"].SetValue(rgbColor.ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }

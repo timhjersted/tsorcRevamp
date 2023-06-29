@@ -164,7 +164,7 @@ namespace tsorcRevamp.Projectiles.VFX
             starRectangle.Width = (int)(starRectangle.Width * (Projectile.ai[0] / 600f));
             starRectangle.Height = (int)(starRectangle.Height * (Projectile.ai[0] / 600f));
 
-            float effectFactor = (float)Math.Pow((360f - effectTimer) / 360f, 14);
+            float effectFactor = (float)Math.Pow((Projectile.ai[1] - effectTimer) / Projectile.ai[1], 3);
             starRectangle.Width = (int)(starRectangle.Width * effectFactor);
             starRectangle.Height = (int)(starRectangle.Height * effectFactor);
 

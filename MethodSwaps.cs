@@ -131,7 +131,13 @@ namespace tsorcRevamp
 
         private static void DrawPlayerAuras(On_Main.orig_DrawPlayers_BehindNPCs orig, Main self)
         {
-
+            for(int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active && !Main.player[i].dead)
+                {
+                    tsorcRevampPlayerAuraDrawLayers.DrawPlayerAuras(Main.player[i]);
+                }
+            }
             orig(self);
         }
 
@@ -424,6 +430,8 @@ namespace tsorcRevamp
                             Color color = Color.White;
                             trail.PreDraw(ref color);
                             trail.additiveContext = false;
+                            Main.spriteBatch.End();
+                            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                         }
                         if (Main.projectile[i].ModProjectile is GenericLaser)
                         {
@@ -432,6 +440,8 @@ namespace tsorcRevamp
                             Color color = Color.White;
                             laser.PreDraw(ref color);
                             laser.additiveContext = false;
+                            Main.spriteBatch.End();
+                            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                         }
                         if (Main.projectile[i].ModProjectile is SpazFireJet)
                         {
@@ -440,6 +450,8 @@ namespace tsorcRevamp
                             Color color = Color.White;
                             jet.PreDraw(ref color);
                             jet.additiveContext = false;
+                            Main.spriteBatch.End();
+                            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                         }
                         if (Main.projectile[i].ModProjectile is Projectiles.Spears.FetidExhaust)
                         {
@@ -448,6 +460,8 @@ namespace tsorcRevamp
                             Color color = Color.White;
                             jet.PreDraw(ref color);
                             jet.additiveContext = false;
+                            Main.spriteBatch.End();
+                            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                         }
                     }
                 }
@@ -476,16 +490,6 @@ namespace tsorcRevamp
                                 lightning.CreateRenderTarget();
                             }
                         }
-                        /*
-                        if (Main.projectile[i].ModProjectile is MarilithLightning)
-                        {
-                            MarilithLightning lightning = (MarilithLightning)Main.projectile[i].ModProjectile;
-                            if (lightning.lightningTarget == null && lightning.branches != null)
-                            {
-                                lightning.CreateRenderTarget();
-                            }
-                        }*/
-
                         //I really should just make one "Lightning" class that all these inherit from
                         //But also ¯\_(ツ)_/¯
                         if (Main.projectile[i].ModProjectile is JellyfishLightning)
@@ -505,16 +509,6 @@ namespace tsorcRevamp
                                 lightning.CreateRenderTarget();
                             }
                         }
-
-
-                        /*if (Main.projectile[i].ModProjectile is JellyfishLightning)
-                        {
-                            JellyfishLightning lightning = (JellyfishLightning)Main.projectile[i].ModProjectile;
-                            if (lightning.lightningTarget == null)
-                            {
-                                lightning.CreateRenderTarget();
-                            }
-                        }*/
                     }
                 }
             }

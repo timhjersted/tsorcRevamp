@@ -66,7 +66,7 @@ namespace tsorcRevamp.Projectiles.Summon
 					}
 				}
 
-				for (int i = 0; i < 6; i++)
+				for (int i = 0; i < 12; i++)
 				{
 					if (foundIndicies.Contains(i))
 					{

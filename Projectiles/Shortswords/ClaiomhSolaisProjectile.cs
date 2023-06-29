@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Enums;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Shortswords
@@ -115,6 +116,7 @@ namespace tsorcRevamp.Projectiles.Shortswords
 		{
 			// "cutting tiles" refers to breaking pots, grass, queen bee larva, etc.
 			DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+			DelegateMethods.tileCutIgnore = TileID.Sets.TileCutIgnore.None;
 			Vector2 start = Projectile.Center;
 			Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
 			Utils.PlotTileLine(start, end, CollisionWidth, DelegateMethods.CutTiles);

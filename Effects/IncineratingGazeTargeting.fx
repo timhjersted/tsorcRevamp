@@ -32,7 +32,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     float4 white = float4(1.0,1.0,1.0,1.0);
     laserColor.rgb = uColor;
     
-    float textureSize = 4096;
+    float textureSize = 1024;
     float projectileWidth = 1200;
     float projectileHeight = 250;
     
@@ -72,7 +72,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     float2 samplePoint = coords;
 
     //Stretch it horizontally and then shift it over time to make it appear to be flowing
-    samplePoint.x = (samplePoint.x + uTime) * 0.1;
+    samplePoint.x = (samplePoint.x + uTime * 4) * 0.1;
     //Compress it vertically
     samplePoint.y = samplePoint.y * 2.0;
 

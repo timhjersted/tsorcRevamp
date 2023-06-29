@@ -52,7 +52,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     float2 samplePoint = float2(distanceIntensity, angle);
     
     //Stretch it so it looks good
-    samplePoint = samplePoint * scale * 50 / effectSize;
+    samplePoint = samplePoint * scale / 5;
     samplePoint.y = samplePoint.y * 3;
     
     //Offset it based on time to create the flowing effect

@@ -939,6 +939,27 @@ namespace tsorcRevamp
         }
 
         ///<summary> 
+        ///Checks if a projectile is safe to fuck with (destroy, reflect, etc)
+        ///</summary>
+        ///<param name="type">The type of projectile being checked</param>
+        public static bool IsProjectileSafeToFuckWith(int type)
+        {
+            if (Main.projectile[type].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.CataluminanceTrail>() ||
+                Main.projectile[type].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>() ||
+                Main.projectile[type].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.CursedMalestrom>())
+            {
+                return false;
+            }
+            Projectile test = Main.projectile[type];
+            if (test.active && test.hostile && test.damage > 0 && test.velocity.Length() > 1 && test.width < 100 && test.height < 100 && !(test.ModProjectile is GenericLaser))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        ///<summary> 
         ///Checks if at least one of a given projectile exists
         ///</summary>
         ///<param name="type">The type of projectile to find</param>

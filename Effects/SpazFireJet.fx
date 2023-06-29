@@ -31,7 +31,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     float4 white = float4(1.0,1.0,1.0,1.0);
     laserColor.rgb = uColor;
 
-    float textureSize = 4096;
+    float textureSize = 1024;
     float projectileWidth = 1200;
     float projectileHeight = 250;
     

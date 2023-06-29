@@ -9,11 +9,10 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.VFX;
 
-namespace tsorcRevamp.Projectiles.Enemy.Prime
+namespace tsorcRevamp.Projectiles.Summon
 {
     class PhotonicDownpourLaser : DynamicTrail
-    {
-        
+    {        
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Death Laser");
@@ -24,9 +23,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             Projectile.width = 20;
             Projectile.height = 20;
             Projectile.timeLeft = 600;
-            Projectile.hostile = true;
-            Projectile.friendly = false;
+            Projectile.hostile = false;
+            Projectile.friendly = true;
             Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 999;
 
             trailWidth = 25;
             trailPointLimit = 150;
@@ -34,7 +36,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             trailMaxLength = 150;
             NPCSource = false;
             collisionPadding = 0;
-            collisionEndPadding = 1;
             collisionFrequency = 2;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
@@ -64,8 +65,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
         float timeFactor = 0;
         public override void SetEffectParameters(Effect effect)
         {
-            collisionEndPadding = trailPositions.Count / 3;
-            collisionPadding = trailPositions.Count / 5;
             visualizeTrail = false;
             timeFactor++;
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);

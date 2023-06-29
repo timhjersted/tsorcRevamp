@@ -136,7 +136,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 trailMaxLength = 200;
                 trailWidth = 100;
             }
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/VortexOrb", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(timeFactor);
