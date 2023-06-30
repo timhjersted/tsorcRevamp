@@ -57,7 +57,7 @@ namespace tsorcRevamp
                 { 232, 4 } //wooden spike, in case tim decides to use them
             };
 
-            SoulSlot = new UIItemSlot(Vector2.Zero, 52, ItemSlot.Context.InventoryItem, LaUtils.GetTextValue("UI.DarkSouls"), null, SoulSlotCondition, DrawSoulSlotBackground, null, null, false, true);
+            SoulSlot = new UIItemSlot(Vector2.Zero, 52, ItemSlot.Context.InventoryItem, LangUtils.GetTextValue("UI.DarkSouls"), null, SoulSlotCondition, DrawSoulSlotBackground, null, null, false, true);
             SoulSlot.BackOpacity = 0.8f;
             SoulSlot.Item = new Item();
             SoulSlot.Item.SetDefaults(0, true);
@@ -431,22 +431,22 @@ namespace tsorcRevamp
                 if (NPC.AnyNPCs(NPCID.LunarTowerSolar))
                 {
                     NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.SolarPillar"), Color.OrangeRed);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.SolarPillar"), Color.OrangeRed);
                 }
                 if (NPC.AnyNPCs(NPCID.LunarTowerStardust))
                 {
                     NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.StardustPillar"), Color.Cyan);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.StardustPillar"), Color.Cyan);
                 }
                 if (NPC.AnyNPCs(NPCID.LunarTowerVortex))
                 {
                     NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.VortexPillar"), Color.Teal);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.VortexPillar"), Color.Teal);
                 }
                 if (NPC.AnyNPCs(NPCID.LunarTowerNebula))
                 {
                     NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.NebulaPillar"), Color.Pink);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.NebulaPillar"), Color.Pink);
                 }
             }
         }
@@ -605,7 +605,7 @@ namespace tsorcRevamp
             }
             if (MiakodaFull)
             { //Miakoda Full Moon
-                if (MiakodaEffectsTimer > Items.Pets.MiakodaFull.HealCooldown)
+                if (MiakodaEffectsTimer > Items.Pets.MiakodaFull.HealCooldown * 60)
                 {
                     if (hit.Crit)
                     {
@@ -630,7 +630,7 @@ namespace tsorcRevamp
 
             if (MiakodaCrescent)
             { //Miakoda Crescent Moon
-                if (MiakodaEffectsTimer > Items.Pets.MiakodaCrescent.BoostCooldown)
+                if (MiakodaEffectsTimer > Items.Pets.MiakodaCrescent.BoostCooldown * 60)
                 {
                     if (hit.Crit)
                     {

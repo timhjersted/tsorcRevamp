@@ -19,7 +19,7 @@ namespace tsorcRevamp.Buffs
         {
             if (type == BuffID.Tipsy)
             {
-                tip += "\n" + LaUtils.GetTextValue("CommonItemTooltip.Summon.WhipDmg", 10);
+                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.Summon.WhipDmg", 10);
             }
         }
     }

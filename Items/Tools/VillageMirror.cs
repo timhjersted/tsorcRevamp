@@ -32,19 +32,19 @@ namespace tsorcRevamp.Items.Tools
         {
             if (tsorcRevampWorld.BossAlive)
             {
-                Main.NewText(LaUtils.GetTextValue("CommonItemTooltip.UnusableDuringBoss"), Color.Yellow);
+                Main.NewText(LangUtils.GetTextValue("CommonItemTooltip.UnusableDuringBoss"), Color.Yellow);
                 return false;
             }
             if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 if (!player.GetModPlayer<tsorcRevampPlayer>().townWarpSet)
                 {
-                    Main.NewText(LaUtils.GetTextValue("Items.GreatMagicMirror.NoLocation"), 255, 240, 20);
+                    Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.NoLocation"), 255, 240, 20);
                     return false;
                 }
                 else if (player.GetModPlayer<tsorcRevampPlayer>().townWarpWorld != Main.worldID)
                 {
-                    Main.NewText(LaUtils.GetTextValue("Items.GreatMagicMirror.WrongWorld"), 255, 240, 20);
+                    Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.WrongWorld"), 255, 240, 20);
                     return false;
                 }
             }
@@ -70,7 +70,7 @@ namespace tsorcRevamp.Items.Tools
 
                 if (player.itemTime == 0)
                 {
-                    Main.NewText(LaUtils.GetTextValue("Items.GreatMagicMirror.OnUse"), 255, 240, 20);
+                    Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.OnUse"), 255, 240, 20);
                     player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
                 }
                 else if (player.itemTime == (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)
@@ -117,7 +117,7 @@ namespace tsorcRevamp.Items.Tools
             }
             else
             {
-                Main.NewText(LaUtils.GetTextValue("Items.GreatMagicMirror.Oops"), 255, 240, 20);
+                Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.Oops"), 255, 240, 20);
             }
 
         }
@@ -132,7 +132,7 @@ namespace tsorcRevamp.Items.Tools
                 if (ttindex != -1)
                 {// if we find one
                     //insert the extra tooltip line
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "BotCNerfedVillageMirror", LaUtils.GetTextValue("Items.VillageMirror.BotCNerfed")));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "BotCNerfedVillageMirror", LangUtils.GetTextValue("Items.VillageMirror.BotCNerfed")));
 
                 }
             }
@@ -148,7 +148,7 @@ namespace tsorcRevamp.Items.Tools
                 player.GetModPlayer<tsorcRevampPlayer>().townWarpY = playerYLocation(player);
                 player.GetModPlayer<tsorcRevampPlayer>().townWarpWorld = Main.worldID;
                 player.GetModPlayer<tsorcRevampPlayer>().townWarpSet = true;
-                Main.NewText(LaUtils.GetTextValue("Items.GreatMagicMirror.NewLocation"), 255, 240, 30);
+                Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.NewLocation"), 255, 240, 30);
             }
             else
             {
@@ -160,7 +160,7 @@ namespace tsorcRevamp.Items.Tools
                     player.GetModPlayer<tsorcRevampPlayer>().townWarpWorld = Main.worldID;
                     player.GetModPlayer<tsorcRevampPlayer>().townWarpSet = true;
                     warpSetDelay2 = Main.time;
-                    Main.NewText(LaUtils.GetTextValue("Items.GreatMagicMirror.NewLocation"), 255, 240, 30);
+                    Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.NewLocation"), 255, 240, 30);
                 }
             }
         }

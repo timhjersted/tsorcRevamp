@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.CursedSkull.Summon"), 175, 75, 255);
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.CursedSkull.Summon"), 175, 75, 255);
             NPC.NewNPC(player.GetSource_ItemUse(Item), (int)player.position.X - 1070, (int)player.position.Y - 150, NPCID.SkeletronHead, 0);
 
             return true;
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.BossItems
                 }
                 else
                 {
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.CursedSkull.Wrong"), 220, 180, 180);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.CursedSkull.Wrong"), 220, 180, 180);
                     return false;
                 }
             }
@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items.BossItems
                 }
                 else
                 {
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.CursedSkull.WrongTime"), 220, 180, 180);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.CursedSkull.WrongTime"), 220, 180, 180);
                     return false;
                 }
             }

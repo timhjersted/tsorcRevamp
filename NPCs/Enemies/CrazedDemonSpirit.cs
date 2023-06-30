@@ -455,7 +455,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void OnKill()
         {
 
-            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.CrazedDemonSpirit.Death"), 175, 75, 255);
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.CrazedDemonSpirit.Death"), 175, 75, 255);
 
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
             if (NPC.life <= 0)

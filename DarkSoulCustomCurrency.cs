@@ -18,7 +18,7 @@ namespace tsorcRevamp
             {
                 Language.GetTextValue("LegacyTooltip.50"),
                 price,
-                LaUtils.GetTextValue("Items.SoulCoin.Plural")
+                LangUtils.GetTextValue("Items.SoulCoin.Plural")
             });
         }
     }

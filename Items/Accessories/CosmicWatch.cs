@@ -42,9 +42,9 @@ namespace tsorcRevamp.Items.Accessories
                 Main.time = 0;
                 if (Main.dayTime)
                 {
-                    Main.NewText(LaUtils.GetTextValue("Items.CosmicWatch.Day"), 175, 75, 255);
+                    Main.NewText(LangUtils.GetTextValue("Items.CosmicWatch.Day"), 175, 75, 255);
                 }
-                else Main.NewText(LaUtils.GetTextValue("Items.CosmicWatch.Night"), 175, 75, 255);
+                else Main.NewText(LangUtils.GetTextValue("Items.CosmicWatch.Night"), 175, 75, 255);
             }
 
             if (Main.netMode != NetmodeID.SinglePlayer && (player.whoAmI == Main.LocalPlayer.whoAmI))

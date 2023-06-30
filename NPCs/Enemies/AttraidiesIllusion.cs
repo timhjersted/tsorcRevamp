@@ -380,7 +380,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             Player player = Main.player[NPC.target];
-            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.AttraidiesIllusion.Death"), 190, 140, 150);
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.AttraidiesIllusion.Death"), 190, 140, 150);
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {

@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.DyingWaterCrystal.Summon"), Color.DeepSkyBlue);
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.DyingWaterCrystal.Summon"), Color.DeepSkyBlue);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<WaterFiendKraken>());
             return true;
         }

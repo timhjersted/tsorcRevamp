@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     public class SmoughArmor : ModItem
     {
         public static int StaminaShieldCost = 40;
-        public static float BadAtkSpeed = 30f;
+        public static float BadAtkSpeed = 35f;
         public static float CritChance = 100f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BadAtkSpeed, CritChance);
         public override void SetStaticDefaults()

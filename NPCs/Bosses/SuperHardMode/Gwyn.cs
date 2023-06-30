@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 1000000;
-            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.Gwyn.DespawnHandler"), Color.OrangeRed, 6);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Gwyn.DespawnHandler"), Color.OrangeRed, 6);
         }
 
         //old attacks, not all used
@@ -159,14 +159,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if(swordDead && swordTimer < 1)
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Gwyn.SwordShattered"), 150, 75, 255);
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Gwyn.RainOfDeath"), 150, 70, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.SwordShattered"), 150, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.RainOfDeath"), 150, 70, 255);
                 swordTimer++;
             }
             //fury increases! - notify player when new attacks are incoming
             if (NPC.life <= NPC.lifeMax / 5 * 4 && lifeTimer < 1 || NPC.life <= NPC.lifeMax / 5 * 3 && lifeTimer < 2 || NPC.life <= NPC.lifeMax / 5 * 2 && lifeTimer < 3 || NPC.life <= NPC.lifeMax / 5 && lifeTimer < 3)
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Gwyn.Fury"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Fury"), 175, 75, 255);
                 num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.BurningPhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
                 num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.BurningPhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
                 num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.BurningPhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
@@ -190,7 +190,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.defense = 9999;
                 if (holdTimer <= 0)
                 {
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Gwyn.Protected"), 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Protected"), 175, 75, 255);
                     holdTimer = 200;
                 }
                 else
@@ -497,7 +497,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                         if (Main.rand.NextBool(20))
                         {
-                            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Gwyn.RainsDeath"), 175, 75, 255);
+                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.RainsDeath"), 175, 75, 255);
                         }
 
                         for (int pcy = 0; pcy < 6; pcy++) 
@@ -517,7 +517,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                         if (Main.rand.NextBool(16))
                         {
-                            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Gwyn.TidalWave"), 175, 75, 255);
+                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.TidalWave"), 175, 75, 255);
                         }
 
                         for (int pcy = 0; pcy < 8; pcy++) 
@@ -538,7 +538,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                         if (Main.rand.NextBool(32))
                         {
-                            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Gwyn.Challenge"), 125, 85, 255);
+                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Challenge"), 125, 85, 255);
                         }
                         for (int pcy = 0; pcy < 12; pcy++) 
                          {
@@ -556,7 +556,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Player nT = Main.player[NPC.target];
                     if (Main.rand.NextBool(12))
                     {
-                        UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Gwyn.GiveUp"), 125, 85, 255);
+                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.GiveUp"), 125, 85, 255);
                     }
                     for (int pcy = 0; pcy < 12; pcy++)
                     {

@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.BossItems
             if (player.ZoneOverworldHeight && !Main.bloodMoon && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>()))
             {
                 NPC.SpawnOnPlayer(Main.myPlayer, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>());
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.BlightStone.Angery"), 255, 50, 50);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.BlightStone.Angery"), 255, 50, 50);
                 return true;
             }
             else

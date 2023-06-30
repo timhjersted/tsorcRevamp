@@ -131,7 +131,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 NPC.Center = Main.player[NPC.target].Center + new Vector2(-1000, 0);
                 NPC.netUpdate = true;
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.RetinazerV2.ClosesIn"));
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.RetinazerV2.ClosesIn"));
             }
 
             if (MoveList == null)
@@ -188,7 +188,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 baseRadius = 0.5f;
                 if (MoveTimer == 1)
                 {
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.RetinazerV2.Warning"), Color.OrangeRed);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.RetinazerV2.Warning"), Color.OrangeRed);
                 }
 
                 rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;

@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Lore
                 {
                     if (tsorcRevampWorld.NewSlain.ContainsKey(new Terraria.ModLoader.Config.NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>())))
                     {
-                        tooltips[i].Text = LaUtils.GetTextValue("Items.Epilogue.Obscured");
+                        tooltips[i].Text = LangUtils.GetTextValue("Items.Epilogue.Obscured");
                     }
                     else
                     {

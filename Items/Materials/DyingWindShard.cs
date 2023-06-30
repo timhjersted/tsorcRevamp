@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Materials
         {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Chaos", LaUtils.GetTextValue("Items.DyingWindShard.Chaos")));
+                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Chaos", LangUtils.GetTextValue("Items.DyingWindShard.Chaos")));
             }
         }
     }

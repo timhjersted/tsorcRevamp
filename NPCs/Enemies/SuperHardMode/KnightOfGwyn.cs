@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 100000;
             //npc.boss = true;
             NPC.lavaImmune = true;
-            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.KnightOfGwyn.DespawnHandler"), Color.Gold, DustID.GoldFlame);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.KnightOfGwyn.DespawnHandler"), Color.Gold, DustID.GoldFlame);
         }
 
         public int holdBallDamage = 20;

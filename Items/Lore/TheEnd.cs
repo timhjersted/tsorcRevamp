@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Lore
                 {
                     if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())))
                     {
-                        tooltips[i].Text = LaUtils.GetTextValue("Items.TheEnd.Obscured");
+                        tooltips[i].Text = LangUtils.GetTextValue("Items.TheEnd.Obscured");
                     }
                     else
                     {

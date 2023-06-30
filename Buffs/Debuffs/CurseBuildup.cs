@@ -27,20 +27,20 @@ namespace tsorcRevamp.Buffs.Debuffs
             {
                 if (player.statLifeMax <= 100)
                 {
-                    Main.NewText(LaUtils.GetTextValue("Buffs.Curse.CurseText1"));
+                    Main.NewText(LangUtils.GetTextValue("Buffs.Curse.CurseText1"));
                 }
 
                 if (player.statLifeMax >= 120)
                 {
                     player.statLifeMax -= 20;
-                    Main.NewText(LaUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", 20));
+                    Main.NewText(LangUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", 20));
                 }
 
                 modPlayer.CurseLevel = 0; // Reset it to 0
 
                 player.AddBuff(ModContent.BuffType<Invincible>(), 480, false); // 8 seconds
                 player.AddBuff(ModContent.BuffType<Strength>(), 3600, false);
-                Main.NewText(LaUtils.GetTextValue("Buffs.CurseBuildup.CurseText2"));
+                Main.NewText(LangUtils.GetTextValue("Buffs.CurseBuildup.CurseText2"));
 
                 for (int i = 0; i < 30; i++)
                 {

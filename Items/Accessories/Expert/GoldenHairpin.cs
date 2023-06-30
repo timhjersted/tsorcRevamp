@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
                     {
                         player.arrowDamage *= 1f + DmgMult / 100f;
                         SoundEngine.PlaySound(SoundID.Item102 with { Volume = 3f });
-                        CombatText.NewText(PlayerRect, Color.BurlyWood, LaUtils.GetTextValue("Items.GoldenHairpin.Bow"));
+                        CombatText.NewText(PlayerRect, Color.BurlyWood, LangUtils.GetTextValue("Items.GoldenHairpin.Bow"));
                         break;
                     }
                 case int Arrow when (Arrow > 0 && Arrow <= SwitchTiming * 60 - 1):
@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
                     {
                         player.bulletDamage *= 1f + DmgMult / 100f;
                         SoundEngine.PlaySound(SoundID.Item149 with { Volume = 3f });
-                        CombatText.NewText(PlayerRect, Color.BurlyWood, LaUtils.GetTextValue("Items.GoldenHairpin.Gun"));
+                        CombatText.NewText(PlayerRect, Color.BurlyWood, LangUtils.GetTextValue("Items.GoldenHairpin.Gun"));
                         break;
                     }
                 case int Bullet when (Bullet > SwitchTiming * 60 * 1 && Bullet <= SwitchTiming * 60 * 2 - 1):
@@ -62,7 +62,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
                     {
                         player.specialistDamage *= 1f + DmgMult / 100f;
                         SoundEngine.PlaySound(SoundID.Item14 with { Volume = 3f });
-                        CombatText.NewText(PlayerRect, Color.BurlyWood, LaUtils.GetTextValue("Items.GoldenHairpin.Specialist"));
+                        CombatText.NewText(PlayerRect, Color.BurlyWood, LangUtils.GetTextValue("Items.GoldenHairpin.Specialist"));
                         break;
                     }
                 case int Specialist when (Specialist >= SwitchTiming * 60 * 2 && Specialist <= SwitchTiming * 60 * 3 - 1):

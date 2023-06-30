@@ -91,28 +91,28 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (Jungle && tsorcRevampWorld.SuperHardMode && AboveEarth && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(20))
 
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.OolacileKnight.Intent"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.OolacileKnight.Intent"), 175, 75, 255);
                 return 1;
             }
 
             if (Dungeon && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(15))
 
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.OolacileKnight.Hunt"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.OolacileKnight.Hunt"), 175, 75, 255);
                 return 1;
             }
 
             if (Meteor && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(20))
 
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.OolacileKnight.Hunt"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.OolacileKnight.Hunt"), 175, 75, 255);
                 return 1;
             }
 
             if (Dungeon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(30))
 
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.OolacileKnight.Hunt"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.OolacileKnight.Hunt"), 175, 75, 255);
                 return 1;
             }
 

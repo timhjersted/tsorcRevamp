@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.Tools
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer)
             {
-                tooltips.Add(new TooltipLine(Mod, "BOTCNoHeal", LaUtils.GetTextValue("CommonItemTooltip.BotCNoHeal")));
+                tooltips.Add(new TooltipLine(Mod, "BOTCNoHeal", LangUtils.GetTextValue("CommonItemTooltip.BotCNoHeal")));
             }
         }
 

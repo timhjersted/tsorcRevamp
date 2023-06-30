@@ -623,7 +623,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public string GetConditionDescription()
         {
-            return LaUtils.GetTextValue("NPCs.Gaibon.Condition");
+            return LangUtils.GetTextValue("NPCs.Gaibon.Condition");
         }
     }
 }

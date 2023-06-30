@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses
             DrawOffsetY = +70;
             NPC.width = 140;
             NPC.height = 60;
-            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.TheHunterChild.DespawnHandler"), Color.Green, 89);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.TheHunterChild.DespawnHandler"), Color.Green, 89);
         }
 
         int hitTime = 0;

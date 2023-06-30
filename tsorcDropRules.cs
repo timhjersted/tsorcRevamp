@@ -60,7 +60,7 @@ namespace tsorcRevamp {
     public class SuperHardmodeRule : IItemDropRuleCondition, IProvideItemConditionDescription {
         public bool CanDrop(DropAttemptInfo info) => tsorcRevampWorld.SuperHardMode;
         public bool CanShowItemDropInUI() => true;
-        public string GetConditionDescription() => LaUtils.GetTextValue("DropRules.SHMOnly");
+        public string GetConditionDescription() => LangUtils.GetTextValue("DropRules.SHMOnly");
     }
 
     public class FirstBagRule : IItemDropRuleCondition, IProvideItemConditionDescription {
@@ -71,7 +71,7 @@ namespace tsorcRevamp {
 
         public bool CanShowItemDropInUI() => true;
 
-        public virtual string GetConditionDescription() => LaUtils.GetTextValue("DropRules.FisrtBagOnly");
+        public virtual string GetConditionDescription() => LangUtils.GetTextValue("DropRules.FisrtBagOnly");
     }
 
     public class CursedRule : IItemDropRuleCondition, IProvideItemConditionDescription {
@@ -82,7 +82,7 @@ namespace tsorcRevamp {
 
         public bool CanShowItemDropInUI() => true;
 
-        public virtual string GetConditionDescription() => LaUtils.GetTextValue("DropRules.BotCOnly");
+        public virtual string GetConditionDescription() => LangUtils.GetTextValue("DropRules.BotCOnly");
     }
 
     public class FirstBagCursedRule : FirstBagRule {
@@ -91,19 +91,19 @@ namespace tsorcRevamp {
             return modPlayer.BearerOfTheCurse & base.CanDrop(info);
         }
 
-        public override string GetConditionDescription() => LaUtils.GetTextValue("DropRules.FirstBagBotCOnly");
+        public override string GetConditionDescription() => LangUtils.GetTextValue("DropRules.FirstBagBotCOnly");
     }
 
     public class AdventureModeRule : IItemDropRuleCondition, IProvideItemConditionDescription {
         public bool CanDrop(DropAttemptInfo info) => ModContent.GetInstance<tsorcRevampConfig>().AdventureMode;
         public bool CanShowItemDropInUI() => true;
-        public string GetConditionDescription() => LaUtils.GetTextValue("DropRules.AdvModeOnly");
+        public string GetConditionDescription() => LangUtils.GetTextValue("DropRules.AdvModeOnly");
     }
 
     public class NonAdventureModeRule : IItemDropRuleCondition, IProvideItemConditionDescription {
         public bool CanDrop(DropAttemptInfo info) => !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode;
         public bool CanShowItemDropInUI() => true;
-        public string GetConditionDescription() => LaUtils.GetTextValue("DropRules.SandboxModeOnly");
+        public string GetConditionDescription() => LangUtils.GetTextValue("DropRules.SandboxModeOnly");
     }
     public class NonExpertFirstKillRule : IItemDropRuleCondition, IProvideItemConditionDescription
     {
@@ -114,6 +114,6 @@ namespace tsorcRevamp {
 
         public bool CanShowItemDropInUI() => true;
 
-        public virtual string GetConditionDescription() => LaUtils.GetTextValue("DropRules.NonExpertFirstKill");
+        public virtual string GetConditionDescription() => LangUtils.GetTextValue("DropRules.NonExpertFirstKill");
     }
 }

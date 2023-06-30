@@ -80,42 +80,42 @@ namespace tsorcRevamp.Buffs
         {
             if (type == BuffID.ManaSickness)
             {
-                tip = LaUtils.GetTextValue("Buffs.VanillaBuffs.ManaSickness", (int)(100 * Main.LocalPlayer.manaSickReduction));
+                tip = LangUtils.GetTextValue("Buffs.VanillaBuffs.ManaSickness", (int)(100 * Main.LocalPlayer.manaSickReduction));
             }
 
             if (type == BuffID.AmmoReservation)
             {
-                tip += "\n" + LaUtils.GetTextValue("CommonItemTooltip.Ranged.CritDmg", tsorcRevampPlayer.AmmoReservationRangedCritDamage);
+                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.Ranged.CritDmg", tsorcRevampPlayer.AmmoReservationRangedCritDamage);
             }
 
             if (type == BuffID.Tipsy)
             {
-                tip += "\n" + LaUtils.GetTextValue("CommonItemTooltip.Summon.WhipDmg", 10);
+                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.Summon.WhipDmg", 10);
             }
 
             if (type == BuffID.Sharpened)
             {
-                tip = LaUtils.GetTextValue("Items.VanillaItems.SharpeningStation", tsorcRevampPlayer.SharpenedMeleeArmorPen);
+                tip = LangUtils.GetTextValue("Items.VanillaItems.SharpeningStation", tsorcRevampPlayer.SharpenedMeleeArmorPen);
             }
 
             if (type == BuffID.AmmoBox)
             {
-                tip += "\n" + LaUtils.GetTextValue("Items.VanillaItems.AmmoBox");
+                tip += "\n" + LangUtils.GetTextValue("Items.VanillaItems.AmmoBox");
             }
 
             if (type == BuffID.SolarShield1)
             {
-                tip = LaUtils.GetTextValue("Buffs.VanillaBuffs.SolarShield", SolarDR1);
+                tip = LangUtils.GetTextValue("Buffs.VanillaBuffs.SolarShield", SolarDR1);
             }
 
             if (type == BuffID.SolarShield2)
             {
-                tip = LaUtils.GetTextValue("Buffs.VanillaBuffs.SolarShield", SolarDR2);
+                tip = LangUtils.GetTextValue("Buffs.VanillaBuffs.SolarShield", SolarDR2);
             }
 
             if (type == BuffID.SolarShield3)
             {
-                tip = LaUtils.GetTextValue("Buffs.VanillaBuffs.SolarShield", SolarDR3);
+                tip = LangUtils.GetTextValue("Buffs.VanillaBuffs.SolarShield", SolarDR3);
             }
 
             if (type == BuffID.NebulaUpDmg1)

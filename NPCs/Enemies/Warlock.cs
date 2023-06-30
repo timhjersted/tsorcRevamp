@@ -88,7 +88,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (Main.rand.NextBool(1200)) return 1;
                 else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(430))
                 {
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Warlock.Near"), 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Warlock.Near"), 175, 75, 255);
                     return 1;
                 }
 
@@ -98,7 +98,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (Main.rand.NextBool(600)) return 1;
                 else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(300))
                 {
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Warlock.Hunt"), 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Warlock.Hunt"), 175, 75, 255);
                     return 1;
                 }
             }

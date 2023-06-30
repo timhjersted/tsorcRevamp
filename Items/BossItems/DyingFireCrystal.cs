@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.DyingFireCrystal.Summon"), Color.OrangeRed);
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.DyingFireCrystal.Summon"), Color.OrangeRed);
 
             int offset = 50 * 16;
             int effectOffset = 65;

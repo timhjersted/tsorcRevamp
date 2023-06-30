@@ -62,7 +62,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
 
             SimpleModTooltip(Mod, item, tooltips, ItemID.AdamantiteDrill, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.AdamantiteDrill"));            
-            SimpleModTooltip(Mod, item, tooltips, ItemID.BandofRegeneration, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.BandOfTegeneration"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.BandofRegeneration, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.BandOfRegeneration"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.BandofStarpower, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.BandOfStarpower"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.CobaltDrill, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.CobaltDrill"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.DivingHelmet, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.DivingHelmet"));
@@ -91,17 +91,17 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (ItemID.Sets.StaffMinionSlotsRequired[item.type] > 1f)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, LaUtils.GetTextValue("CommonItemTooltip.Summon.SlotsRequired", ItemID.Sets.StaffMinionSlotsRequired[item.type]));
+                SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("CommonItemTooltip.Summon.SlotsRequired", ItemID.Sets.StaffMinionSlotsRequired[item.type]));
             }
 
             if (ItemID.Sets.StaffMinionSlotsRequired[item.type] < 1f)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, LaUtils.GetTextValue("CommonItemTooltip.Summon.PercentOfASlot", ItemID.Sets.StaffMinionSlotsRequired[item.type] * 100f));
+                SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("CommonItemTooltip.Summon.PercentOfASlot", ItemID.Sets.StaffMinionSlotsRequired[item.type] * 100f));
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.healLife > 0)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.BotCHealingItems"));
+                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.BotCNoHeal"));
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.buffType == BuffID.WellFed)

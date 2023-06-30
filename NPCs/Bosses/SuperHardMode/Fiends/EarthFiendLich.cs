@@ -56,7 +56,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             NPC.lavaImmune = true;
             NPC.boss = true;
             NPC.value = 600000;
-            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.EarthFiendLich.DespawnHandler"), Color.DarkGreen, DustID.GreenFairy);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.EarthFiendLich.DespawnHandler"), Color.DarkGreen, DustID.GreenFairy);
 
         }
         public float ProjectileTimer
@@ -105,7 +105,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 
                 if (holdTimer <= 0)
                 {
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.EarthFiendLich.Heat"), 255, 255, 0); //yellow
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.EarthFiendLich.Heat"), 255, 255, 0); //yellow
                     holdTimer = 12000;
                 }
 

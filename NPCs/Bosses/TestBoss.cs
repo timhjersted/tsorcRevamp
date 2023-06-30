@@ -63,11 +63,11 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.defense = 50;
             if (damageCounter > 0)
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.TestBoss.DPS") + damageCounter / thisWatch.Elapsed.TotalSeconds);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TestBoss.DPS") + damageCounter / thisWatch.Elapsed.TotalSeconds);
             }
             if (watchTimer == 1)
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.TestBoss.End") + damageCounter / lastTimer);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TestBoss.End") + damageCounter / lastTimer);
                 damageCounter = 0;
             }
             if (watchTimer > 0)

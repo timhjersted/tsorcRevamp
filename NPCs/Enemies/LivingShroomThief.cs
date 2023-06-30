@@ -73,7 +73,7 @@ namespace tsorcRevamp.NPCs.Enemies
             // The npc starts in the asleep state, waiting for a player to enter range
             if (AI_State == State_Asleep)
             {
-                NPC.GivenName = LaUtils.GetTextValue("NPCs.LivingShroomThief.GivenName1");
+                NPC.GivenName = LangUtils.GetTextValue("NPCs.LivingShroomThief.GivenName1");
                 // TargetClosest sets npc.target to the player.whoAmI of the closest player. the faceTarget parameter means that npc.direction will automatically be 1 or -1 if the targeted player is to the right or left. This is also automatically flipped if npc.confused
                 NPC.TargetClosest(true);
                 AI_Timer++;
@@ -93,7 +93,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             else if (AI_State == State_Jump)
             {
-                NPC.GivenName = LaUtils.GetTextValue("NPCs.LivingShroomThief.GivenName2");
+                NPC.GivenName = LangUtils.GetTextValue("NPCs.LivingShroomThief.GivenName2");
                 AI_Timer++;
                 if (AI_Timer == 1)
                 {

@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.noTileCollide = false;
             NPC.behindTiles = true;
             NPC.value = 670000;
-            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.SeathTheScalelessHead.DespawnHandler"), Color.Cyan, DustID.BlueFairy);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.SeathTheScalelessHead.DespawnHandler"), Color.Cyan, DustID.BlueFairy);
         }
 
 
@@ -99,7 +99,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
             if (Main.hardMode && P.townNPCs > 2f && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Artorias>())) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<SeathTheScalelessHead>())) && !Main.dayTime && Main.rand.NextBool(1000))
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.SeathTheScaleless.Spawn"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.SeathTheScaleless.Spawn"), 175, 75, 255);
                 return 1;
             }
             return 0;
@@ -228,7 +228,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                         {
                             secondCrystalSpawned = true;
                         }
-                        UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.SeathTheScaleless.Crystal"), Color.Cyan);
+                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.SeathTheScaleless.Crystal"), Color.Cyan);
                     }
 
                     if (!finalCrystalsSpawned && NPC.life <= (NPC.lifeMax / 6))
@@ -239,7 +239,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                             Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
                         }
                         finalCrystalsSpawned = true;
-                        UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.SeathTheScaleless.FinalCrystal"), Color.Cyan);
+                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.SeathTheScaleless.FinalCrystal"), Color.Cyan);
                     }
                 }
             }

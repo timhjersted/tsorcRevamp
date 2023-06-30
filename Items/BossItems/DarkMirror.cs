@@ -40,11 +40,11 @@ namespace tsorcRevamp.Items.BossItems
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                tooltips.Add(new TooltipLine(Mod, "DarkMirrorAdventure", LaUtils.GetTextValue("Items.DarkMirror.AdvMode")));
+                tooltips.Add(new TooltipLine(Mod, "DarkMirrorAdventure", LangUtils.GetTextValue("Items.DarkMirror.AdvMode")));
             }
             else
             {
-                tooltips.Add(new TooltipLine(Mod, "DarkMirrorDefault", LaUtils.GetTextValue("Items.DarkMirror.NonAdv")));
+                tooltips.Add(new TooltipLine(Mod, "DarkMirrorDefault", LangUtils.GetTextValue("Items.DarkMirror.NonAdv")));
             }
         }
 
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.BossItems
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>());
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.DarkMirror.Summon"), Color.Blue);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.DarkMirror.Summon"), Color.Blue);
                 return true;
             }
             else
@@ -93,7 +93,7 @@ namespace tsorcRevamp.Items.BossItems
             {
                 if (player.itemTime == 0)
                 {
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.DarkMirror.Engulf"), Color.Blue);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.DarkMirror.Engulf"), Color.Blue);
                     player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
                 }
                 else if (player.itemTime == (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)

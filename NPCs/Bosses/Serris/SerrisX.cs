@@ -57,7 +57,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             }
             else
             {
-                despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.SerrisX.DespawnHandler"), Color.Cyan, DustID.Firework_Blue);
+                despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.SerrisX.DespawnHandler"), Color.Cyan, DustID.Firework_Blue);
             }
         }
 

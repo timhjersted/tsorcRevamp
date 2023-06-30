@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.friendly = false;
             NPC.alpha = 255;
             NPC.boss = true;
-            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.Blight.DespawnHandler"), new Color(255, 50, 50), DustID.Firework_Blue);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Blight.DespawnHandler"), new Color(255, 50, 50), DustID.Firework_Blue);
         }
 
         int phantomSeekerDamage = 58;
@@ -395,7 +395,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.defense = 9999;
                 if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
                 {
-                    Main.NewText(LaUtils.GetTextValue("NPCs.Blight.OutOfRange"), 45, 75, 255);
+                    Main.NewText(LangUtils.GetTextValue("NPCs.Blight.OutOfRange"), 45, 75, 255);
                     holdTimer = 200;
                 }
             }

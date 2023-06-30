@@ -105,6 +105,7 @@ Mods: {
 				DmgMult: Increases magic damage by {0}% multiplicatively
 				BadDmgMult: Decreases magic damage by {0}% multiplicatively
 				ArmorPen: Increases magic armor penetration by {0}
+				FlatDmg: Increase magic damage by {0} flat
 			}
 
 			Summon: {
@@ -379,7 +380,9 @@ Mods: {
 				AmmoBox: Increases ammo critical strike chance by the ammo's base damage
 				HerosShirt:
 					'''
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltips.PercentIncreasedCritChance}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.MaxStamina@1}
+					{$CommonItemTooltip.StaminaRegen@2}
+					{$CommonItemTooltip.PercentIncreasedCritChance}
 					Can be upgraded eventually with flippers, a diving helmet, and 3 mythril bars
 					'''
 				RedClothRobe:
@@ -458,7 +461,7 @@ Mods: {
 				CopperAxe: All axes do 2x damage to woody enemies
 				Diamond: Vital ingredient in the crafting of a very powerful potion
 				IronOre: Perhaps you can use these for making special arrows..?
-				RecallItem: "{$CommonItemTooltip.UnusableDuringBossFight}"
+				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:A symbol resembling a large pyramid with the moon to its right side is carved into it]"
 				LargeSapphire: "[c/ffbf00:A symbol resembling a snow-capped mountain near a fortress is carved into it]"
 				VulnerabilityHex: Applies a vulnerability hex
@@ -1365,7 +1368,7 @@ Mods: {
 				Tooltip:
 					'''
 					Unique shield of a nameless knight
-					[c/ffbf00:{$CommonItemTooltip.DrStat} when not attacking or {2}% when attacking, but drains {3} stamina per hit]
+					[c/ffbf00:{$CommonItemTooltip.DRStat} when not attacking or {2}% when attacking, but drains {3} stamina per hit]
 					{$CommonItemTooltip.NoKnockback} and protects against {$CommonItemTooltip.OnFire} but reduces stamina regen by {4}%
 					{$CommonItemTooltip.DRStat@1} if you can't afford the stamina cost
 					'''
@@ -1571,7 +1574,7 @@ Mods: {
 
 			BerserkerEmblem: {
 				DisplayName: Berserker Emblem
-				Tooltip: "{$CommonItemTooltip.Melee.DmgCrit}"
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamageCritChance}"
 			}
 
 			GazingShield: {
@@ -1959,7 +1962,7 @@ Mods: {
 					'''
 					Worn by the hero himself!
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
-					{$CommonItemTooltip.IncreasesMaxMinionsBy1}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
 					{$CommonItemTooltip.MaxStamina@2}
 					{$CommonItemTooltip.StaminaRegen@3}
 					'''
@@ -4137,7 +4140,7 @@ Mods: {
 				DisplayName: Demon Drug
 				Tooltip:
 					'''
-					{$CommonItemTooltip.DmgMultiplier}
+					{$CommonItemTooltip.DmgMult}
 					{$CommonItemTooltip.BadDefense@1}
 					Does not stack with Armor Drug, Strength, or Battlefront Potions.
 					'''
@@ -4541,8 +4544,8 @@ Mods: {
 				DisplayName: Soul Siphon Potion
 				Tooltip:
 					'''
-					{$CommonItemTooltip.IncreasedSoulDrops}
-					{$CommonItemTooltip.IncreasedConsumableSoulDrops@1}
+					{$CommonItemTooltip.SoulDrops}
+					{$CommonItemTooltip.ConsSoulDrops@1}
 					Soul pickup range greatly increased
 					'''
 			}
@@ -6563,12 +6566,14 @@ Mods: {
 					'''
 				Details:
 					'''
+					Critical strike chance for this weapon is doubled
 					Each [c/708090:thrust] can only grant 1 [c/708090:Steel Tempest] stack at maximum
 					Releasing a [c/708090:Tornado] consumes all [c/708090:Steel Tempest] stacks
 					Melee Speed reduces [c/708090:thrust cooldown] (capped at 1.33 seconds)
 					Current [c/708090:thrust Cooldown]: {0} seconds
 					[c/708090:Thrusts] and [c/708090:tornadoes] deal double damage
 					'''
+				SmoughBalance: Critical strike chance gained from Smough's armor is not doubled
 			}
 
 			PlasmaWhirlwind: {
@@ -6591,6 +6596,7 @@ Mods: {
 					[c/00ffff:Spinning Slash] deals quadruple damage
 					[c/00ffff:Spinning Slash] can release a stationary [c/708090:tornado]
 					[c/00ffff:Spinning Slash] and [c/00ffff:dash] deal bonus {1}% max health damage on-hit, up to {2}
+					Critical strike chance for this weapon is doubled
 					Each [c/708090:thrust] can only grant 1 [c/708090:Steel Tempest] stack at maximum
 					Releasing a [c/708090:tornado] consumes all [c/708090:Steel Tempest] stacks
 					Melee Speed reduces [c/708090:thrust cooldown] (capped at 1.33 seconds)
@@ -6621,6 +6627,7 @@ Mods: {
 					[c/00ffff:Spinning Slash] deals quadruple damage
 					[c/00ffff:Spinning Slash] can release a stationary [c/708090:tornado]
 					[c/00ffff:Spinning Slash] and [c/00ffff:dash] deal bonus {1}% max health damage on-hit, up to {2}
+					Critical strike chance for this weapon is doubled
 					Each [c/708090:thrust] can only grant 1 [c/708090:Steel Tempest] stack at maximum
 					Releasing a [c/708090:tornado] consumes all [c/708090:Steel Tempest] stacks
 					Melee Speed reduces [c/708090:thrust cooldown] (capped at 1.33 seconds)

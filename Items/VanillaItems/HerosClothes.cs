@@ -11,6 +11,8 @@ namespace tsorcRevamp.Items.Armors
     {
 
         public static float CritChance = 5f;
+        public static float MaxStamina = 10f;
+        public static float StaminaRegen = 10f;
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
             if (item.type == ItemID.HerosShirt)
@@ -18,7 +20,7 @@ namespace tsorcRevamp.Items.Armors
                 int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria"); //find the last tooltip line
                 if (ttindex != -1)
                 {// if we find one
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CritChance", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.HerosShirt").FormatWith(CritChance)));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CritChance", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.HerosShirt").FormatWith(CritChance, MaxStamina, StaminaRegen)));
                 }
             }
         }
@@ -36,6 +38,8 @@ namespace tsorcRevamp.Items.Armors
             if (set == "Hero's Clothes")
             {
                 player.GetCritChance(DamageClass.Generic) += CritChance / 100f;
+                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + StaminaRegen / 100f;
+                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1f + MaxStamina / 100f;
             }
         }
 

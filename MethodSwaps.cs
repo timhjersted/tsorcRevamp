@@ -1796,19 +1796,19 @@ namespace tsorcRevamp
                     String musicText = "";
                     if (tsorcRevamp.DownloadingMusic)
                     {
-                        musicText = LaUtils.GetTextValue("UI.UpdateMusic") + (int)tsorcRevamp.MusicDownloadProgress + "%";
+                        musicText = LangUtils.GetTextValue("UI.UpdateMusic") + (int)tsorcRevamp.MusicDownloadProgress + "%";
                     }                    
                     else if (!File.Exists(musicModDir))
                     {
-                        musicText = LaUtils.GetTextValue("UI.GetMusic");
+                        musicText = LangUtils.GetTextValue("UI.GetMusic");
                     }
                     else if (tsorcRevamp.MusicNeedsUpdate)
                     {
-                        musicText = LaUtils.GetTextValue("UI.MusicNewUpdate");
+                        musicText = LangUtils.GetTextValue("UI.MusicNewUpdate");
                     }
                     if (tsorcRevamp.musicModDownloadFailures > 0 && !tsorcRevamp.DownloadingMusic)
                     {
-                        musicText = LaUtils.GetTextValue("UI.MusicFail");
+                        musicText = LangUtils.GetTextValue("UI.MusicFail");
                     }
 
                     float musicTextScale = 2;
@@ -1842,11 +1842,11 @@ namespace tsorcRevamp
 
                 if(tsorcRevamp.MapDownloadTotalBytes > 0)
                 {
-                    string mapText = LaUtils.GetTextValue("UI.AdvMapDownloadProgress") + (int)(((float)tsorcRevamp.MapDownloadProgress / (float)tsorcRevamp.MapDownloadTotalBytes) * 100) + "%";// (" + tsorcRevamp.MapDownloadProgress + " / " + tsorcRevamp.MapDownloadTotalBytes + " bytes)";
+                    string mapText = LangUtils.GetTextValue("UI.AdvMapDownloadProgress") + (int)(((float)tsorcRevamp.MapDownloadProgress / (float)tsorcRevamp.MapDownloadTotalBytes) * 100) + "%";// (" + tsorcRevamp.MapDownloadProgress + " / " + tsorcRevamp.MapDownloadTotalBytes + " bytes)";
 
                     if(tsorcRevamp.MapDownloadProgress == tsorcRevamp.MapDownloadTotalBytes)
                     {
-                        mapText = LaUtils.GetTextValue("UI.AdvMapUpdated");
+                        mapText = LangUtils.GetTextValue("UI.AdvMapUpdated");
                     }
 
                     float musicTextScale = 2;

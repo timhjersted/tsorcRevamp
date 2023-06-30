@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.BossItems
         {
             if (Main.dayTime)
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.HellkiteStone.WrongTime"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.HellkiteStone.WrongTime"), 175, 75, 255);
                 return false;
             }
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()))

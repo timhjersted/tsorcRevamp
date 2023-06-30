@@ -930,7 +930,7 @@ namespace tsorcRevamp
                     //Stuff that should be done by every client that joins
                     if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                     {
-                        UsefulFunctions.BroadcastText(LaUtils.GetTextValue("UI.AdvModeAutoEnabled"), Color.GreenYellow);
+                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("UI.AdvModeAutoEnabled"), Color.GreenYellow);
                         ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = true;
                     }
                     if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
@@ -1021,7 +1021,7 @@ namespace tsorcRevamp
                     //Stuff that should only be done if they're *not* on the custom map
                     if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                     {
-                        UsefulFunctions.BroadcastText(LaUtils.GetTextValue("UI.AdvModeAutoDisabled"), Color.GreenYellow);
+                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("UI.AdvModeAutoDisabled"), Color.GreenYellow);
                         ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = false;
                     }
                 }
@@ -1238,11 +1238,11 @@ namespace tsorcRevamp
             Color c = new Color(255f, 255f, 60f);
             if (tsorcRevampWorld.SuperHardMode)
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("World.InitiateTheEnd"), c);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("World.InitiateTheEnd"), c);
             }
             else
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("World.FinalGuardian"), c);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("World.FinalGuardian"), c);
             }
 
             //These are outside of the if statements just so players can still disable hardmode or superhardmode if they happen to activate them again.

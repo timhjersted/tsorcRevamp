@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.BossItems
             }
             else if (!player.ZoneUnderworldHeight)
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.FieryEgg.WrongLocation"));
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.FieryEgg.WrongLocation"));
             }
             else
             {

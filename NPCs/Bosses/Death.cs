@@ -66,7 +66,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.knockBackResist = 0;
             NPC.value = 150000;
 
-            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.Death.DespawnHandler"), Color.DarkMagenta, DustID.Demonite);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Death.DespawnHandler"), Color.DarkMagenta, DustID.Demonite);
         }
 
 

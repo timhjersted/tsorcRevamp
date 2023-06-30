@@ -35,12 +35,12 @@ namespace tsorcRevamp.Items.BossItems
             }
             if (Main.dayTime)
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.WingOfTheGhostWyvern.WrongTime"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.WingOfTheGhostWyvern.WrongTime"), 175, 75, 255);
                 return false;
             }
             else
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.WingOfTheGhostWyvern.Summon"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.WingOfTheGhostWyvern.Summon"), 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>());
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>());
             }

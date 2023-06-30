@@ -4288,17 +4288,17 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.GoblinTinkerer)
             {
-                npc.GivenName = LaUtils.GetTextValue("NPCs.GoblinTinkerer.GivenName");
+                npc.GivenName = LangUtils.GetTextValue("NPCs.GoblinTinkerer.GivenName");
                 return true;
             }
             if (npc.type == NPCID.Mechanic)
             {
-                npc.GivenName = LaUtils.GetTextValue("NPCs.Mechanic.GivenName");
+                npc.GivenName = LangUtils.GetTextValue("NPCs.Mechanic.GivenName");
                 return true;
             }
             if (npc.type == NPCID.Wizard)
             {
-                npc.GivenName = LaUtils.GetTextValue("NPCs.Wizard.GivenName");
+                npc.GivenName = LangUtils.GetTextValue("NPCs.Wizard.GivenName");
                 return true;
             }
 
@@ -5160,7 +5160,7 @@ namespace tsorcRevamp.NPCs
                     {
                         if (npc.type == NPCID.WallofFlesh)
                         {
-                            Main.NewText(LaUtils.GetTextValue("NPCs.WallOfFlesh.DespawnHandler"), Color.OrangeRed);
+                            Main.NewText(LangUtils.GetTextValue("NPCs.WallOfFlesh.DespawnHandler"), Color.OrangeRed);
                         }
                         npc.life = 0;
                         npc.HitEffect();
@@ -5489,7 +5489,7 @@ namespace tsorcRevamp.NPCs
                                 destroyerAttackIndex++;
                                 if (destroyerAttackIndex == 3)
                                 {
-                                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.TheDestroyer.HullGlow"), Color.OrangeRed);
+                                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheDestroyer.HullGlow"), Color.OrangeRed);
                                 }
                             }
                             if (Main.GameUpdateCount % 60 == 0)
@@ -5652,7 +5652,7 @@ namespace tsorcRevamp.NPCs
 
             if(npc.type == NPCID.PrimeLaser)
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.SkeletronPrime.Warning"), Color.Red);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.SkeletronPrime.Warning"), Color.Red);
                 PrimeLaserCooldown = 500;
             }
 

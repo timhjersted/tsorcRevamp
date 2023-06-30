@@ -399,7 +399,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             if (NPC.life <= 0)
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.OolacileSorcerer.Defeated"), 150, 150, 150);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.OolacileSorcerer.Defeated"), 150, 150, 150);
                 if (!Main.dedServ)
                 {
                     Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Oolacile Sorcerer Gore 1").Type, 1f);

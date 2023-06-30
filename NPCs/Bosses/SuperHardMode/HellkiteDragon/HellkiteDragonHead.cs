@@ -58,7 +58,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.value = 250000;
             NPC.lavaImmune = true;
             Color textColor = new Color(175, 75, 255);
-            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.HellkiteDragonHead.DespawnHandler"), textColor, 174);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.HellkiteDragonHead.DespawnHandler"), textColor, 174);
 
             if (tsorcRevampWorld.SuperHardMode)
             {

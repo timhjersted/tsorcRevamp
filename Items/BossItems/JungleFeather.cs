@@ -34,15 +34,15 @@ namespace tsorcRevamp.Items.BossItems
             }
             if (Main.dayTime)
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.JungleFeather.WrongTime"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.JungleFeather.WrongTime"), 175, 75, 255);
             }
             else if (!player.ZoneRockLayerHeight)
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.JungleFeather.WrongLocation"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.JungleFeather.WrongLocation"), 175, 75, 255);
             }
             else
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.JungleFeather.Summon"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.JungleFeather.Summon"), 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>());
             }
             return true;

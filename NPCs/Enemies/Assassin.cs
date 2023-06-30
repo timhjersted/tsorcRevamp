@@ -69,7 +69,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (Main.rand.NextBool(3))
                 {
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Assassin.Track"), 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Assassin.Track"), 175, 75, 255);
                 }
 
                 return 1f;
@@ -79,7 +79,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (Main.rand.NextBool(3))
                 {
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Assassin.Draw"), 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Assassin.Draw"), 175, 75, 255);
                 }
                 return 1f;
             }
@@ -88,7 +88,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (Main.rand.NextBool(3))
                 {
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Assassin.Steps"), 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Assassin.Steps"), 175, 75, 255);
                 }
                 return 1f;
             }
@@ -97,7 +97,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (Main.rand.NextBool(3))
                 {
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Assassin.Track"), 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Assassin.Track"), 175, 75, 255);
                 }
                 return 1f;
             }
@@ -108,7 +108,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (Main.rand.NextBool(3))
                 {
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Assassin.Hunt"), 175, 75, 255);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Assassin.Hunt"), 175, 75, 255);
                 }
                 return 1f;
             }

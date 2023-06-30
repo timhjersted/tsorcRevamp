@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AncientDemonOfTheAbyssBanner>();
-            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.AncientDemonOfTheAbyss.DespawnHandler"), Color.Gold, DustID.GoldFlame);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.AncientDemonOfTheAbyss.DespawnHandler"), Color.Gold, DustID.GoldFlame);
         }
 
         NPCDespawnHandler despawnHandler;

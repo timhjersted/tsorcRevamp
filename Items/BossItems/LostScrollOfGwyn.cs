@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.BossItems
             //}
             else
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.LostScrollOfGwyn.Summon"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.LostScrollOfGwyn.Summon"), 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>());
             }
             return true;

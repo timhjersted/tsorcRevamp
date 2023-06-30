@@ -156,7 +156,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
         public string GetConditionDescription()
         {
-            return LaUtils.GetTextValue("NPCs.GhostDragonHead.Condition");
+            return LangUtils.GetTextValue("NPCs.GhostDragonHead.Condition");
         }
     }
 }

@@ -229,7 +229,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
         public string GetConditionDescription()
         {
-            return LaUtils.GetTextValue("NPCs.MechaDragonHead.Condition");
+            return LangUtils.GetTextValue("NPCs.MechaDragonHead.Condition");
         }
     }
 }

@@ -481,7 +481,7 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.Golem && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.EmpressOfLight.Forcefield"), Color.Cyan);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.EmpressOfLight.Forcefield"), Color.Cyan);
             }
             if (npc.boss)
             {
@@ -550,7 +550,7 @@ namespace tsorcRevamp.NPCs
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()) /*|| npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()) gwyn CLOSES the abyss portal!*/
                         {
-                            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.SHM.BossDeath"), Color.Orange);
+                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.SHM.BossDeath"), Color.Orange);
                         }
 
                         if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)
@@ -2711,7 +2711,7 @@ namespace tsorcRevamp.NPCs
                 {
                     if (despawnText != null)
                     {
-                        UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Player.AllDied"), Color.Yellow);
+                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Player.AllDied"), Color.Yellow);
                         UsefulFunctions.BroadcastText(despawnText, despawnTextColor);
                     }
                     despawnTime = 240;

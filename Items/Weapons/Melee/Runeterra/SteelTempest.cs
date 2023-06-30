@@ -44,6 +44,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public override void ModifyWeaponCrit(Player player, ref float crit)
         {
             crit *= 2;
+            if (player.GetModPlayer<tsorcRevampPlayer>().SmoughAttackSpeedReduction)
+            {
+                crit -= 100;
+            }
         }
         public override void HoldItem(Player player)
         {
@@ -109,7 +113,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
                 player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Thrust") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Thrust") with { Volume = SwingSoundVolume }, player.Center);
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<SteelTempestThrust>(), damage, 7, player.whoAmI);
             }
             else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
@@ -118,7 +122,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 Item.noUseGraphic = false;
                 Item.noMelee = false;
                 player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoCast") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoCast") with { Volume = SwingSoundVolume }, player.Center);
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<SteelTempestTornado>(), damage, 7, player.whoAmI);
             }
             return true;
@@ -148,6 +152,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 if (ttindex != -1)
                 {
                     tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Shift", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Details")));
+                }
+            }
+            if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SmoughAttackSpeedReduction)
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", Language.GetTextValue("Mods.tsorcRevamp.Items.SteelTempest.SmoughBalance")));
                 }
             }
         }

@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.value = 1500000;
             NPC.knockBackResist = 0f;
             NPC.boss = true;
-            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.DarkCloud.DespawnHandler"), Color.Blue, DustID.ShadowbeamStaff);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.DarkCloud.DespawnHandler"), Color.Blue, DustID.ShadowbeamStaff);
         }
 
         #region Damage variables
@@ -242,7 +242,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                     if (i == (ActiveMoveList.Count - 1) && Main.netMode != NetmodeID.Server)
                     {
-                        Main.NewText(LaUtils.GetTextValue("NPCs.DarkCloud.MoveFailed") + NextAttackMode + "ActiveMoveList.Count" + ActiveMoveList.Count);
+                        Main.NewText(LangUtils.GetTextValue("NPCs.DarkCloud.MoveFailed") + NextAttackMode + "ActiveMoveList.Count" + ActiveMoveList.Count);
                     }
                 }
 
@@ -672,7 +672,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     //This lets us bypass the fact that all hitboxes are square, and simply cause damage if the player is within a the dust ring radius
                     //https://en.wikipedia.org/wiki/Spaghettification
                     p.immuneTime = 0;
-                    p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + LaUtils.GetTextValue("NPCs.DarkCloud.Spaghetti")), (int)damage, 1);
+                    p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + LangUtils.GetTextValue("NPCs.DarkCloud.Spaghetti")), (int)damage, 1);
                 }
             }
 
@@ -1124,7 +1124,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         }
 
                         p.immuneTime = 0;
-                        p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + LaUtils.GetTextValue("NPCs.DarkCloud.TidalForces")), (int)damage, 1);
+                        p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + LangUtils.GetTextValue("NPCs.DarkCloud.TidalForces")), (int)damage, 1);
                     }
                 }
             }
@@ -1541,7 +1541,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                     damage += (int)Math.Ceiling((float)p.statDefense * 0.5f);
                                 }
 
-                                p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + LaUtils.GetTextValue("NPCs.DarkCloud.Shattered")), (int)damage, 1);
+                                p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + LangUtils.GetTextValue("NPCs.DarkCloud.Shattered")), (int)damage, 1);
                             }
                         }
                     }
@@ -2103,7 +2103,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     ActuatePyramid();
                 }
             }
-            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.DarkCloud.Defeated"), Color.Blue);
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.DarkCloud.Defeated"), Color.Blue);
         }
 
         #region Debuffs

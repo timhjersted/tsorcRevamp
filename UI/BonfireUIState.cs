@@ -86,7 +86,7 @@ namespace tsorcRevamp.UI
                 player.FindSpawn();
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Main.NewText(LaUtils.GetTextValue("UI.SpawnSet"), 255, 240, 20);
+                    Main.NewText(LangUtils.GetTextValue("UI.SpawnSet"), 255, 240, 20);
                 }
             }
             else
@@ -94,7 +94,7 @@ namespace tsorcRevamp.UI
                 player.RemoveSpawn();
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Main.NewText(LaUtils.GetTextValue("UI.SpawnRemoved"), 150, 140, 0);
+                    Main.NewText(LangUtils.GetTextValue("UI.SpawnRemoved"), 150, 140, 0);
                 }
             }
         }

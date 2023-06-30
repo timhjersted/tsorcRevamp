@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.lifeMax = 15000;
             NPC.timeLeft = 22500;
             NPC.value = 600000;
-            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.TheMachine.DespawnHandler"), Color.DarkGray, DustID.Torch);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.TheMachine.DespawnHandler"), Color.DarkGray, DustID.Torch);
             NPC.friendly = false;
 
             //You can also specify BossBase specific values here
@@ -625,7 +625,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (!finalStand)
             {
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.Artorias.Immune"), true, false);
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.Artorias.Immune"), true, false);
             }
         }
 
@@ -638,7 +638,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (!finalStand)
             {
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.Artorias.Immune"), true, false);
+                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.Artorias.Immune"), true, false);
             }
         }
 

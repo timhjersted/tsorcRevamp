@@ -58,7 +58,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             NPC.value = Item.buyPrice(0, 26);
             NPC.knockBackResist = 0f;
             Music = 39;
-            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.Okiku.DespawnHandler"), Color.DarkMagenta, DustID.PurpleCrystalShard);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Okiku.DespawnHandler"), Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
@@ -117,7 +117,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
                 phaseStarted = false;
                 Initialized = true;
 
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.Okiku.Quote"), new Color(150, 150, 150));
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Okiku.Quote"), new Color(150, 150, 150));
             }
 
             for (int i = 0; i < 10; i++)
@@ -128,7 +128,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
                     Main.player[NPC.target].buffTime[i] = 0;
                     if (Main.netMode != NetmodeID.Server && Main.myPlayer == NPC.target)
                     {
-                        Main.NewText(LaUtils.GetTextValue("NPCs.Okiku.NoGravitation"), 150, 150, 150);
+                        Main.NewText(LangUtils.GetTextValue("NPCs.Okiku.NoGravitation"), 150, 150, 150);
                     }
                     break;
                 }

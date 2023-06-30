@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items
         public override bool? UseItem(Player player)
         {
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Friendly.FreedFairy>());
-            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.FairyInABottle.Guide"), Color.HotPink);
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.FairyInABottle.Guide"), Color.HotPink);
             return true;
         }
     }

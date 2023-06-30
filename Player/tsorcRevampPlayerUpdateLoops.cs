@@ -283,37 +283,7 @@ namespace tsorcRevamp
 
         public string DeathText;
         bool setDeathText = false;
-        public static List<string> DeathTextList
-
-         = new List<string>() {
-             LaUtils.GetTextValue("DeathText.01"),
-             LaUtils.GetTextValue("DeathText.02"),
-             LaUtils.GetTextValue("DeathText.03"),
-             LaUtils.GetTextValue("DeathText.04"),
-             LaUtils.GetTextValue("DeathText.05"),
-             LaUtils.GetTextValue("DeathText.06"),
-             LaUtils.GetTextValue("DeathText.07"),
-             LaUtils.GetTextValue("DeathText.08"),
-             LaUtils.GetTextValue("DeathText.09"),
-             LaUtils.GetTextValue("DeathText.10"),
-             LaUtils.GetTextValue("DeathText.11"),
-             LaUtils.GetTextValue("DeathText.12"),
-             LaUtils.GetTextValue("DeathText.13"),
-             LaUtils.GetTextValue("DeathText.14"),
-             LaUtils.GetTextValue("DeathText.15"),
-             LaUtils.GetTextValue("DeathText.16"),
-             LaUtils.GetTextValue("DeathText.17"),
-             LaUtils.GetTextValue("DeathText.18"),
-             LaUtils.GetTextValue("DeathText.19"),
-             LaUtils.GetTextValue("DeathText.20"),
-             LaUtils.GetTextValue("DeathText.21"),
-             LaUtils.GetTextValue("DeathText.22"),
-             LaUtils.GetTextValue("DeathText.23"),
-             LaUtils.GetTextValue("DeathText.24"),
-             LaUtils.GetTextValue("DeathText.25"),
-             LaUtils.GetTextValue("DeathText.26"),
-             LaUtils.GetTextValue("DeathText.27")
-            };
+        public static List<string> DeathTextList;
 
         public override void ResetEffects()
         {
@@ -765,7 +735,7 @@ namespace tsorcRevamp
             //64x32 rectangle to start the quest
             if (Collision.CheckAABBvAABBCollision(Player.position, new Vector2(Player.width, Player.height), new Vector2(72, 492) * 16, new Vector2(64, 32) * 16) && !startedQuest) {
                 startedQuest = true;
-                Main.NewText(LaUtils.GetTextValue("Quest.Start"));
+                Main.NewText(LangUtils.GetTextValue("Quest.Start"));
             }
             if (Player.whoAmI != Main.myPlayer)
                 return;
@@ -784,7 +754,7 @@ namespace tsorcRevamp
 
             if (touchedSurface) {
                 startedQuest = false;
-                Main.NewText(LaUtils.GetTextValue("Quest.Surface"));
+                Main.NewText(LangUtils.GetTextValue("Quest.Surface"));
             }
 
             //teleporting through a one block thick wall horizontally with a
@@ -796,12 +766,12 @@ namespace tsorcRevamp
             //just dont do that, i guess? its kinda hard anyway
             if (Vector2.Distance(Player.OldPos(1), Player.position) > 36f) {
                 startedQuest = false;
-                Main.NewText(LaUtils.GetTextValue("Quest.Teleport"));
+                Main.NewText(LangUtils.GetTextValue("Quest.Teleport"));
             }
 
             //{7909, 1081} is the underwater observatory's top left corner, and {320, 119} is its rectangular size
             if (Collision.CheckAABBvAABBCollision(Player.position, new Vector2(Player.width, Player.height), new Vector2(7909, 1081) * 16, new Vector2(320, 119) * 16)) {
-                Main.NewText(LaUtils.GetTextValue("Quest.Finish"));
+                Main.NewText(LangUtils.GetTextValue("Quest.Finish"));
                 Player.QuickSpawnItem(Player.GetSource_GiftOrReward(), ItemID.RodofDiscord);
                 finishedQuest = true;
             }
@@ -877,14 +847,14 @@ namespace tsorcRevamp
                                     FieldTimer++;
                                     if (FieldTimer == 1)
                                     {
-                                        UsefulFunctions.BroadcastText(LaUtils.GetTextValue("EoLForcefield.Grapple"), Color.Orange);
+                                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("EoLForcefield.Grapple"), Color.Orange);
                                         TextCooldown = 350;
                                     }
                                     if (FieldTimer >= 340)
                                     {
                                         Player.velocity += new Vector2(0, -15);
                                         Player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 30);
-                                        UsefulFunctions.BroadcastText(LaUtils.GetTextValue("EoLForceField.Snap"), Color.Red);
+                                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("EoLForceField.Snap"), Color.Red);
                                     }
                                 }
                             }
@@ -892,7 +862,7 @@ namespace tsorcRevamp
                             Player.velocity += UsefulFunctions.Aim(new Vector2(4484, 355) * 16, Player.Center, 20);
                             if (TextCooldown <= 0)
                             {
-                                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("EoLForcefield.Expelled"), Color.Purple);
+                                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("EoLForcefield.Expelled"), Color.Purple);
                                 TextCooldown = 240;
                             }
                         }
@@ -948,7 +918,7 @@ namespace tsorcRevamp
                 {
                     CombatText.NewText(Player.Hitbox, CombatText.DamagedFriendly, 999999999, true);
                 }
-                Player.KillMe(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(Player.name + LaUtils.GetTextValue("DeathText.WallDeathReason")), 999999999, 1);
+                Player.KillMe(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(Player.name + LangUtils.GetTextValue("DeathText.WallDeathReason")), 999999999, 1);
             }
 
             if (!Player.HasBuff(ModContent.BuffType<CurseBuildup>()))
@@ -1546,18 +1516,47 @@ namespace tsorcRevamp
         public string PickDeathText(Projectile projectile = null)
         {
             string text;
+            DeathTextList = new List<string>() {
+             LangUtils.GetTextValue("DeathText.01"),
+             LangUtils.GetTextValue("DeathText.02"),
+             LangUtils.GetTextValue("DeathText.03"),
+             LangUtils.GetTextValue("DeathText.04"),
+             LangUtils.GetTextValue("DeathText.05"),
+             LangUtils.GetTextValue("DeathText.06"),
+             LangUtils.GetTextValue("DeathText.07"),
+             LangUtils.GetTextValue("DeathText.08"),
+             LangUtils.GetTextValue("DeathText.09"),
+             LangUtils.GetTextValue("DeathText.10"),
+             LangUtils.GetTextValue("DeathText.11"),
+             LangUtils.GetTextValue("DeathText.12"),
+             LangUtils.GetTextValue("DeathText.13"),
+             LangUtils.GetTextValue("DeathText.14"),
+             LangUtils.GetTextValue("DeathText.15"),
+             LangUtils.GetTextValue("DeathText.16"),
+             LangUtils.GetTextValue("DeathText.17"),
+             LangUtils.GetTextValue("DeathText.18"),
+             LangUtils.GetTextValue("DeathText.19"),
+             LangUtils.GetTextValue("DeathText.20"),
+             LangUtils.GetTextValue("DeathText.21"),
+             LangUtils.GetTextValue("DeathText.22"),
+             LangUtils.GetTextValue("DeathText.23"),
+             LangUtils.GetTextValue("DeathText.24"),
+             LangUtils.GetTextValue("DeathText.25"),
+             LangUtils.GetTextValue("DeathText.26"),
+             LangUtils.GetTextValue("DeathText.27")
+            };
 
             int option = Main.rand.Next(DeathTextList.Count);
             text = DeathTextList[option];
             if (BearerOfTheCurse && Main.rand.NextBool(5))
             {
-                if (Main.rand.NextBool())
+                if (Main.rand.NextBool(2))
                 {
-                    text = LaUtils.GetTextValue("DeathText.BotC1");
+                    text = LangUtils.GetTextValue("DeathText.BotC1");
                 }
                 else
                 {
-                    text = LaUtils.GetTextValue("DeathText.BotC2");
+                    text = LangUtils.GetTextValue("DeathText.BotC2");
                 }
             }
 
@@ -1565,11 +1564,11 @@ namespace tsorcRevamp
             {
                 if (Main.rand.NextBool(20))
                 {
-                    text = LaUtils.GetTextValue("DeathText.IWantToRemoveThisCaptainObviousShit");
+                    text = LangUtils.GetTextValue("DeathText.IWantToRemoveThisCaptainObviousShit");
                 }
                 if (Main.rand.NextBool(100))
                 {
-                    text = LaUtils.GetTextValue("DeathText.TotallyNotMenatToBeToxic");
+                    text = LangUtils.GetTextValue("DeathText.TotallyNotMenatToBeToxic");
                 }
             }
 
@@ -1577,7 +1576,7 @@ namespace tsorcRevamp
             {
                 if (Main.rand.NextBool(10))
                 {
-                    text = LaUtils.GetTextValue("DeathText.HeavyRoll");
+                    text = LangUtils.GetTextValue("DeathText.HeavyRoll");
                 }
             }
 
@@ -1596,7 +1595,7 @@ namespace tsorcRevamp
             {
                 if (Main.rand.NextBool())
                 {
-                    text = LaUtils.GetTextValue("DeathText.BossDeath1");
+                    text = LangUtils.GetTextValue("DeathText.BossDeath1");
                 }
                 else if (Main.rand.NextBool() && (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>() || 
                     Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.SpazmatismV2>() || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Cataluminance>()
@@ -1604,12 +1603,12 @@ namespace tsorcRevamp
                     || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()
                     || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>()))
                 {
-                    text = LaUtils.GetTextValue("DeathText.BossDeath2");
+                    text = LangUtils.GetTextValue("DeathText.BossDeath2");
                 }
 
                 if (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>())
                 {
-                    text = LaUtils.GetTextValue("DeathText.DarkCloud");
+                    text = LangUtils.GetTextValue("DeathText.DarkCloud");
                 }
 
                 //If you want to add custom text for other bosses, stick it here using the line above as a template
@@ -1617,14 +1616,14 @@ namespace tsorcRevamp
 
             if (projectile != null && projectile.type == ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>() && projectile.damage > 999)
             {
-                text = LaUtils.GetTextValue("DeathText.Tonberry");
+                text = LangUtils.GetTextValue("DeathText.Tonberry");
             }
 
             if (projectile != null && projectile.type == ModContent.ProjectileType<Projectiles.Enemy.Marilith.CataclysmicFirestorm>())
             {                
                 if (Main.rand.NextBool())
                 {
-                    text = LaUtils.GetTextValue("DeathText.Marilith");
+                    text = LangUtils.GetTextValue("DeathText.Marilith");
                 }
                 else
                 {
@@ -1639,12 +1638,12 @@ namespace tsorcRevamp
                     }
                     if (!hasRing)
                     {
-                        text = LaUtils.GetTextValue("DeathText.ChloranthyRingTip");
+                        text = LangUtils.GetTextValue("DeathText.ChloranthyRingTip");
                     }
                 }
             }
 
-            return LaUtils.GetTextValue("DeathText.Tip") + text;
+            return LangUtils.GetTextValue("DeathText.Tip") + text;
         }
 
         public override void UpdateDead()

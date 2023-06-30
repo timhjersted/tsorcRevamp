@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.BossItems
         public override bool? UseItem(Player player)
         {
 
-            UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.StoneOfSeath.Summon"), 175, 75, 255);
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.StoneOfSeath.Summon"), 175, 75, 255);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>());
             return true;
         }

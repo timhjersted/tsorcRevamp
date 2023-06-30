@@ -87,14 +87,14 @@ namespace tsorcRevamp
                         Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords + offsetPositon, null, Main.DiscoColor, 0, BonfireMinimapTexture.Size() / 2, 1.04f, SpriteEffects.None, 1);
                     }
                     Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords, null, Color.White, 0, BonfireMinimapTexture.Size() / 2, 1f, SpriteEffects.None, 1);
-                    mouseText = LaUtils.GetTextValue("World.TPToBonfire");
+                    mouseText = LangUtils.GetTextValue("World.TPToBonfire");
 
                     //Step 4: Check if they're left-clicking, and close the minimap + teleport them if so
                     if (Main.mouseLeft && Main.mouseLeftRelease && !tsorcRevampWorld.BossAlive)
                     {
                         if (Main.LocalPlayer.HasBuff(ModContent.BuffType<InCombat>())) {
                             if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().TextCooldown >= 0) {
-                                Main.NewText(LaUtils.GetTextValue("World.NoTPCombat"));
+                                Main.NewText(LangUtils.GetTextValue("World.NoTPCombat"));
                             }
                         }
                         else {
@@ -110,10 +110,10 @@ namespace tsorcRevamp
 
                     if (tsorcRevampWorld.BossAlive)
                     {
-                        mouseText = LaUtils.GetTextValue("World.NoTPBoss");
+                        mouseText = LangUtils.GetTextValue("World.NoTPBoss");
                     }
                     else if (Main.LocalPlayer.HasBuff(ModContent.BuffType<InCombat>())) {
-                        mouseText = LaUtils.GetTextValue("World.NoTPCombat");
+                        mouseText = LangUtils.GetTextValue("World.NoTPCombat");
                     }
                 }
                 else
@@ -135,7 +135,7 @@ namespace tsorcRevamp
                 Main.spriteBatch.Draw(minimapFissureTexture, abyssFissureCoords, null, Color.White, 0, minimapFissureTexture.Size() / 2, 1, SpriteEffects.None, 1);
                 if((mouseTile - tsorcRevampWorld.AbyssPortalLocation / 16).Length() <= hoverRange)
                 {
-                    mouseText = LaUtils.GetTextValue("World.AbyssalFissure");
+                    mouseText = LangUtils.GetTextValue("World.AbyssalFissure");
                 }
             }
 
@@ -162,15 +162,15 @@ namespace tsorcRevamp
             }
 
             else if (MapMarkersUIState.HoveringOver > -1) {
-                string hoverText = LaUtils.GetTextValue("UI.SelectMarker");
+                string hoverText = LangUtils.GetTextValue("UI.SelectMarker");
 
 
                 if (MapMarkersUIState.HoveringOver == MapMarkersUIState.REMOVE_ID) {
-                    hoverText = LaUtils.GetTextValue("UI.EraseMarkers");
+                    hoverText = LangUtils.GetTextValue("UI.EraseMarkers");
                 }
 
                 if (tsorcRevamp.MarkerSelected == MapMarkersUIState.HoveringOver) {
-                    hoverText = LaUtils.GetTextValue("UI.StopEditMarkers");
+                    hoverText = LangUtils.GetTextValue("UI.StopEditMarkers");
                 }
 
                 mouseText = hoverText;
@@ -375,7 +375,7 @@ namespace tsorcRevamp
 
                     
                     //the leading space is not a typo. WrapString prepends a space and is always called on normal text, but not buttons
-                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, LaUtils.GetTextValue("UI.ClickToHide"), textPosition, textColor, 0, Vector2.Zero, scaleMod, SpriteEffects.None, 0);
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, LangUtils.GetTextValue("UI.ClickToHide"), textPosition, textColor, 0, Vector2.Zero, scaleMod, SpriteEffects.None, 0);
                     Point scaledMouseScreen = (Main.MouseScreen * Main.UIScale).ToPoint();
                     Main.spriteBatch.End();
                     Main.spriteBatch.Begin();
@@ -391,7 +391,7 @@ namespace tsorcRevamp
                 else {
                     if (!soapstone.nearPlayer) return;
 
-                    string showButtonText = LaUtils.GetTextValue("UI.ClickToShow");
+                    string showButtonText = LangUtils.GetTextValue("UI.ClickToShow");
                     Vector2 textSize = FontAssets.ItemStack.Value.MeasureString(showButtonText) * scaleMod;
                     Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition) - new Vector2((textSize.X / 2) - 4, 64);
 

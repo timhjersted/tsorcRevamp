@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.width = NPC.height = 40;
             NPC.npcSlots = 50;
             NPC.knockBackResist = 0f;
-            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.SoulOfCinder.DespawnHandler"), Color.OrangeRed, 6);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.SoulOfCinder.DespawnHandler"), Color.OrangeRed, 6);
         }
 
         private float AI_State
@@ -200,7 +200,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 InterruptCurrentPhase();
                 AI_State = (float)States.BulletHell;
                 BulletHell = true;
-                Main.NewText(LaUtils.GetTextValue("NPCs.SoulOfCinder.BulletHell"));
+                Main.NewText(LangUtils.GetTextValue("NPCs.SoulOfCinder.BulletHell"));
             }
 
 

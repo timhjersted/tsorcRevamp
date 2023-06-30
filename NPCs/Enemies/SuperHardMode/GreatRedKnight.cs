@@ -89,7 +89,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             {
                 //Main.NewText("A portal from The Abyss has been opened! ", 175, 75, 255);
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.GreatRedKnight.Hunt"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.GreatRedKnight.Hunt"), 175, 75, 255);
                 return 1;
             }
 
@@ -97,7 +97,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             {
                 //Main.NewText("A portal from The Abyss has been opened! ", 175, 75, 255);
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.GreatRedKnight.Hunt"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.GreatRedKnight.Hunt"), 175, 75, 255);
                 return 1;
             }
 
@@ -105,7 +105,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             {
                 //Main.NewText("A portal from The Abyss has been opened! ", 175, 75, 255);
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.GreatRedKnight.Hunt"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.GreatRedKnight.Hunt"), 175, 75, 255);
                 return 1;
             }
 
@@ -113,7 +113,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             {
                 //Main.NewText("A portal from The Abyss has been opened!", 175, 75, 255);
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.GreatRedKnight.Destroy"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.GreatRedKnight.Destroy"), 175, 75, 255);
                 return 1;
             }
 

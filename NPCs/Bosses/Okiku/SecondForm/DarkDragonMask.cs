@@ -51,7 +51,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0f;
             NPC.npcSlots = 6f;
-            despawnHandler = new NPCDespawnHandler(LaUtils.GetTextValue("NPCs.DarkDragonMask.DespawnHandler"), Color.DarkMagenta, DustID.PurpleCrystalShard);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.DarkDragonMask.DespawnHandler"), Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
 
         public int ObscureDropDamage = 60;
@@ -157,7 +157,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
                     if (Main.netMode != NetmodeID.Server && Main.myPlayer == NPC.target)
                     {
                         //This one can stay a NewText because it already checks != server and does need to run only for that one player
-                        Main.NewText(LaUtils.GetTextValue("NPCs.DarkDragonMask.NoGravitaion"), 150, 150, 150);
+                        Main.NewText(LangUtils.GetTextValue("NPCs.DarkDragonMask.NoGravitaion"), 150, 150, 150);
                     }
                     break;
                 }
@@ -193,7 +193,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<ThirdForm.Okiku>(), 0);
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.DarkDragonMask.Laughter"), new Color(175, 75, 255));
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.DarkDragonMask.Laughter"), new Color(175, 75, 255));
             }
         }
 

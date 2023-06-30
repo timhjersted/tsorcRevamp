@@ -16,35 +16,35 @@ namespace tsorcRevamp.Items.VanillaItems
                 || item.type == ItemID.FlaskofIchor
                 )
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", LaUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", Flasks.IchorFlaskDMG)));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LangUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", Flasks.IchorFlaskDMG)));
             }
             if (item.type == ItemID.FlaskofGold)
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", LaUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", Flasks.GoldFlaskDMG)));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LangUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", Flasks.GoldFlaskDMG)));
             }
             if (item.type == ItemID.FlaskofParty)
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", LaUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", Flasks.ConfettiFlaskDMG)));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LangUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", Flasks.ConfettiFlaskDMG)));
             }
             if (item.type == ItemID.FlaskofFire)
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", LaUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", Flasks.FireFlaskDMG)));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LangUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", Flasks.FireFlaskDMG)));
             }
             if (item.type == ItemID.FlaskofFire)
             {
-                tooltips.Insert(4, new TooltipLine(Mod, "", LaUtils.GetTextValue("CommonItemTooltip.FireDamage")));
+                tooltips.Insert(4, new TooltipLine(Mod, "", LangUtils.GetTextValue("CommonItemTooltip.FireDamage")));
             }
             if (item.type == ItemID.FlaskofCursedFlames)
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", LaUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", Flasks.CursedFlaskDMG)));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LangUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", Flasks.CursedFlaskDMG)));
             }
             if (item.type == ItemID.FlaskofVenom)
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", LaUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", Flasks.VenomFlaskDMGCrit, Buffs.Flasks.VenomFlaskDMGCrit)));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LangUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", Flasks.VenomFlaskDMGCrit, Buffs.Flasks.VenomFlaskDMGCrit)));
             }
             if (item.type == ItemID.FlaskofNanites)
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", LaUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", Flasks.NanitesFlaskDMGCrit, Buffs.Flasks.NanitesFlaskDMGCrit)));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LangUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", Flasks.NanitesFlaskDMGCrit, Buffs.Flasks.NanitesFlaskDMGCrit)));
             }
         }
         public override void AddRecipes()

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     public class SmoughHelmet : ModItem 
     {
         public static float Dmg = 15f;
-        public override LocalizedText Tooltip => base.Tooltip;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
         public override void SetStaticDefaults()
         {
         }
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Generic) += Dmg;
+            player.GetDamage(DamageClass.Generic) += Dmg / 100f;
         }
         public override void AddRecipes()
         {

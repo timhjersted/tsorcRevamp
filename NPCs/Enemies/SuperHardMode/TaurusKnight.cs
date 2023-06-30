@@ -85,14 +85,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (tsorcRevampWorld.SuperHardMode && Dungeon && Main.rand.NextBool(60))
 
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.TaurusKnight.Nearby"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TaurusKnight.Nearby"), 175, 75, 255);
                 return 1;
             }
 
             if (tsorcRevampWorld.SuperHardMode && InHell && Main.rand.NextBool(30))
 
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.TaurusKnight.Nearby"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TaurusKnight.Nearby"), 175, 75, 255);
                 return 1;
             }
 

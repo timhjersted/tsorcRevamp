@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
                 if (holdTimer <= 0)
                 {
-                    UsefulFunctions.BroadcastText(LaUtils.GetTextValue("NPCs.LichKingDisciple.Aura"), 199, 21, 133);//medium violet red
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.LichKingDisciple.Aura"), 199, 21, 133);//medium violet red
                     holdTimer = 9000;
                 }
 

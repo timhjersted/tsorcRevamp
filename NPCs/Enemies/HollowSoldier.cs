@@ -625,7 +625,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (player.position.X < NPC.position.X) //if hit in the back
                 {
-                    CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.WeakSpot"), false, false);
+                    CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
                     modifiers.FinalDamage *= 2; //bonus damage
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
                 }
@@ -634,7 +634,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (player.position.X > NPC.position.X) //if hit in the back
                 {
-                    CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.WeakSpot"), false, false);
+                    CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
                     modifiers.FinalDamage *= 2; //bonus damage
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
                 }
@@ -727,13 +727,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (projectile.oldPosition.X < NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if hit in the back
                     {
-                        CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.WeakSpot"), false, false);
+                        CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
                         modifiers.FinalDamage *= 2; //bonus damage
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
                     }
                     else if (modifiers.HitDirection == 1)
                     {
-                        CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.WeakSpot"), false, false);
+                        CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
                         modifiers.FinalDamage *= 2; //bonus damage
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
                     }
@@ -742,13 +742,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (projectile.oldPosition.X > NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if hit in the back
                     {
-                        CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.WeakSpot"), false, false);
+                        CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
                         modifiers.FinalDamage *= 2; //bonus damage
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
                     }
                     else if (modifiers.HitDirection == -1)
                     {
-                        CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LaUtils.GetTextValue("NPCs.WeakSpot"), false, false);
+                        CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
                         modifiers.FinalDamage *= 2; //bonus damage
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
                     }

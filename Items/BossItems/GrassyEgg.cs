@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.BossItems
             }
             else if (!zoneJ)
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.GrassyEgg.WrongLocation"));
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.GrassyEgg.WrongLocation"));
             }
             else
             {

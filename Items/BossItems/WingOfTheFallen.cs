@@ -36,11 +36,11 @@ namespace tsorcRevamp.Items.BossItems
         {
             if (Main.dayTime)
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.WingOfTheFallen.WrongTime"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.WingOfTheFallen.WrongTime"), 175, 75, 255);
             }
             else
             {
-                UsefulFunctions.BroadcastText(LaUtils.GetTextValue("Items.WingOfTheFallen.Summon"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.WingOfTheFallen.Summon"), 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>());
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>());
             }
