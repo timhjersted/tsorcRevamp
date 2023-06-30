@@ -134,7 +134,7 @@ namespace tsorcRevamp
                 {
                     if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated)
                     {
-                        NPCs.Bosses.SuperHardMode.DarkCloud.ActuatePyramid();
+                        NPCs.Bosses.SuperHardMode.DarkCloud.DeactuatePyramid();
                     }
                 }
                 if (Main.tile[1365, 280] != null)

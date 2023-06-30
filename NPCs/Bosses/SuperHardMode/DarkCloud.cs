@@ -155,7 +155,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated)
                     {
-                        ActuatePyramid();
+                        DeactuatePyramid();
                     }
                 }
                 for (int i = 0; i < Main.maxProjectiles; i++)
@@ -2095,7 +2095,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated)
                 {
-                    ActuatePyramid();
+                    DeactuatePyramid();
                 }
             }
             UsefulFunctions.BroadcastText("You have subsumed your shadow...", Color.Blue);
@@ -2166,16 +2166,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     for (int y = 1696; y < 1773; y++)
                     {
-                        Wiring.ActuateForced(x, y);
+                        if (!Main.tile[x, y].IsActuated)
+                        {
+                            Wiring.ActuateForced(x, y);
+                        }
                     }
                 }
+
                 //109, 43
                 //Middle of the pyramid
                 for (int x = 5774; x < 5883; x++)
                 {
                     for (int y = 1653; y < 1696; y++)
                     {
-                        Wiring.ActuateForced(x, y);
+                        if (!Main.tile[x, y].IsActuated)
+                        {
+                            Wiring.ActuateForced(x, y);
+                        }
                     }
                 }
 
@@ -2184,7 +2191,65 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     for (int y = 1638; y < 1653; y++)
                     {
-                        Wiring.ActuateForced(x, y);
+                        if (!Main.tile[x, y].IsActuated)
+                        {
+                            Wiring.ActuateForced(x, y);
+                        }
+                    }
+                }
+
+                //Covering the gap on the left
+                int offset = 0;
+                for (int y = 1773; y < 1777; y++)
+                {
+                    for (int x = 5740; x < 5748; x++)
+                    {
+                        if (Main.tile[x + offset, y].TileType == TileID.SandstoneBrick)
+                        {
+                            WorldGen.KillTile(x + offset, y, noItem: true);
+                        }
+                    }
+                    offset++;
+                }
+            }
+        }
+        public static void DeactuatePyramid()
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                //Base of the pyramid
+                for (int x = 5697; x < 5937; x++)
+                {
+                    for (int y = 1696; y < 1773; y++)
+                    {
+                        if (Main.tile[x, y].IsActuated)
+                        {
+                            Wiring.ActuateForced(x, y);
+                        }
+                    }
+                }
+                //109, 43
+                //Middle of the pyramid
+                for (int x = 5774; x < 5883; x++)
+                {
+                    for (int y = 1653; y < 1696; y++)
+                    {
+                        if (Main.tile[x, y].IsActuated)
+                        {
+                            Wiring.ActuateForced(x, y);
+                        }
+                    }
+                }
+
+                //Tip of the pyramid
+                for (int x = 5814; x < 5843; x++)
+                {
+                    for (int y = 1638; y < 1653; y++)
+                    {
+                        if (Main.tile[x, y].IsActuated)
+                        {
+                            Wiring.ActuateForced(x, y);
+                        }
                     }
                 }
 
@@ -2197,10 +2262,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         if (Main.tile[x + offset, y].TileType != TileID.SandstoneBrick)
                         {
                             WorldGen.PlaceTile(x + offset, y, TileID.SandstoneBrick, true, true);
-                        }
-                        else
-                        {
-                            WorldGen.KillTile(x + offset, y, noItem: true);
                         }
                     }
                     offset++;
