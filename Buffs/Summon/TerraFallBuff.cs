@@ -1,8 +1,10 @@
+using Humanizer;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Buffs.Summon
 {
@@ -20,7 +22,7 @@ namespace tsorcRevamp.Buffs.Summon
 
 		public override void Update(Player player, ref int buffIndex)
         {
-            AttackSpeed = player.GetModPlayer<tsorcRevampPlayer>().TerraFallStacks * 12f;
+            AttackSpeed = player.GetModPlayer<tsorcRevampPlayer>().TerraFallStacks * TerraFall.MinSummonTagAttackSpeed;
             player.GetAttackSpeed(DamageClass.Summon) += AttackSpeed / 100f;
 
             if (player.whoAmI == Main.myPlayer)
@@ -31,6 +33,10 @@ namespace tsorcRevamp.Buffs.Summon
                     Projectile.NewProjectileDirect(player.GetSource_Buff(buffIndex), player.Center, Vector2.One, ModContent.ProjectileType<Projectiles.Summon.Whips.TerraFallTerraprisma>(), whipDamage, 1f, Main.myPlayer);
                 }
             }
+        }
+        public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
+        {
+            tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.Summon.AtkSpeed").FormatWith((int)AttackSpeed);
         }
     }
 }

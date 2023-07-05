@@ -47,7 +47,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			set => Projectile.ai[1] = value;
 		}
 
-		public override void AI()
+        private float ChargeTimer2 = 0;
+        public override void AI()
 		{
 			Player owner = Main.player[Projectile.owner];
 			Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2; // Without PiOver2, the rotation would be off by 90 degrees counterclockwise.
@@ -85,30 +86,30 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         }
 
 
-        // This method handles a charging mechanic.
-        // If you remove this, also remove Item.channel = true from the item's SetDefaults.
-        // Returns true if fully charged
-        //Causes sound error if removed idk why
+		// This method handles a charging mechanic.
+		// If you remove this, also remove Item.channel = true from the item's SetDefaults.
+		// Returns true if fully charged
+		//Causes sound error if removed idk why
+		public float MaxChargeTime = 300; //Updates twice a tick so /2 this for the actual amount of ticks this needs
         private bool Charge(Player owner)
 		{
 			// Like other whips, this whip updates twice per frame (Projectile.extraUpdates = 1), so 120 is equal to 1 second.
-			if (!owner.channel || ChargeTime >= 120)
+			if (!owner.channel || ChargeTime >= MaxChargeTime)
 			{
 				return true; // finished charging
 			}
 
-			ChargeTime++;
+			ChargeTime += 1f * (owner.GetTotalAttackSpeed(DamageClass.SummonMeleeSpeed));
+            ChargeTimer2 += 1f * (owner.GetTotalAttackSpeed(DamageClass.SummonMeleeSpeed));
 
-			if (ChargeTime % 24 == 0) // 1 segment per 12 ticks of charge.
-			{
-				Projectile.WhipSettings.Segments++;
-				Projectile.WhipSettings.RangeMultiplier += 0.005f;
-			}
+            if (ChargeTimer2 >= (MaxChargeTime / 15))
+            {
+                Projectile.WhipSettings.Segments++;
+                Projectile.WhipSettings.RangeMultiplier += 0.1f;
+                ChargeTimer2 = 0;
+            }
 
-			// Increase range up to 2x for full charge.
-			Projectile.WhipSettings.RangeMultiplier += 1 / 120f;
-
-			owner = Main.player[Projectile.owner];
+            owner = Main.player[Projectile.owner];
 			Vector2 mountedCenter = owner.MountedCenter;
 			Vector2 unitVectorTowardsMouse = mountedCenter.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * owner.direction);
 			owner.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
@@ -124,8 +125,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Player player = Main.player[Main.myPlayer];
-            modifiers.SourceDamage *= MathF.Max(ChargeTime / 35f, 1f);
-            modifiers.Knockback *= MathF.Max(ChargeTime / 35f, 1f);
+            modifiers.SourceDamage *= MathF.Max(ChargeTime / (MaxChargeTime / 4f), 1f);
+            modifiers.Knockback *= MathF.Max(ChargeTime / (MaxChargeTime / 4f), 1f);
             Vector2 WhipTip = new Vector2(11, 14) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
             List<Vector2> points = Projectile.WhipPointsForCollision;
             if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
@@ -138,11 +139,11 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         {
             Player player = Main.player[Projectile.owner];
             var modPlayer = Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.TerraFallStacks = ChargeTime / 40 + 1;
-            player.AddBuff(ModContent.BuffType<Buffs.Summon.TerraFallBuff>(), (int)(modPlayer.TerraFallStacks * 150 * modPlayer.SummonTagDuration));
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.TerraFallDebuff>(), (int)(modPlayer.TerraFallStacks * 150 * modPlayer.SummonTagDuration));
+            modPlayer.TerraFallStacks = ChargeTime / (MaxChargeTime / 4) + 1;
+            player.AddBuff(ModContent.BuffType<Buffs.Summon.TerraFallBuff>(), (int)(modPlayer.TerraFallStacks * 120 * modPlayer.SummonTagDuration));
+			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.TerraFallDebuff>(), (int)(modPlayer.TerraFallStacks * 120 * modPlayer.SummonTagDuration));
             player.MinionAttackTargetNPC = target.whoAmI;
-			Projectile.damage = (int)(Projectile.damage * (modPlayer.TerraFallStacks / 10f + 0.6f)); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
+			Projectile.damage = (int)(Projectile.damage * (modPlayer.TerraFallStacks / 25f + 0.8f)); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
 		}
 
 		// This method draws a line between all points of the whip, in case there's empty space between the sprites.

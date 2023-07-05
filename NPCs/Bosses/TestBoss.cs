@@ -60,7 +60,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void AI()
         {
-            NPC.defense = 50;
+            NPC.defense = 0;
             if (damageCounter > 0)
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TestBoss.DPS") + damageCounter / thisWatch.Elapsed.TotalSeconds);

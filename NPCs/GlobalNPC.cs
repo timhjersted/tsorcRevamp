@@ -692,6 +692,10 @@ namespace tsorcRevamp.NPCs
 
         public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers)
         {
+            if (modifiers.DamageType == DamageClass.SummonMeleeSpeed)
+            {
+                modifiers.CritDamage -= 0.25f;
+            }
             if (npc.HasBuff(BuffID.BetsysCurse) && tsorcRevampPlayer.DragonStonePotency)
             {
                 modifiers.Defense -= 40 * DragonStone.Potency - 40;
@@ -774,9 +778,8 @@ namespace tsorcRevamp.NPCs
             }
             if (markedByNightsCracker)
             {
-                SummonTagFlatDamage += modPlayerProjectileOwner.NightsCrackerStacks * 2f;
-                BaseSummonTagCriticalStrikeChance += modPlayerProjectileOwner.NightsCrackerStacks;
-                //SearingLashDamageBonus needs to be calculated after all the flat tag damage has been added
+                SummonTagFlatDamage += modPlayerProjectileOwner.NightsCrackerStacks * NightsCracker.MinSummonTagDamage;
+                BaseSummonTagCriticalStrikeChance += modPlayerProjectileOwner.NightsCrackerStacks * NightsCracker.MinSummonTagCrit;
             }
             if (markedByPolarisLeash)
             {
@@ -787,11 +790,11 @@ namespace tsorcRevamp.NPCs
                 SummonTagFlatDamage += Pyrosulfate.SummonTagDamage;
                 BaseSummonTagCriticalStrikeChance += Pyrosulfate.SummonTagCrit;
             }
-            //if (markedBySearingLash) SearingLashDamageBonus needs to be calculated after all the flat tag damage has been added
+            //if (markedBySearingLash) Searing Lash Crit Multiplier needs to be calculated after all the flat tag critical strike chance has been added
             if (markedByTerraFall)
             {
-                SummonTagFlatDamage += modPlayerProjectileOwner.TerraFallStacks * 5f;
-                BaseSummonTagCriticalStrikeChance += modPlayerProjectileOwner.TerraFallStacks * 4f;
+                SummonTagFlatDamage += modPlayerProjectileOwner.TerraFallStacks * TerraFall.MinSummonTagDamage;
+                BaseSummonTagCriticalStrikeChance += modPlayerProjectileOwner.TerraFallStacks * TerraFall.MinSummonTagCrit;
             }
             if (markedByUrumi)
             {
@@ -843,6 +846,12 @@ namespace tsorcRevamp.NPCs
             #region Summon Tag Damage Calculation and Special Effects
             if (projectile.IsMinionOrSentryRelated)
             {
+                #region Runeterra effects
+                if (Scorched || Shocked || Sunburnt)
+                {
+                    BaseSummonTagCriticalStrikeChance += 10f;
+                }
+                #endregion
                 #region Modded Whip Special Effects
                 //Crystal Nunchaku Effect located in ModifyIncomingHit
                 if (markedByDetonationSignal) //Detonation Signal effect
@@ -884,20 +893,6 @@ namespace tsorcRevamp.NPCs
 
                     }
                 }
-                if (markedByNightsCracker)
-                {
-                    int WhipDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(NightsCracker.BaseDamage);
-                    float SearingLashDamageScaling = modPlayerProjectileOwner.NightsCrackerStacks * 8f * 0.01f;
-                    if (markedBySearingLash)
-                    {
-                        SearingLashDamageScaling /= 2f;
-                    }
-                    if (markedByTerraFall)
-                    {
-                        SearingLashDamageScaling /= 2f;
-                    }
-                    SummonTagFlatDamage += (projectile.damage + SummonTagFlatDamage) * SearingLashDamageScaling * WhipDamage * 0.01f;
-                }
                 if (markedByPolarisLeash)
                 {
                     int StarDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(PolarisLeash.BaseDamage * PolarisLeash.StarDamageScaling / 100f);
@@ -922,22 +917,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (markedBySearingLash)
                 {
-                    int WhipDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(SearingLash.BaseDamage);
-                    SummonTagFlatDamage += (projectile.damage + SummonTagFlatDamage) * 0.66f * WhipDamage * 0.01f;
-                }
-                if (markedByTerraFall)
-                {
-                    int WhipDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(TerraFall.BaseDamage);
-                    float SearingLashDamageScaling = modPlayerProjectileOwner.TerraFallStacks * 2f * 0.01f;
-                    if (markedBySearingLash)
-                    {
-                        SearingLashDamageScaling /= 2f;
-                    }
-                    if (markedByNightsCracker)
-                    {
-                        SearingLashDamageScaling /= 2f;
-                    }
-                    SummonTagFlatDamage += (int)((projectile.damage + SummonTagFlatDamage) * SearingLashDamageScaling * WhipDamage * 0.01f);
+                    BaseSummonTagCriticalStrikeChance *= SearingLash.CritMult;
                 }
                 #endregion
                 #region Vanilla Whip Special Effects
@@ -966,12 +946,6 @@ namespace tsorcRevamp.NPCs
                     {
                         PositionInWorld = npc.Center
                     });
-                }
-                #endregion
-                #region Runeterra effects
-                if (Scorched || Shocked || Sunburnt)
-                {
-                    BaseSummonTagCriticalStrikeChance += 10f;
                 }
                 #endregion
 

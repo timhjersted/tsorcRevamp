@@ -17,6 +17,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
         public override void Update(NPC npc, ref int buffIndex)
         {
             npc.GetGlobalNPC<tsorcRevampGlobalNPC>().markedByNightsCracker = true;
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().markedBySearingLash = true;
         }
     }
 }

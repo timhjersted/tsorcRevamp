@@ -10,15 +10,15 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     public class NightsCracker : ModItem
 	{
 		public const int BaseDamage = 50;
-		public static float MinSummonTagDamage = 2; //this doesn't affect anything
-        public static float MaxSummonTagDamage = 8; //this doesn't affect anything
-		public static float MinSummonTagCrit = 1;//this doesn't affect anything
-        public static float MaxSummonTagCrit = 4;//this doesn't affect anything
-		public static float MinSummonTagAttackSpeed = 6;//this doesn't affect anything
-        public static float MaxSummonTagAttackSpeed = 24;//this doesn't affect anything
-        public static float SearingLashEfficiency = 50;//this doesn't affect anything
+		public const int MaxStacks = 5; //must be adjusted manually in the whip projectile
+		public static float MinSummonTagDamage = 3;
+        public static float MaxSummonTagDamage = MinSummonTagDamage * MaxStacks;
+		public static float MinSummonTagCrit = 1;
+        public static float MaxSummonTagCrit = MinSummonTagCrit * MaxStacks;
+		public static float MinSummonTagAttackSpeed = 5;
+        public static float MaxSummonTagAttackSpeed = MinSummonTagAttackSpeed * MaxStacks;
         public static float CritDamage = 33;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MinSummonTagDamage, MaxSummonTagDamage, MinSummonTagCrit, MaxSummonTagCrit, MinSummonTagAttackSpeed, MaxSummonTagAttackSpeed, SearingLashEfficiency, CritDamage);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MinSummonTagDamage, MaxSummonTagDamage, MinSummonTagCrit, MaxSummonTagCrit, MinSummonTagAttackSpeed, MaxSummonTagAttackSpeed, SearingLash.CritMult, CritDamage);
         public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao

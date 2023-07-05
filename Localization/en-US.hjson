@@ -134,6 +134,7 @@ Mods: {
 				MinionSentrySlot: Increases maximum minions by {0} and sentries by {1}
 				FlatDmg: Increases summon damage by {0} flat
 				CritChance: Increases summon crit chance by {0}%
+				TagCritMult: Multiplies summon tag critical strike chance by {0}
 			}
 		}
 
@@ -1782,13 +1783,13 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage@0}
-					{$CommonItemTooltip.IncreasedSummonAttackSpeed@1}
+					{$CommonItemTooltip.Summon.AtkSpeed@1}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@2}
-					{$CommonItemTooltip.WhipCritDamage@3}
-					{$CommonItemTooltip.WhipCritHitboxSize@4}
-					{$CommonItemTooltip.IncreasesWhipKnockback}
-					{$CommonItemTooltip.GrantsMeleeWhipAutoswing}
-					{$CommonItemTooltip.AggroIncrease}
+					{$CommonItemTooltip.Summon.WhipCritDmg@3}
+					{$CommonItemTooltip.Summon.WhipCritHitbox@4}
+					{$CommonItemTooltip.Summon.WhipKnockback}
+					{$CommonItemTooltip.MeleeWhipAutoswing}
+					{$CommonItemTooltip.AggroBoost}
 					'''
 			}
 
@@ -6291,7 +6292,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentSummonTagCritChance}
 					Inflicts Blood Butcherer debuff
-					{$CommonItemTooltip.CriticalStrikeDamage@1}
+					{$CommonItemTooltip.CritDmg@1}
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -6328,7 +6329,7 @@ Mods: {
 					{$CommonItemTooltip.Summon.ChargedWhipTagCrit@2}
 					{$CommonItemTooltip.Summon.ChargedWhipAtkSpeed@4}
 					{$CommonItemTooltip.Summon.WhipCC}
-					Inherits Searing Lash's effect at up to {6}% of it's strength
+					{$CommonItemTooltip.Summon.TagCritMult@6}
 					{$CommonItemTooltip.CritDmg@7}
 					{$CommonItemTooltip.Whips}
 					'''
@@ -6365,7 +6366,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.ChargedWhip}
 					Enemies struck by this whip will burn horribly
-					and increase minion damage by {0}% of this whips base damage in +%
+					{$CommonItemTooltip.Summon.TagCritMult}
 					{$CommonItemTooltip.Whips}
 					'''
 				BotCTooltip: "{$CommonItemTooltip.BotCSummonTagDoubleBuffCount}"
@@ -6381,7 +6382,7 @@ Mods: {
 					{$CommonItemTooltip.Summon.ChargedWhipTagCrit@2}
 					{$CommonItemTooltip.Summon.ChargedWhipAtkSpeed@4}
 					{$CommonItemTooltip.Summon.WhipCC}
-					Inherits Searing Lash's effect at up to {6}% of it's strength
+					{$CommonItemTooltip.Summon.TagCritMult@6}
 					{$CommonItemTooltip.CritDmg@7}
 					{$CommonItemTooltip.Whips}
 					'''
@@ -7686,12 +7687,12 @@ Mods: {
 
 			DragoonLashBuff: {
 				DisplayName: Dragoon Awakening
-				Description: "{$CommonItemTooltip.IncreasedSummonAttackSpeed}"
+				Description: "{$CommonItemTooltip.Summon.AtkSpeed}"
 			}
 
 			NightsCrackerBuff: {
 				DisplayName: Night Crack
-				Description: "{$CommonItemTooltip.IncreasedSummonAttackSpeed}"
+				Description: ""
 			}
 
 			NondescriptOwlBuff: {
@@ -7731,11 +7732,7 @@ Mods: {
 
 			TerraFallBuff: {
 				DisplayName: Terraria's Fall
-				Description:
-					'''
-					{$CommonItemTooltip.IncreasedSummonAttackSpeed}
-					Terra Energy fights for you
-					'''
+				Description: Terra Energy fights for you
 			}
 
 			TetsujinBuff: {

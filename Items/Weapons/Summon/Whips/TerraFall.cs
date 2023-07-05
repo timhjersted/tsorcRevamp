@@ -10,15 +10,15 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     public class TerraFall : ModItem
 	{
 		public const int BaseDamage = 115;
+        public const int MaxStacks = 5; //must be adjusted manually in the whip projectile
         public static float MinSummonTagDamage = 5;
-        public static float MaxSummonTagDamage = 20;
-        public static float MinSummonTagCrit = 4;
-        public static float MaxSummonTagCrit = 12;
-        public static float MinSummonTagAttackSpeed = 6;//this doesn't affect anything
-        public static int MaxSummonTagAttackSpeed = 24;//this doesn't affect anything
-        public static float SearingLashEfficiency = 12.5f;
+        public static float MaxSummonTagDamage = MinSummonTagDamage * MaxStacks;
+        public static float MinSummonTagCrit = 2;
+        public static float MaxSummonTagCrit = MinSummonTagCrit * MaxStacks;
+        public static float MinSummonTagAttackSpeed = 7;
+        public static float MaxSummonTagAttackSpeed = MinSummonTagAttackSpeed * MaxStacks;
         public static float CritDamage = 33;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MinSummonTagDamage, MaxSummonTagDamage, MinSummonTagCrit, MaxSummonTagCrit, MinSummonTagAttackSpeed, MaxSummonTagAttackSpeed, SearingLashEfficiency, CritDamage);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MinSummonTagDamage, MaxSummonTagDamage, MinSummonTagCrit, MaxSummonTagCrit, MinSummonTagAttackSpeed, MaxSummonTagAttackSpeed, SearingLash.CritMult, CritDamage);
         public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao

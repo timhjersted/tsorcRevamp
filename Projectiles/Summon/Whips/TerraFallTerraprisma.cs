@@ -49,6 +49,11 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         {
             return true;
         }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            modifiers.CritDamage += 0.25f;
+            modifiers.CritDamage /= 2;
+        }
         public override void AI()
         {
             List<int> ai156_blacklistedTargets = _ai156_blacklistedTargets;
@@ -66,13 +71,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
                 DelegateMethods.CastLightOpen(point2.X, point2.Y);
             ai156_blacklistedTargets.Clear();
             AI_156_Think(ai156_blacklistedTargets);
+            Dust.NewDust(Projectile.Center, Projectile.width / 2, Projectile.height / 2, DustID.TerraBlade);
         }
-
-        public Color AI_156_GetColor()
-        {
-            return Color.GreenYellow;
-        }
-
         private void AI_156_Think(List<int> blacklist)
         {
                 int num = 40;
@@ -310,6 +310,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
                 idleRotation += (float)Math.PI / 2f;
         }
 
-
+        public override bool PreDraw(ref Color lightColor)
+        {
+            lightColor = Color.ForestGreen;
+            return base.PreDraw(ref lightColor);
+        }
     }
 }

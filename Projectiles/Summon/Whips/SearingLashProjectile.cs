@@ -46,6 +46,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			set => Projectile.ai[1] = value;
 		}
 
+		private float ChargeTimer2 = 0;
+
 		public override void AI()
 		{
 			Player owner = Main.player[Projectile.owner];
@@ -84,24 +86,27 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			}
 		}
 
-		// This method handles a charging mechanic.
-		// If you remove this, also remove Item.channel = true from the item's SetDefaults.
-		// Returns true if fully charged
-		//Causes sound error if removed idk why
-		private bool Charge(Player owner)
+        // This method handles a charging mechanic.
+        // If you remove this, also remove Item.channel = true from the item's SetDefaults.
+        // Returns true if fully charged
+        //Causes sound error if removed idk why
+        public float MaxChargeTime = 300; //Updates twice a tick so /2 this for the actual amount of ticks this needs
+        private bool Charge(Player owner)
 		{
 			// Like other whips, this whip updates twice per frame (Projectile.extraUpdates = 1), so 120 is equal to 1 second.
-			if (!owner.channel || ChargeTime >= 120)
+			if (!owner.channel || ChargeTime >= MaxChargeTime)
 			{
 				return true; // finished charging
 			}
 
-			ChargeTime++;
+            ChargeTime += 1f * (owner.GetTotalAttackSpeed(DamageClass.SummonMeleeSpeed));
+            ChargeTimer2 += 1f * (owner.GetTotalAttackSpeed(DamageClass.SummonMeleeSpeed));
 
-			if (ChargeTime % 12 == 0) // 1 segment and 6% range per 12 tick of charge.
-			{
-				Projectile.WhipSettings.RangeMultiplier += 0.15f;
-				Projectile.WhipSettings.Segments++;
+            if (ChargeTimer2 >= (MaxChargeTime / 15))
+            {
+                Projectile.WhipSettings.Segments++;
+                Projectile.WhipSettings.RangeMultiplier += 0.1f;
+				ChargeTimer2 = 0;
 			}
 
 			owner = Main.player[Projectile.owner];
@@ -119,8 +124,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Player player = Main.player[Main.myPlayer];
-			modifiers.SourceDamage *= MathF.Max(ChargeTime / 45f, 1f);
-            modifiers.Knockback *= MathF.Max(ChargeTime / 45f, 1f);
+			modifiers.SourceDamage *= MathF.Max(ChargeTime / (MaxChargeTime / 4.3f), 1f);
+            modifiers.Knockback *= MathF.Max(ChargeTime / (MaxChargeTime / 4.3f), 1f);
             Vector2 WhipTip = new Vector2(10, 12) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
             List<Vector2> points = Projectile.WhipPointsForCollision;
             if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
@@ -134,9 +139,9 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         {
             Player player = Main.player[Projectile.owner];
             var modPlayer = Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.SearingLashStacks = ChargeTime / 40 + 1;
-            target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.SearingLashDebuff>(), (int)(modPlayer.SearingLashStacks * 150 * modPlayer.SummonTagDuration));
-			target.AddBuff(BuffID.OnFire, (int)(modPlayer.SearingLashStacks * 150));
+            modPlayer.SearingLashStacks = ChargeTime / (MaxChargeTime / 4) + 1;
+            target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.SearingLashDebuff>(), (int)(modPlayer.SearingLashStacks * 120 * modPlayer.SummonTagDuration));
+			target.AddBuff(BuffID.OnFire, (int)(modPlayer.SearingLashStacks * 120 * modPlayer.SummonTagDuration));
 			player.MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(Projectile.damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
 		}
