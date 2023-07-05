@@ -163,12 +163,12 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<LivingGlowshroom>();
     }
 
-    public class AncientDemonBanner : EnemyBanner
+    /*public class REDACTEDBanner : EnemyBanner
     {
         public override int PlaceStyle => 10;
 
-        public override int NPCType => ModContent.NPCType<AncientDemon>();
-    }
+        public override int NPCType => ModContent.NPCType<REDACTED>();
+    }*/
 
     public class UndeadCasterBanner : EnemyBanner
     {
@@ -177,12 +177,12 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<UndeadCaster>();
     }
 
-    public class ChickenBanner : EnemyBanner
+    /*public class REDACTEDBanner : EnemyBanner
     {
         public override int PlaceStyle => 12;
 
-        public override int NPCType => ModContent.NPCType<Chicken>();
-    }
+        public override int NPCType => ModContent.NPCType<REDACTED>();
+    }*/
 
     public class AttraidiesIllusionBanner : EnemyBanner
     {

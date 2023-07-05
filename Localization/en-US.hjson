@@ -40,6 +40,7 @@ Mods: {
 			OnFire: On Fire
 			CursedInferno: Cursed Inferno
 			Ichor: Ichor
+			Banner: " Banner"
 			Limited: Your supply of these is finite, so they are never used by Quick Buff
 			NoFallDmg: Grants immunity to fall damage
 			HolyDodge: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
@@ -474,453 +475,443 @@ Mods: {
 			}
 
 			AbandonedStumpBanner: {
-				DisplayName: Abandoned Stump Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Abandoned Stump"
+				DisplayName: "{$NPCs.AbandonedStump.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AbandonedStump.DisplayName}"
 			}
 
 			AbysswalkerBanner: {
-				DisplayName: Abysswalker Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Abysswalker"
-			}
-
-			AncientDemonBanner: {
-				DisplayName: Ancient Demon Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Ancient Demon"
+				DisplayName: "{$NPCs.Abysswalker.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Abysswalker.DisplayName}"
 			}
 
 			AncientDemonOfTheAbyssBanner: {
-				DisplayName: Ancient Demon Of The Abyss Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Ancient Demon Of The Abyss"
+				DisplayName: "{$NPCs.AncientDemonOfTheAbyss.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AncientDemonOfTheAbyss.DisplayName}"
 			}
 
 			ArchdeaconBanner: {
-				DisplayName: Archdeacon Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Archdeacon"
+				DisplayName: "{$NPCs.Archdeacon.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Archdeacon.DisplayName}"
 			}
 
 			ArmoredWraithBanner: {
-				DisplayName: Unarmored Wraith Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Unarmored Wraith"
+				DisplayName: "{$NPCs.ArmoredWraith.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ArmoredWraith.DisplayName}"
 			}
 
 			AssassinBanner: {
-				DisplayName: Assassin Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Assassin"
+				DisplayName: "{$NPCs.Assassin.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Assassin.DisplayName}"
 			}
 
 			AttraidiesIllusionBanner: {
-				DisplayName: Attraidies Illusion Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Attraidies Illusion"
+				DisplayName: "{$NPCs.AttraidiesIllusion.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AttraidiesIllusion.DisplayName}"
 			}
 
 			AttraidiesManifestationBanner: {
-				DisplayName: Attraidies Manifestation Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Attraidies Manifestation"
+				DisplayName: "{$NPCs.AttraidiesManifestation.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AttraidiesManifestation.DisplayName}"
 			}
 
 			BarrowWightBanner: {
-				DisplayName: Barrow Wight Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Barrow Wight"
+				DisplayName: "{$NPCs.BarrowWight.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BarrowWight.DisplayName}"
 			}
 
 			BarrowWightNemesisBanner: {
-				DisplayName: Barrow Wight Nemesis Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Barrow Wight Nemesis"
+				DisplayName: "{$NPCs.BarrowWightNemesis.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BarrowWightNemesis.DisplayName}"
 			}
 
 			BarrowWightPhantomBanner: {
-				DisplayName: Barrow Wight Phantom Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Barrow Wight Phantom"
+				DisplayName: "{$NPCs.BarrowWightPhantom.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BarrowWightPhantom.DisplayName}"
 			}
 
 			BasiliskHunterBanner: {
-				DisplayName: Basilisk Hunter Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Basilisk Hunter"
+				DisplayName: "{$NPCs.BasiliskHunter.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BasiliskHunter.DisplayName}"
 			}
 
 			BasiliskShifterBanner: {
-				DisplayName: Basilisk Shifter Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Basilisk Shifter"
+				DisplayName: "{$NPCs.BasiliskShifter.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BasiliskShifter.DisplayName}"
 			}
 
 			BasiliskWalkerBanner: {
-				DisplayName: Basilisk Walker Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Basilisk Walker"
+				DisplayName: "{$NPCs.BasiliskWalker.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BasiliskWalker.DisplayName}"
 			}
 
 			BlackKnightBanner: {
-				DisplayName: Black Knight Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Black Knight"
-			}
-
-			ChickenBanner: {
-				DisplayName: Chicken Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Chicken"
+				DisplayName: "{$NPCs.BlackKnight.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BlackKnight.DisplayName}"
 			}
 
 			CloudBatBanner: {
-				DisplayName: Cloud Bat Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Cloud Bat"
+				DisplayName: "{$NPCs.CloudBat.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.CloudBat.DisplayName}"
 			}
 
 			CorruptedElementalBanner: {
-				DisplayName: Corrupted Elemental Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Corrupted Elemental"
+				DisplayName: "{$NPCs.CorruptedElemental.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.CorruptedElemental.DisplayName}"
 			}
 
 			CorruptedHornetBanner: {
-				DisplayName: Corrupted Hornet Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Corrupted Hornet"
+				DisplayName: "{$NPCs.CorruptedHornet.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.CorruptedHornet.DisplayName}"
 			}
 
 			CosmicCrystalLizardBanner: {
-				DisplayName: Cosmic Crystal Lizard Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Cosmic Crystal Lizard"
+				DisplayName: "{$NPCs.CosmicCrystalLizard.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.CosmicCrystalLizard.DisplayName}"
 			}
 
 			CrazedDemonSpiritBanner: {
-				DisplayName: Crazed Demon Spirit Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Crazed Demon Spirit"
+				DisplayName: "{$NPCs.CrazedDemonSpirit.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.CrazedDemonSpirit.DisplayName}"
 			}
 
 			CrystalKnightBanner: {
-				DisplayName: Crystal Knight Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Crystal Knight"
+				DisplayName: "{$NPCs.CrystalKnight.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.CrystalKnight.DisplayName}"
 			}
 
 			DarkBloodKnightBanner: {
-				DisplayName: Dark Blood Knight Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Dark Blood Knight"
+				DisplayName: "{$NPCs.DarkBloodKnight.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkBloodKnight.DisplayName}"
 			}
 
 			DarkElfMageBanner: {
-				DisplayName: Dark Elf Mage Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Dark Elf Mage"
+				DisplayName: "{$NPCs.DarkElfMage.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkElfMage.DisplayName}"
 			}
 
 			DarkKnightBanner: {
-				DisplayName: Dark Knight Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Dark Knight"
+				DisplayName: "{$NPCs.DarkKnight.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkKnight.DisplayName}"
 			}
 
 			DemonSpiritBanner: {
-				DisplayName: Demon Spirit Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Demon Spirit"
+				DisplayName: "{$NPCs.DemonSpirit.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DemonSpirit.DisplayName}"
 			}
 
 			DiscipleOfAttraidiesBanner: {
-				DisplayName: Disciple Of Attraidies Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Disciple of Attraidies"
+				DisplayName: "{$NPCs.DiscipleOfAttraidies.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DiscipleOfAttraidies.DisplayName}"
 			}
 
 			DungeonMageBanner: {
-				DisplayName: Dungeon Mage Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Dungeon Mage"
+				DisplayName: "{$NPCs.DungeonMage.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DungeonMage.DisplayName}"
 			}
 
 			DunlendingBanner: {
-				DisplayName: Dunlending Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Dunlending"
+				DisplayName: "{$NPCs.Dunlending.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Dunlending.DisplayName}"
 			}
 
 			DworcFleshhunterBanner: {
-				DisplayName: Dworc Fleshhunter Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Dworc Fleshhunter"
+				DisplayName: "{$NPCs.DworcFleshhunter.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DworcFleshhunter.DisplayName}"
 			}
 
 			DworcVenomsniperBanner: {
-				DisplayName: Dworc Venomsniper Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Dworc Venomsniper"
+				DisplayName: "{$NPCs.DworcVenomsniper.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DworcVenomsniper.DisplayName}"
 			}
 
 			DworcVoodoomasterBanner: {
-				DisplayName: Dworc Voodoomaster Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Dworc Alchemist"
+				DisplayName: "{$NPCs.DworcVoodoomaster.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DworcVoodoomaster.DisplayName}"
 			}
 
 			DworcVoodooShamanBanner: {
-				DisplayName: Dworc Voodoo Shaman Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Dworc Voodoo Shaman"
+				DisplayName: "{$NPCs.DworcVoodooShaman.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DworcVoodooShaman.DisplayName}"
 			}
 
 			FirebombHollowBanner: {
-				DisplayName: Firebomb Hollow Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Firebomb Hollow"
+				DisplayName: "{$NPCs.FirebombHollow.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.FirebombHollow.DisplayName}"
 			}
 
 			FlameBatBanner: {
-				DisplayName: Flame Bat Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Flame Bat"
+				DisplayName: "{$NPCs.FlameBat.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.FlameBat.DisplayName}"
 			}
 
 			GhostOfTheDarkmoonKnightBanner: {
-				DisplayName: Ghost Of The Darkmoon Knight Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Ghost of The Darkmoon Knight"
+				DisplayName: "{$NPCs.GhostOfTheDarkmoonKnight.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GhostOfTheDarkmoonKnight.DisplayName}"
 			}
 
 			GhostOfTheForgottenKnightBanner: {
-				DisplayName: Ghost Of The Forgotten Knight Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Ghost of The Forgotten Knight"
+				DisplayName: "{$NPCs.GhostoftheForgottenKnight.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GhostoftheForgottenKnight.DisplayName}"
 			}
 
 			GhostOfTheForgottenWarriorBanner: {
-				DisplayName: Ghost Of The Forgotten Warrior Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Ghost Of The Forgotten Warrior"
+				DisplayName: "{$NPCs.GhostOfTheForgottenWarrior.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GhostOfTheForgottenWarrior.DisplayName}"
 			}
 
 			GreatRedKnightBanner: {
-				DisplayName: Great Red Knight Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Great Red Knight"
+				DisplayName: "{$NPCs.GreatRedKnight.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GreatRedKnight.DisplayName}"
 			}
 
 			GuardianCorruptorBanner: {
-				DisplayName: Guardian Corruptor Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Guardian Corruptor"
+				DisplayName: "{$NPCs.GuardianCorruptor.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GuardianCorruptor.DisplayName}"
 			}
 
 			HydrisElementalBanner: {
-				DisplayName: Hydris Elemental Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Hydris Elemental"
+				DisplayName: "{$NPCs.HydrisElemental.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HydrisElemental.DisplayName}"
 			}
 
 			HydrisNecromancerBanner: {
-				DisplayName: Hydris Necromancer Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Hydris Necromancer"
+				DisplayName: "{$NPCs.HydrisNecromancer.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HydrisNecromancer.DisplayName}"
 			}
 
 			IceSkeletonBanner: {
-				DisplayName: Ice Skeleton Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Ice Skeleton"
+				DisplayName: "{$NPCs.IceSkeleton.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.IceSkeleton.DisplayName}"
 			}
 
 			JungleSentreeBanner: {
-				DisplayName: Jungle Sentree Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Jungle Sentree"
+				DisplayName: "{$NPCs.JungleSentree.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.JungleSentree.DisplayName}"
 			}
 
 			JungleWyvernJuvenileBanner: {
-				DisplayName: Jungle Wyvern Juvenile Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Jungle Wyvern Juvenile"
+				DisplayName: "{$NPCs.JungleWyvernJuvenileHead.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.JungleWyvernJuvenileHead.DisplayName}"
 			}
 
 			LivingGlowshroomBanner: {
-				DisplayName: Living Glowshroom Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Living Glowshroom"
+				DisplayName: "{$NPCs.LivingGlowshroom.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.LivingGlowshroom.DisplayName}"
 			}
 
 			LivingShroomBanner: {
-				DisplayName: Fleeing Fungi Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Fleeing Fungi"
+				DisplayName: "{$NPCs.LivingShroom.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.LivingShroom.DisplayName}"
 			}
 
 			LivingShroomThiefBanner: {
-				DisplayName: Fungi Felon Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Fungi Felon"
+				DisplayName: "{$NPCs.LivingShroomThief.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.LivingShroomThief.DisplayName}"
 			}
 
 			ManHunterBanner: {
-				DisplayName: Man Hunter Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Man Hunter"
+				DisplayName: "{$NPCs.ManHunter.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ManHunter.DisplayName}"
 			}
 
 			ManOfWarBanner: {
-				DisplayName: Man Of War Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Man Of War"
+				DisplayName: "{$NPCs.ManOfWar.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ManOfWar.DisplayName}"
 			}
 
 			MarilithSpiritTwinBanner: {
-				DisplayName: Marilith Spirit Twin Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Marilith Spirit Twin"
+				DisplayName: "{$NPCs.MarilithSpiritTwin.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MarilithSpiritTwin.DisplayName}"
 			}
 
 			MindflayerIllusionBanner: {
-				DisplayName: Mindflayer Illusion Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Mindflayer Illusion"
+				DisplayName: "{$NPCs.MindflayerIllusion.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MindflayerIllusion.DisplayName}"
 			}
 
 			MindflayerKingServantBanner: {
-				DisplayName: Mindflayer King Servant Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Mindflayer King Servant"
+				DisplayName: "{$NPCs.MindflayerKingServant.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MindflayerKingServant.DisplayName}"
 			}
 
 			MindflayerServantBanner: {
-				DisplayName: Mindflayer Servant Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Mindflayer Servant"
+				DisplayName: "{$NPCs.MindflayerServant.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MindflayerServant.DisplayName}"
 			}
 
 			MutantToadBanner: {
-				DisplayName: Mutant Toad Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Mutant Toad"
+				DisplayName: "{$NPCs.MutantToad.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.MutantToad.DisplayName}"
 			}
 
 			NecromancerBanner: {
-				DisplayName: Necromancer Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Necromancer"
+				DisplayName: "{$NPCs.Necromancer.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Necromancer.DisplayName}"
 			}
 
 			NecromancerElementalBanner: {
-				DisplayName: Necromancer Elemental Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Necromancer Elemental"
+				DisplayName: "{$NPCs.NecromancerElemental.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.NecromancerElemental.DisplayName}"
 			}
 
 			ObsidianJellyfishBanner: {
-				DisplayName: Obsidian Jellyfish Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Obsidian Jellyfish"
+				DisplayName: "{$NPCs.ObsidianJellyfish.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ObsidianJellyfish.DisplayName}"
 			}
 
 			OolacileDemonBanner: {
-				DisplayName: Ephemeral Oolacile Demon Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Oolacile Demon"
+				DisplayName: "{$NPCs.OolacileDemon.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileDemon.DisplayName}"
 			}
 
 			OolacileKnightBanner: {
-				DisplayName: Oolacile Knight Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Oolacile Knight"
+				DisplayName: "{$NPCs.OolacileKnight.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileKnight.DisplayName}"
 			}
 
 			OolacileSorcererBanner: {
-				DisplayName: Oolacile Sorcerer Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Oolacile Sorcerer"
+				DisplayName: "{$NPCs.OolacileSorcerer.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileSorcerer.DisplayName}"
 			}
 
 			ParaspriteBanner: {
-				DisplayName: Parasprite Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Parasprite"
+				DisplayName: "{$NPCs.Parasprite.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Parasprite.DisplayName}"
 			}
 
 			ParasyticWormBanner: {
-				DisplayName: Parasytic Worm Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Parasytic Worm"
+				DisplayName: "{$NPCs.ParasyticWormHead.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ParasyticWormHead.DisplayName}"
 			}
 
 			QuaraHydromancerBanner: {
-				DisplayName: Quara Hydromancer Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Quara Hydromancer"
+				DisplayName: "{$NPCs.QuaraHydromancer.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.QuaraHydromancer.DisplayName}"
 			}
 
 			RedCloudHunterBanner: {
-				DisplayName: Red Cloud Hunter Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Red Cloud Hunter"
+				DisplayName: "{$NPCs.RedCloudHunter.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.RedCloudHunter.DisplayName}"
 			}
 
 			RedKnightBanner: {
-				DisplayName: Red Knight Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Red Knight"
+				DisplayName: "{$NPCs.RedKnight.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.RedKnight.DisplayName}"
 			}
 
 			ResentfulSeedlingBanner: {
-				DisplayName: Resentful Seedling Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Resentful Seedling"
+				DisplayName: "{$NPCs.ResentfulSeedling.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ResentfulSeedling.DisplayName}"
 			}
 
 			SerpentOfTheAbyssBanner: {
-				DisplayName: Serpent Of The Abyss Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Serpent Of The Abyss"
+				DisplayName: "{$NPCs.SerpentOfTheAbyssHead.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SerpentOfTheAbyssHead.DisplayName}"
 			}
 
 			ShadowMageBanner: {
-				DisplayName: Shadow Mage Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Shadow Mage"
+				DisplayName: "{$NPCs.ShadowMage.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ShadowMage.DisplayName}"
 			}
 
 			SlograIIBanner: {
-				DisplayName: Slogra Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Slogra"
+				DisplayName: "{$NPCs.SlograII.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SlograII.DisplayName}"
 			}
 
 			SnowOwlBanner: {
-				DisplayName: Snow Owl Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Snow Owl"
+				DisplayName: "{$NPCs.SnowOwl.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SnowOwl.DisplayName}"
 			}
 
 			StoneGolemBanner: {
-				DisplayName: Stone Golem Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Stone Golem"
+				DisplayName: "{$NPCs.StoneGolem.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.StoneGolem.DisplayName}"
 			}
 
 			TaurusKnightBanner: {
-				DisplayName: Taurus Knight Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Taurus Knight"
+				DisplayName: "{$NPCs.TaurusKnight.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.TaurusKnight.DisplayName}"
 			}
 
 			TetsujinBanner: {
-				DisplayName: Tetsujin Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Tetsujin"
+				DisplayName: "{$NPCs.Tetsujin.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Tetsujin.DisplayName}"
 			}
 
 			TibianAmazonBanner: {
-				DisplayName: Tibian Amazon Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Tibian Amazon"
+				DisplayName: "{$NPCs.TibianAmazon.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.TibianAmazon.DisplayName}"
 			}
 
 			TibianValkyrieBanner: {
-				DisplayName: Tibian Valkyrie Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Tibian Valkyrie"
+				DisplayName: "{$NPCs.TibianValkyrie.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.TibianValkyrie.DisplayName}"
 			}
 
 			TonberryBanner: {
-				DisplayName: Tonberry Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Tonberry"
+				DisplayName: "{$NPCs.Tonberry.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Tonberry.DisplayName}"
 			}
 
 			UndeadCasterBanner: {
-				DisplayName: Undead Caster Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Undead Caster"
+				DisplayName: "{$NPCs.UndeadCaster.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.UndeadCaster.DisplayName}"
 			}
 
 			VampireBatBanner: {
-				DisplayName: Vampire Bat Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Vampire Bat"
+				DisplayName: "{$NPCs.VampireBat.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.VampireBat.DisplayName}"
 			}
 
 			WarlockBanner: {
-				DisplayName: Warlock Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Warlock"
+				DisplayName: "{$NPCs.Warlock.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Warlock.DisplayName}"
 			}
 
 			WaterSpiritBanner: {
-				DisplayName: Water Spirit Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Water Spirit"
+				DisplayName: "{$NPCs.WaterSpirit.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.WaterSpirit.DisplayName}"
 			}
 
 			FireLurkerBanner: {
-				DisplayName: Fire Lurker Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Firelurker"
+				DisplayName: "{$NPCs.FireLurker.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.FireLurker.DisplayName}"
 			}
 
 			HollowSoldierBanner: {
-				DisplayName: Hollow Soldier Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Hollow Soldier"
+				DisplayName: "{$NPCs.HollowSoldier.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HollowSoldier.DisplayName}"
 			}
 
 			HollowWarriorBanner: {
-				DisplayName: Hollow Warrior Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Hollow Warrior"
+				DisplayName: "{$NPCs.HollowWarrior.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HollowWarrior.DisplayName}"
 			}
 
 			HumanityPhantomBanner: {
-				DisplayName: Humanity Phantom Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Humanity Phantom"
+				DisplayName: "{$NPCs.HumanityPhantom.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HumanityPhantom.DisplayName}"
 			}
 
 			LothricBlackKnightBanner: {
-				DisplayName: Lothric Black Knight Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Lothric Black Knight"
+				DisplayName: "{$NPCs.LothricBlackKnight.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.LothricBlackKnight.DisplayName}"
 			}
 
 			LothricKnightBanner: {
-				DisplayName: Lothric Knight Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Lothric Knight"
+				DisplayName: "{$NPCs.LothricKnight.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.LothricKnight.DisplayName}"
 			}
 
 			LothricSpearKnightBanner: {
-				DisplayName: Lothric Spear Knight Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Lothric Spear Knight"
+				DisplayName: "{$NPCs.LothricSpearKnight.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.LothricSpearKnight.DisplayName}"
 			}
 
 			RingedKnightBanner: {
-				DisplayName: Ringed Knight Banner
-				Tooltip: "{$CommonItemTooltip.BannerBonus}Ringed Knight"
+				DisplayName: "{$NPCs.RingedKnight.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.RingedKnight.DisplayName}"
 			}
 
 			AbyssScroll: {
@@ -6332,16 +6323,16 @@ Mods: {
 				DisplayName: Night's Cracker
 				Tooltip:
 					'''
-					{$CommonItemTooltip.ChargedWhip}
-					{$CommonItemTooltip.ChargedWhipSummonTagDamage}
-					{$CommonItemTooltip.ChargedWhipSummonTagCrit@2}
-					{$CommonItemTooltip.ChargedWhipSummonAttackSpeed@4}
-					{$CommonItemTooltip.ImprovedWhipCrowdControl}
+					{$CommonItemTooltip.Summon.ChargedWhip}
+					{$CommonItemTooltip.Summon.ChargedWhipTagDmg}
+					{$CommonItemTooltip.Summon.ChargedWhipTagCrit@2}
+					{$CommonItemTooltip.Summon.ChargedWhipAtkSpeed@4}
+					{$CommonItemTooltip.Summon.WhipCC}
 					Inherits Searing Lash's effect at up to {6}% of it's strength
-					{$CommonItemTooltip.CriticalStrikeDamage@7}
+					{$CommonItemTooltip.CritDmg@7}
 					{$CommonItemTooltip.Whips}
 					'''
-				BotCTooltip: "{$CommonItemTooltip.BotCSummonTagDoubleBuffCount}"
+				BotCTooltip: "{$CommonItemTooltip.Summon.BotCSummonTagDoubleBuffCount}"
 			}
 
 			PolarisLeash: {
@@ -6372,7 +6363,7 @@ Mods: {
 				DisplayName: Searing Lash
 				Tooltip:
 					'''
-					{$CommonItemTooltip.ChargedWhip}
+					{$CommonItemTooltip.Summon.ChargedWhip}
 					Enemies struck by this whip will burn horribly
 					and increase minion damage by {0}% of this whips base damage in +%
 					{$CommonItemTooltip.Whips}
@@ -6384,17 +6375,17 @@ Mods: {
 				DisplayName: Terra Fall
 				Tooltip:
 					'''
-					{$CommonItemTooltip.ChargedWhip}
+					{$CommonItemTooltip.Summon.ChargedWhip}
 					Summons a Terraprisma after striking an enemy
-					{$CommonItemTooltip.ChargedWhipSummonTagDamage}
-					{$CommonItemTooltip.ChargedWhipSummonTagCrit@2}
-					{$CommonItemTooltip.ChargedWhipSummonAttackSpeed@4}
-					{$CommonItemTooltip.ImprovedWhipCrowdControl}
+					{$CommonItemTooltip.Summon.ChargedWhipTagDmg}
+					{$CommonItemTooltip.Summon.ChargedWhipTagCrit@2}
+					{$CommonItemTooltip.Summon.ChargedWhipAtkSpeed@4}
+					{$CommonItemTooltip.Summon.WhipCC}
 					Inherits Searing Lash's effect at up to {6}% of it's strength
-					{$CommonItemTooltip.CriticalStrikeDamage@7}
+					{$CommonItemTooltip.CritDmg@7}
 					{$CommonItemTooltip.Whips}
 					'''
-				BotCTooltip: "{$CommonItemTooltip.BotCSummonTagDoubleBuffCount}"
+				BotCTooltip: "{$CommonItemTooltip.Summon.BotCSummonTagDoubleBuffCount}"
 			}
 
 			Urumi: {
@@ -7110,6 +7101,21 @@ Mods: {
 
 			TheTriadMask: {
 				DisplayName: The Triad Mask
+				Tooltip: ""
+			}
+
+			AncestorSpiritRelicItem: {
+				DisplayName: Ancestor Spirit Relic Item
+				Tooltip: ""
+			}
+
+			AncestorSpiritTrophy: {
+				DisplayName: Ancestor Spirit Trophy
+				Tooltip: ""
+			}
+
+			AncestorSpiritMask: {
+				DisplayName: Ancestor Spirit Mask
 				Tooltip: ""
 			}
 		}

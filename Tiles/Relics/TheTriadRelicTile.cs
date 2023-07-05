@@ -26,10 +26,10 @@ namespace tsorcRevamp.Tiles.Relics
 
         // Every relic has its own extra floating part, should be 50x50. Optional: Expand this sheet if you want to add more, stacked vertically
         // If you do not use the Item.placeStyle approach, and you extend from this class, you can override this to point to a different texture
-        public virtual string RelicTextureName => "tsorcRevamp/Tiles/Relics/TheTriadRelicTexture";
+        public virtual string RelicTextureName => "tsorcRevamp/Tiles/Relics/TheTriadRelicTile";
 
         // All relics use the same pedestal texture, this one is copied from vanilla
-        public override string Texture => "tsorcRevamp/Tiles/Relics/RelicPedestal";
+        public override string Texture => "tsorcRevamp/Tiles/Relics/0RelicPedestal";
 
         public override void Load()
         {

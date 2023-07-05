@@ -51,6 +51,7 @@ using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Utilities;
 using Terraria.Localization;
+using tsorcRevamp.Tiles.Relics;
 
 namespace tsorcRevamp
 {
@@ -307,7 +308,7 @@ namespace tsorcRevamp
                 21, 467, 29, 97, 463, 91, 287, 354, 377, 506, 621, 464, ModContent.TileType<NecromancyAltarTile>(), //chests, piggy bank, safe, defenders forge, banners, buff stations
                 33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
-                128, 269, 470, 378, 240, 560, ModContent.TileType<EmptyTrophyTile>(), 617, //all mannequins, target dummy, trophies and relics
+                128, 269, 470, 378, 240, 560, ModContent.TileType<EmptyTrophyTile>(), 617, ModContent.TileType<TheMachineTrophyTile>(), ModContent.TileType<TheMachineRelicTile>(), ModContent.TileType<RetinazerTrophyTile>(), ModContent.TileType<SpazmatismTrophyTile>(), ModContent.TileType<CataluminanceTrophyTile>(), ModContent.TileType<TheTriadRelicTile>(), //all mannequins, target dummy, trophies and relics
                 162, 127, 320, 624, //thin ice (breakable kind), Ice Rod's ice, seaweed/herb planters, abigail's flower
                 28, 51, 52, 62, 115, 205, 382, 528, //pots, cobwebs, all cuttable vines
                 31, 32, 69, 352, 53, 112, 116, 234, //orbs/hearts, all thorns, all sands
@@ -327,7 +328,7 @@ namespace tsorcRevamp
                 21, 467, 29, 97, 463, 91, 287, 354, 377, 506, 621, 464, ModContent.TileType<NecromancyAltarTile>(), //chests, piggy bank, safe, defenders forge, banners, buff stations
                 33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
-                128, 269, 470, 378, 240, 560, ModContent.TileType<EmptyTrophyTile>(), 617, //all mannequins, target dummy, trophies and relics
+                128, 269, 470, 378, 240, 560, ModContent.TileType<EmptyTrophyTile>(), 617, ModContent.TileType<TheMachineTrophyTile>(), ModContent.TileType<TheMachineRelicTile>(), ModContent.TileType<RetinazerTrophyTile>(), ModContent.TileType<SpazmatismTrophyTile>(), ModContent.TileType<CataluminanceTrophyTile>(), ModContent.TileType<TheTriadRelicTile>(), //all mannequins, target dummy, trophies and relics
                 320, //thin ice (breakable kind), seaweed/herb planters, all sands
                 27, 215, 42, 621, 506, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle), Slice of Cake, Bast Statue
             };
@@ -568,9 +569,9 @@ namespace tsorcRevamp
                         ItemID.ThornWhip,
                         ItemID.BoneWhip,
                         ItemID.CoolWhip,
-                        ItemID.SwordWhip
+                        ItemID.SwordWhip,
                         #endregion
-                        ,
+                        
                         #region Minions
                         ItemID.SpiderStaff
                         #endregion
@@ -784,10 +785,7 @@ namespace tsorcRevamp
                 {   ItemID.BrainOfCthulhuBossBag    ,   new List<int>()                     },
                 {   ItemID.QueenBeeBossBag          ,   new List<int>()                     },
                 {   ItemID.SkeletronBossBag         ,   new List<int>()                     },
-                {   ItemID.WallOfFleshBossBag       ,   new List<int>()
-                                                        {
-                                                            ItemID.FireWhip
-                                                        }                                   },
+                {   ItemID.WallOfFleshBossBag       ,   new List<int>()                     },
                 {   ItemID.DestroyerBossBag         ,   new List<int>()                     },
                 {   ItemID.TwinsBossBag             ,   new List<int>()                     },
                 {   ItemID.SkeletronPrimeBossBag    ,   new List<int>()                     },
