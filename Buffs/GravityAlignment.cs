@@ -13,13 +13,18 @@ namespace tsorcRevamp.Buffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            int tilePos = (int)player.position.X / 16;
-            bool ocean = tilePos < 750 || tilePos > Main.maxTilesX - 750;
-            bool underground = (player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); // Magic number
+            player.gravControl = true;
+        }
 
-            if (((underground && player.ZoneHallow && !ocean && !player.ZoneDungeon) || player.ZoneMeteor) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
-            {
-                player.gravControl = true;
+        private class tsrGravityAlignmentPlayer : ModPlayer {
+            public override void PostUpdateEquips() {
+                int tilePos = (int)Player.position.X / 16;
+                bool ocean = tilePos < 750 || tilePos > Main.maxTilesX - 750;
+                bool underground = (Player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); // Magic number
+
+                if (((underground && Player.ZoneHallow && !ocean && !Player.ZoneDungeon) || Player.ZoneMeteor) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                    Player.AddBuff(ModContent.BuffType<GravityAlignment>(), 2);
+                }
             }
         }
     }
