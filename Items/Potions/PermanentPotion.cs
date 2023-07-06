@@ -49,20 +49,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public abstract int BuffType {
             get;
         }
-
-        public string BuffName {
-            get {
-                //thank you online regex builders
-                Regex splitAtCapitals = new (@"
-                (?<=[A-Z])(?=[A-Z][a-z]) |
-                 (?<=[^A-Z])(?=[A-Z]) |
-                 (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
-                string name = $"{GetType().Name}";
-                name = splitAtCapitals.Replace(name, " ");
-                name = name.Replace("Permanent ", "");
-                name = name.Replace(" Potion", "");
-                return name;
-            }
+        public virtual string BuffName {
+            get;
         }
 
         public int ConsumedAmount {
@@ -211,6 +199,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentObsidianSkinPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentObsidianSkinPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_288";
         public override int PermanentID => 0;
         public override int BuffType => BuffID.ObsidianSkin;
@@ -224,6 +213,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentRegenerationPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentRegenerationPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_289";
         public override int PermanentID => 1;
         public override int BuffType => BuffID.Regeneration;
@@ -245,6 +235,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentSwiftnessPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentSwiftnessPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_290";
         public override int PermanentID => 2;
         public override int BuffType => BuffID.Swiftness;
@@ -256,6 +247,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentGillsPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentGillsPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_291";
         public override int PermanentID => 3;
         public override int BuffType => BuffID.Gills;
@@ -266,6 +258,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentIronskinPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentIronskinPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_292";
         public override int PermanentID => 4;
         public override int BuffType => BuffID.Ironskin;
@@ -277,6 +270,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentManaRegenerationPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentManaRegenerationPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_293";
         public override int PermanentID => 5;
         public override int BuffType => BuffID.ManaRegeneration;
@@ -290,6 +284,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentMagicPowerPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentMagicPowerPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_294";
         public override int PermanentID => 6;
         public override int BuffType => BuffID.MagicPower;
@@ -301,6 +296,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentFeatherfallPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentFeatherfallPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_295";
         public override int PermanentID => 7;
         public override int BuffType => BuffID.Featherfall;
@@ -311,6 +307,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentSpelunkerPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentSpelunkerPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_296";
         public override int PermanentID => 8;
         public override int BuffType => BuffID.Spelunker;
@@ -321,6 +318,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentInvisibilityPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentInvisibilityPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_297";
         public override int PermanentID => 9;
         public override int BuffType => BuffID.Invisibility;
@@ -332,6 +330,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentShinePotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentShinePotion.BuffName");
         public override string Texture => "Terraria/Images/Item_298";
         public override int PermanentID => 10;
         public override int BuffType => BuffID.Shine;
@@ -346,6 +345,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentNightOwlPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentNightOwlPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_299";
         public override int PermanentID => 11;
         public override int BuffType => BuffID.NightOwl;
@@ -357,6 +357,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentBattlePotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentBattlePotion.BuffName");
         public override string Texture => "Terraria/Images/Item_300";
         public override int PermanentID => 12;
         public override int BuffType => BuffID.Battle;
@@ -368,6 +369,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentThornsPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentThornsPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_301";
         public override int PermanentID => 13;
         public override int BuffType => BuffID.Thorns;
@@ -381,6 +383,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentWaterWalkingPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentWaterWalkingPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_302";
         public override int PermanentID => 14;
         public override int BuffType => BuffID.WaterWalking;
@@ -393,6 +396,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentArcheryPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentArcheryPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_303";
         public override int PermanentID => 15;
         public override int BuffType => BuffID.Archery;
@@ -404,6 +408,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentHunterPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentHunterPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_304";
         public override int PermanentID => 16;
         public override int BuffType => BuffID.Hunter;
@@ -415,6 +420,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentGravitationPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentGravitationPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_305";
         public override int PermanentID => 17;
         public override int BuffType => BuffID.Gravitation;
@@ -426,6 +432,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentTipsy : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentTipsy.BuffName");
         public override string Texture => "tsorcRevamp/Items/Potions/VanillaTextures/Ale";
         public override int PermanentID => 18;
         public override int BuffType => BuffID.Tipsy;
@@ -453,6 +460,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentPoisonImbuement : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentPoisonImbuement.BuffName");
         public override string Texture => "Terraria/Images/Item_1359";
         public override int PermanentID => 19;
         public override int BuffType => BuffID.WeaponImbuePoison;
@@ -479,6 +487,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentGoldImbuement : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentGoldImbuement.BuffName");
         public override string Texture => "Terraria/Images/Item_1355";
         public override int PermanentID => 20;
         public override int BuffType => BuffID.WeaponImbueGold;
@@ -505,6 +514,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentPartyImbuement : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentPartyImbuement.BuffName");
         public override string Texture => "Terraria/Images/Item_1358";
         public override int PermanentID => 21;
         public override int BuffType => BuffID.WeaponImbueConfetti;
@@ -531,6 +541,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentFireImbuement : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentFireImbuement.BuffName");
         public override string Texture => "Terraria/Images/Item_1354";
         public override int PermanentID => 22;
         public override int BuffType => BuffID.WeaponImbueFire;
@@ -557,6 +568,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentCursedFlamesImbuement : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentCursedFlamesImbuement.BuffName");
         public override string Texture => "Terraria/Images/Item_1353";
         public override int PermanentID => 23;
         public override int BuffType => BuffID.WeaponImbueCursedFlames;
@@ -583,6 +595,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentIchorImbuement : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentIchorImbuement.BuffName");
         public override string Texture => "Terraria/Images/Item_1356";
         public override int PermanentID => 24;
         public override int BuffType => BuffID.WeaponImbueIchor;
@@ -608,6 +621,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentVenomImbuement : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentVenomImbuement.BuffName");
         public override string Texture => "Terraria/Images/Item_1340";
         public override int PermanentID => 25;
         public override int BuffType => BuffID.WeaponImbueVenom;
@@ -634,6 +648,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentNanitesImbuement : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentNanitesImbuement.BuffName");
         public override string Texture => "Terraria/Images/Item_1357";
         public override int PermanentID => 26;
         public override int BuffType => BuffID.WeaponImbueNanites;
@@ -660,6 +675,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentMiningPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentMiningPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2322";
         public override int PermanentID => 27;
         public override int BuffType => BuffID.Mining;
@@ -672,6 +688,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentHeartreachPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentHeartreachPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2323";
         public override int PermanentID => 28;
         public override int BuffType => BuffID.Heartreach;
@@ -684,6 +701,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentCalmingPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentCalmingPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2324";
         public override int PermanentID => 29;
         public override int BuffType => BuffID.Calm;
@@ -695,6 +713,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentBuilderPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentBuilderPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2325";
         public override int PermanentID => 30;
         public override int BuffType => BuffID.Builder;
@@ -710,6 +729,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentTitanPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentTitanPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2326";
         public override int PermanentID => 31;
         public override int BuffType => BuffID.Titan;
@@ -722,6 +742,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentFlipperPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentFlipperPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2327";
         public override int PermanentID => 32;
         public override int BuffType => BuffID.Flipper;
@@ -735,6 +756,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentSummoningPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentSummoningPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2328";
         public override int PermanentID => 33;
         public override int BuffType => BuffID.Summoning;
@@ -756,6 +778,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentDangersensePotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentDangersensePotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2329";
         public override int PermanentID => 34;
         public override int BuffType => BuffID.Dangersense;
@@ -768,6 +791,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentAmmoReservationPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentAmmoReservationPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2344";
         public override int PermanentID => 35;
         public override int BuffType => BuffID.AmmoReservation;
@@ -783,6 +807,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentLifeforcePotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentLifeforcePotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2345";
         public override int PermanentID => 36;
         public override int BuffType => BuffID.Lifeforce;
@@ -806,6 +831,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentEndurancePotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentEndurancePotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2346";
         public override int PermanentID => 37;
         public override int BuffType => BuffID.Endurance;
@@ -828,6 +854,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentRagePotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentRagePotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2347";
         public override int PermanentID => 38;
         public override int BuffType => BuffID.Rage;
@@ -841,6 +868,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentInfernoPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentInfernoPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2348";
         public override int PermanentID => 39;
         public override int BuffType => BuffID.Inferno;
@@ -904,6 +932,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentWrathPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentWrathPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2349";
         public override int PermanentID => 40;
         public override int BuffType => BuffID.Wrath;
@@ -917,6 +946,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentFishingPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentFishingPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2354";
         public override int PermanentID => 41;
         public override int BuffType => BuffID.Fishing;
@@ -930,6 +960,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentSonarPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentSonarPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2355";
         public override int PermanentID => 41;
         public override int BuffType => BuffID.Sonar;
@@ -942,6 +973,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentCratePotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentCratePotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2356";
         public override int PermanentID => 43;
         public override int BuffType => BuffID.Crate;
@@ -954,6 +986,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentWarmthPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentWarmthPotion.BuffName");
         public override string Texture => "Terraria/Images/Item_2359";
         public override int PermanentID => 44;
         public override int BuffType => BuffID.Warmth;
@@ -966,6 +999,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentArmorDrug : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Buffs.ArmorDrug.DisplayName");
         public override string Texture => "tsorcRevamp/Items/Potions/ArmorDrugPotion";
         public override int PermanentID => 45;
         public override int BuffType => ModContent.BuffType<ArmorDrug>();
@@ -982,6 +1016,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentBattlefrontPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Buffs.Battlefront.DisplayName");
         public override string Texture => "tsorcRevamp/Items/Potions/BattlefrontPotion";
         public override int PermanentID => 46;
         public override int BuffType => ModContent.BuffType<Battlefront>();
@@ -999,6 +1034,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentBoostPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Buffs.Boost.DisplayName");
         public override string Texture => "tsorcRevamp/Items/Potions/BoostPotion";
         public override int PermanentID => 47;
         public override int BuffType => ModContent.BuffType<Boost>();
@@ -1013,6 +1049,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentCrimsonPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Buffs.CrimsonDrain.DisplayName");
         public override string Texture => "tsorcRevamp/Items/Potions/CrimsonPotion";
         public override int PermanentID => 48;
         public override int BuffType => ModContent.BuffType<CrimsonDrain>();
@@ -1025,6 +1062,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentDemonDrug : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Buffs.DemonDrug.DisplayName");
         public override string Texture => "tsorcRevamp/Items/Potions/DemonDrugPotion";
         public override int PermanentID => 49;
         public override int BuffType => ModContent.BuffType<DemonDrug>();
@@ -1042,6 +1080,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentShockwavePotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Buffs.Shockwave.DisplayName");
         public override string Texture => "tsorcRevamp/Items/Potions/ShockwavePotion";
         public override int PermanentID => 50;
         public override int BuffType => ModContent.BuffType<Shockwave>();
@@ -1054,6 +1093,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentStrengthPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Buffs.Strength.DisplayName");
         public override string Texture => "tsorcRevamp/Items/Potions/StrengthPotion";
         public override int PermanentID => 51;
         public override int BuffType => ModContent.BuffType<Strength>();
@@ -1072,6 +1112,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentSoulSiphonPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Buffs.SoulSiphon.DisplayName");
         public override string Texture => "tsorcRevamp/Items/Potions/SoulSiphonPotion";
         public override int PermanentID => 52;
         public override int BuffType => ModContent.BuffType<SoulSiphon>();
@@ -1107,6 +1148,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentWellFed : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentWellFed.BuffName");
         public override string Texture => "tsorcRevamp/Items/Potions/VanillaTextures/Teacup";
         public override int PermanentID => 53;
         public override int BuffType => BuffID.WellFed;
@@ -1138,6 +1180,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentPlentySatisfied : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentPlentySatisfied.BuffName");
         public override string Texture => "tsorcRevamp/Items/Potions/VanillaTextures/BowlOfSoup";
         public override int PermanentID => 54;
         public override int BuffType => BuffID.WellFed2;
@@ -1169,7 +1212,9 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
 
 
-    public class PermanentExquisitelyStuffed : PermanentPotion {
+    public class PermanentExquisitelyStuffed : PermanentPotion
+    {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentExquisitelyStuffed.BuffName");
         public override string Texture => "tsorcRevamp/Items/Potions/VanillaTextures/GoldenDelight";
         public override int PermanentID => 55;
         public override int BuffType => BuffID.WellFed3;
@@ -1199,6 +1244,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentGreenBlossom : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Buffs.GreenBlossom.DisplayName");
         public override string Texture => "tsorcRevamp/Items/Potions/BottomlessGreenTeaPot";
         public override int PermanentID => 56;
         public override int BuffType => ModContent.BuffType<Buffs.GreenBlossom>();
@@ -1212,6 +1258,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentLuckPotion : PermanentPotion
     {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentLuckPotion.BuffName");
         public override string Texture => "tsorcRevamp/Items/Potions/FourLeafClover";
         public override int PermanentID => 57;
         public override int BuffType => BuffID.Lucky;

@@ -4236,16 +4236,19 @@ Mods: {
 			PermanentWellFed: {
 				DisplayName: Infinitea
 				Tooltip: ""
+				BuffName: Well Fed
 			}
 
 			PermanentPlentySatisfied: {
 				DisplayName: Perma-Soup
 				Tooltip: ""
+				BuffName: Plenty Satisfied
 			}
 
 			PermanentExquisitelyStuffed: {
 				DisplayName: Permanent Delight
 				Tooltip: ""
+				BuffName: Exquisitely Stuffed
 			}
 
 			PermanentGreenBlossom: {
@@ -4256,16 +4259,19 @@ Mods: {
 			PermanentTipsy: {
 				DisplayName: Permanent Ale
 				Tooltip: ""
+				BuffName: Tipsy
 			}
 
 			PermanentAmmoReservationPotion: {
 				DisplayName: Permanent Ammo Reservation Potion
 				Tooltip: ""
+				BuffName: Ammo Reservation
 			}
 
 			PermanentArcheryPotion: {
 				DisplayName: Permanent Archery Potion
 				Tooltip: ""
+				BuffName: Archery
 			}
 
 			PermanentArmorDrug: {
@@ -4281,6 +4287,13 @@ Mods: {
 			PermanentBattlePotion: {
 				DisplayName: Permanent Battle Potion
 				Tooltip: ""
+				BuffName: Battle
+			}
+
+			PermanentLuckPotion: {
+				DisplayName: Four Leaf Clover
+				Tooltip: ""
+				BuffName: Lucky
 			}
 
 			PermanentBoostPotion: {
@@ -4291,16 +4304,19 @@ Mods: {
 			PermanentBuilderPotion: {
 				DisplayName: Permanent Builder Potion
 				Tooltip: ""
+				BuffName: Builder
 			}
 
 			PermanentCalmingPotion: {
 				DisplayName: Permanent Calming Potion
 				Tooltip: ""
+				BuffName: Calm
 			}
 
 			PermanentCratePotion: {
 				DisplayName: Permanent Crate Potion
 				Tooltip: ""
+				BuffName: Crate
 			}
 
 			PermanentCrimsonPotion: {
@@ -4311,6 +4327,7 @@ Mods: {
 			PermanentDangersensePotion: {
 				DisplayName: Permanent Dangersense Potion
 				Tooltip: ""
+				BuffName: Dangersense
 			}
 
 			PermanentDemonDrug: {
@@ -4321,146 +4338,175 @@ Mods: {
 			PermanentEndurancePotion: {
 				DisplayName: Permanent Endurance Potion
 				Tooltip: ""
+				BuffName: Endurance
 			}
 
 			PermanentFeatherfallPotion: {
 				DisplayName: Permanent Featherfall Potion
 				Tooltip: ""
+				BuffName: Featherfall
 			}
 
 			PermanentFishingPotion: {
 				DisplayName: Permanent Fishing Potion
 				Tooltip: ""
+				BuffName: Fishing
 			}
 
 			PermanentCursedFlamesImbuement: {
 				DisplayName: Permanent Flask Of Cursed Flames
 				Tooltip: ""
+				BuffName: Weapon Imbuement: Cursed Flames
 			}
 
 			PermanentFireImbuement: {
 				DisplayName: Permanent Flask Of Fire
 				Tooltip: ""
+				BuffName: Weapon Imbue: Fire
 			}
 
 			PermanentGoldImbuement: {
 				DisplayName: Permanent Flask Of Gold
 				Tooltip: ""
+				BuffName: Weapon Imbue: Gold
 			}
 
 			PermanentIchorImbuement: {
 				DisplayName: Permanent Flask Of Ichor
 				Tooltip: ""
+				BuffName: Weapon Imbue: Ichor
 			}
 
 			PermanentNanitesImbuement: {
 				DisplayName: Permanent Flask Of Nanites
 				Tooltip: ""
+				BuffName: Weapon Imbue: Nanites
 			}
 
 			PermanentPartyImbuement: {
 				DisplayName: Permanent Flask Of Party
 				Tooltip: ""
+				BuffName: Weapon Imbue: Confetti
 			}
 
-			PermanentFlaskOfPoison: {
-				DisplayName: Permanent Flask Of Poison
+			PermanentPoisonImbuement: {
+				DisplayName: Permanent Poison Imbuement
 				Tooltip: ""
+				BuffName: Weapon Imbue: Poison
 			}
 
-			PermanentFlaskOfVenom: {
-				DisplayName: Permanent Flask Of Venom
+			PermanentVenomImbuement: {
+				DisplayName: Permanent Venom Imbuement
 				Tooltip: ""
+				BuffName: Weapon Imbue: Acid Venom
 			}
 
 			PermanentFlipperPotion: {
 				DisplayName: Permanent Flipper Potion
 				Tooltip: ""
+				BuffName: Flipper
 			}
 
 			PermanentGillsPotion: {
 				DisplayName: Permanent Gills Potion
 				Tooltip: ""
+				BuffName: Gills
 			}
 
 			PermanentGoldenDelight: {
 				DisplayName: Permanent Golden Delight
 				Tooltip: ""
+				BuffName: Exquisitely Stuffed
 			}
 
 			PermanentGravitationPotion: {
 				DisplayName: Permanent Gravitation Potion
 				Tooltip: ""
+				BuffName: Gravitation
 			}
 
 			PermanentHeartreachPotion: {
 				DisplayName: Permanent Heartreach Potion
 				Tooltip: ""
+				BuffName: Heartreach
 			}
 
 			PermanentHunterPotion: {
 				DisplayName: Permanent Hunter Potion
 				Tooltip: ""
+				BuffName: Hunter
 			}
 
 			PermanentInfernoPotion: {
 				DisplayName: Permanent Inferno Potion
 				Tooltip: ""
+				BuffName: Inferno
 			}
 
 			PermanentInvisibilityPotion: {
 				DisplayName: Permanent Invisibility Potion
 				Tooltip: ""
+				BuffName: Invisibility
 			}
 
 			PermanentIronskinPotion: {
 				DisplayName: Permanent Ironskin Potion
 				Tooltip: ""
+				BuffName: Ironskin
 			}
 
 			PermanentLifeforcePotion: {
 				DisplayName: Permanent Lifeforce Potion
 				Tooltip: ""
+				BuffName: Lifeforce
 			}
 
 			PermanentMagicPowerPotion: {
 				DisplayName: Permanent Magic Power Potion
 				Tooltip: ""
+				BuffName: Magic Power
 			}
 
 			PermanentManaRegenerationPotion: {
 				DisplayName: Permanent Mana Regeneration Potion
 				Tooltip: ""
+				BuffName: Mana Regeneration
 			}
 
 			PermanentMiningPotion: {
 				DisplayName: Permanent Mining Potion
 				Tooltip: ""
+				BuffName: Mining
 			}
 
 			PermanentNightOwlPotion: {
 				DisplayName: Permanent Night Owl Potion
 				Tooltip: ""
+				BuffName: Night Owl
 			}
 
 			PermanentObsidianSkinPotion: {
 				DisplayName: Permanent Obsidian Skin Potion
 				Tooltip: ""
+				BuffName: Obsidian Skin
 			}
 
 			PermanentRagePotion: {
 				DisplayName: Permanent Rage Potion
 				Tooltip: ""
+				BuffName: Rage
 			}
 
 			PermanentRegenerationPotion: {
 				DisplayName: Permanent Regeneration Potion
 				Tooltip: ""
+				BuffName: Regneration
 			}
 
 			PermanentShinePotion: {
 				DisplayName: Permanent Shine Potion
 				Tooltip: ""
+				BuffName: Shine
 			}
 
 			PermanentShockwavePotion: {
@@ -4471,6 +4517,7 @@ Mods: {
 			PermanentSonarPotion: {
 				DisplayName: Permanent Sonar Potion
 				Tooltip: ""
+				BuffName: Sonar
 			}
 
 			PermanentSoulSiphonPotion: {
@@ -4478,14 +4525,10 @@ Mods: {
 				Tooltip: ""
 			}
 
-			PermanentSoup: {
-				DisplayName: Permanent Soup
-				Tooltip: ""
-			}
-
 			PermanentSpelunkerPotion: {
 				DisplayName: Permanent Spelunker Potion
 				Tooltip: ""
+				BuffName: Spelunker
 			}
 
 			PermanentStrengthPotion: {
@@ -4496,36 +4539,43 @@ Mods: {
 			PermanentSummoningPotion: {
 				DisplayName: Permanent Summoning Potion
 				Tooltip: ""
+				BuffName: Summoning
 			}
 
 			PermanentSwiftnessPotion: {
 				DisplayName: Permanent Swiftness Potion
 				Tooltip: ""
+				BuffName: Swiftness
 			}
 
 			PermanentThornsPotion: {
 				DisplayName: Permanent Thorns Potion
 				Tooltip: ""
+				BuffName: Thorns
 			}
 
 			PermanentTitanPotion: {
 				DisplayName: Permanent Titan Potion
 				Tooltip: ""
+				BuffName: Titan
 			}
 
 			PermanentWarmthPotion: {
 				DisplayName: Permanent Warmth Potion
 				Tooltip: ""
+				BuffName: Warmth
 			}
 
 			PermanentWaterWalkingPotion: {
 				DisplayName: Permanent Water Walking Potion
 				Tooltip: ""
+				BuffName: Water Walking
 			}
 
 			PermanentWrathPotion: {
 				DisplayName: Permanent Wrath Potion
 				Tooltip: ""
+				BuffName: Wrath
 			}
 
 			RadiantLifegem: {
@@ -6861,16 +6911,6 @@ Mods: {
 					'''
 			}
 
-			PermanentPoisonImbuement: {
-				DisplayName: Permanent Poison Imbuement
-				Tooltip: ""
-			}
-
-			PermanentVenomImbuement: {
-				DisplayName: Permanent Venom Imbuement
-				Tooltip: ""
-			}
-
 			DamageDebugTome: {
 				DisplayName: Damage Debug Tome
 				Tooltip: Enables/disables damage spread
@@ -6915,11 +6955,6 @@ Mods: {
 			NecromancyAltar: {
 				DisplayName: Necromancy Altar
 				Tooltip: Grants Bewitched and Strategist buffs on right click
-			}
-
-			PermanentLuckPotion: {
-				DisplayName: Four Leaf Clover
-				Tooltip: ""
 			}
 
 			JOI3Chassis: {
