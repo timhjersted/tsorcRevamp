@@ -247,11 +247,11 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<CrazedDemonSpirit>();
     }
 
-    public class DarkElfMageBanner : EnemyBanner
+    public class ClericOfSorrowBanner : EnemyBanner
     {
         public override int PlaceStyle => 22;
 
-        public override int NPCType => ModContent.NPCType<DarkElfMage>();
+        public override int NPCType => ModContent.NPCType<ClericOfSorrow>();
     }
 
     public class DemonSpiritBanner : EnemyBanner

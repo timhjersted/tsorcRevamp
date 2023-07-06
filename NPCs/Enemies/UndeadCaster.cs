@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.lifeMax = 50;
                 NPC.defense = 12;
                 NPC.value = 750;
-                NPC.damage = 20;
+                NPC.damage = 0;
             }
 
             if (NPC.downedBoss3)
@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.lifeMax = 110;
                 NPC.defense = 15;
                 NPC.value = 950;
-                NPC.damage = 32;  
+                NPC.damage = 0;  
             }
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

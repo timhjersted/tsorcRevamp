@@ -8,7 +8,7 @@ using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    class DarkElfMage : ModNPC
+    class ClericOfSorrow : ModNPC
     {
         //int meteorDamage = 9;
         int iceBallDamage = 20;
@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = 28;
             NPC.knockBackResist = 0.01f;
             NPC.aiStyle = 3;
-            NPC.damage = 0;
+            NPC.damage = 65;
             NPC.defense = 35;
             NPC.height = 40;
             NPC.width = 20;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 1800;
             Banner = NPC.type;
-            BannerItem = ModContent.ItemType<Banners.DarkElfMageBanner>();
+            BannerItem = ModContent.ItemType<Banners.ClericOfSorrowBanner>();
         }
 
         //Spawns in Hardmode Surface and Underground, 6.5/10th of the world to the right edge (Width). Does not spawn in Dungeons, Jungle, or Meteor. Only spawns with Town NPCs during Blood Moons.
@@ -74,16 +74,16 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 2, 0.07f, 0.2f, true, enragePercent: 0.2f, enrageTopSpeed: 3);
+            tsorcRevampAIs.FighterAI(NPC, 1.2f, 0.07f, 0.2f, true, enragePercent: 0.2f, enrageTopSpeed: 3);
             tsorcRevampAIs.LeapAtPlayer(NPC, 4, 3, 1, 100);
 
             NPC.localAI[1]++;
             bool validTarget = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 9, validTarget, false, SoundID.Item17, 0.1f, 120, 1);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>(), iceStormDamage, 8, validTarget, false, SoundID.Item17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 160, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 9, validTarget, false, SoundID.Item17, 0.1f, 120, 1);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 160, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>(), iceStormDamage, 8, validTarget, false, SoundID.Item17);
 
 
-            if (NPC.localAI[1] >= 90 && validTarget)
+            if (NPC.localAI[1] >= 160 && validTarget)
             {
                 NPC.localAI[1] = 0;
                 if (Main.netMode != NetmodeID.MultiplayerClient)

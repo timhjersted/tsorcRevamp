@@ -93,16 +93,15 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 1.8f, 0.15f, enragePercent: 0.2f, enrageTopSpeed: 2.2f);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref knifeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref knifeTimer, 160, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17);
 
             //IMMINENT ATTACK TELEGRAPH - PINK DUST 
-            if (knifeTimer >= 90)
+            if (knifeTimer >= 140)
             {
                 Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                 if (Main.rand.NextBool(2))
                 {
-                    int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1f);
-
+                    int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.2f);
                     Main.dust[pink].noGravity = true;
                 }
             }
@@ -136,9 +135,15 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
+        public override void OnKill()
+        {
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1); 
+        }
+
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (knifeTimer >= 60)
+            if (knifeTimer >= 120)
             {
                 Texture2D knifeTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/TibianAmazon_Knife");
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

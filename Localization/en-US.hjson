@@ -7173,6 +7173,11 @@ Mods: {
 				DisplayName: Ancestor Spirit Mask
 				Tooltip: ""
 			}
+
+			ClericOfSorrowBanner: {
+				DisplayName: Cleric Of Sorrow Banner
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -9484,6 +9489,9 @@ Mods: {
 			}
 
 			HomingMissile.DisplayName: Homing Missile
+			Byakhee.DisplayName: Byakhee
+			ClericOfSorrow.DisplayName: Cleric Of Sorrow
+			Willowisp.DisplayName: Willowisp
 		}
 
 		Prefixes: {

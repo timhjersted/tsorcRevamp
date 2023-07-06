@@ -23,12 +23,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 90;
-            NPC.damage = 28;
+            NPC.damage = 22;
             NPC.scale = 1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = .5f;
-            NPC.value = 500;
+            NPC.value = 550;
             NPC.defense = 4;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TibianValkyrieBanner>();
@@ -49,7 +49,12 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 5));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DeadChicken>(), 10));
         }
-
+        public override void OnKill()
+        {
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
+        }
         #region Spawn
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -80,24 +85,23 @@ namespace tsorcRevamp.NPCs.Enemies
         float spearTimer = 0;
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.65f, 0.05f, enragePercent: 0.5f, enrageTopSpeed: 2.4f); //0.7 was .11
+            tsorcRevampAIs.FighterAI(NPC, 1.55f, 0.05f, enragePercent: 0.4f, enrageTopSpeed: 2.3f); 
             int damage = 10;
             if (!NPC.downedBoss1)
             {
                 damage = 7;
             }
-            tsorcRevampAIs.SimpleProjectile(NPC, ref spearTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), damage, 8, Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0), shootSound: SoundID.Item17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref spearTimer, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), damage, 8, Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0), shootSound: SoundID.Item17);
 
             bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
 
             //IMMINENT ATTACK TELEGRAPH - PINK DUST 
             if (spearTimer >= 150)
             {
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); 
                 if (Main.rand.NextBool(2))
                 {
                     int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.2f);
-
                     Main.dust[pink].noGravity = true;
                 }
             }
@@ -108,7 +112,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 boredTeleport++;
 
-                if (boredTeleport == 2600)
+                if (boredTeleport == 4600)
                 {
                     tsorcRevampAIs.Teleport(NPC, 20, false);
 
@@ -149,7 +153,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (spearTimer >= 120)
+            if (spearTimer >= 140)
             {
                 Texture2D spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/TibianValkyrie_Spear");
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

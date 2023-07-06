@@ -140,8 +140,8 @@ namespace tsorcRevamp.NPCs.Enemies
             //TELEGRAPH DUSTS
             if (shotTimer >= 100)
             {
-                Lighting.AddLight(NPC.Center, Color.Purple.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.NextBool(3))
+                Lighting.AddLight(NPC.Center, Color.Purple.ToVector3() * 0.8f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                if (Main.rand.NextBool(2))
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CursedTorch, NPC.velocity.X, NPC.velocity.Y);
                     //Dust.NewDust(npc.position, npc.width, npc.height, DustID.GemEmerald, npc.velocity.X, npc.velocity.Y);
@@ -152,11 +152,11 @@ namespace tsorcRevamp.NPCs.Enemies
             Player player2 = Main.player[NPC.target];
             if (NPC.justHit && NPC.Distance(player2.Center) < 150)
             {
-                shotTimer = 40f;
+                shotTimer = 0f;
             }
             if (NPC.justHit && NPC.Distance(player2.Center) < 150 && Main.rand.NextBool(2))
             {
-                shotTimer = 100f;
+                shotTimer = 80f;
                 NPC.velocity.Y = Main.rand.NextFloat(-6f, -3f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-5f, -3f);
                 NPC.netUpdate = true;
@@ -272,6 +272,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
+
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
+
             if (!Main.dedServ)
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Parasite Zombie Gore 1").Type, 1.1f);
@@ -289,7 +294,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
         }
-
+        
+        
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
