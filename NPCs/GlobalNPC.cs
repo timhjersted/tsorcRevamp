@@ -34,6 +34,8 @@ using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Items.Accessories.Expert;
 using tsorcRevamp.Projectiles.Magic.Runeterra;
 using tsorcRevamp.Utilities;
+using Terraria.ModLoader.IO;
+using System.IO;
 
 namespace tsorcRevamp.NPCs
 {
@@ -117,9 +119,27 @@ namespace tsorcRevamp.NPCs
         public bool Irradiated;
         public bool IrradiatedByShroom;
 
-        public int boredTimer;
-        public int teleportCountdown;
-        public Vector2 nextTeleportLocation;
+        public int BoredTimer;
+        public bool needsNetUpdate;
+        public float ProjectileTimer;
+        public float ArcherShotTimer;
+        public float ArcherAimDirection;
+        public int TeleportCountdown;
+        private Vector2 TeleportTelegraphInternal;
+        public Vector2 TeleportTelegraph
+        {
+            get
+            {
+                return TeleportTelegraphInternal;
+            }
+            set
+            {
+                //This lets it automatically trigger a netupdate whenever this variable is set to something new
+                needsNetUpdate = true;
+                TeleportTelegraphInternal = value;
+            }
+        }
+
         public NPCDespawnHandler DespawnHandler;
 
         public override void ResetEffects(NPC npc)
@@ -171,7 +191,29 @@ namespace tsorcRevamp.NPCs
             Scorched = false;
             Shocked = false;
             Sunburnt = false;
+            
         }
+
+        public override bool PreAI(NPC npc)
+        {
+            if (needsNetUpdate)
+            {
+                needsNetUpdate = false;
+                npc.netUpdate = true;
+            }
+            return base.PreAI(npc);
+        }
+
+        public override void SendExtraAI(NPC npc, BitWriter bitWriter, BinaryWriter binaryWriter)
+        {
+            binaryWriter.WriteVector2(TeleportTelegraph);
+        }
+
+        public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader binaryReader)
+        {
+            TeleportTelegraph = binaryReader.ReadVector2();
+        }
+
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
             if (npc.type == NPCID.KingSlime)
@@ -2701,6 +2743,10 @@ namespace tsorcRevamp.NPCs
                         int dustID = Dust.NewDust(Main.npc[npcID].position, Main.npc[npcID].width, Main.npc[npcID].height, despawnDustType, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
                         Main.dust[dustID].noGravity = true;
                     }
+                    if(Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        UsefulFunctions.DespawnFlash(Main.npc[npcID].Center);
+                    }
                     Main.npc[npcID].active = false;
                 }
                 else
@@ -2727,7 +2773,7 @@ namespace tsorcRevamp.NPCs
     {
         ///<summary> 
         ///Walking AI that walks toward the player. Can be used with SimpleProjectile to fire projectiles, or LeapAtPlayer to leap when the player is close
-        ///Uses up to two ai slots depending on configuration: npc.ai[2] is door break progress (only used if it can break them) and npc.ai[3] is boredom
+        ///Uses up to two ai slots depending on configuration: npc.ai[2] is door break progress (only used if it can break them)
         ///</summary>
         ///<param name="npc">The npc itself this function will run on</param>
         ///<param name="topSpeed">The max speed it can run at</param>
@@ -2749,7 +2795,7 @@ namespace tsorcRevamp.NPCs
 
         ///<summary> 
         ///Special version of the fighter ai, stopping to shoot when the player is within range. Gets bored if it doesn't have line of sight to the player, and if it can teleport it will attempt to warp to a position with a clean shot.
-        ///Uses three ai slots: npc.ai[1] is shot cooldown, npc.ai[2] controls the sprite aiming animation, and npc.ai[3] is boredom
+        ///Uses three ai slots: npc.ai[1] is shot cooldown, npc.ai[2] controls the sprite aiming animation,
         ///</summary>         
         ///<param name="npc">The npc itself this function will run on</param>
         ///<param name="projectileType">The ID of the projectile you want to shoot</param>
@@ -2770,9 +2816,10 @@ namespace tsorcRevamp.NPCs
         public static void ArcherAI(NPC npc, int projectileType, int projectileDamage, float projectileVelocity, int projectileCooldown, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, float projectileGravity = 0.035f, SoundStyle? shootSound = null)
         {
             BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, 0, hatesLight, randomSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
             //Set default shoot sound
-            if(shootSound == null)
+            if (shootSound == null)
             {
                 shootSound = SoundID.Item5;
             }
@@ -2793,39 +2840,39 @@ namespace tsorcRevamp.NPCs
             npc.aiStyle = -1;
             if (npc.confused)
             {
-                npc.ai[2] = 0f; // won't try to stop & aim if confused
+                globalNPC.ArcherAimDirection = 0f; // won't try to stop & aim if confused
             }
             else
             {
-                if (npc.ai[1] > 0f)
-                    npc.ai[1] -= 1f; // decrement fire & reload counter
+                if (globalNPC.ArcherShotTimer > 0f)
+                    globalNPC.ArcherShotTimer -= 1f; // decrement fire & reload counter
 
-                if (npc.justHit || npc.velocity.Y != 0f || npc.ai[1] <= 0f) // was just hit?
+                if (npc.justHit || npc.velocity.Y != 0f || globalNPC.ArcherShotTimer <= 0f) // was just hit?
                 {
-                    npc.ai[1] = projectileCooldown; //Reset firing time
-                    npc.ai[2] = 0f; //Not aiming
+                    globalNPC.ArcherShotTimer = projectileCooldown; //Reset firing time
+                    globalNPC.ArcherAimDirection = 0f; //Not aiming
                 }
 
                 //Check if we're in range of and can hit the player
                 if (Vector2.Distance(npc.Center, Main.player[npc.target].Center) < 700f && Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) && Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) && npc.velocity.Y == 0)
                 {
                     //If so, set boredom to 0
-                    npc.ai[3] = 0;
+                    globalNPC.BoredTimer = 0;
 
                     //If it's not aiming yet, then slow down, aim, and start its cooldown
-                    if (npc.ai[2] == 0)
+                    if (globalNPC.ArcherAimDirection == 0)
                     {
                         //Aim at them, and start the shot cooldown
                         npc.velocity.X *= 0.5f;
-                        npc.ai[2] = 3f;
-                        npc.ai[1] = projectileCooldown;
+                        globalNPC.ArcherAimDirection = 3f;
+                        globalNPC.ArcherShotTimer = projectileCooldown;
                     }
 
                     npc.velocity.X *= 0.9f; // decelerate to stop & shoot
                     npc.spriteDirection = npc.direction; // match animation to facing
 
                     //Fire at halfway through: first half of delay is aim, 2nd half is cooldown
-                    if (npc.ai[1] == (projectileCooldown / 2))
+                    if (globalNPC.ArcherShotTimer == (projectileCooldown / 2))
                     {
                         //Calculate the actual ballistic trajectory to aim the projectile on
                         Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
@@ -2843,21 +2890,21 @@ namespace tsorcRevamp.NPCs
                     if (Math.Abs(aimVector.Y) > Math.Abs(aimVector.X) * 2f) // target steeply above/below NPC
                     {
                         if (aimVector.Y > 0f)
-                            npc.ai[2] = 1f; // aim downward
+                            globalNPC.ArcherAimDirection = 1f; // aim downward
                         else
-                            npc.ai[2] = 5f; // aim upward
+                            globalNPC.ArcherAimDirection = 5f; // aim upward
                     }
                     else if (Math.Abs(aimVector.X) > Math.Abs(aimVector.Y) * 2f) // target on level with NPC
-                        npc.ai[2] = 3f;  //  aim straight ahead
+                        globalNPC.ArcherAimDirection = 3f;  //  aim straight ahead
                     else if (aimVector.Y > 0f) // target is below NPC
-                        npc.ai[2] = 2f;  //  aim slight downward
+                        globalNPC.ArcherAimDirection = 2f;  //  aim slight downward
                     else // target is not below NPC
-                        npc.ai[2] = 4f;  //  aim slight upward                    
+                        globalNPC.ArcherAimDirection = 4f;  //  aim slight upward                    
                 }
                 //If we're out of range of the player, don't aim at them
                 else
                 {
-                    npc.ai[2] = 0;
+                    globalNPC.ArcherAimDirection = 0;
                 }
             }
         }
@@ -2870,6 +2917,21 @@ namespace tsorcRevamp.NPCs
         //More complex "bored" check than simple velocity. Right now it can get bored if it takes too long doing things that require it to move slow.
         private static void BasicAI(NPC npc, float topSpeed, float acceleration, float brakingPower, bool isArcher, bool canTeleport = false, int doorBreakingDamage = 0, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercentage = 0, float enrageTopSpeed = 0, bool lavaJumping = false)
         {
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            if(globalNPC.TeleportCountdown > 0)
+            {
+                globalNPC.TeleportCountdown--;
+                if(globalNPC.TeleportCountdown == 0)
+                {
+                    ExecuteQueuedTeleport(npc);
+                }
+
+                npc.velocity = Vector2.Zero;
+                globalNPC.BoredTimer = 0;
+                globalNPC.ProjectileTimer = 0;
+            }
+
             //Apply scaling to SHM enemies
             if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
             {
@@ -2888,7 +2950,7 @@ namespace tsorcRevamp.NPCs
             //If it has a sound to play, roll a chance for playing it
             if (randomSound != null && Main.rand.Next(soundFrequency) <= 0)
             {
-                Terraria.Audio.SoundEngine.PlaySound(randomSound.Value, npc.Center);
+                SoundEngine.PlaySound(randomSound.Value, npc.Center);
             }
 
             //If we can enrage, do that
@@ -2907,27 +2969,24 @@ namespace tsorcRevamp.NPCs
             //If just hit, then it's not bored
             if (npc.justHit)
             {
-                npc.ai[3] = 0;
+                globalNPC.BoredTimer = 0;
             }
 
             //If not fleeing light and not bored, target the closest player
             if (hatesLight && Main.dayTime && (npc.position.Y / 16f) < Main.worldSurface)
             {
-                npc.ai[3] = -999;
+                globalNPC.BoredTimer = -999;
                 npc.timeLeft = 10;
             }
 
             //If bored, target the closest player it has line of sight to. If it doesn't have los to any, just target the closest one.
-            if (npc.ai[3] != 0)
+            if (globalNPC.BoredTimer != 0)
             {
                 float distance = 9999999;
                 int target = -1;
-
-                //Stopwatch s = new Stopwatch();
-                //s.Start();
                 for(int i = 0; i < Main.maxPlayers; i++)
                 {
-                    if (Main.player[i] != null && Main.player[i].active)
+                    if (Main.player[i].active && !Main.player[i].dead)
                     {
                         if (Main.player[i].CanHit(npc))
                         {
@@ -2948,18 +3007,22 @@ namespace tsorcRevamp.NPCs
                         npc.TargetClosest(false);
                     }
                 }
-                //s.Stop();
-                //Main.NewText("Boredom: " + s.Elapsed);
             }
-            if (npc.ai[3] >= 0)
+
+            //Face the player. Do not do this when bored (aka boredtimer is negative)
+            if (globalNPC.BoredTimer >= 0)
             {
-                if (Main.player[npc.target].Center.X <= npc.Center.X)
+                //Only do it when we're far enough away, to stop it from flipping back and forth at mach 10 when directly under the player
+                if (Math.Abs(Main.player[npc.target].Center.X - npc.Center.X) > 30)
                 {
-                    npc.direction = -1;
-                }
-                else
-                {
-                    npc.direction = 1;
+                    if (Main.player[npc.target].Center.X <= npc.Center.X)
+                    {
+                        npc.direction = -1;
+                    }
+                    else
+                    {
+                        npc.direction = 1;
+                    }
                 }
             }
 
@@ -3073,7 +3136,7 @@ namespace tsorcRevamp.NPCs
                     //First, it checks if the tile in front of it is solid, a door, and the npc can break it
                     if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1) && Main.tile[x_in_front, y_above_feet - 1].TileType == 10 && (doorBreakingDamage > 0))
                     {
-                        npc.ai[3] = 0f; // not bored if working on breaking a door
+                        globalNPC.BoredTimer = 0; // not bored if working on breaking a door
                         if (Main.GameUpdateCount % 60 == 0)  //  knock once per second
                         {
                             npc.velocity.X = 0.5f * -npc.direction; //  slight recoil from hitting it
@@ -3087,7 +3150,7 @@ namespace tsorcRevamp.NPCs
                                 if (!WorldGen.OpenDoor(x_in_front, y_above_feet, npc.direction))
                                 {
                                     //If the door is stuck set the npc to bored
-                                    npc.ai[3] = 999;
+                                    globalNPC.BoredTimer = 999;
                                     npc.velocity.X = 0; // cancel recoil so boredom wall reflection can trigger
                                 }
                                 else if (Main.netMode == NetmodeID.Server)
@@ -3101,52 +3164,50 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            //Main.NewText("Boredom: " + npc.ai[3]);
+            Main.NewText("Boredom: " + globalNPC.BoredTimer);
             bool lineOfSight = Main.player[npc.target].CanHit(npc);
-            bool belowTopSpeed = (Math.Abs(npc.velocity.X) <= topSpeed * 0.9f);
 
-            if (npc.ai[3] >= 0)
+            if (globalNPC.BoredTimer >= 0)
             {
                 //Increase boredom if it's stuck on a wall it can't pass through, walking back and forth above the player, or can teleport but can't see the player
-                if (belowTopSpeed || (canTeleport && !lineOfSight))
+                if (!lineOfSight)
                 {
-                    npc.ai[3]++;
+                    globalNPC.BoredTimer++;
 
                     //Time it takes to get bored scales with how long it takes to accelerate
-                    if (npc.ai[3] > 100 + (4 * (topSpeed / acceleration)))
+                    if (globalNPC.BoredTimer > 100 + (4 * (topSpeed / acceleration)))
                     {
                         if (!canTeleport)
                         {
-                            npc.ai[3] = -180;
+                            globalNPC.BoredTimer = -180;
                             npc.direction *= -1;
                         }
                         else
                         {
                             //Try to teleport somewhere it has line of sight to the player
-                            Teleport(npc, 50, true);
-                            npc.ai[3] = -30;
+                            QueueTeleport(npc, 50, true);
                         }
                     }
                 }
                 //If it's not stuck not and it's not bored decrease the boredom counter
-                else if (npc.ai[3] > 0)
+                else if (globalNPC.BoredTimer > 0)
                 {
-                    npc.ai[3] -= 1;
-                    if (npc.ai[3] < 0)
+                    globalNPC.BoredTimer -= 1;
+                    if (globalNPC.BoredTimer < 0)
                     {
-                        npc.ai[3] = 0;
+                        globalNPC.BoredTimer = 0;
                     }
                 }
             }
             else
             {
-                npc.ai[3]++;
+                globalNPC.BoredTimer++;
             }
 
             //If it has line of sight and is moving at full speed, and the player is near its level, instantly set boredom to 0
-            if (lineOfSight && !belowTopSpeed && Math.Abs(Main.player[npc.target].Center.Y - npc.Center.Y) < 144)
+            if (lineOfSight && Math.Abs(Main.player[npc.target].Center.Y - npc.Center.Y) < 144)
             {
-                npc.ai[3] = 0;
+                globalNPC.BoredTimer = 0;
             }
         }
 
@@ -3157,6 +3218,28 @@ namespace tsorcRevamp.NPCs
         //AI snippits go here! Simply call these in the npc's main AI function to add them
         #region AI Snippets
 
+        public static int ProjectileTelegraphTime = 25;
+        public static int TeleportTelegraphTime = 140;
+
+
+        ///<summary> 
+        ///Fires a projectile with various parameters. Uses GlobalNPC ProjectileTimer by default.
+        ///</summary>
+        ///<param name="npc">The npc itself this function will run on</param>
+        ///<param name="timerCap">How high does the timer have to be for it to shoot</param>
+        ///<param name="projectileType">The ID of the projectile you want to shoot</param>
+        ///<param name="projectileDamage">Damage of the projectile. Multiplied by 2 by default, and then 2 again in expert mode</param>
+        ///<param name="projectileVelocity">Speed of the projectile</param>
+        ///<param name="actuallyFire">This lets you use a condition to block the projectile from firing unless it is true (such as having line of sight to the player)</param>
+        ///<param name="incrementTimer">Should this functoin increase the timer variable by 1 every tick</param>       
+        ///<param name="shootSound">The sound to play when shooting</param>
+        ///<param name="projectileGravity">How much is the projectile's y velocity reduced each tick? Leave blank for default gravity, set to 0 for projectiles with no gravity, set it custom if your projectile has custom gravity</param>
+        ///<param name="ai0">Lets you pass a value to the projectile's ai0</param>
+        ///<param name="ai1">Lets you pass a value to the projectile's ai1</param>
+        public static bool SimpleProjectile(NPC npc, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, bool actuallyFire = true, bool incrementTimer = true, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0)
+        {
+            return SimpleProjectile(npc, ref npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer, timerCap, projectileType, projectileDamage, projectileVelocity, actuallyFire, incrementTimer, shootSound, projectileGravity, ai0, ai1);
+        }
 
         ///<summary> 
         ///Fires a projectile with various parameters. Uses any timer variable you give it, and goes in the npc's AI() function
@@ -3169,24 +3252,55 @@ namespace tsorcRevamp.NPCs
         ///<param name="projectileVelocity">Speed of the projectile</param>
         ///<param name="actuallyFire">This lets you use a condition to block the projectile from firing unless it is true (such as having line of sight to the player)</param>
         ///<param name="incrementTimer">Should this functoin increase the timer variable by 1 every tick</param>
-        ///<param name="soundType">The type of sound to play</param>
-        ///<param name="soundStyle">The style of sound to play</param>
+        ///<param name="shootSound">The sound to play when shooting</param>
         ///<param name="projectileGravity">How much is the projectile's y velocity reduced each tick? Leave blank for default gravity, set to 0 for projectiles with no gravity, set it custom if your projectile has custom gravity</param>
         ///<param name="ai0">Lets you pass a value to the projectile's ai0</param>
         ///<param name="ai1">Lets you pass a value to the projectile's ai1</param>
         public static bool SimpleProjectile(NPC npc, ref float timer, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, bool actuallyFire = true, bool incrementTimer = true, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0)
         {
-            if (npc.ai[3] < 0)
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            //Reset the projectile timer if the NPC is bored (so they can't insta-fire it next time they see the player again)
+            if (globalNPC.BoredTimer < 0)
             {
                 timer = 0;
             }
             else
             {
-                if (incrementTimer && timer < timerCap)
+                //Increment the timer up to timerCap - Telegraph time. Stop there unless it is actually firing. Once it is actually firing do not stop incrementing the timer, so that it can not stop firing.
+                if (incrementTimer && (timer < timerCap - ProjectileTelegraphTime || actuallyFire || timer > timerCap - ProjectileTelegraphTime))
                 {
                     timer++;
+
+                    if (timer == 1 + timerCap - ProjectileTelegraphTime)
+                    {
+                        Vector2 spawnPosition = npc.position;
+                        if (npc.direction == 1)
+                        {
+                            spawnPosition.X += npc.width;
+                        }
+
+                        //Spawn a telegraph flash
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, npc.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer);
+                        }
+                    }
                 }
-                if (timer >= timerCap && actuallyFire)
+
+                //Stop if firing
+                if(timer > timerCap - ProjectileTelegraphTime)
+                {
+                    npc.velocity.X = 0;
+                }
+
+                //Do not charge past the halfway point if it is not actually ready to fire.
+                if(!actuallyFire && timer > timerCap / 2)
+                {
+                    timer = timerCap / 2;
+                }
+
+                if (timer >= timerCap)
                 {
                     timer = 0;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -3204,6 +3318,7 @@ namespace tsorcRevamp.NPCs
 
             return false;
         }
+
 
         ///<summary> 
         ///Lets the npc leap at players who are close, does not use any ai slots, and goes in an npc's ai function
@@ -3225,19 +3340,17 @@ namespace tsorcRevamp.NPCs
         }
 
         ///<summary> 
-        ///Teleports the NPC to a random position within a specified range around the player. *No* effects or sound! Does not teleport the enemy if no safe location exists. Will not teleport enemies right next to the player.
+        ///Calculates a position to teleport the NPC to. Returns null if there is no valid position.
         ///</summary>
         ///<param name="npc">The npc itself this function will run on</param>
         ///<param name="range">The max range from the player it can teleport. Minimum is 12 blocks.</param>
         ///<param name="requireLineofSight">Try to teleport somewhere that has line of sight to the player</param>
-        public static void TeleportNoEffects(NPC npc, int range, bool requireLineofSight = true)
+        public static Vector2? GenerateTeleportPosition(NPC npc, int range, bool requireLineofSight = true)
         {
-            int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
-
             //Do not teleport if the player is way way too far away (stops enemies following you home if you mirror away)
             if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 2000f)
             { // far away from target; 2000 pixels = 125 blocks
-                return;
+                return null;
             }
 
             //Try 100 times at most
@@ -3299,15 +3412,17 @@ namespace tsorcRevamp.NPCs
                         }
 
                         //Then teleport and return
-                        npc.position.X = ((int)teleportTarget.X * 16 - npc.width / 2); //Center npc at target
-                        npc.position.Y = (((int)teleportTarget.Y + y) * 16 - npc.height); //Subtract npc.height from y so block is under feet
+                        Vector2 newPosition = Vector2.Zero;
+                        newPosition.X = ((int)teleportTarget.X * 16 - npc.width / 2); //Center npc at target
+                        newPosition.Y = (((int)teleportTarget.Y + y) * 16 - npc.height); //Subtract npc.height from y so block is under feet
                         npc.TargetClosest(true);
                         npc.netUpdate = true;
-                        return;
-
+                        return newPosition;
                     }
                 }
             }
+
+            return null;
         }
 
 
@@ -3318,26 +3433,47 @@ namespace tsorcRevamp.NPCs
         ///<param name="npc">The npc itself this function will run on</param>
         ///<param name="range">The max range from the player it can teleport. Minimum is 12 blocks.</param>
         ///<param name="requireLineofSight">Try to teleport somewhere that has line of sight to the player</param>
-        public static void Teleport(NPC npc, int range, bool requireLineofSight = true)
+        public static void TeleportImmediately(NPC npc, int range, bool requireLineofSight = true)
         {
-            Vector2 oldPosition = npc.Center;
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, npc.Center);
+            QueueTeleport(npc, range, requireLineofSight);
+            ExecuteQueuedTeleport(npc);
+        }
+
+        public static void QueueTeleport(NPC npc, int range, bool requireLineofSight = true)
+        {
+            Vector2? potentialNewPos;
+
+            SoundEngine.PlaySound(SoundID.Item8, npc.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 for (int i = 0; i < 100; i++)
                 {
-                    TeleportNoEffects(npc, range, requireLineofSight);
-                    if (!requireLineofSight || (Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) && Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1)))
+                    potentialNewPos = GenerateTeleportPosition(npc, range, requireLineofSight);
+                    if (potentialNewPos.HasValue && (!requireLineofSight || (Collision.CanHit(potentialNewPos.Value, 1, 1, Main.player[npc.target].Center, 1, 1) && Collision.CanHitLine(potentialNewPos.Value, 1, 1, Main.player[npc.target].Center, 1, 1))))
                     {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown = TeleportTelegraphTime;
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportTelegraph = potentialNewPos.Value;
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer, npc.whoAmI);
+                            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer);
+                        }
+
                         break;
                     }
                 }
             }
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, npc.Center);
+        }
 
-            Vector2 newPosition = npc.Center;
+        public static void ExecuteQueuedTeleport(NPC npc)
+        {
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            Vector2 diff = newPosition - oldPosition;
+            SoundEngine.PlaySound(SoundID.Item8, npc.Center);
+            
+
+            Vector2 diff = globalNPC.TeleportTelegraph - npc.Center;
             float length = diff.Length();
             diff.Normalize();
             Vector2 offset = Vector2.Zero;
@@ -3352,14 +3488,25 @@ namespace tsorcRevamp.NPCs
                     dustPoint.Y += Main.rand.NextFloat(-npc.height / 2, npc.height / 2);
                     if (Main.rand.NextBool())
                     {
-                        Dust.NewDustPerfect(oldPosition + dustPoint, 71, diff * 5, 200, default, 0.8f).noGravity = true;
+                        Dust.NewDustPerfect(npc.Center + dustPoint, 71, diff * 5, 200, default, 0.8f).noGravity = true;
                     }
                     else
                     {
-                        Dust.NewDustPerfect(oldPosition + dustPoint, DustID.FireworkFountain_Pink, diff * 5, 200, default, 0.8f).noGravity = true;
+                        Dust.NewDustPerfect(npc.Center + dustPoint, DustID.FireworkFountain_Pink, diff * 5, 200, default, 0.8f).noGravity = true;
                     }
                 }
             }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+                Projectile.NewProjectileDirect(npc.GetSource_FromThis(), globalNPC.TeleportTelegraph, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+            }
+
+            npc.Center = globalNPC.TeleportTelegraph;
+            globalNPC.BoredTimer = 0;
+            globalNPC.ArcherShotTimer = 0;
+            globalNPC.ProjectileTimer = 0;
         }
 
         public static void RedKnightOnHit(NPC npc, bool melee)
@@ -3405,7 +3552,7 @@ namespace tsorcRevamp.NPCs
                 //TELEPORT MELEE
                 if (Main.rand.NextBool(12))
                 {
-                    Teleport(npc, 20, true);
+                    TeleportImmediately(npc, 20, true);
                 }
             }
 
@@ -3461,7 +3608,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (npc.Distance(Main.player[npc.target].Center) > 80 && Main.rand.NextBool(20))
                 {
-                    Teleport(npc, 20, false);
+                    TeleportImmediately(npc, 20, false);
                 }
             }
 

@@ -40,6 +40,7 @@ namespace tsorcRevamp.Projectiles
         {
             base.AI();
 
+
             if (Main.GameUpdateCount % 5 == 0)
             {
                 Projectile.netUpdate = true;
@@ -52,6 +53,7 @@ namespace tsorcRevamp.Projectiles
             if (!dying)
             {
                 Lighting.AddLight(Projectile.Center, TorchID.Cursed);
+                Main.player[Projectile.owner].channel = true;
                 Main.player[Projectile.owner].manaRegenDelay = 10;
             }
             if (Projectile.owner == Main.myPlayer)
@@ -98,7 +100,7 @@ namespace tsorcRevamp.Projectiles
         {
             float hostVel = Projectile.velocity.Length();
 
-            float modifiedTime = 0.001f * hostVel;
+            float modifiedTime = 0.0007f * hostVel;
 
             if (Main.gamePaused)
             {

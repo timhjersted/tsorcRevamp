@@ -77,7 +77,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (NPC.justHit && Main.rand.NextBool(12))
             {
-                tsorcRevampAIs.Teleport(NPC, 25, true);
+                tsorcRevampAIs.TeleportImmediately(NPC, 25, true);
                 
             }
             if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(12))//
@@ -104,7 +104,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (NPC.justHit && Main.rand.NextBool(25))
             {
-                tsorcRevampAIs.Teleport(NPC, 25, true);
+                tsorcRevampAIs.TeleportImmediately(NPC, 25, true);
                 poisonStrikeTimer = 0f;
             }
         }

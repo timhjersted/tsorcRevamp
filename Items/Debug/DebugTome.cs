@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Debug
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, player.Center);
 
-            Projectile.NewProjectile(source, Main.MouseWorld, speed * 0.25f, ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), 5, 0f, Main.myPlayer);
+            Projectile.NewProjectile(source, Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0f, Main.myPlayer);
 
             //Projectile.NewProjectile(source, Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Accessories.FriendlyIonBomb>(), 0, 0f, Main.myPlayer);
 

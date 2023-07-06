@@ -135,27 +135,6 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStrikeTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 7, 8, clearLineofSight, true, SoundID.Item20, 0);
             tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 700, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, true, true, SoundID.Item100);
 
-            if (poisonStrikeTimer >= 60)//GREEN DUST
-            {
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CursedTorch, NPC.velocity.X, NPC.velocity.Y);
-            }
-
-            if (poisonStrikeTimer >= 110)//PINK DUST
-            {
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.NextBool(2))
-                {
-                    int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
-
-                    Main.dust[pink].noGravity = true;
-                }
-            }
-
-            if (Main.rand.NextBool(150))
-            {
-                poisonStrikeTimer = 120;
-            }
-
             if (poisonStormTimer >= 520 )//SHRINKING CIRCLE DUST
             {
                 UsefulFunctions.DustRing(NPC.Center, 700 - poisonStormTimer, DustID.CursedTorch, 12, 4);
@@ -182,7 +161,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (NPC.justHit && Main.rand.NextBool(24))
             {
-                tsorcRevampAIs.Teleport(NPC, 20, true);
+                tsorcRevampAIs.TeleportImmediately(NPC, 20, true);
                 poisonStrikeTimer = 70f;
             }
 

@@ -82,7 +82,6 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
         float boredTeleport = 0;
-        float spearTimer = 0;
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 1.55f, 0.05f, enragePercent: 0.4f, enrageTopSpeed: 2.3f); 
@@ -91,20 +90,10 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 damage = 7;
             }
-            tsorcRevampAIs.SimpleProjectile(NPC, ref spearTimer, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), damage, 8, Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0), shootSound: SoundID.Item17);
+            tsorcRevampAIs.SimpleProjectile(NPC, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), damage, 8, Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0), shootSound: SoundID.Item17);
+                       
 
             bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-
-            //IMMINENT ATTACK TELEGRAPH - PINK DUST 
-            if (spearTimer >= 150)
-            {
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); 
-                if (Main.rand.NextBool(2))
-                {
-                    int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.2f);
-                    Main.dust[pink].noGravity = true;
-                }
-            }
 
             //If the enemy doesn't have line of sight for a good while, teleport far away from the player and try again. Then much later, they get one more chance to teleport.
             //Since this is an early enemy, the distance and time is not very aggressive.
@@ -114,13 +103,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 if (boredTeleport == 4600)
                 {
-                    tsorcRevampAIs.Teleport(NPC, 20, false);
+                    tsorcRevampAIs.TeleportImmediately(NPC, 20, false);
 
                 }
 
                 if (boredTeleport == 5600)
                 {
-                    tsorcRevampAIs.Teleport(NPC, 30, false);
+                    tsorcRevampAIs.TeleportImmediately(NPC, 30, false);
                     boredTeleport = 5601;
                 }
 
@@ -129,31 +118,17 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-
-            tsorcRevampAIs.RedKnightOnHit(NPC, true);
-            if (Main.rand.NextBool(3))
-            {
-                spearTimer = 0;
-            }
-            
+            tsorcRevampAIs.RedKnightOnHit(NPC, true);            
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-
             tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
-
-            if (projectile.DamageType == DamageClass.Melee)
-            {
-                
-                    spearTimer = 0;
-                
-            }
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (spearTimer >= 140)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 140)
             {
                 Texture2D spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/TibianValkyrie_Spear");
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

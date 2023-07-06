@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Terraria;
 using Terraria.Chat;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -322,6 +323,16 @@ namespace tsorcRevamp
         {
             return (float)Math.Sin(source * MathHelper.PiOver2);
         }
+
+        ///<summary> 
+        ///Just so I don't have to keep copying and pasting this
+        ///</summary>         
+        ///<param name="center">The center of the flash</param>
+        public static void DespawnFlash(Vector2 center)
+        {
+            Projectile.NewProjectileDirect(new EntitySource_Misc("VFX"), center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 500, 60);
+        }
+
 
         ///<summary> 
         ///Spawns a piece of gore simply

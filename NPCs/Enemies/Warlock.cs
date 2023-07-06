@@ -123,7 +123,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 if (boredTeleport == 1600)
                 {
-                    tsorcRevampAIs.Teleport(NPC, 40, false);
+                    tsorcRevampAIs.TeleportImmediately(NPC, 40, false);
                     boredTeleport = 0;
                 }
 
@@ -192,7 +192,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (NPC.justHit && Main.rand.NextBool(8))
             {
-                tsorcRevampAIs.Teleport(NPC, 20, true);
+                tsorcRevampAIs.TeleportImmediately(NPC, 20, true);
                 attackTimer = 70f;
                 NPC.netUpdate = true;
             }

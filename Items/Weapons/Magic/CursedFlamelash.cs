@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override bool CanUseItem(Player player)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.CursedFlamelash>()] > 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.CursedFlamelash>()] > 0 && player.channel)
             {
                 return false;
             }

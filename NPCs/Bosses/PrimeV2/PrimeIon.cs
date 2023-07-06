@@ -50,7 +50,17 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         NPC primeHost
         {
-            get => Main.npc[(int)NPC.ai[1]];
+            get
+            {
+                if (Main.npc[(int)NPC.ai[1]].active && Main.npc[(int)NPC.ai[1]].type == ModContent.NPCType<TheMachine>())
+                {
+                    return Main.npc[(int)NPC.ai[1]];
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
         public Player Target
         {
@@ -74,7 +84,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         {
             int ionDamage = 200;
 
-            if (primeHost == null || primeHost.active == false || primeHost.type != ModContent.NPCType<TheMachine>())
+            if (primeHost == null)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

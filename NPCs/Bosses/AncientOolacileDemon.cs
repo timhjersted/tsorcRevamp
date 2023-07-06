@@ -138,7 +138,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //TELEPORT MELEE
                 if (Main.rand.NextBool(12))
                 {
-                    tsorcRevampAIs.Teleport(NPC, 25, true);
+                    tsorcRevampAIs.TeleportImmediately(NPC, 25, true);
                     NPC.localAI[1] = 0f;
                 }
             }
@@ -160,7 +160,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //TELEPORT RANGED
             if (Main.rand.NextBool(24))
             {
-                tsorcRevampAIs.Teleport(NPC, 25, true);
+                tsorcRevampAIs.TeleportImmediately(NPC, 25, true);
                 NPC.localAI[1] = 0f;
             }
             //RANGED
@@ -202,7 +202,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (stuckTeleport == 60)
                 {
                     //NPC.localAI[1] = 0;
-                    tsorcRevampAIs.Teleport(NPC, 60, false);
+                    tsorcRevampAIs.TeleportImmediately(NPC, 60, false);
                     stuckTeleport = 0;
                     //breathTimer = 1;
                 }
@@ -234,7 +234,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (boredTeleport == 1000)
                 {
                     NPC.localAI[1] = 0;
-                    tsorcRevampAIs.Teleport(NPC, 40, true);
+                    tsorcRevampAIs.TeleportImmediately(NPC, 40, true);
                     boredTeleport = 0;
                 }
 

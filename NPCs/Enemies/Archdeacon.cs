@@ -168,7 +168,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 else
                 {       
-                    tsorcRevampAIs.Teleport(NPC, 38, true);
+                    tsorcRevampAIs.TeleportImmediately(NPC, 38, true);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 }
             }

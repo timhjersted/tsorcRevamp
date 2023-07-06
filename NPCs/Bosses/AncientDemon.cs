@@ -92,7 +92,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //TELEPORT MELEE
                 if (Main.rand.NextBool(5))
                 {
-                    tsorcRevampAIs.Teleport(NPC, 25, true);
+                    tsorcRevampAIs.TeleportImmediately(NPC, 25, true);
                 }
             }
             //RISK ZONE
@@ -112,7 +112,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //TELEPORT RANGED
             if (Main.rand.NextBool(12))
             {
-                tsorcRevampAIs.Teleport(NPC, 20, true);
+                tsorcRevampAIs.TeleportImmediately(NPC, 20, true);
                 NPC.localAI[1] = 70f;
             }
             //RANGED

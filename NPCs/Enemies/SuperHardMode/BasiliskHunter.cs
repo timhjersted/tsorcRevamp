@@ -347,11 +347,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                         if (breathCD == 120)
                         {
-                            tsorcRevampAIs.Teleport(NPC, 15, true);
+                            tsorcRevampAIs.TeleportImmediately(NPC, 15, true);
                         }
                         if (breathCD == 60)
                         {
-                            tsorcRevampAIs.Teleport(NPC, 15, true);
+                            tsorcRevampAIs.TeleportImmediately(NPC, 15, true);
                         }
                         //
                     }

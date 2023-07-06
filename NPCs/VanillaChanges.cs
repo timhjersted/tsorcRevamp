@@ -23,13 +23,13 @@ namespace tsorcRevamp.NPCs
 
 
 
+
         #region SetDefaults
 
         public override void SetDefaults(NPC npc)
         {
             switch (npc.type)
             {
-
                 #region Pre-Hardmode NPCs
 
                 #region Zombies
@@ -1812,6 +1812,7 @@ namespace tsorcRevamp.NPCs
                 #region King Slime
                 case (NPCID.KingSlime):
                     {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.KingSlimeDespawn"), Color.Blue, DustID.BlueCrystalShard);
                         npc.damage = 60;
                         npc.defense = 15;
                         npc.scale = 1.25f;
@@ -1829,6 +1830,8 @@ namespace tsorcRevamp.NPCs
                 #region Eye of Cthulhu
                 case (NPCID.EyeofCthulhu):
                     {
+                      npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.EoCDespawn"), Color.Red, DustID.RedTorch);
+
                         //damage changes here are for first phase
                         npc.damage = 27; //legacy: 37
                         npc.value = 33330;
@@ -1860,6 +1863,8 @@ namespace tsorcRevamp.NPCs
                 #region Brain of Cthulhu
                 case (NPCID.BrainofCthulhu):
                     {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.BoCDespawn"), Color.Red, DustID.RedTorch);
+
                         //npc.lifeMax = ;
                         npc.value = 42250;
                         break;
@@ -1922,6 +1927,8 @@ namespace tsorcRevamp.NPCs
                 #region Queen Bee
                 case (NPCID.QueenBee):
                     {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.QueenBee"), Color.Yellow, DustID.YellowTorch);
+
                         npc.value = 67430;
                         break;
                     }
@@ -1930,6 +1937,8 @@ namespace tsorcRevamp.NPCs
                 #region Skeletron
                 case (NPCID.SkeletronHead):
                     {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Skeletron"), Color.Gray, DustID.BoneTorch);
+
                         npc.value = 91480;
                         npc.defense = 12;
                         npc.damage = 45; //legacy: 50, then 35
@@ -1952,6 +1961,8 @@ namespace tsorcRevamp.NPCs
                 #region Deerclops
                 case (NPCID.Deerclops):
                     {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.DeerclopsDespawn"), Color.White, DustID.Snow);
+
                         npc.value = 103520; //is dearclops that hard?
                         break;
                     }
@@ -2014,6 +2025,8 @@ namespace tsorcRevamp.NPCs
                 #region Queen Slime
                 case (NPCID.QueenSlimeBoss):
                     {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.QueenSlimeDespawn"), Color.Pink, DustID.PinkCrystalShard);
+
                         npc.value = 134780;
                         break;
                     }
@@ -2053,6 +2066,7 @@ namespace tsorcRevamp.NPCs
                             npc.defense = 36;
                             npc.lifeMax = 25000;
                         }
+                        npc.active = false;
                         break;
                     }
                 #endregion
@@ -2060,6 +2074,8 @@ namespace tsorcRevamp.NPCs
                 #region The Destroyer
                 case (NPCID.TheDestroyer):
                     {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.DestroyerDespawn"), Color.Orange, DustID.Torch);
+
                         npc.lifeMax = 60000;
                         npc.value = 203430;
                         npc.scale = 1.25f;
@@ -2100,6 +2116,8 @@ namespace tsorcRevamp.NPCs
                 #region Skeletron Prime
                 case (NPCID.SkeletronPrime):
                     {
+                        npc.active = false;
+
                         npc.value = 276430;
                         npc.defense = 40;
                         npc.damage = 100;
@@ -2148,6 +2166,8 @@ namespace tsorcRevamp.NPCs
                 #region Plantera
                 case (NPCID.Plantera): //Planteras defense values are hardcoded, no point in changing them here
                     {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.PlanteraDespawn"), Color.Green, DustID.GreenTorch);
+
                         npc.lifeMax = 35000; //base 30k
                         npc.damage = 93; //base 70
                         npc.value = 295930;
@@ -2180,6 +2200,8 @@ namespace tsorcRevamp.NPCs
                 #region Duke Fishron
                 case (NPCID.DukeFishron):
                     {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.DukeDespawn"), Color.Cyan, DustID.Clentaminator_Cyan);
+
                         npc.value = 306660;
                         break;
                     }
@@ -2209,6 +2231,8 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.GolemHead):
                     {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.GolemDespawn"), Color.OrangeRed, DustID.OrangeTorch);
+
                         npc.life = 15000; //base 25k
                         npc.defense = 25; //base 20
                         //npc.damage = 64; //base 64, 80 when freed
@@ -2230,6 +2254,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.DD2Betsy):
                     {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.BetsyDespawn"), Color.Red, DustID.RedTorch);
                         npc.boss = true;
                         npc.value = 257890;
                         break;
@@ -2240,6 +2265,14 @@ namespace tsorcRevamp.NPCs
                 #region Empress of Light
                 case (NPCID.HallowBoss):
                     {
+                        if (Main.rand.NextBool(100))
+                        {
+                            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.EoLDespawnRare"), Color.Gold, DustID.RainbowTorch);
+                        }
+                        else
+                        {
+                            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.EoLDespawn"), Color.Gold, DustID.RainbowTorch);
+                        }
                         npc.value = 444440;
                         break;
                     }
@@ -2249,6 +2282,8 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.CultistBoss):
                     {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler("The cultist has gained another sacrifice...", Color.Blue, DustID.BlueTorch);
+
                         npc.value = 123450;
                         break;
                     }
@@ -2305,6 +2340,8 @@ namespace tsorcRevamp.NPCs
                 #region Moon Lord
                 case (NPCID.MoonLordCore):
                     {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler("Nobody remains to impede the Moon Lord's wrath...", Color.Blue, DustID.BlueTorch);
+
                         npc.life = 100000;
                         npc.value = 527590; //used by boss bag
                         break;
@@ -3139,11 +3176,8 @@ namespace tsorcRevamp.NPCs
         //BLOCKED NPCS
         public override void AI(NPC npc)
         {
-            
-
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-
                 //Block vanilla enemies in certain regions/conditions
                 if (Main.hardMode)
                 {                    

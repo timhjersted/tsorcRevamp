@@ -115,7 +115,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
             if (NPC.justHit && Main.rand.NextBool(18))
             {
-                tsorcRevampAIs.Teleport(NPC, 20, true);
+                tsorcRevampAIs.TeleportImmediately(NPC, 20, true);
                 strikeTimer = 70f;
             }
 

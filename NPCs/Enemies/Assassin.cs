@@ -148,7 +148,7 @@ namespace tsorcRevamp.NPCs.Enemies
            
             if (Main.rand.NextBool(15))
             {
-                tsorcRevampAIs.Teleport(NPC, 30, false);
+                tsorcRevampAIs.TeleportImmediately(NPC, 30, false);
             }
 
         }
@@ -159,7 +159,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.rand.NextBool(15))
             {
-                tsorcRevampAIs.Teleport(NPC, 40, false);
+                tsorcRevampAIs.TeleportImmediately(NPC, 40, false);
             }
 
         }

@@ -199,10 +199,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
             Main.EntitySpriteDraw(tsorcRevamp.NoiseWavy, Projectile.Center - Main.screenPosition, starRectangle, Color.White, -starRotation, starOrigin, 1, SpriteEffects.None, 0);
 
-
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
         }
 
         public override bool? CanDamage()

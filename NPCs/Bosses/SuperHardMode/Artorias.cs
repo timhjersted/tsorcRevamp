@@ -104,7 +104,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (NPC.justHit && Main.rand.NextBool(12))
             {
-                tsorcRevampAIs.Teleport(NPC, 20, true);
+                tsorcRevampAIs.TeleportImmediately(NPC, 20, true);
                 poisonTimer = 1f;
                 DarkBeadShotCounter = 0;
                 DarkBeadShotTimer = 0;
@@ -137,7 +137,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (NPC.justHit && Main.rand.NextBool(25))
             {
-                tsorcRevampAIs.Teleport(NPC, 20, true);
+                tsorcRevampAIs.TeleportImmediately(NPC, 20, true);
                 poisonTimer = 30f;
             }
         }

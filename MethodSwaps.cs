@@ -35,6 +35,7 @@ using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp
 {
@@ -126,7 +127,37 @@ namespace tsorcRevamp
 
             On_Player.UpdateManaRegen += On_Player_UpdateManaRegen;
 
+            On_NPC.TargetClosest += On_NPC_TargetClosest;
+
+            On_NPC.TargetClosestUpgraded += On_NPC_TargetClosestUpgraded;
+
             //Terraria.On_Main.DrawMenu += On_Main_DrawMenu;
+        }
+
+        private static void On_NPC_TargetClosestUpgraded(On_NPC.orig_TargetClosestUpgraded orig, NPC self, bool faceTarget, Vector2? checkPosition)
+        {
+            NPCDespawnHandler handler = self.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler;
+            if (handler != null)
+            {
+                handler.TargetAndDespawn(self.whoAmI);
+            }
+            else
+            {
+                orig(self, faceTarget, checkPosition);
+            }
+        }
+
+        private static void On_NPC_TargetClosest(On_NPC.orig_TargetClosest orig, NPC self, bool faceTarget)
+        {
+            NPCDespawnHandler handler = self.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler;
+            if(handler != null)
+            {
+                handler.TargetAndDespawn(self.whoAmI);
+            }
+            else
+            {
+                orig(self, faceTarget);
+            }
         }
 
         private static void DrawPlayerAuras(On_Main.orig_DrawPlayers_BehindNPCs orig, Main self)

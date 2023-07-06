@@ -139,7 +139,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (NPC.justHit && Main.rand.NextBool(22))
             {
-                tsorcRevampAIs.Teleport(NPC, 20, true);
+                tsorcRevampAIs.TeleportImmediately(NPC, 20, true);
                 poisonStrikeTimer = 10f;
             }
 
