@@ -59,11 +59,7 @@ namespace tsorcRevamp.Items.Potions
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            int Sickness = BaseSickness;
-            if (Main.LocalPlayer.pStone)
-            {
-                Sickness = BaseSickness / 4 * 3 / PhilosophersStoneEfficiency;
-            }
+            int Sickness = BaseSickness / 4 * 3 / PhilosophersStoneEfficiency;
             int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
             if (ttindex != -1)
             {

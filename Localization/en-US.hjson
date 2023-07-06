@@ -136,6 +136,25 @@ Mods: {
 				CritChance: Increases summon crit chance by {0}%
 				TagCritMult: Multiplies summon tag critical strike chance by {0}
 			}
+
+			PermanentPotion: {
+				CanScale:
+					'''
+					[c/77ff77:Grants a weaker {0} effect which increases]
+					[c/77ff77:in strength with each non-permanent source of]
+					[c/77ff77:{0} consumed. Total consumed:] {1}
+					[c/77ff77:Effect potency is ]{2}%
+					'''
+				NoScaling: Permanently grants the {0} buff.
+				GeneralTooltip:
+					'''
+					Does not consume a buff slot.
+					Use to toggle effect.
+					'''
+				Flask: Not compatible with other weapon imbues.
+				Food: Not compatible with other food items.
+				DoesNotStack: "[c/ff7777:Does nothing while the non-permanent buff is active.]"
+			}
 		}
 
 		DeathText: {
@@ -4002,10 +4021,10 @@ Mods: {
 					Miakoda - an ancient being of light over 100 years old, 
 					who has vowed to help you find your wife and defeat Attraidies.
 					Miakoda is an indigenous name that means "Power of the Moon".
-					{$CommonItemTooltip.DamageMultiplier}
+					{$CommonItemTooltip.DmgMult}
 					Crescent Moon Form - Imbues weapons with Crescent Moonlight
 					when you hit a crit ({$CommonItemTooltip.SecondDuration@2}, {$CommonItemTooltip.Cooldown@3})
-					{$CommonItemTooltip.DamageMultiplier@1} while weapon imbue is active again
+					{$CommonItemTooltip.DmgMult@1} again while weapon imbue is active
 					Can switch between forms at an altar
 					'''
 			}
@@ -4019,7 +4038,7 @@ Mods: {
 					Miakoda is an indigenous name that means "Power of the Moon".
 					Full Moon Form - Heals you when you hit a crit for {1} + {2}% of your max life
 					({$CommonItemTooltip.Cooldown@3})
-					{$CommonItemTooltip.IncreasesDR}
+					{$CommonItemTooltip.DRStat}
 					Can switch between forms at an altar
 					'''
 			}
@@ -4036,7 +4055,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}, stacking with the boost
 					While boost is active, gain the following bonuses:
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
-					{$CommonItemTooltip.KnockbackImmunity}
+					{$CommonItemTooltip.NoKnockback}
 					{$CommonItemTooltip.ReducesDamageTakenByPercent@2}
 					Can switch between forms at an altar
 					'''
@@ -4084,7 +4103,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance}
 					{$CommonItemTooltip.Thorns@1} and grants the Battle potion effect
-					{$CommonItemTooltip.DRStatPenalty@2}
+					{$CommonItemTooltip.BadDRStat@2}
 					Does not stack with Demon Drug, Armor Drug, or Strength Potions.
 					'''
 			}
@@ -4099,7 +4118,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.RestoresLife} and applies {2} seconds of Potion Sickness
-					Gives Well Fed buff for {$CommonItemTooltip.SecondDuration@1}
+					Gives Exquisitely Stuffed buff for {$CommonItemTooltip.SecondDuration@1}
 					While the [c/6d8827:Bearer of the Curse] wont be healed by this,
 					they still gain some healing items' other effects such as buffs
 					'''
@@ -4110,7 +4129,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.RestoresLife} and applies {2} seconds of Potion Sickness
-					Gives Well Fed buff for {$CommonItemTooltip.SecondDuration@1}
+					Gives Exquisitely Stuffed buff for {$CommonItemTooltip.SecondDuration@1}
 					'''
 			}
 
@@ -4143,7 +4162,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.RestoresLife} and applies {2} seconds of Potion Sickness
-					Gives Well Fed buff for {$CommonItemTooltip.SecondDuration@1}
+					Gives Exquisitely Stuffed buff for {$CommonItemTooltip.SecondDuration@1}
 					While the [c/6d8827:Bearer of the Curse] wont be healed by this,
 					they still gain some healing items' other effects such as buffs
 					'''

@@ -114,7 +114,8 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             NPCShop shop = new(NPC.type);
 
-            shop.Add(new Item(ModContent.ItemType<DwarvenContract>()) {
+            shop.Add(new Item(ModContent.ItemType<DwarvenContract>()) 
+            {
                 shopCustomPrice = 100, 
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });

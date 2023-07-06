@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Humanizer;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Items.VanillaItems;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Potions.PermanentPotions
 {
@@ -119,28 +121,28 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             {
                 int line = ttindex;
                 line++;
-                if (CanScale) {
-                    tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:Grants a weaker {BuffName} effect which increases]"));
-                    tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:in strength with each non-permanent source of]"));
-                    tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:{BuffName} consumed. Total consumed:] {ConsumedAmount}"));
-                    tooltips.Insert(line++, new TooltipLine(Mod, "", $"[c/77ff77:Effect potency is ]{EffectPotency * 100:F2}%"));
+                if (CanScale)
+                {
+                    tooltips.Insert(line++, new TooltipLine(Mod, "", LangUtils.GetTextValue("CommonItemTooltip.PermanentPotion.CanScale").FormatWith(BuffName, ConsumedAmount, (int)(EffectPotency * 100))));
 
                 }
-                else {
-                    tooltips.Insert(line++, new TooltipLine(Mod, "", $"Permanently grants the {BuffName} buff."));
+                else
+                {
+                    tooltips.Insert(line++, new TooltipLine(Mod, "", LangUtils.GetTextValue("CommonItemTooltip.PermanentPotion.NoScaling").FormatWith(BuffName)));
                 }
-                tooltips.Insert(line++, new TooltipLine(Mod, "", "Does not consume a buff slot."));
-                tooltips.Insert(line++, new TooltipLine(Mod, "", "Use to toggle effect."));
-                if (ExclusivePermanents != null && ExclusivePermanents.Equals(ExclusiveSetFlasks)) {
-                    tooltips.Insert(line++, new TooltipLine(Mod, "", "Not compatible with other weapon imbues."));
+                tooltips.Insert(line++, new TooltipLine(Mod, "", LangUtils.GetTextValue("CommonItemTooltip.PermanentPotion.GeneralTooltip")));
+                if (ExclusivePermanents != null && ExclusivePermanents.Equals(ExclusiveSetFlasks))
+                {
+                    tooltips.Insert(line++, new TooltipLine(Mod, "", LangUtils.GetTextValue("CommonItemTooltip.PermanentPotion.Flask")));
 
                 }
-                else if (ExclusivePermanents != null && ExclusivePermanents.Equals(ExclusiveSetWellFed)) {
-                    tooltips.Insert(line++, new TooltipLine(Mod, "", "Not compatible with other food items."));
+                else if (ExclusivePermanents != null && ExclusivePermanents.Equals(ExclusiveSetWellFed))
+                {
+                    tooltips.Insert(line++, new TooltipLine(Mod, "", LangUtils.GetTextValue("CommonItemTooltip.PermanentPotion.Food")));
 
                 }
 
-                tooltips.Insert(line++, new TooltipLine(Mod, "", "[c/ff7777:Does nothing while the non-permanent buff is active.]"));
+                tooltips.Insert(line++, new TooltipLine(Mod, "", LangUtils.GetTextValue("CommonItemTooltip.PermanentPotion.DoesNotStack")));
             }
         }
 
