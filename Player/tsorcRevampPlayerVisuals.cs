@@ -603,8 +603,8 @@ namespace tsorcRevamp
                 {
                     float abovePlayer = 82f; //how far above the player should the bar be?
                     UsefulFunctions.EnsureLoaded(ref meterFull, "tsorcRevamp/Textures/CurseMeter_full");
-                    UsefulFunctions.EnsureLoaded(ref meterFull, "tsorcRevamp/Textures/CurseMeter_powerfulFull");
-                    UsefulFunctions.EnsureLoaded(ref meterFull, "tsorcRevamp/Textures/CurseMeter_empty");
+                    UsefulFunctions.EnsureLoaded(ref powerfulMeterFull, "tsorcRevamp/Textures/CurseMeter_powerfulFull");
+                    UsefulFunctions.EnsureLoaded(ref meterEmpty, "tsorcRevamp/Textures/CurseMeter_empty");
 
 
                     //this is the position on the screen. it should remain relatively constant unless the window is resized
