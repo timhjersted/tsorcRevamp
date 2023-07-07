@@ -159,15 +159,15 @@ Mods: {
 
 		DeathText: {
 			01: The dodgeroll makes you immune to attacks. Mastering it is necessary for survival!
-			02: Glowing green skulls often hold important secrets...
-			03: The dodgeroll keybind can be changed in Controls. Try Left Shift, R or whatever works for you.
-			04: You can dodge mid-air to avoid attacks and reverse your momentum instantly...
+			02: Glowing green skulls often hold important secrets...Right Click to open them.
+			03: The dodgeroll keybind can be changed in Controls. Try LeftShift for dodge and LeftAlt for Auto Select
+			04: You can dodge mid-air to avoid attacks, cross longer gaps and reverse your momentum instantly...
 			05: Crystal shards often hint at secrets, chests or hidden paths nearby...
 			06: Using potions during normal combat is often necessary to survive
-			07: Losing souls on death can be disabled in the config
+			07: Losing souls on death can be disabled in the config. Try it for more of a Legend of Zelda experience
 			08: Enemies in certain dark areas drop Humanity, which can restore HP lost to curses
 			09: Item tooltips often have information vital to your survival...
-			10: Check if any of your items can be upgraded with Dark Souls
+			10: Check the description of your items to see if any can be upgraded with Dark Souls
 			11: Progression clues can be found on unique items dropped by bosses
 			12: If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction
 			13: Soapstones offer many important hints
@@ -181,7 +181,7 @@ Mods: {
 			21: Welcome to the Dark Souls of Terraria
 			22: The Chloranthy Ring massively improves your dodgeroll, allowing superior evasion...
 			23: Teal pressure plates must be hit with a small projectile to activate
-			24: Use a Recipe Browser mod to investigate any item that says it's a "Dark Souls recipe material".
+			24: Use a Recipe Browser mod to investigate any item that says it's a "Dark Soul recipe material".
 			25: Remember to dodgeroll
 			26: I am so fucking mad
 			27: Grey Stone Gates cannot be broken and must be opened by a lever or switch
@@ -356,7 +356,7 @@ Mods: {
 			AttraidiesDesc: Gather all the Crests in order to craft the Mind Cube.
 			RealAttradiesName: Attraidies (Real)
 			RealAttraidiesDesc: Use the Mindflayer Illusion Relic dropped by Attraidies' illusion.
-			HellkiteDragonDesc: Often sighted roaming the skies above the Village, searching for its next meal.
+			HellkiteDragonDesc: Often sighted roaming the skies above the Village, searching for its next feast.
 			WaterFiendKrakenDesc: Seek out the lihzahrd gate in the Great Chasm.
 			EarthFiendLichDesc: Seek out the lihzahrd gate below the Western Ocean.
 			WitchkingDesc: Found in his lair deep underground, shrouded in extreme darkness.

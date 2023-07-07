@@ -348,6 +348,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (NPC.ai[3] == 0)
             {
+                //normal
                 NPC.alpha = 0;
                 NPC.damage = 110;
                 //NPC.dontTakeDamage = false;
@@ -430,12 +431,12 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
-                //invisibility phase
+                //invisibility / enrage phase
                 
                 NPC.ai[3]++;
                 NPC.alpha = 210;
-                NPC.defense = 32;
-                NPC.damage = 130;
+                NPC.defense = 42;
+                NPC.damage = 140;
 
                 //NPC.dontTakeDamage = true;
                 
@@ -463,7 +464,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
 
                     float num48 = 7f;//8 WAS 9
-                    float invulnDamageMult = 1.44f;
+                    float invulnDamageMult = 1.54f;
                     int type = ModContent.ProjectileType<FireTrails>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);
                     float rotation = (float)Math.Atan2(vector8.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));

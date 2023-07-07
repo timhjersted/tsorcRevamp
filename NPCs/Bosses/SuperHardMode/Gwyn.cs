@@ -45,20 +45,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.width = 20;
             NPC.scale = 1.3f;
             Music = 12;
-            NPC.damage = 53; //was 295
+            NPC.damage = 93; //was 295, 53 too low when melee is the target audience
             NPC.defense = 140;
             NPC.lifeMax = 435000;
-            NPC.knockBackResist = 0.01f;
+            NPC.knockBackResist = 0.0f;
             NPC.boss = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 1000000;
+            NPC.value = 1500000;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Gwyn.DespawnHandler"), Color.OrangeRed, 6);
         }
 
         //old attacks, not all used
         int deathBallDamage = 39; //200
-        int phantomSeekerDamage = 53; //225
+        int phantomSeekerDamage = 55; //225
         int armageddonBallDamage = 41; //300
         int holdBallDamage = 13;
         int fireballBallDamage = 54;
@@ -69,11 +69,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int gravityBallDamage = 66;//300
 
         //basilisk attacks
-        int cursedBreathDamage = 79; //100
-        int cursedFlamesDamage = 75; //100
-        int disruptDamage = 66;//203
-        int bioSpitDamage = 66;//185
-        int bioSpitfinalDamage = 72;//230
+        int cursedBreathDamage = 81; //100
+        int cursedFlamesDamage = 77; //100
+        int disruptDamage = 68;//203
+        int bioSpitDamage = 68;//185
+        int bioSpitfinalDamage = 76;//230
 
         //ultimate attack not used yet
         public int redMagicDamage = 39;
@@ -83,7 +83,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public int smokebombDamage = 58;//295
 
         //death skull attack when player gets too far away - this is to encourage the player to stay in range of more of Gwyn's attacks so ranged builds don't make the fight too easy
-        public int herosArrowDamage = 75; //400
+        public int herosArrowDamage = 77; //400
 
         //slogra attacks
         public int tridentDamage = 43; //150
@@ -116,14 +116,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //oolicile sorcerer
         public float DarkBeadShotTimer;
         public float DarkBeadShotCounter;
-        int darkBeadDamage = 34;
+        int darkBeadDamage = 36;
 
         //ancient demon
-        int cultistFireDamage = 39;//192
-        int cultistMagicDamage = 60;//259
-        int cultistLightningDamage = 40;//260
-        int fireBreathDamage = 49;//131
-        int lostSoulDamage = 36;//223
+        int cultistFireDamage = 41;//192
+        int cultistMagicDamage = 62;//259
+        int cultistLightningDamage = 43;//260
+        int fireBreathDamage = 50;//131
+        int lostSoulDamage = 38;//223
         int greatFireballDamage = 36;//216
         int blackFireDamage = 55;//147
         int greatAttackDamage = 38;//162

@@ -358,11 +358,12 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
-                NPC.damage = 160;
+                //enrage phase
                 NPC.ai[3]++;
                 NPC.alpha = 225;
-                NPC.defense = 56;
-                NPC.damage = 160;
+                NPC.defense = 66;//+10 for all birds
+                NPC.damage = 170;//+10 for all birds
+
                 //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].position.X < NPC.Center.X)
                 {
@@ -385,7 +386,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                 {
                     float num48 = 11f;//22
-                    float invulnDamageMult = 1.52f;
+                    float invulnDamageMult = 1.62f; //+0.10 for all birds
                     int type = ModContent.ProjectileType<MiracleSprouter>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     float rotation = (float)Math.Atan2(NPC.Center.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));

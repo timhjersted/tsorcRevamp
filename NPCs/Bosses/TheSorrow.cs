@@ -422,11 +422,11 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
-                //invisibility mode
+                //invisibility / enrage mode
                 NPC.ai[3]++;
                 NPC.alpha = 220;
-                NPC.defense = 44;
-                NPC.damage = 150;
+                NPC.defense = 54;
+                NPC.damage = 160;
 
                 //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].Center.X < NPC.Center.X)
@@ -450,7 +450,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                 {
                     float num48 = 13f;
-                    float invulnDamageMult = 1.48f;
+                    float invulnDamageMult = 1.58f;//was 1.48
                     int type = ModContent.ProjectileType<WaterTrail>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.SplashWeak, NPC.Center);
                     float rotation = (float)Math.Atan2(NPC.Center.Y - 80 - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);

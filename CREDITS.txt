@@ -1,5 +1,7 @@
 ADVENTURE MAP
-Tim Hjersted aka Vibrent / Everything. Ahhh! :p
+Tim Hjersted aka Vibrent / The ENTIRE map!
+MarfMasterofDesaster / Select loot adjustments
+
 
 MOD REVAMP (Current tModloader Edition)
 Zeodexic / programmer
@@ -36,6 +38,7 @@ Indigo / Plasma Whirlwind item sprite
 Zane Little / Theremin sound effects
 Anilmky -Juno- / Sunset Quasar sprite
 BlazeDayzYT / Healing Dusk Crown Ring sprite
+Sapharan / two enemies
 
 ORIGINAL MOD (tConfig Edition)
 Tim Hjersted / Mod Director + Dark Souls concept + New content + Mod Remixing & Compiling
@@ -72,6 +75,7 @@ Solenix / Vertigo Elemental
 MiraiMai / Duel Wielding mod aka Mainslot-0
 Eikester / Made Game Launcher and improved tConfig installation
 
+
 1.1 MOD UPDATE CONTRIBUTORS
 Tim Hjersted / Update director + new content and polish, see the original change log for more
 Grox The Great / coding help
@@ -89,6 +93,7 @@ Sapharan / select Legend of Sapharan content
 Heartstone25 / coding help
 Phlebas / debuff code
 Solenix / select Vertigo Elemental content
+
 
 TCONFIG EDITION SPECIAL THANKS
 *Yoraizor (is responsible for virtually all of the unique features related to the Dark Souls aspects of the mod and has always been super helpful)
