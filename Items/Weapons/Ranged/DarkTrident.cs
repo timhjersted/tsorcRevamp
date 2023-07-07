@@ -11,6 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     {
         public override void SetStaticDefaults()
         {
+            ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
         }
 
         public override void SetDefaults()
@@ -60,7 +61,15 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override bool AltFunctionUse(Player player)
         {
-            return true;
+            if (!Main.mouseLeft && player.ItemTimeIsZero)
+            {
+                return true;
+            }
+            else
+            {
+                player.altFunctionUse = 1;
+                return false;
+            }
         }
     }
 }
