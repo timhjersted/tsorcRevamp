@@ -604,11 +604,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkBloodKnight.DisplayName}"
 			}
 
-			DarkElfMageBanner: {
-				DisplayName: "{$NPCs.DarkElfMage.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkElfMage.DisplayName}"
-			}
-
 			DarkKnightBanner: {
 				DisplayName: "{$NPCs.DarkKnight.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkKnight.DisplayName}"
@@ -932,6 +927,11 @@ Mods: {
 			RingedKnightBanner: {
 				DisplayName: "{$NPCs.RingedKnight.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.RingedKnight.DisplayName}"
+			}
+
+			ClericOfSorrowBanner: {
+				DisplayName: "{$NPCs.ClericOfSorrow.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ClericOfSorrow.DisplayName}"
 			}
 
 			AbyssScroll: {
@@ -7173,11 +7173,6 @@ Mods: {
 				DisplayName: Ancestor Spirit Mask
 				Tooltip: ""
 			}
-
-			ClericOfSorrowBanner: {
-				DisplayName: Cleric Of Sorrow Banner
-				Tooltip: ""
-			}
 		}
 
 		Buffs: {
@@ -8923,7 +8918,6 @@ Mods: {
 				Death: A lost spirit has been freed from its curse...
 			}
 
-			DarkElfMage.DisplayName: Dark Elf Mage
 			DemonElemental.DisplayName: Demon Elemental
 			DemonSpirit.DisplayName: Demon Spirit
 			DestroyerLaserProbe.DisplayName: Laser Probe
@@ -9280,65 +9274,65 @@ Mods: {
 				AdvModeSHMQuote1:
 					'''
 					Red, it is as I feared. By killing Attraidies, a portal from
-					               the Abyss was opened, unleashing even more oppressive forces upon the world.
-					               The ancestors tell me that the portal can be closed, but
-					               you must first defeat the 3 Elemental Fiends: one of
-					               [c/2f8ee0:Water], one of [c/2d9e2b:Earth], and one of [c/f53d0a:Fire].
-					               You must also defeat 4 more lords of the Abyss:
-					               [c/ffbf00:Artorias], [c/00ffd4:Blight], [c/aa00ff:The Wyvern Mage Shadow], and [c/18ffe2:Seath the Scaleless].
+					the Abyss was opened, unleashing even more oppressive forces upon the world.
+					The ancestors tell me that the portal can be closed, but
+					you must first defeat the 3 Elemental Fiends: one of
+					[c/2f8ee0:Water], one of [c/2d9e2b:Earth], and one of [c/f53d0a:Fire].
+					You must also defeat 4 more lords of the Abyss:
+					[c/ffbf00:Artorias], [c/00ffd4:Blight], [c/aa00ff:The Wyvern Mage Shadow], and [c/18ffe2:Seath the Scaleless].
 					'''
 				AdvModeSHMQuote2:
 					'''
 					My heart despairs for you, Red. It will not be easy. But if you succeed, you will have the strength
-					               to face the final lord, who has tended the flame of the Abyss since the world began.
-					               To the ancestors, he was known as [c/ff6618:Gwyn, Lord of Cinder].
-					               Gwyn's old tomb is buried somewhere beneath the Western sea, but he will surely kill you
+					to face the final lord, who has tended the flame of the Abyss since the world began.
+					To the ancestors, he was known as [c/ff6618:Gwyn, Lord of Cinder].
+					Gwyn's old tomb is buried somewhere beneath the Western sea, but he will surely kill you
 					if you have not yet gathered the strength obtained from the other lords of the Abyss.
 					'''
 				AdvModeSHMQuote3:
 					'''
 					Have you seen the [c/ffbf00:Lihzahrd Gates] scattered across this world? They will lead you towards your goal.
-					               I would start with the one deep inside the Great Chasm, which leads to the Old One's Tree.
-					               There is another, to the East of Elengad's Desert Ruins. The rest, I'm sure you will find. The ancestors will help guide you.
+					I would start with the one deep inside the Great Chasm, which leads to the Old One's Tree.
+					There is another, to the East of Elengad's Desert Ruins. The rest, I'm sure you will find. The ancestors will help guide you.
 					'''
 				AdvModeSHMQuote4:
 					'''
 					There is one thing you should know about [c/ffbf00:Artorias], and another dark being that now stalks these lands,
-					               known as the [c/383838:Witchking].
-					               Both The Witchking and Artorias are protected by dark spells, making them practically invincible, but I have heard that
-					               [c/f53d0a:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic.
-					               [c/fcff00:The Barrow Blade] may just be strong enough to shatter their protection...
+					known as the [c/383838:Witchking].
+					Both The Witchking and Artorias are protected by dark spells, making them practically invincible, but I have heard that
+					[c/f53d0a:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic.
+					[c/fcff00:The Barrow Blade] may just be strong enough to shatter their protection...
 					'''
 				AdvModeSHMQuote5: Good luck, Red.
 				SandboxSHMQuote1:
 					'''
 					To close the seal to the Abyss, you must defeat the 6 lords of The Abyss:
-					               [c/ffbf00:Artorias], [c/00ffd4:The Blight], [c/aa00ff:The Wyvern Mage Shadow],
-					               [c/fcff00:Chaos], and [c/18ffe2:Seath the Scaleless].
-					               With a lord soul from each of these
-					               beings you will be able to summon the final lord -
-					               [c/ff6618:Gwyn, Lord of Cinder].
+					[c/ffbf00:Artorias], [c/00ffd4:The Blight], [c/aa00ff:The Wyvern Mage Shadow],
+					[c/fcff00:Chaos], and [c/18ffe2:Seath the Scaleless].
+					With a lord soul from each of these
+					beings you will be able to summon the final lord -
+					[c/ff6618:Gwyn, Lord of Cinder].
 					'''
 				SandboxSHMQuote2:
 					'''
 					To craft the summoning item for each
-					               lord, you will need to return to eight familiar places
-					               and collect a unique item from an enemy you will find there:
-					               [c/424bf5:The Western Ocean], [c/888888:The Underground], [c/b942f5:The Corruption],
-					               [c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/eb4034:The Underworld], and [c/42f2f5:The Eastern Ocean].
+					lord, you will need to return to eight familiar places
+					and collect a unique item from an enemy you will find there:
+					[c/424bf5:The Western Ocean], [c/888888:The Underground], [c/b942f5:The Corruption],
+					[c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/eb4034:The Underworld], and [c/42f2f5:The Eastern Ocean].
 					'''
 				SandboxSHMQuote3:
 					'''
 					Defeating [c/ffbf00:Artorias], however, will not be possible without a little knowledge.
-					               To find him, you must seek out the [c/383838:Witchking] and restore the strange ring he drops.
-					               He will sometimes appear at night, and more often deeper\nunderground, especially in dungeons.
-					               The most assured way to find him, however, is to enter the Abyss yourself using the Covanent of Artorias ring.
+					To find him, you must seek out the [c/383838:Witchking] and restore the strange ring he drops.
+					He will sometimes appear at night, and more often deeper\nunderground, especially in dungeons.
+					The most assured way to find him, however, is to enter the Abyss yourself using the Covanent of Artorias ring.
 					'''
 				SandboxSHMQuote4:
 					'''
 					Both The [c/383838:Witchking] and [c/ffbf00:Artorias] are protected by dark spells, but I have heard that
-					               [c/cffffa:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic.
-					               Such a blade may just be strong enough to shatter their protection...
+					[c/cffffa:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic.
+					Such a blade may just be strong enough to shatter their protection...
 					'''
 
 				TownNPCMood: {

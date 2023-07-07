@@ -1143,7 +1143,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             modPlayer.SoulSiphon = true;
             modPlayer.SoulSiphonScaling = ApplyScaling(1f);
             modPlayer.SoulReaper += 5; //scaling the range would probably just feel bad
-            modPlayer.ConsSoulChanceMult += (int)ApplyScaling(10);
+            modPlayer.ConsSoulChanceMult += (int)ApplyScaling(SoulSiphonPotion.ConsSoulChanceAmplifier / 5);
         }
     }
     public class PermanentWellFed : PermanentPotion
