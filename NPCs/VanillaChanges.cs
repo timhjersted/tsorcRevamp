@@ -249,9 +249,9 @@ namespace tsorcRevamp.NPCs
                 (giantworm >= NPCID.GiantWormHead && giantworm <= NPCID.GiantWormTail)
                 ):
                     {
-                        npc.lifeMax = 100; //60, 250
+                        npc.lifeMax = 60; //60, 250
                         npc.npcSlots = 3;
-                        npc.value = 810;
+                        npc.value = 710;
 
                         if (npc.type == NPCID.GiantWormHead)
                         {
@@ -285,7 +285,7 @@ namespace tsorcRevamp.NPCs
                         if (npc.type == NPCID.DevourerHead)
                         {
                             npc.damage = 36; //54, 35
-                            npc.defense = 2; //2, 4
+                            npc.defense = 0; //2, 4
                             npc.knockBackResist = 0.05f;
                         }
                         if (npc.type == NPCID.DevourerBody)
@@ -309,7 +309,7 @@ namespace tsorcRevamp.NPCs
                 ):
                     {
                         npc.lifeMax = 300; //265, 1600
-                        npc.scale = 1.3f;
+                        npc.scale = 1.2f;
                         npc.value = 1340; //- ,384
 
                         if (npc.type == NPCID.TombCrawlerHead)
@@ -345,7 +345,7 @@ namespace tsorcRevamp.NPCs
                         if (npc.type == NPCID.BoneSerpentHead)
                         {
                             npc.damage = 80; //60, 50
-                            npc.defense = 2; //10, 2
+                            npc.defense = 0; //10, 2
                         }
                         if (npc.type == NPCID.BoneSerpentBody)
                         {
@@ -936,7 +936,7 @@ namespace tsorcRevamp.NPCs
                         if (npc.type == NPCID.DiggerHead)
                         {
                             npc.damage = 84; //90, 60
-                            npc.defense = 4; //10, 15
+                            npc.defense = 0; //10, 15
                         }
                         if (npc.type == NPCID.DiggerBody)
                         {
@@ -957,14 +957,14 @@ namespace tsorcRevamp.NPCs
                 (dunesplicer >= NPCID.DuneSplicerHead && dunesplicer <= NPCID.DuneSplicerTail)
                 ):
                     {
-                        npc.lifeMax = 700; //1000, 450
+                        npc.lifeMax = 600; //1000, 450
                         npc.npcSlots = 4;
                         npc.value = 2560;
 
                         if (npc.type == NPCID.DuneSplicerHead)
                         {
                             npc.damage = 90; //116, 40
-                            npc.defense = 4; //18, 4
+                            npc.defense = 0; //18, 4
                             npc.knockBackResist = 0.05f;
                         }
                         if (npc.type == NPCID.DuneSplicerBody)
@@ -989,16 +989,16 @@ namespace tsorcRevamp.NPCs
                     {
                         {
                             npc.lifeMax = 1000; //1000, 2000
-                            npc.value = 2910; //- ,441
+                            npc.value = 3210; //- ,441
                         }
                         if (npc.type == NPCID.SeekerHead)
                         {
-                            npc.defense = 20; //36, 50
+                            npc.defense = 0; //36, 50
                             npc.damage = 100; //140, 80
                         }
                         if (npc.type == NPCID.SeekerBody)
                         {
-                            npc.defense = 45; //40, 35
+                            npc.defense = 40; //40, 35
                             npc.damage = 85; //110, 55
                         }
                         if (npc.type == NPCID.SeekerTail)
