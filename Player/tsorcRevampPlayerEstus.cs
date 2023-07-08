@@ -150,7 +150,6 @@ namespace tsorcRevamp
 
             //Slow player for whole duration of action
             Player.velocity.X *= 0.9f;
-            Player.velocity.Y *= 0.9f;
             Player.eocHit = 0;
 
             if (estusDrinkTimer >= estusDrinkTimerMax) //Once finished drinking:
