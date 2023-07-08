@@ -85,6 +85,10 @@ namespace tsorcRevamp.Tiles {
                     if (mouseDistance < tsorcRevamp.NearbySoapstoneMouseDistance && mouseInRange && distance < 400)
                     {
                         tsorcRevamp.NearbySoapstone = entity;
+                        if (!entity.hidden) {
+                            Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.StoryTime>(), 30);
+                        }
+
                         tsorcRevamp.NearbySoapstoneMouse = true;
                         tsorcRevamp.NearbySoapstoneMouseDistance = mouseDistance;
                         entity.timer = 25;
@@ -95,6 +99,10 @@ namespace tsorcRevamp.Tiles {
                 else if (playerInRange || (mouseInRange && distance < 400))
                 {
                     tsorcRevamp.NearbySoapstone = entity;
+                    if (!entity.hidden) {
+                        Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.StoryTime>(), 30); 
+                    }
+
                     if (mouseInRange)
                     {
                         tsorcRevamp.NearbySoapstoneMouse = true;
