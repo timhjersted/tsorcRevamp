@@ -52,6 +52,16 @@ using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Utilities;
 using Terraria.Localization;
 using tsorcRevamp.Tiles.Relics;
+using tsorcRevamp.NPCs.Special;
+using ReLogic.Content;
+using tsorcRevamp.NPCs.Bosses.JungleWyvern;
+using tsorcRevamp.NPCs.Bosses.WyvernMage;
+using tsorcRevamp.NPCs.Bosses.Serris;
+using tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm;
+using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 
 namespace tsorcRevamp
 {
@@ -1379,344 +1389,444 @@ namespace tsorcRevamp
                 // AddBoss, bossname, order or value in terms of vanilla bosses, inline method for retrieving downed value.
                 /*
                 public const float SlimeKing = 1f;
+                public const float TorchGod = 1.5f;
                 public const float EyeOfCthulhu = 2f;
+                public const float BloodMoon = 2.5f
                 public const float EaterOfWorlds = 3f;
+                public const float GoblinArmy = 3.33f
+                public const float OldOnesArmy = 3.66f
+                public const float DarkMage = 3.67f
                 public const float QueenBee = 4f;
                 public const float Skeletron = 5f;
                 public const float Deerclops = 6f;
                 public const float WallOfFlesh = 7f;
-                public const float TheTwins = 8f;
-                public const float TheDestroyer = 9f;
-                public const float SkeletronPrime = 10f;
-                public const float Plantera = 11f;
-                public const float Golem = 12f;
-                public const float DukeFishron = 13f;
-                public const float LunaticCultist = 14f;
-                public const float Moonlord = 15f;*/
-
+                public const float FrostLegion = 7.33f
+                public const float PirateInvasion = 7.66f
+                public const float FlyingDutchman = 7.67f
+                public const float QueenSlime = 8f
+                public const float TheTwins = 9f
+                public const float TheDestroyer = 10f;
+                public const float SkeletronPrime = 11f;
+                public const float Ogre = 11.01f
+                public const float Eclipse = 11.5f
+                public const float Plantera = 12f;
+                public const float Golem = 13f;
+                public const float PumpkinMoon = 13.25f
+                public const float MourningWood = 13.26f
+                public const float Pumpking = 13.27f
+                public const float FrostMoon = 13.5f
+                public const float Everscream = 13.51f
+                public const float Santa-NK1 = 13.52f
+                public const float IceQueen = 13.53f
+                public const float MartianMadness = 13.75f
+                public const float MartianSaucer = 13.76f
+                public const float DukeFishron = 14f;
+                public const float EmpressOfLight = 15f;
+                public const float Betsy = 16f;
+                public const float LunaticCultist = 17f;
+                public const float LunarEvent = 17.01f;
+                public const float Moonlord = 18f;*/
+                var SlograAndGaibonPortrait = (SpriteBatch sb, Rectangle rect, Color color) => {
+                    Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/SlograAndGaibon_Portrait").Value;
+                    Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
+                    sb.Draw(texture, centered, color);
+                };
+                var JungleWyvernPortrait = (SpriteBatch sb, Rectangle rect, Color color) => {
+                    Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/JungleWyvern_Portrait").Value;
+                    Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
+                    sb.Draw(texture, centered, color);
+                }; 
+                var WyvernMagePortrait = (SpriteBatch sb, Rectangle rect, Color color) => {
+                    Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/WyvernMage_Portrait").Value;
+                    Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
+                    sb.Draw(texture, centered, color);
+                };
+                var SerrisPortrait = (SpriteBatch sb, Rectangle rect, Color color) => {
+                    Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/Serris_Portrait").Value;
+                    Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
+                    sb.Draw(texture, centered, color);
+                };
+                var HellkiteDragonPortrait = (SpriteBatch sb, Rectangle rect, Color color) => {
+                    Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/HellkiteDragon_Portrait").Value;
+                    Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
+                    sb.Draw(texture, centered, color);
+                };
+                var SeathPortrait = (SpriteBatch sb, Rectangle rect, Color color) => {
+                    Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/Seath_Portrait").Value;
+                    Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
+                    sb.Draw(texture, centered, color);
+                };
 
 
                 // PRE-HM
-
                 bossChecklist.Call(
-                    "AddMiniBoss", // Name of the call
-                    2.01f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Special.LeonhardPhase1>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("NPCs.Leonhard.DisplayName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Special.LeonhardPhase1>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    0,
-                    0,
-                    new List<int> { ModContent.ItemType<Items.StaminaVessel>(), ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), ModContent.ItemType<Items.NamelessSoldierSoul>(), ModContent.ItemType<Items.SoulCoin>() }, // List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.LeonhardDesc"), // Guide to fight the boss
-                    "", // Despawning Message
-                    "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/LeonhardPhase1");
-
-
-                bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    3.9f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.Slogra>(), ModContent.NPCType<NPCs.Bosses.Gaibon>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("BossChecklist.SlograAndGaibonName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Slogra>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.TomeOfSlograAndGaibon>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.SlograBag>(), ModContent.ItemType<Items.Accessories.Defensive.PoisonbiteRing>(), ModContent.ItemType<Items.Accessories.Defensive.BloodbiteRing>() }, // List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.SlograAndGaibonDesc"), // Guide to fight the boss
-                    "", // Despawning Message
-                    "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/SlograAndGaibon");
+                    "LogMiniBoss",
+                    this,
+                    nameof(LeonhardPhase1),
+                    2.01f, // Tier (look above, for determining where it will display)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<LeonhardPhase1>())),
+                    ModContent.NPCType<NPCs.Special.LeonhardPhase1>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.LeonhardPhase1.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.LeonhardDesc"),
+                        ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/LeonhardPhase1_Head_Boss"
+                    }
+                    );
 
 
                 bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    5.01f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>()/*, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernBody>(), ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernBody2>(), ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernBody3>(), ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernLegs>(), ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernTail>()*/ },
-                    this, // Mod
-                    LangUtils.GetTextValue("NPCs.JungleWyvernHead.DisplayName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.JungleFeather>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.JungleWyvernBag>(), ModContent.ItemType<Items.Accessories.Expert.ChloranthyRing>(), ItemID.Sapphire, ItemID.Ruby, ItemID.Topaz, ItemID.Diamond, ItemID.Emerald, ItemID.Amethyst, ItemID.NecroHelmet, ItemID.NecroBreastplate, ItemID.NecroGreaves }, // List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.JungleWyvernDesc"), // Guide to fight the boss
-                    "", // Despawning Message
-                    "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/JungleWyvern");
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(Slogra),
+                    4.1f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Slogra>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    new List<int>() { ModContent.NPCType<Slogra>(), ModContent.NPCType<Gaibon>() },
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.SlograAndGaibonName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.SlograAndGaibonDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.TomeOfSlograAndGaibon>(),
+                        ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/SlograAndGaibon_Head_Boss",
+                        ["customPortrait"] = SlograAndGaibonPortrait
+                    }
+                    );
 
 
+                bossChecklist.Call(
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(JungleWyvernHead),
+                    6.1f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<JungleWyvernHead>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    new List<int>() { ModContent.NPCType<JungleWyvernHead>(), ModContent.NPCType<JungleWyvernBody>(), ModContent.NPCType<JungleWyvernBody2>(), ModContent.NPCType<JungleWyvernBody3>(), ModContent.NPCType<JungleWyvernLegs>(), ModContent.NPCType<JungleWyvernTail>() },
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.JungleWyvernHead.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.JungleWyvernDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.JungleFeather>(),
+                        ["customPortrait"] = JungleWyvernPortrait
+                    }
+                    );
 
 
                 // HM
 
+
                 bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    7.2f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.TheRage>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("NPCs.TheRage.DisplayName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.FieryEgg>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.TheRageBag>(), ModContent.ItemType<Items.Weapons.Expert.PhoenixEgg>(), ModContent.ItemType<CrestOfFire>(), ItemID.CobaltDrill }, // List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.TheRageDesc"), // Guide to fight the boss
-                    "");
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(TheRage),
+                    8.2f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<TheRage>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<TheRage>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.TheRage.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.TheRageDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.FieryEgg>()
+                    }
+                    );
 
 
                 bossChecklist.Call(
-                    "AddBoss", // Name of the call
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(WyvernMage),
                     8.4f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.TheSorrow>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("NPCs.TheSorrow.DisplayName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.WateryEgg>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.TheSorrowBag>(), ModContent.ItemType<Items.Accessories.Expert.GoldenHairpin>(), ModContent.ItemType<CrestOfWater>(), ItemID.AdamantiteDrill }, // List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.TheSorrowDesc"), // Guide to fight the boss
-                    "");
-
-                bossChecklist.Call(
-                   "AddBoss", // Name of the call
-                   8.6f, // Tier (look above)
-                   new List<int>() { ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>() },
-                   this, // Mod
-                   LangUtils.GetTextValue("NPCs.WyvernMage.DisplayName"), // Boss Name
-                   (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                   ModContent.ItemType<Items.BossItems.WingOfTheFallen>(),
-                   0,
-                   new List<int> { ModContent.ItemType<Items.BossBags.WyvernMageBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.LionheartGunblade>(), ModContent.ItemType<Items.Tools.LampTome>(), ModContent.ItemType<Items.Accessories.Magic.GemBox>(), ModContent.ItemType<Items.Accessories.Defensive.PoisonbiteRing>(), ModContent.ItemType<Items.Accessories.Defensive.BloodbiteRing>() }, // List containing all the loot to show in the bestiary
-                   LangUtils.GetTextValue($"BossChecklist.WyvernMageDesc"), // Guide to fight the boss
-                   "", // Despawning Message
-                   "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/WyvernMage");
-
-                bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    8.7f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.TheHunter>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("NPCs.WyvernMage.DisplayName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.GrassyEgg>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.TheHunterBag>(), ModContent.ItemType<CrestOfEarth>(), ItemID.Drax, ItemID.WaterWalkingBoots }, // List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.TheHunterDesc"), // Guide to fight the boss
-                    "");
-
-                bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    9.3f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("BossChecklist.SerrisName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.SerrisBait>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.SerrisBag>(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), ModContent.ItemType<Items.Tools.MagicBarrierScroll>() }, // List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.SerrisDesc"), // Guide to fight the boss
-                    "", // Despawning Message
-                    "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/Serris");
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WyvernMage>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    new List<int>() { ModContent.NPCType<WyvernMage>(), ModContent.NPCType<MechaDragonHead>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody2>(), ModContent.NPCType<MechaDragonBody3>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonTail>() },
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.WyvernMage.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.WyvernMageDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.WingOfTheFallen>(),
+                        ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/WyvernMageAndMechaDragon_Head_Boss",
+                        ["customPortrait"] = WyvernMagePortrait
+                    }
+                    );
 
 
                 bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    10.1f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.Death>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("NPCs.Death.DisplayName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Death>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    0,
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.DeathBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<Items.Tools.GreatMagicShieldScroll>(), ModContent.ItemType<Items.Tools.MagicBarrierScroll>() }, // List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.DeathDesc"), // Guide to fight the boss
-                    "");
-
-
-               
-
-
-                bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    19.01f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("BossChecklist.AttraidiesName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.MindCube>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>() }, // List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.AttraidiesDesc")); // Guide to fight the boss
-
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(TheSorrow),
+                    8.6f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<TheSorrow>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<TheSorrow>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.TheSorrow.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.TheSorrowDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.WateryEgg>()
+                    }
+                    );
 
 
                 bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    19.02f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("BossChecklist.RealAttraidiesName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.AttraidiesBag>(), ModContent.ItemType<TheEnd>(), ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<SoulOfAttraidies>(), ModContent.ItemType<Items.Weapons.Magic.Tomes.BloomShards>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.SeveringDusk>(), ModContent.ItemType<Items.Weapons.Ranged.Guns.PyroclasticFlow>(), ModContent.ItemType<Items.Weapons.Summon.ShatteredReflection>(),ModContent.ItemType<Items.Weapons.Magic.Tomes.BloomShards>(), ItemID.Picksaw }, // List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.RealAttraidiesDesc"), // Guide to fight the boss
-                    "", // Despawning Message
-                    "",
-                    "",
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>()))));
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(TheHunter),
+                    8.8f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<TheHunter>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<TheHunter>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.TheHunter.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.TheHunterDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.GrassyEgg>()
+                    }
+                    );
 
+
+                bossChecklist.Call(
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(SerrisX),
+                    14.5f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<SerrisX>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    new List<int>() { ModContent.NPCType<SerrisX>(), ModContent.NPCType<SerrisHead>(), ModContent.NPCType<SerrisBody>(), ModContent.NPCType<SerrisTail>() },
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.SerrisName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.SerrisDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.SerrisBait>(),
+                        ["customPortrait"] = SerrisPortrait
+                    }
+                    );
+
+
+                bossChecklist.Call(
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(Death),
+                    16.5f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Death>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<Death>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Death.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.DeathDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DeathBringer>()
+                    }
+                    );
+
+
+                bossChecklist.Call(
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(BrokenOkiku),
+                    17.001f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<BrokenOkiku>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<BrokenOkiku>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AttraidiesName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AttraidiesDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.MindCube>()
+                    }
+                    );
+
+
+                bossChecklist.Call(
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(Attraidies),
+                    17.002f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Attraidies>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<Attraidies>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.RealAttraidiesName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.RealAttraidiesDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>(),
+                        ["availability"] = (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<BrokenOkiku>())))
+                    }
+                    );
 
 
 
 
                 // SHM
 
+
+
                 bossChecklist.Call(
-                    "AddBoss", // Name of the call
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(HellkiteDragonHead),
                     20.1f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("NPCs.HellkiteDragonHead.DisplayName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.HellkiteStone>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.HellkiteBag>(), ModContent.ItemType<DragonEssence>(), ModContent.ItemType<Items.Accessories.Expert.DragonStone>() }, // List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.HellkiteDragonDesc"), // Guide to fight the boss
-                    "", // Despawning Message
-                    "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/HellkiteDragon");
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<HellkiteDragonHead>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    new List<int>() { ModContent.NPCType<HellkiteDragonHead>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody2>(), ModContent.NPCType<HellkiteDragonBody3>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonTail>() },
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.HellkiteDragonHead.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.HellkiteDragonDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.HellkiteStone>(),
+                        ["customPortrait"] = HellkiteDragonPortrait
+                    }
+                    );
 
 
                 bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    21.2f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("NPCs.WaterFiendKraken.DisplayName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.DyingWaterCrystal>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.KrakenBag>(), ModContent.ItemType<Items.Accessories.Expert.DragoonHorn>(), ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() }, // List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.WaterFiendKrakenDesc"), // Guide to fight the boss
-                    "");
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(Blight),
+                    20.2f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Blight>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<Blight>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.BlightName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.BlightDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.BlightStone>()
+                    }
+                    );
 
 
                 bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    22.3f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("NPCs.WaterFiendKraken.DisplayName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.DyingEarthCrystal>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.LichBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<Items.FairyInABottle>(), ModContent.ItemType<Items.Weapons.Magic.Tomes.Bolt3Tome>(), ModContent.ItemType<Items.Accessories.Expert.DragoonBoots>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenGaiaSword>() }, // List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.WaterFiendKrakenDesc"), // Guide to fight the boss
-                    "");
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(EarthFiendLich),
+                    20.3f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<EarthFiendLich>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<EarthFiendLich>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.EarthFiendLich.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.EarthFiendLichDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DyingEarthCrystal>()
+                    }
+                    );
 
 
                 bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    23.4f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("NPCs.Witchking.DisplayName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    0,
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.WitchkingBag>(), ModContent.ItemType<BrokenStrangeMagicRing>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.WitchkingsSword>(), ModContent.ItemType<Items.Armors.Summon.WitchkingHelmet>(), ModContent.ItemType<Items.Armors.Summon.WitchkingRobe>(), ModContent.ItemType<Items.Armors.Summon.WitchkingPants>(),
-                    ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<Items.BossItems.DarkMirror>(), ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>() }, // List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.WitchkingDesc"), // Guide to fight the boss
-                    "");
-
-                bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    23.5f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("NPCs.Artorias.DisplayName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    0,
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.ArtoriasBag>(), ModContent.ItemType<Items.Accessories.Expert.RingofArtorias>(), ModContent.ItemType<Items.Accessories.Defensive.WolfRing>(), ModContent.ItemType<SoulOfArtorias>(), ItemID.LargeAmethyst }, // List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.ArtoriasDesc"), // Guide to fight the boss
-                    "");
-
-                bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    24.6f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("NPCs.SeathTheScalelessHead.DisplayName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.StoneOfSeath>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.SeathBag>(), ModContent.ItemType<DragonEssence>(), ModContent.ItemType<BequeathedSoul>(), ModContent.ItemType<Items.Accessories.Defensive.BlueTearstoneRing>(), ModContent.ItemType<Items.PurgingStone>(), ModContent.ItemType<Items.Accessories.Expert.WingsOfSeath>() },// List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.SeathTheScalelessDesc"), // Guide to fight the boss
-                    "");
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(Witchking),
+                    20.4f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Witchking>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<Witchking>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Witchking.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.WitchkingDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DarkMagicRing>()
+                    }
+                    );
 
 
                 bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    25.65f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.DisplayName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.AbysmalStone>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.OolacileSorcererBag>(), ModContent.ItemType<Items.Potions.HealingElixir>(), ModContent.ItemType<Items.Accessories.Expert.DuskCrownRing>(), ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<Items.PurgingStone>(), ModContent.ItemType<RedTitanite>() },// List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.AbysmalOolacileSorcererDesc"), // Guide to fight the boss
-                    "");
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(Artorias),
+                    20.5f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Artorias>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<Artorias>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Artorias.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.ArtoriasDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.StrangeMagicRing>()
+                    }
+                    );
+
 
                 bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    26.5f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("NPCs.FireFiendMarilith.DisplayName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.DyingFireCrystal>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.MarilithBag>(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), ModContent.ItemType<GuardianSoul>(), ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>(), ModContent.ItemType<Items.Weapons.Magic.Tomes.Ice3Tome>(), ModContent.ItemType<Items.Weapons.Melee.Shortswords.BarrowBlade>() },// List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.FireFiendMarilithDesc"), // Guide to fight the boss
-                    "");
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(WaterFiendKraken),
+                    20.6f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WaterFiendKraken>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<WaterFiendKraken>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.WaterFiendKraken.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.WaterFiendKrakenDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DyingWaterCrystal>()
+                    }
+                    );
+
 
                 bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    27.75f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("BossChecklist.BlightName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.BlightStone>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.BlightBag>(), ModContent.ItemType<SoulOfBlight>(), ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() },// List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.BlightDesc"), // Guide to fight the boss
-                    "");
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(SeathTheScalelessHead),
+                    20.7f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<SeathTheScalelessHead>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    new List<int>() { ModContent.NPCType<SeathTheScalelessHead>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody2>(), ModContent.NPCType<SeathTheScalelessBody3>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessTail>(), ModContent.NPCType<PrimordialCrystal>() },
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.SeathTheScalelessHead.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.SeathTheScalelessDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.StoneOfSeath>(),
+                        ["customPortrait"] = SeathPortrait
+                    }
+                    );
+
 
                 bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    27f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("BossChecklist.DarkCloudName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.DarkMirror>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.DarkCloudBag>(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.MoonlightGreatsword>(), ModContent.ItemType<Items.Accessories.Expert.ReflectionShift>() },// List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.DarkCloudDesc"), // Guide to fight the boss
-                    "");
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(AbysmalOolacileSorcerer),
+                    20.8f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AbysmalOolacileSorcerer>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<AbysmalOolacileSorcerer>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.AbysmalOolacileSorcerer.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AbysmalOolacileSorcererDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.AbysmalStone>()
+                    }
+                    );
+
 
                 bossChecklist.Call(
-                    "AddBoss", // Name of the call
-                    28f, // Tier (look above)
-                    new List<int>() { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>() },
-                    this, // Mod
-                    LangUtils.GetTextValue("BossChecklist.GwynName"), // Boss Name
-                    (Func<bool>)(() => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()))), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.ItemType<Items.BossItems.LostScrollOfGwyn>(),
-                    0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.GwynBag>() },// List containing all the loot to show in the bestiary
-                    LangUtils.GetTextValue($"BossChecklist.GwynDesc"), // Guide to fight the boss
-                    "");
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(FireFiendMarilith),
+                    20.9f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<FireFiendMarilith>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<FireFiendMarilith>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.FireFiendMarilith.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.FireFiendMarilithDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DyingFireCrystal>()
+                    }
+                    );
+
+
+                bossChecklist.Call(
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(DarkCloud),
+                    21f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<DarkCloud>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<DarkCloud>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.DarkCloudName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.DarkCloudDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DarkMirror>()
+                    }
+                    );
+
+
+                bossChecklist.Call(
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(Gwyn),
+                    22f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Gwyn>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<Gwyn>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.GwynName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.GwynDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.LostScrollOfGwyn>()
+                    }
+                    );
 
 
             }

@@ -25,7 +25,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
     {
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.PossessedArmor];
             NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
             {
                 SpecificallyImmuneTo = new int[] {

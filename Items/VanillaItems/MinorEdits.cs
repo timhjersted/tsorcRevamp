@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "RealBossName", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MechanicalEye")));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "RealBossName", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MechanicalEye.Tooltip")));
                 }
             }
         }
