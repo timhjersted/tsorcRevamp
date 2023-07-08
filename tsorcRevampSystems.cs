@@ -408,6 +408,7 @@ namespace tsorcRevamp
                     Main.spriteBatch.Begin();
                     Point scaledMouseScreen = (Main.MouseScreen * Main.UIScale).ToPoint();
                     if (drect.Contains(scaledMouseScreen)) {
+                        Main.LocalPlayer.mouseInterface = true;
                         if (Main.mouseLeft && Main.mouseLeftRelease) {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
                             soapstone.timer = 25;
