@@ -104,9 +104,10 @@ namespace tsorcRevamp.NPCs.Friendly
             });
 
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Broadswords.SunBlade>()) {
-                shopCustomPrice = 300, 
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            });
+                shopCustomPrice = 1000, 
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId,
+            }, Condition.Hardmode //cmonBruh
+            );
 
             shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.ThrowingAxeCrate>()) {
                 shopCustomPrice = 8, 
