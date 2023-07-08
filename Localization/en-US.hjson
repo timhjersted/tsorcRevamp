@@ -6713,7 +6713,7 @@ Mods: {
 				Keybind2: " to fully activate [c/32cd32:Scouts Boost]"
 				Details:
 					'''
-					Venom applied by Toxic Shots scales with ranged damage and critical strike chance
+					[c/ba55d3:Venom] applied by [c/ba55d3:Toxic Shots] scales with ranged damage and critical strike chance
 					Grants [c/32cd32:Scouts Boost] passively while being held:{$CommonItemTooltip.MoveSpeedMult} and,
 					multiplicatively increases stamina regeneration by {1}%
 					[c/32cd32:Scouts Boost] is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@2}
