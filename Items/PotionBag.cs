@@ -49,6 +49,18 @@ namespace tsorcRevamp.Items
             base.UpdateInventory(player);
         }
 
+        public override bool CanRightClick() {
+            return true;
+        }
+
+        public override void RightClick(Player player) {
+            player.GetModPlayer<tsorcRevampPlayer>().potionBagCountdown = 2;
+        }
+
+        public override bool ConsumeItem(Player player) {
+            return false;
+        }
+
         public override void PostUpdate()
         {
             Lighting.AddLight(Item.Center, 0.3f, 0.2f, 0.4f);
