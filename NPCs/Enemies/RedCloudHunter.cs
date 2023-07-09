@@ -91,7 +91,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.ArcherAI(NPC, ProjectileID.FlamingArrow, 22, 13, 100, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2.6f);
+            tsorcRevampAIs.ArcherAI(NPC, ProjectileID.FlamingArrow, 22, 13, 100, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2.6f, telegraphColor: Color.Red);
         }
 
         #region Gore

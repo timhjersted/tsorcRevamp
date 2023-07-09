@@ -166,7 +166,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>(), 50, 14, 100, 2f, .05f, canTeleport: true, enragePercent: 0.4f, enrageTopSpeed: 4f);
+            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>(), 50, 14, 100, 2f, .05f, canTeleport: true, enragePercent: 0.4f, enrageTopSpeed: 4f, telegraphColor: Color.Green);
         }
 
 

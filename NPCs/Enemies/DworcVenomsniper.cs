@@ -93,7 +93,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.2f, 0.05f);
+            tsorcRevampAIs.FighterAI(NPC, 1.2f, 0.05f, canPounce: false);
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

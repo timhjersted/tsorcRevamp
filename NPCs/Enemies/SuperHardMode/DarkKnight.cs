@@ -91,7 +91,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void AI()
         {
-            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormWave>(), stormWaveDamage, 14, 90, 1.4f, 0.04f, 0.04f, true, lavaJumping: true);
+            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormWave>(), stormWaveDamage, 14, 90, 1.4f, 0.04f, 0.04f, true, lavaJumping: true, telegraphColor: Color.Blue);
         }
 
         #region Gore

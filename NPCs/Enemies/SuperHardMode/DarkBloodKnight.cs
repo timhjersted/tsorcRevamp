@@ -97,7 +97,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void AI()
         {
-            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackFire>(), blackFireDamage, 14, 110, 2f, 0.1f, 0.04f, true, lavaJumping: true, projectileGravity: 0.025f);
+            tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackFire>(), blackFireDamage, 14, 110, 2f, 0.1f, 0.04f, true, lavaJumping: true, projectileGravity: 0.025f, telegraphColor: Color.Purple);
         }
 
         public override void OnKill()
