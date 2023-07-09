@@ -48,10 +48,8 @@ namespace tsorcRevamp.Items.Potions
             if (player.itemAnimation != 0)
             {
                 float slowdownX = player.velocity.X * .9f;
-                float slowdownY = player.velocity.Y * .9f;
 
                 player.velocity.X = slowdownX;
-                player.velocity.Y = slowdownY;
             }
         }
 

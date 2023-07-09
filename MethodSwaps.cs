@@ -1034,6 +1034,11 @@ namespace tsorcRevamp
                 validItem = false;
             }
 
+            if (item.type == ItemID.WaterWalkingPotion && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                validItem = false;
+            }
+
             if (item.type == ModContent.ItemType<Items.Potions.HolyWarElixir>())
             {
                 validItem = false;

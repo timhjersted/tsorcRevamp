@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.channel = false;
             Item.useAnimation = 20;
             Item.useTime = 20;
-            Item.damage = 80;
+            Item.damage = 70;
             Item.mana = 40;
             Item.knockBack = 8;
             Item.UseSound = null;
@@ -75,7 +75,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void HoldItem(Player player)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbIdle>()] == 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbIdle>()] == 0 && !player.dead)
             {
                 Projectile.NewProjectile(Projectile.InheritSource(player), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbOfFlameOrbIdle>(), 0, 0);
             }

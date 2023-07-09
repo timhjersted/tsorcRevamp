@@ -18,6 +18,7 @@ namespace tsorcRevamp.Buffs
             player.GetDamage(DamageClass.Generic) += StrengthPotion.DamageBoost / 100f;
             player.GetAttackSpeed(DamageClass.Generic) += StrengthPotion.AttackSpeedBoost / 100f;
             player.GetAttackSpeed(DamageClass.Melee) += StrengthPotion.AttackSpeedBoost / 100f;
+            player.lifeRegen -= StrengthPotion.BadLifeRegen;
         }
     }
 }

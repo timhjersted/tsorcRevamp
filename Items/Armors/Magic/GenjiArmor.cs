@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public static float ManaCost = 19f;
         public static int ManaRegen = 9;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ManaCost, ManaRegen, ShunpoDash.Cooldown);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ManaCost, ManaRegen, ShunpoBlink.Cooldown);
         public override void SetStaticDefaults()
         {
         }
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.manaCost -= ManaCost;
+            player.manaCost -= ManaCost / 100f;
             player.manaRegenBonus += ManaRegen;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Armors.Magic
             Player player = Main.LocalPlayer;
             var ShunpoKeybind = tsorcRevamp.Shunpo.GetAssignedKeys();
             string ShunpoString = ShunpoKeybind.Count > 0 ? ShunpoKeybind[0] : "Shunpo: <NOT BOUND>";
-            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip3");
+            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip4");
             if (ttindex1 != -1)
             {
                 tooltips.RemoveAt(ttindex1);

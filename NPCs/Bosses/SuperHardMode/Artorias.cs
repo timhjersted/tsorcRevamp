@@ -451,7 +451,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightsSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.
+                    
+                    sSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.6f, Pitch = 0.3f }, NPC.position); //Play swing-throw sound
                                                                                                                                 //go to poison attack
                         poisonTimer = 185f;

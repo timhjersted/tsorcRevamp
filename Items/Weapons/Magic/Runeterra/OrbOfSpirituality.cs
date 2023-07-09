@@ -73,7 +73,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void HoldItem(Player player)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrbIdle>()] == 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrbIdle>()] == 0 && !player.dead)
             {
                 Projectile.NewProjectile(Projectile.InheritSource(player), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbOfSpiritualityOrbIdle>(), 0, 0);
             }

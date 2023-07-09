@@ -1465,12 +1465,28 @@ namespace tsorcRevamp
                     nameof(LeonhardPhase1),
                     2.01f, // Tier (look above, for determining where it will display)
                     () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<LeonhardPhase1>())),
-                    ModContent.NPCType<NPCs.Special.LeonhardPhase1>(),
+                    ModContent.NPCType<LeonhardPhase1>(),
                     new Dictionary<string, object>()
                     {
                         ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.LeonhardPhase1.DisplayName"),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.LeonhardDesc"),
                         ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/LeonhardPhase1_Head_Boss"
+                    }
+                    );
+
+
+                bossChecklist.Call(
+                    "LogMiniBoss",
+                    this,
+                    nameof(AncientOolacileDemon),
+                    2.51f, // Tier (look above, for determining where it will display)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AncientOolacileDemon>())),
+                    ModContent.NPCType<AncientOolacileDemon>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.AncientOolacileDemon.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AncientOolacileDemonDesc"),
+                        ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/AncientOolacileDemon_Head_Boss"
                     }
                     );
 
@@ -1506,6 +1522,22 @@ namespace tsorcRevamp
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.JungleWyvernDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.JungleFeather>(),
                         ["customPortrait"] = JungleWyvernPortrait
+                    }
+                    );
+
+
+                bossChecklist.Call(
+                    "LogMiniBoss",
+                    this,
+                    nameof(AncientDemon),
+                    6.51f, // Tier (look above, for determining where it will display)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AncientDemon>())),
+                    ModContent.NPCType<AncientDemon>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.AncientDemon.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AncientDemonDesc"),
+                        ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/AncientDemon_Head_Boss"
                     }
                     );
 

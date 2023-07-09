@@ -13,8 +13,8 @@ namespace tsorcRevamp.Items
     {
         public static float BotCSoulDropAmplifier = 20f;
         public static float BotCMaxHPLossPercentage = 20f;
-        public static float FlaskMaxManaScaling = 15f;
-        public static float BotCMagicDamageAmplifier = 20f;
+        public static float FlaskMaxManaScaling = 12f;
+        public static float BotCMagicDamageAmplifier = 15f;
         public static float BotCMagicAttackSpeedAmplifier = 15f;
         public static float MaxMinionDamageReduction = 90f;
         public static float MinionDamageReductionDecrease = 22f;

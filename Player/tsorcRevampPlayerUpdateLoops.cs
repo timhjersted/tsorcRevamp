@@ -21,6 +21,7 @@ using tsorcRevamp.Items.Accessories.Ranged;
 using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Buffs.Armor;
 
 namespace tsorcRevamp
 {
@@ -101,6 +102,7 @@ namespace tsorcRevamp
         public bool MythrilOrichalcumCritDamage = false;
         public bool Shunpo = false;
         public float ShunpoTimer = 0;
+        public Vector2 ShunpoVelocity;
         public bool ChallengersGloveCritDamage = false;
         public float WhipCritHitboxSize = 1f;
 
@@ -1326,12 +1328,6 @@ namespace tsorcRevamp
                 }
             }
             #endregion
-
-            if(Player.GetModPlayer<tsorcRevampPlayer>().WitchPower)
-            {
-
-            }
-
             if (DragoonBoots && DragoonBootsEnable)
             {
                 //Player.jumpSpeed += 10f; why
@@ -1568,7 +1564,7 @@ namespace tsorcRevamp
                 }
                 if (Main.rand.NextBool(100))
                 {
-                    text = LangUtils.GetTextValue("DeathText.TotallyNotMenatToBeToxic");
+                    text = LangUtils.GetTextValue("DeathText.TotallyNotMeantToBeToxic");
                 }
             }
 
@@ -1645,7 +1641,22 @@ namespace tsorcRevamp
 
             return LangUtils.GetTextValue("DeathText.Tip") + text;
         }
-
+        public override void PreUpdateMovement()
+        {
+            if (ShunpoTimer == 3)
+            {
+                Player.velocity = Vector2.Zero;
+            }
+            if (ShunpoTimer == 2)
+            {
+                Player.velocity = Player.GetModPlayer<tsorcRevampPlayer>().ShunpoVelocity;
+            }
+            if (ShunpoTimer == 1)
+            {
+                Player.velocity = Vector2.Zero;
+                Player.RefreshMovementAbilities();
+            }
+        }
         public override void UpdateDead()
         {
             if (Player.whoAmI == Main.myPlayer)

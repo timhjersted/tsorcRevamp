@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public static float Dmg = 24f;
         public static int MinionSlots = 1;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MinionSlots, ShunpoDash.Cooldown);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MinionSlots, ShunpoBlink.Cooldown);
         public override void SetStaticDefaults()
         {
         }

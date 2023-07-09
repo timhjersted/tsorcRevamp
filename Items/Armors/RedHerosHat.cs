@@ -47,6 +47,7 @@ namespace tsorcRevamp.Items.Armors
             player.noKnockback = true;
             player.GetCritChance(DamageClass.Generic) += CritChance;
             player.ignoreWater = true;
+            player.iceSkate = true;
         }
         public override void AddRecipes()
         {

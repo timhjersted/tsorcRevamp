@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Legs)]
     public class GenjiGreaves : ModItem
     {
-        public static float MoveSpeed = 15f;
+        public static float MoveSpeed = 19f;
         public static int MaxMana = 100;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, MaxMana);
         public override void SetStaticDefaults()

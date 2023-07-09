@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode)
             {
-                NPC.lifeMax = 1400;
+                NPC.lifeMax = 900;
                 NPC.defense = 60;
             }
             if (tsorcRevampWorld.SuperHardMode)

@@ -1,11 +1,11 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 
-namespace tsorcRevamp.Buffs.Runeterra.Magic
+namespace tsorcRevamp.Buffs.Armor
 {
-    public class OrbOfFlameFireballCooldown : ModBuff
+    public class ShunpoBlinkCooldown : ModBuff
     {
         public override void SetStaticDefaults()
         {
@@ -16,7 +16,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
         {
             if (player.buffTime[buffIndex] == 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/FireballReady") with { Volume = OrbOfDeception.OrbSoundVolume * 2 }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/ShunpoReady") with { Volume = 2f });
             }
         }
     }

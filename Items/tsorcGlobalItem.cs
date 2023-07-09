@@ -144,7 +144,7 @@ namespace tsorcRevamp.Items
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                if (item.type == ItemID.ObsidianSkinPotion)
+                if (item.type == ItemID.ObsidianSkinPotion || item.type == ItemID.WaterWalkingPotion)
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "No Quick Buff", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ObsidianSkinPotion")));
                 }

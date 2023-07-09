@@ -7,8 +7,8 @@ namespace tsorcRevamp.Items.Potions
 {
     public class DemonDrugPotion : ModItem
     {
-        public static float DmgMultiplier = 22f;
-        public static int BadDefense = 15;
+        public static float DmgMultiplier = 20f;
+        public static int BadDefense = 12;
         public static int Duration = 480;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMultiplier, BadDefense);
         public override void SetStaticDefaults()

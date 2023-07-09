@@ -130,7 +130,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
 
-                UsefulFunctions.EnsureLoaded(ref knifeTexture, "NPCs/Enemies/TibianAmazon_Knife");
+                UsefulFunctions.EnsureLoaded(ref knifeTexture, "tsorcRevamp/NPCs/Enemies/TibianAmazon_Knife");
                 spriteBatch.Draw(knifeTexture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 60, 56), drawColor, rotation, new Vector2(30, 32), NPC.scale, SpriteEffects.None, 0);
             }
         }

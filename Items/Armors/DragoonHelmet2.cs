@@ -58,6 +58,7 @@ namespace tsorcRevamp.Items.Armors
             //player.wingsLogic = 34;
             //player.wingTimeMax = 180;
             player.ignoreWater = true;
+            player.iceSkate = true;
         }
 
         public override bool WingUpdate(Player player, bool inUse)

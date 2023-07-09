@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors.Melee
     public class FighterBreastplate : ModItem
     {
         public static float MeleeSpeed = 21f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeSpeed, ShunpoDash.Cooldown);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeSpeed, ShunpoBlink.Cooldown);
         public override void SetStaticDefaults()
         {
         }

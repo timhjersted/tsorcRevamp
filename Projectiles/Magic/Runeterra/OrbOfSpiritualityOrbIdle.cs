@@ -47,11 +47,11 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             if (!playedSound1 && !playedSound2 && Main.rand.NextBool(2000) && !player.HasBuff(ModContent.BuffType<InCombat>()))
             {
                 playedSound1 = true;
-                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbAmbient1") with { Volume = 1f }, player.Center); //can give funny pitch hehe
+                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbAmbient1", SoundType.Ambient) with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center); //can give funny pitch hehe
             } else if (!playedSound1 && !playedSound2 && Main.rand.NextBool(2000) && !player.HasBuff(ModContent.BuffType<InCombat>()))
             {
                 playedSound2 = true;
-                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbAmbient2") with { Volume = 1f }, player.Center); //can give funny pitch hehe
+                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbAmbient2", SoundType.Ambient) with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center); //can give funny pitch hehe
             }
             if (playedSound1 || playedSound2)
             {
@@ -87,7 +87,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                     playedSound2 = false;
                 }
             }
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] > 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrb>()] > 0 || player.dead)
             {
                 Projectile.Kill();
             }

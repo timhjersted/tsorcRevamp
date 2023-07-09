@@ -16,6 +16,8 @@ namespace tsorcRevamp.Buffs
         {
             player.statDefense += ArmorDrugPotion.Defense;
             player.endurance += ArmorDrugPotion.DRIncrease / 100f;
+            player.statLifeMax2 += ArmorDrugPotion.MaxLife;
+            player.GetDamage(DamageClass.Generic) -= ArmorDrugPotion.BadDmg / 100f;
         }
     }
 }

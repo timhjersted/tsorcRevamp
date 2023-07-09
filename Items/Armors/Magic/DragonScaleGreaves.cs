@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Legs)]
     public class DragonScaleGreaves : ModItem
     {
-        public static float MoveSpeed = 25f;
+        public static float MoveSpeed = 16f;
         public static float ManaCost = 17f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, ManaCost);
         public override void SetStaticDefaults()

@@ -24,6 +24,7 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 //given out as reward for beating a red knight so I think this is fair, also hard to use
                 item.damage = 20; //from 14
+                item.mana = 10;
             }
 
             if(item.type == ItemID.HolyArrow)
@@ -31,6 +32,10 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 1;
             }
 
+            if (item.type == ItemID.DaedalusStormbow)
+            {
+                item.mana = 20;
+            }
 
             //Why is this eventide's internal name i'm literally going to go feral
             if (item.type == ItemID.FairyQueenRangedItem)

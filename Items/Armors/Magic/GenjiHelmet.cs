@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Head)]
     public class GenjiHelmet : ModItem
     {
-        public static float Dmg = 25f;
-        public static float CritChance = 20f;
+        public static float Dmg = 28f;
+        public static float CritChance = 26f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, CritChance);
         public override void SetStaticDefaults()
         {

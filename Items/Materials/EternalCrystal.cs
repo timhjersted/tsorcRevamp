@@ -85,6 +85,12 @@ namespace tsorcRevamp.Items.Materials
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();
+
+            Recipe recipe3 = CreateRecipe();
+            recipe3.AddIngredient(ItemID.LifeFruit, 9);
+            recipe3.AddTile(TileID.DemonAltar);
+
+            recipe3.Register();
         }
     }
 }

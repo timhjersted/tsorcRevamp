@@ -364,7 +364,7 @@ namespace tsorcRevamp
                     int buffIndex = 0;
                     foreach (int buffType in Player.buffType)
                     {
-                        if (buffType == ModContent.BuffType<ShunpoDashCooldown>())
+                        if (buffType == ModContent.BuffType<ShunpoBlinkCooldown>())
                         {
                             Player.buffTime[buffIndex] -= 20;
                         }
@@ -965,11 +965,25 @@ namespace tsorcRevamp
             {
                 DragoonBootsEnable = !DragoonBootsEnable;
             }
-            if (tsorcRevamp.Shunpo.JustReleased && player.GetModPlayer<tsorcRevampPlayer>().Shunpo && !player.HasBuff(ModContent.BuffType<ShunpoDashCooldown>()))
+            for (int i = 0; i < Main.maxNPCs; i++)
             {
-                player.AddBuff(ModContent.BuffType<ShunpoDash>(), (int)(ShunpoDash.ShunpoDashDuration * 60 * 2));
-                ShunpoTimer = ShunpoDash.ShunpoDashDuration;
-                player.AddBuff(ModContent.BuffType<ShunpoDashCooldown>(), ShunpoDash.Cooldown * 60);
+                NPC other = Main.npc[i];
+                Vector2 MouseHitboxSize = new Vector2(100, 100);
+
+                if (tsorcRevamp.Shunpo.JustReleased && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) && player.GetModPlayer<tsorcRevampPlayer>().Shunpo && !player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
+                {
+                    ShunpoVelocity = player.DirectionTo(other.Center) * other.Center.Distance(player.Center);
+                    player.AddBuff(ModContent.BuffType<ShunpoBlink>(), (int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60 * 2 + 2));
+                    player.AddBuff(ModContent.BuffType<ShunpoBlinkCooldown>(), ShunpoBlink.Cooldown * 60);
+                    if (Main.rand.NextBool(2))
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo1") with { Volume = 1f }, player.Center);
+                    } else
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo2") with { Volume = 1f }, player.Center);
+                    }
+                    ShunpoTimer = 3;
+                }
             }
             if (tsorcRevamp.reflectionShiftKey.JustPressed)
             {

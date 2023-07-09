@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Tools
 {
     public class PowerWithin : ModItem
     {
-        public static float DamageIncrease = 20f;
+        public static float DamageIncrease = 10f;
         public static float StaminaRegen = 30f;
         public static int Duration = 30;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageIncrease, StaminaRegen, Duration);
@@ -35,10 +35,8 @@ namespace tsorcRevamp.Items.Tools
             if (player.itemAnimation != 0)
             {
                 float slowdownX = player.velocity.X * .9f;
-                float slowdownY = player.velocity.Y * .9f;
 
                 player.velocity.X = slowdownX;
-                player.velocity.Y = slowdownY;
 
 
             }

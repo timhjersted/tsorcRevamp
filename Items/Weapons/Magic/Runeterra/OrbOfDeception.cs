@@ -21,6 +21,9 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         public static float EssenceThiefOnKillChance = 12.5f;
         public static float FilledOrbDmgMod = 160f;
         public static float ShootSpeed = 20f;
+        public static float OrbSoundVolume = 0.5f;
+        public static int HealManaDivisor = 100;
+        public static int HealBaseValue = 4;
         public override void SetStaticDefaults()
         {
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 8));
@@ -60,7 +63,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void HoldItem(Player player)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrbIdle>()] == 0) 
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrbIdle>()] == 0 && !player.dead) 
             {
                 Projectile.NewProjectile(Projectile.InheritSource(player), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbOfDeceptionOrbIdle>(), 0, 0); 
             }

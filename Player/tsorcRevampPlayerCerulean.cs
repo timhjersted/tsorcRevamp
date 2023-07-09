@@ -76,11 +76,11 @@ namespace tsorcRevamp
         public override void PostUpdateMiscEffects()
         {
             ceruleanManaGainMaxManaBonus = Player.statManaMax2 * Darksign.FlaskMaxManaScaling / 100f;
-            ceruleanManaGainManaRegenBonus = 1f + ((float)Player.manaRegenBonus / 150f); //manaRegenBonus is usually in the double digits so this is good scaling 
-            ceruleanRestorationTimerBonus = 1f + (Player.manaRegenDelayBonus / 5f);  //manaRegenDelayBonus is given out at 1 or 0.5 by 2 sources in vanilla so this is also very good scaling
+            ceruleanManaGainManaRegenBonus = 1f + ((float)Player.manaRegenBonus / 200f); //manaRegenBonus is usually in the double digits so this is good scaling 
+            ceruleanRestorationTimerBonus = 1f + (Player.manaRegenDelayBonus / 4f);  //manaRegenDelayBonus is given out at 1 or 0.5 by 2 sources in vanilla so this is also very good scaling
             if (Player.manaRegenBuff) //so mana regen pot does something
             {
-                ceruleanRestorationTimerBonus = 1f + (ManaRegenPotRestorationTimerBonus / 100f) + (Player.manaRegenDelayBonus / 4f); 
+                ceruleanRestorationTimerBonus = 1f + (ManaRegenPotRestorationTimerBonus / 100f) + (Player.manaRegenDelayBonus / 3.5f); 
             }
             ceruleanRestorationTimerMax = 300 * ceruleanRestorationTimerBonus; //base value does not affect the total mana restored
         }
@@ -115,7 +115,6 @@ namespace tsorcRevamp
 
             //Slow player for whole duration of action
             Player.velocity.X *= 0.9f;
-            Player.velocity.Y *= 0.9f;
             Player.eocHit = 0;
 
             if (ceruleanDrinkTimer >= ceruleanDrinkTimerMax) //Once finished drinking:

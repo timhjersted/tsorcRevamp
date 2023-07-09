@@ -43,10 +43,10 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 		{
 			Player player = Main.player[Projectile.owner];
             player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, player.direction * -1.9f);
-            if (!playedSound && Main.rand.NextBool(1200) && !player.HasBuff(ModContent.BuffType<InCombat>()))
+            if (!playedSound && Main.rand.NextBool(2000) && !player.HasBuff(ModContent.BuffType<InCombat>()))
             {
                 playedSound = true;
-                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbAmbient") with { Volume = 1f }, player.Center); //can give funny pitch hehe
+                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbAmbient", SoundType.Ambient) with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center); //can give funny pitch hehe
             }
             if (playedSound)
             {
@@ -75,7 +75,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                     SoundCD = 0;
                 }
             }
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrb>()] > 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrb>()] > 0 || player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbIdle>()] > 0 || player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfSpiritualityOrbIdle>()] > 0 || player.dead)
             {
                 Projectile.Kill();
             }

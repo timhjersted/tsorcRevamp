@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public static float Dmg = 23f;
         public static int AmmoChance = 25;   //changing this number has no effect since an ammo consumption chance stat doesn't exist
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, ShunpoDash.Cooldown, AmmoChance);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, ShunpoBlink.Cooldown, AmmoChance);
         public override void SetStaticDefaults()
         {
         }

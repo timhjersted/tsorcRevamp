@@ -4,6 +4,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
@@ -35,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FireCast") with { Volume = 0.25f }, player.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FireCast") with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center);
         }
         public float maxDetectRadius = 500f;
         public override void AI()
@@ -141,12 +142,12 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         {
             Player player = Main.player[Projectile.owner];
             player.statMana += player.GetManaCost(player.HeldItem) / 2;
-            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FireHit") with { Volume = 1f }, player.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FireHit") with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center);
         }
         public override void Kill(int timeLeft)
         {
             Player player = Main.player[Projectile.owner];
-            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FireDespawn") with { Volume = 1f }, player.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FireDespawn") with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center);
         }
     }
 }

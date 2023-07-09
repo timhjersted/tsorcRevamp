@@ -46,7 +46,7 @@ Mods: {
 			HolyDodge: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
 			TitaniumBonus: Attacking generates a defensive barrier of titanium shards
 			ShunpoKeybind1: "Press "
-			ShunpoKeybind2: " to dash towards the cursor and briefly become immune"
+			ShunpoKeybind2: " while hovering your mouse over an enemy to blink to it and briefly become immune"
 			ShunpoCD:
 				'''
 				Shunpo has {$CommonItemTooltip.Cooldown}
@@ -55,6 +55,7 @@ Mods: {
 			BonusMagicDmg: Adds {0}% of bonus magic damage
 			UniqueImbue: Not compatible with other weapon imbues
 			LifeRegen: Increases life regeneration by {0}
+			BadLifeRegen: Decreases life regeneration by {0}
 			BadDefense: Decreases defense by {0}
 			BadDmg: Decreases damage dealt by {0}%
 			DmgMult: Increases damage by {0}% multiplicatively
@@ -342,9 +343,11 @@ Mods: {
 
 		BossChecklist: {
 			LeonhardDesc: Explore.
+			AncientOolacileDemonDesc: Legends mention the Oolacile Forest...
 			SlograAndGaibonName: Slogra and Gaibon
 			SlograAndGaibonDesc: Found in the depths of the Meteor Temple.
 			JungleWyvernDesc: Found in the depths of the Forgotten City.
+			AncientDemonDesc: A secret lair in hell awaits you...
 			TheRageDesc: Found in the depths of the Hallowed Caverns.
 			TheSorrowDesc: Found in the depths of the Frozen Ocean.
 			WyvernMageDesc: Found high atop a mountain in a great fortress.
@@ -1962,7 +1965,7 @@ Mods: {
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					{$CommonItemTooltip.Magic.ManaRegen@2}
 					{$CommonItemTooltip.SetBonus}Grants extended breath & swimming skills
-					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
+					{$CommonItemTooltip.PercentIncreasedCritChance@3}
 					Can be upgraded eventually with {5} Souls of Sight and {4} Dark Souls
 					'''
 			}
@@ -2153,8 +2156,8 @@ Mods: {
 				Tooltip:
 					'''
 					It is made of razor sharp dragon scales.
-					{$CommonItemTooltip.PercentIncreasedMagicCritChance}
-					{$CommonItemTooltip.IncreasesMaxManaBy@1}
+					{$CommonItemTooltip.PercentIncreasedMagicCritChance@1}
+					{$CommonItemTooltip.IncreasesMaxManaBy}
 					'''
 			}
 
@@ -2168,7 +2171,7 @@ Mods: {
 					{$CommonItemTooltip.Magic.ManaRegen@2}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@5}
 					{$CommonItemTooltip.LifeThreshold@3}Dragonscale Cloak Ability activates
-					This doubles mana regen provided by this armor set, Star Cloak effect and 
+					This doubles mana regen provided by this armor set, Star Cloak effect and grants
 					{$CommonItemTooltip.PercentIncreasedMagicDamageCritChance@4}
 					'''
 			}
@@ -2210,7 +2213,7 @@ Mods: {
 				DisplayName: Mimetic Hat
 				Tooltip:
 					'''
-					{$CommonItemTooltip.IncreasesMaxManayBy}
+					{$CommonItemTooltip.IncreasesMaxManaBy}
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					'''
 			}
@@ -4093,6 +4096,8 @@ Mods: {
 					'''
 					{$CommonItemTooltip.IncreasesDefenseBy}
 					{$CommonItemTooltip.DRStatBoost@1}
+					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
+					{$CommonItemTooltip.BadDmg@3}
 					Does not stack with Demon Drug, Strength, or Battlefront Potions.
 					'''
 			}
@@ -4618,6 +4623,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.IncreasesDefenseBy@1}
 					{$CommonItemTooltip.AtkSpeed@2}{$CommonItemTooltip.Melee.Doubled}
+					{$CommonItemTooltip.BadLifeRegen@3}
 					Does not stack with Demon Drug, Armor Drug, or Battlefront Potions
 					'''
 			}
@@ -4637,7 +4643,7 @@ Mods: {
 				Tooltip:
 					'''
 					Harness the power of flame to actualize the inner-self
-					{$CommonItemTooltip.DamageMultiplier}
+					{$CommonItemTooltip.DmgMult}
 					{$CommonItemTooltip.StaminaRegen@1}
 					Excessive power eats away the life-force of its caster
 					Lasts {2} seconds, can't be cancelled
@@ -7933,17 +7939,17 @@ Mods: {
 
 			Ignited: {
 				DisplayName: Ignited
-				Description: Mods.tsorcRevamp.Buffs.Ignited.Description
+				Description: ""
 			}
 
 			Charmed: {
 				DisplayName: Charmed
-				Description: Mods.tsorcRevamp.Buffs.Charmed.Description
+				Description: ""
 			}
 
 			Heatstroke: {
 				DisplayName: Heatstroke
-				Description: Mods.tsorcRevamp.Buffs.Heatstroke.Description
+				Description: ""
 			}
 
 			PhotonicDownpourBuff: {
@@ -7951,14 +7957,14 @@ Mods: {
 				Description: The combat drone will fight for you
 			}
 
-			ShunpoDash: {
-				DisplayName: Shunpo Dash
-				Description: Mods.tsorcRevamp.Buffs.ShunpoDash.Description
+			ShunpoBlink: {
+				DisplayName: Shunpo Immunity
+				Description: Nothing can catch you
 			}
 
-			ShunpoDashCooldown: {
-				DisplayName: Shunpo Dash Cooldown
-				Description: You cannot dash again until this runs out
+			ShunpoBlinkCooldown: {
+				DisplayName: Shunpo Cooldown
+				Description: You cannot blink again until this runs out
 			}
 		}
 

@@ -40,7 +40,7 @@ namespace tsorcRevamp.Buffs.Debuffs
 
                 player.AddBuff(ModContent.BuffType<Invincible>(), 480, false); // 8 seconds
                 player.AddBuff(ModContent.BuffType<Strength>(), 3600, false);
-                Main.NewText(LangUtils.GetTextValue("Buffs.CurseBuildup.CurseText2"));
+                Main.NewText(LangUtils.GetTextValue("Buffs.Curse.CurseText2"));
 
                 for (int i = 0; i < 30; i++)
                 {

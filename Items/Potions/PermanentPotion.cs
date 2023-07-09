@@ -1011,6 +1011,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.statDefense += (int)ApplyScaling(ArmorDrugPotion.Defense);
             player.endurance += ApplyScaling(ArmorDrugPotion.DRIncrease / 100f);
+            player.statLifeMax2 += (int)ApplyScaling(ArmorDrugPotion.MaxLife);
+            player.GetDamage(DamageClass.Generic) -= ApplyScaling(ArmorDrugPotion.BadDmg / 100f);
         }
     }
 
@@ -1029,6 +1031,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetCritChance(DamageClass.Generic) += ApplyScaling(BattlefrontPotion.DamageCritIncrease);
             player.thorns += ApplyScaling(BattlefrontPotion.Thorns / 100f);
             player.enemySpawns = true;
+            player.endurance -= ApplyScaling(BattlefrontPotion.DRDecrease / 100f);
         }
     }
 
@@ -1107,6 +1110,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetDamage(DamageClass.Generic) += ApplyScaling(StrengthPotion.DamageBoost / 100f);
             player.GetAttackSpeed(DamageClass.Generic) += ApplyScaling(StrengthPotion.AttackSpeedBoost / 100f);
             player.GetAttackSpeed(DamageClass.Melee) += ApplyScaling(StrengthPotion.AttackSpeedBoost / 100f);
+            player.lifeRegen -= (int)ApplyScaling(StrengthPotion.BadLifeRegen);
         }
     }
 
