@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Enums;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -37,7 +38,6 @@ namespace tsorcRevamp.Projectiles.Ranged
         float size = 0;
         Vector2 truePosition;
         float maxSize = 2700;
-        bool initialized = false;
         float fadeIn;
         float trueSize = 1;
         public override void AI()
@@ -52,6 +52,11 @@ namespace tsorcRevamp.Projectiles.Ranged
                     Projectile.Kill();
                     return;
                 }
+            }
+
+            if(Main.GameUpdateCount % 20 == 0)
+            {
+                SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.5f }, truePosition);
             }
 
 

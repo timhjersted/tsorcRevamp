@@ -6033,8 +6033,9 @@ Mods: {
 				DisplayName: Freezethrower
 				Tooltip:
 					'''
-					Uses Gel as ammo.
-					Has a chance to freeze
+					Slows enemies, with a chance to freeze
+					High DPS, but blocks dodging while in use
+					Uses gel as ammo
 					'''
 			}
 
