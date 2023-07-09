@@ -742,8 +742,7 @@ namespace tsorcRevamp
 
         public static void BuildSoapstones()
         {
-            char separator = Path.DirectorySeparatorChar;
-            string jsonPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcSoapstones.json";
+            string jsonPath = "tsorcRevamp/Localization/tsorcSoapstones_" + Language.ActiveCulture.Name + ".json";
             tsorcRevamp mod = ModContent.GetInstance<tsorcRevamp>();
 
             bool skipRead = false;
@@ -775,7 +774,11 @@ namespace tsorcRevamp
                         Main.item[i].active = false; //delete ground items
                     }
                 }
-                string bigJson = File.ReadAllText(jsonPath);
+
+                Byte[] jsonBytes = ModContent.GetFileBytes(jsonPath);
+
+                string bigJson = System.Text.Encoding.UTF8.GetString(jsonBytes);
+                
                 List<SignJSONSerializable> texts = UsefulFunctions.DeserializeMultiple<SignJSONSerializable>(bigJson).ToList();
                 foreach (SignJSONSerializable sign in texts)
                 {

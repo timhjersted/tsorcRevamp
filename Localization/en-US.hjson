@@ -7039,7 +7039,7 @@ Mods: {
 
 			Meltdown: {
 				DisplayName: Meltdown
-				Tooltip: 
+				Tooltip:
 					'''
 					Fires an intense jet of piercing flame
 					Uses gel as ammo
