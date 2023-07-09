@@ -2982,7 +2982,7 @@ namespace tsorcRevamp.NPCs
 
                 if (npc.justHit || npc.velocity.Y != 0f || globalNPC.ProjectileTimer <= 0f) // was just hit?
                 {
-                    globalNPC.ProjectileTimer = projectileCooldown * globalNPC.CastingSpeed; //Reset firing time
+                    globalNPC.ProjectileTimer = (int)(projectileCooldown * globalNPC.CastingSpeed); //Reset firing time
                     globalNPC.ArcherAimDirection = 0f; //Not aiming
                 }
 
@@ -2998,7 +2998,7 @@ namespace tsorcRevamp.NPCs
                         //Aim at them, and start the shot cooldown
                         npc.velocity.X *= 0.5f;
                         globalNPC.ArcherAimDirection = 3f;
-                        globalNPC.ProjectileTimer = projectileCooldown * globalNPC.CastingSpeed;
+                        globalNPC.ProjectileTimer = (int)(projectileCooldown * globalNPC.CastingSpeed);
                     }
 
                     npc.velocity.X *= 0.9f; // decelerate to stop & shoot
@@ -3015,6 +3015,23 @@ namespace tsorcRevamp.NPCs
                         }
 
                         SoundEngine.PlaySound(shootSound.Value);
+                    }
+                    if(globalNPC.ProjectileTimer - 15 == (projectileCooldown / 2))
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Vector2 spawnPosition = npc.position;
+                            if (npc.direction == 1)
+                            {
+                                spawnPosition.X += npc.width;
+                            }
+                            Color telegraphColor = Color.Gray;
+                            if(projectileType == ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>())
+                            {
+                                telegraphColor = Color.Green;
+                            }
+                            Projectile.NewProjectileDirect(npc.GetSource_FromThis(), spawnPosition, npc.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(telegraphColor));
+                        }
                     }
 
                     //Calculate a vector aiming at the player. This is purely for the npc's sprite visuals, so it can use the much simpler aiming code.
@@ -3040,6 +3057,8 @@ namespace tsorcRevamp.NPCs
                     globalNPC.ArcherAimDirection = 0;
                 }
             }
+
+            npc.ai[2] = globalNPC.ArcherAimDirection;
         }
 
 
@@ -3493,7 +3512,7 @@ namespace tsorcRevamp.NPCs
             }
 
             //Dodging
-            if (globalNPC.BoredTimer == 0 && globalNPC.TeleportCountdown == 0 && globalNPC.DodgeCooldown == 0 && globalNPC.ArcherAimDirection == 0) {
+            if (globalNPC.BoredTimer == 0 && globalNPC.TeleportCountdown == 0 && globalNPC.DodgeCooldown == 0) {
                 if (canDodgeroll)
                 {
                     for (int i = 0; i < Main.maxProjectiles; i++)
