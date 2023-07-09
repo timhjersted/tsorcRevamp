@@ -180,7 +180,8 @@ namespace tsorcRevamp
             SpawnMechanic,
             SpawnWizard,
             HellkiteDragonEvent,
-            EoL
+            EoL,
+            DungeonGuardian
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -435,6 +436,9 @@ namespace tsorcRevamp
             LothricAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.RadiantLifegem>() }, new List<int>() { 5 });
 
             ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, SuperHardModeCustomCondition, SetNightCustomAction);
+            
+            ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, () => !NPC.downedBoss3);
+
 
 
             //Every enum and ScriptedEvent has to get paired up here
@@ -499,7 +503,9 @@ namespace tsorcRevamp
                 {ScriptedEventType.SpawnMechanic, SpawnMechanic},
                 {ScriptedEventType.SpawnWizard, SpawnWizard},
                 {ScriptedEventType.HellkiteDragonEvent, HellkiteDragonEvent},
-                {ScriptedEventType.EoL, EoL}
+                {ScriptedEventType.EoL, EoL},
+                {ScriptedEventType.DungeonGuardian, DungeonGuardianEvent },
+
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();
