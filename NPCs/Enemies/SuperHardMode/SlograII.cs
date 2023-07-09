@@ -135,7 +135,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int hitCounter = 0;
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 3, 0.09f, 0.2f, true, 0, false, SoundID.Mummy, 2000, 0.1f, 4, true);
+            tsorcRevampAIs.FighterAI(NPC, 3, 0.09f, 0.2f, true, 0, false, SoundID.Mummy, 2000, 0.1f, 4, true, canPounce: false);
             tsorcRevampAIs.LeapAtPlayer(NPC, 5, 4, 2, 128);
 
             if (Main.netMode != NetmodeID.MultiplayerClient)

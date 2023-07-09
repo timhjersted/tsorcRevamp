@@ -108,7 +108,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-
             //TELEPORT RANGED
             if (Main.rand.NextBool(12) && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown == 0)
             {
@@ -132,10 +131,8 @@ namespace tsorcRevamp.NPCs.Bosses
         int spawnedDemons = 0;
         public override void AI()
         {
-
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             int choice = Main.rand.Next(6);
-
 
             //CHANCE TO JUMP BEFORE ATTACK  
             if (NPC.localAI[1] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(40) && NPC.life >= NPC.lifeMax / 3)
@@ -161,7 +158,6 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             NPC.localAI[1]++;
-            bool lineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
             tsorcRevampAIs.FighterAI(NPC, 1, 0.1f, canTeleport: true, lavaJumping: true, canDodgeroll: false);
 
             if (NPC.localAI[1] >= 179)
@@ -358,8 +354,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
 
             }
-
-            NPC.TargetClosest(true);
         
 
             //MULTI-FIRE 1 ATTACK
@@ -372,14 +366,12 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-
                 }
 
                 if (NPC.localAI[1] >= 175f)
                 {
                     NPC.localAI[1] = 1f;
                 }
-                NPC.netUpdate = true;
             }
             //MULTI-BOUNCING DESPERATE FIRE ATTACK
             if (NPC.localAI[1] >= 160f && NPC.life <= NPC.lifeMax / 3 && (choice == 1 || choice == 2))
@@ -390,14 +382,12 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, cultistFireDamage, 3f, Main.myPlayer); //5f was 0f in the example that works
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center); //fire
-
                 }
 
                 if (NPC.localAI[1] >= 190f) //was 126
                 {
                     NPC.localAI[1] = 1f;
                 }
-                NPC.netUpdate = true;
             }
             //LIGHTNING ATTACK
             if (NPC.localAI[1] == 160f && NPC.life >= NPC.lifeMax / 6 && NPC.life <= NPC.lifeMax / 3 * 2 && (choice == 5 || choice == 4)) //&& Main.rand.NextBool(8) 
@@ -412,16 +402,12 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                 {
                     int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.CultistBossLightningOrb, cultistLightningDamage, 0f, Main.myPlayer);
-                    //ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()
-                    
+                    //ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()                    
 
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-
                 }
                
                 NPC.localAI[1] = -50f;
-               
-
             }
 
             /*JUMP DASH FOR FINAL

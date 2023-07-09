@@ -544,14 +544,14 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (boredTeleport == 600)
                     {
                         customAi1 = 1f;
-                        tsorcRevampAIs.TeleportImmediately(NPC, 20, false);
+                        tsorcRevampAIs.QueueTeleport(NPC, 20, false, 45);
 
                     }
 
                     if (boredTeleport == 900)
                     {
                         customAi1 = 1f;
-                        tsorcRevampAIs.TeleportImmediately(NPC, 12, false);
+                        tsorcRevampAIs.QueueTeleport(NPC, 12, false, 45);
                         boredTeleport = 0;
                     }
                 }

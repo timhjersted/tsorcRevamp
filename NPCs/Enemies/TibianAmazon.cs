@@ -92,7 +92,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.8f, 0.15f, enragePercent: 0.2f, enrageTopSpeed: 2.2f);
+            tsorcRevampAIs.FighterAI(NPC, 1.8f, 0.15f, enragePercent: 0.2f, enrageTopSpeed: 2.2f, canPounce: false);
         }
 
 
@@ -102,6 +102,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.rand.NextBool(3))
             {
                 NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
+                NPC.netUpdate = true;
             }
         }
 
@@ -112,6 +113,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (projectile.DamageType == DamageClass.Melee)
             {
                 NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
+                NPC.netUpdate = true;
             }
         }
 
@@ -124,7 +126,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public static Texture2D knifeTexture;
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 120)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimerCap * 3f/4f)
             {
                 float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
 

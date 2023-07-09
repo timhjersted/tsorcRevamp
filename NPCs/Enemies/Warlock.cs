@@ -129,16 +129,17 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (Main.rand.NextBool(3))
                 {
                     NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 110;
+                    NPC.netUpdate = true;
                 }
                 else
                 {
                     NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
+                    NPC.netUpdate = true;
                 }
             }
             if (NPC.justHit && Main.rand.NextBool(8))
             {
                 tsorcRevampAIs.QueueTeleport(NPC, 20, true, 60);
-                NPC.netUpdate = true;
             }
 
             //Transparency. Higher alpha = more invisible

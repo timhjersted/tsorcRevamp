@@ -127,7 +127,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 //TELEPORT MELEE
                 if (Main.rand.NextBool(12))
                 {
-                    tsorcRevampAIs.TeleportImmediately(NPC, 25, true);
+                    tsorcRevampAIs.QueueTeleport(NPC, 25, true, 60);
                 }
             }
             //RISK ZONE
@@ -147,7 +147,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             //TELEPORT RANGED
             if (Main.rand.NextBool(26))
             {
-                tsorcRevampAIs.TeleportImmediately(NPC, 20, true);
+                tsorcRevampAIs.QueueTeleport(NPC, 20, true, 60);
                 NPC.localAI[1] = 70f;
             }
             //RANGED

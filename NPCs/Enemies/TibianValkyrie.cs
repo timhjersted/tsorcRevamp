@@ -84,7 +84,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.55f, 0.05f, enragePercent: 0.4f, enrageTopSpeed: 2.3f);
+            tsorcRevampAIs.FighterAI(NPC, 1.55f, 0.05f, enragePercent: 0.4f, enrageTopSpeed: 2.3f, canPounce: false);
 
             if (!NPC.downedBoss1)
             {

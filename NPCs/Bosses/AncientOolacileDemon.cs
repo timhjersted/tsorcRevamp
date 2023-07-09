@@ -138,7 +138,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //TELEPORT MELEE
                 if (Main.rand.NextBool(12))
                 {
-                    tsorcRevampAIs.TeleportImmediately(NPC, 25, true);
+                    tsorcRevampAIs.QueueTeleport(NPC, 25, true, 60);
                     NPC.localAI[1] = 0f;
                 }
             }
@@ -158,9 +158,9 @@ namespace tsorcRevamp.NPCs.Bosses
         {
 
             //TELEPORT RANGED
-            if (Main.rand.NextBool(24))
+            if (Main.rand.NextBool(24) && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown == 0)
             {
-                tsorcRevampAIs.TeleportImmediately(NPC, 25, true);
+                tsorcRevampAIs.QueueTeleport(NPC, 25, true, 60);
                 NPC.localAI[1] = 0f;
             }
             //RANGED
@@ -183,9 +183,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void AI()
         {
-
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-
 
             //If the enemy doesn't have line of sight, spawn a cursed skull and then teleport
             //Since this is a boss, the distance and time is fairly aggressive.
@@ -197,12 +195,11 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (NPC.velocity.X == 0 && breathTimer > 0)
             {
-
                 stuckTeleport++;
                 if (stuckTeleport == 60)
                 {
                     //NPC.localAI[1] = 0;
-                    tsorcRevampAIs.TeleportImmediately(NPC, 60, false);
+                    tsorcRevampAIs.QueueTeleport(NPC, 60, false, 120);
                     stuckTeleport = 0;
                     //breathTimer = 1;
                 }
@@ -213,7 +210,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
 
-                if (!clearLineofSight)
+            if (!clearLineofSight)
             {
                 boredTeleport++;
 
@@ -234,7 +231,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (boredTeleport == 1000)
                 {
                     NPC.localAI[1] = 0;
-                    tsorcRevampAIs.TeleportImmediately(NPC, 40, true);
+                    tsorcRevampAIs.QueueTeleport(NPC, 40, true, 120);
                     boredTeleport = 0;
                 }
 
@@ -269,7 +266,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             NPC.localAI[1]++;
             bool lineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-            tsorcRevampAIs.FighterAI(NPC, 1, 0.1f, canTeleport: false, lavaJumping: true);
+            tsorcRevampAIs.FighterAI(NPC, 1, 0.1f, canTeleport: true, lavaJumping: true);
             //tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 179, ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.rand.NextBool(200), false, SoundID.Item17);
             //tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 179, ProjectileID.CultistBossFireBall, cultistMagicDamage, 1, Main.rand.NextBool(20), false, SoundID.NPCHit34);
             //tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], 160, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 8, Main.rand.NextBool(2), false, 2, 34, 0);
@@ -473,27 +470,24 @@ namespace tsorcRevamp.NPCs.Bosses
 
             }
 
-            NPC.TargetClosest(true);
             
             //MULTI-FIRE 1 ATTACK
             if (NPC.localAI[1] >= 160f && NPC.life >= NPC.lifeMax / 3 && choice == 1) 
             {
-
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(4), 7);
                 //speed.Y += Main.rand.NextFloat(2f, -2f); //just added
                 if (Main.rand.NextBool(3) && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-
                 }
 
                 if (NPC.localAI[1] >= 175f)
                 {
                     NPC.localAI[1] = 1f;
                 }
-                NPC.netUpdate = true;
             }
+
             //MULTI-BOUNCING DESPERATE FIRE ATTACK
             if (NPC.localAI[1] >= 160f && NPC.life <= NPC.lifeMax / 3 && (choice == 1 || choice == 2))
             {
@@ -503,19 +497,16 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, cultistFireDamage, 3f, Main.myPlayer); //5f was 0f in the example that works
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center); //fire
-
                 }
 
                 if (NPC.localAI[1] >= 190f) //was 126
                 {
                     NPC.localAI[1] = 1f;
                 }
-                NPC.netUpdate = true;
             }
             //LIGHTNING ATTACK
             if (NPC.localAI[1] == 160f && NPC.life >= NPC.lifeMax / 6 && NPC.life <= NPC.lifeMax / 3 * 2 && (choice == 5 || choice == 4)) 
-            {
-                
+            {                
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(1), 1);
                 //speed += Main.player[npc.target].velocity / 4;
 
@@ -531,8 +522,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 
                 NPC.localAI[1] = -50f;
-                
-
             }
 
             /*JUMP DASH FOR FINAL
@@ -571,9 +560,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     NPC.localAI[1] = -90f;
                 }
-
-
-                NPC.netUpdate = true;
             }
         }
         public override void BossLoot(ref string name, ref int potionType)

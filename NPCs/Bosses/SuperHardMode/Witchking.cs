@@ -78,7 +78,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (NPC.justHit && Main.rand.NextBool(12))
             {
-                tsorcRevampAIs.TeleportImmediately(NPC, 25, true);
+                tsorcRevampAIs.QueueTeleport(NPC, 25, true, 60);
                 
             }
             if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(12))//

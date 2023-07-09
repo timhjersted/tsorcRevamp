@@ -129,7 +129,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 0.8f, 0.02f, 0.2f, true, enragePercent: 0.5f, enrageTopSpeed: 1.6f);
+            tsorcRevampAIs.FighterAI(NPC, 0.8f, 0.02f, 0.2f, true, enragePercent: 0.5f, enrageTopSpeed: 1.6f, canPounce: false);
 
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 520)//SHRINKING CIRCLE DUST
             {
@@ -148,16 +148,19 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (Main.rand.NextBool(3))
                 {
                     NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 110;
+                    NPC.netUpdate = true;
                 }
                 else
                 {
                     NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
+                    NPC.netUpdate = true;
                 }
             }
             if (NPC.justHit && Main.rand.NextBool(24))
             {
                 tsorcRevampAIs.QueueTeleport(NPC, 20, true, 50);
                 NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 70f;
+                NPC.netUpdate = true;
             }
 
             //Transparency. Higher alpha = more invisible

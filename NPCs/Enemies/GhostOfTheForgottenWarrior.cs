@@ -91,6 +91,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (NPC.justHit && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer <= 149 && Main.rand.NextBool(4))
             {
                 NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0f;
+                NPC.netUpdate = true;
             }
         }
 

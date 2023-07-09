@@ -115,11 +115,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 {
                     NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
                 }
+
+                NPC.netUpdate = true;
             }
             if (NPC.justHit && Main.rand.NextBool(18))
             {
-                tsorcRevampAIs.TeleportImmediately(NPC, 20, true);
+                tsorcRevampAIs.QueueTeleport(NPC, 20, true, 60);
                 NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 70f;
+                NPC.netUpdate = true;
             }
 
 
@@ -154,7 +157,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             //BlACK DUST is used to show stunlock worked, PINK is used to show unstoppable attack incoming
             //BLACK DUST
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 60)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimerCap * 0.4f)
             {
                 Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                 if (Main.rand.NextBool(2))
@@ -165,8 +168,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                 }
             }
+
             //PINK DUST
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 110)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer * 11f / 15f)
             {
                 Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                 if (Main.rand.NextBool(2))

@@ -285,7 +285,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (moveTimer == baseCooldown)
                 {
-                    tsorcRevampAIs.FighterAI(NPC, 7, 0.2f, 0.2f, true);
+                    tsorcRevampAIs.FighterAI(NPC, 7, 0.2f, 0.2f, true, canPounce: false);
                     moveTimer--; //If it is are doing the dash attack and don't have line of sight, delay the attack until it does
                 }
             }

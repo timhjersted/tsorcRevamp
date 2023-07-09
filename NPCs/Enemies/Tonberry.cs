@@ -70,15 +70,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1f, 0.07f, 0.5f, lavaJumping: true);
+            tsorcRevampAIs.FighterAI(NPC, 1f, 0.07f, 0.5f, lavaJumping: true, canDodgeroll: false, canPounce: false);
 
             //play creature sounds
             if (Main.rand.NextBool(1000))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit55 with { Volume = 0.3f, Pitch = -0.7f }, NPC.Center); // cultist
             }
-
-            Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.5f, 0.4f, 0.4f);
         }
 
         #region Gore
@@ -118,11 +116,13 @@ namespace tsorcRevamp.NPCs.Enemies
         static Texture2D spearTexture;
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.5f, 0.4f, 0.4f);
+
             if (spearTexture == null || spearTexture.IsDisposed)
             {
                 spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyThrowingKnifeSmall");
             }
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 120)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimerCap * 2f/3f)
             {
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 if (NPC.spriteDirection == -1)

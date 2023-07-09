@@ -2162,7 +2162,7 @@ namespace tsorcRevamp.NPCs
             Adeptness = Main.rand.NextFloat(0, 0.3f);
             Swiftness = Main.rand.NextFloat(0.7f, 1.3f);
             CastingSpeed = Main.rand.NextFloat(0.6f, 1.4f);
-            Strength = Main.rand.NextFloat(0.7f, 1.4f);
+            Strength = Main.rand.NextFloat(0.85f, 1.2f);
             Agility = Main.rand.NextFloat(0.2f, 0.6f);
 
             //Disabled by default for bosses
@@ -3452,7 +3452,7 @@ namespace tsorcRevamp.NPCs
             }
 
             //If it has line of sight and is moving at full speed, and the player is near its level, instantly set boredom to 0
-            if (lineOfSight && Math.Abs(Main.player[npc.target].Center.Y - npc.Center.Y) < 144)
+            if (!globalNPC.Fleeing && lineOfSight && Math.Abs(Main.player[npc.target].Center.Y - npc.Center.Y) < 144)
             {
                 globalNPC.BoredTimer = 0;
             }

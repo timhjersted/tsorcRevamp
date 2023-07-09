@@ -103,7 +103,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.04f, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 3f);
+            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.04f, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 3f, canPounce: false);
 
            
             //IF HIT BEFORE PINK DUST TELEGRAPH, RESET TIMER, BUT CHANCE TO BREAK STUN LOCK
@@ -113,18 +113,22 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (Main.rand.NextBool(3))
                 {
                     NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 110;
+                    NPC.netUpdate = true;
                 }
                 else
                 {
                     NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
+                    NPC.netUpdate = true;
                 }
             }
             if (NPC.justHit && Main.rand.NextBool(22) && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown == 0)
             {
                 tsorcRevampAIs.QueueTeleport(NPC, 20, true);
                 NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 10f;
+                NPC.netUpdate = true;
             }
 
+            //Big poison storm telegraph
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 390)
             {
                 UsefulFunctions.DustRing(NPC.Center, 480 - NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer, DustID.CursedTorch, 12, 4);

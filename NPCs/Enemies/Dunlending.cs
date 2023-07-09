@@ -64,7 +64,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.05f);
+            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.05f, canPounce: false);
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
