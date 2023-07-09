@@ -3151,7 +3151,7 @@ namespace tsorcRevamp.NPCs
             if(globalNPC.TeleportCountdown > 0)
             {
                 globalNPC.BoredTimer = 0;
-                npc.velocity = Vector2.Zero;
+                npc.velocity.X = 0;
                 globalNPC.TeleportCountdown--;
                 if (globalNPC.TeleportCountdown == 0)
                 {
@@ -3448,6 +3448,7 @@ namespace tsorcRevamp.NPCs
             }
             else
             {
+                //Always increase it if it's negative (aka bored)
                 globalNPC.BoredTimer++;
             }
 

@@ -73,7 +73,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 2f, 0.05f, enragePercent: 0.3f, enrageTopSpeed: 3.2f);
+            tsorcRevampAIs.FighterAI(NPC, 2f, 0.05f, enragePercent: 0.3f, enrageTopSpeed: 3.2f, canTeleport: true);
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 150f && NPC.justHit)
             {
                 NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 100f; // reset throw countdown when hit, was 150
