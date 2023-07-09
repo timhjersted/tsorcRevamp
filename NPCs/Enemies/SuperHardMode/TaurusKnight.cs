@@ -37,6 +37,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TaurusKnightBanner>();
+            UsefulFunctions.AddAttack(NPC, 136, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 14, SoundID.Item17);
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
@@ -101,8 +102,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        float tridentTimer = 0;
-        int projectileTimer = 0;
+        int fireBreathTimer = 0;
         int breathTimer = 0;
         public override void AI()
         {
@@ -110,8 +110,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             tsorcRevampAIs.FighterAI(NPC, 0.6f, 0.07f, 0.1f, true, enragePercent: 0.5f, enrageTopSpeed: 5);
 
             bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref tridentTimer, 136, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 14, clearLineofSight, true, SoundID.Item17);
-            if (tridentTimer == 125f)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer == 125f)
             {
                 if (Main.rand.NextBool(2))
                 {
@@ -119,11 +118,29 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
 
-            projectileTimer++;
+            fireBreathTimer++;
             if (clearLineofSight)
             {
+                //TELEGRAPH DUSTS
+                if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 117)
+                {
+                    if (Main.rand.NextBool(2))
+                    {
+                        Dust.NewDust(NPC.position, NPC.width / 2, NPC.height / 2, DustID.GoldFlame, NPC.velocity.X, NPC.velocity.Y);
+                        Dust.NewDust(NPC.position, NPC.width / 2, NPC.height / 2, DustID.GoldFlame, NPC.velocity.X, NPC.velocity.Y); //CrystalPulse
+                    }
+                }
+
+                if(fireBreathTimer == 200)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.OrangeRed));
+                    }
+                }
+
                 //Fire rain and disruptor
-                if (projectileTimer > 225)
+                if (fireBreathTimer > 225)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     if (Main.rand.NextBool())
@@ -141,7 +158,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-500, 500), NPC.Center.Y + Main.rand.Next(-500, 500), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), disrupterDamage, 0f, Main.myPlayer);
                         }
                     }
-                    projectileTimer = 0;
+                    fireBreathTimer = 0;
                 }
 
                 if (NPC.life < NPC.lifeMax / 2)
@@ -199,40 +216,26 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
 
-        static Texture2D spearTexture;
+        public static Texture2D spearTexture;
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            UsefulFunctions.EnsureLoaded(ref spearTexture, "Projectiles/Enemy/EarthTrident");
 
-            if (spearTexture == null)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 117 && Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
             {
-                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EarthTrident");
-                //spearTexture = (Texture2D)ModContent.Request<Texture2D>("Terraria/Images/Projectile_508");
-            }
+                float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
 
-            //TELEGRAPH DUSTS
-            if (tridentTimer >= 117 && Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
-            {
                 Lighting.AddLight(NPC.Center, Color.Yellow.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.NextBool(2))
-                {
-                    Dust.NewDust(NPC.position, NPC.width / 2, NPC.height / 2, DustID.GoldFlame, NPC.velocity.X, NPC.velocity.Y);
-                    Dust.NewDust(NPC.position, NPC.width / 2, NPC.height / 2, DustID.GoldFlame, NPC.velocity.X, NPC.velocity.Y); //CrystalPulse
-                }
-
-                //if (npc.ai[2] >= 150)
-                //{
 
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 if (NPC.spriteDirection == -1)
                 {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing left (8, 38 work)
+                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, new Vector2(8, 38), NPC.scale, effects, 0); // facing left (8, 38 work)
                 }
                 else
                 {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing right, first value is height, higher number is higher
+                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, new Vector2(8, 38), NPC.scale, effects, 0); // facing right, first value is height, higher number is higher
                 }
-
-
             }
         }
 

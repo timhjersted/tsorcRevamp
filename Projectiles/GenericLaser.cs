@@ -614,11 +614,6 @@ namespace tsorcRevamp.Projectiles
             Projectile.timeLeft = 2;
 
             ChargeLaser();
-            if (LaserDust != 0)
-            {
-                int pointdust = Dust.NewDust(Projectile.position, 1, 1, LaserDust, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 20, default, 1.0f);
-                Main.dust[pointdust].noGravity = true;
-            }
             if (TelegraphTime + Charge < MaxCharge) return;
 
             if (CastLight)

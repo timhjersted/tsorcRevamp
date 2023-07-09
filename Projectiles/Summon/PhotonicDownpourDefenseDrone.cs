@@ -127,7 +127,7 @@ namespace tsorcRevamp.Projectiles.Summon
 
 			if (owner.HasBuff(ModContent.BuffType<Buffs.Summon.PhotonicDownpourBuff>()))
 			{
-				Projectile.timeLeft = 60;
+				Projectile.timeLeft = 2;
 			}
 
 			return true;

@@ -33,8 +33,20 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.damage = 48;
             NPC.defense = 21;
             NPC.lifeMax = 450;
-            if (Main.hardMode) { NPC.lifeMax = 1400; NPC.defense = 60; }
-            if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 3000; NPC.defense = 75; NPC.damage = 120; NPC.value = 6600; }
+
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 1400;
+                NPC.defense = 60;
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 3000;
+                NPC.defense = 75;
+                NPC.damage = 120;
+                NPC.value = 6600;
+            }
+
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
@@ -42,6 +54,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0.15f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BlackKnightBanner>();
+            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 9, SoundID.Item17);
         }
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -61,12 +74,9 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 2f, 0.05f, enragePercent: 0.3f, enrageTopSpeed: 3.2f);
-            bool inRange = NPC.Distance(Main.player[NPC.target].Center) < 300 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.ai[2], 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 9, inRange, true, SoundID.Item17);
-
-            if (NPC.ai[2] >= 150f && NPC.justHit)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 150f && NPC.justHit)
             {
-                NPC.ai[2] = 100f; // reset throw countdown when hit, was 150
+                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 100f; // reset throw countdown when hit, was 150
             }
         }
 
@@ -77,20 +87,13 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (spearTexture == null || spearTexture.IsDisposed)
             {
-                //spearTexture = (Texture2D)ModContent.Request<Texture2D>("Projectiles/Enemy/BlackKnightsSpear");
-                spearTexture = (Texture2D)ModContent.Request<Texture2D>("Terraria/Images/Projectile_508");
+                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/BlackKnightGhostSpear");
             }
-            if (NPC.ai[2] >= 165)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTelegraphStart)
             {
-                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                if (NPC.spriteDirection == -1)
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing left (8, 38 work)
-                }
-                else
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing right, first value is height, higher number is higher
-                }
+                float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
+                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally; 
+                spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, spearTexture.Size() / 2, 1, SpriteEffects.None, 0);
             }
         }
 

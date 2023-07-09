@@ -51,6 +51,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.alpha = 100;
             NPC.value = 660000;
             despawnHandler = new NPCDespawnHandler(DustID.OrangeTorch);
+            UsefulFunctions.AddAttack(NPC, 1500, ProjectileID.CultistBossLightningOrb, lightningDamage, 10, SoundID.Item17, condition: (NPC npc) => { return npc.Distance(Main.player[npc.target].Center) > 700 && Main.rand.NextBool(200); });
         }
         int lightningDamage = 50;
 
@@ -66,15 +67,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         public override void AI()
         {
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            NPC.localAI[1]++;
-            NPC.localAI[2]++;
             tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<GhostDragonHead>(), bodyTypes, ModContent.NPCType<GhostDragonTail>(), 23, 10f, 15f, 0.13f, true, false, true, false, false);//.01 was .23, 0 was -2
 
-            Player player = Main.player[NPC.target];
-            if (NPC.Distance(player.Center) > 700)
-            {
-                tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[2], 1500, ProjectileID.CultistBossLightningOrb, lightningDamage, 10, Main.rand.NextBool(200), false, SoundID.Item17);
-            }
             //tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 660, ProjectileID.FrostWave, lightningDamage, 1, Main.rand.NextBool(200), false, SoundID.Item20);
             
             //this makes the head always stay in the same position even when it flips upside down

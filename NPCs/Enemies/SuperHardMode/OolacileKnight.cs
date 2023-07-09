@@ -46,6 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.OolacileKnightBanner>();
             NPC.lavaImmune = true;
+            UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), earthTridentDamage, 11, SoundID.Item17);
         }
 
         int dragonsBreathDamage = 39;
@@ -121,14 +122,18 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #endregion
 
         int hitCounter;
-        float tridentTimer;
         float breathTimer;
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.03f, canTeleport: true, randomSound: SoundID.Mummy, soundFrequency: 2000, enragePercent: 0.5f, enrageTopSpeed: 4);
+            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.03f, canTeleport: true, randomSound: SoundID.Mummy, soundFrequency: 2000, enragePercent: 0.5f, enrageTopSpeed: 4, canDodgeroll: false);
             tsorcRevampAIs.LeapAtPlayer(NPC, 7, 4, 1.5f, 128);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref tridentTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), earthTridentDamage, 11, Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height), true, SoundID.Item17);
+
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 110)
+            {
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
+                Main.dust[dust].noGravity = true;
+            }
 
             breathTimer++;
             if (breathTimer > 500)
@@ -241,21 +246,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EarthTrident");
             }
-            if (tridentTimer >= 110)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 110)
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
-                Main.dust[dust].noGravity = true;
-
-                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                if (NPC.spriteDirection == -1)
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing left (8, 38 work)
-                }
-                else
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing right, first value is height, higher number is higher
-                }
+                float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
+                spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, spearTexture.Size() / 2, NPC.scale, SpriteEffects.None, 0);
             }
+
+
             int spriteWidth = NPC.frame.Width; //use same number as ini Main.npcFrameCount[npc.type]
             int spriteHeight = TextureAssets.Npc[ModContent.NPCType<OolacileKnight>()].Value.Height / Main.npcFrameCount[NPC.type];
 

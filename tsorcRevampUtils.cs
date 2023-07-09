@@ -8,11 +8,13 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Chat;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.VFX;
 
@@ -440,6 +442,29 @@ namespace tsorcRevamp
             Vector2 distance = target - source;
             distance.Normalize();
             return distance * speed;
+        }
+
+        /// <summary>
+        /// Add an attack to this NPC. Requires calling SimpleProjectile in their AI for it to actually be executed
+        /// </summary>
+        /// <param name="npc">The NPC this is operating on</param>
+        ///<param name="timerCap">How high does the timer have to be for it to shoot</param>
+        ///<param name="projectileType">The ID of the projectile you want to shoot</param>
+        ///<param name="projectileDamage">Damage of the projectile. Multiplied by 2 by default, and then 2 again in expert mode</param>
+        ///<param name="projectileVelocity">Speed of the projectile</param>
+        ///<param name="shootSound">The sound to play when shooting</param>
+        ///<param name="projectileGravity">How much is the projectile's y velocity reduced each tick? Leave blank for default gravity, set to 0 for projectiles with no gravity, set it custom if your projectile has custom gravity</param>
+        ///<param name="ai0">Lets you pass a value to the projectile's ai0</param>
+        ///<param name="ai1">Lets you pass a value to the projectile's ai1</param>
+        ///<param name="overshoot">Lets you make it aim somewhere offset from the player. Useful for making it lob projectiles above their head.</param>
+        ///<param name="telegraphColor">The color of its telegraph flash. Defaults to white.</param>
+        ///<param name="stopBeforeFiring">Should this NPC stop moving before firing?</param>
+        ///<param name="needsLineOfSight">Does this NPC need line of sight to the player to shoot?</param>
+        ///<param name="weight">The weight of this attack. Lower = less likely to occur and vice versa, default is 1</param>
+        ///<param name="condition">The attack will only execute if this condition is true. Takes a lambda experession.</param>
+        public static void AddAttack(NPC npc, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0, Vector2? overshoot = null, Color? telegraphColor = null, bool stopBeforeFiring = true, bool needsLineOfSight = true, float weight = 1, Func<NPC, bool> condition = null)
+        {
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackList.Add(new tsorcRevampAIs.ProjectileData(projectileType, timerCap, projectileDamage, projectileVelocity, shootSound, projectileGravity, ai0, ai1, overshoot, telegraphColor, stopBeforeFiring, needsLineOfSight, weight, condition));
         }
 
         ///<summary> 

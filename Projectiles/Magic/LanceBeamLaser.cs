@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -60,7 +61,35 @@ namespace tsorcRevamp.Projectiles.Magic
         {
             base.AI();
 
-            if(owner == null || owner.dead)
+            if (IsAtMaxCharge)
+            {
+                Vector2 endpoint = GetOrigin() + Projectile.velocity * Distance;
+                endpoint -= new Vector2(8, 8); //Offset endpoint so dust is centered on it, covering it better
+                float distance = Vector2.Distance(endpoint, GetOrigin());
+                float velocity = -10f;
+                Vector2 speed = ((endpoint - GetOrigin()) / distance) * velocity;
+                speed.X += Main.rand.Next(-1, 1);
+                speed.Y += Main.rand.Next(-1, 1);
+                int dust;
+                for (int i = 0; i < 8; i++)
+                {
+                    dust = Dust.NewDust(endpoint, 16, 16, 127, speed.X * 1.2f + Main.rand.Next(-5, 5), speed.Y * 1.2f + Main.rand.Next(-5, 5), 20, default, 3.5f);
+                    Main.dust[dust].noGravity = true;
+                }
+                if (Main.rand.NextBool(2))
+                {
+                    dust = Dust.NewDust(endpoint, 16, 16, 130, speed.X, speed.Y, 20, default, 1.0f);
+                    Main.dust[dust].noGravity = true;
+                    Main.dust[dust].shader = GameShaders.Armor.GetSecondaryShader(107, Main.LocalPlayer);
+                }
+                if (Main.rand.NextBool(3))
+                {
+                    dust = Dust.NewDust(endpoint, 30, 30, 130, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 20, default, 1.0f);
+                    Main.dust[dust].noGravity = true;
+                }
+            }
+
+            if (owner == null || owner.dead)
             {
                 Projectile.Kill();
                 return;
@@ -93,6 +122,17 @@ namespace tsorcRevamp.Projectiles.Magic
             {
                 Projectile.timeLeft++;
                 owner.manaRegenDelay = 180;
+                Projectile.rotation = UsefulFunctions.Aim(owner.Center, Main.MouseWorld, 1).ToRotation();
+                Projectile.direction = Main.MouseWorld.X > owner.Center.X ? 1 : -1;
+                Vector2 rotDir = Projectile.rotation.ToRotationVector2();
+                if (Projectile.direction == -1)
+                {
+                    rotDir *= -1;
+                }
+                owner.itemRotation = rotDir.ToRotation();
+                owner.ChangeDir(Projectile.direction);
+                owner.itemTime = 2; // Set item time to 2 frames while we are used
+                owner.itemAnimation = 2; // Set item animation time to 2 frames while we are used
 
                 if (FiringTimeLeft > 0)
                 {
@@ -106,8 +146,7 @@ namespace tsorcRevamp.Projectiles.Magic
 
             if (owner != null && !owner.dead && owner.whoAmI == Main.myPlayer)
             {
-                Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, Main.MouseWorld, 1);
-                Projectile.Center += Projectile.velocity * 00;
+                Projectile.velocity = UsefulFunctions.Aim(owner.Center, Main.MouseWorld, 1);
             }
         }
 
@@ -115,7 +154,7 @@ namespace tsorcRevamp.Projectiles.Magic
         {
             if (owner != null && !owner.dead)
             {
-                return owner.Center;
+                return owner.Center + new Vector2(32, 0).RotatedBy(owner.itemRotation - MathHelper.PiOver4);
             }
             else
             {

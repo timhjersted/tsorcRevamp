@@ -326,7 +326,7 @@ namespace tsorcRevamp
             modPlayer.Draw(spriteBatch);
             if (tsorcRevamp.NearbySoapstone != null) {
                 SoapstoneTileEntity soapstone = tsorcRevamp.NearbySoapstone;
-                float scaleMod = (float)((ModContent.GetInstance<tsorcRevampConfig>().SoapstoneScale) / 100f) + 1;
+                float scaleMod = (float)((ModContent.GetInstance<tsorcRevampConfig>().SoapstoneScale / 100f) + 1) / Main.GameViewMatrix.Zoom.X;
 
                 if (soapstone.timer > 0 && !soapstone.hidden) {
                     float textWidth = soapstone.textWidth > 0 ? soapstone.textWidth : SoapstoneMessage.DEFAULT_WIDTH;
@@ -340,19 +340,22 @@ namespace tsorcRevamp
                         alpha = 1;
                     }
                     //Main.NewText("Alpha: " + alpha + " timer: " + soapstone.timer);
-                    Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition) - new Vector2((textWidth / 2) - 4, 128);
-                    
+                    Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition) - new Vector2((textWidth / 2) - 4, 64);
+                    Vector2 textPositionWorld = new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - new Vector2((textWidth / 2) - 4, 64);
+
                     //right padding
                     textWidth += FontAssets.ItemStack.Value.MeasureString(" ").X * scaleMod;
 
                     Main.spriteBatch.End();
-                    Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied); //allows it to have alpha
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); //allows it to have alpha
 
                     Texture2D boxTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/blackpixel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
                     int lineCount = text.Count(a => a == '\n') + 1;
                     float height = scaleMod * (FontAssets.ItemStack.Value.LineSpacing * lineCount) + 8;
                     Rectangle drect = new((int)textPosition.X - 4, (int)textPosition.Y - 4, (int)textWidth + 8, (int)height);
+                    Rectangle drectWorld = new((int)textPositionWorld.X - 4, (int)textPositionWorld.Y - 4, (int)textWidth + 8, (int)height);
+
                     Color bgColor = new(0, 0, 0, (0.5f * alpha) + 0.1f);
                     Main.spriteBatch.Draw(boxTexture, drect, bgColor);
 
@@ -362,24 +365,27 @@ namespace tsorcRevamp
                     //recycle the rect for the show button
                     textPosition.Y = drect.Y + height + 8;
                     drect.Y = drect.Y + (int)height + 4;
+                    drectWorld.Y = drectWorld.Y + (int)height + 4;
 
                     //the leading space is not a typo. WrapString prepends a space and is always called on normal text, but not buttons
                     string hideButtonText = " Click to Hide ";
                     Vector2 size = FontAssets.ItemStack.Value.MeasureString(hideButtonText) * scaleMod;
 
-                    drect.Width = (int)size.X;
+                    drect.Width = (int)size.X + 12;
                     drect.Height = (int)size.Y;
 
+                    drectWorld.Width = (int)size.X + 12;
+                    drectWorld.Height = (int)size.Y;
 
                     Main.spriteBatch.Draw(boxTexture, drect, bgColor);
 
                     
                     //the leading space is not a typo. WrapString prepends a space and is always called on normal text, but not buttons
                     DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, LangUtils.GetTextValue("UI.ClickToHide"), textPosition, textColor, 0, Vector2.Zero, scaleMod, SpriteEffects.None, 0);
-                    Point scaledMouseScreen = (Main.MouseScreen * Main.UIScale).ToPoint();
-                    Main.spriteBatch.End();
-                    Main.spriteBatch.Begin();
-                    if (drect.Contains(scaledMouseScreen)) {
+
+                    UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+
+                    if (drectWorld.Contains(tsorcRevampPlayer.RealMouseWorld.ToPoint())) {
                         Main.LocalPlayer.mouseInterface = true;
                         if (Main.mouseLeft && Main.mouseLeftRelease) {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
@@ -389,25 +395,35 @@ namespace tsorcRevamp
                     }
                 }
                 else {
-                    if (!soapstone.nearPlayer) return;
+                    if (!soapstone.nearPlayer)
+                    {
+                        return;
+                    }
 
                     string showButtonText = LangUtils.GetTextValue("UI.ClickToShow");
                     Vector2 textSize = FontAssets.ItemStack.Value.MeasureString(showButtonText) * scaleMod;
-                    Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition) - new Vector2((textSize.X / 2) - 4, 64);
+                    Vector2 textPosition = (new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - Main.screenPosition - new Vector2((textSize.X / 2) - 16, 20));
+                    Vector2 textPositionWorld = new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - new Vector2((textSize.X / 2) - 16, 20);
 
                     Main.spriteBatch.End();
-                    Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); //allows it to have alpha
 
                     Texture2D boxTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/blackpixel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
                     Rectangle drect = new((int)textPosition.X - 4, (int)textPosition.Y - 4, (int)textSize.X, (int)textSize.Y);
+                    Rectangle drectWorld = new((int)textPositionWorld.X - 4, (int)textPositionWorld.Y - 4, (int)textSize.X, (int)textSize.Y);
+                    //Main.ViewPosition
+                    Matrix matrix = Matrix.Invert(Main.GameViewMatrix.ZoomMatrix);
+                    Vector2 transformedPosition = Vector2.Transform(Main.screenPosition, matrix);
+                    Vector2 transformedMouse = Vector2.Transform(Main.MouseScreen, matrix);
+
                     Main.spriteBatch.Draw(boxTexture, drect, new(0, 0, 0, 113));
 
                     DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, showButtonText, textPosition, new(255, 255, 255, 170), 0, Vector2.Zero, scaleMod, SpriteEffects.None, 0);
-                    Main.spriteBatch.End();
-                    Main.spriteBatch.Begin();
-                    Point scaledMouseScreen = (Main.MouseScreen * Main.UIScale).ToPoint();
-                    if (drect.Contains(scaledMouseScreen)) {
+
+                    UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+
+                    if (drectWorld.Contains(tsorcRevampPlayer.RealMouseWorld.ToPoint())) {
                         Main.LocalPlayer.mouseInterface = true;
                         if (Main.mouseLeft && Main.mouseLeftRelease) {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);

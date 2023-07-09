@@ -7173,6 +7173,11 @@ Mods: {
 				DisplayName: Ancestor Spirit Mask
 				Tooltip: ""
 			}
+
+			LanceScepter: {
+				DisplayName: Lance Scepter
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {

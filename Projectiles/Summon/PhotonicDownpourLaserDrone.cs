@@ -102,7 +102,6 @@ namespace tsorcRevamp.Projectiles.Summon
 			GeneralBehavior(owner, out Vector2 vectorToIdlePosition, out float distanceToIdlePosition);
 			SearchForTargets(owner, out bool foundTarget, out float distanceFromTarget);
 			Movement(foundTarget, distanceFromTarget, distanceToIdlePosition, vectorToIdlePosition);
-			Visuals();
 			
 		}
         public override void SendExtraAI(BinaryWriter writer)
@@ -276,8 +275,9 @@ namespace tsorcRevamp.Projectiles.Summon
 				}
 				else
 				{
-					UsefulFunctions.SmoothHoming(Projectile, targetCenter + targetOffset, 2f, 40);
-					if (Projectile.Distance(targetCenter + targetOffset) < 80)
+					UsefulFunctions.SmoothHoming(Projectile, targetCenter + targetOffset, 2f, 40, bufferStrength: 0.2f);
+					Projectile.velocity = Vector2.Lerp(Projectile.velocity, target.velocity, 0.05f);
+					if (Projectile.Distance(targetCenter + targetOffset) < 120)
 					{
 						firingCountdown = 30;
 					}
@@ -316,12 +316,9 @@ namespace tsorcRevamp.Projectiles.Summon
 					Projectile.velocity.X = -0.15f;
 					Projectile.velocity.Y = -0.05f;
 				}
-			}
-		}
 
-		private void Visuals()
-		{
-			Projectile.rotation = UsefulFunctions.Aim(Projectile.Center, targetCenter, 1).ToRotation() + MathHelper.PiOver2;
+				Projectile.rotation = UsefulFunctions.Aim(Projectile.Center, Main.player[Projectile.owner].Center, 1).ToRotation() - MathHelper.PiOver2;
+			}
 		}
 
 		public static Texture2D glowmask;

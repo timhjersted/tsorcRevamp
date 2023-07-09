@@ -1111,8 +1111,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
 
-
-
                 //250,000 and less
                 //ANCIENT DEMON PHASE
                 if (NPC.life <= NPC.lifeMax / 2)
@@ -1129,8 +1127,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
 
                     bool lineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-                    tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 179, ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.rand.NextBool(180), false, SoundID.Item17);
-                    tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 179, ProjectileID.CultistBossFireBall, cultistFireDamage, 1, Main.rand.NextBool(40), false, SoundID.NPCHit34);
+                    if (NPC.localAI[1] >= 179)
+                    {
+                        if (Main.rand.NextBool(180))
+                        {
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, player.Center, 0.1f), ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.myPlayer);
+                            }
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17);
+                            NPC.localAI[1] = 0;
+                        }
+                        if (Main.rand.NextBool(40))
+                        {
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, player.Center, 0.1f), ProjectileID.CultistBossFireBall, cultistFireDamage, 0.1f, Main.myPlayer);
+                            } 
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit34);
+                            NPC.localAI[1] = 0;
+                        }
+                    }
 
                     //CHANCE TO JUMP BEFORE ATTACK  
                     if (NPC.localAI[3] == 140 && NPC.velocity.Y == 0f && Main.rand.NextBool(30) && NPC.life >= NPC.lifeMax / 100 * 15 && NPC.life <= NPC.lifeMax / 2)

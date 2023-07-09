@@ -270,11 +270,33 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.localAI[1]++;
             bool lineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
             tsorcRevampAIs.FighterAI(NPC, 1, 0.1f, canTeleport: false, lavaJumping: true);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 179, ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.rand.NextBool(200), false, SoundID.Item17);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 179, ProjectileID.CultistBossFireBall, cultistMagicDamage, 1, Main.rand.NextBool(20), false, SoundID.NPCHit34);
+            //tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 179, ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.rand.NextBool(200), false, SoundID.Item17);
+            //tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 179, ProjectileID.CultistBossFireBall, cultistMagicDamage, 1, Main.rand.NextBool(20), false, SoundID.NPCHit34);
             //tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], 160, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 8, Main.rand.NextBool(2), false, 2, 34, 0);
             //tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatFireballBall>(), greatFireballDamage, 8, lineOfSight && Main.rand.NextBool(200), false, 2, 34, 0);
             //tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], 130, ModContent.ProjectileType<Projectiles.Enemy.EnemyGreatAttack>(), greatAttackDamage, 8, lineOfSight && Main.rand.NextBool(140), false, 2, 34);
+
+            if (NPC.localAI[1] >= 179)
+            {
+                if (Main.rand.NextBool(200))
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 0.1f), ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.myPlayer);
+                    }
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17);
+                    NPC.localAI[1] = 0;
+                }
+                if (Main.rand.NextBool(20))
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 0.1f), ProjectileID.CultistBossFireBall, cultistFireDamage, 0.1f, Main.myPlayer);
+                    }
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit34);
+                    NPC.localAI[1] = 0;
+                }
+            }
 
             //EARLY TELEGRAPH
             if (NPC.localAI[1] >= 60)

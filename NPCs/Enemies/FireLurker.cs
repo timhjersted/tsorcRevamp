@@ -44,6 +44,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.FireLurkerBanner>();
+            UsefulFunctions.AddAttack(NPC, 160, ProjectileID.LostSoulHostile, lostSoulDamage, 6, SoundID.NPCDeath9, 0);
 
             if (Main.hardMode)
             {
@@ -102,23 +103,9 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        float lostSoulTimer = 0;
         public override void AI()
         {
-
             tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.07f, canTeleport: true, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.36f, enrageTopSpeed: 3f, lavaJumping: true); //sound type was 26
-            bool lineOfSight = Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref lostSoulTimer, 160, ProjectileID.LostSoulHostile, lostSoulDamage, 6, lineOfSight, true, SoundID.NPCDeath9, 0); //ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>()
-
-            if (lostSoulTimer >= 130)
-            {
-                Lighting.AddLight(NPC.Center, Color.Green.ToVector3());
-                if (Main.rand.NextBool(3))
-                {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CursedTorch, NPC.velocity.X, NPC.velocity.Y);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.IchorTorch, NPC.velocity.X, NPC.velocity.Y);
-                }
-            }
         }
 
         #region Find Frame

@@ -29,8 +29,10 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 2700;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.NecromancerBanner>();
+            UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, SoundID.Item17);
+            UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0, SoundID.Item17);
         }
-        float strikeTimer;
+
         float skeletonTimer;
         float skeletonsSpawned;
         //Spawns in the Underground and Cavern before 3.5/10ths and after 7.5/10ths (Width). Does not Spawn in the Jungle, Meteor, or if there are Town NPCs.
@@ -75,20 +77,23 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.05f, canTeleport: true, lavaJumping: true);
 
-            strikeTimer++;
             skeletonTimer++;
             bool lineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref strikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, lineOfSight && Main.rand.NextBool(), false, SoundID.Item17, 0);
-            if (tsorcRevampAIs.SimpleProjectile(NPC, ref strikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0, !lineOfSight, false, SoundID.Item17, 0))
+
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackSucceeded == 1)
             {
                 NPC.life += 10;
                 NPC.HealEffect(10);
-                if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
+                if (NPC.life > NPC.lifeMax)
+                {
+                    NPC.life = NPC.lifeMax;
+                }
+                NPC.netUpdate = true;
             }
 
             if (NPC.justHit)
             {
-                strikeTimer = 0;
+                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
             }
 
             if ((skeletonsSpawned < 11) && skeletonTimer > 600 && lineOfSight)

@@ -10,11 +10,10 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
-    public class LanceBeam : ModItem
+    public class LanceScepter : ModItem
     {
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Channel a storm of razor-sharp glowing shards which shred enemy defense");
         }
 
         public override void SetDefaults()
@@ -57,10 +56,12 @@ namespace tsorcRevamp.Items.Weapons.Magic
             }
         }
 
-        public override void HoldItem(Player player)
-        {           
 
+        public override Vector2? HoldoutOffset()
+        {
+            return Vector2.Zero;
         }
+
 
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {

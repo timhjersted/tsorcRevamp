@@ -746,52 +746,6 @@ namespace tsorcRevamp
             string jsonPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcSoapstones.json";
             tsorcRevamp mod = ModContent.GetInstance<tsorcRevamp>();
 
-            if (!(File.Exists(jsonPath)))
-            {
-                mod.Logger.Info("Attempting to write soapstone JSON");
-                for (int x = 0; x < Main.maxTilesX - 2; x++)
-                {
-                    for (int y = 0; y < Main.maxTilesY - 2; y++)
-                    {
-                        Tile worldTile = Framing.GetTileSafely(x, y);
-                        if (worldTile.HasTile && worldTile.TileType == TileID.Signs)
-                        {
-                            string h = Main.sign[Sign.ReadSign(x, y, false)].text;
-                            string result = Regex.Replace(h, @"\r\n?|\n", " --NEWLINE ");
-
-                            SignJSONSerializable signJson = new();
-                            signJson.text = result;
-                            signJson.tileX = x;
-                            signJson.tileY = y;
-                            signJson.textWidth = SoapstoneMessage.DEFAULT_WIDTH;
-                            signJson.style = SoapstoneMessage.DEFAULT_STYLE;
-
-                            JsonSerializerOptions opt = new JsonSerializerOptions { WriteIndented = true };
-                            string rawJson = JsonSerializer.Serialize(signJson, opt);
-                            List<string> asList = new() { rawJson };
-                            File.AppendAllLines(jsonPath, asList);
-                            for (int q = x; q < x + 2; q++)
-                            {
-                                for (int w = y; w < y + 2; w++)
-                                {
-                                    WorldGen.KillTile(q, w);
-                                }
-                            }
-                        }
-                    }
-                }
-                for (int i = 0; i < 400; i++)
-                {
-                    if (Main.item[i].type == ItemID.Sign && Main.item[i].active)
-                    {
-                        Main.item[i].active = false; //delete ground items
-                    }
-                }
-            }
-            else
-            {
-                mod.Logger.Info("Soapstone JSON present. Skipping write.");
-            }
             bool skipRead = false;
 
             foreach (KeyValuePair<int, TileEntity> entity in TileEntity.ByID)
@@ -855,6 +809,52 @@ namespace tsorcRevamp
             else
             {
                 mod.Logger.Info("Soapstones present. Skipping JSON read.");
+            }
+        }
+
+        public static void ReadSoapstonesIntoJson()
+        {
+            char separator = Path.DirectorySeparatorChar;
+            string jsonPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcSoapstones.json";
+            tsorcRevamp mod = ModContent.GetInstance<tsorcRevamp>();
+            mod.Logger.Info("Attempting to write soapstone JSON");
+            for (int x = 0; x < Main.maxTilesX - 2; x++)
+            {
+                for (int y = 0; y < Main.maxTilesY - 2; y++)
+                {
+                    Tile worldTile = Framing.GetTileSafely(x, y);
+                    if (worldTile.HasTile && worldTile.TileType == TileID.Signs)
+                    {
+                        string h = Main.sign[Sign.ReadSign(x, y, false)].text;
+                        string result = Regex.Replace(h, @"\r\n?|\n", " --NEWLINE ");
+
+                        SignJSONSerializable signJson = new();
+                        signJson.text = result;
+                        signJson.tileX = x;
+                        signJson.tileY = y;
+                        signJson.textWidth = SoapstoneMessage.DEFAULT_WIDTH;
+                        signJson.style = SoapstoneMessage.DEFAULT_STYLE;
+
+                        JsonSerializerOptions opt = new JsonSerializerOptions { WriteIndented = true };
+                        string rawJson = JsonSerializer.Serialize(signJson, opt);
+                        List<string> asList = new() { rawJson };
+                        File.AppendAllLines(jsonPath, asList);
+                        for (int q = x; q < x + 2; q++)
+                        {
+                            for (int w = y; w < y + 2; w++)
+                            {
+                                WorldGen.KillTile(q, w);
+                            }
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < 400; i++)
+            {
+                if (Main.item[i].type == ItemID.Sign && Main.item[i].active)
+                {
+                    Main.item[i].active = false; //delete ground items
+                }
             }
         }
 

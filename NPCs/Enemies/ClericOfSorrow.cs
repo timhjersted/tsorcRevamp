@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
@@ -11,9 +12,9 @@ namespace tsorcRevamp.NPCs.Enemies
     class ClericOfSorrow : ModNPC
     {
         //int meteorDamage = 9;
-        int iceBallDamage = 20;
-        int iceStormDamage = 18;
-        int lightningDamage = 18;
+        public int iceBallDamage = 20;
+        public int iceStormDamage = 18;
+        public int lightningDamage = 18;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 16;
@@ -33,6 +34,9 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 1800;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.ClericOfSorrowBanner>();
+            UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 9, SoundID.Item17, 0.1f, 120, 1, telegraphColor: Color.Blue);
+            UsefulFunctions.AddAttack(NPC, 240, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>(), iceStormDamage, 8, SoundID.Item17);
+            UsefulFunctions.AddAttack(NPC, 160, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), iceBallDamage, 12, SoundID.Item17, 0, 1, 0, new Vector2(0, -240), Color.Cyan);
         }
 
         //Spawns in Hardmode Surface and Underground, 6.5/10th of the world to the right edge (Width). Does not spawn in Dungeons, Jungle, or Meteor. Only spawns with Town NPCs during Blood Moons.
@@ -76,26 +80,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             tsorcRevampAIs.FighterAI(NPC, 1.2f, 0.07f, 0.2f, true, enragePercent: 0.2f, enrageTopSpeed: 3);
             tsorcRevampAIs.LeapAtPlayer(NPC, 4, 3, 1, 100);
-
-            NPC.localAI[1]++;
-            bool validTarget = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 160, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 9, validTarget, false, SoundID.Item17, 0.1f, 120, 1);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 160, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>(), iceStormDamage, 8, validTarget, false, SoundID.Item17);
-
-
-            if (NPC.localAI[1] >= 160 && validTarget)
-            {
-                NPC.localAI[1] = 0;
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 overshoot = new Vector2(0, -240);
-                    Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center + overshoot, 12, 0.035f);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projectileVector.X, projectileVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), iceBallDamage, 0f, Main.myPlayer, 1, NPC.target);
-                }
-
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-
-            }
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackList[2].ai1 = NPC.target; //Set the lightning ball it shoots to have an ai1 of the NPCs target, so it explodes when near it
         }
 
         #region Gore

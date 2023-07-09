@@ -47,6 +47,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.width = 18;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AbysswalkerBanner>();
+            UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), poisonBallDamage, 9, SoundID.Item20, telegraphColor: Color.GreenYellow);
+            UsefulFunctions.AddAttack(NPC, 400, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormBall>(), stormBallDamage, 0, SoundID.Item100, weight: 0.3f, telegraphColor: Color.Blue);
+            UsefulFunctions.AddAttack(NPC, 300, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 35, 0, SoundID.Item100, weight: 0.2f, telegraphColor: Color.Purple);
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
@@ -98,43 +101,23 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        float poisonStrikeTimer = 0;
-        float poisonStormTimer = 0;
-        int poisonStormTimerCap = 400;
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 2f, 0.05f, 0.2f, true, enragePercent: 0.3f, enrageTopSpeed: 3);
-
-            bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-
-            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), poisonBallDamage, 9, clearLineofSight, true, SoundID.Item20);
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            tsorcRevampAIs.FighterAI(NPC, 2f, 0.05f, 0.2f, true, enragePercent: 0.3f, enrageTopSpeed: 3, canPounce: false);
 
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<EarthFiendLich>())))
             {
-                poisonStormTimerCap = 250;
+                globalNPC.AttackList[1].timerCap = 250;
             }
 
-            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, poisonStormTimerCap, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormBall>(), stormBallDamage, 0, clearLineofSight, true, SoundID.Item100);
-
-            if (poisonStrikeTimer >= 60)
+            //Start the dust ring 90 frames before executing the poison storm attack
+            if (globalNPC.AttackIndex == 1 && globalNPC.ProjectileTimer >= globalNPC.ProjectileTimerCap - 90)
             {
-                Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Ichor, 0, 0).noGravity = true;
-            }
-            if (poisonStormTimer >= poisonStormTimerCap - 90)
-            {
-                UsefulFunctions.DustRing(NPC.Center, (poisonStormTimerCap + 5) - poisonStormTimer, DustID.BlueCrystalShard, 12, 4);//the edge of this attack seems very hard to read; tried to make it more defined but no luck
+                UsefulFunctions.DustRing(NPC.Center, (globalNPC.AttackList[1].timerCap + 5) - globalNPC.ProjectileTimer, DustID.BlueCrystalShard, 12, 4);//the edge of this attack seems very hard to read; tried to make it more defined but no luck
                 Lighting.AddLight(NPC.Center, Color.Orange.ToVector3() * 5);
-                if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
-                {
-                    NPC.velocity = Vector2.Zero;
-                }
             }
 
-            //DEMON SPIRIT ATTACK
-            if (Main.rand.NextBool(375))
-            {
-                int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-600, 600), NPC.Center.Y + Main.rand.Next(-600, 600), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(), 35, 0f, Main.myPlayer);
-            }
 
             //Transparency. Higher alpha = more invisible
             if (NPC.justHit)

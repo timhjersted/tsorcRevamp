@@ -74,7 +74,7 @@ namespace tsorcRevamp.Tiles {
                 }
 
                 bool selectedSoapstone = false;
-                bool mouseInRange = mouseDistance < 150 && mouseLineOfSight;
+                bool mouseInRange = mouseDistance < 250 && mouseLineOfSight;
                 bool playerInRange = distance <= 128;
 
                 //Main.NewText("soap " + tsorcRevamp.NearbySoapstoneMouse);
@@ -82,7 +82,7 @@ namespace tsorcRevamp.Tiles {
                 if (tsorcRevamp.NearbySoapstoneMouse)
                 {
                     //If the mouse is closer to this soapstone than to the previous one, set this as the current soapstone
-                    if (mouseDistance < tsorcRevamp.NearbySoapstoneMouseDistance && mouseInRange && distance < 400)
+                    if (mouseDistance < tsorcRevamp.NearbySoapstoneMouseDistance && mouseInRange && distance < 600)
                     {
                         tsorcRevamp.NearbySoapstone = entity;
                         if (!entity.hidden) {
@@ -96,7 +96,7 @@ namespace tsorcRevamp.Tiles {
                         entity.nearPlayer = true;
                     }
                 }
-                else if (playerInRange || (mouseInRange && distance < 400))
+                else if (playerInRange || (mouseInRange && distance < 600))
                 {
                     tsorcRevamp.NearbySoapstone = entity;
                     if (!entity.hidden) {

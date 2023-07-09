@@ -960,7 +960,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 texture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
-            //if (crystalTexture == null || crystalTexture.IsDisposed)
+            if (crystalTexture == null || crystalTexture.IsDisposed)
             {
                 crystalTexture = (Texture2D)ModContent.Request<Texture2D>(NPC.ModNPC.Texture + "_Crystal", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
@@ -975,7 +975,12 @@ namespace tsorcRevamp.NPCs.Bosses
             Color lightingColor = Color.Lerp(Color.White, crystalColor, 0.5f);
             lightingColor = Color.Lerp(drawColor, lightingColor, 0.6f);
             spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle, lightingColor, NPC.rotation, origin, 1, SpriteEffects.None, 0f);
-            spriteBatch.Draw(crystalTexture, NPC.Center - Main.screenPosition, sourceRectangle, crystalColor, NPC.rotation, origin, 1, SpriteEffects.None, 0f);
+            
+            if (PhaseTwo)
+            {
+                spriteBatch.Draw(crystalTexture, NPC.Center - Main.screenPosition, sourceRectangle, crystalColor, NPC.rotation, origin, 1, SpriteEffects.None, 0f);
+            }
+
             DrawTransformationEffect();
             return false;
         }

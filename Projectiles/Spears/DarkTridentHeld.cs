@@ -52,6 +52,7 @@ namespace tsorcRevamp.Projectiles.Spears
             }
         }
 
+        bool playedSound = false;
         protected override void UpdateAim()
         {
             Projectile.timeLeft = 2;
@@ -59,12 +60,31 @@ namespace tsorcRevamp.Projectiles.Spears
             
             if (player.altFunctionUse != 2)
             {
+                if (charge >= 1 && !playedSound)
+                {
+                    UsefulFunctions.DustRing(player.Center, 70, DustID.Torch, 60, 18);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f }, player.Center);
+                    playedSound = true;
+                }
+
                 Vector2 playerHandPos = player.RotatedRelativePoint(player.MountedCenter);
                 playerHandPos.Y -= 15;
-                Projectile.Center = playerHandPos;
-                Projectile.rotation = Projectile.velocity.ToRotation() + (float)Math.PI / 2f;
+                Projectile.Center = player.Center + new Vector2(0, -15);
+                if (player.whoAmI == Main.myPlayer)
+                {
+                    Projectile.velocity = UsefulFunctions.Aim(player.Center, Main.MouseWorld, 1);
+                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                }
+                if (Projectile.velocity.X < 0)
+                {
+                    Projectile.direction = -1;
+                }
+                else
+                {
+                    Projectile.direction = 1;
+                }
                 player.heldProj = Projectile.whoAmI;
-                player.itemRotation = (Projectile.velocity * Projectile.direction).ToRotation();
+                player.itemRotation = Projectile.rotation;
                 player.itemAnimation = player.itemTime = 2;
 
                 player.ChangeDir(Projectile.direction);
@@ -81,7 +101,7 @@ namespace tsorcRevamp.Projectiles.Spears
                     Projectile.velocity = aimVector * holdoutOffset;
                 }
 
-                Projectile.Center -= new Vector2(5 + (10 * UsefulFunctions.EasingCurve(charge)), 0).RotatedBy(Projectile.velocity.ToRotation());
+                Projectile.Center -= new Vector2(5 + (10 * UsefulFunctions.EasingCurve(charge)), 0).RotatedBy(Projectile.rotation - MathHelper.PiOver2);
             }
         }
 
@@ -156,8 +176,8 @@ namespace tsorcRevamp.Projectiles.Spears
             Main.EntitySpriteDraw(texture,
                 Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
                 cropped, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
             DrawPoints();
         }
     }

@@ -47,6 +47,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.damage = 20;
                 NPC.lifeMax = 750;
             }
+            UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBall>(), energyBallDamage, 8, SoundID.Item28 with { Volume = 0.2f, Pitch = -0.8f });
+            UsefulFunctions.AddAttack(NPC, 250, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBeamBall>(), greatEnergyBeamDamage, 8, weight: 0.3f);
+            UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 1, 0, SoundID.Item17, needsLineOfSight: false, weight: 0.2f);
         }
         //Spawn in the Cavern, mostly before 3/10th and after 7/10th (Width). Does not spawn in the Dungeon, Jungle, Meteor, or if there are Town NPCs
         #region Spawn
@@ -105,95 +108,36 @@ namespace tsorcRevamp.NPCs.Enemies
             return 0;
         }
         #endregion
-        float boredTeleport = 0;
-        float attackTimer = 0;
-        float bigAttackTimer = 0;
+
         public override void AI()
         {
-            bigAttackTimer++;
             tsorcRevampAIs.FighterAI(NPC, 1.8f, 0.03f, .2f, canTeleport: true, lavaJumping: true);
 
-            bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
 
-
-            //If the enemy doesn't have line of sight for a good while, teleport near the player 
-            if (!clearLineofSight)
-            {
-                boredTeleport++;
-
-                if (boredTeleport == 1600)
-                {
-                    tsorcRevampAIs.TeleportImmediately(NPC, 40, false);
-                    boredTeleport = 0;
-                }
-
-            }
-            if (clearLineofSight)
-            {
-                boredTeleport = 0;
-            }
-
-
-            //Attacks
-            bool clearShot = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height) && Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) <= 1000;
-
-            if (tsorcRevampAIs.SimpleProjectile(NPC, ref attackTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBall>(), energyBallDamage, 8, clearShot && Main.rand.NextBool()))
-            {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item28 with { Volume = 0.2f, Pitch = -0.8f }, NPC.Center);
-            }
-            if (tsorcRevampAIs.SimpleProjectile(NPC, ref bigAttackTimer, 250, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBeamBall>(), greatEnergyBeamDamage, 8, clearShot, false))
-            { //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 75, 0.2f, 0.2f);
-
-            }
-
-            if (tsorcRevampAIs.SimpleProjectile(NPC, ref attackTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 1, 0, !clearShot, false, shootSound: SoundID.Item17))
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackSucceeded == 2)
             {
                 NPC.life += 10;
                 NPC.HealEffect(10);
                 if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
-            }
-            //TELEGRAPHS
-            //BlACK DUST is used to show stunlock worked, PINK is used to show unstoppable attack incoming
-            //BLACK DUST
-            if (attackTimer >= 60)
-            {
-
-                if (Main.rand.NextBool(2))
-                {
-                    int black = Dust.NewDust(NPC.position, NPC.width, NPC.height, 54, (NPC.velocity.X * 0.2f), NPC.velocity.Y * 0.2f, 100, default, 1f); //54 is black smoke
-                    Main.dust[black].noGravity = true;
-
-                }
-            }
-            //PINK DUST
-            if (attackTimer >= 110)
-            {
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.NextBool(2))
-                {
-                    int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
-
-                    Main.dust[pink].noGravity = true;
-                }
+                NPC.netUpdate = true;
             }
 
             //IF HIT BEFORE PINK DUST TELEGRAPH, RESET TIMER, BUT CHANCE TO BREAK STUN LOCK
             //(WORKS WITH 2 TELEGRAPH DUSTS, AT 60 AND 110)
-            if (NPC.justHit && attackTimer <= 109)
+            if (NPC.justHit && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer <= 109)
             {
                 if (Main.rand.NextBool(3))
                 {
-                    attackTimer = 110;
+                    NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 110;
                 }
                 else
                 {
-                    attackTimer = 0;
+                    NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
                 }
             }
             if (NPC.justHit && Main.rand.NextBool(8))
             {
-                tsorcRevampAIs.TeleportImmediately(NPC, 20, true);
-                attackTimer = 70f;
+                tsorcRevampAIs.QueueTeleport(NPC, 20, true, 60);
                 NPC.netUpdate = true;
             }
 
@@ -226,10 +170,11 @@ namespace tsorcRevamp.NPCs.Enemies
                     Main.npc[bat].damage /= 2;
 
                 }
+                Main.npc[bat].netUpdate = true;
             }
 
             //BIG ATTACK DUST CIRCLE
-            if (bigAttackTimer > 180)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer > 180)
             {
                 for (int j = 0; j < 10; j++)
                 {

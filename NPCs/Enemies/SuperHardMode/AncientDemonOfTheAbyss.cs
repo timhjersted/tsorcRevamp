@@ -199,11 +199,29 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.localAI[1]++;
             //FIGHTER AI
             bool lineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-            tsorcRevampAIs.FighterAI(NPC, 1, 0.1f, canTeleport: true, lavaJumping: true, enragePercent: 0.2f, enrageTopSpeed: 2);
-           
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 179, ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.rand.NextBool(150), false, SoundID.Item17);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 179, ProjectileID.CultistBossFireBall, cultistMagicDamage, 1, Main.rand.NextBool(20), false, SoundID.NPCHit34);
+            tsorcRevampAIs.FighterAI(NPC, 1, 0.1f, canTeleport: true, lavaJumping: true, enragePercent: 0.2f, enrageTopSpeed: 2, canDodgeroll: false);
 
+            if (NPC.localAI[1] >= 179)
+            {
+                if (Main.rand.NextBool(150))
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, player.Center, 0.1f), ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.myPlayer);
+                    }
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17);
+                    NPC.localAI[1] = 0;
+                }
+                if (Main.rand.NextBool(20))
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, player.Center, 0.1f), ProjectileID.CultistBossFireBall, cultistFireDamage, 0.1f, Main.myPlayer);
+                    }
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit34);
+                    NPC.localAI[1] = 0;
+                }
+            }
 
             //EARLY TELEGRAPH
             if (NPC.localAI[1] >= 60)

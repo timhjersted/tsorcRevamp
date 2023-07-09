@@ -16,7 +16,6 @@ namespace tsorcRevamp.Projectiles.Spears
         {
             Projectile.width = 75;
             Projectile.height = 45;
-            Projectile.aiStyle = 19;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 3600;
             Projectile.friendly = true; //can hit enemies
@@ -40,12 +39,10 @@ namespace tsorcRevamp.Projectiles.Spears
         {
             //DrawOffsetX = -35;
             Player pOwner = Main.player[Projectile.owner];
-            Vector2 ownercenter = pOwner.RotatedRelativePoint(pOwner.MountedCenter, true);
+            Projectile.Center = pOwner.RotatedRelativePoint(pOwner.MountedCenter, true);
             Projectile.direction = pOwner.direction;
             pOwner.heldProj = Projectile.whoAmI;
             pOwner.itemTime = pOwner.itemAnimation;
-            Projectile.position.X = ownercenter.X - (float)(Projectile.width / 2);
-            Projectile.position.Y = ownercenter.Y - (float)(Projectile.height / 2);
 
             if (!pOwner.frozen)
             {
@@ -71,7 +68,8 @@ namespace tsorcRevamp.Projectiles.Spears
             }
 
             Projectile.Center += Projectile.velocity * moveFactor;
-            Projectile.rotation -= MathHelper.ToRadians(45f);
+
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
         public static Texture2D texture;

@@ -33,6 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             AnimationType = NPCID.Skeleton;
             Main.npcFrameCount[NPC.type] = 15;
+            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.ArcherBolt>(), 9, 8, SoundID.Item63, telegraphColor: Color.GreenYellow);
         }
 
         //these mfs drop Every Potion too 
@@ -93,30 +94,11 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 1.2f, 0.05f);
-
-            bool readyToFire = false;
-            if (NPC.Distance(Main.player[NPC.target].Center) < 250 && Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
-            {
-                readyToFire = true;
-            }
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.ai[1], 180, ModContent.ProjectileType<Projectiles.Enemy.ArcherBolt>(), 9, 8, readyToFire, true, SoundID.Item63); //blowpipe
-                                                                                                                                                                 //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 20, 0.2f, 0.3f); //fire
-
-            //TELEGRAPH DUSTS
-            if (NPC.ai[1] >= 150 && NPC.ai[1] <= 170)
-            {
-                Lighting.AddLight(NPC.Center, Color.Purple.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.NextBool(2))
-                {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, NPC.velocity.X, NPC.velocity.Y);
-                    //Dust.NewDust(npc.position, npc.width, npc.height, DustID.GemEmerald, npc.velocity.X, npc.velocity.Y);
-                }
-            }
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (NPC.ai[1] >= 140)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTelegraphStart)
             {
                 Texture2D blowpipeTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/DworcVenomsniper_Telegraph");
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

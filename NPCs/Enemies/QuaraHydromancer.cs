@@ -34,8 +34,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode) { NPC.lifeMax = 500; NPC.defense = 22; NPC.value = 1500; bubbleDamage = 45; }
             if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 1500; NPC.defense = 50; NPC.value = 3600; bubbleDamage = 55; }
+
+            UsefulFunctions.AddAttack(NPC, 80, ModContent.ProjectileType<Projectiles.Enemy.Bubble>(), bubbleDamage, 6, SoundID.Item87, 0);
+            UsefulFunctions.AddAttack(NPC, 300, ModContent.ProjectileType<Projectiles.Enemy.InkGeyser>(), bubbleDamage, 0, condition: (NPC npc) => { return tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WaterFiendKraken>())) && Main.netMode != NetmodeID.MultiplayerClient; });
         }
-        float bubbleTimer;
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -59,31 +61,9 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        int inkJetCooldown = 0;
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 2, 0.05f, canTeleport: false, lavaJumping: true);
-            bool lineOfSight = Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref bubbleTimer, 80, ModContent.ProjectileType<Projectiles.Enemy.Bubble>(), bubbleDamage, 6, lineOfSight, true, SoundID.Item87, 0); //2, 87 is bubble 2 sound
-
-            if (Main.GameUpdateCount % 600 == 0 && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WaterFiendKraken>())) & Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.InkGeyser>(), bubbleDamage, 0, Main.myPlayer);
-                inkJetCooldown = 120;
-            }
-
-            if (inkJetCooldown > 0)
-            {
-                NPC.velocity = Vector2.Zero;
-                inkJetCooldown--;
-            }
-
-
-            //projectile sound needs volume and pitch variables (the last two below)
-            //if (bubbleTimer >= 80)
-            //{
-            //	Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 87, 0.2f, -0.1f); // water2 sound
-            //}
+            tsorcRevampAIs.FighterAI(NPC, 2, 0.05f, canTeleport: false, lavaJumping: true, canDodgeroll: false, canPounce: false);
 
 
             //PLAY CREATURE SOUND
@@ -94,40 +74,23 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
             //JUSTHIT CODE
-
-            Player player2 = Main.player[NPC.target];
-            if (NPC.justHit && NPC.Distance(player2.Center) < 100)
+            Player player = Main.player[NPC.target];
+            if (NPC.justHit && NPC.Distance(player.Center) < 100)
             {
-                bubbleTimer = 0f;
+                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0f;
             }
-            if (NPC.justHit && NPC.Distance(player2.Center) < 150 && Main.rand.NextBool(2))
+            if (NPC.justHit && NPC.Distance(player.Center) < 150 && Main.rand.NextBool(2))
             {
-                bubbleTimer = 40f;
+                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 40f;
                 NPC.velocity.Y = Main.rand.NextFloat(-11f, -3f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-4f, -3f);
                 NPC.netUpdate = true;
             }
-            if (NPC.justHit && NPC.Distance(player2.Center) > 200 && Main.rand.NextBool(2))
+            if (NPC.justHit && NPC.Distance(player.Center) > 200 && Main.rand.NextBool(2))
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-11f, -3f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(4f, 3f);
                 NPC.netUpdate = true;
-            }
-
-            //TELEGRAPH DUST
-            if (bubbleTimer >= 40)
-            {
-                Lighting.AddLight(NPC.Center, Color.Blue.ToVector3());
-
-                for (int j = 0; j < bubbleTimer - 39; j++)
-                {
-                    Vector2 dir = Main.rand.NextVector2CircularEdge(48, 64);
-                    Vector2 dustPos = NPC.Center + dir;
-                    Vector2 dustVel = dir * -1;
-                    dustVel.Normalize();
-                    dustVel *= 3;
-                    Dust.NewDustPerfect(dustPos, 29, dustVel, 200).noGravity = true;
-                }
             }
         }
 

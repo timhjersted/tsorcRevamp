@@ -32,6 +32,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 4;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TibianValkyrieBanner>();
+            UsefulFunctions.AddAttack(NPC, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 10, 8, shootSound: SoundID.Item17);
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
@@ -81,38 +82,13 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        float boredTeleport = 0;
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.55f, 0.05f, enragePercent: 0.4f, enrageTopSpeed: 2.3f); 
-            int damage = 10;
+            tsorcRevampAIs.FighterAI(NPC, 1.55f, 0.05f, enragePercent: 0.4f, enrageTopSpeed: 2.3f);
+
             if (!NPC.downedBoss1)
             {
-                damage = 7;
-            }
-            tsorcRevampAIs.SimpleProjectile(NPC, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), damage, 8, Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0), shootSound: SoundID.Item17);
-                       
-
-            bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-
-            //If the enemy doesn't have line of sight for a good while, teleport far away from the player and try again. Then much later, they get one more chance to teleport.
-            //Since this is an early enemy, the distance and time is not very aggressive.
-            if (!clearLineofSight)
-            {
-                boredTeleport++;
-
-                if (boredTeleport == 4600)
-                {
-                    tsorcRevampAIs.TeleportImmediately(NPC, 20, false);
-
-                }
-
-                if (boredTeleport == 5600)
-                {
-                    tsorcRevampAIs.TeleportImmediately(NPC, 30, false);
-                    boredTeleport = 5601;
-                }
-
+                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackList[0].damage = 7;
             }
         }
 

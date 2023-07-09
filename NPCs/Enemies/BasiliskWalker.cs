@@ -59,6 +59,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BasiliskWalkerBanner>();
+            UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 8, SoundID.Item20 with { Volume = 0.2f, Pitch = 0.3f }, telegraphColor: Color.GreenYellow);
+            UsefulFunctions.AddAttack(NPC, 240, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 3, SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, weight: 0.08f, telegraphColor: Color.Purple);
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
@@ -67,13 +69,9 @@ namespace tsorcRevamp.NPCs.Enemies
             bool Jungle = P.ZoneJungle;
             bool Dungeon = P.ZoneDungeon;
             bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-            bool Hallow = P.ZoneHallow;
             bool AboveEarth = P.ZoneOverworldHeight;
             bool InBrownLayer = P.ZoneDirtLayerHeight;
             bool InGrayLayer = P.ZoneRockLayerHeight;
-            bool InHell = P.ZoneUnderworldHeight;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-            bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
             // P.townNPCs > 0f // is no town NPCs nearby
 
             if (spawnInfo.Invasion)
@@ -121,47 +119,26 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: true, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.2f, enrageTopSpeed: 2);
 
-            bool clearLineOfSight = Collision.CanHitLine(NPC.Center, 2, 2, Main.player[NPC.target].Center, 2, 2);
-            if (tsorcRevampAIs.SimpleProjectile(NPC, ref shotTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 8, clearLineOfSight && !Main.rand.NextBool(15), true)) //VS suggested I change the last thing to NextBool
-            {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = 0.3f }, NPC.Center);  //fire
-            }
-            if (tsorcRevampAIs.SimpleProjectile(NPC, ref shotTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 3, clearLineOfSight, false))
-            {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, NPC.Center); //wobble
-            }
-
             //MAKE SOUND WHEN JUMPING/HOVERING
             if (Main.rand.NextBool(12) && NPC.velocity.Y <= -1f)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.2f, Pitch = 0.1f }, NPC.Center);
             }
 
-            //TELEGRAPH DUSTS
-            if (shotTimer >= 100)
-            {
-                Lighting.AddLight(NPC.Center, Color.Purple.ToVector3() * 0.8f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.NextBool(2))
-                {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CursedTorch, NPC.velocity.X, NPC.velocity.Y);
-                    //Dust.NewDust(npc.position, npc.width, npc.height, DustID.GemEmerald, npc.velocity.X, npc.velocity.Y);
-                }
-            }
-
             //JUSTHIT CODE
-            Player player2 = Main.player[NPC.target];
-            if (NPC.justHit && NPC.Distance(player2.Center) < 150)
+            Player player = Main.player[NPC.target];
+            if (NPC.justHit && NPC.Distance(player.Center) < 150)
             {
-                shotTimer = 0f;
+                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0f;
             }
-            if (NPC.justHit && NPC.Distance(player2.Center) < 150 && Main.rand.NextBool(2))
+            if (NPC.justHit && NPC.Distance(player.Center) < 150 && Main.rand.NextBool(2))
             {
                 shotTimer = 80f;
                 NPC.velocity.Y = Main.rand.NextFloat(-6f, -3f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-5f, -3f);
                 NPC.netUpdate = true;
             }
-            if (NPC.justHit && NPC.Distance(player2.Center) > 150 && Main.rand.NextBool(2))
+            if (NPC.justHit && NPC.Distance(player.Center) > 150 && Main.rand.NextBool(2))
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-5f, -2f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-5f, 3f);
@@ -171,7 +148,6 @@ namespace tsorcRevamp.NPCs.Enemies
             //Shift toward the player randomly
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Player player = Main.player[NPC.target];
                 if (Main.rand.NextBool(200) && NPC.Distance(player.Center) > 260)
                 {
                     chargeDamageFlag = true;

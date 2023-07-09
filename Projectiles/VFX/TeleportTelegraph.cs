@@ -35,12 +35,12 @@ namespace tsorcRevamp.Projectiles.VFX
 
             if (Projectile.ai[0] != 0 && Main.npc[(int)Projectile.ai[0]].active)
             {
-                effectBaseSize = 10 + effectBaseSize * (effectTimer / (float)tsorcRevampAIs.TeleportTelegraphTime);
+                effectBaseSize = 10 + effectBaseSize * (effectTimer / Projectile.ai[1]);
                 Projectile.Center = Main.npc[(int)Projectile.ai[0]].Center;
             }
             else
             {
-                effectBaseSize = 170 * (effectTimer / (float)tsorcRevampAIs.TeleportTelegraphTime);
+                effectBaseSize = 170 * (effectTimer / Projectile.ai[1]);
                 if(effectBaseSize > 120)
                 {
                     effectBaseSize = 120;
@@ -50,7 +50,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
             Projectile.timeLeft++;
             effectTimer++;
-            if (effectTimer > tsorcRevampAIs.TeleportTelegraphTime)
+            if (effectTimer > Projectile.ai[1])
             {
                 Projectile.Kill();
             }

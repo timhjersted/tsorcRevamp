@@ -46,6 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.damage = 50;
                 throwingKnifeDamage = 20;
             }
+            UsefulFunctions.AddAttack(NPC, 160, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17);
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
@@ -89,25 +90,9 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        float knifeTimer = 0;
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 1.8f, 0.15f, enragePercent: 0.2f, enrageTopSpeed: 2.2f);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref knifeTimer, 160, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17);
-
-            //IMMINENT ATTACK TELEGRAPH - PINK DUST 
-            if (knifeTimer >= 140)
-            {
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.NextBool(2))
-                {
-                    int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.2f);
-                    Main.dust[pink].noGravity = true;
-                }
-            }
-
-
-
         }
 
 
@@ -116,22 +101,17 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampAIs.RedKnightOnHit(NPC, true);
             if (Main.rand.NextBool(3))
             {
-                knifeTimer = 0;
+                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
             }
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            //if (projectile.DamageType == DamageClass.Melee)
-            //{
-            //    knifeTimer = 0;
-            //}
-
             tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
 
             if (projectile.DamageType == DamageClass.Melee)
-            {   
-                    knifeTimer = 0;
+            {
+                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
             }
         }
 
@@ -141,20 +121,15 @@ namespace tsorcRevamp.NPCs.Enemies
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1); 
         }
 
+        public static Texture2D knifeTexture;
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (knifeTimer >= 120)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 120)
             {
-                Texture2D knifeTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/TibianAmazon_Knife");
-                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                if (NPC.spriteDirection == -1)
-                {
-                    spriteBatch.Draw(knifeTexture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 60, 56), drawColor, NPC.rotation, new Vector2(30, 32), NPC.scale, effects, 0);
-                }
-                else
-                {
-                    spriteBatch.Draw(knifeTexture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 60, 56), drawColor, NPC.rotation, new Vector2(30, 32), NPC.scale, effects, 0);
-                }
+                float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
+
+                UsefulFunctions.EnsureLoaded(ref knifeTexture, "NPCs/Enemies/TibianAmazon_Knife");
+                spriteBatch.Draw(knifeTexture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 60, 56), drawColor, rotation, new Vector2(30, 32), NPC.scale, SpriteEffects.None, 0);
             }
         }
 

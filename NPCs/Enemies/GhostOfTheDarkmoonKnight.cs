@@ -32,10 +32,9 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = 28;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.GhostOfTheDarkmoonKnightBanner>();
+            UsefulFunctions.AddAttack(NPC, 170, ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(), 20, 9, SoundID.Item17);
         }
 
-
-        float shadowShotTimer;
         int chargeDamage = 0;
         bool charging = false;
 
@@ -110,12 +109,15 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.175f, 0.2f, true, enragePercent: 0.1f, enrageTopSpeed: 3);
 
-            bool canFire = NPC.Distance(Main.player[NPC.target].Center) < 500 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref shadowShotTimer, 170, ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(), 20, 9, canFire, true, SoundID.Item17, 0);
-
-            if (NPC.justHit && shadowShotTimer <= 149f && Main.rand.NextBool(4))
+            if (NPC.justHit && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer <= 140f && Main.rand.NextBool(4))
             {
-                shadowShotTimer = 90f;
+                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 90f;
+            }
+
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 150 && Main.rand.NextBool(3))
+            {
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemDiamond, NPC.velocity.X, NPC.velocity.Y);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemDiamond, NPC.velocity.X, NPC.velocity.Y);
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -142,7 +144,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         static Texture2D spearTexture;
-        static Texture2D darkKnightGlow = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Gores/Ghost of the Darkmoon Knight Glow");
+        static Texture2D darkKnightGlow;
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
 
@@ -162,6 +164,8 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 flop = SpriteEffects.FlipHorizontally;
             }
+
+            UsefulFunctions.EnsureLoaded(ref darkKnightGlow, "tsorcRevamp/Gores/Ghost of the Darkmoon Knight Glow");
 
             //Glowing Eye Effect
             for (int i = 1; i > -1; i--)
@@ -183,27 +187,12 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/ShadowShot");
             }
-            if (shadowShotTimer >= 150)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 150)
             {
                 Lighting.AddLight(NPC.Center, Color.MediumPurple.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                if (Main.rand.NextBool(3))
-                {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemDiamond, NPC.velocity.X, NPC.velocity.Y);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemDiamond, NPC.velocity.X, NPC.velocity.Y);
-                }
-
-                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                if (NPC.spriteDirection == -1)
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 10), NPC.scale, effects, 0); // facing left (8, 38 work)
-                }
-                else
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 13), NPC.scale, effects, 0); // facing right, first value is height, higher number is higher
-                }
+                float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
+                spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, spearTexture.Size() / 2, 1, SpriteEffects.None, 0);
             }
-
         }
-
     }
 }

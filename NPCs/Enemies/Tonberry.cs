@@ -39,6 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 70000;
                 NPC.damage = 0;
             }
+            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17);
         }
         // (O_O;) //I haven't played that game so wtf is this
         int throwingKnifeDamage = 9999;
@@ -67,13 +68,9 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        float knifeTimer = 0;
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 1f, 0.07f, 0.5f, lavaJumping: true);
-
-            bool clearShot = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height) && Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) <= 500;
-            tsorcRevampAIs.SimpleProjectile(NPC, ref knifeTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>(), throwingKnifeDamage, 8, clearShot, shootSound: SoundID.Item17);
 
             //play creature sounds
             if (Main.rand.NextBool(1000))
@@ -125,7 +122,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyThrowingKnifeSmall");
             }
-            if (knifeTimer >= 120)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 120)
             {
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 if (NPC.spriteDirection == -1)

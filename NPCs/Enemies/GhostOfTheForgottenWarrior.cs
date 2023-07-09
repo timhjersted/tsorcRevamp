@@ -49,6 +49,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 1000;
                 topSpeed = 1.8f;
             }
+
+            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, SoundID.Item17);
         }
         public override void OnKill()
         {
@@ -80,19 +82,15 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
 
-        float spearTimer = 0;
         float topSpeed = 0.8f;
 
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, topSpeed, .04f, 0.2f, true, enragePercent: 0.2f, enrageTopSpeed: 2.1f);
 
-            bool canFire = NPC.Distance(Main.player[NPC.target].Center) < 1600 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref spearTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, canFire, true, SoundID.Item17);
-
-            if (NPC.justHit && spearTimer <= 149 &&Main.rand.NextBool(4))
+            if (NPC.justHit && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer <= 149 && Main.rand.NextBool(4))
             {
-                spearTimer = 0f;
+                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0f;
             }
         }
 
@@ -103,22 +101,15 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/BlackKnightGhostSpear");
             }
-            if (spearTimer >= 150)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 150)
             {
                 Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 0.3f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                 if (Main.rand.NextBool(3))
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, NPC.velocity.X, NPC.velocity.Y);
                 }
-                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                if (NPC.spriteDirection == -1)
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing left (8, 38 work)
-                }
-                else
-                {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing right, first value is height, higher number is higher
-                }
+                float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
+                spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, spearTexture.Size() / 2, 1, SpriteEffects.None, 0);
             }
         }
         public override void HitEffect(NPC.HitInfo hit)

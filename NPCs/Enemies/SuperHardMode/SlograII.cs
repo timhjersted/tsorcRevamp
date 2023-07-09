@@ -32,13 +32,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 6000;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.SlograIIBanner>();
+
+            UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 11, SoundID.Item17);
         }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             tridentDamage = (int)(tridentDamage * tsorcRevampWorld.SHMScale);
         }
 
-        float tridentTimer;
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -80,7 +81,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             //Insert whatever you want to happen on-hit here
             if (NPC.justHit)
             {
-                tridentTimer = 100f;
+                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 100f;
                 //npc.knockBackResist = 0.09f;
 
                 //WHEN HIT, CHANCE TO JUMP BACKWARDS && npc.velocity.Y >= -1f
@@ -94,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                     //if (Main.rand.NextBool(1))
                     //{ 
-                    tridentTimer = 140f;
+                    NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 140f;
                     //}
 
                     NPC.netUpdate = true;
@@ -114,7 +115,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     //npc.ai[0] = 0f;
                     //if (Main.rand.NextBool(2))
                     //{
-                    tridentTimer = 140f;
+                    NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 140f;
                     //}
 
                     //CHANCE TO JUMP AFTER DASH
@@ -122,7 +123,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     {
                         NPC.TargetClosest(true);
                         NPC.velocity.Y = -7f;
-                        tridentTimer = 140f;
+                        NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 140f;
 
                     }
 
@@ -136,9 +137,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             tsorcRevampAIs.FighterAI(NPC, 3, 0.09f, 0.2f, true, 0, false, SoundID.Mummy, 2000, 0.1f, 4, true);
             tsorcRevampAIs.LeapAtPlayer(NPC, 5, 4, 2, 128);
-
-            bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref tridentTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 11, clearLineofSight, true, SoundID.Item17);
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -162,7 +160,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     }
                 }
 
-                if (Main.rand.NextBool(500))
+                if (Main.rand.NextBool(500) && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.VampireBat>(), 0);
 
@@ -205,7 +203,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EarthTrident");
             }
-            if (tridentTimer >= 110)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 110)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;

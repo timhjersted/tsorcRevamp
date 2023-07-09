@@ -29,6 +29,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 7500;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.NecromancerElementalBanner>();
+            UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, SoundID.Item17);
+            UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0, SoundID.Item17);
         }
         //Spawns in the Underground and Cavern before 4.5/10ths and after 7.5/10ths (Width). Does not Spawn in the Jungle, Meteor, or if there are Town NPCs.
 
@@ -59,30 +61,32 @@ namespace tsorcRevamp.NPCs.Enemies
             return 0;
         }
         #endregion
-
-        float strikeTimer = 0;
+        
         int chaosElementalTimer;
         int chaosElementalsSpawned = 0;
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 1.8f, 0.05f, canTeleport: true, lavaJumping: true);
 
-            strikeTimer++;
             chaosElementalTimer++;
-            bool lineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref strikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, lineOfSight, false, SoundID.Item17, 0);
-            if (tsorcRevampAIs.SimpleProjectile(NPC, ref strikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0, !lineOfSight, false, SoundID.Item17, 0))
+
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackSucceeded == 1)
             {
-                NPC.life += 50;
-                NPC.HealEffect(50);
-                if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
+                NPC.life += 10;
+                NPC.HealEffect(10);
+                if (NPC.life > NPC.lifeMax)
+                {
+                    NPC.life = NPC.lifeMax;
+                }
+                NPC.netUpdate = true;
             }
 
             if (NPC.justHit)
             {
-                strikeTimer = 0;
+                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
             }
 
+            bool lineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height) && Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) <= 1000;
             if ((chaosElementalsSpawned < 11) && chaosElementalTimer > 300 && lineOfSight)
             {
                 chaosElementalTimer = 0;

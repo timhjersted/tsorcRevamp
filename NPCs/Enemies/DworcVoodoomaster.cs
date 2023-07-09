@@ -48,6 +48,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.damage = 42;
                 NPC.knockBackResist = 0.1f;
             }
+
+            UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 7, 8, SoundID.Item20);
+            UsefulFunctions.AddAttack(NPC, 700, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, SoundID.Item100);
         }
         //excuse me while i drop Every Potion Known To Mankind holy hell
         //these dudes oughtta be called alchemists or something
@@ -86,8 +89,6 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 14));
         }
 
-        float poisonStrikeTimer = 0;
-        float poisonStormTimer = 0;
 
         //Spawns in the Jungle Underground and in the Cavern.
 
@@ -130,39 +131,33 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             tsorcRevampAIs.FighterAI(NPC, 0.8f, 0.02f, 0.2f, true, enragePercent: 0.5f, enrageTopSpeed: 1.6f);
 
-            bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-
-            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStrikeTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 7, 8, clearLineofSight, true, SoundID.Item20, 0);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 700, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, true, true, SoundID.Item100);
-
-            if (poisonStormTimer >= 520 )//SHRINKING CIRCLE DUST
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 520)//SHRINKING CIRCLE DUST
             {
-                UsefulFunctions.DustRing(NPC.Center, 700 - poisonStormTimer, DustID.CursedTorch, 12, 4);
+                UsefulFunctions.DustRing(NPC.Center, 700 - NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer, DustID.CursedTorch, 12, 4);
                 Lighting.AddLight(NPC.Center, Color.Orange.ToVector3() * 5);
                 if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
                 {
                     NPC.velocity = Vector2.Zero;
-                }
-                
+                }                
             }
 
             //IF HIT BEFORE PINK DUST TELEGRAPH, RESET TIMER, BUT CHANCE TO BREAK STUN LOCK
             //(WORKS WITH 2 TELEGRAPH DUSTS, AT 60 AND 110)
-            if (NPC.justHit && poisonStrikeTimer <= 109)
+            if (NPC.justHit && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer < NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTelegraphStart)
             {
                 if (Main.rand.NextBool(3))
                 {
-                    poisonStrikeTimer = 110;
+                    NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 110;
                 }
                 else
                 {
-                    poisonStrikeTimer = 0;
+                    NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
                 }
             }
             if (NPC.justHit && Main.rand.NextBool(24))
             {
-                tsorcRevampAIs.TeleportImmediately(NPC, 20, true);
-                poisonStrikeTimer = 70f;
+                tsorcRevampAIs.QueueTeleport(NPC, 20, true, 50);
+                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 70f;
             }
 
             //Transparency. Higher alpha = more invisible
