@@ -158,6 +158,18 @@ namespace tsorcRevamp
             {
                 orig(self, faceTarget);
             }
+
+            if (faceTarget)
+            {
+                if(self.Center.X < Main.player[self.target].Center.X)
+                {
+                    self.direction = 1;
+                }
+                else
+                {
+                    self.direction = -1;
+                }
+            }
         }
 
         private static void DrawPlayerAuras(On_Main.orig_DrawPlayers_BehindNPCs orig, Main self)

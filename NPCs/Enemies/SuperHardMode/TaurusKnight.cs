@@ -219,7 +219,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public static Texture2D spearTexture;
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            UsefulFunctions.EnsureLoaded(ref spearTexture, "Projectiles/Enemy/EarthTrident");
+            UsefulFunctions.EnsureLoaded(ref spearTexture, "tsorcRevamp/Projectiles/Enemy/EarthTrident");
 
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 117 && Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
             {
