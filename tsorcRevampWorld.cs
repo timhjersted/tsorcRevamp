@@ -774,6 +774,10 @@ namespace tsorcRevamp
                         Main.item[i].active = false; //delete ground items
                     }
                 }
+                for(int i = 0; i < Main.maxDust; i++)
+                {
+                    Main.dust[i].active = false;
+                }
 
                 Byte[] jsonBytes = ModContent.GetFileBytes(jsonPath);
 
