@@ -131,7 +131,21 @@ namespace tsorcRevamp
 
             On_NPC.TargetClosestUpgraded += On_NPC_TargetClosestUpgraded;
 
+            On_Wiring.Teleport += On_Wiring_Teleport;
+
             //Terraria.On_Main.DrawMenu += On_Main_DrawMenu;
+        }
+
+        private static void On_Wiring_Teleport(On_Wiring.orig_Teleport orig)
+        {
+            if (tsorcRevampWorld.BossAlive)
+            {
+                UsefulFunctions.BroadcastText("Can not teleport while a boss is alive!");
+            }
+            else
+            {
+                orig();
+            }
         }
 
         private static void On_NPC_TargetClosestUpgraded(On_NPC.orig_TargetClosestUpgraded orig, NPC self, bool faceTarget, Vector2? checkPosition)
