@@ -2844,7 +2844,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.Summon.CritChance@4}
 					{$CommonItemTooltip.Summon.TagStrength@1}
-					{$CommonItemTooltip.IncreasesMaxMinionsBy@2}
+					{$CommonItemTooltip.Summon.MinionSentrySlot@2}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.HolyDodge}
 					Defense, minion and turret slots are not affected by this
 					'''
@@ -6266,7 +6266,6 @@ Mods: {
 					Summons a null sprite to fight for you
 					Null sprites apply a permanent stacking debuff
 					that increases damage taken from all sources
-					Takes 3/4th of a minion slot
 					'''
 			}
 
@@ -6280,10 +6279,9 @@ Mods: {
 				Tooltip:
 					'''
 					Summons a raging Phoenix Juvenile to fight for you
-					Warms up by dealing damage to enemies, speeding up its movements
-					Deals increased damage after warming up sufficiently
-					Also benefits more from summon tag bonuses
-					Uses 2 minion slots
+					Warms up by dealing damage to enemies, speeding up its movement and attack speed
+					Deals increased damage after warming up sufficiently(up to +{1}% final damage)
+					{$CommonItemTooltip.CritDmg}
 					'''
 			}
 
@@ -6298,7 +6296,6 @@ Mods: {
 					'''
 					What will you see next time you look?
 					Splits off a fragment of your soul to fight for you
-					Uses 2 minion slots
 					'''
 			}
 
@@ -6322,7 +6319,6 @@ Mods: {
 					'''
 					Summons a glowing Tetsujin to fight for you
 					Orbits an enemy, bombarding them with light and fire
-					Uses 2 minion slots
 					'''
 			}
 
@@ -7082,12 +7078,9 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Summon.WhipDmg}
-					{$CommonItemTooltip.Summon.TagDuration@4}
+					{$CommonItemTooltip.Summon.TagDuration@3}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
 					{$CommonItemTooltip.Summon.AtkSpeed@2}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.TitaniumBonus}
-					{$CommonItemTooltip.ShunpoKeybind1}Shunpo{$CommonItemTooltip.ShunpoKeybind2}
-					{$CommonItemTooltip.ShunpoCD@3}
 					'''
 			}
 
@@ -7096,12 +7089,9 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
-					{$CommonItemTooltip.Summon.CritChance@4}
-					{$CommonItemTooltip.Summon.TagStrength@5}
+					{$CommonItemTooltip.Summon.CritChance@3}
+					{$CommonItemTooltip.Summon.TagStrength@4}
 					{$CommonItemTooltip.Summon.MinionSentrySlot@1}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.TitaniumBonus}
-					{$CommonItemTooltip.ShunpoKeybind1}Shunpo{$CommonItemTooltip.ShunpoKeybind2}
-					{$CommonItemTooltip.ShunpoCD@3}
 					'''
 			}
 
@@ -7120,6 +7110,9 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.TitaniumBonus}
+					{$CommonItemTooltip.ShunpoKeybind1}Shunpo{$CommonItemTooltip.ShunpoKeybind2}
+					{$CommonItemTooltip.ShunpoCD@2}
 					'''
 			}
 

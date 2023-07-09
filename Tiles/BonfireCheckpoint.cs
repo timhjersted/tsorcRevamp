@@ -140,7 +140,7 @@ namespace tsorcRevamp.Tiles
                 {
                     foreach (int buffType in player.buffType)
                     {
-                        if (Main.debuff[buffType])
+                        if (Main.debuff[buffType] && buffType != BuffID.HeartLamp)
                         {
                             player.buffImmune[buffType] = true;
                         }
@@ -149,7 +149,11 @@ namespace tsorcRevamp.Tiles
                     // Wind up 1
                     if (bonfireEffectTimer > 0 && bonfireEffectTimer <= 60)
                     {
-                        player.lifeRegen = player.statLifeMax2 / 40;
+                        player.lifeRegen += player.statLifeMax2 / 16 + 20;
+                        if (Main.rand.NextBool(30))
+                        {
+                            player.statLife++;
+                        }
 
                         if (Main.rand.NextBool(8))
                         {
@@ -162,7 +166,11 @@ namespace tsorcRevamp.Tiles
                     // Wind up 2
                     if (bonfireEffectTimer > 60 && bonfireEffectTimer <= 100)
                     {
-                        player.lifeRegen = player.statLifeMax2 / 30;
+                        player.lifeRegen += player.statLifeMax2 / 8 + 40;
+                        if (Main.rand.NextBool(24))
+                        {
+                            player.statLife++;
+                        }
 
                         if (Main.rand.NextBool(4))
                         {
@@ -174,7 +182,11 @@ namespace tsorcRevamp.Tiles
                     // Wind up 3
                     if (bonfireEffectTimer > 100 && bonfireEffectTimer <= 140)
                     {
-                        player.lifeRegen = player.statLifeMax2 / 15;
+                        player.lifeRegen += player.statLifeMax2 / 4 + 80;
+                        if (Main.rand.NextBool(18))
+                        {
+                            player.statLife++;
+                        }
 
                         if (Main.rand.NextBool(2))
                         {
@@ -186,7 +198,11 @@ namespace tsorcRevamp.Tiles
                     // Full effect
                     if (bonfireEffectTimer > 140)
                     {
-                        player.lifeRegen = player.statLifeMax2 / 7;
+                        player.lifeRegen += player.statLifeMax2 / 2 + 160;
+                        if (Main.rand.NextBool(12))
+                        {
+                            player.statLife++;
+                        }
 
                         var dust = Dust.NewDustDirect(player.position, player.width, player.height, DustID.FlameBurst, Alpha: 120);
                         HandleDust(ref dust, Main.rand.Next(80, 95) * 0.043f, 25f, player.Center);

@@ -3,21 +3,21 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Expert
 {
 	public class PhoenixEgg : ModItem
 	{
-		public override void SetStaticDefaults()
+		public static float CritDamage = 10f;
+		public static float DmgDivisor = 100f;
+		public static float MinStacks = 5f;
+		public static float MaxStacks = 20f;
+		public static float MaxDmg = ((MaxStacks - MinStacks) / DmgDivisor) * 100f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritDamage, MaxDmg);
+        public override void SetStaticDefaults()
 		{
-			// DisplayName.SetDefault("Phoenix Egg");
-			/* Tooltip.SetDefault("Summons a raging Phoenix Juvenile to fight for you" +
-                "\nWarms up by dealing damage to enemies, speeding up its movements" +
-                "\nDeals increased damage after warming up sufficiently" +
-                "\nAlso benefits more from summon tag bonuses" +
-                "\nUses 2 minion slots"); */
-
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
 			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Expert
 		}
 		public override void SetDefaults()
 		{
-			Item.damage = 18;
+			Item.damage = 20;
 			Item.knockBack = 3f;
 			Item.mana = 10;
 			Item.width = 32;

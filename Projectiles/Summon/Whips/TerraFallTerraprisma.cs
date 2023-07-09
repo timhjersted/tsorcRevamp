@@ -49,11 +49,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         {
             return true;
         }
-        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-            modifiers.CritDamage += 0.25f;
-            modifiers.CritDamage /= 2;
-        }
         public override void AI()
         {
             List<int> ai156_blacklistedTargets = _ai156_blacklistedTargets;

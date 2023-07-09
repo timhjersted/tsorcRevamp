@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -14,7 +15,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         public static float WhipRange = 30f;
         public static float SummonTagDuration = 35f;
         public static float AtkSpeed = 16f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(WhipDmg, WhipRange, AtkSpeed, ShunpoDash.Cooldown, SummonTagDuration);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(WhipDmg, WhipRange, AtkSpeed, SummonTagDuration);
         public override void SetStaticDefaults()
         {
         }
@@ -32,14 +33,6 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration += SummonTagDuration / 100f;
             player.whipRangeMultiplier += WhipRange / 100f;
             player.GetAttackSpeed(DamageClass.Summon) += AtkSpeed / 100f;
-        }
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<ShamanCloak>() && legs.type == ModContent.ItemType<ShamanPants>();
-        }
-        public override void UpdateArmorSet(Player player)
-        {
-            player.GetModPlayer<tsorcRevampPlayer>().Shunpo = true;
         }
         public override void AddRecipes()
         {

@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -15,7 +16,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         public static float SummonTagStrength = 35f;
         public static int MinionSlot = 2;
         public static int TurretSlot = 2;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MinionSlot, TurretSlot, ShunpoDash.Cooldown, CritChance, SummonTagStrength);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MinionSlot, TurretSlot, CritChance, SummonTagStrength);
         public override void SetStaticDefaults()
         {
         }
@@ -34,14 +35,6 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength += SummonTagStrength / 100f;
             player.maxMinions += MinionSlot;
             player.maxTurrets += TurretSlot;
-        }
-        public override bool IsArmorSet(Item head, Item body, Item legs)
-        {
-            return body.type == ModContent.ItemType<ShamanCloak>() && legs.type == ModContent.ItemType<ShamanPants>();
-        }
-        public override void UpdateArmorSet(Player player)
-        {
-            player.GetModPlayer<tsorcRevampPlayer>().Shunpo = true;
         }
         public override void AddRecipes()
         {

@@ -5,6 +5,8 @@ using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Expert;
+using tsorcRevamp.Projectiles.Summon.SummonProjectiles;
 
 namespace tsorcRevamp.Projectiles.Summon
 {
@@ -14,9 +16,9 @@ namespace tsorcRevamp.Projectiles.Summon
 	// If it isn't attacking, it will float near the player with minimal movement
 	public class PhoenixProjectile : ModProjectile
 	{
-		public int ragestacksfallofftimer = 0;
-		public int ragestackstimer = 0;
-		public int ragestacks = 0;
+		public int WarmupStacksFallOffTimer = 0;
+		public int WarmupStacksTimer = 0;
+		public int WarmupStacks = 0;
 		
 		public override void SetStaticDefaults()
 		{
@@ -45,38 +47,30 @@ namespace tsorcRevamp.Projectiles.Summon
 			Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
 
 			Projectile.usesLocalNPCImmunity = true;
-			Projectile.localNPCHitCooldown = 20;
+			Projectile.localNPCHitCooldown = 100;
 		}
 
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
-			ragestacksfallofftimer = 0;
-			ragestackstimer = 0;
-			ragestacks += 1;
-			if (ragestacks < 0)
+			WarmupStacksFallOffTimer = 0;
+			WarmupStacksTimer = 0;
+			if (WarmupStacks < PhoenixEgg.MaxStacks - 1)
 			{
-				ragestacks = 0;
-			}
-			if (ragestacks > 19)
-			{
-				ragestacks = 20;
+				WarmupStacks++;
 			}
 			if (hit.Crit)
 			{
-				Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoomCrit>(), (int)((Projectile.damage * 0.075 * (ragestacks - 5)) * 2), 1f, Main.myPlayer);
-			}
-			if (ragestacks > 5)
-			{
-
-				if (!hit.Crit)
-                {
-					Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 0.075 * (ragestacks - 5)), 1f, Main.myPlayer);
-				}
+				Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<PhoenixBoomCrit>(), 0, 0);
 			}
 		}
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+			modifiers.SourceDamage *= 1f + (((float)WarmupStacks - PhoenixEgg.MinStacks) / PhoenixEgg.DmgDivisor);
+            modifiers.CritDamage += PhoenixEgg.CritDamage / 100f;
+        }
 
-	// Here you can decide if your minion breaks things like grass or pots
-	public override bool? CanCutTiles()
+        // Here you can decide if your minion breaks things like grass or pots
+        public override bool? CanCutTiles()
 		{
 			return false;
 		}
@@ -90,7 +84,6 @@ namespace tsorcRevamp.Projectiles.Summon
 		// The AI of this minion is split into multiple methods to avoid bloat. This method just passes values between calls actual parts of the AI.
 		public override void AI()
 		{
-
 			Player owner = Main.player[Projectile.owner];
 
 			if (!CheckActive(owner))
@@ -103,56 +96,73 @@ namespace tsorcRevamp.Projectiles.Summon
 			Movement(foundTarget, distanceFromTarget, targetCenter, distanceToIdlePosition, vectorToIdlePosition);
 			Visuals();
 
-			if (ragestacks < 0)
+			switch (WarmupStacks)
 			{
-				ragestacks = 0;
+				case int Tier1 when(Tier1 <= 10 && Tier1 >= 5):
+                    {
+                        Dust.NewDust(Projectile.Center, 10, 10, DustID.GoldFlame, 0f, 0f, 150, Color.Yellow, 0.25f);
+                        break;
+					}
+				case int Tier2 when(Tier2 < 16 && Tier2 > 10):
+                    {
+                        Dust.NewDust(Projectile.Center, 20, 20, DustID.GoldFlame, 0f, 0f, 200, Color.Orange, 0.75f);
+						break;
+                    }
+				case int Tier3 when (Tier3 >= 16):
+                    {
+                        Dust.NewDust(Projectile.Center, 40, 40, DustID.GoldFlame, 0f, 0f, 250, Color.OrangeRed, 1f);
+                        Dust.NewDust(Projectile.Center, 40, 40, DustID.SolarFlare, 0f, 0f, 250, default, 1f);
+                        break;
+                    }
 			}
-			if (ragestacks > 5)
-            {
-				Dust.NewDust(Projectile.Center, 10, 10, DustID.GoldFlame, 0f, 0f, 150, Color.Yellow, 0.5f);
-			} else
-			if (ragestacks > 10)
-            {
-				Dust.NewDust(Projectile.Center, 20, 20, DustID.GoldFlame, 0f, 0f, 200, Color.Orange, 1f);
-			} else
-			if (ragestacks > 19)
-			{
-				ragestacks = 20;
-				Dust.NewDust(Projectile.Center, 80, 80, DustID.SolarFlare, 0f, 0f, 250, Color.OrangeRed, 1.5f);
-			}
-
 			if (Main.GameUpdateCount % 60 == 0)
 			{
-				ragestacksfallofftimer++;
+				WarmupStacksFallOffTimer++;
 			}
-			if (ragestacksfallofftimer >= 5)
+			if (WarmupStacksFallOffTimer >= 5)
             {
 				if (Main.GameUpdateCount % 60 == 0)
 				{
-					ragestackstimer++;
-				}
-			}
-			if (ragestackstimer == 1)
-            {
-				ragestacks -= 1;
+					WarmupStacksTimer++;
+                }
+                switch (WarmupStacksTimer)
+                {
+                    case 0:
+                        {
+                            break;
+                        }
+                    case 1:
+                        {
+                            WarmupStacks -= 1;
+                            break;
+                        }
+                    case 2:
+                        {
+                            WarmupStacks -= 1;
+                            break;
+                        }
+                    case 3:
+                        {
+                            WarmupStacks -= 2;
+                            break;
+                        }
+                    case 4:
+                        {
+                            WarmupStacks -= 2;
+                            break;
+                        }
+                    default:
+                        {
+                            WarmupStacks -= 3;
+                            break;
+                        }
+                }
+                if (WarmupStacks < 0)
+                {
+                    WarmupStacks = 0;
+                }
             }
-			else if (ragestackstimer == 2)
-            {
-				ragestacks -= 1;
-            }
-			else if (ragestackstimer == 3)
-            {
-				ragestacks -= 2;
-            }
-			else if (ragestackstimer == 4)
-            {
-				ragestacks -= 2;
-            }
-			else if (ragestackstimer >= 5)
-            {
-				ragestacks -= 3;
-            }
-	}
+        }
 
 		// This is the "active check", makes sure the minion is alive while the player is alive, and despawns if not
 		private bool CheckActive(Player owner)
@@ -289,7 +299,7 @@ namespace tsorcRevamp.Projectiles.Summon
 		private void Movement(bool foundTarget, float distanceFromTarget, Vector2 targetCenter, float distanceToIdlePosition, Vector2 vectorToIdlePosition)
 		{
 			// Default movement parameters (here for attacking)
-			float speed = 10f;
+			float speed = 10f * (1.3f + ((float)WarmupStacks / 80));
 			float inertia = 20f;
 
 			if (foundTarget)
@@ -302,11 +312,12 @@ namespace tsorcRevamp.Projectiles.Summon
 					direction.Normalize();
 					direction *= speed;
 
-					if (Main.GameUpdateCount % (30 / (1 + ragestacks / 10)) == 0)
+					if (Main.GameUpdateCount % (30 / (1 + WarmupStacks / 10)) == 0)
 					{
-						Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, targetCenter, speed * (1.3f + ((float)ragestacks / 80)));
+						Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, targetCenter, speed * (1.3f + ((float)WarmupStacks / 80)));
+						Projectile.ResetLocalNPCHitImmunity();
 					}
-					//Projectile.velocity = (Projectile.velocity * (inertia - 1) + direction) / inertia;
+					Projectile.velocity = (Projectile.velocity * (inertia - 1) + direction) / inertia;
 				}
 			}
 			else

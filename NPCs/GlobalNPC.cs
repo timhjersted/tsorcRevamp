@@ -1103,9 +1103,17 @@ namespace tsorcRevamp.NPCs
                 modifiers.ArmorPenetration += SummonTagArmorPenetration * modPlayerProjectileOwner.SummonTagStrength;
                 SummonTagCriticalStrikeChance = (BaseSummonTagCriticalStrikeChance * (1f + (projectileOwner.GetTotalCritChance(DamageClass.Summon) / 100f)));
                 int critLevel = (int)(Math.Floor(SummonTagCriticalStrikeChance / 100f));
+                if (Main.rand.Next(1, 101) <= SummonTagCriticalStrikeChance - (100 * critLevel))
+                {
+                    modifiers.SetCrit();
+                }
                 if (critLevel >= 1)
                 {
                     modifiers.SetCrit();
+                    if (Main.rand.Next(1, 101) <= SummonTagCriticalStrikeChance - (100 * critLevel))
+                    {
+                        modifiers.CritDamage *= 2;
+                    }
                 }
                 if (critLevel > 1)
                 {
@@ -1113,11 +1121,6 @@ namespace tsorcRevamp.NPCs
                     {
                         modifiers.CritDamage *= 2;
                     }
-                }
-                if (Main.rand.Next(1, 101) <= SummonTagCriticalStrikeChance - (100 * critLevel))
-                {
-                    modifiers.SetCrit();
-                    modifiers.CritDamage *= 2;
                 }
 
             }

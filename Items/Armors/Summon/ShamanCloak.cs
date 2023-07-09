@@ -1,7 +1,9 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Armors.Summon
@@ -11,7 +13,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public static float Dmg = 24f;
         public static int MinionSlots = 1;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MinionSlots);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MinionSlots, ShunpoDash.Cooldown);
         public override void SetStaticDefaults()
         {
         }
@@ -28,6 +30,26 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             player.GetDamage(DamageClass.Summon) += Dmg / 100f;
             player.maxMinions += MinionSlots;
+        }
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            return (head.type == ModContent.ItemType<ShamanHood>() || head.type == ModContent.ItemType<ShamanMask>()) && legs.type == ModContent.ItemType<ShamanPants>();
+        }
+        public override void UpdateArmorSet(Player player)
+        {
+            player.GetModPlayer<tsorcRevampPlayer>().Shunpo = true;
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            Player player = Main.LocalPlayer;
+            var ShunpoKeybind = tsorcRevamp.Shunpo.GetAssignedKeys();
+            string ShunpoString = ShunpoKeybind.Count > 0 ? ShunpoKeybind[0] : "Shunpo: <NOT BOUND>";
+            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip3");
+            if (ttindex1 != -1)
+            {
+                tooltips.RemoveAt(ttindex1);
+                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ShunpoKeybind1") + ShunpoString + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ShunpoKeybind2")));
+            }
         }
         public override void AddRecipes()
         {
