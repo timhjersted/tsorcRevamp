@@ -854,7 +854,7 @@ namespace tsorcRevamp
                                     {
                                         Player.velocity += new Vector2(0, -15);
                                         Player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 30);
-                                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("EoLForceField.Snap"), Color.Red);
+                                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("EoLForcefield.Snap"), Color.Red);
                                     }
                                 }
                             }
