@@ -3050,6 +3050,8 @@ namespace tsorcRevamp.NPCs
         //More complex "bored" check than simple velocity. Right now it can get bored if it takes too long doing things that require it to move slow.
         private static void BasicAI(NPC npc, float topSpeed, float acceleration, float brakingPower, bool isArcher, bool canTeleport = false, int doorBreakingDamage = 0, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercentage = 0, float enrageTopSpeed = 0, bool lavaJumping = false, bool canDodgeroll = true, bool canPounce = true)
         {
+            npc.noTileCollide = false;
+
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
             topSpeed *= globalNPC.Swiftness;
             acceleration *= globalNPC.Swiftness;
@@ -3336,7 +3338,6 @@ namespace tsorcRevamp.NPCs
                     if (UsefulFunctions.IsTileReallySolid(l, y_below_feet)) // tile exists and is solid
                     {
                         standing_on_solid_tile = true;
-                        break; // one is enough so stop checking
                     }
                 }
             }
@@ -3415,6 +3416,33 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
+
+            //Can fall through platforms
+            bool standing_on_platforms = true;
+            bool atLeastOnePlatform = false;
+            if (npc.velocity.Y == 0)
+            {
+                for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
+                {
+                    if(TileID.Sets.Platforms[Main.tile[l, y_below_feet].TileType])
+                    {
+                        atLeastOnePlatform = true;
+                    }
+                    else
+                    {
+                        if (Main.tile[l, y_below_feet].HasTile)
+                        {
+                            standing_on_platforms = false;
+                        }
+                    }
+                }
+            }
+
+            if (standing_on_platforms && atLeastOnePlatform && Main.player[npc.target].Center.Y > npc.Center.Y && (globalNPC.BoredTimer > 60 || Math.Abs(npc.Center.X - Main.player[npc.target].Center.X) < 300))
+            {
+                npc.noTileCollide = true;
+            }
+
             bool lineOfSight = Main.player[npc.target].CanHit(npc);
 
             if (globalNPC.BoredTimer >= 0)
@@ -3435,7 +3463,10 @@ namespace tsorcRevamp.NPCs
                         else
                         {
                             //Try to teleport somewhere it has line of sight to the player
-                            QueueTeleport(npc, 50, true);
+                            if (globalNPC.TeleportCountdown == 0)
+                            {
+                                QueueTeleport(npc, 50, true);
+                            }
                         }
                     }
                 }
