@@ -3466,7 +3466,7 @@ namespace tsorcRevamp.NPCs
                         //If a projectile is within 100 units of the NPC and is within 0.3 radian angle of being aimed at them, then try to dodge
                         if (Main.projectile[i].active && Main.projectile[i].friendly && Main.projectile[i].damage > 0 && Main.projectile[i].DistanceSQ(npc.Center) < 40000 && UsefulFunctions.CompareAngles(Main.projectile[i].velocity, UsefulFunctions.Aim(Main.projectile[i].Center, npc.Center, 1)) < 0.3f)
                         {
-                            if (Main.rand.NextFloat() < globalNPC.Agility || true)
+                            if (Main.rand.NextFloat() < globalNPC.Agility)
                             {
                                 bool heightToJump = true;
                                 for (int j = 0; j < 8; j++)
