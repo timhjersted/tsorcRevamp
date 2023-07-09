@@ -169,7 +169,10 @@ namespace tsorcRevamp.Projectiles
             effect.Parameters["splitAngle"].SetValue(angle);
             effect.Parameters["rotation"].SetValue(shaderRotation);
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 252);
-            effect.Parameters["length"].SetValue(.05f * size / maxSize);
+            effect.Parameters["length"].SetValue(.07f * size / maxSize);
+            effect.Parameters["texScale"].SetValue(12);
+            effect.Parameters["texScale2"].SetValue(1);
+            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);
             float opacity = 1;
 
             if (fadeIn < 30)
@@ -189,11 +192,11 @@ namespace tsorcRevamp.Projectiles
             //Apply the shader
             effect.CurrentTechnique.Passes[0].Apply();
 
-            Rectangle recsize = new Rectangle(0, 0, tsorcRevamp.NoiseTurbulent.Width, tsorcRevamp.NoiseTurbulent.Height);
+            Rectangle recsize = new Rectangle(0, 0, tsorcRevamp.NoiseVoronoi.Width, tsorcRevamp.NoiseVoronoi.Height);
             Vector2 origin = new Vector2(recsize.Width * 0.5f, recsize.Height * 0.5f);
 
             //Draw the rendertarget with the shader
-            Main.spriteBatch.Draw(tsorcRevamp.NoiseTurbulent, truePosition - Main.screenPosition, recsize, Color.White, Projectile.rotation + (MathHelper.Pi - angle / 2f), origin, trueSize * trueSize * 7.5f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tsorcRevamp.NoiseVoronoi, truePosition - Main.screenPosition, recsize, Color.White, Projectile.rotation + (MathHelper.Pi - angle / 2f), origin, trueSize * trueSize * 15f, SpriteEffects.None, 0);
 
             //Restart the spritebatch so the shader doesn't get applied to the rest of the game
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);

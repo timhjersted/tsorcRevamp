@@ -1,10 +1,21 @@
 sampler uImage0 : register(s0);
+texture noiseTexture;
+sampler uImage1 = sampler_state
+{
+    Texture = (noiseTexture);
+    AddressU = wrap;
+    AddressV = wrap;
+};
+
 
 float time; //Causes the flames to flow with time
 float splitAngle; //How wide (in radians) the angle of fire is
 float rotation; //Rotates the fire
 float length; //The maximum length
 float opacity; //Multiplies the output by this to let it fade in
+float texScale;
+float texScale2;
+
 
 //I precomputed what values I could, to save on instruction count
 float rotationMinusPI;
@@ -24,13 +35,19 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     float angle = atan2(dir.y, dir.x);        
         
     //Calculate how close the current pixel is to the center line of the screen
-    float dist = distance(coords, float2(0.5, 0.5));    
+    float dist = distance(coords, float2(0.5, 0.5));
     
     //Convert uv from rectangular to polar coordinates
+    //Make two sample points, one for the voronoi noise and the other for the turbulent noise
+    //They are different size textures so they must be scaled differently
     float2 samplePoint = float2(dist - time, angle * INVERSETWOPI);
+    float2 samplePoint2 = samplePoint;
+    
+    samplePoint *= texScale;
+    samplePoint2 *= texScale2;
     
     //Calculate how intense a pixel should be based on the noise generator
-    float intensity = tex2D(uImage0, samplePoint).r;
+    float intensity = (tex2D(uImage0, samplePoint).r + tex2D(uImage1, samplePoint2).r) / 2;
     
     //Only draw a slice with angles between 'rotation' and 'splitAngle'. The final && is to stop it from going doing a fucky wucky when it crosses the 2Pi > 0 border.    
     if (angle > splitAnglePlusRotationMinusPI)
