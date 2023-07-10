@@ -46,7 +46,7 @@ Mods: {
 			HolyDodge: 授予神圣闪避，当神圣闪避激活时，此盔甲套装提供的属性加倍
 			TitaniumBonus: 造成伤害会生成一个钛金防御碎片
 			ShunpoKeybind1: "按 "
-			ShunpoKeybind2: " 冲向光标所指处并短暂免疫伤害"
+			ShunpoKeybind2: " 冲向鼠标悬停处所指的敌人并获得短暂的无敌帧"
 			ShunpoCD:
 				'''
 				瞬步有 {$CommonItemTooltip.Cooldown}
@@ -55,7 +55,7 @@ Mods: {
 			BonusMagicDmg: 增加 {0}% 魔法伤害
 			UniqueImbue: 和其他武器不兼容
 			LifeRegen: 增加 {0} 点生命再生
-			// BadLifeRegen: Decreases life regeneration by {0}
+			BadLifeRegen: 减少 {0} 点生命再生
 			BadDefense: 增加 {0} 点防御
 			BadDmg: 降低 {0}% 伤害
 			DmgMult: 乘算增加 {0}% 伤害
@@ -343,11 +343,11 @@ Mods: {
 
 		BossChecklist: {
 			LeonhardDesc: 李奥纳德
-			// AncientOolacileDemonDesc: Legends mention the Oolacile Forest...
+			AncientOolacileDemonDesc: 有传言提到了失落的乌拉席露森林...
 			SlograAndGaibonName: 斯洛格拉和盖波
 			SlograAndGaibonDesc: 在黑曜石神庙深处找到它们...
 			JungleWyvernDesc: 探索失落之城废墟的深处...
-			// AncientDemonDesc: A secret lair in hell awaits you...
+			AncientDemonDesc: 它在地狱中的秘密巢穴等着你...
 			TheRageDesc: 探索东边的神圣洞穴深处...
 			TheSorrowDesc: 潜入大陆东侧冻样的深处...
 			WyvernMageDesc: 他在东边高山顶的一处堡垒中等待你...
@@ -1965,7 +1965,7 @@ Mods: {
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					{$CommonItemTooltip.Magic.ManaRegen@2}
 					{$CommonItemTooltip.SetBonus}可延长呼吸时间，增加水中移动力
-					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
+					{$CommonItemTooltip.PercentIncreasedCritChance@3}
 					最终可用 {5} 个视域之魂和 {4} 个黑暗之魂升级
 					'''
 			}
@@ -2156,8 +2156,8 @@ Mods: {
 				Tooltip:
 					'''
 					它是由锋利的龙鳞制成的
-					{$CommonItemTooltip.PercentIncreasedMagicCritChance}
-					{$CommonItemTooltip.IncreasesMaxManaBy@1}
+					{$CommonItemTooltip.PercentIncreasedMagicCritChance@1}
+					{$CommonItemTooltip.IncreasesMaxManaBy}
 					'''
 			}
 
@@ -2170,9 +2170,9 @@ Mods: {
 					{$CommonItemTooltip.Thorns@1}
 					{$CommonItemTooltip.Magic.ManaRegen@2}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@5}
-					{$CommonItemTooltip.LifeThreshold@3}Dragonscale Cloak 能力激活
-					并触发双倍的该套装魔力再生、星星斗篷效果
-					和{$CommonItemTooltip.PercentIncreasedMagicDamageCritChance@4}
+					{$CommonItemTooltip.LifeThreshold@3} 龙鳞套装能力激活
+					触发双倍的该套装提供的魔力再生、星星斗篷效果
+					并获得{$CommonItemTooltip.PercentIncreasedMagicDamageCritChance@4}的效果
 					'''
 			}
 
@@ -2213,7 +2213,7 @@ Mods: {
 				DisplayName: 模仿者帽子
 				Tooltip:
 					'''
-					{$CommonItemTooltip.IncreasesMaxManayBy}
+					{$CommonItemTooltip.IncreasesMaxManaBy}
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					'''
 			}
@@ -3468,7 +3468,7 @@ Mods: {
 				DisplayName: 破损的 锯刃镐
 				Tooltip:
 					'''
-					一个古老的强大工具似乎已经碎成了几块
+					一个古老的强大工具似乎已经碎成了几块，它损坏的太厉害已经无法被修复了
 					[c/00ffd4:残余物已流尽它们的力量，并安静的吟唱着黑魔法]
 					[c/ffbf00:看起来你得去找到其他的能打破神庙砖的东西...]...
 					这个东西在接下来的旅程中一无是处，还是扔了最好
@@ -4097,6 +4097,8 @@ Mods: {
 					'''
 					{$CommonItemTooltip.IncreasesDefenseBy}
 					{$CommonItemTooltip.DRStatBoost@1}
+					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
+					{$CommonItemTooltip.BadDmg@3}
 					不与恶魔药水、力量药水或前线药水叠加
 					'''
 			}
@@ -4622,6 +4624,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.IncreasesDefenseBy@1}
 					{$CommonItemTooltip.AtkSpeed@2}{$CommonItemTooltip.Melee.Doubled}
+					{$CommonItemTooltip.BadLifeRegen@3}
 					不与恶魔药水、护甲药水或前线药水叠加
 					'''
 			}
@@ -4641,7 +4644,7 @@ Mods: {
 				Tooltip:
 					'''
 					运用火焰之力探索自我的真谛
-					{$CommonItemTooltip.DamageMultiplier}
+					{$CommonItemTooltip.DmgMult}
 					{$CommonItemTooltip.StaminaRegen@1}
 					过度的力量吞噬施法者的生命力
 					持续 {2} 秒且无法取消
@@ -6031,8 +6034,9 @@ Mods: {
 				DisplayName: 冷冻机
 				Tooltip:
 					'''
+					减慢敌人，有几率冻结敌人
+					伤害很高但使用时无法翻滚躲避
 					使用凝胶作为弹药
-					有几率冻结敌人
 					'''
 			}
 
@@ -7937,17 +7941,17 @@ Mods: {
 
 			Ignited: {
 				// DisplayName: Ignited
-				// Description: Mods.tsorcRevamp.Buffs.Ignited.Description
+				// Description: ""
 			}
 
 			Charmed: {
 				// DisplayName: Charmed
-				// Description: Mods.tsorcRevamp.Buffs.Charmed.Description
+				// Description: ""
 			}
 
 			Heatstroke: {
 				// DisplayName: Heatstroke
-				// Description: Mods.tsorcRevamp.Buffs.Heatstroke.Description
+				// Description: ""
 			}
 
 			PhotonicDownpourBuff: {
@@ -7955,14 +7959,14 @@ Mods: {
 				// Description: The combat drone will fight for you
 			}
 
-			ShunpoDash: {
-				// DisplayName: Shunpo Dash
-				// Description: Mods.tsorcRevamp.Buffs.ShunpoDash.Description
+			ShunpoBlink: {
+				// DisplayName: Shunpo Immunity
+				// Description: Nothing can catch you
 			}
 
-			ShunpoDashCooldown: {
-				// DisplayName: Shunpo Dash Cooldown
-				// Description: You cannot dash again until this runs out
+			ShunpoBlinkCooldown: {
+				// DisplayName: Shunpo Cooldown
+				// Description: You cannot blink again until this runs out
 			}
 		}
 
@@ -8781,10 +8785,10 @@ Mods: {
 				// BulletHell: prepare for die
 			}
 
-			// SwordOfLordGwyn.DisplayName: Sword of Lord Gwyn
-			// HellkiteDragonBody.DisplayName: Hellkite Dragon
-			// HellkiteDragonBody2.DisplayName: Hellkite Dragon
-			// HellkiteDragonBody3.DisplayName: Hellkite Dragon
+			SwordOfLordGwyn.DisplayName: 葛温之刃
+			HellkiteDragonBody.DisplayName: 炼狱鸢龙
+			HellkiteDragonBody2.DisplayName: 炼狱鸢龙
+			HellkiteDragonBody3.DisplayName: 炼狱鸢龙
 
 			HellkiteDragonHead: {
 				// DisplayName: Hellkite Dragon
@@ -9264,19 +9268,19 @@ Mods: {
 					Man and animal once lived in harmony, until one day a particular tribe grew a sickness of the mind. 
 					This tribe, known as the Takers, came to dominate the world, exterminating all other ways of being...
 					''' */
-				// Quote2: Arapaho once told me that all plants are our brothers and sisters. They talk to us and if we listen, we can hear them.
-				// Quote3: I am an animist, like the indigenous tribe who once lived in these lands were, before they were wiped out by the Takers.
-				// Quote4Part1: "You must never forget "
-				// Quote4Part2: ", you are not separate from nature. You are one with the whole universe."
-				// Quote5Part1: "The world is not a pyramid, "
-				// Quote5Part2: ", nor is man the top of it. The world is a web, and every strand of the web is connected."
-				// Quote6: Civilized man has grown a great sickness of the mind -- thinks he is superior to all creation. Thinks the world was made for him!
-				// Quote7: Apache said it is better to have less thunder in the mouth and more lightning in the hand.
-				// Quote8: Tuscarora once said they are not dead who live in the hearts they leave behind.
-				// PreAttraidies1: "[c/ffbf00:If you are able to defeat Attraidies, come and find me at my home beyond the Western Sea.] I will have something for you..."
-				// PreAttraidies2: "[c/ffbf00:In some time I will leave Ashen Peak and return to my home beyond the Western Sea.] Come find me there..."
-				// button2v1: Ask about The Abyss
-				// button2v2: Continue...
+				Quote2: Arapaho曾告诉我，所有的植物都是我们的兄弟姐妹。它们与我们交谈，如果我们倾听，我们就能听到它们。
+				Quote3: 我是认为万物有灵，就像曾经生活在这些土地上，被“掠夺者”消灭的土著部落一样。
+				Quote4Part1: "你永远也不要忘记 "
+				Quote4Part2: ", 你不是与自然分离的。你与宇宙共存。"
+				Quote5Part1: 这个世界不是一座金字塔，
+				Quote5Part2: 没有人位于金字塔的塔顶。这个世界是一张网，所有存在都彼此相连。
+				Quote6: 人类文明的精神疾病很严重————认为自己比一切造物都优越。认为世界是为他创造的！
+				Quote7: 阿帕切人说过，「多言不如少言，少言不如实干」。
+				Quote8: 臧克家说过：“有些人活着，但他已经死了；有些人已经死了，但他还活着。”（注：原文为：“塔斯卡罗拉曾说过，「活在他们心中的人并没有死去」。”）
+				PreAttraidies1: "[c/ffbf00:如果你能打败阿卓迪斯，来西海之上找我。] 我有一些东西要给你..."
+				PreAttraidies2: "[c/ffbf00:过一段时间，我将离开灰烬峰，回到西海那边的家。]去那里找我..."
+				button2v1: 询问深渊
+				button2v2: 继续...
 				/* AdvModeSHMQuote1:
 					'''
 					Red, it is as I feared. By killing Attraidies, a portal from
@@ -9504,10 +9508,10 @@ Mods: {
 				}
 			}
 
-			// HomingMissile.DisplayName: Homing Missile
-			// Byakhee.DisplayName: Byakhee
-			// ClericOfSorrow.DisplayName: Cleric Of Sorrow
-			// Willowisp.DisplayName: Willowisp
+			HomingMissile.DisplayName: 自瞄导弹
+			Byakhee.DisplayName: 拜亚基
+			ClericOfSorrow.DisplayName: 哀悼牧师
+			Willowisp.DisplayName: 柳缕
 		}
 
 		Prefixes: {
@@ -9516,41 +9520,41 @@ Mods: {
 				// Tooltip: +{0} life regen while held
 			}
 
-			// Brave.DisplayName: Brave
-			// Commanding.DisplayName: Commanding
-			// Domineering.DisplayName: Domineering
-			// Impatient.DisplayName: Impatient
-			// Perfectionist.DisplayName: Perfectionist
-			// Reckless.DisplayName: Reckless
-			// Invigorating.DisplayName: Invigorating
-			// Refreshing.DisplayName: Refreshing
-			// Revitalizing.DisplayName: Revitalizing
-			// StaminaRegen.Tooltip: +{0}% stamina recovery speed
-			// Sadistic.DisplayName: Sadistic
-			// Tenacious.DisplayName: Tenacious
-			// Undisciplined.DisplayName: Undisciplined
+			Brave.DisplayName: 勇敢的
+			Commanding.DisplayName: 掌控的
+			Domineering.DisplayName: 专横的
+			Impatient.DisplayName: 不耐烦的
+			Perfectionist.DisplayName: 完美的
+			Reckless.DisplayName: 鲁莽的
+			Invigorating.DisplayName: 焕发的
+			Refreshing.DisplayName: 生机的
+			Revitalizing.DisplayName: 振兴的
+			StaminaRegen.Tooltip: +{0}% 耐力回复速度
+			Sadistic.DisplayName: 悲伤的
+			Tenacious.DisplayName: 坚韧的
+			Undisciplined.DisplayName: 涣散的
 		}
 
 		Tiles: {
-			// BonfireCheckpoint.MapEntry: Bonfire Checkpoint
-			// FlameJet.MapEntry: Flame Jet
-			// SoapstoneTile.MapEntry: Soapstone Message
-			// SoulSkellyL.MapEntry: Soul Skelly
-			// SoulSkellyR.MapEntry: Soul Skelly
-			// SoulSkellyWall1.MapEntry: Soul Skelly
-			// SoulSkellyWall2.MapEntry: Soul Skelly
-			// SoulSkullL.MapEntry: Soul Skull
-			// SoulSkullR.MapEntry: Soul Skull
+			BonfireCheckpoint.MapEntry: 篝火检查点
+			FlameJet.MapEntry: 火焰喷射器
+			SoapstoneTile.MapEntry: 蜡石文字泡消息
+			SoulSkellyL.MapEntry: 灵魂骷髅
+			SoulSkellyR.MapEntry: 灵魂骷髅
+			SoulSkellyWall1.MapEntry: 灵魂骷髅
+			SoulSkellyWall2.MapEntry: 灵魂骷髅
+			SoulSkullL.MapEntry: 灵魂头骨
+			SoulSkullR.MapEntry: 灵魂头骨
 		}
 
 		Keybinds: {
-			// "Dragoon Boots.DisplayName": Dragoon Boots
-			// "Reflection Shift.DisplayName": Reflection Shift
-			// "Dodge Roll.DisplayName": Dodge Roll
-			// "Special Ability.DisplayName": Special Ability
-			// "Wolf Ring.DisplayName": Wolf Ring
-			// "Wings of Seath speed toggle.DisplayName": Wings of Seath speed toggle
-			// Shunpo.DisplayName: Shunpo
+			"Dragoon Boots.DisplayName": 龙骑士之靴
+			"Reflection Shift.DisplayName": 反射位移
+			"Dodge Roll.DisplayName": 翻滚
+			"Special Ability.DisplayName": 特殊能力
+			"Wolf Ring.DisplayName": 苍狼之戒
+			"Wings of Seath speed toggle.DisplayName": 希斯之翼速度切换
+			Shunpo.DisplayName: 瞬步
 		}
 
 		Configs: {
