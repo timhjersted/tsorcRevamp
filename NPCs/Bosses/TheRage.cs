@@ -1,9 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.Graphics.Effects;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
@@ -52,8 +56,8 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.timeLeft = 22500;
 
             DrawOffsetY = +70;
-            NPC.width = 140;
-            NPC.height = 60;
+            NPC.width = 160;
+            NPC.height = 75;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.TheRage.DespawnHandler"), Color.OrangeRed, 127);
         }
 
@@ -95,19 +99,19 @@ namespace tsorcRevamp.NPCs.Bosses
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+            NPC.width = 160;
+            NPC.height = 75;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            NPC.netUpdate = true;
+
+            HandleScreenShader();
+
             NPC.ai[2]++;
             NPC.ai[1]++;
             hitTime++;
-            if (NPC.ai[0] > 0) NPC.ai[0] -= hitTime / 10;
-            Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-            //Fun fact: Dusts apparently have a max Scale of 16. For an incredibly good reason, i'm sure.
-            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 0.3f + (10.5f * (NPC.ai[0] / (NPC.lifeMax / 10))));
-            Main.dust[dust].noGravity = true;
-
-
-            
+            if (NPC.ai[0] > 0)
+            {
+                NPC.ai[0] -= hitTime / 10;
+            }
 
             flapWings++;
 
@@ -122,8 +126,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 1f, PitchVariance = 1f }, NPC.position);
                 flapWings = 0; 
             }
-
-
             
             //Demon - 1st phase
             if (NPC.life > NPC.lifeMax / 2)
@@ -138,6 +140,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             Player player = Main.player[NPC.target];
+
             //chaos code: announce proximity debuffs once
             if (holdTimer > 1)
             {
@@ -146,18 +149,15 @@ namespace tsorcRevamp.NPCs.Bosses
 
             //Proximity Debuffs
             if (NPC.Distance(player.Center) < 1550 && NPC.life < NPC.lifeMax / 2)
-            {
-                
-                    player.AddBuff(BuffID.OnFire, 30, false);
-
-               
+            {                
+                player.AddBuff(BuffID.OnFire, 30, false);               
                 if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
                 {
                     UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheRage.HeatWave"), 235, 199, 23);//deep yellow
                     holdTimer = 9000;
                 }
-
             }
+
             //getting close to the rage triggers on fire!
             if (NPC.Distance(player.Center) < 80)
             {
@@ -165,13 +165,10 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             //chance to trigger fire from above / 2nd phase 
-            if (Main.rand.NextBool(500) )
-            {
-                
-                FlameShotCounter2 = 0;
-               
+            if (Main.rand.NextBool(500))
+            {                
+                FlameShotCounter2 = 0;               
             }
-
 
             //DEMON SICKLE - 1ST PHASE
             //counts up each tick. used to space out shots
@@ -179,10 +176,8 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 for (int num36 = 0; num36 < 20; num36++)
                 {
-                    int fireDust = Dust.NewDust(new Vector2(vector8.X, vector8.Y ), DustID.ShadowbeamStaff, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
-                    Main.dust[fireDust].noGravity = true;
-                    
-                    
+                    int fireDust = Dust.NewDust(NPC.Center, DustID.ShadowbeamStaff, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
+                    Main.dust[fireDust].noGravity = true;                    
                 }
 
                 // Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 600 + Main.rand.Next(600), (float)player.position.Y - 120f, (float)(-10 + Main.rand.Next(10)) / 2, 0.1f, ProjectileID.DemonSickle, fireTrailsDamage, 2f, Main.myPlayer); // ModContent.ProjectileType<FireTrails>()
@@ -195,15 +190,10 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DemonSickle, fireTrailsDamage, 0f, Main.myPlayer);
                 }
-                
-
-               
 
                 FlameShotTimer2 = 0;
                 FlameShotCounter2++;
-
             }
-
 
             //FIRE FROM ABOVE ATTACK - 2nd Phase
             //counts up each tick. used to space out shots
@@ -268,7 +258,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
             //GAIBON FIRE BOMBS!     
             Timer++;
-
             //1st phase frequency
             if (Main.rand.NextBool(350) && (player.position.Y + 30 >= NPC.position.Y) && NPC.life > NPC.lifeMax / 2)
             {
@@ -291,7 +280,9 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
                     
                 }
+
             }
+
             //2nd phase frequency
             if (Main.rand.NextBool(130) && (player.position.Y + 30 >= NPC.position.Y) && NPC.life < NPC.lifeMax / 2)
             {
@@ -314,9 +305,6 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
            
-            
-            
-
             //SPAWN METEOR HELL
             if (Main.rand.NextBool(80) && NPC.Distance(player.Center) > 100 && NPC.life <= NPC.lifeMax / 5 )
             {
@@ -327,11 +315,11 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     for (int num36 = 0; num36 < 20; num36++)
                     {
-                        int fireDust = Dust.NewDust(new Vector2(vector8.X + 500, vector8.Y - 100), DustID.Shadowflame, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
+                        int fireDust = Dust.NewDust(new Vector2(NPC.Center.X + 500, NPC.Center.Y - 100), DustID.Shadowflame, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
                         Main.dust[fireDust].noGravity = true;
-                        fireDust = Dust.NewDust(new Vector2(vector8.X, vector8.Y - 100), DustID.Shadowflame, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
+                        fireDust = Dust.NewDust(new Vector2(NPC.Center.X, NPC.Center.Y - 100), DustID.Shadowflame, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
                         Main.dust[fireDust].noGravity = true;
-                        fireDust = Dust.NewDust(new Vector2(vector8.X - 500, vector8.Y - 100), DustID.Shadowflame, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
+                        fireDust = Dust.NewDust(new Vector2(NPC.Center.X - 500, NPC.Center.Y - 100), DustID.Shadowflame, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
                         Main.dust[fireDust].noGravity = true;
                     }
 
@@ -359,22 +347,22 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 if (NPC.ai[2] < 600)
                 {
-                    if (Main.player[NPC.target].position.X < vector8.X)
+                    if (Main.player[NPC.target].position.X < NPC.Center.X)
                     {
 
                         if (NPC.velocity.X > -8) { NPC.velocity.X -= 0.22f; }
                     }
-                    if (Main.player[NPC.target].position.X > vector8.X)
+                    if (Main.player[NPC.target].position.X > NPC.Center.X)
                     {
                         if (NPC.velocity.X < 8) { NPC.velocity.X += 0.22f; }
                     }
 
-                    if (Main.player[NPC.target].position.Y < vector8.Y + 300)
+                    if (Main.player[NPC.target].position.Y < NPC.Center.Y + 300)
                     {
                         if (NPC.velocity.Y > 0f) NPC.velocity.Y -= 0.8f;
                         else NPC.velocity.Y -= 0.07f;
                     }
-                    if (Main.player[NPC.target].position.Y > vector8.Y + 300)
+                    if (Main.player[NPC.target].position.Y > NPC.Center.Y + 300)
                     {
                         if (NPC.velocity.Y < 0f) NPC.velocity.Y += 0.8f;
                         else NPC.velocity.Y += 0.07f;
@@ -385,23 +373,21 @@ namespace tsorcRevamp.NPCs.Bosses
                         float num48 = 4f;//4 was 5, speed
                         int type = ModContent.ProjectileType<FireTrails>();
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.5f, PitchVariance = 1f }, NPC.Center) ; //flame thrower
-                        float rotation = (float)Math.Atan2(vector8.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + 600, vector8.Y - 120, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 120, (float)((Math.Cos(rotation + 0.2) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X - 600, vector8.Y - 120, (float)((Math.Cos(rotation - 0.2) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
+                        float rotation = (float)Math.Atan2(NPC.Center.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + 600, NPC.Center.Y - 120, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 120, (float)((Math.Cos(rotation + 0.2) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 600, NPC.Center.Y - 120, (float)((Math.Cos(rotation - 0.2) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
                         NPC.ai[1] = -90;
                         //Added some dust so the projectiles aren't just appearing out of thin air
                         for (int num36 = 0; num36 < 20; num36++)
                         {
-                            int fireDust = Dust.NewDust(new Vector2(vector8.X + 600, vector8.Y - 120), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
+                            int fireDust = Dust.NewDust(new Vector2(NPC.Center.X + 600, NPC.Center.Y - 120), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
                             Main.dust[fireDust].noGravity = true;
-                            fireDust = Dust.NewDust(new Vector2(vector8.X, vector8.Y - 120), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
+                            fireDust = Dust.NewDust(new Vector2(NPC.Center.X, NPC.Center.Y - 120), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
                             Main.dust[fireDust].noGravity = true;
-                            fireDust = Dust.NewDust(new Vector2(vector8.X - 600, vector8.Y - 120), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
+                            fireDust = Dust.NewDust(new Vector2(NPC.Center.X - 600, NPC.Center.Y - 120), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
                             Main.dust[fireDust].noGravity = true;
-                        }
-
-                        
+                        }                        
                     }
                 }
                 else if (NPC.ai[2] >= 600 && NPC.ai[2] < 850)
@@ -411,7 +397,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     //This exists to delay switching to the 'charging' pattern for a moment to give time for the player to make distance
                     NPC.velocity.X *= 0.95f;
                     NPC.velocity.Y *= 0.95f;
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 130, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 200, default, 1f);
+                    //Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 130, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 200, default, 1f);
 
                     
                 }
@@ -421,7 +407,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.velocity.Y *= 0.98f;
                     if ((NPC.velocity.X < 2f) && (NPC.velocity.X > -2f) && (NPC.velocity.Y < 2f) && (NPC.velocity.Y > -2f))
                     {
-                        float rotation = (float)Math.Atan2((vector8.Y) - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), (vector8.X) - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                        float rotation = (float)Math.Atan2(NPC.Center.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         NPC.velocity.X = (float)(Math.Cos(rotation) * 22) * -1;
                         NPC.velocity.Y = (float)(Math.Sin(rotation) * 22) * -1;//22 w 25, seems to be speed of dash
                     }
@@ -442,20 +428,20 @@ namespace tsorcRevamp.NPCs.Bosses
                 
                 //FlameShotCounter2 = 0;
 
-                if (Main.player[NPC.target].position.X < vector8.X)
+                if (Main.player[NPC.target].position.X < NPC.Center.X)
                 {
                     if (NPC.velocity.X > -6) { NPC.velocity.X -= 0.22f; }
                 }
-                if (Main.player[NPC.target].position.X > vector8.X)
+                if (Main.player[NPC.target].position.X > NPC.Center.X)
                 {
                     if (NPC.velocity.X < 6) { NPC.velocity.X += 0.22f; }
                 }
-                if (Main.player[NPC.target].position.Y < vector8.Y)
+                if (Main.player[NPC.target].position.Y < NPC.Center.Y)
                 {
                     if (NPC.velocity.Y > 0f) NPC.velocity.Y -= 0.8f;
                     else NPC.velocity.Y -= 0.07f;
                 }
-                if (Main.player[NPC.target].position.Y > vector8.Y)
+                if (Main.player[NPC.target].position.Y > NPC.Center.Y)
                 {
                     if (NPC.velocity.Y < 0f) NPC.velocity.Y += 0.8f;
                     else NPC.velocity.Y += 0.07f;
@@ -466,35 +452,27 @@ namespace tsorcRevamp.NPCs.Bosses
                     float num48 = 7f;//8 WAS 9
                     float invulnDamageMult = 1.54f;
                     int type = ModContent.ProjectileType<FireTrails>();
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);
-                    float rotation = (float)Math.Atan2(vector8.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + 300, vector8.Y - 150, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 150, (float)((Math.Cos(rotation + 0.2) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X - 300, vector8.Y - 150, (float)((Math.Cos(rotation - 0.2) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                    float rotation = (float)Math.Atan2(NPC.Center.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + 300, NPC.Center.Y - 150, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 150, (float)((Math.Cos(rotation + 0.2) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 300, NPC.Center.Y - 150, (float)((Math.Cos(rotation - 0.2) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
                     NPC.ai[1] = -90;
                     //Added some dust so the projectiles aren't just appearing out of thin air
                     for (int num36 = 0; num36 < 20; num36++)
                     {
-                        int fireDust = Dust.NewDust(new Vector2(vector8.X + 300, vector8.Y - 150), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
+                        int fireDust = Dust.NewDust(new Vector2(NPC.Center.X + 300, NPC.Center.Y - 150), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
                         Main.dust[fireDust].noGravity = true;
-                        fireDust = Dust.NewDust(new Vector2(vector8.X, vector8.Y - 150), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
+                        fireDust = Dust.NewDust(new Vector2(NPC.Center.X, NPC.Center.Y - 150), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
                         Main.dust[fireDust].noGravity = true;
-                        fireDust = Dust.NewDust(new Vector2(vector8.X - 300, vector8.Y - 150), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
+                        fireDust = Dust.NewDust(new Vector2(NPC.Center.X - 300, NPC.Center.Y - 150), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
                         Main.dust[fireDust].noGravity = true;
                     }
                 }
 
-
                 if (NPC.ai[3] == 100)
                 {
                     NPC.ai[3] = 1;
-                    //if (NPC.life < NPC.lifeMax / 2)
-                    if (NPC.life > NPC.lifeMax / 30)
-                    {
-                        NPC.life -= 300; //amount boss takes damage when enraged
-                      
-                    }
-                    if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }
                 if (NPC.ai[1] >= 0)
                 {
@@ -503,16 +481,25 @@ namespace tsorcRevamp.NPCs.Bosses
                     {
                         Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, 0, 0, 0, new Color(), 3f);
                     }
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                    }
                 }
             }
         }
         public override void FindFrame(int currentFrame)
         {
+            NPC.frame.Width = TextureAssets.Npc[NPC.type].Value.Width;
+            NPC.frame.Height = TextureAssets.Npc[NPC.type].Value.Height;
+
             int num = 1;
             if (!Main.dedServ)
             {
-                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
+                num = TextureAssets.Npc[NPC.type].Value.Height / 7;
             }
+            NPC.frame.Height = num;
+
             if (NPC.velocity.X < 0)
             {
                 NPC.spriteDirection = -1;
@@ -524,12 +511,11 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.rotation = NPC.velocity.X * 0.08f;
             NPC.frameCounter += 1.0;
             if (NPC.frameCounter >= 4.0)
-            {
-                
+            {                
                 NPC.frame.Y = NPC.frame.Y + num;
                 NPC.frameCounter = 0.0;
             }
-            if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
+            if (NPC.frame.Y >= num * 7)
             {
                 NPC.frame.Y = 0;
             }
@@ -572,6 +558,12 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 NPC.ai[1] = -250;
                 NPC.ai[0] = 0;
+
+                if(Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                }
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62, NPC.Center);
             }
         }
         public override void BossLoot(ref string name, ref int potionType)
@@ -590,6 +582,14 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void OnKill()
         {
+            if (FilterID != null)
+            {
+                if (Main.netMode != NetmodeID.Server && Filters.Scene[FilterID].IsActive())
+                {
+                    Filters.Scene[FilterID].Deactivate();
+                    tsorcRevampWorld.boundShaders.Remove(FilterID);
+                }
+            }
             for (int num36 = 0; num36 < 100; num36++)
             {
                 int dust = Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 127, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, new Color(), 9f);
@@ -600,5 +600,117 @@ namespace tsorcRevamp.NPCs.Bosses
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 130, Main.rand.Next(-50, 50), Main.rand.Next(-40, 40), 100, Color.Orange, 3f);
             }
         }
+
+        public string FilterID = "RageFilter";
+        public void HandleScreenShader()
+        {
+            if (Filters.Scene[FilterID] == null)
+            {
+                Filters.Scene[FilterID] = new Filter(new ScreenShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/HeatWave", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "HeatWavePass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
+                tsorcRevampWorld.boundShaders.Add(FilterID);
+            }
+
+            if (Main.netMode != NetmodeID.Server && !Filters.Scene[FilterID].IsActive())
+            {
+                Filters.Scene.Activate(FilterID, NPC.Center).GetShader().UseTargetPosition(NPC.Center);
+                if (!tsorcRevampWorld.boundShaders.Contains(FilterID))
+                {
+                    tsorcRevampWorld.boundShaders.Add(FilterID);
+                }
+            }
+
+            if (Main.netMode != NetmodeID.Server && Filters.Scene[FilterID].IsActive())
+            {
+                float exponent = 0.15f;
+                float intensity = 0.02f;
+                if(NPC.life < NPC.lifeMax / 2)
+                {
+                    exponent = MathHelper.Lerp(0.1f, 1, ((float)NPC.life / NPC.lifeMax) * 2);
+                }
+                else if(NPC.ai[3] == 0)
+                {                    
+                    intensity = 0;
+                }
+
+                if(NPC.ai[3] != 0)
+                {
+                    exponent *= 2;
+                    intensity *= 4;
+                }
+
+                Filters.Scene[FilterID].GetShader().UseTargetPosition(NPC.Center + new Vector2(0, -150)).UseOpacity(exponent).UseIntensity(intensity);
+            }
+        }
+
+        public static Texture2D blurTexture;
+        public static Texture2D enrageTexture;
+        public static Texture2D glowmaskTexture;
+        public static Effect rageEffect;
+        public static Effect rageEnrageEffect;
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            UsefulFunctions.StartAdditiveSpritebatch(ref spriteBatch);
+            UsefulFunctions.EnsureLoaded(ref blurTexture, "tsorcRevamp/NPCs/Bosses/TheRageBlur");
+            UsefulFunctions.EnsureLoaded(ref enrageTexture, "tsorcRevamp/NPCs/Bosses/TheRageEnrage");
+            UsefulFunctions.EnsureLoaded(ref glowmaskTexture, "tsorcRevamp/NPCs/Bosses/TheRageGlowmask");
+
+
+            rageEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/RageEffect", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            rageEffect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 252);
+            rageEffect.Parameters["length"].SetValue(.07f * 1000);
+            rageEffect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);
+            rageEffect.Parameters["sourceRectY"].SetValue(NPC.frame.Y);
+
+            float opacity = NPC.ai[0] / (NPC.lifeMax / 10) * 0.8f;
+            if (NPC.ai[3] != 0)
+            {
+                opacity = 1;
+            }
+            rageEffect.Parameters["opacity"].SetValue(opacity);
+            rageEffect.CurrentTechnique.Passes[0].Apply();
+
+            if (NPC.ai[3] == 0)
+            {
+                Main.spriteBatch.Draw(blurTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, 1.5f, SpriteEffects.None, 0);
+                UsefulFunctions.RestartSpritebatch(ref spriteBatch);
+                Main.spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, NPC.Center - Main.screenPosition, NPC.frame, drawColor, NPC.rotation, NPC.frame.Size() / 2, 1.5f, SpriteEffects.None, 0);
+                Main.spriteBatch.Draw(glowmaskTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, 1.5f, SpriteEffects.None, 0);
+            }
+            else
+            {
+                Main.spriteBatch.Draw(enrageTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, 1.5f, SpriteEffects.None, 0);
+                UsefulFunctions.RestartSpritebatch(ref spriteBatch);
+            }
+
+
+            return false;
+        }
+
+        /*         
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            GraphicsDevice device = Main.graphics.GraphicsDevice;
+
+            RenderTarget2D rageTarget = new RenderTarget2D(device, enrageTexture.Width, enrageTexture.Height, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
+            device.SetRenderTarget(rageTarget);
+            device.Clear(Color.Transparent);
+
+            Effect blurEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/BlurEffect", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            //blurEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.spriteBatch.Draw(enrageTexture, Vector2.Zero, new Rectangle(0, 0, enrageTexture.Width, enrageTexture.Height), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+
+            char separator = Path.DirectorySeparatorChar;
+            string path = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "rageEnrage.png";
+            FileStream stream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);
+            rageTarget.SaveAsPng(stream, enrageTexture.Width, enrageTexture.Height);
+            stream.Close();
+            stream.Dispose();
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
+
+            device.SetRenderTarget(null);
+         
+         
+         */
     }
 }
