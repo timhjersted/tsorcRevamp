@@ -1097,16 +1097,37 @@ namespace tsorcRevamp
         }
 
         ///<summary> 
-        ///Ends the previous spritebatch, and starts a new one that you can apply shaders to.
-        ///Call it before drawing the thing you're trying to shade.
-        ///Call it again *after* drawing the thing you're trying to shade to let the game return to the normal drawing mode.
-        ///Thanks for the tip W1K!
+        ///Ends the previous spritebatch, and starts a new one that uses normal parameters.
+        ///Call it after drawing something with a shader to prevent it from corrupting later drawn objects.
         ///</summary>         
         ///<param name="spriteBatch">The spritebatch to operate on</param>
         public static void RestartSpritebatch(ref SpriteBatch spriteBatch)
         {
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+        }
+
+        ///<summary> 
+        ///Ends the previous spritebatch, and starts a new one that you can apply shaders to.
+        ///Call it before drawing the thing you're trying to shade.
+        ///Thanks for the tip W1K!
+        ///</summary>         
+        ///<param name="spriteBatch">The spritebatch to operate on</param>
+        public static void StartShaderSpritebatch(ref SpriteBatch spriteBatch)
+        {
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+        }
+
+        ///<summary> 
+        ///Ends the previous spritebatch, and starts a new one with additive blending that you can apply shaders to.
+        ///Call it before drawing the thing you're trying to shade.
+        ///</summary>         
+        ///<param name="spriteBatch">The spritebatch to operate on</param>
+        public static void StartAdditiveSpritebatch(ref SpriteBatch spriteBatch)
+        {
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
         }
 
         ///<summary> 
