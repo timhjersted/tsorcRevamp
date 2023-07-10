@@ -2769,20 +2769,24 @@ namespace tsorcRevamp.NPCs
         ///<param name="despawnFlavorText">The custom text this boss displays when it despawns</param>
         ///<param name="textColor">The color of the despawn text</param>
         ///<param name="DustType">The ID of the dust this NPC should create an explosion of upon despawning</param>
-        public NPCDespawnHandler(string despawnFlavorText, Color textColor, int DustType)
+        ///<param name="range">The boss will despawn if any player gets further away than this. -1 means infinite range.</param>
+        public NPCDespawnHandler(string despawnFlavorText, Color textColor, int DustType, float range = -1)
         {
             despawnText = despawnFlavorText;
             despawnTextColor = textColor;
             despawnDustType = DustType;
+            despawnRange = range * range;
         }
 
         ///<summary> 
         ///Handles all targeting and despawning.
         ///</summary> 
         ///<param name="DustType">The ID of the dust this NPC should create an explosion of upon despawning</param>
-        public NPCDespawnHandler(int DustType)
+        ///<param name="range">The boss will despawn if any player gets further away than this. -1 means infinite range.</param>
+        public NPCDespawnHandler(int DustType, float range = -1)
         {
             despawnDustType = DustType;
+            despawnRange = range * range;
         }
 
         readonly string despawnText;
@@ -2793,6 +2797,8 @@ namespace tsorcRevamp.NPCs
         readonly int[] targetIDs = new int[256];
         readonly bool[] targetAlive = new bool[256];
         int despawnTime = -1;
+        float despawnRange;
+        int OutOfBoundsTimer = 600;
 
         ///<summary> 
         ///Handles all targeting and despawning.
@@ -2827,6 +2833,8 @@ namespace tsorcRevamp.NPCs
                 bool viableTarget = false;
                 float closestPlayerDistance = float.MaxValue;
                 float oldTarget = Main.npc[npcID].target;
+                bool foundOutOfBoundsPlayer = false;
+
                 //Iterate through all tracked players in the array
                 for (int i = 0; i < targetCount; i++)
                 {
@@ -2845,6 +2853,24 @@ namespace tsorcRevamp.NPCs
                         {
                             closestPlayerDistance = distance;
                             Main.npc[npcID].target = targetIDs[i];
+                        }
+                        if(despawnRange > 0 && !foundOutOfBoundsPlayer && distance > despawnRange)
+                        {
+                            if(OutOfBoundsTimer == 600)
+                            {
+                                UsefulFunctions.BroadcastText(Main.npc[npcID].TypeName + " " + LangUtils.GetTextValue("NPCs.BossOutOfRange"), Color.Yellow);
+                            }
+                            OutOfBoundsTimer--;
+                            
+                            //If players have been out of bounds for more than 10 seconds, then despawn the boss
+                            if(OutOfBoundsTimer == 0)
+                            {
+                                for(int j = 0; j < targetAlive.Length; j++)
+                                {
+                                    targetAlive[j] = false;
+                                }                                
+                            }
+                            foundOutOfBoundsPlayer = true;
                         }
                     }
                 }
