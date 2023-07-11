@@ -92,26 +92,43 @@ namespace tsorcRevamp
 
         public override void HideDrawLayers(PlayerDrawSet drawInfo)
         {
-            if (isDodging || dodgeCooldown.Value != 0)
+            if (isDodging || dodgeCooldown.Value != 0 || blockVisuals > 0)
             {
                 PlayerDrawLayers.HeldItem.Hide();
+                return;
             }
         }
 
         int oldItemAnimation = 0;
+        bool wasJustRolling = false;
+        int blockVisuals; //Block the remaining itemAnimation visuals after a roll, to prevent visual jank
         public override bool PreItemCheck()
         {
             UpdateDodging();
             //UpdateSwordflip();
 
-            //Stop umbrella and other things from working
+            //Make held item vfx code still run while rolling
+            Item item = Player.HeldItem;
+            if (item != null && item.ModItem != null)
+            {
+                Player.HeldItem.ModItem.HoldItem(Player);
+            }
+
+            //Stop players from using items while rolling, and fix their offset
             if (isDodging || dodgeCooldown.Value != 0)
             {
                 Player.itemLocation = Player.Center + new Vector2(-32, -16); //Stops it from being as disjointed when the player comes out of a roll
+                wasJustRolling = true;
+                blockVisuals = Player.itemAnimation;
                 return false;
             }
+            
+            if(blockVisuals > 0)
+            {
+                blockVisuals--;
+            }
+            
 
-            Item item = Player.HeldItem;
 
             #region BotC Stamina Usage
 
