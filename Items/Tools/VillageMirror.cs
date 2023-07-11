@@ -84,17 +84,6 @@ namespace tsorcRevamp.Items.Tools
                         Dust.NewDust(player.position, player.width, player.height, 57, player.velocity.X * 0.5f, (player.velocity.Y * 0.5f) + 0.5f, 150, default(Color), 1.5f);
                     }
 
-                    //destroy grapples
-                    player.grappling[0] = -1;
-                    player.grapCount = 0;
-                    for (int p = 0; p < 1000; p++)
-                    {
-                        if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].aiStyle == 7)
-                        {
-                            Main.projectile[p].Kill();
-                        }
-                    }
-
                     Vector2 destination;
                     if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                     {
@@ -106,8 +95,12 @@ namespace tsorcRevamp.Items.Tools
                         destination.X = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpX * 16) - (float)((float)player.width / 2.0);
                         destination.Y = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpY * 16) - (float)player.height;
                     }
+                    player.RemoveAllGrapplingHooks();
+                    player.PotionOfReturnOriginalUsePosition = player.Bottom;
                     player.SafeTeleport(destination);
-                    player.AddBuff(ModContent.BuffType<Crippled>(), 1); //1
+                    player.PotionOfReturnHomePosition = player.Bottom;
+                    player.AddBuff(ModContent.BuffType<Crippled>(), 1); //1 (one)
+
 
                     for (int dusts = 0; dusts < 70; dusts++)
                     { //dusts on tp (destination)
@@ -125,36 +118,18 @@ namespace tsorcRevamp.Items.Tools
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            Player player = Main.LocalPlayer;
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {
-                //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
-                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
-                if (ttindex != -1)
-                {// if we find one
-                    //insert the extra tooltip line
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "BotCNerfedVillageMirror", LangUtils.GetTextValue("Items.VillageMirror.BotCNerfed")));
-
-                }
-            }
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.moveSpeed -= 2f;
             player.statDefense -= player.statDefense;
-            if (!player.GetModPlayer<tsorcRevampPlayer>().townWarpSet)
+
+            double timeDifference2 = Main.time - warpSetDelay2;
+            if ((timeDifference2 > 120.0) || (timeDifference2 < 0.0))
             {
-                player.GetModPlayer<tsorcRevampPlayer>().townWarpX = playerXLocation(player);
-                player.GetModPlayer<tsorcRevampPlayer>().townWarpY = playerYLocation(player);
-                player.GetModPlayer<tsorcRevampPlayer>().townWarpWorld = Main.worldID;
-                player.GetModPlayer<tsorcRevampPlayer>().townWarpSet = true;
-                Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.NewLocation"), 255, 240, 30);
-            }
-            else
-            {
-                double timeDifference2 = Main.time - warpSetDelay2;
-                if ((timeDifference2 > 120.0) || (timeDifference2 < 0.0))
+                Rectangle villageRect = new Rectangle(4013 * 16, 608 * 16, 500 * 16, 200 * 16);
+                if (villageRect.Contains(player.Center.ToPoint()))
                 {
                     player.GetModPlayer<tsorcRevampPlayer>().townWarpX = playerXLocation(player);
                     player.GetModPlayer<tsorcRevampPlayer>().townWarpY = playerYLocation(player);
@@ -162,6 +137,11 @@ namespace tsorcRevamp.Items.Tools
                     player.GetModPlayer<tsorcRevampPlayer>().townWarpSet = true;
                     warpSetDelay2 = Main.time;
                     Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.NewLocation"), 255, 240, 30);
+                }
+                else
+                {
+                    warpSetDelay2 = Main.time;
+                    Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.Invalid"), 255, 240, 30);
                 }
             }
         }

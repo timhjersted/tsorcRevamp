@@ -7,7 +7,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Potions
 {
