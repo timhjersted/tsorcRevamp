@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories
 {
     public class DragoonCloak : ModItem
     {
-        public static float LifeThreshold = LightCloak.LifeThreshold + DarkmoonCloak.LifeThreshold + DarkCloak.LifeThreshold / 3;
+        public static float LifeThreshold = (LightCloak.LifeThreshold + DarkmoonCloak.LifeThreshold + DarkCloak.LifeThreshold) / 3;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold);
         public override void SetStaticDefaults()
         {

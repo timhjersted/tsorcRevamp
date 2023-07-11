@@ -56,7 +56,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
 			modifiers.SourceDamage *= AlienGun.BlindingLaserDmgMult;
-            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * AlienGun.BlindingLaserPercentHPDmg, AlienGun.BlindingLaserHPDmgCap);
+            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * AlienGun.BlindingLaserPercentHPDmg / 100f, AlienGun.BlindingLaserHPDmgCap);
         }
     }
 }

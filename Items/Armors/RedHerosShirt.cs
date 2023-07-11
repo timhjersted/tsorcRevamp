@@ -34,8 +34,8 @@ namespace tsorcRevamp.Items.Armors
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BlueHerosShirt>());
-            recipe.AddIngredient(ItemID.SoulofFright, SoulCost);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+            recipe.AddIngredient(ItemID.SoulofFright, SoulCost2);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

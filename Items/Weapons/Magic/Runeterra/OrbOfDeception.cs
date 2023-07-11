@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         public static float OrbDmgMod = 125f;
         public static float OrbReturnDmgMod = 150f;
         public static float DmgLossOnPierce = 5f;
-        public static float EssenceThiefOnKillChance = 12.5f;
+        public static float EssenceThiefOnKillChance = 17f;
         public static float FilledOrbDmgMod = 160f;
         public static float ShootSpeed = 20f;
         public static float OrbSoundVolume = 0.5f;

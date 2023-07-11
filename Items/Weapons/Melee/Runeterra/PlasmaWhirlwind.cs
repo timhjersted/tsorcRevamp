@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public int AttackSpeedScalingDuration = 240;
         public const float DashDuration = 0.2f;
         public const int DashCooldown = 6;
-        public static float PercentHealthDamage = 0.001f;
+        public static float PercentHealthDamage = 0.1f;
         public static int HealthDamageCap = 450;
         public override void SetDefaults()
         {

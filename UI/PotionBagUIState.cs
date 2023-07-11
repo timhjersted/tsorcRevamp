@@ -137,11 +137,11 @@ namespace tsorcRevamp.UI
                 valid = false;
             }
 
-            //Was going to remove this, but also lmao
-            //if (item.type == Terraria.ID.ItemID.ToxicFlask)
-            //{
-            //valid = false;
-            //}
+            //Was going to remove this, but also lmao //why this is cringe
+            if (item.type == Terraria.ID.ItemID.ToxicFlask)
+            {
+            valid = false;
+            }
 
             //Excluding these specifically because for now they need to be used by hand. May change in the future.
             if (item.type == ModContent.ItemType<Items.Potions.Lifegem>())
