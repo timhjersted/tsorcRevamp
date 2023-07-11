@@ -82,7 +82,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             modifiers.SourceDamage += OrbOfFlame.FireballDmgMod / 100f;
-            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * OrbOfFlame.FireballHPPercentDmg, OrbOfFlame.FireballHPDmgCap);
+            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * OrbOfFlame.FireballHPPercentDmg / 100f, OrbOfFlame.FireballHPDmgCap);
         }
     }
 }

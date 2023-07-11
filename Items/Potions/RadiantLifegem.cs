@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Potions
 {
@@ -152,21 +153,24 @@ namespace tsorcRevamp.Items.Potions
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.GreaterHealingPotion, 60);
+            recipe.AddIngredient(ItemID.GreaterHealingPotion, 33);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>());
             recipe.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe.AddTile(TileID.Bottles);
 
             recipe.Register();
 
             Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(ItemID.SuperHealingPotion, 45);
+            recipe2.AddIngredient(ItemID.SuperHealingPotion, 24);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>());
             recipe2.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe2.AddTile(TileID.Bottles);
 
             recipe2.Register();
 
             Recipe recipe3 = CreateRecipe();
-            recipe3.AddIngredient(ItemID.RestorationPotion, 50);
+            recipe3.AddIngredient(ItemID.RestorationPotion, 40);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>());
             recipe3.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe3.AddTile(TileID.Bottles);
 
@@ -174,6 +178,7 @@ namespace tsorcRevamp.Items.Potions
 
             Recipe recipe4 = CreateRecipe();
             recipe4.AddIngredient(ItemID.LifeCrystal, 8);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>());
             recipe4.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe4.AddTile(TileID.Bottles);
 

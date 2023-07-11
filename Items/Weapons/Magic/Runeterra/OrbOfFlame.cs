@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
     {
         public static Color FilledColor = Color.PaleVioletRed;
         public static float FireballDmgMod = 250f;
-        public const float FireballHPPercentDmg = 0.001f;
+        public const float FireballHPPercentDmg = 0.1f;
         public static int FireballHPDmgCap = 450;
         public static float MagicSunder = 20f;
         public static int FireballCD = 4;
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.channel = false;
             Item.useAnimation = 20;
             Item.useTime = 20;
-            Item.damage = 70;
+            Item.damage = 60;
             Item.mana = 40;
             Item.knockBack = 8;
             Item.UseSound = null;

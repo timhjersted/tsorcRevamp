@@ -52,6 +52,7 @@ Mods: {
 				Shunpo has {$CommonItemTooltip.Cooldown}
 				Hitting enemies after maxing out the defensive barrier reduces Shunpo's current Cooldown
 				'''
+			NotBound: ": <Not bound, set it in your Controls settings>"
 			BonusMagicDmg: Adds {0}% of bonus magic damage
 			UniqueImbue: Not compatible with other weapon imbues
 			LifeRegen: Increases life regeneration by {0}
@@ -69,9 +70,9 @@ Mods: {
 			CritDmg: Critical strikes deal {0}% more damage
 			LifeThreshold: "If life falls below {0}%: "
 			Slowness: Slows down movement by {0}%
-			Thorns: Increases thorns by {0}
+			Thorns: Increases thorns by {0}%
 			SoulDrops: Increases the amount of souls dropped by fallen creatures by {0}%
-			ConsSoulDrops: Increases the chance of consumable soul drops by {0}%
+			ConsumableSoulDrops: Increases the chance of consumable soul drops by {0}%
 			MeleeWhipDmg: Increases melee and whip damage by {0}%
 			MoveSpeedMult: Increases your movement speed multiplicatively by {0}%
 			BadMoveSpeedMult: Decreases your movement speed multiplicatively by {0}%
@@ -90,7 +91,7 @@ Mods: {
 				BadDmg: Decreases melee damage dealt by {0}%
 				Only: For melee warriors only
 				DmgMult: Increases melee damage by {0}% multiplicatively
-				CritMult: Increases melee critical srtike chance by {0}% multiplicatively
+				CritMult: Increases melee critical strike chance by {0}% multiplicatively
 				AtkSpeedMult: Increases melee speed by {0}% multiplicatively
 			}
 
@@ -956,7 +957,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamage}
-					{$CommonItemTooltip.DecreasedDefense@1}
+					{$CommonItemTooltip.BadDefense@1}
 					'''
 			}
 
@@ -1007,9 +1008,9 @@ Mods: {
 				DisplayName: Ancient Demon Shield
 				Tooltip:
 					'''
-					{$CommonItemTooltip.IncreasesDR}
+					{$CommonItemTooltip.DRStat}
 					Inherits Obsidian Shield's effects
-					{$CommonItemTooltip.IncreasedThorns@1}
+					{$CommonItemTooltip.Thorns@1}
 					'''
 			}
 
@@ -1093,7 +1094,7 @@ Mods: {
 				Tooltip:
 					'''
 					[c/ffbf00:Focuses the user's mana into a protective shield]
-					{$CommonItemTooltip.DRStatBoost}, but drains {1} mana per hit
+					{$CommonItemTooltip.DRStat}, but drains {1} mana per hit
 					[c/00ffd4:{$CommonItemTooltip.IncreasesMaxManaByPercent@2}]
 					[c/00ffd4:{$CommonItemTooltip.StaminaRegen@3}]
 					Inhibits both natural and artificial mana regen after being hit({$CommonItemTooltip.SecondDuration@4})
@@ -1160,7 +1161,7 @@ Mods: {
 				Tooltip:
 					'''
 					Focuses the user's mana into a protective shield
-					{$CommonItemTooltip.DRStatBoost}, but drains {1} mana per hit
+					{$CommonItemTooltip.DRStat}, but drains {1} mana per hit
 					Inhibits both natural and artificial mana regen after being hit({$CommonItemTooltip.SecondDuration@2})
 					[c/ffbf00:Useful for those who do not specialize in magic]
 					Reduces ranged, magic and summon damage by {3}% multiplicatively
@@ -1173,7 +1174,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.LifeThreshold}Casts and sustains Wall
 					{$CommonItemTooltip.IncreasesDefenseBy@1}
-					{$CommonItemTooltip.BadDamageMultiplier@2}
+					{$CommonItemTooltip.BadDmgMult@2}
 					{$CommonItemTooltip.Slowness@3}
 					{$CommonItemTooltip.UniqueBarrier}
 					'''
@@ -1348,8 +1349,8 @@ Mods: {
 					'''
 					An ancient relic forged and lost many centuries ago
 					One of the 4 Kings of Arradius was said to wear this ring
-					[c/ffbf00:{$CommonItemTooltip.IncreasedSoulDrops}]
-					[c/ffbf00:{$CommonItemTooltip.DecreasedDefense@1}]
+					[c/ffbf00:{$CommonItemTooltip.SoulDrops}]
+					[c/ffbf00:{$CommonItemTooltip.BadDefense@1}]
 					The ring glows with a bright white light
 					'''
 			}
@@ -1359,9 +1360,9 @@ Mods: {
 				Tooltip:
 					'''
 					An ancient relic forged and lost many centuries ago
-					[c/ffbf00:{$CommonItemTooltip.IncreasedSoulDrops}]
-					[c/ffbf00:{$CommonItemTooltip.DecreasedDefense@1}]
-					[c/ffbf00:{$CommonItemTooltip.IncreasedConsumableSoulDrops@2}]
+					[c/ffbf00:{$CommonItemTooltip.SoulDrops}]
+					[c/ffbf00:{$CommonItemTooltip.BadDefense@1}]
+					[c/ffbf00:{$CommonItemTooltip.ConsumableSoulDrops@2}]
 					All souls are drawn to the wearer from a large distance
 					The ring glows with a bright white light
 					'''
@@ -1433,7 +1434,7 @@ Mods: {
 					'''
 					This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth.
 					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicDamage}]
-					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicCrit@1}]
+					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicCritChance@1}]
 					[c/ffbf00:{$CommonItemTooltip.LifeRegen@2}]
 					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@3}.] Your previous max HP is restored when the ring is removed.
 					'''
@@ -1506,10 +1507,12 @@ Mods: {
 					The wings of Seath the Scaleless
 					Allow for superior control of movement in the air, including walking on air
 					Walking on air follows hovering controls
-					Press hotkey to toggle speed levels and featherfall
+					{$Items.WingsOfSeath.Keybind1}Wings Of Seath{$Items.WingsOfSeath.Keybind2}
 					Provide immunity to all fire and lava damage, as well as perfect sight and hunting abilities.
 					{$CommonItemTooltip.NoKnockback}
 					'''
+				Keybind1: "Press "
+				Keybind2: " to toggle speed levels and featherfall"
 			}
 
 			EyeOfTheGods: {
@@ -1724,7 +1727,6 @@ Mods: {
 					'''
 					Supersonic movement speed, rocket boots effect, knockback protection, and water-walking if moving fast enough.
 					Speed boost is multiplied by movement speed boosts.
-					Can be upgraded eventually with Angel Wings & 20000 Dark Souls.
 					{$CommonItemTooltip.BootsDisableThis}
 					'''
 			}
@@ -1783,7 +1785,7 @@ Mods: {
 				Tooltip:
 					'''
 					Moderately{$CommonItemTooltip.DSPickUpRange}
-					{$CommonItemTooltip.ConsSoulDrops}
+					{$CommonItemTooltip.ConsumableSoulDrops}
 					Gives off a faint glow
 					Can be upgraded with {1} Dark Souls
 					'''
@@ -1794,7 +1796,7 @@ Mods: {
 				Tooltip:
 					'''
 					Greatly{$CommonItemTooltip.DSPickUpRange}
-					{$CommonItemTooltip.ConsSoulDrops}
+					{$CommonItemTooltip.ConsumableSoulDrops}
 					Lashes out with a sickle in retaliation
 					Gives off an eerie aura
 					'''
@@ -1966,7 +1968,7 @@ Mods: {
 					{$CommonItemTooltip.Magic.ManaRegen@2}
 					{$CommonItemTooltip.SetBonus}Grants extended breath & swimming skills
 					{$CommonItemTooltip.PercentIncreasedCritChance@3}
-					Can be upgraded eventually with {5} Souls of Sight and {4} Dark Souls
+					Can be upgraded eventually with {5} Souls of Fright and {4} {$Items.DarkSoul.DisplayName}
 					'''
 			}
 
@@ -2116,7 +2118,7 @@ Mods: {
 				DisplayName: Ankor Wat Chestplate
 				Tooltip:
 					'''
-					{$CommonItemTooltip.PercentIncreasedMacigCritChance}
+					{$CommonItemTooltip.PercentIncreasedMagicCritChance}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.HolyDodge}
 					Defense and maximum mana are not affected by this
 					'''
@@ -2126,7 +2128,7 @@ Mods: {
 				DisplayName: Ankor Wat Helmet
 				Tooltip:
 					'''
-					{$CommonItemTooltip.IncreasesMaxManayBy}
+					{$CommonItemTooltip.IncreasesMaxManaBy}
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					{$CommonItemTooltip.Magic.ManaRegen@2}
 					'''
@@ -2674,7 +2676,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Ranged.FlatDmg}
-					{$CommonItemTooltip.SetBonus}Increases specialist damage by {1}% multiplicatively
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasesSpecialistDamageByPercent@1} multiplicatively
 					{$CommonItemTooltip.PercentChanceToSaveAmmo@2}
 					'''
 			}
@@ -2699,7 +2701,7 @@ Mods: {
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.ObsidianShield} and Lava resistance
 					Plus extended breath, water and lava walk, & swim
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
-					Can be upgraded to its master form with {4} Dark Souls
+					Can be upgraded to its master form with {4} {$Items.DarkSoul.DisplayName}
 					'''
 			}
 
@@ -2709,7 +2711,7 @@ Mods: {
 					'''
 					Worn by the hero himself!
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
-					{$CommonItemTooltip.IncreasesMaxMinionsBy1}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
 					{$CommonItemTooltip.MaxStamina@2}
 					{$CommonItemTooltip.StaminaRegen@3}
 					'''
@@ -3843,7 +3845,7 @@ Mods: {
 					Activate by left-clicking the mirror in your toolbar.
 					Warp point saves on quit.
 					Reduces defense to 0 and slows movement while equipped and setting your warp point.
-					Channel time is five seconds and you cannot move during the channel.
+					Channel time is three seconds and you cannot move during the channel.
 					'''
 				NoLocation: You haven't set a location!
 				WrongWorld: This mirror is set in a different world!
@@ -4095,7 +4097,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.IncreasesDefenseBy}
-					{$CommonItemTooltip.DRStatBoost@1}
+					{$CommonItemTooltip.DRStat@1}
 					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
 					{$CommonItemTooltip.BadDmg@3}
 					Does not stack with Demon Drug, Strength, or Battlefront Potions.
@@ -4611,7 +4613,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.SoulDrops}
-					{$CommonItemTooltip.ConsSoulDrops@1}
+					{$CommonItemTooltip.ConsumableSoulDrops@1}
 					Soul pickup range greatly increased
 					'''
 			}
@@ -5145,9 +5147,9 @@ Mods: {
 					'''
 					A lost beginner's scroll
 					[c/ffbf00:Casts Magic Shield on the player]
-					[c/ffbf00:{$CommonItemTooltip.IncreasesDefenseBy}
-					{$CommonItemTooltip.SecondDuration@1}]
-					{$CommonItemToltip.UniqueBarrier}
+					[c/ffbf00:{$CommonItemTooltip.IncreasesDefenseBy}]
+					[c/ffbf00:{$CommonItemTooltip.SecondDuration@1}]
+					{$CommonItemTooltip.UniqueBarrier}
 					'''
 			}
 
@@ -5309,11 +5311,7 @@ Mods: {
 
 			WandOfFrost: {
 				DisplayName: Wand of Frost
-				Tooltip:
-					'''
-					A powerful wand made for fighting magic users that can shoot through walls.
-					Can be upgraded with 25,000 Dark Souls, 60 Crystal Shards, and 5 Souls of Light
-					'''
+				Tooltip: A powerful wand made for fighting magic users that can shoot through walls.
 			}
 
 			WandOfFrost2: {
@@ -7959,7 +7957,7 @@ Mods: {
 			}
 
 			ShunpoBlink: {
-				DisplayName: Shunpo Immunity
+				DisplayName: Shunpo
 				Description: Nothing can catch you
 			}
 
@@ -9553,7 +9551,7 @@ Mods: {
 			"Dodge Roll.DisplayName": Dodge Roll
 			"Special Ability.DisplayName": Special Ability
 			"Wolf Ring.DisplayName": Wolf Ring
-			"Wings of Seath speed toggle.DisplayName": Wings of Seath speed toggle
+			"Wings of Seath speed toggle.DisplayName": Wings of Seath Speed toggle
 			Shunpo.DisplayName: Shunpo
 		}
 

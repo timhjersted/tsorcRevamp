@@ -5,6 +5,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
 {
@@ -76,7 +77,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             var WolfRingKey = tsorcRevamp.WolfRing.GetAssignedKeys();
-            string WolfRingString = WolfRingKey.Count > 0 ? WolfRingKey[0] : "Wolf Ring: <NOT BOUND>";
+            string WolfRingString = WolfRingKey.Count > 0 ? WolfRingKey[0] : LangUtils.GetTextValue("Keybinds.Wolf Ring.DisplayName") + LangUtils.GetTextValue("CommonItemTooltip.NotBound");
             int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip2");
             if (ttindex != -1)
             {

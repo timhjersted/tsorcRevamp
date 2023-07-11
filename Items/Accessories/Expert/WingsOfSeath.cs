@@ -2,6 +2,9 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.DataStructures;
+using System.Collections.Generic;
+using Terraria.Localization;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Accessories.Expert
 {
@@ -54,6 +57,17 @@ namespace tsorcRevamp.Items.Accessories.Expert
             {
                 speed = 16f;
                 acceleration = 1f;
+            }
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            var WingsSpeedToggle = tsorcRevamp.WingsOfSeath.GetAssignedKeys();
+            string WingsSpeedToggleString = WingsSpeedToggle.Count > 0 ? WingsSpeedToggle[0] : LangUtils.GetTextValue("Keybinds.Wings of Seath speed toggle.DisplayName") + LangUtils.GetTextValue("CommonItemTooltip.NotBound");
+            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip3");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.WingsOfSeath.Keybind1") + WingsSpeedToggleString + Language.GetTextValue("Mods.tsorcRevamp.Items.WingsOfSeath.Keybind2")));
             }
         }
 

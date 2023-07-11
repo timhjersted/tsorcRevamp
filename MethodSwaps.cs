@@ -140,7 +140,7 @@ namespace tsorcRevamp
         {
             if (tsorcRevampWorld.BossAlive)
             {
-                UsefulFunctions.BroadcastText("Can not teleport while a boss is alive!");
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("World.NoTPBoss"));
             }
             else
             {

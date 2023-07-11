@@ -838,6 +838,14 @@ namespace tsorcRevamp.NPCs
             #endregion
         }
 
+        public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)
+        {
+            if (DodgeTimer > 0)
+            {
+                return false;
+            }
+            return base.CanHitPlayer(npc, target, ref cooldownSlot);
+        }
 
         public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers)
         {
@@ -2774,8 +2782,13 @@ namespace tsorcRevamp.NPCs
         {
             despawnText = despawnFlavorText;
             despawnTextColor = textColor;
-            despawnDustType = DustType;
-            despawnRange = range * range;
+            despawnDustType = DustType; 
+            
+            if (range > 0) //Pre-emptively square it so we don't have to do so later
+            {
+                range *= range;
+            }
+            despawnRange = range;
         }
 
         ///<summary> 
@@ -2786,7 +2799,11 @@ namespace tsorcRevamp.NPCs
         public NPCDespawnHandler(int DustType, float range = -1)
         {
             despawnDustType = DustType;
-            despawnRange = range * range;
+            if (range > 0)
+            {
+                range *= range;
+            }
+            despawnRange = range;
         }
 
         readonly string despawnText;
@@ -3539,7 +3556,7 @@ namespace tsorcRevamp.NPCs
 
             //Dodging
             if (globalNPC.BoredTimer == 0 && globalNPC.TeleportCountdown == 0 && globalNPC.DodgeCooldown == 0) {
-                if (canDodgeroll)
+                if (canDodgeroll && npc.Distance(Main.player[npc.target].Center) > 160)
                 {
                     for (int i = 0; i < Main.maxProjectiles; i++)
                     {

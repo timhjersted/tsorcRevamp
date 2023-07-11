@@ -92,7 +92,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PermanentShinePotion>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PermanentNightOwlPotion>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImprovedBlueBalloon>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DemonDrugPotion>(), 1, 3, 6));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 1, 3, 6));
         }
     }
     public class SlograBag : BossBag
@@ -146,10 +146,6 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ItemID.Diamond, 1, 2, 10));
         }
     }
-    #endregion
-
-    #region Hardmode
-
     public class AncientDemonBag : BossBag
     {
         public override void SetStaticDefaults()
@@ -168,6 +164,10 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BattlefrontPotion>(), 1, 2, 4));
         }
     }
+    #endregion
+
+    #region Hardmode
+
     public class HeroOfLumeliaBag : BossBag
     {
         public override void SetStaticDefaults()
@@ -302,7 +302,6 @@ namespace tsorcRevamp.Items.BossBags
             //no expert-exclusive item yet
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DemonDrugPotion>(), 1, 3, 7));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ArmorDrugPotion>(), 1, 3, 7));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<MagicBarrierScroll>()));
         }
     }
     public class DeathBag : BossBag
@@ -378,9 +377,7 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             //no expert-exclusive item yet
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Shortswords.BarrowBlade>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.ForgottenRisingSun>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Ice3Tome>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<FairyInABottle>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
         }
@@ -395,7 +392,6 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.DragoonBoots>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Bolt3Tome>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.ForgottenGaiaSword>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
         }
@@ -487,7 +483,6 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HellkiteStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Spears.HiRyuuSpear>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 22, 28));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Shortswords.BarrowBlade>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 5, 10));
         }
     }

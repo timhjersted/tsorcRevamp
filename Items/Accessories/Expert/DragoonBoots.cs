@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Accessories.Expert
 {
@@ -29,7 +30,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             var DragoonBoots = tsorcRevamp.toggleDragoonBoots.GetAssignedKeys();
-            string DragoonBootsString = DragoonBoots.Count > 0 ? DragoonBoots[0] : "Dragoon Boots: <NOT BOUND>";
+            string DragoonBootsString = DragoonBoots.Count > 0 ? DragoonBoots[0] : LangUtils.GetTextValue("Keybinds.Dragoon Boots.DisplayName") + LangUtils.GetTextValue("CommonItemTooltip.NotBound");
             int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip3");
             if (ttindex != -1)
             {

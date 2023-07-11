@@ -5,6 +5,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Armors.Summon
 {
@@ -43,7 +44,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             Player player = Main.LocalPlayer;
             var ShunpoKeybind = tsorcRevamp.Shunpo.GetAssignedKeys();
-            string ShunpoString = ShunpoKeybind.Count > 0 ? ShunpoKeybind[0] : "Shunpo: <NOT BOUND>";
+            string ShunpoString = ShunpoKeybind.Count > 0 ? ShunpoKeybind[0] : LangUtils.GetTextValue("Keybinds.Shunpo.DisplayName") + LangUtils.GetTextValue("CommonItemTooltip.NotBound");
             int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip3");
             if (ttindex1 != -1)
             {
