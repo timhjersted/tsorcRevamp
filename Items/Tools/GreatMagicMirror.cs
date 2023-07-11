@@ -52,8 +52,8 @@ namespace tsorcRevamp.Items.Tools
             Item.CloneDefaults(ItemID.MagicMirror);
             Item.accessory = true;
             Item.value = 25000;
-            Item.useTime = 300;
-            Item.useAnimation = 300;
+            Item.useTime = 180;
+            Item.useAnimation = 180;
 
         }
 
