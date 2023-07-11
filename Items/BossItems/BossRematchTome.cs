@@ -34,45 +34,6 @@ namespace tsorcRevamp.Items.BossItems
             Item.shoot = ModContent.ProjectileType<Projectiles.BlackFirelet>();
         }
 
-        int index = 0;
-        List<NPCDefinition> keys;
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            string selectedBoss;
-            if(tsorcRevampWorld.NewSlain == null || tsorcRevampWorld.NewSlain.Keys.Count == 0)
-            {
-                selectedBoss = Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.None");
-            }
-            else
-            {
-                keys = new List<NPCDefinition>(tsorcRevampWorld.NewSlain.Keys);
-                RemoveBannedBosses(keys);
-                if(keys.Count == 0)
-                {
-                    selectedBoss = Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.None");
-                }
-                else
-                {
-                    NPC temp = new NPC();
-                    temp.SetDefaults(keys[index].Type);
-
-                    selectedBoss = temp.GivenOrTypeName;
-
-                    if (selectedBoss.Contains("Slogra"))
-                    {
-                        selectedBoss = Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.Duo1");
-                    }
-                }
-            }
-            
-            tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "selectedboss", Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.Selected") + selectedBoss));
-            base.ModifyTooltips(tooltips);
-        }
-
-
-
-       
-
         
 
         public static List<int> PreHardmodeBossIDs = new List<int>
@@ -156,129 +117,31 @@ namespace tsorcRevamp.Items.BossItems
             return result;
         }
 
+
+        public override bool CanUseItem(Player player)
+        {
+            return !UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.VFX.BossSelectVisuals>());
+        }
+
         //TODO: Make it work like the Grand Design
         public override bool? UseItem(Player player)
         {
-            keys = new List<NPCDefinition>(tsorcRevampWorld.NewSlain.Keys);
-            if(player.whoAmI != Main.myPlayer || Main.netMode == NetmodeID.Server)
+            if (player.whoAmI != Main.myPlayer || Main.netMode == NetmodeID.Server)
             {
                 return false;
             }
-
-            RemoveBannedBosses(keys);
-            if (tsorcRevampWorld.NewSlain == null || tsorcRevampWorld.NewSlain.Keys.Count == 0 || keys.Count == 0)
+            if (tsorcRevampWorld.NewSlain == null || tsorcRevampWorld.NewSlain.Keys.Count == 0)
             {
                 UsefulFunctions.BroadcastText(Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.None"));
-                return true;
+                return false;
             }
-
-            if (player.altFunctionUse == 2)
-            {                
-                if (keys.Count > 1)
-                {
-                    if (index >= keys.Count - 1)
-                    {
-                        index = 0;
-                    }
-                    else
-                    {
-                        index++;
-                    }
-                }
-                NPC temp = new NPC();
-                temp.SetDefaults(keys[index].Type);
-
-                string selectedBoss = temp.GivenOrTypeName;
-
-                if (selectedBoss.Contains("Slogra"))
-                {
-                    selectedBoss = Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.Duo1");
-                }
-                if (keys[index].Type == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>())
-                {
-                    selectedBoss = Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.Attraidies1");
-                }
-                if (keys[index].Type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())
-                {
-                    selectedBoss = Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.Attraidies2");
-                }
-
-                UsefulFunctions.BroadcastText(Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.Selected") + selectedBoss);
-            }
-            else
+            if (tsorcRevampWorld.BossAlive)
             {
-                
-                if (!tsorcRevampWorld.BossAlive)
-                {
-                    if (keys[index].Type == ModContent.NPCType<NPCs.Bosses.Slogra>())
-                    {
-                        if (Main.netMode == NetmodeID.SinglePlayer)
-                        {
-                            NPC.NewNPCDirect(Item.GetSource_FromThis(), player.Center + new Vector2(0, -300), ModContent.NPCType<NPCs.Bosses.Gaibon>());
-                        }
-                        else
-                        {
-                            ModPacket spawnNPCPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                            spawnNPCPacket.Write(tsorcPacketID.SpawnNPC);
-                            spawnNPCPacket.Write(ModContent.NPCType<NPCs.Bosses.Gaibon>());
-                            spawnNPCPacket.WriteVector2(player.Center + new Vector2(0, -300));
-                            spawnNPCPacket.Send();
-                        }
-                    }
-                    if (Main.netMode == NetmodeID.SinglePlayer)
-                    {
-                        NPC.NewNPCDirect(Item.GetSource_FromThis(), player.Center + new Vector2(0, -300), keys[index].Type);
-                    }
-                    else
-                    {
-                        ModPacket spawnNPCPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                        spawnNPCPacket.Write(tsorcPacketID.SpawnNPC);
-                        spawnNPCPacket.Write(keys[index].Type);
-                        spawnNPCPacket.WriteVector2(player.Center + new Vector2(0, -300));
-                        spawnNPCPacket.Send();
-                    }
-                }
-                else
-                {
-                    UsefulFunctions.BroadcastText(Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.Forbidden"));
-                }
+                UsefulFunctions.BroadcastText(Language.GetTextValue("Mods.tsorcRevamp.Items.BossRematchTome.Forbidden"));
+                return false;
             }
-            return base.UseItem(player);
-        }
 
-        public void RemoveBannedBosses(List<NPCDefinition> keys)
-        {
-            //These are pieces or alternate phases of bosses which automatically get spawned by their 'parent' boss and should not be spawned on their own
-            List<int> bannedBosses = new List<int>();
-            bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.Gaibon>());
-            bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>());
-            bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>());
-            bannedBosses.Add(ModContent.NPCType<LichKingDisciple>());
-            bannedBosses.Add(ModContent.NPCType<LichKingSerpentHead>());
-            bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloudMirror>());
-            bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>());
-            bannedBosses.Add(NPCID.EaterofWorldsBody);
-            bannedBosses.Add(NPCID.EaterofWorldsTail);
-
-            //These are bugged and need to be fixed
-            bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>()); //Head is detached from its body
-            bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()); //Head is detached from its body
-            bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()); //Head is detached from its body
-            bannedBosses.Add(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()); //Just spawns the head, nothing more
-            bannedBosses.Add(ModContent.NPCType<NPCs.Enemies.RedKnight>()); //Bugged loot
-
-            //Check if the keys list has any of the banned bosses, and if so remove them
-            for (int i = 0; i < bannedBosses.Count; i++)
-            {
-                if (keys.Contains(new NPCDefinition(bannedBosses[i])))
-                {
-                    keys.Remove(new NPCDefinition(bannedBosses[i]));
-                }
-            }
-        }
-
-        public override bool AltFunctionUse(Player player)
-        {
+            Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossSelectVisuals>(), 0, 0, player.whoAmI);
             return true;
         }
 
