@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
@@ -86,8 +87,16 @@ namespace tsorcRevamp
         public PlayerFrames? forcedBodyFrame;
         public PlayerFrames? forcedLegFrame;
         public int forcedDirection;
+        public int itemBlockingTime;
 
 
+        public override void HideDrawLayers(PlayerDrawSet drawInfo)
+        {
+            if (isDodging || dodgeCooldown.Value != 0)
+            {
+                PlayerDrawLayers.HeldItem.Hide();
+            }
+        }
 
         int oldItemAnimation = 0;
         public override bool PreItemCheck()
@@ -96,8 +105,9 @@ namespace tsorcRevamp
             //UpdateSwordflip();
 
             //Stop umbrella and other things from working
-            if (isDodging && Player.HeldItem.type == ItemID.Umbrella)
+            if (isDodging || dodgeCooldown.Value != 0)
             {
+                Player.itemLocation = Player.Center + new Vector2(-32, -16); //Stops it from being as disjointed when the player comes out of a roll
                 return false;
             }
 
@@ -287,6 +297,9 @@ namespace tsorcRevamp
             dodgeDirectionVisual = (sbyte)Player.direction;
             dodgeDirection = wantedDodgerollDir != 0 ? wantedDodgerollDir : (sbyte)Player.direction;
             dodgeCooldown = DodgeDefaultCooldown;
+            Player.channel = false;
+            
+            Player.TryInterruptingItemUsage();
 
             if (!isLocal)
             {
