@@ -7,12 +7,13 @@ using Terraria.ModLoader;
 using static tsorcRevamp.Items.Tools.GreatMagicMirror;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Items.Materials;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Tools
 {
     public class VillageMirror : ModItem
     {
-
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ChannelTime / 60);
         double warpSetDelay2;
 
         public override void SetDefaults()
@@ -20,8 +21,8 @@ namespace tsorcRevamp.Items.Tools
             Item.CloneDefaults(ItemID.MagicMirror);
             Item.accessory = true;
             Item.value = 25000;
-            Item.useTime = 300;
-            Item.useAnimation = 300;
+            Item.useTime = ChannelTime;
+            Item.useAnimation = ChannelTime;
 
         }
 

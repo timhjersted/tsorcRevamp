@@ -3845,7 +3845,7 @@ Mods: {
 					Activate by left-clicking the mirror in your toolbar.
 					Warp point saves on quit.
 					Reduces defense to 0 and slows movement while equipped and setting your warp point.
-					Channel time is three seconds and you cannot move during the channel.
+					Channel time is {0} seconds and you cannot move during the channel.
 					'''
 				NoLocation: You haven't set a location!
 				WrongWorld: This mirror is set in a different world!
@@ -4772,7 +4772,7 @@ Mods: {
 					Activate by left-clicking the mirror in your toolbar.
 					Warp point saves on quit.
 					Reduces defense to 0 and slows movement while equipped and setting your warp point.
-					Channel time is five seconds and you cannot move during the channel.
+					Channel time is {0} seconds and you cannot move during the channel.
 					'''
 				BotCNerfed: Will always take the [c/6d8827:Bearer of the Curse] to the center of the village
 			}

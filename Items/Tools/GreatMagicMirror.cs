@@ -6,14 +6,14 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Items.Materials;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Tools
 {
     public class GreatMagicMirror : ModItem
     {
-
-
-
+        public static int ChannelTime = 180;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ChannelTime / 60);
         public static int playerXLocation(Player player)
         {
             return (int)((player.position.X + player.width / 2.0 + 8.0) / 16.0);
@@ -52,8 +52,8 @@ namespace tsorcRevamp.Items.Tools
             Item.CloneDefaults(ItemID.MagicMirror);
             Item.accessory = true;
             Item.value = 25000;
-            Item.useTime = 180;
-            Item.useAnimation = 180;
+            Item.useTime = ChannelTime;
+            Item.useAnimation = ChannelTime;
 
         }
 
