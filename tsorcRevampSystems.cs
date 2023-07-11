@@ -361,38 +361,7 @@ namespace tsorcRevamp
 
                     Color textColor = new(1, 1, 1, alpha);
                     DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, text, textPosition, textColor, 0, Vector2.Zero, scaleMod, SpriteEffects.None, 0);
-
-                    //recycle the rect for the show button
-                    textPosition.Y = drect.Y + height + 8;
-                    drect.Y = drect.Y + (int)height + 4;
-                    drectWorld.Y = drectWorld.Y + (int)height + 4;
-
-                    //the leading space is not a typo. WrapString prepends a space and is always called on normal text, but not buttons
-                    string hideButtonText = " Click to Hide ";
-                    Vector2 size = FontAssets.ItemStack.Value.MeasureString(hideButtonText) * scaleMod;
-
-                    drect.Width = (int)size.X + 12;
-                    drect.Height = (int)size.Y;
-
-                    drectWorld.Width = (int)size.X + 12;
-                    drectWorld.Height = (int)size.Y;
-
-                    Main.spriteBatch.Draw(boxTexture, drect, bgColor);
-
-                    
-                    //the leading space is not a typo. WrapString prepends a space and is always called on normal text, but not buttons
-                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, LangUtils.GetTextValue("UI.ClickToHide"), textPosition, textColor, 0, Vector2.Zero, scaleMod, SpriteEffects.None, 0);
-
-                    UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
-
-                    if (drectWorld.Contains(tsorcRevampPlayer.RealMouseWorld.ToPoint())) {
-                        Main.LocalPlayer.mouseInterface = true;
-                        if (Main.mouseLeft && Main.mouseLeftRelease) {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
-                            soapstone.timer = 0;
-                            soapstone.hidden = true;
-                        }
-                    }
+                    return;
                 }
                 else {
                     if (!soapstone.nearPlayer)
