@@ -317,7 +317,8 @@ namespace tsorcRevamp
                 31, 32, 69, 352, 210, 484, //orbs/hearts, all thorns, land mines, rolling cactus
                 165, 178, 185, 186, 187, 233, 530, 2311, 238, //all ambient objects (background breakables), QB Larva, Plantera Bulb
                 3, 24, 61, 73, 74, 110, 113, 184, 201, 518, 519, 529, 549, //cuttable plants - all biomes
-                132, 135, 136, 143, 144, 419, 420, 421, 422, 423, 424, 425, 428, 429, 440, 442, TileID.WoodenBeam//wiring, incl pressure plates
+                132, 135, 136, 143, 144, 419, 420, 421, 422, 423, 424, 425, 428, 429, 440, 442, TileID.WoodenBeam,//wiring, incl pressure plates                
+                TileID.LivingFire, TileID.LivingCursedFire, TileID.LivingDemonFire, TileID.LivingFrostFire, TileID.LivingIchor,
             };
             #endregion
             //--------
