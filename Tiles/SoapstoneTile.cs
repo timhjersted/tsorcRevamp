@@ -96,7 +96,7 @@ namespace tsorcRevamp.Tiles {
                         entity.nearPlayer = true;
                     }
                 }
-                else if (playerInRange || (mouseInRange && distance < 600))
+                else if (playerInRange || (mouseInRange && distance < 200))
                 {
                     tsorcRevamp.NearbySoapstone = entity;
                     if (!entity.hidden) {

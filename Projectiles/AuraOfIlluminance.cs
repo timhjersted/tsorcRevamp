@@ -48,7 +48,7 @@ namespace tsorcRevamp.Projectiles
             Vector2 averageCenter = Vector2.Zero;
             for (int i = 0; i < trailPositions.Count; i++)
             {
-                if (!intersection && i < (trailPositions.Count * 5) / 6 && (trailPositions[trailPositions.Count - 1] - trailPositions[i]).LengthSquared() < 1000)
+                if (!intersection && i < (trailPositions.Count * 3f) / 6f && (trailPositions[trailPositions.Count - 1] - trailPositions[i]).LengthSquared() < 1000)
                 {
                     intersection = true;
                 }

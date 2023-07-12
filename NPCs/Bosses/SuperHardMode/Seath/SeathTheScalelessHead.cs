@@ -219,11 +219,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     {
                         int crystal = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X, (int)NPC.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, NPC.whoAmI);
                         Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
-                        if (NPC.life >= (NPC.lifeMax / 2))
-                        {
-                            firstCrystalSpawned = true;
-                        }
-                        else
+                                                
+                        firstCrystalSpawned = true;
+                        
+                        if (NPC.life <= (NPC.lifeMax / 2))
                         {
                             secondCrystalSpawned = true;
                         }

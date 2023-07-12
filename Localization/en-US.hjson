@@ -3842,15 +3842,15 @@ Mods: {
 				Tooltip:
 					'''
 					Equip this in an accessory slot anywhere to create a new warp point.
-					Activate by left-clicking the mirror in your toolbar.
-					Warp point saves on quit.
+					Use the mirror to return to that warp point.
 					Reduces defense to 0 and slows movement while equipped and setting your warp point.
-					Channel time is three seconds and you cannot move during the channel.
+					Teleport takes {0} seconds and you cannot move during the channel.
 					'''
 				NoLocation: You haven't set a location!
 				WrongWorld: This mirror is set in a different world!
 				OnUse: Picking up where you left off...
 				NewLocation: New warp location set!
+				Invalid: The Village Mirror can only be set inside Ashen Peak Village.
 				Oops: Your warp location is broken! Please file a bug report!
 				BotCDisabled: "[c/ca1e00:The Curse prevents you from using this!]"
 				OutOfBounds: Your warp location is outside the world!
@@ -4768,13 +4768,13 @@ Mods: {
 				DisplayName: Village Mirror
 				Tooltip:
 					'''
-					Equip this in an accessory slot anywhere to create a new warp point.
-					Activate by left-clicking the mirror in your toolbar.
-					Warp point saves on quit.
-					Reduces defense to 0 and slows movement while equipped and setting your warp point.
-					Channel time is five seconds and you cannot move during the channel.
+					Lets you return to Ashen Peak Village at any point.
+					Works just like a potion of return, creating a portal that leads back to your old location afterward.
+					Equip this in an accessory slot anywhere in the village to create a new warp point.
+					Use the mirror to return to that warp point.
+					Reduces defense to 0 and slows movement while equipped.
+					Teleport takes {0} seconds and you cannot move during the channel.
 					'''
-				BotCNerfed: Will always take the [c/6d8827:Bearer of the Curse] to the center of the village
 			}
 
 			DebugTome: {
