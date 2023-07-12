@@ -1,0 +1,2416 @@
+{
+  "text": "- 你发现了大地恶妖隐蔽的巢穴 -",
+  "tileX": 58,
+  "tileY": 1911,
+  "textWidth": 280,
+  "style": 1
+}
+{
+  "text": "一个声音对你低语：\u0022西海上漂浮的珊瑚礁指向灰烬之王葛温的秘密陵墓……”",
+  "tileX": 67,
+  "tileY": 1399,
+  "textWidth": 528,
+  "style": 1
+}
+{
+  "text": "- 你发现了通往地核的火山裂缝 - --NEWLINE   --NEWLINE \u0022这条路被神庙蜥蜴砖堵住了，神庙蜥蜴砖是一种比世界上任何东西都强的材料。” --NEWLINE   --NEWLINE Miakoda说，\u0022当我们有足够强大的工具来打破这个裂缝时，我们必须回到这里，如果我们敢这么大胆的话。",
+  "tileX": 99,
+  "tileY": 1572,
+  "textWidth": 820,
+  "style": 1
+}
+{
+  "text": "你找到了萨满长老的房屋。",
+  "tileX": 101,
+  "tileY": 524,
+  "textWidth": 180,
+  "style": 1
+}
+{
+  "text": "一种黑暗的冲动驱使你杀死这朵花……但你怀疑自己是否应当这么做。",
+  "tileX": 247,
+  "tileY": 1484,
+  "textWidth": 480,
+  "style": 1
+}
+{
+  "text": "在浑浊的水里，你看到到处都是粉红色的花。它们的诱惑力是黑暗的，但确实很诱人……它们等待着被毁灭……",
+  "tileX": 284,
+  "tileY": 1556,
+  "textWidth": 750,
+  "style": 1
+}
+{
+  "text": "你听到一只成精了的蘑菇在墙外发出声音。 --NEWLINE   --NEWLINE 它引起了你的注意力，对你说：\u0022寻找石巨人金字塔…它的入口藏在树妖的家下面…”",
+  "tileX": 286,
+  "tileY": 1333,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "Asha：\u0022好的，瑞德。但首先我要告诉你在哪里可以找到你父亲的剑和他那神圣的盔甲。你还记得我们老村子附近被洪水淹没的铁矿吗？ --NEWLINE   --NEWLINE 他的剑和盔甲可以在一堵土墙外找到——一块叶绿矿标记着它的位置。在那之外是叶绿矿墙的封印，只有德拉克斯（神圣钻头）才能打破。” --NEWLINE   --NEWLINE Red：\u0022彳亍，走吧。”
+  ",
+  "tileX": 291,
+  "tileY": 1367,
+  "textWidth": 980,
+  "style": 1
+}
+{
+  "text": "在你潜到湖底之前，你突然感觉到妻子仿佛就在你身边。 --NEWLINE   --NEWLINE 你在湖边寻找她的任何迹象，但什么都没有。 --NEWLINE   --NEWLINE \u0022我爱你，亲爱的，”你心想，\u0022我不知道你是否还活着，但我会找到你，不论今生还是来世。”",
+  "tileX": 292,
+  "tileY": 1515,
+  "textWidth": 720,
+  "style": 1
+}
+{
+  "text": "Red：\u0022我会回来的，我们最终能够迎来和平。 --NEWLINE   --NEWLINE 当我们到达海洋时，我会带你去西边的群岛，当我打败阿卓迪斯后我会回到那里。”",
+  "tileX": 294,
+  "tileY": 1367,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "\u0022阿卓迪斯愚弄了所有人。 --NEWLINE   --NEWLINE 但没关系。我做了我认为需要的事，那就是来救你。”",
+  "tileX": 297,
+  "tileY": 1367,
+  "textWidth": 460,
+  "style": 1
+}
+{
+  "text": "你还记得那个巫师告诉过你这个地方， --NEWLINE   --NEWLINE 为了唤醒猎手，你必须潜到湖底，触摸金色的环形区域。",
+  "tileX": 298,
+  "tileY": 1515,
+  "textWidth": 400,
+  "style": 1
+}
+{
+  "text": "Asha：\u0022你打算怎么办？” --NEWLINE   --NEWLINE Red：\u0022我要杀了他。在我寻找你的过程中，我做了一件可怕的事情， --NEWLINE   --NEWLINE 我必须纠正我父亲的错误，并治愈我帮助阿卓迪斯释放的腐化。” --NEWLINE   --NEWLINE Asha：\u0022你做了什么？”",
+  "tileX": 300,
+  "tileY": 1367,
+  "textWidth": 670,
+  "style": 1
+}
+{
+  "text": "\u0022当我拒绝告诉他们你父亲的剑在哪里时，阿卓迪斯折磨了我好几天，但最终放弃了，把我留在了这里。 --NEWLINE   --NEWLINE 我不知道他为什么不杀我。但感谢上帝，还能活着见到你真高兴。” --NEWLINE   --NEWLINE Red：\u0022来，随我离开这里。我会带你去一个安全的地方。”",
+  "tileX": 303,
+  "tileY": 1367,
+  "textWidth": 740,
+  "style": 1
+}
+{
+  "text": "你打开亚莎牢房的门，看到她紧紧扣住自己的手臂，衣服上血迹斑斑，但她的眼睛依然充满活力。 --NEWLINE   --NEWLINE 你把她抱在怀里，紧紧拥抱她，然后抬头问，\u0022他们对你做了什么？”",
+  "tileX": 306,
+  "tileY": 1367,
+  "textWidth": 720,
+  "style": 1
+}
+{
+  "text": "\u0022是你吗，亚莎？” --NEWLINE   --NEWLINE \u0022哦，瑞德，感谢上帝！我在这里！我就知道你要来……我在来的路上甚至提前感觉到了你的存在。” --NEWLINE   --NEWLINE \u0022亚莎，我爱你！我要带你离开这个鬼地方。”",
+  "tileX": 319,
+  "tileY": 1367,
+  "textWidth": 700,
+  "style": 1
+}
+{
+  "text": "小屋里的人说：\u0022你想知道如何打开地上的两扇门，是吗？” --NEWLINE   --NEWLINE \u0022每个人都想知道！但我把开关藏得太好了！放弃吧……” --NEWLINE   --NEWLINE \u0022这些该死的蠢货……”他喃喃自语。",
+  "tileX": 349,
+  "tileY": 850,
+  "textWidth": 440,
+  "style": 1
+}
+{
+  "text": "你听见什么声音了吗？",
+  "tileX": 378,
+  "tileY": 1399,
+  "textWidth": 160,
+  "style": 1
+}
+{
+  "text": "你感觉到一股强大的力量从这扇门后面涌出， --NEWLINE   --NEWLINE 但只有最强的钻头才能穿透这片叶绿矿石。",
+  "tileX": 459,
+  "tileY": 1453,
+  "textWidth": 340,
+  "style": 1
+}
+{
+  "text": " - 你发现了猎手的巢穴 - --NEWLINE   --NEWLINE Miakoda:\u0022打开神庙大门的拉杆可能就在附近……”]",
+  "tileX": 460,
+  "tileY": 1520,
+  "textWidth": 550,
+  "style": 1
+}
+{
+  "text": "你拉动操纵杆，听到头顶有隆隆声。",
+  "tileX": 465,
+  "tileY": 1163,
+  "textWidth": 260,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022如果我记得没错的话，从这里直走，我们会找到一条走出这个洞穴的路，从西海下面走上来。 --NEWLINE   --NEWLINE 这条路也一直延伸到下面很远的地方。 --NEWLINE   --NEWLINE 我不知道你在下面会发现什么，但我能感觉到我们的路在召唤我们去那里。”",
+  "tileX": 474,
+  "tileY": 1281,
+  "textWidth": 750,
+  "style": 1
+}
+{
+  "text": "你听到余烬噼啪作响，听起来像是从壁炉里出来的。 --NEWLINE   --NEWLINE \u0022也许这里有个休息的地方。”",
+  "tileX": 479,
+  "tileY": 1505,
+  "textWidth": 380,
+  "style": 1
+}
+{
+  "text": "在珊瑚下面，你注意到这实际上是一扇大门， --NEWLINE   --NEWLINE 但它必须从另一边打开。",
+  "tileX": 525,
+  "tileY": 1107,
+  "textWidth": 360,
+  "style": 1
+}
+{
+  "text": "这个屋子似乎是最近才被遗弃的…",
+  "tileX": 537,
+  "tileY": 1484,
+  "textWidth": 240,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022现在我们可以打破叶绿门，有三条甚至四条路可供选择 --NEWLINE   --NEWLINE 下一步如何取决于你，没有理想的路，只有最适合自己的路。”",
+  "tileX": 571,
+  "tileY": 1552,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "- 你发现了熔岩空域神庙 -",
+  "tileX": 586,
+  "tileY": 1919,
+  "textWidth": 230,
+  "style": 1
+}
+{
+  "text": "你来到一个神秘的圣所，感受到内心深处的平静。这也许是在你父母去世、失去妻子后第一次有这种感觉。 --NEWLINE   --NEWLINE 一种伟大的爱的感觉压倒了你，当你沉思时，思维裹挟着巨大的悲怆。 --NEWLINE   --NEWLINE 你决定在这里多呆一会儿，反思你的旅程……并鼓起勇气走上前方的道路。",
+  "tileX": 611,
+  "tileY": 1559,
+  "textWidth": 740,
+  "style": 1
+}
+{
+  "text": "- 你发现了灰烬之王——葛温的坟墓 - --NEWLINE   --NEWLINE 要打败葛温，你需要击败7个远古领主来获得足够的力量。 --NEWLINE   --NEWLINE 他们被称为亚尔特留斯、大地恶妖、火焰恶魔马瑞丽斯、北海巨妖克拉肯、枯萎、冰龙希斯和渊堕飞龙法师。 --NEWLINE   --NEWLINE 在击败他们之前和葛温战斗，必死无疑",
+  "tileX": 810,
+  "tileY": 1245,
+  "textWidth": 800,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022瑞德，在你的地图上标出这一点。我相信这个海底洞穴通向格温的坟墓。 --NEWLINE   --NEWLINE 如果我们能找到打开这个洞穴的方法，我们应回到这里。”",
+  "tileX": 812,
+  "tileY": 985,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "阿莱蒂乌斯的四位国王，守卫着西海。 --NEWLINE   --NEWLINE 曾经生活在该地区的土著部落将该海域亲切地称为诺拉。 --NEWLINE   --NEWLINE 你还记得听过海神诺拉的传说吗？ --NEWLINE   --NEWLINE 她和她的情人阿卡伊迪斯在海面上跳舞了整整500年，激起了巨大的热带风暴， --NEWLINE   --NEWLINE 几百年前给这片土地带来了海啸，淹没了附近的城镇。",
+  "tileX": 816,
+  "tileY": 842,
+  "textWidth": 700,
+  "style": 1
+}
+{
+  "text": "拉动控制杆后，你听到从你下方开始的巨大隆隆声，然后随着声音向东传播然后消失。 --NEWLINE   --NEWLINE 无论它打开了什么，它都离你很远。 --NEWLINE   --NEWLINE Miakoda：\u0022这座波涌神庙似乎还留下了一个秘密……”",
+  "tileX": 1051,
+  "tileY": 955,
+  "textWidth": 680,
+  "style": 1
+}
+{
+  "text": "Miakoda告诉你：\u0022你需要一些东西来穿过这里。”",
+  "tileX": 1172,
+  "tileY": 1433,
+  "textWidth": 400,
+  "style": 1
+}
+{
+  "text": "- 你发现了熔岩空域神庙 -",
+  "tileX": 1355,
+  "tileY": 1935,
+  "textWidth": 230,
+  "style": 1
+}
+{
+  "text": "- 你找到了阿卓迪斯的神殿 - --NEWLINE   --NEWLINE 你每击败一个恶魔之神（共计有8个）就会获得一块碎片，把它们和这箱子中的材料结合起来，制造出阿卓迪斯的召唤物。 --NEWLINE   --NEWLINE 召唤物将削弱阿卓迪斯的力量，这能给你一个击败他的机会。 --NEWLINE   --NEWLINE \u0022是时候结束这一切了。”",
+  "tileX": 1400,
+  "tileY": 325,
+  "textWidth": 880,
+  "style": 1
+}
+{
+  "text": "- 你发现了阿卓迪斯的黑暗之塔 -",
+  "tileX": 1401,
+  "tileY": 842,
+  "textWidth": 290,
+  "style": 1
+}
+{
+  "text": "在一张破碎的纸上，你读到了3种成分… --NEWLINE   --NEWLINE 1暗影之魂和1骨头和1000黑暗之魂 --NEWLINE   --NEWLINE 它似乎能制造一种武器,死寂是这把武器唯一的归宿…它在向你发出致命的召唤…",
+  "tileX": 1411,
+  "tileY": 574,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "观察完这扇大门上的栓接系统，你认为必须要触发三个开关才能解锁它。",
+  "tileX": 1427,
+  "tileY": 1363,
+  "textWidth": 500,
+  "style": 1
+}
+{
+  "text": "- 你发现了赛里斯藏身的神殿 -",
+  "tileX": 1443,
+  "tileY": 937,
+  "textWidth": 270,
+  "style": 1
+}
+{
+  "text": "三座巨像…被附魔的石柱挡住了一切，无论如何努力挖掘也无济于事… --NEWLINE   --NEWLINE \u0022阻止这条通道的人显然不想让任何人得到藏在里面的力量……也许最好把一些东西埋起来，交付给岁月长河来遗忘……” --NEWLINE   --NEWLINE 你留意到了奇怪的符号：^^^ --- <^ --- <<^",
+  "tileX": 1553,
+  "tileY": 1778,
+  "textWidth": 850,
+  "style": 1
+}
+{
+  "text": "- 你发现了海妖的国度 - --NEWLINE   --NEWLINE Miakoda：\u0022瑞德，我能感觉到一个强大的力量在附近…… --NEWLINE   --NEWLINE 保持警惕，你需要活用所有技能才能生存。”",
+  "tileX": 1554,
+  "tileY": 1709,
+  "textWidth": 450,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022这看起来很危险，Red。也许我们应该进一步探索西方，寻找更强大的装备。在这片沙漠之外是诺拉海。 --NEWLINE   --NEWLINE 它如此之深，很少有人能在浅水区以外探索并返回，但有传言称曾经有人住在水下，他可以在水上甚至在熔岩上行走！”",
+  "tileX": 1577,
+  "tileY": 988,
+  "textWidth": 820,
+  "style": 1
+}
+{
+  "text": "- 你发现了埃仑嘉德沙漠遗址 -",
+  "tileX": 1604,
+  "tileY": 812,
+  "textWidth": 280,
+  "style": 1
+}
+{
+  "text": "- 你发现了安格斯苦痛洞窟 - --NEWLINE   --NEWLINE 我可以在这里使用寒冰魔杖…或者沙枪… --NEWLINE   --NEWLINE 也许还有一两种功能型药水。 --NEWLINE   --NEWLINE 我需要明智的选择策略，钩爪或许也有帮助",
+  "tileX": 1622,
+  "tileY": 971,
+  "textWidth": 350,
+  "style": 1
+}
+{
+  "text": "\u0022一把金弓？…奇怪…但是它可能会派上用场…？”",
+  "tileX": 1630,
+  "tileY": 1364,
+  "textWidth": 360,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022就是这里了！在这扇门的左边，坐落着奥斯匹克部落的废墟。一只巨大的长翅膀野兽，名为\u0022猎手”，现在占据了这些洞穴。 --NEWLINE   --NEWLINE 它是一个致命的捕食者，比我们以前见过的任何东西都强大得多。小心点，瑞德。”",
+  "tileX": 1664,
+  "tileY": 966,
+  "textWidth": 930,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022我曾经探索过这些遗址，但那是几十年前的事了， --NEWLINE   --NEWLINE 下面的老遗址入口肯定被多年的沙尘暴掩盖了。 --NEWLINE   --NEWLINE 然而，众所周知，奥斯匹克人使用柔和的紫罗兰色照明来引导友好的旅行者到他们家中做客……”",
+  "tileX": 1718,
+  "tileY": 803,
+  "textWidth": 680,
+  "style": 1
+}
+{
+  "text": "埃伦加德沙漠遗址 --NEWLINE   --NEWLINE 你曾经听说过一个叫奥斯匹克的民族的故事，他们在烈日下的沙漠深处建立了自己的文明，通过隧道网络连接起来。 --NEWLINE   --NEWLINE 没有人知道他们为什么选择这样一个不适宜居住的地方，但一些人相信，一种神秘的能量在这个地方的下方生长。",
+  "tileX": 1723,
+  "tileY": 804,
+  "textWidth": 820,
+  "style": 1
+}
+{
+  "text": "在你危险的旅程中稍作休息。 --NEWLINE   --NEWLINE 你决定在这里过夜，明天一早出发。",
+  "tileX": 1783,
+  "tileY": 839,
+  "textWidth": 280,
+  "style": 1
+}
+{
+  "text": "多么超现实啊，你有一种很熟悉的感觉，感觉就像沉浸在梦中一样…",
+  "tileX": 1795,
+  "tileY": 838,
+  "textWidth": 500,
+  "style": 1
+}
+{
+  "text": "这扇门一定是从另一侧打开的",
+  "tileX": 1799,
+  "tileY": 1807,
+  "textWidth": 240,
+  "style": 1
+}
+{
+  "text": "-你发现了进入暗影神庙的大门- --NEWLINE   --NEWLINE Miakoda：\u0022毁灭者在这条小路的尽头等待着你，瑞德。 --NEWLINE   --NEWLINE 我听说这是一段危险的旅程。但我们不要灰心！”",
+  "tileX": 1800,
+  "tileY": 1045,
+  "textWidth": 480,
+  "style": 1
+}
+{
+  "text": "打开大门后，你看到上面的路通向暗影神庙附近的洞穴。",
+  "tileX": 1803,
+  "tileY": 1650,
+  "textWidth": 390,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022这些发光的废墟上印有塞里斯的印记，塞里斯是一个外星生物，曾在陨石中生活了数千年，直到陨石坠入沙漠。 --NEWLINE   --NEWLINE 曾经有一座神庙用来供奉它，但那是几个世纪前的事了。沙子肯定把它掩埋了……”",
+  "tileX": 1817,
+  "tileY": 850,
+  "textWidth": 880,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022继续前进，沿着这里走下去，说不定附近有拉杆。”",
+  "tileX": 1821,
+  "tileY": 1739,
+  "textWidth": 450,
+  "style": 1
+}
+{
+  "text": "Miakoda翻译刻在雕像上的符文： --NEWLINE   --NEWLINE \u0022移开视线，但不要害怕。袖珍镜就在附近……”",
+  "tileX": 1874,
+  "tileY": 1352,
+  "textWidth": 400,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022瑞德，我听说过很多关于暗影神庙的传言。 --NEWLINE   --NEWLINE 它以其迷宫般的设计而闻名，它延伸到神庙的大门外，连接着洞穴、一个巨大的地下湖和神圣地形的尖刺裂缝…… --NEWLINE   --NEWLINE 一个勇敢的灵魂，曾经活着逃离过这个地方，告诉我有两条隐藏的捷径: --NEWLINE   --NEWLINE 一条在地下湖的湖面；另一条几乎靠近入口，但不完全如此…我不知道她是什么意思…”",
+  "tileX": 1927,
+  "tileY": 1121,
+  "textWidth": 800,
+  "style": 1
+}
+{
+  "text": "这附近一定有一个拉杆…",
+  "tileX": 1940,
+  "tileY": 1898,
+  "textWidth": 180,
+  "style": 1
+}
+{
+  "text": "突然你注意到你完全在阴影中。 --NEWLINE   --NEWLINE 你抬头一看，看到一团黑暗挡住了太阳…",
+  "tileX": 1966,
+  "tileY": 846,
+  "textWidth": 350,
+  "style": 1
+}
+{
+  "text": "回首望向神庙建筑，Miakoda问道：\u0022你认为这些柱子的方向和排列有什么特殊意义吗？”",
+  "tileX": 2033,
+  "tileY": 860,
+  "textWidth": 660,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022瑞德，有时你发现的物品看起来毫无用处…别那么快就妄下定论… --NEWLINE   --NEWLINE 如果能用黑暗之魂将其打造成新的东西，那么可能值得研究其隐藏的潜力…”",
+  "tileX": 2096,
+  "tileY": 973,
+  "textWidth": 580,
+  "style": 1
+}
+{
+  "text": "- 你发现了毁灭者的神庙 -",
+  "tileX": 2108,
+  "tileY": 968,
+  "textWidth": 250,
+  "style": 1
+}
+{
+  "text": "-这扇门守卫着通往火神之路- --NEWLINE   --NEWLINE 你拿出日记，写下一张纸条：\u0022蜥蜴门就在沙漠中一座未知神庙的东边。”",
+  "tileX": 2238,
+  "tileY": 857,
+  "textWidth": 520,
+  "style": 1
+}
+{
+  "text": "你来到一个很深的神圣化洞穴。 --NEWLINE   --NEWLINE 当你往下走的时候，你可以感觉到重力再次开始移动…（尝试按向上键）",
+  "tileX": 2265,
+  "tileY": 1183,
+  "textWidth": 520,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022赛里斯科技被用来阻断通往暗影神庙的一条路。” --NEWLINE   --NEWLINE 但相信这样的谣言可能会导致疯狂… --NEWLINE   --NEWLINE 也许我们应该专注于寻找猎手,但这取决于你。 --NEWLINE   --NEWLINE 我会帮你到最后…”",
+  "tileX": 2354,
+  "tileY": 843,
+  "textWidth": 460,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022凝水之冠上的谜题说要寻找灰蒙蒙的雾 --NEWLINE   --NEWLINE 被紫罗兰色的光芒照亮…这会把我们引向猎手。 --NEWLINE   --NEWLINE 曾经生活在这片沙漠的人们留下卷轴，暗示了许多秘密。 --NEWLINE   --NEWLINE 他们说沙漠中有一条隐藏的小路 --NEWLINE   --NEWLINE 通向一个被称为塞里斯的古老生物。”",
+  "tileX": 2374,
+  "tileY": 843,
+  "textWidth": 420,
+  "style": 1
+}
+{
+  "text": "检查过你的指南针和地图后，你认为东边的路一定是通往腐化的神庙下面的。 --NEWLINE   --NEWLINE 你可以感觉到这个方向有一个可怕的敌人，是你从未见过的。",
+  "tileX": 2397,
+  "tileY": 1027,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "这个箱子上刻着一个瓶中云的符号。",
+  "tileX": 2444,
+  "tileY": 895,
+  "textWidth": 240,
+  "style": 1
+}
+{
+  "text": "一个声音在对你低语… --NEWLINE   --NEWLINE \u0022寻找失落之城东边被遗忘的亚尔特留斯废墟 --NEWLINE   --NEWLINE 在太阳崇拜者房间的外面,他正在等待…”",
+  "tileX": 2445,
+  "tileY": 1794,
+  "textWidth": 350,
+  "style": 1
+}
+{
+  "text": "你拉下拉杆，听到石头在你头顶发出的轰鸣声。",
+  "tileX": 2488,
+  "tileY": 922,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "-你找到了阴影之洞- --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022叶绿矿大门…沙漠郊区的暗影之洞…”",
+  "tileX": 2542,
+  "tileY": 774,
+  "textWidth": 500,
+  "style": 1
+}
+{
+  "text": "- 你发现了旧日之树 -  --NEWLINE   --NEWLINE Miakoda告诉我，从这里可以找到通往水魔克拉肯的道路…但入口仍然是个谜…",
+  "tileX": 2668,
+  "tileY": 1217,
+  "textWidth": 580,
+  "style": 1
+}
+{
+  "text": "这扇大门挡住了西去的路。我需要一个能挖掘精金的钻头才行。",
+  "tileX": 2698,
+  "tileY": 673,
+  "textWidth": 440,
+  "style": 1
+}
+{
+  "text": "你注意到门上方隐藏着一个小开关… --NEWLINE   --NEWLINE Miakoda说：\u0022这个地牢似乎用各种把戏来保护自己的秘密。”",
+  "tileX": 2846,
+  "tileY": 1647,
+  "textWidth": 390,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022传说中三子杀害了许多寻求荣耀的勇士。 --NEWLINE   --NEWLINE 不要愚蠢,也许我们应该在面对他们之前寻求更大的力量。”",
+  "tileX": 2893,
+  "tileY": 59,
+  "textWidth": 500,
+  "style": 1
+}
+{
+  "text": "瓶中云的符号刻在这面苔藓墙上。",
+  "tileX": 2942,
+  "tileY": 695,
+  "textWidth": 230,
+  "style": 1
+}
+{
+  "text": "- 你发现了地下陵寝 -",
+  "tileX": 2991,
+  "tileY": 1231,
+  "textWidth": 190,
+  "style": 1
+}
+{
+  "text": "向西<--- --NEWLINE 埃伦加德沙漠遗址 --NEWLINE 未知之地 --NEWLINE   --NEWLINE 向东--> --NEWLINE 阿拉齐姆双峰 --NEWLINE 村庄 --NEWLINE 奥里德部落的雨林",
+  "tileX": 3009,
+  "tileY": 348,
+  "textWidth": 150,
+  "style": 1
+}
+{
+  "text": "- 你发现了灰烬洞窟，巫师王的藏身巢穴 -",
+  "tileX": 3040,
+  "tileY": 1819,
+  "textWidth": 350,
+  "style": 1
+}
+{
+  "text": "在水中你看到三颗跳动的大心脏… --NEWLINE   --NEWLINE \u0022这是什么恶心玩意？”不假思索，你随手摧毁了它们…",
+  "tileX": 3044,
+  "tileY": 904,
+  "textWidth": 390,
+  "style": 1
+}
+{
+  "text": "- 这扇门必须从另一侧打开 - --NEWLINE   --NEWLINE \u0022它用神庙蜥蜴砖装饰…也许进去的路是用同样的材料堵住的…”",
+  "tileX": 3103,
+  "tileY": 1837,
+  "textWidth": 460,
+  "style": 1
+}
+{
+  "text": "- 你发现了深渊的起源 - --NEWLINE   --NEWLINE 它是深渊渗透整个世界的源头。",
+  "tileX": 3147,
+  "tileY": 1782,
+  "textWidth": 300,
+  "style": 1
+}
+{
+  "text": "\u0022看起来人们试图在这里挖掘宝石，但他们都不见了…”",
+  "tileX": 3188,
+  "tileY": 985,
+  "textWidth": 370,
+  "style": 1
+}
+{
+  "text": "手里拿着一个暗影鳞片，你感觉到暗影盔甲的隐藏形态具有强大的能力，在前方的丛林中会很有用。 --NEWLINE   --NEWLINE \u0022啊，这房子里有我制作暗影盔甲的工具。”",
+  "tileX": 3188,
+  "tileY": 1096,
+  "textWidth": 720,
+  "style": 1
+}
+{
+  "text": "这扇门必须从另一个方向打开。",
+  "tileX": 3196,
+  "tileY": 1253,
+  "textWidth": 210,
+  "style": 1
+}
+{
+  "text": "这扇门似乎是用精金密封的，这是这片大地上最坚硬的矿石之一。什么样的强大魔法能打开这个？ --NEWLINE   --NEWLINE \u0022当我找到能突破这一关的东西时，我必须记住这个地方。”",
+  "tileX": 3231,
+  "tileY": 676,
+  "textWidth": 680,
+  "style": 1
+}
+{
+  "text": "你感觉到一股黑暗力量渗入你的皮肤。腐烂的泥土、腐烂的肉和胆汁散发出臭味。但你感觉到的力量是巨大的。 --NEWLINE   --NEWLINE 被称为世界吞噬者的地球孪生众神占据了这个被淹没的洞穴。要制作由鳞片制成的盔甲，你必须击败两个世界吞噬者。 --NEWLINE   --NEWLINE 随着你内心对力量的渴望越来越强烈，你跳进下面的水里。",
+  "tileX": 3241,
+  "tileY": 1187,
+  "textWidth": 840,
+  "style": 1
+}
+{
+  "text": "你感觉到一股暖气从你下面腐烂岩石的缝隙中喷出来。 --NEWLINE   --NEWLINE 你可以感觉到世界吞噬者就在附近。在金箱子里发现了一张纸条： --NEWLINE   --NEWLINE \u0022我在下面的箱子留了一朵瓶中云和一套暗影盔甲。我希望它比我更适合你。”",
+  "tileX": 3244,
+  "tileY": 1015,
+  "textWidth": 540,
+  "style": 1
+}
+{
+  "text": "\u0022我需要能够跳得更高才能到达那个壁架。” --NEWLINE   --NEWLINE 在微弱的火光中，你隐约看出有一扇精金门。",
+  "tileX": 3252,
+  "tileY": 705,
+  "textWidth": 340,
+  "style": 1
+}
+{
+  "text": "\u0022这条路似乎被另一个开关挡住了……”",
+  "tileX": 3271,
+  "tileY": 62,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "这条路被一种难以置信的力量所封闭。 --NEWLINE   --NEWLINE 你最好的镐子挖掘后连一个凹痕都不能留下… --NEWLINE   --NEWLINE \u0022当我找到一把能把它打碎的镐子时，我必须回来。”",
+  "tileX": 3306,
+  "tileY": 353,
+  "textWidth": 360,
+  "style": 1
+}
+{
+  "text": " -你已经找到了三子神殿- --NEWLINE   --NEWLINE \u0022我需要一些可以打破叶绿的东西…”",
+  "tileX": 3316,
+  "tileY": 238,
+  "textWidth": 260,
+  "style": 1
+}
+{
+  "text": "一个深渊中的声音对你耳语： --NEWLINE   --NEWLINE \u0022巫王和亚尔特留斯被特殊的魔法护盾包裹，唯有巴罗之刃…”",
+  "tileX": 3343,
+  "tileY": 1782,
+  "textWidth": 500,
+  "style": 1
+}
+{
+  "text": "这个冰架笔直向上。 --NEWLINE   --NEWLINE \u0022上面会有什么？”",
+  "tileX": 3349,
+  "tileY": 336,
+  "textWidth": 180,
+  "style": 1
+}
+{
+  "text": "-这扇门守护着通往水魔之路- --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022大峡谷底部的神庙蜥蜴砖大门。打开未知的钥匙…”",
+  "tileX": 3364,
+  "tileY": 1412,
+  "textWidth": 590,
+  "style": 1
+}
+{
+  "text": "\u0022能打开这扇门的拉杆被藏起来了，我也许应该去更深的地方找找 --NEWLINE   --NEWLINE 不过我现在有了云朵瓶，也可以去探索东边奥里德部落的雨林”",
+  "tileX": 3373,
+  "tileY": 848,
+  "textWidth": 470,
+  "style": 1
+}
+{
+  "text": "这扇火山大门必须从另一个方向打开。",
+  "tileX": 3384,
+  "tileY": 1733,
+  "textWidth": 270,
+  "style": 1
+}
+{
+  "text": "\u0022这一定是由下面的拉杆控制的门。”",
+  "tileX": 3384,
+  "tileY": 1759,
+  "textWidth": 260,
+  "style": 1
+}
+{
+  "text": "--腐败圣殿之口-- --NEWLINE   --NEWLINE 你需要一段助跑到达对面，只有你小时候读到的神话里的赫尔墨斯之靴才能达到需要的速度。 --NEWLINE   --NEWLINE 园艺老妇人提到过，靴子可能在村庄下面的大地神庙里找到。",
+  "tileX": 3413,
+  "tileY": 713,
+  "textWidth": 700,
+  "style": 1
+}
+{
+  "text": "就是这样。在这座古老黑暗的巨大的祭坛上，你取出巫毒娃娃，将它高高地举过头顶，准备将它扔到下面的熔岩中。 --NEWLINE   --NEWLINE 注意：如果你的第一次尝试没有成功，请使用向导巫毒娃娃来制作亚伦保护石，并使用该石来重新召唤血肉之墙。",
+  "tileX": 3417,
+  "tileY": 1830,
+  "textWidth": 820,
+  "style": 1
+}
+{
+  "text": "\u0022羽落药水应该很有用…”",
+  "tileX": 3432,
+  "tileY": 966,
+  "textWidth": 160,
+  "style": 1
+}
+{
+  "text": "- 你发现了腐败森林 - --NEWLINE   --NEWLINE 标牌上的告示上写着：\u0022小心：世界吞噬者沉睡在这片森林下面。” --NEWLINE   --NEWLINE 你深吸一口气。\u0022这一定是前进的道路。”",
+  "tileX": 3436,
+  "tileY": 799,
+  "textWidth": 520,
+  "style": 1
+}
+{
+  "text": "你意识到你的旅程正处于十字路口。 --NEWLINE   --NEWLINE 你可以冒险进入腐败洞穴的深处找回未知的宝藏，或者返回村庄。 --NEWLINE   --NEWLINE 有了云朵瓶，你坟墓东边的新大陆现在可以探索了。",
+  "tileX": 3441,
+  "tileY": 848,
+  "textWidth": 450,
+  "style": 1
+}
+{
+  "text": "金盔甲和暗影盔甲可以升级成非常有用的东西。",
+  "tileX": 3445,
+  "tileY": 1021,
+  "textWidth": 350,
+  "style": 1
+}
+{
+  "text": "你发现了神秘的赫尔墨斯之靴的隐藏位置！ --NEWLINE   --NEWLINE 是\u0022克苏鲁之眼”没有带走的那一双…",
+  "tileX": 3471,
+  "tileY": 652,
+  "textWidth": 340,
+  "style": 1
+}
+{
+  "text": "奥罗斯山口，莱昂哈德大桥 --NEWLINE   --NEWLINE 在阿拉齐双峰之间的交界处",
+  "tileX": 3486,
+  "tileY": 357,
+  "textWidth": 240,
+  "style": 1
+}
+{
+  "text": "你把一根荧光棒扔到竖井里，它消失在黑暗中。也许我会在这里使用大魔镜… --NEWLINE   --NEWLINE 大魔镜：用于在任何位置设置折跃点 --NEWLINE   --NEWLINE 配方：1个魔镜，1000个黑暗之魂",
+  "tileX": 3487,
+  "tileY": 413,
+  "textWidth": 540,
+  "style": 1
+}
+{
+  "text": "你找到了打开黄金宝箱的钥匙。 --NEWLINE   --NEWLINE 这把钥匙只能用来打开在这座山上某处发现的锁着的宝箱。 --NEWLINE   --NEWLINE \u0022象形文字看起来像是指向上的。”",
+  "tileX": 3494,
+  "tileY": 614,
+  "textWidth": 480,
+  "style": 1
+}
+{
+  "text": "你应该休息一下。 --NEWLINE   --NEWLINE 使用合适的药水可能是提高你生存率的关键。",
+  "tileX": 3500,
+  "tileY": 1188,
+  "textWidth": 340,
+  "style": 1
+}
+{
+  "text": "黄金宝箱。 --NEWLINE   --NEWLINE 它需要金钥匙才能解锁。",
+  "tileX": 3504,
+  "tileY": 414,
+  "textWidth": 200,
+  "style": 1
+}
+{
+  "text": "\u0022我的天哪…”",
+  "tileX": 3509,
+  "tileY": 1919,
+  "textWidth": 100,
+  "style": 1
+}
+{
+  "text": "在桌子上的书中你看到一段被标记的话： --NEWLINE   --NEWLINE \u0022战略家们有一句话：吾不敢进一寸，吾宁退避三舍。” --NEWLINE   --NEWLINE 没有比低估敌人的力量更大的灾难了,因为轻视敌人的后果就是失去自己的财富。",
+  "tileX": 3547,
+  "tileY": 292,
+  "textWidth": 650,
+  "style": 1
+}
+{
+  "text": "书上继续写道： --NEWLINE   --NEWLINE \u0022故抗兵相若，哀者胜矣。——老子，《道德经》第六十九章”",
+  "tileX": 3543,
+  "tileY": 292,
+  "textWidth": 480,
+  "style": 1
+}
+{
+  "text": "在上面发光蘑菇发出的暗淡光芒中，你隐约看到房间顶部的一个金色的箱子。",
+  "tileX": 3541,
+  "tileY": 468,
+  "textWidth": 560,
+  "style": 1
+}
+{
+  "text": "这个杠杆打开了大峡谷底部的火山门。几千年来，它保护着这片大地。",
+  "tileX": 3551,
+  "tileY": 1915,
+  "textWidth": 550,
+  "style": 1
+}
+{
+  "text": "你找到了巫师私人宝箱的钥匙。 --NEWLINE  --NEWLINE \u0022但我真的能从他那里偷到东西，再活着带走吗？”",
+  "tileX": 3556,
+  "tileY": 313,
+  "textWidth": 380,
+  "style": 1
+}
+{
+  "text": "你抬头看到一道紫色的光芒，但从这里看不清它是什么。",
+  "tileX": 3567,
+  "tileY": 1919,
+  "textWidth": 530,
+  "style": 1
+}
+{
+  "text": "你一跃而下，拿出武器，召唤克苏鲁之眼…",
+  "tileX": 3585,
+  "tileY": 1215,
+  "textWidth": 350,
+  "style": 1
+}
+{
+  "text": "一个老矿工的屋舍…",
+  "tileX": 3599,
+  "tileY": 513,
+  "textWidth": 180,
+  "style": 1
+}
+{
+  "text": "一个声音从墙外对你说话： --NEWLINE   --NEWLINE \u0022双子世界吞噬者睡在这些腐烂洞穴的最深处，在大峡谷的西边……”",
+  "tileX": 3629,
+  "tileY": 962,
+  "textWidth": 500,
+  "style": 1
+}
+{
+  "text": "将银表在恶魔祭坛制作成宇宙表，并使用它随意改变昼夜。",
+  "tileX": 3649,
+  "tileY": 1263,
+  "textWidth": 400,
+  "style": 1
+}
+{
+  "text": "当你走出洞穴时，一股清新的空气吹到你的脸上，你的身上顿时松了一口气。 --NEWLINE   --NEWLINE 你还记得博迪说，村里的侦察员看到了阿卓迪斯的军队向东行进",
+  "tileX": 3660,
+  "tileY": 260,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "\u0022奇怪…这里的水面上有一层厚厚的黏液…”",
+  "tileX": 3697,
+  "tileY": 1269,
+  "textWidth": 300,
+  "style": 1
+}
+{
+  "text": "你感到黑暗袭来。",
+  "tileX": 3734,
+  "tileY": 896,
+  "textWidth": 120,
+  "style": 1
+}
+{
+  "text": "- 你发现了野心之路 - --NEWLINE   --NEWLINE 你的潜意识告诉你沿着这条路走下去是不明智的…",
+  "tileX": 3758,
+  "tileY": 1243,
+  "textWidth": 400,
+  "style": 1
+}
+{
+  "text": "- 你发现了蘑菇洞窟 -",
+  "tileX": 3801,
+  "tileY": 1545,
+  "textWidth": 220,
+  "style": 1
+}
+{
+  "text": "雕刻在岩石上的华丽野兽迷住了你，它的红色眼睛渗透到你的潜意识，进入你的想象，播下噩梦的种子，粉碎你的信念。 --NEWLINE   --NEWLINE 你开始怀疑，问自己，你是否真的有能力把这件事做到底……够了！ --NEWLINE   --NEWLINE 你把目光移开，突然醒来。两个小时过去了！天哪，这野兽有什么力量？",
+  "tileX": 3820,
+  "tileY": 904,
+  "textWidth": 870,
+  "style": 1
+}
+{
+  "text": "一想到你身上有这么多灵魂，你就会紧张。\u0022我应该尽量在我有能力的时候花掉我的钱。 --NEWLINE   --NEWLINE 特别是当我有几千的时候。我不希望骄傲或粗心大意成为我最后的遗憾。”注：可以开启灵魂死亡不掉落",
+  "tileX": 3823,
+  "tileY": 1130,
+  "textWidth": 720,
+  "style": 1
+}
+{
+  "text": "\u0022这些铁皮药水应该有助于探索大地神庙…”",
+  "tileX": 3824,
+  "tileY": 674,
+  "textWidth": 340,
+  "style": 1
+}
+{
+  "text": "凝视着黑暗的深渊，一种可怕的恐惧感袭来。 --NEWLINE   --NEWLINE 现在没有回头路了…",
+  "tileX": 3835,
+  "tileY": 904,
+  "textWidth": 330,
+  "style": 1
+}
+{
+  "text": "\u0022我想知道这些象形文字一样的符号在说什么？”",
+  "tileX": 3840,
+  "tileY": 533,
+  "textWidth": 370,
+  "style": 1
+}
+{
+  "text": "- 你发现了腐化的隧道 - --NEWLINE   --NEWLINE 它在多年前被废弃，因腐化圣殿入口处涌出的黑暗使得它太危险而无法正常作业。",
+  "tileX": 3851,
+  "tileY": 713,
+  "textWidth": 580,
+  "style": 1
+}
+{
+  "text": "尝试在空中躲避以达到更远的距离，或在跳跃后躲避攻击。",
+  "tileX": 3859,
+  "tileY": 1077,
+  "textWidth": 400,
+  "style": 1
+}
+{
+  "text": "-阿拉齐姆山洞- --NEWLINE   --NEWLINE \u0022奇怪。这些发光蘑菇的排列顺序看起来不是随机的……”",
+  "tileX": 3923,
+  "tileY": 685,
+  "textWidth": 390,
+  "style": 1
+}
+{
+  "text": "墙外传来魔鬼般笑声，在你耳边窃窃私语：\u0022记得用你的翻滚。” --NEWLINE   --NEWLINE 它毛骨悚然的笑声让你不安，当你回过神只听到死寂般的沉默 --NEWLINE   --NEWLINE 你不禁怀疑自己是否在地下呆了太久以至出现了幻听...",
+  "tileX": 3938,
+  "tileY": 1120,
+  "textWidth": 520,
+  "style": 1
+}
+{
+  "text": "\u0022在我深入地下之前，这些洞穴可能值得探索…”",
+  "tileX": 3956,
+  "tileY": 710,
+  "textWidth": 380,
+  "style": 1
+}
+{
+  "text": "\u0022嗯…狩猎药水…”",
+  "tileX": 3976,
+  "tileY": 896,
+  "textWidth": 170,
+  "style": 1
+}
+{
+  "text": "你拨动开关，听到上面有微弱的隆隆声。",
+  "tileX": 3996,
+  "tileY": 1006,
+  "textWidth": 300,
+  "style": 1
+}
+{
+  "text": " 在墙上你看到了一份寻宝日志： --NEWLINE   --NEWLINE 在西部洞穴中的废墟里发现了锁着的箱子。梯子坍塌了，上坡很危险。 --NEWLINE   --NEWLINE 伊莎玛尔摔伤脚踝后，不得不放弃补给物资。明天会回来取回它们。 --NEWLINE   --NEWLINE 发光的符文表明洞穴中有一把钥匙。",
+  "tileX": 4004,
+  "tileY": 646,
+  "textWidth": 500,
+  "style": 1
+}
+{
+  "text": "<<西边<< --NEWLINE 阿拉齐姆山洞 --NEWLINE 大峡谷 --NEWLINE 腐化神殿 --NEWLINE 埃伦加德沙漠遗址 --NEWLINE 未知之地 --NEWLINE   --NEWLINE <^西北<^ --NEWLINE 阿拉齐姆双峰 --NEWLINE 巫师的住所",
+  "tileX": 4017,
+  "tileY": 710,
+  "textWidth": 160,
+  "style": 1
+}
+{
+  "text": "\u0022这个压力板肯定连接到计时器上。”",
+  "tileX": 4028,
+  "tileY": 1226,
+  "textWidth": 280,
+  "style": 1
+}
+{
+  "text": "\u0022这将是一个设置我的大魔镜的好地方… --NEWLINE   --NEWLINE 毕竟，如果我没跳过去，我可以用魔镜快速回到最后一个检查点。”",
+  "tileX": 4035,
+  "tileY": 1138,
+  "textWidth": 500,
+  "style": 1
+}
+{
+  "text": "你拉动操纵杆，听到头顶上有微弱的隆隆声。灯笼的光芒在通道顶部闪烁。",
+  "tileX": 4056,
+  "tileY": 1052,
+  "textWidth": 530,
+  "style": 1
+}
+{
+  "text": "\u0022这条路肯定通向村庄，但大门是封闭的。”",
+  "tileX": 4057,
+  "tileY": 986,
+  "textWidth": 300,
+  "style": 1
+}
+{
+  "text": "透过玻璃窗你看到了第四根拉杆…",
+  "tileX": 4064,
+  "tileY": 1614,
+  "textWidth": 280,
+  "style": 1
+}
+{
+  "text": "一位相貌和善的妇女在屋外照看她的花园，她告诉你一个古老的故事，宝藏藏在这个小镇深处的洞穴里， --NEWLINE   --NEWLINE 一双神秘的靴子，曾经是赫耳墨斯穿的，赫耳墨斯是他那个时代的神，据说他跑得足够快，可以在水上行走，一跃而过巨大的裂缝。 --NEWLINE   --NEWLINE 他戴着一套金色的盔甲，像太阳一样明亮，他从云端跳到云端，用从天而降的火焰弹摧毁敌人。这样惊人的故事是真的吗？",
+  "tileX": 4065,
+  "tileY": 713,
+  "textWidth": 940,
+  "style": 1
+}
+{
+  "text": "瑞德：\u0022那是夺心魔之王。他终于复仇了……他认为他也杀了我……” --NEWLINE   --NEWLINE 你停顿了一下……当你意识到你刚刚做出的选择时，你沉默了。 --NEWLINE   --NEWLINE \u0022我已经收集了我的盔甲、武器和食物，很快就要离开了。” --NEWLINE   --NEWLINE 亚伦：\u0022好吧……我明白了。我祝你好运。这似乎不可能，但……” --NEWLINE   --NEWLINE 亚伦急忙在床上的箱子里找东西。 --NEWLINE   --NEWLINE \u0022拿着这个！这是一块刻有我图像的火山石。 --NEWLINE   --NEWLINE 它一直保护着我，散发出强大的魔力，当你遇到困难时，它会给你带来好运。”",
+  "tileX": 4089,
+  "tileY": 713,
+  "textWidth": 560,
+  "style": 1
+}
+{
+  "text": "洞穴可以通过站在入口处 --NEWLINE   --NEWLINE 点击头顶的黑暗进入",
+  "tileX": 4091,
+  "tileY": 983,
+  "textWidth": 650,
+  "style": 1
+}
+{
+  "text": "你的朋友亚伦：\u0022瑞德！”他惊讶地结结巴巴地说：\u0022他们说你死了！” --NEWLINE   --NEWLINE 瑞德：\u0022我知道，我也不敢相信。我只是很高兴他们袭击时你没有来。我几乎所有的家人……” --NEWLINE   --NEWLINE 亚伦：\u0022我知道，瑞德。我不敢相信他们所做的……这是……”",
+  "tileX": 4092,
+  "tileY": 709,
+  "textWidth": 650,
+  "style": 1
+}
+{
+  "text": "你看到一个青色的压力板。在它的下方，墙上画着大眼的象征。 --NEWLINE   --NEWLINE \u0022这一定是前进的道路。我需要找到激活这个压力板的方法…”",
+  "tileX": 4093,
+  "tileY": 1147,
+  "textWidth": 480,
+  "style": 1
+}
+{
+  "text": "你拉动拉杆，听到西边一扇大门打开。",
+  "tileX": 4099,
+  "tileY": 1868,
+  "textWidth": 280,
+  "style": 1
+}
+{
+  "text": "阅读标牌赋予故事时间buff，使敌人无法生成。",
+  "tileX": 4115,
+  "tileY": 1006,
+  "textWidth": 360,
+  "style": 1
+}
+{
+  "text": "火把：可以帮助记住你探索过的地方。 --NEWLINE   --NEWLINE 木头和石头：用于制作箭。 --NEWLINE   --NEWLINE 药剂：推荐用于探索和战斗。囤积的药水对死者毫无用处。",
+  "tileX": 4116,
+  "tileY": 713,
+  "textWidth": 420,
+  "style": 1
+}
+{
+  "text": "你拉动拉杆，听到西边一扇大门打开。",
+  "tileX": 4133,
+  "tileY": 1824,
+  "textWidth": 280,
+  "style": 1
+}
+{
+  "text": "合作工具店——由村庄居民拥有和管理 --NEWLINE   --NEWLINE 欢迎您根据需要使用此处的所有工具",
+  "tileX": 4151,
+  "tileY": 709,
+  "textWidth": 280,
+  "style": 1
+}
+{
+  "text": "- 你发现了光之女皇的天空废墟 - --NEWLINE   --NEWLINE 很久以前，石巨人用大金字塔的黑暗魔法囚禁了女皇，让这座天空神庙毁于一旦。 --NEWLINE   --NEWLINE 据说，在石巨人被打败的那一天，女皇将被释放回到这些圣地。",
+  "tileX": 4154,
+  "tileY": 351,
+  "textWidth": 580,
+  "style": 1
+}
+{
+  "text": "在箱子里发现的看似无用或普通的物品可能会隐藏其真正的潜力。 --NEWLINE   --NEWLINE 将他们带到恶魔祭坛或查看合成表指南，以发现它们的真正面目。",
+  "tileX": 4155,
+  "tileY": 1193,
+  "textWidth": 480,
+  "style": 1
+}
+{
+  "text": "\u0022速度再快一点，我几乎可以…”",
+  "tileX": 4160,
+  "tileY": 1074,
+  "textWidth": 240,
+  "style": 1
+}
+{
+  "text": "右键单击发光的绿色骨骼和头骨可以发现一些奖励",
+  "tileX": 4163,
+  "tileY": 1135,
+  "textWidth": 360,
+  "style": 1
+}
+{
+  "text": "这个箱子里有巫师的私人物品，需要钥匙才能打开。 --NEWLINE   --NEWLINE 但即使我能找到巫师的钥匙，我真的能从他那里偷到东西全身而退吗？",
+  "tileX": 4170,
+  "tileY": 720,
+  "textWidth": 520,
+  "style": 1
+}
+{
+  "text": "\u0022是时候出发了…”",
+  "tileX": 4189,
+  "tileY": 679,
+  "textWidth": 160,
+  "style": 1
+}
+{
+  "text": "一个魔镜…和一张字条… --NEWLINE   --NEWLINE \u0022把我带到恶魔祭坛，我会让你见到我真正的模样。”",
+  "tileX": 4191,
+  "tileY": 979,
+  "textWidth": 390,
+  "style": 1
+}
+{
+  "text": "你看到墙上有个裂缝… --NEWLINE   --NEWLINE （确保在TSORC的mod config选项中打开了冒险模式。这将强制执行地图的\u0022禁止挖掘”规则。 --NEWLINE   --NEWLINE 但是，任何宽度为1的块都可以断开。如果有疑问，请尝试联系作者或者汉化组！ --NEWLINE   --NEWLINE 同样的，不要随便乱挖/炸像拉杆、压力板这样的东西！挖/炸完了你就放不回去了！有可能无法继续玩下去！）",
+  "tileX": 4209,
+  "tileY": 944,
+  "textWidth": 760,
+  "style": 1
+}
+{
+  "text": "镇井。 --NEWLINE   --NEWLINE 你在黑暗中看到一个微光。光线使你神魂颠倒，仿佛你看到自己在回头看自己的眼睛。 --NEWLINE   --NEWLINE 久远的记忆突然被唤醒。你看到你父亲被一个披着斗篷的刺客砍伤，刺客的眼睛闪着黄光。 --NEWLINE   --NEWLINE 你记得他把你和母亲扔在身后，三个黑色骑士笼罩在灰雾中，闯入房间。 --NEWLINE   --NEWLINE 你的内心充满了痛苦，泪水模糊了视线，记忆又消失在深处。",
+  "tileX": 4210,
+  "tileY": 713,
+  "textWidth": 700,
+  "style": 1
+}
+{
+  "text": "墙壁上有一个小裂缝… --NEWLINE   --NEWLINE -你发现了去大地神庙的侧门-",
+  "tileX": 4215,
+  "tileY": 1038,
+  "textWidth": 250,
+  "style": 1
+}
+{
+  "text": "\u0022看起来我可以安全地踩在泥上而不会被烧伤。” --NEWLINE   --NEWLINE Miakoda：\u0022众所周知这些废墟曾经的居民用黑曜石的力量来保护自己。如果我们探索的足够远或许能找到一块。”",
+  "tileX": 4219,
+  "tileY": 1868,
+  "textWidth": 840,
+  "style": 1
+}
+{
+  "text": "瑞德：\u0022父亲给我们讲了阿卓迪斯的故事……我不相信……”你停顿了一下，长长地吸了一口气 --NEWLINE   --NEWLINE \u0022我不会让他破坏我们父亲用生命保护的和平。” --NEWLINE   --NEWLINE 博迪：\u0022我祝你好运，兄弟。你一直是最擅长战斗的人。我腿上的神经受损，我只会成为你的累赘……”",
+  "tileX": 4223,
+  "tileY": 713,
+  "textWidth": 720,
+  "style": 1
+}
+{
+  "text": "尝试半空中使用翻滚，以达到更远的距离，或在跳跃后躲避攻击。",
+  "tileX": 4227,
+  "tileY": 1178,
+  "textWidth": 450,
+  "style": 1
+}
+{
+  "text": "- 你发现了火焰神庙 - ",
+  "tileX": 4227,
+  "tileY": 1862,
+  "textWidth": 220,
+  "style": 1
+}
+{
+  "text": "博迪：\u0022如果你需要食物或物品，请随便取用。” --NEWLINE   --NEWLINE 瑞德：\u0022谢谢你，兄弟。我会想念你的。”",
+  "tileX": 4234,
+  "tileY": 695,
+  "textWidth": 360,
+  "style": 1
+}
+{
+  "text": "\u0022Miakoda，在你的旅行中，你遇到过暗影钥匙吗？” --NEWLINE   --NEWLINE \u0022在我被骷髅王囚禁之前，我曾经从冰冻海洋深处获得过一个。 --NEWLINE   --NEWLINE 我也听过传言，飞龙法师会向那些玩他的游戏的人提供一个， --NEWLINE   --NEWLINE 这个游戏是在他位于东部山巅的堡垒里举办的……”",
+  "tileX": 4236,
+  "tileY": 1749,
+  "textWidth": 500,
+  "style": 1
+}
+{
+  "text": "\u0022以利亚和你的妻子，我不知道。当我看到山谷中的烟雾时，我冲回家。 --NEWLINE   --NEWLINE 他们不见了。我只找到了你和我们的父母，” --NEWLINE   --NEWLINE 看到袭击的村庄侦察员说，\u0022军队正在向东行进…” --NEWLINE   --NEWLINE \u0022那么他们还有机会活着，”你平静地说，对发生的事情仍然恍惚。",
+  "tileX": 4242,
+  "tileY": 709,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "当博迪看到你穿过敞开的门时，他僵住了。然后高兴地喊道：\u0022我超，你还活着！我以为你死了！” --NEWLINE   --NEWLINE 你仍然震惊地问：\u0022但以利亚和我们的父母…还有亚莎呢？他们还活着吗？” --NEWLINE   --NEWLINE \u0022噢，天哪，瑞德，不。太可怕了。他们杀了父母。我不得不把你和他们一起埋葬。你没有呼吸。我以为你也……”",
+  "tileX": 4249,
+  "tileY": 709,
+  "textWidth": 760,
+  "style": 1
+}
+{
+  "text": "右键单击发光的绿色骷髅和悬挂的骷髅以发现隐藏的战利品。",
+  "tileX": 4248,
+  "tileY": 980,
+  "textWidth": 440,
+  "style": 1
+}
+{
+  "text": "你在桌上发现了一本古代咒语的书。 --NEWLINE   --NEWLINE 决定在这间废弃的房间里休息一晚后，你就用剩下的时间阅读这本古老的魔法书。 --NEWLINE   --NEWLINE 早上你看到一页：保护巫毒人偶与附魔。特别有一句咒语——巫毒娃娃仿制术。",
+  "tileX": 4249,
+  "tileY": 1822,
+  "textWidth": 580,
+  "style": 1
+}
+{
+  "text": "\u0022巫毒娃娃仿制术——对一个物体施魔法，赋予其无敌的天赋。 --NEWLINE   --NEWLINE 然而，这种魔法很少被天才法师使用，因为这种力量的代价是一个人的生命与这个物体联系在一起。 --NEWLINE   --NEWLINE 摧毁这个物体，你就杀死了被施魔法的人。” --NEWLINE   --NEWLINE 突然，神奇的事情发生了。亚伦给你的人偶，散发出与所描述的相同的力量。",
+  "tileX": 4252,
+  "tileY": 1822,
+  "textWidth": 750,
+  "style": 1
+}
+{
+  "text": "\u0022这是哪里？”",
+  "tileX": 4253,
+  "tileY": 1085,
+  "textWidth": 120,
+  "style": 1
+}
+{
+  "text": "亚伦知道这种联系吗？ --NEWLINE   --NEWLINE 有些事看起来复杂,但解决方案却太巧妙了,从一开始就在我的手上... --NEWLINE   --NEWLINE 你拿出巫毒娃娃和你最强有力的武器, 用尽全力攻击它。 --NEWLINE   --NEWLINE 震惊！一股反震冲击波把你掀翻在地上. --NEWLINE   --NEWLINE 站起身后你意识到想摧毁它并不简单...",
+  "tileX": 4255,
+  "tileY": 1822,
+  "textWidth": 530,
+  "style": 1
+}
+{
+  "text": "在这个崇高祭坛的火焰中用你收集的灵魂锻造装备。 --NEWLINE   --NEWLINE 强大的力量可以在这里锻造，但也有巨大的负担代价…",
+  "tileX": 4266,
+  "tileY": 989,
+  "textWidth": 420,
+  "style": 1
+}
+{
+  "text": "你听到从上面的洞穴传来嗡嗡声…",
+  "tileX": 4266,
+  "tileY": 1399,
+  "textWidth": 240,
+  "style": 1
+}
+{
+  "text": "你记得你父亲曾经告诉你发光的晶体利用环境的能量生长并发出发光。 --NEWLINE   --NEWLINE 它们经常在强大的能量和隐藏的宝藏附近被发现，为好奇的旅行者照亮了道路…",
+  "tileX": 4301,
+  "tileY": 990,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "墙上的铭文写道： --NEWLINE   --NEWLINE 你必须击败大眼睛才能获得古代的赫尔墨斯之靴... --NEWLINE   --NEWLINE 寻找令人不寒而栗的深处，找到喷泉汇集成一汪水塘的地方。 --NEWLINE   --NEWLINE 一条路将会显露。",
+  "tileX": 4311,
+  "tileY": 1045,
+  "textWidth": 450,
+  "style": 1
+}
+{
+  "text": "桌旁的一位老人告诉你，在村子西边的山洞里可以找到宝藏。 --NEWLINE   --NEWLINE \u0022这是一桩手到擒来的买卖，孩子！ --NEWLINE   --NEWLINE 如果你够蠢到去探索阿斯匹克下面的神庙，至少也要足够聪明地多准备一点。” --NEWLINE   --NEWLINE \u0022我敢肯定，一个像你一样活泼的年轻人可以面对任何事情！但不要说我没有警告你！”",
+  "tileX": 4316,
+  "tileY": 713,
+  "textWidth": 620,
+  "style": 1
+}
+{
+  "text": "在你的头顶上，你看到一个蓝绿色的压力板。 --NEWLINE   --NEWLINE 刻蚀在严重磨损的压力板上的是弓箭浮雕，几乎看不清图案",
+  "tileX": 4320,
+  "tileY": 990,
+  "textWidth": 450,
+  "style": 1
+}
+{
+  "text": "你发现的许多物品都可以用黑暗之魂转化。 --NEWLINE   --NEWLINE 如果一件物品是\u0022材料”，为了解更多关于其隐藏潜力的信息 --NEWLINE   --NEWLINE 你可以把它交给向导Aaron或者用合成表模组检查它。",
+  "tileX": 4325,
+  "tileY": 953,
+  "textWidth": 480,
+  "style": 1
+}
+{
+  "text": "露西亚酒馆",
+  "tileX": 4326,
+  "tileY": 709,
+  "textWidth": 90,
+  "style": 1
+}
+{
+  "text": "- 你发现了古林飞龙的巢穴 - --NEWLINE   --NEWLINE 一种强大的野兽守卫着这座被遗忘的城市。",
+  "tileX": 4330,
+  "tileY": 1740,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "你在骷髅手上发现一张纸条：\u0022探索时使用药水对你的生存至关重要。当你有很多灵魂的时候使用它们。 --NEWLINE   --NEWLINE 在找回失去的灵魂时使用它们。在探索新领域时使用它们。当你看到危险的敌人时使用它们。不要犯我犯的错误。”",
+  "tileX": 4335,
+  "tileY": 1030,
+  "textWidth": 800,
+  "style": 1
+}
+{
+  "text": "\u0022通过适时的空中闪避，我想我可以避开这些尖刺……”",
+  "tileX": 4348,
+  "tileY": 1041,
+  "textWidth": 420,
+  "style": 1
+}
+{
+  "text": "耀骑士索拉尔的瞭望塔 --NEWLINE   --NEWLINE 索拉尔在向你用赞美太阳的方式打招呼后， --NEWLINE   --NEWLINE 他问你是否和Jade说话了，Jade是村外瞭望塔的女人。 --NEWLINE   --NEWLINE \u0022去和她谈谈吧，我的朋友！ --NEWLINE   --NEWLINE 她有很多重要的事情要告诉你。也许在一些事情还能帮助你。” --NEWLINE   --NEWLINE \u0022接下来……”他喃喃自语，然后咆哮道：\u0022为了我们的友谊干杯！”",
+  "tileX": 4363,
+  "tileY": 666,
+  "textWidth": 480,
+  "style": 1
+}
+{
+  "text": "塔楼在这个方向上被堵住了…",
+  "tileX": 4372,
+  "tileY": 1568,
+  "textWidth": 210,
+  "style": 1
+}
+{
+  "text": "索拉尔嚷道：\u0022村庄下面的大地神庙里到处都是危险的陷阱和不死生物。 --NEWLINE   --NEWLINE 我得承认我差点就把小命交代在那了！ --NEWLINE   --NEWLINE 我相信你比我更勇！如果不是，你可以考虑去村子西边的山洞探险。 --NEWLINE   --NEWLINE 那里更安全，你可以找到一些东西来帮助你的旅行！”",
+  "tileX": 4374,
+  "tileY": 666,
+  "textWidth": 520,
+  "style": 1
+}
+{
+  "text": "- 埃什峰村 -",
+  "tileX": 4384,
+  "tileY": 713,
+  "textWidth": 120,
+  "style": 1
+}
+{
+  "text": "\u0022这块该死的保护石仍在散发黑暗的气息，没有任何解脱的迹象。 --NEWLINE   --NEWLINE 我得更多地向西探索，看看是否有一条通往那个方向的路…”",
+  "tileX": 4399,
+  "tileY": 1880,
+  "textWidth": 480,
+  "style": 1
+}
+{
+  "text": "你感觉到顺着这个方向有一股强大的力量…你犹豫着是否应该回头…但…",
+  "tileX": 4419,
+  "tileY": 1100,
+  "textWidth": 560,
+  "style": 1
+}
+{
+  "text": "你拨动开关，听到下面有东西在动…",
+  "tileX": 4435,
+  "tileY": 775,
+  "textWidth": 300,
+  "style": 1
+}
+{
+  "text": "(6)\u0022他在与…非自然的天体生命交流。” --NEWLINE   --NEWLINE 现在你的兄弟已经被解救了，当你下次回到村庄时，把他的出生点设置在那里。 --NEWLINE   --NEWLINE 我们鼓励您随时返回村庄用您获得的金币重铸物品。",
+  "tileX": 4445,
+  "tileY": 1740,
+  "textWidth": 560,
+  "style": 1
+}
+{
+  "text": "(5)\u0022但是杀死亚伦并不容易。他肯定预料到了可能会有直接的攻击，所以肯定会采取一些强大的魔法来保护自己。 --NEWLINE   --NEWLINE 不要让他觉得可疑。如果你能直接想到什么……我只是不知道……但够了。 --NEWLINE   --NEWLINE 现在就走吧。快点！我可以自己返回村庄。通过我的牢房窗户，是守卫这座被遗忘的城市的野兽。 --NEWLINE   --NEWLINE 偷走它的力量，你还有机会。我看到了阿卓迪斯。自从我们父亲的时代以来，他变得更强大了。”",
+  "tileX": 4452,
+  "tileY": 1740,
+  "textWidth": 800,
+  "style": 1
+}
+{
+  "text": "(4)\u0022村里没有人知道他在和阿卓迪斯联络。 --NEWLINE   --NEWLINE 想到他和新发现的财富一起快乐的生活在那里，看着我走向死亡之途， --NEWLINE   --NEWLINE 而他的背叛无人告发，这让我感到恶心。我不知道该说什么，瑞德。” --NEWLINE   --NEWLINE \u0022只要他还活着…我很抱歉。”\u0022我想你知道你必须做什么。”",
+  "tileX": 4452,
+  "tileY": 1745,
+  "textWidth": 520,
+  "style": 1
+}
+{
+  "text": "--大地神庙-- --NEWLINE   --NEWLINE 你感觉到空气变得温暖潮湿。你脚下的大地好像在呼吸。",
+  "tileX": 4456,
+  "tileY": 854,
+  "textWidth": 420,
+  "style": 1
+}
+{
+  "text": "(3)\u0022他们认为她很虚弱，他们仍然可以轻而易举地击败她， --NEWLINE   --NEWLINE 但你和我知道，她永远不会告诉阿卓迪斯，即使他们夺走了她的生命。 --NEWLINE   --NEWLINE 我只希望你能在他们意识到这一点之前找到她。 --NEWLINE   --NEWLINE 但瑞德，我还有最后一件事要告诉你。你的朋友亚伦，他背叛了我们所有人。 --NEWLINE   --NEWLINE 当他们把我带到这里时，他正站在阿卓迪斯旁边。 --NEWLINE   --NEWLINE 他一定告诉他在哪里可以找到我们和我们的父亲。”",
+  "tileX": 4456,
+  "tileY": 1745,
+  "textWidth": 550,
+  "style": 1
+}
+{
+  "text": "越过层层壁架和下面的大平台，你看到一个通向相邻塔楼的孔洞。 --NEWLINE   --NEWLINE \u0022以一定的速度，我想我可以做到……”",
+  "tileX": 4457,
+  "tileY": 1539,
+  "textWidth": 480,
+  "style": 1
+}
+{
+  "text": "(2)\u0022你妻子Asha……她还活着。 --NEWLINE   --NEWLINE 他们把我留在这里,带走了她，如果他们希望找到你父亲的剑，他们不得不让她活着。” --NEWLINE   --NEWLINE \u0022亚莎知道我们父亲把剑放在哪里？” --NEWLINE   --NEWLINE \u0022当父亲看到他们走近时他告诉她的，让我们两个都逃跑， --NEWLINE   --NEWLINE 但在我们到达森林之前，侦察员抓住了我们。我们没有机会。”",
+  "tileX": 4459,
+  "tileY": 1745,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "(1)\u0022瑞德，谢天谢地是你！快让我离开这里！当军队进攻时，他们俘虏了我。 --NEWLINE   --NEWLINE 他们在寻找我们父亲的剑。他们拷问了我，直到他们确信我不知道， --NEWLINE   --NEWLINE 于是决定把我留在这里自生自灭。但是瑞德...”",
+  "tileX": 4462,
+  "tileY": 1745,
+  "textWidth": 520,
+  "style": 1
+}
+{
+  "text": "在恶魔祭坛时，盔甲和饰品必须在你的背包中（不在身上穿着）， --NEWLINE   --NEWLINE 以查看它们是否可以用黑暗灵魂升级。阅读所有项目的提示以了解升级线索。",
+  "tileX": 4468,
+  "tileY": 1028,
+  "textWidth": 560,
+  "style": 1
+}
+{
+  "text": "右键单击篝火以点燃它们。 --NEWLINE   --NEWLINE 点燃篝火后，你可以将其设置为重生点，或者使用他们提供的幽灵存钱罐或保险箱。 --NEWLINE   --NEWLINE 可以随时传送到已经点燃的篝火。",
+  "tileX": 4480,
+  "tileY": 732,
+  "textWidth": 610,
+  "style": 1
+}
+{
+  "text": "你身体里的每一个细胞似乎都在战栗着，要你现在立即返回！",
+  "tileX": 4493,
+  "tileY": 1104,
+  "textWidth": 460,
+  "style": 1
+}
+{
+  "text": "- 你发现了进入大地神庙的入口 - --NEWLINE   --NEWLINE 洞口坍塌了。 --NEWLINE   --NEWLINE \u0022这个地方的石头看起来不太多。用炸弹或镐子，我想我可以把它挖出来。”",
+  "tileX": 4521,
+  "tileY": 857,
+  "textWidth": 560,
+  "style": 1
+}
+{
+  "text": "突然，似乎万物安好、无事发生…",
+  "tileX": 4563,
+  "tileY": 1101,
+  "textWidth": 260,
+  "style": 1
+}
+{
+  "text": "---->友好的旅行者<---- --NEWLINE   --NEWLINE 向西北方向前进，到达埃什峰村 --NEWLINE *提供温暖的蜂蜜酒、住宿和补给*",
+  "tileX": 4580,
+  "tileY": 857,
+  "textWidth": 250,
+  "style": 1
+}
+{
+  "text": "水变得不可忍受地冰冷刺骨…",
+  "tileX": 4604,
+  "tileY": 1007,
+  "textWidth": 220,
+  "style": 1
+}
+{
+  "text": "一种可以穿透墙壁的武器可能是此时生存的关键。",
+  "tileX": 4605,
+  "tileY": 1100,
+  "textWidth": 380,
+  "style": 1
+}
+{
+  "text": "你找到了被淹没的机器神殿。 --NEWLINE   --NEWLINE 你父亲小时候给你讲过这个地方的故事 --NEWLINE   --NEWLINE 在这里建造的机器实际上守卫着通往大金字塔的道路，在很久很久以前以前就消逝在世人的记忆之中了… --NEWLINE   --NEWLINE 没人知道这座神庙是如何被洪水淹没的。也许这是一次尝试击败机器的战斗…铁吴克。",
+  "tileX": 4615,
+  "tileY": 1026,
+  "textWidth": 760,
+  "style": 1
+}
+{
+  "text": "入口被叶绿矿封闭，叶绿矿是一种比精金更坚固的矿石。",
+  "tileX": 4615,
+  "tileY": 1033,
+  "textWidth": 400,
+  "style": 1
+}
+{
+  "text": "从左边的坑里往下看，Miakoda建议在这里可以使用羽落药水…或者冰魔杖…",
+  "tileX": 4625,
+  "tileY": 1100,
+  "textWidth": 580,
+  "style": 1
+}
+{
+  "text": "拉杆只打开了门的一半…",
+  "tileX": 4625,
+  "tileY": 1261,
+  "textWidth": 180,
+  "style": 1
+}
+{
+  "text": "右键单击发光的绿色骷髅和悬挂的骷髅以发现隐藏的战利品。",
+  "tileX": 4647,
+  "tileY": 898,
+  "textWidth": 480,
+  "style": 1
+}
+{
+  "text": "- 你发现了神秘小径 -",
+  "tileX": 4666,
+  "tileY": 919,
+  "textWidth": 200,
+  "style": 1
+}
+{
+  "text": "\u0022奇怪。看起来好像有人或什么东西一直在试图重建这个地方。”",
+  "tileX": 4668,
+  "tileY": 1754,
+  "textWidth": 450,
+  "style": 1
+}
+{
+  "text": "向下是直线下降，但你认为你能成功。 --NEWLINE   --NEWLINE 你突然为你关于父亲的记忆不断消逝感到惊讶。 --NEWLINE   --NEWLINE 想到他已经去世，你感到十分悲伤，但你也很感激，回忆起他在夏天教你如何攀爬山崖。",
+  "tileX": 4746,
+  "tileY": 1482,
+  "textWidth": 620,
+  "style": 1
+}
+{
+  "text": "\u0022这些支撑梁看起来像是最近几年建造的……”",
+  "tileX": 4755,
+  "tileY": 1742,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "你的家人都不见了，但你希望他们还活着。 --NEWLINE   --NEWLINE \u0022也许他们到了村里…”",
+  "tileX": 4776,
+  "tileY": 867,
+  "textWidth": 360,
+  "style": 1
+}
+{
+  "text": "-这道门守护着通往灰烬洞穴的被遗忘之路- --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022神庙蜥蜴砖门靠近地球熔化的核心， --NEWLINE   --NEWLINE 守护着我不知道该如何描述的东西……某种容器，或运输工具……” --NEWLINE   --NEWLINE 你试着画一个粗略的草图，并在上面画一座通往遗忘之城的塔作为参考点…",
+  "tileX": 4791,
+  "tileY": 1907,
+  "textWidth": 560,
+  "style": 1
+}
+{
+  "text": "你家的余烬在风中噼啪作响。 --NEWLINE   --NEWLINE 你的作品和画作被毁了，妻子被抓走了。你低头看了看你们两人的破相框。 --NEWLINE   --NEWLINE 你的心紧绷，愤怒和悲伤的阵痛抽打着你的心。这一生有什么意义？ --NEWLINE   --NEWLINE 这短暂的生命追求纯真的快乐，心灵的安慰与爱，食物和安全？ --NEWLINE   --NEWLINE 这是成功和认可的附属品吗？现在这些都不重要了—— --NEWLINE   --NEWLINE 所有这些都是你留下的，现在只剩大火烧成的灰烬。",
+  "tileX": 4808,
+  "tileY": 864,
+  "textWidth": 560,
+  "style": 1
+}
+{
+  "text": "- 你发现了失落之城 -",
+  "tileX": 4821,
+  "tileY": 1470,
+  "textWidth": 200,
+  "style": 1
+}
+{
+  "text": "你兄弟以利亚和博迪的房子。",
+  "tileX": 4837,
+  "tileY": 867,
+  "textWidth": 220,
+  "style": 1
+}
+{
+  "text": "这座桥是用燃烧的地狱石建造的。它在两个方向上持续一千英尺，没有任何起伏。 --NEWLINE   --NEWLINE \u0022我必须爬回这座塔，找到另一条路到这里，那里可以安全穿过地狱石…”",
+  "tileX": 4846,
+  "tileY": 1884,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "这扇门必须从另一侧打开。",
+  "tileX": 4847,
+  "tileY": 1349,
+  "textWidth": 200,
+  "style": 1
+}
+{
+  "text": "<*>按左Alt可在躲避伤害的同时躲避敌人。您可以在mod部分通过TML的控制器设置更改输入。 --NEWLINE   --NEWLINE 左移或右移也值得一试。找到适合你的方法。这对您的旅程至关重要。<*>",
+  "tileX": 4855,
+  "tileY": 866,
+  "textWidth": 700,
+  "style": 1
+}
+{
+  "text": "你父母的房子",
+  "tileX": 4880,
+  "tileY": 863,
+  "textWidth": 120,
+  "style": 1
+}
+{
+  "text": "你在失去知觉之前的最后记忆：你家的房屋被一支戴着阿卓迪斯标志的军队袭击并纵火。 --NEWLINE   --NEWLINE 你冲到你家人的家里寻找幸存者。",
+  "tileX": 4902,
+  "tileY": 866,
+  "textWidth": 650,
+  "style": 1
+}
+{
+  "text": "你精神沮丧绝望——你旁边的坟墓没有标记， --NEWLINE   --NEWLINE 但一定是在埋葬你的时候挖的。你不想去想谁挖了这些…",
+  "tileX": 4911,
+  "tileY": 866,
+  "textWidth": 400,
+  "style": 1
+}
+{
+  "text": "你醒来时咳嗽着黑色的血块，你意识到你被认为已经死去，被活埋在这里 --NEWLINE   --NEWLINE 心跳开始加速，手在黑暗中挣扎，寻找任何能帮你出去的东西 --NEWLINE   --NEWLINE 你感觉到背后有东西，转身发现了你父亲遗留的破碎的镐子…",
+  "tileX": 4919,
+  "tileY": 873,
+  "textWidth": 520,
+  "style": 1
+}
+{
+  "text": "击败骷髅王并在附近的德鲁伊家休息后，你回到这里，凝视下面的黑暗。 --NEWLINE   --NEWLINE \u0022这一定是前进的道路”你想，但你看不到壁架之外的任何东西。 --NEWLINE   --NEWLINE 深吸一口气，你跳进未知世界。",
+  "tileX": 4923,
+  "tileY": 1407,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "~·~ The Story Of Red Cloud 红云物语~·~  --NEWLINE 巨焱龙晶汉化组 汉化  --NEWLINE 人手不够 有部分翻译生硬 请见谅  --NEWLINE   --NEWLINE ~·~汉化人员：~·~ --NEWLINE 星界棱晶 b站id454936579 --NEWLINE 巨像ha b站id 52650683 --NEWLINE 丛林龙_亚戎 b站id 319380527 --NEWLINE 闪金 b站id 434011516 --NEWLINE 麒龙 b站id 178324958 --NEWLINE 芋圆銮歌 b站id 259288171 --NEWLINE 小小红白 b站id 397702 --NEWLINE 咕咕王 b站id 38075201 --NEWLINE urgiv b站id 335846318",
+  "tileX": 4926,
+  "tileY": 860,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "附加的一些游玩提示： --NEWLINE   --NEWLINE 1.不要加内容类MOD！ --NEWLINE 包括某些辅助类mod如翻页背包、连锁挖矿。 --NEWLINE 不但你加的mod玩不好，这张地图也有可能出大bug，出事了只能说你活该。 --NEWLINE   --NEWLINE 2.如果游玩过程中遇到没翻译的句子、告示牌或你认为有问题的地方。 --NEWLINE 可以截图（尽量详细一些），发在我们的qq群里，并@群主&管理 --NEWLINE   --NEWLINE 感谢您对红云物语模组和该冒险地图以及我们的支持！ --NEWLINE   --NEWLINE 可以加QQ群:645748667关注我们的动态以及提出宝贵建议！ --NEWLINE   --NEWLINE 祝您游玩愉快！",
+  "tileX": 4930,
+  "tileY": 860,
+  "textWidth": 650,
+  "style": 1
+}
+{
+  "text": "向西<--- --NEWLINE 埃什峰村 --NEWLINE   --NEWLINE 向东---> --NEWLINE 奥里德部落的雨林 --NEWLINE 丛林废墟 --NEWLINE 黑曜石火山 --NEWLINE 未知之地",
+  "tileX": 4944,
+  "tileY": 859,
+  "textWidth": 130,
+  "style": 1
+}
+{
+  "text": "- 你发现了被洪水掩埋的废弃矿井 -",
+  "tileX": 4966,
+  "tileY": 882,
+  "textWidth": 300,
+  "style": 1
+}
+{
+  "text": "\u0022看来住在这里的人都崇拜太阳…他们可能是耀骑士Solaire的祖先？ --NEWLINE   --NEWLINE 没有白天的温暖和阳光来安慰他们，他们一定很痛苦… --NEWLINE   --NEWLINE 也许他们还是找到了一种与太阳交流的方式……”",
+  "tileX": 5002,
+  "tileY": 1741,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "另一队阿卓迪斯的军队已经入侵了山谷！ --NEWLINE   --NEWLINE 当你进入这片树木繁茂的树林时，你往西看到烟雾从村庄附近的小山上冒出来。 --NEWLINE   --NEWLINE 如果您希望激活此事件，请使用哥布林战旗-在旧家废墟中战斗。",
+  "tileX": 5007,
+  "tileY": 864,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "这扇大门被叶绿矿封闭，叶绿矿是一种比精金更坚固的矿石。 --NEWLINE   --NEWLINE \u0022我需要一个非常强大的钻头来打开这个。炸弹和普通的钻头不会让它产生任何形变…”",
+  "tileX": 5018,
+  "tileY": 915,
+  "textWidth": 620,
+  "style": 1
+}
+{
+  "text": "在你上方很远的地方，你可以看到房间里有一个开口。 --NEWLINE   --NEWLINE \u0022也许这会带来出路。”",
+  "tileX": 5054,
+  "tileY": 1092,
+  "textWidth": 450,
+  "style": 1
+}
+{
+  "text": "这座古老的庙宇是为了纪念被称为骷髅王的守护者而建造的，他是死者之首。 --NEWLINE   --NEWLINE 据说他是一个强大的法师的创造物，被称为拜月教徒，他与这些寺庙的联系仍然未知… --NEWLINE   --NEWLINE 如果你第一次与老人战斗不顺利，用这个箱子里的骨头合成召唤物，直到你获得了它的力量。",
+  "tileX": 5059,
+  "tileY": 1402,
+  "textWidth": 680,
+  "style": 1
+}
+{
+  "text": "你找到了机器的巢穴。",
+  "tileX": 5073,
+  "tileY": 1099,
+  "textWidth": 160,
+  "style": 1
+}
+{
+  "text": "在你父亲的剑下，你发现一张纸条：\u0022瑞德，很多年前，当这片大地还留有和平的时候， --NEWLINE   --NEWLINE 我将这把剑的灵魂一分为二，确保它的全部力量永远不会被黑暗势力所利用。 --NEWLINE   --NEWLINE 如果再次需要这种力量，请在蜥蜴神庙大门外的大峡谷深处寻找老树…… --NEWLINE   --NEWLINE 保持小心，瑞德。我将永远与你在一起。”-你的父亲",
+  "tileX": 5084,
+  "tileY": 920,
+  "textWidth": 680,
+  "style": 1
+}
+{
+  "text": "-你找到了遗忘之城的墓穴- --NEWLINE   --NEWLINE \u0022门是密封的，但没有钥匙孔……”",
+  "tileX": 5117,
+  "tileY": 1743,
+  "textWidth": 280,
+  "style": 1
+}
+{
+  "text": "当你拉起杠杆时，听到上方传来隆隆声 --NEWLINE   --NEWLINE 湖边的大门打开，露出一条新路。",
+  "tileX": 5145,
+  "tileY": 1563,
+  "textWidth": 300,
+  "style": 1
+}
+{
+  "text": "这堵石墙必须从另一侧打开。",
+  "tileX": 5149,
+  "tileY": 1004,
+  "textWidth": 220,
+  "style": 1
+}
+{
+  "text": "\u0022这个门的操纵杆应该在附近。” --NEWLINE   --NEWLINE 你做好准备，深呼吸…",
+  "tileX": 5150,
+  "tileY": 1359,
+  "textWidth": 300,
+  "style": 1
+}
+{
+  "text": "这道门是很久以前搭建并密封关闭的，目的是保护神庙居民免受无名不朽的\u0022老人”的伤害。 --NEWLINE   --NEWLINE 他现在被诅咒为一个被称为骷髅王的恶魔的容器，骷髅王是死亡之首 --NEWLINE   --NEWLINE 但不要可怜他，他的罪行远远大于他所赢得的命运…",
+  "tileX": 5155,
+  "tileY": 1366,
+  "textWidth": 640,
+  "style": 1
+}
+{
+  "text": "\u0022你看起来很疲惫。你一直在努力捍卫我们的自然母亲，不是吗？好吧，拿着这个！ --NEWLINE   --NEWLINE 这是仙灵铃铛，它是精神的指引，会一直陪着你旅行，在绝望的时候照亮你的路。 --NEWLINE   --NEWLINE 还有这个再生之杖！拿着它，治愈这个世界上已经腐蚀了这片土地的疾病。 --NEWLINE   --NEWLINE 这两个礼物都可以在我楼上的床旁的箱子里找到。”",
+  "tileX": 5167,
+  "tileY": 952,
+  "textWidth": 640,
+  "style": 1
+}
+{
+  "text": "- 你发现了被遗忘的亚尔特留斯废墟 -",
+  "tileX": 5176,
+  "tileY": 1755,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "树妖之家。 --NEWLINE   --NEWLINE \u0022确保所有进入我家的人都有纯粹的善意；你会受到礼物和善意的欢迎。 --NEWLINE   --NEWLINE 带着恶意来，你也不会离开这个地方。欢迎旅行者！ --NEWLINE   --NEWLINE 轻轻一步，感谢这片神奇的大地，凝聚了我们所有亲人的生命！”",
+  "tileX": 5201,
+  "tileY": 958,
+  "textWidth": 580,
+  "style": 1
+}
+{
+  "text": "商人告诉你一个关于流星雨的传闻—— --NEWLINE   --NEWLINE 流星雨从未落在地面上，一直悬浮在雨林上空。 --NEWLINE   --NEWLINE 如此奇怪的谜语…",
+  "tileX": 5254,
+  "tileY": 846,
+  "textWidth": 360,
+  "style": 1
+}
+{
+  "text": "- 乌纳丁酒店 - --NEWLINE   --NEWLINE 欢迎光临，你在这里的时候可以从我这里买弹药和药水。 --NEWLINE   --NEWLINE 如果我不在，请你自己随便找个房间住下。当你出去的时候在箱子里放上相应的货币，谢谢。 --NEWLINE   --NEWLINE -乌纳丁",
+  "tileX": 5257,
+  "tileY": 865,
+  "textWidth": 650,
+  "style": 1
+}
+{
+  "text": "- 你发现了丛林深处的花间湖 -",
+  "tileX": 5269,
+  "tileY": 1379,
+  "textWidth": 260,
+  "style": 1
+}
+{
+  "text": "\u0022这堵墙被冻的很坚固。我想应该从其它方向进去……”",
+  "tileX": 5271,
+  "tileY": 1630,
+  "textWidth": 390,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022很久以前，这座被遗忘的城市由一位名叫亚尔特留斯的骑士守卫， --NEWLINE   --NEWLINE 他是深渊行者。这个房间仍然充满着深渊的能量…”",
+  "tileX": 5308,
+  "tileY": 1694,
+  "textWidth": 560,
+  "style": 1
+}
+{
+  "text": "向东--> --NEWLINE 奥里德部落的雨林 --NEWLINE 黑曜岩火山 --NEWLINE 埃伦达利斯山脉 --NEWLINE 冻洋 --NEWLINE   --NEWLINE 向南↓ --NEWLINE 树妖之家的洞穴入口",
+  "tileX": 5338,
+  "tileY": 867,
+  "textWidth": 220,
+  "style": 1
+}
+{
+  "text": "这扇大门从另一侧打开。",
+  "tileX": 5338,
+  "tileY": 956,
+  "textWidth": 180,
+  "style": 1
+}
+{
+  "text": "一个声音低声对你说： --NEWLINE   --NEWLINE \u0022寻找被称为混沌的恶魔领主。它的神庙长期不被世人知晓，因为它被亚尔特留斯封印的宝石锁保护着” --NEWLINE   --NEWLINE \u0022寻找月亮圣殿门…在大金字塔以东…”",
+  "tileX": 5402,
+  "tileY": 1689,
+  "textWidth": 750,
+  "style": 1
+}
+{
+  "text": "-你找到了失落的乌拉席露森林- --NEWLINE   --NEWLINE 一种恐惧感直击你的胃：你不应该在这里。",
+  "tileX": 5422,
+  "tileY": 925,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "当你打开大门时 --NEWLINE   --NEWLINE 你感觉到一股新鲜空气涌入。",
+  "tileX": 5507,
+  "tileY": 982,
+  "textWidth": 220,
+  "style": 1
+}
+{
+  "text": "你应当休息。",
+  "tileX": 5568,
+  "tileY": 1761,
+  "textWidth": 100,
+  "style": 1
+}
+{
+  "text": "墙上的符文写着：献祭骨头。",
+  "tileX": 5585,
+  "tileY": 1702,
+  "textWidth": 220,
+  "style": 1
+}
+{
+  "text": "\u0022这个壁架太陡了，爬不过去。” --NEWLINE   --NEWLINE 转过身，你抬头仰望天空，在寺庙废墟的顶部，看到一个宝箱在火炬光中闪闪发光。",
+  "tileX": 5589,
+  "tileY": 1230,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "你在地下丛林里呆了这么久，感到迷失方向，渴望阳光。 --NEWLINE   --NEWLINE \u0022我想知道这会导致什么？”",
+  "tileX": 5599,
+  "tileY": 1032,
+  "textWidth": 440,
+  "style": 1
+}
+{
+  "text": "这个门需要一把神圣钻头打开。",
+  "tileX": 5662,
+  "tileY": 1790,
+  "textWidth": 230,
+  "style": 1
+}
+{
+  "text": "一个老德鲁伊的家，很久以前就被遗弃了。",
+  "tileX": 5680,
+  "tileY": 1158,
+  "textWidth": 290,
+  "style": 1
+}
+{
+  "text": "- 你发现了大金字塔 - --NEWLINE   --NEWLINE Miakoda：\u0022众所周知，这座金字塔与恒星和月球有一定的联系。 --NEWLINE   --NEWLINE 据信，在这个地点的正西方建造了一座较小的神庙，以与月球的宇宙能量保持一致。 --NEWLINE   --NEWLINE 出于什么目的？古老的传说提到，它被用作通往另一个国度的大门…… --NEWLINE   --NEWLINE 但是，也许有些谜团最好还是不去深究……”",
+  "tileX": 5774,
+  "tileY": 1775,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "当你停下来休息片刻时，一层薄薄的白光薄雾在树的后面弥漫，从这种形态中你可以看到森林的伟大魂灵出现在你面前。 --NEWLINE   --NEWLINE 鹿的身体，长长的脖子，画着羚羊的脸，有人类的眼睛、鼻子和嘴，还有最具魔力的鹿角。 --NEWLINE   --NEWLINE 她带着好奇的微笑看着你的眼睛，她的眼睛明亮，然后驻足慢慢地向你鞠躬，眨眨眼消失在密林深处。",
+  "tileX": 5795,
+  "tileY": 821,
+  "textWidth": 850,
+  "style": 1
+}
+{
+  "text": "一个黑暗的冲动迫使你摧毁这些大花朵中的一个…",
+  "tileX": 5833,
+  "tileY": 1674,
+  "textWidth": 350,
+  "style": 1
+}
+{
+  "text": "这扇大门必须从另一边打开…",
+  "tileX": 5863,
+  "tileY": 1229,
+  "textWidth": 220,
+  "style": 1
+}
+{
+  "text": "一个声音在对你说话，好像它在墙里面：\u0022东边的月亮神庙隐藏了比它看起来更多的秘密……”",
+  "tileX": 5884,
+  "tileY": 1747,
+  "textWidth": 640,
+  "style": 1
+}
+{
+  "text": "Miakoda告诉你，你可以通过隧道返回地面 --NEWLINE   --NEWLINE 隧道直接通向西边的大洞穴中最高的神庙废墟。",
+  "tileX": 5934,
+  "tileY": 1281,
+  "textWidth": 400,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022墙上的紫色圣草非常聪明。它可能会将我们带到有趣的地方……”",
+  "tileX": 5939,
+  "tileY": 1259,
+  "textWidth": 520,
+  "style": 1
+}
+{
+  "text": "在与肉山的战斗后，你仍然喘着气，决定在这里休息一夜。 --NEWLINE   --NEWLINE 清晨，你计划回到地面，并决定前往东部山区，希望找到阿莎。",
+  "tileX": 5983,
+  "tileY": 1544,
+  "textWidth": 460,
+  "style": 1
+}
+{
+  "text": "这扇门从另一侧打开。",
+  "tileX": 5996,
+  "tileY": 981,
+  "textWidth": 160,
+  "style": 1
+}
+{
+  "text": "\u0022如果运气好的话，这条路会回到地面。” --NEWLINE   --NEWLINE Miakoda：\u0022肉山掉落的的熔岩稿可以打破蓝色的钴大门，就像守卫东边神圣洞穴的大门一样。”",
+  "tileX": 6003,
+  "tileY": 1866,
+  "textWidth": 700,
+  "style": 1
+}
+{
+  "text": "你可以感觉到岩浆在你上方沸腾的热量。 --NEWLINE   --NEWLINE 在你拉杠杆之前，你要确保你已经准备好了，因为你知道你必须疯狂地冲刺才能活下来。",
+  "tileX": 6035,
+  "tileY": 1053,
+  "textWidth": 620,
+  "style": 1
+}
+{
+  "text": "-你找到了月亮神殿大门- --NEWLINE   --NEWLINE 你注意到东墙有一个月牙形状的洞。从北墙全息图上发出的月球光几乎没有射中洞口…",
+  "tileX": 6053,
+  "tileY": 1746,
+  "textWidth": 620,
+  "style": 1
+}
+{
+  "text": "大门被封上了，但上面写着…\u0022在熔岩符文附近，你会发现我，淹没在黑暗的光线中。” --NEWLINE   --NEWLINE \u0022这是某种谜语，”你自言自语道。\u0022一定有一个开关藏在这些废墟的某个地方。”",
+  "tileX": 6087,
+  "tileY": 1037,
+  "textWidth": 620,
+  "style": 1
+}
+{
+  "text": "你找到了一把紫水晶宝石锁。需要一个大紫水晶来解锁阻止传送机的力场。 --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022需要大紫水晶。月亮神殿门后的神庙蜥蜴门……大金字塔东边……”",
+  "tileX": 6087,
+  "tileY": 1743,
+  "textWidth": 700,
+  "style": 1
+}
+{
+  "text": "- 你发现了石巨人的神庙 -",
+  "tileX": 6098,
+  "tileY": 1386,
+  "textWidth": 240,
+  "style": 1
+}
+{
+  "text": "这扇门从另一侧打开。",
+  "tileX": 6139,
+  "tileY": 1143,
+  "textWidth": 200,
+  "style": 1
+}
+{
+  "text": "\u0022什么样的古代文明可以建造这个？”",
+  "tileX": 6155,
+  "tileY": 880,
+  "textWidth": 250,
+  "style": 1
+}
+{
+  "text": "- 你发现了地下丛林遗迹 -",
+  "tileX": 6192,
+  "tileY": 1034,
+  "textWidth": 240,
+  "style": 1
+}
+{
+  "text": "- 你发现了丛林遗迹 -",
+  "tileX": 6200,
+  "tileY": 879,
+  "textWidth": 240,
+  "style": 1
+}
+{
+  "text": "- 你发现了斯洛格拉和盖波的地穴 -",
+  "tileX": 6230,
+  "tileY": 1279,
+  "textWidth": 300,
+  "style": 1
+}
+{
+  "text": "在前方，你可以看到一座火山的斜坡，这座古老的神庙一定是为之而建的。 --NEWLINE   --NEWLINE 强大的能量一定是从这片土地下面散发出来的。下面你可以看到其他东西。",
+  "tileX": 6278,
+  "tileY": 854,
+  "textWidth": 550,
+  "style": 1
+}
+{
+  "text": ">东部> --NEWLINE   --NEWLINE 黑曜石火山 --NEWLINE 神圣的洞穴 --NEWLINE 埃伦达利斯山脉 --NEWLINE 冻洋",
+  "tileX": 6278,
+  "tileY": 861,
+  "textWidth": 120,
+  "style": 1
+}
+{
+  "text": "墙外的一个声音窃笑道： --NEWLINE   --NEWLINE \u0022如果你要寻找的是黑曜石神庙，那就要知道它所拥有的秘密——不止一个入口……” --NEWLINE   --NEWLINE 它发出令人不安的笑声，然后沉默了。",
+  "tileX": 6349,
+  "tileY": 1077,
+  "textWidth": 660,
+  "style": 1
+}
+{
+  "text": "- 你发现了黑曜石火山 -",
+  "tileX": 6395,
+  "tileY": 815,
+  "textWidth": 220,
+  "style": 1
+}
+{
+  "text": "传说中提到了伟大的黑曜石神，他在这座山上与赫耳墨斯战斗了一千年， --NEWLINE   --NEWLINE 当时地球上仍有熔岩喷发。巨大的力量存在于这座火山表面深处的熔岩流中。 --NEWLINE   --NEWLINE 据说为了获得这样的力量，一个人要有黑曜石一样的皮肤，跳进下面的岩浆中，将自己的肉体奉献给黑曜石之神。 --NEWLINE   --NEWLINE 如果黑曜石之神偏爱你，他会饶了你的命。如果他不这样做，你将被活活烧死，而其他世界的众神却在嘲笑你。",
+  "tileX": 6403,
+  "tileY": 808,
+  "textWidth": 850,
+  "style": 1
+}
+{
+  "text": "- 你发现了地下丛林的秘密入口 - --NEWLINE   --NEWLINE 拉动操纵杆后不久，你听到地面向西面发出微弱的隆隆声。",
+  "tileX": 6447,
+  "tileY": 1126,
+  "textWidth": 460,
+  "style": 1
+}
+{
+  "text": "这扇大门必须从对侧打开。",
+  "tileX": 6461,
+  "tileY": 1104,
+  "textWidth": 220,
+  "style": 1
+}
+{
+  "text": "你慢慢地开始感觉轻了很多，就像火山下面的重力是不同的。 --NEWLINE   --NEWLINE 如果你跳得够高的话，你认为你几乎可以…在天花板上行走。",
+  "tileX": 6492,
+  "tileY": 1020,
+  "textWidth": 450,
+  "style": 1
+}
+{
+  "text": "试着按向上键（就像你有一个重力药水激活一样） --NEWLINE   --NEWLINE 以完全与火山下方这个神圣区域内的独特重力相协调。",
+  "tileX": 6495,
+  "tileY": 1020,
+  "textWidth": 400,
+  "style": 1
+}
+{
+  "text": "一个精灵出现在你耳边低语：\u0022地下丛林废墟的一个隐藏入口就在这条路的左边…… --NEWLINE   --NEWLINE 在这些废墟的深处，在三座黄金神殿的上方，你会找到一条返回地面的路。”",
+  "tileX": 6521,
+  "tileY": 1165,
+  "textWidth": 620,
+  "style": 1
+}
+{
+  "text": "- 你发现了通往神圣洞穴的入口 - --NEWLINE   --NEWLINE 你需要熔岩镐才能通过。",
+  "tileX": 6528,
+  "tileY": 807,
+  "textWidth": 250,
+  "style": 1
+}
+{
+  "text": "一个力场阻止你进入监狱。 --NEWLINE   --NEWLINE 看起来一颗大蓝宝石被用作钥匙。",
+  "tileX": 6569,
+  "tileY": 89,
+  "textWidth": 300,
+  "style": 1
+}
+{
+  "text": ">东部> --NEWLINE 冻洋 --NEWLINE   --NEWLINE ^北方^ --NEWLINE 埃伦达利斯山脉 --NEWLINE 飞龙法师监狱",
+  "tileX": 6588,
+  "tileY": 718,
+  "textWidth": 120,
+  "style": 1
+}
+{
+  "text": "一个声音低声对你说：\u0022在世界的尽头寻找枯萎，那里的寒冰永久地割裂着地平线…”",
+  "tileX": 6589,
+  "tileY": 1886,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "你应当休息。",
+  "tileX": 6616,
+  "tileY": 1525,
+  "textWidth": 120,
+  "style": 1
+}
+{
+  "text": "\u0022这个世界发生了什么？ --NEWLINE   --NEWLINE 发生了可怖的变化。”",
+  "tileX": 6693,
+  "tileY": 817,
+  "textWidth": 200,
+  "style": 1
+}
+{
+  "text": "在打败了石巨人之后 --NEWLINE   --NEWLINE 你注意到它掉下的磐石之冠中有一条线索…",
+  "tileX": 6697,
+  "tileY": 1663,
+  "textWidth": 340,
+  "style": 1
+}
+{
+  "text": "你觉得自己越来越轻了。 --NEWLINE   --NEWLINE 引力在转移…试着按下向上键（就像你有一个重力药水处于活动状态），以完全适应这个区域内独特的重力。",
+  "tileX": 6718,
+  "tileY": 848,
+  "textWidth": 800,
+  "style": 1
+}
+{
+  "text": "- 你发现了飞龙法师的玻璃监狱 - --NEWLINE   --NEWLINE 不知道他在这里囚禁了什么…",
+  "tileX": 6724,
+  "tileY": 232,
+  "textWidth": 290,
+  "style": 1
+}
+{
+  "text": "-这扇门守护着‘深渊之肠’- --NEWLINE   --NEWLINE 一个声音从墙后对你说：这无色的雾来自深渊。 --NEWLINE 它从这个世界和另一个世界之间的缝隙中渗透出来，在那里，维度之间的联系非常脆弱。 --NEWLINE   --NEWLINE 如果你学会了如何穿越深渊，在虚空中寻找这些裂缝。深渊是关键！",
+  "tileX": 6728,
+  "tileY": 1659,
+  "textWidth": 640,
+  "style": 1
+}
+{
+  "text": "\u0022你看到了吗？”一位女性的声音低语着。 --NEWLINE   --NEWLINE \u0022漂浮在村庄上空的天空神庙？” --NEWLINE   --NEWLINE \u0022这就是石巨人囚禁光之女皇的地方！”",
+  "tileX": 6733,
+  "tileY": 1609,
+  "textWidth": 420,
+  "style": 1
+}
+{
+  "text": "- 你发现了飞龙法师的堡垒 -",
+  "tileX": 6749,
+  "tileY": 457,
+  "textWidth": 240,
+  "style": 1
+}
+{
+  "text": "一个声音低声对你说： --NEWLINE   --NEWLINE \u0022寻找被囚禁在魔法玻璃笼子里的幽灵飞龙法师。 --NEWLINE   --NEWLINE 它漂浮在天空中，高高地在这些山上的堡垒之上……”",
+  "tileX": 6779,
+  "tileY": 706,
+  "textWidth": 400,
+  "style": 1
+}
+{
+  "text": "\u0022地心引力似乎受到大地深处的影响。”",
+  "tileX": 6795,
+  "tileY": 800,
+  "textWidth": 270,
+  "style": 1
+}
+{
+  "text": "\u0022自从唤醒这堵血肉之墙后， --NEWLINE   --NEWLINE 还有什么东西从那扇门进来了？”",
+  "tileX": 6805,
+  "tileY": 900,
+  "textWidth": 280,
+  "style": 1
+}
+{
+  "text": "你看到远处的山上有一座城堡。 --NEWLINE   --NEWLINE \u0022我打赌我可以用冰魔杖穿过…”",
+  "tileX": 6889,
+  "tileY": 452,
+  "textWidth": 270,
+  "style": 1
+}
+{
+  "text": "你俯视下面的黑暗深坑。热蒸汽从开口处涌出，几乎烧焦了你的脸。 --NEWLINE   --NEWLINE 愤怒等待着你。",
+  "tileX": 7002,
+  "tileY": 1495,
+  "textWidth": 520,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022瑞德，你应该知道一些关于愤怒和其他类似的野兽的事情—— --NEWLINE   --NEWLINE 当它们很快受到伤害时，它们会生气。 --NEWLINE 在这种状态下，它们变得更致命，它们的羽毛会改变颜色以融入周围环境。 --NEWLINE   --NEWLINE 请注意这一点。正如我父亲经常告诉我的那样， --NEWLINE   --NEWLINE 有时后退，哪怕是一瞬间，也是前进的最佳方式。”",
+  "tileX": 7095,
+  "tileY": 1457,
+  "textWidth": 520,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022你要知道，当它的羽毛迅速脱落时，愤怒就要生气了。 --NEWLINE   --NEWLINE 当它生气的时候会对自己造成一次高额伤害，但它也会变得更加危险 --NEWLINE   --NEWLINE 在战斗中勇往直前还是伺机而动，这取决于你",
+  "tileX": 7102,
+  "tileY": 1457,
+  "textWidth": 520,
+  "style": 1
+}
+{
+  "text": "这扇门被居住在山顶的飞龙法师封住了。Miakoda告诉你，在这扇门的后面是冻洋。",
+  "tileX": 7219,
+  "tileY": 773,
+  "textWidth": 650,
+  "style": 1
+}
+{
+  "text": "一个蓝色的小魔法符号出现了，对你说：\u0022瑞德，是你吗？是我，阿拉兹。 --NEWLINE   --NEWLINE 我是你父亲的一位老朋友。在袭击你家的村庄后不久，阿卓迪斯就把我俘虏了。” --NEWLINE   --NEWLINE \u0022我要带你离开这里，等着！”",
+  "tileX": 7298,
+  "tileY": 568,
+  "textWidth": 580,
+  "style": 1
+}
+{
+  "text": "你拉动杠杆，听到远处传来微弱的隆隆声。 --NEWLINE   --NEWLINE 这似乎打开了通往冻洋的大门…",
+  "tileX": 7299,
+  "tileY": 599,
+  "textWidth": 350,
+  "style": 1
+}
+{
+  "text": "一个声音进入你的脑海，\u0022瑞德，别急着杀我。你对暴力的渴望可以等待。”他笑道。 --NEWLINE   --NEWLINE \u0022毕竟，这将有充足的时间… --NEWLINE   --NEWLINE 首先，我想让你玩个游戏。我想你会喜欢的。入口就在台阶下面…”",
+  "tileX": 7304,
+  "tileY": 420,
+  "textWidth": 620,
+  "style": 1
+}
+{
+  "text": "飞龙法师的冰魔法游戏。 --NEWLINE   --NEWLINE 失败的代价是死亡，活下来的奖励：暗影钥匙。",
+  "tileX": 7308,
+  "tileY": 477,
+  "textWidth": 350,
+  "style": 1
+}
+{
+  "text": "瑞德：\u0022阿拉兹，你能帮我吗？自从你被捕以来，情况变得更糟了。 --NEWLINE   --NEWLINE 自从杀死了那个把我们出卖给阿卓迪斯的告密者后，世界上充斥着更强大的野兽和恶魔。 --NEWLINE   --NEWLINE 腐败在全国范围内蔓延得越来越快。我不知道如何才能阻止它。”",
+  "tileX": 7318,
+  "tileY": 604,
+  "textWidth": 640,
+  "style": 1
+}
+{
+  "text": "\u0022这确实很严峻，瑞德。我能感觉到发生了什么事； --NEWLINE   --NEWLINE 一个入口从另一个更为地狱的世界打开了。我在梦中看到了这个世界。 --NEWLINE   --NEWLINE 这是一个噩梦世界，由八个恶魔守护者守护，他们在这片土地上休息，他们现在声称这是他们自己的。 --NEWLINE   --NEWLINE 你已经击败了一个，愤怒。但还有七个在等待。”",
+  "tileX": 7321,
+  "tileY": 604,
+  "textWidth": 720,
+  "style": 1
+}
+{
+  "text": "\u0022阴郁、猎手、双子魔眼、毁灭者、骷髅统帅、世纪之花和被遗忘的石巨人。 --NEWLINE   --NEWLINE 如果你想削弱阿卓迪斯的力量，足以杀死他，你就必须勇敢地与每一个恶魔战斗。 --NEWLINE   --NEWLINE 从这8个恶魔身上取下一块碎片，你就能制造出一种足够强大的催化剂来召唤和面对阿卓迪斯。”",
+  "tileX": 7324,
+  "tileY": 604,
+  "textWidth": 700,
+  "style": 1
+}
+{
+  "text": "瑞德：\u0022谢谢你，阿拉兹，我接受了在我夺走亚伦生命的那一刻行为的业力， --NEWLINE   --NEWLINE 我决心改正错误，并将和平带回这些土地，即使是在我生命的最后一刻。” --NEWLINE   --NEWLINE 阿拉兹：\u0022祝你好运，我的朋友。你继承了你父亲的顽强精神，比你想的还要多。”",
+  "tileX": 7328,
+  "tileY": 599,
+  "textWidth": 580,
+  "style": 1
+}
+{
+  "text": "在你们两人离开之前，阿拉兹要求看看愤怒留下的碎片。 --NEWLINE   --NEWLINE \u0022是的，就像我想的那样。 --NEWLINE   --NEWLINE 每个碎片都应该隐藏一个像这样的谜语，这将引导你找到另一个碎片，”他说， --NEWLINE   --NEWLINE \u0022我可以看到你的未来很快会让你去东方的冻洋旅行。悲伤等待着你……祝你好运！”",
+  "tileX": 7331,
+  "tileY": 599,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "\u0022祝贺你。真是让我印象深刻。很少有人在我的比赛中幸存下来。奖励是你的。 --NEWLINE   --NEWLINE 然而，我已经对这样的游戏感到厌倦，旅行者，并不是所有的礼物都是他们看起来的那样光鲜亮丽。”",
+  "tileX": 7356,
+  "tileY": 485,
+  "textWidth": 720,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022这似乎不是通往愤怒的道路。我不知道这会导致什么… --NEWLINE   --NEWLINE 也许我们应该回头向西，继续探索神圣洞穴……”",
+  "tileX": 7556,
+  "tileY": 1536,
+  "textWidth": 450,
+  "style": 1
+}
+{
+  "text": "Miakoda告诉你，悲伤生活在这些水域的深处。 --NEWLINE   --NEWLINE 强烈的隆隆声在冰层中震荡，让你浑身发抖。深呼吸，使用芦苇管…",
+  "tileX": 7624,
+  "tileY": 863,
+  "textWidth": 480,
+  "style": 1
+}
+{
+  "text": "一层厚厚的秘银冰已经冻结了整个海洋。你一生中从未见过这样的景象。",
+  "tileX": 7803,
+  "tileY": 866,
+  "textWidth": 520,
+  "style": 1
+}
+{
+  "text": "你俯瞰下面，看到云中一个青翠的岛屿。",
+  "tileX": 7887,
+  "tileY": 147,
+  "textWidth": 290,
+  "style": 1
+}
+{
+  "text": "- 你发现了冰冻深渊 -",
+  "tileX": 7910,
+  "tileY": 1621,
+  "textWidth": 210,
+  "style": 1
+}
+{
+  "text": "武士剑安放的斗篷现在空空如也…家，现在被遗弃… --NEWLINE   --NEWLINE 从书架上的书来看，这位曾经住在这里的武士似乎是禅宗弟子…",
+  "tileX": 8021,
+  "tileY": 1564,
+  "textWidth": 460,
+  "style": 1
+}
+{
+  "text": "瞧瞧这是什么好东西",
+  "tileX": 8053,
+  "tileY": 1918,
+  "textWidth": 160,
+  "style": 1
+}
+{
+  "text": "-这扇门守卫着通往冰冻深渊的道路- --NEWLINE   --NEWLINE 你拿出日记，写一张便条：\u0022冰封海洋最深处的神庙蜥蜴砖大门……”",
+  "tileX": 8070,
+  "tileY": 1644,
+  "textWidth": 480,
+  "style": 1
+}
+{
+  "text": "- 你发现了冰冻海洋上的枯萎 - --NEWLINE   --NEWLINE 它的力量似乎处于休眠状态，但不稳定…",
+  "tileX": 8136,
+  "tileY": 867,
+  "textWidth": 300,
+  "style": 1
+}
+{
+  "text": "悲伤栖息的洞穴。 --NEWLINE   --NEWLINE 当你走进这里，你听到一个低沉洪亮的声音充斥这个地方， --NEWLINE   --NEWLINE 他说：\u0022你已经走得很远了，我很高兴。” --NEWLINE   --NEWLINE 突然，阿卓迪斯出现在你面前，在空中盘旋。 --NEWLINE   --NEWLINE 你拿着你的剑，向他冲去，你的剑对着保护他的原力场挥动。",
+  "tileX": 8157,
+  "tileY": 1645,
+  "textWidth": 450,
+  "style": 1
+}
+{
+  "text": "阿卓迪斯发出一声低沉的蔑笑。 --NEWLINE   --NEWLINE \u0022瑞德，”他说，\u0022你必须学会如何品味这一刻。是不是这些小小的时刻让生活变得如此美好？ --NEWLINE 此外，我真的应该感谢你……” --NEWLINE   --NEWLINE 瑞德：\u0022你™够了没，说你真正想说的。”",
+  "tileX": 8160,
+  "tileY": 1645,
+  "textWidth": 660,
+  "style": 1
+}
+{
+  "text": "\u0022啊，但这是我设计的游戏，你玩得如此娴熟，让我印象深刻。” --NEWLINE   --NEWLINE 瑞德沉默了。\u0022你现在还没意识到吗？我想让你杀亚伦。我破坏了他的意志，让他背叛你。 --NEWLINE   --NEWLINE 我把你用来杀他的石头给了他，并告诉了他想要听到的，这样他就会认为把它给你是在保护自己。”",
+  "tileX": 8163,
+  "tileY": 1645,
+  "textWidth": 720,
+  "style": 1
+}
+{
+  "text": "\u0022但它不仅被施了两次魔法，还被施了第三次魔法。 --NEWLINE   --NEWLINE 第一次是为了创造保护石，我用它来换取你父亲的位置， --NEWLINE 第二次是为了把他的生命绑在石头上， --NEWLINE 第三次是为了释放世界上有史以来最强大的毁灭力量。”",
+  "tileX": 8166,
+  "tileY": 1645,
+  "textWidth": 440,
+  "style": 1
+}
+{
+  "text": "\u0022但我需要你，瑞德。 --NEWLINE   --NEWLINE 你看，腐败的力量在黑暗中诞生，而包含这支军队的咒语仍然被你父亲的纯洁精神锁住。 --NEWLINE   --NEWLINE 为了打破封印，一个纯洁精神和纯真的战士必须被复仇的欲望所腐蚀。”",
+  "tileX": 8169,
+  "tileY": 1645,
+  "textWidth": 640,
+  "style": 1
+}
+{
+  "text": "\u0022你打得很好。你打得非常好。你所需要的……瑞德……只是一点点复仇的诱惑。” --NEWLINE   --NEWLINE 在阿卓迪斯的脸上，是一个笑容，如此邪恶，深深刻在你的脑海中。 --NEWLINE   --NEWLINE \u0022但我会给你一个机会，瑞德。看看你能不能处理好这个。” --NEWLINE   --NEWLINE 然后，阿卓迪斯消失在黑暗魔法能量中，召唤悲伤代替他。",
+  "tileX": 8172,
+  "tileY": 1645,
+  "textWidth": 560,
+  "style": 1
+}
+{
+  "text": "你屏住呼吸远眺地平线。只不过是一种淡淡的白色，轻松地融入了雪中发出的蓝绿色光芒。 --NEWLINE   --NEWLINE 这片海洋似乎消失得无边无际。谁能想象这个世界之外会发生什么？",
+  "tileX": 8334,
+  "tileY": 866,
+  "textWidth": 640,
+  "style": 1
+}
