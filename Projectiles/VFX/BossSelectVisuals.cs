@@ -306,13 +306,13 @@ namespace tsorcRevamp.Projectiles.VFX
             {
                 Main.player[Projectile.owner].Center = tsorcRevampWorld.BossIDsAndCoordinates[id] * 16;
             }
-            //TODO: Make teleport all players packet
+
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
-                ModPacket timePacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                timePacket.Write(tsorcPacketID.TeleportAllPlayers);
-                timePacket.WriteVector2(tsorcRevampWorld.BossIDsAndCoordinates[id] * 16);
-                timePacket.Send();
+                ModPacket teleportPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                teleportPacket.Write(tsorcPacketID.TeleportAllPlayers);
+                teleportPacket.WriteVector2(tsorcRevampWorld.BossIDsAndCoordinates[id] * 16);
+                teleportPacket.Send();
             }
         }
 
@@ -383,11 +383,11 @@ namespace tsorcRevamp.Projectiles.VFX
             //Tell the server to spawn it
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
-                ModPacket timePacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                timePacket.Write(tsorcPacketID.SpawnNPC);
-                timePacket.Write(id);
-                timePacket.WriteVector2(Main.player[Projectile.owner].Center + spawnOffset);
-                timePacket.Send();
+                ModPacket spawnBossPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                spawnBossPacket.Write(tsorcPacketID.SpawnNPC);
+                spawnBossPacket.Write(id);
+                spawnBossPacket.WriteVector2(Main.player[Projectile.owner].Center + spawnOffset);
+                spawnBossPacket.Send();
             }
             else if (Main.netMode == NetmodeID.SinglePlayer)
             {
