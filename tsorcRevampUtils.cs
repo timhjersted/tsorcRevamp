@@ -440,6 +440,10 @@ namespace tsorcRevamp
         public static Vector2 Aim(Vector2 source, Vector2 target, float speed)
         {
             Vector2 distance = target - source;
+            if(distance == Vector2.Zero)
+            {
+                return Vector2.Zero;
+            }
             distance.Normalize();
             return distance * speed;
         }

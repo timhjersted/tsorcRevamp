@@ -153,7 +153,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                             for (int j = 0; j < 10f * proximity * proximity; j++)
                             {
                                 Vector2 diff = Main.player[i].Center - NPC.Center;
-                                diff.Normalize();
+                                diff.SafeNormalize(Vector2.Zero);
                                 diff *= 500;
 
                                 diff = diff.RotatedBy(Main.rand.NextFloat(-MathHelper.Pi / 15, MathHelper.Pi / 15));
@@ -190,7 +190,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                     {
                         speed = 2f;
                     }
-                    NPC.velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, speed);                   
+                    NPC.velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, speed);
                 }
 
                 if (NPC.life <= 1000)

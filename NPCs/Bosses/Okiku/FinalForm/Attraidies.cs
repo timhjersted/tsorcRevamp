@@ -1039,9 +1039,20 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            DrawAura();
-
-            if(deathTimer < 150 && introTimer >= 120)
+            if (introTimer == 0 && NPC.whoAmI == 0)
+            {
+                Phase = 3;
+                introTimer = 120;
+                DrawAura();
+                introTimer = 0;
+            }
+            else
+            {
+                DrawAura();
+            }
+            //Do not draw his main body if he is in his intro or dying
+            //Added an exception for when timer == 0 and whoami == 0, since that means he is being drawn by the rematch tome.
+            if((deathTimer < 150 && introTimer >= 120) || (introTimer == 0 && NPC.whoAmI == 0))
             {
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
@@ -1070,8 +1081,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                     spriteEffects = SpriteEffects.FlipHorizontally;
                 }
 
-                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle2, lightingColor * spriteFade, NPC.rotation, origin2, 1, spriteEffects, 0f);
+                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle2, lightingColor * spriteFade, NPC.rotation, origin2, 1 * NPC.scale, spriteEffects, 0f);
             }
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
             return false;
         }
 

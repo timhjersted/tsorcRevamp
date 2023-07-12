@@ -8496,6 +8496,7 @@ Mods: {
 			PhotonicDownpourLaserDrone.DisplayName: Photonic Downpour Laser Drone
 			TelegraphFlash.DisplayName: Telegraph Flash
 			TeleportTelegraph.DisplayName: Teleport Telegraph
+			BossSelectVisuals.DisplayName: Boss Select Visuals
 		}
 
 		NPCs: {

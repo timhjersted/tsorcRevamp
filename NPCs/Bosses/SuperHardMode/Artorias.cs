@@ -159,10 +159,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 Vector2 origin = NPC.frame.Size() / 2f;
                 Vector2 offset = new Vector2(16, 20);
-                spriteBatch.Draw(texture, NPC.position - Main.screenPosition + offset, NPC.frame, Color.White, NPC.rotation, origin, 1.1f, effects, 0f);
-                spriteBatch.End();
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
-
+                spriteBatch.Draw(texture, NPC.position - Main.screenPosition + offset, NPC.frame, Color.White, NPC.rotation, origin, 1.1f, effects, 0f); 
+                UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
             }
         }
 

@@ -453,6 +453,8 @@ namespace tsorcRevamp.NPCs.Bosses
                     Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
                 }
             }
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
             return base.PreDraw(spriteBatch, screenPos, drawColor);
         }
 

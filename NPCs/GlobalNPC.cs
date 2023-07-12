@@ -2871,7 +2871,7 @@ namespace tsorcRevamp.NPCs
                             closestPlayerDistance = distance;
                             Main.npc[npcID].target = targetIDs[i];
                         }
-                        if(despawnRange > 0 && !foundOutOfBoundsPlayer && distance > despawnRange)
+                        if(despawnRange > 0 && !foundOutOfBoundsPlayer && Vector2.DistanceSquared(Main.player[targetIDs[i]].Center, tsorcRevampWorld.BossIDsAndCoordinates[Main.npc[npcID].type])* 16 > despawnRange)
                         {
                             if(OutOfBoundsTimer == 600)
                             {

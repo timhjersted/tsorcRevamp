@@ -54,7 +54,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.lifeMax = 400000;
             NPC.timeLeft = 22500;
-            NPC.alpha = 100;
             NPC.friendly = false;
             NPC.noTileCollide = true;
             NPC.noGravity = true;
@@ -153,7 +152,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
                     if(distance <  2000)
                     {
-                        Main.player[i].AddBuff(BuffID.Oiled, 180);
                         Main.player[i].AddBuff(BuffID.OnFire, 180);
 
                         bool hasCovenant = false;
@@ -216,6 +214,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 int heightToTop = 0;
                 for (int index = 1; index < 800; index++)
                 {
+                    if(j - index < 0)
+                    {
+                        continue;
+                    }
                     if (!Main.tile[i, j - index].HasTile || (!Main.tileSolid[Main.tile[i, j - index].TileType]))
                     {
                         heightToTop++;
