@@ -1285,6 +1285,19 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.TeleportAllPlayers:
+                    {
+                        Vector2 targetLocation = reader.ReadVector2();
+                        for(int i = 0; i < Main.maxPlayers; i++)
+                        {
+                            if (Main.player[i].active && !Main.player[i].dead)
+                            {
+                                Main.player[i].Teleport(targetLocation);
+                                NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null, 0, i, targetLocation.X, targetLocation.Y, 0);
+                            }
+                        }
+                        break;
+                    }
 
                 default: {
                     Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
@@ -2477,6 +2490,7 @@ namespace tsorcRevamp
         public const byte SyncNPCExtras = 9;
         public const byte SyncMasterScroll = 10;
         public const byte SyncMinionRadius = 11;
+        public const byte TeleportAllPlayers = 12;
     }
 
     //config moved to separate file

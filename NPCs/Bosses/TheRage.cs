@@ -43,7 +43,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.damage = 55; 
             NPC.defense = 32;
             NPC.knockBackResist = 0f;
-            NPC.scale = 1.4f;
             NPC.value = 120000;
             NPC.npcSlots = 6;
             NPC.boss = true;
@@ -671,14 +670,14 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (NPC.ai[3] == 0)
             {
-                Main.spriteBatch.Draw(blurTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, 1.5f, SpriteEffects.None, 0);
+                Main.spriteBatch.Draw(blurTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, 1.5f * NPC.scale, SpriteEffects.None, 0);
                 UsefulFunctions.RestartSpritebatch(ref spriteBatch);
-                Main.spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, NPC.Center - Main.screenPosition, NPC.frame, drawColor, NPC.rotation, NPC.frame.Size() / 2, 1.5f, SpriteEffects.None, 0);
-                Main.spriteBatch.Draw(glowmaskTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, 1.5f, SpriteEffects.None, 0);
+                Main.spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, NPC.Center - Main.screenPosition, NPC.frame, drawColor, NPC.rotation, NPC.frame.Size() / 2, 1.5f * NPC.scale, SpriteEffects.None, 0);
+                Main.spriteBatch.Draw(glowmaskTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, 1.5f * NPC.scale, SpriteEffects.None, 0);
             }
             else
             {
-                Main.spriteBatch.Draw(enrageTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, 1.5f, SpriteEffects.None, 0);
+                Main.spriteBatch.Draw(enrageTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, 1.5f * NPC.scale, SpriteEffects.None, 0);
                 UsefulFunctions.RestartSpritebatch(ref spriteBatch);
             }
 

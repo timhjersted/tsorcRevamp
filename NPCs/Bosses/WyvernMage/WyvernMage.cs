@@ -118,9 +118,9 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 //player.AddBuff(ModContent.BuffType<Buffs.Chilled>(), 60, false);
                 
 
-                if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
+                if (holdTimer <= 0)
                 {
-                    Main.NewText(LangUtils.GetTextValue("NPCs.WyvernMage.FrostWave"), 235, 199, 23);//deep yellow
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.WyvernMage.FrostWave"), 235, 199, 23);//deep yellow
                     holdTimer = 12000;
                 }
 

@@ -982,6 +982,8 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             DrawTransformationEffect();
+
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
             return false;
         }
 

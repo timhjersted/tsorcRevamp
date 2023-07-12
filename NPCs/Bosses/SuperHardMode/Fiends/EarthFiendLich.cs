@@ -42,7 +42,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             NPC.damage = 128;
             NPC.defense = 82;
             NPC.aiStyle = 22;
-            NPC.alpha = 100;
             NPC.scale = 1.1f;
             AnimationType = -1;
             NPC.HitSound = SoundID.NPCHit1;
