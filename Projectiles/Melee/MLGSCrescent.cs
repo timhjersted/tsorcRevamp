@@ -50,7 +50,7 @@ namespace tsorcRevamp.Projectiles.Melee
 
             if (Projectile.ai[0] > 8)
             {
-                Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 64, 68, 64), color, Projectile.rotation, new Vector2(34, 32), Projectile.scale, spriteEffects, 0);
+                Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, texture.Bounds, color, Projectile.rotation, texture.Size() / 2f, Projectile.scale, spriteEffects, 0);
             }
 
             return false;
