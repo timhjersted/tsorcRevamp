@@ -95,7 +95,6 @@ namespace tsorcRevamp
         public int fallStart_old = -1;
 
         public bool MeleeArmorVamp10 = false;
-        public bool NUVamp = false;
         public bool HasShadowSickle = false;
         public bool MagmaArmor;
         public bool PortlyPlateArmor;
@@ -1335,6 +1334,10 @@ namespace tsorcRevamp
                 }
             }
             #endregion
+            if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthCooldown>()))
+            {
+                Player.buffTime[Player.FindBuffIndex(ModContent.BuffType<PhoenixRebirthCooldown>())]--;
+            }
             if (DragoonBoots && DragoonBootsEnable)
             {
                 //Player.jumpSpeed += 10f; why

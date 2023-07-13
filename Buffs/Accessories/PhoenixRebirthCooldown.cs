@@ -18,6 +18,7 @@ namespace tsorcRevamp.Buffs.Accessories
             {
                 SoundEngine.PlaySound(SoundID.Zombie126 with { Volume = 2f });
             }
+            player.buffTime[buffIndex]++;
         }
     }
 }

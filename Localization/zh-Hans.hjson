@@ -480,7 +480,6 @@ Mods: {
 					[c/ffbf00:用这个打开东边的钴门]
 					Miakoda提醒你钴门位于黑曜石火山东边
 					'''
-				SilverWatch: "[c/ffbf00:可以用黑暗之魂升级，更替日夜。]"
 				StickyBomb: 用起来比镐子更有趣！
 				WormFood: "{$CommonItemTooltip.NonConsumable}"
 				CopperAxe: 所有斧头对木质敌人造成2倍伤害
@@ -7181,6 +7180,41 @@ Mods: {
 				DisplayName: 兰斯权杖
 				Tooltip: ""
 			}
+
+			TheRageRelicItem: {
+				// DisplayName: The Rage Relic Item
+				// Tooltip: ""
+			}
+
+			TheRageTrophy: {
+				// DisplayName: The Rage Trophy
+				// Tooltip: ""
+			}
+
+			TheRageMask: {
+				// DisplayName: The Rage Mask
+				// Tooltip: ""
+			}
+
+			OilPot: {
+				// DisplayName: Oil Pot
+				/* Tooltip:
+					'''
+					Breaks into multiple shards and oil droplets upon impact
+					Inflicts Oiled debuff, applying heavy damage over time if enemy is set on fire
+					''' */
+			}
+
+			PhoenixSkull: {
+				// DisplayName: Phoenix Skull
+				/* Tooltip:
+					'''
+					Prevents death({$CommonItemTooltip.Cooldown})
+					Revives you with {1}% of your maximum life
+					Grants {2}% lifesteal for {3} seconds after reviving if worn
+					Cooldown only refreshes while wearing this
+					''' */
+			}
 		}
 
 		Buffs: {
@@ -7966,6 +8000,16 @@ Mods: {
 				DisplayName: 瞬步冲刺冷却
 				Description: 冷却结束前你不能再使用瞬步冲刺
 			}
+
+			PhoenixRebirthCooldown: {
+				// DisplayName: Phoenix Rebirth Cooldown
+				// Description: You can't rise from the ashes again until this runs out
+			}
+
+			PhoenixRebirthBuff: {
+				// DisplayName: Phoenix Rebirth Buff
+				// Description: You've been reborn!
+			}
 		}
 
 		Projectiles: {
@@ -8498,6 +8542,13 @@ Mods: {
 			TelegraphFlash.DisplayName: 电报闪光
 			TeleportTelegraph.DisplayName: 电报
 			// BossSelectVisuals.DisplayName: Boss Select Visuals
+			// OilDroplet1.DisplayName: Oil Droplet1
+			// OilDroplet2.DisplayName: Oil Droplet2
+			// OilPotProjectile.DisplayName: Oil Pot Projectile
+			// OilPotShard1.DisplayName: Oil Pot Shard1
+			// OilPotShard2.DisplayName: Oil Pot Shard2
+			// OilPotShard3.DisplayName: Oil Pot Shard3
+			// OilPotShard4.DisplayName: Oil Pot Shard4
 		}
 
 		NPCs: {

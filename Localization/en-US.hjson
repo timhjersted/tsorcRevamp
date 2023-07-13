@@ -7183,6 +7183,8 @@ Mods: {
 					'''
 					Prevents death({$CommonItemTooltip.Cooldown})
 					Revives you with {1}% of your maximum life
+					Grants {2}% lifesteal for {3} seconds after reviving if worn
+					Cooldown only refreshes while wearing this
 					'''
 			}
 		}
@@ -7973,7 +7975,12 @@ Mods: {
 
 			PhoenixRebirthCooldown: {
 				DisplayName: Phoenix Rebirth Cooldown
-				Description: Mods.tsorcRevamp.Buffs.PhoenixRebirthCooldown.Description
+				Description: You can't rise from the ashes again until this runs out
+			}
+
+			PhoenixRebirthBuff: {
+				DisplayName: Phoenix Rebirth Buff
+				Description: You've been reborn!
 			}
 		}
 

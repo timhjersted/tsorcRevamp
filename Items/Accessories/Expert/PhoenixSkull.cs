@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Accessories;
 
 namespace tsorcRevamp.Items.Accessories.Expert
 {
@@ -8,8 +9,10 @@ namespace tsorcRevamp.Items.Accessories.Expert
     public class PhoenixSkull : ModItem
     {
         public static int Cooldown = 90;
-        public static float HealthPercent = 25f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Cooldown, HealthPercent);
+        public static float HealthPercent = 10f;
+        public static float LifeSteal = 5f;
+        public static int Duration = 5;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Cooldown, HealthPercent, LifeSteal, Duration);
         public override void SetStaticDefaults()
         {
         }

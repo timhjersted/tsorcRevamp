@@ -430,7 +430,8 @@ namespace tsorcRevamp
                 }
                 Player.statLife = (int)(Player.statLifeMax2 * Items.Accessories.Expert.PhoenixSkull.HealthPercent / 100f);
                 Player.AddBuff(ModContent.BuffType<PhoenixRebirthCooldown>(), Items.Accessories.Expert.PhoenixSkull.Cooldown * 60);
-                Player.SetImmuneTimeForAllTypes(2 * 60);
+                Player.AddBuff(ModContent.BuffType<PhoenixRebirthBuff>(), Items.Accessories.Expert.PhoenixSkull.Duration * 60);
+                Player.SetImmuneTimeForAllTypes(1 * 60 + 30);
                 return false;
             }
             if (ModContent.GetInstance<tsorcRevampConfig>().DeleteDroppedSoulsOnDeath && Main.netMode == NetmodeID.SinglePlayer)
@@ -620,6 +621,10 @@ namespace tsorcRevamp
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+        }
+
+        public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
+        {
             if (MagmaArmor && target.HasBuff(BuffID.OnFire) || target.HasBuff(BuffID.OnFire3))
             {
                 target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
@@ -629,15 +634,7 @@ namespace tsorcRevamp
                 if (Main.rand.NextBool(10))
                 {
                     Player.HealEffect(10);
-                    Player.statLife += (10);
-                }
-            }
-            if (NUVamp)
-            {
-                if (Main.rand.NextBool(5))
-                {
-                    Player.HealEffect(damageDone / 4);
-                    Player.statLife += (damageDone / 4);
+                    Player.statLife += 10;
                 }
             }
             if (MiakodaFull)
@@ -698,14 +695,20 @@ namespace tsorcRevamp
                     }
                 }
             }
-        }
-
-        public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
-        {
+            if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()))
+            {
+                Player.HealEffect((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
+                Player.statLife += ((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
+            }
         }
 
         public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
         {
+            if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()))
+            {
+                Player.HealEffect((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
+                Player.statLife += ((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
+            }
             if (MagmaArmor && target.HasBuff(BuffID.OnFire) || target.HasBuff(BuffID.OnFire3))
             {
                 target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
