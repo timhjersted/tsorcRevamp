@@ -38,6 +38,8 @@ using tsorcRevamp.Buffs.Summon.WhipDebuffs;
 using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Projectiles.Melee.Runeterra;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Items.Vanity;
+using tsorcRevamp.Buffs.Accessories;
 
 namespace tsorcRevamp
 {
@@ -366,7 +368,7 @@ namespace tsorcRevamp
                     {
                         if (buffType == ModContent.BuffType<ShunpoBlinkCooldown>())
                         {
-                            Player.buffTime[buffIndex] -= 20;
+                            Player.buffTime[buffIndex] -= 40;
                         }
                         buffIndex++;
                     }
@@ -395,6 +397,42 @@ namespace tsorcRevamp
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
+            if (PhoenixSkull && !Player.HasBuff(ModContent.BuffType<PhoenixRebirthCooldown>()))
+            {
+                Dust dust1 = Main.dust[Dust.NewDust(Player.BottomLeft, Player.width, Player.height - 40, 6, 0f, -5f, 100, default, 1.8f)];
+                dust1.velocity.Y = Main.rand.NextFloat(-5, -2.5f);
+                dust1.velocity.X = Main.rand.NextFloat(-1, 1);
+                Dust dust2 = Main.dust[Dust.NewDust(Player.BottomLeft, Player.width, Player.height - 40, 6, 0f, -5f, 50, default, 1.2f)];
+                dust2.velocity.Y = Main.rand.NextFloat(-5, -2.5f);
+                dust2.velocity.X = Main.rand.NextFloat(-1, 1);
+                Projectile.NewProjectile(Player.GetSource_None(), Player.Top, Player.velocity, ProjectileID.DD2ExplosiveTrapT2Explosion, 250, 15, Player.whoAmI);
+                SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 4f});
+
+                for (int d = 0; d < 90; d++) // Upwards
+                {
+                    Dust dust = Main.dust[Dust.NewDust(Player.BottomLeft, Player.width, Player.height - 40, 6, 0f, -5f, 30, default, Main.rand.NextFloat(1, 1.8f))]; // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    dust.velocity.Y = Main.rand.NextFloat(-5, -0f);
+                    dust.velocity.X = Main.rand.NextFloat(-1.5f, 1.5f);
+                }
+
+                for (int d = 0; d < 30; d++) // Left
+                {
+                    Dust dust = Main.dust[Dust.NewDust(Player.BottomLeft, Player.width, Player.height - 55, 6, -6f, -4f, 30, default, Main.rand.NextFloat(1, 1.8f))]; // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    dust.velocity.Y = Main.rand.NextFloat(-4, -0f);
+                    dust.velocity.X = Main.rand.NextFloat(-5, -1.5f);
+                }
+
+                for (int d = 0; d < 30; d++) // Right
+                {
+                    Dust dust = Main.dust[Dust.NewDust(Player.BottomLeft, Player.width, Player.height - 55, 6, 6f, -4f, 30, default, Main.rand.NextFloat(1, 1.8f))]; // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    dust.velocity.Y = Main.rand.NextFloat(-4, -0f);
+                    dust.velocity.X = Main.rand.NextFloat(5, 1.5f);
+                }
+                Player.statLife = (int)(Player.statLifeMax2 * Items.Accessories.Expert.PhoenixSkull.HealthPercent / 100f);
+                Player.AddBuff(ModContent.BuffType<PhoenixRebirthCooldown>(), Items.Accessories.Expert.PhoenixSkull.Cooldown * 60);
+                Player.SetImmuneTimeForAllTypes(2 * 60);
+                return false;
+            }
             if (ModContent.GetInstance<tsorcRevampConfig>().DeleteDroppedSoulsOnDeath && Main.netMode == NetmodeID.SinglePlayer)
             {
                 for (int i = 0; i < 400; i++)

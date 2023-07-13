@@ -10,7 +10,6 @@ namespace tsorcRevamp.Items.Accessories
     public class SoulReaper2 : ModItem
     {
         public static int ConsSoulChanceAmp = 50;
-        public static int SoulsRequired = 7000;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ConsSoulChanceAmp);
         public override void SetStaticDefaults()
         {
@@ -28,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulsRequired);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
             recipe.AddIngredient(ModContent.ItemType<SoulReaper>(), 1);
             recipe.AddTile(TileID.DemonAltar);
 

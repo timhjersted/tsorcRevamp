@@ -12,6 +12,10 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Lore;
+using tsorcRevamp.Items.Placeable.Relics;
+using tsorcRevamp.Items.Placeable.Trophies;
+using tsorcRevamp.Items.Vanity;
+using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
@@ -576,7 +580,11 @@ namespace tsorcRevamp.NPCs.Bosses
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CrestOfFire>(), 1, 2, 2));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.CobaltDrill));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<PhoenixEgg>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<TheRageMask>(), 7));
             npcLoot.Add(notExpertCondition);
+            npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<TheRageRelicItem>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheRageTrophy>(), 10));
         }
 
         public override void OnKill()
@@ -597,6 +605,18 @@ namespace tsorcRevamp.NPCs.Bosses
             for (int num36 = 0; num36 < 70; num36++)
             {
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 130, Main.rand.Next(-50, 50), Main.rand.Next(-40, 40), 100, Color.Orange, 3f);
+            }
+        }
+        public override void HitEffect(NPC.HitInfo hit)
+        {
+            if (!Main.dedServ)
+            {
+                if (NPC.life <= 0)
+                {
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheRage_Gore_1").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheRage_Gore_2").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheRage_Gore_3").Type, 1f);
+                }
             }
         }
 

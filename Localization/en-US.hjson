@@ -408,7 +408,6 @@ Mods: {
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.MaxStamina@1}
 					{$CommonItemTooltip.StaminaRegen@2}
 					{$CommonItemTooltip.PercentIncreasedCritChance}
-					Can be upgraded eventually with flippers, a diving helmet, and 3 mythril bars
 					'''
 				RedClothRobe:
 					'''
@@ -480,7 +479,6 @@ Mods: {
 					[c/ffbf00:Can be used to open gates made of Cobalt Ore]
 					Miakoda reminds you of the Cobalt Gate to the East of Obsidian's Volcano
 					'''
-				SilverWatch: "[c/ffbf00:Can be upgraded with Dark Souls to change day to night.]"
 				StickyBomb: More fun to use than a pickaxe!
 				WormFood: "{$CommonItemTooltip.NonConsumable}"
 				CopperAxe: All axes do 2x damage to woody enemies
@@ -1143,7 +1141,6 @@ Mods: {
 					'''
 					{$CommonItemTooltip.DRStat}
 					{$CommonItemTooltip.BadMoveSpeedMult@1}
-					Can be upgraded with {2} Dark Souls.
 					'''
 			}
 
@@ -1228,7 +1225,7 @@ Mods: {
 
 			SilverRing: {
 				DisplayName: Silver Ring
-				Tooltip: Can be upgraded.
+				Tooltip: ""
 			}
 
 			SpikedIronShield: {
@@ -1239,7 +1236,6 @@ Mods: {
 					{$CommonItemTooltip.DRStat@1}
 					{$CommonItemTooltip.Thorns}
 					{$CommonItemTooltip.BadMoveSpeedMult@2}
-					Can be upgraded with an Obsidian Shield and {3} Dark Souls
 					'''
 			}
 
@@ -1787,7 +1783,6 @@ Mods: {
 					Moderately{$CommonItemTooltip.DSPickUpRange}
 					{$CommonItemTooltip.ConsumableSoulDrops}
 					Gives off a faint glow
-					Can be upgraded with {1} Dark Souls
 					'''
 			}
 
@@ -1968,7 +1963,6 @@ Mods: {
 					{$CommonItemTooltip.Magic.ManaRegen@2}
 					{$CommonItemTooltip.SetBonus}Grants extended breath & swimming skills
 					{$CommonItemTooltip.PercentIncreasedCritChance@3}
-					Can be upgraded eventually with {5} Souls of Fright and {4} {$Items.DarkSoul.DisplayName}
 					'''
 			}
 
@@ -2701,7 +2695,6 @@ Mods: {
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.ObsidianShield} and Lava resistance
 					Plus extended breath, water and lava walk, & swim
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
-					Can be upgraded to its master form with {4} {$Items.DarkSoul.DisplayName}
 					'''
 			}
 
@@ -4817,7 +4810,6 @@ Mods: {
 					A lost beginner's tome
 					Drops a small lightning strike upon collision
 					Has a chance to electrify enemies
-					Can be upgraded
 					'''
 			}
 
@@ -4828,7 +4820,6 @@ Mods: {
 					A lost tome for artisans.
 					Drops a lightning strike upon collision
 					Electrifies enemies
-					Can be upgraded with 25,000 Dark Souls and 15 Soul of Light.
 					'''
 			}
 
@@ -4839,7 +4830,6 @@ Mods: {
 					A lost tome fabled to deal great damage.
 
 					Electrifies and paralyzes enemiesOnly mages will be able to realize this tome's full potential. 
-					Can be upgraded with 85,000 Dark Souls
 					'''
 			}
 
@@ -5082,7 +5072,6 @@ Mods: {
 					allowing for high burst damage
 					Drops a small icicle upon collision
 					Slows enemies
-					Can be upgraded
 					'''
 			}
 
@@ -5092,7 +5081,6 @@ Mods: {
 					'''
 					A lost tome for artisans, with a high rate of casting.
 					Slows and occasionally freezes enemies
-					Can be upgraded
 					'''
 			}
 
@@ -5104,7 +5092,6 @@ Mods: {
 
 					Slows and occasionally freezes enemies
 					Only mages will be able to realize this tome's full potential. 
-					Can be upgraded
 					'''
 			}
 
@@ -5195,7 +5182,6 @@ Mods: {
 					'''
 					A sword crafted for magic users
 					Deals +1 damage for every 20 mana the user has over 200
-					Can be upgraded
 					'''
 			}
 
@@ -5248,11 +5234,7 @@ Mods: {
 
 			SoulArrowStaff: {
 				DisplayName: Soul Arrow
-				Tooltip:
-					'''
-					Shoots a lightly homing soul arrow
-					Can be upgraded
-					'''
+				Tooltip: Shoots a lightly homing soul arrow
 			}
 
 			Starfall: {
@@ -5348,11 +5330,7 @@ Mods: {
 
 			WoodenWand: {
 				DisplayName: Wooden Wand
-				Tooltip:
-					'''
-					An unenchanted wooden wand 
-					Can be upgraded many different ways
-					'''
+				Tooltip: An unenchanted wooden wand
 			}
 
 			AncientFireAxe: {
@@ -5839,11 +5817,7 @@ Mods: {
 
 			GaeBolg: {
 				DisplayName: Gae Bolg
-				Tooltip:
-					'''
-					Pierce reality 
-					Can be upgraded into its mythical form with 70,000 Dark Souls
-					'''
+				Tooltip: Pierce reality
 			}
 
 			HiRyuuSpear: {
@@ -7178,6 +7152,39 @@ Mods: {
 				DisplayName: Lance Scepter
 				Tooltip: ""
 			}
+
+			TheRageRelicItem: {
+				DisplayName: The Rage Relic Item
+				Tooltip: ""
+			}
+
+			TheRageTrophy: {
+				DisplayName: The Rage Trophy
+				Tooltip: ""
+			}
+
+			TheRageMask: {
+				DisplayName: The Rage Mask
+				Tooltip: ""
+			}
+
+			OilPot: {
+				DisplayName: Oil Pot
+				Tooltip:
+					'''
+					Breaks into multiple shards and oil droplets upon impact
+					Inflicts Oiled debuff, applying heavy damage over time if enemy is set on fire
+					'''
+			}
+
+			PhoenixSkull: {
+				DisplayName: Phoenix Skull
+				Tooltip:
+					'''
+					Prevents death({$CommonItemTooltip.Cooldown})
+					Revives you with {1}% of your maximum life
+					'''
+			}
 		}
 
 		Buffs: {
@@ -7963,6 +7970,11 @@ Mods: {
 				DisplayName: Shunpo Cooldown
 				Description: You cannot blink again until this runs out
 			}
+
+			PhoenixRebirthCooldown: {
+				DisplayName: Phoenix Rebirth Cooldown
+				Description: Mods.tsorcRevamp.Buffs.PhoenixRebirthCooldown.Description
+			}
 		}
 
 		Projectiles: {
@@ -8495,6 +8507,13 @@ Mods: {
 			TelegraphFlash.DisplayName: Telegraph Flash
 			TeleportTelegraph.DisplayName: Teleport Telegraph
 			BossSelectVisuals.DisplayName: Boss Select Visuals
+			OilDroplet1.DisplayName: Oil Droplet1
+			OilDroplet2.DisplayName: Oil Droplet2
+			OilPotProjectile.DisplayName: Oil Pot Projectile
+			OilPotShard1.DisplayName: Oil Pot Shard1
+			OilPotShard2.DisplayName: Oil Pot Shard2
+			OilPotShard3.DisplayName: Oil Pot Shard3
+			OilPotShard4.DisplayName: Oil Pot Shard4
 		}
 
 		NPCs: {

@@ -9,7 +9,6 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Legs)]
     public class DragoonGreaves : ModItem
     {
-        public static int SoulCost = 26000;
         public static float MoveSpeed = 30f;
         public static int MinionSlots = 2;
         public static float MaxStamina = 18f;
@@ -73,7 +72,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.SoulofMight, 10);
             recipe.AddIngredient(ItemID.SoulofSight, 10);
             recipe.AddIngredient(ItemID.SoulofFright, 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 26000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

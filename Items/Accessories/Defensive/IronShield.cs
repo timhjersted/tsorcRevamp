@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public static float DR = 4f;
         public static float BadMoveSpeedMult = 5f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DR, BadMoveSpeedMult, SpikedIronShield.SoulCost);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DR, BadMoveSpeedMult);
         public override void SetStaticDefaults()
         {
         }

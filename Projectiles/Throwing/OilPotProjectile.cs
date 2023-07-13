@@ -2,10 +2,11 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Throwing;
 
-namespace tsorcRevamp.Projectiles
+namespace tsorcRevamp.Projectiles.Throwing
 {
-    class BlackFirebombProj : ModProjectile
+    class OilPotProjectile : ModProjectile
     {
 
         public override void SetDefaults()
@@ -18,7 +19,6 @@ namespace tsorcRevamp.Projectiles
             Projectile.penetrate = -1;
             Projectile.knockBack = 9;
             Projectile.DamageType = DamageClass.Throwing;
-            Projectile.scale = .8f;
             Projectile.ContinuouslyUpdateDamageStats = true;
 
             // These 2 help the projectile hitbox be centered on the projectile sprite.
@@ -44,18 +44,15 @@ namespace tsorcRevamp.Projectiles
                 // change the hitbox size, centered about the original projectile center. This makes the projectile damage enemies during the explosion.
                 Projectile.position.X = Projectile.position.X + (float)(Projectile.width / 2);
                 Projectile.position.Y = Projectile.position.Y + (float)(Projectile.height / 2);
-                Projectile.width = 200;
-                Projectile.height = 200;
+                Projectile.width = 150;
+                Projectile.height = 150;
                 Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
                 Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
-                Projectile.damage = 200;
                 Projectile.knockBack = 9f;
                 Projectile.DamageType = DamageClass.Throwing;
                 Projectile.netUpdate = true;
             }
-
-            target.AddBuff(BuffID.OnFire, 600);
-
+            target.AddBuff(BuffID.Oiled, OilPot.OiledDurationInSeconds * 60);
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
@@ -72,11 +69,10 @@ namespace tsorcRevamp.Projectiles
                 // change the hitbox size, centered about the original projectile center. This makes the projectile damage enemies during the explosion.
                 Projectile.position.X = Projectile.position.X + (float)(Projectile.width / 2);
                 Projectile.position.Y = Projectile.position.Y + (float)(Projectile.height / 2);
-                Projectile.width = 200;
-                Projectile.height = 200;
+                Projectile.width = 150;
+                Projectile.height = 150;
                 Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
                 Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
-                Projectile.damage = 200; //DAMAGE OF EXPLOSION when fuse runs out, not when collidew/npc
                 Projectile.knockBack = 9f;
                 Projectile.DamageType = DamageClass.Throwing;
             }
@@ -85,7 +81,7 @@ namespace tsorcRevamp.Projectiles
                 // Smoke and fuse dust spawn.
                 if (Main.rand.NextBool(4))
                 {
-                    int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 6, 0f, 0f, 100, default(Color), 1f);
+                    int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.Asphalt, 0f, 0f, 100, default, 1f);
                     Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;
                     Main.dust[dustIndex].fadeIn = .5f + (float)Main.rand.Next(5) * 0.1f;
                     Main.dust[dustIndex].noGravity = true;
@@ -119,40 +115,13 @@ namespace tsorcRevamp.Projectiles
         public override void Kill(int timeLeft)
         {
             // Play explosion sound
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { PitchVariance = 0.5f }, Projectile.Center);
-            Projectile.knockBack = 2f;
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { PitchVariance = 0.5f }, Projectile.Center);
 
-            if (Projectile.ai[1] == 0)
-            {
-                for (int i = 0; i < 10; i++)
-                {
-
-                    // Random upward vector.
-                    Vector2 vel = new Vector2(Main.rand.NextFloat(-4f, 4f), Main.rand.NextFloat(-6, -2));
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, vel, ProjectileID.MolotovFire, (int)Main.player[Projectile.owner].GetTotalDamage(DamageClass.Throwing).ApplyTo(Projectile.damage / 5), Projectile.knockBack, Projectile.owner, 0, 1);
-                }
-            }
             // Fire Dust spawn
             for (int i = 0; i < 200; i++)
             {
-                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 74, Projectile.height - 74, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 2f);
+                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 100, Projectile.height - 100, DustID.Asphalt, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default, 1f);
                 Main.dust[dustIndex].noGravity = true;
-                Main.dust[dustIndex].velocity *= 3.5f;
-            }
-            // Large Smoke Gore spawn
-            for (int g = 0; g < 2; g++)
-            {
-                if (!Main.dedServ)
-                {
-                    int goreIndex = Gore.NewGore(Projectile.GetSource_Death(), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), .8f);
-                    Main.gore[goreIndex].scale = 1f;
-                    Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X + 1f;
-                    Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y + 1f;
-                    goreIndex = Gore.NewGore(Projectile.GetSource_Death(), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), .8f);
-                    Main.gore[goreIndex].scale = 1f;
-                    Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X - 1f;
-                    Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y + 1f;
-                }
             }
             // reset size to normal width and height.
             Projectile.position.X = Projectile.position.X + (float)(Projectile.width / 2);
@@ -161,6 +130,20 @@ namespace tsorcRevamp.Projectiles
             Projectile.height = 10;
             Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
             Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
+
+            int MaxVel = 15;
+            Vector2 RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilDroplet1>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilDroplet1>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilPotShard1>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilPotShard2>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilPotShard3>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilPotShard4>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
         }
     }
 }

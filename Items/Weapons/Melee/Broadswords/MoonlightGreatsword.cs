@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Melee;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -12,10 +13,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("[c/ffbf00:The Moonlight Greatsword, the sword of legend...]" +
-                                "\nGlows and gains piercing projectiles at night" +
-                                "\nScales with your magic or melee stats, whichever is higher" +
-                                "\nLaunches glimmering waves of moonlight"); */
         }
         public override void SetDefaults()
         {
@@ -31,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = 1000000;
-            Item.shoot = ModContent.ProjectileType<Projectiles.MLGSCrescent>();
+            Item.shoot = ModContent.ProjectileType<MLGSCrescent>();
             Item.shootSpeed = 2f; //Yes it looks slow but it gets *1.2f each tick in it's AI. My attempt at making the sword look like it's not spawning in the player.
         }
 

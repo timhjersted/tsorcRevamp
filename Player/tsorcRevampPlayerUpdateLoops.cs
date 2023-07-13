@@ -22,6 +22,9 @@ using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Buffs.Armor;
+using tsorcRevamp.Buffs.Runeterra.Magic;
+using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Buffs.Accessories;
 
 namespace tsorcRevamp
 {
@@ -105,6 +108,8 @@ namespace tsorcRevamp
         public Vector2 ShunpoVelocity;
         public bool ChallengersGloveCritDamage = false;
         public float WhipCritHitboxSize = 1f;
+
+        public bool PhoenixSkull = false;
 
         public int SteelTempestStacks = 0;
         public Vector2 SweepingBladeVelocity;
@@ -318,6 +323,8 @@ namespace tsorcRevamp
             Shunpo = false;
             ChallengersGloveCritDamage = false;
             WhipCritHitboxSize = 1;
+
+            PhoenixSkull = false;
 
             SummonTagStrength = 1f;
             SummonTagDuration = 1f;

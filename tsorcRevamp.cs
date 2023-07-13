@@ -315,16 +315,16 @@ namespace tsorcRevamp
                 14, 469, 94, 125, 217, 218, 228, 243, 622, //tables, specialized crafting stations
                 16, 17, 18, 77, 86, 96, 101, 106, 114, 133, 134, 172, 247, 283, 355, 412, //core crafting stations
                 220, 300, 301, 302, 303, 304, 305, 306, 307, 308, 499, //theme furniture crafting stations
-                21, 467, 29, 97, 463, 91, 287, 354, 377, 506, 621, 464, ModContent.TileType<NecromancyAltarTile>(), //chests, piggy bank, safe, defenders forge, banners, buff stations
+                21, 467, 29, 97, 463, 91, 287, 354, 377, 506, 621, 464, //chests, piggy bank, safe, defenders forge, banners, buff stations
                 33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
-                128, 269, 470, 378, 240, 560, ModContent.TileType<EmptyTrophyTile>(), 617, ModContent.TileType<TheMachineTrophyTile>(), ModContent.TileType<TheMachineRelicTile>(), ModContent.TileType<RetinazerTrophyTile>(), ModContent.TileType<SpazmatismTrophyTile>(), ModContent.TileType<CataluminanceTrophyTile>(), ModContent.TileType<TheTriadRelicTile>(), //all mannequins, target dummy, trophies and relics
+                128, 269, 470, 378, 240, 560, 617, //all mannequins, target dummy, trophies and relics
                 162, 127, 320, 624, //thin ice (breakable kind), Ice Rod's ice, seaweed/herb planters, abigail's flower
                 28, 51, 52, 62, 115, 205, 382, 528, //pots, cobwebs, all cuttable vines
                 31, 32, 69, 352, 53, 112, 116, 234, //orbs/hearts, all thorns, all sands
                 165, 178, 185, 186, 187, 233, 530, 2311, 238, //all ambient objects (background breakables), QB Larva, Plantera Bulb
                 3, 24, 61, 73, 74, 110, 113, 184, 201, 518, 519, 529, 549, //cuttable plants - all biomes
-                27, 215, 42, 621, 506, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle), Slice of Cake, Bast Statue
+                27, 215, 42, 621, 506 //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle), Slice of Cake, Bast Statue
             };
             #endregion
             //--------
@@ -335,12 +335,12 @@ namespace tsorcRevamp
                 14, 469, 94, 125, 217, 218, 228, 243, 622, //tables, specialized crafting stations
                 16, 17, 18, 77, 86, 96, 101, 106, 114, 133, 134, 172, 247, 283, 355, 412, //core crafting stations
                 220, 300, 301, 302, 303, 304, 305, 306, 307, 308, 499, //theme furniture crafting stations
-                21, 467, 29, 97, 463, 91, 287, 354, 377, 506, 621, 464, ModContent.TileType<NecromancyAltarTile>(), //chests, piggy bank, safe, defenders forge, banners, buff stations
+                21, 467, 29, 97, 463, 91, 287, 354, 377, 506, 621, 464,//chests, piggy bank, safe, defenders forge, banners, buff stations
                 33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
-                128, 269, 470, 378, 240, 560, ModContent.TileType<EmptyTrophyTile>(), 617, ModContent.TileType<TheMachineTrophyTile>(), ModContent.TileType<TheMachineRelicTile>(), ModContent.TileType<RetinazerTrophyTile>(), ModContent.TileType<SpazmatismTrophyTile>(), ModContent.TileType<CataluminanceTrophyTile>(), ModContent.TileType<TheTriadRelicTile>(), //all mannequins, target dummy, trophies and relics
+                128, 269, 470, 378, 240, 560, //all mannequins, target dummy, trophies and relics
                 320, //thin ice (breakable kind), seaweed/herb planters, all sands
-                27, 215, 42, 621, 506, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle), Slice of Cake, Bast Statue
+                27, 215, 42, 621, 506 //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle), Slice of Cake, Bast Statue
             };
             #endregion
             //--------
@@ -390,8 +390,12 @@ namespace tsorcRevamp
             #region PlaceAllowedModTiles list
             PlaceAllowedModTiles = new List<int>()
             {
+                ModContent.TileType<NecromancyAltarTile>(),
                 ModContent.TileType<EnemyBannerTile>(),
-
+                ModContent.TileType<AncestorSpiritTrophyTile>(), ModContent.TileType<AncestorSpiritRelicTile>(),
+                ModContent.TileType<TheRageTrophyTile>(), ModContent.TileType<TheRageRelicTile>(),
+                ModContent.TileType<TheMachineTrophyTile>(), ModContent.TileType<TheMachineRelicTile>(),
+                ModContent.TileType<RetinazerTrophyTile>(), ModContent.TileType<SpazmatismTrophyTile>(), ModContent.TileType<CataluminanceTrophyTile>(), ModContent.TileType<TheTriadRelicTile>()
             };
             #endregion
             //--------
@@ -1323,7 +1327,7 @@ namespace tsorcRevamp
             {
                 summonersAssociation.Call(
                     "AddMinionInfo",
-                    ModContent.ItemType<Items.Weapons.Expert.PhoenixEgg>(),
+                    ModContent.ItemType<PhoenixEgg>(),
                     ModContent.BuffType<PhoenixBuff>(),
                     ModContent.ProjectileType<PhoenixProjectile>(),
                     2f                    

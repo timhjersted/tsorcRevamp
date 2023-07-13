@@ -9,7 +9,6 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class DragoonArmor : ModItem
     {
-        public static int SoulCost = 30000;
         public static float Dmg = 30f;
         public static float MeleeSpeed = 30f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MeleeSpeed);
@@ -66,7 +65,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.SoulofMight, 10);
             recipe.AddIngredient(ItemID.SoulofSight, 10);
             recipe.AddIngredient(ItemID.SoulofFright, 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

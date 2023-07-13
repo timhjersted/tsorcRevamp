@@ -70,32 +70,32 @@ namespace tsorcRevamp.Buffs
         {
             if (type == BuffID.WeaponImbuePoison)
             {
-                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", PoisonFlaskDMG);
+                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", PoisonFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueFire)
             {
-                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", FireFlaskDMG);
+                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", FireFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueGold)
             {
-                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", GoldFlaskDMG);
+                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", GoldFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueConfetti)
             {
-                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", ConfettiFlaskDMG);
+                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", ConfettiFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueCursedFlames)
             {
-                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", CursedFlaskDMG);
+                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", CursedFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueIchor)
             {
-                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.Generic.MeleeWhipDmg", IchorFlaskDMG);
+                tip += "\n" + LangUtils.GetTextValue("CommonItemTooltip.MeleeWhipDmg", IchorFlaskDMG);
             }
 
             if (type == BuffID.WeaponImbueVenom)

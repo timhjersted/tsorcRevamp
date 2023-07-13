@@ -169,6 +169,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 				Hit = true;
             }
 			Projectile.damage = (int)(Projectile.damage * (1f - OrbOfDeception.DmgLossOnPierce / 100f));
+			target.AddBuff(BuffID.OnFire3, 4 * 60);
         }
 
         public override bool PreDraw(ref Color lightColor)

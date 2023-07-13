@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ObsidianShield);
             recipe.AddIngredient(ModContent.ItemType<SpikedIronShield>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

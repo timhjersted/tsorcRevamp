@@ -9,7 +9,7 @@ using Terraria.ObjectData;
 namespace tsorcRevamp.Tiles.Trophies
 {
     // Simple 3x3 tile that can be placed on a wall
-    public class EmptyTrophyTile : ModTile
+    public class TheRageTrophyTile : ModTile
     {
         public override void SetStaticDefaults()
         {
@@ -26,7 +26,7 @@ namespace tsorcRevamp.Tiles.Trophies
 
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
-            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<Items.Placeable.Trophies.EmptyTrophy>());
+            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<Items.Placeable.Trophies.TheRageTrophy>());
         }
     }
 }

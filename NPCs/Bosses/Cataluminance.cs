@@ -1247,14 +1247,14 @@ namespace tsorcRevamp.NPCs.Bosses
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedCrystal>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedFlameNozzle>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<TheTriadMask>(), 7));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedLaser>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DamagedRemote>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CrestOfSky>(), 1, 3, 3));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.HallowedBar, 1, 25, 40));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofSight, 1, 20, 40));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<TheTriadMask>(), 7));
             npcLoot.Add(notExpertCondition);
-            npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<TheMachineRelicItem>()));
+            npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<TheTriadRelicItem>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CataluminanceTrophy>(), 10));
         }
 

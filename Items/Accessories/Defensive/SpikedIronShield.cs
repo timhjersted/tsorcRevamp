@@ -13,8 +13,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public static float Thorns = 100f;
         public static float DR = 4f;
         public static float BadMoveSpeedMult = 5f;
-        public static int SoulCost = 2000;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Thorns, DR, BadMoveSpeedMult, AncientDemonShield.SoulCost);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Thorns, DR, BadMoveSpeedMult);
         public override void SetStaticDefaults()
         {
         }
@@ -39,7 +38,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<IronShield>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

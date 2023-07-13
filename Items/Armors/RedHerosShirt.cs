@@ -11,8 +11,6 @@ namespace tsorcRevamp.Items.Armors
     {
         public static float Dmg = 20f;
         public static float MeleeSpeed = 20f;
-        public static int SoulCost = 15000;
-        public static int SoulCost2 = 2;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MeleeSpeed);
         public override void SetStaticDefaults()
         {
@@ -34,8 +32,8 @@ namespace tsorcRevamp.Items.Armors
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BlueHerosShirt>());
-            recipe.AddIngredient(ItemID.SoulofFright, SoulCost2);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
+            recipe.AddIngredient(ItemID.SoulofFright, 2);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

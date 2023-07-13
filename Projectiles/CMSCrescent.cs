@@ -8,11 +8,10 @@ namespace tsorcRevamp.Projectiles
 {
     class CMSCrescent : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Projectiles/MLGSCrescent";
+        public override string Texture => "tsorcRevamp/Projectiles/Melee/MLGSCrescent";
 
         public override void SetStaticDefaults()
         {
-            Main.projFrames[Projectile.type] = 3;
         }
 
         public override void SetDefaults()

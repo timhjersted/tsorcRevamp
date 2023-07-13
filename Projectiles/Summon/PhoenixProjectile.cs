@@ -1,11 +1,9 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.DataStructures;
-using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Expert;
+using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Projectiles.Summon.SummonProjectiles;
 
 namespace tsorcRevamp.Projectiles.Summon

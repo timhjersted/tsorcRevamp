@@ -9,13 +9,11 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class RedHerosHat : ModItem
     {
-        public static int SoulCost = 12000;
         public static int MaxMana = 80;
         public static float ManaCost = 11f;
         public static int ManaRegen = 7;
         public static float CritChance = 20f;
-        public static int SoulCost2 = 1;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost, ManaRegen, CritChance, DragoonHelmet.SoulCost + DragoonArmor.SoulCost + DragoonGreaves.SoulCost);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost, ManaRegen, CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -53,8 +51,8 @@ namespace tsorcRevamp.Items.Armors
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BlueHerosHat>());
-            recipe.AddIngredient(ItemID.SoulofFright, SoulCost2);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
+            recipe.AddIngredient(ItemID.SoulofFright, 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 12000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

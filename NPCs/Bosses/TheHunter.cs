@@ -549,5 +549,17 @@ namespace tsorcRevamp.NPCs.Bosses
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 131, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, Color.Orange, 3f);
             }
         }
+        public override void HitEffect(NPC.HitInfo hit)
+        {
+            if (!Main.dedServ)
+            {
+                if (NPC.life <= 0)
+                {
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Earth Phoenix GORE 1").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Earth Phoenix GORE 2").Type, 1f);
+                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Earth Phoenix GORE 3").Type, 1f);
+                }
+            }
+        }
     }
 }

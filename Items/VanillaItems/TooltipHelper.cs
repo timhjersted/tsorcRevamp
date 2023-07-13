@@ -69,7 +69,6 @@ namespace tsorcRevamp.Items.VanillaItems
             SimpleModTooltip(Mod, item, tooltips, ItemID.MechanicalSkull, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MechanicalSkull"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.MechanicalWorm, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MechanicalWorm"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.MoltenPickaxe, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MoltenPickaxe"));
-            SimpleModTooltip(Mod, item, tooltips, ItemID.SilverWatch, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.SilverWatch"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.StickyBomb, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.StickyBomb"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.WormFood, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.WormFood"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.CopperAxe, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.CopperAxe"));

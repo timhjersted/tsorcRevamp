@@ -199,9 +199,11 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Expert.PhoenixEgg>()));
+            //no expert-exlusive item yet
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Summon.PhoenixEgg>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfFire>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.CobaltDrill));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheRageMask>(), 7));
         }
     }
     public class TheSorrowBag : BossBag

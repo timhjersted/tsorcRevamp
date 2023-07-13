@@ -3,14 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles
+namespace tsorcRevamp.Projectiles.Melee
 {
     class MLGSCrescent : ModProjectile
     {
 
         public override void SetStaticDefaults()
         {
-            Main.projFrames[Projectile.type] = 3;
         }
 
         public override void SetDefaults()
@@ -28,12 +27,18 @@ namespace tsorcRevamp.Projectiles
                 Projectile.tileCollide = false;
             }
             Projectile.DamageType = DamageClass.Melee;
+            Projectile.timeLeft = 20;
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
             Color color;
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (Projectile.velocity.X > 0)
+            {
+                spriteEffects = SpriteEffects.FlipVertically;
+            }
             if (Main.dayTime)
             {
                 color = lightColor;
@@ -45,7 +50,7 @@ namespace tsorcRevamp.Projectiles
 
             if (Projectile.ai[0] > 8)
             {
-                Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 64, 68, 64), color, Projectile.rotation, new Vector2(34, 32), Projectile.scale, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 64, 68, 64), color, Projectile.rotation, new Vector2(34, 32), Projectile.scale, spriteEffects, 0);
             }
 
             return false;
@@ -55,7 +60,7 @@ namespace tsorcRevamp.Projectiles
         {
             for (int i = 0; i < 20; i++)
             {
-                int dust = Dust.NewDust(new Vector2(Projectile.position.X - 11, Projectile.position.Y - 11), Projectile.width + 22, Projectile.height + 22, 89, 0, 0, 70, default(Color), 1f);
+                int dust = Dust.NewDust(new Vector2(Projectile.position.X - 11, Projectile.position.Y - 11), Projectile.width + 22, Projectile.height + 22, 89, 0, 0, 70, default, 1f);
                 Main.dust[dust].noGravity = true;
             }
         }
@@ -75,24 +80,15 @@ namespace tsorcRevamp.Projectiles
 
                 for (int d = 0; d < 2; d++)
                 {
-                    int dust = Dust.NewDust(new Vector2(Projectile.position.X - 11, Projectile.position.Y - 11), Projectile.width + 22, Projectile.height + 22, 89, Projectile.velocity.X * 0f, Projectile.velocity.Y * 0f, 30, default(Color), 1f);
+                    int dust = Dust.NewDust(new Vector2(Projectile.position.X - 11, Projectile.position.Y - 11), Projectile.width + 22, Projectile.height + 22, 89, Projectile.velocity.X * 0f, Projectile.velocity.Y * 0f, 30, default, 1f);
                     Main.dust[dust].noGravity = true;
 
                 }
 
                 for (int d = 0; d < 2; d++)
                 {
-                    int dust = Dust.NewDust(new Vector2(Projectile.position.X - 11, Projectile.position.Y - 11), Projectile.width + 22, Projectile.height + 22, 110, Projectile.velocity.X * 0f, Projectile.velocity.Y * 0f, 30, default(Color), 1f);
+                    int dust = Dust.NewDust(new Vector2(Projectile.position.X - 11, Projectile.position.Y - 11), Projectile.width + 22, Projectile.height + 22, 110, Projectile.velocity.X * 0f, Projectile.velocity.Y * 0f, 30, default, 1f);
                     Main.dust[dust].noGravity = true;
-                }
-
-                if (++Projectile.frameCounter >= 3)
-                {
-                    Projectile.frameCounter = 0;
-                    if (++Projectile.frame > 2)
-                    {
-                        Projectile.Kill();
-                    }
                 }
             }
 

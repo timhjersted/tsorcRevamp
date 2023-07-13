@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories
     public class SoulReaper : ModItem
     {
         public static int ConsSoulChance = 25;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ConsSoulChance, SoulReaper2.SoulsRequired);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ConsSoulChance);
         public override void SetStaticDefaults()
         {
         }

@@ -9,7 +9,6 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class DragoonHelmet : ModItem
     {
-        public static int SoulCost = 24000;
         public static int MaxMana = 140;
         public static float ManaCost = 14f;
         public static int ManaRegen = 9;
@@ -82,7 +81,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.SoulofMight, 10);
             recipe.AddIngredient(ItemID.SoulofSight, 10);
             recipe.AddIngredient(ItemID.SoulofFright, 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 24000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

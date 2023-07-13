@@ -6,7 +6,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Expert
+namespace tsorcRevamp.Items.Weapons.Summon
 {
 	public class PhoenixEgg : ModItem
 	{
@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Expert
 		public static float MinStacks = 5f;
 		public static float MaxStacks = 20f;
 		public static float MaxDmg = ((MaxStacks - MinStacks) / DmgDivisor) * 100f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritDamage, MaxDmg);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritDamage, (int)MaxDmg);
         public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
@@ -34,8 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Expert
 			Item.useAnimation = 30;
 			Item.useStyle = ItemUseStyleID.Swing;
 			Item.value = Item.buyPrice(0, 50, 0, 0);
-			Item.rare = ItemRarityID.Expert;
-			Item.expert = true;
+			Item.rare = ItemRarityID.LightRed;
 			Item.UseSound = SoundID.Item44;
 
 

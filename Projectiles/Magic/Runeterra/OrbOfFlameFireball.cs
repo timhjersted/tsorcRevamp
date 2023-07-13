@@ -78,6 +78,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             Player player = Main.player[Projectile.owner];
 			target.AddBuff(ModContent.BuffType<Charmed>(), 5 * 60);
             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/FireballHit") with { Volume = OrbOfDeception.OrbSoundVolume * 4 }, player.Center);
+            target.AddBuff(BuffID.OnFire3, 4 * 60);
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {

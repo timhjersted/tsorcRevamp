@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Placeable.Trophies
 {
-	public class EmptyTrophy : ModItem
+	public class TheRageTrophy : ModItem
 	{
 		public override void SetStaticDefaults() 
 		{
@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Placeable.Trophies
 
 		public override void SetDefaults() 
 		{
-			Item.DefaultToPlaceableTile(ModContent.TileType<Tiles.Trophies.EmptyTrophyTile>());
+			Item.DefaultToPlaceableTile(ModContent.TileType<Tiles.Trophies.TheRageTrophyTile>());
 
 			Item.width = 32;
 			Item.height = 32;

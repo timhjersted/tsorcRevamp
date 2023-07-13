@@ -894,6 +894,10 @@ namespace tsorcRevamp.NPCs
                     {
                         debuffCounter++;
                     }
+                    if (buffType == ModContent.BuffType<Heatstroke>())
+                    {
+                        debuffCounter++;
+                    }
                     if (buffType == ModContent.BuffType<Charmed>())
                     {
                         debuffCounter++;

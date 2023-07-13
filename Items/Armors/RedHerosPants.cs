@@ -9,12 +9,10 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Legs)]
     public class RedHerosPants : ModItem
     {
-        public static int SoulCost = 13000;
         public static float MoveSpeed = 20f;
         public static int MinionSlots = 2;
         public static float MaxStamina = 15f;
         public static float StaminaRegen = 15f;
-        public static int SoulCost2 = 1;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, MinionSlots, MaxStamina, StaminaRegen);
         public override void SetStaticDefaults()
         {
@@ -38,8 +36,8 @@ namespace tsorcRevamp.Items.Armors
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BlueHerosPants>());
-            recipe.AddIngredient(ItemID.SoulofFright, SoulCost2);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
+            recipe.AddIngredient(ItemID.SoulofFright, 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 13000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
