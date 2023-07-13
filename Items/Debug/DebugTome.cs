@@ -60,13 +60,17 @@ namespace tsorcRevamp.Items.Debug
             //Uncomment this to make the debug tome max out your perma potions
             //return false;
 
+            return false;
+            /*
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             foreach(KeyValuePair<Terraria.ModLoader.Config.ItemDefinition, int> k in modPlayer.consumedPotions)
             {
-                modPlayer.consumedPotions[k.Key] = 999;
+                if(k.Key.Type == ModContent.ItemType<Items.Potions.CharcoalPineResin>()){
+                    modPlayer.consumedPotions[k.Key] = 15;
+                }
+                //modPlayer.consumedPotions[k.Key] = 999;
             }
-
-            return false;
+            return false;*/
         }
 
         //For multiplayer testing, because I only have enough hands for one keyboard. Makes the player holding it float vaguely near the next other player.

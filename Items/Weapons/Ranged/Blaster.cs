@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetDefaults()
         {
-            Item.damage = 20;
+            Item.damage = 25;
             Item.DamageType = DamageClass.Ranged;
             Item.crit = 4;
             Item.width = 44;
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             //recipe.AddIngredient(null, "oddscrapmetal", 10);
             recipe.AddIngredient(ItemID.IronBar, 5);
             recipe.AddIngredient(ItemID.Diamond, 2);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1200);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 600);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             //recipe.AddIngredient(null, "oddscrapmetal", 10);
             recipe2.AddIngredient(ItemID.LeadBar, 5);
             recipe2.AddIngredient(ItemID.Diamond, 2);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 1200);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 600);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();

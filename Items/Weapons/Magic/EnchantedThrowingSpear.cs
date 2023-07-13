@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Magic throwing spear that passes through walls and is created with mana on each throw");
+            // Tooltip.SetDefault("Throwing spear that passes through walls and is created with mana on each throw");
         }
         public override void SetDefaults()
         {
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.autoReuse = true;
-            Item.DamageType = DamageClass.Magic;
+            Item.DamageType = DamageClass.Ranged;
 
             Item.UseSound = SoundID.Item1;
             Item.value = PriceByRarity.LightRed_4;

@@ -9,6 +9,14 @@ namespace tsorcRevamp.Items.VanillaItems
     {
         public override void SetDefaults(Item item)
         {
+            if(item.type == ItemID.Minishark)
+            {
+                item.damage = 4;
+            }
+            if(item.type == ItemID.CrystalBullet)
+            {
+                item.damage = 1;
+            }
             if (item.type == ItemID.ChlorophyteBullet)
             {
                 //chlorophyte bullets are fucking stupid, dont @ me

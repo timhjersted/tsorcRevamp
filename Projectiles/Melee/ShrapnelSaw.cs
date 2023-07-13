@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles.Melee
                 Projectile.rotation = UsefulFunctions.Aim(owner.Center, Main.MouseWorld, 1).ToRotation();
                 Projectile.direction = Main.MouseWorld.X > owner.Center.X ? 1 : -1;
                 Vector2 rotDir = Projectile.rotation.ToRotationVector2();
-                Projectile.Center = new Vector2(-8, 0) + owner.Center + rotDir * 64;
+                Projectile.Center = owner.Center + rotDir * 64;
                 if (Projectile.direction == -1)
                 {
                     rotDir *= -1;

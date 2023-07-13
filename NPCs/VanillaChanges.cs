@@ -15,6 +15,7 @@ using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Utilities;
+using System.Diagnostics;
 
 namespace tsorcRevamp.NPCs
 {
@@ -3172,7 +3173,6 @@ namespace tsorcRevamp.NPCs
         #endregion
 
 
-
         //BLOCKED NPCS
         public override void AI(NPC npc)
         {
@@ -5682,6 +5682,7 @@ namespace tsorcRevamp.NPCs
 
         public override void OnKill(NPC npc)
         {
+
             #region Loot Changes
 
             if(npc.type == NPCID.PrimeLaser)

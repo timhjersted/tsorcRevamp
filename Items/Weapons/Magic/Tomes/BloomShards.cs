@@ -33,6 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.noMelee = true;
             Item.DamageType = DamageClass.Magic;
             Item.value = PriceByRarity.Cyan_9;
+            Item.rare = ItemRarityID.Cyan;
         }
 
         public override void HoldItem(Player player)

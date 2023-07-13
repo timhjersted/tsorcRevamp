@@ -5550,7 +5550,6 @@ Mods: {
 					'''
 					A blade honed sharp by the magic of the coming night.
 					Right click to dash, consuming stamina and making you immune for a moment
-					Striking enemies while dashing creates a demon spirit from their torn soul
 					'''
 			}
 
@@ -5637,7 +5636,7 @@ Mods: {
 			}
 
 			EphemeralThrowingAxe2: {
-				DisplayName: Ephemeral Throwing Axe2
+				DisplayName: Ephemeral Throwing Axe 2
 				Tooltip:
 					'''
 					An enchanted melee weapon that can be thrown through walls.
@@ -6032,8 +6031,7 @@ Mods: {
 				Tooltip:
 					'''
 					Slows enemies, with a chance to freeze
-					High DPS, but blocks dodging while in use
-					Uses gel as ammo
+					High DPS, but slowly uses gel as ammo
 					'''
 			}
 

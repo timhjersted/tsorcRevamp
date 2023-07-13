@@ -20,6 +20,7 @@ using tsorcRevamp.Tiles;
 using Terraria.Localization;
 using Terraria.Graphics.Effects;
 using tsorcRevamp.Utilities;
+using System.Diagnostics;
 
 namespace tsorcRevamp
 {
@@ -908,8 +909,23 @@ namespace tsorcRevamp
 
         //}
 
+        Stopwatch bossTimer = new Stopwatch();
         public override void PreUpdateWorld()
         {
+            if (bossTimer == null)
+            {
+                bossTimer = new Stopwatch();
+            }
+            if (!bossTimer.IsRunning && BossAlive)
+            {
+                bossTimer.Start();
+            }
+            if (bossTimer.IsRunning && !BossAlive)
+            {
+                Main.NewText("Boss duration: " + bossTimer.Elapsed);
+                bossTimer.Stop();
+                bossTimer.Reset();
+            }
             Terraria.GameContent.Creative.CreativePowerManager.Instance.GetPower<Terraria.GameContent.Creative.CreativePowers.StopBiomeSpreadPower>().SetPowerInfo(true);
         }
 

@@ -129,6 +129,12 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
+            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.ThrowingAxeCrate>())
+            {
+                shopCustomPrice = 8,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
 
 
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenIceRod>()) {

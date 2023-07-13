@@ -21,10 +21,9 @@ namespace tsorcRevamp.Projectiles
             Projectile.friendly = true;
             Projectile.hostile = false;
             Projectile.ownerHitCheck = false;
-            Projectile.DamageType = DamageClass.Magic;
+            Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = false;
             Projectile.scale = 1f;
-            Projectile.DamageType = DamageClass.Magic;
 
         }
 

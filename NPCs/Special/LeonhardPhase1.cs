@@ -40,8 +40,8 @@ namespace tsorcRevamp.NPCs.Special
             NPC.width = 20;
             if (NPC.downedBoss1 || NPC.downedBoss2) { NPC.damage = 18; }
             else { NPC.damage = 12; } //Low contact damage, the slashes will be doing the damage
-            if (NPC.downedBoss1 || NPC.downedBoss2) { NPC.lifeMax = 2500; }
-            else { NPC.lifeMax = 1500; }
+            if (NPC.downedBoss1 || NPC.downedBoss2) { NPC.lifeMax = 3500; }
+            else { NPC.lifeMax = 2500; }
             NPC.defense = 8;
             NPC.value = 15000;
             NPC.HitSound = SoundID.NPCHit48;

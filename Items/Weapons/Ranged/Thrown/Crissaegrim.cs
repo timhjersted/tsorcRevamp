@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Thrown
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofNight, 30);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

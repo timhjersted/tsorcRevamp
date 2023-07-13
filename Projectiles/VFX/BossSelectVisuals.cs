@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 foreach (int id in tsorcRevampWorld.PreHardmodeBossIDs.Keys)
                 {
                     PreHardmodeDownedBosses.Add(new NPC());
-                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == NPCID.EaterofWorldsHead && NPC.downedBoss2))
+                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == NPCID.EaterofWorldsHead && NPC.downedBoss2) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()))
                     {
                         PreHardmodeDownedBosses[PreHardmodeDownedBosses.Count - 1].SetDefaults(id);
                     }
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 {
                     HardmodeDownedBosses.Add(new NPC());
                     
-                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>() && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))))
+                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>() && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()))
                     {
                         //Draw golems head instead of its body
                         int newID = id;
@@ -71,7 +71,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 foreach (int id in tsorcRevampWorld.SHMBossIDs.Keys)
                 {
                     SHMDownedBosses.Add(new NPC());
-                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)))
+                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()))
                     {
                         int newID = id;
                         if (newID == NPCID.MoonLordCore)
@@ -120,11 +120,19 @@ namespace tsorcRevamp.Projectiles.VFX
                 }
             }
 
-            if (Main.player[Projectile.owner].HeldItem.type != ModContent.ItemType<Items.BossItems.BossRematchTome>() && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.player[Projectile.owner].HeldItem.type != ModContent.ItemType<Items.BossItems.BossRematchTome>())
             {
-                for (int i = 0; i < currentDownedList.Count; i++)
+                if (Main.netMode != NetmodeID.MultiplayerClient) 
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), currentDownedList[i].Center, UsefulFunctions.Aim(currentDownedList[i].Center, Main.player[Projectile.owner].Center, 3), ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 300, 20);
+                    for (int i = 0; i < currentDownedList.Count; i++)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), currentDownedList[i].Center, UsefulFunctions.Aim(currentDownedList[i].Center, Main.player[Projectile.owner].Center, 3), ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 300, 20);
+                    }
+                }
+
+                if (spawnCountdown > 0)
+                {
+                    SpawnBoss(spawnID);
                 }
                 Projectile.Kill();
             }
