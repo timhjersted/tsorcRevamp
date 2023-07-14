@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
     [LegacyName("GrandWizardsHat")]
     public class EnchantedWizardsHat : ModItem
     {
-        public static float DmgMult = 12f;
+        public static float DmgMult = 10f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMult);
         public override void SetStaticDefaults()
         {
