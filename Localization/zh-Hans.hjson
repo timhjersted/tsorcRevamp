@@ -291,8 +291,11 @@ Mods: {
 			TSORCMap: 新的红云物语冒险地图
 			VanillaMap: 新的原版随机生成地图
 			Back: 返回
+			// SpawnSetHoverText: Set Spawn
 			SpawnSet: 重生点已设置！
 			SpawnRemoved: 重生点已移除！
+			// AccessPiggyBank: Access Piggy Bank
+			// AccessSafe: Access Safe
 		}
 
 		World: {

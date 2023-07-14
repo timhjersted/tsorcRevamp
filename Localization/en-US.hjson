@@ -291,8 +291,11 @@ Mods: {
 			TSORCMap: New Story of Red Cloud Adventure Map
 			VanillaMap: New Vanilla Map
 			Back: Back
+			SpawnSetHoverText: Set Spawn
 			SpawnSet: Spawn point set!
 			SpawnRemoved: Spawn point removed!
+			AccessPiggyBank: Access Piggy Bank
+			AccessSafe: Access Safe
 		}
 
 		World: {

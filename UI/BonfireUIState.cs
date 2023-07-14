@@ -75,7 +75,7 @@ namespace tsorcRevamp.UI
 
         public override void Update(GameTime gameTime)
         {
-            ButtonSetSpawn.HoverText = LangUtils.GetTextValue("UI.SetSpawnHoverText");
+            ButtonSetSpawn.HoverText = LangUtils.GetTextValue("UI.SpawnSetHoverText");
             ButtonPiggyBank.HoverText = LangUtils.GetTextValue("UI.AccessPiggyBank");
             ButtonSafe.HoverText = LangUtils.GetTextValue("UI.AccessSafe");
             base.Update(gameTime);
