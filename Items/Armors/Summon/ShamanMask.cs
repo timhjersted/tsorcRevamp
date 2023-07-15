@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.SummonMeleeSpeed) += WhipDmg;
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += WhipDmg / 100f;
             player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration += SummonTagDuration / 100f;
             player.whipRangeMultiplier += WhipRange / 100f;
             player.GetAttackSpeed(DamageClass.Summon) += AtkSpeed / 100f;
