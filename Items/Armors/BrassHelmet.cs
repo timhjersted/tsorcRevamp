@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Generic) -= BadDmg;
+            player.GetDamage(DamageClass.Generic) -= BadDmg / 100f;
             player.lifeRegen += LifeRegen;
         }
         public override void AddRecipes()

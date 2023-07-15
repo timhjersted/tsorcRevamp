@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Magic) += AtkSpeed;
+            player.GetAttackSpeed(DamageClass.Magic) += AtkSpeed / 100f;
             player.spaceGun = true;
 
             int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 60, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Red, 1.0f);

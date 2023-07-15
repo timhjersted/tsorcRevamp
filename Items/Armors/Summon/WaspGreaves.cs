@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += MoveSpeed;
+            player.moveSpeed += MoveSpeed / 100f;
             player.maxTurrets += SentrySlot;
         }
         public override void AddRecipes()

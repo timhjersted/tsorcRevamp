@@ -6414,7 +6414,7 @@ Mods: {
 					{$CommonItemTooltip.Summon.TagCritMult}
 					{$CommonItemTooltip.Whips}
 					'''
-				BotCTooltip: "{$CommonItemTooltip.BotCSummonTagDoubleBuffCount}"
+				BotCTooltip: "{$CommonItemTooltip.Summon.BotCSummonTagDoubleBuffCount}"
 			}
 
 			TerraFall: {
