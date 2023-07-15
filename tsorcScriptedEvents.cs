@@ -228,7 +228,7 @@ namespace tsorcRevamp
             GoblinWizardWMF.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
 
             //GOBLIN SUMMONER IN THE CLOUDS (WMF)
-            ScriptedEvent GoblinWizardClouds = new ScriptedEvent(new Vector2(7822, 118), 40, NPCID.GoblinSummoner, DustID.MagicMirror, true, false, false, LangUtils.GetTextValue("Events.GoblinSUmmoner2"), Color.MediumPurple, false);
+            ScriptedEvent GoblinWizardClouds = new ScriptedEvent(new Vector2(7822, 118), 40, NPCID.GoblinSummoner, DustID.MagicMirror, true, false, false, LangUtils.GetTextValue("Events.GoblinSummoner2"), Color.MediumPurple, false);
             GoblinWizardClouds.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
 
             //ICE GOLEM WYVERN COMBO
@@ -337,7 +337,7 @@ namespace tsorcRevamp
             //TWIN EATER OF WORLDS FIGHT
             ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1215), 20, default, DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.TwinEaters"), Color.Purple, false, TwinEoWCustomCondition, TwinEoWAction);
 
-            //DUNLEDING AMBUSH
+            //DUNLENDING AMBUSH
             List<int> DunledingAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>() };
             List<Vector2> DunledingAmbushEnemyLocations = new List<Vector2>() { new Vector2(4697, 858), new Vector2(4645, 858), new Vector2(4645, 841) };
             ScriptedEvent DunledingAmbush = new ScriptedEvent(new Vector2(4666, 856), 10, DunledingAmbushEnemyTypeList, DunledingAmbushEnemyLocations, default, true, false, false, LangUtils.GetTextValue("Events.DunlendingAmbush"), Color.Red, false, PreEoCCustomCondition, DundledingAmbushAction);
@@ -419,7 +419,7 @@ namespace tsorcRevamp
             //BRIDGE AMBUSH 1 - ON BRIDGE POST EOW
             List<int> BridgeAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowWarrior>(), ModContent.NPCType<NPCs.Enemies.HollowSoldier>(), ModContent.NPCType<NPCs.Enemies.ManHunter>(), ModContent.NPCType<NPCs.Enemies.TibianAmazon>(), NPCID.Piranha, NPCID.Piranha, NPCID.Piranha };
             List<Vector2> BridgeAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4593, 858), new Vector2(4640, 858), new Vector2(4643f, 841), new Vector2(4588f, 858), new Vector2(4608f, 870), new Vector2(4616f, 872), new Vector2(4626f, 870) };
-            ScriptedEvent BridgeAmbush1 = new ScriptedEvent(new Vector2(4615, 852), 6, BridgeAmbush1EnemyTypeList, BridgeAmbush1EnemyLocations, DustID.Cloud, true, false, false, LangUtils.GetTextValue("Events.BridgeAmbush"), Color.Red, false, PostEoWCustomCondition, null);
+            ScriptedEvent BridgeAmbush1 = new ScriptedEvent(new Vector2(4615, 852), 6, BridgeAmbush1EnemyTypeList, BridgeAmbush1EnemyLocations, DustID.Cloud, true, false, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red, false, PostEoWCustomCondition, null);
 
             //LOTHRIC AMBUSH 1 - IN ROOM BELOW ARTORIAS BOSS FIGHT ROOM, APPROACHING JUNGLE PYRAMID FROM FORGOTTEN CITY
             List<int> LothricAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.LothricKnight>(), ModContent.NPCType<NPCs.Enemies.LothricSpearKnight>() };
