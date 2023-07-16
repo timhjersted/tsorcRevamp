@@ -61,7 +61,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             NPC.value = 600000;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0;
-            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Attradies.DespawnHandler"), Color.DarkMagenta, DustID.PurpleCrystalShard);
+            despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Attraidies.DespawnHandler"), Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
 
         public int ShadowOrbDamage = 35;
