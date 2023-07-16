@@ -31,8 +31,8 @@ namespace tsorcRevamp.UI {
             base.OnInitialize();
             MapMarkerUIPanel = new UIPanel();
             MapMarkerUIPanel.SetPadding(0);
-            MapMarkerUIPanel.Left.Set(5, 0);
-            MapMarkerUIPanel.Top.Set(5, 0);
+            MapMarkerUIPanel.Left.Set(22, 0);
+            MapMarkerUIPanel.Top.Set(22, 0);
             MapMarkerUIPanel.Width.Set(WIDTH, 0f);
             MapMarkerUIPanel.Height.Set(HEIGHT, 0f);
             MapMarkerUIPanel.BackgroundColor = new Color(35, 20, 20);
