@@ -29,6 +29,7 @@ namespace tsorcRevamp.Projectiles.Summon
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 999;
+            Projectile.DamageType = DamageClass.Summon;
 
             trailWidth = 25;
             trailPointLimit = 150;
