@@ -8584,7 +8584,7 @@ Mods: {
 
 			Death: {
 				DisplayName: Death
-				Despawnhandler: Death claims you at last...
+				DespawnHandler: Death claims you at last...
 			}
 
 			PrimeBeam.DisplayName: Prime Beam
