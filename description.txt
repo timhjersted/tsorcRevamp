@@ -1,6 +1,9 @@
-The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack. Your 1-4 player journey will span 18 dungeons spread across an expansive, hand-crafted open world, offering a 20 to 30+ hr experience for a first playthrough.
+The Story of Red Cloud is a massive 20+ hour Dark Souls-inspired adventure built inside the world of Terraria using a custom world, mod and companion soundtrack.
 
-✅ The Custom Map will load automatically when you reach the Select World screen. To create a fresh or updated map, click New on the World screen.
+In development over 6 years, your 1-4 player journey will span 18 dungeons spread across an expansive, hand-crafted open world filled with shortcuts, hidden paths, epic boss fights, and countless secrets.
+
+
+✅ The Custom World will load automatically when you reach the Select World screen. To create a fresh or updated map, click New on the World screen.
 
 ✅ To download TSORC's Music Mod, click the text prompt you'll see on TML's main menu after enabling this mod.
 
@@ -9,19 +12,13 @@ The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside t
 
 ✅ TOP FEATURES
 ------------------------------------------
-*Explore a vast, interconnected and richly illustrated world, developed over the span of 6 years
 *Companion Soundtrack with 59 songs! (Dark Souls, Elden Ring and Zelda fans will love it)
 *42 bosses (17 vanilla plus 25 mod bosses)
-*100+ new NPCS including 8 friendly NPCs
-*Over 700 new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
-*Dark Souls game mechanics, including bonfire save points and the dodge roll (bound to Left Alt by default)
+*100+ new enemies and 8 friendly NPCs
+*800+ new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
+*Dark Souls game mechanics, including bonfire save points, soul currency and the dodge roll 
 *The mod enforces old school adventure map rules, so if you can do it, it's okay to do it!
-
-
-⚠️ PROJECT STATUS: BETA
-------------------------------------------
-The game is fairly polished up to the end of the main story (defeating Attraidies). Development is currently focused on balancing and revamping the sizeable post-Attraidies content, especially the bosses. We recommend waiting to play this third chapter when we're out of beta, unless you'd like to be a part of the journey to 1.0. 
-The mod has been made fully translatable through localization files, if you're interested in making it more accessible to your fellow speakers, please join the discord and ask MarfMaster for details. 
+*Bearer Of The Curse Mode offers the ultimate Dark Souls experience, adding an Estus Flask and Cerulean Tear to your UI, prevents the use of healing potions and makes all weapons use different amounts of stamina
 
 
 ✅ DISCORD
@@ -32,7 +29,8 @@ https://discord.gg/UGE6Mstrgz
 -Please share suggestions for improvement under #any-suggestions or #bug-reports.
 -The changelogs can be found under #mod-changelog and #map-changelog.
 -TSORC holds many secrets. If you have questions, post them to #map-questions or #mod-questions.
--Share Let's Plays or video recordings of your playthrough in #tsorc-media.
+-Share videos of your playthrough in #tsorc-media.
+-The mod has been made fully translatable through a localization file. If you're interested in making it more accessible to your fellow speakers, please ask MarfMaster for details. 
 
 
 ⚠️ CROSS MOD COMPATIBILITY:
@@ -66,18 +64,21 @@ Some mods interfere with the Adventure Map, but may be used if you're playing on
 
 ⚠️ GAME MANUAL:
 ------------------------------------------
-*Create a new character named Red Cloud (for multiplayer, everyone should use a different name)
-
-*Read signs in the order you come to them 
-
-*Read all mod item tool-tips for hints and important game clues. Also look for "Dark Souls Crafting Material" on items to discover craftable mod content.
+*Create a new classic character named Red Cloud (for multiplayer, everyone should use a different name)
 
 *On death, you will drop all your Dark Souls and have one chance to recover them. For a more forgiving experience, you can turn this off in the mod's Config options.
 
-*The new dodge roll action with i-frames is an essential part of TSORC. It can be bound to any key in TModLoader's controller settings, under the mod section. (Left Alt by default. Left Shift is also recommended, with Auto Select bound to Left Alt.)
+*The new dodge roll action with i-frames can be bound to any key in TModLoader's controller settings, under the mod section. (Left Alt by default. Left Shift is also recommended, with Auto Select bound to Left Alt.)
 
-*Adventure Mode should stay checked in the TSORC mod config options to play with the custom map.
+*In Bearer of the Curse Mode, your Estus Flask is bound to the Quick Heal key and the Cerulian Tear is tied to your Quick Mana key.
+
+*Adventure Mode should stay checked in the TSORC mod config options to play with the custom story world.
 
 *Multiplayer is supported for 4 players. Class diversity recommended. Post issues you find under #bug-reports. Thanks! 
 
 *Go to #tips in our Discord for all game hints
+
+
+⚠️ PROJECT STATUS:
+------------------------------------------
+The game is fairly polished up to the end of the main story (defeating Attraidies). Development is currently focused on balancing and revamping the sizeable post-Attraidies content. We recommend waiting to play this third chapter when we're out of beta, unless you'd like to be a part of the journey to 1.0. (Really 2.0 if you're counting the original TSORC from over 10 years ago!)
