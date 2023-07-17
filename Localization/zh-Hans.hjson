@@ -203,6 +203,8 @@ Mods: {
 		}
 
 		Events: {
+			// Deerclops: The Ancenstral Spirit has been disturbed!
+			// SkeletronHidden: Skeletron, Lord of Graves, has awoken!
 			EoC: 克苏鲁之眼盯上你了！
 			EoW: 世界吞噬者已经准备好饱餐一顿！
 			EoL: 光之女皇已苏醒！
@@ -7129,9 +7131,9 @@ Mods: {
 				Tooltip: ""
 			}
 
-			TheMachineRelicItem: {
-				DisplayName: 机械骷髅王圣物
-				Tooltip: ""
+			TheMachineRelic: {
+				// DisplayName: The Machine Relic
+				// Tooltip: ""
 			}
 
 			TheMachineMask: {
@@ -7139,9 +7141,9 @@ Mods: {
 				Tooltip: ""
 			}
 
-			TheTriadRelicItem: {
-				DisplayName: 三子魔眼圣物
-				Tooltip: ""
+			TheTriadRelic: {
+				// DisplayName: The Triad Relic
+				// Tooltip: ""
 			}
 
 			CataluminanceTrophy: {
@@ -7164,9 +7166,9 @@ Mods: {
 				Tooltip: ""
 			}
 
-			AncestorSpiritRelicItem: {
-				DisplayName: 先祖之灵圣物
-				Tooltip: ""
+			AncestorSpiritRelic: {
+				// DisplayName: Ancestor Spirit Relic
+				// Tooltip: ""
 			}
 
 			AncestorSpiritTrophy: {
@@ -7184,8 +7186,8 @@ Mods: {
 				Tooltip: ""
 			}
 
-			TheRageRelicItem: {
-				// DisplayName: The Rage Relic Item
+			TheRageRelic: {
+				// DisplayName: The Rage Relic
 				// Tooltip: ""
 			}
 
@@ -7217,6 +7219,21 @@ Mods: {
 					Grants {2}% lifesteal for {3} seconds after reviving if worn
 					Cooldown only refreshes while wearing this
 					''' */
+			}
+
+			TheSorrowRelic: {
+				// DisplayName: The Sorrow Relic
+				// Tooltip: ""
+			}
+
+			TheSorrowTrophy: {
+				// DisplayName: The Sorrow Trophy
+				// Tooltip: ""
+			}
+
+			TheSorrowMask: {
+				// DisplayName: The Sorrow Mask
+				// Tooltip: ""
 			}
 		}
 
@@ -8558,10 +8575,14 @@ Mods: {
 			GoblinTinkerer.GivenName: Elijah
 			Mechanic.GivenName: Asha
 			Wizard.GivenName: Araz
-			WallOfFlesh.DespawnHandler: 血肉之墙的怒火得到了平息...
 			TheDestroyer.HullGlow: 毁灭者的身体发出耀眼的光芒......
 			SkeletronPrime.Warning: WARNING: 激光重定向......
-			EmpressOfLight.Forcefield: 在天空的某个地方，一个力场坍塌了......
+
+			EmpressOfLight: {
+				Forcefield: 在天空的某个地方，一个力场坍塌了......
+				// DespawnHandler: The Goddess of Light has returned to the sun
+			}
+
 			SHM.BossDeath: 通往深渊的大门越来越宽，它的子民越来越强大...
 			Player.AllDied: 所有玩家均已被打败！
 			BossOutOfRange: 开始对你失去兴趣，重新返回战斗！
@@ -8569,20 +8590,22 @@ Mods: {
 			StardustPillar: 星尘柱的力量恢复了...
 			VortexPillar: 星旋柱的力量恢复了...
 			NebulaPillar: 星云柱的力量恢复了...
-			KingSlimeDespawn: 史莱姆王捍卫了它的王位...
-			EoCDespawn: 克苏鲁之眼的目光再次掠过你...
-			BoCDespawn: 克苏鲁值脑觉得你的弱小让它玩腻了...
-			QueenBeeDespawn: 蜂后大胜而归...
-			SkeletronDespawn: 骷髅王已经从你的死亡中得到了满足...
-			DeerclopsDespawn: 独眼巨鹿将你破碎的身体拖回巢穴...
-			QueenSlimeDespawn: 史莱姆女皇重返王位...
-			DestroyerDespawn: 毁灭者回到腐败的深渊...
-			PlanteraDespawn: 世纪之花为它的子民报了仇...
-			DukeDespawn: 猪龙鱼公爵已经杀死了所有侵入其领地的人...
-			GolemDespawn: 石巨人击退了入侵者...
-			BetsyDespawn: 双足翼龙很满意用你这种食材做出的新鲜佳肴...
-			EoLDespawn: 光之女皇隐入太阳
-			EoLDespawnRare: 尝尝彩虹的力量吧，混蛋...
+			// KingSlime.DespawnHandler: King Slime returns to his throne...
+			// EyeOfCthulhu.DespawnHandler: The Eye's gaze passes once again...
+			// BrainOfCthulhu.DespawnHandler: The Brain grows bored of your weakness...
+			// QueenBee.DespawnHandler: The Queen returns to her hive victorious...
+			// Skeletron.DespawnHandler: Skeletron has fed off your death and grown satisfied...
+			// Deerclops.DespawnHandler: Deerclops drags your broken body back to its den...
+			WallOfFlesh.DespawnHandler: 血肉之墙的怒火得到了平息...
+			// QueenSlime.DespawnHandler: Queen Slime returns to her throne...
+			// Destroyer.DespawnHandler: The Destroyer returns to the depths of the corruption...
+			// Plantera.DespawnHandler: Plantera has avenged its child...
+			// DukeFishron.DespawnHandler: Duke Fishron has slain all of those trespassing in its domain...
+			// Golem.DespawnHandler: Golem has repelled the invaders...
+			// Betsy.DespawnHandler: Betsy is satisfied with her freshly-cooked meal...
+			// EmpressOfLight.DespawnHandlerRare: Taste the rainbow, motherfucker...
+			// LunaticCultist.DespawnHandler: The cultist has gained another sacrifice...
+			// MoonLord.DespawnHandler: Nobody remains to impede the Moon Lord's wrath...
 
 			AncientDemon: {
 				DisplayName: 远古恶魔
@@ -8596,7 +8619,7 @@ Mods: {
 
 			Cataluminance: {
 				DisplayName: 耀翳眼 v2.02
-				Despawnhandler: 三子魔眼回归星空......
+				// DespawnHandler: The Triad returns to the skies...
 				ClosesIn: 耀翳眼正在逼近...
 				Desperation: 三子魔眼准备将你击败...
 				Light: 神圣的光芒在夜空中聚合纠缠...
@@ -8612,7 +8635,7 @@ Mods: {
 
 			Death: {
 				DisplayName: 「死神」
-				Despawnhandler: 「死神」最终找上了你...
+				// DespawnHandler: Death claims you at last...
 			}
 
 			PrimeBeam.DisplayName: 机械骷髅王的光束核心
@@ -8817,7 +8840,7 @@ Mods: {
 
 			WyvernMageShadow: {
 				DisplayName: 飞龙法师堕魂——渊影
-				espawnHandler: 飞龙法师堕魂挣脱了囚禁......
+				// DespawnHandler: The Wyvern Mage's imprisoned shadow breaks free...
 				Condition: 当他的灵鬼虬龙死后掉落
 			}
 

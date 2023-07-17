@@ -583,7 +583,7 @@ namespace tsorcRevamp.NPCs.Bosses
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<PhoenixEgg>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<TheRageMask>(), 7));
             npcLoot.Add(notExpertCondition);
-            npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<TheRageRelicItem>()));
+            npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<TheRageRelic>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheRageTrophy>(), 10));
         }
 

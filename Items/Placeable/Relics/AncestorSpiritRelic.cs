@@ -5,7 +5,7 @@ using tsorcRevamp.Tiles.Relics;
 
 namespace tsorcRevamp.Items.Placeable.Relics
 {
-    public class AncestorSpiritRelicItem : ModItem
+    public class AncestorSpiritRelic : ModItem
     {
         public override void SetDefaults()
         {

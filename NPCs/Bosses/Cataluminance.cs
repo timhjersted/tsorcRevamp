@@ -1254,7 +1254,7 @@ namespace tsorcRevamp.NPCs.Bosses
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofSight, 1, 20, 40));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<TheTriadMask>(), 7));
             npcLoot.Add(notExpertCondition);
-            npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<TheTriadRelicItem>()));
+            npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<TheTriadRelic>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CataluminanceTrophy>(), 10));
         }
 

@@ -203,7 +203,7 @@ Mods: {
 		}
 
 		Events: {
-		    Deerclops: The Ancenstral Spirit has been disturbed!
+			Deerclops: The Ancenstral Spirit has been disturbed!
 			SkeletronHidden: Skeletron, Lord of Graves, has awoken!
 			EoC: The Eye sees you!
 			EoW: The Eater of Worlds is ready to feed!
@@ -7103,8 +7103,8 @@ Mods: {
 				Tooltip: ""
 			}
 
-			TheMachineRelicItem: {
-				DisplayName: The Machine Relic Item
+			TheMachineRelic: {
+				DisplayName: The Machine Relic
 				Tooltip: ""
 			}
 
@@ -7113,8 +7113,8 @@ Mods: {
 				Tooltip: ""
 			}
 
-			TheTriadRelicItem: {
-				DisplayName: The Triad Relic Item
+			TheTriadRelic: {
+				DisplayName: The Triad Relic
 				Tooltip: ""
 			}
 
@@ -7138,8 +7138,8 @@ Mods: {
 				Tooltip: ""
 			}
 
-			AncestorSpiritRelicItem: {
-				DisplayName: Ancestor Spirit Relic Item
+			AncestorSpiritRelic: {
+				DisplayName: Ancestor Spirit Relic
 				Tooltip: ""
 			}
 
@@ -7158,8 +7158,8 @@ Mods: {
 				Tooltip: ""
 			}
 
-			TheRageRelicItem: {
-				DisplayName: The Rage Relic Item
+			TheRageRelic: {
+				DisplayName: The Rage Relic
 				Tooltip: ""
 			}
 
@@ -7191,6 +7191,21 @@ Mods: {
 					Grants {2}% lifesteal for {3} seconds after reviving if worn
 					Cooldown only refreshes while wearing this
 					'''
+			}
+
+			TheSorrowRelic: {
+				DisplayName: The Sorrow Relic
+				Tooltip: ""
+			}
+
+			TheSorrowTrophy: {
+				DisplayName: The Sorrow Trophy
+				Tooltip: ""
+			}
+
+			TheSorrowMask: {
+				DisplayName: The Sorrow Mask
+				Tooltip: ""
 			}
 		}
 
@@ -8534,7 +8549,12 @@ Mods: {
 			Wizard.GivenName: Araz
 			TheDestroyer.HullGlow: The Destroyer's hull begins glowing fiercely...
 			SkeletronPrime.Warning: WARNING: Laser power redirected......
-			EmpressOfLight.Forcefield: Somewhere in the sky a forcefield collapses...
+
+			EmpressOfLight: {
+				Forcefield: Somewhere in the sky a forcefield collapses...
+				DespawnHandler: The Goddess of Light has returned to the sun
+			}
+
 			SHM.BossDeath: The portal to The Abyss widens, and its denizens grow stronger...
 			Player.AllDied: All players have been defeated at least once!
 			BossOutOfRange: begins to lose interst, return to the fight!
@@ -8555,10 +8575,9 @@ Mods: {
 			DukeFishron.DespawnHandler: Duke Fishron has slain all of those trespassing in its domain...
 			Golem.DespawnHandler: Golem has repelled the invaders...
 			Betsy.DespawnHandler: Betsy is satisfied with her freshly-cooked meal...
-			EmpressOfLight.DespawnHandler: The Goddess of Light has returned to the sun
-			EMpressOfLight.DespawnHandlerRare: Taste the rainbow, motherfucker...
-			LunaticCultist.DespawnHandler: "The cultist has gained another sacrifice..."
-			MoonLord.DespawnHandler: "Nobody remains to impede the Moon Lord's wrath..."
+			EmpressOfLight.DespawnHandlerRare: Taste the rainbow, motherfucker...
+			LunaticCultist.DespawnHandler: The cultist has gained another sacrifice...
+			MoonLord.DespawnHandler: Nobody remains to impede the Moon Lord's wrath...
 
 			AncientDemon: {
 				DisplayName: Ancient Demon

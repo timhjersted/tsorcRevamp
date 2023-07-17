@@ -893,7 +893,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofFright, 1, 20, 40));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<TheMachineMask>(), 7));
             npcLoot.Add(notExpertCondition);
-            npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<TheMachineRelicItem>())); 
+            npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<TheMachineRelic>())); 
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheMachineTrophy>(), 10));
         }
 
