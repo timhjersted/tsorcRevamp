@@ -203,6 +203,8 @@ Mods: {
 		}
 
 		Events: {
+		    Deerclops: The Ancenstral Spirit has been disturbed!
+			SkeletronHidden: Skeletron, Lord of Graves, has awoken!
 			EoC: The Eye sees you!
 			EoW: The Eater of Worlds is ready to feed!
 			EoL: The Empress of Light awakens!

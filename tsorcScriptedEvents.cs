@@ -123,6 +123,8 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            Deerclops,
+            SkeletronHidden,
             AlienAmbush,
             EoC,
             EoW1,
@@ -196,7 +198,12 @@ namespace tsorcRevamp
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
 
-            
+            //Deerclops
+            ScriptedEvent DeerclopsEvent = new ScriptedEvent(new Vector2(4043, 143), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.Deerclops"), Color.Blue, false, null, SetNightCustomAction);
+
+            //SkeletronHidden
+            ScriptedEvent SkeletronHiddenEvent = new ScriptedEvent(new Vector2(5563, 1676), 16, NPCID.Skeletron, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.SkeletronHidden"), Color.Blue, false, null, SetNightCustomAction);
+
             //EoC
             ScriptedEvent EoCEvent = new ScriptedEvent(new Vector2(3900, 1138), 20, NPCID.EyeofCthulhu, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.EoC"), Color.Blue, false, null, SetNightCustomAction);
 
@@ -444,7 +451,8 @@ namespace tsorcRevamp
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
-                
+                {ScriptedEventType.Deerclops, DeerclopsEvent},
+                {ScriptedEventType.SkeletronHidden, SkeletronHiddenEvent},
                 {ScriptedEventType.AlienAmbush, AlienAmbush},
                 {ScriptedEventType.EoC, EoCEvent},
                 {ScriptedEventType.EoW1, EoW1Event},
