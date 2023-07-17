@@ -331,7 +331,7 @@ namespace tsorcRevamp
             ScriptedEvent DarkCloudEvent = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.DarkCloud"), Color.LightCyan, false, SuperHardModeCustomCondition);
 
             //ARTORIAS
-            ScriptedEvent ArtoriasEvent = new ScriptedEvent(new Vector2(5344, 1692), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.Artorias"), Color.Gold, false, SuperHardModeCustomCondition);
+            ScriptedEvent ArtoriasEvent = new ScriptedEvent(new Vector2(5344, 1692), 15, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.Artorias"), Color.Gold, false, SuperHardModeCustomCondition);
             //ArtoriasEvent.SetCustomDrops(new List<int>() { ItemID.RodofDiscord, ModContent.ItemType<Items.DestructionElement>() }, new List<int>() { 1, 4 });
 
             //BLACK KNIGHT IN FORGOTTEN CITY
