@@ -145,23 +145,17 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
                     Main.dust[dust].noGravity = true;
-                    //npc.direction *= -1;
-
-                    //npc.ai[0] = 0f;
+                    
                     NPC.velocity.Y = -4f;
-                    //npc.TargetClosest(true);
                     NPC.velocity.X = NPC.velocity.X * 4f; // burst forward
 
                     if ((float)NPC.direction * NPC.velocity.X > 4)
                         NPC.velocity.X = (float)NPC.direction * 4;  
-                                                                   
-
-
+                       
                     //CHANCE TO JUMP AFTER DASH
                     if (Main.rand.NextBool(14) && NPC.localAI[1] <= 166f)
                     {
-
-                        //npc.ai[0] = 0f;
+ 
                         Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f);
                         if (Main.rand.NextBool(3))
                         {
@@ -169,27 +163,21 @@ namespace tsorcRevamp.NPCs.Enemies
                             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
                         }
                         NPC.velocity.Y = -7f;
-
-
                         NPC.localAI[1] = 170f;
-
                     }
-
                     NPC.netUpdate = true;
                 }
 
-
                 //OFFENSIVE JUMP
-                if (NPC.localAI[1] == 165 && NPC.velocity.Y <= 0f && Main.rand.NextBool(5)) // && npc.localAI[1] <= 161 && npc.Distance(player.Center) > 80; 5 was 10
+                if (NPC.localAI[1] == 165 && NPC.velocity.Y <= 0f && Main.rand.NextBool(5)) 
                 {
-                    Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                    Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f); 
                     if (Main.rand.NextBool(3))
                     {
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.TeleportationPotion, NPC.velocity.X, NPC.velocity.Y);
                     }
                     NPC.velocity.Y = -10f; //9             
-                    NPC.TargetClosest(true);
-                    //npc.localAI[1] = 165;
+                    NPC.TargetClosest(true);    
                     NPC.netUpdate = true;
                 }
 
@@ -197,14 +185,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.localAI[1] == 180f) // 
                 {
                     NPC.TargetClosest(true);
-                    //if (Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
-                    //{
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 11, fallback: true); //0.4f, true, true																								
-                    //speed += Main.player[npc.target].velocity;
+                   
+                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 11, fallback: true); 																					  
                     speed += Main.rand.NextVector2Circular(-4, -2);
 
-                    //if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
-                    //{
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.RedKnightsSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center); //Play swing-throw sound
 
@@ -216,18 +200,12 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
 
                         NPC.localAI[1] = 1f;
-
                     }
-
-
-                    //}
-
-
                 }
 
 
                 //POISON ATTACK DUST TELEGRAPH
-                if (NPC.localAI[1] >= 250) //was 180; && npc.Distance(player.Center) > 160
+                if (NPC.localAI[1] >= 250) 
                 {
 
                     Lighting.AddLight(NPC.Center, Color.Yellow.ToVector3() * 1f);
@@ -238,13 +216,11 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
 
                     //POISON ATTACK
-                    if (NPC.localAI[1] >= 320)//&& npc.Distance(player.Center) > 160
+                    if (NPC.localAI[1] >= 320)
                     {
                         NPC.TargetClosest(true);
-                        //if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 500)
                         if (Collision.CanHitLine(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
                         {
-                            //Vector2 speed2 = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 11);
                             Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 11, 1.1f, highAngle: true, fallback: true); //0.4f, true, true																								
                             speed2 += Main.player[NPC.target].velocity / 4;
 
@@ -252,26 +228,6 @@ namespace tsorcRevamp.NPCs.Enemies
                             {
                                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
 
-
-                                //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 42, 0.6f, 0f); //flaming wood, high pitched air going out
-                                //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 43, 0.6f, 0f); //staff magic cast, low sound
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45 with { Volume = 0.6f, Pitch = 0.7f }, NPC.Center); //inferno fork, almost same as fire (works)
-                                                                                                                                       //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 48, 0.6f, 0.7f); // mine snow, tick sound
-                                                                                                                                       //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 60, 0.6f, 0.0f); //terra beam
-                                                                                                                                       //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
-
-                                //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 81, 0.6f, 0f); //spawn slime mount, more like thunder flame burn
-                                //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 88, 0.6f, 0f); //meteor staff more bass and fire
-                                //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 100, 0.6f, 0f); // cursed flame wall, lasts a bit longer than flame
-                                //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 101, 0.6f, 0f); // crystal vilethorn - breaking crystal
-                                //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 103, 0.6f, 0f); //shadowflame hex (little beasty)
-                                //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 104, 0.6f, 0f); //shadowflame 
-                                //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 106, 0.6f, 0f); //flask throw tink sound
-
-                                //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 109, 0.6f, 0.0f); //crystal serpent fire
-                                //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 110, 0.6f, 0.0f); //crystal serpent split, paper, thud, faint high squeel
-
-                                //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 125, 0.3f, .2f); //phantasmal bolt fire 2
                                 NPC.localAI[1] = 1f;
                             }
                         }
@@ -346,19 +302,32 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
 
-
-
-
-
-
-
-
             }
 
 
 
 
         }
+
+        //sound notes
+        //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 42, 0.6f, 0f); //flaming wood, high pitched air going out
+        //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 43, 0.6f, 0f); //staff magic cast, low sound
+        //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45 with { Volume = 0.6f, Pitch = 0.7f }, NPC.Center); //inferno fork, almost same as fire (works)
+        //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 48, 0.6f, 0.7f); // mine snow, tick sound
+        //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 60, 0.6f, 0.0f); //terra beam
+         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
+
+         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 81, 0.6f, 0f); //spawn slime mount, more like thunder flame burn
+         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 88, 0.6f, 0f); //meteor staff more bass and fire
+         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 100, 0.6f, 0f); // cursed flame wall, lasts a bit longer than flame
+         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 101, 0.6f, 0f); // crystal vilethorn - breaking crystal
+         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 103, 0.6f, 0f); //shadowflame hex (little beasty)
+         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 104, 0.6f, 0f); //shadowflame 
+         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 106, 0.6f, 0f); //flask throw tink sound
+        //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 109, 0.6f, 0.0f); //crystal serpent fire
+       //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 110, 0.6f, 0.0f); //crystal serpent split, paper, thud, faint high squeel
+       //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 125, 0.3f, .2f); //phantasmal bolt fire 2
+
 
         #region Gore
         public override void OnKill()
