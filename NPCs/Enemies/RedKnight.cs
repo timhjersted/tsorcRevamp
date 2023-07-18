@@ -112,11 +112,13 @@ namespace tsorcRevamp.NPCs.Enemies
             if (NPC.ai[3] < 0)
             {
                 NPC.localAI[1] = 0;
+                NPC.localAI[2] = 0;
             }
 
             if (Main.netMode != 1 && !Main.player[NPC.target].dead)
             {
                 NPC.localAI[1]++;
+                NPC.localAI[2]++;
 
                 //play creature sounds
                 if (Main.rand.NextBool(1500))
@@ -130,8 +132,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 //CHANCE TO JUMP FORWARDS
                 if (NPC.Distance(player.Center) > 60 && NPC.velocity.Y == 0f && Main.rand.NextBool(500) && NPC.localAI[1] <= 166f)
                 {
-                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
-                    Main.dust[dust].noGravity = true;
+                    //int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
+                    //Main.dust[dust].noGravity = true;
                     NPC.velocity.Y = -6f; //9             
                     NPC.TargetClosest(true);
                     NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * 2f;  //was 2  accellerate fwd; can happen midair
@@ -143,24 +145,24 @@ namespace tsorcRevamp.NPCs.Enemies
                 //CHANCE TO DASH STEP FORWARDS 
                 if (NPC.Distance(player.Center) > 100 && NPC.velocity.Y == 0f && Main.rand.NextBool(300) && NPC.localAI[1] <= 166f)
                 {
-                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
-                    Main.dust[dust].noGravity = true;
-                    
+                    //int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
+                    //Main.dust[dust].noGravity = true;
+
                     NPC.velocity.Y = -4f;
                     NPC.velocity.X = NPC.velocity.X * 4f; // burst forward
 
                     if ((float)NPC.direction * NPC.velocity.X > 4)
-                        NPC.velocity.X = (float)NPC.direction * 4;  
-                       
+                        NPC.velocity.X = (float)NPC.direction * 4;
+
                     //CHANCE TO JUMP AFTER DASH
                     if (Main.rand.NextBool(14) && NPC.localAI[1] <= 166f)
                     {
- 
+
                         Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f);
                         if (Main.rand.NextBool(3))
                         {
-                            Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
-                            Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
+                            //Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
+                            //Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
                         }
                         NPC.velocity.Y = -7f;
                         NPC.localAI[1] = 170f;
@@ -169,24 +171,38 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 //OFFENSIVE JUMP
-                if (NPC.localAI[1] == 165 && NPC.velocity.Y <= 0f && Main.rand.NextBool(5)) 
+                if (NPC.localAI[1] == 165 && NPC.velocity.Y <= 0f && Main.rand.NextBool(5))
                 {
-                    Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f); 
-                    if (Main.rand.NextBool(3))
-                    {
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.TeleportationPotion, NPC.velocity.X, NPC.velocity.Y);
-                    }
-                    NPC.velocity.Y = -10f; //9             
-                    NPC.TargetClosest(true);    
+                    Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f);
+                    
+                    NPC.velocity.Y = -10f;
+                    NPC.TargetClosest(true);
                     NPC.netUpdate = true;
                 }
 
+                //SPEAR TELEGRAPH
+                if (NPC.localAI[1] == 155f)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        float x = NPC.Center.X;
+                        float y = NPC.Center.Y;
+                        Vector2 position = new Vector2(x, y);
+
+                        int projectileType = ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>();
+                        Color projectileColor = Color.PaleVioletRed;
+
+                        Projectile spearTelegraph = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, Vector2.Zero, projectileType, 0, 0, Main.myPlayer, projectileColor.R, projectileColor.G, projectileColor.B);
+                    }
+
+                }
+
                 //SPEAR ATTACK
-                if (NPC.localAI[1] == 180f) // 
+                if (NPC.localAI[1] == 180f)
                 {
                     NPC.TargetClosest(true);
-                   
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 11, fallback: true); 																					  
+
+                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 11, fallback: true);
                     speed += Main.rand.NextVector2Circular(-4, -2);
 
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.RedKnightsSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
@@ -204,19 +220,29 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
 
-                //POISON ATTACK DUST TELEGRAPH
-                if (NPC.localAI[1] >= 250) 
+                //POISON ATTACK TELEGRAPH
+                if (NPC.localAI[1] == 300)
                 {
 
-                    Lighting.AddLight(NPC.Center, Color.Yellow.ToVector3() * 1f);
-                    if (Main.rand.NextBool(2) && NPC.Distance(player.Center) > 1)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Teleporter, NPC.velocity.X, NPC.velocity.Y);
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Teleporter, NPC.velocity.X, NPC.velocity.Y);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            float x = NPC.Center.X;
+                            float y = NPC.Center.Y;
+                            Vector2 position = new Vector2(x, y);
+
+                            int projectileType = ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>();
+                            Color projectileColor = Color.GreenYellow;
+
+                            Projectile poisonTelegraph = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, Vector2.Zero, projectileType, 0, 0, Main.myPlayer, projectileColor.R, projectileColor.G, projectileColor.B);
+                        }
+
                     }
+                }
 
                     //POISON ATTACK
-                    if (NPC.localAI[1] >= 320)
+                    if (NPC.localAI[1] >= 325)
                     {
                         NPC.TargetClosest(true);
                         if (Collision.CanHitLine(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
@@ -233,55 +259,64 @@ namespace tsorcRevamp.NPCs.Enemies
                         }
 
                     }
-                }
-
+                
 
                 //FIRE ATTACK FROM THE AIR
-                if (NPC.localAI[1] <= 100 && NPC.Distance(player.Center) > 60)
+                if ((NPC.localAI[2] == 75 || NPC.localAI[2] == 525 || NPC.localAI[2] == 575) && NPC.Distance(player.Center) > 60)
                 {
-
-                    if (Main.rand.NextBool(420)) //30 was cool for great red knight
-                    {
-                        //FIRE
-                        for (int pcy = 0; pcy < 2; pcy++)
-                        {
-
-
-                            //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 10 + Main.rand.Next(10), (float)player.position.Y - 400f, (float)(-10 + Main.rand.Next(10)) / 10, 4.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 2f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   
-
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
-
-                            NPC.netUpdate = true;
-                        }
-
+                    //FIRE
+                    for (int pcy = 0; pcy < 2; pcy++)
+                    {                   
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X, (float)player.position.Y - 300f, (float)(-10 + Main.rand.Next(10)) / 10, 5.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 1f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
+                        NPC.netUpdate = true;
                     }
+
+                }
+                
+                //SLIGHTLY DELAYED FIRE ATTACK FROM THE AIR
+                if ((NPC.localAI[2] == 100 || NPC.localAI[2] == 550 || NPC.localAI[2] == 600) && NPC.Distance(player.Center) > 60)
+                {
+                    //FIRE
+                    for (int pcy = 0; pcy < 4; pcy++)
+                    {
+                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
+                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 400 + Main.rand.Next(400), (float)player.position.Y - 300f, (float)(Main.rand.Next(10)) / 10, 1.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 2f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
+                        NPC.netUpdate = true;
+                    }
+                }
+            
+                if (NPC.localAI[2] >= 1000)
+                {
+                    NPC.localAI[2] = 0;
                 }
 
                 /*ULTIMATE DEATH ATTACK - BLANKET OF FIRE ABOVE PLAYER THAT CURSES
-            Player player = Main.player[npc.target];
-            if (npc.Distance(player.Center) > 20 && Main.rand.NextBool(3))
-            {
-                Player nT = Main.player[npc.target];
-                if (Main.rand.NextBool(8))
+                Player player = Main.player[npc.target];
+                if (npc.Distance(player.Center) > 20 && Main.rand.NextBool(3))
+                    {
+                        Player nT = Main.player[npc.target];
+                        if (Main.rand.NextBool(8))
+                        {
+                            UsefulFunctions.BroadcastText("Death!", 175, 75, 255);
+                        }
+
+                        for (int pcy = 0; pcy < 3; pcy++)
+                        {
+                            //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.CursedDragonsBreath>(), redMagicDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
+                            Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 5);
+                            npc.netUpdate = true;
+                        }
+                    }
+
+
+
+                //INSANE WHIP ATTACK
+                if (npc.localAI[1] >= 180f) //180 (without 2nd condition) and 185 created an insane attack
                 {
-                    UsefulFunctions.BroadcastText("Death!", 175, 75, 255);
-                }
-
-                for (int pcy = 0; pcy < 3; pcy++)
-                {
-                    //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.CursedDragonsBreath>(), redMagicDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
-                    Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 5);
-                    npc.netUpdate = true;
-                }
-            }
-
-
-
-            //INSANE WHIP ATTACK
-            if (npc.localAI[1] >= 180f) //180 (without 2nd condition) and 185 created an insane attack
-            {
                 npc.TargetClosest(true);
                 if (Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
                 {
@@ -307,30 +342,30 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
 
-        }
+    }
 
-        //sound notes
-        //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 42, 0.6f, 0f); //flaming wood, high pitched air going out
-        //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 43, 0.6f, 0f); //staff magic cast, low sound
-        //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45 with { Volume = 0.6f, Pitch = 0.7f }, NPC.Center); //inferno fork, almost same as fire (works)
-        //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 48, 0.6f, 0.7f); // mine snow, tick sound
-        //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 60, 0.6f, 0.0f); //terra beam
-         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
+    //sound notes
+    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 42, 0.6f, 0f); //flaming wood, high pitched air going out
+    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 43, 0.6f, 0f); //staff magic cast, low sound
+    //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45 with { Volume = 0.6f, Pitch = 0.7f }, NPC.Center); //inferno fork, almost same as fire (works)
+    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 48, 0.6f, 0.7f); // mine snow, tick sound
+    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 60, 0.6f, 0.0f); //terra beam
+    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
 
-         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 81, 0.6f, 0f); //spawn slime mount, more like thunder flame burn
-         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 88, 0.6f, 0f); //meteor staff more bass and fire
-         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 100, 0.6f, 0f); // cursed flame wall, lasts a bit longer than flame
-         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 101, 0.6f, 0f); // crystal vilethorn - breaking crystal
-         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 103, 0.6f, 0f); //shadowflame hex (little beasty)
-         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 104, 0.6f, 0f); //shadowflame 
-         //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 106, 0.6f, 0f); //flask throw tink sound
-        //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 109, 0.6f, 0.0f); //crystal serpent fire
-       //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 110, 0.6f, 0.0f); //crystal serpent split, paper, thud, faint high squeel
-       //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 125, 0.3f, .2f); //phantasmal bolt fire 2
+    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 81, 0.6f, 0f); //spawn slime mount, more like thunder flame burn
+    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 88, 0.6f, 0f); //meteor staff more bass and fire
+    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 100, 0.6f, 0f); // cursed flame wall, lasts a bit longer than flame
+    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 101, 0.6f, 0f); // crystal vilethorn - breaking crystal
+    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 103, 0.6f, 0f); //shadowflame hex (little beasty)
+    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 104, 0.6f, 0f); //shadowflame 
+    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 106, 0.6f, 0f); //flask throw tink sound
+    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 109, 0.6f, 0.0f); //crystal serpent fire
+    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 110, 0.6f, 0.0f); //crystal serpent split, paper, thud, faint high squeel
+    //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 125, 0.3f, .2f); //phantasmal bolt fire 2
 
 
-        #region Gore
-        public override void OnKill()
+    #region Gore
+    public override void OnKill()
         {
             if (!Main.dedServ)
             {
@@ -383,8 +418,8 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (NPC.localAI[1] >= 120 && NPC.localAI[1] <= 180f)
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
-                Main.dust[dust].noGravity = true;
+                //int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
+                //Main.dust[dust].noGravity = true;
 
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 if (NPC.spriteDirection == -1)
