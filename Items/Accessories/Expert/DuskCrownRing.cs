@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Expert
@@ -10,6 +11,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
         public static int MagicCrit = 50;
         public static int LifeRegen = 7;
         public static float BadMaxLife = 50f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MagicDmg, MagicCrit, LifeRegen, BadMaxLife);
         public override void SetStaticDefaults()
         {
         }
