@@ -41,7 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 15110;
-            NPC.knockBackResist = 0.06f;
+            NPC.knockBackResist = 0.05f;
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.RedKnightBanner>();
@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 //npc.defense = 14;
                 //npc.value = 3500;
                 //npc.damage = 40;
-                redKnightsSpearDamage = 14;
+                redKnightsSpearDamage = 15;
                 redMagicDamage = 12;
                 NPC.boss = true;
             }
@@ -105,7 +105,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 despawnHandler.TargetAndDespawn(NPC.whoAmI);
             }
-            tsorcRevampAIs.FighterAI(NPC, 2, 0.05f, 0.2f, true, 10, false, null, 1000, 0.5f, 4, true);
+            tsorcRevampAIs.FighterAI(NPC, 2, 0.05f, 0.2f, canTeleport: true, 10, false, null, 1000, 0.5f, 4, lavaJumping: true, canDodgeroll: true, canPounce: true);
 
             //Reset spear and shot timer after teleporting
             //This prevents it from insta-hitting players
@@ -153,15 +153,13 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.velocity.X = NPC.velocity.X * 4f; // burst forward
 
                     if ((float)NPC.direction * NPC.velocity.X > 4)
-                        NPC.velocity.X = (float)NPC.direction * 4;  //  but cap at top speed
-                                                                    //npc.localAI[1] = 160f;
+                        NPC.velocity.X = (float)NPC.direction * 4;  
+                                                                   
 
 
                     //CHANCE TO JUMP AFTER DASH
                     if (Main.rand.NextBool(14) && NPC.localAI[1] <= 166f)
                     {
-
-
 
                         //npc.ai[0] = 0f;
                         Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f);

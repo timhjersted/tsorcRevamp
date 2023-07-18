@@ -266,7 +266,7 @@ namespace tsorcRevamp
 
             //RED KNIGHT IN TWIN PEAKS MOUNTAIN
             ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.RedKnight2"), Color.Purple, false, default, RedKnightMountainCustomAction);
-            RedKnightTwinMountain.SetCustomStats(1600, 10, 65, 2055);
+            RedKnightTwinMountain.SetCustomStats(2200, 10, 65, 2355);
 
             //JUNGLE WYVERN
             ScriptedEvent JungleWyvernEvent = new ScriptedEvent(new Vector2(4331, 1713), 16, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), DustID.CursedTorch, true, true, true, LangUtils.GetTextValue("Events.JungleWyvern"), Color.Green, false);
