@@ -5,8 +5,8 @@ Mods: {
 			AggroBoost: 敌人更可能瞄准你
 			SetBonus: "套装奖励: "
 			NoKnockback: 对击退免疫
-			ObsidianShield: "{$CommonItemTooltip.NoKnockback} 对火块免疫"
-			ForBotCOnly: " 仅限[c/6d8827:被诅咒者]"
+			ObsidianShield: "{$CommonItemTooltip.NoKnockback}、对火块免疫"
+			ForBotCOnly: 仅限[c/6d8827:被诅咒者]：
 			UniqueBarrier: 不与其他屏障或盾牌法术叠加
 			NonConsumable: 物品不被消耗
 			UnusableDuringBoss: 有BOSS存活时不能使用!
@@ -121,8 +121,8 @@ Mods: {
 				TagDuration: 增加 {0}% 召唤标记持续时间
 				BotCSummonTagDoubleBuffCount: 完全充能的鞭子对敌人造成2倍的减益效果
 				ChargedWhip: 这个鞭子的属性随着你充能的时间长短而变化
-				ChargedWhipTagDmg: "{0}-{1} 召唤（鞭子标记）伤害"
-				ChargedWhipTagCrit: "{0}-{1}% 召唤（鞭子标记）暴击率"
+				ChargedWhipTagDmg: "{0}-{1} 召唤标记伤害"
+				ChargedWhipTagCrit: "{0}-{1}% 召唤标记暴击率"
 				ChargedWhipAtkSpeed: 击中敌人时获得 {0}-{1}% 召唤攻击速度
 				WhipCC: 与其他鞭子相比，对多目标的表现更好
 				TagArmorPen: "{0} 召唤（鞭子标记）护甲穿透"
@@ -203,8 +203,8 @@ Mods: {
 		}
 
 		Events: {
-			// Deerclops: The Ancenstral Spirit has been disturbed!
-			// SkeletronHidden: Skeletron, Lord of Graves, has awoken!
+			Deerclops: 你惊动了远古之灵！
+			SkeletronHidden: 坟墓之主骷髅王已苏醒！
 			EoC: 克苏鲁之眼盯上你了！
 			EoW: 世界吞噬者已经准备好饱餐一顿！
 			EoL: 光之女皇已苏醒！
@@ -270,7 +270,7 @@ Mods: {
 
 				使用时 [c/ff9955:禁用] 耐力再生
 				'''
-			PerSecond: / 秒
+			PerSecond: /秒
 			DarkSouls: 黑暗之魂
 			Soapstone: 如果你感到迷茫，就探索在地图上未显示出来的地方，几乎每个方向都有秘密和路径。
 			BonfireLit: 篝火已点燃，重生点设置！
@@ -286,18 +286,18 @@ Mods: {
 			GetMusic: 点击这里以下载红云物语音乐包！无法下载的在QQ群645748667文件中下载。
 			MusicNewUpdate: 音乐包更新可用，点击这里以更新 (会重启游戏！)
 			MusicFail: 音乐包下载失败，请加QQ群645748667文件中下载。
-			AdvMapDownloadProgress: "冒险地图正在下载中: "
+			AdvMapDownloadProgress: "冒险地图正在下载中(如果无法下载请在原版创意工坊订阅story of red cloud地图后导入Tmod): "
 			AdvMapUpdated: 冒险地图下载完成！
 			Bless: 在这里放置一个物品以进行祝福
 			SelectWorld: 选择世界大小:
 			TSORCMap: 新的红云物语冒险地图
 			VanillaMap: 新的原版随机生成地图
 			Back: 返回
-			// SpawnSetHoverText: Set Spawn
+			SpawnSetHoverText: 设置重生点
 			SpawnSet: 重生点已设置！
 			SpawnRemoved: 重生点已移除！
-			// AccessPiggyBank: Access Piggy Bank
-			// AccessSafe: Access Safe
+			AccessPiggyBank: 打开猪猪存钱罐
+			AccessSafe: 打开保险箱
 		}
 
 		World: {
@@ -413,7 +413,6 @@ Mods: {
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.MaxStamina@1}
 					{$CommonItemTooltip.StaminaRegen@2}
 					{$CommonItemTooltip.PercentIncreasedCritChance}
-					整套用脚蹼、潜水头盔和三个秘银锭升级
 					'''
 				RedClothRobe:
 					'''
@@ -1147,7 +1146,6 @@ Mods: {
 					'''
 					{$CommonItemTooltip.DRStat}
 					{$CommonItemTooltip.BadMoveSpeedMult@1}
-					可以用 {2} 黑暗之魂升级
 					'''
 			}
 
@@ -1176,7 +1174,7 @@ Mods: {
 				DisplayName: 神秘手套
 				Tooltip:
 					'''
-					{$CommonItemTooltip.LifeThreshold}，施放维持短时间的障壁
+					{$CommonItemTooltip.LifeThreshold}施放维持短时间的障壁
 					{$CommonItemTooltip.IncreasesDefenseBy@1}
 					{$CommonItemTooltip.BadDmgMult@2}
 					{$CommonItemTooltip.Slowness@3}
@@ -1232,7 +1230,7 @@ Mods: {
 
 			SilverRing: {
 				DisplayName: 银戒指
-				Tooltip: 可升级
+				Tooltip: ""
 			}
 
 			SpikedIronShield: {
@@ -1243,7 +1241,6 @@ Mods: {
 					{$CommonItemTooltip.DRStat@1}
 					{$CommonItemTooltip.Thorns}
 					{$CommonItemTooltip.BadMoveSpeedMult@2}
-					可以用黑曜石盾牌与 {3} 黑暗之魂升级
 					'''
 			}
 
@@ -1565,10 +1562,10 @@ Mods: {
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					提供荆棘效果
 					击中敌人时小概率产生法力之星
-					伤害与最大法力值有关
+					造成的伤害与最大法力值有关
 					这些法力之星可以收集用于回复魔力
-					需要时自动使用法力补充药水
-					增加法力之星的拾取范围
+					需要时自动使用魔力补充药水
+					增加魔力星的拾取范围
 					受伤时恢复法力值
 					'''
 			}
@@ -1627,7 +1624,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Melee.Only}
-					{$CommonItemTooltip.ObsidianShield} 同时 {$CommonItemTooltip.OnFire}
+					{$CommonItemTooltip.ObsidianShield} 同时免疫 {$CommonItemTooltip.OnFire}
 					{$CommonItemTooltip.DRStat}
 					{$CommonItemTooltip.NonMeleeBadDmg@1}
 					{$CommonItemTooltip.BadMoveSpeedMult@2}
@@ -1639,7 +1636,7 @@ Mods: {
 				Tooltip:
 					'''
 					一面为战士打造的传奇盾牌
-					{$CommonItemTooltip.ObsidianShield} 同时 {$CommonItemTooltip.OnFire}， {$CommonItemTooltip.CursedInferno} and {$CommonItemTooltip.Ichor}
+					{$CommonItemTooltip.ObsidianShield}，同时免疫{$CommonItemTooltip.OnFire}、{$CommonItemTooltip.CursedInferno}、{$CommonItemTooltip.Ichor}
 					{$CommonItemTooltip.DRStat}
 					{$CommonItemTooltip.NonMeleeBadDmg@1}
 					{$CommonItemTooltip.BadMoveSpeedMult@2}
@@ -1791,7 +1788,6 @@ Mods: {
 					稍微的{$CommonItemTooltip.DSPickUpRange}
 					{$CommonItemTooltip.ConsumableSoulDrops}
 					微弱的光浮动于其之上
-					可以用 {1} 黑暗之魂升级
 					'''
 			}
 
@@ -1972,7 +1968,6 @@ Mods: {
 					{$CommonItemTooltip.Magic.ManaRegen@2}
 					{$CommonItemTooltip.SetBonus}可延长呼吸时间，增加水中移动力
 					{$CommonItemTooltip.PercentIncreasedCritChance@3}
-					最终可用 {5} 个视域之魂和 {4} 个{$Items.DarkSoul.DisplayName}升级
 					'''
 			}
 
@@ -2705,7 +2700,6 @@ Mods: {
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.ObsidianShield} 和岩浆
 					延长水下呼吸时间，获得游泳和液体上行走能力
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
-					可以用 {4} {$Items.DarkSoul.DisplayName}升级
 					'''
 			}
 
@@ -2865,8 +2859,8 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.FlatDmg}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasesMaxMinionsBy}
-					可以在NPC处购买
-					一件雪怪大衣也会触发套装效果
+					可以在萨满长老处购买
+					一件小雪怪皮毛外套也会触发该套装效果
 					'''
 			}
 
@@ -3857,7 +3851,7 @@ Mods: {
 				NewLocation: 新的折跃点已设置！
 				Invalid: 村庄魔镜的传送点只能设置在埃什峰村内部
 				Oops: 位置损坏！请报告错误！
-				BotCDisabled: "[c/ca1e00:The Curse prevents you from using this!]"
+				BotCDisabled: "[c/ca1e00:诅咒之下你无法使用此物品！]"
 				OutOfBounds: 保存记录的传送点在世界范围之外！
 			}
 
@@ -4654,7 +4648,7 @@ Mods: {
 					{$CommonItemTooltip.StaminaRegen@1}
 					过度的力量吞噬施法者的生命力
 					持续 {2} 秒且无法取消
-					{$CommonItemTooltip.ForBotCOnly}，物品的效果加倍
+					{$CommonItemTooltip.ForBotCOnly}物品的效果加倍
 					'''
 			}
 
@@ -4822,7 +4816,6 @@ Mods: {
 					丢失的初学者之书，《奔雷诀》第一卷《层岚碾城》
 					碰撞时会发出小闪电
 					有一定几率使敌人触电
-					可升级
 					'''
 			}
 
@@ -4833,7 +4826,6 @@ Mods: {
 					遗失的工匠典籍，《奔雷诀》第二卷《云秤崩兮》
 					碰撞时会发出闪电
 					使敌人触电
-					可以用25000黑暗之魂和15光明之魂升级
 					'''
 			}
 
@@ -4844,7 +4836,6 @@ Mods: {
 					失落的传说巨著，《奔雷诀》第三卷《阴阳相汲》
 					使敌人带电并麻痹
 					造成巨大的伤害，只有法师才能充分发挥这本书的潜力 
-					可以用85000黑暗之魂升级
 					'''
 			}
 
@@ -5087,7 +5078,6 @@ Mods: {
 					以产生高爆发伤害
 					碰撞时掉落一个小冰柱
 					减慢敌人
-					可以升级
 					'''
 			}
 
@@ -5097,7 +5087,6 @@ Mods: {
 					'''
 					一本工匠遗失的书
 					有着更高的发射频率，减速并偶尔冻结敌人
-					可以升级
 					'''
 			}
 
@@ -5109,7 +5098,6 @@ Mods: {
 					可以造成超乎想象的伤害
 					减速并偶尔冻结敌人
 					只有法师才能发挥这本书的全部潜力 
-					可以升级
 					'''
 			}
 
@@ -5200,7 +5188,6 @@ Mods: {
 					'''
 					一把为魔法使用者制作的剑
 					使用者的法力值每超过200有20点，就会+1伤害
-					可升级
 					'''
 			}
 
@@ -5253,11 +5240,7 @@ Mods: {
 
 			SoulArrowStaff: {
 				DisplayName: 魂之箭
-				Tooltip:
-					'''
-					射出轻微追踪的魂之箭
-					可升级
-					'''
+				Tooltip: 射出轻微追踪的魂之箭
 			}
 
 			Starfall: {
@@ -5315,12 +5298,12 @@ Mods: {
 			}
 
 			WandOfFrost: {
-				DisplayName: 霜之魔杖
+				DisplayName: 霜冻魔杖
 				Tooltip: 一把强大的魔杖，专为与魔法使用者战斗而生，可以穿墙
 			}
 
 			WandOfFrost2: {
-				DisplayName: 寒霜魔杖
+				DisplayName: 霜灾魔杖
 				Tooltip:
 					'''
 					重铸以展现这个古老冰系法术的全部力量
@@ -5353,11 +5336,7 @@ Mods: {
 
 			WoodenWand: {
 				DisplayName: 木棒
-				Tooltip:
-					'''
-					一根没有附魔的木棒
-					可以通过多种不同的方式升级
-					'''
+				Tooltip: 一根没有附魔的木棒
 			}
 
 			AncientFireAxe: {
@@ -5554,8 +5533,7 @@ Mods: {
 				Tooltip:
 					'''
 					一把被残夜魔力锻造过的锋利的剑
-					右击冲刺，消耗体力，让你暂时免疫
-					在冲刺时击中敌人，从他们撕裂的灵魂中创造出恶灵
+					右击冲刺，消耗体力让你暂时免疫
 					'''
 			}
 
@@ -5637,12 +5615,12 @@ Mods: {
 			}
 
 			EphemeralThrowingAxe: {
-				DisplayName: 短命投斧
+				DisplayName: 夺命投斧
 				Tooltip: 能穿过坚固的墙壁
 			}
 
 			EphemeralThrowingAxe2: {
-				DisplayName: 附魔短命投斧
+				DisplayName: 附魔夺命投斧
 				Tooltip:
 					'''
 					一种可以穿墙投掷的附魔近战武器
@@ -5845,11 +5823,7 @@ Mods: {
 
 			GaeBolg: {
 				DisplayName: 盖博尔格
-				Tooltip:
-					'''
-					刺穿现实
-					可以用70000个黑暗之魂升级成它的神话形式
-					'''
+				Tooltip: 刺穿现实
 			}
 
 			HiRyuuSpear: {
@@ -5882,7 +5856,7 @@ Mods: {
 			}
 
 			ThrowingAxe: {
-				DisplayName: 飞斧
+				DisplayName: 投斧
 				Tooltip: ""
 			}
 
@@ -5916,7 +5890,7 @@ Mods: {
 			}
 
 			Blast: {
-				DisplayName: Blast
+				DisplayName: 起爆器
 				Tooltip: ""
 			}
 
@@ -6037,8 +6011,7 @@ Mods: {
 				Tooltip:
 					'''
 					减慢敌人，有几率冻结敌人
-					伤害很高但使用时无法翻滚躲避
-					使用凝胶作为弹药
+					伤害很高，使用时缓慢消耗凝胶
 					'''
 			}
 
@@ -6444,7 +6417,7 @@ Mods: {
 					{$CommonItemTooltip.Summon.TagCritMult}
 					{$CommonItemTooltip.Whips}
 					'''
-				BotCTooltip: "{$CommonItemTooltip.BotCSummonTagDoubleBuffCount}"
+				BotCTooltip: "{$CommonItemTooltip.Summon.BotCSummonTagDoubleBuffCount}"
 			}
 
 			TerraFall: {
@@ -6798,14 +6771,14 @@ Mods: {
 				Tooltip:
 					'''
 					投出一个 [c/87cefa:魔法珠] ，它会在一定距离后返回你身边
-					当[c/87cefa:珠子] 投出时发射追踪火焰
-					当[c/87cefa:珠子] 命中和击杀敌人时，获得 [c/87cefa:精华窃取] 堆叠
+					当[c/87cefa:珠子]投出时攻击会生成追踪火焰
+					当[c/87cefa:珠子]命中和击杀敌人时，获得 [c/87cefa:精华窃取] 堆叠
 					当获得九层堆叠时，下一次投出的[c/87cefa:魔法珠]将会消耗所有层数，[c/87cefa:治疗玩家并对敌人造成大量伤害]
 					[c/87cefa:“「不羁放纵，五指山下」”]
 					'''
 				Details:
 					'''
-					[c/87cefa:魔法珠] 返回玩家时获得 {0}% 的伤害加成，加成最高为 {1}% 
+					[c/87cefa:魔法珠]返回玩家时获得最少 {0}% 的伤害加成，加成最高为 {1}% 
 					追踪火焰命中敌人时回复消耗的一半魔力
 					只有 [c/87cefa:魔法珠] 投出和返回时造成的第一次伤害可以获得 [c/87cefa:精华窃取] 堆叠
 					如果暴击则获得两层 [c/87cefa:精华窃取] 堆叠
@@ -6819,8 +6792,8 @@ Mods: {
 				Tooltip:
 					'''
 					投出一个附有火焰的 [c/87cefa:魔法珠] ，它会在一定距离后返回你身边
-					当[c/87cefa:珠子] 投出时发射追踪火焰
-					当[c/87cefa:珠子] 命中和击杀敌人时，获得 [c/87cefa:精华窃取] 堆叠
+					当[c/87cefa:珠子]投出时攻击会生成追踪火焰
+					当[c/87cefa:珠子]命中和击杀敌人时，获得 [c/87cefa:精华窃取] 堆叠
 					当获得九层堆叠时，下一次投出的[c/87cefa:魔法珠]将会消耗所有层数，[c/87cefa:治疗玩家并对敌人造成大量伤害]
 					<右键> 施放一个[c/ff7f50:割裂]敌人的[c/ff7f50:魔法火球] 并增加他们受到的魔法伤害
 					[c/ff7f50:“苦痛之中，亦见光辉”]
@@ -6828,9 +6801,9 @@ Mods: {
 				Details:
 					'''
 					[c/ff7f50:魔法火球] 每次攻击造成 {4}x 伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}）
-					[c/ff7f50:割裂] 的敌人受到的魔法伤害增加 {8}%
+					[c/ff7f50:割裂]的敌人受到的魔法伤害增加 {8}%
 					追踪火焰优先攻击 [c/ff7f50:割裂] 的敌人
-					[c/87cefa:魔法珠] 返回玩家时获得 {0}% 的伤害加成，加成最高为 {1}% 
+					[c/87cefa:魔法珠]返回玩家时获得最少 {0}% 的伤害加成，加成最高为 {1}% 
 					追踪火焰命中敌人时回复消耗的一半魔力
 					只有 [c/87cefa:魔法珠] 投出和返回时造成的第一次伤害可以获得 [c/87cefa:精华窃取] 堆叠
 					如果暴击则获得两层 [c/87cefa:精华窃取] 堆叠
@@ -6844,8 +6817,8 @@ Mods: {
 				Tooltip:
 					'''
 					投出一个灵性的 [c/87cefa:魔法珠] ，它会在一定距离后返回你身边
-					当[c/87cefa:珠子] 投出时发射追踪火焰
-					当[c/87cefa:珠子] 命中和击杀敌人时，获得 [c/87cefa:精华窃取] 堆叠
+					当[c/87cefa:珠子]投出时攻击会生成追踪火焰
+					当[c/87cefa:珠子]命中和击杀敌人时，获得 [c/87cefa:精华窃取] 堆叠
 					当获得九层堆叠时，下一次投出的[c/87cefa:魔法珠]将会消耗所有层数，[c/87cefa:治疗玩家并对敌人造成大量伤害]
 					<右键> 施放一个[c/ff7f50:割裂]敌人的[c/ff7f50:爱心] 并增加他们受到的魔法伤害
 					{$Items.OrbOfSpirituality.Keybind1}特殊能力键{$Items.OrbOfSpirituality.Keybind2}
@@ -6858,11 +6831,11 @@ Mods: {
 					'''
 					按 [c/ff00ff:特殊能力键] 获得增益，允许你[c/ff00ff:冲刺三次]
 					增益{$CommonItemTooltip.SecondDuration@9}，{$CommonItemTooltip.Cooldown@10}
-					[c/ff00ff:冲刺] 产生的追踪火焰命中敌人时不恢复魔力，激活[c/ff00ff:特殊能力] 消耗 {11} 魔力
-					[c/ff7f50:爱心] 每次攻击造成 {4}x 伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}
-					[c/ff7f50:割裂] 的敌人受到的魔法伤害增加 {8}%
+					[c/ff00ff:冲刺]产生的追踪火焰命中敌人时不恢复魔力，激活[c/ff00ff:特殊能力] 消耗 {11} 魔力
+					[c/ff7f50:爱心]每次攻击造成 {4}x 伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}
+					[c/ff7f50:割裂]的敌人受到的魔法伤害增加 {8}%
 					追踪火焰优先攻击 [c/ff7f50:割裂] 的敌人
-					[c/87cefa:魔法珠] 返回玩家时获得 {0}% 的伤害加成，加成最高为 {1}% 
+					[c/87cefa:魔法珠]返回玩家时获得最少 {0}% 的伤害加成，加成最高为 {1}% 
 					追踪火焰命中敌人时回复消耗的一半魔力
 					只有 [c/87cefa:魔法珠] 投出和返回时造成的第一次伤害可以获得 [c/87cefa:精华窃取] 堆叠
 					如果暴击则获得两层 [c/87cefa:精华窃取] 堆叠
@@ -6975,7 +6948,7 @@ Mods: {
 
 			SoulVessel: {
 				DisplayName: 灵魂容器
-				Tooltip: "{$CommonItemTooltip.PermanentlyIncreasesMaxManaBy}{$CommonItemTooltip.ForBotCOnly}"
+				Tooltip: "{$CommonItemTooltip.ForBotCOnly}{$CommonItemTooltip.PermanentlyIncreasesMaxManaBy}"
 			}
 
 			PortlyPlateHelmet: {
@@ -6997,7 +6970,7 @@ Mods: {
 					允许你在翻滚经过敌人时对它们造成伤害
 					{0} 近战伤害
 					{1}% 暴击率
-					面积击退
+					免疫击退
 					'''
 			}
 
@@ -7034,7 +7007,7 @@ Mods: {
 			}
 
 			TheMachineBag: {
-				DisplayName: 宝藏袋（机械骷髅王）
+				DisplayName: 宝藏袋（旧日机械支配者）
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -7075,11 +7048,11 @@ Mods: {
 
 			DarkMagicRing: {
 				DisplayName: 黑魔法之戒
-				Tooltip: 可以召唤被遗忘的探索者的黑暗遗物
+				Tooltip: 用于召唤巫师王的黑暗古物
 			}
 
 			TheMachineTrophy: {
-				DisplayName: 机械骷髅王纪念章
+				DisplayName: 旧日机械支配者纪念章
 				Tooltip: ""
 			}
 
@@ -7132,18 +7105,18 @@ Mods: {
 			}
 
 			TheMachineRelic: {
-				// DisplayName: The Machine Relic
-				// Tooltip: ""
+				DisplayName: 旧日机械支配者圣物
+				Tooltip: ""
 			}
 
 			TheMachineMask: {
-				DisplayName: 机械骷髅王面具
+				DisplayName: 旧日机械支配者面具
 				Tooltip: ""
 			}
 
 			TheTriadRelic: {
-				// DisplayName: The Triad Relic
-				// Tooltip: ""
+				DisplayName: 三子魔眼圣物
+				Tooltip: ""
 			}
 
 			CataluminanceTrophy: {
@@ -7167,12 +7140,12 @@ Mods: {
 			}
 
 			AncestorSpiritRelic: {
-				// DisplayName: Ancestor Spirit Relic
-				// Tooltip: ""
+				DisplayName: 远古之灵圣物
+				Tooltip: ""
 			}
 
 			AncestorSpiritTrophy: {
-				DisplayName: 先祖之灵纪念章
+				DisplayName: 远古之灵纪念章
 				Tooltip: ""
 			}
 
@@ -7187,53 +7160,53 @@ Mods: {
 			}
 
 			TheRageRelic: {
-				// DisplayName: The Rage Relic
-				// Tooltip: ""
+				DisplayName: 愤怒圣物
+				Tooltip: ""
 			}
 
 			TheRageTrophy: {
-				// DisplayName: The Rage Trophy
-				// Tooltip: ""
+				DisplayName: 愤怒纪念章
+				Tooltip: ""
 			}
 
 			TheRageMask: {
-				// DisplayName: The Rage Mask
-				// Tooltip: ""
+				DisplayName: 愤怒面具
+				Tooltip: ""
 			}
 
 			OilPot: {
-				// DisplayName: Oil Pot
-				/* Tooltip:
+				DisplayName: 油壶
+				Tooltip:
 					'''
-					Breaks into multiple shards and oil droplets upon impact
-					Inflicts Oiled debuff, applying heavy damage over time if enemy is set on fire
-					''' */
+					撞击时破碎成多个碎片和油滴
+					造成涂油减益，增加敌人受到的火焰伤害
+					'''
 			}
 
 			PhoenixSkull: {
-				// DisplayName: Phoenix Skull
-				/* Tooltip:
+				DisplayName: 凤凰涅槃之骨
+				Tooltip:
 					'''
-					Prevents death({$CommonItemTooltip.Cooldown})
-					Revives you with {1}% of your maximum life
-					Grants {2}% lifesteal for {3} seconds after reviving if worn
-					Cooldown only refreshes while wearing this
-					''' */
+					逃脱死亡({$CommonItemTooltip.Cooldown})
+					复活时恢复你最大生命值的 {1}% 
+					复活后获得 {2}% 生命窃取，持续 {3} 秒
+					只有佩戴此物品时才会进入冷却
+					'''
 			}
 
 			TheSorrowRelic: {
-				// DisplayName: The Sorrow Relic
-				// Tooltip: ""
+				DisplayName: 悲伤圣物
+				Tooltip: ""
 			}
 
 			TheSorrowTrophy: {
-				// DisplayName: The Sorrow Trophy
-				// Tooltip: ""
+				DisplayName: 悲伤纪念章
+				Tooltip: ""
 			}
 
 			TheSorrowMask: {
-				// DisplayName: The Sorrow Mask
-				// Tooltip: ""
+				DisplayName: 悲伤面具
+				Tooltip: ""
 			}
 		}
 
@@ -8022,13 +7995,13 @@ Mods: {
 			}
 
 			PhoenixRebirthCooldown: {
-				// DisplayName: Phoenix Rebirth Cooldown
-				// Description: You can't rise from the ashes again until this runs out
+				DisplayName: 凤凰涅槃冷却
+				Description: 冷却结束前你不能再次从灰烬中涅槃重生
 			}
 
 			PhoenixRebirthBuff: {
-				// DisplayName: Phoenix Rebirth Buff
-				// Description: You've been reborn!
+				DisplayName: 凤凰涅槃
+				Description: 你复活了！
 			}
 		}
 
@@ -8223,7 +8196,7 @@ Mods: {
 			MarilithFirestorm.DisplayName: 火山灰爆破
 			MarilithFirewall.DisplayName: 马瑞丽斯火墙
 			MarilithHoldBall.DisplayName: 马瑞丽斯之球
-			MarilithLightning.DisplayName: 只因光
+			MarilithLightning.DisplayName: 激光
 			MediumWeaponSlash.DisplayName: 中型武器斩击
 			MediumWeaponSlashCrimson.DisplayName: 绯红的中型武器突刺
 			MediumWeaponSlashFire.DisplayName: 中型武器斩击火光
@@ -8272,7 +8245,7 @@ Mods: {
 			SpearheadCrimson.DisplayName: 猩红矛头
 			SpearheadFire.DisplayName: 矛头焰
 			SpellUltimateExplosion.DisplayName: 法术究极爆破
-			TetsujinLaser.DisplayName: 哲♂人只因光
+			TetsujinLaser.DisplayName: 哲♂人激光
 			TheOracle.DisplayName: 神谕
 			BlindingGaze.DisplayName: 你瞎啦！
 			CataluminanceTrail.DisplayName: 光辉光环
@@ -8283,7 +8256,7 @@ Mods: {
 			IchorTrail.DisplayName: 腐败轨迹
 			IncineratingGaze.DisplayName: 焚烧凝视
 			MaliciousGaze.DisplayName: 恶意凝视
-			RetDeathLaser.DisplayName: 死亡只因光
+			RetDeathLaser.DisplayName: 死亡激光
 			RetPiercingLaser.DisplayName: 激光
 			SpazCursedFireball.DisplayName: 诅咒火球
 			SpazFireJet.DisplayName: 诅咒喷气
@@ -8293,8 +8266,8 @@ Mods: {
 			EnergyField.DisplayName: 能量场符文
 			EnergyFieldBall.DisplayName: 能量场符文球
 			EnergyStrike.DisplayName: 能量打击卷轴
-			EphemeralThrowingAxeProj.DisplayName: 短命投斧
-			EphemeralThrowingAxeProj2.DisplayName: 附魔短命投斧
+			EphemeralThrowingAxeProj.DisplayName: 夺命投斧
+			EphemeralThrowingAxeProj2.DisplayName: 附魔夺命投斧
 			EphemeralThrowingSpear.DisplayName: 短暂投掷矛
 			Explosion.DisplayName: 爆破
 			ExplosionBall.DisplayName: 爆破球
@@ -8373,7 +8346,7 @@ Mods: {
 			MagicalBall.DisplayName: 魔力球
 			MagicShield.DisplayName: 魔力盾
 			MarksmanShot.DisplayName: 神枪手之射击
-			MasterBuster.DisplayName: 大师只因光
+			MasterBuster.DisplayName: 大师激光
 			MegaDrill.DisplayName: 巨型钻头
 			Meteor.DisplayName: 陨星
 			MeteorShower.DisplayName: 流星雨
@@ -8534,10 +8507,10 @@ Mods: {
 			OrbOfFlameOrbIdle.DisplayName: 火焰之珠
 			OrbOfSpiritualityOrbIdle.DisplayName: 灵性之珠
 			PortlyPlateRollHitbox.DisplayName: 臃肿板甲翻滚
-			PrimeBeam.DisplayName: 机械骷髅王的光束
-			PrimeDeathLaser.DisplayName: 机械骷髅王的死亡激光
-			PrimeRapidBeam.DisplayName: 机械骷髅王的快速射光
-			PrimeSaw.DisplayName: 机械骷髅王的电锯
+			PrimeBeam.DisplayName: 旧日机械支配者的光束
+			PrimeDeathLaser.DisplayName: 旧日机械支配者的死亡激光
+			PrimeRapidBeam.DisplayName: 旧日机械支配者的快速射光
+			PrimeSaw.DisplayName: 旧日机械支配者的电锯
 			IonBomb.DisplayName: 离子炸弹
 			MoltenWeld.DisplayName: 热熔裂缝
 			SyntheticFirestorm.DisplayName: 人造火风暴
@@ -8561,14 +8534,14 @@ Mods: {
 			PhotonicDownpourLaserDrone.DisplayName: 光子守御防护
 			TelegraphFlash.DisplayName: 电报闪光
 			TeleportTelegraph.DisplayName: 电报
-			// BossSelectVisuals.DisplayName: Boss Select Visuals
-			// OilDroplet1.DisplayName: Oil Droplet1
-			// OilDroplet2.DisplayName: Oil Droplet2
-			// OilPotProjectile.DisplayName: Oil Pot Projectile
-			// OilPotShard1.DisplayName: Oil Pot Shard1
-			// OilPotShard2.DisplayName: Oil Pot Shard2
-			// OilPotShard3.DisplayName: Oil Pot Shard3
-			// OilPotShard4.DisplayName: Oil Pot Shard4
+			BossSelectVisuals.DisplayName: Boss重召唤书选择光圈
+			OilDroplet1.DisplayName: 油滴
+			OilDroplet2.DisplayName: 油滴
+			OilPotProjectile.DisplayName: 油壶
+			OilPotShard1.DisplayName: 油壶碎片
+			OilPotShard2.DisplayName: 油壶碎片
+			OilPotShard3.DisplayName: 油壶碎片
+			OilPotShard4.DisplayName: 油壶碎片
 		}
 
 		NPCs: {
@@ -8579,9 +8552,9 @@ Mods: {
 			SkeletronPrime.Warning: WARNING: 激光重定向......
 
 			EmpressOfLight: {
-				Forcefield: 在天空的某个地方，一个力场坍塌了......
-				// DespawnHandler: The Goddess of Light has returned to the sun
-				// DespawnHandlerRare: Taste the rainbow, motherfucker...
+				Forcefield: 在天空的某个地方，一个力场坍塌了...
+				DespawnHandler: 光之女皇隐入太阳
+				DespawnHandlerRare: 尝尝彩虹的力量吧，混蛋...
 			}
 
 			SHM.BossDeath: 通往深渊的大门越来越宽，它的子民越来越强大...
@@ -8591,21 +8564,21 @@ Mods: {
 			StardustPillar: 星尘柱的力量恢复了...
 			VortexPillar: 星旋柱的力量恢复了...
 			NebulaPillar: 星云柱的力量恢复了...
-			// KingSlime.DespawnHandler: King Slime returns to his throne...
-			// EyeOfCthulhu.DespawnHandler: The Eye's gaze passes once again...
-			// BrainOfCthulhu.DespawnHandler: The Brain grows bored of your weakness...
-			// QueenBee.DespawnHandler: The Queen returns to her hive victorious...
-			// Skeletron.DespawnHandler: Skeletron has fed off your death and grown satisfied...
-			// Deerclops.DespawnHandler: Deerclops drags your broken body back to its den...
+			KingSlime.DespawnHandler: 史莱姆王保卫了它的皇冠...
+			EyeOfCthulhu.DespawnHandler: 克苏鲁之眼的目光再次掠过你...
+			BrainOfCthulhu.DespawnHandler: 克苏鲁之脑玩腻了，你太弱啦...
+			QueenBee.DespawnHandler: 蜂后大胜而归...
+			Skeletron.DespawnHandler: 骷髅王从你的死亡中得到了满足...
+			Deerclops.DespawnHandler: 独眼巨鹿将你破碎的身体拖回巢穴...
 			WallOfFlesh.DespawnHandler: 血肉之墙的怒火得到了平息...
-			// QueenSlime.DespawnHandler: Queen Slime returns to her throne...
-			// Destroyer.DespawnHandler: The Destroyer returns to the depths of the corruption...
-			// Plantera.DespawnHandler: Plantera has avenged its child...
-			// DukeFishron.DespawnHandler: Duke Fishron has slain all of those trespassing in its domain...
-			// Golem.DespawnHandler: Golem has repelled the invaders...
-			// Betsy.DespawnHandler: Betsy is satisfied with her freshly-cooked meal...
-			// LunaticCultist.DespawnHandler: The cultist has gained another sacrifice...
-			// MoonLord.DespawnHandler: Nobody remains to impede the Moon Lord's wrath...
+			QueenSlime.DespawnHandler: 史莱姆女皇重返王位...
+			Destroyer.DespawnHandler: 毁灭者重回腐败的深处...
+			Plantera.DespawnHandler: 世纪之花为它的子民报了仇...
+			DukeFishron.DespawnHandler: 猪龙鱼公爵已经杀死了所有侵入其领地的人...
+			Golem.DespawnHandler: 石巨人击退了入侵者...
+			Betsy.DespawnHandler: 双足翼龙很满意用你这种食材做出的新鲜佳肴...
+			LunaticCultist.DespawnHandler: 拜月教邪教徒无往不克...
+			MoonLord.DespawnHandler: 没有人能阻挡月亮领主的怒火...
 
 			AncientDemon: {
 				DisplayName: 远古恶魔
@@ -8619,7 +8592,7 @@ Mods: {
 
 			Cataluminance: {
 				DisplayName: 耀翳眼 v2.02
-				// DespawnHandler: The Triad returns to the skies...
+				DespawnHandler: 三子魔眼回归星空......
 				ClosesIn: 耀翳眼正在逼近...
 				Desperation: 三子魔眼准备将你击败...
 				Light: 神圣的光芒在夜空中聚合纠缠...
@@ -8635,22 +8608,22 @@ Mods: {
 
 			Death: {
 				DisplayName: 「死神」
-				// DespawnHandler: Death claims you at last...
+				DespawnHandler: 「死神」最终找上了你...
 			}
 
-			PrimeBeam.DisplayName: 机械骷髅王的光束核心
-			PrimeBuzzsaw.DisplayName: 机械骷髅王的焰锯核心
-			PrimeGatling.DisplayName: 机械骷髅王的激光核心
-			PrimeIon.DisplayName: 机械骷髅王的离子核心
-			PrimeLauncher.DisplayName: 机械骷髅王的发射核心
-			PrimeV2.DisplayName: 机械骷髅王 V2
-			PrimeWelder.DisplayName: 机械骷髅王的焊接核心
+			PrimeBeam.DisplayName: 旧日机械支配者的光束核心
+			PrimeBuzzsaw.DisplayName: 旧日机械支配者的焰锯核心
+			PrimeGatling.DisplayName: 旧日机械支配者的激光核心
+			PrimeIon.DisplayName: 旧日机械支配者的离子核心
+			PrimeLauncher.DisplayName: 旧日机械支配者的发射核心
+			PrimeV2.DisplayName: 旧日机械支配者 V2
+			PrimeWelder.DisplayName: 旧日机械支配者的焊接核心
 			HullBreachMissile.DisplayName: 穿甲导弹
-			PrimeSiege.DisplayName: 机械骷髅王的围攻核心
-			PrimeIntro.DisplayName: 机械骷髅王的画线器
+			PrimeSiege.DisplayName: 旧日机械支配者的围攻核心
+			PrimeIntro.DisplayName: 旧日机械支配者的画线器
 
 			TheMachine: {
-				DisplayName: 机械古王
+				DisplayName: 旧日机械支配者
 				DespawnHandler: 机械神庙再次回归死寂...
 			}
 
@@ -8661,7 +8634,7 @@ Mods: {
 
 			FireFiendMarilith: {
 				DisplayName: 火焰恶魔马瑞丽斯
-				DespawnHandler: 火焰恶魔马瑞丽斯堕入下界...
+				DespawnHandler: 火焰恶魔马瑞丽斯让你堕入下界...
 				Abyss: 深渊的力量弥漫在这里，没有保护你将无法生存...
 			}
 
@@ -8670,7 +8643,7 @@ Mods: {
 
 			EarthFiendLich: {
 				DisplayName: 大地恶魔巫妖王
-				DespawnHandler: 大地恶魔巫妖王消散于这片土地...
+				DespawnHandler: 大地恶魔巫妖王让你消散于这片土地...
 				Heat: 大地恶魔巫妖王借助来自世界岩浆核心的热量！
 			}
 
@@ -8685,7 +8658,7 @@ Mods: {
 
 			WaterFiendKraken: {
 				DisplayName: 水之恶魔克拉肯
-				DespawnHandler: 克拉肯沉入了深渊...
+				DespawnHandler: 克拉肯将你沉入了深渊...
 			}
 
 			Gaibon: {
@@ -8840,7 +8813,7 @@ Mods: {
 
 			WyvernMageShadow: {
 				DisplayName: 飞龙法师堕魂——渊影
-				// DespawnHandler: The Wyvern Mage's imprisoned shadow breaks free...
+				DespawnHandler: 飞龙法师堕魂挣脱了囚禁......
 				Condition: 当他的灵鬼虬龙死后掉落
 			}
 
@@ -9070,7 +9043,7 @@ Mods: {
 
 			RedKnight: {
 				DisplayName: 红骑士
-				DespawnHandler: 红骑士杀死了你...
+				// DepsawnHandler: The Red Knight has slain you...
 			}
 
 			ResentfulSeedling.DisplayName: 哀怨树苗
@@ -9146,7 +9119,7 @@ Mods: {
 			ViciousSpit.DisplayName: 恶臭唾液
 
 			Warlock: {
-				DisplayName: 男巫
+				DisplayName: 术士
 				Near: "一个术士在接近... "
 				Hunt: "一个术士在追杀你... "
 			}
@@ -9588,7 +9561,7 @@ Mods: {
 			HomingMissile.DisplayName: 自瞄导弹
 			Byakhee.DisplayName: 拜亚基
 			ClericOfSorrow.DisplayName: 哀悼牧师
-			Willowisp.DisplayName: 柳缕
+			Willowisp.DisplayName: 冰絮
 		}
 
 		Prefixes: {
