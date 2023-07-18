@@ -141,17 +141,17 @@ namespace tsorcRevamp.NPCs.Friendly
             });
 
             shop.Add(new Item(ModContent.ItemType<Items.Armors.StuddedLeatherHelmet>()) {
-                shopCustomPrice = 50, 
+                shopCustomPrice = 25, 
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<Items.Armors.StuddedLeatherArmor>()) {
-                shopCustomPrice = 50, 
+                shopCustomPrice = 40, 
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<Items.Armors.StuddedLeatherGreaves>()) {
-                shopCustomPrice = 50, 
+                shopCustomPrice = 33, 
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 

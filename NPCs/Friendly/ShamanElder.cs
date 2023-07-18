@@ -194,17 +194,17 @@ namespace tsorcRevamp.NPCs.Friendly
             NPCShop shop = new(NPC.type);
 
             shop.Add(new Item(ModContent.ItemType<Items.Armors.Summon.OldChainCoif>()) {
-                shopCustomPrice = 50, 
+                shopCustomPrice = 25, 
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<Items.Armors.Summon.OldChainArmor>()) {
-                shopCustomPrice = 100, 
+                shopCustomPrice = 50, 
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<Items.Armors.Summon.OldChainGreaves>()) {
-                shopCustomPrice = 75, 
+                shopCustomPrice = 33, 
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 

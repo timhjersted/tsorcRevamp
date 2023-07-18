@@ -465,6 +465,8 @@ namespace tsorcRevamp
                 }
             }
 
+            SteelTempestStacks = 0;
+
             if (!onePlayerAlive)
             {
                 if (NPC.AnyNPCs(NPCID.LunarTowerSolar))

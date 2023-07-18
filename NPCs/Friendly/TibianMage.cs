@@ -136,17 +136,17 @@ namespace tsorcRevamp.NPCs.Friendly
             });
 
             shop.Add(new Item(ModContent.ItemType<Items.Armors.Magic.RedClothHat>()) {
-                shopCustomPrice = 50,
+                shopCustomPrice = 25,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<Items.Armors.Magic.RedClothTunic>()) {
-                shopCustomPrice = 100,
+                shopCustomPrice = 50,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<Items.Armors.Magic.RedClothPants>()) {
-                shopCustomPrice = 75,
+                shopCustomPrice = 33,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 

@@ -1,3 +1,4 @@
+using Humanizer;
 using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -94,7 +95,7 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if (set == "GoldenGi")
             {
-                player.setBonus = Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.GoldenGi");
+                player.setBonus = Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.GoldenGi").FormatWith(GoldenGiFlatDamage);
 
                 player.GetDamage(DamageClass.Melee).Flat += GoldenGiFlatDamage;
             }

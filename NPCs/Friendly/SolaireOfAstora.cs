@@ -115,17 +115,17 @@ namespace tsorcRevamp.NPCs.Friendly
             });
 
             shop.Add(new Item(ModContent.ItemType<Items.Armors.Melee.AncientGoldenHelmet>()) {
-                shopCustomPrice = 50, 
+                shopCustomPrice = 25, 
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<Items.Armors.Melee.AncientGoldenArmor>()) {
-                shopCustomPrice = 100, 
+                shopCustomPrice = 50, 
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<Items.Armors.Melee.AncientGoldenGreaves>()) {
-                shopCustomPrice = 75, 
+                shopCustomPrice = 33, 
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
