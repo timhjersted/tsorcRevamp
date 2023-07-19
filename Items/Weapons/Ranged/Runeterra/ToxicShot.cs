@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public const int ScoutsBoostOnHitCooldown = 3;
         public const int ScoutsBoost2Duration = 5;
         public const int ScoutsBoost2Cooldown = 25;
-        public static int PoisonDartDmgMult = 2;
+        public static float PoisonDartDmgMult = 1.5f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PoisonDartDmgMult);
         public override void SetStaticDefaults()
         {
@@ -85,7 +85,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             }
             if (type == ProjectileID.PoisonDartBlowgun)
             {
-                damage *= PoisonDartDmgMult;
+                damage = (int)(damage * PoisonDartDmgMult);
             }
         }
         public override void HoldItem(Player player)

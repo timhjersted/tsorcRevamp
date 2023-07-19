@@ -26,6 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public const int BlindingLaserBonusCritChance = 100;
         public const float BlindingLaserPercentHPDmg = 0.1f;
         public const int BlindingLaserHPDmgCap = 450;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ToxicShot.PoisonDartDmgMult);
         public override void SetStaticDefaults()
         {
             ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
@@ -63,7 +64,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             }
             if (type == ProjectileID.PoisonDartBlowgun)
             {
-                damage *= ToxicShot.PoisonDartDmgMult;
+                damage = (int)(damage * ToxicShot.PoisonDartDmgMult);
             }
             if (player.altFunctionUse == 2)
             {

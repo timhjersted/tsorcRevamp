@@ -23,6 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public const int ShroomCooldown = 5;
         public const int ShroomBonusCritChance = 100;
         public static int ShroomSetupTime = 3;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ToxicShot.PoisonDartDmgMult);
         public override void SetStaticDefaults()
         {
             ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
@@ -60,7 +61,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             }
             if (type == ProjectileID.PoisonDartBlowgun)
             {
-                damage *= ToxicShot.PoisonDartDmgMult;
+                damage = (int)(damage * ToxicShot.PoisonDartDmgMult);
             }
             if (player.altFunctionUse == 2)
             {
