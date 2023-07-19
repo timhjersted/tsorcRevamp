@@ -6,6 +6,7 @@ using Terraria.Utilities;
 using tsorcRevamp.Prefixes;
 using Terraria.Localization;
 using Humanizer;
+using Terraria.ID;
 
 namespace tsorcRevamp.Items
 {

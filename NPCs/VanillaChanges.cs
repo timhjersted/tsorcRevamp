@@ -1874,7 +1874,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.Creeper):
                     {
                         //npc.lifeMax = ;
-                        npc.value = 710; //*20 per brain, making 1420
+                        npc.value = 0; //*20 per brain, making 1420
                         break;
                     }
                 #endregion
@@ -1950,7 +1950,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.SkeletronHand):
                     {
-                        npc.value = 5780;
+                        npc.value = 0;
                         npc.defense = 14; //legacy: 12
                         npc.damage = 40; //legacy: 40, then 22, then 32 but reports still too easy
                         npc.lifeMax = 600;
@@ -5731,11 +5731,6 @@ namespace tsorcRevamp.NPCs
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.Katana, 1);
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ItemID.GoldCoin, 10); //obtained from boss bag in Expert mode (see tsorcGlobalItem for boss bag edits)
                 }
-            }
-
-            if (npc.type == NPCID.QueenBee)
-            {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), 2000);
             }
 
             if (npc.type == NPCID.TheDestroyer && !Main.expertMode)

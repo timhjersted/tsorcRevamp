@@ -11,6 +11,8 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if (item.type == ItemID.SuspiciousLookingEye
                 || item.type == ItemID.WormFood
+                || item.type == ItemID.BloodySpine
+                || item.type == ItemID.Abeemination
                 || item.type == ItemID.DeerThing
                 || item.type == ItemID.QueenSlimeCrystal
                 || item.type == ItemID.MechanicalEye

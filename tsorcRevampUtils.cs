@@ -1195,12 +1195,14 @@ namespace tsorcRevamp
         /// </summary>
         public static void SafeTeleport(this Player player, Vector2 destination)
         {
-            player.position.X = destination.X - player.width / 2;
-            player.position.Y = destination.Y - player.height / 2;
+            player.mount.Dismount(player);
+            player.Center = destination;
             player.gravDir = 1;
             player.velocity.X = 0f;
             player.velocity.Y = 0f;
             player.fallStart = (int)player.Center.Y;
+            player.RemoveAllGrapplingHooks();
+            player.AddBuff(ModContent.BuffType<Buffs.Debuffs.Crippled>(), 2);
         }
 
         /// <summary>

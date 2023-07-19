@@ -40,7 +40,6 @@ namespace tsorcRevamp.Items.Tools
                     {
                         WorldGen.KillTile(sanityX, sanityY);
                     }
-
                 }
             }
             return true;
@@ -104,68 +103,43 @@ namespace tsorcRevamp.Items.Tools
             {
                 return;
             }
-
-            if (checkWarpLocation(player.GetModPlayer<tsorcRevampPlayer>().warpX, player.GetModPlayer<tsorcRevampPlayer>().warpY))
+                        
+            if (player.itemTime > (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)
             {
-                if (player.itemTime > (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)
-                {
-                    player.velocity = Vector2.Zero;
-                    player.gravDir = 1;
-                    player.fallStart = (int)player.Center.Y;
-                    player.position.Y -= 0.4f;
-                }
-                if (Main.rand.NextBool() && player.itemTime != 0)
-                { //ambient dust during use
-
-                    // position, width, height, type, speed.X, speed.Y, alpha, color, scale
-                    Dust.NewDust(player.position, player.width, player.height, 57, 0f, 0.5f, 150, default(Color), 1f + (float)(4 - (Item.useAnimation / (Item.useAnimation - player.itemTime))));
-                }
-
-                if (player.itemTime == 0)
-                {
-                    Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.OnUse"), 255, 240, 20);
-                    player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
-                }
-                else if (player.itemTime == (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)
-                {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item60);
-
-
-                    for (int dusts = 0; dusts < 70; dusts++)
-                    { //dusts on tp (source)
-                        Dust.NewDust(player.position, player.width, player.height, 57, player.velocity.X * 0.5f, (player.velocity.Y * 0.5f) + 0.5f, 150, default(Color), 1.5f);
-                    }
-
-                    //destroy grapples
-                    player.grappling[0] = -1;
-                    player.grapCount = 0;
-                    for (int p = 0; p < 1000; p++)
-                    {
-                        if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].aiStyle == 7)
-                        {
-                            Main.projectile[p].Kill();
-                        }
-                    }
-
-
-                    Vector2 destination;
-                    destination.X = (float)(player.GetModPlayer<tsorcRevampPlayer>().warpX * 16) - (float)((float)player.width / 2.0);
-                    destination.Y = (float)(player.GetModPlayer<tsorcRevampPlayer>().warpY * 16) - (float)player.height;
-                    player.SafeTeleport(destination);
-                    player.AddBuff(ModContent.BuffType<Crippled>(), 1); //1
-
-                    for (int dusts = 0; dusts < 70; dusts++)
-                    { //dusts on tp (destination)
-                        Dust.NewDust(player.position, player.width, player.height, 57, player.velocity.X * 0.5f, (player.velocity.Y * 0.5f) + 0.5f * 0.5f, 150, default(Color), 1.5f);
-                    }
-
-                }
+                player.velocity.X = 0;
+                player.gravDir = 1;
+                player.fallStart = (int)player.Center.Y;
             }
-            else
-            {
-                Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.Oops"), 255, 240, 20);
+            if (Main.rand.NextBool() && player.itemTime != 0)
+            { //ambient dust during use
+
+                // position, width, height, type, speed.X, speed.Y, alpha, color, scale
+                Dust.NewDust(player.position, player.width, player.height, 57, 0f, 0.5f, 150, default(Color), 1f + (float)(4 - (Item.useAnimation / (Item.useAnimation - player.itemTime))));
             }
 
+            if (player.itemTime == 0)
+            {
+                Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.OnUse"), 255, 240, 20);
+                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
+            }
+            else if (player.itemTime == (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item60);
+
+
+                for (int dusts = 0; dusts < 70; dusts++)
+                { //dusts on tp (source)
+                    Dust.NewDust(player.position, player.width, player.height, 57, player.velocity.X * 0.5f, (player.velocity.Y * 0.5f) + 0.5f, 150, default(Color), 1.5f);
+                }
+
+                player.SafeTeleport(player.GetModPlayer<tsorcRevampPlayer>().greatMirrorWarpPoint);
+
+                for (int dusts = 0; dusts < 70; dusts++)
+                { //dusts on tp (destination)
+                    Dust.NewDust(player.position, player.width, player.height, 57, player.velocity.X * 0.5f, (player.velocity.Y * 0.5f) + 0.5f * 0.5f, 150, default(Color), 1.5f);
+                }
+
+            }            
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
@@ -195,8 +169,7 @@ namespace tsorcRevamp.Items.Tools
             player.statDefense -= player.statDefense;
             if (!player.GetModPlayer<tsorcRevampPlayer>().warpSet)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().warpX = playerXLocation(player);
-                player.GetModPlayer<tsorcRevampPlayer>().warpY = playerYLocation(player);
+                player.GetModPlayer<tsorcRevampPlayer>().greatMirrorWarpPoint = player.Center;
                 player.GetModPlayer<tsorcRevampPlayer>().warpWorld = Main.worldID;
                 player.GetModPlayer<tsorcRevampPlayer>().warpSet = true;
                 Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.NewLocation"), 255, 240, 30);
@@ -206,8 +179,7 @@ namespace tsorcRevamp.Items.Tools
                 double timeDifference = Main.time - warpSetDelay;
                 if ((timeDifference > 120.0) || (timeDifference < 0.0))
                 {
-                    player.GetModPlayer<tsorcRevampPlayer>().warpX = playerXLocation(player);
-                    player.GetModPlayer<tsorcRevampPlayer>().warpY = playerYLocation(player);
+                    player.GetModPlayer<tsorcRevampPlayer>().greatMirrorWarpPoint = player.Center;
                     player.GetModPlayer<tsorcRevampPlayer>().warpWorld = Main.worldID;
                     player.GetModPlayer<tsorcRevampPlayer>().warpSet = true;
                     warpSetDelay = Main.time;

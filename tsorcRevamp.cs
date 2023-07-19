@@ -1299,6 +1299,7 @@ namespace tsorcRevamp
                             if (Main.player[i].active && !Main.player[i].dead)
                             {
                                 Main.player[i].Teleport(targetLocation);
+                                Main.player[i].fallStart = (int)Main.player[i].Center.Y;
                                 NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null, 0, i, targetLocation.X, targetLocation.Y, 0);
                             }
                         }

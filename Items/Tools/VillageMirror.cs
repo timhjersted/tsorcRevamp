@@ -95,11 +95,10 @@ namespace tsorcRevamp.Items.Tools
                         destination.X = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpX * 16) - (float)((float)player.width / 2.0);
                         destination.Y = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpY * 16) - (float)player.height;
                     }
-                    player.RemoveAllGrapplingHooks();
+
                     player.PotionOfReturnOriginalUsePosition = player.Bottom;
                     player.SafeTeleport(destination);
                     player.PotionOfReturnHomePosition = player.Bottom;
-                    player.AddBuff(ModContent.BuffType<Crippled>(), 1); //1 (one)
 
 
                     for (int dusts = 0; dusts < 70; dusts++)

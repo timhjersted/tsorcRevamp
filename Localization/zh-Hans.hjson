@@ -9043,7 +9043,7 @@ Mods: {
 
 			RedKnight: {
 				DisplayName: 红骑士
-				// DepsawnHandler: The Red Knight has slain you...
+				// DespawnHandler: The Red Knight has slain you...
 			}
 
 			ResentfulSeedling.DisplayName: 哀怨树苗

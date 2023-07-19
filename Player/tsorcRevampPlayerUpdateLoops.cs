@@ -33,8 +33,7 @@ namespace tsorcRevamp
     {
         public bool NoDamageSpread = false;
 
-        public int warpX;
-        public int warpY;
+        public Vector2 greatMirrorWarpPoint;
         public int warpWorld;
         public bool warpSet;
 

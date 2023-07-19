@@ -115,8 +115,7 @@ namespace tsorcRevamp
 
         public override void SaveData(TagCompound tag)
         {
-            tag.Add("warpX", warpX);
-            tag.Add("warpY", warpY);
+            tag.Add("greatMirrorWarp", greatMirrorWarpPoint);
             tag.Add("warpWorld", warpWorld);
             tag.Add("warpSet", warpSet);
             tag.Add("townWarpX", townWarpX);
@@ -170,8 +169,15 @@ namespace tsorcRevamp
 
         public override void LoadData(TagCompound tag)
         {
-            warpX = tag.GetInt("warpX");
-            warpY = tag.GetInt("warpY");
+            int warpX = tag.GetInt("warpX");
+            int warpY = tag.GetInt("warpY");
+            greatMirrorWarpPoint = tag.Get<Vector2>("greatMirrorWarp");
+            if(greatMirrorWarpPoint == Vector2.Zero)
+            {
+                //This migrates old saves to the new system.
+                greatMirrorWarpPoint.X = warpX;
+                greatMirrorWarpPoint.Y = warpY;
+            }
             warpWorld = tag.GetInt("warpWorld");
             warpSet = tag.GetBool("warpSet");
             townWarpX = tag.GetInt("townWarpX");

@@ -312,7 +312,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
             if (Main.netMode == NetmodeID.SinglePlayer)
             {
-                Main.player[Projectile.owner].Center = tsorcRevampWorld.BossIDsAndCoordinates[id] * 16;
+                UsefulFunctions.SafeTeleport(Main.player[Projectile.owner], tsorcRevampWorld.BossIDsAndCoordinates[id] * 16);
             }
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
