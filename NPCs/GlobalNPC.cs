@@ -124,49 +124,49 @@ namespace tsorcRevamp.NPCs
         /// How likely it is to dash at the player if it is far away.
         /// Range: 0.00001 - 2.5
         /// </summary>
-        public float Aggression;
+        public float Aggression = -1;
 
         /// <summary>
         /// Controls how quickly it gets bored (and thus how long it waits before teleporting, if it has that ability).
         /// Range: 0.5 - 2
         /// </summary>
-        public float Patience;
+        public float Patience = -1;
 
         /// <summary>
         /// How likely it is to try and run if it is low on health.
         /// Range: 0 - 0.3
         /// </summary>
-        public float Cowardice;
+        public float Cowardice = -1;
 
         /// <summary>
         /// Improves the likelihood of performing low-weighted attacks.
         /// Range: 0 - 0.3
         /// </summary>
-        public float Adeptness;
+        public float Adeptness = -1;
 
         /// <summary>
         /// Modifies movement speed and acceleration.
         /// Range: 0.7 - 1.3
         /// </summary>
-        public float Swiftness;
+        public float Swiftness = -1;
 
         /// <summary>
         /// Modifies how often it fires projectiles.
         /// Range: 0.6 - 1.4
         /// </summary>
-        public float CastingSpeed;
+        public float CastingSpeed = -1;
 
         /// <summary>
         /// Modifies base health, size, and contact damage.
         /// Range: 0.7 - 1.3
         /// </summary>
-        public float Strength;
+        public float Strength = -1;
 
         /// <summary>
         /// Controls how often it tries to roll through or jumps over projectiles.
         /// Range: 0.2 - 0.6
         /// </summary>
-        public float Agility;
+        public float Agility = -1;
 
 
         //Custom AI execution values
@@ -2171,27 +2171,78 @@ namespace tsorcRevamp.NPCs
 
         public override void SetDefaults(NPC npc)
         {
-            Aggression = Main.rand.NextFloat(0.00001f, 2.5f);
-            Patience = Main.rand.NextFloat(0.5f, 2);
-            Cowardice = Main.rand.NextFloat(0, 0.3f);
-            Adeptness = Main.rand.NextFloat(0, 0.3f);
-            Swiftness = Main.rand.NextFloat(0.7f, 1.3f);
-            CastingSpeed = Main.rand.NextFloat(0.6f, 1.4f);
-            Strength = Main.rand.NextFloat(0.85f, 1.2f);
-            Agility = Main.rand.NextFloat(0.2f, 0.6f);
-
-            //Disabled by default for bosses
-            //Can be re-enabled in that specific bosses SetDefaults by giving these another value there
+            //Set the default value of each if it has not been custom-tuned
             if (npc.boss)
             {
-                Aggression = 0.00001f;
-                Patience = 1;
-                Cowardice = 0;
-                Adeptness = 0;
-                Swiftness = 1;
-                CastingSpeed = 1;
-                Strength = 1;
-                Agility = 0;
+                //Disables all of them by default for bosses
+                //Can be re-enabled in that specific bosses SetDefaults by giving these another value there
+                if (Aggression == -1)
+                {
+                    Aggression = 0.0000001f;
+                }
+                if (Patience == -1)
+                {
+                    Patience = 1;
+                }
+                if (Cowardice == -1)
+                {
+                    Cowardice = 0;
+                }
+                if (Adeptness == -1)
+                {
+                    Adeptness = 0;
+                }
+                if (Swiftness == -1)
+                {
+                    Swiftness = 1;
+                }
+                if (CastingSpeed == -1)
+                {
+                    CastingSpeed = 1;
+                }
+                if (Strength == -1)
+                {
+                    Strength = 1;
+                }
+                if (Agility == -1)
+                {
+                    Agility = 0;
+                }
+            }
+            else
+            {
+                if (Aggression == -1)
+                {
+                    Aggression = Main.rand.NextFloat(0.00001f, 2.5f);
+                }
+                if (Patience == -1)
+                {
+                    Patience = Main.rand.NextFloat(0.5f, 2);
+                }
+                if (Cowardice == -1)
+                {
+                    Cowardice = Main.rand.NextFloat(0, 0.3f);
+                }
+                if (Adeptness == -1)
+                {
+                    Adeptness = Main.rand.NextFloat(0, 0.3f);
+                }
+                if (Swiftness == -1)
+                {
+                    Swiftness = Main.rand.NextFloat(0.7f, 1.3f);
+                }
+                if (CastingSpeed == -1)
+                {
+                    CastingSpeed = Main.rand.NextFloat(0.6f, 1.4f);
+                }
+                if (Strength == -1)
+                {
+                    Strength = Main.rand.NextFloat(0.85f, 1.2f);
+                }
+                if (Agility == -1)
+                {
+                    Agility = Main.rand.NextFloat(0.2f, 0.6f);
+                }
             }
 
             //Only mess with it if it's one of our bosses
