@@ -213,7 +213,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             Main.npc[Previous].active = false;
             if (!(NPC.CountNPCS(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) > 1))
             {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Serris.Transform"), Color.Cyan);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.SerrisHead.Transform"), Color.Cyan);
                 NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + (float)(NPC.width / 2)), (int)(NPC.position.Y + (float)NPC.height), ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>(), 0);
             }
             if (!Main.dedServ)
