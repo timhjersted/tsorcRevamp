@@ -8541,6 +8541,7 @@ Mods: {
 			OilPotShard2.DisplayName: Oil Pot Shard2
 			OilPotShard3.DisplayName: Oil Pot Shard3
 			OilPotShard4.DisplayName: Oil Pot Shard4
+			DroidBomb.DisplayName: Droid Bomb
 		}
 
 		NPCs: {

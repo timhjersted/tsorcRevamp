@@ -8542,6 +8542,7 @@ Mods: {
 			OilPotShard2.DisplayName: 油壶碎片
 			OilPotShard3.DisplayName: 油壶碎片
 			OilPotShard4.DisplayName: 油壶碎片
+			// DroidBomb.DisplayName: Droid Bomb
 		}
 
 		NPCs: {
