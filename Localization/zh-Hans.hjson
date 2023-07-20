@@ -160,34 +160,34 @@ Mods: {
 		}
 
 		DeathText: {
-			01: 闪避使你对攻击免疫。掌握它是生存的必要条件！
+			01: 翻滚使你对攻击免疫。掌握它是生存的必要条件！
 			02: 发光的绿色头骨通常隐藏着重要的秘密...右键以打开
 			03: 可以在“控件”中更改绑定的翻滚快捷键。尝试左Shift绑定翻滚、左Alt绑定智能光标
 			04: 你可以躲避半空中的攻击，跨过较长的距离并立即改变你的移动方向...
 			05: 水晶碎块经常暗示附近的秘密、箱子或隐藏路径...
-			06: 在正常战斗中使用药剂通常是生存所必需的。
+			06: 在正常战斗中使用药剂通常是生存所必需的
 			07: 死亡时失去灵魂可以在模组配置中禁用，试试吧就像塞尔达传说那样
 			08: 某些黑暗区域的敌人掉落人性，可以恢复因诅咒而损失的生命值。
 			09: 物品提示通常包含对你的生存至关重要的信息...
 			10: 留意您物品的描述，看看是否有能用黑暗之魂升级的物品。
-			11: 可以在BOSS掉落的独特物品上找到进展线索。
-			12: 如果你感到迷茫，就探索在地图上未显示出来的地方，几乎每个方向都有秘密和路径。
-			13: 蜡石文字泡消息提供了许多重要提示。
-			14: 如果你的暴击几率超过100%，你就有机会造成多重暴击，从而造成4倍或更多的伤害。
-			15: 用鞭子尖端攻击敌人必定造成暴击。
-			16: 青色压力板只能用小型实体射弹激活。
-			17: 一些原版物品的合成配方已被禁用。你必须通过在世界上探索以找到这些物品。
-			18: 在武器上有一个负面的修饰语？与绿宝石传令官Jade交谈。她可以用祝福来移除它。
-			19: 你可能会在有能力打败BOSS之前就提前遭遇他们。如果陷入困境，等你变强了再回来。
+			11: 可以在BOSS掉落的独特物品上找到进展线索
+			12: 如果你感到迷茫，就探索在地图上未显示出来的地方，几乎每个方向都有秘密和路径
+			13: 蜡石文字泡消息提供了许多重要提示
+			14: 如果你的暴击几率超过100%，你就有机会造成多重暴击，从而造成4倍或更多的伤害
+			15: 用鞭子尖端攻击敌人必定造成暴击
+			16: 青色压力板只能用小型实体射弹激活
+			17: 一些原版物品的合成配方已被禁用。你必须通过在世界上探索以找到这些物品
+			18: 在武器上有一个负面的修饰语？与绿宝石传令官Jade交谈。她可以用祝福来移除它
+			19: 你可能会在有能力打败BOSS之前就提前遭遇他们。如果陷入困境，等你变强了再回来
 			20: 推荐使用"Recipe Browser"辅助模组，轻松查看新获得的物品有哪些合成配方
 			21: 欢迎来到泰拉瑞亚的类黑暗之魂模组
 			22: 绿花戒指大大提高了你的闪避能力，让你可以更好地躲避...
-			23: 青色压力板必须用小型实体射弹攻击以激活。
-			24: 使用'Recipe Browser'辅助模组来查看被标记为'黑暗之魂合成材料'的物品。
+			23: 青色压力板必须用小型实体射弹攻击以激活
+			24: 使用'Recipe Browser'辅助模组来查看被标记为'黑暗之魂合成材料'的物品
 			25: 不要忘记翻滚啊！
 			26: 我真是**的疯了
-			27: 灰石门不能被打破，必须用拉杆或开关打开。
-			WallDeathReason: " 被血肉之墙吞噬"
+			27: 石头构成的门不能被稿子挖开，必须用拉杆或开关打开
+			WallDeathReason: "被血肉之墙吞噬"
 			BotC1: 被诅咒者模式可以随时关闭...
 			BotC2: 被诅咒者模式是为有通关经验的玩家设计的...
 			IWantToRemoveThisCaptainObviousShit: 尽量避免被敌人击中...
@@ -282,11 +282,11 @@ Mods: {
 			StopEditMarkers: 点击以停止修改标记。
 			ClickToHide: 点这里隐藏
 			ClickToShow: "点这里显示 "
-			UpdateMusic: "正在更新音乐Mod: "
+			UpdateMusic: "正在更新红云物语音乐包: "
 			GetMusic: 点击这里以下载红云物语音乐包！无法下载的在QQ群645748667文件中下载。
 			MusicNewUpdate: 音乐包更新可用，点击这里以更新 (会重启游戏！)
 			MusicFail: 音乐包下载失败，请加QQ群645748667文件中下载。
-			AdvMapDownloadProgress: "冒险地图正在下载中(如果无法下载请在原版创意工坊订阅story of red cloud地图后导入Tmod): "
+			AdvMapDownloadProgress: "冒险地图下载中(也可在原版创意工坊订阅 Dark Souls Adventure Map 后在Tmod导入世界): "
 			AdvMapUpdated: 冒险地图下载完成！
 			Bless: 在这里放置一个物品以进行祝福
 			SelectWorld: 选择世界大小:
@@ -1111,9 +1111,9 @@ Mods: {
 					'''
 					[c/ffbf00:穿戴时允许你进入深渊。摘下指环，离开深渊！]
 					[c/ffbf00:深渊遍布世界，如我们自身之镜，但其黑暗更加深远...]
-					[c/00ffd4:对一些深渊相关的敌人造成的debuff免疫， 例如残废，中毒，着火, 以及涂油]
+					[c/00ffd4:对一些深渊相关的敌人造成的debuff免疫，例如残废，中毒，着火, 以及涂油]
 					免疫击退，火块，熔岩和地狱黯炎，但是会提升敌人生成速度
-					乘算增加 {0}% 伤害，暴击率，移动速度，攻击速度{$CommonItemTooltip.Melee.Doubled}
+					乘算增加 {0}% 伤害、暴击率、移动速度、攻击速度{$CommonItemTooltip.Melee.Doubled}
 					'''
 			}
 
@@ -1130,7 +1130,7 @@ Mods: {
 					继承清晰之戒的免疫效果
 					按下绑定的苍狼之戒快捷键以暂时提高生命恢复和伤害
 					效果生效期间受到伤害会移除生命恢复效果加成，并进入长时间的冷却
-					{$CommonItemTooltip.IncreasesDefenseBy} within the Abyss
+					在深渊中时{$CommonItemTooltip.IncreasesDefenseBy}
 					赋予酸性毒液灌注效果
 					{$CommonItemTooltip.LifeRegen@1}
 					{$CommonItemTooltip.IncreasesMaxManaBy@2}
@@ -1256,7 +1256,7 @@ Mods: {
 					亚尔特留斯曾经佩戴的戒指之一
 					按下绑定的苍狼之戒快捷键以暂时大幅提高生命恢复和伤害
 					效果生效期间受到伤害会移除生命恢复效果加成，并进入长时间的冷却
-					深渊内 {$CommonItemTooltip.IncreasesDefenseBy} 
+					在深渊中时{$CommonItemTooltip.IncreasesDefenseBy} 
 					赋予酸性毒液灌注效果
 					灌注效果可通过隐藏饰品关闭
 					'''
@@ -6634,7 +6634,7 @@ Mods: {
 					[c/00ffff:冲撞冷却] 作用于敌人({3} 秒)
 					用 [c/00ffff:剑光] 对敌人造成伤害会使 [c/708090:钢铁风暴堆叠] 到达最大值
 					[c/00ffff:剑光] 造成四倍伤害
-					[c/00ffff:剑光] 可以释放一个固定的 [c/708090:旋风]
+					[c/00ffff:剑光] 会将达到最大堆叠的 [c/708090:旋风] 原地释放
 					[c/00ffff:剑光] 和 [c/00ffff:冲撞] 在命中时额外造成 {1}% 的最大生命值伤害，最高到 {2}
 					武器有双倍的暴击率
 					每次 [c/708090:突刺] 最多获得一层 [c/708090:钢铁风暴堆叠]
@@ -6665,7 +6665,7 @@ Mods: {
 					[c/00ffff:冲撞冷却] 作用于敌人({3} 秒)
 					用 [c/00ffff:剑光] 对敌人造成伤害会使 [c/708090:钢铁风暴堆叠] 到达最大值
 					[c/00ffff:剑光] 造成四倍伤害
-					[c/00ffff:剑光] 可以释放一个固定的 [c/708090:旋风]
+					[c/00ffff:剑光] 会将达到最大堆叠的 [c/708090:旋风] 原地释放
 					[c/00ffff:剑光] 和 [c/00ffff:冲撞] 在命中时额外造成 {1}% 的最大生命值伤害，最高到 {2}
 					武器有双倍的暴击率
 					每次 [c/708090:突刺] 最多获得一层 [c/708090:钢铁风暴堆叠]
@@ -6682,7 +6682,7 @@ Mods: {
 					'''
 					将种子转化为[c/ba55d3:恶毒飞镖]，并允许您从草中收集种子
 					[c/ba55d3:恶毒飞镖] 对敌人造成 [c/ba55d3:酸性毒液] 减益并自动追踪附近敌人
-					也使用所有飞镖作为弹药，但毒镖造成 {0}x 倍伤害
+					也可以使用其它飞镖作为弹药，但使用毒镖造成 {0}x 倍伤害
 					在使用时[c/32cd32:有条件的限制玩家的移动] 
 					当{$Items.ToxicShot.Keybind1}特殊能力键{$Items.ToxicShot.Keybind2}时，
 					[c/32cd32:可以给予移动速度和耐力回复提升]
@@ -6709,7 +6709,7 @@ Mods: {
 					'''
 					将种子转化为[c/00ffff:外星激光]，并允许您从草中收集种子
 					[c/00ffff:外星激光] 对敌人造成短暂的 [c/00ffff:触电] 减益并自动追踪附近敌人
-					也使用所有飞镖作为弹药，但毒镖造成 {0}x 倍伤害
+					也可以使用其它飞镖作为弹药，但使用毒镖造成 {0}x 倍伤害
 					在使用时[c/32cd32:有条件的限制玩家的移动] 
 					当{$Items.ToxicShot.Keybind1}特殊能力键{$Items.ToxicShot.Keybind2}时，
 					[c/32cd32:可以给予移动速度和耐力回复提升]
@@ -6718,7 +6718,7 @@ Mods: {
 					'''
 				Details:
 					'''
-					[c/00ffff:致盲激光] 造成 {0}x 伤害, 在使用种子作为弹药时再次乘以 {8} ，({$CommonItemTooltip.Cooldown@9})
+					[c/00ffff:致盲激光] 造成 {0}x 伤害, 使用种子作为弹药时[c/00ffff:致盲激光]伤害再次乘 {8} ({$CommonItemTooltip.Cooldown@9})
 					[c/00ffff:致盲激光] 获得 {1}% 暴击几率加成和 {2}% 每击最大生命值伤害，最大到 {3}
 					[c/00ffff:致盲激光]造成的[c/00ffff:触电] 减益受到远程伤害和暴击率加成
 					按住特殊能力键时获得获得 [c/32cd32:侦察兵激励] 被动增益：
@@ -6737,7 +6737,7 @@ Mods: {
 					'''
 					将种子转化为 [c/adff2f:放射性飞镖] ，并允许您从草中收集种子
 					[c/adff2f:放射性飞镖] 对敌人造成短暂的 [c/adff2f:辐射] 减益并自动追踪附近敌人
-					也使用所有飞镖作为弹药，但毒镖造成 {0}x 倍伤害
+					也可以使用其它飞镖作为弹药，但使用毒镖造成 {0}x 倍伤害
 					在使用时[c/32cd32:有条件的限制玩家的移动]
 					当{$Items.ToxicShot.Keybind1}特殊能力键{$Items.ToxicShot.Keybind2}时，
 					[c/32cd32:可以给予移动速度和耐力回复提升]
@@ -6746,14 +6746,14 @@ Mods: {
 					[c/adff2f:“外面有一个蘑菇，上面有你的名字”]
 					'''
 				Keybind1: "按Shift和 "
-				Keybind2: " 来发射一个 [c/adff2f:蘑菇弹]"
+				Keybind2: " 在光标所指位置生成一个 [c/adff2f:蘑菇弹]"
 				Details:
 					'''
 					[c/adff2f:蘑菇弹] 在发射后需要 {0} 秒来引爆，({$CommonItemTooltip.Cooldown@9})
 					[c/adff2f:蘑菇弹] 的爆炸造成巨量的伤害并施加更强的 [c/adff2f:辐射] 减益
 					多个 [c/adff2f:蘑菇弹] 同时爆炸不会增加造成的伤害
-					[c/adff2f:蘑菇弹] 爆炸造成的 [c/adff2f:辐射] 减益和 [c/adff2f:放射性飞镖] 造成的相互叠加
-					[c/00ffff:致盲激光] 造成 {1}x 伤害, 在使用种子作为弹药时再次乘以 {9} ，({$CommonItemTooltip.Cooldown@10})
+					[c/adff2f:蘑菇弹] 爆炸和 [c/adff2f:放射性飞镖] 造成的 [c/adff2f:辐射] 减益相互叠加
+					[c/00ffff:致盲激光] 造成 {1}x 伤害, 使用种子作为弹药时[c/00ffff:致盲激光]伤害再次乘 {9} ({$CommonItemTooltip.Cooldown@10})
 					[c/00ffff:致盲激光] 获得 {2}% 暴击几率加成和 {3}% 每击最大生命值伤害，最大到 {4}
 					[c/adff2f:放射性飞镖] 造成的 [c/adff2f:辐射] 减益受到远程伤害和暴击率加成
 					按住特殊能力键时获得获得 [c/32cd32:侦察兵激励] 被动增益：
@@ -6767,14 +6767,14 @@ Mods: {
 			}
 
 			OrbOfDeception: {
-				DisplayName: 欺诈之珠
+				DisplayName: 诡谲之珠
 				Tooltip:
 					'''
 					投出一个 [c/87cefa:魔法珠] ，它会在一定距离后返回你身边
 					当[c/87cefa:珠子]投出时攻击会生成追踪火焰
 					当[c/87cefa:珠子]命中和击杀敌人时，获得 [c/87cefa:精华窃取] 堆叠
 					当获得九层堆叠时，下一次投出的[c/87cefa:魔法珠]将会消耗所有层数，[c/87cefa:治疗玩家并对敌人造成大量伤害]
-					[c/87cefa:“「不羁放纵，五指山下」”]
+					[c/87cefa:“不羁又放纵，泼猴山下压”]
 					'''
 				Details:
 					'''
@@ -6788,7 +6788,7 @@ Mods: {
 			}
 
 			OrbOfFlame: {
-				DisplayName: 火焰之珠
+				DisplayName: 烈焰之珠
 				Tooltip:
 					'''
 					投出一个附有火焰的 [c/87cefa:魔法珠] ，它会在一定距离后返回你身边
@@ -7566,23 +7566,23 @@ Mods: {
 			}
 
 			OrbOfFlameFireballCooldown: {
-				DisplayName: 火焰宝珠冷却
-				Description: 在当前火焰宝珠返回之前，你不能再次使用
+				DisplayName: 烈焰之珠冷却
+				Description: 在当前冷却结束之前，你不能再次使用
 			}
 
 			OrbOfSpiritualityCharmCooldown: {
-				DisplayName: 灵性宝珠冷却
-				Description: 在当前灵魂宝珠返回之前，你不能再次使用
+				DisplayName: 灵性之珠冷却
+				Description: 在当前冷却结束之前，你不能再次使用
 			}
 
 			OrbOfSpiritualityDash: {
-				DisplayName: 灵性宝珠使用中
+				DisplayName: 灵性之珠使用中
 				Description: 你正在狩猎！
 			}
 
 			OrbOfSpiritualityDashCooldown: {
-				DisplayName: 灵魂宝珠冲刺冷却
-				Description: 你不能重新激活灵魂宝珠冲刺直到现在的用完
+				DisplayName: 灵性之珠冲刺冷却
+				Description: 你不能重新激活灵性之珠冲刺直到冷却结束
 			}
 
 			SunderedDebuff: {
@@ -8330,18 +8330,18 @@ Mods: {
 			LightOfDawn.DisplayName: 黎明之光
 			LightrifleFire.DisplayName: 轻步枪弹
 			RadiantGlimmer.DisplayName: 璀璨之光
-			OrbOfDeceptionFlame.DisplayName: 欺诈火焰之珠
-			OrbOfDeceptionOrb.DisplayName: 欺诈之珠
-			OrbOfDeceptionOrbFilled.DisplayName: 充能的欺诈之珠
-			OrbOfFlameFireball.DisplayName: 火焰之珠火球
-			OrbOfFlameFlame.DisplayName: 火焰之珠
-			OrbOfFlameOrb.DisplayName: 火焰之珠
+			OrbOfDeceptionFlame.DisplayName: 诡谲之珠火焰
+			OrbOfDeceptionOrb.DisplayName: 诡谲之珠
+			OrbOfDeceptionOrbFilled.DisplayName: 充能的诡谲之珠
+			OrbOfFlameFireball.DisplayName: 烈焰之珠火球
+			OrbOfFlameFlame.DisplayName: 烈焰之珠
+			OrbOfFlameOrb.DisplayName: 烈焰之珠
 			OrbOfFlameOrbFilled.DisplayName: 充能的烈焰之珠
-			OrbOfSpiritualityCharm.DisplayName: 灵魂之珠爱心
-			OrbOfSpiritualityFlame.DisplayName: 灵魂之珠火球
-			OrbOfSpiritualityFlameNoMana.DisplayName: 灵魂之珠火焰
-			OrbOfSpiritualityOrb.DisplayName: 灵魂之珠之球
-			OrbOfSpiritualityOrbFilled.DisplayName: 灵魂之珠之球
+			OrbOfSpiritualityCharm.DisplayName: 灵性之珠爱心
+			OrbOfSpiritualityFlame.DisplayName: 灵性之珠火球
+			OrbOfSpiritualityFlameNoMana.DisplayName: 灵性之珠火焰
+			OrbOfSpiritualityOrb.DisplayName: 灵性之珠
+			OrbOfSpiritualityOrbFilled.DisplayName: 灵性之珠
 			ShatteredPrism.DisplayName: 破碎棱镜
 			MagicalBall.DisplayName: 魔力球
 			MagicShield.DisplayName: 魔力盾
@@ -8503,8 +8503,8 @@ Mods: {
 			ScorchingPointAura.DisplayName: 焦点灵气
 			CenterOfTheUniverseAura.DisplayName: 宇宙中心光环
 			InterstellarVesselAura.DisplayName: 星际飞船光环
-			OrbOfDeceptionOrbIdle.DisplayName: 欺诈之珠
-			OrbOfFlameOrbIdle.DisplayName: 火焰之珠
+			OrbOfDeceptionOrbIdle.DisplayName: 诡谲之珠
+			OrbOfFlameOrbIdle.DisplayName: 烈焰之珠
 			OrbOfSpiritualityOrbIdle.DisplayName: 灵性之珠
 			PortlyPlateRollHitbox.DisplayName: 臃肿板甲翻滚
 			PrimeBeam.DisplayName: 旧日机械支配者的光束
@@ -8542,7 +8542,7 @@ Mods: {
 			OilPotShard2.DisplayName: 油壶碎片
 			OilPotShard3.DisplayName: 油壶碎片
 			OilPotShard4.DisplayName: 油壶碎片
-			// DroidBomb.DisplayName: Droid Bomb
+			DroidBomb.DisplayName: 无人机炸弹
 		}
 
 		NPCs: {
@@ -9044,7 +9044,7 @@ Mods: {
 
 			RedKnight: {
 				DisplayName: 红骑士
-				// DespawnHandler: The Red Knight has slain you...
+				DespawnHandler: 红骑士杀死了你...
 			}
 
 			ResentfulSeedling.DisplayName: 哀怨树苗

@@ -1,8 +1,8 @@
 {
-  "text": "- 你发现了大地恶妖隐蔽的巢穴 -",
+  "text": "- 你发现了大地恶魔巫妖王隐蔽的巢穴 -",
   "tileX": 58,
   "tileY": 1911,
-  "textWidth": 280,
+  "textWidth": 330,
   "style": 1
 }
 {
@@ -203,7 +203,7 @@
   "style": 1
 }
 {
-  "text": "- 你发现了灰烬之王——葛温的坟墓 - --NEWLINE   --NEWLINE 要打败葛温，你需要击败7个远古领主来获得足够的力量。 --NEWLINE   --NEWLINE 他们被称为亚尔特留斯、大地恶妖、火焰恶魔马瑞丽斯、北海巨妖克拉肯、枯萎、冰龙希斯和渊堕飞龙法师。 --NEWLINE   --NEWLINE 在击败他们之前和葛温战斗，必死无疑",
+  "text": "- 你发现了灰烬之王——葛温的坟墓 - --NEWLINE   --NEWLINE 要打败葛温，你需要击败7个远古领主来获得足够的力量。 --NEWLINE   --NEWLINE 他们被称为亚尔特留斯、大地恶魔巫妖王、火焰恶魔马瑞丽斯、水之恶魔克拉肯、枯萎、冰龙希斯和渊堕飞龙法师。 --NEWLINE   --NEWLINE 在击败他们之前和葛温战斗，必死无疑",
   "tileX": 810,
   "tileY": 1245,
   "textWidth": 800,
@@ -1799,7 +1799,7 @@
   "style": 1
 }
 {
-  "text": "向东--> --NEWLINE 奥里德部落的雨林 --NEWLINE 黑曜岩火山 --NEWLINE 埃伦达利斯山脉 --NEWLINE 冻洋 --NEWLINE   --NEWLINE 向南↓ --NEWLINE 树妖之家的洞穴入口",
+  "text": "向东--> --NEWLINE 奥里德部落的雨林 --NEWLINE 黑曜石火山 --NEWLINE 埃伦达利斯山脉 --NEWLINE 冻洋 --NEWLINE   --NEWLINE 向南↓ --NEWLINE 树妖之家的洞穴入口",
   "tileX": 5338,
   "tileY": 867,
   "textWidth": 220,
