@@ -203,14 +203,14 @@
   "style": 1
 }
 {
-  "text": "- 你发现了灰烬之王——葛温的坟墓 - --NEWLINE   --NEWLINE 要打败葛温，你需要击败7个远古领主来获得足够的力量。 --NEWLINE   --NEWLINE 他们被称为亚尔特留斯、大地恶魔巫妖王、火焰恶魔马瑞丽斯、水之恶魔克拉肯、枯萎、冰龙希斯和渊堕飞龙法师。 --NEWLINE   --NEWLINE 在击败他们之前和葛温战斗，必死无疑",
+  "text": "- 你发现了灰烬之王葛温的坟墓 - --NEWLINE   --NEWLINE 要打败葛温，你需要击败七个恶魔领主来获得足够的力量。 --NEWLINE   --NEWLINE 他们被称为亚尔特留斯、大地恶魔巫妖王、火焰恶魔马瑞丽斯、水之恶魔克拉肯、枯萎、冰龙希斯和渊堕飞龙法师。 --NEWLINE   --NEWLINE 在击败他们之前和葛温战斗，必死无疑",
   "tileX": 810,
   "tileY": 1245,
   "textWidth": 800,
   "style": 1
 }
 {
-  "text": "Miakoda：\u0022瑞德，在你的地图上标出这一点。我相信这个海底洞穴通向格温的坟墓。 --NEWLINE   --NEWLINE 如果我们能找到打开这个洞穴的方法，我们应回到这里。\u0022",
+  "text": "Miakoda：\u0022瑞德，在你的地图上标出这里。我相信这个海底洞穴通向葛温的坟墓。 --NEWLINE   --NEWLINE 如果我们能找到打开这个洞穴的方法，我们应回到这里。\u0022",
   "tileX": 812,
   "tileY": 985,
   "textWidth": 600,
@@ -259,7 +259,7 @@
   "style": 1
 }
 {
-  "text": "在一张破碎的纸上，你读到了3种成分… --NEWLINE   --NEWLINE 1暗影之魂和1骨头和1000黑暗之魂 --NEWLINE   --NEWLINE 它似乎能制造一种武器,死寂是这把武器唯一的归宿…它在向你发出致命的召唤…",
+  "text": "在一张破碎的纸上，你读到了三种成分… --NEWLINE   --NEWLINE 1暗影之魂和1骨头和1000黑暗之魂 --NEWLINE   --NEWLINE 它似乎能制造一种武器，死寂是它唯一的归宿，它在向你发出致命的召唤…",
   "tileX": 1411,
   "tileY": 574,
   "textWidth": 600,
@@ -280,14 +280,14 @@
   "style": 1
 }
 {
-  "text": "三座巨像…被附魔的石柱挡住了一切，无论如何努力挖掘也无济于事… --NEWLINE   --NEWLINE \u0022阻止这条通道的人显然不想让任何人得到藏在里面的力量……也许最好把一些东西埋起来，交付给岁月长河来遗忘……\u0022 --NEWLINE   --NEWLINE 你留意到了奇怪的符号：^^^ --- <^ --- <<^",
+  "text": "三座附魔的石柱…拒人于千里之外… --NEWLINE   --NEWLINE \u0022封闭这的人显然不想让任何人得到藏在里面的力量… --NEWLINE   --NEWLINE 也许最好把一些东西埋起来，在岁月长河中遗忘…\u0022 --NEWLINE   --NEWLINE 你留意到了奇怪的符号：^^^|<^|<<^",
   "tileX": 1553,
   "tileY": 1778,
-  "textWidth": 850,
+  "textWidth": 380,
   "style": 1
 }
 {
-  "text": "- 你发现了海妖的国度 - --NEWLINE   --NEWLINE Miakoda：\u0022瑞德，我能感觉到一个强大的力量在附近…… --NEWLINE   --NEWLINE 保持警惕，你需要活用所有技能才能生存。\u0022",
+  "text": "- 你发现了水之恶魔的国度 - --NEWLINE   --NEWLINE Miakoda：\u0022瑞德，我能感觉到一个有强大力量的生物就在附近… --NEWLINE   --NEWLINE 保持警惕，你需要活用所有技能才能生存。\u0022",
   "tileX": 1554,
   "tileY": 1709,
   "textWidth": 450,
@@ -343,14 +343,14 @@
   "style": 1
 }
 {
-  "text": "在你危险的旅程中稍作休息。 --NEWLINE   --NEWLINE 你决定在这里过夜，明天一早出发。",
+  "text": "在你危险重重的旅程中稍作休息。 --NEWLINE   --NEWLINE 你决定在这里过夜，明天一早出发。",
   "tileX": 1783,
   "tileY": 839,
   "textWidth": 280,
   "style": 1
 }
 {
-  "text": "多么超现实啊，你有一种很熟悉的感觉，感觉就像沉浸在梦中一样…",
+  "text": "这怎么可能，你感觉沙漠中的这所房子很眼熟，就像你被烧毁的家一样 --NEWLINE   --NEWLINE 黄粱一梦终须醒,镜花水月总是空…",
   "tileX": 1795,
   "tileY": 838,
   "textWidth": 500,
@@ -448,7 +448,7 @@
   "style": 1
 }
 {
-  "text": "你来到一个很深的神圣化洞穴。 --NEWLINE   --NEWLINE 当你往下走的时候，你可以感觉到重力再次开始移动…（尝试按向上键）",
+  "text": "你来到一个很深的神圣洞穴。 --NEWLINE   --NEWLINE 当你往下走的时候，你可以感觉到重力再次开始变化…（尝试按向上键）",
   "tileX": 2265,
   "tileY": 1183,
   "textWidth": 520,
@@ -476,7 +476,7 @@
   "style": 1
 }
 {
-  "text": "这个箱子上刻着一个瓶中云的符号。",
+  "text": "这个箱子上刻着一个云朵瓶的符号",
   "tileX": 2444,
   "tileY": 895,
   "textWidth": 270,
@@ -490,31 +490,31 @@
   "style": 1
 }
 {
-  "text": "你拉下拉杆， --NEWLINE   --NEWLINE 听到石头在你头顶发出的轰鸣声。",
+  "text": "你拉下拉杆， --NEWLINE   --NEWLINE 听到头顶石块移动发出的轰鸣声。",
   "tileX": 2488,
   "tileY": 922,
   "textWidth": 240,
   "style": 1
 }
 {
-  "text": "-你找到了阴影之洞- --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022叶绿矿大门…沙漠郊区的暗影之洞…\u0022",
+  "text": "- 你找到了阴影之洞 - --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022叶绿矿大门…沙漠郊区的阴影之洞…\u0022",
   "tileX": 2542,
   "tileY": 774,
   "textWidth": 500,
   "style": 1
 }
 {
-  "text": "- 你发现了旧日之树 -  --NEWLINE   --NEWLINE Miakoda告诉我，从这里可以找到通往水魔克拉肯的道路…但入口仍然是个谜…",
+  "text": "- 你发现了旧日之树 -  --NEWLINE   --NEWLINE Miakoda告诉我，从这里可以找到通往水之恶魔克拉肯的道路…但入口仍然是个谜…",
   "tileX": 2668,
   "tileY": 1217,
   "textWidth": 580,
   "style": 1
 }
 {
-  "text": "这扇大门挡住了西去的路。我需要一个能挖掘精金的钻头才行。",
+  "text": "这扇大门挡住了西去的路。 --NEWLINE   --NEWLINE 我需要一个能挖掘精金的钻头才行。",
   "tileX": 2698,
   "tileY": 673,
-  "textWidth": 440,
+  "textWidth": 270,
   "style": 1
 }
 {
@@ -665,7 +665,7 @@
   "style": 1
 }
 {
-  "text": "-这扇门守护着通往水魔之路- --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022大峡谷底部的神庙蜥蜴砖大门。打开未知的钥匙…\u0022",
+  "text": "- 这扇门守护着通往水之恶魔之路 - --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022大峡谷底部的神庙蜥蜴砖大门。打开未知的钥匙…\u0022",
   "tileX": 3364,
   "tileY": 1412,
   "textWidth": 590,

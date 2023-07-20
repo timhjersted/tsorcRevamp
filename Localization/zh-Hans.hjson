@@ -187,7 +187,7 @@ Mods: {
 			25: 不要忘记翻滚啊！
 			26: 我真是**的疯了
 			27: 石头构成的门不能被稿子挖开，必须用拉杆或开关打开
-			WallDeathReason: "被血肉之墙吞噬"
+			WallDeathReason: 被血肉之墙吞噬
 			BotC1: 被诅咒者模式可以随时关闭...
 			BotC2: 被诅咒者模式是为有通关经验的玩家设计的...
 			IWantToRemoveThisCaptainObviousShit: 尽量避免被敌人击中...
@@ -203,7 +203,7 @@ Mods: {
 		}
 
 		Events: {
-			Deerclops: 你惊动了远古之灵！
+			Deerclops: 你惊动了远古巨鹿！
 			SkeletronHidden: 坟墓之主骷髅王已苏醒！
 			EoC: 克苏鲁之眼盯上你了！
 			EoW: 世界吞噬者已经准备好饱餐一顿！
@@ -3737,7 +3737,7 @@ Mods: {
 
 			Epilogue: {
 				DisplayName: 结语
-				Tooltip: 这件物品来自未来，上面的文本模糊不清。你必须在你的冒险中取得更大的进展才能揭示它...
+				Tooltip: obscured这件物品来自未来，上面的文本模糊不清。你必须在你的冒险中取得更大的进展才能揭示它...
 				Obscured:
 					'''
 					[c/ffbf00:恭喜！你已经解锁了游戏的真实结局！]
@@ -4750,8 +4750,8 @@ Mods: {
 			}
 
 			TheEnd: {
-				DisplayName: 终末抑或是中末
-				Tooltip: 这件物品来自未来，上面的文本模糊不清。你必须在你的冒险中取得更大的进展才能揭示它
+				DisplayName: 终末还是中末
+				Tooltip: obscured这件物品来自未来，上面的文本模糊不清。你必须在你的冒险中取得更大的进展才能揭示它
 				Obscured:
 					'''
 					当夺心魔之王燃烧的残骸摆在您面前时，您抬头望向地平线
@@ -6247,7 +6247,7 @@ Mods: {
 				Tooltip:
 					'''
 					召唤一个空精灵为你而战
-					空精灵会使用一些永久性的debuff
+					空精灵造成永久性的可堆叠debuff
 					空精灵可以吃到所有来源的伤害加成
 					'''
 			}
@@ -7140,17 +7140,17 @@ Mods: {
 			}
 
 			AncestorSpiritRelic: {
-				DisplayName: 远古之灵圣物
+				DisplayName: 远古巨鹿圣物
 				Tooltip: ""
 			}
 
 			AncestorSpiritTrophy: {
-				DisplayName: 远古之灵纪念章
+				DisplayName: 远古巨鹿纪念章
 				Tooltip: ""
 			}
 
 			AncestorSpiritMask: {
-				DisplayName: 先祖之灵面具
+				DisplayName: 远古巨鹿面具
 				Tooltip: ""
 			}
 
@@ -8570,7 +8570,7 @@ Mods: {
 			BrainOfCthulhu.DespawnHandler: 克苏鲁之脑玩腻了，你太弱啦...
 			QueenBee.DespawnHandler: 蜂后大胜而归...
 			Skeletron.DespawnHandler: 骷髅王从你的死亡中得到了满足...
-			Deerclops.DespawnHandler: 独眼巨鹿将你破碎的身体拖回巢穴...
+			Deerclops.DespawnHandler: 远古巨鹿将你破碎的身体拖回巢穴...
 			WallOfFlesh.DespawnHandler: 血肉之墙的怒火得到了平息...
 			QueenSlime.DespawnHandler: 史莱姆女皇重返王位...
 			Destroyer.DespawnHandler: 毁灭者重回腐败的深处...
