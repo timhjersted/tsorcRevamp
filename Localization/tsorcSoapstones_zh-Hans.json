@@ -938,7 +938,7 @@
   "style": 1
 }
 {
-  "text": "-阿拉齐姆山洞- --NEWLINE   --NEWLINE \u0022奇怪。这些发光蘑菇的排列顺序看起来不是随机的……\u0022",
+  "text": "- 阿拉齐姆山洞 - --NEWLINE   --NEWLINE \u0022奇怪。这些发光蘑菇的排列顺序看起来不是随机的……\u0022",
   "tileX": 3923,
   "tileY": 685,
   "textWidth": 390,
@@ -952,7 +952,7 @@
   "style": 1
 }
 {
-  "text": "\u0022在我深入地下之前，这些洞穴可能值得探索…\u0022",
+  "text": "\u0022在我深入地下之前，这些山洞可能值得探索…\u0022",
   "tileX": 3956,
   "tileY": 710,
   "textWidth": 380,
@@ -1603,10 +1603,10 @@
   "style": 1
 }
 {
-  "text": "<*>按左Alt可在躲避伤害的同时躲避敌人。您可以在mod部分通过TML的控制器设置更改输入。 --NEWLINE   --NEWLINE 左移或右移也值得一试。找到适合你的方法。这对您的旅程至关重要。<*>",
+  "text": "按左Alt翻滚可在躲避伤害的同时躲避敌人。 --NEWLINE   --NEWLINE 可以在设置中的控件选项，更改模组新增功能绑定的快捷键。 --NEWLINE   --NEWLINE 左移或右移也值得一试，找到适合你的方法。这对您的旅程至关重要。",
   "tileX": 4855,
   "tileY": 866,
-  "textWidth": 700,
+  "textWidth": 500,
   "style": 1
 }
 {
@@ -1638,21 +1638,21 @@
   "style": 1
 }
 {
-  "text": "你醒来时咳嗽着黑色的血块，你意识到你被认为已经死去，被活埋在这里 --NEWLINE   --NEWLINE 心跳开始加速，手在黑暗中挣扎，寻找任何能帮你出去的东西 --NEWLINE   --NEWLINE 你感觉到背后有东西，转身发现了你父亲遗留的破碎的镐子…",
+  "text": "你醒来时咳着黑色的血块，有人认为你已经死去，遂将你埋在这里 --NEWLINE   --NEWLINE 你的心跳开始加速，手在黑暗中挣扎，寻找任何能帮你出去的东西 --NEWLINE   --NEWLINE 你感觉到背后有东西，转身发现了你父亲遗留的破碎的镐子…",
   "tileX": 4919,
   "tileY": 873,
   "textWidth": 520,
   "style": 1
 }
 {
-  "text": "~·~ The Story Of Red Cloud 红云物语~·~  --NEWLINE 巨焱龙晶汉化组 汉化  --NEWLINE 人手不够 有部分翻译生硬 请见谅  --NEWLINE   --NEWLINE ~·~汉化人员：~·~ --NEWLINE 星界棱晶 b站id454936579 --NEWLINE 巨像ha b站id 52650683 --NEWLINE 丛林龙_亚戎 b站id 319380527 --NEWLINE 闪金 b站id 434011516 --NEWLINE 麒龙 b站id 178324958 --NEWLINE 芋圆銮歌 b站id 259288171 --NEWLINE 小小红白 b站id 397702 --NEWLINE 咕咕王 b站id 38075201 --NEWLINE urgiv b站id 335846318",
+  "text": "~·~ The Story Of Red Cloud 红云物语 ~·~  --NEWLINE 巨焱龙晶汉化组 汉化  --NEWLINE 人手不够 有部分翻译生硬 请见谅  --NEWLINE   --NEWLINE ~·~汉化人员：~·~ --NEWLINE 星界棱晶 b站id454936579 --NEWLINE 巨像ha b站id 52650683 --NEWLINE 丛林龙_亚戎 b站id 319380527 --NEWLINE 闪金 b站id 434011516 --NEWLINE 麒龙 b站id 178324958 --NEWLINE 芋圆銮歌 b站id 259288171 --NEWLINE 小小红白 b站id 397702 --NEWLINE 咕咕王 b站id 38075201 --NEWLINE urgiv b站id 335846318",
   "tileX": 4926,
   "tileY": 860,
   "textWidth": 320,
   "style": 1
 }
 {
-  "text": "附加的一些游玩提示： --NEWLINE   --NEWLINE 1.不要加内容类MOD！ --NEWLINE 包括某些辅助类mod如翻页背包、连锁挖矿。 --NEWLINE 不但你加的mod玩不好，这张地图也有可能出大bug，出事了只能说你活该。 --NEWLINE   --NEWLINE 2.如果游玩过程中遇到没翻译的句子、告示牌或你认为有问题的地方。 --NEWLINE 可以截图（尽量详细一些），发在我们的qq群里，并@群主&管理 --NEWLINE   --NEWLINE 感谢您对红云物语模组和该冒险地图以及我们的支持！ --NEWLINE   --NEWLINE 可以加QQ群:645748667关注我们的动态以及提出宝贵建议！ --NEWLINE   --NEWLINE 祝您游玩愉快！",
+  "text": "附加的一些游玩提示： --NEWLINE   --NEWLINE 1.不要加内容类模组！ --NEWLINE 以及某些辅助类模组如懒人、翻页背包、连锁挖矿。 --NEWLINE 不但你加的mod玩不好，这张地图也有可能出大bug，出事了只能说你活该。 --NEWLINE   --NEWLINE 2.如果游玩过程中遇到没翻译的句子、告示牌或你认为有问题的地方。 --NEWLINE 可以截图（尽量详细一些），发在我们的qq群里，并@群主&管理 --NEWLINE   --NEWLINE 可以加QQ群:645748667关注我们的动态以及提出宝贵建议！ --NEWLINE   --NEWLINE 感谢您对红云物语模组和该冒险地图以及我们的支持！祝您游玩愉快！",
   "tileX": 4930,
   "tileY": 860,
   "textWidth": 650,
@@ -1662,7 +1662,7 @@
   "text": "向西<--- --NEWLINE 埃什峰村 --NEWLINE   --NEWLINE 向东---> --NEWLINE 奥里德部落的雨林 --NEWLINE 丛林废墟 --NEWLINE 黑曜石火山 --NEWLINE 未知之地",
   "tileX": 4944,
   "tileY": 859,
-  "textWidth": 130,
+  "textWidth": 150,
   "style": 1
 }
 {
@@ -1680,17 +1680,17 @@
   "style": 1
 }
 {
-  "text": "这扇大门被叶绿矿封闭，叶绿矿是一种比精金更坚固的矿石。 --NEWLINE   --NEWLINE \u0022我需要一个非常强大的钻头来打开这个。炸弹和普通的钻头不会让它产生任何形变…\u0022",
+  "text": "这扇大门被叶绿矿封闭，叶绿矿是一种比精金更坚固的矿石。 --NEWLINE   --NEWLINE \u0022我需要一个非常强大的钻头来打开这个。炸弹和普通的钻头不能破坏它…\u0022",
   "tileX": 5018,
   "tileY": 915,
-  "textWidth": 620,
+  "textWidth": 560,
   "style": 1
 }
 {
-  "text": "在你上方很远的地方，你可以看到房间里有一个开口。 --NEWLINE   --NEWLINE \u0022也许这会带来出路。\u0022",
+  "text": "在你上方很远的地方，你可以看到房间里有一个开口。 --NEWLINE   --NEWLINE \u0022也许那里有出路。\u0022",
   "tileX": 5054,
   "tileY": 1092,
-  "textWidth": 450,
+  "textWidth": 440,
   "style": 1
 }
 {
@@ -1701,14 +1701,14 @@
   "style": 1
 }
 {
-  "text": "在你父亲的剑下，你发现一张纸条：\u0022瑞德，很多年前，当这片大地还留有和平的时候， --NEWLINE   --NEWLINE 我将这把剑的灵魂一分为二，确保它的全部力量永远不会被黑暗势力所利用。 --NEWLINE   --NEWLINE 如果再次需要这种力量，请在蜥蜴神庙大门外的大峡谷深处寻找老树…… --NEWLINE   --NEWLINE 保持小心，瑞德。我将永远与你在一起。\u0022-你的父亲",
+  "text": "在你父亲的剑下，你发现一张纸条：\u0022瑞德，很多年前，当这片大地还留有和平的时候， --NEWLINE   --NEWLINE 我将这把剑的灵魂一分为三，确保它的全部力量永远不会被黑暗势力所利用。 --NEWLINE   --NEWLINE 如果再次需要这种力量，请在蜥蜴神庙大门外的大峡谷深处寻找老树…… --NEWLINE   --NEWLINE 保持小心，瑞德。我将永远与你在一起。\u0022-你的父亲",
   "tileX": 5084,
   "tileY": 920,
   "textWidth": 680,
   "style": 1
 }
 {
-  "text": "-你找到了遗忘之城的墓穴- --NEWLINE   --NEWLINE \u0022门是密封的，但没有钥匙孔……\u0022",
+  "text": "- 你找到了遗忘之城的墓穴 - --NEWLINE   --NEWLINE \u0022门是密封的，但没有钥匙孔……\u0022",
   "tileX": 5117,
   "tileY": 1743,
   "textWidth": 280,
@@ -1998,7 +1998,7 @@
   "text": "\u0022什么样的古代文明可以建造这个？\u0022",
   "tileX": 6155,
   "tileY": 880,
-  "textWidth": 250,
+  "textWidth": 270,
   "style": 1
 }
 {

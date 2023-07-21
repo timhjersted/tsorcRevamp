@@ -9,7 +9,7 @@ Mods: {
 			ForBotCOnly: 仅限[c/6d8827:被诅咒者]：
 			UniqueBarrier: 不与其他屏障或盾牌法术叠加
 			NonConsumable: 物品不被消耗
-			UnusableDuringBoss: 有BOSS存活时不能使用!
+			UnusableDuringBoss: 有BOSS存活时不能使用！
 			MeleeWhipAutoswing: 激活近战武器自动挥舞
 			RecipeTooltip: "[c/66fc03:黑暗之魂合成材料]"
 			WingsDisabled:
@@ -17,9 +17,9 @@ Mods: {
 				这些翅膀已被一个凶残的[c/009400:猎手]Boss[c/383838:诅咒]
 				它们在其被击败之前不能使用
 				'''
-			TileEnabled: "[c/1cfc03:冒险模式下允许放置!]"
-			TileDisabled: "[c/fc1c03:冒险模式下禁止放置!]"
-			ItemDisabled: "[c/fc1c03:该物品在冒险模式下被禁用!]"
+			TileEnabled: "[c/1cfc03:冒险模式下允许放置！]"
+			TileDisabled: "[c/fc1c03:冒险模式下禁止放置！]"
+			ItemDisabled: "[c/fc1c03:该物品在冒险模式下被禁用！]"
 			AttraidiesCursed:
 				'''
 				这件物品已经被[c/aa00ff:阿卓迪斯][c/383838:诅咒]了
@@ -87,7 +87,7 @@ Mods: {
 			Melee: {
 				ArmorPenPercent: 增加近战护甲穿透 {0}%
 				FlatDmg: 增加近战伤害 {0} 点
-				Bonus: (对于近战是双倍)(x{0} for melee)
+				Doubled: (近战武器的加成再额外x{0})
 				BadDmg: 减少 {0}% 近战伤害
 				Only: 仅供近战战士使用
 				DmgMult: 乘算增加 {0}% 近战伤害
@@ -215,8 +215,8 @@ Mods: {
 			AncientOolacileDemon: 你这个愚蠢的人类...可悲的傲慢...
 			GoblinSummoner1: 你太大意了，瑞德。你来这里是个傻瓜...
 			GoblinSummoner2: 你觉得你很聪明吗，瑞德？
-			IceGolemWyvern: !!!
-			IceGolem: !
+			IceGolemWyvern: ！！！
+			IceGolem: ！
 			KingSlime: 史莱姆王出现了！
 			HeroOfLumelia: “你杀了我的兄弟向导，瑞德！...你在这个世界上释放了地狱深处的灾难！”鲁米利亚的一位英雄来寻求正义...
 			FireLurker: 一个被诅咒的火焰潜伏者出现了...
@@ -2869,7 +2869,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Summon.AtkSpeed}
-					可以在NPC处购买
+					可以在萨满长老处购买
 					'''
 			}
 
@@ -2878,7 +2878,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
-					可以在NPC处购买
+					可以在萨满长老处购买
 					'''
 			}
 
@@ -3445,11 +3445,11 @@ Mods: {
 				DisplayName: Boss重召唤书
 				Tooltip:
 					'''
-					允许你重新召唤任何你曾经打败过的boss
-					左键点击召唤选中的boss，右键点击选择你想要召唤的boss
-					以这种方式召唤的boss不会掉落黑暗之魂、守护灵魂或耐力容器
+					允许你重新召唤任何你曾经打败过的Boss
+					手持该物品时左键点击显示Boss选择光圈，右侧箭头切换不同时期，再左键点击你想要的Boss以召唤
+					以这种方式召唤的Boss不会掉落黑暗之魂、守护灵魂或耐力容器
 					然而，他们仍会掉落剩下的正常战利品
-					开发者注:[c/ff0000:目前还不是所有的boss都可以通过这种方式被召唤，但其余的将会随着时间的推移而添加]
+					开发者注:[c/ff0000:目前还不是所有的Boss都可以通过这种方式被召唤，但其余的将会随着时间的推移而添加]
 					'''
 				None: 没有打败任何可以重召唤的boss！
 				Selected: 当前选择的boss：
@@ -3711,7 +3711,7 @@ Mods: {
 					...
 					希望你享受了本次游戏历程
 					我们期待你对该mod提出改进意见，你可以通过Steam页面与Discord联系我们！
-					- Tim Hjersted, aka Vibrent, and the rest of the Revamp Team
+					- Tim Hjersted,aka Vibrent和开发团队
 					'''
 			}
 
@@ -6487,7 +6487,7 @@ Mods: {
 			}
 
 			WorldIDReset: {
-				DisplayName: "{TROUBLESHOOTING ITEM!!} World ID Reset"
+				DisplayName: "{TROUBLESHOOTING ITEM！！} World ID Reset"
 				Tooltip:
 					'''
 					用于恢复损坏地图的调试项。 如果您不尝试这样做，可能会导致小地图损坏！
@@ -6657,7 +6657,7 @@ Mods: {
 					{$Items.Nightbringer.Keybind1}特殊能力键{$Items.Nightbringer.Keybind2}
 					[c/ff4500:“和谐是一个用来迫使顺从的谎言”]
 					'''
-				Keybind1: "按 Shift 键和 "
+				Keybind1: "按A+D键和 "
 				Keybind2: " 会制造一道 [c/ff4500:防火墙]"
 				Details:
 					'''
@@ -6745,7 +6745,7 @@ Mods: {
 					{$Items.OmegaSquadRifle.Keybind1}特殊能力键{$Items.OmegaSquadRifle.Keybind2}
 					[c/adff2f:“外面有一个蘑菇，上面有你的名字”]
 					'''
-				Keybind1: "按Shift和 "
+				Keybind1: "按A+D键和 "
 				Keybind2: " 在光标所指位置生成一个 [c/adff2f:蘑菇弹]"
 				Details:
 					'''
@@ -6850,8 +6850,8 @@ Mods: {
 					'''
 					召唤火球围绕你旋转，并以敌人的方式伤害敌人
 					消耗半个召唤栏位，如果召唤出足够多的火球，就会产生炽热光环
-					持有该物品时，通过按 特殊能力键 增加其半径
-					或通过按 Shift+特殊能力键 来减小半径
+					手持该物品时，通过按 特殊能力键 来改变其半径
+					增大/减小半径的效果取决于玩家面对的方向
 					施加 灼热 增益, 根据你暴击率的一小部分给予召唤物暴击率
 					“献给Runeterra的灰烬之主！”
 					'''
@@ -6863,8 +6863,8 @@ Mods: {
 					'''
 					召唤星际飞船围绕你旋转，并以敌人的方式伤害敌人
 					消耗半个召唤栏位，如果召唤出足够多的星际飞船，就会产生恒星光环
-					持有该物品时，通过按 特殊能力键 增加其半径
-					或通过按 Shift+特殊能力键 来减小半径
+					手持该物品时，通过按 特殊能力键 来改变其半径
+					增大/减小半径的效果取决于玩家面对的方向
 					在不持有遥控器的情况下按 特殊能力键 可以激活涡轮增压
 					这会增加星际飞船的伤害和移动速度
 					涡轮增压会消耗你的魔力，在受到魔力病病的影响时无法激活
@@ -6879,8 +6879,8 @@ Mods: {
 					'''
 					召唤恒星围绕你旋转，并以敌人的方式伤害敌人
 					消耗半个召唤栏位，如果召唤出足够多的恒星，就会产生宇宙光环
-					持有该物品时，通过按 特殊能力键 增加其半径
-					或通过按 Shift+特殊能力键 来减小半径
+					手持该物品时，通过按 特殊能力键 来改变其半径
+					增大/减小半径的效果取决于玩家面对的方向
 					在不持有遥控器的情况下按 特殊能力键 可以激活涡轮增压
 					这会增加恒星的伤害和移动速度，但消耗你的魔力
 					每暴击15次后，右键 即可召唤星际伪造者
@@ -7458,7 +7458,7 @@ Mods: {
 
 			Invincible: {
 				DisplayName: 无敌
-				Description: 你成为了卡兹!
+				Description: 你成为了卡兹！
 			}
 
 			LifegemHealing: {
@@ -8543,7 +8543,7 @@ Mods: {
 			OilPotShard3.DisplayName: 油壶碎片
 			OilPotShard4.DisplayName: 油壶碎片
 			DroidBomb.DisplayName: 无人机炸弹
-			// EnemyForgottenPearlSpearProj.DisplayName: Enemy Forgotten Pearl Spear Proj
+			EnemyForgottenPearlSpearProj.DisplayName: 被遗忘的珍珠矛
 		}
 
 		NPCs: {
@@ -8651,7 +8651,7 @@ Mods: {
 
 			LichKingDisciple: {
 				DisplayName: 巫妖王信徒
-				Aura: 巫妖王信徒的周围散发出一股恶臭！!
+				Aura: 巫妖王信徒的周围散发出一股恶臭！！
 			}
 
 			LichKingSerpentBody.DisplayName: 巫妖狂蟒
@@ -8787,7 +8787,7 @@ Mods: {
 			DarkCloud: {
 				DisplayName: 堕渊瑞德
 				DespawnHandler: 你被纳入了你自己的暗影...
-				MoveFailed: "Move failed to set! NextAttackMode "
+				MoveFailed: "无法进行移动！下一种攻击即将到来"
 				Spaghetti: " 被切碎了"
 				TidalFoces: " 被潮汐引力撕裂"
 				Shattered: " 被粉碎了"
@@ -8824,11 +8824,11 @@ Mods: {
 				DespawnHandler: 你被灰烬帝王打败了...
 				SwordShattered: 葛温的剑已然碎裂！葛温被削弱了！
 				RainOfDeath: 葛温的死亡之雨增强了！
-				Fury: 葛温怒火中烧!
+				Fury: 葛温怒火中烧！
 				Protected: 葛温受到燃灰之魂的保护——你离得太远了！
 				RainsDeath: 葛温降下死亡@
 				TidalWave: 葛温召唤了死亡汐漩！
-				Challenge: 面对我!
+				Challenge: 面对我！
 				GiveUp: 投降吧，瑞德！接受你的命运！
 			}
 
@@ -9185,7 +9185,7 @@ Mods: {
 				Name11: Uorin
 				Quote1: 在这里为您服务。
 				Quote2: 我可以用一些酒...
-				Quote3: 我已经等不及力，快点端上来罢!（急迫）
+				Quote3: 我已经等不及力，快点端上来罢！（急迫）
 				Quote4: 嗨害嗨！
 				Quote5: 无可奉告。
 
@@ -9611,7 +9611,7 @@ Mods: {
 
 		Configs: {
 			tsorcRevampConfig: {
-				DisplayName: 设置
+				DisplayName: 红云物语模组设置
 
 				AdventureMode: {
 					Label: 冒险模式：主体
@@ -9619,8 +9619,8 @@ Mods: {
 						'''
 						防止破坏和放置大多数块。
 						它还启用了一些模组配套地图的功能。
-						“如果游戏允许你打破它或放置它，那就是允许的!存在即合理!"
-						如果您正在使用模组配套的地图，请启用此功能!
+						“如果游戏允许你打破它或放置它，那就是允许的，存在即合理！"
+						如果您正在使用模组配套的地图，请启用此功能！
 						'''
 				}
 
@@ -9766,7 +9766,7 @@ Mods: {
 					Label: 禁用重力效果屏幕翻转
 					Tooltip:
 						'''
-						仍在测试! (大部分运行正常，但会有一些小bug)
+						仍在测试！ (大部分运行正常，但会有一些小bug)
 						翻转重力只会翻转你的角色，而不是整个屏幕。
 						'''
 				}
