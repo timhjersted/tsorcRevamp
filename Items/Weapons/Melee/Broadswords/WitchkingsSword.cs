@@ -14,8 +14,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     class WitchkingsSword : ModItem
     {
-        public static int DebuffDuration = 5;
-        public static int TagDuration = 4;
+        public static int DebuffDuration = 3;
+        public static int TagDuration = 3;
         public override void SetStaticDefaults()
         {
         }
