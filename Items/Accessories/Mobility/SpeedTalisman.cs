@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Accessories.Mobility
 {
     public class SpeedTalisman : ModItem
     {
-        public static float AtkSpeed = 8f;
+        public static float AtkSpeed = 10f;
         public static float MoveSpeed = 15f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed, MoveSpeed);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed, MoveSpeed, 1f + tsorcRevampPlayer.MeleeBonusMultiplier);
         public override void SetStaticDefaults()
         {
         }
@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         {
             player.moveSpeed += MoveSpeed / 100f;
             player.GetAttackSpeed(DamageClass.Generic) += AtkSpeed / 100f;
-            player.GetAttackSpeed(DamageClass.Melee) += AtkSpeed / 100f;
+            player.GetAttackSpeed(DamageClass.Melee) += (AtkSpeed / 100f) * tsorcRevampPlayer.MeleeBonusMultiplier;
             player.autoReuseGlove = true;
         }
 

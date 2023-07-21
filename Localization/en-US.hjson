@@ -87,7 +87,7 @@ Mods: {
 			Melee: {
 				ArmorPenPercent: Increases melee armor penetration by {0}%
 				FlatDmg: Increases melee damage by {0} flat
-				Doubled: (doubled for melee)
+				Bonus: (x{0} for melee)
 				BadDmg: Decreases melee damage dealt by {0}%
 				Only: For melee warriors only
 				DmgMult: Increases melee damage by {0}% multiplicatively
@@ -1113,7 +1113,7 @@ Mods: {
 					[c/ffbf00:The Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous in this realm.]
 					[c/00ffd4:Grants immunity to particular dangers caused by the Abyss and foes empowered by it, such as Crippled, Poisoned, On Fire and Oiled]
 					Also grants protection from lava, knockback, Blackened Flames and fire blocks, but increases enemy spawn rates.
-					Increases damage, critical strike chance, movement and attack speed{$CommonItemTooltip.Melee.Doubled} by {0}% multiplicatively
+					Increases damage, critical strike chance, movement and attack speed{$CommonItemTooltip.Melee.Bonus@1} by {0}% multiplicatively
 					'''
 			}
 
@@ -1716,7 +1716,7 @@ Mods: {
 				DisplayName: Speed Talisman
 				Tooltip:
 					'''
-					{$CommonItemTooltip.AtkSpeed}{$CommonItemTooltip.Melee.Doubled}
+					{$CommonItemTooltip.AtkSpeed}{$CommonItemTooltip.Melee.Bonus@2}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
 					{$CommonItemTooltip.MeleeWhipAutoswing}
 					'''
@@ -1913,7 +1913,7 @@ Mods: {
 				Tooltip:
 					'''
 					Fueled by a magical gem in the chest
-					{$CommonItemTooltip.AtkSpeed}{$CommonItemTooltip.Melee.Doubled}
+					{$CommonItemTooltip.AtkSpeed}{$CommonItemTooltip.Melee.Bonus@1}
 					{$CommonItemTooltip.SetBonus}Chance to gain stacks upon damaging anything
 					Collect stacks to gain up to 28% damage reduction against the next hit
 					'''
@@ -4622,7 +4622,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.IncreasesDefenseBy@1}
-					{$CommonItemTooltip.AtkSpeed@2}{$CommonItemTooltip.Melee.Doubled}
+					{$CommonItemTooltip.AtkSpeed@2}{$CommonItemTooltip.Melee.Bonus@4}
 					{$CommonItemTooltip.BadLifeRegen@3}
 					Does not stack with Demon Drug, Armor Drug, or Battlefront Potions
 					'''
@@ -6656,7 +6656,7 @@ Mods: {
 					{$Items.Nightbringer.Keybind1}Special Ability{$Items.Nightbringer.Keybind2}
 					[c/ff4500:'Harmony is a lie told to force Obedience']
 					'''
-				Keybind1: "Press Shift + "
+				Keybind1: "Press A + D + "
 				Keybind2: " to create a stationary [c/ff4500:Firewall]"
 				Details:
 					'''
@@ -6744,7 +6744,7 @@ Mods: {
 					{$Items.OmegaSquadRifle.Keybind1}Special Ability{$Items.OmegaSquadRifle.Keybind2}
 					[c/adff2f:'There's a mushroom out there with your name on it']
 					'''
-				Keybind1: "Press Shift and "
+				Keybind1: "Press A + D + "
 				Keybind2: " to drop a [c/adff2f:Nuclear Mushroom]"
 				Details:
 					'''
@@ -6849,8 +6849,8 @@ Mods: {
 					'''
 					Summons fireballs to rotate around you and damage enemies in their way
 					Uses half a minion slot, grants a fiery aura if enough fireballs are summoned
-					While holding this item, increase their radius by holding Special Ability
-					Or hold Shift + Special Ability to shrink their radius
+					While holding this item, increase or shrink their radius by holding Special Ability,
+					 depending on which direction the player is facing
 					Applies the Scorching debuff, which grants minions crit chance based on a fraction of your critical strike chance
 					'By the Ashen Lord of Runeterra!'
 					'''
@@ -6862,8 +6862,8 @@ Mods: {
 					'''
 					Summons spaceships to rotate around you and damage enemies in their way
 					Uses half a minion slot, grants a stellar aura if enough spaceships are summoned
-					While holding this item, increase their radius by holding Special Ability
-					Or hold Shift + Special Ability to shrink their radius
+					While holding this item, increase or shrink their radius by holding Special Ability,
+					 depending on which direction the player is facing
 					Press Special Ability while not holding the remote to activate Turboboost
 					This increases the spaceships damage and movement speed
 					Turboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness                        
@@ -6876,10 +6876,10 @@ Mods: {
 				DisplayName: Center of the Universe
 				Tooltip:
 					'''
-					Summons stars to rotate around you and damage enemies in their way
+					WIP Summons stars to rotate around you and damage enemies in their way
 					Uses half a minion slot, grants a cosmic aura if enough stars are summoned
-					While holding this item, increase their radius by holding the Special Ability hotkey
-					Or hold Shift + Special Ability to shrink their radius
+					While holding this item, increase or shrink their radius by holding Special Ability,
+					 depending on which direction the player is facing
 					Press Special Ability while not holding the remote to activate Turboboost
 					This increases the stars damage and movement speed but drains your mana
 					Every 15 critical hits, rightclick with this item in hand to call in the Star Forger

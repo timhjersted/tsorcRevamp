@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors
     public class AncientMagicPlateArmor : ModItem
     {
         public static float AtkSpeed = 12f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed, 1f + tsorcRevampPlayer.MeleeBonusMultiplier);
         public override void SetStaticDefaults()
         {
         }
@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.GetAttackSpeed(DamageClass.Generic) += AtkSpeed / 100f;
-            player.GetAttackSpeed(DamageClass.Melee) += AtkSpeed / 100f;
+            player.GetAttackSpeed(DamageClass.Melee) += (AtkSpeed / 100f) * tsorcRevampPlayer.MeleeBonusMultiplier;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {

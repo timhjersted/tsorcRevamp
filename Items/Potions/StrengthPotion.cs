@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Potions
         public static float DamageBoost = 12f;
         public static float AttackSpeedBoost = 10f;
         public static int BadLifeRegen = 5;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageBoost, Defense, AttackSpeedBoost, BadLifeRegen);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageBoost, Defense, AttackSpeedBoost, BadLifeRegen, 1f + tsorcRevampPlayer.MeleeBonusMultiplier);
         public override void SetStaticDefaults()
         {
         }

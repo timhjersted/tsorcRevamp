@@ -87,7 +87,7 @@ Mods: {
 			Melee: {
 				ArmorPenPercent: 增加近战护甲穿透 {0}%
 				FlatDmg: 增加近战伤害 {0} 点
-				Doubled: (对于近战是双倍)
+				Bonus: (对于近战是双倍)(x{0} for melee)
 				BadDmg: 减少 {0}% 近战伤害
 				Only: 仅供近战战士使用
 				DmgMult: 乘算增加 {0}% 近战伤害
@@ -1113,7 +1113,7 @@ Mods: {
 					[c/ffbf00:深渊遍布世界，如我们自身之镜，但其黑暗更加深远...]
 					[c/00ffd4:对一些深渊相关的敌人造成的debuff免疫，例如残废，中毒，着火, 以及涂油]
 					免疫击退，火块，熔岩和地狱黯炎，但是会提升敌人生成速度
-					乘算增加 {0}% 伤害、暴击率、移动速度、攻击速度{$CommonItemTooltip.Melee.Doubled}
+					乘算增加 {0}% 伤害、暴击率、移动速度、攻击速度{$CommonItemTooltip.Melee.Bonus@1}
 					'''
 			}
 
@@ -1716,7 +1716,7 @@ Mods: {
 				DisplayName: 速度护身符
 				Tooltip:
 					'''
-					{$CommonItemTooltip.AtkSpeed}{$CommonItemTooltip.Melee.Doubled}
+					{$CommonItemTooltip.AtkSpeed}{$CommonItemTooltip.Melee.Bonus@2}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
 					{$CommonItemTooltip.MeleeWhipAutoswing}
 					'''
@@ -1913,7 +1913,7 @@ Mods: {
 				Tooltip:
 					'''
 					由一个宝箱里的魔法石提供燃料
-					{$CommonItemTooltip.AtkSpeed}{$CommonItemTooltip.Melee.Doubled}
+					{$CommonItemTooltip.AtkSpeed}{$CommonItemTooltip.Melee.Bonus@1}
 					{$CommonItemTooltip.SetBonus}对任何东西造成伤害时有机会获得叠加层数
 					叠满后，在下次被击中时获得高达28%的伤害减免
 					'''
@@ -4623,7 +4623,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.IncreasesDefenseBy@1}
-					{$CommonItemTooltip.AtkSpeed@2}{$CommonItemTooltip.Melee.Doubled}
+					{$CommonItemTooltip.AtkSpeed@2}{$CommonItemTooltip.Melee.Bonus@4}
 					{$CommonItemTooltip.BadLifeRegen@3}
 					不与恶魔药水、护甲药水或前线药水叠加
 					'''

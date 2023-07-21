@@ -1109,7 +1109,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.statDefense += (int)ApplyScaling(StrengthPotion.Defense);
             player.GetDamage(DamageClass.Generic) += ApplyScaling(StrengthPotion.DamageBoost / 100f);
             player.GetAttackSpeed(DamageClass.Generic) += ApplyScaling(StrengthPotion.AttackSpeedBoost / 100f);
-            player.GetAttackSpeed(DamageClass.Melee) += ApplyScaling(StrengthPotion.AttackSpeedBoost / 100f);
+            player.GetAttackSpeed(DamageClass.Melee) += ApplyScaling((StrengthPotion.AttackSpeedBoost / 100f) * tsorcRevampPlayer.MeleeBonusMultiplier);
             player.lifeRegen -= (int)ApplyScaling(StrengthPotion.BadLifeRegen);
         }
     }

@@ -23,7 +23,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		{
 			Main.projFrames[Projectile.type] = 8;
 			Main.projPet[Projectile.type] = true;
-			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
+            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+            ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
 		}
 		public sealed override void SetDefaults()
 		{
@@ -40,7 +41,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Projectile.ContinuouslyUpdateDamageStats = true;
 
             Projectile.usesLocalNPCImmunity = true;
-			Projectile.localNPCHitCooldown = 20;
+			Projectile.localNPCHitCooldown = 30;
 
             trailWidth = 45;
 			trailPointLimit = 900;

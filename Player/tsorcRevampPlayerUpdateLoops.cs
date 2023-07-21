@@ -31,6 +31,8 @@ namespace tsorcRevamp
     //update loops that run every frame
     public partial class tsorcRevampPlayer
     {
+        public static float MeleeBonusMultiplier = 0.5f;
+
         public bool NoDamageSpread = false;
 
         public Vector2 greatMirrorWarpPoint;
@@ -135,7 +137,9 @@ namespace tsorcRevamp
 
 
         public bool InterstellarBoost = false;
-        public float MinionCircleRadius = 50;
+        public int MinimumMinionCircleRadius = 150;
+        public int MaximumMinionCircleRadius = 500;
+        public float MinionCircleRadius = 150;
 
         public bool WaspPower = false;
         public bool DemonPower = false;
