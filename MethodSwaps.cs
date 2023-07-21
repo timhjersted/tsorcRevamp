@@ -560,11 +560,8 @@ namespace tsorcRevamp
 
                         if (Main.projectile[i].ModProjectile is RealityCrack)
                         {
-                            RealityCrack lightning = (RealityCrack)Main.projectile[i].ModProjectile;
-                            if (lightning.lightningTarget == null)
-                            {
-                                lightning.CreateRenderTarget();
-                            }
+                            RealityCrack proj = (RealityCrack)Main.projectile[i].ModProjectile;
+                            proj.CreateRenderTarget();
                         }
                     }
                 }

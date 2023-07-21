@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             Projectile.height = 1;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 400;
+            Projectile.timeLeft = 1200;
             Projectile.penetrate = -1;
             Projectile.hostile = true;
             Projectile.friendly = false;
@@ -64,19 +64,19 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                         float angle = MathHelper.TwoPi * i / 95;
                         trailPositions.Add(Projectile.Center + new Vector2(5, 0).RotatedBy(angle));
                         trailRotations.Add(angle + MathHelper.PiOver2);
-                        trailVelocities.Add(new Vector2(1, 0).RotatedBy(angle));
+                        trailVelocities.Add(new Vector2(5, 0).RotatedBy(angle));
                     }
                     trailCurrentLength = CalculateLength();
                 }
                 else
                 {
-                    if(timer < 90 && fixedSpeed < 5)
+                    if(timer < 90 && fixedSpeed < 2)
                     {
-                        fixedSpeed += 0.1f;
+                        fixedSpeed += 0.01f;
                     }
                     for (int i = 0; i < trailPositions.Count; i++)
                     {
-                        trailPositions[i] += fixedSpeed * new Vector2(1, 0).RotatedBy(trailRotations[i] - MathHelper.PiOver2);
+                        trailPositions[i] += fixedSpeed * new Vector2(3, 0).RotatedBy(trailRotations[i] - MathHelper.PiOver2);
                     }
 
                     for (int i = 0; i < trailPositions.Count; i++)
@@ -181,7 +181,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                     {
                         if (target != null)
                         {
-                            trailVelocity = UsefulFunctions.Aim(trailPositions[trailPositions.Count / 2], target.Center, 15f);
+                            trailVelocity = UsefulFunctions.Aim(trailPositions[trailPositions.Count / 2], target.Center, 5f);
                         }
                     }
                     else

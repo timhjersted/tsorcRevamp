@@ -46,11 +46,8 @@ namespace tsorcRevamp.Items.Debug
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, player.Center);
 
-            Projectile.NewProjectile(source, Main.MouseWorld, Vector2.One * 6, ModContent.ProjectileType<Projectiles.Enemy.DroidBomb>(), 10, 0f, Main.myPlayer);
+            Projectile.NewProjectile(source, Main.MouseWorld, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0f, Main.myPlayer);
 
-            //Projectile.NewProjectile(source, Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Accessories.FriendlyIonBomb>(), 0, 0f, Main.myPlayer);
-
-            //Projectile.NewProjectile(source, Main.MouseWorld, speed, ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>(), 0, 0f, Main.myPlayer);
 
             //NPCs.Bosses.PrimeV2.PrimeV2.ActuatePrimeArena();
 

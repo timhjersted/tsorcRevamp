@@ -302,11 +302,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 NPC.Center = Target.Center + new Vector2(0, -300);
             }
 
-            if(introTimer >= 60 && introTimer % 10 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            if(introTimer == 60 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(32, 32), Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
             }
 
             if(introTimer == 120)
@@ -316,7 +314,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer);
                 }
-                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.RealityCrack>());
                 animationState = 1;
                 animationTimer = 90;
             }
@@ -1039,7 +1036,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            if (introTimer == 0 && NPC.whoAmI == 0)
+            if (introTimer == 0 && NPC.whoAmI == 0 && NPC.ai[0] == 1)
             {
                 Phase = 3;
                 introTimer = 120;
@@ -1256,23 +1253,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             }
 
 
-            if(deathTimer == 150)
+            if (deathTimer == 150)
             {
                 SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/EvilLaugh") with { Volume = 2, PlayOnlyIfFocused = false, MaxInstances = 0 });
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
-            }
-
-            //Spawn distortion lightning effects
-            if (deathTimer > 200)
-            {
-                float delay = 20;
-                if(deathTimer > 280)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    delay = 10;
-                }
-                if (deathTimer % delay == 0)
-                {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 1), ModContent.ProjectileType<Projectiles.VFX.RealityCrack>(), 0, 0, Main.myPlayer, 1);
                 }
             }
 
@@ -1281,8 +1267,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 //Attraidies dies
                 //Spawn abyss portal NPC
                 SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/MetalShatter") with { Volume = 1f, PlayOnlyIfFocused = false, MaxInstances = 0 });
-                NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<NPCs.Special.AbyssPortal>(), ai0: 1);
-                UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.RealityCrack>());
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<NPCs.Special.AbyssPortal>(), ai0: 1);
+                }
                 tsorcRevampWorld.AbyssPortalLocation = NPC.Center;
                 NPC.dontTakeDamage = false;
                 NPC.StrikeNPC(NPC.CalculateHitInfo(999999, 1, true, 0), false, false);

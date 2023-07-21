@@ -36,11 +36,30 @@ namespace tsorcRevamp.Projectiles.VFX
         public string filterIndex;
 
         float effectTimer = 0;
+        float effectLimit = 60;
+        float newCrackDelay = 0;
         bool initialized = false;
+        bool newCrack = false;
         public override void AI()
         {
             Projectile.timeLeft++;
             effectTimer++;
+                        
+            if (Projectile.ai[0] == 1)
+            {
+                effectLimit = 250;
+            }
+
+            if (newCrackDelay <= 0)
+            {
+                SoundEngine.PlaySound(SoundID.Shatter with { Volume = 0.5f });
+                newCrack = true;
+                newCrackDelay += 0.1f * (effectLimit - effectTimer);
+            }
+            else
+            {
+                newCrackDelay--;
+            }
 
             //Get an unused copy of the effect from the scene filter dictionary, or create one if they're all in use
             if (!initialized && Main.netMode != NetmodeID.Server)
@@ -88,18 +107,18 @@ namespace tsorcRevamp.Projectiles.VFX
             }
 
             //Apply it
-            if (Main.netMode != NetmodeID.Server && !Filters.Scene[filterIndex].IsActive() && lightningTarget != null && !lightningTarget.IsDisposed)
+            if (Main.netMode != NetmodeID.Server && !Filters.Scene[filterIndex].IsActive() && renTarget != null && !renTarget.IsDisposed)
             {
-                Filters.Scene.Activate(filterIndex, Projectile.Center).GetShader().UseTargetPosition(storedPosition).UseProgress(1).UseOpacity(1).UseIntensity(1).UseColor(Color.White.ToVector3()).UseImage(lightningTarget, samplerState: SamplerState.LinearClamp).UseDirection(-Projectile.velocity);
+                Filters.Scene.Activate(filterIndex, Projectile.Center).GetShader().UseTargetPosition(storedPosition).UseProgress(1).UseOpacity(1).UseIntensity(1).UseColor(Color.White.ToVector3()).UseImage(renTarget, samplerState: SamplerState.LinearClamp).UseDirection(-Projectile.velocity);
             }
 
-            if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex].IsActive() && lightningTarget != null && !lightningTarget.IsDisposed)
+            if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex].IsActive() && renTarget != null && !renTarget.IsDisposed)
             {
-                Filters.Scene[filterIndex].GetShader().UseTargetPosition(storedPosition).UseProgress(1).UseOpacity(1).UseIntensity(1).UseColor(Color.White.ToVector3()).UseImage(lightningTarget, samplerState: SamplerState.LinearClamp).UseDirection(-Projectile.velocity);
+                Filters.Scene[filterIndex].GetShader().UseTargetPosition(storedPosition).UseOpacity(1).UseIntensity(1).UseColor(Color.White.ToVector3()).UseImage(renTarget, samplerState: SamplerState.LinearClamp).UseDirection(-Projectile.velocity);
             }
 
 
-            if (effectTimer > 1000)
+            if (effectTimer > effectLimit)
             {                
                 Projectile.Kill();
             }
@@ -114,14 +133,14 @@ namespace tsorcRevamp.Projectiles.VFX
                 Filters.Scene[filterIndex].Deactivate();
                 tsorcRevampWorld.boundShaders.Remove(filterIndex);
             }
-            if (lightningTarget != null && !lightningTarget.IsDisposed)
+            if (renTarget != null && !renTarget.IsDisposed)
             {
-                lightningTarget.Dispose();
+                renTarget.Dispose();
             }
         }
 
 
-        public RenderTarget2D lightningTarget;
+        public RenderTarget2D renTarget;
         Vector2 storedPosition;
         public override bool PreDraw(ref Color lightColor)
         {
@@ -130,26 +149,47 @@ namespace tsorcRevamp.Projectiles.VFX
 
 
         Vector2 targetOffset;
+        public static Effect preRenderEffect;
         public void CreateRenderTarget()
         {
+            if (!newCrack)
+            {
+                return;
+            }
+            else
+            {
+                newCrack = false;
+            }
+            Projectile.velocity = Main.rand.NextVector2CircularEdge(1, 1);
             //Store a reference to the graphics device to simplify code
             GraphicsDevice device = Main.graphics.GraphicsDevice;
 
             //Create a rendertarget. Instead of drawing all 200 lightning branches every frame, we will draw them once and store the results in this.
             //Once that is done, we can simply draw this one rendertarget to display the full lightning strike
-            lightningTarget = new RenderTarget2D(device, device.PresentationParameters.BackBufferWidth * 2, device.PresentationParameters.BackBufferHeight * 3, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
-            targetOffset = lightningTarget.Size() / 2;
-            //Set the device target to the new rendertarget
-            device.SetRenderTarget(lightningTarget);
+            if (renTarget == null || renTarget.IsDisposed)
+            {
+                renTarget = new RenderTarget2D(device, device.PresentationParameters.BackBufferWidth * 2, device.PresentationParameters.BackBufferHeight * 3, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
 
-            //Clear it, so that whatever was previously stored on the backbuffer (like other lightning) doesn't get put in this target
+                targetOffset = renTarget.Size() / 2; 
+                storedPosition = Main.screenPosition - targetOffset;
+            }
+
             device.Clear(Color.Transparent);
 
-            //Start a new "default" texture-sorted spritebatch
-            Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend);
+            //Set the device target to the new rendertarget
+            device.SetRenderTarget(renTarget);
 
-            //Activate the living ocean shader to make it look nicer
-            //GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.LivingOceanDye), Main.LocalPlayer).Apply();
+            //Clear it, so that whatever was previously stored on the backbuffer (like other lightning) doesn't get put in this target
+
+            //Start a new "default" texture-sorted spritebatch
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            if (preRenderEffect == null)
+            {
+                preRenderEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/RealityCrackPreRender", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+            preRenderEffect.Parameters["xOffset"].SetValue((Projectile.velocity.X + 1) / 2f);
+            preRenderEffect.Parameters["yOffset"].SetValue((Projectile.velocity.Y + 1) / 2f);
+            preRenderEffect.CurrentTechnique.Passes[0].Apply();
 
             CreateLightningSegments();
 
@@ -162,7 +202,6 @@ namespace tsorcRevamp.Projectiles.VFX
             
 
             //Store the current screen position at time of drawing so it can be used to calculate where to draw the lightning later
-            storedPosition = Main.screenPosition - targetOffset;
 
             //Re-set the old bindings
             //If I do this instead, then everything drawn *before* the lightning (tiles, backrounds, etc) is blacked out this frame
@@ -215,7 +254,7 @@ namespace tsorcRevamp.Projectiles.VFX
         //public float initialAngleLimit = MathHelper.ToRadians(75); //Can diverge up to 75 degrees from 
         private void CreateLightningSegments()
         {
-            if (!positionSet)
+            //if (!positionSet)
             {
                 branches = new List<List<Vector2>>();
                 branchAngles = new List<List<float>>();

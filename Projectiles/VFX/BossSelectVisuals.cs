@@ -10,6 +10,8 @@ using Terraria.Graphics.Shaders;
 using tsorcRevamp.Items.BossItems;
 using System.Collections.Generic;
 using Terraria.ModLoader.Config;
+using ReLogic.Graphics;
+using Terraria.GameContent;
 
 namespace tsorcRevamp.Projectiles.VFX
 {
@@ -57,11 +59,12 @@ namespace tsorcRevamp.Projectiles.VFX
                     {
                         //Draw golems head instead of its body
                         int newID = id;
+                        HardmodeDownedBosses[HardmodeDownedBosses.Count - 1].SetDefaults(newID);
                         if (newID == NPCID.Golem)
                         {
                             newID = NPCID.GolemHeadFree;
+                            HardmodeDownedBosses[HardmodeDownedBosses.Count - 1].SetDefaults(newID);
                         }
-                        HardmodeDownedBosses[HardmodeDownedBosses.Count - 1].SetDefaults(newID);
                     }
                     else
                     {
@@ -224,6 +227,9 @@ namespace tsorcRevamp.Projectiles.VFX
             }
 
 
+            string mouseOver = "";
+            Vector2 mouseOverPos = Vector2.Zero;
+            float mouseOverHeight = 0;
             for (int i = 0; i < currentDownedList.Count; i++)
             {
                 Vector2 drawPos = new Vector2(350 * UsefulFunctions.EasingCurve(Math.Min(radius, 1)), 0).RotatedBy(-i * MathHelper.TwoPi / currentDownedList.Count);
@@ -247,14 +253,77 @@ namespace tsorcRevamp.Projectiles.VFX
                     currentDownedList[i].scale = 1f;
                 }
 
+                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheRage>())
+                {
+                    currentDownedList[i].ai[0] = 0;
+                    currentDownedList[i].scale = 0.7f;
+                }
+
+                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())
+                {
+                    currentDownedList[i].ai[0] = 0;
+                }
 
                 if (Projectile.owner == Main.myPlayer)
                 {
-                    if (currentDownedList[i].Hitbox.Contains(Main.MouseWorld.ToPoint()) && radius >= 1)
+                    bool inHitbox = currentDownedList[i].Hitbox.Contains(Main.MouseWorld.ToPoint());
+                    if (currentDownedList[i].type == NPCID.GolemHeadFree)
+                    {
+                        if(new Rectangle(currentDownedList[i].Hitbox.X - 20, currentDownedList[i].Hitbox.Y - 50, currentDownedList[i].Hitbox.Width + 40, currentDownedList[i].Hitbox.Height + 100).Contains(Main.MouseWorld.ToPoint()))
+                        {
+                            inHitbox = true;
+                        }
+                    }
+
+                    if (inHitbox && radius >= 1)
                     {
                         Main.hoverItemName = currentDownedList[i].GivenOrTypeName;
                         currentDownedList[i].scale = 1.1f;
                         Main.LocalPlayer.mouseInterface = true;
+                        mouseOver = currentDownedList[i].TypeName;
+                        mouseOverPos = currentDownedList[i].Center;
+                        mouseOverHeight = currentDownedList[i].height;
+                        if(currentDownedList[i].type == NPCID.BrainofCthulhu)
+                        {
+                            mouseOverHeight *= 1.3f;
+                        }
+                        if (currentDownedList[i].type == NPCID.Deerclops)
+                        {
+                            mouseOverHeight *= 0.8f;
+                        }
+                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())
+                        {
+                            mouseOverHeight *= 0.6f;
+                            currentDownedList[i].ai[0] = 1;
+                        }
+                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Death>())
+                        {
+                            mouseOverHeight *= 0.6f;
+                        }
+                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheRage>())
+                        {
+                            currentDownedList[i].ai[0] = currentDownedList[i].lifeMax / 20f;
+                            currentDownedList[i].scale = 0.8f;
+                            mouseOverHeight *= 1.0f;
+                        }
+                        if (currentDownedList[i].type == NPCID.GolemHeadFree)
+                        {
+                            mouseOver = "Golem";
+                        }
+                        if (currentDownedList[i].type == NPCID.MoonLordFreeEye)
+                        {
+                            mouseOver = "Moon Lord";
+                            mouseOverHeight *= 1.5f;
+                        }
+
+                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>())
+                        {
+                            Rectangle drawRect = ((Texture2D)Terraria.GameContent.TextureAssets.Npc[ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DamnedSoul>()]).Bounds;
+                            drawRect.Height = drawRect.Height / 4;
+                            Main.spriteBatch.Draw((Texture2D)Terraria.GameContent.TextureAssets.Npc[ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DamnedSoul>()], Projectile.Center + drawPos - Main.screenPosition, drawRect, Color.White * 0.6f, 0, drawRect.Size() / 2, currentDownedList[i].scale * 1.3f, SpriteEffects.None, 0);
+
+                        }
+
                         if (Main.mouseLeft && Main.mouseLeftRelease)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
@@ -277,14 +346,13 @@ namespace tsorcRevamp.Projectiles.VFX
                     currentDownedList[i].scale *= 0.8f;
                 }
 
-                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>())
-                {
-                    Rectangle drawRect = ((Texture2D)Terraria.GameContent.TextureAssets.Npc[ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DamnedSoul>()]).Bounds;
-                    drawRect.Height = drawRect.Height / 4;
-                    Main.spriteBatch.Draw((Texture2D)Terraria.GameContent.TextureAssets.Npc[ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DamnedSoul>()], Projectile.Center + drawPos - Main.screenPosition, drawRect, Color.White* 0.6f, 0, drawRect.Size() / 2, currentDownedList[i].scale * 1.3f, SpriteEffects.None, 0);
-                }
-
                 Main.instance.DrawNPCDirect(Main.spriteBatch, currentDownedList[i], false, Main.screenPosition);
+            }
+
+
+            if (mouseOver != "")
+            {
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, mouseOver, mouseOverPos - Main.screenPosition + new Vector2(1.1f * -FontAssets.ItemStack.Value.MeasureString(mouseOver).X / 2f, mouseOverHeight * 0.75f), Color.White, 0, Vector2.Zero, 1.2f, SpriteEffects.None, 0);
             }
 
             return false;

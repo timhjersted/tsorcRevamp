@@ -22,20 +22,22 @@ float4 uSourceRect;
 float2 uZoom;
 
 float4 PixelShaderFunction(float4 position : SV_POSITION, float2 coords : TEXCOORD0) : COLOR0
-{    
+{
+    
     //Offset and scale it
     float2 currentPixel = coords * uScreenResolution;
     float2 focusPoint = uTargetPosition - uScreenPosition;
     float2 drawPosition = (currentPixel - focusPoint) / uImageSize1;
+    //return tex2D(uImage1, drawPosition);
     float4 outColor = tex2D(uImage0, coords);
     float2 distortion = float2(0, 0);
     
     if (drawPosition.x > 0 && drawPosition.x < 1 &&
         drawPosition.y > 0 && drawPosition.y < 1)
     {
-        distortion = uDirection * tex2D(uImage1, drawPosition).b / 2;        
+        distortion = tex2D(uImage1, drawPosition).rg * 0.02;
     }
-    return tex2D(uImage0, coords + distortion);
+    return tex2D(uImage0, coords + distortion) + float4(1, 1, 1, 1) * uProgress;
 }
 
 
