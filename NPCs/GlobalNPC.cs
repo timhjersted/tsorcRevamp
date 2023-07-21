@@ -170,7 +170,7 @@ namespace tsorcRevamp.NPCs
 
 
         //Custom AI execution values
-        public bool AlreadySentAIValues;
+        public int DoorBreakProgress;
         public bool Fleeing;
         public bool Initialized;
         public int PounceTimer;
@@ -289,6 +289,7 @@ namespace tsorcRevamp.NPCs
 
         public override void SendExtraAI(NPC npc, BitWriter bitWriter, BinaryWriter binaryWriter)
         {
+            binaryWriter.Write(DoorBreakProgress);
             binaryWriter.Write(DodgeTimer);
             binaryWriter.Write(ProjectileTimer);
             binaryWriter.Write(TeleportCountdown);
@@ -306,6 +307,7 @@ namespace tsorcRevamp.NPCs
 
         public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader binaryReader)
         {
+            DoorBreakProgress = binaryReader.ReadInt32();
             DodgeTimer = binaryReader.ReadInt32();
             ProjectileTimer = binaryReader.ReadSingle();
             TeleportCountdown = binaryReader.ReadInt32();
@@ -3004,7 +3006,6 @@ namespace tsorcRevamp.NPCs
     {
         ///<summary> 
         ///Walking AI that walks toward the player. Can be used with SimpleProjectile to fire projectiles, or LeapAtPlayer to leap when the player is close
-        ///Uses up to two ai slots depending on configuration: npc.ai[2] is door break progress (only used if it can break them)
         ///</summary>
         ///<param name="npc">The npc itself this function will run on</param>
         ///<param name="topSpeed">The max speed it can run at</param>
@@ -3018,7 +3019,7 @@ namespace tsorcRevamp.NPCs
         ///<param name="enragePercent">Accelerates twice as fast when below this % health</param> 
         ///<param name="enrageTopSpeed">Its new top speed when enraged</param>
         ///<param name="lavaJumping">Lets it hop around in lava</param>
-        public static void FighterAI(NPC npc, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, int doorBreakingDamage = 0, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, bool canDodgeroll = true, bool canPounce = true)
+        public static void FighterAI(NPC npc, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, int doorBreakingDamage = 4, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, bool canDodgeroll = true, bool canPounce = true)
         {
             npc.aiStyle = -1;
             BasicAI(npc, topSpeed, acceleration, brakingPower, false, canTeleport, doorBreakingDamage, hatesLight, randomSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping, canDodgeroll, canPounce);
@@ -3026,7 +3027,7 @@ namespace tsorcRevamp.NPCs
 
         ///<summary> 
         ///Special version of the fighter ai, stopping to shoot when the player is within range. Gets bored if it doesn't have line of sight to the player, and if it can teleport it will attempt to warp to a position with a clean shot.
-        ///Uses three ai slots: npc.ai[1] is shot cooldown, npc.ai[2] controls the sprite aiming animation,
+        ///Uses npc.ai[2] to control aim direction!! Do not set it yourself if an NPC uses ArcherAI
         ///</summary>         
         ///<param name="npc">The npc itself this function will run on</param>
         ///<param name="projectileType">The ID of the projectile you want to shoot</param>
@@ -3044,9 +3045,9 @@ namespace tsorcRevamp.NPCs
         ///<param name="lavaJumping">Lets it hop around in lava</param>
         ///<param name="projectileGravity">How much is the projectile's y velocity reduced each tick? Set 0 for projectiles with no gravity. If your projectile has custom gravity dropoff, stick that here.</param>
         ///<param name="shootSound">The type of sound to play when it shoots. Defaults to bow.</param>
-        public static void ArcherAI(NPC npc, int projectileType, int projectileDamage, float projectileVelocity, int projectileCooldown, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, float projectileGravity = 0.035f, SoundStyle? shootSound = null, bool canDodgeroll = true, bool canPounce = false, Color? telegraphColor = null)
+        public static void ArcherAI(NPC npc, int projectileType, int projectileDamage, float projectileVelocity, int projectileCooldown, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, int doorBreakingDamage = 4, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, float projectileGravity = 0.035f, SoundStyle? shootSound = null, bool canDodgeroll = true, bool canPounce = false, Color? telegraphColor = null)
         {
-            BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, 0, hatesLight, randomSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping, canDodgeroll, false);
+            BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, doorBreakingDamage, hatesLight, randomSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping, canDodgeroll, false);
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
             if(telegraphColor == null)
@@ -3438,10 +3439,11 @@ namespace tsorcRevamp.NPCs
             }
             else
             {
-                x_in_front = (int)((npc.position.X + npc.width) / 16f) + 1;
+                x_in_front = (int)((npc.position.X + npc.width) / 16f);
             }
 
             int y_above_feet = (int)((npc.position.Y + (float)npc.height - 15f) / 16f); // 15 pix above feet
+            //Dust.DrawDebugBox(new Rectangle(x_in_front * 16, y_above_feet * 16, 16, 16));
             int y_below_feet = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
             bool standing_on_solid_tile = false;
 
@@ -3503,17 +3505,18 @@ namespace tsorcRevamp.NPCs
 
                     //Door breaking
                     //First, it checks if the tile in front of it is solid, a door, and the npc can break it
-                    if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1) && Main.tile[x_in_front, y_above_feet - 1].TileType == 10 && (doorBreakingDamage > 0))
+                    if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1)  && Main.tile[x_in_front, y_above_feet - 1].TileType == 10 && (doorBreakingDamage > 0))
                     {
+                        npc.velocity.Y = 0;
                         globalNPC.BoredTimer = 0; // not bored if working on breaking a door
                         if (Main.GameUpdateCount % 60 == 0)  //  knock once per second
                         {
                             npc.velocity.X = 0.5f * -npc.direction; //  slight recoil from hitting it
-                            npc.ai[2] += doorBreakingDamage;  //  increase door damage counter
+                            globalNPC.DoorBreakProgress += doorBreakingDamage;  //  increase door damage counter
                             WorldGen.KillTile(x_in_front, y_above_feet - 1, true, true, false);  //  kill door ? when door not breaking too? can fail=true; effect only would make more sense, to make knocking sound
-                            if (npc.ai[2] >= 10f && Main.netMode != NetmodeID.MultiplayerClient)
+                            if (globalNPC.DoorBreakProgress >= 10f && Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                npc.ai[2] = 0; //Reset counter
+                                globalNPC.DoorBreakProgress = 0; //Reset counter
 
                                 //Try to open door
                                 if (!WorldGen.OpenDoor(x_in_front, y_above_feet, npc.direction))
@@ -3525,7 +3528,7 @@ namespace tsorcRevamp.NPCs
                                 else if (Main.netMode == NetmodeID.Server)
                                 {
                                     //If it didn't fail sync the door opening
-                                    NetMessage.SendData(19, -1, -1, null, 0, (float)x_in_front, (float)y_above_feet, (float)npc.direction, 0); // ??
+                                    NetMessage.SendData(MessageID.ToggleDoorState, -1, -1, null, 0, (float)x_in_front, (float)y_above_feet, (float)npc.direction, 0); // ??
                                 }
                             }
                         }
