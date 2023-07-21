@@ -8543,6 +8543,7 @@ Mods: {
 			OilPotShard3.DisplayName: 油壶碎片
 			OilPotShard4.DisplayName: 油壶碎片
 			DroidBomb.DisplayName: 无人机炸弹
+			// EnemyForgottenPearlSpearProj.DisplayName: Enemy Forgotten Pearl Spear Proj
 		}
 
 		NPCs: {

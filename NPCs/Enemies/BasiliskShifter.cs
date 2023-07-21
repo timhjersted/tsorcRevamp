@@ -218,27 +218,15 @@ namespace tsorcRevamp.NPCs.Enemies
                         clearSpace = false;
                     }
                 }
-
                 if (clearSpace)
                 {
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
 
                     speed.Y += Main.rand.NextFloat(-2f, -6f);
-                    //speed += Main.rand.NextVector2Circular(-10, -8);
                     if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                     {
-                        int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, bioSpitDamage, 0f, Main.myPlayer);
-                        //Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>(), bioSpitDamage, 0f, Main.myPlayer);
-                        //DD2DrakinShot; DesertDjinnCurse; ProjectileID.DD2DrakinShot
-                        //if (projectile_velocity <= 0f)
-                        //{ Main.projectile[lob].tileCollide = false; }
-                        //else if (projectile_velocity >= 1f)
-                        //{ Main.projectile[lob].tileCollide = true; }
-
-                        //Main.projectile[lob].hostile = true;
-                        //Main.projectile[num555].timeLeft = 300; //40
+                        int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, bioSpitDamage, 0f, Main.myPlayer);                       
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-
                     }
 
                     if (shotTimer >= 154f)
@@ -247,7 +235,6 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
             }
-
             //NORMAL SPIT ATTACK
             if (shotTimer >= 115f && NPC.life >= NPC.lifeMax / 2 && choice >= 2)
             {
@@ -264,7 +251,6 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
             }
-
             //FINAL DESPERATE ATTACK
             if (shotTimer >= 175f && Main.rand.NextBool(2) && NPC.life <= NPC.lifeMax / 2)
             {
@@ -280,15 +266,12 @@ namespace tsorcRevamp.NPCs.Enemies
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.1f }, NPC.Center);
                     //customAi1 = 1f;
                 }
-
                 if (shotTimer >= 206f)
                 {
                     shotTimer = 1f;
                 }
             }
-
-
-            //Knockback conditional
+            //KNOCKBACK CONDITIONAL
             if (NPC.life >= NPC.lifeMax / 2)
             {
                 NPC.knockBackResist = 0.04f;
@@ -297,13 +280,11 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.knockBackResist = 0.0f;
             }
-
             //MAKE SOUND WHEN JUMPING/HOVERING
             if (Main.rand.NextBool(12) && NPC.velocity.Y <= -1f)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.2f, Pitch = 0.1f }, NPC.Center);
             }
-
             //TELEGRAPH DUSTS
             if (shotTimer >= 100)
             {
@@ -314,51 +295,42 @@ namespace tsorcRevamp.NPCs.Enemies
                     //Dust.NewDust(npc.position, npc.width, npc.height, DustID.GemEmerald, npc.velocity.X, npc.velocity.Y);
                 }
             }
-
             //reset attack timer when hit in melee range
             if (NPC.justHit && NPC.Distance(player.Center) < 100 && NPC.life >= NPC.lifeMax / 2)
             {
-                shotTimer = 10f;
+                shotTimer = 0f;
             }
-
             //jump back when hit at close range
-            if (NPC.justHit && NPC.Distance(player.Center) < 150 && Main.rand.NextBool(2))
+            if (NPC.justHit && NPC.Distance(player.Center) < 150 && Main.rand.NextBool(3))
             {
-
                 NPC.velocity.Y = Main.rand.NextFloat(-6f, -4f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-7f, -4f);
                 shotTimer = 50f;
                 NPC.netUpdate = true;
             }
-
             //jump forward when hit at range
             if (NPC.justHit && NPC.Distance(player.Center) > 150 && Main.rand.NextBool(2))
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(7f, 3f);
                 NPC.netUpdate = true;
-
             }
-
             //Shift toward the player randomly
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 if (Main.rand.NextBool(80) && NPC.Distance(player.Center) > 200)
                 {
                     Lighting.AddLight(NPC.Center, Color.Red.ToVector3() * 3f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-
                     chargeDamageFlag = true;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     NPC.velocity.X = (float)(Math.Cos(rotation) * 10) * -1;
                     NPC.velocity.Y = (float)(Math.Sin(rotation) * 10) * -1;
                     NPC.netUpdate = true;
-
                 }
                 if (chargeDamageFlag == true)
                 {
                     Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-
                     NPC.damage = 35;
                     chargeDamage++;
                 }

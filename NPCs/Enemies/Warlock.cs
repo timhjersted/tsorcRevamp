@@ -111,7 +111,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.8f, 0.03f, .2f, canTeleport: true, lavaJumping: true);
+            tsorcRevampAIs.FighterAI(NPC, 1.8f, 0.03f, .2f, canTeleport: true, lavaJumping: true, canDodgeroll: true);
 
 
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackSucceeded == 2)
