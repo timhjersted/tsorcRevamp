@@ -35,9 +35,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
             for (int i = 0; i < 15; i++)
             {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 7, 0, 0, 0, default, 0.5f); //6 is a flame dust
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 7, 0, 0, 0, default, 0.5f);
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 7, 0, 0, 0, default, 0.5f); //7 is a wood splinter dust
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 7, 0, 0, 0, default, 1f); //6 is a flame dust
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 7, 0, 0, 0, default, 1.5f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 7, 0, 0, 0, default, 1.5f); //7 is a wood splinter dust
             }
             return true;
         }
