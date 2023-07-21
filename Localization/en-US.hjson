@@ -8018,7 +8018,7 @@ Mods: {
 			BiohazardExplosion.DisplayName: Biohazard Explosion
 			BiohazardShot.DisplayName: Biohazard Shot
 			BlackFire.DisplayName: Black Fire
-			BlackFirebombProj.DisplayName: Black Firebomb Proj
+			BlackFirebombProj.DisplayName: Black Firebomb
 			BlackFirelet.DisplayName: Black Fire
 			BlasterShot.DisplayName: Blaster Shot
 			Bloodsign.DisplayName: Bloodsign
@@ -8265,8 +8265,8 @@ Mods: {
 			EnergyField.DisplayName: Energy Field
 			EnergyFieldBall.DisplayName: Energy Field Ball
 			EnergyStrike.DisplayName: Energy Strike
-			EphemeralThrowingAxeProj.DisplayName: Ephemeral Throwing Axe Proj
-			EphemeralThrowingAxeProj2.DisplayName: Ephemeral Throwing Axe Proj2
+			EphemeralThrowingAxeProj.DisplayName: Ephemeral Throwing Axe
+			EphemeralThrowingAxeProj2.DisplayName: Ephemeral Throwing Axe 2
 			EphemeralThrowingSpear.DisplayName: Ephemeral Throwing Spear
 			Explosion.DisplayName: Explosion
 			ExplosionBall.DisplayName: Explosion Ball
@@ -8280,7 +8280,7 @@ Mods: {
 			FireballInferno2.DisplayName: Fireball Inferno2
 			FireballNova.DisplayName: Fireball Nova
 			FireBombBall.DisplayName: Fire Bomb Ball
-			FirebombProj.DisplayName: Firebomb Proj
+			FirebombProj.DisplayName: Firebomb
 			FireField.DisplayName: Fire Field
 			FireFieldBall.DisplayName: Fire Field Ball
 			BerserkerNightmareBall.DisplayName: Berserker Nightmare Ball
@@ -8289,7 +8289,7 @@ Mods: {
 			SunderingLightBall.DisplayName: Sundering Light Ball
 			FlameJet.DisplayName: Flame Jet
 			FlameStrike.DisplayName: Flame Strike
-			ForgottenRisingSunProj.DisplayName: Forgotten Rising Sun Proj
+			ForgottenRisingSunProj.DisplayName: Forgotten Rising Sun
 			FreezeBolt.DisplayName: Freeze Bolt
 			Freezethrower.DisplayName: Freezethrower
 			GenericLaser.DisplayName: DefaultLaserName
@@ -8394,12 +8394,12 @@ Mods: {
 			ShamanBolt.DisplayName: Shaman Bolt
 			ShatteredMoonlight.DisplayName: Shattered Moonlight
 			Shockwave.DisplayName: Shockwave
-			BarbarousThornBladeProjectile.DisplayName: Barbarous Thorn Blade Projectile
-			BarrowBladeProjectile.DisplayName: Barrow Blade Projectile
-			ClaiomhSolaisProjectile.DisplayName: Claiomh Solais Projectile
-			LaevateinnProjectile.DisplayName: Laevateinn Projectile
-			WyrmkillerProjectile.DisplayName: Wyrmkiller Projectile
-			YellowTailProjectile.DisplayName: Yellow Tail Projectile
+			BarbarousThornBladeProjectile.DisplayName: Barbarous Thorn
+			BarrowBladeProjectile.DisplayName: Barrow Blade
+			ClaiomhSolaisProjectile.DisplayName: Claiomh Solais
+			LaevateinnProjectile.DisplayName: Laevateinn
+			WyrmkillerProjectile.DisplayName: Wyrmkiller
+			YellowTailProjectile.DisplayName: Yellow Tail
 			ShulletBellDark.DisplayName: Shullet Bell Dark
 			ShulletBellLight.DisplayName: Shullet Bell Light
 			SoulArrow.DisplayName: Soul Arrow
@@ -8407,27 +8407,27 @@ Mods: {
 			SoulSickle.DisplayName: Soul Sickle
 			Soulsplosion.DisplayName: Soulsplosion
 			SoulsplosionLarge.DisplayName: Large Soulsplosion
-			AncientBloodLanceProj.DisplayName: Ancient Blood Lance Proj
-			AncientDragonLanceProj.DisplayName: Ancient Dragon Lance Proj
-			AncientHolyLanceProj.DisplayName: Ancient Holy Lance Proj
-			CelestialLanceProj.DisplayName: Celestial Lance Proj
-			CobaltHalberdProj.DisplayName: Cobalt Halberd Proj
+			AncientBloodLanceProj.DisplayName: Ancient Blood Lance
+			AncientDragonLanceProj.DisplayName: Ancient Dragon Lance
+			AncientHolyLanceProj.DisplayName: Ancient Holy Lance
+			CelestialLanceProj.DisplayName: Celestial Lance
+			CobaltHalberdProj.DisplayName: Cobalt Halberd
 			DarkTridentHeld.DisplayName: Charged Bow
 			DarkTridentPoke.DisplayName: Dark Trident Poke
 			DarkTridentThrown.DisplayName: Dark Trident Thrown
-			DragoonLanceProj.DisplayName: Dragoon Lance Proj
+			DragoonLanceProj.DisplayName: Dragoon Lance
 			FetidExhaust.DisplayName: Noxious Jet
-			ForgottenImpHalberdProj.DisplayName: Forgotten Imp Halberd Proj
-			ForgottenPearlSpearProj.DisplayName: Forgotten Pearl Spear Proj
-			ForgottenPolearmProj.DisplayName: Forgotten Polearm Proj
-			ForgottenRadiantLanceProj.DisplayName: Forgotten Radiant Lance Proj
-			GaeBolgProj.DisplayName: Gae Bolg Proj
-			HiRyuuSpearProj.DisplayName: Hi Ryuu Spear Proj
-			LonginusProj.DisplayName: Longinus Proj
-			OldHalberdProj.DisplayName: Old Halberd Proj
+			ForgottenImpHalberdProj.DisplayName: Forgotten Imp Halberd
+			ForgottenPearlSpearProj.DisplayName: Forgotten Pearl Spear
+			ForgottenPolearmProj.DisplayName: Forgotten Polearm
+			ForgottenRadiantLanceProj.DisplayName: Forgotten Radiant Lance
+			GaeBolgProj.DisplayName: Gae Bolg
+			HiRyuuSpearProj.DisplayName: Hi Ryuu Spear
+			LonginusProj.DisplayName: Longinus
+			OldHalberdProj.DisplayName: Old Halberd
 			SporePowder.DisplayName: Spore Powder
 			SSShot.DisplayName: S S Shot
-			StarfallProjectile.DisplayName: Starfall Projectile
+			StarfallProjectile.DisplayName: Starfall
 			SuddenDeathStrike.DisplayName: Sudden Death Strike
 			ArcherToken.DisplayName: Archer
 			NondescriptOwlProjectile.DisplayName: Owl Archer
@@ -8445,28 +8445,28 @@ Mods: {
 			InterstellarVesselShip.DisplayName: Interstellar Vessel Ship
 			ScorchingPointFireball.DisplayName: Scorching Point Fireball
 			SamuraiBeetle.DisplayName: Samurai Beetle
-			GaleForceProjectile.DisplayName: Gale Force Projectile
-			ShatteredReflectionProjectile.DisplayName: Shattered Reflection Projectile
+			GaleForceProjectile.DisplayName: Gale Force
+			ShatteredReflectionProjectile.DisplayName: Shattered Reflection
 			BarrowWightMinion.DisplayName: Barrow Wight Minion
 			NullSpriteBeam.DisplayName: Null Beam
 			PhoenixBoom.DisplayName: Phoenix Boom
 			PhoenixBoomCrit.DisplayName: Phoenix Boom Crit
 			SunsetQuasarMinion.DisplayName: Sunset Quasar
 			SunsetQuasarToken.DisplayName: Sunset Quasar
-			TetsujinProjectile.DisplayName: Tetsujin Projectile
-			CrystalNunchakuProjectile.DisplayName: Crystal Nunchaku Projectile
-			DetonationSignalProjectile.DisplayName: Detonation Signal Projectile
-			DominatrixProjectile.DisplayName: Dominatrix Projectile
-			DragoonLashProjectile.DisplayName: Dragoon Lash Projectile
+			TetsujinProjectile.DisplayName: Tetsujin
+			CrystalNunchakuProjectile.DisplayName: Crystal Nunchaku
+			DetonationSignalProjectile.DisplayName: Detonation Signal
+			DominatrixProjectile.DisplayName: Dominatrix
+			DragoonLashProjectile.DisplayName: Dragoon Lash
 			EnchantedWhipFallingStar.DisplayName: Enchanted Whip Falling Star
-			EnchantedWhipProjectile.DisplayName: Enchanted Whip Projectile
-			NightsCrackerProjectile.DisplayName: Nights Cracker Projectile
+			EnchantedWhipProjectile.DisplayName: Enchanted Whip
+			NightsCrackerProjectile.DisplayName: Nights Cracker
 			PolarisLeashFallingStar.DisplayName: Polaris Leash Falling Star
 			PolarisLeashPolaris.DisplayName: Polaris Leash Polaris
-			PolarisLeashProjectile.DisplayName: Polaris Leash Projectile
-			PyrosulfateProjectile.DisplayName: Pyrosulfate Projectile
-			SearingLashProjectile.DisplayName: Searing Lash Projectile
-			TerraFallProjectile.DisplayName: Terra Fall Projectile
+			PolarisLeashProjectile.DisplayName: Polaris Leash
+			PyrosulfateProjectile.DisplayName: Pyrosulfate
+			SearingLashProjectile.DisplayName: Searing Lash
+			TerraFallProjectile.DisplayName: Terra Fall
 			TerraFallTerraprisma.DisplayName: True Terraprisma
 			SuperBlasterShot.DisplayName: Super Blaster Shot
 			DrakarthusDagger.DisplayName: Drakarthus Dagger
@@ -8498,7 +8498,7 @@ Mods: {
 			FriendlyCatLightOfDawn.DisplayName: Light Of Dawn
 			SRBlackFire.DisplayName: Black Fire
 			FriendlyRetLaser.DisplayName: Laser
-			UrumiProjectile.DisplayName: Urumi Projectile
+			UrumiProjectile.DisplayName: Urumi
 			ScorchingPointAura.DisplayName: Scorching Point Aura
 			CenterOfTheUniverseAura.DisplayName: Center Of The Universe Aura
 			InterstellarVesselAura.DisplayName: Interstellar Vessel Aura
@@ -8521,7 +8521,7 @@ Mods: {
 			HomingMissileTrail.DisplayName: Homing Missile Trail
 			ExplosionFlash.DisplayName: Explosion Flash
 			FriendlyIonBomb.DisplayName: Friendly Ion Bomb
-			PhotonicDownpourProjectile.DisplayName: Photonic Downpour Projectile
+			PhotonicDownpourProjectile.DisplayName: Photonic Downpour
 			PhotonicDownpourLaser.DisplayName: Photonic Downpour Laser
 			LanceBeamLaser.DisplayName: Lance Beam Laser
 			MeltdownFirestorm.DisplayName: Meltdown Firestorm
@@ -8536,13 +8536,13 @@ Mods: {
 			BossSelectVisuals.DisplayName: Boss Select Visuals
 			OilDroplet1.DisplayName: Oil Droplet1
 			OilDroplet2.DisplayName: Oil Droplet2
-			OilPotProjectile.DisplayName: Oil Pot Projectile
+			OilPotProjectile.DisplayName: Oil Pot
 			OilPotShard1.DisplayName: Oil Pot Shard1
 			OilPotShard2.DisplayName: Oil Pot Shard2
 			OilPotShard3.DisplayName: Oil Pot Shard3
 			OilPotShard4.DisplayName: Oil Pot Shard4
 			DroidBomb.DisplayName: Droid Bomb
-			EnemyForgottenPearlSpearProj.DisplayName: Enemy Forgotten Pearl Spear Proj
+			EnemyForgottenPearlSpearProj.DisplayName: Enemy Forgotten Pearl Spear
 		}
 
 		NPCs: {

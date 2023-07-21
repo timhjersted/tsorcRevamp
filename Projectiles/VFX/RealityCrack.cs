@@ -114,7 +114,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
             if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex].IsActive() && renTarget != null && !renTarget.IsDisposed)
             {
-                Filters.Scene[filterIndex].GetShader().UseTargetPosition(storedPosition).UseOpacity(1).UseIntensity(1).UseColor(Color.White.ToVector3()).UseImage(renTarget, samplerState: SamplerState.LinearClamp).UseDirection(-Projectile.velocity);
+                Filters.Scene[filterIndex].GetShader().UseTargetPosition(storedPosition).UseOpacity(1).UseProgress(0).UseIntensity(1).UseColor(Color.White.ToVector3()).UseImage(renTarget, samplerState: SamplerState.LinearClamp).UseDirection(-Projectile.velocity);
             }
 
 

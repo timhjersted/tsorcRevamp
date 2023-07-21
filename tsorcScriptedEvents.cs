@@ -183,7 +183,8 @@ namespace tsorcRevamp
             SpawnWizard,
             HellkiteDragonEvent,
             EoL,
-            DungeonGuardian
+            DungeonGuardian,
+            OldManEvent
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -203,6 +204,9 @@ namespace tsorcRevamp
 
             //SkeletronHidden
             ScriptedEvent SkeletronHiddenEvent = new ScriptedEvent(new Vector2(5563, 1676), 16, NPCID.SkeletronHead, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.SkeletronHidden"), Color.Blue, false, null, SetNightCustomAction);
+
+            //SkeletronHidden
+            ScriptedEvent OldManEvent = new ScriptedEvent(new Vector2(4979, 1398), 64, NPCID.OldMan, DustID.WhiteTorch, true, true, true, "default", Color.White, false, () => { return !NPC.AnyNPCs(NPCID.OldMan) && !NPC.AnyNPCs(NPCID.SkeletronHead) && !NPC.downedBoss3; });
 
             //EoC
             ScriptedEvent EoCEvent = new ScriptedEvent(new Vector2(3900, 1138), 20, NPCID.EyeofCthulhu, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.EoC"), Color.Blue, false, null, SetNightCustomAction);
@@ -452,6 +456,7 @@ namespace tsorcRevamp
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
                 {ScriptedEventType.Deerclops, DeerclopsEvent},
+                {ScriptedEventType.OldManEvent, OldManEvent},
                 {ScriptedEventType.SkeletronHidden, SkeletronHiddenEvent},
                 {ScriptedEventType.AlienAmbush, AlienAmbush},
                 {ScriptedEventType.EoC, EoCEvent},

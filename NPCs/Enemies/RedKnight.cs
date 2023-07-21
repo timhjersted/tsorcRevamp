@@ -18,55 +18,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public int redKnightsSpearDamage = 32;
         public int redMagicDamage = 22;
         public int redKnightsGreatDamage = 18;
-        //Custom AI personality paramaters
 
-        /// <summary>
-        /// How likely it is to dash at the player if it is far away.
-        /// Range: 0.00001 - 2.5
-        /// </summary>
-        public float Aggression;
-
-        /// <summary>
-        /// Controls how quickly it gets bored (and thus how long it waits before teleporting, if it has that ability).
-        /// Range: 0.5 - 2
-        /// </summary>
-        public float Patience;
-
-        /// <summary>
-        /// How likely it is to try and run if it is low on health.
-        /// Range: 0 - 0.3
-        /// </summary>
-        public float Cowardice;
-
-        /// <summary>
-        /// Improves the likelihood of performing low-weighted attacks.
-        /// Range: 0 - 0.3
-        /// </summary>
-        public float Adeptness;
-
-        /// <summary>
-        /// Modifies movement speed and acceleration.
-        /// Range: 0.7 - 1.3
-        /// </summary>
-        public float Swiftness;
-
-        /// <summary>
-        /// Modifies how often it fires projectiles.
-        /// Range: 0.6 - 1.4
-        /// </summary>
-        public float CastingSpeed;
-
-        /// <summary>
-        /// Modifies base health, size, and contact damage.
-        /// Range: 0.7 - 1.3
-        /// </summary>
-        public float Strength;
-
-        /// <summary>
-        /// Controls how often it tries to roll through or jumps over projectiles.
-        /// Range: 0.2 - 0.6
-        /// </summary>
-        public float Agility;
 
         public override void SetStaticDefaults()
         {
@@ -111,14 +63,18 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.boss = true;
             }
 
-            //Aggression = 2.5f;
-            Patience = 2;
-            Cowardice = 0f;
-            //Adeptness = 0.3f;
-            //Swiftness = 1.3f;
-            //CastingSpeed = Main.rand.NextFloat(0.6f, 1.4f);
-            //Strength = Main.rand.NextFloat(0.7f, 1.4f);
-            Agility = 0.6f;
+            tsorcRevampGlobalNPC redKnightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            //redKnightGlobalNPC.Aggression = 2.5f;
+            redKnightGlobalNPC.Patience = 2;
+            redKnightGlobalNPC.Cowardice = 0f;
+            //redKnightGlobalNPC.Adeptness = 0.3f;
+            //redKnightGlobalNPC.Swiftness = 1.3f;
+            //redKnightGlobalNPC.CastingSpeed = Main.rand.NextFloat(0.6f, 1.4f);
+            //redKnightGlobalNPC.Strength = Main.rand.NextFloat(0.7f, 1.4f);
+            redKnightGlobalNPC.Agility = 0.6f;
+
+            
 
             //UsefulFunctions.AddAttack(NPC, 340, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 8, SoundID.Item1 with { Volume = 0.2f, Pitch = -0.8f });
             //UsefulFunctions.AddAttack(NPC, 340, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 8, SoundID.Item1 with { Volume = 0.2f, Pitch = -0.8f });

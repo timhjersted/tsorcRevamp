@@ -87,7 +87,7 @@ Mods: {
 			Melee: {
 				ArmorPenPercent: 增加近战护甲穿透 {0}%
 				FlatDmg: 增加近战伤害 {0} 点
-				Doubled: (近战武器的加成再额外x{0})
+				// Bonus: (x{0} for melee)
 				BadDmg: 减少 {0}% 近战伤害
 				Only: 仅供近战战士使用
 				DmgMult: 乘算增加 {0}% 近战伤害
@@ -8787,7 +8787,7 @@ Mods: {
 			DarkCloud: {
 				DisplayName: 堕渊瑞德
 				DespawnHandler: 你被纳入了你自己的暗影...
-				MoveFailed: "无法进行移动！下一种攻击即将到来"
+				MoveFailed: 无法进行移动！下一种攻击即将到来
 				Spaghetti: " 被切碎了"
 				TidalFoces: " 被潮汐引力撕裂"
 				Shattered: " 被粉碎了"
