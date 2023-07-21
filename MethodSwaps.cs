@@ -163,26 +163,42 @@ namespace tsorcRevamp
 
         private static void On_NPC_TargetClosest(On_NPC.orig_TargetClosest orig, NPC self, bool faceTarget)
         {
-            NPCDespawnHandler handler = self.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler;
-            if(handler != null)
-            {
-                handler.TargetAndDespawn(self.whoAmI);
-            }
-            else
+            if(self.ModNPC == null)
             {
                 orig(self, faceTarget);
+                return;
             }
 
-            if (faceTarget)
+            try
             {
-                if(self.Center.X < Main.player[self.target].Center.X)
+                NPCDespawnHandler handler = self.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler;
+
+                if (handler != null)
                 {
-                    self.direction = 1;
+                    handler.TargetAndDespawn(self.whoAmI);
                 }
                 else
                 {
-                    self.direction = -1;
+                    orig(self, faceTarget);
                 }
+
+                if (faceTarget)
+                {
+                    if (self.Center.X < Main.player[self.target].Center.X)
+                    {
+                        self.direction = 1;
+                    }
+                    else
+                    {
+                        self.direction = -1;
+                    }
+                }
+            }
+            catch
+            {
+
+                orig(self, faceTarget);
+                return;
             }
         }
 

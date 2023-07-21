@@ -306,9 +306,9 @@ namespace tsorcRevamp.NPCs
 
         public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader binaryReader)
         {
-            DodgeTimer = binaryReader.Read();
-            ProjectileTimer = binaryReader.Read();
-            TeleportCountdown = binaryReader.Read();
+            DodgeTimer = binaryReader.ReadInt32();
+            ProjectileTimer = binaryReader.ReadSingle();
+            TeleportCountdown = binaryReader.ReadInt32();
             TeleportTelegraph = binaryReader.ReadVector2();
 
             Aggression = binaryReader.ReadSingle();

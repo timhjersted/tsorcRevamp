@@ -1305,6 +1305,11 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.DeleteNPC:
+                    {
+                        Main.npc[reader.ReadInt32()].active = false;
+                        break;
+                    }
 
                 default: {
                     Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
@@ -2497,7 +2502,14 @@ namespace tsorcRevamp
         public const byte SyncNPCExtras = 9;
         public const byte SyncMasterScroll = 10;
         public const byte SyncMinionRadius = 11;
+        /// <summary>
+        /// Teleport all players to the specified vector2
+        /// </summary>
         public const byte TeleportAllPlayers = 12;
+        /// <summary>
+        /// Just deletes the NPC whose index is specified.
+        /// </summary>
+        public const byte DeleteNPC = 13;
     }
 
     //config moved to separate file

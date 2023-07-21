@@ -86,34 +86,33 @@ namespace tsorcRevamp.NPCs.Friendly
             button = Language.GetTextValue("Mods.tsorcRevamp.NPCs.FreedFairy.Button");
         }
 
-        bool droppedCrystallineShard = false;
         public override void OnChatButtonClicked(bool firstButton, ref string shopName)
         {
-            if (!droppedCrystallineShard)
+            //Drop one for each player
+            for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
             {
-                //Drop one for each player
-                for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Summon.CrystallineShard>());
-                }
-                droppedCrystallineShard = true;
+                Main.LocalPlayer.QuickSpawnItem(NPC.GetSource_FromThis(), ModContent.ItemType<Items.Accessories.Summon.CrystallineShard>(), 1);
+            }
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                ModPacket teleportPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                teleportPacket.Write(tsorcPacketID.DeleteNPC);
+                teleportPacket.Write(NPC.whoAmI);
+                teleportPacket.Send();
+            }
+
+            NPC.active = false;
+
+            for (int i = 0; i < 20; i++)
+            {
+                Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.BlueFairy, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3));
             }
         }
 
         #region AI
         public override void AI()
         {
-            //The despawning has to be done in AI(), because spawning dusts from within OnChatButtonClicked doesn't work specifically when autopause is on.
-            //I don't know why. I probably don't want to know why. This is as simple as workarounds get, though.
-            if (droppedCrystallineShard)
-            {
-                NPC.active = false;
-                for (int i = 0; i < 20; i++)
-                {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.BlueFairy, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3));
-                }
-                return;
-            }
             NPC.TargetClosest(true);
 
             this.NPC.directionY = -1;

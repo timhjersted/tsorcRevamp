@@ -79,7 +79,7 @@ namespace tsorcRevamp
             tsorcRevampPlayer clone = clientClone as tsorcRevampPlayer;
             if (clone == null) { return; }
 
-            clone.SoulSlot.Item = SoulSlot.Item.Clone();
+            SoulSlot.Item.CopyNetStateTo(clone.SoulSlot.Item);
         }
         public override void SendClientChanges(ModPlayer clientPlayer)
         {
