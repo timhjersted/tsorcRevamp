@@ -87,7 +87,7 @@ Mods: {
 			Melee: {
 				ArmorPenPercent: 增加近战护甲穿透 {0}%
 				FlatDmg: 增加近战伤害 {0} 点
-				Doubled: (近战武器的加成再额外x{0})
+				Bonus: (近战武器的加成再额外 x{0})
 				BadDmg: 减少 {0}% 近战伤害
 				Only: 仅供近战战士使用
 				DmgMult: 乘算增加 {0}% 近战伤害
@@ -4141,7 +4141,7 @@ Mods: {
 
 			CookedChicken: {
 				DisplayName: 烧鸡
-				Tooltip: 施加 {0} 的药水疾病
+				Tooltip: 施加 {0} 秒的药水疾病
 			}
 
 			CrimsonPotion: {
@@ -4236,7 +4236,7 @@ Mods: {
 					虽然 [c/6d8827:被诅咒者] 不会被此物品治疗
 					他们仍能获得治疗物品的一些其他的增益效果
 					'''
-				Sickness: 使用点金石的效果的药水疾病只有 {0} 秒
+				Sickness: 佩戴点金石饰品时药水疾病只有 {0} 秒
 			}
 
 			PermanentWellFed: {
@@ -5408,9 +5408,9 @@ Mods: {
 				DisplayName: 腐蚀犬齿
 				Tooltip:
 					'''
-					[c/ffbf00:一滴绿泥从牙齿上滴落]
-					[c/ffbf00:对性质相似的敌人造成三倍的伤害，有可能更多]
-					有几率在击中时治愈玩家
+					[c/ffbf00:一摊绿色的酸泥从刀齿上滴落]
+					[c/ffbf00:对性质相似的敌人造成三倍或更多的伤害]
+					击中敌人时治愈玩家
 					剑身上刻着“捍卫者”.....
 					'''
 			}
@@ -7001,8 +7001,8 @@ Mods: {
 				DisplayName: 等离子狂怒
 				Tooltip:
 					'''
-					神秘的能量之源，辐射不稳定的能量
-					定期发射自我传送的爆炸物，附着在敌人身上
+					神秘的能量之源，散发不稳定的能量
+					定期生成传送附着在敌人身上的爆炸物
 					'''
 			}
 
@@ -8787,7 +8787,7 @@ Mods: {
 			DarkCloud: {
 				DisplayName: 堕渊瑞德
 				DespawnHandler: 你被纳入了你自己的暗影...
-				MoveFailed: "无法进行移动！下一种攻击即将到来"
+				MoveFailed: 无法进行移动！下一种攻击即将到来
 				Spaghetti: " 被切碎了"
 				TidalFoces: " 被潮汐引力撕裂"
 				Shattered: " 被粉碎了"
