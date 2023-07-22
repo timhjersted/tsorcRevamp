@@ -5820,7 +5820,7 @@ namespace tsorcRevamp.NPCs
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DeadChicken>());
             }
 
-            if (npc.type == NPCID.Vulture && Main.rand.NextBool(10))
+            if (npc.type == NPCID.Vulture)
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DeadChicken>());
             }
