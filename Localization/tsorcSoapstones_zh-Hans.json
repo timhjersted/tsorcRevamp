@@ -48,11 +48,10 @@
   "style": 1
 }
 {
-  "text": "Asha：\u0022好的，瑞德。但首先我要告诉你在哪里可以找到你父亲的剑和他那神圣的盔甲。你还记得我们老村子附近被洪水淹没的铁矿吗？ --NEWLINE   --NEWLINE 他的剑和盔甲可以在一堵土墙外找到——一块叶绿矿标记着它的位置。在那之外是叶绿矿墙的封印，只有德拉克斯（神圣钻头）才能打破。\u0022 --NEWLINE   --NEWLINE Red：\u0022彳亍，走吧。\u0022
-  ",
+  "text": "Asha：\u0022好的，瑞德。但首先我要告诉你在哪里可以找到你父亲的剑和神圣盔甲。 --NEWLINE   --NEWLINE 你还记得我们老村子附近被洪水淹没的铁矿吗？ --NEWLINE   --NEWLINE 他的剑和盔甲可以在一堵土墙后找到，在那之外是叶绿矿墙的封印，只有神圣钻头才能打破。\u0022 --NEWLINE   --NEWLINE Red：\u0022彳亍，走吧。\u0022",
   "tileX": 291,
   "tileY": 1367,
-  "textWidth": 980,
+  "textWidth": 660,
   "style": 1
 }
 {
@@ -316,8 +315,8 @@
 }
 {
   "text": "\u0022一把金弓？…奇怪…但是它可能会派上用场…？\u0022",
-  "tileX": 1630,
-  "tileY": 1364,
+  "tileX": 1636,
+  "tileY": 1365,
   "textWidth": 360,
   "style": 1
 }
@@ -392,17 +391,24 @@
   "style": 1
 }
 {
-  "text": "Miakoda翻译刻在雕像上的符文： --NEWLINE   --NEWLINE \u0022移开视线，但不要害怕。袖珍镜就在附近……\u0022",
+  "text": "Miakoda翻译刻在雕像上的符文： --NEWLINE   --NEWLINE \u0022移开视线，但不要害怕。袖珍镜就在附近…… --NEWLINE   --NEWLINE 进入大理石洞穴，顺着光线的引导， --NEWLINE   --NEWLINE 如果你勇敢到打开每个箱子，你将很快消除内心最后的恐惧\u0022",
   "tileX": 1874,
   "tileY": 1352,
-  "textWidth": 400,
+  "textWidth": 430,
   "style": 1
 }
 {
-  "text": "Miakoda：\u0022瑞德，我听说过很多关于暗影神庙的传言。 --NEWLINE   --NEWLINE 它以其迷宫般的设计而闻名，它延伸到神庙的大门外，连接着洞穴、一个巨大的地下湖和神圣地形的尖刺裂缝…… --NEWLINE   --NEWLINE 一个勇敢的灵魂，曾经活着逃离过这个地方，告诉我有两条隐藏的捷径: --NEWLINE   --NEWLINE 一条在地下湖的湖面；另一条几乎靠近入口，但不完全如此…我不知道她是什么意思…\u0022",
-  "tileX": 1927,
+  "text": "Miakoda：\u0022一个曾经活着逃离过这个地方勇敢的灵魂，告诉我有三条隐藏的捷径: --NEWLINE   --NEWLINE 一条在地下湖的湖面；一条在恐怖的花岗岩洞穴 --NEWLINE   --NEWLINE 另一条几乎靠近入口，但不完全如此… --NEWLINE   --NEWLINE 我不确定这是什么意思…\u0022",
+  "tileX": 1897,
   "tileY": 1121,
-  "textWidth": 800,
+  "textWidth": 620,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022瑞德，我听说过很多关于暗影神庙的传言。 --NEWLINE   --NEWLINE 它以其迷宫般的设计而闻名，它延伸到神庙的大门外，连接着洞穴、一个巨大的地下湖和神圣地形的尖刺裂缝……\u0022",
+  "tileX": 1900,
+  "tileY": 1121,
+  "textWidth": 320,
   "style": 1
 }
 {
@@ -476,13 +482,6 @@
   "style": 1
 }
 {
-  "text": "这个箱子上刻着一个云朵瓶的符号",
-  "tileX": 2444,
-  "tileY": 895,
-  "textWidth": 270,
-  "style": 1
-}
-{
   "text": "一个声音在对你低语… --NEWLINE   --NEWLINE \u0022寻找失落之城东边被遗忘的亚尔特留斯废墟 --NEWLINE   --NEWLINE 在太阳崇拜者房间的外面,他正在等待…\u0022",
   "tileX": 2445,
   "tileY": 1794,
@@ -529,13 +528,6 @@
   "tileX": 2893,
   "tileY": 59,
   "textWidth": 500,
-  "style": 1
-}
-{
-  "text": "瓶中云的符号刻在这面苔藓墙上",
-  "tileX": 2942,
-  "tileY": 695,
-  "textWidth": 230,
   "style": 1
 }
 {
@@ -595,7 +587,7 @@
   "style": 1
 }
 {
-  "text": "这扇门必须从另一个方向打开。",
+  "text": "这扇门必须从另一侧打开。",
   "tileX": 3196,
   "tileY": 1253,
   "textWidth": 210,
@@ -620,13 +612,6 @@
   "tileX": 3244,
   "tileY": 1015,
   "textWidth": 540,
-  "style": 1
-}
-{
-  "text": "\u0022我需要能够跳得更高才能到达那个壁架。\u0022 --NEWLINE   --NEWLINE 在微弱的火光中，你隐约看出有一扇精金门。",
-  "tileX": 3252,
-  "tileY": 705,
-  "textWidth": 340,
   "style": 1
 }
 {
@@ -655,13 +640,6 @@
   "tileX": 3343,
   "tileY": 1782,
   "textWidth": 500,
-  "style": 1
-}
-{
-  "text": "这个冰架笔直向上。 --NEWLINE   --NEWLINE \u0022上面会有什么？\u0022",
-  "tileX": 3349,
-  "tileY": 336,
-  "textWidth": 180,
   "style": 1
 }
 {
@@ -704,13 +682,6 @@
   "tileX": 3417,
   "tileY": 1830,
   "textWidth": 820,
-  "style": 1
-}
-{
-  "text": "\u0022羽落药水应该很有用…\u0022",
-  "tileX": 3432,
-  "tileY": 966,
-  "textWidth": 160,
   "style": 1
 }
 {
@@ -784,10 +755,10 @@
   "style": 1
 }
 {
-  "text": "在桌子上的书中你看到一段被标记的话： --NEWLINE   --NEWLINE \u0022战略家们有一句话：吾不敢进一寸，吾宁退避三舍。\u0022 --NEWLINE   --NEWLINE 没有比低估敌人的力量更大的灾难了,因为轻视敌人的后果就是失去自己的财富。",
-  "tileX": 3547,
-  "tileY": 292,
-  "textWidth": 650,
+  "text": "在上面发光蘑菇发出的暗淡光芒中， --NEWLINE   --NEWLINE 你隐约看到房间顶部的一个金色的箱子。",
+  "tileX": 3541,
+  "tileY": 468,
+  "textWidth": 320,
   "style": 1
 }
 {
@@ -798,10 +769,10 @@
   "style": 1
 }
 {
-  "text": "在上面发光蘑菇发出的暗淡光芒中， --NEWLINE   --NEWLINE 你隐约看到房间顶部的一个金色的箱子。",
-  "tileX": 3541,
-  "tileY": 468,
-  "textWidth": 320,
+  "text": "在桌子上的书中你看到一段被标记的话： --NEWLINE   --NEWLINE \u0022战略家们有一句话：吾不敢进一寸，吾宁退避三舍。\u0022 --NEWLINE   --NEWLINE 没有比低估敌人的力量更大的灾难了,因为轻视敌人的后果就是失去自己的财富。",
+  "tileX": 3547,
+  "tileY": 292,
+  "textWidth": 650,
   "style": 1
 }
 {
@@ -966,10 +937,10 @@
   "style": 1
 }
 {
-  "text": "你拨动开关，听到上面有微弱的隆隆声。",
-  "tileX": 3996,
-  "tileY": 1006,
-  "textWidth": 300,
+  "text": "你拨动开关，听到上面有微弱的隆隆声。 --NEWLINE   --NEWLINE 似是从东边很远的地方传来的，大概是大地神庙入口附近吧。",
+  "tileX": 3991,
+  "tileY": 1008,
+  "textWidth": 430,
   "style": 1
 }
 {
@@ -991,6 +962,13 @@
   "tileX": 4028,
   "tileY": 1226,
   "textWidth": 280,
+  "style": 1
+}
+{
+  "text": "你发现一具骷髅手中紧紧地握着地图。 --NEWLINE   --NEWLINE 上面提到了巫师的房子，坐标似乎指向地下室…",
+  "tileX": 4032,
+  "tileY": 1734,
+  "textWidth": 350,
   "style": 1
 }
 {
@@ -1022,14 +1000,14 @@
   "style": 1
 }
 {
-  "text": "一位相貌和善的妇女在屋外照看她的花园，她告诉你一个古老的故事，宝藏藏在这个小镇深处的洞穴里， --NEWLINE   --NEWLINE 一双神秘的靴子，曾经是赫耳墨斯穿的，赫耳墨斯是他那个时代的神，据说他跑得足够快，可以在水上行走，一跃而过巨大的裂缝。 --NEWLINE   --NEWLINE 他戴着一套金色的盔甲，像太阳一样明亮，他从云端跳到云端，用从天而降的火焰弹摧毁敌人。这样惊人的故事是真的吗？",
+  "text": "一位相貌和善的妇女在屋外照看她的花园， --NEWLINE   --NEWLINE 她告诉你一个古老的故事，在村庄后山深处的洞穴里有着宝藏， --NEWLINE   --NEWLINE 一双神秘的靴子，曾经是赫耳墨斯穿的，赫耳墨斯是他那个时代的神， --NEWLINE   --NEWLINE 据说他跑得足够快，可以在水上行走，一跃而过巨大的裂缝。 --NEWLINE   --NEWLINE 他穿着一套金色的盔甲，像太阳一样明亮， --NEWLINE   --NEWLINE 他从云端跳到云端，用从天而降的火焰弹摧毁敌人。 --NEWLINE   --NEWLINE 这样惊人的故事是真的吗？",
   "tileX": 4065,
   "tileY": 713,
-  "textWidth": 940,
+  "textWidth": 520,
   "style": 1
 }
 {
-  "text": "瑞德：\u0022那是夺心魔之王。他终于复仇了……他认为他也杀了我……\u0022 --NEWLINE   --NEWLINE 你停顿了一下……当你意识到你刚刚做出的选择时，你沉默了。 --NEWLINE   --NEWLINE \u0022我已经收集了我的盔甲、武器和食物，很快就要离开了。\u0022 --NEWLINE   --NEWLINE 亚伦：\u0022好吧……我明白了。我祝你好运。这似乎不可能，但……\u0022 --NEWLINE   --NEWLINE 亚伦急忙在床上的箱子里找东西。 --NEWLINE   --NEWLINE \u0022拿着这个！这是一块刻有我图像的火山石。 --NEWLINE   --NEWLINE 它一直保护着我，散发出强大的魔力，当你遇到困难时，它会给你带来好运。\u0022",
+  "text": "瑞德：\u0022那是夺心魔王阿卓迪斯。他终于复仇了…他认为我已经死了…\u0022 --NEWLINE   --NEWLINE 你停顿了一下……当你意识到你刚刚做出的选择时，你沉默了。 --NEWLINE   --NEWLINE \u0022我已经收集了我的盔甲、武器和食物，很快就要离开了。\u0022 --NEWLINE   --NEWLINE 亚伦：\u0022好吧……我明白了。我祝你好运。这似乎不可能，但……\u0022 --NEWLINE   --NEWLINE 亚伦急忙在床上的箱子里找东西。 --NEWLINE   --NEWLINE \u0022拿着这个！这是一块刻有我图像的火山石。 --NEWLINE   --NEWLINE 它一直保护着我，散发出强大的魔力，当你遇到困难时，它会给你带来好运。\u0022",
   "tileX": 4089,
   "tileY": 713,
   "textWidth": 560,
@@ -1155,14 +1133,7 @@
   "style": 1
 }
 {
-  "text": "墙壁上有一个小裂缝… --NEWLINE   --NEWLINE -你发现了去大地神庙的侧门-",
-  "tileX": 4215,
-  "tileY": 1038,
-  "textWidth": 250,
-  "style": 1
-}
-{
-  "text": "你发现的许多物品都可以用黑暗之魂转化。 --NEWLINE   --NEWLINE 如果一件物品是\u0022材料\u0022，为了解更多关于其隐藏潜力的信息 --NEWLINE   --NEWLINE 你可以把它交给向导Aaron或者用合成表模组检查它。",
+  "text": "你找到的许多物品都可以用黑暗之魂转化。 --NEWLINE   --NEWLINE 如果一件物品是\u0022材料\u0022，为了解更多关于其隐藏潜力的信息 --NEWLINE   --NEWLINE 你可以把它交给向导Aaron或者用合成表模组检查它。",
   "tileX": 4218,
   "tileY": 970,
   "textWidth": 480,
@@ -1243,13 +1214,6 @@
   "tileX": 4252,
   "tileY": 1822,
   "textWidth": 750,
-  "style": 1
-}
-{
-  "text": "\u0022这是哪里？\u0022",
-  "tileX": 4253,
-  "tileY": 1085,
-  "textWidth": 120,
   "style": 1
 }
 {
@@ -1365,13 +1329,6 @@
   "style": 1
 }
 {
-  "text": "你感觉到顺着这个方向有一股强大的力量… --NEWLINE   --NEWLINE 你犹豫着是否应该回头…但…",
-  "tileX": 4419,
-  "tileY": 1100,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "你拨动开关，听到下面有东西在动…",
   "tileX": 4435,
   "tileY": 775,
@@ -1400,7 +1357,7 @@
   "style": 1
 }
 {
-  "text": "--大地神庙-- --NEWLINE   --NEWLINE 你感觉到空气变得温暖潮湿。你脚下的大地好像在呼吸。",
+  "text": "- 大地神庙 - --NEWLINE   --NEWLINE 你感觉到空气变得温暖潮湿。你脚下的大地好像在呼吸。",
   "tileX": 4456,
   "tileY": 854,
   "textWidth": 420,
@@ -1449,10 +1406,10 @@
   "style": 1
 }
 {
-  "text": "你身体里的每一个细胞似乎都在战栗着，要你现在立即返回！",
-  "tileX": 4493,
+  "text": "你感觉到顺着这个方向有一股强大的力量… --NEWLINE   --NEWLINE 你犹豫着是否应该回头…但…",
+  "tileX": 4482,
   "tileY": 1104,
-  "textWidth": 460,
+  "textWidth": 320,
   "style": 1
 }
 {
@@ -1460,6 +1417,13 @@
   "tileX": 4521,
   "tileY": 857,
   "textWidth": 560,
+  "style": 1
+}
+{
+  "text": "你身体里的每一个细胞似乎都在战栗着，要你现在立即返回！",
+  "tileX": 4527,
+  "tileY": 1104,
+  "textWidth": 460,
   "style": 1
 }
 {
@@ -1491,17 +1455,17 @@
   "style": 1
 }
 {
-  "text": "你找到了被淹没的机器神殿。 --NEWLINE   --NEWLINE 你父亲小时候给你讲过这个地方的故事 --NEWLINE   --NEWLINE 在这里建造的机器实际上守卫着通往大金字塔的道路，在很久很久以前以前就消逝在世人的记忆之中了… --NEWLINE   --NEWLINE 没人知道这座神庙是如何被洪水淹没的。 --NEWLINE   --NEWLINE 也许是因为一次尝试击败旧日机械支配者的战斗…",
+  "text": "你找到了被淹没的机器神殿。 --NEWLINE   --NEWLINE 你父亲小时候给你讲过这个地方的故事 --NEWLINE   --NEWLINE 在这里建造的机器守卫着通往大金字塔的道路， --NEWLINE   --NEWLINE 在很久以前就消逝在世人的记忆之中了… --NEWLINE   --NEWLINE 没人知道这座神庙是如何被洪水淹没的。 --NEWLINE   --NEWLINE 也许是因为一次尝试击败旧日机械支配者的战斗…",
   "tileX": 4615,
   "tileY": 1026,
-  "textWidth": 760,
+  "textWidth": 360,
   "style": 1
 }
 {
   "text": "入口被叶绿矿封闭 --NEWLINE   --NEWLINE 叶绿矿是一种比精金更坚固的矿石",
   "tileX": 4615,
   "tileY": 1033,
-  "textWidth": 240,
+  "textWidth": 260,
   "style": 1
 }
 {
@@ -1568,7 +1532,7 @@
   "style": 1
 }
 {
-  "text": "你家的余烬在风中噼啪作响。 --NEWLINE   --NEWLINE 你的作品和画作被毁了，妻子被抓走了。你低头看了看你们两人的破相框。 --NEWLINE   --NEWLINE 你的心紧绷，愤怒和悲伤的阵痛抽打着你的心。这一生有什么意义？ --NEWLINE   --NEWLINE 这短暂的生命追求纯真的快乐，心灵的安慰与爱，食物和安全？ --NEWLINE   --NEWLINE 这是成功和认可的附属品吗？现在这些都不重要了—— --NEWLINE   --NEWLINE 所有这些都是你留下的，现在只剩大火烧成的灰烬。",
+  "text": "你家的余烬在风中毕剥作响。 --NEWLINE   --NEWLINE 你的作品和画作被毁了，妻子被抓走了。你低头看了看你们两人的破相框。 --NEWLINE   --NEWLINE 你的心紧绷，愤怒和悲伤的阵痛抽打着你的心。这一生有什么意义？ --NEWLINE   --NEWLINE 这短暂的生命追求纯真的快乐，心灵的安慰与爱，食物和安全？ --NEWLINE   --NEWLINE 这是成功和认可的附属品吗？现在这些都不重要了—— --NEWLINE   --NEWLINE 所有这些都是你留下的，现在只剩大火烧成的灰烬。",
   "tileX": 4808,
   "tileY": 864,
   "textWidth": 560,
@@ -1673,6 +1637,13 @@
   "style": 1
 }
 {
+  "text": "- 你发现了封印着旧日机械支配者的遗迹 -",
+  "tileX": 4977,
+  "tileY": 1101,
+  "textWidth": 370,
+  "style": 1
+}
+{
   "text": "\u0022看来住在这里的人都崇拜太阳…他们可能是耀骑士Solaire的祖先？ --NEWLINE   --NEWLINE 没有白天的温暖和阳光来安慰他们，他们一定很痛苦… --NEWLINE   --NEWLINE 也许他们还是找到了一种与太阳交流的方式……\u0022",
   "tileX": 5002,
   "tileY": 1741,
@@ -1736,7 +1707,7 @@
   "style": 1
 }
 {
-  "text": "这道门是很久以前搭建并密封关闭的，目的是保护神庙居民免受无名不朽的\u0022老人\u0022的伤害。 --NEWLINE   --NEWLINE 他现在被诅咒为一个被称为骷髅王的恶魔的容器，骷髅王是死亡之首 --NEWLINE   --NEWLINE 但不要可怜他，他的罪行远远大于他所赢得的命运…",
+  "text": "这道门是很久以前搭建并密封关闭的，目的是保护神庙居民免受无名不朽\u0022老人\u0022的伤害。 --NEWLINE   --NEWLINE 他现在被诅咒为一个被称为骷髅王的恶魔的容器，骷髅王是死亡之首 --NEWLINE   --NEWLINE 但不要可怜他，他的罪行远远大于他所赢得的命运…",
   "tileX": 5155,
   "tileY": 1366,
   "textWidth": 640,
@@ -1820,7 +1791,7 @@
   "style": 1
 }
 {
-  "text": "-你找到了失落的乌拉席露森林- --NEWLINE   --NEWLINE 一种恐惧感直击你的胃：你不应该在这里。",
+  "text": "- 你找到了失落的乌拉席露森林 - --NEWLINE   --NEWLINE 一种恐惧感包裹了你：你不应该出现在这里。",
   "tileX": 5422,
   "tileY": 925,
   "textWidth": 320,
@@ -1878,7 +1849,7 @@
 {
   "text": "- 你发现了大金字塔 - --NEWLINE   --NEWLINE Miakoda：\u0022众所周知，这座金字塔与恒星和月球有一定的联系。 --NEWLINE   --NEWLINE 据信，在这个地点的正西方建造了一座较小的神庙，以与月球的宇宙能量保持一致。 --NEWLINE   --NEWLINE 出于什么目的？古老的传说提到，它被用作通往另一个国度的大门…… --NEWLINE   --NEWLINE 但是，也许有些谜团最好还是不去深究……\u0022",
   "tileX": 5774,
-  "tileY": 1775,
+  "tileY": 1781,
   "textWidth": 600,
   "style": 1
 }
@@ -1905,8 +1876,8 @@
 }
 {
   "text": "一个声音在对你说话，好像它在墙里面：\u0022东边的月亮神庙隐藏了比它看起来更多的秘密……\u0022",
-  "tileX": 5884,
-  "tileY": 1747,
+  "tileX": 5916,
+  "tileY": 1781,
   "textWidth": 640,
   "style": 1
 }
@@ -2345,10 +2316,10 @@
   "style": 1
 }
 {
-  "text": "瞧瞧这是什么好东西",
+  "text": "瞧瞧旁边那是什么好东西",
   "tileX": 8053,
   "tileY": 1918,
-  "textWidth": 160,
+  "textWidth": 180,
   "style": 1
 }
 {
