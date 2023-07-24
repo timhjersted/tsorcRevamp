@@ -396,6 +396,7 @@ namespace tsorcRevamp
                 ModContent.TileType<AncestorSpiritTrophyTile>(), ModContent.TileType<AncestorSpiritRelicTile>(),
                 ModContent.TileType<TheRageTrophyTile>(), ModContent.TileType<TheRageRelicTile>(),
                 ModContent.TileType<TheSorrowTrophyTile>(), ModContent.TileType<TheSorrowRelicTile>(),
+                ModContent.TileType<TheHunterTrophyTile>(), ModContent.TileType<TheHunterRelicTile>(),
                 ModContent.TileType<TheMachineTrophyTile>(), ModContent.TileType<TheMachineRelicTile>(),
                 ModContent.TileType<RetinazerTrophyTile>(), ModContent.TileType<SpazmatismTrophyTile>(), ModContent.TileType<CataluminanceTrophyTile>(), ModContent.TileType<TheTriadRelicTile>()
             };

@@ -7208,6 +7208,21 @@ Mods: {
 				DisplayName: 悲伤面具
 				Tooltip: ""
 			}
+
+			TheHunterRelic: {
+				// DisplayName: The Hunter Relic
+				// Tooltip: ""
+			}
+
+			TheHunterTrophy: {
+				// DisplayName: The Hunter Trophy
+				// Tooltip: ""
+			}
+
+			TheHunterMask: {
+				// DisplayName: The Hunter Mask
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {

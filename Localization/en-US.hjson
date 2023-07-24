@@ -7207,6 +7207,21 @@ Mods: {
 				DisplayName: The Sorrow Mask
 				Tooltip: ""
 			}
+
+			TheHunterRelic: {
+				DisplayName: The Hunter Relic
+				Tooltip: ""
+			}
+
+			TheHunterTrophy: {
+				DisplayName: The Hunter Trophy
+				Tooltip: ""
+			}
+
+			TheHunterMask: {
+				DisplayName: The Hunter Mask
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {
