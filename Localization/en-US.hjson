@@ -6362,7 +6362,7 @@ Mods: {
 					{$CommonItemTooltip.SummonTagDamage}
 					Strike enemies with an enchantment
 					Enchanted enemies will be showered by stars upon minion hits
-					Star damage scales with {1} of this whips damage
+					Star damage scales with {1}% of this whips damage
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -9437,9 +9437,9 @@ Mods: {
 				Quote1: Dark Souls possess great powers, but also great responsibilities.
 				Quote2: Praise the sun!
 				Quote3: Oh, hello there. I will stay behind, to gaze at the sun. The sun is a wondrous body. Like a magnificent father! If only I could be so grossly incandescent!
-				Quote5: Of course, we are not the only ones engaged in this.
-				Quote6: Would you like to buy some of my wares?
-				Quote7:
+				Quote4: Of course, we are not the only ones engaged in this.
+				Quote5: Would you like to buy some of my wares?
+				Quote6:
 					'''
 					The way I see it, our fates appear to be intertwined. In a land brimming with Hollows, could that really be mere chance? 
 					So, what do you say? Why not help one another on this lonely journey?
