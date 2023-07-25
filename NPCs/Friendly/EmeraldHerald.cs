@@ -73,7 +73,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     }
                     if (!tsorcRevampWorld.SuperHardMode)
                     {
-                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.AttradiesTip"));
+                        chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.AttraidiesTip"));
                     }
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip1"));
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.Tip2"));
