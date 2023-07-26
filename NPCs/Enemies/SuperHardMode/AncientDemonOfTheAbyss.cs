@@ -504,11 +504,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 
-            if ((intspawnedSpirits < 3) && Main.rand.NextBool(1000))
+            if ((intspawnedSpirits < 6) && Main.rand.NextBool(1000))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<NPCs.Enemies.SuperHardMode.GreatRedKnight>(), 0);
+                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<NPCs.Enemies.FireLurker>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
                     intspawnedSpirits++;
                     if (Main.netMode == NetmodeID.Server)

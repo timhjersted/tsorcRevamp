@@ -33,12 +33,14 @@ namespace tsorcRevamp.Buffs.Debuffs
                 if (player.statLifeMax >= 120)
                 {
                     player.statLifeMax -= 20;
+                    player.statLife -= 20;
                     Main.NewText(LangUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", 20));
                 }
 
                 modPlayer.CurseLevel = 0; // Reset it to 0
 
                 player.AddBuff(ModContent.BuffType<Invincible>(), 480, false); // 8 seconds
+                player.AddBuff(ModContent.BuffType<GreenBlossom>(), 3600, false); 
                 player.AddBuff(ModContent.BuffType<Strength>(), 3600, false);
                 Main.NewText(LangUtils.GetTextValue("Buffs.Curse.CurseText2"));
 

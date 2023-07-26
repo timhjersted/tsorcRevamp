@@ -16,14 +16,15 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class RedKnight : ModNPC
     {
-        public int redKnightsSpearDamage = 32;
-        public int redMagicDamage = 22;
-        public int redKnightsGreatDamage = 18;
-        
+        public int redKnightsSpearDamage = 20;
+        public int redMagicDamage = 15;
+        public int redKnightsGreatDamage = 18;       
         Vector2 storedPlayerPosition = Vector2.Zero;
         public int framesSinceStoredPosition = 0;
         public int attackDirection = 0; // Variable to store the direction during the attack state (doesn't work yet)
-     
+
+        NPCDespawnHandler despawnHandler;
+
         #region Defaults
         public override void SetStaticDefaults()
         {
@@ -85,7 +86,7 @@ namespace tsorcRevamp.NPCs.Enemies
           
         }
 
-        NPCDespawnHandler despawnHandler;
+        
         #endregion
 
         #region Spawn
@@ -133,11 +134,11 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 despawnHandler.TargetAndDespawn(NPC.whoAmI);
             }
-
-            Vector2 targetPosition = Vector2.Zero; 
-
+         
             tsorcRevampAIs.FighterAI(NPC, 1, 0.04f, 0.2f, canTeleport: true, 10, false, null, 1000, 0.5f, 2.5f, lavaJumping: true, canDodgeroll: true);
             Lighting.AddLight(NPC.Center, Color.GhostWhite.ToVector3() * 2f);
+
+            Vector2 targetPosition = Vector2.Zero;
 
             //Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
@@ -159,7 +160,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ominous-creature2") with { Volume = 0.8f }, NPC.Center);
                 }
-                //CHANCE TO JUMP FORWARDS
+                // Chance to jump forward
                 if (NPC.Distance(player.Center) > 200 && NPC.velocity.Y == 0f && Main.rand.NextBool(500) && (NPC.ai[1] <= 150f || NPC.ai[1] >= 476f))
                 {
                     NPC.velocity.Y = Main.rand.NextFloat(-4, -8f);
@@ -169,7 +170,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         NPC.velocity.X = (float)NPC.direction * 2;
                     NPC.netUpdate = true;
                 }
-                //CHANCE TO DASH STEP FORWARDS 
+                // Chance to dash step forward
                 if (NPC.Distance(player.Center) > 200 && NPC.velocity.Y == 0f && Main.rand.NextBool(140) && (NPC.ai[1] <= 220f || NPC.ai[1] >= 276f))
                 {
                     NPC.velocity.Y = -4f;
@@ -178,25 +179,21 @@ namespace tsorcRevamp.NPCs.Enemies
                     if ((float)NPC.direction * NPC.velocity.X > 4)
                         NPC.velocity.X = (float)NPC.direction * 4;
 
-                    //CHANCE TO JUMP AFTER DASH
+                    // Chance to jump after dash
                     if (Main.rand.NextBool(6) && (NPC.ai[1] <= 150f || NPC.ai[1] >= 476f))
                     {                       
                         NPC.velocity.Y = -8f;
                     }
                     NPC.netUpdate = true;
                 }
-                //OFFENSIVE JUMP
+                // Offensive jump before 3 attacks
                 if ((NPC.ai[1] == 145 || NPC.ai[1] == 275 || NPC.ai[1] == 890) && NPC.velocity.Y <= 0f && Main.rand.NextBool(4))
-                {
-                    Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f);
-
+                {                   
                     NPC.velocity.Y = Main.rand.NextFloat(-6, -10f);
                     NPC.netUpdate = true;
                 }
                 #endregion
                 
-
-
                 // Increment the frames since we stored the player's position
                 framesSinceStoredPosition++;
 
@@ -247,20 +244,22 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.ai[1] == 180f && NPC.Distance(player.Center) > 400)
                 {
                     NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(16, 19f);
-                  
-                    // Calculate the direction towards the stored player position.
-                    int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
+                    float spearProjectileSpeed = Main.rand.NextFloat(16, 19f);                
                   
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
                     //speed += Main.rand.NextVector2Circular(-6, -2);
                     speed.Y += Main.rand.NextFloat(-2f, 2f); //adds random variation from -1 to 2
+                    speed += Main.player[NPC.target].velocity;
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyForgottenPearlSpearProj>(), redKnightsSpearDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
                     
                     // Reset the targetPosition 
                     targetPosition = Vector2.Zero;
+
+                    // Move closer to next attack
                     NPC.ai[1] = 200f;
+
+                    // Chance to fire Spear again
                     if (Main.rand.NextBool(2))
                     {
                         NPC.ai[1] = 90f;
@@ -273,9 +272,6 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.TargetClosest(true);
                     float spearProjectileSpeed = Main.rand.NextFloat(10, 12f);
 
-                    // Calculate the direction towards the stored player position.
-                    int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
-
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
                     //speed += Main.rand.NextVector2Circular(-6, -2);
                     speed.Y += Main.rand.NextFloat(-1f, 1f); //adds random variation from -1 to 2
@@ -284,8 +280,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     // Reset the targetPosition 
                     targetPosition = Vector2.Zero;
+
+                    // Move closer to next attack
                     NPC.ai[1] = 200f;
-                    if (Main.rand.NextBool(2))
+
+                    // Chance to fire Spear again
+                    if (Main.rand.NextBool(3))
                     {
                         NPC.ai[1] = 90f;
                         NPC.netUpdate = true;
@@ -410,9 +410,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     // Calculate the direction towards the stored player position.
                     int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
 
-                    // Calculate targetPosition
-                    //targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction * 25f, storedPlayerPosition.Y);
-                    targetPosition = new Vector2(storedPlayerPosition.X * direction, storedPlayerPosition.Y);
+                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y); //trying + 10 again
                     
                     // Store the direction for the attack state in the separate variable (doesn't work)
                     attackDirection = (targetPosition.X > NPC.Center.X) ? 1 : -1;
@@ -449,14 +447,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Bomb Attack Far
                 if (NPC.ai[1] == 925f && NPC.Distance(player.Center) > 400)
                 {
-                    float bombProjectileSpeed = 14f;
-                   
-                    // Calculate the direction towards the stored player position.
-                    int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
+                    float bombProjectileSpeed = 14f;                                 
 
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
-                    
-                    speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
+
+                    //speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
+                    speed += Main.player[NPC.target].velocity;
 
                     int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
@@ -464,6 +460,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     // Reset targetPosition 
                     targetPosition = Vector2.Zero;
 
+                    // Reset attack counter
                     NPC.ai[1] = 0f;
 
                     // Chance to throw again
@@ -477,10 +474,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.ai[1] == 925f && NPC.Distance(player.Center) <= 400)
                 {
                     float bombProjectileSpeed = 9f;
-
-                    // Calculate the direction towards the stored player position.
-                    int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
-
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
 
                     speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
@@ -494,7 +487,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.ai[1] = 0f;
 
                     // Chance to throw again
-                    if (Main.rand.NextBool(2))
+                    if (Main.rand.NextBool(3))
                     {
                         NPC.ai[1] = 830f;
                         NPC.netUpdate = true;
@@ -505,7 +498,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Fire Attack from Air
                 if ((NPC.ai[2] == 75 || NPC.ai[2] == 525 || NPC.ai[2] == 575) && NPC.Distance(player.Center) > 350)
                 {
-                    for (int pcy = 0; pcy < 2; pcy++)
+                    for (int pcy = 0; pcy < 3; pcy++)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X, (float)player.position.Y - 360f, (float)(-100 + Main.rand.Next(100)) / 10, 5.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 1f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
@@ -552,7 +545,6 @@ namespace tsorcRevamp.NPCs.Enemies
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.White));
                        
                     }
-
                     // Store the player's position 
                     if (framesSinceStoredPosition >= 25)
                     {
@@ -674,13 +666,6 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             return true;
         }
-
-
-
-
-
-
-
         #endregion
 
         #region Draw Attack Sprites

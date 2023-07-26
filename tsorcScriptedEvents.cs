@@ -14,6 +14,7 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp
 {
@@ -123,6 +124,7 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            GreatRedKnightInDesert,
             Deerclops,
             SkeletronHidden,
             AlienAmbush,
@@ -197,7 +199,13 @@ namespace tsorcRevamp
         {
             Player player = Main.LocalPlayer;
 
+
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
+
+            //GREAT RED KNIGHT IN DESERT
+            ScriptedEvent GreatRedKnightInDesert = new ScriptedEvent(new Vector2(2229, 856), 100, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.GreatRedKnightInDesert"), Color.Red, false, SuperHardModeCustomCondition);
+            GreatRedKnightInDesert.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<Humanity>() }, new List<int>() { 2, 2, 2 });
+            GreatRedKnightInDesert.SetCustomStats(null, null, null, 30500);
 
             //Deerclops
             ScriptedEvent DeerclopsEvent = new ScriptedEvent(new Vector2(4043, 143), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.Deerclops"), Color.Blue, false, null, SetNightCustomAction);
@@ -255,23 +263,21 @@ namespace tsorcRevamp
 
             //HERO OF LUMELIA FIGHT
             ScriptedEvent HeroofLumeliaFight = new ScriptedEvent(new Vector2(2229, 854), 60, ModContent.NPCType<NPCs.Bosses.HeroofLumelia>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HeroOfLumelia"), Color.LightGoldenrodYellow, false, LumeliaCustomCondition);//location previously was 4413, 717, near village
-            //HeroofLumeliaFight.SetCustomStats(1600, 12, 52, 1555);
-            //HeroofLumeliaFight.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion }, new List<int>() { 2, 2 });
 
             //FIRE LURKER PATH OF PAIN
             ScriptedEvent FireLurkerPain = new ScriptedEvent(new Vector2(3245, 1252), 9, ModContent.NPCType<NPCs.Enemies.FireLurker>(), DustID.CursedTorch, true, true, true, LangUtils.GetTextValue("Events.FireLurker"), Color.Purple, false, default, FireLurkerPainCustomAction);
-            FireLurkerPain.SetCustomStats(1900, 12, 85, 1755);
+            FireLurkerPain.SetCustomStats(2000, 12, 85, 2055);
             FireLurkerPain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<WorldRune>() }, new List<int>() { 2, 2, 2 });
 
             //RED KNIGHT IN PATH OF PAIN
             ScriptedEvent RedKnightPain = new ScriptedEvent(new Vector2(3897, 1219), 20, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.RedKnight1"), Color.Purple, false, default, RedKnightPainCustomAction);
             RedKnightPain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<WorldRune>() }, new List<int>() { 2, 2, 2 });
-            RedKnightPain.SetCustomStats(2700, 10, 75, 3255);
+            RedKnightPain.SetCustomStats(3000, 10, 65, 3350);
 
             //RED KNIGHT IN TWIN PEAKS MOUNTAIN
             ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.RedKnight2"), Color.Purple, false, default, RedKnightMountainCustomAction);
-            RedKnightTwinMountain.SetCustomStats(2200, 10, 65, 2355);
-
+            RedKnightTwinMountain.SetCustomStats(2500, 10, 55, 2750);
+     
             //JUNGLE WYVERN
             ScriptedEvent JungleWyvernEvent = new ScriptedEvent(new Vector2(4331, 1713), 16, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), DustID.CursedTorch, true, true, true, LangUtils.GetTextValue("Events.JungleWyvern"), Color.Green, false);
 
@@ -455,6 +461,7 @@ namespace tsorcRevamp
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
+                {ScriptedEventType.GreatRedKnightInDesert, GreatRedKnightInDesert},
                 {ScriptedEventType.Deerclops, DeerclopsEvent},
                 {ScriptedEventType.OldManEvent, OldManEvent},
                 {ScriptedEventType.SkeletronHidden, SkeletronHiddenEvent},
@@ -855,7 +862,7 @@ namespace tsorcRevamp
                 //Note: If you can't find the damages for a NPC, the variable that controls the damage for its projectile might not be public (read: probably isn't).
                 //It's an easy fix though: Go to the file for the NPC you want to change and find the damage variables for the projectiles you want to modify (in this case spearDamage) and put 'public' in front of them.
                 //Then you'll be able to access them from here and set them to anything!
-                ourKnight.spearDamage = 40;
+                ourKnight.redKnightsSpearDamage = 15;
             }
             return EventActionStatus.EndAction;
         }

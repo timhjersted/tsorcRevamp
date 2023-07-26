@@ -203,6 +203,7 @@ Mods: {
 		}
 
 		Events: {
+			// GreatRedKnightInDesert: Your world has been invaded by a Great Red Knight...
 			Deerclops: 你惊动了远古巨鹿！
 			SkeletronHidden: 坟墓之主骷髅王已苏醒！
 			EoC: 克苏鲁之眼盯上你了！
@@ -8559,6 +8560,10 @@ Mods: {
 			OilPotShard4.DisplayName: 油壶碎片
 			DroidBomb.DisplayName: 无人机炸弹
 			EnemyForgottenPearlSpearProj.DisplayName: 被遗忘的珍珠矛
+			// BlackThrowingSpear.DisplayName: Black Throwing Spear
+			// EnemyBlackKnightHomingCrystal.DisplayName: Enemy Black Knight Homing Crystal
+			// EnemyMoonfuryBomb.DisplayName: Enemy Moonfury Bomb
+			// EnemyBlackCursedBreath.DisplayName: Enemy Black Cursed Breath
 		}
 
 		NPCs: {
