@@ -417,6 +417,15 @@ namespace tsorcRevamp
 
         private static void StopLunarApocalypse(Terraria.On_WorldGen.orig_TriggerLunarApocalypse orig)
         {
+            /*NPC SolarPillar = NPC.NewNPCDirect(NPC.GetSource_None(), new Vector2(33905, 4008), NPCID.LunarTowerSolar);
+            NPC VortexPillar = NPC.NewNPCDirect(NPC.GetSource_None(), new Vector2(86525, 9064), NPCID.LunarTowerVortex);
+            NPC NebulaPillar = NPC.NewNPCDirect(NPC.GetSource_None(), new Vector2(12420, 5821), NPCID.LunarTowerNebula);
+            NPC StardustPillar = NPC.NewNPCDirect(NPC.GetSource_None(), new Vector2(125990, 6376), NPCID.LunarTowerStardust);
+            NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;
+            NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
+            NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
+            NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
+            Main.NewText(SolarPillar.position);*/
             return;
         }
 
