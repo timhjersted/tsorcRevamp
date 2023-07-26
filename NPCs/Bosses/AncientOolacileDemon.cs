@@ -127,7 +127,7 @@ namespace tsorcRevamp.NPCs.Bosses
         //PROJECTILE HIT LOGIC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, true);
+            tsorcRevampAIs.FighterOnHit(NPC, true);
 
             //JUSTHIT CODE
             //MELEE RANGE

@@ -632,7 +632,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 //JUMP BEFORE KNIFE ATTACK SOMETIMES
                 if (customAi1 == 130f && NPC.velocity.Y == 0f && NPC.life >= 1001 && Main.rand.NextBool(2))
-                //if (customAi1 >= 130f && customAi1 <= 131f && npc.velocity.Y == 0f && Main.rand.NextBool(2))
                 {
 
                     NPC.velocity.Y = Main.rand.NextFloat(-10f, -5f);
@@ -651,7 +650,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 //DESPERATE FINAL ATTACK
                 if (customAi1 >= 130f && customAi1 <= 148f && NPC.life <= 1000)
-                //if (customAi1 >= 130f && customAi1 <= 131f && npc.velocity.Y == 0f && Main.rand.NextBool(2))
                 {
                     if (NPC.velocity.Y == 0f)
                     {
@@ -671,13 +669,10 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.netUpdate = true;
                 }
 
-                //THROW KNIFE
-                //&& Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1)
-                //if (Collision.CanHitLine(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))			
+                //THROW KNIFE               
                 if (customAi1 == 152)
                 {
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12); //0.4f, true, true
-                                                                                                                         //speed += Main.rand.NextVector2Circular(-3, -1);
+                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12);                                                                                                                          
                     speed += Main.player[NPC.target].velocity / 2;
                     if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                     {

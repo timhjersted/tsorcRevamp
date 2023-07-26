@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.height = 15;
             Projectile.penetrate = 1;
             Projectile.DamageType = DamageClass.Ranged;
-            Projectile.scale = 0.8f;
+            Projectile.scale = 0.7f;
             Projectile.tileCollide = true;
             Projectile.width = 14;
         }
@@ -36,8 +36,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             for (int i = 0; i < 15; i++)
             {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 7, 0, 0, 0, default, 1f); //6 is a flame dust
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 7, 0, 0, 0, default, 1.5f);
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 7, 0, 0, 0, default, 1.5f); //7 is a wood splinter dust
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 7, 0, 0, 0, default, 1.2f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 7, 0, 0, 0, default, 1.2f); //7 is a wood splinter dust
             }
             return true;
         }

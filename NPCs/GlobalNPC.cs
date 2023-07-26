@@ -37,6 +37,7 @@ using tsorcRevamp.Utilities;
 using Terraria.ModLoader.IO;
 using System.IO;
 using Microsoft.Xna.Framework.Graphics;
+using tsorcRevamp.NPCs.Enemies;
 
 namespace tsorcRevamp.NPCs
 {
@@ -4016,81 +4017,282 @@ namespace tsorcRevamp.NPCs
             npc.Center = globalNPC.TeleportTelegraph;
         }
 
-        public static void RedKnightOnHit(NPC npc, bool melee)
-        {
-            if (melee)
-            {
-                npc.localAI[1] = 100f;
-                npc.knockBackResist = 0.09f;
-
-                //WHEN HIT, CHANCE TO JUMP BACKWARDS 
-                if (Main.rand.NextBool(10))
+        public static void FighterOnHit(NPC npc, bool melee) 
+        {        
+                if (melee)
                 {
-                    npc.TargetClosest(false);
+                    npc.localAI[1] = 80f; // was 100
+                    npc.knockBackResist = 0.09f;
 
-                    npc.velocity.Y = -8f;
-                    npc.velocity.X = -4f * npc.direction;
-
-
-                    npc.localAI[1] = 160f;
-
-                    npc.netUpdate = true;
-                }
-
-                //WHEN HIT, CHANCE TO DASH STEP BACKWARDS 
-                else if (Main.rand.NextBool(8))//was 10
-                {
-                    npc.velocity.Y = -4f;
-                    npc.velocity.X = -6f * npc.direction;
-
-                    npc.localAI[1] = 160f;
-
-                    //CHANCE TO JUMP AFTER DASH
-                    if (Main.rand.NextBool(4))
+                    //TELEPORT MELEE
+                    if (Main.rand.NextBool(12))
+                    {
+                        TeleportImmediately(npc, 20, true);
+                    }
+                    //WHEN HIT, CHANCE TO JUMP BACKWARDS 
+                    else if (Main.rand.NextBool(8))
+                    {
+                        //npc.TargetClosest(false);
+                        npc.velocity.Y = -8f;
+                        npc.velocity.X = -4f * npc.direction;
+                        npc.localAI[1] = 150f;
+                        npc.netUpdate = true;
+                    }
+                    //WHEN HIT, CHANCE TO DASH STEP BACKWARDS 
+                    else if (Main.rand.NextBool(8))
+                    {
+                        npc.velocity.Y = -4f;
+                        npc.velocity.X = -7f * npc.direction;
+                        npc.localAI[1] = 150f;                                       
+                        npc.netUpdate = true;
+                    }
+                    else if (Main.rand.NextBool(4))
                     {
                         npc.TargetClosest(true);
                         npc.velocity.Y = -7f;
-                        //npc.localAI[1] = 161f;
+                        npc.velocity.X = -10f * npc.direction;
+                        npc.localAI[1] = 150f;
+                        npc.netUpdate = true;
                     }
+                    
+                }
+                if (!melee && Main.rand.NextBool())
+                {
+                    if (Main.rand.NextBool(4))
+                    {
+                        
+                        int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 1f);
+                        Main.dust[dust].noGravity = true;
 
+                        npc.velocity.Y = -9f; 
+                        npc.velocity.X = 4f * npc.direction; 
+                        npc.TargetClosest(true);
+
+                        if ((float)npc.direction * npc.velocity.X > 4)
+                        {
+                            npc.velocity.X = (float)npc.direction * 4; 
+                        }
+                        npc.netUpdate = true;
+                    }
+                    if (Main.rand.NextBool(6))
+                    {
+
+                        npc.ai[0] = 0f;
+                        npc.velocity.Y = -5f;
+                        npc.velocity.X *= 4f; // burst forward
+                        npc.TargetClosest(true);
+
+                        npc.velocity.X += (float)npc.direction * 5f;  //  accellerate fwd; can happen midair
+                        if ((float)npc.direction * npc.velocity.X > 5)
+                        {
+                            npc.velocity.X = (float)npc.direction * 5;  //  but cap at top speed
+                        }
+                        //CHANCE TO JUMP AFTER DASH
+                        if (Main.rand.NextBool(8))
+                        {
+                            npc.TargetClosest(true);
+                            npc.spriteDirection = npc.direction;
+                            npc.ai[0] = 0f;
+                            npc.velocity.Y = -6f;
+                        }
+                        npc.netUpdate = true;
+                    }
+                    if (npc.Distance(Main.player[npc.target].Center) > 80 && Main.rand.NextBool(20))
+                    {
+                        TeleportImmediately(npc, 20, false);
+                    }
+                }
+            
+        }
+            public static void RedKnightOnHit(NPC npc, bool melee) //ref int stunlockBreak
+        {
+            /*
+            // Ensure that the stunlockBreak timer is always decreasing
+            stunlockBreak--;
+
+            // Increment the stunlockBreak timer
+            stunlockBreak += 600;
+
+            // Check if the stunlockBreak timer is greater than or equal to 3000
+            if (stunlockBreak >= 2000)
+            {
+                
+                // Set knockback to 0 and decrement the stunlockBreak timer
+                npc.knockBackResist = 0;
+                
+            }
+ 
+            if (stunlockBreak < 0)
+            {
+                stunlockBreak = 0;
+            }
+            */
+            if (melee)
+            {
+                // Ensures melee can't interrupt attack once the flash telegraph triggers
+                if ((npc.ai[1] < 155f) || (npc.ai[1] > 180f && npc.ai[1] < 300f) || (npc.ai[1] > 325f && npc.ai[1] < 900f) || npc.ai[1] > 925f)
+                {
+                    
+                    int randomChoice = Main.rand.Next(10);
+
+                    switch (randomChoice)
+                    {
+                        case 0:
+                            npc.ai[1] = 50f;
+                            break;
+
+                        case 1:
+                            npc.ai[1] = 700f;
+                            break;
+
+                        case 2:
+                            npc.ai[1] = 200f;
+                            break;
+
+                        case 3:
+                            npc.ai[1] = 80f;
+                            break;
+                        case 4:
+                            //CHANCE TO BIG JUMP BACKWARDS - SPEAR
+                            if (Main.rand.NextBool(2))
+                            {
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -9f;
+                                npc.velocity.X = -9f * npc.direction;
+                                npc.ai[1] = 140f;
+                                npc.netUpdate = true;
+                            }
+                            else
+                            {
+                                npc.ai[1] = 50f;
+                            }
+                            break;
+                        case 5:
+                            //CHANCE TO SMALL DASH BACKWARDS - BOMB
+                            if (Main.rand.NextBool(2))
+                            {
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -6f;
+                                npc.velocity.X = -8f * npc.direction;
+                                npc.ai[1] = 860f;
+                                npc.netUpdate = true;
+
+
+                            }
+                            //ALT BOMB DASH
+                            else
+                            {
+                                npc.ai[1] = 850f;
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -4f;
+                                npc.velocity.X = -9f * npc.direction;
+                            }
+                            break;
+                        case 6:
+                            //CHANCE TO BIG DASH BACKWARDS - BOMB
+                            if (Main.rand.NextBool(2))
+                            {
+                                npc.TargetClosest(true);
+                                npc.ai[1] = 880f;
+                                npc.velocity.Y = -8f;
+                                npc.velocity.X = -11f * npc.direction;
+                                npc.netUpdate = true;
+                            }
+                            else
+                            {
+                                npc.TargetClosest(true);
+                                npc.ai[1] = 50f;
+                            }
+                            break;
+                        case 7:
+                            //TELEPORT MELEE
+                            if (Main.rand.NextBool(2))
+                            {
+                                TeleportImmediately(npc, 22, true);
+                                npc.netUpdate = true;
+                            }
+                            else
+                            {
+                                //POISON
+                                TeleportImmediately(npc, 22, true);
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -9f;
+                                npc.velocity.X = -6f * npc.direction;
+                                npc.ai[1] = 250f;
+                            }
+                            break;
+                        case 8:
+                            //CHANCE TO SMALL DASH BACKWARDS - SPEAR
+                            if (Main.rand.NextBool(2))
+                            {
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -3f;
+                                npc.velocity.X = -7f * npc.direction;
+                                npc.ai[1] = 130f;
+                                npc.netUpdate = true;
+                            }
+                            else
+                            {
+                                //JUMP HIGH
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -11f;
+                                npc.velocity.X = -7f * npc.direction;
+                                npc.ai[1] = 130f;
+
+                            }
+                            break;
+                        case 9:
+                            //DASH BACKWARDS - POISON
+                            if (Main.rand.NextBool(2))
+                            {
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -6f;
+                                npc.velocity.X = -9f * npc.direction;
+                                npc.ai[1] = 280f;
+                                npc.netUpdate = true;
+                            }
+                            else
+                            {
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -10f;
+                                npc.velocity.X = -7f * npc.direction;
+                                npc.ai[1] = 280f;
+                            }
+                            break;
+                            
+
+                    }
                     npc.netUpdate = true;
                 }
-
-                //TELEPORT MELEE
-                if (Main.rand.NextBool(12))
+                else
                 {
-                    TeleportImmediately(npc, 20, true);
+                    npc.knockBackResist = 0;
                 }
+
+                npc.knockBackResist = 0.4f; //was 0.9
+
+             
             }
 
             if (!melee && Main.rand.NextBool())
             {
                 if (Main.rand.NextBool(4))
                 {
-                    //customAi1 = 110f;
-                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 1f);
-                    Main.dust[dust].noGravity = true;
-                    
-
-
-                    npc.velocity.Y = -9f; //9
-                    npc.velocity.X = 4f * npc.direction; //was -4
-
+                    npc.velocity.Y = -9f; 
+                    npc.velocity.X = 4f * npc.direction; 
                     npc.TargetClosest(true);
                     
                     if ((float)npc.direction * npc.velocity.X > 4)
                     {
-                        npc.velocity.X = (float)npc.direction * 4;  //  but cap at top speed
+                        npc.velocity.X = (float)npc.direction * 3;  //  3 was 4 - this caps the top speed
                     }
                     npc.netUpdate = true;
                 }
 
                 if (Main.rand.NextBool(6))
                 {
-                    
-
                     npc.ai[0] = 0f;
-                    npc.velocity.Y = -5f;
+                    npc.velocity.Y = -6f;
                     npc.velocity.X *= 4f; // burst forward
                     npc.TargetClosest(true);
                     
@@ -4101,19 +4303,17 @@ namespace tsorcRevamp.NPCs
                     }
 
                     //CHANCE TO JUMP AFTER DASH
-                    if (Main.rand.NextBool(8))
+                    if (Main.rand.NextBool(6))
                     {
                         npc.TargetClosest(true);
-
                         npc.spriteDirection = npc.direction;
-                        npc.ai[0] = 0f;
-
+                        //npc.ai[0] = 0f; //Why was this here?
                         npc.velocity.Y = -6f;
                     }
 
                     npc.netUpdate = true;
                 }
-                if (npc.Distance(Main.player[npc.target].Center) > 80 && Main.rand.NextBool(20))
+                if (npc.Distance(Main.player[npc.target].Center) > 200 && Main.rand.NextBool(18))
                 {
                     TeleportImmediately(npc, 20, false);
                 }

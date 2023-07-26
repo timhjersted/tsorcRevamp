@@ -107,9 +107,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void AI()
         {
             NPC.aiStyle = -1;
+
             tsorcRevampAIs.FighterAI(NPC, 0.6f, 0.07f, 0.1f, true, enragePercent: 0.5f, enrageTopSpeed: 5);
 
+            Lighting.AddLight(NPC.Center, Color.Yellow.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+
             bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
+            
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer == 125f)
             {
                 if (Main.rand.NextBool(2))
@@ -131,7 +135,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     }
                 }
 
-                if(fireBreathTimer == 200)
+                if (fireBreathTimer == 200)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -224,9 +228,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 117 && Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
             {
                 float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
-
-                Lighting.AddLight(NPC.Center, Color.Yellow.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-
+             
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 if (NPC.spriteDirection == -1)
                 {

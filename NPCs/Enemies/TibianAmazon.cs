@@ -98,7 +98,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, true);
+            tsorcRevampAIs.FighterOnHit(NPC, true);
             if (Main.rand.NextBool(3))
             {
                 NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
@@ -108,7 +108,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+            tsorcRevampAIs.FighterOnHit(NPC, projectile.DamageType == DamageClass.Melee);
 
             if (projectile.DamageType == DamageClass.Melee)
             {

@@ -116,11 +116,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         //PROJECTILE HIT LOGIC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, true);
+            tsorcRevampAIs.FighterOnHit(NPC, true);
 
             //JUSTHIT CODE
             //MELEE RANGE
-            if (NPC.Distance(player.Center) < 100 && NPC.localAI[1] < 70f) //npc.justHit && 
+            if (NPC.Distance(player.Center) < 100 && NPC.localAI[1] < 70f) 
             {
                 NPC.localAI[1] = 50f;
 
@@ -131,7 +131,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
             //RISK ZONE
-            if (NPC.Distance(player.Center) < 300 && NPC.localAI[1] < 70f && Main.rand.NextBool(5))//npc.justHit && 
+            if (NPC.Distance(player.Center) < 300 && NPC.localAI[1] < 70f && Main.rand.NextBool(5))
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
                 float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-10f, -7f);
@@ -151,7 +151,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 NPC.localAI[1] = 70f;
             }
             //RANGED
-            if (NPC.Distance(player.Center) > 201 && NPC.velocity.Y == 0f && Main.rand.NextBool(3))//npc.justHit &&
+            if (NPC.Distance(player.Center) > 201 && NPC.velocity.Y == 0f && Main.rand.NextBool(3))
             {
 
                 NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f);
