@@ -140,19 +140,19 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void Kill(int timeLeft)
         {
             // Play explosion sound
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with {PitchVariance = 0.2f }, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath55 with {PitchVariance = 2f }, Projectile.Center);
 
 
             // Fire Dust spawn
             for (int i = 0; i < 200; i++)
             {
-                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 74, Projectile.height - 74, DustID.BoneTorch, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, Color.Purple, 2f);
+                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 74, Projectile.height - 74, DustID.CosmicEmber, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, Color.Purple, 2f);
                 Main.dust[dustIndex].noGravity = true;
-                Main.dust[dustIndex].velocity *= 3.5f;
+                Main.dust[dustIndex].velocity *= 1f;
             }
 
             // Large Smoke Gore spawn
-            for (int g = 0; g < 2; g++)
+            for (int g = 0; g < 10; g++)
             {
                 if (!Main.dedServ)
                 {

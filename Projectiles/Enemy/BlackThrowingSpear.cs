@@ -19,12 +19,21 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.scale = 0.8f;
             Projectile.tileCollide = true;
             Projectile.width = 14;
-            Projectile.alpha = 20;
+            Projectile.alpha = 0;
+            Projectile.light = 1;
         }
 
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            for (int num36 = 0; num36 < 2; num36++)
+            {
+                int wraith = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, DustID.Wraith, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.5f);
+                Main.dust[wraith].noGravity = true;
+
+                int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 75, 0, 0, 50, Color.DarkGray, 1.0f);
+                Main.dust[dust].noGravity = true;
+            }
         }
 
         public override bool PreKill(int timeLeft)

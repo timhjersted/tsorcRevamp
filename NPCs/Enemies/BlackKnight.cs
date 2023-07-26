@@ -102,7 +102,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.6f, 0.05f, enragePercent: 0.5f, enrageTopSpeed: 3.1f, canTeleport: true, canDodgeroll: true);
+            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.05f, enragePercent: 0.5f, enrageTopSpeed: 2.9f, canTeleport: true, canDodgeroll: true);
             Lighting.AddLight(NPC.Center, Color.GhostWhite.ToVector3() * 2f);
 
             //if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 150f && NPC.justHit)
@@ -210,11 +210,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.ai[1] == 180f && NPC.Distance(player.Center) > 400)
                 {
                     NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(16, 19f);
+                    float spearProjectileSpeed = Main.rand.NextFloat(14, 16f);
 
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
                     //speed += Main.rand.NextVector2Circular(-6, -2);
-                    speed.Y += Main.rand.NextFloat(-2f, 2f); //adds random variation from -1 to 2
+                    //speed.Y += Main.rand.NextFloat(-2f, 2f); //adds random variation from -1 to 2
                     speed += Main.player[NPC.target].velocity;
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
@@ -236,11 +236,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.ai[1] == 180f && NPC.Distance(player.Center) <= 400)
                 {
                     NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(10, 12f);
+                    float spearProjectileSpeed = Main.rand.NextFloat(9, 10f);
 
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
                     //speed += Main.rand.NextVector2Circular(-6, -2);
-                    speed.Y += Main.rand.NextFloat(-1f, 1f); //adds random variation from -1 to 2
+                    //speed.Y += Main.rand.NextFloat(-1f, 1f); //adds random variation from -1 to 2
+                    speed += Main.player[NPC.target].velocity;
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
 
@@ -286,9 +287,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Poison Attack 1
                 if (NPC.ai[1] == 325)
                 {
-                    float projectileSpeed = 5f;
+                    float projectileSpeed = 15f;
                     float projectileSpread = MathHelper.Pi / 6f; // Angle between each projectile (30 degrees in radians)
-                    int numProjectiles = 2; // Number of projectiles to shoot
+                    int numProjectiles = 1; // Number of projectiles to shoot
 
                     for (int i = 0; i < numProjectiles; i++)
                     {
@@ -300,8 +301,8 @@ namespace tsorcRevamp.NPCs.Enemies
                             angle = MathHelper.Pi - angle;
                         }
 
-                        Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, projectileSpeed, 1.1f, highAngle: true, fallback: true);
-                        speed2 += Main.player[NPC.target].velocity / 2; //was 4
+                        Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, projectileSpeed, 2.1f, highAngle: true, fallback: true);
+                        speed2 += Main.player[NPC.target].velocity; //was 4
                         speed2 = speed2.RotatedBy(angle); // Rotate the projectile speed vector by the angle
 
                         if (((speed2.X < 0f) && (NPC.velocity.X < 0f)) || ((speed2.X > 0f) && (NPC.velocity.X > 0f)))
@@ -332,9 +333,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Poison Attack 2
                 if (NPC.ai[1] == 375)
                 {
-                    float projectileSpeed = 5f;
+                    float projectileSpeed = 18f;
                     float projectileSpread = MathHelper.Pi / 6f; // Angle between each projectile (30 degrees in radians)
-                    int numProjectiles = 8; // Number of projectiles to shoot
+                    int numProjectiles = 2; // Number of projectiles to shoot
 
                     for (int i = 0; i < numProjectiles; i++)
                     {
@@ -347,7 +348,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         }
 
                         Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, projectileSpeed, 1.1f, highAngle: true, fallback: true);
-                        speed2 += Main.player[NPC.target].velocity / 2; //was 4
+                        //speed2 += Main.player[NPC.target].velocity / 2; //was 4
                         speed2 = speed2.RotatedBy(angle); // Rotate the projectile speed vector by the angle
 
                         if (((speed2.X < 0f) && (NPC.velocity.X < 0f)) || ((speed2.X > 0f) && (NPC.velocity.X > 0f)))
@@ -359,12 +360,12 @@ namespace tsorcRevamp.NPCs.Enemies
                     // Shorter or longer pause before bomb attack
                     if (Main.rand.NextBool(2))
                     {
-                        NPC.ai[1] = 800f;
+                        NPC.ai[1] = 700f;
                         NPC.netUpdate = true;
                     }
                     else
                     {
-                        NPC.ai[1] = 850f;
+                        NPC.ai[1] = 800f;
                         NPC.netUpdate = true;
                     }
                 }
@@ -409,7 +410,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Bomb Attack Far
                 if (NPC.ai[1] == 925f && NPC.Distance(player.Center) > 400)
                 {
-                    float bombProjectileSpeed = 14f;
+                    float bombProjectileSpeed = 8f;
 
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
 
@@ -435,7 +436,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Bomb Attack Close
                 if (NPC.ai[1] == 925f && NPC.Distance(player.Center) <= 400)
                 {
-                    float bombProjectileSpeed = 8f;
+                    float bombProjectileSpeed = 5f;
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
 
                     speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
@@ -460,7 +461,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Death Attack from Air
                 if ((NPC.ai[2] == 75 || NPC.ai[2] == 525 || NPC.ai[2] == 575) && NPC.Distance(player.Center) > 250)
                 {
-                    for (int pcy = 0; pcy < 3; pcy++)
+                    for (int pcy = 0; pcy < 4; pcy++)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X, (float)player.position.Y - 300f, (float)(-100 + Main.rand.Next(100)) / 10, 5.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redMagicDamage, 3f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
@@ -471,7 +472,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Slightly Delayed Death Attack From Air
                 if ((NPC.ai[2] == 100 || NPC.ai[2] == 550 || NPC.ai[2] == 600) && NPC.Distance(player.Center) > 270)
                 {
-                    for (int pcy = 0; pcy < 4; pcy++)
+                    for (int pcy = 0; pcy < 6; pcy++)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 500 + Main.rand.Next(1000), (float)player.position.Y - 300f, (float)(Main.rand.Next(10)) / 10, 3.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redMagicDamage, 4f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
@@ -480,7 +481,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 // Breather before reset
-                if (NPC.ai[2] >= 1100)
+                if (NPC.ai[2] >= 1200)
                 {
                     NPC.ai[2] = 0;
                 }
@@ -520,7 +521,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 }
                 // Ultrakill Attack
-                if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 200f && NPC.ai[2] <= 225f)
+                if (NPC.life <= NPC.lifeMax / 2 && NPC.ai[2] >= 200f && NPC.ai[2] <= 235f)
                 {
                     NPC.velocity.X *= 0.25f;
 
@@ -531,19 +532,19 @@ namespace tsorcRevamp.NPCs.Enemies
                     targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
 
                     // Exlosives
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 1f, fallback: true);
-                    speed += Main.rand.NextVector2Circular(-12, -16);//was -4, -2, then -12, -16
+                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 2f, fallback: true);
+                    speed += Main.rand.NextVector2Circular(1, 5);//was -12, -16
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), redKnightsGreatDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center); //Play flame sound
 
                     // ???
-                    Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 2, fallback: true);
-                    speed2 += Main.rand.NextVector2Circular(-4, 4);//was -4, -2, then -12, -16
+                    Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 3, fallback: true);
+                    speed2 += Main.rand.NextVector2Circular(-3, 3);//was -4, -2, then -12, -16
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redKnightsGreatDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 0.9f, PitchVariance = 2f }, NPC.Center);
                 }
                 // After Ultrakill attack completes
-                if (NPC.ai[2] == 236f)
+                if (NPC.ai[2] == 246f)
                 {
                     // Reset the targetPosition 
                     targetPosition = Vector2.Zero;
@@ -604,7 +605,7 @@ namespace tsorcRevamp.NPCs.Enemies
             // Spear
             if (NPC.ai[1] >= 120 && NPC.ai[1] <= 180f)
             {
-                float spriteScale = 0.7f; // Set the desired scale value (0.7 means 70% of the original size)
+                float spriteScale = 0.8f; // Set the desired scale value (0.7 means 70% of the original size)
                 float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
 
                
@@ -639,6 +640,17 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Gore
         public override void OnKill()
         {
+            // create unknown embers that fill the explosion's radius
+            for (int i = 0; i < 30; i++)
+            {
+                float velX = 1f - ((float)Main.rand.Next(20)) / 5f;
+                float velY = 1f - ((float)Main.rand.Next(20)) / 5f;
+                velX *= 2f;
+                velY *= 2f;
+                Dust.NewDust(new Vector2(NPC.position.X - (float)(NPC.width / 2), NPC.position.Y - (float)(NPC.height / 2)), NPC.width, NPC.height, DustID.EnchantedNightcrawler, velX, velY, 160, default, 1.5f);
+                Dust.NewDust(new Vector2(NPC.position.X - (float)(NPC.width / 2), NPC.position.Y - (float)(NPC.height / 2)), NPC.width, NPC.height, DustID.CosmicEmber, velX, velY, 160, default, 1.5f);
+            }
+
             if (!Main.dedServ)
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Black Knight Gore 1").Type, 1f);

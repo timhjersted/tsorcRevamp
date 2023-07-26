@@ -21,11 +21,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.width = 26;
             Projectile.height = 20;
             Projectile.scale = 1f;
-            Projectile.timeLeft = 460;
+            Projectile.timeLeft = 240;
             Projectile.hostile = true;          
             Projectile.penetrate = 1;
-            //Projectile.DamageType = DamageClass.Magic;
-            Projectile.tileCollide = true;
+            Projectile.DamageType = DamageClass.Magic;
+            //Projectile.tileCollide = false;
             Projectile.damage = 35;
             Projectile.knockBack = 12;
             Projectile.light = 1;
@@ -42,9 +42,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             // Rotate the projectile based on the spin speed
             Projectile.rotation += spinSpeed;
-
-            if (timer > 60 && timer < 300)
+            Projectile.tileCollide = false;
+            if (timer > 60 && timer < 240)
             {
+                Projectile.tileCollide = true;
                 Player closest = UsefulFunctions.GetClosestPlayer(Projectile.Center);
 
                 if (closest != null)
@@ -54,28 +55,46 @@ namespace tsorcRevamp.Projectiles.Enemy
 
                 if (!Main.dedServ)
                 {
-                    //Gore.NewGore(Projectile.GetSource_FromThis(), Projectile.position - new Vector2(16, 16) - Projectile.velocity * 1, Vector2.Zero, Main.rand.Next(61, 64), Main.rand.NextFloat(0.1f, 0.5f));
-                    //Gore.NewGore(Projectile.GetSource_FromThis(), Projectile.position - new Vector2(16, 16) - Projectile.velocity * 1, Vector2.Zero, Main.rand.Next(61, 64), Main.rand.NextFloat(0.1f, 0.5f));
-                    //Gore.NewGore(Projectile.GetSource_FromThis(), Projectile.position - new Vector2(16, 16) - Projectile.velocity * 1, Vector2.Zero, Main.rand.Next(61, 64), Main.rand.NextFloat(0.1f, 0.5f));
 
-                    // create unknown embers that fill the explosion's radius
-                    for (int i = 0; i < 30; i++)
+                    // Smoke and fuse dust spawn.
+                    if (Main.rand.NextBool(2))
+                    {
+                       
+                        int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 6, 0f, 0f, 100, Color.MediumPurple, 1f);
+                        Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;
+                        Main.dust[dustIndex].fadeIn = .5f + (float)Main.rand.Next(5) * 0.1f;
+                        Main.dust[dustIndex].noGravity = true;
+
+                        for (int num36 = 0; num36 < 2; num36++)
+                        {
+                            int purple = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, DustID.ShadowbeamStaff, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.5f);
+                            Main.dust[purple].noGravity = true;
+                            int wither = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, 0f, 0f, 100, Color.MediumPurple, 0.5f);
+                            Main.dust[wither].noGravity = true;
+                        }
+                        
+                    }
+
+                    
+                    /*
+                    for (int i = 0; i < 10; i++)
                     {
                         float velX = 2f - ((float)Main.rand.Next(20)) / 5f;
                         float velY = 2f - ((float)Main.rand.Next(20)) / 5f;
-                        velX *= 4f;
-                        velY *= 4f;
-                        Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.Wraith, velX, velY, 160, default, 1f);
-                        Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.Wraith, velX, velY, 160, default, 1f);
-                        //Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.Firefly, velX, velY, 160, default, 1f);
+                        velX *= 2f;
+                        velY *= 2f;
+                        Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.Wraith, velX, velY, 160, default, 2f);
+                        Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.FireflyHit, velX, velY, 160, default, 2f);
+                      
                         Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.SparkForLightDisc, velX, velY, 160, default, 1f);
                     }
+                    */
 
                 }
             }
             else
             {
-                Projectile.velocity *= 0.95f;
+                Projectile.velocity *= 0.85f;
             }
 
             timer++;
@@ -84,65 +103,61 @@ namespace tsorcRevamp.Projectiles.Enemy
         #region Kill   
         public override void Kill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie82 with { Volume = 0.6f, Pitch = -3f, PitchVariance = 2f }, Projectile.Center); //wraith
+        
 
             // setup projectile for explosion
             Projectile.damage = Projectile.damage * 2;
             Projectile.penetrate = 20;
-            Projectile.width = Projectile.width << 3;
-            Projectile.height = Projectile.height << 3;
+            Projectile.width = Projectile.width * 2;
+            Projectile.height = Projectile.height * 2;
 
             Projectile.Damage();
 
-            if (Projectile.owner == Main.myPlayer)
+            //if (Projectile.owner == Main.myPlayer)
+            //{
+            //    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.position, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 10, 10, Main.myPlayer, 400, 30);
+            //}
+
+            // Fire Dust spawn
+            for (int i = 0; i < 200; i++)
             {
-                //Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.position, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 10, 0, Main.myPlayer, 400, 30);
+                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width * 2, Projectile.height  * 2, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 3f);
+                Main.dust[dustIndex].noGravity = true;
+                Main.dust[dustIndex].velocity *= 2.5f;
             }
+            // Large Smoke Gore spawn
+            for (int g = 0; g < 2; g++) //6 was 2
+            {
+                if (!Main.dedServ)
+                {
+                    int goreIndex = Gore.NewGore(Projectile.GetSource_Death(), new Vector2(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2)), default(Vector2), Main.rand.Next(61, 64), .8f);
+                    Main.gore[goreIndex].scale = 2f;
+                    Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X + 1f;
+                    Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y + 1f;
+                    goreIndex = Gore.NewGore(Projectile.GetSource_Death(), new Vector2(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2)), default(Vector2), Main.rand.Next(61, 64), .8f);
+                    Main.gore[goreIndex].scale = 2f;
+                    Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X - 1f;
+                    Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y + 1f;
+                }
+            }
+
 
             // create unknown embers that fill the explosion's radius
             for (int i = 0; i < 30; i++)
             {
-                float velX = 2f - ((float)Main.rand.Next(20)) / 5f;
-                float velY = 2f - ((float)Main.rand.Next(20)) / 5f;
-                velX *= 4f;
-                velY *= 4f;
-                Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.EnchantedNightcrawler, velX, velY, 160, default, 1.5f);
-                Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.CosmicEmber, velX, velY, 160, default, 1.5f);
+                float velX = 1f - ((float)Main.rand.Next(20)) / 5f;
+                float velY = 1f - ((float)Main.rand.Next(20)) / 5f;
+                velX *= 2f;
+                velY *= 2f;
+                Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
+                Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
+                Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.Firefly, velX, velY, 160, default, 1f);
+                Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.Firefly, velX, velY, 160, default, 1f);
+
             }
 
-            if (!Projectile.active)
-            {
-                return;
-            }
-            Projectile.timeLeft = 0;
-            {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit54, Projectile.Center);
-                if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(), Projectile.damage, 3f, Projectile.owner);
-                Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
-                int arg_1394_1 = Projectile.width;
-                int arg_1394_2 = Projectile.height;
-                int arg_1394_3 = 15;
-                float arg_1394_4 = 0f;
-                float arg_1394_5 = 0f;
-                int arg_1394_6 = 100;
-                Color newColor = default(Color);
-                int num41 = Dust.NewDust(arg_1394_0, arg_1394_1, arg_1394_2, arg_1394_3, arg_1394_4, arg_1394_5, arg_1394_6, newColor, 2f);
-                Main.dust[num41].noGravity = true;
-                Dust expr_13B1 = Main.dust[num41];
-                expr_13B1.velocity *= 2f;
-                Vector2 arg_1422_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
-                int arg_1422_1 = Projectile.width;
-                int arg_1422_2 = Projectile.height;
-                int arg_1422_3 = 15;
-                float arg_1422_4 = 0f;
-                float arg_1422_5 = 0f;
-                int arg_1422_6 = 100;
-                newColor = default(Color);
-                num41 = Dust.NewDust(arg_1422_0, arg_1422_1, arg_1422_2, arg_1422_3, arg_1422_4, arg_1422_5, arg_1422_6, newColor, 1f);
-            }
-           
-            // terminate projectile
-            Projectile.active = false;
+        
 
         }
         #endregion
@@ -160,7 +175,11 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         */
 
-       
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            // Do nothing here to prevent damaging NPCs
+        }
+
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000);       
