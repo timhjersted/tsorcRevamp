@@ -203,6 +203,7 @@ Mods: {
 		}
 
 		Events: {
+			GreatRedKnightInDesert: Your world has been invaded by a Great Red Knight...
 			Deerclops: The Ancenstral Spirit has been disturbed!
 			SkeletronHidden: Skeletron, Lord of Graves, has awoken!
 			EoC: The Eye sees you!
@@ -8558,6 +8559,10 @@ Mods: {
 			OilPotShard4.DisplayName: Oil Pot Shard4
 			DroidBomb.DisplayName: Droid Bomb
 			EnemyForgottenPearlSpearProj.DisplayName: Enemy Forgotten Pearl Spear
+			BlackThrowingSpear.DisplayName: Black Throwing Spear
+			EnemyBlackKnightHomingCrystal.DisplayName: Enemy Black Knight Homing Crystal
+			EnemyMoonfuryBomb.DisplayName: Enemy Moonfury Bomb
+			EnemyBlackCursedBreath.DisplayName: Enemy Black Cursed Breath
 		}
 
 		NPCs: {

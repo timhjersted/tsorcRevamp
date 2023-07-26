@@ -43,7 +43,8 @@ namespace tsorcRevamp.Buffs.Debuffs
                 player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel = 0; // Reset to 0
                 player.AddBuff(ModContent.BuffType<Invincible>(), 5 * 60); // 5 seconds
                 player.AddBuff(ModContent.BuffType<Strength>(), 120 * 60); // 2 minutes
-                player.AddBuff(ModContent.BuffType<CrimsonDrain>(), 5 * 60); // Reduced duration, so it adds visually to the moment of curse
+                player.AddBuff(ModContent.BuffType<GreenBlossom>(), 120 * 60); // 2 minutes
+                player.AddBuff(ModContent.BuffType<CrimsonDrain>(), 1 * 60); // Reduced duration, but retained to add visually to the moment of curse
                 player.AddBuff(BuffID.Clairvoyance, 120 * 60); // 2 minutes
 
                 for (int i = 0; i < 50; i++)

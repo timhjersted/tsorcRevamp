@@ -141,7 +141,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Vector2 projPosition = Main.rand.NextVector2Circular(Projectile.width / 3, Projectile.height / 3) + Projectile.Center;
                 Vector2 projVelocity = Main.rand.NextVector2CircularEdge(5, 5);
                 Dust.NewDustPerfect(projPosition, 54, projVelocity, 160, default, 1.5f);
-                Dust.NewDustPerfect(projPosition, 58, projVelocity, 160, default, 1.5f);
+                Dust.NewDustPerfect(projPosition, 58, projVelocity, 160, default, 1.5f); //was 1.5
             }
 
             // terminate projectile

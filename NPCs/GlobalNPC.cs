@@ -4104,7 +4104,7 @@ namespace tsorcRevamp.NPCs
                 }
             
         }
-            public static void RedKnightOnHit(NPC npc, bool melee) //ref int stunlockBreak
+        public static void RedKnightOnHit(NPC npc, bool melee) //ref int stunlockBreak
         {
             /*
             // Ensure that the stunlockBreak timer is always decreasing
@@ -4131,8 +4131,7 @@ namespace tsorcRevamp.NPCs
             {
                 // Ensures melee can't interrupt attack once the flash telegraph triggers
                 if ((npc.ai[1] < 155f) || (npc.ai[1] > 180f && npc.ai[1] < 300f) || (npc.ai[1] > 325f && npc.ai[1] < 900f) || npc.ai[1] > 925f)
-                {
-                    
+                {                  
                     int randomChoice = Main.rand.Next(10);
 
                     switch (randomChoice)
@@ -4150,10 +4149,10 @@ namespace tsorcRevamp.NPCs
                             break;
 
                         case 3:
-                            npc.ai[1] = 80f;
+                            npc.ai[1] = 800f;
                             break;
                         case 4:
-                            //CHANCE TO BIG JUMP BACKWARDS - SPEAR
+                            // Big jump back - Spear
                             if (Main.rand.NextBool(2))
                             {
                                 npc.TargetClosest(true);
@@ -4168,7 +4167,7 @@ namespace tsorcRevamp.NPCs
                             }
                             break;
                         case 5:
-                            //CHANCE TO SMALL DASH BACKWARDS - BOMB
+                            // Small dash back - Bomb
                             if (Main.rand.NextBool(2))
                             {
                                 npc.TargetClosest(true);
@@ -4179,7 +4178,7 @@ namespace tsorcRevamp.NPCs
 
 
                             }
-                            //ALT BOMB DASH
+                            // Alt dash - Bomb
                             else
                             {
                                 npc.ai[1] = 850f;
@@ -4189,7 +4188,7 @@ namespace tsorcRevamp.NPCs
                             }
                             break;
                         case 6:
-                            //CHANCE TO BIG DASH BACKWARDS - BOMB
+                            // Big dash back - Bomb
                             if (Main.rand.NextBool(2))
                             {
                                 npc.TargetClosest(true);
@@ -4205,24 +4204,26 @@ namespace tsorcRevamp.NPCs
                             }
                             break;
                         case 7:
-                            //TELEPORT MELEE
+                            // Teleport
                             if (Main.rand.NextBool(2))
                             {
+                                npc.spriteDirection = npc.direction;
                                 TeleportImmediately(npc, 22, true);
                                 npc.netUpdate = true;
                             }
                             else
                             {
-                                //POISON
+                                // Poison TP
+                                npc.spriteDirection = npc.direction;
                                 TeleportImmediately(npc, 22, true);
                                 npc.TargetClosest(true);
-                                npc.velocity.Y = -9f;
+                                npc.velocity.Y = -10f;
                                 npc.velocity.X = -6f * npc.direction;
-                                npc.ai[1] = 250f;
+                                npc.ai[1] = 260f;
                             }
                             break;
                         case 8:
-                            //CHANCE TO SMALL DASH BACKWARDS - SPEAR
+                            //Small dash back - Spear
                             if (Main.rand.NextBool(2))
                             {
                                 npc.TargetClosest(true);
@@ -4233,7 +4234,7 @@ namespace tsorcRevamp.NPCs
                             }
                             else
                             {
-                                //JUMP HIGH
+                                // Jump high
                                 npc.TargetClosest(true);
                                 npc.velocity.Y = -11f;
                                 npc.velocity.X = -7f * npc.direction;
@@ -4242,7 +4243,7 @@ namespace tsorcRevamp.NPCs
                             }
                             break;
                         case 9:
-                            //DASH BACKWARDS - POISON
+                            // Dash back - Poison
                             if (Main.rand.NextBool(2))
                             {
                                 npc.TargetClosest(true);
@@ -4269,56 +4270,172 @@ namespace tsorcRevamp.NPCs
                     npc.knockBackResist = 0;
                 }
 
-                npc.knockBackResist = 0.4f; //was 0.9
-
-             
+                npc.knockBackResist = 0.4f; //was 0.9            
             }
 
-            if (!melee && Main.rand.NextBool())
+            if (!melee)
             {
-                if (Main.rand.NextBool(4))
+                // Ensures ranged can't interrupt attack once the flash telegraph triggers
+                if ((npc.ai[1] < 155f) || (npc.ai[1] > 180f && npc.ai[1] < 300f) || (npc.ai[1] > 325f && npc.ai[1] < 900f) || npc.ai[1] > 925f)
                 {
-                    npc.velocity.Y = -9f; 
-                    npc.velocity.X = 4f * npc.direction; 
-                    npc.TargetClosest(true);
-                    
-                    if ((float)npc.direction * npc.velocity.X > 4)
+                    int randomChoice = Main.rand.Next(9);
+
+                    switch (randomChoice)
                     {
-                        npc.velocity.X = (float)npc.direction * 3;  //  3 was 4 - this caps the top speed
+                        case 0:
+                            // Burst forward
+                            if (Main.rand.NextBool(4))
+                            {
+                                npc.velocity.Y = -9f;
+                                npc.velocity.X = 4f * npc.direction;
+                                npc.TargetClosest(true);
+
+                                if ((float)npc.direction * npc.velocity.X > 4)
+                                {
+                                    npc.velocity.X = (float)npc.direction * 3;  //  3 was 4 - this caps the top speed
+                                }
+                                npc.netUpdate = true;
+                            }
+                            break;
+
+                        case 1:
+                            // Burst forward
+                            if (Main.rand.NextBool(6))
+                            {
+                                npc.velocity.Y = -6f;
+                                npc.velocity.X *= 4f; // burst forward
+                                npc.TargetClosest(true);
+
+                                npc.velocity.X += (float)npc.direction * 5f;  //  accellerate fwd; can happen midair
+                                if ((float)npc.direction * npc.velocity.X > 5)
+                                {
+                                    npc.velocity.X = (float)npc.direction * 5;  //  but cap at top speed
+                                }
+
+                                // Chance to jump after dash
+                                if (Main.rand.NextBool(6))
+                                {
+                                    npc.TargetClosest(true);
+                                    npc.spriteDirection = npc.direction;
+                                    npc.velocity.Y = -6f;
+                                }
+
+                                npc.netUpdate = true;
+                            }
+                            break;
+
+                        case 2:
+                            // Teleport
+                            if (npc.Distance(Main.player[npc.target].Center) > 400 && Main.rand.NextBool(3))
+                            {
+                                TeleportImmediately(npc, 15, false);
+                            }
+                            break;
+
+                        case 3:
+                            // Dash backwards - Poison
+                            if (Main.rand.NextBool(4))
+                            {
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -6f;
+                                npc.velocity.X = -9f * npc.direction;
+                                npc.ai[1] = 290f;
+                                npc.netUpdate = true;
+                            }
+                            else if (Main.rand.NextBool(4))
+                            {
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -10f;
+                                npc.velocity.X = -7f * npc.direction;
+                                npc.ai[1] = 290f;
+                            }
+                            break;
+                        case 4:
+                            // Chance to big jump backwards - Spear
+                            if (Main.rand.NextBool(4))
+                            {
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -9f;
+                                npc.velocity.X = -9f * npc.direction;
+                                npc.ai[1] = 140f;
+                                npc.netUpdate = true;
+                            }                            
+                            break;
+                        case 5:
+                            // Small dash backwards - Bomb
+                            if (Main.rand.NextBool(2))
+                            {
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -6f;
+                                npc.velocity.X = 6f * npc.direction;
+                                npc.ai[1] = 860f;
+                                npc.netUpdate = true;
+                            }
+                            // Alt dash backwards - Bomb
+                            else
+                            {
+                                npc.ai[1] = 850f;
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -4f;
+                                npc.velocity.X = -9f * npc.direction;
+                            }
+                            break;
+                        case 6:
+                            // Big dash backwards - Bomb
+                            if (Main.rand.NextBool(4))
+                            {
+                                npc.TargetClosest(true);
+                                npc.ai[1] = 880f;
+                                npc.velocity.Y = -8f;
+                                npc.velocity.X = -11f * npc.direction;
+                                npc.netUpdate = true;
+                            }                           
+                            break;
+                        case 7:
+                            // Teleport
+                            if (Main.rand.NextBool(4))
+                            {
+                                TeleportImmediately(npc, 20, true);
+                                npc.netUpdate = true;
+                            }
+                            else if (Main.rand.NextBool(4))
+                            // Poision Teleport
+                            {
+                                TeleportImmediately(npc, 20, true);
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -10f;
+                                npc.velocity.X = -5f * npc.direction;
+                                npc.ai[1] = 250f;
+                            }
+                            break;
+                        case 8:
+                            // Small dash backwards - Spear
+                            if (Main.rand.NextBool(3))
+                            {
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -3f;
+                                npc.velocity.X = -7f * npc.direction;
+                                npc.ai[1] = 140f;
+                                npc.netUpdate = true;
+                            }
+                            else
+                            // Jump high, slightly forward
+                            {
+                                npc.TargetClosest(true);
+                                npc.velocity.Y = -10f;
+                                npc.velocity.X = 3f * npc.direction;
+                                npc.ai[1] = 130f;
+                                npc.netUpdate = true;
+                            }
+                            break;  
+                        case 9:
+                            // Attack interrupt; for Great Red Knight it cycles to DD2 attack at 1/2 health
+                            npc.ai[1] = 700f;
+                            break;
                     }
                     npc.netUpdate = true;
-                }
-
-                if (Main.rand.NextBool(6))
-                {
-                    npc.ai[0] = 0f;
-                    npc.velocity.Y = -6f;
-                    npc.velocity.X *= 4f; // burst forward
-                    npc.TargetClosest(true);
-                    
-                    npc.velocity.X += (float)npc.direction * 5f;  //  accellerate fwd; can happen midair
-                    if ((float)npc.direction * npc.velocity.X > 5)
-                    {
-                        npc.velocity.X = (float)npc.direction * 5;  //  but cap at top speed
-                    }
-
-                    //CHANCE TO JUMP AFTER DASH
-                    if (Main.rand.NextBool(6))
-                    {
-                        npc.TargetClosest(true);
-                        npc.spriteDirection = npc.direction;
-                        //npc.ai[0] = 0f; //Why was this here?
-                        npc.velocity.Y = -6f;
-                    }
-
-                    npc.netUpdate = true;
-                }
-                if (npc.Distance(Main.player[npc.target].Center) > 200 && Main.rand.NextBool(18))
-                {
-                    TeleportImmediately(npc, 20, false);
-                }
+                }              
             }
-
         }
         #endregion
     }

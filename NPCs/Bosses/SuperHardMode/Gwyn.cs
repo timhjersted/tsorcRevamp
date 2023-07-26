@@ -1419,7 +1419,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                         if ((customspawn2 < 1) && Main.rand.NextBool(1000))
                         {
-                            int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.GreatRedKnight>(), 0);
+                            int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(), 0);
                             Main.npc[Spawned].velocity.Y = -8;
                             Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
                             NPC.ai[0] = 20 - Main.rand.Next(80);
