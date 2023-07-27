@@ -8,15 +8,12 @@ using tsorcRevamp.Projectiles.Summon.SummonProjectiles;
 
 namespace tsorcRevamp.Projectiles.Summon
 {
-	// This minion shows a few mandatory things that make it behave properly.
-	// Its attack pattern is simple: If an enemy is in range of 43 tiles, it will fly to it and deal contact damage
-	// If the player targets a certain NPC with right-click, it will fly through tiles to it
-	// If it isn't attacking, it will float near the player with minimal movement
 	public class PhoenixProjectile : ModProjectile
 	{
 		public int WarmupStacksFallOffTimer = 0;
 		public int WarmupStacksTimer = 0;
 		public int WarmupStacks = 0;
+		public int BaseAttackSpeedCooldown = 33; //Lower is better
 		
 		public override void SetStaticDefaults()
 		{
@@ -46,7 +43,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
 
 			Projectile.usesLocalNPCImmunity = true;
-			Projectile.localNPCHitCooldown = 100;
+			Projectile.localNPCHitCooldown = BaseAttackSpeedCooldown;
 		}
 
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -311,7 +308,7 @@ namespace tsorcRevamp.Projectiles.Summon
 					direction.Normalize();
 					direction *= speed;
 
-					if (Main.GameUpdateCount % (30 / (1 + WarmupStacks / 10)) == 0)
+					if (Main.GameUpdateCount % (BaseAttackSpeedCooldown / (1 + WarmupStacks / 10)) == 0)
 					{
 						Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, targetCenter, speed * (1.3f + ((float)WarmupStacks / 80)));
 						Projectile.ResetLocalNPCHitImmunity();

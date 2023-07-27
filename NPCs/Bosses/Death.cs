@@ -50,8 +50,8 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.npcSlots = 10;
             NPC.aiStyle = 0;
-            NPC.width = 68;
-            NPC.height = 70;
+            NPC.width = 100;
+            NPC.height = 100;
             NPC.damage = 254;
             NPC.defense = 45;
             NPC.scale = 1.1f;

@@ -12,7 +12,6 @@ namespace tsorcRevamp.Items.Weapons.Summon
 	{
 		public override void SetStaticDefaults()
 		{
-
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
 			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
@@ -20,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         }
 		public override void SetDefaults()
 		{
-			Item.damage = 100;
+			Item.damage = 85;
 			Item.knockBack = 3f;
 			Item.mana = 10;
 			Item.width = 42;

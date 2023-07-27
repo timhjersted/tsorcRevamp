@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Summon
         public override void SetStaticDefaults()
 		{
 			// DisplayName.SetDefault("Samurai Beetle");
-			Main.projFrames[Projectile.type] = 12; //Flinx: 12, Pirate: 15, Frog: 24
+			Main.projFrames[Projectile.type] = 36; //Flinx: 12, Pirate: 15, Frog: 24
 			ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
 
 			Main.projPet[Projectile.type] = true;
@@ -26,8 +26,8 @@ namespace tsorcRevamp.Projectiles.Summon
 
 		public sealed override void SetDefaults()
         {
-            Projectile.width = 26;
-            Projectile.height = 26;
+            Projectile.width = 100;
+            Projectile.height = 64;
             Projectile.penetrate = -1;
             Projectile.netImportant = true;
             Projectile.DamageType = DamageClass.Summon;

@@ -854,7 +854,7 @@ namespace tsorcRevamp.NPCs
         {
             if (modifiers.DamageType == DamageClass.SummonMeleeSpeed)
             {
-                modifiers.CritDamage -= 0.25f;
+                modifiers.CritDamage -= 0.5f;
             }
             if (npc.HasBuff(BuffID.BetsysCurse) && tsorcRevampPlayer.DragonStonePotency)
             {
@@ -1113,8 +1113,8 @@ namespace tsorcRevamp.NPCs
                 }
                 #endregion
 
-                modifiers.FlatBonusDamage += SummonTagFlatDamage * ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type] * modPlayerProjectileOwner.SummonTagStrength;
-                modifiers.ScalingBonusDamage += SummonTagScalingDamage * ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type] * modPlayerProjectileOwner.SummonTagStrength;
+                modifiers.FlatBonusDamage += SummonTagFlatDamage * SummonTagDamageMultiplier * modPlayerProjectileOwner.SummonTagStrength;
+                modifiers.ScalingBonusDamage += SummonTagScalingDamage * SummonTagDamageMultiplier * modPlayerProjectileOwner.SummonTagStrength;
                 modifiers.ArmorPenetration += SummonTagArmorPenetration * modPlayerProjectileOwner.SummonTagStrength;
                 SummonTagCriticalStrikeChance = (BaseSummonTagCriticalStrikeChance * (1f + (projectileOwner.GetTotalCritChance(DamageClass.Summon) / 100f)));
                 int critLevel = (int)(Math.Floor(SummonTagCriticalStrikeChance / 100f));

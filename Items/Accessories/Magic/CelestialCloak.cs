@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
     public class CelestialCloak : ModItem
     {
         public static int MaxMana = 40;
-        public static float ManaCost = 20f;
+        public static float ManaCost = 10f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost);
 
         public override void SetStaticDefaults()

@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public static float Dmg = 7f;
         public static float TagStrength = 18f;
-        public static float CritChance = 11f;
+        public static float CritChance = 7f;
         public static int MinionSlots = 1;
         public static int SentrySlots = 1;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, TagStrength, MinionSlots, SentrySlots, CritChance);

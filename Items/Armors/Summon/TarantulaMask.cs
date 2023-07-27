@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     public class TarantulaMask : ModItem
     {
         public static float Dmg = 12f;
-        public static float CritChance = 20f;
+        public static float CritChance = 13f;
         public static float SummonTagStrength = 33f;
         public static int MinionSlot = 1;
         public static int TurretSlot = 1;

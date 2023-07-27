@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     public class ShamanHood : ModItem
     {
         public static float Dmg = 14f;
-        public static float CritChance = 23f;
+        public static float CritChance = 16f;
         public static float SummonTagStrength = 35f;
         public static int MinionSlot = 2;
         public static int TurretSlot = 2;

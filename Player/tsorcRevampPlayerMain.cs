@@ -382,7 +382,7 @@ namespace tsorcRevamp
             }
             if (CelestialCloak) 
             {
-                if (Main.rand.NextBool(20))
+                if (Main.rand.NextBool(25))
                 {
                     Vector2 starvector1 = new Vector2(-40, -200) + victim.Center;
                     Vector2 starvector2 = new Vector2(40, -200) +victim.Center;

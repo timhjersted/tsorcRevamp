@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             player.GetDamage(DamageClass.SummonMeleeSpeed) += WhipDmg / 100f;
             player.GetAttackSpeed(DamageClass.Summon) += AtkSpeed / 100f;
-            player.whipRangeMultiplier += WhipRange;
+            player.whipRangeMultiplier += WhipRange / 100f;
             player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration += TagDuration / 100f;
 
             if (player.HasBuff(BuffID.ShadowDodge))
