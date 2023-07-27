@@ -38,7 +38,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 21000;
+            NPC.lifeMax = 22000;
             NPC.damage = 65;
             NPC.defense = 36;
             NPC.knockBackResist = 0f;
@@ -60,17 +60,10 @@ namespace tsorcRevamp.NPCs.Bosses
 
         int hitTime = 0;
         public float flapWings;
-
-        //oolicile sorcerer
         public float FrogSpawnTimer;
         public float FrogSpawnCounter;
-
-        //chaos
         int holdTimer = 0;
-
-    
         bool ChildrenSpawned = false;
-
         float breathTimer = 60;
         float breathTimer2 = 600;
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
@@ -98,7 +91,7 @@ namespace tsorcRevamp.NPCs.Bosses
             flapWings++;
             breathTimer++;
             
-            //Flap Wings
+            // Flap Wings
             if (flapWings == 30 || flapWings == 60)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 1f, Pitch = 0.0f }, NPC.position); //wing flap sound
@@ -110,25 +103,25 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
 
-            //Frogs spawn above half health
+            // Frogs spawn above half health
             if (NPC.life >= NPC.lifeMax / 2)
             {
                 FrogSpawnTimer++;
             }
 
-            //chaos code: announce child spawn once
+            // Announce child spawn once
             if (holdTimer > 1)
             {
                 holdTimer--;
             }
 
-            //both phases, ichor debuff triggers when super close
+            // Both phases: Ichor debuff triggers when super close
             if (NPC.Distance(player.Center) < 20)
             {
                 player.AddBuff(BuffID.Ichor, 180, false);
             }
 
-            //2nd phase, spawns the hunter's child
+            // 2nd phase: Spawns the Hunter's child
             if (NPC.Distance(player.Center) < 1550 && NPC.life < NPC.lifeMax / 2)
             {        
                 if (holdTimer <= 0)
@@ -139,7 +132,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 
             }
 
-            //spawn the child!
+            // Spawn the child!
             if (!ChildrenSpawned && NPC.life <= NPC.lifeMax / 2)
             {
                 
@@ -158,8 +151,8 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             
 
-            //MUTANT TOAD SPAWN
-            //counts up each tick. used to space out spawns
+            // Mutant Toad Spawn
+            // Counts up each tick. used to space out spawns
             if (FrogSpawnTimer >= 120 && FrogSpawnCounter < 3)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -176,26 +169,24 @@ namespace tsorcRevamp.NPCs.Bosses
                     FrogSpawnCounter++;
                 }
             }
-            //chance to trigger frogs spawning
+            // Chance to trigger frogs spawning
             if (Main.rand.NextBool(600) && NPC.life >= NPC.lifeMax / 2)
             {
                 FrogSpawnCounter = 0;
                 
             }
-
-            
+           
             Player Player = Main.player[NPC.target];
 
+            // Normal Phase
             if (NPC.ai[3] == 0)
             {
                 NPC.damage = 130;
                 NPC.alpha = 0;
-                //NPC.dontTakeDamage = false;
                 NPC.defense = 26;
                 if (NPC.ai[2] < 600)
                 {
-                    //FINAL BREATH
-                    // FIRE BREATH ATTACK 
+                    // Final Breath Attack
                     if (NPC.life <= NPC.lifeMax / 4)
                     {
                         breathTimer2++;
@@ -203,7 +194,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         {
                             breathTimer2 = 355;
                         }
-                        //dust animation
+                        // Dust animation
                         if (breathTimer2 > 360)
                         {
                             NPC.ai[2] = 300;
@@ -218,7 +209,7 @@ namespace tsorcRevamp.NPCs.Bosses
                             NPC.ai[2] = 300;
                         }
 
-                        //projectile
+                        // Projectile
                         if (breathTimer2 < 0)
                         {
 
@@ -234,11 +225,7 @@ namespace tsorcRevamp.NPCs.Bosses
                                 }
                             }
                         }
-
-
-
                     }
-                    //END FINAL BREATH ATTACK
 
                     if (Main.player[NPC.target].position.X < NPC.Center.X)
                     {
@@ -262,7 +249,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                     {
-                        float num48 = 11f;//was 14
+                        float num48 = 11f;
 
                         int type = ModContent.ProjectileType<MiracleSprouter>();
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass with { Volume = 0.8f, PitchVariance = 2f}, NPC.Center);
@@ -278,21 +265,19 @@ namespace tsorcRevamp.NPCs.Bosses
                         }
                         NPC.ai[1] = -90;
                     }
-                    NPC.netUpdate = true; //new
+                    NPC.netUpdate = true; 
                 }
                 else if (NPC.ai[2] >= 600 && NPC.ai[2] < 850) //was 750
                 {
-
-
-                    //Then chill for a few seconds.
-                    //This exists to delay switching to the 'charging' pattern for 150 frames, because otherwise the way the sprouters linger can often make the first charge impossible to dodge
+                    // Then chill for a few seconds.
+                    // This exists to delay switching to the 'charging' pattern for 150 frames, because otherwise the way the sprouters linger can often make the first charge impossible to dodge
 
                     if (NPC.ai[2] <= 700)
                     { 
                         Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 131, Main.rand.Next(-2, 2), Main.rand.Next(-20, 2), 200, default, 1f);
                     }
-                    // NEW BREATH ATTACK 
 
+                    // Breath Attack
                     if (breathTimer > 501)
                     {
                         breathTimer = 359;
@@ -336,15 +321,8 @@ namespace tsorcRevamp.NPCs.Bosses
                             breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
                             
-                        }
-                        
-
-                    }
-
-                    
-
-
-
+                        }                      
+                    }                 
                 }
                 else if (NPC.ai[2] >= 850 && NPC.ai[2] < 1350)
                 {
@@ -361,13 +339,12 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
-                //enrage phase
+                // Enrage Phase
                 NPC.ai[3]++;
                 NPC.alpha = 225;
-                NPC.defense = 66;//+10 for all birds
+                NPC.defense = 70;//+14 for all birds
                 NPC.damage = 170;//+10 for all birds
 
-                //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].position.X < NPC.Center.X)
                 {
                     if (NPC.velocity.X > -6) { NPC.velocity.X -= 0.22f; }
@@ -389,7 +366,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                 {
                     float num48 = 11f;//22
-                    float invulnDamageMult = 1.62f; //+0.10 for all birds
+                    float invulnDamageMult = 1.72f; //+0.20 for all birds
                     int type = ModContent.ProjectileType<MiracleSprouter>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     float rotation = (float)Math.Atan2(NPC.Center.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
@@ -415,11 +392,11 @@ namespace tsorcRevamp.NPCs.Bosses
                         FrogSpawnCounter = 0;
                     }
 
-                    //if (NPC.life > (NPC.lifeMax / 2) + 100 || NPC.life < (NPC.lifeMax / 2) - 1100)
-                    if (NPC.life > 35)
-                    {
-                        NPC.life -= 400; //boss takes burst damage when enraged
-                    }
+                    // Loses life on enrage: removed because it made the birds too easy
+                    //if (NPC.life > 35)
+                    //{
+                    //    NPC.life -= 400; //boss takes burst damage 
+                    //}
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }
                 if (NPC.ai[1] >= 0)

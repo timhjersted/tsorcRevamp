@@ -43,7 +43,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 15000;
+            NPC.lifeMax = 16000;
             NPC.damage = 55; 
             NPC.defense = 32;
             NPC.knockBackResist = 0f;
@@ -67,7 +67,6 @@ namespace tsorcRevamp.NPCs.Bosses
         public float flapWings;
         int hitTime = 0;
 
-        //oolicile sorcerer
         public float FlameShotTimer;
         public float FlameShotCounter;
 
@@ -77,18 +76,14 @@ namespace tsorcRevamp.NPCs.Bosses
         public float FlameShotTimer3;
         public float FlameShotCounter3;
 
-        //chaos
         int holdTimer = 0;
         int breathTimer = 0;
-
-       
 
         public bool secondPhase
         {
             get => NPC.life <= NPC.lifeMax / 2;
         }
 
-        //gaibon 
         public int Timer
         {
             get => (int)NPC.ai[0];
@@ -130,7 +125,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 flapWings = 0; 
             }
             
-            //Demon - 1st phase
+            // Demon Attack - 1st phase
             if (NPC.life > NPC.lifeMax / 2)
             {
                 FlameShotTimer2++;
@@ -144,13 +139,13 @@ namespace tsorcRevamp.NPCs.Bosses
 
             Player player = Main.player[NPC.target];
 
-            //chaos code: announce proximity debuffs once
+            // Announce proximity debuffs once
             if (holdTimer > 1)
             {
                 holdTimer--;
             }
 
-            //Proximity Debuffs
+            // Proximity Debuffs
             if (NPC.Distance(player.Center) < 1550 && NPC.life < NPC.lifeMax / 2)
             {                
                 player.AddBuff(BuffID.OnFire, 30, false);               
@@ -161,20 +156,21 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
 
-            //getting close to the rage triggers on fire!
+            // Getting close to the rage triggers on fire!
             if (NPC.Distance(player.Center) < 80)
             {
-                player.AddBuff(BuffID.OnFire, 180, false);
+                player.AddBuff(BuffID.OnFire, 300, false);
             }
 
-            //chance to trigger fire from above / 2nd phase 
+            // Chance to trigger fire from above / 2nd phase 
             if (Main.rand.NextBool(500))
             {                
-                FlameShotCounter2 = 0;               
+                FlameShotCounter2 = 0;
+                NPC.netUpdate = true;
             }
 
-            //DEMON SICKLE - 1ST PHASE
-            //counts up each tick. used to space out shots
+            // Demon Sickle Attack: 1st Phase
+            // Counts up each tick. used to space out shots
             if (FlameShotTimer2 >= 30 && FlameShotCounter2 < 6 && NPC.Distance(player.Center) > 200)
             {
                 for (int num36 = 0; num36 < 20; num36++)
@@ -182,9 +178,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     int fireDust = Dust.NewDust(NPC.Center, DustID.ShadowbeamStaff, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
                     Main.dust[fireDust].noGravity = true;                    
                 }
-
-                // Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 600 + Main.rand.Next(600), (float)player.position.Y - 120f, (float)(-10 + Main.rand.Next(10)) / 2, 0.1f, ProjectileID.DemonSickle, fireTrailsDamage, 2f, Main.myPlayer); // ModContent.ProjectileType<FireTrails>()
-                // Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, PitchVariance = 2 }, NPC.Center);
+                    // Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, PitchVariance = 2 }, NPC.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -198,36 +192,29 @@ namespace tsorcRevamp.NPCs.Bosses
                 FlameShotCounter2++;
             }
 
-            //FIRE FROM ABOVE ATTACK - 2nd Phase
-            //counts up each tick. used to space out shots
+            // Fire From Above Attack: 2nd Phase
+            // Counts up each tick. used to space out shots
             if (FlameShotTimer >= 45 && FlameShotCounter < 15)
             {
-                //more fire trails
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 600 + Main.rand.Next(1200), (float)player.position.Y - 600f, (float)(-40 + Main.rand.Next(80)) / 10, 2f, ModContent.ProjectileType<FireTrails>(), fireTrailsDamage, 2f, Main.myPlayer); //  ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>()
 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, PitchVariance = 2 }, NPC.Center);
                 
-
                 FlameShotTimer = 0;
-                FlameShotCounter++;
-
-                
+                FlameShotCounter++;               
             }
-            //homing fireballs - part of 2nd phase 
+            // Homing Fireballs Attack: Part of 2nd phase 
             if (FlameShotTimer3 >= 25 && FlameShotCounter3 < 10)
             {
-                //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 500 + Main.rand.Next(500), (float)player.position.Y - 400f, (float)(-40 + Main.rand.Next(80)) / 10, 2.5f, ModContent.ProjectileType<Hellwing>(), fireTrailsDamage, 2f, Main.myPlayer); // ModContent.ProjectileType<FireTrails>()
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 200 + Main.rand.Next(400), (float)player.position.Y - 480f, (float)(-40 + Main.rand.Next(80)) / 10, 3f, ProjectileID.CultistBossFireBall, fireTrailsDamage, 3f, Main.myPlayer); //ProjectileID.NebulaBlaze2 would be cool to use at the end of attraidies or gwyn fight with the text, "The spirit of your father summons cosmic light to aid you!"
                 FlameShotTimer3 = 0;
                 FlameShotCounter3++;
             }
 
-            //FIRE BREATH - aggressive frequency, during all phases of movement
-            //triggers at 75% health
+            // Fire Breath Attack: Aggressive frequency, during all phases of movement, triggers at 3/4th health
             if (NPC.life < NPC.lifeMax / 2 * 1.5)
             {
-                breathTimer++;
-                
+                breathTimer++;                
             }
             if (breathTimer > 280)
             {
@@ -243,8 +230,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireTrailsDamage, 0f, Main.myPlayer);
                     }
                     
-
-                    //play breath sound
+                    // Play breath sound
                     if (Main.rand.NextBool(3))
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.9f, PitchVariance = 1f }, NPC.Center); //flame thrower
@@ -257,11 +243,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1);
             }
 
-
-
-            //GAIBON FIRE BOMBS!     
+            // Fire Bomb Attack
             Timer++;
-            //1st phase frequency
+            // 1st phase frequency
             if (Main.rand.NextBool(350) && (player.position.Y + 30 >= NPC.position.Y) && NPC.life > NPC.lifeMax / 2)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -286,7 +270,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             }
 
-            //2nd phase frequency
+            // 2nd phase frequency: Bombs
             if (Main.rand.NextBool(130) && (player.position.Y + 30 >= NPC.position.Y) && NPC.life < NPC.lifeMax / 2)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -308,13 +292,13 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
            
-            //SPAWN METEOR HELL
-            if (Main.rand.NextBool(80) && NPC.Distance(player.Center) > 100 && NPC.life <= NPC.lifeMax / 5 )
+            // Spawn Meteor Hell at 1/5th life
+            if (Main.rand.NextBool(80) && NPC.Distance(player.Center) > 150 && NPC.life <= NPC.lifeMax / 5 )
             {
 
                 if (player.position.Y + 50 >= NPC.position.Y)
                 {
-                    int Meteor = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.MeteorHead, 0); //ModContent.NPCType<NPCs.Enemies.MutantToad>()
+                    int Meteor = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.MeteorHead, 0); 
 
                     for (int num36 = 0; num36 < 20; num36++)
                     {
@@ -332,21 +316,15 @@ namespace tsorcRevamp.NPCs.Bosses
                     {
                         NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Meteor, 0f, 0f, 0f, 0);
                     }
-                }
-                
-
+                }               
             }
 
             if (NPC.ai[3] == 0)
             {
-                //normal
+                // Normal Phase
                 NPC.alpha = 0;
-                NPC.damage = 110;
-                //NPC.dontTakeDamage = false;
+                NPC.damage = 110;              
                 NPC.defense = 22;
-
-                //if (breathTimer < 179)
-                //{ breathTimer = 100; }
 
                 if (NPC.ai[2] < 600)
                 {
@@ -373,7 +351,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                     {
-                        float num48 = 4f;//4 was 5, speed
+                        float num48 = 4f;
                         int type = ModContent.ProjectileType<FireTrails>();
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.5f, PitchVariance = 1f }, NPC.Center) ; //flame thrower
                         float rotation = (float)Math.Atan2(NPC.Center.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
@@ -381,7 +359,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 120, (float)((Math.Cos(rotation + 0.2) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 600, NPC.Center.Y - 120, (float)((Math.Cos(rotation - 0.2) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
                         NPC.ai[1] = -90;
-                        //Added some dust so the projectiles aren't just appearing out of thin air
+                        // Added some dust so the projectiles aren't just appearing out of thin air
                         for (int num36 = 0; num36 < 20; num36++)
                         {
                             int fireDust = Dust.NewDust(new Vector2(NPC.Center.X + 600, NPC.Center.Y - 120), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
@@ -396,12 +374,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 else if (NPC.ai[2] >= 600 && NPC.ai[2] < 850)
                 {
                     FlameShotCounter3 = 0;
-                    //Then chill for a second.
-                    //This exists to delay switching to the 'charging' pattern for a moment to give time for the player to make distance
+                    // Then chill for a second.
+                    // This exists to delay switching to the 'charging' pattern for a moment to give time for the player to make distance
                     NPC.velocity.X *= 0.95f;
                     NPC.velocity.Y *= 0.95f;
-                    //Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 130, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 200, default, 1f);
-
                     
                 }
                 else if (NPC.ai[2] >= 850 && NPC.ai[2] < 1350)
@@ -420,16 +396,13 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
-                //invisibility / enrage phase
-                
+                // Enrage Phase              
                 NPC.ai[3]++;
-                NPC.alpha = 210;
-                NPC.defense = 42;
+                //NPC.alpha = 210; //No longer goes invisible, that can just be a Hunter mechanic
+                NPC.defense = 45;
                 NPC.damage = 140;
-
-                //NPC.dontTakeDamage = true;
                 
-                //FlameShotCounter2 = 0;
+                // FlameShotCounter2 = 0;
 
                 if (Main.player[NPC.target].position.X < NPC.Center.X)
                 {
@@ -452,8 +425,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                 {
 
-                    float num48 = 7f;//8 WAS 9
-                    float invulnDamageMult = 1.54f;
+                    float num48 = 7f;
+                    float invulnDamageMult = 1.64f;
                     int type = ModContent.ProjectileType<FireTrails>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     float rotation = (float)Math.Atan2(NPC.Center.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
@@ -461,7 +434,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 150, (float)((Math.Cos(rotation + 0.2) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 300, NPC.Center.Y - 150, (float)((Math.Cos(rotation - 0.2) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
                     NPC.ai[1] = -90;
-                    //Added some dust so the projectiles aren't just appearing out of thin air
+                    // Added some dust so the projectiles aren't just appearing out of thin air
                     for (int num36 = 0; num36 < 20; num36++)
                     {
                         int fireDust = Dust.NewDust(new Vector2(NPC.Center.X + 300, NPC.Center.Y - 150), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);

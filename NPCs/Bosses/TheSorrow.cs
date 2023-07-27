@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 18000;
+            NPC.lifeMax = 19000;
             NPC.damage = 60;
             NPC.defense = 34;
             NPC.knockBackResist = 0f;
@@ -63,12 +63,11 @@ namespace tsorcRevamp.NPCs.Bosses
         public float flapWings;
         int hitTime = 0; //How long since it's last been hit (used for reducing damage counter)
 
-        //magic from above attack
+        // Magic from above attack
         public float iceSpiritTimer;
 
         float breathTimer = 60;
 
-        //gaibon 
         public int Timer
         {
             get => (int)NPC.ai[0];
@@ -98,13 +97,14 @@ namespace tsorcRevamp.NPCs.Bosses
             Ice3Attack();
             InflictDebuffs();
 
-            //Ice spirit attack starts in phase 2
+            // Ice spirit attack starts in phase 2
             if (secondPhase)
             {
                 IceSpiritAttack();
             }
+
+            // Spawn Turtles!
             turtleTimer++;
-            //SPAWN TURTLES!
             if (turtleTimer > 3000 && (Target.Center.Y + 20 >= NPC.Center.Y) && breathTimer > 0 && !secondPhase)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit24 with { Volume = 0.5f }, NPC.Center);
@@ -144,22 +144,22 @@ namespace tsorcRevamp.NPCs.Bosses
 
         void InflictDebuffs()
         {
-            //Displaying slow range with ring
+            // Displaying slow range with ring
             if (secondPhase)
             {
                 UsefulFunctions.DustRing(NPC.Center, 200, DustID.IceTorch, 10, 2f);
             }
 
-            //Check every player in the game to see if they are in range
+            // Check every player in the game to see if they are in range
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 Player player = Main.player[i];
 
-                //Storing the distance means we don't have to re-calculate it multiple times
+                // Storing the distance means we don't have to re-calculate it multiple times
                 float distance = NPC.Distance(player.Center);
 
                
-                //Phase 2 triggers chilled, slow and frostburn
+                // Phase 2 triggers chilled, slow and frostburn
                 if (distance < 1550 && secondPhase)
                 {
                     player.AddBuff(BuffID.Chilled, 30, false);
@@ -170,7 +170,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         player.AddBuff(BuffID.Frostburn, 30, false);
                     }
 
-                    //announce proximity debuffs once
+                    // Announce proximity debuffs once
                     if (!announcedDebuffs)
                     {
                         UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheSorrow.Chill"), 235, 199, 23);//deep yellow
@@ -184,13 +184,13 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             breathTimer++;
 
-            //Breath charges faster in phase 2
+            // Breath charges faster in phase 2
             if (secondPhase)
             {
                 breathTimer += 0.34f;
             }
 
-            //dust animation
+            // Dust animation
             if (breathTimer > 380)
             {
                 UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((480 - breathTimer) / 100)), DustID.IceTorch, 48, 4);
@@ -204,7 +204,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             breathTimer++;
-            //longer breath at half health          
+            // Longer breath at half health          
             if (breathTimer > 480)
             {
                 breathTimer = -120;
@@ -215,7 +215,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
 
-            //projectile
+            // Projectile
             if (breathTimer < 0)
             {
                 NPC.velocity.X = 0f;
@@ -226,7 +226,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.netSpam = 0;
                 }
 
-                //play breath sound
+                // Play breath sound
                 if (Main.rand.NextBool(3))
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.9f, PitchVariance = 1f }, NPC.Center); //flame thrower
@@ -244,7 +244,7 @@ namespace tsorcRevamp.NPCs.Bosses
         void Ice3Attack()
         {
             ice3Timer++;
-            //GAIBON SHOOT!
+            // Ice 3 Attack
             if (breathTimer > 0 && ice3Timer > 160 && !secondPhase)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -267,7 +267,7 @@ namespace tsorcRevamp.NPCs.Bosses
             float iceSpiritTimerCap = 900;
             iceSpiritTimer++;
 
-            //Cooldown gets faster with lower life
+            // Cooldown gets faster with lower life
             if (NPC.life <= NPC.lifeMax / 4)
             {
                 iceSpiritTimerCap = 450;
@@ -296,7 +296,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
         void BirdAI()
         {
-            //BIRD AI
             NPC.ai[1]++;
             NPC.ai[2]++;
             hitTime++;
@@ -304,9 +303,8 @@ namespace tsorcRevamp.NPCs.Bosses
             int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 29, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 0.1f + (10.5f * (NPC.ai[0] / (NPC.lifeMax / 10)))); //10.5 was 15.5
             Main.dust[dust].noGravity = true;
 
+            // Flap Wings
             flapWings++;
-
-            //Flap Wings
             if (flapWings == 30 || flapWings == 60)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 1f, Pitch = 0.0f }, NPC.Center); //wing flap sound
@@ -320,14 +318,14 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (NPC.ai[3] == 0)
             {
-                //normal
+                // Normal Phase
                 NPC.alpha = 0;
                 NPC.defense = 24;
                 NPC.damage = 120;
-                //NPC.dontTakeDamage = false;
+
                 if (NPC.ai[2] < 600)
                 {
-                    //No horizontal movement if using breath attack
+                    // No horizontal movement if using breath attack
                     if (breathTimer > 0)
                     {
                         if (Main.player[NPC.target].Center.X < NPC.Center.X)
@@ -353,8 +351,8 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                     {
-                        //If the sorrow doesn't have line of sight to the player due to blocks in the way, its projectiles will be able to phase through walls to hit them and travel much faster.
-                        //phasedBullets is passed to the projectile's ai[0] value (which takes a float) to tell it whether or not to collide with tiles
+                        // If the sorrow doesn't have line of sight to the player due to blocks in the way, its projectiles will be able to phase through walls to hit them and travel much faster.
+                        // PhasedBullets is passed to the projectile's ai[0] value (which takes a float) to tell it whether or not to collide with tiles
                         float speed = 9f;
                         float phasedBullets = 0;
                         if (!Collision.CanHit(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1) && !Collision.CanHitLine(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
@@ -366,42 +364,42 @@ namespace tsorcRevamp.NPCs.Bosses
                         int type = ModContent.ProjectileType<WaterTrail>();
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.SplashWeak, NPC.Center);
 
-                        //Get the vector that points from the NPC to the player
+                        // Get the vector that points from the NPC to the player
                         Vector2 difference = Main.player[NPC.target].Center - NPC.Center;
 
-                        //Create a new vector that is just a line with length [speed], and rotate it to be facing the player based on the preivious vector
+                        // Create a new vector that is just a line with length [speed], and rotate it to be facing the player based on the preivious vector
                         Vector2 velocity = new Vector2(speed, 0).RotatedBy(difference.ToRotation());
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            //Fire a projectile right at the player
+                            // Fire a projectile right at the player
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, velocity.X, velocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
 
-                            //Rotate it further to fire the shots angled away from the player
+                            // Rotate it further to fire the shots angled away from the player
                             Vector2 angledVelocity = velocity.RotatedBy(Math.PI / 6);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
                             angledVelocity = velocity.RotatedBy(-Math.PI / 6);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
 
-                            //And again the more offset shots
+                            // And again the more offset shots
                             angledVelocity = velocity.RotatedBy(Math.PI / 3);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
                             angledVelocity = velocity.RotatedBy(-Math.PI / 3);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
 
-                            //And once mroe for the most offset shots
+                            // And once mroe for the most offset shots
                             angledVelocity = velocity.RotatedBy(Math.PI / 1.8);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
                             angledVelocity = velocity.RotatedBy(-Math.PI / 1.8);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
-                            //Could this all have been a for loop? Yeah. Easier to read like this though, imo.
+                            // Could this all have been a for loop? Yeah. Easier to read like this though, imo.
                         }
                         NPC.ai[1] = -180;
                     }
                 }
                 else if (NPC.ai[2] >= 600 && NPC.ai[2] < 690)
                 {
-                    //Then chill for a second.
-                    //This exists to delay switching to the 'charging' pattern for a moment to give time for the player to make distance
+                    // Then chill for a second.
+                    // This exists to delay switching to the 'charging' pattern for a moment to give time for the player to make distance
                     NPC.velocity.X *= 0.95f;
                     NPC.velocity.Y *= 0.95f;
                     Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 132, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 200, default, 1f);
@@ -422,13 +420,12 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
-                //invisibility / enrage mode
+                // Enrage Phase
                 NPC.ai[3]++;
-                NPC.alpha = 220;
-                NPC.defense = 54;
+                //NPC.alpha = 220; // No longer goes invisible, that can just be a Hunger mechanic
+                NPC.defense = 57;
                 NPC.damage = 160;
 
-                //NPC.dontTakeDamage = true;
                 if (Main.player[NPC.target].Center.X < NPC.Center.X)
                 {
                     if (NPC.velocity.X > -6) { NPC.velocity.X -= 0.22f; }
@@ -450,11 +447,11 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                 {
                     float num48 = 13f;
-                    float invulnDamageMult = 1.58f;//was 1.48
+                    float invulnDamageMult = 1.68f;//was 1.48
                     int type = ModContent.ProjectileType<WaterTrail>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.SplashWeak, NPC.Center);
                     float rotation = (float)Math.Atan2(NPC.Center.Y - 80 - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
-                    //yes do it manually. im not using a loop. i don't care //Understandable, have a nice day.
+                    // Yes do it manually. im not using a loop. i don't care //Understandable, have a nice day.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
@@ -471,15 +468,16 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 if (NPC.ai[3] == 100)
                 {
-                    //Use ice spirit attack
+                    // Ice Spirit Attack
                     iceSpiritTimer = 900;
                     turtleTimer += 500;
                     NPC.ai[3] = 1;
-                    //if (NPC.life > (NPC.lifeMax / 2) + 100 || NPC.life < (NPC.lifeMax / 2) - 950)
-                    if (NPC.life > 550)
-                    {
-                        NPC.life -= 350; //amount boss takes damage when becoming enraged
-                    }
+                    
+                    // Lose health on enrage
+                    //if (NPC.life > 550)
+                    //{
+                    //    NPC.life -= 350; //amount boss takes damage when becoming enraged
+                    //}
                         
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                     NPC.netUpdate = true;
@@ -559,9 +557,9 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheSorrow.Enrage"), Color.Orange);
 
-                NPC.ai[3] = 1; //begin inisibility/high defense state
+                NPC.ai[3] = 1; // Begin inisibility/high defense state
                 for (int i = 0; i < 50; i++)
-                { //dustsplosion on invisibility
+                { // Dustsplosion on enrage
                     Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
                 }
                 for (int i = 0; i < 20; i++)
@@ -569,7 +567,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 29, 0, 0, 100, default, 3f);
                 }
                 NPC.ai[1] = -180;
-                NPC.ai[0] = 0; //reset damage counter
+                NPC.ai[0] = 0; // Reset damage counter
             }
         }
         public override bool CheckActive()

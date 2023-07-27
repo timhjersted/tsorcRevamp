@@ -69,7 +69,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.ai[1]++;
             hitTime++;
             if (NPC.ai[0] > 0) NPC.ai[0] -= hitTime / 10;
-            //dusts get bigger as damage taken increases
+            // Dusts get bigger as damage taken increases
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
 
             Player player = Main.player[NPC.target];
@@ -79,10 +79,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 Main.dust[dust].noGravity = true;
             }
 
+            // Flap Wings
             flapWings++;
-
-            //Flap Wings
-            
             if (flapWings == 30 || flapWings == 60)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item32 with { Volume = 0.4f, Pitch = 0.7f }, NPC.position); //wing flap sound
@@ -93,7 +91,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 flapWings = 0;
             }
 
-            //getting close triggers hunter vision
+            // Getting close triggers hunter vision
             if (NPC.Distance(player.Center) < 80)
             {
                 player.AddBuff(BuffID.Hunter, 60, false);
@@ -110,8 +108,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (NPC.ai[3] == 0)
             {
-                //NPC.alpha = 200;
-                //NPC.dontTakeDamage = false;
+                // Normal Phase
                 NPC.defense = 26;
                 if (NPC.ai[2] < 600)
                 {
@@ -153,12 +150,12 @@ namespace tsorcRevamp.NPCs.Bosses
                         }
                         NPC.ai[1] = -90;
                     }
-                    NPC.netUpdate = true; //new
+                    NPC.netUpdate = true; 
                 }
                 else if (NPC.ai[2] >= 600 && NPC.ai[2] < 950)
                 {
-                    //Then chill for a few seconds.
-                    //This exists to delay switching to the 'charging' pattern for 150 frames, because otherwise the way the sprouters linger can often make the first charge impossible to dodge
+                    // Then chill for a few seconds.
+                    // This exists to delay switching to the 'charging' pattern for 150 frames, because otherwise the way the sprouters linger can often make the first charge impossible to dodge
                     NPC.velocity.X *= 0.95f;
                     NPC.velocity.Y *= 0.95f;
                     Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 131, Main.rand.Next(-1, 1), Main.rand.Next(-10, 1), 200, default, 0.5f);
@@ -178,10 +175,10 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
-                NPC.ai[3]++;
-                //NPC.alpha = 210;
+                // Enrage phase
+                NPC.ai[3]++;               
                 NPC.defense = 66;
-                //NPC.dontTakeDamage = true;
+
                 if (Main.player[NPC.target].position.X < vector8.X)
                 {
                     if (NPC.velocity.X > -6) { NPC.velocity.X -= 0.22f; }
@@ -202,8 +199,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                 {
-                    float num48 = 15f;//was 22
-                    float invulnDamageMult = 1.7f; //was 1.3
+                    float num48 = 15f;
+                    float invulnDamageMult = 1.74f; 
                     int type = ModContent.ProjectileType<MiracleSprouter>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);
                     float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
@@ -224,8 +221,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 
                     
                     NPC.ai[3] = 1;
-                    NPC.life -= 500;
-                    //loses health on enrage now, as an inversion of usual mechanic, but enraged miracle sprouter attack has a higher damage multiplier to add a risk/reward element
+                    // NPC.life -= 500;
+                    // No longer loses health on enrage now
+
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }
                 if (NPC.ai[1] >= 0)
@@ -277,7 +275,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 { 
                     NPC.alpha = 255; 
                 }
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1f); 
             }
             else
             {
@@ -289,7 +287,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 { 
                     NPC.alpha = 255; 
                 }
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); 
             }
         }
         public override bool CheckActive()
@@ -328,8 +326,6 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             potionType = ItemID.GreaterHealingPotion;
         }
-
-        
 
         public override void OnKill()
         {
