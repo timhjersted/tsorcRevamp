@@ -67,6 +67,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             tsorcRevampGlobalNPC blackKnightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             blackKnightGlobalNPC.Agility = 0.5f;
+            blackKnightGlobalNPC.Aggression = 1f;
+            blackKnightGlobalNPC.Patience = 2f;
         }
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -261,11 +263,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 // Poison Attack 1 Telegraph 
                 // Part 1: Dusts
-                if (NPC.ai[1] >= 225 && NPC.ai[1] <= 300)
+                if (NPC.ai[1] >= 265 && NPC.ai[1] <= 325)
                 {
                     if (Main.rand.NextBool(2))
                     {
-                        int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.DarkSlateGray, 2f);
+                        int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, DustID.ShadowbeamStaff, Color.DarkSlateGray, 0.5f);
                         Main.dust[dust2].noGravity = true;
                     }
                 }
@@ -280,11 +282,11 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.GreenYellow));
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Orange));
                     }
                 }
 
-                // Poison Attack 1
+                // Homing Attack 1
                 if (NPC.ai[1] == 325)
                 {
                     float projectileSpeed = 15f;
@@ -316,7 +318,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 }
 
-                // Poison Attack 2 Telegraph
+                // Homing Attack 2 Telegraph
                 if (NPC.ai[1] == 350)
                 {
                     Vector2 spawnPosition = NPC.position;
@@ -326,11 +328,11 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Green));
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.Orange));
                     }
                 }
 
-                // Poison Attack 2
+                // Homing Attack 2
                 if (NPC.ai[1] == 375)
                 {
                     float projectileSpeed = 18f;
@@ -531,17 +533,18 @@ namespace tsorcRevamp.NPCs.Enemies
                     // Set targetPosition with an offset of 10f * direction units from the storedPlayerPosition along the X-axis.
                     targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
 
-                    // Exlosives
+                    // Death Skulls
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 2f, fallback: true);
                     speed += Main.rand.NextVector2Circular(1, 5);//was -12, -16
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), redKnightsGreatDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center); //Play flame sound
 
-                    // ???
-                    Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 3, fallback: true);
-                    speed2 += Main.rand.NextVector2Circular(-3, 3);//was -4, -2, then -12, -16
+                    // Black Breath
+                    Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 2, fallback: true);
+                    speed2 += Main.rand.NextVector2Circular(-5, 5);//was -4, -2, then -12, -16
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackCursedBreath>(), redKnightsGreatDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 0.9f, PitchVariance = 2f }, NPC.Center);
+                    NPC.netUpdate = true;
                 }
                 // After Ultrakill attack completes
                 if (NPC.ai[2] == 246f)
