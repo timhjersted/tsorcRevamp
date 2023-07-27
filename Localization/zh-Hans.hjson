@@ -203,7 +203,7 @@ Mods: {
 		}
 
 		Events: {
-			// GreatRedKnightInDesert: Your world has been invaded by a Great Red Knight...
+			GreatRedKnightInDesert: 你的世界被一位卓越赭骑士入侵了...
 			Deerclops: 你惊动了远古巨鹿！
 			SkeletronHidden: 坟墓之主骷髅王已苏醒！
 			EoC: 克苏鲁之眼盯上你了！
@@ -1438,7 +1438,7 @@ Mods: {
 					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicDamage}]
 					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicCritChance@1}]
 					[c/ffbf00:{$CommonItemTooltip.LifeRegen@2}]
-					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@3}.] 当这枚戒指被摘下时，你的最大生命值会恢复至正常值.
+					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@3}.] 当这枚戒指被摘下时，你的最大生命值会恢复至正常值
 					'''
 			}
 
@@ -1447,11 +1447,11 @@ Mods: {
 				Tooltip:
 					'''
 					乘算增加 {0}% 弓箭、子弹或特殊弹药的伤害
-					增伤的弹药类型定期从三种弹药中选择一种
+					增伤的类型定期从三种弹药中选择一种
 					七秒一更换
 					'''
-				Bow: 弓手！
-				Gun: 枪手！
+				Bow: 万箭齐发！
+				Gun: 枪林弹雨！
 				Specialist: 奇技淫巧！
 			}
 
@@ -1462,13 +1462,13 @@ Mods: {
 					继承黑曜石护盾冰冻护盾和神话壁垒的效果
 					同时免疫冰冻和石化
 					稍微减慢翻滚时的速度
-					翻滚经过敌人时有概率对其施加本饰品免疫的状态效果
+					翻滚经过敌人时有概率对其施加本饰品所免疫的状态效果
 					'''
 			}
 
 			MythrilBulwark: {
 				DisplayName: 神话壁垒
-				Tooltip: R翻滚经过敌人时会使其受到的伤害增加 {0}% ，持续 {1} 秒
+				Tooltip: 翻滚经过敌人时会使其受到的伤害增加 {0}% ，持续 {1} 秒
 			}
 
 			ReflectionShift: {
@@ -1547,7 +1547,7 @@ Mods: {
 
 			HolyNecklace: {
 				DisplayName: 神圣项链
-				Tooltip: 发出淡蓝色的光，增加无敌帧，提供星星斗篷效果
+				Tooltip: 发出淡蓝色的光，增加无敌帧时长，提供星星斗篷效果
 			}
 
 			AquamarineRing: {
@@ -1900,7 +1900,7 @@ Mods: {
 			}
 
 			AncientHornedHelmet: {
-				DisplayName: 远古角盔
+				DisplayName: 远古魔法角盔
 				Tooltip:
 					'''
 					一件来自远古浩劫平原的宝物
@@ -1915,13 +1915,13 @@ Mods: {
 					'''
 					由一个宝箱里的魔法石提供燃料
 					{$CommonItemTooltip.AtkSpeed}{$CommonItemTooltip.Melee.Bonus@1}
-					{$CommonItemTooltip.SetBonus}对任何东西造成伤害时有机会获得叠加层数
-					叠满后，在下次被击中时获得高达28%的伤害减免
+					{$CommonItemTooltip.SetBonus}对任何东西造成伤害时获得堆叠层数
+					每层堆叠减少 1% 下次受到的伤害，最高到28%
 					'''
 			}
 
 			AncientMagicPlateGreaves: {
-				DisplayName: 远古魔法板甲护胫
+				DisplayName: 远古魔法护胫
 				Tooltip:
 					'''
 					远古的被遗忘之靴
@@ -2641,7 +2641,7 @@ Mods: {
 					'''
 					一套由传奇生物的外壳制成的盔甲
 					{$CommonItemTooltip.PercentIncreasedRangedCritChance}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@1}，远程暴击率加倍
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@1}远程暴击率加倍
 					{$CommonItemTooltip.PercentChanceToSaveAmmo@2}
 					'''
 			}
@@ -2676,7 +2676,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Ranged.FlatDmg}
-					{$CommonItemTooltip.SetBonus}乘算{$CommonItemTooltip.IncreasesSpecialistDamageByPercent@1}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasesSpecialistDamageByPercent@1}
 					{$CommonItemTooltip.PercentChanceToSaveAmmo@2}
 					'''
 			}
@@ -3482,7 +3482,7 @@ Mods: {
 					'''
 					奇怪的魔法戒指坏成了两半...
 					Miakoda: "为了恢复它的魔力，
-					你需要7个白钛矿 ,20诅咒之魂和1000黑暗之魂
+					你需要7个白钛矿,20诅咒之魂和1000黑暗之魂
 					为了找到我们要的东西，还得去腐化和地下"
 					'''
 			}
@@ -3637,7 +3637,7 @@ Mods: {
 				DisplayName: 已死之鸡
 				Tooltip:
 					'''
-					可以在烹饪锅中烹制 1 只烧鸡
+					可以在烹饪锅中烹制一只烧鸡
 					烧鸡治疗 {0} 生命值并只有 {1} 秒的药水冷却时间。哎呀，真香！
 					'''
 			}
@@ -3646,8 +3646,8 @@ Mods: {
 				DisplayName: 崩坏元素
 				Tooltip:
 					'''
-					用于制造高伤害枪
-					摸上去很温暖，这让你想起某个曾经去过的地方...
+					用于制造高伤害的枪
+					表面摸上去有些烫手，这种奇怪的感觉让你想起某个曾经探索过的地方...
 					'''
 			}
 
@@ -4142,7 +4142,7 @@ Mods: {
 
 			CookedChicken: {
 				DisplayName: 烧鸡
-				Tooltip: 施加 {0} 秒的药水疾病
+				Tooltip: 造成 {0} 秒的药水疾病
 			}
 
 			CrimsonPotion: {
@@ -4904,7 +4904,7 @@ Mods: {
 
 			EnchantedThrowingSpear: {
 				DisplayName: 附魔投矛
-				Tooltip: 穿过墙壁的魔法投掷矛，每次投掷都会产生法力值
+				Tooltip: 穿过墙壁的魔法投掷矛，每次投掷都会消耗法力值
 			}
 
 			EnergyBombRune: {
@@ -6600,8 +6600,8 @@ Mods: {
 				DisplayName: 钢铁风暴
 				Tooltip:
 					'''
-					<右键> 以 [c/708090:突刺]
-					[c/708090:刺过]敌人时获得一层[c/708090:钢铁风暴堆叠]
+					<右键> 以释放 [c/708090:突刺]
+					[c/708090:突刺]敌人时获得一层[c/708090:钢铁风暴堆叠]
 					获得两层堆叠后，下次 <右键> 将会释放一阵 [c/708090:旋风]
 					[c/708090:“死亡如风，常伴吾身”]
 					'''
@@ -6621,8 +6621,8 @@ Mods: {
 				DisplayName: 等离子风暴
 				Tooltip:
 					'''
-					<右键> 以 [c/708090:突刺]
-					[c/708090:刺过]敌人时获得一层[c/708090:钢铁风暴堆叠]
+					<右键> 以释放 [c/708090:突刺]
+					[c/708090:突刺]敌人时获得一层[c/708090:钢铁风暴堆叠]
 					获得两层堆叠后，下次 <右键> 将会释放一阵 [c/708090:旋风]
 					{$Items.PlasmaWhirlwind.Keybind1}特殊能力键{$Items.PlasmaWhirlwind.Keybind2}
 					当 [c/00ffff:冲撞] 时长按<右键>会释放一道 [c/00ffff:剑光]
@@ -6650,8 +6650,8 @@ Mods: {
 				DisplayName: 夜之使者
 				Tooltip:
 					'''
-					<右键> 以 [c/708090:突刺]
-					[c/708090:刺过]敌人时获得一层[c/708090:钢铁风暴堆叠]
+					<右键> 以释放 [c/708090:突刺]
+					[c/708090:突刺]敌人时获得一层[c/708090:钢铁风暴堆叠]
 					获得两层堆叠后，下次 <右键> 将会释放一阵 [c/708090:旋风]
 					{$Items.PlasmaWhirlwind.Keybind1}特殊能力键{$Items.PlasmaWhirlwind.Keybind2}
 					当 [c/00ffff:冲撞] 时长按<右键>会释放一道 [c/00ffff:剑光]
@@ -6685,8 +6685,8 @@ Mods: {
 					[c/ba55d3:恶毒飞镖] 对敌人造成 [c/ba55d3:酸性毒液] 减益并自动追踪附近敌人
 					也可以使用其它飞镖作为弹药，但使用毒镖造成 {0}x 倍伤害
 					在使用时[c/32cd32:有条件的限制玩家的移动] 
-					当{$Items.ToxicShot.Keybind1}特殊能力键{$Items.ToxicShot.Keybind2}时，
-					[c/32cd32:可以给予移动速度和耐力回复提升]
+					手持该物品时，获得[c/32cd32:移动速度和耐力回复提升]
+					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
 					[c/ba55d3:“那一定很刺痛”]
 					'''
 				Keybind1: "按 "
@@ -6694,8 +6694,8 @@ Mods: {
 				Details:
 					'''
 					[c/ba55d3:恶毒飞镖]造成的[c/ba55d3:酸性毒液] 减益受到远程伤害和暴击率加成
-					按住特殊能力键时获得获得 [c/32cd32:侦察兵激励] 被动增益：
-					{$CommonItemTooltip.MoveSpeedMult} 同时乘算增加 {1}% 耐力再生
+					按住特殊能力键时获得获得 [c/32cd32:侦察兵激励] 增益：
+					{$CommonItemTooltip.MoveSpeedMult}，同时乘算增加 {1}% 耐力再生
 					当受到伤害时[c/32cd32:侦察兵激励]被移除，同时获得 {$CommonItemTooltip.Cooldown@2}
 					当 [c/32cd32:侦察兵激励] 激活时使用武器会减缓你的速度
 					当 [c/32cd32:侦察兵激励] 冷却时使用该物品，会让你短暂的不能移动
@@ -6712,18 +6712,18 @@ Mods: {
 					[c/00ffff:外星激光] 对敌人造成短暂的 [c/00ffff:触电] 减益并自动追踪附近敌人
 					也可以使用其它飞镖作为弹药，但使用毒镖造成 {0}x 倍伤害
 					在使用时[c/32cd32:有条件的限制玩家的移动] 
-					当{$Items.ToxicShot.Keybind1}特殊能力键{$Items.ToxicShot.Keybind2}时，
-					[c/32cd32:可以给予移动速度和耐力回复提升]
-					<右键> 射出一道追踪的 [c/00ffff:致盲激光] 造成困惑减益
-					[c/00ffff:“全副武装 随时战斗”]
+					手持该物品时，获得[c/32cd32:移动速度和耐力回复提升]
+					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
+					<right> 射出一道追踪的 [c/00ffff:致盲激光] 造成困惑减益
+					[c/00ffff:“全副武装，随时战斗”]
 					'''
 				Details:
 					'''
 					[c/00ffff:致盲激光] 造成 {0}x 伤害, 使用种子作为弹药时[c/00ffff:致盲激光]伤害再次乘 {8} ({$CommonItemTooltip.Cooldown@9})
 					[c/00ffff:致盲激光] 获得 {1}% 暴击几率加成和 {2}% 每击最大生命值伤害，最大到 {3}
 					[c/00ffff:致盲激光]造成的[c/00ffff:触电] 减益受到远程伤害和暴击率加成
-					按住特殊能力键时获得获得 [c/32cd32:侦察兵激励] 被动增益：
-					{$CommonItemTooltip.MoveSpeedMult@4} 同时乘算增加 {5}% 耐力再生
+					按住特殊能力键时获得获得 [c/32cd32:侦察兵激励] 增益：
+					{$CommonItemTooltip.MoveSpeedMult@4}，同时乘算增加 {5}% 耐力再生
 					当受到伤害时[c/32cd32:侦察兵激励]被移除，同时获得 {$CommonItemTooltip.Cooldown@6}
 					当 [c/32cd32:侦察兵激励] 激活时使用武器会减缓你的速度
 					当 [c/32cd32:侦察兵激励] 冷却时使用该物品，会让你短暂的不能移动
@@ -6740,9 +6740,9 @@ Mods: {
 					[c/adff2f:放射性飞镖] 对敌人造成短暂的 [c/adff2f:辐射] 减益并自动追踪附近敌人
 					也可以使用其它飞镖作为弹药，但使用毒镖造成 {0}x 倍伤害
 					在使用时[c/32cd32:有条件的限制玩家的移动]
-					当{$Items.ToxicShot.Keybind1}特殊能力键{$Items.ToxicShot.Keybind2}时，
-					[c/32cd32:可以给予移动速度和耐力回复提升]
-					<右键> 射出一道追踪的 [c/00ffff:致盲激光] 造成困惑减益
+					手持该物品时，获得[c/32cd32:移动速度和耐力回复提升]
+					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
+					<right> 射出一道追踪的 [c/00ffff:致盲激光] 造成困惑减益
 					{$Items.OmegaSquadRifle.Keybind1}特殊能力键{$Items.OmegaSquadRifle.Keybind2}
 					[c/adff2f:“外面有一个蘑菇，上面有你的名字”]
 					'''
@@ -6757,8 +6757,8 @@ Mods: {
 					[c/00ffff:致盲激光] 造成 {1}x 伤害, 使用种子作为弹药时[c/00ffff:致盲激光]伤害再次乘 {9} ({$CommonItemTooltip.Cooldown@10})
 					[c/00ffff:致盲激光] 获得 {2}% 暴击几率加成和 {3}% 每击最大生命值伤害，最大到 {4}
 					[c/adff2f:放射性飞镖] 造成的 [c/adff2f:辐射] 减益受到远程伤害和暴击率加成
-					按住特殊能力键时获得获得 [c/32cd32:侦察兵激励] 被动增益：
-					{$CommonItemTooltip.MoveSpeedMult@5} 同时乘算增加 {6}% 耐力再生
+					按住特殊能力键时获得获得 [c/32cd32:侦察兵激励] 增益：
+					{$CommonItemTooltip.MoveSpeedMult@5}，同时乘算增加 {6}% 耐力再生
 					当受到伤害时[c/32cd32:侦察兵激励]被移除，同时获得 {$CommonItemTooltip.Cooldown@7}
 					当 [c/32cd32:侦察兵激励] 激活时使用武器会减缓你的速度
 					当 [c/32cd32:侦察兵激励] 冷却时使用该物品，会让你短暂的不能移动
@@ -7211,18 +7211,18 @@ Mods: {
 			}
 
 			TheHunterRelic: {
-				// DisplayName: The Hunter Relic
-				// Tooltip: ""
+				DisplayName: 猎手圣物
+				Tooltip: ""
 			}
 
 			TheHunterTrophy: {
-				// DisplayName: The Hunter Trophy
-				// Tooltip: ""
+				DisplayName: 猎手纪念章
+				Tooltip: ""
 			}
 
 			TheHunterMask: {
-				// DisplayName: The Hunter Mask
-				// Tooltip: ""
+				DisplayName: 猎手面具
+				Tooltip: ""
 			}
 		}
 
@@ -8560,10 +8560,10 @@ Mods: {
 			OilPotShard4.DisplayName: 油壶碎片
 			DroidBomb.DisplayName: 无人机炸弹
 			EnemyForgottenPearlSpearProj.DisplayName: 被遗忘的珍珠矛
-			// BlackThrowingSpear.DisplayName: Black Throwing Spear
-			// EnemyBlackKnightHomingCrystal.DisplayName: Enemy Black Knight Homing Crystal
-			// EnemyMoonfuryBomb.DisplayName: Enemy Moonfury Bomb
-			// EnemyBlackCursedBreath.DisplayName: Enemy Black Cursed Breath
+			BlackThrowingSpear.DisplayName: 黑骑士的投掷矛
+			EnemyBlackKnightHomingCrystal.DisplayName: 黑骑士的追踪水晶
+			EnemyMoonfuryBomb.DisplayName: 月怒爆鸣
+			EnemyBlackCursedBreath.DisplayName: 黑暗诅咒之息
 		}
 
 		NPCs: {
