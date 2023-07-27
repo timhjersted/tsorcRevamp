@@ -60,7 +60,8 @@ namespace tsorcRevamp.Projectiles
 
             base.OnSpawn(projectile, source);
         }*/
-
+        public static float WhipVolume = 0.4f;
+        public static float WhipPitch = 0.3f;
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
             /*Entitysource experiments

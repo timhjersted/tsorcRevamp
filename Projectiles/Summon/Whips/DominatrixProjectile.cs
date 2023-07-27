@@ -81,7 +81,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.CrimsonPlants, 0f, 0f, 150, default(Color), 1.3f);
 			if (Timer == swingTime / 2)
 			{
-				SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Item/SummonerWhipcrack") with { Volume = 0.6f, PitchVariance = 0.3f }, points[points.Count - 1]);
+				SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Item/SummonerWhipcrack") with { Volume = tsorcGlobalProjectile.WhipVolume, PitchVariance = tsorcGlobalProjectile.WhipPitch }, points[points.Count - 1]);
 			}
 		}
 
