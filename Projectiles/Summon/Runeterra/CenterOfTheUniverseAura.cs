@@ -16,7 +16,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         public override void SetStaticDefaults()
 		{
 			ProjectileID.Sets.MinionShot[Projectile.type] = true;
-		}
+            ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = ScorchingPoint.SummonTagDmgMult / 100f;
+        }
 		public sealed override void SetDefaults()
 		{
 			Projectile.tileCollide = false;

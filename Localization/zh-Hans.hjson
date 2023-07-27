@@ -118,6 +118,7 @@ Mods: {
 				WhipCritDmg: 增加 {0}% 鞭子暴击伤害
 				WhipCritHitbox: 增加 {0}x 鞭子尖端暴击判定大小
 				TagStrength: 增加 {0}% 召唤标记伤害和护甲穿透
+				// BadTagStrengthMult: Decreases Summon Tag Damage and Armor Penetration by {0}% multiplicatively
 				TagDuration: 增加 {0}% 召唤标记持续时间
 				BotCSummonTagDoubleBuffCount: 完全充能的鞭子对敌人造成2倍的减益效果
 				ChargedWhip: 这个鞭子的属性随着你充能的时间长短而变化
@@ -137,6 +138,7 @@ Mods: {
 				FlatDmg: 增加 {0} 点召唤伤害
 				CritChance: 增加 {0}% 召唤暴击率
 				TagCritMult: 增加 {0} 倍召唤标记暴击率
+				// TagDmgMult: This weapon scales with only {0}% Tag Damage
 			}
 
 			PermanentPotion: {

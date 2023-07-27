@@ -118,6 +118,7 @@ Mods: {
 				WhipCritDmg: Increases the damage of whip crits by {0}%
 				WhipCritHitbox: Increases the Whip Tip Crit Hitbox Size to {0}x
 				TagStrength: Increases Summon Tag Damage and Armor Penetration by {0}%
+				BadTagStrengthMult: Decreases Summon Tag Damage and Armor Penetration by {0}% multiplicatively
 				TagDuration: Increases the duration of Summon Tag effects by {0}%
 				BotCSummonTagDoubleBuffCount: Fully charged whip debuff counts as 2
 				ChargedWhip: Stats of this whip scale with how long you've charged it
@@ -137,6 +138,7 @@ Mods: {
 				FlatDmg: Increases summon damage by {0} flat
 				CritChance: Increases summon crit chance by {0}%
 				TagCritMult: Multiplies summon tag critical strike chance by {0}
+				TagDmgMult: This weapon scales with only {0}% Tag Damage
 			}
 
 			PermanentPotion: {
@@ -6265,6 +6267,7 @@ Mods: {
 					Warms up by dealing damage to enemies, speeding up its movement and attack speed
 					Deals increased damage after warming up sufficiently(up to +{1}% final damage)
 					{$CommonItemTooltip.CritDmg}
+					{$CommonItemTooltip.Summon.TagDmgMult@2}
 					'''
 			}
 
@@ -6853,6 +6856,7 @@ Mods: {
 					While holding this item, increase or shrink their radius by holding Special Ability,
 					 depending on which direction the player is facing
 					Applies the Scorching debuff, which grants minions crit chance based on a fraction of your critical strike chance
+					{$CommonItemTooltip.Summon.TagDmgMult}
 					'By the Ashen Lord of Runeterra!'
 					'''
 			}
@@ -6869,6 +6873,7 @@ Mods: {
 					This increases the spaceships damage and movement speed
 					Turboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness                        
 					Applies the Shocked debuff, which grants minions crit chance based on a fraction of your critical strike chance
+					{$CommonItemTooltip.Summon.TagDmgMult}
 					'Adjusting trajectory for ASOL-13!'
 					'''
 			}
@@ -6886,6 +6891,7 @@ Mods: {
 					Every 15 critical hits, rightclick with this item in hand to call in the Star Forger
 					The Star Forger will breathe cosmic dust at the mouse location
 					Applies the Sunburn debuff, which grants minions crit chance based on a fraction of your critical strike chance
+					{$CommonItemTooltip.Summon.TagDmgMult}
 					'Leave them in awe at the sight of the Star Forger'
 					'''
 			}
@@ -6985,6 +6991,7 @@ Mods: {
 					'''
 					Doubles your maximum amount of minions and sentries
 					{$CommonItemTooltip.Summon.BadDmgMult}
+					{$CommmonItemTooltip.Summon.BadTagStrengthMult@1}
 					'''
 			}
 

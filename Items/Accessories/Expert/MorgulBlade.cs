@@ -6,8 +6,9 @@ namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class MorgulBlade : ModItem
     {
-        public static float BadSummonDmgMultiplier = 45f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BadSummonDmgMultiplier);
+        public static float BadSummonDmgMultiplier = 35f;
+        public static float BadSummonTagStrengthMult = 35f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BadSummonDmgMultiplier, BadSummonTagStrengthMult);
         public override void SetStaticDefaults()
         {
         }
@@ -24,6 +25,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
         {
             player.GetDamage(DamageClass.Summon) *= 1f - BadSummonDmgMultiplier / 100f;
             player.GetModPlayer<tsorcRevampPlayer>().MaxMinionTurretMultiplier = 2;
+            player.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength *= 1f - BadSummonTagStrengthMult / 100f;
         }
     }
 }

@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Materials;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
@@ -18,7 +19,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 		public static List<InterstellarVesselShip> projectiles = null;
 		public static int processedProjectilesCount = 0;
 
-		public override void SetStaticDefaults()
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ScorchingPoint.SummonTagDmgMult);
+        public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     public class SearingLash : ModItem
 	{
 		public const int BaseDamage = 33;
-		public static float CritMult = 2;
+		public static float CritMult = 1.66f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritMult);
         public override void SetStaticDefaults()
 		{

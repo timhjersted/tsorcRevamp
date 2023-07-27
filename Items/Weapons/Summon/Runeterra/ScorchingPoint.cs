@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Materials;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
@@ -16,7 +17,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
     {
         public static List<ScorchingPointFireball> projectiles = null;
         public static int processedProjectilesCount = 0;
-
+        public static float SummonTagDmgMult = 75f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagDmgMult);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;

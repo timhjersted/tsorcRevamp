@@ -8,7 +8,7 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-    [Autoload(true)]
+    [Autoload(false)]
     public class SpiritBell : ModItem
 	{
 		public override void SetStaticDefaults()

@@ -1,8 +1,8 @@
 ﻿using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
 using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Friendly
@@ -36,7 +36,13 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void AI()
         {
-            if (!Main.dedServ && (Main.rand.NextBool(360))) Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/ChickenBokbok") with { Volume = 0.8f, Pitch = 0.3f }, NPC.Center);
+            if (!Main.dedServ && (Main.rand.NextBool(360)))
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/ChickenBokbok") with { Volume = 0.8f, Pitch = 0.3f }, NPC.Center);
+            } else if (!Main.dedServ && Main.rand.NextBool(2000))
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/EvilChicken") with { Volume = 1f }, NPC.Center);
+            }
         }
         public override void FindFrame(int frameHeight)
         {

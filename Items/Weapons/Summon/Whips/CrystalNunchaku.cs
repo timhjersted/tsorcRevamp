@@ -8,11 +8,11 @@ using tsorcRevamp.Items.Materials;
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
     public class CrystalNunchaku : ModItem
-	{
-		public static float MaxSummonTagScalingDamage = 25;
+    {
         public static float MinSummonTagScalingDamage = 0;
-        public static float MaxSummonTagDefense = 15;
+        public static float MaxSummonTagScalingDamage = 33;
         public static int MinSummonTagDefense = 0;
+        public static float MaxSummonTagDefense = 15;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxSummonTagScalingDamage, MinSummonTagScalingDamage, MaxSummonTagDefense, MinSummonTagDefense);
         public override void SetStaticDefaults()
 		{

@@ -15,7 +15,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
 		public static float MinStacks = 5f;
 		public static float MaxStacks = 20f;
 		public static float MaxDmg = ((MaxStacks - MinStacks) / DmgDivisor) * 100f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritDamage, (int)MaxDmg);
+		public static float SummonTagDmgMult = 75f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritDamage, (int)MaxDmg, SummonTagDmgMult);
         public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;

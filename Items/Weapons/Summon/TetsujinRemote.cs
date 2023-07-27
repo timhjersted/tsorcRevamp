@@ -33,8 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			Item.useAnimation = 30;
 			Item.useStyle = ItemUseStyleID.Shoot;
 			Item.value = Item.buyPrice(1, 50, 0, 0);
-			Item.rare = ItemRarityID.Expert;
-			Item.expert = true;
+			Item.rare = ItemRarityID.Red;
 			Item.UseSound = SoundID.Item44;
 
 

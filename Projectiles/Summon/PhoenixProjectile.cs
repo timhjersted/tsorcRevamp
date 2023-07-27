@@ -20,7 +20,6 @@ namespace tsorcRevamp.Projectiles.Summon
 		
 		public override void SetStaticDefaults()
 		{
-			// DisplayName.SetDefault("Phoenix Juvenile");
 			Main.projFrames[Projectile.type] = 7;
 			// This is necessary for right-click targeting
 			ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
@@ -29,6 +28,8 @@ namespace tsorcRevamp.Projectiles.Summon
 
 			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; // This is needed so your minion can properly spawn when summoned and replaced when other minions are summoned
 			ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true; // Make the cultist resistant to this projectile, as it's resistant to all homing projectiles.
+
+			ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = PhoenixEgg.SummonTagDmgMult / 100f;
 		}
 
 		public sealed override void SetDefaults()

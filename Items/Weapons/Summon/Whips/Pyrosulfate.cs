@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
     public class Pyrosulfate : ModItem
 	{
-		public static float SummonTagDamage = 8;
+		public static float SummonTagDamage = 5;
 		public static float SummonTagCrit = 7;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagDamage, SummonTagCrit);
         public override void SetStaticDefaults()
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 74;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 51;
+			Item.damage = 45;
 			Item.knockBack = 2.5f;
 			Item.rare = ItemRarityID.LightRed;
 			Item.value = Item.buyPrice(0, 14, 50, 0);
