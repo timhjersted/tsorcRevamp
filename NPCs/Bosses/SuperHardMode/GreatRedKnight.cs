@@ -23,7 +23,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         Vector2 storedPlayerPosition = Vector2.Zero;
         
         public int framesSinceStoredPosition = 0;
-        public int attackDirection = 0; // Variable to store the direction during the attack state (doesn't work yet)
 
         NPCDespawnHandler despawnHandler;
 
@@ -74,8 +73,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         #endregion
 
-        /*
         #region Spawn
+        /*
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             Player P = spawnInfo.Player; //this shortens our code up from writing this line over and over.
@@ -140,10 +139,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
           
             return 0;
         }
-        #endregion
         */
-
-        float poisonTimer = 0;
+        #endregion
 
         public Player player
         {
@@ -233,7 +230,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // Increment the frames since we stored the player's position
                 framesSinceStoredPosition++;
 
-                // Spear Attack: Get targetPosition and set NPC direction (the latter part is not working)
+                // Spear Attack: Get targetPosition 
                 if (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f)
                 {
                     NPC.knockBackResist = 0f;
@@ -241,14 +238,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
 
                     // Use the stored player's position from 25 frames ago to calculate the targetPosition.
-                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
-                    //targetPosition = new Vector2(storedPlayerPosition.X * direction, storedPlayerPosition.Y);
-
-                    // Store the direction for the attack state in the separate variable
-                    attackDirection = (targetPosition.X > NPC.Center.X) ? 1 : -1;
-
-                    NPC.direction = attackDirection;
-                    NPC.spriteDirection = attackDirection;
+                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);               
                 }
 
                 // Spear Telegraph
@@ -535,12 +525,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     // Calculate the direction towards the stored player position.
                     int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
 
-                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y); //trying + 10 again
-
-                    // Store the direction for the attack state in the separate variable (doesn't work)
-                    attackDirection = (targetPosition.X > NPC.Center.X) ? 1 : -1;
-                    NPC.direction = attackDirection;
-                    NPC.spriteDirection = attackDirection;
+                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
                 }
 
                 // Bomb Telegraph
@@ -740,82 +725,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            poisonTimer++; ;
+       
             /*
-            //CHANCE TO JUMP FORWARDS
-            if (NPC.Distance(player.Center) > 150 && NPC.velocity.Y == 0f && Main.rand.NextBool(500))
-            {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
-                Main.dust[dust].noGravity = true;
-                NPC.velocity.Y = -6f; //9             
-                NPC.TargetClosest(true);
-                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * 2f;  //was 2  accellerate fwd; can happen midair
-                if ((float)NPC.direction * NPC.velocity.X > 2)
-                    NPC.velocity.X = (float)NPC.direction * 2;  //  but cap at top speed
-                NPC.netUpdate = true;
-            }
-
-            //CHANCE TO DASH STEP FORWARDS 
-            else if (NPC.Distance(player.Center) > 100 && NPC.velocity.Y == 0f && Main.rand.NextBool(280))
-            {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
-                Main.dust[dust].noGravity = true;
-    
-                NPC.velocity.Y = -4f;
-        
-                NPC.velocity.X = NPC.velocity.X * 4f; // burst forward
-
-                if ((float)NPC.direction * NPC.velocity.X > 4)
-                    NPC.velocity.X = (float)NPC.direction * 4;  //  but cap at top speed
-                                                             
-                //CHANCE TO JUMP AFTER DASH
-                if (Main.rand.NextBool(14))
-                {
-                    NPC.TargetClosest(true);
-
-        
-                    Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                    if (Main.rand.NextBool(3))
-                    {
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
-                    }
-                 NPC.velocity.Y = -7f;
-                 poisonTimer = 175f;
-
-                }
-
-                NPC.netUpdate = true;
-            }
-
-            /*
+            
             //TELEGRAPH DUSTS
             if (poisonTimer >= 150 && poisonTimer <= 179)
             {
@@ -847,8 +759,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 }
             }
-            */
-            /*
+           
             //FIRE ATTACK 2
 
             if (poisonTimer <= 100 && NPC.Distance(player.Center) > 200)
@@ -893,57 +804,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
 
-            */
-
-
-            /*
-            //OFFENSIVE JUMPS
-            if (poisonTimer >= 160 && poisonTimer <= 161 && NPC.Distance(player.Center) > 40)
-            {
-                //CHANCE TO JUMP 
-                if (Main.rand.NextBool(10))
-                {
-                    Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                    
-                    NPC.velocity.Y = -9f;          
-                    NPC.TargetClosest(true);
-                    poisonTimer = 165;
-                    NPC.netUpdate = true;
-                }
-            }
-            //SPEAR ATTACK
-            if (poisonTimer == 180f) 
-            {
-                NPC.TargetClosest(true);
-                //if (Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
-                //{
-                Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12); //0.4f, true, true																								
-                speed += Main.player[NPC.target].velocity;
-                //speed += Main.rand.NextVector2Circular(-4, -2);
-
-                if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.RedKnightsSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.6f, Pitch = 0.3f }, NPC.position); //Play swing-throw sound
-                                                                                                                              //go to poison attack
-                    poisonTimer = 185f;
-
-                    if (Main.rand.NextBool(3))
-                    {
-                        //or chance to reset
-                        poisonTimer = 1f;
-
-                    }
-
-                }
-
-            }
-
             
 
-            */
 
-            /*
+           
+
+           
                     //HELLWING ATMOSPHERE BUT DOES NO DAMAGE YET
                     for (int pcy = 0; pcy < 2; pcy++)
                     {
@@ -952,31 +818,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 5);
                         //Main.projectile[FireAttack].timeLeft = 15296;
                         npc.netUpdate = true;
-                    }
-             */
-
-            /*INSANE WHIP ATTACK
-            if (poisonTimer >= 180f && npc.life <= npc.lifemax / 6) //180 (without 2nd condition) and 185 created an insane attack
-            {
-                npc.TargetClosest(true);
-                if (Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
-                {
-                    Vector2 speed = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 11);
-
-                    if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X, npc.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, poisonStrikeDamage, 0f, Main.myPlayer);
-                        Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 34, 0.3f, .03f); //flamethrower
-
-                        //
-                    }
-                    if (poisonTimer >= 200f) //180 (without 2nd condition) and 185 created an insane attack
-                    {
-                        poisonTimer = 1f;
-                    }
-                }
-
-            }
+                    }           
+            
             */
 
 
@@ -986,6 +829,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void OnKill()
         {
+
+            // create unknown embers that fill the explosion's radius
+            for (int i = 0; i < 30; i++)
+            {
+                float velX = 1f - ((float)Main.rand.Next(20)) / 5f;
+                float velY = 1f - ((float)Main.rand.Next(20)) / 5f;
+                velX *= 4f;
+                velY *= 4f;
+                Dust.NewDust(new Vector2(NPC.position.X - (float)(NPC.width / 2), NPC.position.Y - (float)(NPC.height / 2)), NPC.width, NPC.height, DustID.EnchantedNightcrawler, velX, velY, 160, default, 1.5f);
+                Dust.NewDust(new Vector2(NPC.position.X - (float)(NPC.width / 2), NPC.position.Y - (float)(NPC.height / 2)), NPC.width, NPC.height, DustID.CosmicEmber, velX, velY, 160, default, 1.5f);
+                Dust.NewDust(new Vector2(NPC.position.X - (float)(NPC.width / 2), NPC.position.Y - (float)(NPC.height / 2)), NPC.width, NPC.height, DustID.EnchantedNightcrawler, velX, velY, 160, default, 1f);
+                Dust.NewDust(new Vector2(NPC.position.X - (float)(NPC.width / 2), NPC.position.Y - (float)(NPC.height / 2)), NPC.width, NPC.height, DustID.CosmicEmber, velX, velY, 160, default, 1f);
+            }
+
             if (!Main.dedServ)
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Red Knight Gore 1").Type, 1f);
@@ -1049,17 +906,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // Spear
             if (NPC.ai[1] >= 120 && NPC.ai[1] <= 180f)
             {
-                float spriteScale = 0.7f; // Set the desired scale value (0.7 means 70% of the original size)
+                float spriteScale = 0.8f; // Set the desired scale value (0.7 means 70% of the original size)
                 float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
 
-                SpriteEffects effects = attackDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 if (NPC.spriteDirection == -1)
                 {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, new Vector2(8, 38), NPC.scale * spriteScale, effects, 0); // facing left (8, 38 work)
+                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, new Vector2(8, 38), NPC.scale * spriteScale, SpriteEffects.None, 0); // facing left (8, 38 work)
                 }
                 else
                 {
-                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, new Vector2(8, 38), NPC.scale * spriteScale, effects, 0); // facing right, first value is height, higher number is higher
+                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, new Vector2(8, 38), NPC.scale * spriteScale, SpriteEffects.None, 0); // facing right, first value is height, higher number is higher
                 }
 
             }
@@ -1067,14 +923,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (NPC.ai[1] >= 865)
             {
                 float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
-                SpriteEffects effects = attackDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
                 if (NPC.spriteDirection == -1)
                 {
-                    spriteBatch.Draw(bombTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, new Vector2(14, 4), NPC.scale, effects, 0); // facing left (8, 38 work)
+                    spriteBatch.Draw(bombTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, new Vector2(14, 4), NPC.scale, SpriteEffects.None, 0); // facing left (8, 38 work)
                 }
                 else
                 {
-                    spriteBatch.Draw(bombTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, new Vector2(14, 4), NPC.scale, effects, 0); // facing right, first value is height, higher number is higher
+                    spriteBatch.Draw(bombTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, new Vector2(14, 4), NPC.scale, SpriteEffects.None, 0); // facing right, first value is height, higher number is higher
                 }
             }
 
