@@ -578,7 +578,8 @@ namespace tsorcRevamp.NPCs.Enemies
                     Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, 6, fallback: true);
                     speed2 += Main.rand.NextVector2Circular(-4, 4);//was -4, -2, then -12, -16
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ProjectileID.InsanityShadowHostile, redKnightsGreatDamage, 0f, Main.myPlayer);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center); 
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item69 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center);
+                    NPC.netUpdate = true;
                 }
                 // After Ultrakill attack completes
                 if (NPC.ai[2] == 236f)
