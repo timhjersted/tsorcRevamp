@@ -309,7 +309,7 @@ namespace tsorcRevamp.Projectiles
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[projectile.owner];
                 target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 2 * 60);
             }
-            if (projectile.type == ProjectileID.PoisonDartBlowgun && player.HeldItem.type == ModContent.ItemType<ToxicShot>())
+            if (projectile.type == ProjectileID.PoisonDartBlowgun && player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
             {
                 if (hit.Crit)
                 {
