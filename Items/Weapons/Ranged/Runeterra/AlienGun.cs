@@ -128,7 +128,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                 int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
                 if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", Language.GetTextValue("Mods.tsorcRevamp.Items.ToxicShot.Details").FormatWith(BlindingLaserDmgMult, BlindingLaserBonusCritChance, BlindingLaserPercentHPDmg, BlindingLaserHPDmgCap, ToxicShot.ScoutsBoostMoveSpeedMult, ToxicShot.ScoutsBoostStaminaRegenMult, ToxicShot.ScoutsBoostOnHitCooldown, ToxicShot.ScoutsBoost2Duration, BlindingLaserSeedDmgMult, BlindingLaserCooldown)));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", Language.GetTextValue("Mods.tsorcRevamp.Items.AlienGun.Details").FormatWith(AlienGun.BlindingLaserDmgMult, AlienGun.BlindingLaserBonusCritChance, AlienGun.BlindingLaserPercentHPDmg, AlienGun.BlindingLaserHPDmgCap, ToxicShot.ScoutsBoostMoveSpeedMult, ToxicShot.ScoutsBoostStaminaRegenMult, ToxicShot.ScoutsBoostOnHitCooldown, ToxicShot.ScoutsBoost2Duration, AlienGun.BlindingLaserSeedDmgMult, AlienGun.BlindingLaserCooldown)));
                 }
             }
             else
