@@ -25,11 +25,11 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += MoveSpeed;
+            player.moveSpeed += MoveSpeed / 100f;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.moveSpeed += MoveSpeed;
+                player.moveSpeed += MoveSpeed / 100f;
             }
         }
 

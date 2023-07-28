@@ -27,12 +27,12 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Ranged) += Dmg;
+            player.GetDamage(DamageClass.Ranged) += Dmg / 100f;
             player.lifeRegen += LifeRegen;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
-                player.GetDamage(DamageClass.Ranged) += Dmg;
+                player.GetDamage(DamageClass.Ranged) += Dmg / 100f;
                 player.lifeRegen += LifeRegen;
             }
         }
