@@ -118,7 +118,7 @@ Mods: {
 				WhipCritDmg: 增加 {0}% 鞭子暴击伤害
 				WhipCritHitbox: 增加 {0}x 鞭子尖端暴击判定大小
 				TagStrength: 增加 {0}% 召唤标记伤害和护甲穿透
-				// BadTagStrengthMult: Decreases Summon Tag Damage and Armor Penetration by {0}% multiplicatively
+				BadTagStrengthMult: 乘算减少 {0}% 召唤标记伤害和护甲穿透
 				TagDuration: 增加 {0}% 召唤标记持续时间
 				BotCSummonTagDoubleBuffCount: 完全充能的鞭子对敌人造成2倍的减益效果
 				ChargedWhip: 这个鞭子的属性随着你充能的时间长短而变化
@@ -138,7 +138,7 @@ Mods: {
 				FlatDmg: 增加 {0} 点召唤伤害
 				CritChance: 增加 {0}% 召唤暴击率
 				TagCritMult: 增加 {0} 倍召唤标记暴击率
-				// TagDmgMult: This weapon scales with only {0}% Tag Damage
+				TagDmgMult: 此武器仅受到 {0}% 的召唤标记伤害加成
 			}
 
 			PermanentPotion: {
@@ -3494,7 +3494,7 @@ Mods: {
 				Tooltip:
 					'''
 					黑木炭——就像松树树脂一样
-					消耗以灌注火焰给近战武器，({$CommonItemTooltip.SecondDuration})
+					使用以将火焰灌注给近战武器，({$CommonItemTooltip.SecondDuration})
 					对木质敌人有奇效
 					{$CommonItemTooltip.MeleeWhipDmg@1}
 					'''
@@ -6268,6 +6268,7 @@ Mods: {
 					在战斗过程中凤凰会逐渐充能，增加移动速度和攻击速度
 					在充能后会增加伤害(最多 +{1}% 伤害)
 					{$CommonItemTooltip.CritDmg}
+					{$CommonItemTooltip.Summon.TagDmgMult@2}
 					'''
 			}
 
@@ -6855,7 +6856,8 @@ Mods: {
 					消耗半个召唤栏位，如果召唤出足够多的火球，就会产生炽热光环
 					手持该物品时，通过按 特殊能力键 来改变其半径
 					增大/减小半径的效果取决于玩家面对的方向
-					施加 灼热 增益, 根据你暴击率的一小部分给予召唤物暴击率
+					施加 灼热 增益, 由你暴击率的一小部分给予召唤物暴击率
+					{$CommonItemTooltip.Summon.TagDmgMult}
 					“献给Runeterra的灰烬之主！”
 					'''
 			}
@@ -6871,7 +6873,8 @@ Mods: {
 					在不持有遥控器的情况下按 特殊能力键 可以激活涡轮增压
 					这会增加星际飞船的伤害和移动速度
 					涡轮增压会消耗你的魔力，在受到魔力病病的影响时无法激活
-					施加 大吃一惊 增益, 根据你暴击率的一小部分给予召唤物暴击率
+					施加 大吃一惊 增益, 由你暴击率的一小部分给予召唤物暴击率
+					{$CommonItemTooltip.Summon.TagDmgMult}
 					“调整 ASOL-13 的轨迹！”
 					'''
 			}
@@ -6886,10 +6889,11 @@ Mods: {
 					增大/减小半径的效果取决于玩家面对的方向
 					在不持有遥控器的情况下按 特殊能力键 可以激活涡轮增压
 					这会增加恒星的伤害和移动速度，但消耗你的魔力
-					每暴击15次后，右键 即可召唤星际伪造者
-					星际伪造者将在鼠标位置释放宇宙尘埃
-					施加 日照 增益, 根据你暴击率的一小部分给予召唤物暴击率
-					“让他们一看到星际伪造者就肃然起敬！”
+					每暴击15次后，右键 即可召唤行星锻造者
+					行星锻造者将在鼠标位置释放宇宙尘埃
+					施加 日照 增益, 由你暴击率的一小部分给予召唤物暴击率
+					{$CommonItemTooltip.Summon.TagDmgMult}
+					“让他们一看到行星锻造者就肃然起敬！”
 					'''
 			}
 
@@ -6988,6 +6992,7 @@ Mods: {
 					'''
 					你的召唤物栏位和哨兵栏位变多一倍
 					{$CommonItemTooltip.Summon.BadDmgMult}
+					{$CommonItemTooltip.Summon.BadTagStrengthMult@1}
 					'''
 			}
 

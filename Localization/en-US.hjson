@@ -6991,7 +6991,7 @@ Mods: {
 					'''
 					Doubles your maximum amount of minions and sentries
 					{$CommonItemTooltip.Summon.BadDmgMult}
-					{$CommmonItemTooltip.Summon.BadTagStrengthMult@1}
+					{$CommonItemTooltip.Summon.BadTagStrengthMult@1}
 					'''
 			}
 
