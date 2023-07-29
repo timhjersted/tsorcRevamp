@@ -2702,7 +2702,7 @@ Mods: {
 					{$CommonItemTooltip.Magic.ManaRegen@2}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.ObsidianShield} and Lava resistance
 					Plus extended breath, water and lava walk, & swim
-					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
+					{$CommonItemTooltip.PercentIncreasedCritChance@3}
 					'''
 			}
 

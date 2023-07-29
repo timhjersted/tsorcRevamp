@@ -121,7 +121,7 @@
   "text": "你听见什么声音了吗？",
   "tileX": 378,
   "tileY": 1399,
-  "textWidth": 160,
+  "textWidth": 180,
   "style": 1
 }
 {
@@ -258,17 +258,17 @@
   "style": 1
 }
 {
-  "text": "在一张破碎的纸上，你读到了三种成分… --NEWLINE   --NEWLINE 1暗影之魂和1骨头和1000黑暗之魂 --NEWLINE   --NEWLINE 它似乎能制造一种武器，死寂是它唯一的归宿，它在向你发出致命的召唤…",
+  "text": "在一张破碎的纸上，你读到了三种成分… --NEWLINE   --NEWLINE 暗影之魂、骨头和1000黑暗之魂 --NEWLINE   --NEWLINE 它似乎能制造一种武器，死寂是它唯一的归宿，它在向你发出致命的召唤…",
   "tileX": 1411,
   "tileY": 574,
-  "textWidth": 600,
+  "textWidth": 550,
   "style": 1
 }
 {
   "text": "观察完这扇大门上的栓接系统，你认为必须要触发三个开关才能解锁它。",
   "tileX": 1427,
   "tileY": 1363,
-  "textWidth": 500,
+  "textWidth": 530,
   "style": 1
 }
 {
@@ -363,7 +363,7 @@
   "style": 1
 }
 {
-  "text": "-你发现了进入暗影神庙的大门- --NEWLINE   --NEWLINE Miakoda：\u0022毁灭者在这条小路的尽头等待着你，瑞德。 --NEWLINE   --NEWLINE 我听说这是一段危险的旅程。但我们不要灰心！\u0022",
+  "text": "- 你发现了进入暗影神庙的大门 - --NEWLINE   --NEWLINE Miakoda：\u0022毁灭者在这条小路的尽头等待着你，瑞德。 --NEWLINE   --NEWLINE 我听说这是一段危险的旅程。但我们不要灰心！\u0022",
   "tileX": 1800,
   "tileY": 1045,
   "textWidth": 480,
@@ -524,10 +524,10 @@
   "style": 1
 }
 {
-  "text": "Miakoda：\u0022传说中三子杀害了许多寻求荣耀的勇士。 --NEWLINE   --NEWLINE 不要愚蠢,也许我们应该在面对他们之前寻求更大的力量。\u0022",
+  "text": "Miakoda：\u0022传说中三子魔眼杀害了许多寻求荣耀的勇士。 --NEWLINE   --NEWLINE 不要愚蠢，也许我们应该在面对它们之前掌握更强的力量。\u0022",
   "tileX": 2893,
   "tileY": 59,
-  "textWidth": 500,
+  "textWidth": 450,
   "style": 1
 }
 {

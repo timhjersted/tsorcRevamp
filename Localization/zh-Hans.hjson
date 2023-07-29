@@ -1069,7 +1069,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.LifeThreshold}释放魔法屏障
-					魔法屏障效果： {$CommonItemTooltip.IncreasesDefenseBy@1}
+					魔法屏障效果：{$CommonItemTooltip.IncreasesDefenseBy@1}
 					{$CommonItemTooltip.UniqueBarrier}
 					'''
 			}
@@ -2702,7 +2702,7 @@ Mods: {
 					{$CommonItemTooltip.Magic.ManaRegen@2}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.ObsidianShield} 和岩浆
 					延长水下呼吸时间，获得游泳和液体上行走能力
-					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
+					{$CommonItemTooltip.PercentIncreasedCritChance@3}
 					'''
 			}
 
@@ -6693,17 +6693,17 @@ Mods: {
 					[c/ba55d3:“那一定很刺痛”]
 					'''
 				Keybind1: "按 "
-				Keybind2: " 启用 [c/32cd32:侦察兵激励]"
+				Keybind2: " 启用 [c/32cd32:侦察兵激励II]"
 				Details:
 					'''
 					[c/ba55d3:恶毒飞镖]造成的[c/ba55d3:酸性毒液] 减益受到远程伤害和暴击率加成
-					按住特殊能力键时获得获得 [c/32cd32:侦察兵激励] 增益：
+					手持该武器时获得 [c/32cd32:侦察兵激励] 增益：
 					{$CommonItemTooltip.MoveSpeedMult}，同时乘算增加 {1}% 耐力再生
 					当受到伤害时[c/32cd32:侦察兵激励]被移除，同时获得 {$CommonItemTooltip.Cooldown@2}
 					当 [c/32cd32:侦察兵激励] 激活时使用武器会减缓你的速度
 					当 [c/32cd32:侦察兵激励] 冷却时使用该物品，会让你短暂的不能移动
-					[c/32cd32:激活的能力] 移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@3}
-					[c/32cd32:激活的能力] 加倍移动速度和耐力再生增益
+					[c/32cd32:侦察兵激励II] 移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@3}
+					[c/32cd32:侦察兵激励II] 加倍移动速度和耐力再生增益
 					'''
 			}
 
@@ -6724,14 +6724,14 @@ Mods: {
 					'''
 					[c/00ffff:致盲激光] 造成 {0}x 伤害, 使用种子作为弹药时[c/00ffff:致盲激光]伤害再次乘 {8} ({$CommonItemTooltip.Cooldown@9})
 					[c/00ffff:致盲激光] 获得 {1}% 暴击几率加成和 {2}% 每击最大生命值伤害，最大到 {3}
-					[c/00ffff:致盲激光]造成的[c/00ffff:触电] 减益受到远程伤害和暴击率加成
-					按住特殊能力键时获得获得 [c/32cd32:侦察兵激励] 增益：
+					[c/00ffff:外星激光]造成的 [c/00ffff:触电] 减益受到远程伤害和暴击率加成
+					手持该武器时获得 [c/32cd32:侦察兵激励] 增益：
 					{$CommonItemTooltip.MoveSpeedMult@4}，同时乘算增加 {5}% 耐力再生
 					当受到伤害时[c/32cd32:侦察兵激励]被移除，同时获得 {$CommonItemTooltip.Cooldown@6}
 					当 [c/32cd32:侦察兵激励] 激活时使用武器会减缓你的速度
 					当 [c/32cd32:侦察兵激励] 冷却时使用该物品，会让你短暂的不能移动
-					[c/32cd32:激活的能力] 移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@7}
-					[c/32cd32:激活的能力] 加倍移动速度和耐力再生增益
+					[c/32cd32:侦察兵激励II] 移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@7}
+					[c/32cd32:侦察兵激励II] 加倍移动速度和耐力再生增益
 					'''
 			}
 
@@ -6760,13 +6760,13 @@ Mods: {
 					[c/00ffff:致盲激光] 造成 {1}x 伤害, 使用种子作为弹药时[c/00ffff:致盲激光]伤害再次乘 {9} ({$CommonItemTooltip.Cooldown@10})
 					[c/00ffff:致盲激光] 获得 {2}% 暴击几率加成和 {3}% 每击最大生命值伤害，最大到 {4}
 					[c/adff2f:放射性飞镖] 造成的 [c/adff2f:辐射] 减益受到远程伤害和暴击率加成
-					按住特殊能力键时获得获得 [c/32cd32:侦察兵激励] 增益：
+					手持该武器时获得 [c/32cd32:侦察兵激励] 增益：
 					{$CommonItemTooltip.MoveSpeedMult@5}，同时乘算增加 {6}% 耐力再生
 					当受到伤害时[c/32cd32:侦察兵激励]被移除，同时获得 {$CommonItemTooltip.Cooldown@7}
 					当 [c/32cd32:侦察兵激励] 激活时使用武器会减缓你的速度
 					当 [c/32cd32:侦察兵激励] 冷却时使用该物品，会让你短暂的不能移动
-					[c/32cd32:激活的能力] 移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@8}
-					[c/32cd32:激活的能力] 加倍移动速度和耐力再生增益
+					[c/32cd32:侦察兵激励II] 移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@8}
+					[c/32cd32:侦察兵激励II] 加倍移动速度和耐力再生增益
 					'''
 			}
 
@@ -8381,7 +8381,7 @@ Mods: {
 			MiakodaCrescent.DisplayName: 蛾眉月的Miakoda
 			MiakodaFull.DisplayName: 满月的Miakoda
 			MiakodaNew.DisplayName: 新月的Miakoda
-			PiggyBankProjectile.DisplayName: 猪猪存钱罐之魂
+			PiggyBankProjectile.DisplayName: 猪猪存钱罐
 			RTQ2.DisplayName: RTQ2
 			SafeProjectile.DisplayName: 灵魂保险箱
 			PhantomSeeker.DisplayName: 幻影追随者
@@ -9258,7 +9258,7 @@ Mods: {
 				Tip5: 可以使用镐子或粘性炸弹来打破宽度为1格的墙壁。 石制门需要找到开关来开启。如果不确定你面对的是哪种门，先给它来一稿子再说。
 				Tip6: 黑暗之魂具有特殊的特性。 你死后将丢失所有的黑暗之魂，但仍有机会找回它们。但如果再次死亡，已经掉落的黑暗之魂就会永久消逝。
 				Tip7: 在您的旅途中，您会遇到未点燃的篝火，点燃它们并享受它们提供的宁静。您可以将它们用作检查点和存储库。
-				Tip8: 您可以将多余的弹药、武器和盔甲存放在保存点和篝火处的保险箱和小猪储钱罐中。
+				Tip8: 您可以将多余的弹药、武器和盔甲存放在保存点和篝火处的保险箱和猪猪存钱罐中。
 				Tip9: 只有更强的镐才能击碎坚固的大门。
 				Tip10: 最后...我不确定它是什么意思，但有人告诉我要告诉你阅读名为“游戏手册”的东西以获取更多信息。注：即有问题就来群里问问群员看看谁能帮上忙。
 				ReceiveGift: 带上这些。 愿它们让你的旅程更轻松。
