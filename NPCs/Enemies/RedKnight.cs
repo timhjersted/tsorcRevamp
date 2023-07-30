@@ -64,9 +64,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (!Main.hardMode)
             {
-                //npc.defense = 14;
-                //npc.value = 3500;
-                //npc.damage = 40;
+                NPC.defense = 14;
+                NPC.value = 3500;
+                NPC.damage = 40;
                 redKnightsGreatDamage = 9;
                 redKnightsSpearDamage = 12;
                 redMagicDamage = 7;
@@ -639,15 +639,9 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            player.AddBuff(BuffID.OnFire, 3 * 60, false);
-
-            if (Main.rand.NextBool(5))
-            {
-                player.AddBuff(ModContent.BuffType<Crippled>(), 3 * 60, false); // loss of flight mobility
-                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 30 * 60, false);
-                player.AddBuff(BuffID.OnFire, 60, false);
-
-            }
+            player.AddBuff(BuffID.OnFire, 3 * 60, false);          
+            player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 30 * 60, false);
+            player.AddBuff(ModContent.BuffType<Crippled>(), 3 * 60, false); // loss of flight mobility          
         }
         #endregion
 

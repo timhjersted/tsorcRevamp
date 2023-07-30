@@ -9,6 +9,8 @@ using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
 using Terraria.GameContent;
+using Terraria.UI;
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -53,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.lifeMax = 30000; 
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 200000;
+            NPC.value = 0;
             NPC.knockBackResist = 0.36f;
             NPC.scale = 1.15f;
             NPC.boss = true;
@@ -161,11 +163,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 2, canTeleport: true, enragePercent: 0.4f, enrageTopSpeed: 4);
+            tsorcRevampAIs.FighterAI(NPC, 2, canTeleport: true, enragePercent: 0.5f, enrageTopSpeed: 4);
             tsorcRevampAIs.LeapAtPlayer(NPC, 7, 5, 1.5f, 128);
             
-            // Debuffs
-            if (NPC.Distance(player.Center) < 600)
+            // Proximity Debuffs
+            if (NPC.Distance(player.Center) < 700)
             {
                 player.AddBuff(ModContent.BuffType<TornWings>(), 1 * 60, false);
                 player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 1 * 60, false);
@@ -713,7 +715,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Rain of Cursed Flame at 1/3 life
-                if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 150 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 60 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                         Player nT = Main.player[NPC.target];
 
@@ -856,18 +858,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 3, 6));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 1, 1, 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FlameOfTheAbyss>(), 1, 1, 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 6));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 1));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 20, 50));
+
+            IItemDropRule drop1 = ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 3, 6);
+            IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 1);
+            IItemDropRule drop3 = ItemDropRule.Common(ModContent.ItemType<FlameOfTheAbyss>(), 1, 2, 3);
+            SuperHardmodeRule SHM = new();
+            IItemDropRule shmCondition = new LeadingConditionRule(SHM);
+            shmCondition.OnSuccess(drop1);
+            shmCondition.OnSuccess(drop2);
+            shmCondition.OnSuccess(drop3);
+            npcLoot.Add(shmCondition);
         }
 
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
-        {
-                player.AddBuff(BuffID.OnFire, 6 * 60, false);
-                player.AddBuff(ModContent.BuffType<Crippled>(), 3 * 60, false); // loss of flight mobility
-                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 30 * 60, false);           
+        {          
+            player.AddBuff(BuffID.OnFire, 30 * 60, false);
+            player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 6 * 60, false); // knockback on hit
+            player.AddBuff(ModContent.BuffType<DarkInferno>(), 6 * 60, false); // no health regen
+            player.AddBuff(ModContent.BuffType<Crippled>(), 6 * 60, false); // loss of flight mobility
+            player.AddBuff(BuffID.BrokenArmor, 6 * 60, false);
         }
         #endregion
 

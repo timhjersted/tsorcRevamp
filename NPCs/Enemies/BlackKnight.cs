@@ -11,9 +11,9 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class BlackKnight : ModNPC
     {       
-        public int redKnightsSpearDamage = 16;
+        public int redKnightsSpearDamage = 15;
         public int redMagicDamage = 14;
-        public int redKnightsGreatDamage = 16;
+        public int redKnightsGreatDamage = 18;
         Vector2 storedPlayerPosition = Vector2.Zero;
         public int framesSinceStoredPosition = 0;
         
@@ -39,21 +39,28 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.aiStyle = -1;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.damage = 58;
+            NPC.damage = 50;
             NPC.defense = 21;
-            NPC.lifeMax = 600;
+            NPC.lifeMax = 500;
 
             if (Main.hardMode)
             {
                 NPC.lifeMax = 1000;
-                NPC.defense = 60;
+                NPC.damage = 65;
+                NPC.defense = 50;
+                redKnightsGreatDamage = 21;
+                redKnightsSpearDamage = 23;
+                redMagicDamage = 19;
             }
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.lifeMax = 3000;
+                NPC.lifeMax = 4000;
                 NPC.defense = 75;
                 NPC.damage = 120;
-                NPC.value = 7500;
+                NPC.value = 20000;
+                redKnightsGreatDamage = 35;
+                redKnightsSpearDamage = 26;
+                redMagicDamage = 23;
             }
 
             NPC.HitSound = SoundID.NPCHit1;
@@ -74,7 +81,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             if (spawnInfo.Player.townNPCs > 1f) return 0f;
-            if (!spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneDungeon && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && spawnInfo.Player.ZoneOverworldHeight && NPC.downedBoss3 && !Main.dayTime && Main.rand.NextBool(100)) return 1;
+            if (!spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneDungeon && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && spawnInfo.Player.ZoneOverworldHeight && NPC.downedBoss3 && !Main.dayTime && Main.rand.NextBool(200)) return 1;
             if (!Main.hardMode && spawnInfo.Player.ZoneMeteor && NPC.downedBoss2 && Main.rand.NextBool(100)) return 1;
             if (Main.hardMode && spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(100)) return 1;
             if (Main.hardMode && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && !spawnInfo.Player.ZoneBeach && !Main.dayTime && Main.rand.NextBool(200)) return 1;

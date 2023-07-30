@@ -15,6 +15,7 @@ using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp
 {
@@ -124,6 +125,9 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            BlackKnightHallowed,
+            QueenSlimeEvent,
+            GreatRedKnightTropicalIsland,
             GreatRedKnightInDesert,
             Deerclops,
             SkeletronHidden,
@@ -202,10 +206,22 @@ namespace tsorcRevamp
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
 
+            //BLACK KNIGHT IN HALLOWED CAVES
+            ScriptedEvent BlackKnightHallowed = new ScriptedEvent(new Vector2(7454, 1413), 40, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, false, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
+            BlackKnightHallowed.SetCustomStats(8000, 20, 80, 5000);
+
+            //QUEEN SLIME
+            ScriptedEvent QueenSlimeEvent = new ScriptedEvent(new Vector2(7059, 1289), 25, NPCID.QueenSlimeBoss, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.QueenSlime"), Color.Blue, false);
+            
             //GREAT RED KNIGHT IN DESERT
-            ScriptedEvent GreatRedKnightInDesert = new ScriptedEvent(new Vector2(2229, 856), 100, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.GreatRedKnightInDesert"), Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent GreatRedKnightInDesert = new ScriptedEvent(new Vector2(2229, 856), 100, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(), DustID.Shadowflame, true, false, true, LangUtils.GetTextValue("Events.GreatRedKnightInvasion"), Color.Red, false, SuperHardModeCustomCondition);
             GreatRedKnightInDesert.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<Humanity>() }, new List<int>() { 2, 2, 2 });
-            GreatRedKnightInDesert.SetCustomStats(null, null, null, 30500);
+            GreatRedKnightInDesert.SetCustomStats(null, null, null, 20000);
+
+            //GREAT RED KNIGHT ON FLOATING TROPICAL ISLAND
+            ScriptedEvent GreatRedKnightTropicalIsland = new ScriptedEvent(new Vector2(7874, 390), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(), DustID.Shadowflame, true, false, true, LangUtils.GetTextValue("Events.GreatRedKnightInvasion"), Color.Red, false, null, SetNightCustomAction);
+            GreatRedKnightInDesert.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion, ModContent.ItemType<HolyWarElixir>() }, new List<int>() { 5, 3, 1 });
+            GreatRedKnightInDesert.SetCustomStats(null, null, null, 20000);
 
             //Deerclops
             ScriptedEvent DeerclopsEvent = new ScriptedEvent(new Vector2(4043, 143), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.Deerclops"), Color.Blue, false, null, SetNightCustomAction);
@@ -345,8 +361,8 @@ namespace tsorcRevamp
             //ArtoriasEvent.SetCustomDrops(new List<int>() { ItemID.RodofDiscord, ModContent.ItemType<Items.DestructionElement>() }, new List<int>() { 1, 4 });
 
             //BLACK KNIGHT IN FORGOTTEN CITY
-            ScriptedEvent BlackKnightCity = new ScriptedEvent(new Vector2(4508, 1745), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, true, default, BlackKnightCustomAction);
-            BlackKnightCity.SetCustomStats(1750, 10, 60, 1555);
+            ScriptedEvent BlackKnightCity = new ScriptedEvent(new Vector2(4508, 1745), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
+            BlackKnightCity.SetCustomStats(3000, 10, 60, 3500);
 
             //ATTRAIDIES THE SORROW EVENT
             ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, true, true, LangUtils.GetTextValue("Events.SorrowAttraidies"), Color.OrangeRed, false, AttraidiesTheSorrowCondition);
@@ -460,7 +476,11 @@ namespace tsorcRevamp
 
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
-
+                
+                
+                {ScriptedEventType.QueenSlimeEvent, QueenSlimeEvent},
+                {ScriptedEventType.BlackKnightHallowed, BlackKnightHallowed},
+                {ScriptedEventType.GreatRedKnightTropicalIsland, GreatRedKnightTropicalIsland},
                 {ScriptedEventType.GreatRedKnightInDesert, GreatRedKnightInDesert},
                 {ScriptedEventType.Deerclops, DeerclopsEvent},
                 {ScriptedEventType.OldManEvent, OldManEvent},
@@ -862,7 +882,7 @@ namespace tsorcRevamp
                 //Note: If you can't find the damages for a NPC, the variable that controls the damage for its projectile might not be public (read: probably isn't).
                 //It's an easy fix though: Go to the file for the NPC you want to change and find the damage variables for the projectiles you want to modify (in this case spearDamage) and put 'public' in front of them.
                 //Then you'll be able to access them from here and set them to anything!
-                ourKnight.redKnightsSpearDamage = 15;
+                //ourKnight.redKnightsSpearDamage = 20;
             }
             return EventActionStatus.EndAction;
         }
@@ -885,7 +905,9 @@ namespace tsorcRevamp
             if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
                 NPCs.Enemies.RedKnight ourRedKnightPain = (NPCs.Enemies.RedKnight)thisEvent.eventNPCs[0].npc.ModNPC;
-                ourRedKnightPain.redKnightsSpearDamage = 26; //was 20
+                ourRedKnightPain.redKnightsSpearDamage = 18;
+                ourRedKnightPain.redMagicDamage = 14;
+                ourRedKnightPain.redKnightsGreatDamage = 16;
             }
             return EventActionStatus.EndAction;
         }
@@ -896,8 +918,9 @@ namespace tsorcRevamp
             if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
                 NPCs.Enemies.RedKnight ourRedKnight = (NPCs.Enemies.RedKnight)thisEvent.eventNPCs[0].npc.ModNPC;
-                ourRedKnight.redKnightsSpearDamage = 22; //was 19
-                ourRedKnight.redMagicDamage = 22; //was 19
+                ourRedKnight.redKnightsSpearDamage = 15; 
+                ourRedKnight.redMagicDamage = 11;
+                ourRedKnight.redKnightsGreatDamage = 13;
             }
             return EventActionStatus.EndAction;
         }

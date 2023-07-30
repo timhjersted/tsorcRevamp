@@ -205,7 +205,8 @@ Mods: {
 		}
 
 		Events: {
-			GreatRedKnightInDesert: Your world has been invaded by a Great Red Knight...
+		    QueenSlime: Queen Slime emerges from her Hallowed cave!
+			GreatRedKnightInvasion: A Great Red Knight has invaded your world!
 			Deerclops: The Ancenstral Spirit has been disturbed!
 			SkeletronHidden: Skeletron, Lord of Graves, has awoken!
 			EoC: The Eye sees you!
@@ -223,8 +224,8 @@ Mods: {
 			KingSlime: King Slime appears!
 			HeroOfLumelia: "'You killed my brother, Red! ... You've unleashed hell upon this world!' A hero from Lumelia has come seeking justice... "
 			FireLurker: A cursed Fire Lurker appears...
-			RedKnight1: A Red Knight appears...
-			RedKnight2: A Red Knight appears...
+			RedKnight1: A Red Knight has invaded your world!
+			RedKnight2: A Red Knight has invaded your world!
 			JungleWyvern: You have disturbed the Ancient Wyvern of the Forgotten City!
 			SeathTheScaleless: Seath the Scaleless rises!
 			WyvernMage: You impress me Red! But this is where your journey ends...
