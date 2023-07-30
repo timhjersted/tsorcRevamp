@@ -409,8 +409,8 @@ Mods: {
 				GoldenGi: "{$CommonItemTooltip.Melee.FlatDmg}"
 				ManaCost1: "消耗 "
 				ManaCost2: " 法力以发射投掷物"
-				AmmoReservationPotion: "{$IncreasedRangedCriticalDamage}"
-				AmmoBox: 根据弹药基础伤害来增加弹药暴击几率
+				AmmoReservationPotion: 增加远程暴击伤害
+				AmmoBox: 以弹药基础伤害的一半来增加弹药暴击几率
 				HerosShirt:
 					'''
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.MaxStamina@1}
@@ -1168,8 +1168,8 @@ Mods: {
 					将使用者的魔力集中在一个护盾
 					{$CommonItemTooltip.DRStat}, 每次生效会消耗 {1} 魔力
 					触发后一段时间内抑制魔力的自然恢复与人为恢复，({$CommonItemTooltip.SecondDuration@2})
-					[c/ffbf00:通常对法师以外的职业比较有效]
-					乘算减少 {3}% 法、召唤、远程伤害
+					[c/ffbf00:对法师以外的职业比较有效]
+					乘算减少 {3}% 魔法、召唤、远程伤害
 					'''
 			}
 
@@ -1387,9 +1387,9 @@ Mods: {
 				Tooltip:
 					'''
 					属于一个无名骑士的独特盾牌
-					[c/ffbf00:不攻击时 {$CommonItemTooltip.DRStat} ，攻击时只抵挡 {2}% ，每次抵挡会消耗 {3} 耐力]
-					{$CommonItemTooltip.NoKnockback} 并免疫 {$CommonItemTooltip.OnFire} ，但会减少 {4}% 的耐力再生
-					在体力不足时 {$CommonItemTooltip.DRStat@1}
+					[c/ffbf00:不攻击时{$CommonItemTooltip.DRStat}，攻击时只减少 {2}%，每次抵挡伤害会消耗 {3} 耐力]
+					{$CommonItemTooltip.NoKnockback}并免疫{$CommonItemTooltip.OnFire}，但会减少{4}%的耐力再生
+					在体力不足时{$CommonItemTooltip.DRStat@1}
 					'''
 			}
 
@@ -1461,7 +1461,7 @@ Mods: {
 				DisplayName: 冰封的神话宙斯盾
 				Tooltip:
 					'''
-					继承黑曜石护盾冰冻护盾和神话壁垒的效果
+					继承黑曜石护盾、冰冻护盾和神话壁垒的效果
 					同时免疫冰冻和石化
 					稍微减慢翻滚时的速度
 					翻滚经过敌人时有概率对其施加本饰品所免疫的状态效果
@@ -2700,7 +2700,7 @@ Mods: {
 					{$CommonItemTooltip.IncreasesMaxManaBy}
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					{$CommonItemTooltip.Magic.ManaRegen@2}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.ObsidianShield} 和岩浆
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.ObsidianShield}、降低岩浆的伤害
 					延长水下呼吸时间，获得游泳和液体上行走能力
 					{$CommonItemTooltip.PercentIncreasedCritChance@3}
 					'''
@@ -3515,7 +3515,7 @@ Mods: {
 					'''
 					一块发光的恶魔碎片，渗出古老的能量
 					八分之一。 [c/00ffd4:在底部有一段文字：]
-					"[c/ffbf00:在一座断裂的、熟悉的桥下，你会找到我]"
+					"[c/ffbf00:在阿拉齐姆双峰之上，我们凝视上天，下观沟壑。我们是远古者的眼睛]"
 					'''
 			}
 
@@ -3526,7 +3526,8 @@ Mods: {
 					一块纯净的矿物打磨而成
 					八分之一
 					[c/00ffd4:其中包含一个谜语：] 
-					"[c/ffbf00:在阿拉齐姆双峰之上，我们凝视上天，下观沟壑。我们是远古者的眼睛]"
+					"[c/ffbf00:有两条路通向入口。 在沙漠遗迹之下, 赛里斯开启了道路]
+					"[c/ffbf00:在熟悉的紫光之下，叶绿之门开启了道路]"
 					'''
 			}
 
@@ -3558,8 +3559,7 @@ Mods: {
 					'''
 					三片含氧碳酸盐碎片
 					三块加起来也是八分之一，[c/00ffd4:它的侧面有一条线索：]
-					"[c/ffbf00:有两条路通向入口。 在沙漠遗迹之下, 赛里斯开启了道路]
-					"[c/ffbf00:在熟悉的紫光之下，叶绿之门开启了道路]"
+					"[c/ffbf00:在一座断裂的、熟悉的桥下，你会找到我]"
 					'''
 			}
 
@@ -3661,7 +3661,7 @@ Mods: {
 					钻石的尖端已经注入了来自天人的魔法
 					因此，它不会对生物造成伤害，但它的尖端可以轻松打破方块
 					令人难以置信的轻松......在事实上，它在你手中移动得如此之快
-					你几乎看不到它，但使用它却感觉毫不费力...
+					你几乎看不到它，但使用它却感觉毫不费力...躲闪备忘录
 					'''
 			}
 
@@ -4280,7 +4280,7 @@ Mods: {
 			PermanentArcheryPotion: {
 				DisplayName: 永久箭术药水
 				Tooltip: ""
-				BuffName: Archery
+				BuffName: 箭术
 			}
 
 			PermanentArmorDrug: {
@@ -4453,7 +4453,7 @@ Mods: {
 			}
 
 			PermanentInvisibilityPotion: {
-				DisplayName: Permanent 永久隐身药水
+				DisplayName: 永久隐身药水
 				Tooltip: ""
 				BuffName: 隐身
 			}
@@ -6872,7 +6872,7 @@ Mods: {
 					增大/减小半径的效果取决于玩家面对的方向
 					在不持有遥控器的情况下按 特殊能力键 可以激活涡轮增压
 					这会增加星际飞船的伤害和移动速度
-					涡轮增压会消耗你的魔力，在受到魔力病病的影响时无法激活
+					涡轮增压会消耗你的魔力，在受到魔力病减益时无法激活
 					施加 大吃一惊 增益, 由你暴击率的一小部分给予召唤物暴击率
 					{$CommonItemTooltip.Summon.TagDmgMult}
 					“调整 ASOL-13 的轨迹！”
@@ -8244,7 +8244,7 @@ Mods: {
 			ObscureShot.DisplayName: 隐晦一击
 			PhasedMatterBlast.DisplayName: 相位物质爆破
 			PoisonSmog.DisplayName: 毒雾
-			PoisonTrail.DisplayName: 毒雾
+			PoisonTrail.DisplayName: 剧毒之环
 			ShadowOrb.DisplayName: 影球
 			SolarBeam.DisplayName: 激光
 			SolarBlast.DisplayName: 太阳风暴
