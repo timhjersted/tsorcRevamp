@@ -25,6 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.autoReuse = true;
             Item.useAnimation = 27;
             Item.useTime = 27;
+            Item.mana = 30;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = 1000000;
