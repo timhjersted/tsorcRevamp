@@ -43,10 +43,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.aiStyle = 3;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.scale = 1.3f;
+            NPC.scale = 1.1f;
             Music = 12;
-            NPC.damage = 93; //was 295, 53 too low when melee is the target audience
-            NPC.defense = 140;
+            NPC.damage = 95; //was 295, 53 too low when melee is the target audience
+            NPC.defense = 160;
             NPC.lifeMax = 435000;
             NPC.knockBackResist = 0.0f;
             NPC.boss = true;
@@ -135,13 +135,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int lifeTimer = 0;
         int swordTimer = 0;
 
+        bool announcedDebuffs = false;
+
         #region debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(BuffID.OnFire, 10 * 60, false);
-            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 20 * 60, false); //lose defense on hit
-            target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 20 * 60, false); //slowed life regen
-            target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 20 * 60, false); //you lose knockback resistance
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 60 * 60, false); //lose defense on hit
+            target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 30 * 60, false); //slowed life regen
+            target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30 * 60, false); //you lose knockback resistance
             if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.Weak, 10 * 60, false); 
@@ -155,6 +157,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+            InflictDebuffs();
+
             int num58;
 
             if(swordDead && swordTimer < 1)
@@ -185,7 +189,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 holdTimer--;
             }
 
-            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 1150)
+            UsefulFunctions.DustRing(NPC.Center, 1000, DustID.BlueTorch, 20, 1f);
+            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 1000)
             {
                 NPC.defense = 9999;
                 if (holdTimer <= 0)
@@ -195,7 +200,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 else
                 {
-                    NPC.defense = 160;
+                    if(swordDead)
+                    {
+                        NPC.defense = 130;
+                    }
+                    else
+                    {
+                        NPC.defense = 160;
+                    }
+                    
                 }
             }
             
@@ -220,19 +233,53 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Player player = Main.player[NPC.target];
 
             //PROXIMITY-BASED DEBUFFS
-            if (NPC.Distance(player.Center) < 600)
+            if (NPC.Distance(player.Center) < 2000)
             {
                 player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);   
             }
 
+            UsefulFunctions.DustRing(NPC.Center, 2000, DustID.RedsWingsRun, 1, 1f);
+            UsefulFunctions.DustRing(NPC.Center, 2000, DustID.Torch, 10, 1f);
+            UsefulFunctions.DustRing(NPC.Center, 2000, DustID.RedTorch, 5, 2f);
+            UsefulFunctions.DustRing(NPC.Center, 2000, DustID.Firefly, 100, -3f);
             //near instant death when player runs too far away
-            if (NPC.Distance(player.Center) > 4600)
+            if (NPC.Distance(player.Center) > 2000) //was 4600
             {
-                player.AddBuff(ModContent.BuffType<CowardsAffliction>(), 30, false);
-                
+                player.AddBuff(ModContent.BuffType<CowardsAffliction>(), 1 * 30, false);
+
+                if (!announcedDebuffs)
+                {
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Coward"), 235, 199, 23);//deep yellow
+                    announcedDebuffs = true;
+                }
             }
-            //add later: 
-            bool tooEarly = !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Artorias>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Seath.SeathTheScalelessHead>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<EarthFiendLich>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<FireFiendMarilith>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WaterFiendKraken>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Blight>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<GhostWyvernMage.WyvernMageShadow>()));
+
+
+            void InflictDebuffs()
+            {
+                
+
+                // Check every player in the game to see if they are in range
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player player = Main.player[i];
+
+                    // Storing the distance means we don't have to re-calculate it multiple times
+                    float distance = NPC.Distance(player.Center);
+
+                    // Proximity Debuffs
+                    if (NPC.Distance(player.Center) < 700)
+                    {
+                        player.AddBuff(ModContent.BuffType<TornWings>(), 1 * 60, false);
+                        player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 1 * 60, false);
+                    }
+
+                   
+                }
+            }
+
+
+                bool tooEarly = !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Artorias>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Seath.SeathTheScalelessHead>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<EarthFiendLich>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<FireFiendMarilith>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WaterFiendKraken>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Blight>())) || !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<GhostWyvernMage.WyvernMageShadow>()));
             if (tooEarly)
             {
                 
@@ -275,7 +322,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.localAI[1] = 1f;
 
             }
-            if (NPC.justHit && NPC.Distance(player.Center) > 151 && NPC.Distance(player.Center) < 349 && Main.rand.NextBool(2))
+            if (NPC.justHit && NPC.Distance(player.Center) > 151 && NPC.Distance(player.Center) < 349 && Main.rand.NextBool(4))
             {
                 customAi1 = 1f;
 
@@ -1414,9 +1461,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (swordDead)
                     {
                         
-                        NPC.defense = 140; //Speed things up a bit
+                        NPC.defense = 130; //Speed things up a bit
                         baseCooldown = 180; //was 90
 
+                        /*
                         if ((customspawn2 < 1) && Main.rand.NextBool(1000))
                         {
                             int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(), 0);
@@ -1429,6 +1477,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
                             }
                         }
+                        */
                     }
 
                     //Perform attacks
@@ -1448,7 +1497,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (moveTimer < baseCooldown)
                     {
                         //NPC.ai[3] = 0; //Never get bored
-                        tsorcRevampAIs.FighterAI(NPC, 2f, canTeleport: true, enragePercent: 0.2f, enrageTopSpeed: 3);
+                        tsorcRevampAIs.FighterAI(NPC, 2f, canTeleport: false, enragePercent: 0.3f, enrageTopSpeed: 3);
                         //tsorcRevampAIs.LeapAtPlayer(NPC, 7, 4, 1.5f, 128);
                     }
 
@@ -1771,7 +1820,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (swordDead)
             {
                 modifiers.FinalDamage *= 1.2f;
-                herosArrowDamage = (int)(herosArrowDamage * 1.25f);
+                herosArrowDamage = (int)(herosArrowDamage * 1.3f);
             }
         }
 
@@ -1779,8 +1828,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (swordDead)
             {
-                modifiers.FinalDamage *= 1.15f;
-                herosArrowDamage = (int)(herosArrowDamage * 1.25f);
+                modifiers.FinalDamage *= 1.2f;
+                herosArrowDamage = (int)(herosArrowDamage * 1.3f);
             }
 
             if (projectile.minion)

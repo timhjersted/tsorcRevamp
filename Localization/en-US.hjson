@@ -8851,11 +8851,12 @@ Mods: {
 				SwordShattered: Gwyn's sword has shattered! Gwyn's defenses have been weakened!
 				RainOfDeath: Gwyn's rain of death has strengthened!
 				Fury: Gwyn's fury increases!
-				Protected: Gwyn is protected by the soul of cinder -- you're too far away!
+				Protected: Gwyn is protected by the Soul of Cinder: You're too far away!
 				RainsDeath: Gwyn rains down death!
 				TidalWave: Gwyn summons a tidal wave of death!
 				Challenge: Face me!
 				GiveUp: Just let go, Red. Submit to your fate!
+				Coward: The Soul of Cinder burns the flesh of cowards: You're too far away!
 			}
 
 			SoulOfCinder: {

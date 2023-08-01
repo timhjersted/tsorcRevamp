@@ -125,6 +125,7 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            RedKnightOolicileForest,
             BlackKnightHallowed,
             QueenSlimeEvent,
             GreatRedKnightTropicalIsland,
@@ -205,6 +206,10 @@ namespace tsorcRevamp
 
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
+
+            //RED KNIGHT IN OOLICILE FOREST
+            ScriptedEvent RedKnightOolicileForest = new ScriptedEvent(new Vector2(5596, 926), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.RedKnight2"), Color.Purple, false, default, RedKnightMountainCustomAction);
+            RedKnightOolicileForest.SetCustomStats(1600, 12, 60, 1500);
 
             //BLACK KNIGHT IN HALLOWED CAVES
             ScriptedEvent BlackKnightHallowed = new ScriptedEvent(new Vector2(7454, 1413), 40, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, false, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
@@ -476,8 +481,9 @@ namespace tsorcRevamp
 
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
+
                 
-                
+                {ScriptedEventType.RedKnightOolicileForest, RedKnightOolicileForest},
                 {ScriptedEventType.QueenSlimeEvent, QueenSlimeEvent},
                 {ScriptedEventType.BlackKnightHallowed, BlackKnightHallowed},
                 {ScriptedEventType.GreatRedKnightTropicalIsland, GreatRedKnightTropicalIsland},
@@ -905,9 +911,9 @@ namespace tsorcRevamp
             if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
                 NPCs.Enemies.RedKnight ourRedKnightPain = (NPCs.Enemies.RedKnight)thisEvent.eventNPCs[0].npc.ModNPC;
-                ourRedKnightPain.redKnightsSpearDamage = 18;
-                ourRedKnightPain.redMagicDamage = 14;
-                ourRedKnightPain.redKnightsGreatDamage = 16;
+                ourRedKnightPain.redKnightsSpearDamage = 17;
+                ourRedKnightPain.redMagicDamage = 13;
+                ourRedKnightPain.redKnightsGreatDamage = 15;
             }
             return EventActionStatus.EndAction;
         }
