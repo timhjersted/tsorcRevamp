@@ -8799,7 +8799,7 @@ Mods: {
 			Blight: {
 				DisplayName: 枯萎
 				DespawnHandler: 命中注定难过此劫！
-				OutofRange: 枯萎把自己包裹在无法穿透的光线中——你离它太远了！
+				OutOfRange: 枯萎把自己包裹在无法穿透的光线中——你离它太远了！
 			}
 
 			Chaos: {

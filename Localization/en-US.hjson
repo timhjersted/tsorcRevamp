@@ -8798,7 +8798,7 @@ Mods: {
 			Blight: {
 				DisplayName: Blight
 				DespawnHandler: Inevitable
-				OutofRange: Blight encloses itself in impenetrable light -- you're too far away!
+				OutOfRange: Blight encloses itself in impenetrable light -- you're too far away!
 			}
 
 			Chaos: {
