@@ -205,7 +205,8 @@ Mods: {
 		}
 
 		Events: {
-			GreatRedKnightInDesert: 你的世界被一位卓越赭骑士入侵了...
+			QueenSlime: 史莱姆女皇从她的神圣洞穴中现身！
+			GreatRedKnightInvasion: 一位卓越赭骑士入侵了你的世界！
 			Deerclops: 你惊动了远古巨鹿！
 			SkeletronHidden: 坟墓之主骷髅王已苏醒！
 			EoC: 克苏鲁之眼盯上你了！
@@ -223,8 +224,8 @@ Mods: {
 			KingSlime: 史莱姆王出现了！
 			HeroOfLumelia: “你杀了我的兄弟向导，瑞德！...你在这个世界上释放了地狱深处的灾难！”鲁米利亚的一位英雄来寻求正义...
 			FireLurker: 一个被诅咒的火焰潜伏者出现了...
-			RedKnight1: 一位赭骑士出现了...
-			RedKnight2: 一位红骑士出现了...
+			RedKnight1: 你的世界被一位红骑士入侵了...
+			RedKnight2: 你的世界被一位红骑士入侵了...
 			JungleWyvern: 你打搅了失落之城的远古飞龙！
 			SeathTheScaleless: 冰龙希斯已苏醒！
 			WyvernMage: 你给我留下了深刻的印象，瑞德！但这将是你旅程的终点！
@@ -1219,7 +1220,7 @@ Mods: {
 				DisplayName: 清晰之戒
 				Tooltip:
 					'''
-					免疫 {$CommonItemTooltip.OnFire}、燃烧、缓慢、 {$CommonItemTooltip.CursedInferno}, {$CommonItemTooltip.Ichor}, 
+					免疫 {$CommonItemTooltip.OnFire}、燃烧、冷冻、{$CommonItemTooltip.CursedInferno}、{$CommonItemTooltip.Ichor}
 					免疫重力颠倒、流血、中毒和击退
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.LifeRegen@1}
@@ -1462,7 +1463,7 @@ Mods: {
 				Tooltip:
 					'''
 					继承黑曜石护盾、冰冻护盾和神话壁垒的效果
-					同时免疫冰冻和石化
+					同时免疫冷冻和石化
 					稍微减慢翻滚时的速度
 					翻滚经过敌人时有概率对其施加本饰品所免疫的状态效果
 					'''
@@ -1490,7 +1491,7 @@ Mods: {
 					'''
 					亚尔特留斯曾佩戴的戒指
 					曾拥有着这个世界所无法承受的力量
-					[c/ffbf00:现在，它可以使佩戴者免疫诅咒、黑视与冻结]
+					[c/ffbf00:现在，它可以使佩戴者免疫诅咒、黑视失明与冰冻]
 					'''
 			}
 
@@ -3620,7 +3621,7 @@ Mods: {
 					如果有 {7} 个或更多的鞭子减益同时生效，伤害减少量会固定为 {8}%  
 					鞭子范围减少 {9}%
 					[c/ca1e00:此模式适用于有红云物语模组游玩经验的玩家]
-					[c/ca1e00:第一次游玩时【不】推荐]
+					[c/ca1e00:第一次游玩时 【不】 推荐]
 					'''
 				Enabled: 你成为了被诅咒者
 				Disabled: 诅咒已被移除
@@ -5115,7 +5116,7 @@ Mods: {
 
 			LampTome: {
 				DisplayName: 灯塔
-				Tooltip: 一本失传的能治愈失明的书
+				Tooltip: 一本失传的能治愈黑视失明的书
 			}
 
 			LightOfDawn: {
@@ -7048,8 +7049,8 @@ Mods: {
 				Tooltip:
 					'''
 					全面运作的无人机控制系统
-					在玩家近处使用生成防御无人机
-					在玩家远处使用生成激光无人机
+					在玩家近处使用生成守御战机，阻挡敌人的射弹
+					在玩家远处使用生成陷阵战机，发射刺眼的激光
 					可以召唤足够多的作战无人机，让工程师都自惭形愧
 					'''
 			}
@@ -8850,13 +8851,14 @@ Mods: {
 				DisplayName: 葛温，灰烬帝王
 				DespawnHandler: 你被灰烬帝王打败了...
 				SwordShattered: 葛温的剑已然碎裂！葛温被削弱了！
-				RainOfDeath: 葛温的死亡之雨增强了！
+				RainOfDeath: 葛温的死亡之球增强了！
 				Fury: 葛温怒火中烧！
-				Protected: 葛温受到燃灰之魂的保护——你离得太远了！
-				RainsDeath: 葛温降下死亡@
+				Protected: 葛温受到燃灰之魂的保护:你离得太远了！
+				RainsDeath: 葛温降下死亡之球
 				TidalWave: 葛温召唤了死亡汐漩！
 				Challenge: 面对我！
 				GiveUp: 投降吧，瑞德！接受你的命运！
+				Coward: 燃灰之魂将焚尽懦夫的肉体:你离得太远了！
 			}
 
 			SoulOfCinder: {
