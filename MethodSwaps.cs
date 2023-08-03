@@ -134,6 +134,18 @@ namespace tsorcRevamp
             On_Wiring.Teleport += On_Wiring_Teleport;
 
             //Terraria.On_Main.DrawMenu += On_Main_DrawMenu;
+
+            On_Player.UpdateArmorSets += On_Player_UpdateArmorSets;
+        }
+
+        private static void On_Player_UpdateArmorSets(On_Player.orig_UpdateArmorSets orig, Player self, int i)
+        {
+            if (self.head == 101 && self.body == 66 && self.legs == 55)
+            {
+                self.GetDamage(DamageClass.Magic) += 0.4f;
+                self.GetDamage(DamageClass.Magic) *= 0.6f;
+            }
+            orig(self, i);
         }
 
         private static void On_Wiring_Teleport(On_Wiring.orig_Teleport orig)

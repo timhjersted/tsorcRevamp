@@ -56,6 +56,10 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.useAnimation = 20;
                 item.mana = 25;
             }
+            if (item.type == ItemID.VampireKnives)
+            {
+                item.mana = 35;
+            }
             if (item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand | item.type == ItemID.Starfury)
             {
                 item.mana = ManaBase1;
