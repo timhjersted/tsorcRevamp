@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items
             {
                 if (tsorcRevampWorld.BossAlive)
                 {
-                    Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.UnusableDuringBoos"), Color.Yellow);
+                    Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.UnusableDuringBoss"), Color.Yellow);
                     return false;
                 }
             }
