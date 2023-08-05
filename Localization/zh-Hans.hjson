@@ -9593,6 +9593,7 @@ Mods: {
 			Byakhee.DisplayName: 拜亚基
 			ClericOfSorrow.DisplayName: 哀悼牧师
 			Willowisp.DisplayName: 冰絮
+			// GreatRedThresher.DisplayName: Great Red Thresher
 		}
 
 		Prefixes: {

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -13,40 +14,41 @@ namespace tsorcRevamp.NPCs.Special
     {
 
         NPCDespawnHandler despawnHandler;
-        public int ThisNPC => ModContent.NPCType<NPCs.Special.Faraam>();
+        public int ThisNPC => ModContent.NPCType<Faraam>();
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Faraam");
-            Main.npcFrameCount[NPC.type] = 27; //27 for ???
+            Main.npcFrameCount[NPC.type] = 27;
             NPCID.Sets.TrailCacheLength[NPC.type] = 5; //How many copies of shadow/trail
             NPCID.Sets.TrailingMode[NPC.type] = 0;
+            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
+            {
+                SpecificallyImmuneTo = new int[] {
+                    BuffID.Confused
+                }
+            };
+            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
 
         public override void SetDefaults()
         {
             NPC.npcSlots = 200;
             NPC.knockBackResist = 0.3f;
-            //NPC.boss = true;
+            NPC.boss = true;
             NPC.aiStyle = -1;
-            NPC.height = 55;
-            NPC.width = 40;
+            NPC.height = 40;
+            NPC.width = 20;
             if (NPC.downedBoss1 || NPC.downedBoss2) { NPC.damage = 18; }
             else { NPC.damage = 12; } //Low contact damage, the slashes will be doing the damage
-            if (NPC.downedBoss1 || NPC.downedBoss2) { NPC.lifeMax = 2500; }
-            else { NPC.lifeMax = 1500; }
+            if (NPC.downedBoss1 || NPC.downedBoss2) { NPC.lifeMax = 3500; }
+            else { NPC.lifeMax = 2500; }
             NPC.defense = 8;
             NPC.value = 15000;
             NPC.HitSound = SoundID.NPCHit48;
             NPC.DeathSound = SoundID.NPCDeath58;
             NPC.dontTakeDamageFromHostiles = true;
             NPC.lavaImmune = true;
-            NPC.buffImmune[BuffID.Confused] = true;
-            NPC.buffImmune[BuffID.OnFire] = true;
-            NPC.buffImmune[BuffID.Poisoned] = true;
-            NPC.buffImmune[BuffID.Frostburn] = true;
             despawnHandler = new NPCDespawnHandler(null, Color.Teal, 54);
-
         }
 
 
@@ -541,7 +543,7 @@ namespace tsorcRevamp.NPCs.Special
                     NPC.FaceTarget(); //Face targeted player
                 }
 
-                if (NPC.ai[1] == 120) //When timer is 120
+                if (NPC.ai[1] == 120 && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Faraam>()))) //When timer is 120
                 {
                     //Main.NewText("[c/CCCCCC:???:] Very good, a worthy opponent. Take these, for your trouble", 109, 145, 138); //Send message to chat
                     for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
