@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 25;
             Item.value = PriceByRarity.Green_2;
-            Item.scale = 1.5f;
+            Item.scale = 1.3f;
             Item.shoot = ModContent.ProjectileType<Nothing>();
         }
 

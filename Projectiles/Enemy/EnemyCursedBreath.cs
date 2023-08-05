@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.width = 16;
             Projectile.height = 16;
-            Projectile.alpha = 255;
+            Projectile.alpha = 210;
             Projectile.aiStyle = 8; //8 with 96 AI Style works; with no AIType it rained down 5 streams like a firework, good if launched above player (23 is a orange flame)
             Projectile.timeLeft = 60;
             Projectile.friendly = false;

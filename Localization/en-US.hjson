@@ -205,7 +205,7 @@ Mods: {
 		}
 
 		Events: {
-		    QueenSlime: Queen Slime emerges from her Hallowed cave!
+			QueenSlime: Queen Slime emerges from her Hallowed cave!
 			GreatRedKnightInvasion: A Great Red Knight has invaded your world!
 			Deerclops: The Ancenstral Spirit has been disturbed!
 			SkeletronHidden: Skeletron, Lord of Graves, has awoken!

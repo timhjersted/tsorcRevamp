@@ -16,6 +16,7 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class RedKnight : ModNPC
     {
+        #region Defaults
         public int redKnightsSpearDamage = 20;
         public int redMagicDamage = 15;
         public int redKnightsGreatDamage = 18;       
@@ -25,11 +26,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
         NPCDespawnHandler despawnHandler;
 
-        #region Defaults
+        
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 16;
-            NPCID.Sets.TrailCacheLength[NPC.type] = 3; //How many copies of shadow/trail
+            NPCID.Sets.TrailCacheLength[NPC.type] = 4; //How many copies of shadow/trail
             NPCID.Sets.TrailingMode[NPC.type] = 0;
             NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
             {
@@ -96,15 +97,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode && P.ZoneDungeon && !(P.ZoneCorrupt || P.ZoneCrimson) && Main.rand.NextBool(1200)) return 1;
 
-            if (Main.hardMode && P.ZoneMeteor && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.NextBool(250)) return 1;
+            if (Main.hardMode && P.ZoneMeteor && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.NextBool(1250)) return 1;
 
-            if (Main.hardMode && !Main.dayTime && P.ZoneDungeon && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.NextBool(350)) return 1;
+            if (Main.hardMode && !Main.dayTime && P.ZoneDungeon && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.NextBool(1350)) return 1;
 
-            if (Main.hardMode && P.ZoneUnderworldHeight && Main.rand.NextBool(100)) return 1;
+            if (Main.hardMode && P.ZoneUnderworldHeight && Main.rand.NextBool(1100)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && P.ZoneDungeon && Main.rand.NextBool(5)) return 1; //30 was 1 percent, 10 is 2.76%
+            if (tsorcRevampWorld.SuperHardMode && P.ZoneDungeon && Main.rand.NextBool(500)) return 1; 
 
-            if (tsorcRevampWorld.SuperHardMode && P.ZoneUnderworldHeight && Main.rand.NextBool(3)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && P.ZoneUnderworldHeight && Main.rand.NextBool(300)) return 1;
 
             return 0;
         }

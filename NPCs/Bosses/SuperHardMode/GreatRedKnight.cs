@@ -163,7 +163,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 2, canTeleport: true, enragePercent: 0.5f, enrageTopSpeed: 4);
+            tsorcRevampAIs.FighterAI(NPC, 2, canTeleport: true, enragePercent: 0.5f, enrageTopSpeed: 4, canDodgeroll: true) ;
             tsorcRevampAIs.LeapAtPlayer(NPC, 7, 5, 1.5f, 128);
             
             // Proximity Debuffs

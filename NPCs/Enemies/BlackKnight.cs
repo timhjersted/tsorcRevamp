@@ -121,7 +121,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             Vector2 targetPosition = Vector2.Zero;
 
-            //Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
+            // Block firing and reset cooldowns if it's busy doing other things that it shouldn't be able to shoot during
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             if (globalNPC.TeleportCountdown > 0 || globalNPC.BoredTimer < 0 || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
             {
@@ -179,6 +179,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 // Increment the frames since we stored the player's position
                 framesSinceStoredPosition++;
 
+                #region Spear Attack
                 // Spear Attack: Get targetPosition 
                 if (NPC.ai[1] >= 155f && NPC.ai[1] <= 180f)
                 {
@@ -267,7 +268,9 @@ namespace tsorcRevamp.NPCs.Enemies
                         NPC.netUpdate = true;
                     }
                 }
+                #endregion
 
+                #region Homing Attack
                 // Poison Attack 1 Telegraph 
                 // Part 1: Dusts
                 if (NPC.ai[1] >= 265 && NPC.ai[1] <= 325)
@@ -378,7 +381,9 @@ namespace tsorcRevamp.NPCs.Enemies
                         NPC.netUpdate = true;
                     }
                 }
+                #endregion
 
+                #region Bomb Attack
                 // Code for Bomb Telegraph & Attack: 
                 if (NPC.ai[1] >= 900f && NPC.ai[1] <= 925f)
                 {
@@ -465,6 +470,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         NPC.netUpdate = true;
                     }
                 }
+                #endregion
 
                 #region AI 2 Attacks
                 // Death Attack from Air

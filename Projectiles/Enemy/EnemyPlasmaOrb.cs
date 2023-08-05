@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             //Projectile.type = 645; //killpretendtype
             for (int num36 = 0; num36 < 10; num36++)
             {
-                int dust = Dust.NewDust(Projectile.position, (int)(Projectile.width), (int)(Projectile.height), DustID.Firework_Blue, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, new Color(), 9f);
+                int dust = Dust.NewDust(Projectile.position, (int)(Projectile.width), (int)(Projectile.height), DustID.BlueTorch, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, new Color(), 6f);
                 Main.dust[dust].noGravity = true;
             }
             return true;
