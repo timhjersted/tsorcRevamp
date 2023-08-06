@@ -807,7 +807,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //"Die." - Minos Prime, 2022
             if (deathTimer > 240)
             {
-                UsefulFunctions.BroadcastText(NPC.TypeName + " has been defeated!", Color.Red);
+                UsefulFunctions.BroadcastText(NPC.TypeName + LangUtils.GetTextValue("NPCs.RetinazerV2.Defeated"), Color.Red);
                 if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:RetShockwave"].IsActive())
                 {
                     Filters.Scene["tsorcRevamp:RetShockwave"].Deactivate();

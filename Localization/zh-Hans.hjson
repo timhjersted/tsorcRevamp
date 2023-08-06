@@ -8626,15 +8626,20 @@ Mods: {
 				ClosesIn: 耀翳眼正在逼近...
 				Desperation: 三子魔眼准备将你击败...
 				Light: 神圣的光芒在夜空中聚合纠缠...
+				Transformed: 三子魔眼形态转换...
 			}
 
 			RetinazerV2: {
 				DisplayName: 激光眼 v3.08
 				ClosesIn: 激光眼正在逼近...
 				Warning: 灼热的能量从激光眼的躯壳散发出来...
+				Defeated: 已被击败！
 			}
 
-			SpazmatismV2.DisplayName: 魔焰眼 v3.11
+			SpazmatismV2: {
+				DisplayName: 魔焰眼 v3.11
+				Defeated: 已被击败！
+			}
 
 			Death: {
 				DisplayName: 「死神」

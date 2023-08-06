@@ -12,6 +12,7 @@ using Terraria.Audio;
 using System.IO;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Utilities;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items;
@@ -672,7 +673,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (deathTimer > 240)
             {
-                UsefulFunctions.BroadcastText(NPC.TypeName + " has been defeated!", Color.GreenYellow);
+                UsefulFunctions.BroadcastText(NPC.TypeName + LangUtils.GetTextValue("NPCs.SpazmatismV2.Defeated"), Color.GreenYellow);
                 if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:SpazShockwave"].IsActive())
                 {
                     Filters.Scene["tsorcRevamp:SpazShockwave"].Deactivate();

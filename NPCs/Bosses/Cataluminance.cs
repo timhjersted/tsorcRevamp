@@ -796,7 +796,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (transformationTimer > 240)
             {
-                UsefulFunctions.BroadcastText("The Triad has transformed...", Color.DeepPink);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Cataluminance.Transformed"), Color.DeepPink);
                 UsefulFunctions.SimpleGore(NPC, "Cataluminance_Gore_1");
                 transformed = true;
             }

@@ -8624,15 +8624,20 @@ Mods: {
 				ClosesIn: Cataluminance Closes In...
 				Desperation: The Triad prepares to take you down with them...
 				Light: Hallowed light begins to rip through the air...
+				Transformed: The Triad has transformed...
 			}
 
 			RetinazerV2: {
 				DisplayName: Retinazer v3.08
 				ClosesIn: Retinazer Closes In...
 				Warning: Scorching heat radiates from Retinazer's hull...
+				Defeated: " has been defeated!"
 			}
 
-			SpazmatismV2.DisplayName: Spazmatism v3.11
+			SpazmatismV2: {
+				DisplayName: Spazmatism v3.11
+				Defeated: " has been defeated!"
+			}
 
 			Death: {
 				DisplayName: Death
