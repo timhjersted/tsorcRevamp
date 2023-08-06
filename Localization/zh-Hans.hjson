@@ -286,7 +286,7 @@ Mods: {
 			StopEditMarkers: 点击以停止修改标记。
 			ClickToHide: 点这里隐藏
 			ClickToShow: "点这里显示 "
-			UpdateMusic: "正在更新红云物语音乐包: "
+			UpdateMusic: "正在更新红云物语音乐包(也可在QQ群645748667文件中下载): "
 			GetMusic: 点击这里以下载红云物语音乐包！无法下载的在QQ群645748667文件中下载。
 			MusicNewUpdate: 音乐包更新可用，点击这里以更新 (会重启游戏！)
 			MusicFail: 音乐包下载失败，请加QQ群645748667文件中下载。
@@ -4865,7 +4865,7 @@ Mods: {
 			}
 
 			CrystalMagicWeapon: {
-				DisplayName: 水晶魔兵灌注
+				DisplayName: 璀璨魔兵灌注
 				Tooltip:
 					'''
 					用水晶魔法灌注近战武器
@@ -5052,7 +5052,7 @@ Mods: {
 			}
 
 			GreatMagicWeapon: {
-				DisplayName: 传奇魔兵灌注
+				DisplayName: 卓越魔兵灌注
 				Tooltip:
 					'''
 					用强力魔法灌注近战武器
@@ -6257,7 +6257,7 @@ Mods: {
 			}
 
 			PeculiarSphere: {
-				DisplayName: 异常球
+				DisplayName: 魔法异常球
 				Tooltip: 召唤一个友好的猫头鹰弓箭手为你战斗
 			}
 
@@ -6319,8 +6319,8 @@ Mods: {
 				DisplayName: 水晶双截棍
 				Tooltip:
 					'''
-					攻击敌人会施加15s水晶标记。
-					5s后提高自身防御或敌人受到的伤害。
+					攻击敌人会施加15秒水晶标记。
+					5秒后提高自身防御或敌人受到的伤害。
 					标记期间对敌人造成（本鞭子以外）伤害会减少敌人的易伤状态并提高自己的防御。
 					对敌人增伤从25%降到0%，自己的防御从0增加到15。
 					“进攻才是最好的防御，又或恰恰相反？”
@@ -6394,10 +6394,10 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.SummonTagDamage}
-					击中敌人会产生北极星，它的伤害是这个鞭子伤害的 {1}% 
+					击中敌人会产生北极星，它的伤害是这个鞭子伤害的 {1}%
 					北极星会停留在你的光标上，用寒冷的魔法打击敌人
 					被魔法击中的敌人在被仆从击中时也会被北极星攻击
-					这些星星的伤害为鞭子伤害的 {2} 
+					这些星星的伤害为鞭子伤害的 {2}%
 					你的召唤物会集中攻击被北极星标记的敌人
 					'''
 			}
@@ -6850,7 +6850,7 @@ Mods: {
 			}
 
 			ScorchingPoint: {
-				DisplayName: 灼热火球
+				DisplayName: 灼热焦点
 				Tooltip:
 					'''
 					召唤火球围绕你旋转，并以敌人的方式伤害敌人
@@ -6874,7 +6874,7 @@ Mods: {
 					在不持有遥控器的情况下按 特殊能力键 可以激活涡轮增压
 					这会增加星际飞船的伤害和移动速度
 					涡轮增压会消耗你的魔力，在受到魔力病减益时无法激活
-					施加 大吃一惊 增益, 由你暴击率的一小部分给予召唤物暴击率
+					施加 出其不意 增益, 由你暴击率的一小部分给予召唤物暴击率
 					{$CommonItemTooltip.Summon.TagDmgMult}
 					“调整 ASOL-13 的轨迹！”
 					'''
@@ -7740,17 +7740,17 @@ Mods: {
 			}
 
 			ScorchingDebuff: {
-				DisplayName: 炽热减益
+				DisplayName: 炽热
 				Description: ""
 			}
 
 			ShockedDebuff: {
-				DisplayName: 大吃一惊减益
+				DisplayName: 出其不意
 				Description: ""
 			}
 
 			SunburnDebuff: {
-				DisplayName: 日照减益
+				DisplayName: 日照
 				Description: ""
 			}
 
@@ -8224,9 +8224,9 @@ Mods: {
 			MediumWeaponSlash.DisplayName: 中型武器斩击
 			MediumWeaponSlashCrimson.DisplayName: 绯红的中型武器突刺
 			MediumWeaponSlashFire.DisplayName: 中型武器斩击火光
-			MiracleSprouter.DisplayName: 奇迹之源
-			MiracleVines.DisplayName: 奇迹之藤
-			MiracleVinesTrail.DisplayName: 奇迹之藤蔓路
+			MiracleSprouter.DisplayName: 神奇之藤
+			MiracleVines.DisplayName: 神奇之藤
+			MiracleVinesTrail.DisplayName: 神奇之藤
 			ObscureSeeker.DisplayName: 潮涌
 			CrazedOrb.DisplayName: 脉冲
 			CrazyOrb.DisplayName: 脉冲
@@ -8543,7 +8543,7 @@ Mods: {
 			NightbringerSpin.DisplayName: 夜之使者
 			NightbringerDashHitbox.DisplayName: 夜之使者
 			NightbringerFirewall.DisplayName: 夜之使者屏障
-			HomingMissileTrail.DisplayName: 追踪导弹轨迹
+			HomingMissileTrail.DisplayName: 旧日机械支配者的追踪导弹
 			ExplosionFlash.DisplayName: 爆炸闪光
 			FriendlyIonBomb.DisplayName: 离子炸弹
 			PhotonicDownpourProjectile.DisplayName: 光子陷阵战机
@@ -8649,8 +8649,8 @@ Mods: {
 			PrimeV2.DisplayName: 旧日机械支配者 V2
 			PrimeWelder.DisplayName: 旧日机械支配者的焊接核心
 			HullBreachMissile.DisplayName: 穿甲导弹
-			PrimeSiege.DisplayName: 旧日机械支配者的围攻核心
-			PrimeIntro.DisplayName: 旧日机械支配者的画线器
+			PrimeSiege.DisplayName: 旧日机械支配者的封锁核心
+			PrimeIntro.DisplayName: 旧日机械支配者的激光划线器
 
 			TheMachine: {
 				DisplayName: 旧日机械支配者
@@ -9592,8 +9592,8 @@ Mods: {
 			HomingMissile.DisplayName: 自瞄导弹
 			Byakhee.DisplayName: 拜亚基
 			ClericOfSorrow.DisplayName: 哀悼牧师
-			Willowisp.DisplayName: 冰絮
-			// GreatRedThresher.DisplayName: Great Red Thresher
+			Willowisp.DisplayName: 飞絮
+			GreatRedThresher.DisplayName: 卓越殷红勾魂使
 		}
 
 		Prefixes: {
@@ -9644,11 +9644,11 @@ Mods: {
 				DisplayName: 红云物语模组设置
 
 				AdventureMode: {
-					Label: 冒险模式：主体
+					Label: 冒险模式：模组游玩基础
 					Tooltip:
 						'''
-						防止破坏和放置大多数块。
-						它还启用了一些模组配套地图的功能。
+						防止破坏和放置大多数物块。
+						它还启用了一些模组配套地图的特性。
 						“如果游戏允许你打破它或放置它，那就是允许的，存在即合理！"
 						如果您正在使用模组配套的地图，请启用此功能！
 						'''

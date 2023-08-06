@@ -23,7 +23,7 @@
   "text": "你找到了萨满长老的房屋。",
   "tileX": 101,
   "tileY": 524,
-  "textWidth": 180,
+  "textWidth": 200,
   "style": 1
 }
 {
@@ -265,10 +265,10 @@
   "style": 1
 }
 {
-  "text": "观察完这扇大门上的栓接系统，你认为必须要触发三个开关才能解锁它。",
+  "text": "观察完这扇大门上的栓接系统， --NEWLINE   --NEWLINE 你认为必须要触发三个开关才能解锁它。",
   "tileX": 1427,
   "tileY": 1363,
-  "textWidth": 530,
+  "textWidth": 300,
   "style": 1
 }
 {
@@ -398,17 +398,17 @@
   "style": 1
 }
 {
-  "text": "Miakoda：\u0022一个曾经活着逃离过这个地方勇敢的灵魂，告诉我有三条隐藏的捷径: --NEWLINE   --NEWLINE 一条在地下湖的湖面；一条在恐怖的花岗岩洞穴 --NEWLINE   --NEWLINE 另一条几乎靠近入口，但不完全如此… --NEWLINE   --NEWLINE 我不确定这是什么意思…\u0022",
+  "text": "Miakoda：\u0022一个曾活着逃离这个地方的勇敢灵魂，告诉我有三条隐藏的捷径: --NEWLINE   --NEWLINE 一条在地下湖表面；一条在恐怖花岗岩洞穴；另一条几乎靠近入口，又不完全如此… --NEWLINE   --NEWLINE 我不确定它提到的这些地点具体在哪里…\u0022",
   "tileX": 1897,
   "tileY": 1121,
   "textWidth": 620,
   "style": 1
 }
 {
-  "text": "Miakoda：\u0022瑞德，我听说过很多关于暗影神庙的传言。 --NEWLINE   --NEWLINE 它以其迷宫般的设计而闻名，它延伸到神庙的大门外，连接着洞穴、一个巨大的地下湖和神圣地形的尖刺裂缝……\u0022",
+  "text": "Miakoda：\u0022瑞德，我听说过很多关于暗影神庙的传言。 --NEWLINE   --NEWLINE 它以其迷宫般的设计而闻名，一路延伸到神庙的范围之外， --NEWLINE   --NEWLINE 连接了岩浆猩红洞穴、巨大的地下湖和神圣地形的尖刺裂缝…\u0022",
   "tileX": 1900,
   "tileY": 1121,
-  "textWidth": 320,
+  "textWidth": 450,
   "style": 1
 }
 {
@@ -496,7 +496,7 @@
   "style": 1
 }
 {
-  "text": "- 你找到了暗影之洞 - --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022叶绿矿大门…沙漠郊区的暗影之洞…\u0022",
+  "text": "- 你找到了暗影之洞 - --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022叶绿矿大门…沙漠边缘的暗影之洞…\u0022",
   "tileX": 2542,
   "tileY": 774,
   "textWidth": 500,
@@ -678,10 +678,10 @@
   "style": 1
 }
 {
-  "text": "就是这样。在这座古老黑暗的巨大的祭坛上，你取出巫毒娃娃，将它高高地举过头顶，准备将它扔到下面的熔岩中。 --NEWLINE   --NEWLINE 注意：如果你的第一次尝试没有成功，请使用向导巫毒娃娃来制作亚伦保护石，并使用该石来重新召唤血肉之墙。",
+  "text": "终于，在这座古老黑暗的巨大祭坛上，你取出巫毒娃娃， --NEWLINE   --NEWLINE 将它高高地举过头顶，准备将它扔到下面的熔岩中。 --NEWLINE   --NEWLINE 注意：如果你的第一次尝试没有成功， --NEWLINE   --NEWLINE 请用向导巫毒娃娃制作亚伦保护石，并用该石重新召唤血肉之墙。",
   "tileX": 3417,
   "tileY": 1830,
-  "textWidth": 820,
+  "textWidth": 480,
   "style": 1
 }
 {
@@ -1014,10 +1014,10 @@
   "style": 1
 }
 {
-  "text": "洞穴可以通过站在入口处 --NEWLINE   --NEWLINE 点击头顶的黑暗进入",
+  "text": "洞穴可以通过站在入口处 --NEWLINE   --NEWLINE 右键点击头顶的黑暗进入",
   "tileX": 4091,
   "tileY": 983,
-  "textWidth": 180,
+  "textWidth": 190,
   "style": 1
 }
 {
@@ -1469,10 +1469,10 @@
   "style": 1
 }
 {
-  "text": "从左边的坑里往下看，Miakoda建议在这里可以使用羽落药水…或者冰魔杖…",
+  "text": "看着左边深坑里的尖刺， --NEWLINE   --NEWLINE Miakoda建议使用羽落药水或者寒冰魔杖…",
   "tileX": 4625,
   "tileY": 1100,
-  "textWidth": 580,
+  "textWidth": 320,
   "style": 1
 }
 {
@@ -1945,10 +1945,10 @@
   "style": 1
 }
 {
-  "text": "大门被封上了，但上面写着…\u0022在熔岩符文附近，你会发现我，淹没在黑暗的光线中。\u0022 --NEWLINE   --NEWLINE \u0022这是某种谜语，\u0022你自言自语道。\u0022一定有一个开关藏在这些废墟的某个地方。\u0022",
+  "text": "大门被封上了…但上面写着： --NEWLINE   --NEWLINE \u0022在熔岩符文附近，你会发现我，淹没在黑暗的光线中。\u0022 --NEWLINE   --NEWLINE \u0022这是某种谜语，\u0022你自言自语道。\u0022一定有一个开关藏在这些废墟的某个地方。\u0022",
   "tileX": 6087,
   "tileY": 1037,
-  "textWidth": 620,
+  "textWidth": 560,
   "style": 1
 }
 {
@@ -2176,10 +2176,10 @@
   "style": 1
 }
 {
-  "text": "你看到远处的山上有一座城堡。 --NEWLINE   --NEWLINE \u0022我打赌我可以用冰魔杖穿过…\u0022",
+  "text": "你看到远处的山上有一座城堡。 --NEWLINE   --NEWLINE \u0022我打赌我可以用寒冰魔杖穿过这里…\u0022",
   "tileX": 6889,
   "tileY": 452,
-  "textWidth": 270,
+  "textWidth": 300,
   "style": 1
 }
 {
@@ -2225,10 +2225,10 @@
   "style": 1
 }
 {
-  "text": "一个声音进入你的脑海，\u0022瑞德，别急着杀我。你对暴力的渴望可以等待。\u0022 --NEWLINE   --NEWLINE 他笑道，\u0022毕竟，这将有充足的时间… --NEWLINE   --NEWLINE 首先，我想让你玩个游戏。我想你会喜欢的。入口就在台阶下面…\u0022",
+  "text": "一个声音进入你的脑海： --NEWLINE   --NEWLINE \u0022瑞德，别急着杀我。你的暴戾之行可以先等等。\u0022 --NEWLINE   --NEWLINE 他笑道，\u0022毕竟，在最终一幕之前你还有充足的时间… --NEWLINE   --NEWLINE 首先，我想让你玩个游戏。我想你会喜欢的，入口就在台阶下面…\u0022",
   "tileX": 7304,
   "tileY": 420,
-  "textWidth": 500,
+  "textWidth": 490,
   "style": 1
 }
 {
@@ -2274,10 +2274,10 @@
   "style": 1
 }
 {
-  "text": "\u0022祝贺你。真是让我印象深刻。很少有人在我的游戏中幸存下来。奖励是你的。 --NEWLINE   --NEWLINE 然而，我已经对这样的游戏感到厌倦， --NEWLINE   --NEWLINE 旅行者，并不是所有的礼物都是看起来那样光鲜亮丽。\u0022",
+  "text": "\u0022祝贺你，真是让我印象深刻。 --NEWLINE   --NEWLINE 很少有人在我的游戏中幸存下来，奖励是你的。 --NEWLINE   --NEWLINE 然而，我已经对这样的游戏感到厌倦， --NEWLINE   --NEWLINE 旅行者，并不是所有的礼物都是看起来那样光鲜亮丽。\u0022",
   "tileX": 7356,
   "tileY": 485,
-  "textWidth": 560,
+  "textWidth": 420,
   "style": 1
 }
 {
@@ -2316,7 +2316,7 @@
   "style": 1
 }
 {
-  "text": "武士剑安放的斗篷现在空空如也…家，现在被遗弃… --NEWLINE   --NEWLINE 从书架上的书来看，这位曾经住在这里的武士似乎是禅宗弟子…",
+  "text": "曾经放置武士剑的架子现在空空如也…家，也被遗弃… --NEWLINE   --NEWLINE 从书架上的书来看，这位曾经住在这里的武士似乎是禅宗弟子…",
   "tileX": 8021,
   "tileY": 1564,
   "textWidth": 460,
@@ -2344,42 +2344,42 @@
   "style": 1
 }
 {
-  "text": "悲伤栖息的洞穴。 --NEWLINE   --NEWLINE 当你走进这里，你听到一个低沉洪亮的声音充斥这个地方， --NEWLINE   --NEWLINE 他说：\u0022你已经走得很远了，我很高兴。\u0022 --NEWLINE   --NEWLINE 突然，阿卓迪斯出现在你面前，在空中盘旋。 --NEWLINE   --NEWLINE 你拿着你的剑，向他冲去，你的剑对着保护他的原力场挥动。",
+  "text": "- 悲伤栖息的洞穴 - --NEWLINE   --NEWLINE 当你走进这里，你听到一个低沉洪亮的声音充斥这个地方， --NEWLINE   --NEWLINE 他说：\u0022你做的很好，瑞德，比我计划的还要顺利，我很高兴。\u0022 --NEWLINE   --NEWLINE 突然，阿卓迪斯出现在你面前，在空中盘旋。 --NEWLINE   --NEWLINE 你拿着剑向他冲去，却无法破开保护着他的原力场。",
   "tileX": 8157,
   "tileY": 1645,
   "textWidth": 450,
   "style": 1
 }
 {
-  "text": "阿卓迪斯发出一声低沉的蔑笑。 --NEWLINE   --NEWLINE \u0022瑞德，\u0022他说，\u0022你必须学会如何品味这一刻。 --NEWLINE   --NEWLINE 是不是这些小小的时刻让生活变得如此美好？ --NEWLINE   --NEWLINE 此外，我真的应该感谢你……\u0022 --NEWLINE   --NEWLINE 瑞德：\u0022你™够了没，说你真正想说的。\u0022",
+  "text": "阿卓迪斯发出一声低沉的蔑笑。 --NEWLINE   --NEWLINE \u0022瑞德，\u0022他说，\u0022你必须学会如何品味这一刻。 --NEWLINE   --NEWLINE 正是你这呆蠢的提线木偶让我的生活有了乐子。 --NEWLINE   --NEWLINE 此外，我真的应该感谢你……\u0022 --NEWLINE   --NEWLINE 瑞德：\u0022你™够了没，说你真正想说的。\u0022",
   "tileX": 8160,
   "tileY": 1645,
   "textWidth": 360,
   "style": 1
 }
 {
-  "text": "\u0022啊，但这是我设计的游戏，你玩得如此娴熟，让我印象深刻。\u0022 --NEWLINE   --NEWLINE 瑞德沉默了。 --NEWLINE   --NEWLINE \u0022你现在还没意识到吗？我想让你杀亚伦。我破坏了他的意志，让他背叛你。 --NEWLINE   --NEWLINE 我给了能杀死他的保护石，并告诉了他想要听到的，这样他就会认为把石头给你是在保护自己。\u0022",
+  "text": "\u0022啊，虽然这个精妙的陷阱诡计是我想出来的， --NEWLINE   --NEWLINE 但你像野猪一样一头钻进来横冲直撞，还真是让我印象深刻。\u0022 --NEWLINE   --NEWLINE 瑞德沉默了。 --NEWLINE   --NEWLINE \u0022你还没醒悟吗？我想让你杀死亚伦。我利用他内心的邪念，让他背叛你。 --NEWLINE   --NEWLINE 我给了他能杀死自己的保护石，并告诉了他想要听到的谎言， --NEWLINE   --NEWLINE 这样他就会认为把石头交到你手上，是在保护自己。\u0022",
   "tileX": 8163,
   "tileY": 1645,
-  "textWidth": 720,
+  "textWidth": 540,
   "style": 1
 }
 {
-  "text": "\u0022但它不只被施了两层魔法，还有第三层。 --NEWLINE   --NEWLINE 第一次是为了创造保护石，我用它来换取你父亲的位置， --NEWLINE 第二次是为了把他的生命绑在石头上， --NEWLINE 第三次是为了释放世界上有史以来最强大的毁灭力量。\u0022",
+  "text": "\u0022保护石不只被施了两次魔法，还有第三此。 --NEWLINE   --NEWLINE 第一次是为了创造保护石，我用它来换取你父亲的位置， --NEWLINE   --NEWLINE 第二次是为了把亚伦的生命绑定在石头上， --NEWLINE   --NEWLINE 第三次是为了释放世界上有史以来最强大的毁灭力量。\u0022",
   "tileX": 8166,
   "tileY": 1645,
-  "textWidth": 440,
+  "textWidth": 420,
   "style": 1
 }
 {
-  "text": "\u0022但我需要你，瑞德。 --NEWLINE   --NEWLINE 你看，腐化的力量在黑暗中诞生， --NEWLINE   --NEWLINE 而包含这支军队的咒语仍然被你父亲的纯洁精神锁住。 --NEWLINE   --NEWLINE 为了打破封印，一个纯洁精神和纯真的战士必须被复仇的欲望所腐蚀。\u0022",
+  "text": "\u0022但我需要你，瑞德。 --NEWLINE   --NEWLINE 你看，邪恶的力量在黑暗中诞生， --NEWLINE   --NEWLINE 而包含这支军队的咒语仍然被你父亲的纯洁精神锁住。 --NEWLINE   --NEWLINE 要打破封印，一个纯真的战士必须被复仇的欲望所腐蚀。\u0022",
   "tileX": 8169,
   "tileY": 1645,
-  "textWidth": 640,
+  "textWidth": 420,
   "style": 1
 }
 {
-  "text": "\u0022你打得很好，瑞德。你所需要的…只是一点点复仇的诱惑。\u0022 --NEWLINE   --NEWLINE 阿卓迪斯的脸上露出邪恶笑容，深深刻在你的脑海中。 --NEWLINE   --NEWLINE \u0022但我会给你一个机会，瑞德。看看你能不能处理好这个。\u0022 --NEWLINE   --NEWLINE 然后，阿卓迪斯消失在黑暗魔法能量中，召唤悲伤代替他。",
+  "text": "\u0022你做得很好，瑞德。你所需要的…只是一点点复仇的诱惑。\u0022 --NEWLINE   --NEWLINE 阿卓迪斯的脸上露出邪恶笑容，深深刻在你的脑海中。 --NEWLINE   --NEWLINE \u0022但我会给你一个机会，瑞德。看看你能不能处理好这个。\u0022 --NEWLINE   --NEWLINE 然后，阿卓迪斯消失在黑暗魔法能量中，召唤悲伤代替他。",
   "tileX": 8172,
   "tileY": 1645,
   "textWidth": 560,

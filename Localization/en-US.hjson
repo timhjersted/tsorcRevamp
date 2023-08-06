@@ -6395,7 +6395,7 @@ Mods: {
 					Striking enemies will create Polaris, which scales with {1}% of this whips damage
 					Polaris stays on your cursor and hits enemies with a frigid enchantment
 					Enchanted Enemies will also be showered by polar stars when struck by minions
-					These scale with {2} of this whips damage
+					These scale with {2}% of this whips damage
 					Your summons will focus enemies struck by Polaris
 					'''
 			}
