@@ -6332,7 +6332,7 @@ Mods: {
 					'''
 					Enemies struck by this whip will explode once on minion hit
 					Explosion increases the damage dealt by {0}%
-					Exploded enemies will also deal {1}x the contact damage to you for 4 seconds
+					Exploded enemies will also deal {1}% the contact damage to you for 4 seconds
 					{$CommonItemTooltip.Whips}
 					'''
 			}

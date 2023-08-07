@@ -43,7 +43,7 @@ Mods: {
 			Banner: 旗帜
 			Limited: 快速治疗快捷键不会误用此药水，因为它们很稀有
 			NoFallDmg: 对坠落伤害免疫
-			HolyDodge: 授予神圣闪避，当神圣闪避激活时，此盔甲套装提供的属性加倍
+			HolyDodge: 赋予神圣闪避效果，当神圣闪避激活时，此盔甲套装提供的属性加倍
 			TitaniumBonus: 造成伤害会生成一个钛金防御碎片
 			ShunpoKeybind1: "按 "
 			ShunpoKeybind2: " 冲向鼠标悬停处所指的敌人并获得短暂的无敌帧"
@@ -132,9 +132,9 @@ Mods: {
 					乘算减少 {0}% 召唤伤害
 					鞭子标记伤害不受影响
 					'''
-				SlotsRequired: 消耗 {0} 召唤物栏位
+				SlotsRequired: +{0} 召唤栏
 				PercentOfASlot: 消耗一个召唤物栏位的 {0}%
-				MinionSentrySlot: 增加 {0} 的召唤物栏位和 {1} 的哨兵栏位
+				MinionSentrySlot: +{0} 召唤栏和 +{1} 哨兵栏
 				FlatDmg: 增加 {0} 点召唤伤害
 				CritChance: 增加 {0}% 召唤暴击率
 				TagCritMult: 增加 {0} 倍召唤标记暴击率
@@ -1116,7 +1116,7 @@ Mods: {
 					[c/ffbf00:穿戴时允许你进入深渊。摘下指环，离开深渊！]
 					[c/ffbf00:深渊遍布世界，如我们自身之镜，但其黑暗更加深远...]
 					[c/00ffd4:对一些深渊相关的敌人造成的debuff免疫，例如残废，中毒，着火, 以及涂油]
-					免疫击退，火块，熔岩和地狱黯炎，但是会提升敌人生成速度
+					免疫击退、熔岩、火块和地狱黯炎，但是会提升敌人生成速度
 					乘算增加 {0}% 伤害、暴击率、移动速度、攻击速度{$CommonItemTooltip.Melee.Bonus@1}
 					'''
 			}
@@ -1132,7 +1132,7 @@ Mods: {
 					'''
 					亚尔特留斯曾经佩戴的戒指之一
 					继承清晰之戒的免疫效果
-					按下绑定的苍狼之戒快捷键以暂时提高生命恢复和伤害
+					按下绑定的苍狼之戒快捷键以短暂提高生命恢复和伤害
 					效果生效期间受到伤害会移除生命恢复效果加成，并进入长时间的冷却
 					在深渊中时{$CommonItemTooltip.IncreasesDefenseBy}
 					赋予酸性毒液灌注效果
@@ -1258,7 +1258,7 @@ Mods: {
 				Tooltip:
 					'''
 					亚尔特留斯曾经佩戴的戒指之一
-					按下绑定的苍狼之戒快捷键以暂时大幅提高生命恢复和伤害
+					按下绑定的苍狼之戒快捷键以短暂提高生命恢复和伤害
 					效果生效期间受到伤害会移除生命恢复效果加成，并进入长时间的冷却
 					在深渊中时{$CommonItemTooltip.IncreasesDefenseBy} 
 					赋予酸性毒液灌注效果
@@ -1871,8 +1871,8 @@ Mods: {
 				DisplayName: 残酷之箭
 				Tooltip:
 					'''
-					一只清扫迷失、被遗忘的灵魂的箭...
-					对部分敌人伤害x8
+					一种专门用于清除迷失的、被遗忘灵魂的箭...
+					对这些敌人造成八倍伤害
 					穿透一次
 					'''
 			}
@@ -3122,7 +3122,7 @@ Mods: {
 			}
 
 			OolacileDemonBag: {
-				DisplayName: 宝藏袋（远古乌拉席露恶魔）
+				DisplayName: 宝藏袋（乌拉席露恶魔）
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -4023,48 +4023,44 @@ Mods: {
 			}
 
 			MiakodaCrescent: {
-				DisplayName: Miakoda——峨眉月形态
+				DisplayName: Miakoda 峨眉月形态
 				Tooltip:
 					'''
-					Miakoda——一个 100 岁以上的古老光之存在, 
+					Miakoda，一个存世百年之久的光之造物
 					它发誓要帮助你找到你的妻子并击败阿卓迪斯
 					Miakoda 是一个当地方言的名字，意思是“月亮的力量”
 					{$CommonItemTooltip.DmgMult}
-					峨眉月形态——用月之光灌输武器
-					当你暴击时 ({$CommonItemTooltip.SecondDuration@2}, {$CommonItemTooltip.Cooldown@3})
-					当武器灌注激活时再{$CommonItemTooltip.DmgMult@1}
+					【峨眉月形态】，当你暴击时用月之光灌注武器
+					再{$CommonItemTooltip.DmgMult@1}（{$CommonItemTooltip.SecondDuration@2}, {$CommonItemTooltip.Cooldown@3}）
 					可以在恶魔祭坛上切换形态
 					'''
 			}
 
 			MiakodaFull: {
-				DisplayName: Miakoda——满月形态
+				DisplayName: Miakoda 满月形态
 				Tooltip:
 					'''
-					Miakoda——一个 100 岁以上的古老光之存在, 
+					Miakoda，一个存世百年之久的光之造物
 					它发誓要帮助你找到你的妻子并击败阿卓迪斯
 					Miakoda 是一个当地方言的名字，意思是“月亮的力量”
-					满月形态——当你暴击时治疗自己最大生命值的 {1} + {2}% 
-					({$CommonItemTooltip.Cooldown@3})
+					【满月形态】，当你暴击时治疗自己（{$CommonItemTooltip.Cooldown@3}）
+					治疗量为 {1}+最大生命值的{2}% 
 					{$CommonItemTooltip.DRStat}
 					可以在恶魔祭坛上切换形态
 					'''
 			}
 
 			MiakodaNew: {
-				DisplayName: Miakoda——新月形态
+				DisplayName: Miakoda 新月形态
 				Tooltip:
 					'''
-					Miakoda——一个 100 岁以上的古老光之存在, 
+					Miakoda，一个存世百年之久的光之造物
 					它发誓要帮助你找到你的妻子并击败阿卓迪斯
 					Miakoda 是一个当地方言的名字，意思是“月亮的力量”
-					新月形态——当你暴击时用迈达斯灌注武器
-					使敌人掉落更多钱币，({$CommonItemTooltip.SecondDuration@3}, {$CommonItemTooltip.Cooldown@4})
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
-					同时获得以下增益：
-					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
-					{$CommonItemTooltip.NoKnockback}
-					{$CommonItemTooltip.ReducesDamageTakenByPercent@2}
+					【新月形态】，当你暴击时用迈达斯灌注武器
+					使敌人掉落更多钱币（{$CommonItemTooltip.SecondDuration@3}, {$CommonItemTooltip.Cooldown@4}）
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}，{$CommonItemTooltip.ReducesDamageTakenByPercent@2}，{$CommonItemTooltip.NoKnockback}
 					可以在恶魔祭坛上切换形态
 					'''
 			}
@@ -5445,7 +5441,7 @@ Mods: {
 				DisplayName: 被遗忘的盖亚剑
 				Tooltip:
 					'''
-					用来杀死巫师王王的剑
+					用来杀死巫师王的剑
 					[c/ffbf00:对巫王造成 3 倍伤害并击碎巫师王和亚尔特留斯的防御护盾]
 					'''
 			}
@@ -5526,9 +5522,10 @@ Mods: {
 				DisplayName: 符文之刃
 				Tooltip:
 					'''
-					一把用来杀死魔法使用者的剑
-					[c/ffbf00:对法师造成高达 8 倍的伤害]
-					每三次攻击都会产生一个魔法刺
+					一把用来杀死各种法师的剑
+					每攻击三次会产生一个魔法波纹
+					[c/ffbf00:对法师造成高达八倍的伤害]
+					“似乎夺心魔头也是法师...”
 					'''
 			}
 
@@ -5584,16 +5581,16 @@ Mods: {
 				Tooltip:
 					'''
 					用于瞬杀狼人的剑
-					对狼人造成 8 倍伤害
+					对狼人造成十六倍伤害
 					'''
 			}
 
 			WitchkingsSword: {
-				DisplayName: 巫师王王之剑
-				Tooltip: 可造成多个debuff
+				DisplayName: 巫师王之剑
+				Tooltip: 攻击敌人时可施加多个增益/减益
 				Empowered:
 					'''
-					每次命中造成2种随机的鞭子debuff
+					每次命中造成 2 种随机的鞭子debuff
 					使用鞭子伤害和攻击范围加成，而不是近战的
 					'''
 			}
@@ -5752,8 +5749,8 @@ Mods: {
 				DisplayName: 屠龙者
 				Tooltip:
 					'''
-					用于斩杀飞龙的剑
-					对飞行野兽造成 8 倍伤害
+					用于斩杀各种飞龙的剑
+					对飞行的野兽造成八倍伤害
 					'''
 			}
 
@@ -6332,9 +6329,9 @@ Mods: {
 				DisplayName: 引爆信号
 				Tooltip:
 					'''
-					被该鞭子击中的敌人会在被仆从击中时产生爆炸
-					爆炸造成的伤害增加 {0}% 
-					爆炸的敌人会对你造成 {1}x 接触伤害持续4秒
+					被该鞭子击中的敌人会在受到仆从攻击时产生爆炸
+					爆炸额外造成 {0}% 的伤害
+					爆炸的敌人4秒内会对你造成 {1}% 接触伤害
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -6900,7 +6897,7 @@ Mods: {
 
 			DamageDebugTome: {
 				DisplayName: Damage Debug Tome
-				Tooltip: 启用/禁用伤害扩散
+				Tooltip: 启用/禁用伤害数值浮动
 			}
 
 			DamagedCrystal: {
@@ -7730,7 +7727,7 @@ Mods: {
 			}
 
 			CenterOfTheUniverseBuff: {
-				DisplayName: 宇宙中心
+				DisplayName: 宇宙重心
 				Description: 你在一个“轴心”上
 			}
 
@@ -8106,7 +8103,7 @@ Mods: {
 			EnemyArrowOfDarkCloud.DisplayName: 渊堕瑞德之箭
 			DarkExplosion.DisplayName: 暗黑爆破
 			DarkExplosion2.DisplayName: 暗黑爆破
-			DemonSpirit.DisplayName: 恶魔之魂
+			DemonSpirit.DisplayName: 恶灵意志
 			DragonMeteor.DisplayName: 龙陨
 			DragonsBreath.DisplayName: 龙息
 			EarthTrident.DisplayName: 大地之戟
@@ -8240,7 +8237,7 @@ Mods: {
 			MassiveCrystalShards.DisplayName: 巨型水晶碎片
 			MassiveCrystalShardsSpell.DisplayName: 巨型水晶碎咒
 			NebulaShot.DisplayName: 星云定格
-			ObscureDrop.DisplayName: 隐秘坠落
+			ObscureDrop.DisplayName: 隐秘坠落球
 			ObscureSaw.DisplayName: 潮涌
 			ObscureShot.DisplayName: 隐晦一击
 			PhasedMatterBlast.DisplayName: 相位物质爆破
@@ -8616,8 +8613,8 @@ Mods: {
 			}
 
 			AncientOolacileDemon: {
-				DisplayName: 古老的乌拉席露恶魔
-				DespawnHandler: 古老的乌拉席露恶魔打算放你一马...
+				DisplayName: 乌拉席露恶魔
+				DespawnHandler: 乌拉席露恶魔打算放你一马...
 			}
 
 			Cataluminance: {
@@ -8711,8 +8708,8 @@ Mods: {
 				DisplayName: 鲁米利亚的英雄
 				DespawnHandler: 鲁米利亚的英雄所向披靡...
 				Spawn: "“你杀死了我的兄弟向导！”一位鲁米利亚英雄前来追杀你... "
-				Archers1: 弓箭手埋伏！
-				Archers2: 弓箭手埋伏在树上！
+				Archers1: 弓箭吊射！
+				Archers2: 弓箭从天而降！
 			}
 
 			JungleWyvernBody.DisplayName: 古林飞龙
@@ -9010,7 +9007,7 @@ Mods: {
 			CosmicCrystalLizard.DisplayName: 宇宙晶蜥
 
 			CrazedDemonSpirit: {
-				DisplayName: 疯魔小精灵
+				DisplayName: 癫狂恶灵意志
 				Death: 一个迷失的灵魂已经从诅咒中解脱出来...
 			}
 
