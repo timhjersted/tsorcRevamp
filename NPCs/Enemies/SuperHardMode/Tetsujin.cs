@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         public override void SetDefaults()
         {
-            //npc.npcSlots = 50;
+            NPC.npcSlots = 4;
             NPC.width = 42;
             NPC.height = 42;
             NPC.aiStyle = 22;
@@ -26,12 +26,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lavaImmune = true; ;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
-            NPC.lifeMax = 3000; //was 35k
+            NPC.lifeMax = 3000; //was 35k a long time ago
             NPC.scale = 1f;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
             NPC.noTileCollide = false;
-            NPC.value = 18750;
+            NPC.value = 12000; // 1875
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TetsujinBanner>();
         }

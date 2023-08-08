@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = .6f;
-            NPC.value = 400;
+            NPC.value = 430;
             NPC.defense = 2;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TibianAmazonBanner>();
@@ -42,7 +42,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.lifeMax = 180;
                 NPC.defense = 16;
-                NPC.value = 650;
+                NPC.value = 900;
                 NPC.damage = 50;
                 throwingKnifeDamage = 20;
             }

@@ -37,7 +37,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.damage = 0;
             NPC.scale = 1f;
             NPC.knockBackResist = 0.3f;
-            NPC.value = 6000;
+            NPC.value = 5000; // life * 1.25 because main boss minion : was 600
             NPC.defense = 10;
             NPC.height = 44;
             NPC.width = 28;
@@ -57,7 +57,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1 && NPC.CountNPCS(ModContent.NPCType<DungeonMage>()) < 1)
             {
                 if (!Main.hardMode) { chance = .02f; }
-                else chance = .011f;
+                else chance = .0125f;
 
             }
 
@@ -66,9 +66,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 chance = .033f;
             }
 
-            if (spawnInfo.Player.ZoneJungle && Main.hardMode)
+            if (spawnInfo.Player.ZoneRockLayerHeight && Main.hardMode && !tsorcRevampWorld.SuperHardMode) // was jungle only
             {
-                chance = .00625f;
+                chance = .00525f;
             }
 
             return chance;

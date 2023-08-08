@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
-            NPC.value = 450;
+            NPC.value = 750; //was 45
             NPC.knockBackResist = 0.0f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.GhostOfTheForgottenKnightBanner>();
@@ -36,18 +36,18 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.lifeMax = 200;
                 NPC.defense = 32;
-                NPC.value = 650;
-                NPC.damage = 40;
+                NPC.value = 1000; // was 65
+                NPC.damage = 50;
                 spearDamage = 25;
                 topSpeed = 1.5f;
             }
 
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.lifeMax = 900;
-                NPC.defense = 70;
+                NPC.lifeMax = 1000;
+                NPC.defense = 80;
                 NPC.damage = 50;
-                NPC.value = 1000;
+                NPC.value = 4000; //was 100
                 spearDamage = 45;
                 topSpeed = 2f;
             }
@@ -59,15 +59,19 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.Player.ZoneDungeon)
             {
-                return 0.2f; //.16 should be 8%
+                return 0.16f; // was .2 : .16 should be 8%
             }
             if (Main.hardMode && spawnInfo.Player.ZoneDungeon)
             {
-                return 0.17f;
+                return 0.1f; // was 0.17
+            }
+            if (spawnInfo.Player.ZoneGraveyard)
+            {
+                return 0.2f; // was 0.17
             }
             if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon)
             {
-                return 0.08f; //.08% is 4.28%
+                return 0.05f; //.08% is 4.28%
             }
 
             return 0;
@@ -84,7 +88,7 @@ namespace tsorcRevamp.NPCs.Enemies
         float topSpeed = 1.2f;
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, topSpeed, .05f, 0.2f, true, enragePercent: 0.2f, enrageTopSpeed: 2.4f);
+            tsorcRevampAIs.FighterAI(NPC, topSpeed, .05f, 0.2f, false, enragePercent: 0.2f, enrageTopSpeed: 2.4f); // now that boredom code is good, can no longer teleport
 
             if (NPC.justHit && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer <= 149 && Main.rand.NextBool(4))
             {

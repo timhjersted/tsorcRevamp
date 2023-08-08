@@ -23,6 +23,8 @@ namespace tsorcRevamp.NPCs.Enemies
         int shieldAnimTimer;
         bool countingUP = false;
 
+        public int hollowLesserSlashDamage = 18;
+        public int hollowGreaterSlashDamage = 22;
 
         public override void SetStaticDefaults()
         {
@@ -37,9 +39,25 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 250;
-            if (Main.hardMode) { NPC.lifeMax = 500; NPC.defense = 30; NPC.damage = 42; NPC.value = 1500; }
-            if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 1000; NPC.defense = 40; NPC.damage = 52; NPC.value = 2500; }
-            NPC.value = 1200;
+            if (Main.hardMode) 
+            { 
+                NPC.lifeMax = 500; 
+                NPC.defense = 30; 
+                NPC.damage = 42; 
+                NPC.value = 2500; // was 150
+                hollowLesserSlashDamage = 26;
+                hollowGreaterSlashDamage = 30; // scaling damage added
+    }
+            if (tsorcRevampWorld.SuperHardMode) 
+            { 
+                NPC.lifeMax = 1500; 
+                NPC.defense = 70; 
+                NPC.damage = 58; 
+                NPC.value = 6000; //was 250, now has scaling damage
+                hollowLesserSlashDamage = 30;
+                hollowGreaterSlashDamage = 34;
+            }
+            NPC.value = 1250;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
             Banner = NPC.type;
@@ -362,11 +380,11 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (!standing_on_solid_tile)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(14, -60), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 18, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(14, -60), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                             else
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(14, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 18, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(14, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                         }
 
@@ -374,11 +392,11 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (!standing_on_solid_tile)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-10, -60), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 18, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-10, -60), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                             else
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-10, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 18, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-10, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                         }
                     }
@@ -497,12 +515,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
                         if (NPC.direction == 1)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 22, 5, Main.myPlayer, NPC.whoAmI, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowGreaterSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                         }
 
                         else
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 22, 5, Main.myPlayer, NPC.whoAmI, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowGreaterSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                         }
                     }
                     if (NPC.ai[1] > 470 && NPC.ai[1] < 510)
@@ -784,7 +802,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (spawnInfo.Player.townNPCs > 1f) return 0f;
 
-            if (Main.hardMode && spawnInfo.Lihzahrd) return 0.18f;
+            if (!Main.hardMode && spawnInfo.SpawnTileType == TileID.GreenDungeonBrick && !spawnInfo.Water) return 0.12f;
+
+            if (Main.hardMode && spawnInfo.Lihzahrd) return 0.2f;
+            if (Main.hardMode && p.ZoneNormalCaverns && !spawnInfo.Water) return 0.02f;
+            if (Main.hardMode && p.ZoneDesert && p.ZoneOverworldHeight && !spawnInfo.Water) return 0.05f;
+            if (Main.hardMode && p.ZoneUndergroundDesert && !spawnInfo.Water) return 0.07f;
+            if (Main.hardMode && spawnInfo.SpawnTileType == TileID.BlueDungeonBrick && !spawnInfo.Water) return 0.18f;
+            if (Main.hardMode && spawnInfo.SpawnTileType == TileID.TungstenBrick && !spawnInfo.Water) return 0.15f;
 
             if (tsorcRevampWorld.SuperHardMode && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneUnderworldHeight)) return 0.23f;
             if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneOverworldHeight && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return 0.25f;

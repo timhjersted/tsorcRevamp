@@ -30,23 +30,24 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             AnimationType = NPCID.GreenJellyfish;
             NPC.aiStyle = 18;
             NPC.timeLeft = 750;
-            NPC.damage = 60;
-            NPC.defense = 40;
+            NPC.damage = 65;
+            NPC.defense = 50;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lifeMax = 1000;
             NPC.alpha = 20;
             NPC.scale = .7f;
-            NPC.knockBackResist = 0.3f;
+            NPC.knockBackResist = 0.1f;
             NPC.noGravity = true;
-            NPC.value = 1250;
+            NPC.value = 2000; // life / 2.5 / 2 bc it's so simple : was 125
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.ManOfWarBanner>();
             if (Main.hardMode)
             {
                 NPC.lifeMax = 250;
                 NPC.defense = 30;
-                NPC.value = 550;
+                NPC.value = 620; // was 55
+                NPC.knockBackResist = 0.3f;
             }
         }
 
@@ -69,6 +70,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (Main.hardMode && spawnInfo.Water)
             {
+                chance = 0.25f;
+            }
+            if (Main.hardMode && spawnInfo.Player.ZoneDungeon && spawnInfo.Water)
+            {
                 chance = 0.5f;
             }
             if (Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3)
@@ -80,10 +85,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
+            target.AddBuff(BuffID.Electrified, 5 * 60);
+
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.PotionSickness, 60 * 60); //evil! pure evil!
-                target.AddBuff(BuffID.Electrified, 5 * 60);
+                target.AddBuff(BuffID.PotionSickness, 30 * 60); //evil! pure evil! (yeah true, don't know who did this but it's 30 now instead of 60)              
             }
         }
         public override void HitEffect(NPC.HitInfo hit)

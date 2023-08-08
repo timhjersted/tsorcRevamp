@@ -39,11 +39,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.damage = 0;
             NPC.defense = 72;
             NPC.height = 40;
-            NPC.lifeMax = 2550;
+            NPC.lifeMax = 2500;
             NPC.scale = 1.2f;
             NPC.HitSound = SoundID.NPCHit29;
             NPC.DeathSound = SoundID.NPCDeath31;
-            NPC.value = 15500;
+            NPC.value = 10000; // life / 2.5 : was 1550 
             NPC.width = 18;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AbysswalkerBanner>();
@@ -82,11 +82,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if ((player.ZoneMeteor || player.ZoneJungle) && tsorcRevampWorld.SuperHardMode && !player.ZoneDungeon && !(player.ZoneCorrupt || player.ZoneCrimson))
             {
-                chance = 0.15f;
+                chance = 0.1f; // reduced from .15
             }
             if (player.ZoneDirtLayerHeight)
             {
-                chance *= 1.5f;
+                chance *= 1.3f;
             }
             if (player.ZoneRockLayerHeight)
             {

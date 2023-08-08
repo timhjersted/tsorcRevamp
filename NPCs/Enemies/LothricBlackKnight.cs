@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Security.Cryptography.X509Certificates;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
@@ -29,6 +30,7 @@ namespace tsorcRevamp.NPCs.Enemies
         int shieldAnimTimer;
         bool countingUP = false;
 
+        public int lothricDamage = 17;
 
         public override void SetStaticDefaults()
         {
@@ -38,6 +40,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void SetDefaults()
         {
+            
             NPC.npcSlots = 5;
             NPC.knockBackResist = 0.15f;
             NPC.aiStyle = -1;
@@ -46,15 +49,41 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 44;
             NPC.width = 20;
             NPC.lifeMax = 1000;
-            if (Main.hardMode) { NPC.lifeMax = 1500; NPC.defense = 40; NPC.value = 10200; }
-            if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 3000; NPC.defense = 85; NPC.damage = 100; NPC.value = 16000; }
-            NPC.value = 7200;
+            if (Main.hardMode) 
+            { 
+                NPC.lifeMax = 1500; 
+                NPC.defense = 40; 
+                NPC.value = 7500;  // was 1000
+                lothricDamage = 25;
+            } 
+            if (tsorcRevampWorld.SuperHardMode) 
+            { 
+                NPC.lifeMax = 3000; 
+                NPC.defense = 85; 
+                NPC.damage = 100; 
+                NPC.value = 12000;  // was 1600
+                lothricDamage = 35;
+            } 
+            NPC.value = 5000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.LothricBlackKnightBanner>();
         }
+
+        public Player player
+        {
+            get => Main.player[NPC.target];
+        }
+
+        #region Debuffs
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+        {          
+            player.AddBuff(36, 3 * 60, false); //broken armor         
+            player.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 10 * 60, false);
+        }
+        #endregion
 
         public override void HitEffect(NPC.HitInfo hit)
         {
@@ -83,6 +112,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             Player player = Main.player[NPC.target];
             //when close to enemy, grapple and mobility hindered
+            UsefulFunctions.DustRing(NPC.Center, 600, DustID.RedTorch, 5, 2f);
             if (NPC.Distance(player.Center) < 600)
             {
                 player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 2);
@@ -90,9 +120,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
             }
 
-            if (Main.hardMode && NPC.Distance(player.Center) < 60)
+            if (Main.hardMode && NPC.Distance(player.Center) < 600)
             {
                 player.AddBuff(ModContent.BuffType<Crippled>(), 30, false);
+                player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30, false);
             }
 
             var projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>();
@@ -109,7 +140,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (NPC.life < NPC.lifeMax / 2)
             {
                 top_speed *= 1.5f;
-                damage = (int)(1.1f * damage);
+                damage = (int)(1.3f * damage);
                 projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlashCrimson>();
                 projStab = ModContent.ProjectileType<Projectiles.Enemy.SpearheadCrimson>();
 
@@ -446,11 +477,11 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (!standing_on_solid_tile)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -66), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -66), new Vector2(0, 4f), projSlash, (int)(lothricDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                             else
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), projSlash, (int)(lothricDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
 
                         }
@@ -459,12 +490,12 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (!standing_on_solid_tile)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -66), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -66), new Vector2(0, 4f), projSlash, (int)(lothricDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
 
                             }
                             else
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -20), new Vector2(0, 4f), projSlash, (int)(lothricDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                         }
                     }
@@ -583,12 +614,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
                         if (NPC.direction == 1)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), projSlash, (int)(lothricDamage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
                         }
 
                         else
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), projSlash, (int)(lothricDamage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
                         }
                     }
                     if (NPC.ai[1] > 470 && NPC.ai[1] < 489)
@@ -660,14 +691,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
                         if (NPC.direction == 1)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), projStab, (int)(damage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), projStab, (int)(lothricDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
                             NPC.velocity.X += 10.5f;
                             NPC.velocity.Y -= 2f;
                         }
 
                         else
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-44, -2), new Vector2(0, 0), projStab, (int)(damage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-44, -2), new Vector2(0, 0), projStab, (int)(lothricDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
                             NPC.velocity.X -= 10.5f;
                             NPC.velocity.Y -= 2f;
                         }

@@ -44,9 +44,21 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noGravity = false;
             NPC.noTileCollide = false;
             NPC.lavaImmune = true;
-            NPC.value = 6000;
+            NPC.value = 5000; // life * 1.25 bc attraidies minion
             NPC.width = 28;
             NPC.knockBackResist = 0.3f;
+
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 800;
+                NPC.defense = 20;
+                NPC.damage = 80;
+                NPC.value = 10000; // life * 1.25
+                demonSpiritDamage = 20;//gets doubled
+                poisonFieldDamage = 30;//gets doubled
+                NPC.knockBackResist = 0.1f;
+            }
+
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AttraidiesManifestationBanner>();
         }
@@ -57,6 +69,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
+            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !spawnInfo.Water && Main.rand.NextBool(100)) return 1;
+
             if (!Main.hardMode && spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(40) && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1
                 && NPC.CountNPCS(ModContent.NPCType<AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<DungeonMage>()) < 1)
             {

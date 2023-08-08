@@ -37,11 +37,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.damage = 63;
             NPC.defense = 70;
             NPC.lavaImmune = true;
-            NPC.lifeMax = 9000;
+            NPC.lifeMax = 5000; // was 9000
             NPC.scale = 1.1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 28750;
+            NPC.value = 20000; // was 2875 with 7k health
             NPC.knockBackResist = 0f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.OolacileKnightBanner>();
@@ -49,7 +49,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), earthTridentDamage, 11, SoundID.Item17);
         }
 
-        int dragonsBreathDamage = 39;
+        int dragonsBreathDamage = 42;
         int darkExplosionDamage = 37;
         int earthTridentDamage = 35;
 
@@ -59,8 +59,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             darkExplosionDamage = (int)(darkExplosionDamage * tsorcRevampWorld.SHMScale);
             earthTridentDamage = (int)(earthTridentDamage * tsorcRevampWorld.SHMScale);
         }
-
-
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -103,14 +101,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return 1;
             }
 
-            if (Meteor && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(20))
+            if (Meteor && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(25))
 
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.OolacileKnight.Hunt"), 175, 75, 255);
                 return 1;
             }
 
-            if (Dungeon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(30))
+            if (Dungeon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(35))
 
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.OolacileKnight.Hunt"), 175, 75, 255);
@@ -215,27 +213,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
-        {
+        {         
+            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 600 * 60, false); //-20 HP curse
+            target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 300 * 60, false);
+            target.AddBuff(ModContent.BuffType<TornWings>(), 60 * 60, false);
 
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 600 * 60, false); //-20 HP curse
-            }
-
-            if (Main.rand.NextBool(4))
-            {
-
-                target.AddBuff(BuffID.BrokenArmor, 10 * 60, false);
-                target.AddBuff(BuffID.Cursed, 5 * 60, false);
-            }
-
-            //if (Main.rand.NextBool(10) && player.statLifeMax > 20) 
-
-            //{
-
-            //			Main.NewText("You have been cursed!");
-            //	player.statLifeMax -= 20;
-            //}
+                target.AddBuff(BuffID.BrokenArmor, 60 * 60, false);
+                target.AddBuff(BuffID.Cursed, 3 * 60, false);
+            }           
         }
         #endregion
 

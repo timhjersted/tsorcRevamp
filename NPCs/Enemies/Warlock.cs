@@ -4,6 +4,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
 
@@ -34,11 +35,11 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 5;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 1150;
+            NPC.lifeMax = 1500;
             NPC.scale = 1f;
             NPC.HitSound = SoundID.NPCHit37;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 15750;
+            NPC.value = 15000; // rare enemy so not dividing health by 2 : was 1575
             NPC.rarity = 3;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.WarlockBanner>();
@@ -46,6 +47,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.damage = 20;
                 NPC.lifeMax = 750;
+                NPC.value = 12500;
             }
             UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBall>(), energyBallDamage, 8, SoundID.Item28 with { Volume = 0.2f, Pitch = -0.8f });
             UsefulFunctions.AddAttack(NPC, 250, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBeamBall>(), greatEnergyBeamDamage, 8, weight: 0.3f);
@@ -204,13 +206,38 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyNPCLoot(NPCLoot npcLoot) 
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.LifeforcePotion));
-            npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 30));
+            npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 10));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>(), 3, 2, 6));
             npcLoot.Add(ItemDropRule.Common(ItemID.UnicornHorn, 3));
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofLight, 1, 3, 6));
             npcLoot.Add(hmCondition);
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 2));
+
+            // took all this from an enemy that it didn't make sense for it to have
+            npcLoot.Add(ItemDropRule.Common(ItemID.BattlePotion, 20));
+            npcLoot.Add(ItemDropRule.Common(ItemID.WaterWalkingPotion, 20));
+            npcLoot.Add(ItemDropRule.Common(ItemID.SwiftnessPotion, 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.SpelunkerPotion, 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ShinePotion, 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.RegenerationPotion, 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GillsPotion, 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.HunterPotion, 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ArcheryPotion, 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 15));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 10));
+            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 10)); //not a typo
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 15));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 8, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 10, 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 8));      
+
         }
     }
 }

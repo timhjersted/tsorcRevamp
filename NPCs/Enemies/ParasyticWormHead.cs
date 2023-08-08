@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
-            NPC.value = 4000;
+            NPC.value = 3750; // was 400. life / 2 / 2 because worm
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.ParasyticWormBanner>();
 

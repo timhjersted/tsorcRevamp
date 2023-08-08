@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.damage = 0;
             NPC.scale = 1f;
             NPC.knockBackResist = 0.1f;
-            NPC.value = 400;
+            NPC.value = 300; // was 40
             NPC.defense = 6;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.UndeadCasterBanner>();
@@ -36,17 +36,17 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (NPC.downedBoss1)
             {
-                NPC.lifeMax = 50;
+                NPC.lifeMax = 60;
                 NPC.defense = 12;
-                NPC.value = 750;
+                NPC.value = 600; // was 75
                 NPC.damage = 0;
             }
 
             if (NPC.downedBoss3)
             {
-                NPC.lifeMax = 110;
+                NPC.lifeMax = 120;
                 NPC.defense = 15;
-                NPC.value = 950;
+                NPC.value = 900; // was 95
                 NPC.damage = 0;  
             }
         }

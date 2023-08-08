@@ -125,6 +125,7 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            BlackKnightSHMDungeon,
             RedKnightOolicileForest,
             BlackKnightHallowed,
             QueenSlimeEvent,
@@ -206,6 +207,10 @@ namespace tsorcRevamp
 
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
+
+            //BLACK KNIGHT IN BLUE SHM DUNGEON
+            ScriptedEvent BlackKnightSHMDungeon = new ScriptedEvent(new Vector2(2282, 1650), 30, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
+            BlackKnightSHMDungeon.SetCustomStats(25000, 30, 140, 16000);
 
             //RED KNIGHT IN OOLICILE FOREST
             ScriptedEvent RedKnightOolicileForest = new ScriptedEvent(new Vector2(5596, 926), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.RedKnight2"), Color.Purple, false, default, RedKnightMountainCustomAction);
@@ -482,7 +487,7 @@ namespace tsorcRevamp
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
-                
+                {ScriptedEventType.BlackKnightSHMDungeon, BlackKnightSHMDungeon},
                 {ScriptedEventType.RedKnightOolicileForest, RedKnightOolicileForest},
                 {ScriptedEventType.QueenSlimeEvent, QueenSlimeEvent},
                 {ScriptedEventType.BlackKnightHallowed, BlackKnightHallowed},

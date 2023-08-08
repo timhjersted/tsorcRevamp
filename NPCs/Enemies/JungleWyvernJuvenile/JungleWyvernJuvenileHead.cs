@@ -15,6 +15,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
     {
         int breathCD = 180;
         bool breath = false;
+        public int wyvernFireDamage = 22;
         public override void SetStaticDefaults()
         {
             NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
@@ -45,7 +46,25 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
             NPC.scale = 0.7f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.value = 2000;
+            NPC.value = 3120; // life / 2 / 2 because worm enemy : was 200
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 2500;
+                NPC.damage = 75;
+                NPC.defense = 25;
+                NPC.value = 6250;
+                wyvernFireDamage = 32;
+
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 3000;
+                NPC.defense = 45;
+                NPC.damage = 100;
+                NPC.value = 6000;  // life / 2.5 / 2
+                wyvernFireDamage = 42;
+
+            }
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.JungleWyvernJuvenileBanner>();
         }
@@ -58,6 +77,12 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 
             if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1
                 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesManifestation>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.DungeonMage>()) < 1)
+            {
+                chance = 0.05f;
+            }
+
+            // Spawns in the Western Sea
+            if (Main.hardMode && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 2 && spawnInfo.Water && spawnInfo.SpawnTileX < 800)
             {
                 chance = 0.05f;
             }
@@ -152,7 +177,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y /*+ (5f * npc.direction)*/, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 2), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ModContent.ProjectileType<Projectiles.Enemy.JungleWyvernFire>(), 22, 0f, Main.myPlayer); //cursed dragons breath
+                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y /*+ (5f * npc.direction)*/, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 2), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ModContent.ProjectileType<Projectiles.Enemy.JungleWyvernFire>(), wyvernFireDamage, 0f, Main.myPlayer); //cursed dragons breath
 
                     //These won't work in multiplayer (projectile id's, timeleft, scale, etc are not synced), but it's not that big a deal
                     Main.projectile[num54].timeLeft = 10;

@@ -38,13 +38,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             AnimationType = 28;
             NPC.knockBackResist = 0.03f;
             NPC.damage = 48;
-            NPC.defense = 90; //was 105
+            NPC.defense = 80; //was 105
             NPC.height = 54;
             NPC.width = 54;
-            NPC.lifeMax = 2650;
+            NPC.lifeMax = 2500;
             NPC.HitSound = SoundID.NPCHit20;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.value = 8820;
+            NPC.value = 10000; // life / 2.5 in SHM : was 882
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BasiliskHunterBanner>();
@@ -105,13 +105,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 if (((player.ZoneMeteor || player.ZoneCorrupt || player.ZoneCrimson || player.ZoneUndergroundDesert) && (player.ZoneDirtLayerHeight || player.ZoneRockLayerHeight)) && !player.ZoneDungeon)
                 {
-                    chance = 0.33f;
+                    chance = 0.20f; // was .30
                 }
                 else
                 {
                     if (player.ZoneOverworldHeight && (player.ZoneMeteor || player.ZoneCorrupt || player.ZoneCrimson || player.ZoneHallow) && !Ocean && !Main.dayTime)
                     {
-                        chance = 0.11f;
+                        chance = 0.10f;
                     }
                 }
             }
@@ -145,7 +145,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void AI()  //  warrior ai
         {
-            tsorcRevampAIs.FighterAI(NPC, 1, .03f, 0.2f, true, 10, false, SoundID.Mummy, 1000, 0.3f, 1.1f, true);
+            tsorcRevampAIs.FighterAI(NPC, 1, .03f, 0.2f, false, 10, false, SoundID.Mummy, 1000, 0.3f, 1.5f, true);
 
 
             #region melee movement
@@ -166,26 +166,19 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             }
             //CHANCE TO DASH STEP FORWARDS 
-            else if (NPC.Distance(player3.Center) > 350 && NPC.velocity.Y == 0f && Main.rand.NextBool(28) && NPC.life >= NPC.lifeMax / 5) //was 5
+            else if (NPC.Distance(player3.Center) > 370 && NPC.velocity.Y == 0f && Main.rand.NextBool(23) && NPC.life >= NPC.lifeMax / 5) //was 5
             {
                 int dust3 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
                 Main.dust[dust3].noGravity = true;
 
-
-
                 NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f);
-                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(6f, 5f);
-                //npc.TargetClosest(true);
-                //npc.velocity.X = npc.velocity.X * 5f; // burst forward
-
-                //if ((float)npc.direction * npc.velocity.X > 5)
-                //    npc.velocity.X = (float)npc.direction * 5;  //  but cap at top speed
+                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(6f, 5f);              
 
                 NPC.netUpdate = true;
             }
 
 
-            //CHANCE TO JUMP BEFORE ATTACK  npc.localAI[1]  >= 103 && 
+            //CHANCE TO JUMP BEFORE ATTACK  
             if (NPC.localAI[1] >= 103 && Main.rand.NextBool(20) && NPC.life >= NPC.lifeMax / 5)
             {
                 NPC.velocity.Y = Main.rand.NextFloat(-4f, -2f);
@@ -209,7 +202,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
 
 
-            //OFFENSIVE JUMPS  npc.localAI[1]  <= 186 
+            //OFFENSIVE JUMPS 
             Player player4 = Main.player[NPC.target];
             if (NPC.localAI[1] >= 100 && NPC.velocity.Y == 0f && NPC.Distance(player4.Center) > 220 && NPC.life >= NPC.lifeMax / 5)
             {
@@ -220,20 +213,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     if (Main.rand.NextBool(2))
                     {
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Torch, NPC.velocity.X, NPC.velocity.Y);
-
                     }
                     NPC.velocity.Y = -8f; //9             
                     NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(5f, 1f);
                     NPC.netUpdate = true;
-                    //npc.TargetClosest(true);
-
-                    //npc.localAI[1]  = 165;
-
-
                 }
             }
             #endregion
-
 
             #region Charge
             //CHARGE UNTIL DESPERATE PHASE
@@ -264,12 +250,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 
-
             #region Projectiles
             if (Main.netMode != 1)
-            {
-                
-
+            {               
                 NPC.localAI[1]++;
                 NPC.localAI[2]++;
 
@@ -281,9 +264,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                 if (NPC.localAI[2] >= 300 && NPC.life >= NPC.lifeMax / 5)
                 {
-                    //BREATH ATTACK
-                    
-
+                    //BREATH ATTACK                  
                     if (NPC.localAI[2] >= 301 && NPC.localAI[2] <= 395 && NPC.Distance(player.Center) > 20 && NPC.life >= NPC.lifeMax / 5)
                     {
                         
@@ -299,15 +280,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
 
                         if (Main.rand.NextBool(2))
-                        {
-                            
-
+                        {                           
                             Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 1.0f); //purple magic outward fire
                             Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 1.0f);
                             Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 2.0f); //purple magic outward fire
-                            Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 2.0f);
-
-                            
+                            Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 2.0f);                          
                         }
 
                     }
@@ -353,7 +330,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         {
                             tsorcRevampAIs.TeleportImmediately(NPC, 15, true);
                         }
-                        //
+                        
                     }
 
                     if (breathCD <= 0)
@@ -371,24 +348,20 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 //TELEGRAPH DUSTS
                 if (NPC.localAI[1] >= 85)
                 {
-                    Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                    Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 0.5f); 
                     if (Main.rand.NextBool(3))
                     {
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemEmerald, NPC.velocity.X, NPC.velocity.Y);
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemEmerald, NPC.velocity.X, NPC.velocity.Y);
                     }
-
                 }
 
                 if (NPC.localAI[1] >= 95f)
                 {
-
                     int choice = Main.rand.Next(4);
                     //PURPLE MAGIC LOB ATTACK; 
                     if (NPC.localAI[1] >= 110f && NPC.life >= NPC.lifeMax / 5 && choice == 0)
                     {
-
-
                         bool clearSpace = true;
                         for (int i = 0; i < 15; i++)
                         {
@@ -417,22 +390,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             if (NPC.localAI[1] >= 154f)
                             { NPC.localAI[1] = 1f; }
                         }
-
                     }
 
                     NPC.TargetClosest(true);
                     Player player = Main.player[NPC.target];
 
-
                     //HYPNOTIC DISRUPTER ATTACK
                     if (Main.rand.NextBool(150) && NPC.Distance(player.Center) > 230 && Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
                     {
-
                         Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 6f, 1.06f, true, true);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), disruptDamage, 5f, Main.myPlayer);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.8f, Pitch = -0.2f }, NPC.Center); //wobble
-
-
                         NPC.localAI[1] = 1f;
                         NPC.netUpdate = true;
                     }
@@ -444,7 +412,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(5f, 2f);
                         NPC.netUpdate = true;
                     }
-
 
                     //MULTI-SPIT 1 ATTACK
                     if (NPC.localAI[1] >= 105f && choice == 1 && Main.rand.NextBool(8) && NPC.life >= NPC.lifeMax / 5 * 2 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
@@ -463,11 +430,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         {
                             NPC.localAI[1] = 1f;
                         }
-                        //Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(npc.Center, [target], [speed], [projectile gravity], [should it aim high ?], [what happens if enemy is too far away to hit ?]);
-                        //Then use projectileVelocity as "velocity" when you call NewProjectile, like
-                        //Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center, projectileVelocity, ModContent.ProjectileType <[your projectile] > (), damage, knockBack, Main.myPlayer);
-
-                        //Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(npc.Center, player, 6, true, true, false);
+                        
                         NPC.netUpdate = true;
                     }
 
@@ -495,8 +458,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     {
                         int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Blue, 1f);
                         Main.dust[dust2].noGravity = true;
-
-                        //npc.velocity.X = npc.velocity.X + (float)npc.direction * Main.rand.NextFloat(2f, 1f);
+     
                         NPC.netUpdate = true;
                     }
 
@@ -504,7 +466,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     if (NPC.localAI[1] >= 155f && NPC.life <= NPC.lifeMax / 5)
                     
                     {
-                        Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                        Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 2f); 
                         if (Main.rand.NextBool(2))
                         {
                             int dust3 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.OrangeRed, 1f);
@@ -525,8 +487,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         {
                             NPC.localAI[1] = 1f;
                         }
-
-
                         NPC.netUpdate = true;
                     }
                 }
@@ -587,8 +547,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-
-
             player.AddBuff(36, 600, false); //broken armor
             player.AddBuff(20, 1800, false); //poisoned
             player.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false); //-20 life if counter hits 100

@@ -37,10 +37,10 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 55;
             NPC.height = 54;
             NPC.width = 54;
-            NPC.lifeMax = 335; 
+            NPC.lifeMax = 350; 
             NPC.HitSound = SoundID.NPCHit20;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.value = 2330;
+            NPC.value = 1750; // health / 2 : was 233
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BasiliskShifterBanner>();
@@ -105,13 +105,13 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.hardMode && Corruption && Main.dayTime && !Ocean && (InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.rand.NextBool(30)) return 1;
 
             //SPAWNS IN DUNGEON AT NIGHT RARELY
-            if (Main.hardMode && Dungeon && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.NextBool(40)) return 1;
+            if (Main.hardMode && Dungeon && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.NextBool(45)) return 1;
 
-            //SPAWNS IN HM HALLOW 
-            if (Main.hardMode && (InBrownLayer || InGrayLayer) && Hallow && !Ocean && !spawnInfo.Water && Main.rand.NextBool(30)) return 1;
+            //SPAWNS IN HM HALLOW RARELY
+            if (Main.hardMode && (InBrownLayer || InGrayLayer) && Hallow && !Ocean && !spawnInfo.Water && Main.rand.NextBool(45)) return 1;
 
             //SPAWNS RARELY IN HM JUNGLE UNDERGROUND
-            if (Main.hardMode && Jungle && InGrayLayer && !Ocean && !spawnInfo.Water && Main.rand.NextBool(70)) return 1;
+            if (Main.hardMode && Jungle && InGrayLayer && !Ocean && !spawnInfo.Water && Main.rand.NextBool(60)) return 1;
 
             //BLOODMOON HIGH SPAWN IN METEOR OR JUNGLE
             if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && (Meteor || Jungle) && !Dungeon && (AboveEarth || InBrownLayer || InGrayLayer) && !spawnInfo.Water && Main.bloodMoon && Main.rand.NextBool(5)) return 1;
@@ -123,7 +123,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             Player player = Main.player[NPC.target];
-            tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: true, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.1f, enrageTopSpeed: 2);
+            tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: false, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.5f, enrageTopSpeed: 2);
 
             shotTimer++;
 

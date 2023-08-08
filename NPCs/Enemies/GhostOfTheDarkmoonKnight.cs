@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lifeMax = 3000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 12500;
+            NPC.value = 12000; // was 1250
             NPC.knockBackResist = 0.0f;
             AnimationType = 28;
             Banner = NPC.type;
@@ -45,23 +45,27 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (tsorcRevampWorld.SuperHardMode && BeforeFourAfterSix && spawnInfo.Player.ZoneDungeon)
             {
-                return 0.3f;
+                return 0.6f;
             }
             if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneUnderworldHeight && spawnInfo.Player.ZoneDungeon)
             {
-                return 0.4f;
+                return 0.5f;
             }
             if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && spawnInfo.Player.ZoneDungeon)
             {
-                return 0.2f;
+                return 0.4f;
             }
             if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon)
+            {
+                return 0.2f;
+            }
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneHallow)
             {
                 return 0.1f;
             }
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon)
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneForest && !Main.dayTime)
             {
-                return 0.08f;
+                return 0.3f;
             }
 
             return 0;
@@ -70,11 +74,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(BuffID.Slow, 300);
+            target.AddBuff(BuffID.Slow, 600);
 
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.Poisoned, 10 * 60);
+                target.AddBuff(BuffID.Poisoned, 60 * 60);
                 target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30 * 60);
             }
         }
@@ -107,7 +111,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.175f, 0.2f, true, enragePercent: 0.1f, enrageTopSpeed: 3);
+            tsorcRevampAIs.FighterAI(NPC, 1.4f, 0.175f, 0.2f, false, enragePercent: 0.2f, enrageTopSpeed: 3, canDodgeroll: true);
 
             if (NPC.justHit && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer <= 140f && Main.rand.NextBool(4))
             {

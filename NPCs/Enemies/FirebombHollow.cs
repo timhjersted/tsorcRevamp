@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0.5f;
             NPC.lifeMax = 60;
             NPC.damage = 16;
-            NPC.value = 250;
+            NPC.value = 300; // life / 2 for preHM : was 25
             NPC.height = 40;
             NPC.width = 20;
             NPC.HitSound = SoundID.NPCHit1;
@@ -36,19 +36,18 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.lifeMax = 500;
                 NPC.defense = 25;
-                NPC.value = 1550;
+                NPC.value = 2500; // was 155
                 NPC.damage = 42;
                 NPC.knockBackResist = 0.2f;
             }
 
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.lifeMax = 1520;
+                NPC.lifeMax = 2000;
                 NPC.defense = 80;
-                NPC.value = 2250;
-                NPC.damage = 64;
-                NPC.knockBackResist = 0.05f;
-
+                NPC.value = 8000; // was 225 with 1500 health
+                NPC.damage = 74;
+                NPC.knockBackResist = 0.0f;
             }
 
         }
@@ -520,9 +519,13 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0f, Main.myPlayer);
                         }
-                        else
+                        else if (Main.hardMode && !tsorcRevampWorld.SuperHardMode)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 25, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 30, 0f, Main.myPlayer);
+                        }
+                        else if (tsorcRevampWorld.SuperHardMode)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 40, 0f, Main.myPlayer);
                         }
                     }
                 }

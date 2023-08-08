@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 15;
             NPC.height = 40;
             NPC.width = 30;
-            NPC.lifeMax = 39;
+            NPC.lifeMax = 40;
             NPC.scale = 0.9f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -37,9 +37,9 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.hardMode)
             {
                 NPC.defense = 44;
-                NPC.value = 550;
+                NPC.value = 660;
                 NPC.damage = 55;
-                NPC.lifeMax = 195;
+                NPC.lifeMax = 200;
                 NPC.knockBackResist = 0.1f;
             }
 
@@ -47,7 +47,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
+        {              
+            // Spawns in the Western Sea
+            if (Main.hardMode && spawnInfo.Water && spawnInfo.SpawnTileX < 900 && Main.rand.NextBool(15))
+            {
+                return 1;
+            }
+      
             for (int num36 = 0; num36 < 200; num36++)
             {
                 if (Main.npc[num36].active && Main.npc[num36].type == NPC.type)

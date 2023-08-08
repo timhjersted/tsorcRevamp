@@ -28,9 +28,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.width = 18;
             NPC.height = 40;
             NPC.knockBackResist = .3f;
-            NPC.value = 1630;
+            NPC.value = 4000; // 163
             NPC.timeLeft = 750;
-            NPC.damage = 60;
+            NPC.damage = 70;
             NPC.defense = 73;
             NPC.HitSound = SoundID.NPCHit2;
             NPC.DeathSound = SoundID.NPCDeath2;
@@ -61,14 +61,18 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             Player p = spawnInfo.Player;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f)
+            if (tsorcRevampWorld.SuperHardMode && p.ZoneSnow)
+            {
+                return 0.15f;
+            }
+                if (tsorcRevampWorld.SuperHardMode && spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f)
             {
                 if (p.ZoneDirtLayerHeight)
                 {
                     if (!Main.dayTime) { return 0.2f; }
                     else return 0.067f;
                 }
-                else if (p.ZoneRockLayerHeight) { return 0.1f; }
+                else if (p.ZoneRockLayerHeight) { return 0.2f; } // was 0.1f
             }
             return 0f;
         }

@@ -449,6 +449,11 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[3] == 100)
                 {
                     NPC.ai[3] = 1;
+
+                    // Gains life on enrage: re-added to fit with rage theme                 
+                    NPC.life += 200; 
+                   
+                    if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }
                 if (NPC.ai[1] >= 0)
                 {
@@ -461,6 +466,8 @@ namespace tsorcRevamp.NPCs.Bosses
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
                     }
+
+                    
                 }
             }
         }

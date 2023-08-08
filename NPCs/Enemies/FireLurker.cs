@@ -37,10 +37,10 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 10;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 100;
+            NPC.lifeMax = 120;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.value = 430;
+            NPC.value = 600; // was 43 for 100 life
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.FireLurkerBanner>();
@@ -48,9 +48,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode)
             {
-                NPC.lifeMax = 190;
+                NPC.lifeMax = 250;
                 NPC.defense = 22;
-                NPC.value = 650;
+                NPC.value = 1250; // was 65
                 NPC.damage = 30;
                 lostSoulDamage = 22;
                 NPC.knockBackResist = 0.2f;
@@ -58,12 +58,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.lifeMax = 1330;
-                NPC.defense = 47;
-                NPC.value = 3650;
-                NPC.damage = 48;
-                lostSoulDamage = 37;
-                NPC.knockBackResist = 0.1f;
+                NPC.lifeMax = 1500;
+                NPC.defense = 97;
+                NPC.value = 6000; // was 365 with 1330 life
+                NPC.damage = 68;
+                lostSoulDamage = 40;
+                NPC.knockBackResist = 0.0f;
 
             }
         }
@@ -93,10 +93,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (spawnInfo.Water) return 0f;
 
-            //ONLY SPAWNS IN HELL
+            //ONLY SPAWNS IN HELL PRE-HM, THEN CAN SPAWN IN CORRUPTION IN HM
             if (!Main.hardMode && InHell && Main.rand.NextBool(6)) return 1;
 
             if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && InHell && Main.rand.NextBool(5)) return 1;
+
+            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && Corruption && Main.rand.NextBool(20)) return 1;
 
             if (tsorcRevampWorld.SuperHardMode && InHell && Main.rand.NextBool(5)) return 1; //8 is 3%, 5 is 5, 3 IS 3%???
             return 0;

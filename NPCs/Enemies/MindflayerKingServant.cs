@@ -24,13 +24,14 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
             AIType = 32;
-            NPC.value = 800;
+            NPC.value = 1000; // was 80
             NPC.width = 28;
             NPC.knockBackResist = 0.2f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.MindflayerKingServantBanner>();
         }
 
+        // This enemy doesn't even appear to be used properly yet. Perhaps could be retrofitted to spawn somewhere in HM. 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {

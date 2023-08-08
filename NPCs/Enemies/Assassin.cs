@@ -21,14 +21,20 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.damage = 35; //normal mode stat
             NPC.lifeMax = 500; //normal mode stat
-            if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 1500; NPC.defense = 60; NPC.damage = 80; NPC.value = 6900; }
-            NPC.scale = 1.0f; //was 1.1
+            if (tsorcRevampWorld.SuperHardMode) 
+            { 
+                NPC.lifeMax = 2000; 
+                NPC.defense = 60; 
+                NPC.damage = 80; 
+                NPC.value = 20000; // life / 1 bc rare : was 690
+            } 
+            NPC.scale = 1.0f; 
             NPC.defense = 40;
-            NPC.value = 4600;
+            NPC.value = 5000; // life / 1 bc rare : was 460
             NPC.width = 18;
             NPC.aiStyle = -1;
             NPC.height = 48;
-            NPC.knockBackResist = 0.3f;
+            NPC.knockBackResist = 0.2f;
             NPC.rarity = 3;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AssassinBanner>();
@@ -113,6 +119,25 @@ namespace tsorcRevamp.NPCs.Enemies
                 return 1f;
             }
 
+            
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                if (spawnInfo.Player.ZoneDirtLayerHeight)
+                {
+                    chance = 0.002f;                 
+                }
+                if (spawnInfo.Player.ZoneRockLayerHeight)
+                {
+                    chance = 0.001f;
+                }
+            }
+
+            if (Main.bloodMoon)
+            {
+                chance *= 2;
+            }
+
+            return chance;
             //SUPER-HM
 
             /*if (ModWorld.superHardmode && !Main.dayTime && !Corruption && !Ocean && AboveEarth && Main.rand.NextBool(30))

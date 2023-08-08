@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.width = 16;
             NPC.height = 16;
             NPC.aiStyle = -1;
-            NPC.damage = 68;
+            NPC.damage = 70;
             NPC.defense = 0;
             NPC.lifeMax = 1;
             NPC.HitSound = null;

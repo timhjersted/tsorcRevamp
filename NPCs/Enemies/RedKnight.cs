@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lifeMax = 2500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 30000;
+            NPC.value = 20000; // life / 1.25 in HM
             NPC.knockBackResist = 0.04f;
             NPC.lavaImmune = true;
             Banner = NPC.type;
@@ -66,14 +66,23 @@ namespace tsorcRevamp.NPCs.Enemies
             if (!Main.hardMode)
             {
                 NPC.defense = 14;
-                NPC.value = 3500;
+                NPC.value = 12500;
                 NPC.damage = 40;
                 redKnightsGreatDamage = 9;
                 redKnightsSpearDamage = 12;
                 redMagicDamage = 7;
                 NPC.boss = true;
             }
-
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 4000;
+                NPC.defense = 75;
+                NPC.damage = 120;
+                NPC.value = 16000; // life / 2.5
+                redKnightsGreatDamage = 38;
+                redKnightsSpearDamage = 32;
+                redMagicDamage = 26;
+            }
             tsorcRevampGlobalNPC redKnightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
             //redKnightGlobalNPC.Aggression = 2.5f;

@@ -76,7 +76,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             {
                 player.AddBuff(BuffID.CursedInferno, 30, false);
                 //player.AddBuff(BuffID.Obstructed, 60, false);
-                player.AddBuff(BuffID.ManaSickness, 180, false);
+                player.AddBuff(BuffID.ManaSickness, 120, false);
             }
 
             NPC.netUpdate = false;

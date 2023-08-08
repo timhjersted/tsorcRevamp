@@ -2646,10 +2646,10 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.DD2LightningBugT3):
                     {
                         npc.lifeMax = 500;
-                        npc.damage = 69;
+                        npc.damage = 73;
                         npc.defense = 35;
-                        npc.knockBackResist = 0.46f;
-                        npc.value = 990;
+                        npc.knockBackResist = 0.26f;
+                        npc.value = 1250;
                         break;
                     }
 

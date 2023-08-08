@@ -341,7 +341,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 // Enrage Phase
                 NPC.ai[3]++;
-                NPC.alpha = 225;
+                NPC.alpha = 235;
                 NPC.defense = 70;//+14 for all birds
                 NPC.damage = 170;//+10 for all birds
 

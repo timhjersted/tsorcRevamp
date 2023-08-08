@@ -233,7 +233,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             if (NPC.ai[3] >= 100) //how often the attack can happen in frames per second
             {
                
-                if (mageShadowTimer >= 900 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (mageShadowTimer >= 700 && Main.netMode != NetmodeID.MultiplayerClient) //700 was 900
                 {
                         
                         int Paraspawn = 0;

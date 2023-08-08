@@ -36,8 +36,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.defense = 42;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 850;
-            NPC.value = 1200;
+            NPC.lifeMax = 1000;
+            NPC.value = 4000; // 120
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.HydrisElementalBanner>();
         }

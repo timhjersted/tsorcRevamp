@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
 
-            NPC.value = 300750;
+            NPC.value = 60000; // life / 2.5 : was 30,075!
             NPC.knockBackResist = 0;
             NPC.lavaImmune = true;
             Banner = NPC.type;

@@ -38,7 +38,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noGravity = false;
             NPC.noTileCollide = false;
             NPC.lavaImmune = true;
-            NPC.value = 10000;
+            NPC.value = 17500;
             NPC.width = 28;
             NPC.knockBackResist = 0.2f;
             AnimationType = NPCID.GoblinSorcerer;

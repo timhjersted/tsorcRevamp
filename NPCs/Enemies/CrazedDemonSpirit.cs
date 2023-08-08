@@ -10,6 +10,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs;
 using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Utilities;
+using Terraria.GameContent.Personalities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -37,7 +38,8 @@ namespace tsorcRevamp.NPCs.Enemies
             };
             NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
-
+        // HM Enemy
+        int demonDamage = 20;
         public override void SetDefaults()
         {
             NPC.aiStyle = 22;
@@ -45,20 +47,31 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = 60;
             NPC.width = 50;
             NPC.height = 50;
-            NPC.damage = 38;
+            NPC.damage = 48;
             NPC.defense = 18;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 600;
+            NPC.lifeMax = 500;
             NPC.friendly = false;
             NPC.noTileCollide = true;
             NPC.lavaImmune = true;
             NPC.noGravity = true;
             NPC.knockBackResist = 0;
             NPC.alpha = 100;
-            NPC.value = 1600;
+            NPC.value = 2500; // life / 2 in HM : was 160
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CrazedDemonSpiritBanner>();
+
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 1000;
+                NPC.defense = 85;
+                NPC.damage = 180;
+                NPC.value = 4000; // life / 2.5
+                NPC.scale = 1.15f;
+                demonDamage = 35;
+            }
+
         }
         float customAi1;
 
@@ -91,12 +104,23 @@ namespace tsorcRevamp.NPCs.Enemies
             bool undergroundEvil = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && (p.ZoneCorrupt || p.ZoneCrimson);
             bool undergroundHoly = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && p.ZoneHallow;
 
+            if (p.ZoneMeteor && Main.hardMode && Main.rand.NextBool(25)) return 1;
+
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())))
             {
-                if (underworld && Main.rand.NextBool(500)) return 1;
-                else if (underworld && Main.hardMode && Main.rand.NextBool(10)) return 1;
+                if (underworld && Main.rand.NextBool(300)) return 1;
+                else if (underworld && Main.hardMode && Main.rand.NextBool(15)) return 1;
             }
-            return 0;
+
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                if (spawnInfo.Player.ZoneCrimson)
+                {
+                    return 0.15f;
+                }
+                else return 0;
+            }
+            else return 0;
         }
         #endregion
 
@@ -140,7 +164,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             num51 = num48 / num51;
                             speedX *= num51;
                             speedY *= num51;
-                            int damage = (int)(14f * NPC.scale);
+                            int damage = demonDamage; //(int)(14f * NPC.scale);
                             int type = ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>();//44;//0x37; //14;
                             int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 120;
@@ -163,7 +187,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             num51 = num48 / num51;
                             speedX *= num51;
                             speedY *= num51;
-                            int damage = 32;//(int) (14f * npc.scale);
+                            int damage = demonDamage;//(int) (14f * npc.scale);
                             int type = ModContent.ProjectileType<Projectiles.Enemy.PurpleCrush>();//44;//0x37; //14;
                             int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 170;

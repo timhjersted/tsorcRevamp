@@ -28,9 +28,9 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath29;
             NPC.npcSlots = 3;
             NPC.damage = 0;
-            NPC.lifeMax = 182;
+            NPC.lifeMax = 250;
             NPC.defense = 7;
-            NPC.value = 3100;
+            NPC.value = 1250; // life / 2 
             NPC.width = 18;
             NPC.aiStyle = -1;
             NPC.height = 40;
@@ -42,9 +42,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode)
             {
-                NPC.lifeMax = 312;
+                NPC.lifeMax = 500;
                 NPC.defense = 14;
-                NPC.value = 2650;
+                NPC.value = 2500;
                 NPC.damage = 42;
                 NPC.knockBackResist = 0.1f;
             }
@@ -120,7 +120,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (spawnInfo.Player.ZoneRockLayerHeight && Main.dayTime) return 0.095f;
                 if (spawnInfo.Player.ZoneRockLayerHeight && !Main.dayTime) return 0.035f;
             }
-            if (Main.hardMode && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneBeach && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson) return 0.0005f;
+            if (Main.hardMode && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneBeach && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson) return 0.005f;
 
             return chance;
         }

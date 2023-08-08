@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.damage = 35;
             NPC.scale = 1f;
             NPC.knockBackResist = 0.9f;
-            NPC.value = 380;
+            NPC.value = 300;
             NPC.defense = 999;
             NPC.buffImmune[BuffID.Confused] = true;
             Banner = NPC.type;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.knockBackResist = 0.7f;
                 NPC.lifeMax = 10;
                 NPC.defense = 999;
-                NPC.value = 630;
+                NPC.value = 600;
                 NPC.damage = 50;
             }
         }

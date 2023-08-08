@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.damage = 20;
             NPC.lifeMax = 60;
             NPC.defense = 14;
-            NPC.value = 250;
+            NPC.value = 300; // was 25
             NPC.knockBackResist = 0.35f;
             AnimationType = NPCID.GraniteGolem;
             Banner = NPC.type;

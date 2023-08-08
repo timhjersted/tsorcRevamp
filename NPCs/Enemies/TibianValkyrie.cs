@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = .5f;
-            NPC.value = 550;
+            NPC.value = 450;
             NPC.defense = 4;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TibianValkyrieBanner>();

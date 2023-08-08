@@ -29,32 +29,38 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             NPC.aiStyle = 22;
             NPC.npcSlots = 5;
-            AnimationType = -1; //was 60
+            AnimationType = -1; 
             NPC.width = 30;
             NPC.height = 80;
             NPC.damage = 41;
             NPC.defense = 18;
-            NPC.aiStyle = -1;//22;
+            NPC.aiStyle = -1; //22;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.lifeMax = 200;
+            NPC.lifeMax = 250;
             NPC.friendly = false;
             NPC.noTileCollide = true;
             NPC.lavaImmune = true;
             NPC.noGravity = true;
             NPC.knockBackResist = 0f;
-            NPC.alpha = 70; // was 100
-            NPC.value = 500;
+            NPC.alpha = 70; 
+            NPC.value = 1250; // health divided by 2 in pre-HM : was 50
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DemonSpiritBanner>();
-
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 500;
+                NPC.defense = 20;
+                NPC.value = 2500; // life / 2
+                NPC.damage = 80;
+                crystalFireDamage = 38;
+            }
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.lifeMax = 1840;
+                NPC.lifeMax = 2000; // 1840
                 NPC.defense = 67;
-                NPC.value = 16500;
+                NPC.value = 8000; // was 1650 souls
                 NPC.damage = 148;
-                NPC.knockBackResist = 0.0f;
                 crystalFireDamage = 48;
             }
         }
@@ -89,9 +95,11 @@ namespace tsorcRevamp.NPCs.Enemies
             bool undergroundJungle = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && p.ZoneJungle;
             bool undergroundEvil = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && (p.ZoneCorrupt || p.ZoneCrimson);
             bool undergroundHoly = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && p.ZoneHallow;
-
-            if (underworld && Main.rand.NextBool(15)) return 1;
-            else if (underworld && Main.hardMode && Main.rand.NextBool(1000)) return 1;
+            
+            if (underworld && !Main.hardMode && Main.rand.NextBool(15)) return 1;
+            if (spawnInfo.Player.ZoneCrimson && Main.hardMode && Main.rand.NextBool(25)) return 1;
+            if (spawnInfo.Player.ZoneDesert && Main.hardMode && Main.rand.NextBool(45)) return 1;
+            if (underworld && Main.hardMode && Main.rand.NextBool(100)) return 1;
             return 0;
         }
         #endregion

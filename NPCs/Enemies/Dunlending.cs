@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 45;
-            NPC.value = 150;
+            NPC.value = 220;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
             AnimationType = NPCID.PossessedArmor;

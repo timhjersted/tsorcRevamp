@@ -28,11 +28,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.damage = 73;
             NPC.defense = 50;
             NPC.timeLeft = 22000;
-            NPC.lifeMax = 7100;
+            NPC.lifeMax = 5000; // was 7100, toning down to increase spawn rates, now also in desert
             NPC.scale = 1.1f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 62000;
+            NPC.value = 40000; // life / 1.25 bc rare : was 6200 with 7100 life
             NPC.knockBackResist = 0.01f;
             NPC.lavaImmune = true;
             Banner = NPC.type;
@@ -50,13 +50,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int chargeDamage = 0;
         bool chargeDamageFlag = false;
 
-
-
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             Player P = spawnInfo.Player; //this shortens our code up from writing this line over and over.
             bool Meteor = P.ZoneMeteor;
+            bool Desert = (P.ZoneDesert || P.ZoneUndergroundDesert);
             bool Jungle = P.ZoneJungle;
             bool Dungeon = P.ZoneDungeon;
             bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
@@ -83,7 +82,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
 
-            if (tsorcRevampWorld.SuperHardMode && Dungeon && Main.rand.NextBool(60))
+            if (tsorcRevampWorld.SuperHardMode && Desert && Main.rand.NextBool(45))
+
+            {
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TaurusKnight.Nearby"), 175, 75, 255);
+                return 1;
+            }
+
+            if (tsorcRevampWorld.SuperHardMode && Dungeon && Main.rand.NextBool(50))
 
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TaurusKnight.Nearby"), 175, 75, 255);
@@ -108,7 +114,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             NPC.aiStyle = -1;
 
-            tsorcRevampAIs.FighterAI(NPC, 0.6f, 0.07f, 0.1f, true, enragePercent: 0.5f, enrageTopSpeed: 5);
+            tsorcRevampAIs.FighterAI(NPC, 0.6f, 0.07f, 0.1f, canTeleport: true, enragePercent: 0.5f, enrageTopSpeed: 5, canDodgeroll: true, lavaJumping: true);
 
             Lighting.AddLight(NPC.Center, Color.Yellow.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
 
@@ -119,6 +125,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 if (Main.rand.NextBool(2))
                 {
                     NPC.velocity.Y = -8f;
+                    NPC.netUpdate = true;
                 }
             }
 

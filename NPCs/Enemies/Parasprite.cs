@@ -16,15 +16,15 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.width = 12;
             NPC.height = 12;
             NPC.aiStyle = 22;
-            NPC.damage = 30;
+            NPC.damage = 48;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.lifeMax = 5;
+            NPC.lifeMax = 30;
             NPC.friendly = false;
             NPC.noTileCollide = false;
             NPC.noGravity = true;
             NPC.knockBackResist = 0;
-            NPC.value = 50;
+            NPC.value = 80;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.ParaspriteBanner>();
         }

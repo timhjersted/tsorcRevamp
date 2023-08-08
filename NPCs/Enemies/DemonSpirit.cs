@@ -35,14 +35,14 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 18;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.lifeMax = 425;
+            NPC.lifeMax = 400; // 425
             NPC.friendly = false;
             NPC.noTileCollide = true;
             NPC.lavaImmune = true;
             NPC.noGravity = true;
             NPC.knockBackResist = 0;
             NPC.alpha = 150;
-            NPC.value = 2200;
+            NPC.value = 2000; //220
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DemonSpiritBanner>();
         }

@@ -80,6 +80,14 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
                 Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
                 Projectile.damage = 18; //DAMAGE OF EXPLOSION when fuse runs out, not when collidew/npc
+                if (Main.hardMode)
+                {
+                    Projectile.damage = 28;
+                }
+                if (tsorcRevampWorld.SuperHardMode)
+                {
+                    Projectile.damage = 38;
+                }
                 Projectile.knockBack = 9f;
                 Projectile.DamageType = DamageClass.Throwing;
             }

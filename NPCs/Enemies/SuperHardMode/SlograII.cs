@@ -22,14 +22,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.height = 32;
             AnimationType = 104;
             NPC.aiStyle = 26;
-            //npc.timeLeft = 750;
-            NPC.damage = 58;
+            NPC.damage = 68;
             NPC.defense = 50;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
-            NPC.lifeMax = 3100;
+            NPC.lifeMax = 3000;
             NPC.knockBackResist = 0f;
-            NPC.value = 6000;
+            NPC.value = 12000; // was 600
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.SlograIIBanner>();
 
@@ -60,13 +59,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             // these are all the regular stuff you get , now lets see......
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && AboveEarth && Main.rand.NextBool(50)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && AboveEarth && Main.rand.NextBool(40)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && InBrownLayer && Main.rand.NextBool(32)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && InBrownLayer && Main.rand.NextBool(60)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && InGrayLayer && Main.rand.NextBool(40)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && InGrayLayer && Main.rand.NextBool(80)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && Main.bloodMoon && Main.rand.NextBool(5)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && Main.rand.NextBool(35)) return 1;
 
 
             return 0;

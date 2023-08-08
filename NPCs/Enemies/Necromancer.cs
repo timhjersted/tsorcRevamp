@@ -23,10 +23,10 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 25;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 790;
+            NPC.lifeMax = 800;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 2700;
+            NPC.value = 4000; // was 270
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.NecromancerBanner>();
             UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, SoundID.Item17);
@@ -65,8 +65,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (oUnderworld && Main.dayTime && Main.rand.NextBool(60)) return 1;
                 if (oUnderworld && !Main.dayTime && Main.rand.NextBool(35)) return 1;
                 if (spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(100)) return 1;
-                if (spawnInfo.Player.ZoneHallow && (oUnderground || oCavern) && Main.rand.NextBool(120)) return 1;
-                if ((spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && (oUnderground || oCavern) && Main.rand.NextBool(220)) return 1;
+                if (spawnInfo.Player.ZoneHallow && (oUnderground || oCavern) && Main.rand.NextBool(90)) return 1;
+                if ((spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneUndergroundDesert) && (oUnderground || oCavern) && Main.rand.NextBool(100)) return 1;
                 return 0;
             }
             return 0;

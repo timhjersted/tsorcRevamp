@@ -6,6 +6,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -41,9 +42,9 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noGravity = false;
             NPC.noTileCollide = false;
             NPC.lavaImmune = true;
-            NPC.value = 3750;
+            NPC.value = 4000; // was 375
             NPC.width = 28;
-            NPC.knockBackResist = 0.2f;
+            NPC.knockBackResist = 0.1f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.ArchdeaconBanner>();
         }
@@ -54,11 +55,20 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             float chance = 0;
             if (spawnInfo.Player.ZoneSkyHeight && spawnInfo.Player.ZoneSnow && Main.hardMode && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.Archdeacon>()) < 3 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1
-               && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.BarrowWight>()) < 3)
+               && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.BarrowWight>()) < 3 && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>())))
             {
-                chance += 0.03f;
+                chance += 0.35f;
             }
-            return chance;
+            if (spawnInfo.Player.ZoneSkyHeight && Main.hardMode && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1
+               && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.BarrowWight>()) < 3 && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>())))
+            {
+                chance += 0.2f;
+            }
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>())))
+            {
+                chance += 0.15f;
+            }
+                return chance;
         }
 
         public override void AI()

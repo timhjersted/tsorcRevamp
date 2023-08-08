@@ -21,9 +21,9 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit29; //spider
             NPC.DeathSound = SoundID.NPCDeath29;//lizard
             NPC.damage = 26;
-            NPC.lifeMax = 35;
+            NPC.lifeMax = 50;
             NPC.defense = 8;
-            NPC.value = 370;
+            NPC.value = 250; // was 37
             NPC.width = 18;
             NPC.aiStyle = -1;
             NPC.height = 40;
@@ -37,32 +37,14 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         //these mfs drop Every Potion too 
-        //why
+        //why : no more! now warlock has them
         public override void ModifyNPCLoot(NPCLoot npcLoot)
-        {
-            npcLoot.Add(ItemDropRule.Common(ItemID.BattlePotion, 50));
-            npcLoot.Add(ItemDropRule.Common(ItemID.WaterWalkingPotion, 40));
-            npcLoot.Add(ItemDropRule.Common(ItemID.SwiftnessPotion, 50));
-            npcLoot.Add(ItemDropRule.Common(ItemID.SpelunkerPotion, 50));
-            npcLoot.Add(ItemDropRule.Common(ItemID.ShinePotion, 50));
-            npcLoot.Add(ItemDropRule.Common(ItemID.RegenerationPotion, 50));
-            npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 50));
-            npcLoot.Add(ItemDropRule.Common(ItemID.GillsPotion, 50));
-            npcLoot.Add(ItemDropRule.Common(ItemID.HunterPotion, 50));
-            npcLoot.Add(ItemDropRule.Common(ItemID.ArcheryPotion, 50));
-            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 50));
-            npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 50));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 50));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 50));
-            npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 55));
-            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 50));
-            npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 50)); //not a typo
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 55));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 8, 1, 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 5, 1, 2));
+        {     
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 2, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 5, 1, 4));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 8));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 7));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 5));
         }
 
         //Spawns in the Jungle, mostly Underground and in the Cavern.

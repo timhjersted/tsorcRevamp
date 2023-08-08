@@ -40,13 +40,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.defense = 32;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 2600;
-            NPC.value = 1300;
+            NPC.lifeMax = 1500;
+            NPC.value = 6000; // health / 2.5 : was 130 with 2600 life (?)
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CorruptedElementalBanner>();
         }
 
-        //Spawns in the Underground and Cavern before 3.5/10ths and after 7.5/10ths (Width). Does not Spawn in the Jungle, Meteor, or if there are Town NPCs.
+        //Spawns in the SHM: Underground and Cavern before 3.5/10ths and after 7.5/10ths (Width). Does not Spawn in the Jungle, Meteor, or if there are Town NPCs.
 
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

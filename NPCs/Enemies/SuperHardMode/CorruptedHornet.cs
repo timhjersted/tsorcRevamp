@@ -32,8 +32,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             AIType = 42;
             NPC.width = 34;
             NPC.height = 12;
-            NPC.knockBackResist = .3f;
-            NPC.value = 1130;
+            NPC.knockBackResist = .2f;
+            NPC.value = 4000; // life / 2.5 : was 113
             NPC.aiStyle = 5;
             NPC.timeLeft = 750;
             NPC.damage = 48;
@@ -41,7 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.noGravity = true;
-            NPC.lifeMax = 1500;
+            NPC.lifeMax = 1000;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CorruptedHornetBanner>();
         }
@@ -67,9 +67,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
+            target.AddBuff(BuffID.Poisoned, 120 * 60, false);
+
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.Confused, 3 * 60, false); //confused!
+                target.AddBuff(BuffID.Confused, 3 * 60, false); 
+               
             }
         }
 

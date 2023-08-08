@@ -422,8 +422,8 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 // Enrage Phase
                 NPC.ai[3]++;
-                //NPC.alpha = 220; // No longer goes invisible, that can just be a Hunger mechanic
-                NPC.defense = 57;
+                //NPC.alpha = 220; // No longer goes invisible, that is now just a Hunter mechanic
+                NPC.defense = 999; // Was 57, increased greatly just for The Sorrow to fit with frozen ice theme
                 NPC.damage = 160;
 
                 if (Main.player[NPC.target].Center.X < NPC.Center.X)

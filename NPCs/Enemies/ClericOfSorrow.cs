@@ -1,10 +1,12 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Threading.Channels;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -28,10 +30,10 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 35;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 405;
+            NPC.lifeMax = 400;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 1800;
+            NPC.value = 2000; // was 180
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.ClericOfSorrowBanner>();
             UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 9, SoundID.Item17, 0.1f, 120, 1, telegraphColor: Color.Blue);
@@ -62,14 +64,15 @@ namespace tsorcRevamp.NPCs.Enemies
             // these are all the regular stuff you get , now lets see......
             if (spawnInfo.Player.townNPCs > 0f) return 0;
 
-            if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && Main.rand.NextBool(55)) return 1;
+            if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && Main.rand.NextBool(40)) return 1;
 
             if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && InBrownLayer && Main.rand.NextBool(35)) return 1;
 
             if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && InGrayLayer && Main.rand.NextBool(25)) return 1;
 
-            if (Main.hardMode && FrozenOcean && Main.rand.NextBool(20)) return 1;
+            if (Main.hardMode && FrozenOcean && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) && Main.rand.NextBool(15)) return 1;
 
+            if (Main.hardMode && FrozenOcean && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) && Main.rand.NextBool(25)) return 1;
 
             return 0;
         }

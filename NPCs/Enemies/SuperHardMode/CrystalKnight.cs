@@ -36,10 +36,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
-            NPC.lifeMax = 1750;
-            NPC.scale = 0.9f;
+            NPC.lifeMax = 2000;
+            NPC.scale = 1f; // was 0.9 for some reason?
             NPC.knockBackResist = 0;
-            NPC.value = 7230;
+            NPC.value = 8000; // life / 2.5 : was 723 with a bit less health - 2.5 seems a good average to equalize the numbers
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CrystalKnightBanner>();
         }

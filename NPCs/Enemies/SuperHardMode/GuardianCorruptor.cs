@@ -31,10 +31,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.height = 164;
             NPC.damage = 42;
             NPC.defense = 50;
-            NPC.lifeMax = 4500;
+            NPC.lifeMax = 1500; // 4500 was too much for such a dumb enemy
             NPC.aiStyle = -1;
             NPC.npcSlots = 3;
-            NPC.value = 18750;
+            NPC.value = 6000; //life / 2.5 : was 1875 but with way more health 
             NPC.knockBackResist = 0.01f;
             NPC.scale = 1f;
             NPC.HitSound = SoundID.NPCHit1;
@@ -53,6 +53,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 if (player.ZoneCorrupt && player.ZoneOverworldHeight && !Main.dayTime) chance = 0.5f;
                 else if (player.ZoneCorrupt && player.ZoneRockLayerHeight && !Main.dayTime) chance = 0.5f;
                 else if (player.ZoneCorrupt) chance = 0.25f;
+                else if (spawnInfo.Water) chance = 0.025f;
             }
 
             return chance;
@@ -96,7 +97,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(BuffID.Weak, 120 * 60, true);
-            target.AddBuff(BuffID.BrokenArmor, 3 * 60, true);
+            target.AddBuff(BuffID.BrokenArmor, 60 * 60, true);
+            target.AddBuff(BuffID.Poisoned, 300 * 60, true);
         }
 
         /*public override void FindFrame(int frameHeight)

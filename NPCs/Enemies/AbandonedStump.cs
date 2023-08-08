@@ -44,7 +44,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lifeMax = 120;
             NPC.HitSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCHit/Dig");
             NPC.DeathSound = SoundID.NPCDeath33;
-            NPC.value = 500;
+            NPC.value = 600;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AbandonedStumpBanner>();
         }

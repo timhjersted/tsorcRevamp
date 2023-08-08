@@ -11,8 +11,8 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class ShadowMage : ModNPC
     {
-        int oracleDamage = 13;
-        int ice3Damage = 18;
+        int oracleDamage = 15;
+        int ice3Damage = 20;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 2;
@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noGravity = false;
             NPC.noTileCollide = false;
             NPC.lavaImmune = true;
-            NPC.value = 3000;
+            NPC.value = 2250; // was 300
             NPC.width = 28;
             NPC.knockBackResist = 0.3f;
             Banner = NPC.type;
@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Enemies
             bool underworld = spawnInfo.Player.ZoneUnderworldHeight;
             if (Main.hardMode && spawnInfo.Player.ZoneDungeon || Main.hardMode && underworld)
             {
-                if (Main.rand.NextBool(50))
+                if (Main.rand.NextBool(40))
                 {
                     return 1;
                 }

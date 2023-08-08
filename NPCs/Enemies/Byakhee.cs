@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			NPC.damage = 40;
 			NPC.defense = 8;
 			NPC.lifeMax = 300;
-			NPC.value = 1800f;
+			NPC.value = 1500f;
 			NPC.aiStyle = -1;
 			NPC.knockBackResist = 0.2f;
 			//AIType = NPCID.Demon;
@@ -51,13 +51,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (spawnInfo.Player.townNPCs > 0f) return 0f;
             if (spawnInfo.Player.ZoneOverworldHeight && Main.hardMode && spawnInfo.Player.ZoneDesert && !Main.dayTime) return 0.0627f;
-            if (spawnInfo.Player.ZoneOverworldHeight && Main.hardMode && spawnInfo.Player.ZoneDesert && Main.dayTime) return 0.0268f;
-            if (spawnInfo.Player.ZoneUndergroundDesert && Main.hardMode && Main.dayTime) return 0.028f;
+            if (spawnInfo.Player.ZoneOverworldHeight && Main.hardMode && spawnInfo.Player.ZoneDesert && Main.dayTime) return 0.0368f;
+            if (spawnInfo.Player.ZoneUndergroundDesert && Main.hardMode && Main.dayTime) return 0.038f;
 
             if (Main.hardMode && spawnInfo.Player.ZoneRain)
             {
-                if (spawnInfo.Player.ZoneOverworldHeight && Main.hardMode && Main.dayTime) return 0.0233f;
-                if (spawnInfo.Player.ZoneOverworldHeight && Main.hardMode && !Main.dayTime) return 0.0455f;     
+                if (spawnInfo.Player.ZoneOverworldHeight && Main.dayTime) return 0.0433f;
+                if (spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime) return 0.0855f;     
             }
             return chance;
         }

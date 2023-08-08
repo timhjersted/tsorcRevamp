@@ -482,7 +482,7 @@ namespace tsorcRevamp.NPCs
             //mushroom
             if (spawnInfo.Player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode)
             {
-                pool.Add(NPCID.DD2LightningBugT3, 0.25f);
+                pool.Add(NPCID.DD2LightningBugT3, 0.28f);
             }
             if (spawnInfo.Player.ZoneUnderworldHeight && !spawnInfo.Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
             {
@@ -4025,9 +4025,9 @@ namespace tsorcRevamp.NPCs
                     npc.knockBackResist = 0.09f;
 
                     //TELEPORT MELEE
-                    if (Main.rand.NextBool(12))
+                    if (Main.rand.NextBool(18))
                     {
-                        TeleportImmediately(npc, 20, true);
+                        TeleportImmediately(npc, 25, true);
                     }
                     //WHEN HIT, CHANCE TO JUMP BACKWARDS 
                     else if (Main.rand.NextBool(8))
@@ -4097,7 +4097,7 @@ namespace tsorcRevamp.NPCs
                         }
                         npc.netUpdate = true;
                     }
-                    if (npc.Distance(Main.player[npc.target].Center) > 80 && Main.rand.NextBool(20))
+                    if (npc.Distance(Main.player[npc.target].Center) > 300 && Main.rand.NextBool(24))
                     {
                         TeleportImmediately(npc, 20, false);
                     }

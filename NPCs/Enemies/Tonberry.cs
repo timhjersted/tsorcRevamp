@@ -28,15 +28,15 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lifeMax = 1500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 25000;
+            NPC.value = 30000; // double life bc tonberry, was 2500
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TonberryBanner>();
             NPC.rarity = 9;
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.lifeMax = 3360;
-                NPC.defense = 57;
-                NPC.value = 70000;
+                NPC.lifeMax = 3500;
+                NPC.defense = 67;
+                NPC.value = 70000; // already was double life
                 NPC.damage = 0;
             }
             UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17);

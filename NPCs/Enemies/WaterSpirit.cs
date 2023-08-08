@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noGravity = true;
             NPC.knockBackResist = 0;
             NPC.alpha = 100;
-            NPC.value = 1600;
+            NPC.value = 2000;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.WaterSpiritBanner>();
         }

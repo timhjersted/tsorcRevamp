@@ -22,11 +22,11 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 30;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 4350;
+            NPC.lifeMax = 4000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
-            NPC.value = 7500;
+            NPC.value = 20000;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.NecromancerElementalBanner>();
             UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, SoundID.Item17);

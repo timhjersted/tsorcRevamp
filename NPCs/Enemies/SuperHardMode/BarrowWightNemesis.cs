@@ -43,7 +43,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.knockBackResist = 0;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.value = 6230;
+            NPC.value = 10000; // life / 2.5 : was 623
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BarrowWightNemesisBanner>();
         }

@@ -19,11 +19,11 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.CloneDefaults(NPCID.CaveBat);
             AnimationType = NPCID.GiantBat;
             AIType = NPCID.CaveBat;
-            NPC.lifeMax = 35;
-            NPC.damage = 45;
+            NPC.lifeMax = 100;
+            NPC.damage = 65;
             NPC.knockBackResist = .55f;
-            NPC.value = 350;
-            NPC.defense = 5;
+            NPC.value = 500; // was 35 with 35 life
+            NPC.defense = 20;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CloudBatBanner>();
         }

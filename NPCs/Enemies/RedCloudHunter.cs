@@ -27,10 +27,10 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.damage = 18;
-            NPC.lifeMax = 575;
+            NPC.lifeMax = 600;
             NPC.scale = 0.9f;
             NPC.defense = 18;
-            NPC.value = 6500;
+            NPC.value = 5210; // life / 1.15 bc rare : was 650
             NPC.width = 18;
             NPC.aiStyle = -1;
             NPC.height = 48;
@@ -42,19 +42,19 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.SkeletonArcher;
             if (Main.hardMode)
             {
-                NPC.lifeMax = 650;
+                NPC.lifeMax = 800;
                 NPC.defense = 27;
-                NPC.value = 3500;
+                NPC.value = 4000; // was 350
                 NPC.damage = 24;
                 archerBoltDamage = 45;
             }
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.lifeMax = 1875;
+                NPC.lifeMax = 2000;
                 NPC.defense = 42;
-                NPC.value = 3900;
-                NPC.damage = 35;
-                archerBoltDamage = 70;
+                NPC.value = 8000; // life / 2.5 : was 390
+                NPC.damage = 55;
+                archerBoltDamage = 75;
             }
 
         }
@@ -63,7 +63,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 6));
             npcLoot.Add(ItemDropRule.Common(ItemID.HolyArrow, 1, 30, 60));
             npcLoot.Add(ItemDropRule.Common(ItemID.UnicornHorn, 3, 1, 1));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 2, 4));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 6, 8));
         }
 
         #region Spawn

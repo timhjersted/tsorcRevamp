@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lavaImmune = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 27050; //was 1600 souls
+            NPC.value = 12000; //life / 2.5 : was 1600 souls
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.HydrisNecromancerBanner>();
             UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, SoundID.Item17, telegraphColor: Color.Black);

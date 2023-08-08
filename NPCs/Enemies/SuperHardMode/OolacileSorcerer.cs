@@ -31,11 +31,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.npcSlots = 2;
             AnimationType = 29;
             NPC.aiStyle = 0;
-            NPC.damage = 48;
+            NPC.damage = 68;
             NPC.defense = 92;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 6400;
+            NPC.lifeMax = 2000; // 6400 geez
             NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
@@ -44,10 +44,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.OolacileSorcererBanner>();
-
-            NPC.value = 10500;
+            NPC.value = 8000; // 1200 with 6k life
             NPC.width = 28;
-            NPC.knockBackResist = 0.1f;
+            NPC.knockBackResist = 0f;
         }
 
         int darkBeadDamage = 40;
@@ -87,13 +86,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             // these are all the regular stuff you get , now lets see......
 
-            if (tsorcRevampWorld.SuperHardMode && Jungle && !Dungeon && !Corruption && AboveEarth && !Ocean && Main.rand.NextBool(90)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && Jungle && !Dungeon && !Corruption && AboveEarth && !Ocean && Main.rand.NextBool(70)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Jungle && !Dungeon && !Corruption && !AboveEarth && !Ocean && Main.rand.NextBool(120)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && Ocean && !AboveEarth && Main.rand.NextBool(25)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && Dungeon && Main.rand.NextBool(30)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Jungle && !Dungeon && !Corruption && !AboveEarth && !Ocean && Main.rand.NextBool(30)) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Dungeon && !Corruption && !AboveEarth && Main.rand.NextBool(15)) return 1;
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(20)) return 1;
+
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && InGrayLayer && Main.rand.NextBool(50)) return 1;
 
             if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Dungeon && Main.rand.NextBool(8)) return 1;
 

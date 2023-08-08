@@ -15,14 +15,15 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Main.npcFrameCount[NPC.type] = 16;
         }
+        public int warriorDamage = 20;
         public override void SetDefaults()
         {
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.damage = 35;
-            NPC.lifeMax = 95;
+            NPC.lifeMax = 100;
             NPC.defense = 16;
-            NPC.value = 350;
+            NPC.value = 500; // was 35
             NPC.width = 20;
             NPC.aiStyle = -1;
             NPC.height = 40;
@@ -34,23 +35,25 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.GoblinWarrior;
             if (Main.hardMode)
             {
-                NPC.lifeMax = 300;
-                NPC.defense = 20;
-                NPC.value = 450;
+                NPC.lifeMax = 200;
+                NPC.defense = 40;
+                NPC.value = 1000; // was 45 but 30 defense
                 NPC.damage = 60;
                 topSpeed = 1.1f;
+                warriorDamage = 30;
             }
 
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.lifeMax = 1595;
-                NPC.defense = 70;
-                NPC.damage = 80;
-                NPC.value = 1000;
+                NPC.lifeMax = 1000;
+                NPC.defense = 90;
+                NPC.damage = 90;
+                NPC.value = 4000; // was 100 but worse stats
                 topSpeed = 1.8f;
+                warriorDamage = 50; // didn't have scaling damage before
             }
 
-            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, SoundID.Item17);
+            UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), warriorDamage, 8, SoundID.Item17);
         }
         public override void OnKill()
         {
@@ -75,7 +78,10 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 return 0.1f; //.05 is 3.85%
             }
-
+            if (spawnInfo.Player.ZoneGraveyard)
+            {
+                return 0.2f; // was 0.17
+            }
             return chance;
         }
 
@@ -86,7 +92,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, topSpeed, .04f, 0.2f, true, enragePercent: 0.2f, enrageTopSpeed: 2.1f);
+            tsorcRevampAIs.FighterAI(NPC, topSpeed, .04f, 0.2f, false, enragePercent: 0.2f, enrageTopSpeed: 2.1f); // experimenting with no longer teleporting
 
             if (NPC.justHit && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer <= 149 && Main.rand.NextBool(4))
             {

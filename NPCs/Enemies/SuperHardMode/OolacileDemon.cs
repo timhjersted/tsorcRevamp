@@ -38,12 +38,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.behindTiles = true;
             NPC.lavaImmune = true;
             NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
-            NPC.lifeMax = 4500;
+            NPC.lifeMax = 3000;
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.2f;
             NPC.noGravity = true;
             NPC.noTileCollide = false;
-            NPC.value = 18750;
+            NPC.value = 12000; // life / 2.5 : was 1875 with 4500 health
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.OolacileDemonBanner>();
         }
@@ -84,6 +84,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return 0;
             }
 
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(20)) return 1;
+
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDesert && Main.rand.NextBool(30)) return 1;
+
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneUndergroundDesert && Main.rand.NextBool(20)) return 1;
 
             if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && InHell && Main.rand.NextBool(13)) return 1;
 
@@ -507,7 +512,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 target.AddBuff(ModContent.BuffType<CurseBuildup>(), 600 * 60, false); //-20 HP curse
             }
 
-            if (Main.rand.NextBool(4))
+            if (Main.rand.NextBool(2))
             {
 
                 target.AddBuff(ModContent.BuffType<FracturingArmor>(), 60 * 60, false); //armor reduced on hit

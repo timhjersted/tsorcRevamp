@@ -23,6 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies
         bool hasEnraged = false;
         int enrageTimer;
 
+        public int ringedKnightDamage = 10; // was 8 or life / 4
 
         //Anim
         //int shieldFrame;
@@ -56,9 +57,24 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.width = 20;
             NPC.lifeMax = 400;
             //stats not doubled with scale expert method yet (!)(oops)
-            if (Main.hardMode) { NPC.lifeMax = 800; NPC.defense = 45; NPC.damage = 82; }
-            if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 2500; NPC.defense = 100; NPC.damage = 130; NPC.value = 6000; }
-            NPC.value = 1500;
+            if (Main.hardMode) 
+            { 
+                NPC.lifeMax = 800; 
+                NPC.defense = 45; 
+                NPC.damage = 82; 
+                NPC.value = 4000;
+                ringedKnightDamage = 20;
+            }
+            if (tsorcRevampWorld.SuperHardMode) 
+            { 
+                NPC.lifeMax = 2500; 
+                NPC.defense = 100; 
+                NPC.damage = 130; 
+                NPC.value = 10000; // was 600
+                NPC.knockBackResist = 0.0f;
+                ringedKnightDamage = 30;
+            } 
+            NPC.value = 2000; // was 150
             NPC.HitSound = SoundID.NPCHit48;
             NPC.DeathSound = SoundID.NPCDeath2;
             NPC.lavaImmune = true;
@@ -538,11 +554,11 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (!standing_on_solid_tile)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -66), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -66), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                             else
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
 
                         }
@@ -551,12 +567,12 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (!standing_on_solid_tile)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -66), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -66), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
 
                             }
                             else
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                         }
                     }
@@ -675,12 +691,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
                         if (NPC.direction == 1)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
                         }
 
                         else
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
                         }
                     }
                     if (NPC.ai[1] > 470 && NPC.ai[1] < 489)
@@ -759,14 +775,14 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         if (NPC.direction == 1)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(48, -2), new Vector2(0, 0), projStab, (int)(damage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(48, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
                             NPC.velocity.X += 10.5f;
                             //npc.velocity.Y -= 2f;
                         }
 
                         else
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-48, -2), new Vector2(0, 0), projStab, (int)(damage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-48, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
                             NPC.velocity.X -= 10.5f;
                             //npc.velocity.Y -= 2f;
                         }
@@ -775,14 +791,14 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         if (NPC.direction == 1)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), projStab, (int)(damage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
                             NPC.velocity.X += 10.5f;
                             //npc.velocity.Y -= 2f;
                         }
 
                         else
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-44, -2), new Vector2(0, 0), projStab, (int)(damage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-44, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
                             NPC.velocity.X -= 10.5f;
                             //npc.velocity.Y -= 2f;
                         }
@@ -1051,6 +1067,8 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spawnInfo.Player.townNPCs > 1f) return 0f;
 
             if (spawnInfo.Player.ZoneUnderworldHeight) return 0.15f;
+
+            if (Main.hardMode && spawnInfo.Player.ZoneUndergroundDesert) return 0.16f; // now spawns in desert HM
 
             return chance;
         }

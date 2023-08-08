@@ -36,13 +36,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
             NPC.height = 14;
             NPC.aiStyle = 6;
             NPC.timeLeft = 750;
-            NPC.damage = 53;
-            NPC.defense = 58;
+            NPC.damage = 63;
+            NPC.defense = 80;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0;
-            NPC.lifeMax = 25000;
+            NPC.lifeMax = 10000;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.behindTiles = true;

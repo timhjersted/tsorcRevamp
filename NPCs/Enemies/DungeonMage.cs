@@ -31,14 +31,14 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 10;
             NPC.height = 44;
             NPC.timeLeft = 22500;
-            NPC.lifeMax = 130;
+            NPC.lifeMax = 160;
             NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.noGravity = false;
             NPC.noTileCollide = false;
             NPC.lavaImmune = true;
-            NPC.value = 1500;
+            NPC.value = 800; //was 150
             NPC.width = 28;
             NPC.knockBackResist = 0.3f;
             AnimationType = NPCID.GoblinSorcerer;

@@ -19,6 +19,10 @@ namespace tsorcRevamp.NPCs.Enemies
         int shieldFrame;
         int shieldAnimTimer;
 
+        // now has damage scaling
+        public int smallSlashDamage = 10;
+        public int bigSlashDamage = 15;
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 17;
@@ -31,10 +35,26 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 10;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.lifeMax = 75;
-            if (Main.hardMode) { NPC.lifeMax = 200; NPC.defense = 25; NPC.damage = 28; NPC.value = 450; }
-            if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 1050; NPC.defense = 45; NPC.damage = 38; NPC.value = 550; }
-            NPC.value = 250;
+            NPC.lifeMax = 100;
+            if (Main.hardMode) 
+            { 
+                NPC.lifeMax = 250; 
+                NPC.defense = 25; 
+                NPC.damage = 28; 
+                NPC.value = 1250;
+                smallSlashDamage = 20;
+                bigSlashDamage = 25;
+    }
+            if (tsorcRevampWorld.SuperHardMode) 
+            { 
+                NPC.lifeMax = 1000; 
+                NPC.defense = 45; 
+                NPC.damage = 38; 
+                NPC.value = 4000;
+                smallSlashDamage = 30;
+                bigSlashDamage = 35;
+            }
+            NPC.value = 500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
             Banner = NPC.type;
@@ -349,12 +369,12 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (!standing_on_solid_tile)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -56), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), 10, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -56), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), smallSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
 
                             }
                             else
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), 10, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), smallSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                         }
 
@@ -362,12 +382,12 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (!standing_on_solid_tile)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -56), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), 10, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -56), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), smallSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
 
                             }
                             else
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), 10, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), smallSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                         }
                     }
@@ -485,12 +505,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
                         if (NPC.direction == 1)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), 13, 5, Main.myPlayer, NPC.whoAmI, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), bigSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                         }
 
                         else
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-20, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), 13, 5, Main.myPlayer, NPC.whoAmI, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-20, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), bigSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
                         }
                     }
                     if (NPC.ai[1] > 470 && NPC.ai[1] < 510)
@@ -783,18 +803,26 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spawnInfo.Water || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) return 0f;
             if (spawnInfo.Player.ZoneGlowshroom) return 0f;
 
-            if (Main.hardMode && spawnInfo.Lihzahrd) return 0.15f;
+            if (!Main.hardMode && spawnInfo.SpawnTileType == TileID.GreenDungeonBrick && !spawnInfo.Water) return 0.15f;
+
+            if (Main.hardMode && spawnInfo.Lihzahrd) return 0.2f;
+            if (Main.hardMode && p.ZoneNormalCaverns && !spawnInfo.Water) return 0.02f;
+            if (Main.hardMode && p.ZoneDesert && p.ZoneOverworldHeight && !spawnInfo.Water) return 0.05f;
+            if (Main.hardMode && p.ZoneUndergroundDesert && !spawnInfo.Water) return 0.07f;
+            if (Main.hardMode && spawnInfo.SpawnTileType == TileID.BlueDungeonBrick && !spawnInfo.Water) return 0.18f;
+            if (Main.hardMode && spawnInfo.SpawnTileType == TileID.TungstenBrick && !spawnInfo.Water) return 0.15f;
 
             if (tsorcRevampWorld.SuperHardMode && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneUnderworldHeight)) return 0.23f;
             if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneOverworldHeight && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSkyHeight)) return 0.25f;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDesert && !Ocean) return 0.13f;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneUnderworldHeight) return 0.2f; //.08% is 4.28%
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDesert && !Ocean) return 0.15f;
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneUnderworldHeight) return 0.15f; //.08% is 4.28%
 
 
             if (Main.expertMode && Main.bloodMoon && spawnInfo.Player.ZoneOverworldHeight && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSkyHeight)) return chance = 0.075f;
 
             if (Main.expertMode && Main.bloodMoon && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneUnderworldHeight)) return chance = 0.04f;
 
+            // not sure why these were added since base game is expert mode
             if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.Player.ZoneOverworldHeight && Main.dayTime && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneSkyHeight)) return chance = 0.05f;
             if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.09f;
 

@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.aiStyle = 6; 
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22750;
-            NPC.damage = 93;
+            NPC.damage = 96;
             NPC.defense = 120;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath10;

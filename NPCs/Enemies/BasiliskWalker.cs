@@ -41,22 +41,22 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 8;
             NPC.height = 50;
             NPC.width = 24;
-            NPC.lifeMax = 90; //was 280
+            NPC.lifeMax = 100;  
+            NPC.HitSound = SoundID.NPCHit20;
+            NPC.DeathSound = SoundID.NPCDeath5;
+            NPC.value = 500; // health / 2
+            NPC.lavaImmune = true;
 
             if (Main.hardMode)
             {
-                NPC.lifeMax = 190;
+                NPC.lifeMax = 250;
                 NPC.defense = 20;
-                NPC.value = 700;
-                NPC.damage = 30;
+                NPC.value = 1250; // health / 2 : was 70
+                NPC.damage = 33;
                 hypnoticDisruptorDamage = 23;
                 bioSpitDamage = 18;
             }
 
-            NPC.HitSound = SoundID.NPCHit20;
-            NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.value = 400; 
-            NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BasiliskWalkerBanner>();
             UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 8, SoundID.Item20 with { Volume = 0.2f, Pitch = 0.3f }, telegraphColor: Color.GreenYellow);
@@ -117,7 +117,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: true, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.2f, enrageTopSpeed: 2);
+            tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: false, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.2f, enrageTopSpeed: 2);
 
             //MAKE SOUND WHEN JUMPING/HOVERING
             if (Main.rand.NextBool(12) && NPC.velocity.Y <= -1f)

@@ -23,12 +23,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.damage = 12;
             NPC.lifeMax = 125;
             NPC.defense = 9;
-            NPC.value = 1000;
+            NPC.value = 630; // was 100
             NPC.scale = 0.9f;
             NPC.width = 18;
             NPC.aiStyle = -1;
             NPC.height = 48;
-            NPC.knockBackResist = 0.7f;
+            NPC.knockBackResist = 0.6f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.ManHunterBanner>();
 
@@ -37,10 +37,10 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.hardMode)
             {
                 NPC.lifeMax = 250;
-                NPC.defense = 12;
-                NPC.value = 1500;
+                NPC.defense = 22;
+                NPC.value = 1250; // was 150
                 NPC.damage = 25;
-                archerBoltDamage = 15;
+                archerBoltDamage = 28;
             }
         }
 

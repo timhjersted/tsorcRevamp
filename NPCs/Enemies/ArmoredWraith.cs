@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.damage = 48;
             NPC.scale = 1f;
             NPC.knockBackResist = 0;
-            NPC.value = 500;
+            NPC.value = 370; // life / 2 : was 50 
             NPC.defense = 25;
             NPC.alpha = 100;
             NPC.lavaImmune = true;

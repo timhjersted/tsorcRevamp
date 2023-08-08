@@ -35,9 +35,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.defense = 67;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.lifeMax = 3350;
+            NPC.lifeMax = 2000;
             NPC.knockBackResist = 0;
-            NPC.value = 10430;
+            NPC.value = 8000; // life / 2.5 : was 1043 w 3k health
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DarkBloodKnightBanner>();
         }

@@ -40,11 +40,11 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 0;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 189;
+            NPC.lifeMax = 180;
             NPC.knockBackResist = 0;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.value = 850;
+            NPC.value = 900; // was 85
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BarrowWightBanner>();
         }
