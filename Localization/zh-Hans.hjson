@@ -85,7 +85,7 @@ Mods: {
 			MaxStamina: 增加 {0}% 耐力上限
 
 			Melee: {
-				ArmorPenPercent: 增加近战护甲穿透 {0}%
+				ArmorPenPercent: 增加 {0}% 近战护甲穿透
 				FlatDmg: 增加近战伤害 {0} 点
 				Bonus: (近战武器的加成再额外 x{0})
 				BadDmg: 减少 {0}% 近战伤害
@@ -226,7 +226,7 @@ Mods: {
 			FireLurker: 一个被诅咒的火焰潜伏者出现了...
 			RedKnight1: 你的世界被一位红骑士入侵了...
 			RedKnight2: 你的世界被一位红骑士入侵了...
-			JungleWyvern: 你打搅了失落之城的远古飞龙！
+			JungleWyvern: 你打搅了失落之城的古林飞龙！
 			SeathTheScaleless: 冰龙希斯已苏醒！
 			WyvernMage: 你给我留下了深刻的印象，瑞德！但这将是你旅程的终点！
 			SlograAndGaibon: 斯洛格拉和盖波从深处苏醒！
@@ -410,8 +410,8 @@ Mods: {
 				GoldenGi: "{$CommonItemTooltip.Melee.FlatDmg}"
 				ManaCost1: "消耗 "
 				ManaCost2: " 法力以发射投掷物"
-				AmmoReservationPotion: 增加远程暴击伤害
-				AmmoBox: 以弹药基础伤害的一半来增加弹药暴击几率
+				AmmoReservationPotion: 增加 {0}% 远程暴击伤害
+				AmmoBox: 以弹药基础伤害值的一半增加弹药暴击几率
 				HerosShirt:
 					'''
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.MaxStamina@1}
@@ -424,7 +424,7 @@ Mods: {
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					'''
 				MagicSummonHybridDamageClass: 魔法/召唤伤害
-				AleSake: 对鞭子标记堆叠的微小改进
+				AleSake: 鞭子属性小幅提升
 				Firecracker: 爆炸增加 {0}% 伤害
 				MorningStar:
 					'''
@@ -1069,9 +1069,8 @@ Mods: {
 				DisplayName: 壁垒之戒
 				Tooltip:
 					'''
-					{$CommonItemTooltip.LifeThreshold}释放魔法屏障
-					魔法屏障效果：{$CommonItemTooltip.IncreasesDefenseBy@1}
-					{$CommonItemTooltip.UniqueBarrier}
+					在佩戴者周围释放可以豁免攻击的屏障
+					豁免攻击后屏障进入 {$CommonItemTooltip.Cooldown}
 					'''
 			}
 
@@ -2393,7 +2392,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@3}
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
-					{$CommonItemTooltip.LifeThreshold@2}由该套装提供的近战攻速翻倍
+					{$CommonItemTooltip.LifeThreshold@2}由该套装提供的近战速度翻倍
 					'''
 			}
 
@@ -2420,7 +2419,7 @@ Mods: {
 			}
 
 			DarkKnightHelmet: {
-				DisplayName: 黑暗骑士头盔黑暗骑士头盔
+				DisplayName: 黑暗骑士头盔
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
 			}
 
@@ -3332,7 +3331,7 @@ Mods: {
 					直到今天，它一直守卫着这座失落的废墟  
 					把任何发现它的旅行者撕成碎片
 					'''
-				WrongTime: 古林飞龙还在深林里......晚上再试试吧
+				WrongTime: 古林飞龙还在深林里...晚上再试试吧
 				WrongLocation: 古林飞龙只能在地下召唤
 				Summon: "你脚下在发生震动... "
 			}
@@ -4007,7 +4006,7 @@ Mods: {
 				Enabled: 大师模式已启动，享受你额外的饰品栏位吧！
 				Disabled:
 					'''
-					大师模式已关闭，代价太大了....
+					大师模式已关闭，玩得太劳心伤神了...
 					胆小鬼！你缺少一往无前的决心
 					'''
 			}
@@ -4029,9 +4028,10 @@ Mods: {
 					Miakoda，一个存世百年之久的光之造物
 					它发誓要帮助你找到你的妻子并击败阿卓迪斯
 					Miakoda 是一个当地方言的名字，意思是“月亮的力量”
-					{$CommonItemTooltip.DmgMult}
-					【峨眉月形态】，当你暴击时用月之光灌注武器
-					再{$CommonItemTooltip.DmgMult@1}（{$CommonItemTooltip.SecondDuration@2}, {$CommonItemTooltip.Cooldown@3}）
+					【峨眉月形态】，{$CommonItemTooltip.DmgMult}
+					当你暴击时用月之光灌注武器
+					再{$CommonItemTooltip.DmgMult@1}
+					{$CommonItemTooltip.SecondDuration@2}, {$CommonItemTooltip.Cooldown@3}
 					可以在恶魔祭坛上切换形态
 					'''
 			}
@@ -4043,9 +4043,10 @@ Mods: {
 					Miakoda，一个存世百年之久的光之造物
 					它发誓要帮助你找到你的妻子并击败阿卓迪斯
 					Miakoda 是一个当地方言的名字，意思是“月亮的力量”
-					【满月形态】，当你暴击时治疗自己（{$CommonItemTooltip.Cooldown@3}）
+					【满月形态】，{$CommonItemTooltip.DRStat}
+					当你暴击时用月之魔法治疗自己
 					治疗量为 {1}+最大生命值的{2}% 
-					{$CommonItemTooltip.DRStat}
+					{$CommonItemTooltip.Cooldown@3}
 					可以在恶魔祭坛上切换形态
 					'''
 			}
@@ -4057,10 +4058,10 @@ Mods: {
 					Miakoda，一个存世百年之久的光之造物
 					它发誓要帮助你找到你的妻子并击败阿卓迪斯
 					Miakoda 是一个当地方言的名字，意思是“月亮的力量”
-					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
-					【新月形态】，当你暴击时用迈达斯灌注武器
-					使敌人掉落更多钱币（{$CommonItemTooltip.SecondDuration@3}, {$CommonItemTooltip.Cooldown@4}）
+					【新月形态】，{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					当你暴击时用迈达斯灌注武器使敌人掉落更多钱币
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}，{$CommonItemTooltip.ReducesDamageTakenByPercent@2}，{$CommonItemTooltip.NoKnockback}
+					{$CommonItemTooltip.SecondDuration@3}, {$CommonItemTooltip.Cooldown@4}
 					可以在恶魔祭坛上切换形态
 					'''
 			}
@@ -5420,7 +5421,7 @@ Mods: {
 				Tooltip:
 					'''
 					无名指李奥纳德的首选武器
-					被赋予了月之力
+					一把能接引月之力以剑光攻击的剑
 					[c/ffbf00:射出穿透墙壁的新月光束]
 					'''
 			}
@@ -5573,7 +5574,7 @@ Mods: {
 
 			VampireBlade: {
 				DisplayName: 吸血鬼之刃
-				Tooltip: 每次攻击恢复2点生命值
+				Tooltip: 每次攻击恢复 3 点生命值
 			}
 
 			WereBane: {
@@ -5740,7 +5741,7 @@ Mods: {
 				DisplayName: 莱瓦汀
 				Tooltip:
 					'''
-					刀刀烈火刀刀爆（源自北欧神话火焰巨人苏尔特拥有的火焰之剑
+					克敌先机（源自北欧神话火焰巨人苏尔特拥有的火焰之剑
 					像一把短剑一样使用
 					'''
 			}
@@ -6078,7 +6079,7 @@ Mods: {
 				DisplayName: 大口径步枪
 				Tooltip:
 					'''
-					以 2.5 秒冷却时间为代价换取惊人伤害
+					以较长的冷却时间为代价换取惊人伤害
 					别忘了屏住呼吸
 					'''
 			}
@@ -6254,8 +6255,14 @@ Mods: {
 			}
 
 			PeculiarSphere: {
-				DisplayName: 魔法异常球
-				Tooltip: 召唤一个友好的猫头鹰弓箭手为你战斗
+				DisplayName: 魔法异次元球
+				Tooltip:
+					'''
+					召唤一个友好的猫头鹰弓箭手为你战斗
+					射出的弓箭飞行一段时间或从物块反弹后将追踪光标所在的位置
+					重复召唤 {1} 次后猫头鹰弓箭手将射出两支箭
+					每次重复召唤将增加 {0}% 伤害
+					'''
 			}
 
 			PhoenixEgg: {
@@ -6611,7 +6618,7 @@ Mods: {
 					武器有双倍的暴击率
 					每次 [c/708090:突刺] 最多获得一层 [c/708090:钢铁风暴堆叠]
 					释放 [c/708090:旋风] 会消耗所有 [c/708090:钢铁风暴堆叠]
-					近战攻速加成可以减少 [c/708090:突刺冷却] (冷却最低为 1.33 秒)
+					近战速度加成可以减少 [c/708090:突刺冷却] (冷却最低为 1.33 秒)
 					当前 [c/708090:突刺冷却]: {0} 秒
 					[c/708090:突袭] 和 [c/708090:旋风] 造成双倍伤害
 					'''
@@ -6641,7 +6648,7 @@ Mods: {
 					武器有双倍的暴击率
 					每次 [c/708090:突刺] 最多获得一层 [c/708090:钢铁风暴堆叠]
 					释放 [c/708090:旋风] 会消耗所有 [c/708090:钢铁风暴堆叠]
-					近战攻速加成可以减少 [c/708090:突刺冷却] (冷却最低为 1.33 秒)
+					近战速度加成可以减少 [c/708090:突刺冷却] (冷却最低为 1.33 秒)
 					当前 [c/708090:突刺冷却]: {0} 秒
 					[c/708090:突袭] 和 [c/708090:旋风] 造成双倍伤害
 					'''
@@ -6672,7 +6679,7 @@ Mods: {
 					武器有双倍的暴击率
 					每次 [c/708090:突刺] 最多获得一层 [c/708090:钢铁风暴堆叠]
 					释放 [c/708090:旋风] 会消耗所有 [c/708090:钢铁风暴堆叠]
-					近战攻速加成可以减少 [c/708090:突刺冷却] (冷却最低为 1.33 秒)
+					近战速度加成可以减少 [c/708090:突刺冷却] (冷却最低为 1.33 秒)
 					当前 [c/708090:突刺冷却]: {0} 秒
 					[c/708090:突袭] 和 [c/708090:旋风] 造成双倍伤害
 					'''
@@ -6896,48 +6903,49 @@ Mods: {
 			}
 
 			SteraksGage: {
-				// DisplayName: Steraks Gage
-				/* Tooltip:
+				DisplayName: 斯特拉克的挑战护手
+				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					Further increases the damage of slow weapons based on how slow they are(up to {1}%)
+					根据武器使用时间有多慢，获得近战伤害加成（加成最高到 {1}%）
 					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
-					Heals you for {4} life when life goes below {3}%({$CommonItemTooltip.Cooldown@5})
-					''' */
+					当生命值低于 {3}%时， 回复 {4}点生命值（{$CommonItemTooltip.Cooldown@5}）
+					'''
 			}
 
 			InfinityEdge: {
 				DisplayName: 无尽之刃
 				Tooltip:
 					'''
+					{$CommonItemTooltip.PercentIncreasedRangedDamage@1}
+					{$CommonItemTooltip.PercentIncreasedRangedCritChance@2}
 					{$CommonItemTooltip.Ranged.CritDmg}
-					{$CommonItemTooltip.Ranged.NonCritDmg@1}
 					'''
 			}
 
 			LudensTempest: {
-				// DisplayName: Ludens Tempest
-				/* Tooltip:
+				DisplayName: 卢登的激荡
+				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMagicDamage}
 					{$CommonItemTooltip.Magic.ArmorPen@1}
 					{$CommonItemTooltip.IncreasesMaxManaBy@2}
-					Dealing magic damage launches extra damaging projectiles({$CommonItemTooltip.Cooldown@3})
-					Cooldown is reduced on each magic damage hit
-					''' */
+					造成魔法伤害时额外产生一簇黑黯焰火（{$CommonItemTooltip.Cooldown@3}）
+					使用魔法武器攻击会减少冷却时间
+					'''
 			}
 
 			Goredrinker: {
-				// DisplayName: Goredrinker
-				/* Tooltip:
+				DisplayName: 渴血战斧
+				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.IncreasesMaxLifeBy@1}
-					Empowers whip swings occasionally({$CommonItemTooltip.Cooldown@2})
-					Empowered whip swings gain extra damage, range and heal you on-hit
-					Heal scales with whip damage and missing life
-					Cooldown is reduced on every normal whip hit
-					''' */
+					允许你在挥舞鞭子时进行强力鞭挞（{$CommonItemTooltip.Cooldown@2}）
+					强力鞭挞有更大的范围、更高的伤害并在击中敌人时治疗玩家
+					治疗量取决于鞭子伤害和失去生命值的多少
+					使用鞭子的普通攻击会减少冷却时间
+					'''
 			}
 
 			DamageDebugTome: {
@@ -7828,7 +7836,7 @@ Mods: {
 
 			CrystalShield: {
 				DisplayName: 水晶屏障护盾
-				Description: 增加 {0} 防御
+				Description: 防御增加：
 			}
 
 			DragoonLashBuff: {
@@ -8062,23 +8070,23 @@ Mods: {
 			}
 
 			LudensTempestCooldown: {
-				// DisplayName: Ludens Tempest Cooldown
-				// Description: You can't cast extra magic on-hit until this runs out
+				DisplayName: 卢登的激荡冷却
+				Description: 当前冷却结束前你不能再次触发黑黯焰火
 			}
 
 			SteraksGageCooldown: {
-				// DisplayName: Steraks Gage Cooldown
-				// Description: You won't be healed again until this runs out
+				DisplayName: 斯特拉克的挑战护手冷却
+				Description: 当前冷却结束前你不能再次获得生命治疗
 			}
 
 			GoredrinkerCooldown: {
-				// DisplayName: Goredrinker Cooldown
-				// Description: You won't get healed on-hit by whips until this runs out
+				DisplayName: 渴血战斧冷却
+				Description: 当前冷却结束前你不能通过攻击获得生命治疗
 			}
 
 			BarrierCooldown: {
-				// DisplayName: Barrier Cooldown
-				// Description: The Barrier needs time to rebuild itself
+				DisplayName: 壁垒冷却
+				Description: 壁垒正在重构
 			}
 		}
 
@@ -8840,7 +8848,7 @@ Mods: {
 			SerrisX: {
 				DisplayName: 「赛里斯X型」
 				DespawnHandler: 「塞里斯X型」退到圣殿深处...
-				// Defeated: Serris falls...
+				Defeated: 「赛里斯」被击败了...
 			}
 
 			AbysmalOolacileSorcerer: {
@@ -9654,7 +9662,7 @@ Mods: {
 			Byakhee.DisplayName: 拜亚基
 			ClericOfSorrow.DisplayName: 哀悼牧师
 			Willowisp.DisplayName: 飞絮
-			GreatRedThresher.DisplayName: 卓越殷红勾魂使
+			GreatRedThresher.DisplayName: 殷红勾魂使
 		}
 
 		Prefixes: {
