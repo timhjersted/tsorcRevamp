@@ -6895,6 +6895,51 @@ Mods: {
 					'''
 			}
 
+			SteraksGage: {
+				// DisplayName: Steraks Gage
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					Further increases the damage of slow weapons based on how slow they are(up to {1}%)
+					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
+					Heals you for {4} life when life goes below {3}%({$CommonItemTooltip.Cooldown@5})
+					''' */
+			}
+
+			InfinityEdge: {
+				DisplayName: 无尽之刃
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Ranged.CritDmg}
+					{$CommonItemTooltip.Ranged.NonCritDmg@1}
+					'''
+			}
+
+			LudensTempest: {
+				// DisplayName: Ludens Tempest
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					{$CommonItemTooltip.Magic.ArmorPen@1}
+					{$CommonItemTooltip.IncreasesMaxManaBy@2}
+					Dealing magic damage launches extra damaging projectiles({$CommonItemTooltip.Cooldown@3})
+					Cooldown is reduced on each magic damage hit
+					''' */
+			}
+
+			Goredrinker: {
+				// DisplayName: Goredrinker
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.IncreasesMaxLifeBy@1}
+					Empowers whip swings occasionally({$CommonItemTooltip.Cooldown@2})
+					Empowered whip swings gain extra damage, range and heal you on-hit
+					Heal scales with whip damage and missing life
+					Cooldown is reduced on every normal whip hit
+					''' */
+			}
+
 			DamageDebugTome: {
 				DisplayName: Damage Debug Tome
 				Tooltip: 启用/禁用伤害数值浮动
@@ -6991,15 +7036,6 @@ Mods: {
 					你的召唤物栏位和哨兵栏位变多一倍
 					{$CommonItemTooltip.Summon.BadDmgMult}
 					{$CommonItemTooltip.Summon.BadTagStrengthMult@1}
-					'''
-			}
-
-			InfinityEdge: {
-				DisplayName: 无尽之刃
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Ranged.CritDmg}
-					{$CommonItemTooltip.Ranged.NonCritDmg@1}
 					'''
 			}
 
@@ -8024,6 +8060,26 @@ Mods: {
 				DisplayName: 凤凰涅槃
 				Description: 你复活了！
 			}
+
+			LudensTempestCooldown: {
+				// DisplayName: Ludens Tempest Cooldown
+				// Description: You can't cast extra magic on-hit until this runs out
+			}
+
+			SteraksGageCooldown: {
+				// DisplayName: Steraks Gage Cooldown
+				// Description: You won't be healed again until this runs out
+			}
+
+			GoredrinkerCooldown: {
+				// DisplayName: Goredrinker Cooldown
+				// Description: You won't get healed on-hit by whips until this runs out
+			}
+
+			BarrierCooldown: {
+				// DisplayName: Barrier Cooldown
+				// Description: The Barrier needs time to rebuild itself
+			}
 		}
 
 		Projectiles: {
@@ -8569,6 +8625,8 @@ Mods: {
 			EnemyBlackKnightHomingCrystal.DisplayName: 黑骑士的追踪水晶
 			EnemyMoonfuryBomb.DisplayName: 月怒爆鸣
 			EnemyBlackCursedBreath.DisplayName: 黑暗诅咒之息
+			// LudensTempestFire.DisplayName: Ludens Tempest Fire
+			// LudensTempestFirelet.DisplayName: Ludens Tempest Firelet
 		}
 
 		NPCs: {
@@ -8782,6 +8840,7 @@ Mods: {
 			SerrisX: {
 				DisplayName: 「赛里斯X型」
 				DespawnHandler: 「塞里斯X型」退到圣殿深处...
+				// Defeated: Serris falls...
 			}
 
 			AbysmalOolacileSorcerer: {

@@ -1069,9 +1069,8 @@ Mods: {
 				DisplayName: Barrier Ring
 				Tooltip:
 					'''
-					{$CommonItemTooltip.LifeThreshold}Casts Magic Barrier
-					Magic Barrier effect: {$CommonItemTooltip.IncreasesDefenseBy@1}
-					{$CommonItemTooltip.UniqueBarrier}
+					Casts a Barrier around the wearer which will block an attack
+					After blocking an attack it will go on a {$CommonItemTooltip.Cooldown}
 					'''
 			}
 
@@ -6079,7 +6078,7 @@ Mods: {
 				DisplayName: High Caliber Rifle
 				Tooltip:
 					'''
-					Incredible damage at the cost of 2.5 second cooldown between shots
+					Incredible damage but high reload time
 					Remember to hold your breath.
 					'''
 			}
@@ -6256,7 +6255,13 @@ Mods: {
 
 			PeculiarSphere: {
 				DisplayName: Peculiar Sphere
-				Tooltip: Summons a friendly Owl Archer to fight for you.
+				Tooltip:
+					'''
+					Summons a friendly Owl Archer to fight for you
+					Its arrows seek out the cursor after a while or after bouncing off of a tile
+					Shoots two arrows while using up {1} or more minion slots
+					Repeatedly summoning this minion increases it's damage by {0}% each time
+					'''
 			}
 
 			PhoenixEgg: {
@@ -6896,6 +6901,52 @@ Mods: {
 					'''
 			}
 
+			SteraksGage: {
+				DisplayName: Steraks Gage
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					Further increases the damage of slow weapons based on how slow they are(up to {1}%)
+					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
+					Heals you for {4} life when life goes below {3}%({$CommonItemTooltip.Cooldown@5})
+					'''
+			}
+
+			InfinityEdge: {
+				DisplayName: Infinity Edge
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedRangedDamage@1}
+					{$CommonItemTooltip.PercentIncreasedRangedCritChance@2}
+					{$CommonItemTooltip.Ranged.CritDmg}
+					'''
+			}
+
+			LudensTempest: {
+				DisplayName: Ludens Tempest
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					{$CommonItemTooltip.Magic.ArmorPen@1}
+					{$CommonItemTooltip.IncreasesMaxManaBy@2}
+					Dealing magic damage launches extra damaging projectiles({$CommonItemTooltip.Cooldown@3})
+					Cooldown is reduced on each magic damage hit
+					'''
+			}
+
+			Goredrinker: {
+				DisplayName: Goredrinker
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.IncreasesMaxLifeBy@1}
+					Empowers whip swings occasionally({$CommonItemTooltip.Cooldown@2})
+					Empowered whip swings gain extra damage, range and heal you on-hit
+					Heal scales with whip damage and missing life
+					Cooldown is reduced on every normal whip hit
+					'''
+			}
+
 			DamageDebugTome: {
 				DisplayName: Damage Debug Tome
 				Tooltip: Enables/disables damage spread
@@ -6992,15 +7043,6 @@ Mods: {
 					Doubles your maximum amount of minions and sentries
 					{$CommonItemTooltip.Summon.BadDmgMult}
 					{$CommonItemTooltip.Summon.BadTagStrengthMult@1}
-					'''
-			}
-
-			InfinityEdge: {
-				DisplayName: Infinity Edge
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Ranged.CritDmg}
-					{$CommonItemTooltip.Ranged.NonCritDmg@1}
 					'''
 			}
 
@@ -7793,7 +7835,7 @@ Mods: {
 
 			CrystalShield: {
 				DisplayName: Crystal Shield
-				Description: Defense increased by {0}
+				Description: "Defense increased by "
 			}
 
 			DragoonLashBuff: {
@@ -8024,6 +8066,26 @@ Mods: {
 			PhoenixRebirthBuff: {
 				DisplayName: Phoenix Rebirth Buff
 				Description: You've been reborn!
+			}
+
+			LudensTempestCooldown: {
+				DisplayName: Ludens Tempest Cooldown
+				Description: You can't cast extra magic on-hit until this runs out
+			}
+
+			SteraksGageCooldown: {
+				DisplayName: Steraks Gage Cooldown
+				Description: You won't be healed again until this runs out
+			}
+
+			GoredrinkerCooldown: {
+				DisplayName: Goredrinker Cooldown
+				Description: You won't get healed on-hit by whips until this runs out
+			}
+
+			BarrierCooldown: {
+				DisplayName: Barrier Cooldown
+				Description: The Barrier needs time to rebuild itself
 			}
 		}
 
@@ -8570,6 +8632,8 @@ Mods: {
 			EnemyBlackKnightHomingCrystal.DisplayName: Enemy Black Knight Homing Crystal
 			EnemyMoonfuryBomb.DisplayName: Enemy Moonfury Bomb
 			EnemyBlackCursedBreath.DisplayName: Enemy Black Cursed Breath
+			LudensTempestFire.DisplayName: Ludens Tempest Fire
+			LudensTempestFirelet.DisplayName: Ludens Tempest Firelet
 		}
 
 		NPCs: {
@@ -8783,6 +8847,7 @@ Mods: {
 			SerrisX: {
 				DisplayName: Serris-X
 				DespawnHandler: Serris returns to the depths of its temple...
+				Defeated: Serris falls...
 			}
 
 			AbysmalOolacileSorcerer: {

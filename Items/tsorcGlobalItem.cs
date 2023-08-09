@@ -14,6 +14,7 @@ using Terraria.Localization;
 using tsorcRevamp.Items.Debug;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Buffs.Runeterra.Summon;
 
 namespace tsorcRevamp.Items
 {
@@ -742,6 +743,15 @@ namespace tsorcRevamp.Items
                     }
                 }
             }
+        }
+
+        public override bool? UseItem(Item item, Player player)
+        {
+            if (item.type == ItemID.TorchGodsFavor)
+            {
+                player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<WorldRune>());
+            }
+            return base.UseItem(item, player);
         }
     }
 }

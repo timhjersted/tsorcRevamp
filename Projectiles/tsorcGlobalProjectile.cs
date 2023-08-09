@@ -15,6 +15,10 @@ using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.NPCs;
 using Terraria.Audio;
+using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Projectiles.Summon.Whips;
+using static Humanizer.In;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -74,10 +78,17 @@ namespace tsorcRevamp.Projectiles
                     Main.NewText("a");
                 }
             }*/
-            Player player = Main.player[projectile.owner];
+            Player owner = Main.player[projectile.owner];
             if (projectile.type == ProjectileID.CrystalDart)
             {
-                projectile.damage = 1 + player.GetWeaponDamage(player.HeldItem);
+                projectile.damage = 1 + owner.GetWeaponDamage(owner.HeldItem);
+            }
+            if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady
+                && projectile.type != ModContent.ProjectileType<TerraFallTerraprisma>() && projectile.type != ModContent.ProjectileType<TerraFallProjectile>() && projectile.type != ModContent.ProjectileType<NightsCrackerProjectile>() && projectile.type != ModContent.ProjectileType<SearingLashProjectile>()
+                && projectile.type != ModContent.ProjectileType<PolarisLeashFallingStar>() && projectile.type != ModContent.ProjectileType<PolarisLeashPolaris>() && projectile.type != ModContent.ProjectileType<EnchantedWhipFallingStar>())
+            {
+                owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = true;
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = 1f }, owner.Center);
             }
         }
         public override bool PreAI(Projectile projectile)
@@ -443,6 +454,18 @@ namespace tsorcRevamp.Projectiles
             {
                 return true;
             }
+        }
+
+        public override void Kill(Projectile projectile, int timeLeft)
+        {
+            Player owner = Main.player[projectile.owner];
+            if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && projectile.type != ModContent.ProjectileType<TerraFallTerraprisma>() && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung)
+            {
+                owner.AddBuff(ModContent.BuffType<GoredrinkerCooldown>(), Items.Accessories.Summon.Goredrinker.Cooldown * 60);
+                owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady = false;
+                owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = false;
+            }
+            base.Kill(projectile, timeLeft);
         }
     }
 }

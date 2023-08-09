@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -9,6 +10,9 @@ namespace tsorcRevamp.Items.Weapons.Summon
 {
     public class PeculiarSphere : ModItem 
     {
+        public static float ScalingPerSlot = 0.15f;
+        public static int DoubleShotMinimumSlots = 4;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ScalingPerSlot, DoubleShotMinimumSlots);
         public override void SetStaticDefaults() 
         {
             ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;

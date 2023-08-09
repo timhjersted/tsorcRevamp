@@ -10,8 +10,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Incredible damage at the cost of 2.5 second cooldown between shots" +
-                                "\nRemember to hold your breath."); */
         }
 
         public override void SetDefaults()
@@ -22,14 +20,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Item.autoReuse = true;
             Item.DamageType = DamageClass.Ranged;
             Item.rare = ItemRarityID.Lime;
-            Item.scale = 1;
             Item.shoot = ProjectileID.PurificationPowder;
             Item.shootSpeed = 20;
             Item.useAmmo = AmmoID.Bullet;
-            Item.useAnimation = 150;
+            Item.useAnimation = 120;
+            Item.useTime = 120;
             Item.UseSound = SoundID.Item11;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 150;
             Item.value = PriceByRarity.Lime_7;
             Item.width = 66;
             Item.knockBack = 50f;
@@ -38,8 +35,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Megashark, 1);
-            recipe.AddIngredient(ItemID.IllegalGunParts, 1);
+            recipe.AddIngredient(ItemID.SniperRifle);
+            recipe.AddIngredient(ItemID.IllegalGunParts);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 

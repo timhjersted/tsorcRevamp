@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
 
             Item.rare = ItemRarityID.Green;
             Item.DamageType = DamageClass.Melee;
-            Item.damage = 32;
+            Item.damage = 60;
             Item.width = 48;
             Item.height = 48;
             Item.knockBack = 9f;
@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.autoReuse = true;
             Item.useTurn = false;
             Item.useAnimation = 40;
-            Item.useTime = 29;
+            Item.useTime = 40;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Green_2;
@@ -38,8 +38,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.TheBreaker, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddIngredient(ItemID.TheBreaker);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

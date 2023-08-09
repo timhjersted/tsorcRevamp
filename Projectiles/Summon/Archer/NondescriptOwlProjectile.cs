@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Summon;
 
 namespace tsorcRevamp.Projectiles.Summon.Archer {
     public class NondescriptOwlProjectile : ModProjectile {
@@ -37,9 +38,8 @@ namespace tsorcRevamp.Projectiles.Summon.Archer {
         {
             return false;
         }
-
-        public float SCALING_PER_SLOT = 1.2f;
-        public override void AI() {
+        public override void AI() 
+        {
             Player player = Main.player[Projectile.owner];
             if (player.dead || !player.active) {
                 player.ClearBuff(ModContent.BuffType<Buffs.Summon.NondescriptOwlBuff>());
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer {
             int damage = (int)summon.ApplyTo(Projectile.originalDamage);
             int tokenCount = player.ownedProjectileCounts[ModContent.ProjectileType<ArcherToken>()];
 
-            float finalDamage = damage * (1.0f + (SCALING_PER_SLOT * (tokenCount - 1)));
+            float finalDamage = damage * (1.0f + (PeculiarSphere.ScalingPerSlot * (tokenCount - 1)));
 
             Projectile.damage = (int)finalDamage;
 
@@ -111,7 +111,8 @@ namespace tsorcRevamp.Projectiles.Summon.Archer {
         }
         bool shouldFaceLeft = false;
         bool shouldFaceRight = false;
-        private void AI_026() {
+        private void AI_026() 
+        {
             Player player = Main.player[Projectile.owner];
             if (!player.active) {
                 Projectile.active = false;
@@ -126,10 +127,12 @@ namespace tsorcRevamp.Projectiles.Summon.Archer {
             int spacer = 10;
             int minionOffset = 40 * player.direction;
             if (animationState != AnimationStates.Shooting) {
-                if (player.position.X + player.width / 2 < Projectile.position.X + Projectile.width / 2 - spacer + minionOffset) {
+                if (player.position.X + player.width / 2 < Projectile.position.X + Projectile.width / 2 - spacer + minionOffset) 
+                {
                     shouldFaceLeft = true;
                 }
-                else if (player.position.X + player.width / 2 > Projectile.position.X + Projectile.width / 2 + spacer + minionOffset) {
+                else if (player.position.X + player.width / 2 > Projectile.position.X + Projectile.width / 2 + spacer + minionOffset) 
+                {
                     shouldFaceRight = true;
                 } 
             }
@@ -172,6 +175,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer {
                 }
 
             }
+            int tokenCount = player.ownedProjectileCounts[ModContent.ProjectileType<ArcherToken>()];
             switch (AI_State) {
                 case (float)AI_States.Combat: {
 
@@ -261,7 +265,11 @@ namespace tsorcRevamp.Projectiles.Summon.Archer {
                                     AI_Timer = attackRate;
                                     Vector2 aim = UsefulFunctions.Aim(Projectile.Center, new(currentClosestNPC_X, posY), 12);
                                     int projectileType = ModContent.ProjectileType<OwlsArrow>();
-                                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, aim, projectileType, Projectile.damage, Projectile.knockBack, Main.myPlayer);
+                                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, aim, projectileType, Projectile.damage, Projectile.knockBack, Projectile.owner);
+                                    if (tokenCount > PeculiarSphere.DoubleShotMinimumSlots - 1)
+                                        {
+                                            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, aim * 2, projectileType, Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
+                                        }
                                     Main.projectile[p].timeLeft = 300;
                                     Main.projectile[p].originalDamage = Projectile.damage;
                                     Projectile.netUpdate = true;

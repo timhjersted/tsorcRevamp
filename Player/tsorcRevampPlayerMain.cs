@@ -40,6 +40,11 @@ using tsorcRevamp.Projectiles.Melee.Runeterra;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Items.Vanity;
 using tsorcRevamp.Buffs.Accessories;
+using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.Summon.Whips;
+using static Humanizer.In;
+using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Projectiles.Magic.Runeterra.LudensTempest;
 
 namespace tsorcRevamp
 {
@@ -284,6 +289,12 @@ namespace tsorcRevamp
         {
             if (Player.HasBuff(ModContent.BuffType<Invincible>()))
             {
+                return true;
+            }
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BarrierRing && !Player.HasBuff(ModContent.BuffType<BarrierCooldown>()))
+            {
+                Player.AddBuff(ModContent.BuffType<BarrierCooldown>(), Items.Accessories.Defensive.BarrierRing.Cooldown * 60);
+                Player.SetImmuneTimeForAllTypes((int)(Items.Accessories.Defensive.BarrierRing.ImmuneTimeAfterHit * 60f));
                 return true;
             }
             if (DragonStoneImmunity)
@@ -712,6 +723,49 @@ namespace tsorcRevamp
 
         public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
         {
+            Player owner = Main.player[proj.owner];
+            if (LudensTempest && hit.DamageType == DamageClass.Magic && !owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()))
+            {
+                int? closest = UsefulFunctions.GetClosestEnemyNPC(target.Center);
+                if (closest.HasValue && (Main.npc[closest.Value].type != NPCID.TargetDummy || Main.npc[closest.Value].Distance(target.Center) < 2000))
+                {
+                    Vector2 velocity = UsefulFunctions.Aim(target.Bottom, Main.npc[closest.Value].Top, 3);
+                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(-1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * 1.5f), 0, Main.myPlayer, 0);
+                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(0, -3), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * 1.5f), 0, Main.myPlayer, 0);
+                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * 1.5f), 0, Main.myPlayer, 0);
+                    Main.player[proj.owner].AddBuff(ModContent.BuffType<LudensTempestCooldown>(), Items.Accessories.Magic.LudensTempest.Cooldown * 60);
+                }
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/LudensTempest") with { Volume = 0.25f }, target.Center);
+            } else if (LudensTempest && hit.DamageType == DamageClass.Magic && owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()) && proj.type != ModContent.ProjectileType<LudensTempestFire>() && proj.type != ModContent.ProjectileType<LudensTempestFirelet>())
+            {
+                int buffIndex = 0;
+                foreach (int buffType in owner.buffType)
+                {
+                    if (buffType == ModContent.BuffType<LudensTempestCooldown>())
+                    {
+                        Player.buffTime[buffIndex] -= 20;
+                    }
+                    buffIndex++;
+                }
+            }
+            if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && proj.type != ModContent.ProjectileType<TerraFallTerraprisma>() && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung)
+            {
+                Player.statLife += (int)(Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife) / GoredrinkerHits;
+                Player.HealEffect((int)(Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife) / GoredrinkerHits);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerHit") with { Volume = 0.25f }, target.Center);
+                GoredrinkerHits++;
+            } else if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && proj.type != ModContent.ProjectileType<TerraFallTerraprisma>() && owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()))
+            {
+                int buffIndex = 0;
+                foreach (int buffType in owner.buffType)
+                {
+                    if (buffType == ModContent.BuffType<GoredrinkerCooldown>())
+                    {
+                        Player.buffTime[buffIndex] -= 15;
+                    }
+                    buffIndex++;
+                }
+            }
             if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()))
             {
                 Player.HealEffect((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
@@ -805,7 +859,6 @@ namespace tsorcRevamp
         {
             if (modifiers.DamageType == DamageClass.Ranged)
             {
-                modifiers.NonCritDamage -= Items.Accessories.Ranged.InfinityEdge.NonCritDmgReduction / 100f;
                 modifiers.CritDamage += Items.Accessories.Ranged.InfinityEdge.CritDmgIncrease / 100f;
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread)
@@ -856,10 +909,16 @@ namespace tsorcRevamp
 
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Projectile, consider using ModifyHitNPC instead */
         {
+            Player owner = Main.player[proj.owner];
             int critLevel = (int)(Math.Floor(proj.CritChance / 100f));
             if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>())
             {
                 modifiers.FinalDamage *= 0.55f;
+            }
+            if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung
+                && proj.type != ModContent.ProjectileType<TerraFallTerraprisma>() && proj.type != ModContent.ProjectileType<PolarisLeashFallingStar>() && proj.type != ModContent.ProjectileType<PolarisLeashPolaris>() && proj.type != ModContent.ProjectileType<EnchantedWhipFallingStar>())
+            {
+                modifiers.SourceDamage += Items.Accessories.Summon.Goredrinker.WhipDmgRange / 100f;
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().ChallengersGloveCritDamage && proj.DamageType == DamageClass.SummonMeleeSpeed)
             {

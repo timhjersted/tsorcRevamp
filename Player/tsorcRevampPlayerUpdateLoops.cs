@@ -25,6 +25,9 @@ using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Accessories;
+using Terraria.Audio;
+using tsorcRevamp.Buffs.Runeterra.Melee;
+using tsorcRevamp.Projectiles.Summon;
 
 namespace tsorcRevamp
 {
@@ -55,6 +58,7 @@ namespace tsorcRevamp
         public bool Celestriad = false;
         public bool UndeadTalisman = false;
         public bool WolfRing = false;
+        public bool BarrierRing;
 
         public bool DragoonBoots = false;
         public bool DragoonBootsEnable = false;
@@ -71,7 +75,14 @@ namespace tsorcRevamp
 
         public int MaxMinionTurretMultiplier;
 
+        public bool SteraksGage;
         public bool InfinityEdge;
+        public bool LudensTempest;
+        public bool Goredrinker;
+        public bool GoredrinkerReady = false;
+        public bool GoredrinkerSwung = false;
+        public int GoredrinkerHits = 1;
+
         public bool BoneRing;
         public bool CelestialCloak;
 
@@ -312,12 +323,17 @@ namespace tsorcRevamp
 
             HasShadowSickle = false;
 
+            SteraksGage = false;
             InfinityEdge = false;
+            LudensTempest = false;
+            Goredrinker = false;
+
             BoneRing = false;
 
             ChloranthyRing1 = false;
             ChloranthyRing2 = false;
             WolfRing = false;
+            BarrierRing = false;
 
             BrokenSpirit = false;
 
@@ -424,7 +440,6 @@ namespace tsorcRevamp
             AuraOfIlluminance = false;
             CurrentAuraState = tsorcAuraState.None;
         }
-        
         public override void PreUpdate()
         {
             RealMouseWorld = Main.MouseWorld;
@@ -1340,6 +1355,12 @@ namespace tsorcRevamp
             if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthCooldown>()))
             {
                 Player.buffTime[Player.FindBuffIndex(ModContent.BuffType<PhoenixRebirthCooldown>())]--;
+            }
+            if (SteraksGage && Player.statLife < (Player.statLifeMax2 * Items.Accessories.Melee.SteraksGage.LifeThreshold / 100f) && !Player.HasBuff(ModContent.BuffType<SteraksGageCooldown>()))
+            {
+                Player.statLife += Items.Accessories.Melee.SteraksGage.ShieldHeal;
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteraksGageShield") with { Volume = 1f }, Player.Center);
+                Player.AddBuff(ModContent.BuffType<SteraksGageCooldown>(), Items.Accessories.Melee.SteraksGage.Cooldown * 60);
             }
             if (DragoonBoots && DragoonBootsEnable)
             {

@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -7,6 +8,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
@@ -62,27 +64,28 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			if (!Charge(owner))
 			{
 				return; // timer doesn't update while charging, freezing the animation at the start.
-			}
-
-
-			Timer++;
-
-			float swingTime = owner.itemAnimationMax * Projectile.MaxUpdates;
-			if (Timer >= swingTime || owner.itemAnimation <= 0)
-			{
-				Projectile.Kill();
-				return;
-			}
-
-			owner.heldProj = Projectile.whoAmI;
-			// Plays a whipcrack sound at the tip of the whip.
-			List<Vector2> points = Projectile.WhipPointsForCollision;
-			Projectile.FillWhipControlPoints(Projectile, points);
-			Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.TerraBlade, 0f, 0f, 150, default(Color), 1f);
-			if (Timer == swingTime / 2)
-			{
+            }
+            Timer++;
+            float swingTime = owner.itemAnimationMax * Projectile.MaxUpdates;
+            if (Timer >= swingTime || owner.itemAnimation <= 0)
+            {
+                Projectile.Kill();
+                return;
+            }
+            owner.heldProj = Projectile.whoAmI;
+            // Plays a whipcrack sound at the tip of the whip.
+            List<Vector2> points = Projectile.WhipPointsForCollision;
+            Projectile.FillWhipControlPoints(Projectile, points);
+            Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.TerraBlade, 0f, 0f, 150, default(Color), 1f);
+            if (Timer == swingTime / 2)
+            {
 				SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Item/SummonerWhipcrack") with { Volume = tsorcGlobalProjectile.WhipVolume, PitchVariance = tsorcGlobalProjectile.WhipPitch }, points[points.Count - 1]);
-			}
+                if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady)
+                {
+                    owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = true;
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = 1f }, owner.Center);
+                }
+            }
         }
 
 

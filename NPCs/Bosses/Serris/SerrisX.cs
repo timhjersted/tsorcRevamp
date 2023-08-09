@@ -291,7 +291,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 
         public override void OnKill()
         {
-            UsefulFunctions.BroadcastText("Serris falls...", Color.Cyan);
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.SerrisX.Defeated"), Color.Cyan);
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) 

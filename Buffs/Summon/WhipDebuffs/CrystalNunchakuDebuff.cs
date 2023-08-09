@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs;
@@ -20,6 +21,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 
             globalNPC.markedByCrystalNunchaku = true;
             globalNPC.CrystalNunchakuUpdateTick += 0.0167f;
+            Dust.NewDust(npc.Center, 10, 10, DustID.CrystalPulse, Scale:0.5f);
 
             if (globalNPC.CrystalNunchakuUpdateTick > 15.02f)
             {
@@ -30,7 +32,8 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 
             if (globalNPC.CrystalNunchakuUpdateTick >= 5f && globalNPC.CrystalNunchakuUpdateTick <= 5.2f)
             {
-                Dust.NewDust(npc.TopLeft, 10, 10, DustID.CrystalPulse);
+                Dust.NewDust(npc.Center, 50, 50, DustID.CrystalPulse, Scale:2f);
+                SoundEngine.PlaySound(SoundID.Item78 with { Volume = 4f }, npc.Center);
                 globalNPC.CrystalNunchakuProc = true;
             }
         }

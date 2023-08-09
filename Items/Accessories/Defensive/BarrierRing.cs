@@ -2,14 +2,16 @@
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Accessories;
 using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class BarrierRing : ModItem
     {
-        public static float LifeThreshold = 25f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold, Buffs.MagicBarrier.DefenseIncrease);
+        public static int Cooldown = 75;
+        public static float ImmuneTimeAfterHit = 1f; //in seconds
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Cooldown);
         public override void SetStaticDefaults()
         {
         }
@@ -36,9 +38,11 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            if ((player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f)) && !(player.HasBuff(ModContent.BuffType<Buffs.MagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicBarrier>())))
+            player.GetModPlayer<tsorcRevampPlayer>().BarrierRing = true;
+            if (!player.HasBuff(ModContent.BuffType<BarrierCooldown>()))
             {
-                player.AddBuff(ModContent.BuffType<Buffs.MagicBarrier>(), 1, false);
+                Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.Barrier>(), 0, 0f, player.whoAmI);
+                Lighting.AddLight(player.Center, .450f, .450f, .600f);
             }
         }
 

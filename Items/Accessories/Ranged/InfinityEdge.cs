@@ -9,8 +9,9 @@ namespace tsorcRevamp.Items.Accessories.Ranged
     public class InfinityEdge : ModItem
     {
         public static float CritDmgIncrease = 35f;
-        public static float NonCritDmgReduction = 20f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritDmgIncrease, NonCritDmgReduction);
+        public static float Dmg = 8f;
+        public static float Crit = 2f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritDmgIncrease, Dmg, Crit);
         public override void SetStaticDefaults()
         {
         }
@@ -20,14 +21,17 @@ namespace tsorcRevamp.Items.Accessories.Ranged
             Item.width = 30;
             Item.height = 30;
             Item.accessory = true;
-            Item.value = PriceByRarity.LightRed_4;
-            Item.rare = ItemRarityID.LightRed;
+            Item.value = PriceByRarity.Orange_3;
+            Item.rare = ItemRarityID.Orange;
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.GoldBar, 34);
+            recipe.AddIngredient(ItemID.IronBroadsword);
+            recipe.AddIngredient(ItemID.IronPickaxe);
+            recipe.AddIngredient(ItemID.HunterCloak);
+            recipe.AddIngredient(ModContent.ItemType<WorldRune>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3600);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -37,6 +41,8 @@ namespace tsorcRevamp.Items.Accessories.Ranged
         public override void UpdateEquip(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().InfinityEdge = true;
+            player.GetDamage(DamageClass.Ranged) += Dmg / 100f;
+            player.GetCritChance(DamageClass.Ranged) += Crit;
         }
 
     }

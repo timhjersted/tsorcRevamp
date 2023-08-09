@@ -7,6 +7,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
@@ -65,7 +66,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			}
 
 
-			Timer++;
+            Timer++;
 
 			float swingTime = owner.itemAnimationMax * Projectile.MaxUpdates;
 			if (Timer >= swingTime || owner.itemAnimation <= 0)
@@ -83,7 +84,12 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			if (Timer == swingTime / 2)
 			{
 				SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Item/SummonerWhipcrack") with { Volume = tsorcGlobalProjectile.WhipVolume, PitchVariance = tsorcGlobalProjectile.WhipPitch }, points[points.Count - 1]);
-			}
+                if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady)
+                {
+                    owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = true;
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = 1f }, owner.Center);
+                }
+            }
 		}
 
         // This method handles a charging mechanic.

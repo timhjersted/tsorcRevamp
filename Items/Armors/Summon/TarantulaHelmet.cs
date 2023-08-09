@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.SummonMeleeSpeed) += WhipDmg;
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += WhipDmg / 100f;
             player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration += SummonTagDuration / 100f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)

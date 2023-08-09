@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (item.type == ItemID.StaffoftheFrostHydra) //buff so it's an actually decent reward
             {
-                item.damage = 160;
+                item.damage = 120;
             }
 
             //Lunar items

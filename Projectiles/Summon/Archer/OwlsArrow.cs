@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -23,12 +24,19 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
             Projectile.aiStyle = 0;
             Projectile.DamageType = DamageClass.Summon;
             Projectile.tileCollide = true;
-            Projectile.timeLeft = 37;
+            Projectile.timeLeft = 300;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 60;
+            Projectile.penetrate = 4;
             Projectile.scale = 0.85f;
             Projectile.extraUpdates = 1;
         }
+        Vector2 CursorPosition = Main.MouseWorld;
+        bool HitTile = false;
         public override void AI()
         {
+            Player owner = Main.player[Projectile.owner];
+
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2; // projectile faces sprite right
 
             if (Projectile.owner == Main.myPlayer && Projectile.timeLeft == 35)
@@ -58,6 +66,20 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
                     Main.dust[dust].noGravity = true;
                 }
             }
+            if (owner.whoAmI == Main.myPlayer)
+            {
+                CursorPosition = Main.MouseWorld;
+            }
+            Vector2 CursorVelocity = Projectile.DirectionTo(CursorPosition).SafeNormalize(Vector2.Zero) * 7f;
+            if (Projectile.ai[0] == 1)
+            {
+                CursorVelocity *= 2;
+            }
+
+            if (Projectile.timeLeft <= 200 || HitTile)
+            {
+                Projectile.velocity = CursorVelocity;
+            }
         }
         public override bool PreDraw(ref Color lightColor)
         {
@@ -82,8 +104,8 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 159, Projectile.velocity.X, Projectile.velocity.Y, 30, default(Color), 1.2f);
                 Main.dust[dust].noGravity = true;
             }
-
-            return true;
+            HitTile = true;
+            return false;
         }
         /*public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
@@ -93,7 +115,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
             }
         }*/
 
-        public override void Kill(int timeLeft)
+        public override void OnSpawn(IEntitySource source)
         {
             if (Main.netMode != NetmodeID.Server)
             {
