@@ -45,14 +45,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.width = 20;
             NPC.scale = 1.1f;
             Music = 12;
-            NPC.damage = 95; //was 295, 53 too low when melee is the target audience
+            NPC.damage = 95; 
             NPC.defense = 160;
-            NPC.lifeMax = 435000;
+            NPC.lifeMax = 1000000;
             NPC.knockBackResist = 0.0f;
             NPC.boss = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 1500000;
+            NPC.value = 2000000;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Gwyn.DespawnHandler"), Color.OrangeRed, 6);
         }
 
