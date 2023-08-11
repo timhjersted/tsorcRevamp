@@ -6260,7 +6260,7 @@ Mods: {
 					Summons a friendly Owl Archer to fight for you
 					Its arrows seek out the cursor after a while or after bouncing off of a tile
 					Shoots two arrows while using up {1} or more minion slots
-					Repeatedly summoning this minion increases it's damage by {0}% each time
+					Repeatedly summoning this minion increases its damage by {0}% each time
 					'''
 			}
 

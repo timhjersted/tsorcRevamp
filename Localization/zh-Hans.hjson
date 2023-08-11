@@ -87,7 +87,7 @@ Mods: {
 			Melee: {
 				ArmorPenPercent: 增加 {0}% 近战护甲穿透
 				FlatDmg: 增加近战伤害 {0} 点
-				Bonus: (近战武器的加成再额外 x{0})
+				Bonus: （近战武器的加成再额外 x{0}）
 				BadDmg: 减少 {0}% 近战伤害
 				Only: 仅供近战战士使用
 				DmgMult: 乘算增加 {0}% 近战伤害
@@ -381,7 +381,7 @@ Mods: {
 			BlightDesc: 冰冻海洋上的裂缝翻腾着深渊的能量...
 			DarkCloudName: ???
 			DarkCloudDesc: 古老的金字塔又一次被黑暗占据...
-			GwynName: 葛温——灰烬帝王
+			GwynName: 葛温—灰烬帝王
 			GwynDesc: 西海之下的珊瑚礁引导你找到他的坟墓
 		}
 
@@ -950,9 +950,9 @@ Mods: {
 				Tooltip:
 					'''
 					为了靠近深渊印记，你必须锤死深渊六大领主：
-					亚尔特留斯，“枯萎”，飞龙法师堕魂——渊影，无鳞冰龙_希斯，和“混沌”。
+					亚尔特留斯，“枯萎”，飞龙法师堕魂—渊影，无鳞冰龙_希斯，和“混沌”。
 					带上这些恶魔领主的灵魂
-					你就能召唤最后一位领主：葛温——灰烬帝王。
+					你就能召唤最后一位领主：葛温—灰烬帝王。
 					为了合成这些领主的召唤物，你得回到这八个常见的地方：
 					并且收集你能在那里找到的敌怪掉落的独一无二物品：西（左）海洋，地下，
 					腐化/血腥之地，丛林，地牢，地狱和东（右）海洋。
@@ -1112,9 +1112,9 @@ Mods: {
 				DisplayName: 亚尔特留斯之约
 				Tooltip:
 					'''
-					[c/ffbf00:穿戴时允许你进入深渊。摘下指环，离开深渊！]
+					[c/ffbf00:穿戴时允许你进入深渊。 摘下指环，离开深渊！]
 					[c/ffbf00:深渊遍布世界，如我们自身之镜，但其黑暗更加深远...]
-					[c/00ffd4:对一些深渊相关的敌人造成的debuff免疫，例如残废，中毒，着火, 以及涂油]
+					[c/00ffd4:对一些深渊相关的敌人造成的debuff免疫，例如残废，中毒，着火以及涂油]
 					免疫击退、熔岩、火块和地狱黯炎，但是会提升敌人生成速度
 					乘算增加 {0}% 伤害、暴击率、移动速度、攻击速度{$CommonItemTooltip.Melee.Bonus@1}
 					'''
@@ -1211,7 +1211,7 @@ Mods: {
 				Tooltip:
 					'''
 					与死亡对抗的指环
-					为佩戴者提供 "守护之力"—— ({$CommonItemTooltip.IncreasesDefenseBy})
+					为佩戴者提供 "守护之力"— ({$CommonItemTooltip.IncreasesDefenseBy})
 					'''
 			}
 
@@ -2027,7 +2027,7 @@ Mods: {
 					{$CommonItemTooltip.IncreasesMaxManaBy}
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					{$CommonItemTooltip.Magic.ManaRegen@2}
-					{$CommonItemTooltip.SetBonus}调和四种元素属性——火、水、土、风
+					{$CommonItemTooltip.SetBonus}调和四种元素属性—火、水、土、风
 					提供水下呼吸能力同时免疫岩浆伤害
 					{$CommonItemTooltip.PercentIncreasedCritChance@3}
 					即使只有一件或两件盔甲升级到最高形态，也会保留当前套装的加成
@@ -2066,7 +2066,7 @@ Mods: {
 					{$CommonItemTooltip.Magic.ManaRegen@2}
 					提供点金石的效果
 					{$CommonItemTooltip.LifeRegen@4}
-					{$CommonItemTooltip.SetBonus}调和四种元素属性——火、水、土、风
+					{$CommonItemTooltip.SetBonus}调和四种元素属性—火、水、土、风
 					{$CommonItemTooltip.PercentIncreasedCritChance@3}
 					'''
 			}
@@ -3081,7 +3081,7 @@ Mods: {
 			}
 
 			GwynBag: {
-				DisplayName: 宝藏袋（葛温——灰烬帝王）
+				DisplayName: 宝藏袋（葛温—灰烬帝王）
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -3101,17 +3101,17 @@ Mods: {
 			}
 
 			KrakenBag: {
-				DisplayName: 宝藏袋（水之恶魔——克拉肯）
+				DisplayName: 宝藏袋（水之恶魔-克拉肯）
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
 			LichBag: {
-				DisplayName: 宝藏袋（大地恶魔——巫妖王）
+				DisplayName: 宝藏袋（大地恶魔-巫妖王）
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
 			MarilithBag: {
-				DisplayName: 宝藏袋（火焰恶魔——玛瑞丽斯）
+				DisplayName: 宝藏袋（火焰恶魔-玛瑞丽斯）
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -3131,7 +3131,7 @@ Mods: {
 			}
 
 			SeathBag: {
-				DisplayName: 宝藏袋（无鳞冰龙——希斯）
+				DisplayName: 宝藏袋（无鳞冰龙-希斯）
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -3258,10 +3258,10 @@ Mods: {
 				Tooltip:
 					'''
 					逐渐消逝的大地水晶
-					召唤大地恶魔——巫妖王 
+					召唤大地恶魔—巫妖王 
 					物品不被消耗
 					'''
-				Summon: 大地恶魔——巫妖王从地面上出现
+				Summon: 大地恶魔—巫妖王从地面上出现
 			}
 
 			DyingFireCrystal: {
@@ -3269,10 +3269,10 @@ Mods: {
 				Tooltip:
 					'''
 					逐渐消逝的火焰水晶.
-					召唤火焰恶魔——玛瑞里斯 
+					召唤火焰恶魔—玛瑞里斯 
 					物品不被消耗
 					'''
-				Summon: 火焰恶魔——玛瑞里斯从黑暗的火焰柱中爆发
+				Summon: 火焰恶魔—玛瑞里斯从黑暗的火焰柱中爆发
 			}
 
 			DyingWaterCrystal: {
@@ -3280,10 +3280,10 @@ Mods: {
 				Tooltip:
 					'''
 					逐渐消逝的涓流之晶 
-					召唤水之恶魔——克拉肯
+					召唤水之恶魔—克拉肯
 					物品不被消耗
 					'''
-				Summon: 水之恶魔——克拉肯从深处出现
+				Summon: 水之恶魔—克拉肯从深处出现
 			}
 
 			DyingWindCrystal: {
@@ -3340,7 +3340,7 @@ Mods: {
 				DisplayName: 葛温遗失的卷轴
 				Tooltip:
 					'''
-					用于召唤葛温——灰烬帝王 
+					用于召唤葛温—灰烬帝王 
 					葛温在你击败七名深渊守护者之前几乎是不可能战胜的，他们是：
 					亚尔特留斯，无鳞冰龙希斯，巫妖王, 克拉肯，马瑞丽斯，枯萎与堕渊飞龙法师之影 
 					只有真正NB的战士，才能屹立不倒
@@ -3352,7 +3352,7 @@ Mods: {
 				DisplayName: 思绪立方体
 				Tooltip:
 					'''
-					召唤阿卓迪斯——夺心魔之王
+					召唤阿卓迪斯—夺心魔之王
 					终幕已至 
 					[c/ffbf00:为了找到足够数量能在冒险模式下合成这玩意的光＆暗碎片...你得去阿卓迪斯的黑暗之塔最顶端]
 					'''
@@ -3381,7 +3381,7 @@ Mods: {
 				DisplayName: 希斯之石
 				Tooltip:
 					'''
-					召唤无鳞冰龙——希斯，一条因为帮了葛温灭了不死龙群 
+					召唤无鳞冰龙—希斯，一条因为帮了葛温灭了不死龙群 
 					而被赐予了领主之魂的一个碎片和封爵的巨龙 
 					希斯在研究对它遥不可及的永生之鳞时魔怔了
 					讽刺的是，它现在反倒成了一个实实在在的永生亡灵 
@@ -3493,7 +3493,7 @@ Mods: {
 				DisplayName: 炭化松树树脂
 				Tooltip:
 					'''
-					黑木炭——就像松树树脂一样
+					黑木炭—就像松树树脂一样
 					使用以将火焰灌注给近战武器，({$CommonItemTooltip.SecondDuration})
 					对木质敌人有奇效
 					{$CommonItemTooltip.MeleeWhipDmg@1}
@@ -3620,7 +3620,7 @@ Mods: {
 					如果有 {7} 个或更多的鞭子减益同时生效，伤害减少量会固定为 {8}%  
 					鞭子范围减少 {9}%
 					[c/ca1e00:此模式适用于有红云物语模组游玩经验的玩家]
-					[c/ca1e00:第一次游玩时 【不】 推荐]
+					[c/ca1e00:第一次游玩时 【不】 推荐开启]
 					'''
 				Enabled: 你成为了被诅咒者
 				Disabled: 诅咒已被移除
@@ -4001,7 +4001,8 @@ Mods: {
 				Tooltip:
 					'''
 					用于开关大师模式
-					大师模式下获得额外20%黑暗之魂
+					大师模式下敌怪大幅加强，玩家获得额外20%黑暗之魂
+					[c/ca1e00:第一次游玩时 【不】 推荐开启]
 					'''
 				Enabled: 大师模式已启动，享受你额外的饰品栏位吧！
 				Disabled:
@@ -4186,16 +4187,16 @@ Mods: {
 			}
 
 			HealingElixir: {
-				DisplayName: 起死回生灵丹妙药
+				DisplayName: 灵丹妙药
 				Tooltip:
 					'''
-					治疗身中大量减益debuff的玩家
-					提供快速治疗增益buff
+					治愈身中大量减益的玩家
+					提供快速治疗增益
 					'''
 			}
 
 			HolyWarElixir: {
-				DisplayName: 圣战神药
+				DisplayName: 圣战神剂
 				Tooltip:
 					'''
 					会让你立于不败之地
@@ -4696,7 +4697,7 @@ Mods: {
 
 			SoulOfArtorias: {
 				DisplayName: 亚尔特留斯之魂
-				Tooltip: 深渊行者——亚尔特留斯的精华
+				Tooltip: 深渊行者—亚尔特留斯的精华
 			}
 
 			SoulOfAttraidies: {
@@ -5427,14 +5428,13 @@ Mods: {
 			}
 
 			Drakarthus: {
-				DisplayName: Drakarthus
+				DisplayName: 德雷克萨斯
 				Tooltip:
 					'''
-					右键投出匕首
-					匕首会贴在敌人身上
+					右键投出一把无限飞行的匕首
 					再次右键会传送到匕首旁边
-					并且摧毁匕首，发射追踪刀片
-					投出匕首需要100魔力
+					传送后匕首被消耗，并向外发射六个追踪刀片
+					投出匕首需要消耗100魔力
 					'''
 			}
 
@@ -5458,7 +5458,7 @@ Mods: {
 
 			ForgottenSwordbreaker: {
 				DisplayName: 被遗忘的锏
-				Tooltip: "[c/ffbf00:打击敌人可能会暂时使您偏转攻击]"
+				Tooltip: "[c/ffbf00:攻击敌人可能会让你暂时免疫攻击]"
 			}
 
 			Galaxia: {
@@ -5535,7 +5535,7 @@ Mods: {
 				Tooltip:
 					'''
 					一把被残夜魔力锻造过的锋利的剑
-					右击冲刺，消耗体力让你暂时免疫
+					<right> 冲刺，消耗耐力让你暂时免疫攻击
 					'''
 			}
 
@@ -5543,7 +5543,7 @@ Mods: {
 				DisplayName: 影镰
 				Tooltip:
 					'''
-					一个出奇的普通但致命的武器——它的短距离似乎是它唯一的弱点
+					一个出奇的普通但致命的武器—它的短距离似乎是它唯一的弱点
 					命中时使用法力以撕裂敌人
 					命中后返还25点法力值
 					'''
@@ -5693,7 +5693,7 @@ Mods: {
 			}
 
 			ForgottenStardustRod: {
-				DisplayName: 被遗忘的星尘法杖
+				DisplayName: 被遗忘的流星法杖
 				Tooltip: 随机施放流星
 			}
 
@@ -5848,7 +5848,7 @@ Mods: {
 					'''
 					造成从 0 到 {0} 的随机伤害
 					随伤害词缀的最大伤害变化而变化
-					<右键> 单击像长矛一样刺出
+					<right> 像长矛一样刺出
 					'''
 			}
 
@@ -6185,7 +6185,7 @@ Mods: {
 			}
 
 			Crissaegrim: {
-				DisplayName: 无限真空刃——祝福之风
+				DisplayName: 无限真空刃—祝福之风
 				Tooltip:
 					'''
 					一把由 30 个迷失的暗夜之魂组成的强大的可投掷剑
@@ -6235,7 +6235,7 @@ Mods: {
 				Tooltip:
 					'''
 					增强的弹丸推进核心将允许引爆弹穿透一次
-					剧毒——小心处理
+					剧毒—小心处理
 					'''
 			}
 
@@ -6608,9 +6608,9 @@ Mods: {
 				DisplayName: 钢铁风暴
 				Tooltip:
 					'''
-					<右键> 以释放 [c/708090:突刺]
+					<right> 以释放 [c/708090:突刺]
 					[c/708090:突刺]敌人时获得一层[c/708090:钢铁风暴堆叠]
-					获得两层堆叠后，下次 <右键> 将会释放一阵 [c/708090:旋风]
+					获得两层堆叠后，下次 <right> 将会释放一阵 [c/708090:旋风]
 					[c/708090:“死亡如风，常伴吾身”]
 					'''
 				Details:
@@ -6629,9 +6629,9 @@ Mods: {
 				DisplayName: 等离子风暴
 				Tooltip:
 					'''
-					<右键> 以释放 [c/708090:突刺]
+					<right> 以释放 [c/708090:突刺]
 					[c/708090:突刺]敌人时获得一层[c/708090:钢铁风暴堆叠]
-					获得两层堆叠后，下次 <右键> 将会释放一阵 [c/708090:旋风]
+					获得两层堆叠后，下次 <right> 将会释放一阵 [c/708090:旋风]
 					{$Items.PlasmaWhirlwind.Keybind1}特殊能力键{$Items.PlasmaWhirlwind.Keybind2}
 					当 [c/00ffff:冲撞] 时长按<右键>会释放一道 [c/00ffff:剑光]
 					[c/00ffff:“奥德赛的同伴”]
@@ -6658,9 +6658,9 @@ Mods: {
 				DisplayName: 夜之使者
 				Tooltip:
 					'''
-					<右键> 以释放 [c/708090:突刺]
+					<right> 以释放 [c/708090:突刺]
 					[c/708090:突刺]敌人时获得一层[c/708090:钢铁风暴堆叠]
-					获得两层堆叠后，下次 <右键> 将会释放一阵 [c/708090:旋风]
+					获得两层堆叠后，下次 <right> 将会释放一阵 [c/708090:旋风]
 					{$Items.PlasmaWhirlwind.Keybind1}特殊能力键{$Items.PlasmaWhirlwind.Keybind2}
 					当 [c/00ffff:冲撞] 时长按<右键>会释放一道 [c/00ffff:剑光]
 					{$Items.Nightbringer.Keybind1}特殊能力键{$Items.Nightbringer.Keybind2}
@@ -6783,7 +6783,7 @@ Mods: {
 					当[c/87cefa:珠子]投出时攻击会生成追踪火焰
 					当[c/87cefa:珠子]命中和击杀敌人时，获得 [c/87cefa:精华窃取] 堆叠
 					当获得九层堆叠时，下一次投出的[c/87cefa:魔法珠]将会消耗所有层数，[c/87cefa:治疗玩家并对敌人造成大量伤害]
-					[c/87cefa:“不羁又放纵，泼猴压山下”]
+					[c/87cefa:“任性恣情，如指诸掌”]
 					'''
 				Details:
 					'''
@@ -6804,7 +6804,7 @@ Mods: {
 					当[c/87cefa:珠子]投出时攻击会生成追踪火焰
 					当[c/87cefa:珠子]命中和击杀敌人时，获得 [c/87cefa:精华窃取] 堆叠
 					当获得九层堆叠时，下一次投出的[c/87cefa:魔法珠]将会消耗所有层数，[c/87cefa:治疗玩家并对敌人造成大量伤害]
-					<右键> 施放一个[c/ff7f50:割裂]敌人的[c/ff7f50:魔法火球] 并增加他们受到的魔法伤害
+					<right> 施放一个[c/ff7f50:割裂]敌人的[c/ff7f50:魔法火球] 并增加他们受到的魔法伤害
 					[c/ff7f50:“苦痛之中，亦见光辉”]
 					'''
 				Details:
@@ -6829,10 +6829,10 @@ Mods: {
 					当[c/87cefa:珠子]投出时攻击会生成追踪火焰
 					当[c/87cefa:珠子]命中和击杀敌人时，获得 [c/87cefa:精华窃取] 堆叠
 					当获得九层堆叠时，下一次投出的[c/87cefa:魔法珠]将会消耗所有层数，[c/87cefa:治疗玩家并对敌人造成大量伤害]
-					<右键> 施放一个[c/ff7f50:割裂]敌人的[c/ff7f50:爱心] 并增加他们受到的魔法伤害
+					<right> 施放一个[c/ff7f50:割裂]敌人的[c/ff7f50:爱心] 并增加他们受到的魔法伤害
 					{$Items.OrbOfSpirituality.Keybind1}特殊能力键{$Items.OrbOfSpirituality.Keybind2}
 					[c/ff00ff:万物有灵，终有归宿]
-					[c/ff00ff:急着投胎，物理超度]
+					[c/ff00ff:敌速投胎，物理超度]
 					'''
 				Keybind1: "按 "
 				Keybind2: " 以 [c/ff00ff:冲向光标所在的位置] 沿途发射追踪火焰"
@@ -6936,7 +6936,7 @@ Mods: {
 			}
 
 			Goredrinker: {
-				DisplayName: 渴血战斧
+				DisplayName: 渴血鞭稍
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
@@ -8508,7 +8508,7 @@ Mods: {
 			ForgottenPolearmProj.DisplayName: 被遗忘的长枪
 			ForgottenRadiantLanceProj.DisplayName: 被遗忘的光辉之枪
 			GaeBolgProj.DisplayName: 盖博尔格
-			HiRyuuSpearProj.DisplayName: Hi Ryuu之矛
+			HiRyuuSpearProj.DisplayName: HiRyuu之矛
 			LonginusProj.DisplayName: 朗基努斯
 			OldHalberdProj.DisplayName: 旧戟
 			SporePowder.DisplayName: 孢子粉
@@ -8869,7 +8869,7 @@ Mods: {
 			Blight: {
 				DisplayName: 枯萎
 				DespawnHandler: 命中注定难过此劫！
-				OutOfRange: 枯萎把自己包裹在无法穿透的光线中——你离它太远了！
+				OutOfRange: 枯萎把自己包裹在无法穿透的光线中—你离它太远了！
 			}
 
 			Chaos: {
@@ -8878,7 +8878,7 @@ Mods: {
 				Heal1: 混沌开始治疗自己...
 				Heal2: 混沌仍在治疗自己...
 				Rips: 混沌撕裂你的翅膀和盔甲！
-				OutOfRange: 混沌受到看不见的力量的保护——你离它太远了！
+				OutOfRange: 混沌受到看不见的力量的保护—你离它太远了！
 			}
 
 			DarkCloud: {
@@ -8908,10 +8908,10 @@ Mods: {
 
 			GhostDragonLegs.DisplayName: 灵鬼虬龙
 			GhostDragonTail.DisplayName: 灵鬼虬龙
-			MageShadow.DisplayName: 法师之影
+			MageShadow.DisplayName: 堕魂法师之影
 
 			WyvernMageShadow: {
-				DisplayName: 飞龙法师堕魂——渊影
+				DisplayName: 飞龙法师堕魂—渊影
 				DespawnHandler: 飞龙法师堕魂挣脱了囚禁......
 				Condition: 当他的灵鬼虬龙死后掉落
 			}
@@ -8948,24 +8948,24 @@ Mods: {
 			HellkiteDragonLegs.DisplayName: 炼狱鸢龙
 			HellkiteDragonTail.DisplayName: 炼狱鸢龙
 			PrimordialCrystal.DisplayName: 始源晶簇
-			SeathTheScalelessBody.DisplayName: 无鳞的冰龙——希斯
-			SeathTheScalelessBody2.DisplayName: 无鳞的冰龙——希斯
-			SeathTheScalelessBody3.DisplayName: 无鳞的冰龙——希斯
+			SeathTheScalelessBody.DisplayName: 无鳞的冰龙—希斯
+			SeathTheScalelessBody2.DisplayName: 无鳞的冰龙—希斯
+			SeathTheScalelessBody3.DisplayName: 无鳞的冰龙—希斯
 
 			SeathTheScalelessHead: {
-				DisplayName: 无鳞的冰龙——希斯
+				DisplayName: 无鳞的冰龙—希斯
 				DespawnHandler: 希斯在吞噬你的灵魂...
 				Spawn:
 					'''
 					村庄被袭击了！
-					无鳞的冰龙——希斯毁灭了一切...
+					无鳞的冰龙—希斯毁灭了一切...
 					'''
 				Crystal: 希斯召唤了一个始源晶簇...
 				FinalCrystal: 希斯召唤了它最后的始源晶簇...
 			}
 
-			SeathTheScalelessLegs.DisplayName: 无鳞的冰龙——希斯
-			SeathTheScalelessTail.DisplayName: 无鳞的冰龙——希斯
+			SeathTheScalelessLegs.DisplayName: 无鳞的冰龙—希斯
+			SeathTheScalelessTail.DisplayName: 无鳞的冰龙—希斯
 
 			Witchking: {
 				DisplayName: 巫师王
@@ -8980,7 +8980,7 @@ Mods: {
 			}
 
 			TheHunter: {
-				DisplayName: 茂林飞鸟——「猎手」
+				DisplayName: 茂林飞鸟—「猎手」
 				DespawnHandler: 猎手在寻找它的下一个目标...
 				Child: 猎手决定把你喂给它的孩子。它的孩子隐藏在于环境中！
 				Enrage: 正所谓鸟急奔树狗急跳墙，猎手因为受到大量伤害而凶相毕露...
@@ -8992,14 +8992,14 @@ Mods: {
 			}
 
 			TheRage: {
-				DisplayName: 熔火飞鸟——「愤怒」
+				DisplayName: 熔火飞鸟—「愤怒」
 				DespawnHandler: 愤怒得到了满足...
 				HeatWave: 愤怒从它的身体发出灼热的热浪！你感觉自己的肺都因吸入的空气而燃烧！
 				Enrage: 正所谓鸟急奔树狗急跳墙，愤怒因为受到大量伤害而暴戾恣睢...
 			}
 
 			TheSorrow: {
-				DisplayName: 寒霜飞鸟——「悲伤」
+				DisplayName: 寒霜飞鸟—「悲伤」
 				DespawnHandler: 悲伤裹挟了你...
 				Chill: 悲伤从它的身体里散发出令人不寒而栗的寒意。失去家人使你悲痛欲绝！
 				Enrage: 正所谓鸟急奔树狗急跳墙，悲伤因为受到大量伤害而戾气横生...
@@ -9312,7 +9312,7 @@ Mods: {
 				Name1: Jade
 				FirstEncounter:
 					'''
-					你是我要警告的那个人吗？ 我的名字是Jade，我不属于这个世界。 我被派到这里来警告你 阿卓迪斯——夺心魔王所带来的危险。
+					你是我要警告的那个人吗？ 我的名字是Jade，我不属于这个世界。 我被派到这里来警告你：阿卓迪斯—夺心魔王所带来的危险。
 					他的力量变得强大，不仅要摧毁你的世界，还要摧毁我的世界和许多其他世界。
 					'''
 				HasShard:
@@ -9424,7 +9424,7 @@ Mods: {
 				Quote4Part2: ", 你不是与自然分离的。你与宇宙共存。"
 				Quote5Part1: 这个世界不是一座金字塔，
 				Quote5Part2: 没有人位于金字塔的塔顶。这个世界是一张网，所有存在都彼此相连。
-				Quote6: 人类文明的精神疾病很严重————认为自己比一切造物都优越。认为世界是为他创造的！
+				Quote6: 人类文明的精神疾病很严重——认为自己比一切造物都优越。认为整个世界是为他们而创造的！
 				Quote7: 阿帕切人说过，「多言不如少言，少言不如实干」。
 				Quote8: 臧克家说过：“有些人活着，但他已经死了；有些人已经死了，但他还活着。”（注：原文为：“塔斯卡罗拉曾说过，「活在他们心中的人并没有死去」。”）
 				PreAttraidies1: "[c/ffbf00:如果你能打败阿卓迪斯，来西海之上找我。] 我有一些东西要给你..."
@@ -9439,7 +9439,7 @@ Mods: {
 					但你必须首先击败三个元素恶魔：
 					[c/2f8ee0:水]、[c/2d9e2b:大地]、[c/f53d0a:火焰].
 					你还必须击败另外四个深渊守护者：
-					[c/ffbf00:亚尔特留斯], [c/00ffd4:枯萎], [c/aa00ff:飞龙法师堕魂——渊影], and [c/18ffe2:无鳞冰龙——希斯].
+					[c/ffbf00:亚尔特留斯], [c/00ffd4:枯萎], [c/aa00ff:飞龙法师堕魂—渊影], and [c/18ffe2:无鳞冰龙—希斯].
 					'''
 				AdvModeSHMQuote2:
 					'''
@@ -9467,11 +9467,10 @@ Mods: {
 				SandboxSHMQuote1:
 					'''
 					要关闭通往深渊的传送门，你必须击败6个深渊领主：
-					[c/ffbf00:亚尔特留斯]、[c/00ffd4:枯萎]、[c/aa00ff:飞龙法师堕魂——渊影]、
-					[c/fcff00:混沌]和[c/18FF2:无鳞冰龙——希斯]。
+					[c/ffbf00:亚尔特留斯]、[c/00ffd4:枯萎]、[c/aa00ff:飞龙法师堕魂—渊影]、
+					[c/fcff00:混沌]和[c/18FF2:无鳞冰龙—希斯]。
 					有了这些领主的灵魂，
-					你将能够召唤出最后一个领主-
-					[c/ff6618:葛温，灰烬帝王]
+					你将能够召唤出最后一个领主-[c/ff6618:葛温，灰烬帝王]
 					'''
 				SandboxSHMQuote2:
 					'''

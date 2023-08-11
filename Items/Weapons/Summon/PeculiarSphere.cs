@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
     {
         public static float ScalingPerSlot = 0.15f;
         public static int DoubleShotMinimumSlots = 4;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ScalingPerSlot, DoubleShotMinimumSlots);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs((int)System.Math.Round(ScalingPerSlot*100), DoubleShotMinimumSlots);
         public override void SetStaticDefaults() 
         {
             ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
