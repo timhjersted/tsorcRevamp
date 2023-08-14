@@ -258,6 +258,7 @@ Mods: {
 			LothricAmbush1: Ambush!
 			LothricAmbush2: Ambush!
 			HellkiteDragon: The village is under attack! A Hellkite Dragon has come to feed...
+			Bossduration: "Boss duration: "
 		}
 
 		UI: {

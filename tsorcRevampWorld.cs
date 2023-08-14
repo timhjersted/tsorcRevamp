@@ -922,7 +922,7 @@ namespace tsorcRevamp
             }
             if (bossTimer.IsRunning && !BossAlive)
             {
-                Main.NewText("Boss duration: " + bossTimer.Elapsed);
+                Main.NewText(LangUtils.GetTextValue("Events.Bossduration") + bossTimer.Elapsed);
                 bossTimer.Stop();
                 bossTimer.Reset();
             }

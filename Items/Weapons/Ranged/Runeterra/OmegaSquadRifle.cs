@@ -129,7 +129,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             var SpecialAbilityKey = tsorcRevamp.specialAbility.GetAssignedKeys();
-            string SpecialAbilityString = SpecialAbilityKey.Count > 0 ? SpecialAbilityKey[0] : "Special Ability: <NOT BOUND>";
+            string SpecialAbilityString = SpecialAbilityKey.Count > 0 ? SpecialAbilityKey[0] : Language.GetTextValue("Mods.tsorcRevamp.Keybinds.Special Ability.DisplayName") + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.NotBound");
             int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip5");
             if (ttindex1 != -1)
             {
