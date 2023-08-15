@@ -62,6 +62,7 @@ using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 
 namespace tsorcRevamp
 {
@@ -1505,7 +1506,7 @@ namespace tsorcRevamp
                     "LogMiniBoss",
                     this,
                     nameof(AncientOolacileDemon),
-                    2.51f, // Tier (look above, for determining where it will display)
+                    3.9f, // Tier (look above, for determining where it will display)
                     () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AncientOolacileDemon>())),
                     ModContent.NPCType<AncientOolacileDemon>(),
                     new Dictionary<string, object>()
@@ -1851,6 +1852,38 @@ namespace tsorcRevamp
                         ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.FireFiendMarilith.DisplayName"),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.FireFiendMarilithDesc"),
                         ["spawnItems"] = ModContent.ItemType<Items.BossItems.DyingFireCrystal>()
+                    }
+                    );
+
+
+                bossChecklist.Call(
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(WyvernMageShadow),
+                    20.91f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WyvernMageShadow>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<WyvernMageShadow>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.WyvernMageShadow.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.WyvernMageShadowDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.WingOfTheGhostWyvern>()
+                    }
+                    );
+
+
+                bossChecklist.Call(
+                    "LogBoss", // Name of the call
+                    this,
+                    nameof(Chaos),
+                    20.92f, // Tier (look above)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Chaos>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<Chaos>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Chaos.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.ChaosDesc"),
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DyingWindCrystal>()
                     }
                     );
 

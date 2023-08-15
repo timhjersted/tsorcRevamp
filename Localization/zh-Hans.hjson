@@ -289,9 +289,9 @@ Mods: {
 			ClickToShow: "点这里显示 "
 			UpdateMusic: "正在更新红云物语音乐包(也可在QQ群645748667文件中下载): "
 			GetMusic: 点击这里以下载红云物语音乐包！无法下载的在QQ群645748667文件中下载。
-			MusicNewUpdate: 音乐包更新可用，点击这里以更新 (会重启游戏！)
+			MusicNewUpdate: 点击这里以更新音乐包 (如已手动放置tsorcMusic.tmod，则忽略此提示)
 			MusicFail: 音乐包下载失败，请加QQ群645748667文件中下载。
-			AdvMapDownloadProgress: "冒险地图下载中(也可在原版创意工坊订阅 Dark Souls Adventure Map 后在Tmod导入世界): "
+			AdvMapDownloadProgress: (在原版创意工坊订阅 Dark Souls Adventure Map，再在Tmod内创意工坊选择导入世界)地图下载中:
 			AdvMapUpdated: 冒险地图下载完成！
 			Bless: 在这里放置一个物品以进行祝福
 			SelectWorld: 选择世界大小:
@@ -366,9 +366,9 @@ Mods: {
 			SerrisName: 赛里斯
 			SerrisDesc: ？找到隐藏之地？
 			DeathDesc: ？找到未知之物？
-			AttraidiesName: 阿卓迪斯
+			AttraidiesName: 夺心魔王幻象
 			AttraidiesDesc: 收集所有的冠冕以合成思绪立方体！
-			RealAttraidiesName: 真实阿卓迪斯
+			RealAttraidiesName: 阿卓迪斯
 			RealAttraidiesDesc: 使用幻象掉落的噬魂怪遗物以迎接这挑战吧！
 			HellkiteDragonDesc: 经常在村庄上方的天空中游荡，寻找它的下一顿餐食...
 			WaterFiendKrakenDesc: 双峰之间大裂缝底部的丛林蜥蜴砖大门隐藏着秘密...
@@ -380,6 +380,8 @@ Mods: {
 			FireFiendMarilithDesc: 探索西部沙漠的丛林蜥蜴砖大门下不为人知的秘密...
 			BlightName: 枯萎
 			BlightDesc: 冰冻海洋上的裂缝翻腾着深渊的能量...
+			WyvernMageShadowDesc: 寻找雪山之巅的玻璃监狱...
+			ChaosDesc: 探寻金字塔东边的月亮神殿里的秘密...
 			DarkCloudName: ???
 			DarkCloudDesc: 古老的金字塔又一次被黑暗占据...
 			GwynName: 葛温—灰烬帝王
@@ -1005,10 +1007,10 @@ Mods: {
 				DisplayName: 黑月斗篷
 				Tooltip:
 					'''
-					提供星星斗篷的效果， {$CommonItemTooltip.PercentIncreasedDamageCritChance}
+					提供星星斗篷的效果，{$CommonItemTooltip.PercentIncreasedDamageCritChance}
 					武器魔法灌注不再需要冷却
-					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.Magic.ManaRegen@2} 同时获得额外的
-					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
+					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.Magic.ManaRegen@2} 
+					同时再获得{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}的增益
 					'''
 			}
 
@@ -1241,7 +1243,7 @@ Mods: {
 				DisplayName: 钉盾牌
 				Tooltip:
 					'''
-					‘所有人都会离得你远远的’
+					“所有人都会离得你远远的”
 					{$CommonItemTooltip.DRStat@1}
 					{$CommonItemTooltip.Thorns}
 					{$CommonItemTooltip.BadMoveSpeedMult@2}
@@ -3117,7 +3119,7 @@ Mods: {
 			}
 
 			MindflayerIllusionBag: {
-				DisplayName: 宝藏袋（夺心魔王幻象之遗物）
+				DisplayName: 宝藏袋（夺心魔王幻象）
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -3353,7 +3355,7 @@ Mods: {
 				DisplayName: 思绪立方体
 				Tooltip:
 					'''
-					召唤阿卓迪斯—夺心魔之王
+					召唤阿卓迪斯—夺心魔王
 					终幕已至 
 					[c/ffbf00:为了找到足够数量能在冒险模式下合成这玩意的光＆暗碎片...你得去阿卓迪斯的黑暗之塔最顶端]
 					'''
@@ -3424,10 +3426,9 @@ Mods: {
 				DisplayName: 坠落之翼
 				Tooltip:
 					'''
-					召唤飞龙法师，擅长使用法力和闪电的强力恶魔
+					召唤飞龙法师，擅长使用法力和闪电的强大法师
 					飞龙法师以操控忠诚的如钢般强悍的白鳞火龙而闻名
-					如果你输了好几次
-					之后再来是明智的
+					如果你输给他很多次，升级装备之后再来是明智的
 					'''
 				WrongTime: 飞龙法师不在这个维度，晚上再试试...
 				Summon: 召唤我是个错误...
@@ -3662,9 +3663,9 @@ Mods: {
 					'''
 					一个用于探索理想的镐子...
 					钻石的尖端已经注入了来自天人的魔法
-					因此，它不会对生物造成伤害，但它的尖端可以轻松打破方块
-					令人难以置信的轻松......在事实上，它在你手中移动得如此之快
-					你几乎看不到它，但使用它却感觉毫不费力...躲闪备忘录
+					因此，它不会对生物造成伤害，但它的尖端可以轻松打破物块
+					令人难以置信的轻松...在事实上，它在你手中移动得如此之快
+					你几乎看不到它，但使用它却感觉毫不费力...
 					'''
 			}
 
@@ -4759,11 +4760,11 @@ Mods: {
 				Tooltip: obscured这件物品来自未来，上面的文本模糊不清。你必须在你的冒险中取得更大的进展才能揭示它
 				Obscured:
 					'''
-					当夺心魔之王燃烧的残骸摆在您面前时，您抬头望向地平线
+					当夺心魔王燃烧的残骸摆在您面前时，您抬头望向地平线
 					您感到如释重负，但您的心仍未平静。阿卓迪斯以他的把戏而闻名
 					即使在死亡中，你也怀疑他对世界的影响并没有结束
 					你还记得他对Aaron施放的魔法咒语，不禁怀疑他是否对自身也施了同样的咒语...
-					[c/00ffd4:看向脚下， 你注意到一把镐子躺在灰烬中，摸起来仍然很烫...]
+					[c/00ffd4:看向脚下，你注意到一把镐子躺在灰烬中，摸起来仍然很烫...]
 					[c/ffbf00:恭喜你通关了游戏！ 我们希望您喜欢它！- Tim Hjersted和开发团队]
 					'''
 			}
@@ -5529,7 +5530,7 @@ Mods: {
 					一把用来杀死各种法师的剑
 					每攻击三次会产生一个魔法波纹
 					[c/ffbf00:对法师造成高达八倍的伤害]
-					“似乎夺心魔头也是法师...”
+					“似乎夺心魔王也是法师...”
 					'''
 			}
 
@@ -7347,8 +7348,8 @@ Mods: {
 			}
 
 			CrystalMagicWeapon: {
-				DisplayName: 水晶武器魔力灌注
-				Description: 你的武器充满了水晶的魔法力量！
+				DisplayName: 璀璨魔兵灌注
+				Description: 你的武器充满了不可思议的魔法力量！
 			}
 
 			BrokenSpirit: {
@@ -7505,8 +7506,8 @@ Mods: {
 			}
 
 			GreatMagicWeapon: {
-				DisplayName: 更OP的武器魔力灌注
-				Description: 你的武器充满了OP的魔法力量！
+				DisplayName: 卓越魔兵灌注
+				Description: 你的武器无坚不摧的魔法力量！
 			}
 
 			GreenBlossom: {
@@ -7560,8 +7561,8 @@ Mods: {
 			}
 
 			MagicWeapon: {
-				DisplayName: 武器魔力灌注
-				Description: 你的武器充满了魔法力量！
+				DisplayName: 魔兵灌注
+				Description: 你的武器充满了积于忽微的魔法力量！
 			}
 
 			MarilithHold: {
@@ -8811,7 +8812,7 @@ Mods: {
 			DamnedSoul.DisplayName: 堕落灵魂
 
 			DarkShogunMask: {
-				DisplayName: 夺心魔王
+				DisplayName: 夺心魔王幻象
 				DespawnHandler: 你被阿卓迪斯杀死了...
 				Quote: 你是个傻瓜，瑞德。你认为你能打败我吗？...
 			}
@@ -8829,10 +8830,10 @@ Mods: {
 			ShadowDragonHead.DisplayName: 影龙
 			ShadowDragonLegs.DisplayName: 影龙
 			ShadowDragonTail.DisplayName: 影龙
-			BrokenOkiku.DisplayName: 夺心魔幻象
+			BrokenOkiku.DisplayName: 夺心魔王幻象
 
 			Okiku: {
-				DisplayName: 夺心魔幻象
+				DisplayName: 夺心魔王幻象
 				DespawnHandler: 你被阿卓迪斯杀死了...
 				Quote: 你干得漂亮，瑞德。但是没完，小子！
 				NoGravitation: 多么可怕的夜晚，你的重力buff被驱散了...
@@ -9060,8 +9061,8 @@ Mods: {
 			}
 
 			AttraidiesIllusion: {
-				DisplayName: 阿卓迪斯幻影
-				Death: 阿卓迪斯幻影被击败了...
+				DisplayName: 阿卓迪斯幻象
+				Death: 阿卓迪斯幻象被击败了...
 			}
 
 			AttraidiesManifestation: {
@@ -9078,7 +9079,7 @@ Mods: {
 
 			CrazedDemonSpirit: {
 				DisplayName: 癫狂恶灵意志
-				Death: 一个迷失的灵魂已经从诅咒中解脱出来...
+				Death: 一个迷失的灵魂从诅咒中解脱出来...
 			}
 
 			DemonElemental.DisplayName: 恶魔元素
@@ -9133,7 +9134,7 @@ Mods: {
 				Destroy: 哈哈哈！我要摧毁你，瑞德...
 			}
 
-			MindflayerKingServant.DisplayName: 夺心魔头之仆
+			MindflayerKingServant.DisplayName: 夺心魔王之仆
 			MindflayerServant.DisplayName: 夺心魔之仆
 			MutantToad.DisplayName: 突变蟾蜍
 			Necromancer.DisplayName: 死灵法师
@@ -9712,7 +9713,7 @@ Mods: {
 
 		Configs: {
 			tsorcRevampConfig: {
-				DisplayName: 红云物语模组设置
+				DisplayName: "[c/b52e83:红][c/b9227a:云][c/bb1c74:物][c/b9227a:语][c/b53087:模][c/b14095:组][c/ad52a5:设][c/a75eaf:置]"
 
 				AdventureMode: {
 					Label: 冒险模式：模组游玩基础
