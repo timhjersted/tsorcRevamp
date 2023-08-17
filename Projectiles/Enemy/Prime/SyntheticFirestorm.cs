@@ -13,7 +13,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Cataclysmic Firestorm");
+            //Always draw this projectile even if its "center" is far offscreen
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
         }
 
         public override void SetDefaults()
@@ -36,61 +37,30 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         float size = 0;
         Vector2 truePosition;
         float maxSize = 1200;
-        float explosionTime = 4000;
-        bool initialized = false;
         float fadeIn;
         public override void AI()
         {
             int? index = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>());
             if (index != null)
             {
-                truePosition = Main.npc[index.Value].Center;
+                Projectile.Center = Main.npc[index.Value].Center;
+                Projectile.rotation = Main.npc[index.Value].ai[3] - MathHelper.PiOver2 + (Projectile.ai[0] * MathHelper.TwoPi / 3f);
             }
             else
             {
                 Projectile.active = false;
             }
 
-            if (!initialized)
-            {
-                initialized = true;
-                if(Projectile.ai[0] == 0)
-                {
-                    Projectile.rotation = -MathHelper.PiOver2;
-                }
-                for(int i = 0; i < Main.maxProjectiles; i++)
-                {
-                    if (Main.projectile[i].active && Main.projectile[i].type == Projectile.type && Main.projectile[i].ai[0] == Projectile.ai[0] - 1)
-                    Projectile.rotation = Main.projectile[i].rotation + MathHelper.TwoPi / 3f;
-                }
-            }
-
-            Projectile.rotation -= 0.007f;
-
             if (fadeIn < 120)
             {
                 fadeIn++;
                 if(fadeIn == 110)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, truePosition);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, Projectile.Center);
                 }
                 return;
             }
-            if(Projectile.rotation > MathHelper.TwoPi)
-            {
-                Projectile.rotation -= MathHelper.TwoPi;
-            }
-            if(Projectile.rotation < 0)
-            {
-                Projectile.rotation += MathHelper.TwoPi;
-            }
-            
-            if(truePosition == Vector2.Zero)
-            {
-                truePosition = Projectile.Center;
-            }
 
-            Projectile.Center = Main.LocalPlayer.Center;
             Projectile.timeLeft = 2;
 
             if (size < maxSize)
@@ -110,8 +80,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             {
                 return false;
             }
-            float distance = Vector2.Distance(truePosition, Main.LocalPlayer.Center);
-            float angleBetween = (float)UsefulFunctions.CompareAngles(Vector2.Normalize(truePosition - Main.LocalPlayer.Center), Projectile.rotation.ToRotationVector2());
+            float distance = Vector2.Distance(Projectile.Center, Main.LocalPlayer.Center);
+            float angleBetween = (float)UsefulFunctions.CompareAngles(Vector2.Normalize(Projectile.Center - Main.LocalPlayer.Center), Projectile.rotation.ToRotationVector2());
             return distance < size && Math.Abs(angleBetween - MathHelper.Pi) < angle / 2.85f;
         }
 
@@ -158,7 +128,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Vector2 origin = new Vector2(recsize.Width * 0.5f, recsize.Height * 0.5f);
 
             //Draw the rendertarget with the shader
-            Main.spriteBatch.Draw(tsorcRevamp.NoiseTurbulent, truePosition - Main.screenPosition, recsize, Color.White, 0, origin, 4.5f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tsorcRevamp.NoiseTurbulent, Projectile.Center - Main.screenPosition, recsize, Color.White, 0, origin, 4.5f, SpriteEffects.None, 0);
 
             //Restart the spritebatch so the shader doesn't get applied to the rest of the game
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);

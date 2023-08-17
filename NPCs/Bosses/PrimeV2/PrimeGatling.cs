@@ -80,15 +80,19 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public Vector2 Offset = new Vector2(604, 250);
         int cooldown;
+        public int LaserDamage = 100;
         public override void AI()
         {
-            int LaserDamage = 100;
-
+            if (NPC.life == 1)
+            {
+                damaged = true;
+            }
+            AttackTimer++;
             if (primeHost == null)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 500, 60);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
                 }
                 NPC.active = false;
                 return;
@@ -119,7 +123,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         cooldown = 15;
                     }
                     //Fire increasingly fast bursts of 3 projectiles
-                    if (Main.GameUpdateCount % cooldown == cooldown - 1)
+                    if (AttackTimer % cooldown == cooldown - 1)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -135,7 +139,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 else
                 {
                     //Just spam shots everywhere
-                    if (Main.GameUpdateCount % 10 == 0)
+                    if (AttackTimer % 10 == 0)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -152,7 +156,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 if (!damaged)
                 {
                     cooldown = 60;
-                    if (Main.GameUpdateCount % 90 == 45)
+                    if (AttackTimer % 90 == 45)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -164,7 +168,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
                 else
                 {
-                    if (Main.GameUpdateCount % 90 == 45)
+                    if (AttackTimer % 90 == 45)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {

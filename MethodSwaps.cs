@@ -718,9 +718,12 @@ namespace tsorcRevamp
                         {
                             int cross = (2 * j) - 1;
                             //check in an x shape instead of checking the entire region, since checking 100 tiles every frame is a little silly
-                            if (Main.wallDungeon[Main.tile[playerTileX + i, playerTileY + (i * cross)].WallType] || tsorcRevamp.CustomDungeonWalls[Main.tile[playerTileX + i, playerTileY + (i * cross)].WallType])
+                            if (WorldGen.InWorld(playerTileX + i, playerTileY + (i * cross)))
                             {
-                                self.ZoneDungeon = true;
+                                if (Main.wallDungeon[Main.tile[playerTileX + i, playerTileY + (i * cross)].WallType] || tsorcRevamp.CustomDungeonWalls[Main.tile[playerTileX + i, playerTileY + (i * cross)].WallType])
+                                {
+                                    self.ZoneDungeon = true;
+                                }
                             }
                         }
                     }

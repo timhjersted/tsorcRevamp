@@ -64,6 +64,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         }
 
         public static int torchID;
+        float phase2Rotation
+        {
+            get => NPC.ai[3];
+            set => NPC.ai[3] = value;
+        }
 
         /// <summary>
         /// Add all the moves and damage numbers for your boss in here!
@@ -96,9 +101,19 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         int fireChargeTimer = 0;
         bool activated;
+        bool initialized;
         public override void AI()
         {
-            NPC.friendly = false;
+            //If not in adventure mode then teleport above the closest player and set its origin points to that location
+            if (!initialized && !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                NPC.Center = UsefulFunctions.GetClosestPlayer(NPC.Center).Center;
+                PrimeCenterPoint = NPC.Center;
+                NPC.position.Y -= 400;
+                PrimeCeilingPoint = NPC.Center;
+                initialized = true;
+            }
+
             if (despawning)
             {
                 if (Main.tile[5152, 1106].TileType != TileID.Glass)
@@ -106,7 +121,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     ActuateBottomHalf();
                 }
             }
-            PrimeCeilingPoint = new Vector2(81048, 16424);
+
             if (!activated)
             {
                 NPC.Center = PrimeCeilingPoint + new Vector2(0, -200);
@@ -124,6 +139,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     return;
                 }
             }
+
             base.AI();
 
             if (!aiPaused)
@@ -141,7 +157,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             if (Phase == 1)
             {
                 fireChargeTimer++;
-                //TODO: Fire chargeup VFX
+
                 if (fireChargeTimer == 180)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -152,6 +168,15 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 if (fireChargeTimer >= 120)
                 {
                     phase2Rotation -= 0.007f;
+
+                    if (phase2Rotation > MathHelper.TwoPi)
+                    {
+                        phase2Rotation -= MathHelper.TwoPi;
+                    }
+                    if (phase2Rotation < 0)
+                    {
+                        phase2Rotation += MathHelper.TwoPi;
+                    }
                 }
             }
         }
@@ -177,6 +202,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
         }
 
+        //Since its parts handle the attacking, there isn't much to be done in these functions aside from changing the arena lighting
         public void Beam()
         {
             torchID = TorchID.Crimson;
@@ -342,6 +368,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public static int PrimeArmHealth = 15000;
         public static void PrimeDamageShare(int thisNPC, int damage)
         {
+            damage /= 4;
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 if (Main.npc[i].active && i != thisNPC)
@@ -355,27 +382,27 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         type == ModContent.NPCType<PrimeSiege>() ||
                         type == ModContent.NPCType<PrimeWelder>()))
                     {
-                        Main.npc[i].life -= damage / 4;
-                        CombatText.NewText(Main.npc[i].Hitbox, CombatText.DamagedHostile, damage / 4);
-
-                        if (Main.npc[i].life < 1)
+                        if(damage > Main.npc[i].life)
                         {
-                            Main.npc[i].life = 1;
+                            damage = Main.npc[i].life - 1;
                         }
+                        if(damage == 0)
+                        {
+                            continue;
+                        }
+
+                        if (Main.netMode != NetmodeID.SinglePlayer)
+                        {
+                            NPC.HitInfo info = new NPC.HitInfo();
+                            info.Damage = damage;
+                            NetMessage.SendStrikeNPC(Main.npc[i], info, Main.myPlayer);
+                        }
+
+                        Main.npc[i].life -= damage;
+                        CombatText.NewText(Main.npc[i].Hitbox, CombatText.DamagedHostile, damage);
                     }
                 }
             }
-        }
-
-        //TODO: Remove
-        public override bool? CanBeHitByItem(Player player, Item item)
-        {
-            return base.CanBeHitByItem(player, item);
-        }
-
-        public override bool? CanBeHitByProjectile(Projectile projectile)
-        {
-            return base.CanBeHitByProjectile(projectile);
         }
 
         public static void PrimeProjectileBalancing(ref Projectile projectile)
@@ -515,6 +542,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
 
                 for(int y = 1106; y < 1180; y++)
+                {
+                    Main.tile[x, y].LiquidAmount = 0;
+                }
+            }
+            for (int x = 4960; x < 4993; x++)
+            {
+                for (int y = 1102; y < 1110; y++)
                 {
                     Main.tile[x, y].LiquidAmount = 0;
                 }
@@ -690,7 +724,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public static Texture2D texture;
         public static Texture2D phase2Texture;
         float phase2Warmup;
-        float phase2Rotation;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             DrawMachineAura(Color.Gray * 0.8f, true, NPC);

@@ -720,7 +720,7 @@ namespace tsorcRevamp
 
             }
 
-            if (Main.tile[(int)Player.position.X / 16, (int)Player.position.Y / 16] != null && Main.tile[(int)Player.position.X / 16, (int)Player.position.Y / 16].WallType == WallID.StarlitHeavenWallpaper)
+            if (Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.StarlitHeavenWallpaper)
             {
                 Player.AddBuff(BuffID.Darkness, 60);
             }

@@ -43,9 +43,9 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         }
         const float TRAIL_LENGTH = 12;
 
-        public int AttackTimer
+        public float AttackTimer
         {
-            get => (int)NPC.ai[0];
+            get => NPC.ai[0];
             set => NPC.ai[0] = value;
         }
 
@@ -73,19 +73,37 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             get => primeHost != null && ((TheMachine)primeHost.ModNPC).MoveIndex == 5;
         }
 
-        int phase;
         bool damaged;
-        float angle;
+        float angle
+        {
+            get => NPC.ai[2];
+            set => NPC.ai[2] = value;
+        }
         public Vector2 Offset = new Vector2(-810, 250);
         public override void AI()
         {
+            UsefulFunctions.BroadcastText("Server: Welder Damaged " + damaged);
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                Main.NewText("Client: Welder Damaged " + damaged);
+            }
+            UsefulFunctions.BroadcastText("Server: Welder Active " + active);
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                Main.NewText("Client: Welder Active " + active);
+            }
+            AttackTimer++;
+            if (NPC.life == 1)
+            {
+                damaged = true;
+            }
             int WeldDamage = 100;
 
             if (primeHost == null)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 500, 60);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
                 }
                 NPC.active = false;
                 return;
@@ -109,7 +127,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
 
             NPC.rotation = (Target.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
-            if ((!damaged && !UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.Enemy.Prime.MoltenWeld>())) || (damaged && Main.GameUpdateCount % 60 == 0))
+            if ((!damaged && !UsefulFunctions.AnyProjectile(ModContent.ProjectileType<Projectiles.Enemy.Prime.MoltenWeld>())) || (damaged && AttackTimer % 60 == 0))
             {
                 float aiZero = 0;
                 if (damaged)
@@ -126,7 +144,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             if (damaged)
             {
                 angle += 0.01f;
-                if (Main.GameUpdateCount % 60 == 0)
+                if (AttackTimer % 60 == 0)
                 {
                     float speed = 9;
                     Vector2 targetPoint;
@@ -168,7 +186,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
             else
             {
-
                 if (active)
                 {
                     UsefulFunctions.SmoothHoming(NPC, Target.Center, 0.1f, 7f, bufferZone: false);

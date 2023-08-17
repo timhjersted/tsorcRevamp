@@ -86,11 +86,16 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public Vector2 Offset = new Vector2(200, 70);
         public override void AI()
         {
+            if (NPC.life == 1)
+            {
+                damaged = true;
+            }
+            AttackTimer++;
             if (primeHost == null)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 500, 60);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
                 }
                 NPC.active = false;
                 return;
@@ -134,7 +139,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (!damaged)
                 {
-                    if ((Main.GameUpdateCount % 120) % 10 == 0 && Main.GameUpdateCount % 120 <= 20)
+                    if ((AttackTimer % 120) % 10 == 0 && AttackTimer % 120 <= 20)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -147,7 +152,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
                 else
                 {
-                    if (Main.GameUpdateCount % 40 == 0)
+                    if (AttackTimer % 40 == 0)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -163,7 +168,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (!damaged)
                 {
-                    if (Main.GameUpdateCount % 550 == 0)
+                    if (AttackTimer % 550 == 0)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -176,7 +181,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
                 else
                 {
-                    if (Main.GameUpdateCount % 75 == 0)
+                    if (AttackTimer % 75 == 0)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {

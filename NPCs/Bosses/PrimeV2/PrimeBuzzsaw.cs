@@ -32,7 +32,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.aiStyle = -1;
             NPC.width = 70;
             NPC.height = 150;
-            NPC.damage = 0;
+            NPC.damage = 60;
             NPC.defense = 20;
             NPC.lifeMax = TheMachine.PrimeArmHealth;
             NPC.HitSound = SoundID.NPCHit4;
@@ -65,6 +65,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
             }
         }
+
+        public float SawTimer
+        {
+            get => NPC.ai[2];
+            set => NPC.ai[2] = value;
+        }
+
         TheMachine Prime
         {
             get => ((TheMachine)primeHost.ModNPC);
@@ -79,10 +86,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         {
             get => primeHost != null && ((TheMachine)primeHost.ModNPC).MoveIndex == 2;
         }
-        int phase
-        {
-            get => ((TheMachine)primeHost.ModNPC).Phase;
-        }
 
         bool damaged;
 
@@ -90,18 +93,21 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         bool seekingPlayer;
         Vector2 drawOffset = Vector2.Zero;
 
+        public int SawDamage = 120;
         public Vector2 Offset = new Vector2(600, 200);
         public override void AI()
         {
+            SawTimer++;
             NPC.rotation = 0;
-            NPC.damage = 60;
-            int SawDamage = 120;
-
+            if(NPC.life == 1)
+            {
+                damaged = true;
+            }
             if (primeHost == null)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 500, 60);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
                 }
                 NPC.active = false;
                 return;
@@ -185,7 +191,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
                     if (damaged)
                     {
-                        NPC.velocity.Y = 5 * (float)Math.Sin(Main.GameUpdateCount / 20f);
+                        NPC.velocity.Y = 5 * (float)Math.Sin(SawTimer / 20f);
                     }
                 }
             }
@@ -207,7 +213,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 UsefulFunctions.SimpleGore(NPC, "Buzzsaw_Damaged_1");
                 UsefulFunctions.SimpleGore(NPC, "Buzzsaw_Damaged_2");
                 NPC.life = 1;
-                damaged = true;
                 NPC.dontTakeDamage = true;
                 return false;
             }

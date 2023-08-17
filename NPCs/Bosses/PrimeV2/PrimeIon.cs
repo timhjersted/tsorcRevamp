@@ -80,15 +80,19 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
 
         public Vector2 Offset = new Vector2(-304, 80);
+        public int ionDamage = 200;
         public override void AI()
         {
-            int ionDamage = 200;
-
+            AttackTimer++;
+            if (NPC.life == 1)
+            {
+                damaged = true;
+            }
             if (primeHost == null)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 500, 60);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
                 }
                 NPC.active = false;
                 return;
@@ -113,7 +117,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (damaged)
                 {
-                    if (Main.GameUpdateCount % 200 == 0)
+                    if (AttackTimer % 200 == 0)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot"), NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -127,7 +131,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
                 else
                 {
-                    if (Main.GameUpdateCount % 120 == 0)
+                    if (AttackTimer % 120 == 0)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot"), NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -142,7 +146,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (damaged)
                 {
-                    if (Main.GameUpdateCount % 600 == 100)
+                    if (AttackTimer % 600 == 100)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot"), NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -155,7 +159,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
                 else
                 {
-                    if (Main.GameUpdateCount % 400 == 150)
+                    if (AttackTimer % 400 == 150)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot"), NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)

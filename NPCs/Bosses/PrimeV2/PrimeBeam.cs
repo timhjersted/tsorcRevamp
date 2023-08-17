@@ -73,10 +73,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             get => primeHost != null && ((TheMachine)primeHost.ModNPC).MoveIndex == 0;
         }
 
-        int phase
-        {
-            get => ((TheMachine)primeHost.ModNPC).Phase;
-        }
 
         bool damaged;
 
@@ -86,14 +82,19 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public Vector2 Offset = new Vector2(-604, 250);
         public int cooldown = 60;
+        public int BeamDamage = 150;
         public override void AI()
         {
-            int BeamDamage = 150;
+            if (NPC.life == 1)
+            {
+                damaged = true;
+            }
+            AttackTimer++;
             if (primeHost == null)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 500, 60);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 10, 0, Main.myPlayer, 500, 60);
                 }
                 NPC.active = false;
                 return;
@@ -148,7 +149,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 else
                 {
                     //Spam stationary wide beams around the target player
-                    if (Main.GameUpdateCount % 60 == 0)
+                    if (AttackTimer % 60 == 0)
                     {
                         rotationTarget = (NPC.Center - Target.Center).ToRotation() + Main.rand.NextFloat(-0.25f, 0.25f) + MathHelper.PiOver2;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -162,13 +163,13 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 if (damaged)
                 {
-                    if (Main.GameUpdateCount % 300 == 140)
+                    if (AttackTimer % 300 == 140)
                     {
                         rotationTarget = (NPC.Center - Target.Center).ToRotation() + Main.rand.NextFloat(-0.25f, 0.25f) + MathHelper.PiOver2;
                         rotationSpeed = 0.1f;
                     }
                     //Spam stationary wide beams around the target player
-                    if (Main.GameUpdateCount % 300 == 200)
+                    if (AttackTimer % 300 == 200)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -178,11 +179,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
                 else
                 {
-                    if (Main.GameUpdateCount % 600 > 239 && Main.GameUpdateCount % 600 < 300)
+                    if (AttackTimer % 600 > 239 && AttackTimer % 600 < 300)
                     {
                         rotationTarget = (Target.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
                     }
-                    if (Main.GameUpdateCount % 600 == 299)
+                    if (AttackTimer % 600 == 299)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
