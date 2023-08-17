@@ -139,6 +139,11 @@ namespace tsorcRevamp.Projectiles.VFX
         public bool NPCSource;
 
         /// <summary>
+        /// Makes the trail move relative to the screen instead of the world
+        /// </summary>
+        public bool ScreenSpace;
+
+        /// <summary>
         /// The whoAmI of the host NPC (if it has one)
         /// </summary>
         public float HostNPCIdentifier
@@ -221,14 +226,29 @@ namespace tsorcRevamp.Projectiles.VFX
                 if (Vector2.Distance(lastPosition, HostEntity.Center) > 1f)
                 {
                     lastPosition = HostEntity.Center;
-                    trailPositions.Add(HostEntity.Center);
-                    trailRotations.Add(HostEntity.velocity.ToRotation());
+                    if (!ScreenSpace)
+                    {
+                        trailPositions.Add(HostEntity.Center);
+                    }
+                    else
+                    {
+                        trailPositions.Add(HostEntity.Center - Main.screenPosition);
+                    }
 
+                    trailRotations.Add(HostEntity.velocity.ToRotation());
                 }
 
                 if (trailPositions.Count > 2)
                 {
-                    trailPositions[trailPositions.Count - 1] = HostEntity.Center;
+                    if (!ScreenSpace)
+                    {
+                        trailPositions[trailPositions.Count - 1] = HostEntity.Center;
+                    }
+                    else
+                    {
+                        trailPositions[trailPositions.Count - 1] = HostEntity.Center - Main.screenPosition;
+                    }
+
                     trailRotations[trailRotations.Count - 1] = HostEntity.velocity.ToRotation();
 
                     trailCurrentLength = CalculateLength();
@@ -260,18 +280,22 @@ namespace tsorcRevamp.Projectiles.VFX
                     }
                 }
 
-                if (trailPositions.Count > 2)
+                //Smoothing
+                if (trailPositions.Count > 2 && !ScreenSpace)
                 {
-                    trailRotations[trailRotations.Count - 1] = (trailPositions[trailRotations.Count - 2] - trailPositions[trailRotations.Count - 1]).ToRotation();
+                   trailRotations[trailRotations.Count - 1] = (trailPositions[trailPositions.Count - 2] - trailPositions[trailPositions.Count - 1]).ToRotation();
                 }
 
-                //Smoothing
+                //More smoothing
                 if (trailPositions.Count > 3)
                 {
                     for (int i = 3; i < trailPositions.Count - 1; i++)
                     {
                         trailPositions[i - 2] = (trailPositions[i - 3] + trailPositions[i - 1]) / 2f;
-                        trailRotations[i - 2] = (trailPositions[i - 3] - trailPositions[i - 2]).ToRotation();
+                        if (!ScreenSpace)
+                        {
+                            trailRotations[i - 2] = (trailPositions[i - 3] - trailPositions[i - 2]).ToRotation();
+                        }
                     }
                 }
 
@@ -329,10 +353,21 @@ namespace tsorcRevamp.Projectiles.VFX
                 {
                     trailPositions = new List<Vector2>();
                     trailRotations = new List<float>();
-                    trailPositions.Add(HostEntity.Center + hostOffset);
-                    trailPositions.Add(HostEntity.Center + hostOffset);
+
+                    if (!ScreenSpace)
+                    {
+                        trailPositions.Add(HostEntity.Center + hostOffset);
+                        trailPositions.Add(HostEntity.Center + hostOffset);
+                    }
+                    else
+                    {
+                        trailPositions.Add(HostEntity.Center + hostOffset - Main.screenPosition);
+                        trailPositions.Add(HostEntity.Center + hostOffset - Main.screenPosition);
+                    }
+
                     trailRotations.Add(HostEntity.velocity.ToRotation());
                     trailRotations.Add(HostEntity.velocity.ToRotation());
+
                     return 0;
                 }
                 calculatedLength += extraDistance;
@@ -364,6 +399,7 @@ namespace tsorcRevamp.Projectiles.VFX
             {
                 lastPosition = Projectile.Center;
             }
+
             trailPositions = new List<Vector2>();
             trailRotations = new List<float>();
 
@@ -405,9 +441,19 @@ namespace tsorcRevamp.Projectiles.VFX
                 {
                     break;
                 }
-                if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), trailPositions[i], trailPositions[i + collisionFrequency - 1], 2 * CollisionWidthFunction((float)i / (float)trailPositions.Count), ref discard))
+                if (!ScreenSpace)
                 {
-                    return true;
+                    if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), trailPositions[i], trailPositions[i + collisionFrequency - 1], 2 * CollisionWidthFunction((float)i / (float)trailPositions.Count), ref discard))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft() - Main.screenPosition, targetHitbox.Size(), trailPositions[i], trailPositions[i + collisionFrequency - 1], 2 * CollisionWidthFunction((float)i / (float)trailPositions.Count), ref discard))
+                    {
+                        return true;
+                    }
                 }
             }
 
@@ -467,8 +513,14 @@ namespace tsorcRevamp.Projectiles.VFX
                 customEffect.CurrentTechnique.Passes[0].Apply();
             }
 
+            Vector2 offset = -Main.screenPosition;
+            if (ScreenSpace)
+            {
+                offset = Vector2.Zero;
+            }
+
             VertexStrip vertexStrip = new VertexStrip();
-            vertexStrip.PrepareStrip(trailPositions.ToArray(), trailRotations.ToArray(), ColorFunction, WidthFunction, -Main.screenPosition, includeBacksides: true);
+            vertexStrip.PrepareStrip(trailPositions.ToArray(), trailRotations.ToArray(), ColorFunction, WidthFunction, offset, includeBacksides: true);
             vertexStrip.DrawTrail();
 
 
@@ -492,9 +544,9 @@ namespace tsorcRevamp.Projectiles.VFX
                     {
                         scaleFactor /= 2f;
                     }
-                    Main.spriteBatch.Draw(starTexture, trailPositions[i] - Main.screenPosition + new Vector2(CollisionWidthFunction((float)i / (float)trailPositions.Count), 0).RotatedBy(trailRotations[i] + MathHelper.PiOver2), starSourceRectangle, Color.White, trailRotations[i], starOrigin, Projectile.scale * scaleFactor, SpriteEffects.None, 0);
-                    Main.spriteBatch.Draw(starTexture, trailPositions[i] - Main.screenPosition, starSourceRectangle, Color.White, trailRotations[i], starOrigin, Projectile.scale * 0.75f, SpriteEffects.None, 0);
-                    Main.spriteBatch.Draw(starTexture, trailPositions[i] - Main.screenPosition - new Vector2(CollisionWidthFunction((float)i / (float)trailPositions.Count), 0).RotatedBy(trailRotations[i] + MathHelper.PiOver2), starSourceRectangle, Color.White, trailRotations[i], starOrigin, Projectile.scale * scaleFactor, SpriteEffects.None, 0);
+                    Main.spriteBatch.Draw(starTexture, trailPositions[i] + offset + new Vector2(CollisionWidthFunction((float)i / (float)trailPositions.Count), 0).RotatedBy(trailRotations[i] + MathHelper.PiOver2), starSourceRectangle, Color.White, trailRotations[i], starOrigin, Projectile.scale * scaleFactor, SpriteEffects.None, 0);
+                    Main.spriteBatch.Draw(starTexture, trailPositions[i] + offset, starSourceRectangle, Color.White, trailRotations[i], starOrigin, Projectile.scale * 0.75f, SpriteEffects.None, 0);
+                    Main.spriteBatch.Draw(starTexture, trailPositions[i] + offset - new Vector2(CollisionWidthFunction((float)i / (float)trailPositions.Count), 0).RotatedBy(trailRotations[i] + MathHelper.PiOver2), starSourceRectangle, Color.White, trailRotations[i], starOrigin, Projectile.scale * scaleFactor, SpriteEffects.None, 0);
                 }
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);

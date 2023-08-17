@@ -48,11 +48,12 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			trailPointLimit = 900;
 			trailMaxLength = 333;
 			Projectile.hide = true;
-			collisionPadding = 50;
+			collisionPadding = 5;
 			NPCSource = false;
 			trailCollision = true;
-			collisionFrequency = 5;
+			collisionFrequency = 10;
 			noFadeOut = true;
+			ScreenSpace = true;
 			customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/InterstellarVessel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 		}
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
@@ -268,7 +269,9 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		public static Texture2D glowTexture;
 		public override bool PreDraw(ref Color lightColor)
         {
-			return true;
+			visualizeTrail = false;
+			base.PreDraw(ref lightColor);
+			return false;
 		}
     }	
 }

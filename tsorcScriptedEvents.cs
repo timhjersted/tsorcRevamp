@@ -1244,10 +1244,7 @@ namespace tsorcRevamp
 
                             if (distance < EnabledEvents[i].radius * 6)
                             {
-                                if (!Main.player[index].HasBuff(BuffID.PeaceCandle))
-                                {
-                                    Main.player[index].AddBuff(BuffID.PeaceCandle, 30, false);
-                                }
+                                Main.player[index].AddBuff(BuffID.PeaceCandle, 30, false);
                             }
                             if (distance < EnabledEvents[i].radius && !Main.player[index].dead)
                             {
