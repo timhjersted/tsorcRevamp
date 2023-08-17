@@ -546,13 +546,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     Main.tile[x, y].LiquidAmount = 0;
                 }
             }
-            for (int x = 4960; x < 4993; x++)
-            {
-                for (int y = 1102; y < 1110; y++)
-                {
-                    Main.tile[x, y].LiquidAmount = 0;
-                }
-            }
         }
 
         /// <summary>
