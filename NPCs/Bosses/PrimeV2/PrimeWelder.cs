@@ -82,16 +82,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public Vector2 Offset = new Vector2(-810, 250);
         public override void AI()
         {
-            UsefulFunctions.BroadcastText("Server: Welder Damaged " + damaged);
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                Main.NewText("Client: Welder Damaged " + damaged);
-            }
-            UsefulFunctions.BroadcastText("Server: Welder Active " + active);
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                Main.NewText("Client: Welder Active " + active);
-            }
             AttackTimer++;
             if (NPC.life == 1)
             {
