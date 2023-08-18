@@ -61,8 +61,8 @@ namespace tsorcRevamp.Projectiles.VFX
                         break;
                     }
 
-                    //If more than 10 are already active at once, give up and just kill the shockwave instead of creating yet another one.
-                    if (index >= 20)
+                    //If more than 30 are already active at once, give up and just kill the shockwave instead of creating yet another one.
+                    if (index >= 30)
                     {
                         initialized = true;
                         Projectile.Kill();
