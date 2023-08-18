@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.Graphics.VertexStrip;
 
 namespace tsorcRevamp.Projectiles.VFX
 {
@@ -106,9 +107,14 @@ namespace tsorcRevamp.Projectiles.VFX
         public float deathSpeed = 1f / 60f;
 
         /// <summary>
+        /// How far the trail must travel before adding a new point to its list
+        /// </summary>
+        public float newPointDistance = 1;
+
+        /// <summary>
         /// If this projectile is attached to an NPC it is stored here
         /// </summary>
-        public NPC hostNPC;       
+        public NPC hostNPC;
 
         /// <summary>
         /// The effect this trail uses.
@@ -187,7 +193,7 @@ namespace tsorcRevamp.Projectiles.VFX
         /// <summary>
         /// Whether the trail has completed its initialization tasks or not
         /// </summary>
-        public bool initialized = false;        
+        public bool initialized = false;
 
         public float lengthPercent
         {
@@ -199,10 +205,10 @@ namespace tsorcRevamp.Projectiles.VFX
 
         public Vector2 lastPosition = Vector2.Zero;
         public override void AI()
-        {            
+        {
             if (!initialized)
             {
-                 Initialize();
+                Initialize();
             }
 
             if ((!HostEntityValid() || Projectile.timeLeft < 1f / deathSpeed || dying) && !noFadeOut)
@@ -211,7 +217,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 hostNPC = null;
 
                 deathProgress += deathSpeed;
-                if(deathProgress > 1)
+                if (deathProgress > 1)
                 {
                     deathProgress = 1;
                     Projectile.Kill();
@@ -223,7 +229,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 Projectile.Center = HostEntity.Center;
 
                 //Don't add new trail segments if it has not travelled far enough
-                if (Vector2.Distance(lastPosition, HostEntity.Center) > 1f)
+                if (Vector2.Distance(lastPosition, HostEntity.Center) > newPointDistance)
                 {
                     lastPosition = HostEntity.Center;
                     if (!ScreenSpace)
@@ -283,7 +289,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 //Smoothing
                 if (trailPositions.Count > 2 && !ScreenSpace)
                 {
-                   trailRotations[trailRotations.Count - 1] = (trailPositions[trailPositions.Count - 2] - trailPositions[trailPositions.Count - 1]).ToRotation();
+                    trailRotations[trailRotations.Count - 1] = (trailPositions[trailPositions.Count - 2] - trailPositions[trailPositions.Count - 1]).ToRotation();
                 }
 
                 //More smoothing
@@ -339,7 +345,7 @@ namespace tsorcRevamp.Projectiles.VFX
             //Failsafe for if trailIndex is already at the end of the trail
             return trailIndex;
         }
-                
+
 
         public float CalculateLength()
         {
@@ -349,7 +355,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 float extraDistance = Vector2.Distance(trailPositions[i], trailPositions[i + 1]);
 
                 //If the trail is discontinuous (because its host got teleported, for example) then restart it
-                if(extraDistance > 60 && !noDiscontinuityCheck)
+                if (extraDistance > 60 && !noDiscontinuityCheck)
                 {
                     trailPositions = new List<Vector2>();
                     trailRotations = new List<float>();
@@ -385,7 +391,7 @@ namespace tsorcRevamp.Projectiles.VFX
             {
                 return false;
             }
-            if(NPCSource && hostNPC.type != hostEntityType)
+            if (NPCSource && hostNPC.type != hostEntityType)
             {
                 return false;
             }
@@ -394,8 +400,8 @@ namespace tsorcRevamp.Projectiles.VFX
         }
 
         public void Initialize()
-        {            
-            if(lastPosition == Vector2.Zero)
+        {
+            if (lastPosition == Vector2.Zero)
             {
                 lastPosition = Projectile.Center;
             }
@@ -408,9 +414,9 @@ namespace tsorcRevamp.Projectiles.VFX
                 hostNPC = Main.npc[(int)HostNPCIdentifier];
                 hostEntityType = hostNPC.type;
             }
-            initialized = true;            
+            initialized = true;
         }
-               
+
         public virtual float WidthFunction(float progress)
         {
             return trailWidth;
@@ -475,7 +481,7 @@ namespace tsorcRevamp.Projectiles.VFX
         public bool additiveContext = false;
         public override bool PreDraw(ref Color lightColor)
         {
-            if(trailPositions == null)
+            if (trailPositions == null)
             {
                 return false;
             }
@@ -519,12 +525,24 @@ namespace tsorcRevamp.Projectiles.VFX
                 offset = Vector2.Zero;
             }
 
+            VertexPositionColor[] vertices = new VertexPositionColor[3];
+            vertices[0] = new VertexPositionColor(new Vector3(0, 1, 0), Color.Red);
+            vertices[1] = new VertexPositionColor(new Vector3(+0.5f, 0, 0), Color.Green);
+            vertices[2] = new VertexPositionColor(new Vector3(-0.5f, 0, 0), Color.Blue);
+            VertexBuffer vertexBuffer = new VertexBuffer(Main.graphics.GraphicsDevice, typeof(VertexPositionColor), 3, BufferUsage.WriteOnly);
+            vertexBuffer.SetData<VertexPositionColor>(vertices);
+            Main.graphics.GraphicsDevice.SetVertexBuffer(vertexBuffer);
+            Main.graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);
+
+
+
+
             VertexStrip vertexStrip = new VertexStrip();
             vertexStrip.PrepareStrip(trailPositions.ToArray(), trailRotations.ToArray(), ColorFunction, WidthFunction, offset, includeBacksides: true);
             vertexStrip.DrawTrail();
 
 
-            
+
             if (visualizeTrail)
             {
                 Main.spriteBatch.End();
@@ -540,7 +558,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 for (int i = 0; i < trailPositions.Count - 0; i++)
                 {
                     float scaleFactor = 0.75f;
-                    if(i < collisionEndPadding || i > trailPositions.Count - collisionPadding)
+                    if (i < collisionEndPadding || i > trailPositions.Count - collisionPadding)
                     {
                         scaleFactor /= 2f;
                     }
@@ -555,7 +573,124 @@ namespace tsorcRevamp.Projectiles.VFX
             return false;
         }
 
-        
+
+        private CustomVertexInfo[] _vertices = new CustomVertexInfo[1];
+        public int vertexAmount = 0;
+        void PrepareVertexStrip()
+        {
+            int positionCount = trailPositions.Count;
+            int num2 = (vertexAmount = positionCount * 2);
+            if (_vertices.Length < num2)
+            {
+                Array.Resize(ref _vertices, num2);
+            }
+
+            for (int i = 0; i < positionCount; i++)
+            {
+                if (trailPositions[i] == Vector2.Zero)
+                {
+                    positionCount = i - 1;
+                    vertexAmount = positionCount * 2;
+                    break;
+                }
+
+                Vector2 offset = -Main.screenPosition;
+                if (ScreenSpace)
+                {
+                    offset = Vector2.Zero;
+                }
+                Vector2 pos = trailPositions[i] + offset;
+                float rot = MathHelper.WrapAngle(trailRotations[i]);
+                int indexOnVertexArray = i * 2;
+                float progressOnStrip = (float)i / (float)(positionCount - 1);
+                AddVertex(ColorFunction, WidthFunction, pos, rot, indexOnVertexArray, progressOnStrip);
+            }
+
+            PrepareIndices(positionCount, true);
+        }
+
+        private void AddVertex(StripColorFunction colorFunction, StripHalfWidthFunction widthFunction, Vector2 pos, float rot, int indexOnVertexArray, float progressOnStrip)
+        {
+            while (indexOnVertexArray + 1 >= _vertices.Length)
+            {
+                Array.Resize(ref _vertices, _vertices.Length * 2);
+            }
+
+            Color color = colorFunction(progressOnStrip);
+            float width = widthFunction(progressOnStrip);
+
+            //Instead of adding two verticies per point, add *one* and alternate it
+            //Use these to form a triangle strip, then draw it!
+            Vector2 vector = MathHelper.WrapAngle(rot - MathF.PI / 2f).ToRotationVector2() * width;
+            _vertices[indexOnVertexArray].Position = pos + vector;
+            _vertices[indexOnVertexArray + 1].Position = pos - vector;
+            _vertices[indexOnVertexArray].TexCoord = new Vector2(progressOnStrip, 1f);
+            _vertices[indexOnVertexArray + 1].TexCoord = new Vector2(progressOnStrip, 0f);
+            _vertices[indexOnVertexArray].Color = color;
+            _vertices[indexOnVertexArray + 1].Color = color;
+        }
+
+        private short[] _indices = new short[1];
+
+        private int _indicesAmountCurrentlyMaintained;
+        private void PrepareIndices(int vertexPairsAdded, bool includeBacksides)
+        {
+            int vertexListLength = vertexPairsAdded - 1;
+            int indiciesPerVertex = 6 + includeBacksides.ToInt() * 6;
+            int indexCount = (_indicesAmountCurrentlyMaintained = vertexListLength * indiciesPerVertex);
+            if (_indices.Length < indexCount)
+            {
+                Array.Resize(ref _indices, indexCount);
+            }
+
+            for (short i = 0; i < vertexListLength; i = (short)(i + 1))
+            {
+                short currentIndex = (short)(i * indiciesPerVertex);
+                int indexID = i * 2;
+                _indices[currentIndex] = (short)indexID;
+                _indices[currentIndex + 1] = (short)(indexID + 1);
+                _indices[currentIndex + 2] = (short)(indexID + 2);
+                _indices[currentIndex + 3] = (short)(indexID + 2);
+                _indices[currentIndex + 4] = (short)(indexID + 1);
+                _indices[currentIndex + 5] = (short)(indexID + 3);
+                if (includeBacksides)
+                {
+                    _indices[currentIndex + 6] = (short)(indexID + 2);
+                    _indices[currentIndex + 7] = (short)(indexID + 1);
+                    _indices[currentIndex + 8] = (short)indexID;
+                    _indices[currentIndex + 9] = (short)(indexID + 2);
+                    _indices[currentIndex + 10] = (short)(indexID + 3);
+                    _indices[currentIndex + 11] = (short)(indexID + 1);
+                }
+            }
+        }
+
+        void DrawVertexStrip()
+        {
+            if (vertexAmount >= 3)
+            {
+                Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, _vertices, 0, vertexAmount, _indices, 0, _indicesAmountCurrentlyMaintained / 3);
+            }
+        }
+        private struct CustomVertexInfo : IVertexType
+        {
+            public Vector2 Position;
+
+            public Color Color;
+
+            public Vector2 TexCoord;
+
+            private static VertexDeclaration _vertexDeclaration = new VertexDeclaration(new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0), new VertexElement(8, VertexElementFormat.Color, VertexElementUsage.Color, 0), new VertexElement(12, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0));
+
+            public VertexDeclaration VertexDeclaration => _vertexDeclaration;
+
+            public CustomVertexInfo(Vector2 position, Color color, Vector2 texCoord)
+            {
+                Position = position;
+                Color = color;
+                TexCoord = texCoord;
+            }
+        }
 
         //Shifting blue and pink
         //Could be useful later

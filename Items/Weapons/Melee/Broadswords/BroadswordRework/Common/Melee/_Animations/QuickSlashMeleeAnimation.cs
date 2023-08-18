@@ -43,14 +43,14 @@ public class QuickSlashMeleeAnimation : MeleeAnimation, ICanDoMeleeDamage
 			(0.0f, MathHelper.Lerp(minValue, maxValue, 0.1f)),
 			(0.1f, minValue),
 			(0.15f, MathHelper.Lerp(minValue, maxValue, 0.125f)),
-			(0.151f, MathHelper.Lerp(minValue, maxValue, 0.8f)),
-			(0.3f, MathHelper.Lerp(minValue, maxValue, 0.95f)),
-			(0.5f, maxValue),
+			(0.3f, MathHelper.Lerp(minValue, maxValue, 0.5f)),
+			(0.5f, MathHelper.Lerp(minValue, maxValue, 0.75f)),
+			(0.6f, maxValue),
 			(0.75f, maxValue),
 			(0.9f, MathHelper.Lerp(minValue, maxValue, 0.96f)),
 			(1.0f, MathHelper.Lerp(minValue, maxValue, 0.9f))
 		);
-
+		//Main.NewText("New: " + (float)(MathHelper.Pi * step - (Math.Sin(2 * MathHelper.Pi * step) / 2f) / 2f) / MathHelper.Pi);
 		return animation.GetValue(step);
 	}
 

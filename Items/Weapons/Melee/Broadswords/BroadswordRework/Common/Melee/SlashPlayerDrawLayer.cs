@@ -27,7 +27,7 @@ public class SlashPlayerDrawLayer : PlayerDrawLayer
 		=> new BeforeParent(PlayerDrawLayers.HeldItem);
 
 	public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
-		=> true;
+		=> false;
 
 	protected override void Draw(ref PlayerDrawSet drawInfo)
 	{

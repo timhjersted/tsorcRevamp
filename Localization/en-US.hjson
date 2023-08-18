@@ -8638,6 +8638,7 @@ Mods: {
 			EnemyBlackCursedBreath.DisplayName: Enemy Black Cursed Breath
 			LudensTempestFire.DisplayName: Ludens Tempest Fire
 			LudensTempestFirelet.DisplayName: Ludens Tempest Firelet
+			Slash.DisplayName: Slash
 		}
 
 		NPCs: {
