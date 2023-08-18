@@ -3452,7 +3452,8 @@ Mods: {
 				Tooltip:
 					'''
 					Allows you to re-summon any boss you have defeated
-					Left click to summon the selected boss, right click to select the one you want
+					Left click to show Boss Select Menu, then click on the Boss icon to summon
+					Use the arrows on both sides to switch between different periods
 					Bosses summoned in this way will not drop dark souls, guardian souls or stamina vessels
 					However, they will drop the rest of their normal loot
 					[Developer note: Not all bosses can be summoned this way yet, but the rest will be added over time]

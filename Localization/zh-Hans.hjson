@@ -3450,11 +3450,12 @@ Mods: {
 				DisplayName: Boss重召唤书
 				Tooltip:
 					'''
-					允许你重新召唤任何你曾经打败过的Boss
-					手持该物品时左键点击显示Boss选择光圈，右侧箭头切换不同时期，再左键点击你想要的Boss以召唤
-					以这种方式召唤的Boss不会掉落黑暗之魂、守护灵魂或耐力容器
+					允许你重新召唤已经击败的Boss
+					手持该物品时左键点击显示Boss选择光圈，再点击光圈上的Boss图标以召唤
+					通过光圈两侧的箭头切换不同时期的Boss
+					以这种方式召唤的Boss不会掉落黑暗之魂、守护之魂或耐力容器
 					然而，他们仍会掉落剩下的正常战利品
-					开发者注:[c/ff0000:目前还不是所有的Boss都可以通过这种方式被召唤，但其余的将会随着时间的推移而添加]
+					[c/ff0000:开发者注：有些Boss还不能通过这种方式被正常召唤]
 					'''
 				None: 没有打败任何可以重召唤的boss！
 				Selected: 当前选择的boss：
@@ -5595,19 +5596,19 @@ Mods: {
 				Tooltip: 攻击敌人时可施加多个增益/减益
 				Empowered:
 					'''
-					每次命中造成 2 种随机的鞭子debuff
+					每次命中造成 2 种随机的鞭子状态效果
 					使用鞭子伤害和攻击范围加成，而不是近战的
 					'''
 			}
 
 			YianBlade: {
 				DisplayName: 魇刃
-				Tooltip: 随机从攻击中偷取生命
+				Tooltip: 造成伤害后有1/15的几率将伤害的一半转化为生命
 			}
 
 			ForgottenBurningFist: {
 				DisplayName: 被遗忘的燃烧之拳
-				Tooltip: 随机施放巨大的火球爆炸
+				Tooltip: 有极低的概率放出爆炸火球
 			}
 
 			ForgottenKaiserKnuckles: {
@@ -8637,8 +8638,8 @@ Mods: {
 			EnemyBlackKnightHomingCrystal.DisplayName: 黑骑士的追踪水晶
 			EnemyMoonfuryBomb.DisplayName: 月怒爆鸣
 			EnemyBlackCursedBreath.DisplayName: 黑暗诅咒之息
-			// LudensTempestFire.DisplayName: Ludens Tempest Fire
-			// LudensTempestFirelet.DisplayName: Ludens Tempest Firelet
+			LudensTempestFire.DisplayName: 卢登的激荡火焰
+			LudensTempestFirelet.DisplayName: 卢登的激荡火焰
 		}
 
 		NPCs: {
@@ -8769,7 +8770,7 @@ Mods: {
 			}
 
 			Slogra: {
-				DisplayName: 斯洛格拉，迷失的深渊魂灵
+				DisplayName: 斯洛格拉-迷失的深渊魂灵
 				DespawnHandler: 斯洛格拉重回深渊...
 				Condition: 当盖波死后掉落
 			}
@@ -9025,7 +9026,7 @@ Mods: {
 				DisplayName: 飞龙法师
 				DespawnHandler: 飞龙法师所向披靡...
 				FrostWave: 飞龙法师发出寒意阵阵的霜冻！寒冷难忍！
-				Archdeacons: 飞龙法师召唤了大主教！
+				Archdeacons: 飞龙法师召唤了执事长！
 				Condition: 当他的机械飞龙死后掉落
 			}
 
@@ -9049,7 +9050,7 @@ Mods: {
 				GivenName2: 遗忘树桩
 			}
 
-			Archdeacon.DisplayName: 大主教
+			Archdeacon.DisplayName: 执事长
 			ArmoredWraith.DisplayName: 无装甲幽灵
 
 			Assassin: {

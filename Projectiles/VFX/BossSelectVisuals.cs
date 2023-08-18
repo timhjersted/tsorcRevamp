@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using Terraria.ModLoader.Config;
 using ReLogic.Graphics;
 using Terraria.GameContent;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Projectiles.VFX
 {
@@ -308,11 +309,11 @@ namespace tsorcRevamp.Projectiles.VFX
                         }
                         if (currentDownedList[i].type == NPCID.GolemHeadFree)
                         {
-                            mouseOver = "Golem";
+                            mouseOver = Language.GetTextValue("NPCName.Golem");
                         }
                         if (currentDownedList[i].type == NPCID.MoonLordFreeEye)
                         {
-                            mouseOver = "Moon Lord";
+                            mouseOver = Language.GetTextValue("NPCName.MoonLordHead");
                             mouseOverHeight *= 1.5f;
                         }
 
