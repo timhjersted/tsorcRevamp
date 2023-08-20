@@ -5717,6 +5717,11 @@ Mods: {
 					'''
 			}
 
+			YellowTail: {
+				DisplayName: 黄尾
+				Tooltip: 以高穿透力粉碎强大的防御（多段伤害）
+			}
+
 			BarbarousThornBlade: {
 				DisplayName: 野蛮刺刃
 				Tooltip:
@@ -5737,11 +5742,6 @@ Mods: {
 					'''
 			}
 
-			ClaiomhSolais: {
-				DisplayName: 克拉乌·索拉斯
-				Tooltip: 把握光阴（源自凯尔特神话丹奴国王路旦所持有的光之剑
-			}
-
 			Laevateinn: {
 				DisplayName: 莱瓦汀
 				Tooltip:
@@ -5751,6 +5751,11 @@ Mods: {
 					'''
 			}
 
+			ClaiomhSolais: {
+				DisplayName: 克拉乌·索拉斯
+				Tooltip: 把握光阴（源自凯尔特神话丹奴国王路旦所持有的光之剑
+			}
+
 			Wyrmkiller: {
 				DisplayName: 屠龙者
 				Tooltip:
@@ -5758,11 +5763,6 @@ Mods: {
 					用于斩杀各种飞龙的剑
 					对飞行的野兽造成八倍伤害
 					'''
-			}
-
-			YellowTail: {
-				DisplayName: 黄尾
-				Tooltip: 以高穿透力粉碎强大的防御（多段伤害）
 			}
 
 			AncientBloodLance: {
@@ -8093,6 +8093,16 @@ Mods: {
 				DisplayName: 壁垒冷却
 				Description: 壁垒正在重构
 			}
+
+			LaevateinnInvincible: {
+				// DisplayName: "{$Mods.tsorcRevamp.Buffs.Invincible.DisplayName}"
+				// Description: "{$Mods.tsorcRevamp.Buffs.Invincible.Description}"
+			}
+
+			LaevateinnInvincibleCooldown: {
+				// DisplayName: Invincibility Cooldown
+				// Description: Laevateinn and Claiomh Solais cannot grant you invincibility while you have this!
+			}
 		}
 
 		Projectiles: {
@@ -8640,6 +8650,9 @@ Mods: {
 			EnemyBlackCursedBreath.DisplayName: 黑暗诅咒之息
 			LudensTempestFire.DisplayName: 卢登的激荡火焰
 			LudensTempestFirelet.DisplayName: 卢登的激荡火焰
+			// Slash.DisplayName: Slash
+			// BarbarousThornBladeBriar.DisplayName: Barbarous Thorn Blade Briar
+			// YellowTailFishbone.DisplayName: Yellow Tail Fishbone
 		}
 
 		NPCs: {

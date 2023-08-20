@@ -9,6 +9,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Weapons.Summon;
 
 namespace tsorcRevamp.Projectiles.Summon
 {
@@ -122,12 +123,12 @@ namespace tsorcRevamp.Projectiles.Summon
 		{
 			if (owner.dead || !owner.active)
 			{
-				owner.ClearBuff(ModContent.BuffType<Buffs.Summon.PhotonicDownpourBuff>());
+				owner.ClearBuff(ModContent.BuffType<PhotonicDownpourBuff>());
 
 				return false;
 			}
 
-			if (owner.HasBuff(ModContent.BuffType<Buffs.Summon.PhotonicDownpourBuff>()))
+			if (owner.HasBuff(ModContent.BuffType<PhotonicDownpourBuff>()))
 			{
 				Projectile.timeLeft = 2;
 			}

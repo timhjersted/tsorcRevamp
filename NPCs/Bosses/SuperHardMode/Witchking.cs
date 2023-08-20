@@ -19,6 +19,7 @@ using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
 using Terraria.UI;
+using tsorcRevamp.Projectiles.Melee.Shortswords;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -286,7 +287,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            if (projectile.type == ModContent.ProjectileType<Projectiles.Shortswords.BarrowBladeProjectile>())
+            if (projectile.type == ModContent.ProjectileType<BarrowBladeProjectile>())
             {
                 defenseBroken = true;
             }

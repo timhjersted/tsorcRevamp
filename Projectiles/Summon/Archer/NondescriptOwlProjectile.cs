@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Weapons.Summon;
 
 namespace tsorcRevamp.Projectiles.Summon.Archer {
@@ -42,10 +43,10 @@ namespace tsorcRevamp.Projectiles.Summon.Archer {
         {
             Player player = Main.player[Projectile.owner];
             if (player.dead || !player.active) {
-                player.ClearBuff(ModContent.BuffType<Buffs.Summon.NondescriptOwlBuff>());
+                player.ClearBuff(ModContent.BuffType<NondescriptOwlBuff>());
             }
 
-            if (player.HasBuff(ModContent.BuffType<Buffs.Summon.NondescriptOwlBuff>())) {
+            if (player.HasBuff(ModContent.BuffType<NondescriptOwlBuff>())) {
                 Projectile.timeLeft = 2;
             }
 

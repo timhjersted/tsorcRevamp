@@ -4,12 +4,15 @@ using Terraria;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     class ShadowSickle : ModItem
     {
-        public const int BaseDamage = 50;
+        public const int BaseDamage = 51;
+        public static int ManaRefund = 15;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ManaRefund);
         public override void SetStaticDefaults()
         {
         }
@@ -21,10 +24,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.height = 32;
             Item.knockBack = 6f;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 40;
+            Item.useAnimation = 60;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 40;
+            Item.useTime = 60;
             Item.value = 13500;
             Item.shoot = ModContent.ProjectileType<Nothing>();
         }
@@ -32,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(ModContent.BuffType<SickleSlashes>(), 5 * 60);
-            player.statMana += 25;
+            player.statMana += ManaRefund;
         }
 
         public override void UpdateInventory(Player player)

@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 	{
 		public const int BaseDamage = 18;
 		public static float SummonTagDamage = 4;
-		public static float StarDamageScaling = 50;
+		public static float StarDamageScaling = 44;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagDamage, StarDamageScaling);
         public override void SetStaticDefaults()
 		{

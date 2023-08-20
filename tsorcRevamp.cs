@@ -37,7 +37,7 @@ using tsorcRevamp.Tiles;
 using tsorcRevamp.Tiles.Trophies;
 using tsorcRevamp.Banners;
 using tsorcRevamp.Items.Weapons.Summon;
-using tsorcRevamp.Buffs.Summon;
+using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Projectiles.Summon;
 using tsorcRevamp.Projectiles.Summon.SunsetQuasar;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;

@@ -4,6 +4,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Weapons.Summon;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
@@ -33,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 
 			Item.noMelee = true;
 			Item.DamageType = DamageClass.Summon;
-			Item.buffType = ModContent.BuffType<Buffs.Summon.ShatteredReflectionBuff>();
+			Item.buffType = ModContent.BuffType<ShatteredReflectionBuff>();
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.ShatteredReflectionProjectile>();
 		}
 

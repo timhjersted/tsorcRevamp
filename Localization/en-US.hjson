@@ -413,7 +413,7 @@ Mods: {
 				GoldenGi: "{$CommonItemTooltip.Melee.FlatDmg}"
 				ManaCost1: "Requires "
 				ManaCost2: " mana to cast projectile"
-				AmmoReservationPotion: Increases ranged critical damage by {0}%
+				AmmoReservationPotion: "{$CommonItemTooltip.Ranged.CritDmg}"
 				AmmoBox: Increases ammo critical strike chance by the ammo's base damage
 				HerosShirt:
 					'''
@@ -5548,7 +5548,7 @@ Mods: {
 					'''
 					A curiously simple but deadly weapon - its short reach seems to be its only weakness.
 					Uses mana to slash enemy multiple times on-hit
-					Refunds 25 mana on-hit
+					Refunds {0} mana on-hit
 					'''
 			}
 
@@ -5715,12 +5715,22 @@ Mods: {
 					'''
 			}
 
+			YellowTail: {
+				DisplayName: Yellow Tail
+				Tooltip:
+					'''
+					Launches fishbones on-hit that deal {0} damage
+					Fishbones penetrate {1}% of enemy armor and heal you on-hit
+					'''
+			}
+
 			BarbarousThornBlade: {
 				DisplayName: Barbarous Thorn Blade
 				Tooltip:
 					'''
 					A blade that lashes out with the fury of a mythical beast
-					Right-click to shoot briars
+					Launches briars on-hit that deal {0} damage
+					Briars penetrate {1}% of enemy armor and heal you on-hit
 					'''
 			}
 
@@ -5735,17 +5745,23 @@ Mods: {
 					'''
 			}
 
-			ClaiomhSolais: {
-				DisplayName: Claiomh Solais
-				Tooltip: Seize the day
-			}
-
 			Laevateinn: {
 				DisplayName: Laevateinn
 				Tooltip:
 					'''
 					Strike true.
-					Wielded like a shortsword
+					Wielded like a shortsword, right click to become invincible({$CommonItemTooltip.Cooldown})
+					Only invincible while holding this sword({$CommonItemTooltip.SecondDuration@1})
+					'''
+			}
+
+			ClaiomhSolais: {
+				DisplayName: Claiomh Solais
+				Tooltip:
+					'''
+					Seize the day.
+					Wielded like a shortsword, right click to become invincible({$CommonItemTooltip.Cooldown})
+					Only invincible while holding this sword({$CommonItemTooltip.SecondDuration@1})
 					'''
 			}
 
@@ -5754,13 +5770,8 @@ Mods: {
 				Tooltip:
 					'''
 					A sword used to kill wyverns and dragons.
-					Does 8x damage against flying beasts.
+					Does {0}x damage against flying beasts.
 					'''
-			}
-
-			YellowTail: {
-				DisplayName: Yellow Tail
-				Tooltip: Shatters strong defenses with high penetration(multi - hit damage)
 			}
 
 			AncientBloodLance: {
@@ -8091,6 +8102,16 @@ Mods: {
 				DisplayName: Barrier Cooldown
 				Description: The Barrier needs time to rebuild itself
 			}
+
+			LaevateinnInvincible: {
+				DisplayName: "{$Mods.tsorcRevamp.Buffs.Invincible.DisplayName}"
+				Description: "{$Mods.tsorcRevamp.Buffs.Invincible.Description}"
+			}
+
+			LaevateinnInvincibleCooldown: {
+				DisplayName: Invincibility Cooldown
+				Description: Laevateinn and Claiomh Solais cannot grant you invincibility while you have this!
+			}
 		}
 
 		Projectiles: {
@@ -8639,6 +8660,8 @@ Mods: {
 			LudensTempestFire.DisplayName: Ludens Tempest Fire
 			LudensTempestFirelet.DisplayName: Ludens Tempest Firelet
 			Slash.DisplayName: Slash
+			BarbarousThornBladeBriar.DisplayName: Barbarous Thorn Blade Briar
+			YellowTailFishbone.DisplayName: Yellow Tail Fishbone
 		}
 
 		NPCs: {

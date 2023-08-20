@@ -10,10 +10,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
 
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("An invisible blade wrought with spells of a fierce power." +
-                                "\n[c/ffbf00:Dispels the defensive shields of Artorias and the Witchking]" +
-                                "\nThe night reveals its connection to the Abyss..." +
-                                "\nHas a chance to spread Ichor to those it pierces"); */
         }
         public override void SetDefaults()
         {
@@ -21,7 +17,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             Item.damage = 98;
             Item.height = 32;
             Item.knockBack = 5;
-            Item.maxStack = 1;
             Item.DamageType = DamageClass.Generic;
             Item.scale = 0.9f;
             Item.useAnimation = 20;
@@ -65,8 +60,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
 
 
             }
-
-            
         }
         public override bool MeleePrefix()
         {
@@ -76,32 +69,17 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
+            target.AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 600 * 60);
             if (Main.netMode != NetmodeID.SinglePlayer)
             {
-                NetMessage.SendData(MessageID.AddNPCBuff, number: target.whoAmI, number2: ModContent.BuffType<Buffs.DispelShadow>(), number3: 36000);
+                NetMessage.SendData(MessageID.AddNPCBuff, number: target.whoAmI, number2: ModContent.BuffType<Buffs.DispelShadow>(), number3: 600 * 60);
                 ModPacket shadowPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
                 shadowPacket.Write((byte)tsorcPacketID.DispelShadow);
                 shadowPacket.Write(target.whoAmI);
                 shadowPacket.Send();
             }
-            target.AddBuff(BuffID.Ichor, 1800);
+            target.AddBuff(BuffID.Ichor, 30 * 60);
 
-        }
-
-        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
-        {
-           
-            target.AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
-            if (Main.netMode != NetmodeID.SinglePlayer)
-            {
-                NetMessage.SendData(MessageID.AddNPCBuff, number: target.whoAmI, number2: ModContent.BuffType<Buffs.DispelShadow>(), number3: 36000);
-                ModPacket shadowPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                shadowPacket.Write((byte)tsorcPacketID.DispelShadow);
-                shadowPacket.Write(target.whoAmI);
-                shadowPacket.Send();
-            }
-            target.AddBuff(BuffID.Ichor, 1800);
         }
     }
 }

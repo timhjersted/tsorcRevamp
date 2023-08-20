@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -42,6 +41,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (item.type == ItemID.DaedalusStormbow)
             {
+                item.damage = 45;
                 item.mana = 20;
             }
 
@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.VanillaItems
             //Lunar items
             if (item.type == ItemID.Phantasm)
             {
-                item.damage = 35;
+                item.mana = 30;
             }
         }
         public override void ModifyWeaponCrit(Item item, Player player, ref float crit)

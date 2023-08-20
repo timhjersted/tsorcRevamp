@@ -4,6 +4,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Weapons.Summon;
 
 namespace tsorcRevamp.Items.Weapons.Summon {
     class SunsetQuasar : ModItem 
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Summon {
 
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
-            Item.buffType = ModContent.BuffType<Buffs.Summon.SunsetQuasarBuff>();
+            Item.buffType = ModContent.BuffType<SunsetQuasarBuff>();
             Item.shoot = ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarToken>();
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback) 

@@ -4,6 +4,7 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon
@@ -34,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.UseSound = SoundID.Item44;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
-            Item.buffType = ModContent.BuffType<Buffs.Summon.NondescriptOwlBuff>();
+            Item.buffType = ModContent.BuffType<NondescriptOwlBuff>();
             Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Archer.ArcherToken>();
         }
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) 

@@ -9,6 +9,8 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
@@ -143,8 +145,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             Player player = Main.player[Projectile.owner];
             var modPlayer = Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>();
             modPlayer.TerraFallStacks = ChargeTime / (MaxChargeTime / 4) + 1;
-            player.AddBuff(ModContent.BuffType<Buffs.Summon.TerraFallBuff>(), (int)(modPlayer.TerraFallStacks * 120 * modPlayer.SummonTagDuration));
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.TerraFallDebuff>(), (int)(modPlayer.TerraFallStacks * 120 * modPlayer.SummonTagDuration));
+            player.AddBuff(ModContent.BuffType<TerraFallBuff>(), (int)(modPlayer.TerraFallStacks * 120 * modPlayer.SummonTagDuration));
+			target.AddBuff(ModContent.BuffType<TerraFallDebuff>(), (int)(modPlayer.TerraFallStacks * 120 * modPlayer.SummonTagDuration));
             player.MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(Projectile.damage * (modPlayer.TerraFallStacks / 25f + 0.8f)); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
 		}

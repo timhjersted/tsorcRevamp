@@ -5,6 +5,7 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Weapons.Summon;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
@@ -41,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 
 			Item.noMelee = true;
 			Item.DamageType = DamageClass.Summon;
-			Item.buffType = ModContent.BuffType<Buffs.Summon.PhoenixBuff>();
+			Item.buffType = ModContent.BuffType<PhoenixBuff>();
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.PhoenixProjectile>();
 		}
 

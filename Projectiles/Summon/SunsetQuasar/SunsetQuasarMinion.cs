@@ -3,7 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using tsorcRevamp.Buffs.Weapons.Summon;
 
 namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
 {
@@ -41,10 +41,10 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
         public override void AI() {
             Player player = Main.player[Projectile.owner];
             if (player.dead || !player.active) {
-                player.ClearBuff(ModContent.BuffType<Buffs.Summon.SunsetQuasarBuff>());
+                player.ClearBuff(ModContent.BuffType<SunsetQuasarBuff>());
             }
 
-            if (player.HasBuff(ModContent.BuffType<Buffs.Summon.SunsetQuasarBuff>())) {
+            if (player.HasBuff(ModContent.BuffType<SunsetQuasarBuff>())) {
                 Projectile.timeLeft = 2;
             }
 

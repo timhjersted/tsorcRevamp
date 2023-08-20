@@ -2,6 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
+using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
@@ -19,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.penetrate = -1;
 			Projectile.extraUpdates = 1;
 			Projectile.usesLocalNPCImmunity = true;
-			Projectile.localNPCHitCooldown = 40;
+			Projectile.localNPCHitCooldown = 30;
 		}
 
 		public override void AI()
@@ -32,9 +34,9 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             Player player = Main.player[Projectile.owner];
 			if (player.dead || !player.active)
 			{
-				player.ClearBuff(ModContent.BuffType<Buffs.Summon.PolarisLeashBuff>());
+				player.ClearBuff(ModContent.BuffType<PolarisLeashBuff>());
 			}
-			if (player.HasBuff(ModContent.BuffType<Buffs.Summon.PolarisLeashBuff>()))
+			if (player.HasBuff(ModContent.BuffType<PolarisLeashBuff>()))
 			{
 				Projectile.timeLeft = 2;
 			}
@@ -42,7 +44,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 		}
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.PolarisLeashDebuff>(), (int)(4 * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
+			target.AddBuff(ModContent.BuffType<PolarisLeashDebuff>(), (int)(4 * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 		}
 	}

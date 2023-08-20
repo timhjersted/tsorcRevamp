@@ -14,6 +14,7 @@ using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Projectiles.Melee.Shortswords;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -685,7 +686,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            if (projectile.type == ModContent.ProjectileType<Projectiles.Shortswords.BarrowBladeProjectile>())
+            if (projectile.type == ModContent.ProjectileType<BarrowBladeProjectile>())
             {
                 defenseBroken = true;
             }

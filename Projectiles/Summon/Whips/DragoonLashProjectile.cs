@@ -6,6 +6,8 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
@@ -124,8 +126,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
 		{
 			var owner = Main.player[Projectile.owner];
-			owner.AddBuff(ModContent.BuffType<Buffs.Summon.DragoonLashBuff>(), (int)(4 * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
-			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.DragoonLashDebuff>(), (int)(4 * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
+			owner.AddBuff(ModContent.BuffType<DragoonLashBuff>(), (int)(4 * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
+			target.AddBuff(ModContent.BuffType<DragoonLashDebuff>(), (int)(4 * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
 			owner.MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(Projectile.damage * 0.8f); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
             if (!Hit)

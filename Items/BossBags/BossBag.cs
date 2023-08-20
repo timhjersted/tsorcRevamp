@@ -20,6 +20,7 @@ using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Items.Vanity;
+using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 
 namespace tsorcRevamp.Items.BossBags
 {
@@ -318,6 +319,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.HerosCrest>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GreatMagicShieldScroll>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<MagicBarrierScroll>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Laevateinn>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>(), 1, 4, 4));
         }
     }

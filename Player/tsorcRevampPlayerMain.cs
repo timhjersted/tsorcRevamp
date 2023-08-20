@@ -34,7 +34,7 @@ using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Armors.Summon;
-using tsorcRevamp.Buffs.Summon.WhipDebuffs;
+using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Projectiles.Melee.Runeterra;
 using tsorcRevamp.Utilities;

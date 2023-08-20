@@ -1,16 +1,18 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Melee.Shortswords;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
 {
     class Wyrmkiller : ModItem
     {
+        public static int DmgMult = 15;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMult);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A sword used to kill wyverns and dragons." +
-                                "\nDoes 8x damage against flying beasts."); */
         }
         public override void SetDefaults()
         {
@@ -28,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             Item.width = 32;
             Item.noUseGraphic = true;
             Item.noMelee= true;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Shortswords.WyrmkillerProjectile>(); // The projectile is what makes a shortsword work
+            Item.shoot = ModContent.ProjectileType<WyrmkillerProjectile>(); // The projectile is what makes a shortsword work
             Item.shootSpeed = 2.1f; // This value bleeds into the behavior of the projectile as velocity, keep that in mind when tweaking values
         }
         public override bool MeleePrefix()
@@ -45,51 +47,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }
-        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
-        {
-            //what a mess lmao, should probably be a switch but im lazy
-            if (target.type == NPCID.WyvernBody
-                || target.type == NPCID.WyvernBody2
-                || target.type == NPCID.WyvernBody3
-                || target.type == NPCID.WyvernHead
-                || target.type == NPCID.WyvernTail
-                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.ShadowDragonBody>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.ShadowDragonHead>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonBody>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonBody2>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonBody3>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonLegs>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonTail>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernBody>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernBody2>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernBody3>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernLegs>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernTail>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody2>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody3>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonLegs>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonTail>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonBody>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonBody2>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonBody3>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonLegs>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonTail>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessBody>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessBody2>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessBody3>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessLegs>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessTail>()
-                )
-            {
-                modifiers.FinalDamage *= 8;
-            }
         }
     }
 }

@@ -10,7 +10,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
-using tsorcRevamp.Buffs.Summon.WhipDebuffs;
+using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Items.Accessories.Expert;
 
 namespace tsorcRevamp

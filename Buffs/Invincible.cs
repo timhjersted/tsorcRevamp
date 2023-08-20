@@ -14,6 +14,7 @@ namespace tsorcRevamp.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             player.immune = true;
+            player.SetImmuneTimeForAllTypes(1);
         }
     }
 }

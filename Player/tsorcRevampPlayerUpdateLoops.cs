@@ -28,6 +28,7 @@ using tsorcRevamp.Buffs.Accessories;
 using Terraria.Audio;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Projectiles.Summon;
+using tsorcRevamp.Buffs.Weapons.Summon;
 
 namespace tsorcRevamp
 {
@@ -730,7 +731,7 @@ namespace tsorcRevamp
                 MaxAcquiredHP = Player.statLifeMax;
             }
 
-            if (Player.HasBuff(ModContent.BuffType<Buffs.Summon.NondescriptOwlBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Archer.NondescriptOwlProjectile>()] == 0) {
+            if (Player.HasBuff(ModContent.BuffType<NondescriptOwlBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Archer.NondescriptOwlProjectile>()] == 0) {
                 Item staff = new();
                 staff.SetDefaults(ModContent.ItemType<Items.Weapons.Summon.PeculiarSphere>());
                 int damage = staff.damage;
@@ -738,7 +739,7 @@ namespace tsorcRevamp
                 Main.projectile[p].originalDamage = damage;
             }
 
-            if (Player.HasBuff(ModContent.BuffType<Buffs.Summon.SunsetQuasarBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarMinion>()] == 0) {
+            if (Player.HasBuff(ModContent.BuffType<SunsetQuasarBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarMinion>()] == 0) {
                 Item staff = new();
                 staff.SetDefaults(ModContent.ItemType<Items.Weapons.Summon.SunsetQuasar>());
                 int damage = staff.damage;

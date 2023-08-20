@@ -4,6 +4,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon
@@ -35,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
 
 			Item.noMelee = true;
 			Item.DamageType = DamageClass.Summon;
-			Item.buffType = ModContent.BuffType<Buffs.Summon.SamuraiBeetleBuff>();
+			Item.buffType = ModContent.BuffType<SamuraiBeetleBuff>();
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.SamuraiBeetle>();
 		}
 

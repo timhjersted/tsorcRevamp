@@ -3,6 +3,8 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Weapons.Summon;
+
 namespace tsorcRevamp.Projectiles.Summon
 {
     public class NullSprite : ModProjectile
@@ -34,10 +36,10 @@ namespace tsorcRevamp.Projectiles.Summon
             Player player = Main.player[Projectile.owner];
             if (player.dead || !player.active)
             {
-                player.ClearBuff(ModContent.BuffType<Buffs.Summon.NullSpriteBuff>());
+                player.ClearBuff(ModContent.BuffType<NullSpriteBuff>());
             }
 
-            if (player.HasBuff(ModContent.BuffType<Buffs.Summon.NullSpriteBuff>()))
+            if (player.HasBuff(ModContent.BuffType<NullSpriteBuff>()))
             {
                 Projectile.timeLeft = 2;
             }

@@ -16,6 +16,7 @@ using tsorcRevamp.Items;
 using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
 using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -219,6 +220,7 @@ namespace tsorcRevamp.NPCs.Bosses
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>(), 1, 2, 4));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<GreatMagicShieldScroll>(), 6));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MagicBarrierScroll>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Laevateinn>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Humanity>()));
             npcLoot.Add(notExpertCondition);
         }

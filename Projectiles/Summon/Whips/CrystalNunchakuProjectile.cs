@@ -7,6 +7,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
@@ -126,9 +127,9 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (!target.HasBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.CrystalNunchakuDebuff>()))
+            if (!target.HasBuff(ModContent.BuffType<CrystalNunchakuDebuff>()))
 			{
-                target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.CrystalNunchakuDebuff>(), (int)(15 * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
+                target.AddBuff(ModContent.BuffType<CrystalNunchakuDebuff>(), (int)(15 * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
             }
 			Projectile.damage = (int)(Projectile.damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
 		}

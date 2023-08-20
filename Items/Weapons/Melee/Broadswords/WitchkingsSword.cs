@@ -7,8 +7,8 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Buffs.Summon;
-using tsorcRevamp.Buffs.Summon.WhipDebuffs;
+using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {

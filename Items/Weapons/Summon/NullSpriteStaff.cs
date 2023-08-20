@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Weapons.Summon;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
@@ -35,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.UseSound = SoundID.Item44;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
-            Item.buffType = ModContent.BuffType<Buffs.Summon.NullSpriteBuff>();
+            Item.buffType = ModContent.BuffType<NullSpriteBuff>();
             Item.shoot = ModContent.ProjectileType<Projectiles.Summon.NullSprite>();
         }
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)

@@ -19,8 +19,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             Projectile.height = 24;
             Projectile.DamageType = DamageClass.SummonMeleeSpeed;
 			Projectile.penetrate = 2;
-			Projectile.usesIDStaticNPCImmunity = true;
-			Projectile.idStaticNPCHitCooldown = 15;
+			Projectile.usesLocalNPCImmunity = true;
+			Projectile.localNPCHitCooldown = 60;
 		}
         public override void AI()
         {
