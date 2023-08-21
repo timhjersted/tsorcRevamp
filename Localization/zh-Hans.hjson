@@ -412,8 +412,8 @@ Mods: {
 				SharpeningStation: "{$CommonItemTooltip.Melee.ArmorPenPercent}"
 				GoldenGi: "{$CommonItemTooltip.Melee.FlatDmg}"
 				ManaCost1: "消耗 "
-				ManaCost2: " 法力以发射投掷物"
-				AmmoReservationPotion: 增加 {0}% 远程暴击伤害
+				ManaCost2: " 魔力以发射投掷物"
+				AmmoReservationPotion: "{$CommonItemTooltip.Ranged.CritDmg}"
 				AmmoBox: 以弹药基础伤害值的一半增加弹药暴击几率
 				HerosShirt:
 					'''
@@ -1102,8 +1102,8 @@ Mods: {
 				DisplayName: 三星项环
 				Tooltip:
 					'''
-					[c/ffbf00:消耗玩家的法力形成一个护盾]
-					{$CommonItemTooltip.DRStat}, 每次受击会消耗 {1} 法力值
+					[c/ffbf00:消耗玩家的魔力形成一个护盾]
+					{$CommonItemTooltip.DRStat}, 每次受击会消耗 {1} 魔力值
 					[c/00ffd4:{$CommonItemTooltip.IncreasesMaxManaByPercent@2}]
 					[c/00ffd4:{$CommonItemTooltip.StaminaRegen@3}]
 					触发后一段时间内抑制魔力的自然恢复与人为恢复，({$CommonItemTooltip.SecondDuration@4})
@@ -1568,11 +1568,11 @@ Mods: {
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					提供荆棘效果
 					击中敌人时小概率产生法力之星
-					造成的伤害与最大法力值有关
+					造成的伤害与最大魔力值有关
 					这些法力之星可以收集用于回复魔力
 					需要时自动使用魔力补充药水
 					增加魔力星的拾取范围
-					受伤时恢复法力值
+					受伤时恢复魔力值
 					'''
 			}
 
@@ -2125,7 +2125,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedMagicCritChance}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.HolyDodge}
-					防御和最大法力不受此影响
+					防御和最大魔力不受此影响
 					'''
 			}
 
@@ -4091,7 +4091,7 @@ Mods: {
 				Tooltip:
 					'''
 					最多可存储 28 瓶药水
-					支持快速增益/治疗/法力快捷键使用以及放置永久药水！
+					支持快速增益/治疗/魔力快捷键使用以及放置永久药水！
 					使用 ALT+鼠标左键点击 在药水袋中"[c/C92CD1:收藏]" 一些稀有的药水
 					[c/C92CD1:标记收藏的药水] 不会被快速喝药快捷键消耗
 					药水是按角色而不是按袋子存储的，类似于小猪储蓄罐
@@ -4910,7 +4910,7 @@ Mods: {
 
 			EnchantedThrowingSpear: {
 				DisplayName: 附魔投矛
-				Tooltip: 穿过墙壁的魔法投掷矛，每次投掷都会消耗法力值
+				Tooltip: 穿过墙壁的魔法投掷矛，每次投掷都会消耗魔力值
 			}
 
 			EnergyBombRune: {
@@ -5194,7 +5194,7 @@ Mods: {
 				Tooltip:
 					'''
 					一把为魔法使用者制作的剑
-					使用者的法力值每超过200有20点，就会+1伤害
+					使用者的魔力值每超过200有20点，就会+1伤害
 					'''
 			}
 
@@ -5203,7 +5203,7 @@ Mods: {
 				Tooltip:
 					'''
 					一把为魔法使用者制作的剑
-					使用者的法力值每超过200有20点，就会+1伤害
+					使用者的魔力值每超过200有20点，就会+1伤害
 					'''
 			}
 
@@ -5549,8 +5549,8 @@ Mods: {
 				Tooltip:
 					'''
 					一个出奇的普通但致命的武器—它的短距离似乎是它唯一的弱点
-					命中时使用法力以撕裂敌人
-					命中后返还25点法力值
+					命中时使用魔力以撕裂敌人
+					命中后返还 {0} 点魔力值
 					'''
 			}
 
@@ -5719,15 +5719,20 @@ Mods: {
 
 			YellowTail: {
 				DisplayName: 黄尾
-				Tooltip: 以高穿透力粉碎强大的防御（多段伤害）
+				Tooltip:
+					'''
+					命中时发射鱼骨，造成 {0} 点伤害
+					鱼骨穿透敌人 {1}% 的护甲并在命中时治疗你
+					'''
 			}
 
 			BarbarousThornBlade: {
 				DisplayName: 野蛮刺刃
 				Tooltip:
 					'''
-					用神话野兽的愤怒制成的刀片
-					右键单击以发射野蔷薇
+					神秘野兽的狂暴之刃
+					命中时发射荆棘，造成 {0} 点伤害
+					鱼骨穿透敌人 {1}% 的护甲并在命中时治疗你
 					'''
 			}
 
@@ -5746,22 +5751,29 @@ Mods: {
 				DisplayName: 莱瓦汀
 				Tooltip:
 					'''
-					克敌先机（源自北欧神话火焰巨人苏尔特拥有的火焰之剑
-					像一把短剑一样使用
+					克敌机先
+					像短剑一样使用它，右键单击进入无敌状态（{$CommonItemTooltip.Cooldown}）
+					只有拿着这把剑才能立于不败之地（{$CommonItemTooltip.SecondDuration@1}）
+
 					'''
 			}
 
 			ClaiomhSolais: {
-				DisplayName: 克拉乌·索拉斯
-				Tooltip: 把握光阴（源自凯尔特神话丹奴国王路旦所持有的光之剑
+				DisplayName: 光明之剑
+				Tooltip:
+					'''
+					把握光阴
+					像短剑一样使用它，右键单击进入无敌状态（{$CommonItemTooltip.Cooldown}）
+					只有拿着这把剑才能立于不败之地（{$CommonItemTooltip.SecondDuration@1}）
+					'''
 			}
 
 			Wyrmkiller: {
-				DisplayName: 屠龙者
+				DisplayName: 屠龙小宝剑
 				Tooltip:
 					'''
 					用于斩杀各种飞龙的剑
-					对飞行的野兽造成八倍伤害
+					对飞行的野兽造成 {0} 倍伤害
 					'''
 			}
 
@@ -6377,7 +6389,7 @@ Mods: {
 					{$CommonItemTooltip.SummonTagDamage}
 					用附魔之力击打敌人
 					被附魔的敌人会在被召唤物击中后引来落星
-					落星的攻击力是鞭子攻击力的 {1}% 
+					落星的伤害是鞭子的 {1}% 
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -8095,13 +8107,13 @@ Mods: {
 			}
 
 			LaevateinnInvincible: {
-				// DisplayName: "{$Mods.tsorcRevamp.Buffs.Invincible.DisplayName}"
-				// Description: "{$Mods.tsorcRevamp.Buffs.Invincible.Description}"
+				DisplayName: "{$Mods.tsorcRevamp.Buffs.Invincible.DisplayName}"
+				Description: "{$Mods.tsorcRevamp.Buffs.Invincible.Description}"
 			}
 
 			LaevateinnInvincibleCooldown: {
-				// DisplayName: Invincibility Cooldown
-				// Description: Laevateinn and Claiomh Solais cannot grant you invincibility while you have this!
+				DisplayName: 无敌冷却
+				Description: 冷却结束前莱瓦汀和克拉乌·索拉斯不能让你再次获得无敌效果
 			}
 		}
 
@@ -8650,9 +8662,9 @@ Mods: {
 			EnemyBlackCursedBreath.DisplayName: 黑暗诅咒之息
 			LudensTempestFire.DisplayName: 卢登的激荡火焰
 			LudensTempestFirelet.DisplayName: 卢登的激荡火焰
-			// Slash.DisplayName: Slash
-			// BarbarousThornBladeBriar.DisplayName: Barbarous Thorn Blade Briar
-			// YellowTailFishbone.DisplayName: Yellow Tail Fishbone
+			Slash.DisplayName: 银河斩击
+			BarbarousThornBladeBriar.DisplayName: 荆棘
+			YellowTailFishbone.DisplayName: 鱼骨
 		}
 
 		NPCs: {
@@ -9167,7 +9179,7 @@ Mods: {
 			ResentfulSeedling.DisplayName: 哀怨树苗
 			Weakness: 破绽！
 			WeakSpot: 弱点！
-			RingedKnight.DisplayName: 指环骑士
+			RingedKnight.DisplayName: 环印骑士
 			ShadowMage.DisplayName: 幻影法师
 			SnowOwl.DisplayName: 雪枭
 			StoneGolem.DisplayName: 戈仑石人
