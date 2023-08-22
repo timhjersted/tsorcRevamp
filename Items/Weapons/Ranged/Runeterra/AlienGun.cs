@@ -26,6 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public const int BlindingLaserBonusCritChance = 100;
         public const float BlindingLaserPercentHPDmg = 0.1f;
         public const int BlindingLaserHPDmgCap = 450;
+        public const int BaseLaserManaCost = 20;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ToxicShot.PoisonDartDmgMult);
         public override void SetStaticDefaults()
         {

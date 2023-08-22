@@ -51,6 +51,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBuilt3") with { Volume = 1f }, Projectile.Center);
             }
+            owner.statMana -= (int)(OmegaSquadRifle.BaseShroomManaCost * owner.manaCost);
+            owner.ManaEffect(-(int)(OmegaSquadRifle.BaseShroomManaCost * owner.manaCost));
         }
         public override void AI()
         {

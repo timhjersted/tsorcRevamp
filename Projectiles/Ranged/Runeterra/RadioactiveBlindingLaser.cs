@@ -41,6 +41,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
             var player = Main.player[Projectile.owner];
             player.AddBuff(ModContent.BuffType<RadioactiveBlindingLaserCooldown>(), AlienGun.BlindingLaserCooldown * 60);
 			Projectile.CritChance += 100;
+            player.statMana -= (int)(OmegaSquadRifle.BaseLaserManaCost * player.manaCost);
+            player.ManaEffect(-(int)(OmegaSquadRifle.BaseLaserManaCost * player.manaCost));
         }
 
         public override void AI()

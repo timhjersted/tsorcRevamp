@@ -23,6 +23,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public const int ShroomCooldown = 5;
         public const int ShroomBonusCritChance = 100;
         public static int ShroomSetupTime = 3;
+        public const int BaseLaserManaCost = 30;
+        public const int BaseShroomManaCost = 100;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ToxicShot.PoisonDartDmgMult);
         public override void SetStaticDefaults()
         {

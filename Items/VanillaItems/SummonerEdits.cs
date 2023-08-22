@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.VanillaItems
         public static int LeatherWhipTagDmg = 4;
         public static int SnapthornTagDmg = 6;
         public static int SpinalTapTagDmg = 7;
-        public static float FirecrackerScalingDmg = 100f;
+        public static float FirecrackerScalingDmg = 200f;
         public static int CoolWhipTagDmg = 6;
         public static int DurendalTagDmg = 9;
         public static int DarkHarvestTagDmg = 10;

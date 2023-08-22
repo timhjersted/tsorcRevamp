@@ -6736,7 +6736,7 @@ Mods: {
 					[c/32cd32:Inhibits player movement conditionally] whilst being used
 					[c/32cd32:May grant a movement speed and stamina regen boost] whilst being held
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
-					<right> to shoot a homing [c/00ffff:Blinding Laser] which inflicts confusion
+					<right> to shoot a homing [c/00ffff:Blinding Laser] using Mana which inflicts confusion
 					[c/00ffff:'Armed and ready']
 					'''
 				Details:
@@ -6764,12 +6764,12 @@ Mods: {
 					[c/32cd32:Inhibits player movement conditionally] whilst being used
 					[c/32cd32:May grant a movement speed and stamina regen boost] whilst being held
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
-					<right> to shoot a homing [c/00ffff:Blinding Laser] which inflicts confusion
+					<right> to shoot a homing [c/00ffff:Blinding Laser] using Mana which inflicts confusion
 					{$Items.OmegaSquadRifle.Keybind1}Special Ability{$Items.OmegaSquadRifle.Keybind2}
 					[c/adff2f:'There's a mushroom out there with your name on it']
 					'''
 				Keybind1: "Press A + D + "
-				Keybind2: " to drop a [c/adff2f:Nuclear Mushroom]"
+				Keybind2: " to drop a [c/adff2f:Nuclear Mushroom] using Mana"
 				Details:
 					'''
 					[c/adff2f:Nuclear Mushroom] needs {0} seconds to arm itself after being dropped({$CommonItemTooltip.Cooldown@9})
