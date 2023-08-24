@@ -9,13 +9,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Never miss again\n" +
-                "Unleashes a storm of enchanted arrows that hunt down any enemy you select"); */
         }
         public override void SetDefaults()
         {
             Item.autoReuse = true;
-            Item.damage = 450;
+            Item.damage = 150;
             Item.height = 58;
             Item.knockBack = 5;
             Item.noMelee = true;
@@ -43,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
                 {
                     if (thisProjectile == null || thisProjectile.active == false || thisProjectile.type != ModContent.ProjectileType<Projectiles.ElfinTargeting>())
                     {
-                        thisProjectile = Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), Main.npc[closest.Value].position, Vector2.Zero, ModContent.ProjectileType<Projectiles.ElfinTargeting>(), 0, 0, Main.myPlayer, closest.Value);
+                        thisProjectile = Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), Main.npc[closest.Value].position, Vector2.Zero, ModContent.ProjectileType<Projectiles.ElfinTargeting>(), 0, 0, player.whoAmI, closest.Value);
                     }
                     else
                     {
@@ -64,7 +62,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             }
 
             Vector2 projVel = speed + Main.rand.NextVector2CircularEdge(randomness, randomness);
-            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, projVel, ModContent.ProjectileType<Projectiles.ElfinArrow>(), Item.damage, Item.knockBack, Main.myPlayer, target);
+            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, projVel, ModContent.ProjectileType<Projectiles.ElfinArrow>(), damage, knockBack, player.whoAmI, target);
             return false;
         }
     }

@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Ammo
             Item.damage = 50; //500 totally was just a typo guys, how did we not notice this earlier
             Item.height = 28;
             Item.knockBack = 4f;
-            Item.maxStack = 2000;
+            Item.maxStack = 9999;
             Item.DamageType = DamageClass.Ranged;
             Item.shootSpeed = 3.5f;
             Item.useAnimation = 100;
