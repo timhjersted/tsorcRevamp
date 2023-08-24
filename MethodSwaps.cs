@@ -36,6 +36,7 @@ using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.NPCs;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
 
 namespace tsorcRevamp
 {
@@ -136,6 +137,32 @@ namespace tsorcRevamp
             //Terraria.On_Main.DrawMenu += On_Main_DrawMenu;
 
             On_Player.UpdateArmorSets += On_Player_UpdateArmorSets;
+
+            On_Player.ItemCheck_EmitUseVisuals += On_Player_ItemCheck_EmitUseVisuals;
+        }
+
+        private static Rectangle On_Player_ItemCheck_EmitUseVisuals(On_Player.orig_ItemCheck_EmitUseVisuals orig, Player self, Item sItem, Rectangle itemRectangle)
+        {
+            Rectangle oldRectangle = itemRectangle;
+            
+            //Find a random point along the length of the weapon, aimed at its current swing angle
+            bool flippedSwing = false;
+            if (self.HeldItem.TryGetGlobalItem(out ItemMeleeAttackAiming aiming))
+            {
+                flippedSwing = aiming.AttackId % 2 != 0;
+            }
+            Vector2 dustPoint = (QuickSlashMeleeAnimation.MeleeSwingRotation(self, sItem, flippedSwing)).ToRotationVector2() * sItem.height * sItem.scale * 1.5f * Main.rand.NextFloat();
+            dustPoint = self.Center + dustPoint;
+            //Dust.QuickDustLine(self.Center, dustPoint, 10, Color.Blue);
+
+            //Use that point to make a rectangle somewhere along the weapons current swing position
+            itemRectangle = new Rectangle((int)dustPoint.X, (int)dustPoint.Y, 1, 1);
+
+            //Run the vanilla code item effect with the edited rectangle
+            orig(self, sItem, itemRectangle);
+
+            //Spit the old unedited rectangle back out to avoid making things too silly
+            return oldRectangle;
         }
 
         private static void On_Player_UpdateArmorSets(On_Player.orig_UpdateArmorSets orig, Player self, int i)
