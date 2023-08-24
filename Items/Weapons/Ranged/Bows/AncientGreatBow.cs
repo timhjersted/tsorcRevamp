@@ -9,27 +9,21 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Ancient Great Bow");
         }
 
         public override void SetDefaults()
         {
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ProjectileID.PurificationPowder;
-
-
-            Item.damage = 24; //Demon Bow is 14
+            Item.damage = 24;
             Item.height = 58;
             Item.width = 16;
-            Item.knockBack = 1.5f; //DB is 1
-            Item.maxStack = 1;
+            Item.knockBack = 1.5f;
             Item.noMelee = true;
-            Item.autoReuse = true;
             Item.rare = ItemRarityID.Green;
-            Item.scale = (float)1;
-            Item.shootSpeed = (float)7.5; //DB is 6.7
+            Item.shootSpeed = 7.5f;
             Item.useAmmo = AmmoID.Arrow;
-            Item.useTime = 25; //Same as DB
+            Item.useTime = 25;
             Item.useAnimation = 25;
             Item.UseSound = SoundID.Item5;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -40,23 +34,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ItemID.DemonBow, 1);
-            //recipe.AddIngredient(ItemID.ShadowScale, 1);
+            recipe.AddIngredient(ItemID.DemonBow);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-
-            /*
-            Recipe recipe2 = CreateRecipe();
-
-            recipe2.AddIngredient(ItemID.DemonBow, 1);
-            recipe2.AddIngredient(ItemID.TissueSample, 1);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
-            recipe2.AddTile(TileID.DemonAltar);
-
-            recipe2.Register();
-            */
         }
 
 

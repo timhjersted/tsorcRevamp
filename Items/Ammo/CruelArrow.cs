@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Items.Ammo
 {
@@ -20,13 +21,12 @@ namespace tsorcRevamp.Items.Ammo
             Item.damage = 7;
             Item.height = 28;
             Item.knockBack = (float)3.5;
-            Item.maxStack = 2000;
+            Item.maxStack = 9999;
             Item.DamageType = DamageClass.Ranged;
-            Item.scale = (float)1;
-            Item.shootSpeed = (float)6.5;
+            Item.shootSpeed = 6.5f;
             Item.value = 50;
             Item.width = 10;
-            Item.shoot = ModContent.ProjectileType<Projectiles.CruelArrow>();
+            Item.shoot = ModContent.ProjectileType<CruelArrowProjectile>();
         }
 
         public override void AddRecipes()

@@ -9,21 +9,15 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Bow of Earendil");
-            /* Tooltip.SetDefault("Always aim for the heart" +
-                               "\nLegendary"); */
-
         }
 
         public override void SetDefaults()
         {
-
             Item.damage = 90;
             Item.height = 58;
             Item.width = 20;
             Item.DamageType = DamageClass.Ranged;
             Item.knockBack = 4f;
-            Item.maxStack = 1;
             Item.noMelee = true;
             Item.rare = ItemRarityID.Pink;
             Item.scale = 0.9f;
@@ -32,11 +26,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.useAmmo = AmmoID.Arrow;
             Item.useAnimation = 16;
             Item.useTime = 16;
-            Item.autoReuse = true;
             Item.UseSound = SoundID.Item5;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = PriceByRarity.Pink_5;
-
         }
 
         public override void AddRecipes()

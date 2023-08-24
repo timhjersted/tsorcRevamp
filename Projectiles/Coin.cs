@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -68,7 +69,7 @@ namespace tsorcRevamp.Projectiles
                         {
                             float ai1 = 0;
                             //Special case handling
-                            if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.RedLaserBeam>())
+                            if (Main.projectile[i].type == ModContent.ProjectileType<RedLaserBeam>())
                             {
                                 ai1 = 1;
                             }

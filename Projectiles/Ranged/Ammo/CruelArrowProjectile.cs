@@ -3,9 +3,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Ammo;
 
-namespace tsorcRevamp.Projectiles
+namespace tsorcRevamp.Projectiles.Ranged.Ammo
 {
-    public class CruelArrow : ModProjectile
+    public class CruelArrowProjectile : ModProjectile
     {
 
         public override string Texture => "tsorcRevamp/Items/Ammo/CruelArrow";
@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.friendly = true;
             Projectile.height = 10;
             Projectile.damage = 10;
-            Projectile.penetrate = 1 + Items.Ammo.CruelArrow.Pierce;
+            Projectile.penetrate = 1 + CruelArrow.Pierce;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = true;
             Projectile.width = 5;
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles
                 target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonLegs>() ||
                 target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonTail>() ||
                 target.type == ModContent.NPCType<NPCs.Enemies.GhostOfTheDarkmoonKnight>())
-                modifiers.SourceDamage *= Items.Ammo.CruelArrow.DmgMult;
+                modifiers.SourceDamage *= CruelArrow.DmgMult;
         }
 
         public override void Kill(int timeLeft)

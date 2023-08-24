@@ -2,9 +2,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles
+namespace tsorcRevamp.Projectiles.Ranged.Ammo
 {
-    public class ArrowOfBard : ModProjectile
+    public class ArrowOfBardProjectile : ModProjectile
     {
 
         public override string Texture => "tsorcRevamp/Items/Ammo/ArrowOfBard";
@@ -26,6 +26,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.width = 5;
             AIType = ProjectileID.WoodenArrowFriendly;
             Projectile.aiStyle = 1;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 100;
         }
 
         public override void Kill(int timeLeft)

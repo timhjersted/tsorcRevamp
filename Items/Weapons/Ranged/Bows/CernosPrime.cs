@@ -12,7 +12,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
 
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Fires three arrows. \nHold FIRE to charge. \nArrows are faster and more accurate when the bow is charged.");
         }
 
         public override void SetDefaults()
@@ -20,7 +19,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<Projectiles.CernosPrimeHeld>();
             Item.channel = true;
-
             Item.damage = 795;
             Item.width = 58;
             Item.height = 76;
@@ -38,7 +36,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.shootSpeed = 24f;
         }
 
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) 
+        {
             Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<Projectiles.CernosPrimeHeld>(), damage, knockback, player.whoAmI, type);
             return false;
         }

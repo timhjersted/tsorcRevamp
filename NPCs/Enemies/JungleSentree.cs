@@ -13,6 +13,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.NPCs.Enemies
 {

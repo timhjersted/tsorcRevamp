@@ -8665,6 +8665,9 @@ Mods: {
 			Slash.DisplayName: 银河斩击
 			BarbarousThornBladeBriar.DisplayName: 荆棘
 			YellowTailFishbone.DisplayName: 鱼骨
+			// ArrowOfBardProjectile.DisplayName: Arrow Of Bard Projectile
+			// BoltProjectile.DisplayName: Bolt Projectile
+			// CruelArrowProjectile.DisplayName: Cruel Arrow Projectile
 		}
 
 		NPCs: {

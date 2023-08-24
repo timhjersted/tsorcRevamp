@@ -525,14 +525,14 @@ namespace tsorcRevamp.Projectiles.VFX
                 offset = Vector2.Zero;
             }
 
-            VertexPositionColor[] vertices = new VertexPositionColor[3];
+            /*VertexPositionColor[] vertices = new VertexPositionColor[3];
             vertices[0] = new VertexPositionColor(new Vector3(0, 1, 0), Color.Red);
             vertices[1] = new VertexPositionColor(new Vector3(+0.5f, 0, 0), Color.Green);
             vertices[2] = new VertexPositionColor(new Vector3(-0.5f, 0, 0), Color.Blue);
             VertexBuffer vertexBuffer = new VertexBuffer(Main.graphics.GraphicsDevice, typeof(VertexPositionColor), 3, BufferUsage.WriteOnly);
             vertexBuffer.SetData<VertexPositionColor>(vertices);
             Main.graphics.GraphicsDevice.SetVertexBuffer(vertexBuffer);
-            Main.graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);
+            Main.graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);*/
 
 
 

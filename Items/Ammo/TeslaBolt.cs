@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Items.Ammo
 {
@@ -18,7 +19,7 @@ namespace tsorcRevamp.Items.Ammo
             Item.scale = 1f;
             Item.value = 3;
             Item.ammo = Item.type;
-            Item.shoot = ModContent.ProjectileType<Projectiles.RedLaserBeam>();
+            Item.shoot = ModContent.ProjectileType<RedLaserBeam>();
         }
     }
 }

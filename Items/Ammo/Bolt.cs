@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Items.Ammo
 {
@@ -16,14 +17,14 @@ namespace tsorcRevamp.Items.Ammo
             Item.damage = 7;
             Item.height = 28;
             Item.knockBack = 3f;
-            Item.maxStack = 2000;
+            Item.maxStack = 9999;
             Item.DamageType = DamageClass.Ranged;
             Item.shootSpeed = 3.5f;
             Item.useAnimation = 100;
             Item.useTime = 100;
             Item.value = 10;
             Item.width = 10;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Bolt>(); //dont forget to make it shoot a projectile
+            Item.shoot = ModContent.ProjectileType<BoltProjectile>(); //dont forget to make it shoot a projectile
         }
 
         public override void AddRecipes()

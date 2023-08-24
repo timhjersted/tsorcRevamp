@@ -15,6 +15,7 @@ using tsorcRevamp.Projectiles.Summon.Whips;
 using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.NPCs.Enemies
 {

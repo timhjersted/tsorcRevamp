@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Items.Ammo
 {
@@ -14,10 +15,10 @@ namespace tsorcRevamp.Items.Ammo
             Item.damage = 40;
             Item.height = 28;
             Item.knockBack = 3f;
-            Item.maxStack = 2000;
+            Item.maxStack = 9999;
             Item.shootSpeed = 3.5f;
             Item.value = 1000;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Bolt>();
+            Item.shoot = ModContent.ProjectileType<BoltProjectile>();
         }
     }
 }
