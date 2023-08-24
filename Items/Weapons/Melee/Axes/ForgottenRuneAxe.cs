@@ -28,7 +28,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 21;
             Item.value = PriceByRarity.Cyan_9;
-            Item.shoot = ModContent.ProjectileType<Nothing>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Cyan;
         }
 
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)

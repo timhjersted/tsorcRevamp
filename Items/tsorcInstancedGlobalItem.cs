@@ -7,6 +7,7 @@ using tsorcRevamp.Prefixes;
 using Terraria.Localization;
 using Humanizer;
 using Terraria.ID;
+using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.Items
 {
@@ -14,6 +15,8 @@ namespace tsorcRevamp.Items
     {
         public byte blessed;
         public float refreshing;
+        public Color slashColor = Color.DarkGray;
+        public tsorcSlashStyle slashStyle;
 
         public tsorcInstancedGlobalItem()
         {
@@ -71,5 +74,14 @@ namespace tsorcRevamp.Items
         {
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += refreshing;
         }
+    }
+
+    public enum tsorcSlashStyle
+    {
+        Metal = 0,
+        LightMagic = 1,
+        DarkMagic = 2,
+        Scifi = 3,
+        //TODO: Add more as needed, such as firey
     }
 }

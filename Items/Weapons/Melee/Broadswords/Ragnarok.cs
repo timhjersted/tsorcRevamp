@@ -25,9 +25,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useAnimation = 15;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 21;
+            Item.useTime = 15;
             Item.value = PriceByRarity.Cyan_9;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Gold;
         }
     }
 }

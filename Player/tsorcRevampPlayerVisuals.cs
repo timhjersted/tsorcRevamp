@@ -584,7 +584,7 @@ namespace tsorcRevamp
             #endregion
 
             #region curse meter
-            if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu)
+            if (!Main.gameMenu)
             {
                 float curseCurrent = drawPlayer.GetModPlayer<tsorcRevampPlayer>().CurseLevel;
                 float powerfulCurseCurrent = drawPlayer.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel;
@@ -616,8 +616,8 @@ namespace tsorcRevamp
 
 
                     Main.spriteBatch.Draw(meterEmpty, barDestination, Color.White);
-                    Main.spriteBatch.Draw(UsefulFunctions.Crop(meterFull, new Rectangle(0, (int)(meterFull.Height * (1 - cursePercentage)), meterFull.Width, meterFull.Height)), fullBarDestination, Color.White);
-                    Main.spriteBatch.Draw(UsefulFunctions.Crop(powerfulMeterFull, new Rectangle(0, (int)(powerfulMeterFull.Height * (1 - powerfulCursePercentage)), powerfulMeterFull.Width, powerfulMeterFull.Height)), powerfulFullBarDestination, Color.White);
+                    Main.spriteBatch.Draw(meterFull, fullBarDestination, new Rectangle(0, (int)(meterFull.Height * (1 - cursePercentage)), meterFull.Width, meterFull.Height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
+                    Main.spriteBatch.Draw(powerfulMeterFull, powerfulFullBarDestination, new Rectangle(0, (int)(powerfulMeterFull.Height * (1 - powerfulCursePercentage)), powerfulMeterFull.Width, powerfulMeterFull.Height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);                   
                 }
             }
             #endregion

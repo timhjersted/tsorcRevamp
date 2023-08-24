@@ -37,18 +37,20 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             if (!Main.dayTime)
             {
                 Item.shoot = ModContent.ProjectileType<Projectiles.CrescentTrue>();
                 Item.shootSpeed = 12f;
+                instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Magenta;
 
             }
             else
             {
                 Item.shoot = ModContent.ProjectileType<Projectiles.CMSCrescent>();
                 Item.shootSpeed = 4.5f; //Projectile has same range as the Ancient Blood Lance
+                instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.ForestGreen;
             }
-
             return true;
         }
 

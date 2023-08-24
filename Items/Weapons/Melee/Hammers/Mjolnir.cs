@@ -29,7 +29,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Melee;
-            Item.shoot = ModContent.ProjectileType<Nothing>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Blue;
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {

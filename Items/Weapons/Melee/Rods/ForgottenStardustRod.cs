@@ -27,12 +27,12 @@ namespace tsorcRevamp.Items.Weapons.Melee.Rods
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 21;
             Item.value = PriceByRarity.Pink_5;
-            Item.shoot = ModContent.ProjectileType<Nothing>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
         public override bool? UseItem(Player player)
         {
-            if (Main.rand.NextBool(4))
+            if (player.whoAmI == Main.myPlayer && Main.rand.NextBool(4))
             {
                 Projectile.NewProjectile(player.GetSource_ItemUse(Item),
                (float)(Main.mouseX + Main.screenPosition.X) - 100 + Main.rand.Next(200),

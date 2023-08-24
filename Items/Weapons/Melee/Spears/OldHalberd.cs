@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             Item.useTime = 32;
             Item.value = 7000;
             Item.shootSpeed = 4f;
-            Item.shoot = ModContent.ProjectileType<Nothing>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             Item.useStyle = ItemUseStyleID.Swing;
         }
 

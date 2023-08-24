@@ -32,7 +32,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.useTime = 25;
             Item.value = PriceByRarity.Green_2;
             Item.scale = 1.3f;
-            Item.shoot = ModContent.ProjectileType<Nothing>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.OrangeRed;
         }
 
         public override void AddRecipes()

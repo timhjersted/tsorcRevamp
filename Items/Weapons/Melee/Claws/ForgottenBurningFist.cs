@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
             Item.useTime = 21;
             Item.value = PriceByRarity.LightRed_4;
             Item.rare = ItemRarityID.LightRed;
-            Item.shoot = ModContent.ProjectileType<Nothing>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
 
         public override void AddRecipes()
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
 
         public override bool? UseItem(Player player)
         {
-            if (Main.rand.NextBool(40))
+            if (player.whoAmI == Main.myPlayer && Main.rand.NextBool(10))
             {
                 Projectile.NewProjectile(player.GetSource_ItemUse(Item),
                player.position.X,

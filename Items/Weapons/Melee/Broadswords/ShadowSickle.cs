@@ -29,7 +29,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 60;
             Item.value = 13500;
-            Item.shoot = ModContent.ProjectileType<Nothing>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.DarkMagenta;
         }
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)

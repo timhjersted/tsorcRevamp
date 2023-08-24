@@ -30,6 +30,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.value = PriceByRarity.Lime_7;
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Red;
         }
 
         public override void MeleeEffects(Player player, Rectangle hitbox)

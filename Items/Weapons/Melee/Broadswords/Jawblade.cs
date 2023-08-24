@@ -29,24 +29,19 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.Orange_3;
             Item.DamageType = DamageClass.Melee;
-            Item.shoot = ProjectileID.BookOfSkullsSkull;
-            Item.shootSpeed = 10f;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Beige * 0.75f;
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            canitshoot = true;
+            Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 10), ProjectileID.BookOfSkullsSkull, damageDone, 1, player.whoAmI);
         }
+
+        //TODO: Remove this
         public override bool CanShoot(Player player)
         {
-            if (canitshoot == false)
-            {
-                return false;
-            }
-            else
-            {
-                canitshoot = false;
-                return true;
-            }
+            return true;
         }
 
         public override void AddRecipes()

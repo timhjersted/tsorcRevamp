@@ -8668,6 +8668,8 @@ Mods: {
 			// ArrowOfBardProjectile.DisplayName: Arrow Of Bard Projectile
 			// BoltProjectile.DisplayName: Bolt Projectile
 			// CruelArrowProjectile.DisplayName: Cruel Arrow Projectile
+			// RageDemonBolt.DisplayName: Rage Demon Bolt
+			// RageFirebomb.DisplayName: Rage Firebomb
 		}
 
 		NPCs: {

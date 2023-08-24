@@ -36,6 +36,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useTime = 15;
             Item.value = PriceByRarity.Red_10;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Main.DiscoColor;
         }
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {

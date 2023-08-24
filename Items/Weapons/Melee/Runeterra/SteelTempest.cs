@@ -29,8 +29,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Item.value = Item.buyPrice(0, 10, 0, 0);
             Item.damage = 20;
             Item.crit = CritChance;
-            Item.width = 60;
-            Item.height = 57;
+            Item.width = 86;
+            Item.height = 82;
             Item.scale = 0.7f;
             Item.knockBack = 3.5f;
             Item.DamageType = DamageClass.Melee;

@@ -28,6 +28,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useTime = 21;
             Item.value = PriceByRarity.Red_10;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Gold;
         }
 
 

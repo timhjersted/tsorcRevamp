@@ -18,11 +18,20 @@ public class QuickSlashMeleeAnimation : MeleeAnimation, ICanDoMeleeDamage
 
 	public override float GetItemRotation(Player player, Item item)
 	{
+		return MeleeSwingRotation(player, item, IsAttackFlipped);
+	}
+
+	//This is public static so I can access it anywhere
+	public static float MeleeSwingRotation(Player player, Item item, bool IsAttackFlipped)
+    {
 		float baseAngle;
 
-		if (item.TryGetGlobalItem(out ItemMeleeAttackAiming meleeAiming)) {
+		if (item.TryGetGlobalItem(out ItemMeleeAttackAiming meleeAiming))
+		{
 			baseAngle = meleeAiming.AttackAngle;
-		} else {
+		}
+		else
+		{
 			baseAngle = 0f;
 		}
 
@@ -32,23 +41,24 @@ public class QuickSlashMeleeAnimation : MeleeAnimation, ICanDoMeleeDamage
 		float minValue = baseAngle - MathHelper.PiOver2 * 1.25f;
 		float maxValue = baseAngle + MathHelper.PiOver2 * 1.0f;
 
-		if (dir < 0) {
+		if (dir < 0)
+		{
 			Utils.Swap(ref minValue, ref maxValue);
 		}
 
 		//sword visual rotation
 		//T1 is itemAnimation progress percentage, T2 is sword rotation angle at that percentage
 		//lerps between consecutive angles
-        var animation = new Gradient<float>(
-			(0.0f, MathHelper.Lerp(minValue, maxValue, 0.1f)),
-			(0.1f, minValue),
+		var animation = new Gradient<float>(
+			(0.0f, minValue),
+			(0.1f, MathHelper.Lerp(minValue, maxValue, 0.1f)),
 			(0.15f, MathHelper.Lerp(minValue, maxValue, 0.125f)),
 			(0.3f, MathHelper.Lerp(minValue, maxValue, 0.5f)),
 			(0.5f, MathHelper.Lerp(minValue, maxValue, 0.75f)),
-			(0.6f, maxValue),
-			(0.75f, maxValue),
-			(0.9f, MathHelper.Lerp(minValue, maxValue, 0.96f)),
-			(1.0f, MathHelper.Lerp(minValue, maxValue, 0.9f))
+			(0.6f, MathHelper.Lerp(minValue, maxValue, 0.9f)),
+			(0.75f, MathHelper.Lerp(minValue, maxValue, 0.96f)),
+			(0.9f, maxValue),
+			(1.0f, maxValue)
 		);
 		//Main.NewText("New: " + (float)(MathHelper.Pi * step - (Math.Sin(2 * MathHelper.Pi * step) / 2f) / 2f) / MathHelper.Pi);
 		return animation.GetValue(step);

@@ -45,6 +45,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             {
                 Item.DamageType = DamageClass.Magic;
             }
+
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Teal;
         }
 
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)

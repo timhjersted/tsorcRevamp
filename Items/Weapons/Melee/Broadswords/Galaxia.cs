@@ -27,8 +27,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.value = PriceByRarity.LightPurple_6;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<Projectiles.VFX.Slash>();
-            Item.shootSpeed = 1;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Gold;
         }
 
         public override void AddRecipes()
@@ -44,8 +45,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void MeleeEffects(Player player, Rectangle hitbox)
         {
-            //int dust = Dust.NewDust(new Vector2((float)hitbox.X, (float)hitbox.Y), hitbox.Width, hitbox.Height, 57, (player.velocity.X), player.velocity.Y, 200, default, 1f);
-            //Main.dust[dust].noGravity = false;
+            int dust = Dust.NewDust(new Vector2((float)hitbox.X, (float)hitbox.Y), hitbox.Width, hitbox.Height, 57, (player.velocity.X), player.velocity.Y, 200, default, 1f);
+            Main.dust[dust].noGravity = false;
         }
     }
 }

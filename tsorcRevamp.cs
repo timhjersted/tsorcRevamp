@@ -172,6 +172,9 @@ namespace tsorcRevamp
         public static Texture2D NoiseCircuit;
         public static Texture2D NoiseVoronoi;
         public static Texture2D NoiseMarble;
+        public static Texture2D NoiseSmooth;
+        public static Texture2D NoiseSwirly;
+        public static Texture2D NoisePerlin;
 
         public override void Load()
         {
@@ -256,6 +259,9 @@ namespace tsorcRevamp
             NoiseCircuit = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/CircuitNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             NoiseVoronoi = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/VoronoiNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             NoiseMarble = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/MarbleNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            NoiseSmooth = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/SmoothNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            NoiseSwirly = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/SwirlyNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            NoisePerlin = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/PerlinNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
 
             //AttraidiesEffect = Instance.GetEffect("Effects/ScreenFilters/AttraidiesShader");
             //Filters.Scene["tsorcRevamp:AttraidiesShader"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(AttraidiesEffect), "AttraidiesShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);

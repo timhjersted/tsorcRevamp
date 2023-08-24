@@ -477,7 +477,7 @@ namespace tsorcRevamp
                 }
                 
                 //Draw anything additive that needs to be drawn on a different layer in one big batch
-                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
                     if (projCache.Contains(i))

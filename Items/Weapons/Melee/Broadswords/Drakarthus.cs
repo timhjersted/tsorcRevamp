@@ -38,6 +38,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.value = 1000000;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             Item.shootSpeed = 24f;
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.MediumVioletRed;
         }
 
         public override bool AltFunctionUse(Player player) 

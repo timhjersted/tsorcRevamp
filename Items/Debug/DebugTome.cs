@@ -46,8 +46,6 @@ namespace tsorcRevamp.Items.Debug
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, player.Center);
 
-            Projectile.NewProjectile(source, player.Center, speed, ModContent.ProjectileType<Projectiles.VFX.Slash>(), 0, 0f, Main.myPlayer);
-
 
             //NPCs.Bosses.PrimeV2.PrimeV2.ActuatePrimeArena();
 

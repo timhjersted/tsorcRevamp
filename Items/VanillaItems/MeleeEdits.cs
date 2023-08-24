@@ -19,6 +19,8 @@ namespace tsorcRevamp.Items.VanillaItems
         public static int ManaDelay = 720;
         public override void SetDefaults(Item item)
         {
+            SetMeleeSlashColor(item);
+
             if (item.type == ItemID.DayBreak)
             {
                 item.mana = 88;
@@ -77,6 +79,51 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 50;
             }
         }
+
+        public static void SetMeleeSlashColor(Item item)
+        {
+            tsorcInstancedGlobalItem instancedGlobal = item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            switch (item.type)
+            {
+                case ItemID.IronBroadsword:
+                    instancedGlobal.slashColor = Color.SlateGray;
+                    break;
+                case ItemID.WoodenSword:
+                    instancedGlobal.slashColor = Color.Brown;
+                    break;
+                case ItemID.WarAxeoftheNight:
+                    instancedGlobal.slashColor = Color.DarkMagenta;
+                    break;
+                case ItemID.LightsBane:
+                    instancedGlobal.slashColor = Color.DarkMagenta;
+                    break;
+                case ItemID.Starfury:
+                    instancedGlobal.slashColor = Color.Pink;
+                    break;
+                case ItemID.TheBreaker:
+                    instancedGlobal.slashColor = Color.DarkMagenta;
+                    break;
+                case ItemID.FieryGreatsword:
+                    instancedGlobal.slashColor = Color.OrangeRed;
+                    break;
+                case ItemID.Muramasa:
+                    instancedGlobal.slashColor = Color.Blue;
+                    break;
+                case ItemID.BladeofGrass:
+                    instancedGlobal.slashColor = Color.YellowGreen;
+                    break;
+                case ItemID.WoodenHammer:
+                    instancedGlobal.slashColor = Color.Brown;
+                    break;
+                case ItemID.BluePhaseblade:
+                    instancedGlobal.slashColor = Color.Blue;
+                    break;
+                case ItemID.RedPhaseblade:
+                    instancedGlobal.slashColor = Color.Red;
+                    break;
+            }
+        }
+
         public override bool? UseItem(Item item, Player player)
         {
             if (item.DamageType != DamageClass.Magic && item.mana > 0)

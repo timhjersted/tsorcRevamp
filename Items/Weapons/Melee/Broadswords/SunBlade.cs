@@ -29,6 +29,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useTime = 20;
             Item.value = PriceByRarity.LightRed_4;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Orange;
         }
 
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)

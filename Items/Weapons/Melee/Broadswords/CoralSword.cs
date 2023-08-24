@@ -25,6 +25,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Blue_1;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Pink;
         }
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {

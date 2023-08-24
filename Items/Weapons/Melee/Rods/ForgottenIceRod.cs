@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Rods
 {
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Rods
 
         public override bool? UseItem(Player player)
         {
-            if (Main.rand.NextBool(5))
+            if (Main.myPlayer == player.whoAmI && Main.rand.NextBool(5))
             {
                 Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.position.X, player.position.Y, (float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Ice2Ball>(), 20, 2.0f, player.whoAmI);
             }

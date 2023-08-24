@@ -470,7 +470,6 @@ namespace tsorcRevamp.Projectiles.VFX
         {
             Matrix view = Matrix.CreateLookAt(Vector3.Zero, Vector3.UnitZ, Vector3.Up) * Matrix.CreateTranslation(Main.graphics.GraphicsDevice.Viewport.Width / 2, Main.graphics.GraphicsDevice.Viewport.Height / -2, 0) * Matrix.CreateRotationZ(MathHelper.Pi) * Matrix.CreateScale(Main.GameViewMatrix.Zoom.X, Main.GameViewMatrix.Zoom.Y, 1f);
             Matrix projection = Matrix.CreateOrthographic(Main.graphics.GraphicsDevice.Viewport.Width, Main.graphics.GraphicsDevice.Viewport.Height, 0, 1000);
-
             return view * projection;
         }
 
@@ -482,6 +481,11 @@ namespace tsorcRevamp.Projectiles.VFX
         public override bool PreDraw(ref Color lightColor)
         {
             if (trailPositions == null)
+            {
+                return false;
+            }
+
+            if(trailPositions.Count < 2)
             {
                 return false;
             }
@@ -525,7 +529,8 @@ namespace tsorcRevamp.Projectiles.VFX
                 offset = Vector2.Zero;
             }
 
-            /*VertexPositionColor[] vertices = new VertexPositionColor[3];
+            /*
+            VertexPositionColor[] vertices = new VertexPositionColor[3];
             vertices[0] = new VertexPositionColor(new Vector3(0, 1, 0), Color.Red);
             vertices[1] = new VertexPositionColor(new Vector3(+0.5f, 0, 0), Color.Green);
             vertices[2] = new VertexPositionColor(new Vector3(-0.5f, 0, 0), Color.Blue);
@@ -534,12 +539,19 @@ namespace tsorcRevamp.Projectiles.VFX
             Main.graphics.GraphicsDevice.SetVertexBuffer(vertexBuffer);
             Main.graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);*/
 
-
-
-
             VertexStrip vertexStrip = new VertexStrip();
             vertexStrip.PrepareStrip(trailPositions.ToArray(), trailRotations.ToArray(), ColorFunction, WidthFunction, offset, includeBacksides: true);
             vertexStrip.DrawTrail();
+
+            /*
+            PrepareVertexStrip();
+            DrawVertexStrip();
+
+            if (vertexAmount >= 3)
+            {
+                Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, _vertices, 0, vertexAmount);
+            }
+            VisualizeVertexStrip();*/
 
 
 
@@ -555,7 +567,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 Rectangle starSourceRectangle = new Rectangle(0, 0, starTexture.Width, starTexture.Height);
                 Vector2 starOrigin = starSourceRectangle.Size() / 2f;
 
-                for (int i = 0; i < trailPositions.Count - 0; i++)
+                for (int i = 0; i < trailPositions.Count; i++)
                 {
                     float scaleFactor = 0.75f;
                     if (i < collisionEndPadding || i > trailPositions.Count - collisionPadding)
@@ -573,61 +585,75 @@ namespace tsorcRevamp.Projectiles.VFX
             return false;
         }
 
+        void VisualizeVertexStrip()
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-        private CustomVertexInfo[] _vertices = new CustomVertexInfo[1];
+            if (starTexture == null || starTexture.IsDisposed)
+            {
+                starTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            }
+            Rectangle starSourceRectangle = new Rectangle(0, 0, starTexture.Width, starTexture.Height);
+            Vector2 starOrigin = starSourceRectangle.Size() / 2f;
+
+            for (int i = 0; i < _vertices.Length; i++)
+            {
+                Main.spriteBatch.Draw(starTexture, _vertices[i].Position, starSourceRectangle, Color.White, 0, starOrigin, Projectile.scale, SpriteEffects.None, 0);
+            }
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+        }
+
+        private CustomVertexInfo[] _vertices = new CustomVertexInfo[0];
         public int vertexAmount = 0;
         void PrepareVertexStrip()
         {
+            _vertices = new CustomVertexInfo[0];
             int positionCount = trailPositions.Count;
-            int num2 = (vertexAmount = positionCount * 2);
-            if (_vertices.Length < num2)
+            int vertexArraySpotsNeeded = (vertexAmount = positionCount + 2);
+            if (_vertices.Length < vertexArraySpotsNeeded)
             {
-                Array.Resize(ref _vertices, num2);
+                Array.Resize(ref _vertices, vertexArraySpotsNeeded);
             }
+
+            Vector2 offset = -Main.screenPosition;
+            if (ScreenSpace)
+            {
+                offset = Vector2.Zero;
+            }
+            
+            //Add an extra vertex before the very first one, to make the end square
+            AddVertex(ColorFunction, WidthFunction, trailPositions[0] + offset, MathHelper.WrapAngle(trailRotations[0]), 0, 0, false);
 
             for (int i = 0; i < positionCount; i++)
             {
-                if (trailPositions[i] == Vector2.Zero)
-                {
-                    positionCount = i - 1;
-                    vertexAmount = positionCount * 2;
-                    break;
-                }
-
-                Vector2 offset = -Main.screenPosition;
-                if (ScreenSpace)
-                {
-                    offset = Vector2.Zero;
-                }
                 Vector2 pos = trailPositions[i] + offset;
                 float rot = MathHelper.WrapAngle(trailRotations[i]);
-                int indexOnVertexArray = i * 2;
+                int indexOnVertexArray = i;
                 float progressOnStrip = (float)i / (float)(positionCount - 1);
-                AddVertex(ColorFunction, WidthFunction, pos, rot, indexOnVertexArray, progressOnStrip);
+                AddVertex(ColorFunction, WidthFunction, pos, rot, indexOnVertexArray + 1, progressOnStrip, i % 2 == 0);
             }
 
-            PrepareIndices(positionCount, true);
+            //Add an extra vertex after the very last one, to make the ending square
+            AddVertex(ColorFunction, WidthFunction, trailPositions[trailPositions.Count - 1] + offset, MathHelper.WrapAngle(trailRotations[trailRotations.Count - 1]), trailRotations.Count + 1, 1, trailRotations.Count % 2 == 0);
         }
 
-        private void AddVertex(StripColorFunction colorFunction, StripHalfWidthFunction widthFunction, Vector2 pos, float rot, int indexOnVertexArray, float progressOnStrip)
+        private void AddVertex(StripColorFunction colorFunction, StripHalfWidthFunction widthFunction, Vector2 pos, float rot, int indexOnVertexArray, float progressOnStrip, bool side)
         {
-            while (indexOnVertexArray + 1 >= _vertices.Length)
-            {
-                Array.Resize(ref _vertices, _vertices.Length * 2);
-            }
-
             Color color = colorFunction(progressOnStrip);
             float width = widthFunction(progressOnStrip);
 
             //Instead of adding two verticies per point, add *one* and alternate it
             //Use these to form a triangle strip, then draw it!
             Vector2 vector = MathHelper.WrapAngle(rot - MathF.PI / 2f).ToRotationVector2() * width;
+            if (side)
+            {
+                vector *= -1;
+            }
             _vertices[indexOnVertexArray].Position = pos + vector;
-            _vertices[indexOnVertexArray + 1].Position = pos - vector;
             _vertices[indexOnVertexArray].TexCoord = new Vector2(progressOnStrip, 1f);
-            _vertices[indexOnVertexArray + 1].TexCoord = new Vector2(progressOnStrip, 0f);
             _vertices[indexOnVertexArray].Color = color;
-            _vertices[indexOnVertexArray + 1].Color = color;
         }
 
         private short[] _indices = new short[1];
@@ -669,7 +695,7 @@ namespace tsorcRevamp.Projectiles.VFX
         {
             if (vertexAmount >= 3)
             {
-                Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, _vertices, 0, vertexAmount, _indices, 0, _indicesAmountCurrentlyMaintained / 3);
+                Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, _vertices, 0, vertexAmount);
             }
         }
         private struct CustomVertexInfo : IVertexType

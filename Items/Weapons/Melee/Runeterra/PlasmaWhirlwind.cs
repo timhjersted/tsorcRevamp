@@ -40,7 +40,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Item.useTime = 20;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.shootSpeed = 5f;
-            Item.shoot = ModContent.ProjectileType<Nothing>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Cyan;
         }
 
         public override void ModifyWeaponCrit(Player player, ref float crit)

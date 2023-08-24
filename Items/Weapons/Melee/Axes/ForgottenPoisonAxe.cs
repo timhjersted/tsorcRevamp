@@ -27,15 +27,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 15;
             Item.value = PriceByRarity.Pink_5;
-            Item.shoot = ModContent.ProjectileType<Nothing>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.YellowGreen;
         }
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (Main.rand.NextBool(2))
-            {
-                target.AddBuff(BuffID.Poisoned, 6 * 60, false);
-            }
+            target.AddBuff(BuffID.Poisoned, 6 * 60, false);
         }
     }
 }

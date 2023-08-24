@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -25,6 +26,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useTime = 15;
             Item.value = PriceByRarity.Pink_5;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Cyan;
         }
 
         public override bool? UseItem(Player player)

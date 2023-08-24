@@ -16,8 +16,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         public override void SetDefaults()
         {
             Item.damage = 8;
-            Item.width = 48;
-            Item.height = 44;
+            Item.width = 24;
+            Item.height = 22;
             Item.knockBack = 5;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 11;
@@ -26,7 +26,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = 3500;
             Item.rare = ItemRarityID.White;
-            Item.shoot = ModContent.ProjectileType<Nothing>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.DarkGray;
         }
 
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
@@ -40,6 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
                 || target.type == ModContent.NPCType<NPCs.Enemies.Necromancer>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.RedCloudHunter>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.Assassin>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.Dunlending>()
                 )
             {
                 modifiers.FinalDamage *= 4; // *2 > *4, lets make it actually useful shall we
@@ -47,10 +50,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             if (target.type == ModContent.NPCType<NPCs.Enemies.BlackKnight>())
             {
                 modifiers.FinalDamage *= 6;
-            }
-            if (target.type == ModContent.NPCType<NPCs.Enemies.Dunlending>())
-            {
-                modifiers.FinalDamage *= 4;
             }
         }
 

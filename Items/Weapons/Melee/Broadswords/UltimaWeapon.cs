@@ -32,6 +32,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Yellow_8;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Cyan;
         }
         public override void AddRecipes()
         {

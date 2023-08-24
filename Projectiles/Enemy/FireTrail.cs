@@ -6,7 +6,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     class FireTrail : ModProjectile
     {
-
         public override string Texture => "tsorcRevamp/Projectiles/FireBallDarkCore";
         public override void SetDefaults()
         {
@@ -42,10 +41,6 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.Kill();
                 return;
             }
-
-
         }
-
-
     }
 }
