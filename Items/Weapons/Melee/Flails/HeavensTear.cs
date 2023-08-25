@@ -54,34 +54,5 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             recipe.Register();
         }
 
-        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
-        {
-            //damage = (int) ((Main.rand.Next(26)) * (P.GetDamage(DamageClass.Melee)));
-            if (target.FullName == "Tim"
-                || target.FullName == "Dark Caster"
-                || target.FullName == "Goblin Sorcerer"
-                || target.FullName == "Undead Caster"
-                || target.FullName == "Mindflayer Servant"
-                || target.FullName == "Dungeon Mage"
-                || target.FullName == "Demon Spirit"
-                || target.FullName == "Crazed Demon Spirit"
-                || target.FullName == "Shadow Mage"
-                || target.FullName == "Attraidies Illusion"
-                || target.FullName == "Attraidies Manifestation"
-                || target.FullName == "Mindflayer King"
-                || target.FullName == "Dark Shogun Mask"
-                || target.FullName == "Dark Dragon Mask"
-                || target.FullName == "Broken Okiku"
-                || target.FullName == "Okiku"
-                || target.FullName == "Wyvern Mage"
-                || target.FullName == "Ghost of the Forgotten Knight"
-                || target.FullName == "Barrow Wight Nemesis"
-                || target.FullName == "Oolacile Sorcerer"
-                || target.FullName == "Abysmal Oolacile Sorcerer"
-                || target.FullName == "Dark Cloud"
-                || target.FullName == "Barrow Wight"
-                ) modifiers.FinalDamage *= 2;
-        }
-
     }
 }

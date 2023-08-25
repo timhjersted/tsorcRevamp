@@ -449,6 +449,33 @@ namespace tsorcRevamp.Projectiles.Flails
             {
                 modifiers.Knockback *= 0.5f;
             }
+			 if (target.type == NPCID.Tim
+                || target.type == NPCID.DarkCaster
+                || target.type == NPCID.GoblinSorcerer
+                || target.type == ModContent.NPCType<NPCs.Enemies.UndeadCaster>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerServant>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.DungeonMage>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.DemonSpirit>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.CrazedDemonSpirit>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.ShadowMage>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.AttraidiesManifestation>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerKingServant>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.BarrowWight>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.GhostoftheForgottenKnight>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.DarkDragonMask>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.Okiku>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>()
+                ) 
+            {
+                modifiers.FinalDamage *= 2;
+            }
         }
 
         // PreDraw is used to draw a chain and trail before the projectile is drawn normally.
