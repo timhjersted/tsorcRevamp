@@ -36,7 +36,7 @@ Mods: {
 			VanityFunction: 在时装栏中也生效
 			DragoonGearCompatible: 与龙骑士套装和龙靴兼容.
 			BootsDisableThis: 如果同时装备了赫尔墨斯靴或幽灵靴，则不会生效
-			FireDamage: 所有的火焰对木质敌人造成两倍伤害
+			FireDamage: 所有的火焰对木质敌人造成双倍伤害
 			OnFire: 着火了
 			CursedInferno: 诅咒狱火
 			Ichor: 灵液
@@ -493,7 +493,7 @@ Mods: {
 					'''
 				StickyBomb: 用起来比镐子更有趣！
 				WormFood: "{$CommonItemTooltip.NonConsumable}"
-				CopperAxe: 所有斧头对木质敌人造成2倍伤害
+				CopperAxe: 所有斧头对木质敌人造成双倍伤害
 				Diamond: 制作强力药剂的重要成分
 				IronOre: 也许你可以用这些来制作特殊的箭……？
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
@@ -1742,7 +1742,7 @@ Mods: {
 				DisplayName: 超音速之翼
 				Tooltip:
 					'''
-					提供中等超音速移动速度、飞行、火上行走能力
+					提供中等超音速移动速度、飞行能力和火块行走能力
 					继承超音速之靴的所有能力
 					{$CommonItemTooltip.DragoonGearCompatible}
 					{$CommonItemTooltip.BootsDisableThis}
@@ -1783,7 +1783,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedRangedDamageCritChance}
-					将战败敌人的骨头猛烈地扔来扔去
+					将战败敌人的骨头肆意抛掷
 					'''
 			}
 
@@ -1874,7 +1874,7 @@ Mods: {
 				Tooltip:
 					'''
 					一种专门用于清除迷失的、被遗忘灵魂的箭...
-					对这些敌人造成八倍伤害
+					对这些敌人造成8倍伤害
 					穿透一次
 					'''
 			}
@@ -5376,7 +5376,7 @@ Mods: {
 
 			GigantAxe: {
 				DisplayName: 巨斧
-				Tooltip: 用来杀人的斧头
+				Tooltip: 用来杀人的斧头，对人类造成双倍伤害
 			}
 
 			AncientFireSword: {
@@ -5408,7 +5408,7 @@ Mods: {
 
 			CoralSword: {
 				DisplayName: 珊瑚剑
-				Tooltip: 斩杀海王，对水中敌人造成4倍伤害
+				Tooltip: 用于斩杀来自大海的生物，对与水有关的敌人造成4倍伤害
 			}
 
 			CorruptedTooth: {
@@ -5644,8 +5644,8 @@ Mods: {
 				DisplayName: 天堂之泪
 				Tooltip:
 					'''
-					每次的挥击都让天堂分裂
-					对法师和幽灵造成双倍伤害
+					每次的挥击都让天堂分崩离析
+					对法师、巫师和幽灵造成双倍伤害
 					'''
 			}
 
@@ -5659,7 +5659,7 @@ Mods: {
 				Tooltip:
 					'''
 					撕裂生与死的边界
-					对法师和幽灵造成双倍伤害
+					对法师、巫师和幽灵造成双倍伤害
 					'''
 			}
 
@@ -6627,7 +6627,7 @@ Mods: {
 					'''
 					<right> 以释放 [c/708090:突刺]
 					[c/708090:突刺]敌人时获得一层[c/708090:钢铁风暴堆叠]
-					获得两层堆叠后，下次 <right> 将会释放一阵 [c/708090:旋风]
+					获得两层堆叠后，下次<right>将会释放一阵 [c/708090:旋风]
 					[c/708090:“死亡如风，常伴吾身”]
 					'''
 				Details:
@@ -6648,9 +6648,9 @@ Mods: {
 					'''
 					<right> 以释放 [c/708090:突刺]
 					[c/708090:突刺]敌人时获得一层[c/708090:钢铁风暴堆叠]
-					获得两层堆叠后，下次 <right> 将会释放一阵 [c/708090:旋风]
+					获得两层堆叠后，下次<right>将会释放一阵 [c/708090:旋风]
 					{$Items.PlasmaWhirlwind.Keybind1}特殊能力键{$Items.PlasmaWhirlwind.Keybind2}
-					当 [c/00ffff:冲撞] 时长按<右键>会释放一道 [c/00ffff:剑光]
+					当 [c/00ffff:冲撞] 时长按<right>会释放一道 [c/00ffff:剑光]
 					[c/00ffff:“奥德赛的同伴”]
 					'''
 				Keybind1: "把光标对准一个敌人按 "
@@ -6677,14 +6677,14 @@ Mods: {
 					'''
 					<right> 以释放 [c/708090:突刺]
 					[c/708090:突刺]敌人时获得一层[c/708090:钢铁风暴堆叠]
-					获得两层堆叠后，下次 <right> 将会释放一阵 [c/708090:旋风]
+					获得两层堆叠后，下次<right>将会释放一阵 [c/708090:旋风]
 					{$Items.PlasmaWhirlwind.Keybind1}特殊能力键{$Items.PlasmaWhirlwind.Keybind2}
-					当 [c/00ffff:冲撞] 时长按<右键>会释放一道 [c/00ffff:剑光]
+					当 [c/00ffff:冲撞] 时长按<right>会释放一道 [c/00ffff:剑光]
 					{$Items.Nightbringer.Keybind1}特殊能力键{$Items.Nightbringer.Keybind2}
 					[c/ff4500:“和谐是一个用来迫使顺从的谎言”]
 					'''
-				Keybind1: "按A+D键和 "
-				Keybind2: " 会制造一道 [c/ff4500:防火墙]"
+				Keybind1: 按 A+D键和
+				Keybind2: 键 在面前产生一道 [c/ff4500:防火墙]
 				Details:
 					'''
 					[c/ff4500:防火墙] 能阻挡大部分敌人的弹幕攻击持续 {4} 秒，({$CommonItemTooltip.Cooldown@5})
@@ -6739,7 +6739,7 @@ Mods: {
 					在使用时[c/32cd32:有条件的限制玩家的移动] 
 					手持该物品时，获得[c/32cd32:移动速度和耐力回复提升]
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
-					<right> 射出一道追踪的 [c/00ffff:致盲激光] 造成困惑减益
+					<right> 消耗魔力射出一道追踪的 [c/00ffff:致盲激光] 造成困惑减益
 					[c/00ffff:“全副武装，随时战斗”]
 					'''
 				Details:
@@ -6767,12 +6767,12 @@ Mods: {
 					在使用时[c/32cd32:有条件的限制玩家的移动]
 					手持该物品时，获得[c/32cd32:移动速度和耐力回复提升]
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
-					<right> 射出一道追踪的 [c/00ffff:致盲激光] 造成困惑减益
+					<right> 消耗魔力射出一道追踪的 [c/00ffff:致盲激光] 造成困惑减益
 					{$Items.OmegaSquadRifle.Keybind1}特殊能力键{$Items.OmegaSquadRifle.Keybind2}
 					[c/adff2f:“外面有一个蘑菇，上面有你的名字”]
 					'''
-				Keybind1: "按A+D键和 "
-				Keybind2: " 在光标所指位置生成一个 [c/adff2f:蘑菇弹]"
+				Keybind1: 按 A+D键和
+				Keybind2: 键 消耗魔力在光标所指位置生成一个 [c/adff2f:蘑菇弹]
 				Details:
 					'''
 					[c/adff2f:蘑菇弹] 在发射后需要 {0} 秒来引爆，({$CommonItemTooltip.Cooldown@9})
@@ -8362,7 +8362,7 @@ Mods: {
 			BlindingGaze.DisplayName: 你瞎啦！
 			CataluminanceTrail.DisplayName: 光辉光环
 			CursedMalestrom.DisplayName: 诅咒阴风
-			HomingStar.DisplayName: 自瞄星星
+			HomingStar.DisplayName: 追踪火星
 			IchorFragment.DisplayName: 腐败碎片
 			IchorShockwave.DisplayName: 腐败冲击波
 			IchorTrail.DisplayName: 腐败轨迹
@@ -8665,12 +8665,12 @@ Mods: {
 			Slash.DisplayName: 银河斩击
 			BarbarousThornBladeBriar.DisplayName: 荆棘
 			YellowTailFishbone.DisplayName: 鱼骨
-			// ArrowOfBardProjectile.DisplayName: Arrow Of Bard Projectile
-			// BoltProjectile.DisplayName: Bolt Projectile
-			// CruelArrowProjectile.DisplayName: Cruel Arrow Projectile
-			// RageDemonBolt.DisplayName: Rage Demon Bolt
-			// RageFirebomb.DisplayName: Rage Firebomb
-			// RageFirebreath.DisplayName: Rage Firebreath
+			ArrowOfBardProjectile.DisplayName: 吟游诗人之箭
+			BoltProjectile.DisplayName: 弩箭
+			CruelArrowProjectile.DisplayName: 残酷之箭
+			RageDemonBolt.DisplayName: 追踪火星
+			RageFirebomb.DisplayName: 火焰炸弹
+			RageFirebreath.DisplayName: 烈火之息
 		}
 
 		NPCs: {
@@ -9737,7 +9737,7 @@ Mods: {
 			"Dragoon Boots.DisplayName": 龙骑士之靴
 			"Reflection Shift.DisplayName": 反射位移
 			"Dodge Roll.DisplayName": 翻滚
-			"Special Ability.DisplayName": 特殊能力
+			"Special Ability.DisplayName": 特殊能力键
 			"Wolf Ring.DisplayName": 苍狼之戒
 			"Wings of Seath speed toggle.DisplayName": 希斯之翼加速度切换
 			Shunpo.DisplayName: 瞬步
