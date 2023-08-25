@@ -25,6 +25,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.netUpdate = true;
             Projectile.light = .9f;
 
+            trailCollision = true;
             trailWidth = 25;
             trailPointLimit = 150;
             trailYOffset = 30;
@@ -39,18 +40,31 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             return 10;
         }
+
+        float baseNoiseUOffset;
         public override void SetEffectParameters(Effect effect)
         {
-            collisionEndPadding = trailPositions.Count / 3;
-            collisionPadding = trailPositions.Count / 8;
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);
+            if (baseNoiseUOffset == 0)
+            {
+                baseNoiseUOffset = Main.rand.NextFloat();
+            }
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+
+            effect.Parameters["baseNoise"].SetValue(tsorcRevamp.NoiseSmooth);
+            effect.Parameters["baseNoiseUOffset"].SetValue(baseNoiseUOffset);
+            //effect.Parameters["secondaryNoise"].SetValue(noiseTexture);
+
+            visualizeTrail = false;
+
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-
             Color shaderColor = new Color(1.0f, 0.4f, 0.1f, 1.0f);
-            shaderColor = UsefulFunctions.ShiftColor(shaderColor, (float)Main.timeForVisualEffects, 0.01f);
-            effect.Parameters["shaderColor"].SetValue(shaderColor.ToVector4());
+            effect.Parameters["slashCenter"].SetValue(Color.White.ToVector4());
+            effect.Parameters["slashEdge"].SetValue(shaderColor.ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
+            collisionEndPadding = trailPositions.Count / 3;
+            collisionPadding = trailPositions.Count / 8;
         }
 
         private const int AI_Split_Counter_Slot = 0;
@@ -84,6 +98,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             base.AI();
+
+            if (fadeOut < 0.3f)
+            {
+                Projectile.damage = 0;
+                trailCollision = false;
+            }
 
             Projectile.rotation += 4f;
 

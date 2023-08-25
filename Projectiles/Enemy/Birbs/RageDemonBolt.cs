@@ -45,15 +45,26 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
         }
 
         bool playedSound = false;
+        Vector2 realVelocity = Vector2.Zero;
         public override void AI()
         {
             base.AI();
             Lighting.AddLight(Projectile.Center, Color.Red.ToVector3());
             if (!playedSound)
             {
+                realVelocity = Projectile.velocity;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item33 with { Volume = 0.5f }, Projectile.Center);
                 playedSound = true;
             }
+
+            if (Projectile.timeLeft < 560)
+            {
+                if (realVelocity.Length() < 10)
+                {
+                    realVelocity += Vector2.Normalize(Projectile.velocity) * 0.5f;
+                }
+            }
+            Projectile.velocity = realVelocity.RotatedBy(Math.Sin(Main.GameUpdateCount * 0.15f));
         }
 
         public override float CollisionWidthFunction(float progress)
@@ -62,18 +73,30 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
         }
 
         float timeFactor = 0;
+        float baseNoiseUOffset;
         public override void SetEffectParameters(Effect effect)
         {
+            if (baseNoiseUOffset == 0)
+            {
+                baseNoiseUOffset = Main.rand.NextFloat();
+            }
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+
+            effect.Parameters["baseNoise"].SetValue(tsorcRevamp.NoiseSmooth);
+            effect.Parameters["baseNoiseUOffset"].SetValue(baseNoiseUOffset);
+            //effect.Parameters["secondaryNoise"].SetValue(noiseTexture);
+
             visualizeTrail = false;
-            timeFactor++;
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);
+
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-
-            Color shaderColor = new Color(0.6f, 0.05f, 0.6f, 1.0f);
-            shaderColor = UsefulFunctions.ShiftColor(shaderColor, timeFactor, 0.03f);
-            effect.Parameters["shaderColor"].SetValue(shaderColor.ToVector4());
+            Color shaderColor = new Color(1.0f, 0.01f, 0.8f, 1.0f);
+            effect.Parameters["slashCenter"].SetValue(Color.White.ToVector4());
+            effect.Parameters["slashEdge"].SetValue(shaderColor.ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
+            collisionEndPadding = trailPositions.Count / 3;
+            collisionPadding = trailPositions.Count / 8;
         }
     }
 }

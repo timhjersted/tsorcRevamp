@@ -24,11 +24,42 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
             // These 2 help the projectile hitbox be centered on the projectile sprite.
             DrawOffsetX = -5;
             DrawOriginOffsetY = -5;
+
+            trailWidth = 25;
+            trailPointLimit = 150;
+            trailYOffset = 30;
+            trailMaxLength = 150;
+            NPCSource = false;
+            collisionPadding = 0;
+            collisionEndPadding = 1;
+            collisionFrequency = 2;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
+        float baseNoiseUOffset;
         public override void SetEffectParameters(Effect effect)
         {
-            base.SetEffectParameters(effect);
+            if (baseNoiseUOffset == 0)
+            {
+                baseNoiseUOffset = Main.rand.NextFloat();
+            }
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+
+            effect.Parameters["baseNoise"].SetValue(tsorcRevamp.NoiseSmooth);
+            effect.Parameters["baseNoiseUOffset"].SetValue(baseNoiseUOffset);
+            //effect.Parameters["secondaryNoise"].SetValue(noiseTexture);
+
+            visualizeTrail = false;
+
+            effect.Parameters["fadeOut"].SetValue(fadeOut);
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            Color shaderColor = new Color(1.0f, 0.1f, 0.1f, 1.0f);
+            effect.Parameters["slashCenter"].SetValue(Color.White.ToVector4());
+            effect.Parameters["slashEdge"].SetValue(shaderColor.ToVector4());
+            effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
+            collisionEndPadding = trailPositions.Count / 3;
+            collisionPadding = trailPositions.Count / 8;
         }
 
         public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)

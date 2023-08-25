@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.VFX
 			noFadeOut = true;
 			ScreenSpace = true;
 			newPointDistance = 0.000f;
-			customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/InterstellarVessel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+			customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/Slash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 		}
 		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
 		{
@@ -120,8 +120,6 @@ namespace tsorcRevamp.Projectiles.VFX
 		float trailIntensity = 1;
 		public override void SetEffectParameters(Effect effect)
 		{
-			customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/Slash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-			effect = ModContent.Request<Effect>("tsorcRevamp/Effects/Slash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 			if(baseNoiseUOffset == 0)
             {
 				baseNoiseUOffset = Main.rand.NextFloat();

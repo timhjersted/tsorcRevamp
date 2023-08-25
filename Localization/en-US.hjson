@@ -8667,6 +8667,7 @@ Mods: {
 			CruelArrowProjectile.DisplayName: Cruel Arrow Projectile
 			RageDemonBolt.DisplayName: Rage Demon Bolt
 			RageFirebomb.DisplayName: Rage Firebomb
+			RageFirebreath.DisplayName: Rage Firebreath
 		}
 
 		NPCs: {
