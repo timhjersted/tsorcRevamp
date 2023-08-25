@@ -39,6 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 || target.type == NPCID.PinkJellyfish
                 || target.type == NPCID.Piranha
                 || target.type == NPCID.AnglerFish
+                || target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.ManOfWar>()
                 //|| target.type == ModContent.NPCType<SahaginChief>()
                 //|| target.type == ModContent.NPCType<SahaginPrince>()
                 //|| target.type == ModContent.NPCType<QuaraCosntrictor>()
