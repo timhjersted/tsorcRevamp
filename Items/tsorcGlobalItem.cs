@@ -289,6 +289,16 @@ namespace tsorcRevamp.Items
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
+            //Spawn the melee slash vfx
+            if (player.ItemAnimationJustStarted && player.whoAmI == Main.myPlayer)
+            {
+                //No slash effect if any of these is true
+                if (!(item.useStyle != ItemUseStyleID.Swing || item.noMelee || item.channel || item.noUseGraphic || item.pick > 0 || item.createTile >= TileID.Dirt || item.createWall >= 0 || item.damage <= 0))
+                {
+                    Projectile.NewProjectile(item.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.Slash>(), 0, 1, player.whoAmI);
+                }
+            }
+
             if (modPlayer.MiakodaCrescentBoost)
             {
                 int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 164, player.velocity.X * 1.2f, player.velocity.Y * 1.2f, 80, default(Color), 1.2f);
@@ -752,11 +762,6 @@ namespace tsorcRevamp.Items
                 player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<WorldRune>());
             }
 
-            //No slash effect if any of these is true
-            if (!(item.useStyle != ItemUseStyleID.Swing || item.noMelee || item.channel || item.noUseGraphic || item.pick > 0 || item.createTile >= TileID.Dirt || item.createWall >= 0 || item.damage <= 0))
-            {
-                Projectile.NewProjectile(item.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.Slash>(), 0, 1, player.whoAmI);
-            }
 
             return base.UseItem(item, player);
         }

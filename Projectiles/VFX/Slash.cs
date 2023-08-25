@@ -50,22 +50,24 @@ namespace tsorcRevamp.Projectiles.VFX
 		Color slashColor = Color.White;
 		float timeMax = 1;
 		tsorcSlashStyle slashStyle = tsorcSlashStyle.Metal;
+		bool flippedSwing = false;
+		int AttackId = 0;
 
 		float rotationDirection = 0;
 		bool reachedEnd = false;
 		public override void AI()
 		{
             Player owner = Main.player[Projectile.owner];
-			bool flippedSwing = false;
-			if (owner.HeldItem.TryGetGlobalItem(out ItemMeleeAttackAiming aiming))
-			{
-				flippedSwing = aiming.AttackId % 2 != 0;
-			}
 
 			if (!initializedSlash)
 			{
+				if (owner.HeldItem.TryGetGlobalItem(out ItemMeleeAttackAiming aimingInit))
+				{
+					AttackId = aimingInit.AttackId;
+				}
+				flippedSwing = AttackId % 2 != 0;
 				trailWidth = (int)(owner.HeldItem.height * owner.HeldItem.scale * 1.3f);
-				Projectile.timeLeft = owner.itemAnimation + 10;
+				Projectile.timeLeft = owner.itemAnimationMax + 10;
 				tsorcInstancedGlobalItem instancedGlobal = owner.HeldItem.GetGlobalItem<tsorcInstancedGlobalItem>();
 				slashColor = instancedGlobal.slashColor;
 				slashStyle = instancedGlobal.slashStyle;
@@ -80,12 +82,19 @@ namespace tsorcRevamp.Projectiles.VFX
 			}
 
 
+			if (owner.HeldItem.TryGetGlobalItem(out ItemMeleeAttackAiming aiming))
+			{
+				//Main.NewText(aiming.AttackId);
+				if(AttackId != aiming.AttackId)
+                {
+					reachedEnd = true;
+                }
+			}
 
 
-			if (Projectile.timeLeft > 10)
+			if (Projectile.timeLeft > 10 && !reachedEnd)
 			{
 				Projectile.rotation = QuickSlashMeleeAnimation.MeleeSwingRotation(owner, owner.HeldItem, flippedSwing) + MathHelper.PiOver2;
-				Projectile.velocity = Projectile.rotation.ToRotationVector2();
 
 				//Skip the first
 				if (lastPercent == 0)
