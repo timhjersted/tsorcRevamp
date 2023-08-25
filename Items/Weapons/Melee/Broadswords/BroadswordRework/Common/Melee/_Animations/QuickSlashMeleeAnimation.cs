@@ -111,6 +111,6 @@ public class QuickSlashMeleeAnimation : MeleeAnimation, ICanDoMeleeDamage
 
 
         //only deal melee damage when the swing visually occurs
-        return (player.itemAnimation >= player.itemAnimationMax * 0.8f) && (player.itemAnimation <= player.itemAnimationMax * 0.9f);
+        return (player.itemAnimation <= player.itemAnimationMax * 0.9f);
 	}
 }
