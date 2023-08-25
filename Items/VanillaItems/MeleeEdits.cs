@@ -86,6 +86,8 @@ namespace tsorcRevamp.Items.VanillaItems
             switch (item.type)
             {
                 case ItemID.IronBroadsword:
+                case ItemID.IronHammer:
+                case ItemID.IronAxe:
                     instancedGlobal.slashColor = Color.SlateGray;
                     break;
                 case ItemID.WoodenSword:
@@ -116,10 +118,218 @@ namespace tsorcRevamp.Items.VanillaItems
                     instancedGlobal.slashColor = Color.Brown;
                     break;
                 case ItemID.BluePhaseblade:
+                case ItemID.BluePhasesaber:
                     instancedGlobal.slashColor = Color.Blue;
                     break;
                 case ItemID.RedPhaseblade:
+                case ItemID.RedPhasesaber:
                     instancedGlobal.slashColor = Color.Red;
+                    break;
+                case ItemID.GreenPhaseblade:
+                case ItemID.GreenPhasesaber:
+                    instancedGlobal.slashColor = Color.Green;
+                    break;
+                case ItemID.PurplePhaseblade:
+                case ItemID.PurplePhasesaber:
+                    instancedGlobal.slashColor = Color.Purple;
+                    break;
+                case ItemID.WhitePhaseblade:
+                case ItemID.WhitePhasesaber:
+                    instancedGlobal.slashColor = Color.WhiteSmoke;
+                    break;
+                case ItemID.YellowPhaseblade:
+                case ItemID.YellowPhasesaber:
+                    instancedGlobal.slashColor = Color.Yellow;
+                    break;
+                case ItemID.MeteorHamaxe:
+                    instancedGlobal.slashColor = Color.Purple;
+                    break;
+                case ItemID.MoltenHamaxe:
+                    instancedGlobal.slashColor = Color.DarkOrange;
+                    break;
+                case ItemID.AdamantiteSword:
+                case ItemID.AdamantiteWaraxe:
+                    instancedGlobal.slashColor = Color.Red;
+                    break;
+                case ItemID.CobaltSword:
+                case ItemID.CobaltWaraxe:
+                    instancedGlobal.slashColor = Color.RoyalBlue;
+                    break;
+                case ItemID.MythrilSword:
+                case ItemID.MythrilWaraxe:
+                    instancedGlobal.slashColor = Color.PaleGreen;
+                    break;
+                case ItemID.EnchantedSword:
+                    instancedGlobal.slashColor = Color.DarkSlateBlue;
+                    break;
+                case ItemID.BeeKeeper:
+                    instancedGlobal.slashColor = Color.MediumPurple;
+                    break;
+                case ItemID.PalladiumSword:
+                case ItemID.PalladiumWaraxe:
+                    instancedGlobal.slashColor = Color.DarkOrange;
+                    break;
+                case ItemID.OrichalcumSword:
+                case ItemID.OrichalcumWaraxe:
+                    instancedGlobal.slashColor = Color.HotPink;
+                    break;
+                case ItemID.ChlorophyteClaymore:
+                case ItemID.ChlorophyteSaber:
+                case ItemID.ChlorophyteGreataxe:
+                case ItemID.ChlorophyteWarhammer:
+                    instancedGlobal.slashColor = Color.LawnGreen;
+                    break;
+                case ItemID.ZombieArm:
+                    instancedGlobal.slashColor = Color.DarkOliveGreen;
+                    break;
+                case ItemID.TheAxe:
+                    instancedGlobal.slashColor = Color.Red;
+                    break;
+                case ItemID.IceSickle:
+                    instancedGlobal.slashColor = Color.DeepSkyBlue;
+                    break;
+                case ItemID.DeathSickle:
+                    instancedGlobal.slashColor = Color.DarkViolet;
+                    break;
+                case ItemID.SpectreHamaxe:
+                    instancedGlobal.slashColor = Color.CornflowerBlue;
+                    break;
+                case ItemID.CandyCaneSword:
+                    instancedGlobal.slashColor = Color.Red;
+                    break;
+                case ItemID.ChristmasTreeSword:
+                    instancedGlobal.slashColor = Color.ForestGreen;
+                    break;
+                case ItemID.PurpleClubberfish:
+                    instancedGlobal.slashColor = Color.BlueViolet;
+                    break;
+                case ItemID.PalmWoodHammer:
+                case ItemID.PalmWoodSword:
+                    instancedGlobal.slashColor = Color.PeachPuff; //who is naming these colors?
+                    break;
+                case ItemID.BorealWoodSword:
+                case ItemID.BorealWoodHammer:
+                    instancedGlobal.slashColor = Color.BurlyWood; //"Please paint my walls Burlywood"
+                    break;
+                case ItemID.InfluxWaver:
+                    instancedGlobal.slashColor = Color.DarkCyan;
+                    break;
+                case ItemID.FetidBaghnakhs:
+                    instancedGlobal.slashColor = Color.BurlyWood; 
+                    break;
+                case ItemID.Seedler:
+                    instancedGlobal.slashColor = Color.YellowGreen;
+                    break;
+                case ItemID.Meowmere:
+                    instancedGlobal.slashColor = Color.Coral;
+                    break;
+                case ItemID.StarWrath:
+                    instancedGlobal.slashColor = Color.DeepPink;
+                    break;
+                case ItemID.PsychoKnife:
+                    instancedGlobal.slashColor = Color.Red;
+                    break;
+                case ItemID.Bladetongue:
+                    instancedGlobal.slashColor = Color.Pink;
+                    break;
+                case ItemID.SlapHand:
+                    instancedGlobal.slashColor = Color.BurlyWood;
+                    break;
+                case ItemID.PlatinumHammer:
+                case ItemID.PlatinumAxe:
+                case ItemID.PlatinumBroadsword:
+                    instancedGlobal.slashColor = Color.CornflowerBlue;
+                    break;
+                case ItemID.TungstenHammer:
+                case ItemID.TungstenAxe:
+                case ItemID.TungstenBroadsword:
+                    instancedGlobal.slashColor = Color.SpringGreen;
+                    break;
+                case ItemID.LeadHammer:
+                case ItemID.LeadAxe:
+                case ItemID.LeadBroadsword:
+                    instancedGlobal.slashColor = Color.MidnightBlue;
+                    break;
+                case ItemID.TinHammer:
+                case ItemID.TinAxe:
+                case ItemID.TinBroadsword:
+                    instancedGlobal.slashColor = Color.Khaki;
+                    break;
+                case ItemID.CopperHammer:
+                case ItemID.CopperAxe:
+                case ItemID.CopperBroadsword:
+                    instancedGlobal.slashColor = Color.Peru; //"my favorite color is Peru" -- statements dreamed up by the utterly deranged
+                    break;
+                case ItemID.SilverHammer:
+                case ItemID.SilverAxe:
+                case ItemID.SilverBroadsword:
+                    instancedGlobal.slashColor = Color.Silver;
+                    break;
+                case ItemID.GoldHammer:
+                case ItemID.GoldAxe:
+                case ItemID.GoldBroadsword:
+                    instancedGlobal.slashColor = Color.DarkGoldenrod;
+                    break;
+                case ItemID.SolarFlareAxe:
+                case ItemID.SolarFlareHammer:
+                case ItemID.LunarHamaxeSolar:
+                    instancedGlobal.slashColor = Color.DarkOrange;
+                    break;
+                case ItemID.VortexAxe:
+                case ItemID.VortexHammer:
+                case ItemID.LunarHamaxeVortex:
+                    instancedGlobal.slashColor = Color.MediumSeaGreen;
+                    break;
+                case ItemID.NebulaAxe:
+                case ItemID.NebulaHammer:
+                case ItemID.LunarHamaxeNebula:
+                    instancedGlobal.slashColor = Color.Magenta;
+                    break;
+                case ItemID.StardustAxe:
+                case ItemID.StardustHammer:
+                case ItemID.LunarHamaxeStardust:
+                    instancedGlobal.slashColor = Color.Teal;
+                    break;
+                case ItemID.AntlionClaw:
+                    instancedGlobal.slashColor = Color.Gold;
+                    break;
+                case ItemID.DD2SquireDemonSword:
+                    instancedGlobal.slashColor = Color.MediumVioletRed;
+                    break;
+                case ItemID.DD2SquireBetsySword:
+                    instancedGlobal.slashColor = Color.DarkSalmon;
+                    break;
+                case ItemID.OrangePhaseblade:
+                case ItemID.OrangePhasesaber:
+                    instancedGlobal.slashColor = Color.Orange;
+                    break;
+                case ItemID.BloodHamaxe:
+                    instancedGlobal.slashColor = Color.PaleVioletRed;
+                    break;
+                case ItemID.GravediggerShovel:
+                    instancedGlobal.slashColor = Color.Gray;
+                    break;
+                case ItemID.TentacleSpike:
+                    instancedGlobal.slashColor = Color.DarkViolet;
+                    break;
+                case ItemID.LucyTheAxe:
+                    instancedGlobal.slashColor = Color.Red;
+                    break;
+                case ItemID.HamBat:
+                    instancedGlobal.slashColor = Color.IndianRed;
+                    break;
+                case ItemID.BatBat:
+                    instancedGlobal.slashColor = Color.PaleVioletRed;
+                    break;
+                case ItemID.Flymeal:
+                    instancedGlobal.slashColor = Color.DarkOliveGreen;
+                    break;
+                case ItemID.AshWoodHammer:
+                case ItemID.AshWoodSword:
+                    instancedGlobal.slashColor = Color.DarkOrange;
+                    break;
+                case ItemID.WaffleIron:
+                    instancedGlobal.slashColor = Color.Gray;
                     break;
             }
         }
