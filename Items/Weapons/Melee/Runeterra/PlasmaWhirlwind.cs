@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Item.width = 70;
             Item.height = 68;
             Item.knockBack = 4f;
-            Item.scale = 0.85f;
+            Item.scale = 0.92f;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 20;
             Item.useTime = 20;

@@ -40,22 +40,6 @@ namespace tsorcRevamp.NPCs.Bosses
         int watchTimer = 0;
         float damageCounter;
         float lastTimer = 1;
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            if(damageCounter == 0)
-            {
-                thisWatch = new Stopwatch();
-                thisWatch.Start();
-            }
-
-            watchTimer = 600;
-            damageCounter += damageDone;
-            if (hit.Crit)
-            {
-                damageCounter += damageDone;
-            }
-            lastTimer = (float)thisWatch.Elapsed.TotalSeconds;
-        }
 
         public override void AI()
         {
@@ -82,8 +66,24 @@ namespace tsorcRevamp.NPCs.Bosses
 
         }
 
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {/*
+            if(damageCounter == 0)
+            {
+                thisWatch = new Stopwatch();
+                thisWatch.Start();
+            }
+
+            watchTimer = 600;
+            damageCounter += damageDone;
+            if (hit.Crit)
+            {
+                damageCounter += damageDone;
+            }
+            lastTimer = (float)thisWatch.Elapsed.TotalSeconds;*/
+        }
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
-        {
+        {/*
             if (item.type == ItemID.WoodenHammer)
             {
                 NPC.life = 0;
@@ -97,7 +97,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             watchTimer = 600;
             damageCounter += damageDone;
-            lastTimer = (float)thisWatch.Elapsed.TotalSeconds;
+            lastTimer = (float)thisWatch.Elapsed.TotalSeconds;*/
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

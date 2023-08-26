@@ -5490,7 +5490,14 @@ Mods: {
 
 			LionheartGunblade: {
 				DisplayName: Lionheart Gunblade
-				Tooltip: '''"Of gunblades, the finest model is the Lionheart."'''
+				Tooltip:
+					'''
+					"Of gunblades, the finest model is the Lionheart."
+					Hitting an enemy with the Blade adds a mark
+					At {0} marks, shoot the enemy to consume them for massive damage
+					Mark bonus damage is based on distance to the enemy
+					Benefits from all damage types
+					'''
 			}
 
 			MagmaTooth: {
@@ -8112,6 +8119,11 @@ Mods: {
 				DisplayName: Invincibility Cooldown
 				Description: Laevateinn and Claiomh Solais cannot grant you invincibility while you have this!
 			}
+
+			LionheartMark: {
+				DisplayName: Lionheart Mark
+				Description: Mods.tsorcRevamp.Buffs.LionheartMark.Description
+			}
 		}
 
 		Projectiles: {
@@ -8668,6 +8680,7 @@ Mods: {
 			RageDemonBolt.DisplayName: Rage Demon Bolt
 			RageFirebomb.DisplayName: Rage Firebomb
 			RageFirebreath.DisplayName: Rage Firebreath
+			LionheartGunshot.DisplayName: Lionheart Gunshot
 		}
 
 		NPCs: {

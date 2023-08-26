@@ -111,6 +111,9 @@ namespace tsorcRevamp.NPCs
         public bool Soulstruck;
         public bool PhazonCorruption;
 
+        public int LionheartMarks = 0;
+        public bool LionheartMarked = false;
+
         public bool Sundered;
 
         public bool Venomized;

@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 30;
 
-
+			ScreenSpace = true;
             trailWidth = 45;
 			trailPointLimit = 900;
 			trailMaxLength = 333;
@@ -102,11 +102,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			{
 				trailIntensity -= 0.05f;
 			}
-
-            if (InterstellarVesselGauntlet.processedProjectilesCount > 9 && owner.ownedProjectileCounts[ModContent.ProjectileType<InterstellarVesselAura>()] == 0)
-            {
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), owner.Center, Vector2.Zero, ModContent.ProjectileType<InterstellarVesselAura>(), Projectile.damage, 0);
-            }
 
 
             if (!CheckActive(owner))

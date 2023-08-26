@@ -21,6 +21,7 @@ using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Items.Vanity;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Items.Accessories.Expert;
 
 namespace tsorcRevamp.Items.BossBags
 {
@@ -200,7 +201,7 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            //no expert-exlusive item yet
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PhoenixSkull>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Summon.PhoenixEgg>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfFire>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.CobaltDrill));
@@ -219,6 +220,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.GoldenHairpin>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfWater>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.AdamantiteDrill));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheSorrowMask>(), 7));
         }
     }
     public class TheHunterBag : BossBag
@@ -234,6 +236,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfEarth>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.Drax));
             itemLoot.Add(ItemDropRule.Common(ItemID.AngelWings));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheHunterMask>(), 7));
         }
     }
 
@@ -286,8 +289,7 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            //no expert-exclusive item yet
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.LionheartGunblade>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.LionheartGunblade>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Magic.GemBox>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<LampTome>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>(), 1, 2, 2));

@@ -9,6 +9,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Lore;
+using tsorcRevamp.Items.Placeable.Relics;
+using tsorcRevamp.Items.Placeable.Trophies;
+using tsorcRevamp.Items.Vanity;
 using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
@@ -585,7 +588,10 @@ namespace tsorcRevamp.NPCs.Bosses
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CrestOfWater>(), 1, 2, 2));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.AdamantiteDrill));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<TheSorrowMask>(), 7));
             npcLoot.Add(notExpertCondition);
+            npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<TheSorrowRelic>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheSorrowTrophy>(), 10));
         }
         public override void OnKill()
         {

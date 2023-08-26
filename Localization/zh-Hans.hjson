@@ -8115,6 +8115,11 @@ Mods: {
 				DisplayName: 无敌冷却
 				Description: 冷却结束前莱瓦汀和克拉乌·索拉斯不能让你再次获得无敌效果
 			}
+
+			LionheartMark: {
+				// DisplayName: Lionheart Mark
+				// Description: Mods.tsorcRevamp.Buffs.LionheartMark.Description
+			}
 		}
 
 		Projectiles: {
@@ -8671,6 +8676,7 @@ Mods: {
 			RageDemonBolt.DisplayName: 追踪火星
 			RageFirebomb.DisplayName: 火焰炸弹
 			RageFirebreath.DisplayName: 烈火之息
+			// LionheartGunshot.DisplayName: Lionheart Gunshot
 		}
 
 		NPCs: {

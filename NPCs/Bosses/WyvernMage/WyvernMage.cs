@@ -389,7 +389,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             if (!Main.expertMode)
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 2);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.LionheartGunblade>(), 1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<LampTome>(), 1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Magic.GemBox>(), 1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Defensive.PoisonbiteRing>(), 1);

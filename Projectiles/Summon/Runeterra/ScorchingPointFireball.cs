@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
             Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = 30;
-
+			ScreenSpace = true;
             trailWidth = 45;
 			trailPointLimit = 900;
 			trailMaxLength = 111;
@@ -80,11 +80,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			base.AI();
 			Player owner = Main.player[Projectile.owner];
 			tsorcRevampPlayer modPlayer = owner.GetModPlayer<tsorcRevampPlayer>();
-
-			if (ScorchingPoint.processedProjectilesCount > 4 && owner.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointAura>()] == 0) 
-			{
-				Projectile.NewProjectile(Projectile.GetSource_FromThis(), owner.Center, Vector2.Zero, ModContent.ProjectileType<ScorchingPointAura>(), Projectile.damage, 0);
-			}
 
 			if (!CheckActive(owner))
 			{

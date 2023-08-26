@@ -104,11 +104,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 				trailIntensity -= 0.05f;
 			}
 
-            if (CenterOfTheUniverse.processedProjectilesCount > 13 && owner.ownedProjectileCounts[ModContent.ProjectileType<CenterOfTheUniverseAura>()] == 0)
-            {
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), owner.Center, Vector2.Zero, ModContent.ProjectileType<CenterOfTheUniverseAura>(), Projectile.damage, 0);
-            }
-
 
             if (!CheckActive(owner))
 			{
