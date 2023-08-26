@@ -32,9 +32,9 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 24;
             }
 
-            if (item.type == ItemID.StaffoftheFrostHydra) //buff so it's an actually decent reward
+            if (item.type == ItemID.StaffoftheFrostHydra) //nerf, using static immunity frame in tml1.4.4, vanilla damage is 100
             {
-                item.damage = 120;
+                item.damage = 80;
             }
 
             //Lunar items
