@@ -25,6 +25,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             player.buffImmune[ModContent.BuffType<PowerfulCurseBuildup>()] = true;
             player.buffImmune[BuffID.Frozen] = true;
             player.buffImmune[BuffID.Blackout] = true;
+            player.buffImmune[BuffID.Obstructed] = true;
         }
 
     }

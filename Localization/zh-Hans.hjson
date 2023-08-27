@@ -1493,7 +1493,7 @@ Mods: {
 					'''
 					亚尔特留斯曾佩戴的戒指
 					曾拥有着这个世界所无法承受的力量
-					[c/ffbf00:现在，它可以使佩戴者免疫诅咒、黑视失明与冰冻]
+					[c/ffbf00:现在，它可以使佩戴者免疫诅咒、黑视、遮蔽与冰冻]
 					'''
 			}
 
@@ -5119,7 +5119,7 @@ Mods: {
 
 			LampTome: {
 				DisplayName: 灯塔
-				Tooltip: 一本失传的能治愈黑视失明的书
+				Tooltip: 一本失传的能治愈各种失明症状的魔法之书
 			}
 
 			LightOfDawn: {
@@ -5491,7 +5491,14 @@ Mods: {
 
 			LionheartGunblade: {
 				DisplayName: 狮子心枪刃
-				Tooltip: “在最终幻想Ⅷ的枪刃中，狮子心是最好的型号”
+				Tooltip:
+					'''
+					“在最终幻想Ⅷ的枪刃中，狮子心是最好的型号”
+					被剑刃攻击的敌人会获得一层狮心印记堆叠
+					在 {0} 层堆叠时，右键射击会消耗狮心印记并造成大量伤害
+					印记加持的伤害取决于玩家与敌人之间的距离
+					获得所有职业的加成效果
+					'''
 			}
 
 			MagmaTooth: {
@@ -6926,7 +6933,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
 					根据武器使用时间有多慢，获得近战伤害加成（加成最高到 {1}%）
 					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
-					当生命值低于 {3}%时， 回复 {4}点生命值（{$CommonItemTooltip.Cooldown@5}）
+					当生命值低于{3}%时，回复{4}点生命值（{$CommonItemTooltip.Cooldown@5}）
 					'''
 			}
 
@@ -7254,9 +7261,9 @@ Mods: {
 				DisplayName: 凤凰涅槃之骨
 				Tooltip:
 					'''
-					逃脱死亡({$CommonItemTooltip.Cooldown})
+					逃脱死亡（{$CommonItemTooltip.Cooldown}）
 					复活时恢复你最大生命值的 {1}% 
-					复活后获得 {2}% 生命窃取，持续 {3} 秒
+					复活后获得生命窃取增益，造成伤害的 {2}% 转化为自己的生命值，持续 {3} 秒
 					只有佩戴此物品时才会进入冷却
 					'''
 			}
@@ -8117,8 +8124,8 @@ Mods: {
 			}
 
 			LionheartMark: {
-				// DisplayName: Lionheart Mark
-				// Description: Mods.tsorcRevamp.Buffs.LionheartMark.Description
+				DisplayName: 狮心印记
+				Description: Mods.tsorcRevamp.Buffs.LionheartMark.Description
 			}
 		}
 
@@ -8302,8 +8309,8 @@ Mods: {
 			HerosArrow.DisplayName: 英雄之箭
 			HypnoticDisrupter.DisplayName: 虚空之梦
 			IceSpirit.DisplayName: 冰灵
-			InkGeyser.DisplayName: 墨水间歇泉
-			InkJet.DisplayName: 墨水间喷发
+			InkGeyser.DisplayName: 黯墨喷涌
+			InkJet.DisplayName: 黯墨爆发
 			JellyfishLightning.DisplayName: 激光
 			JungleWyvernFire.DisplayName: 丛林之息
 			CataclysmicFirestorm.DisplayName: 灾厄风暴燚
@@ -8676,7 +8683,7 @@ Mods: {
 			RageDemonBolt.DisplayName: 追踪火星
 			RageFirebomb.DisplayName: 火焰炸弹
 			RageFirebreath.DisplayName: 烈火之息
-			// LionheartGunshot.DisplayName: Lionheart Gunshot
+			LionheartGunshot.DisplayName: 狮心枪射
 		}
 
 		NPCs: {
