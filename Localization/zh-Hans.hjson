@@ -9822,6 +9822,16 @@ Mods: {
 						'''
 				}
 
+				DisableRifleScopeZoom: {
+					Label: Disable Rifle Scope Zoom
+					Tooltip: 
+						'''
+						Disable the Off-Screen Zooming feature provided by the Rifle Scope and it's upgrades,
+						doesn't affect weapons like the Sniper Rifle which have this natively, 
+						useful for guns that have a right-click function. Defaults to Off.
+						'''
+				}
+
 				DisableDragoonGreavesDoubleJump: {
 					Label: 禁用 龙骑士腿甲 的二段跳
 					Tooltip: 禁用 龙骑士腿甲 的额外跳跃效果。默认为关闭。

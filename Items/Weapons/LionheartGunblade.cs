@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
@@ -17,13 +18,15 @@ namespace tsorcRevamp.Items.Weapons
         public const int MaxMarks = 5;
         public const float MarkExtraDmgMultBase = 2f;
         public const float MarkDistanceBasedDmgDivisor = 8f;
+        public const int BaseDmg = 80;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMarks);
         public override void SetStaticDefaults()
         {
+            ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
         }
         public override void SetDefaults()
         {
-            Item.damage = 80;
+            Item.damage = BaseDmg;
             Item.knockBack = 5f;
             Item.width = 73;
             Item.height = 29;
@@ -42,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons
         }
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
-            damage *= player.GetDamage(DamageClass.Melee).ApplyTo(1f) + player.GetDamage(DamageClass.Ranged).ApplyTo(1f) + player.GetDamage(DamageClass.Magic).ApplyTo(1f) + player.GetDamage(DamageClass.Summon).ApplyTo(1f) + player.GetDamage(DamageClass.Throwing).ApplyTo(1f) - 4f;
+            damage.Flat += (player.GetDamage(DamageClass.Melee).ApplyTo(BaseDmg) + player.GetDamage(DamageClass.Ranged).ApplyTo(BaseDmg) + player.GetDamage(DamageClass.Magic).ApplyTo(BaseDmg) + player.GetDamage(DamageClass.Summon).ApplyTo(BaseDmg) + player.GetDamage(DamageClass.Throwing).ApplyTo(BaseDmg)) - (5f * BaseDmg);
         }
         public override void ModifyWeaponCrit(Player player, ref float crit)
         {
@@ -88,11 +91,13 @@ namespace tsorcRevamp.Items.Weapons
                 Item.useStyle = ItemUseStyleID.Shoot;
                 Item.noMelee = true;
                 Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<LionheartGunshot>(), damage, knockback);
+                SoundEngine.PlaySound(SoundID.Item11);
             }
             else
             {
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.noMelee = false;
+                SoundEngine.PlaySound(SoundID.Item1);
             }
             return false;
         }

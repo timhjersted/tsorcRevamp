@@ -9820,6 +9820,16 @@ Mods: {
 						'''
 				}
 
+				DisableRifleScopeZoom: {
+					Label: Disable Rifle Scope Zoom
+					Tooltip: 
+						'''
+						Disable the Off-Screen Zooming feature provided by the Rifle Scope and it's upgrades,
+						doesn't affect weapons like the Sniper Rifle which have this natively, 
+						useful for guns that have a right-click function. Defaults to Off.
+						'''
+				}
+
 				DisableDragoonGreavesDoubleJump: {
 					Label: Disable Dragoon Greaves Double Jump
 					Tooltip: Disable the extra jump provided by both Dragoon Greaves. Defaults to Off.

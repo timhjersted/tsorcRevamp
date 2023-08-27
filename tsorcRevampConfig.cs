@@ -38,6 +38,10 @@ namespace tsorcRevamp
 
         [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(false)]
+        public bool DisableRifleScopeZoom { get; set; }
+
+        [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(false)]
         public bool DisableDragoonGreavesDoubleJump { get; set; }
 
         [BackgroundColor(60, 140, 80, 192)]

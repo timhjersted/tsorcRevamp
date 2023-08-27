@@ -1043,6 +1043,10 @@ namespace tsorcRevamp
             {
                 Player.manaFlower = false;
             }
+            if (ModContent.GetInstance<tsorcRevampConfig>().DisableRifleScopeZoom)
+            {
+                Player.scope = false;
+            }
             if (manaShield > 0)
             {
                 Player.manaRegenBuff = false;
