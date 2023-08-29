@@ -4,9 +4,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles
+namespace tsorcRevamp.Projectiles.Enemy
 {
-    class CMSCrescent : ModProjectile
+    class LeonhardCMSCrescent : ModProjectile
     {
         public override string Texture => "tsorcRevamp/Projectiles/Melee/MLGSCrescent";
 
@@ -16,7 +16,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.height = 20;
             Projectile.DamageType = DamageClass.Generic;
             Projectile.penetrate = 3;
-            Projectile.friendly = true;
+            Projectile.hostile = true;
+            Projectile.timeLeft = 12;
             Projectile.tileCollide = true;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.usesLocalNPCImmunity = true;

@@ -8681,6 +8681,7 @@ Mods: {
 			RageFirebomb.DisplayName: Rage Firebomb
 			RageFirebreath.DisplayName: Rage Firebreath
 			LionheartGunshot.DisplayName: Lionheart Gunshot
+			LeonhardCMSCrescent.DisplayName: Leonhard C M S Crescent
 		}
 
 		NPCs: {
@@ -9709,6 +9710,7 @@ Mods: {
 			ClericOfSorrow.DisplayName: Cleric Of Sorrow
 			Willowisp.DisplayName: Willowisp
 			GreatRedThresher.DisplayName: Great Red Thresher
+			LeonhardPhase2.DisplayName: Leonhard Phase2
 		}
 
 		Prefixes: {
@@ -9822,7 +9824,7 @@ Mods: {
 
 				DisableRifleScopeZoom: {
 					Label: Disable Rifle Scope Zoom
-					Tooltip: 
+					Tooltip:
 						'''
 						Disable the Off-Screen Zooming feature provided by the Rifle Scope and it's upgrades,
 						doesn't affect weapons like the Sniper Rifle which have this natively, 

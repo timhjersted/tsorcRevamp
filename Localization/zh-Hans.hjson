@@ -8684,6 +8684,7 @@ Mods: {
 			RageFirebomb.DisplayName: 火焰炸弹
 			RageFirebreath.DisplayName: 烈火之息
 			LionheartGunshot.DisplayName: 狮心枪射
+			// LeonhardCMSCrescent.DisplayName: Leonhard C M S Crescent
 		}
 
 		NPCs: {
@@ -9711,6 +9712,7 @@ Mods: {
 			ClericOfSorrow.DisplayName: 哀悼牧师
 			Willowisp.DisplayName: 飞絮
 			GreatRedThresher.DisplayName: 殷红勾魂使
+			// LeonhardPhase2.DisplayName: Leonhard Phase2
 		}
 
 		Prefixes: {
@@ -9824,7 +9826,7 @@ Mods: {
 
 				DisableRifleScopeZoom: {
 					Label: Disable Rifle Scope Zoom
-					Tooltip: 
+					Tooltip:
 						'''
 						Disable the Off-Screen Zooming feature provided by the Rifle Scope and it's upgrades,
 						doesn't affect weapons like the Sniper Rifle which have this natively, 
