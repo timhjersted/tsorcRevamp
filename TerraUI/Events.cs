@@ -3,47 +3,46 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using TerraUI.Objects;
 
-namespace TerraUI
+namespace TerraUI;
+
+public delegate void UIEventHandler(UIObject sender);
+public delegate bool MouseClickEventHandler(UIObject sender, MouseButtonEventArgs e);
+public delegate void MouseButtonEventHandler(UIObject sender, MouseButtonEventArgs e);
+public delegate void MouseEventHandler(UIObject sender, MouseEventArgs e);
+public delegate void DrawHandler(UIObject sender, SpriteBatch spriteBatch);
+public delegate bool ConditionHandler(Item item);
+public delegate void ValueChangedEventHandler<T>(UIObject sender, ValueChangedEventArgs<T> e);
+
+public class ValueChangedEventArgs<T>
 {
-    public delegate void UIEventHandler(UIObject sender);
-    public delegate bool MouseClickEventHandler(UIObject sender, MouseButtonEventArgs e);
-    public delegate void MouseButtonEventHandler(UIObject sender, MouseButtonEventArgs e);
-    public delegate void MouseEventHandler(UIObject sender, MouseEventArgs e);
-    public delegate void DrawHandler(UIObject sender, SpriteBatch spriteBatch);
-    public delegate bool ConditionHandler(Item item);
-    public delegate void ValueChangedEventHandler<T>(UIObject sender, ValueChangedEventArgs<T> e);
+    public T PreviousValue { get; private set; }
+    public T Value { get; private set; }
 
-    public class ValueChangedEventArgs<T>
+    public ValueChangedEventArgs(T previousValue, T value)
     {
-        public T PreviousValue { get; private set; }
-        public T Value { get; private set; }
-
-        public ValueChangedEventArgs(T previousValue, T value)
-        {
-            PreviousValue = previousValue;
-            Value = value;
-        }
+        PreviousValue = previousValue;
+        Value = value;
     }
+}
 
-    public class MouseButtonEventArgs
+public class MouseButtonEventArgs
+{
+    public MouseButtons Button { get; private set; }
+    public Vector2 Position { get; private set; }
+
+    public MouseButtonEventArgs(MouseButtons button, Vector2 position)
     {
-        public MouseButtons Button { get; private set; }
-        public Vector2 Position { get; private set; }
-
-        public MouseButtonEventArgs(MouseButtons button, Vector2 position)
-        {
-            Button = button;
-            Position = position;
-        }
+        Button = button;
+        Position = position;
     }
+}
 
-    public class MouseEventArgs
+public class MouseEventArgs
+{
+    public Vector2 Position { get; private set; }
+
+    public MouseEventArgs(Vector2 position)
     {
-        public Vector2 Position { get; private set; }
-
-        public MouseEventArgs(Vector2 position)
-        {
-            Position = position;
-        }
+        Position = position;
     }
 }

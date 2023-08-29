@@ -4,110 +4,109 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items
+namespace tsorcRevamp.Items;
+
+[LegacyName("SoulShekel")]
+class SoulCoin : BaseRarityItem
 {
-    [LegacyName("SoulShekel")]
-    class SoulCoin : BaseRarityItem
+    public override void SetStaticDefaults()
     {
-        public override void SetStaticDefaults()
-        {
-            Tooltip.SetDefault("A mysterious coin formed out of dark souls" +
-                "\nUsed as a currency among certain merchants");
-            ItemID.Sets.ItemNoGravity[Item.type] = true;
-            //Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(4, 8));
+        Tooltip.SetDefault("A mysterious coin formed out of dark souls" +
+            "\nUsed as a currency among certain merchants");
+        ItemID.Sets.ItemNoGravity[Item.type] = true;
+        //Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(4, 8));
 
-        }
+    }
 
-        public override void SetDefaults()
-        {
-            Item.width = 14;
-            Item.height = 22;
-            Item.maxStack = 99999;
-            Item.value = 1;
-            Item.rare = ItemRarityID.Lime;
-            DarkSoulRarity = 12;
-        }
+    public override void SetDefaults()
+    {
+        Item.width = 14;
+        Item.height = 22;
+        Item.maxStack = 99999;
+        Item.value = 1;
+        Item.rare = ItemRarityID.Lime;
+        DarkSoulRarity = 12;
+    }
 
-        public override bool GrabStyle(Player player)
-        {
-            Vector2 vectorItemToPlayer = player.Center - Item.Center;
-            Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 10f;
-            Item.velocity = movement;
-            return true;
-        }
+    public override bool GrabStyle(Player player)
+    {
+        Vector2 vectorItemToPlayer = player.Center - Item.Center;
+        Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 10f;
+        Item.velocity = movement;
+        return true;
+    }
 
-        public override void GrabRange(Player player, ref int grabRange)
-        {
-            grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper / 2);
-        }
+    public override void GrabRange(Player player, ref int grabRange)
+    {
+        grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper / 2);
+    }
 
-        public override void ModifyTooltips(System.Collections.Generic.List<TooltipLine> list)
+    public override void ModifyTooltips(System.Collections.Generic.List<TooltipLine> list)
+    {
+        foreach (TooltipLine line2 in list)
         {
-            foreach (TooltipLine line2 in list)
+            if (line2.Mod == "Terraria" && line2.Name == "ItemName")
             {
-                if (line2.Mod == "Terraria" && line2.Name == "ItemName")
-                {
-                    line2.OverrideColor = BaseColor.RarityExample;
-                }
+                line2.OverrideColor = BaseColor.RarityExample;
+            }
+        }
+    }
+
+    public override bool OnPickup(Player player)
+    {
+        bool openSlot = false;
+        for (int i = 0; i < /*Main.maxInventory*/ 50; i++) //Main.maxInventory == 58 would include coin and ammo slots, we don't want to take those into account in this case
+        {
+            if (player.inventory[i].IsAir || player.HasItem(ModContent.ItemType<SoulCoin>()))
+            {
+                openSlot = true;
+            }
+        }
+        if (openSlot)
+        {
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.CoinPickup with { Volume = 0.8f}, player.Center);
+        }
+        return true;
+    }
+
+    public override void AddRecipes()
+    {
+        Recipe recipe = CreateRecipe();
+        recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5);
+
+        recipe.Register();
+
+        Recipe recipe2 = CreateRecipe(10);
+        recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 50);
+        recipe2.Register();
+
+        Recipe recipe3 = CreateRecipe(100);
+        recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
+        recipe3.Register();
+    }
+
+    int itemframe = 0;
+    int itemframeCounter = 0;
+
+    public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+    {
+
+        Lighting.AddLight(Item.Center, 0.1f, 0.45f, 0.21f);
+        Texture2D texture = (Texture2D)Mod.Assets.Request<Texture2D>("Items/SoulCoin_InWorld");
+        var myrectangle = texture.Frame(1, 8, 0, itemframe);
+        spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(7, 11), Item.scale, SpriteEffects.None, 0.1f);
+
+        itemframeCounter += Main.rand.Next(1, 3);
+
+        if (itemframeCounter >= 15)
+        {
+            itemframeCounter = 0;
+            if (++itemframe >= 7)
+            {
+                itemframe = 0;
             }
         }
 
-        public override bool OnPickup(Player player)
-        {
-            bool openSlot = false;
-            for (int i = 0; i < /*Main.maxInventory*/ 50; i++) //Main.maxInventory == 58 would include coin and ammo slots, we don't want to take those into account in this case
-            {
-                if (player.inventory[i].IsAir || player.HasItem(ModContent.ItemType<SoulCoin>()))
-                {
-                    openSlot = true;
-                }
-            }
-            if (openSlot)
-            {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.CoinPickup with { Volume = 0.8f}, player.Center);
-            }
-            return true;
-        }
-
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5);
-
-            recipe.Register();
-
-            Recipe recipe2 = CreateRecipe(10);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 50);
-            recipe2.Register();
-
-            Recipe recipe3 = CreateRecipe(100);
-            recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
-            recipe3.Register();
-        }
-
-        int itemframe = 0;
-        int itemframeCounter = 0;
-
-        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
-        {
-
-            Lighting.AddLight(Item.Center, 0.1f, 0.45f, 0.21f);
-            Texture2D texture = (Texture2D)Mod.Assets.Request<Texture2D>("Items/SoulCoin_InWorld");
-            var myrectangle = texture.Frame(1, 8, 0, itemframe);
-            spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(7, 11), Item.scale, SpriteEffects.None, 0.1f);
-
-            itemframeCounter += Main.rand.Next(1, 3);
-
-            if (itemframeCounter >= 15)
-            {
-                itemframeCounter = 0;
-                if (++itemframe >= 7)
-                {
-                    itemframe = 0;
-                }
-            }
-
-            return false;
-        }
+        return false;
     }
 }

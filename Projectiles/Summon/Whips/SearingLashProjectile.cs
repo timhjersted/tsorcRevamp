@@ -7,12 +7,12 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Summon.Whips
-{
+namespace tsorcRevamp.Projectiles.Summon.Whips;
+
 	public class SearingLashProjectile : ModProjectile
 	{
-        public static int SearingCharges = 0;
-        public override void SetStaticDefaults()
+    public static int SearingCharges = 0;
+    public override void SetStaticDefaults()
 		{
 			// This makes the projectile use whip collision detection and allows flasks to be applied to it.
 			ProjectileID.Sets.IsAWhip[Type] = true;
@@ -119,28 +119,28 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			owner.itemTime = owner.itemTimeMax;
 
 			return false; // still charging
-        }
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    }
+    public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    {
+        Player player = Main.player[Main.myPlayer];
+        Vector2 WhipTip = new Vector2(10, 12) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
+        List<Vector2> points = Projectile.WhipPointsForCollision;
+        if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
         {
-            Player player = Main.player[Main.myPlayer];
-            Vector2 WhipTip = new Vector2(10, 12) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
-            List<Vector2> points = Projectile.WhipPointsForCollision;
-            if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
+            crit = true;
+            if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
             {
-                crit = true;
-                if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
-                {
-                    damage *= 5;
-                    damage /= 4;
-                }
+                damage *= 5;
+                damage /= 4;
             }
         }
+    }
 
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+    public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-            SearingCharges = (int)ChargeTime / 40 + 1;
-            target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.SearingLashDebuff>(), SearingCharges * 150);
+        SearingCharges = (int)ChargeTime / 40 + 1;
+        target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.SearingLashDebuff>(), SearingCharges * 150);
 			target.AddBuff(BuffID.OnFire, SearingCharges * 150);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
@@ -227,4 +227,3 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			return false;
 		}
 	}
-}

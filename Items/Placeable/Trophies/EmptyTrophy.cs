@@ -3,8 +3,8 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Placeable.Trophies
-{
+namespace tsorcRevamp.Items.Placeable.Trophies;
+
 	public class EmptyTrophy : ModItem
 	{
 		public override void SetStaticDefaults() 
@@ -25,4 +25,3 @@ namespace tsorcRevamp.Items.Placeable.Trophies
 			Item.value = Item.buyPrice(0, 15, 0, 0);
 		}
 	}
-}

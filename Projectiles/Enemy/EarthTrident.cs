@@ -6,87 +6,86 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 
-namespace tsorcRevamp.Projectiles.Enemy
+namespace tsorcRevamp.Projectiles.Enemy;
+
+class EarthTrident : ModProjectile
 {
-    class EarthTrident : ModProjectile
+
+    public override void SetDefaults()
     {
+        Projectile.aiStyle = -1;
+        Projectile.hostile = true;
+        Projectile.height = 16;
+        Projectile.light = 0.5f;
+        Projectile.DamageType = DamageClass.Ranged;
+        Projectile.scale = 0.8f;
+        Projectile.penetrate = 1;
+        Projectile.tileCollide = true;
+        Projectile.width = 16;
+        Projectile.tileCollide = false;
+    }
 
-        public override void SetDefaults()
+    public static Texture2D texture;
+    public override bool PreDraw(ref Color lightColor)
+    {
+        Main.spriteBatch.End();
+        Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+        if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gaibon>()))
         {
-            Projectile.aiStyle = -1;
-            Projectile.hostile = true;
-            Projectile.height = 16;
-            Projectile.light = 0.5f;
-            Projectile.DamageType = DamageClass.Ranged;
-            Projectile.scale = 0.8f;
-            Projectile.penetrate = 1;
-            Projectile.tileCollide = true;
-            Projectile.width = 16;
-            Projectile.tileCollide = false;
+            ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
+            data.Apply(null);
         }
 
-        public static Texture2D texture;
-        public override bool PreDraw(ref Color lightColor)
+        SpriteEffects spriteEffects = SpriteEffects.None;
+        if (Projectile.spriteDirection == -1)
         {
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gaibon>()))
-            {
-                ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
-                data.Apply(null);
-            }
-
-            SpriteEffects spriteEffects = SpriteEffects.None;
-            if (Projectile.spriteDirection == -1)
-            {
-                spriteEffects = SpriteEffects.FlipHorizontally;
-            }
-
-            if (texture == null || texture.IsDisposed)
-            {
-                texture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture);
-            }
-
-            int frameHeight = texture.Height / Main.projFrames[Projectile.type];
-            int startY = frameHeight * Projectile.frame;
-            Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
-            Vector2 origin = sourceRectangle.Size() / 2f;
-            Main.EntitySpriteDraw(texture,
-                Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
-                sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
-
-            return false;
+            spriteEffects = SpriteEffects.FlipHorizontally;
         }
 
-        public override void AI()
+        if (texture == null || texture.IsDisposed)
         {
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2; //This makes it rotate to face where it's moving
-                                                                                         //projectile.velocity.Y += (9.8f / 60); //This is its gravity. Comes out to about 0.16 per frame, which is actually really high!!
-            Projectile.velocity.Y += 0.1f;
+            texture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture);
         }
 
-        
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gaibon>()))
-            {
-                target.AddBuff(BuffID.OnFire, 150);
-            }
-        }
+        int frameHeight = texture.Height / Main.projFrames[Projectile.type];
+        int startY = frameHeight * Projectile.frame;
+        Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+        Vector2 origin = sourceRectangle.Size() / 2f;
+        Main.EntitySpriteDraw(texture,
+            Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+            sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
+        Main.spriteBatch.End();
+        Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
 
-        public override bool PreKill(int timeleft)
-        {
-            Projectile.type = ProjectileID.WoodenArrowHostile;
+        return false;
+    }
 
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
-            for (int i = 0; i < 10; i++)
-            {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 7, 0, 0, 0, default, 1f);
-            }
-            return true;
+    public override void AI()
+    {
+        Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2; //This makes it rotate to face where it's moving
+                                                                                     //projectile.velocity.Y += (9.8f / 60); //This is its gravity. Comes out to about 0.16 per frame, which is actually really high!!
+        Projectile.velocity.Y += 0.1f;
+    }
+
+    
+    public override void OnHitPlayer(Player target, int damage, bool crit)
+    {
+        if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gaibon>()))
+        {
+            target.AddBuff(BuffID.OnFire, 150);
         }
+    }
+
+    public override bool PreKill(int timeleft)
+    {
+        Projectile.type = ProjectileID.WoodenArrowHostile;
+
+        Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
+        for (int i = 0; i < 10; i++)
+        {
+            Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 7, 0, 0, 0, default, 1f);
+        }
+        return true;
     }
 }

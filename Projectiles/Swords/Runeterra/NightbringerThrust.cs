@@ -7,8 +7,8 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace tsorcRevamp.Projectiles.Swords.Runeterra
-{
+namespace tsorcRevamp.Projectiles.Swords.Runeterra;
+
 	public class NightbringerThrust : ModProjectile
 	{
 		public int steeltempesthittimer3 = 0;
@@ -23,15 +23,15 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 		{
 			get => (int)Projectile.ai[0];
 			set => Projectile.ai[0] = value;
-        }
-        public override void SetStaticDefaults()
-        {
-            Main.projFrames[Projectile.type] = 12;
-            DisplayName.SetDefault("Nightbringer Thrust");
-        }
+    }
+    public override void SetStaticDefaults()
+    {
+        Main.projFrames[Projectile.type] = 12;
+        DisplayName.SetDefault("Nightbringer Thrust");
+    }
 
 
-        public override void SetDefaults()
+    public override void SetDefaults()
 		{
 			Projectile.Size = new Vector2(18);
 			Projectile.aiStyle = -1;
@@ -40,19 +40,19 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			Projectile.tileCollide = false;
 			Projectile.scale = 1f; 
 			Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 20;
-            Projectile.DamageType = DamageClass.Melee;
+        Projectile.localNPCHitCooldown = 20;
+        Projectile.DamageType = DamageClass.Melee;
 			Projectile.ownerHitCheck = true; 
 			Projectile.extraUpdates = 1; 
 			Projectile.timeLeft = 360;
 			Projectile.hide = true;
-        }
-        public override void OnSpawn(IEntitySource source)
-        {
-            Player player = Main.player[Projectile.owner];
-            Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 2f);
-        }
-        public override void AI()
+    }
+    public override void OnSpawn(IEntitySource source)
+    {
+        Player player = Main.player[Projectile.owner];
+        Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 2f);
+    }
+    public override void AI()
 		{
 			Player player = Main.player[Projectile.owner];
 
@@ -73,13 +73,13 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter, reverseRotation: false, addGfxOffY: false);
 			Projectile.Center = playerCenter + Projectile.velocity * (Timer - 1f);
 
-            //Projectile.spriteDirection = (Vector2.Dot(Projectile.velocity, Vector2.UnitX) >= 0f).ToDirectionInt();
+        //Projectile.spriteDirection = (Vector2.Dot(Projectile.velocity, Vector2.UnitX) >= 0f).ToDirectionInt();
 
-            Projectile.rotation = Projectile.velocity.ToRotation();
+        Projectile.rotation = Projectile.velocity.ToRotation();
 
-            SetVisualOffsets();
-            Visuals();
-        }
+        SetVisualOffsets();
+        Visuals();
+    }
 
 		private void SetVisualOffsets()
 		{
@@ -114,66 +114,65 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			float collisionPoint = 0f;
 			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
 		}
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
+    public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+    {
 			Player player = Main.player[Projectile.owner];
-            if (steeltempesthittimer3 == 0)
-            {
+        if (steeltempesthittimer3 == 0)
+        {
 				player.GetModPlayer<tsorcRevampPlayer>().steeltempest += 1;
 				steeltempesthittimer3 = 1;
 				if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().steeltempest == 2)
-                {
+            {
 					SoundEngine.PlaySound(SoundID.Item74, player.Center);
-                }
             }
         }
-        private void Visuals()
+    }
+    private void Visuals()
+    {
+        float frameSpeed = 3f;
+
+        Projectile.frameCounter++;
+
+        if (Projectile.frameCounter >= frameSpeed)
         {
-            float frameSpeed = 3f;
+            Projectile.frameCounter = 0;
+            Projectile.frame++;
 
-            Projectile.frameCounter++;
-
-            if (Projectile.frameCounter >= frameSpeed)
+            if (Projectile.frame >= Main.projFrames[Projectile.type])
             {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
-
-                if (Projectile.frame >= Main.projFrames[Projectile.type])
-                {
-                    Projectile.frame = 0;
-                }
+                Projectile.frame = 0;
             }
-            Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
         }
-        public static Texture2D texture;
-        public static Texture2D glowTexture;
-        public override bool PreDraw(ref Color lightColor)
+        Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
+    }
+    public static Texture2D texture;
+    public static Texture2D glowTexture;
+    public override bool PreDraw(ref Color lightColor)
+    {
+        SpriteEffects spriteEffects = SpriteEffects.None;
+
+        if (Main.player[Projectile.owner].direction == 1)
         {
-            SpriteEffects spriteEffects = SpriteEffects.None;
-
-            if (Main.player[Projectile.owner].direction == 1)
-            {
-            } else if (Main.player[Projectile.owner].direction != 1)
-            {
-                spriteEffects = SpriteEffects.FlipVertically;
-            }
-
-            //if (texture == null || texture.IsDisposed)
-            {
-                texture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            }
-            //if (glowTexture == null || glowTexture.IsDisposed)
-            {
-                glowTexture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            }
-            int frameHeight = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
-            int startY = frameHeight * Projectile.frame;
-            Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
-            Vector2 origin = sourceRectangle.Size() / 2f;
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY), sourceRectangle, lightColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
-
-
-            return false;
+        } else if (Main.player[Projectile.owner].direction != 1)
+        {
+            spriteEffects = SpriteEffects.FlipVertically;
         }
+
+        //if (texture == null || texture.IsDisposed)
+        {
+            texture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
+        }
+        //if (glowTexture == null || glowTexture.IsDisposed)
+        {
+            glowTexture = (Texture2D)ModContent.Request<Texture2D>(Projectile.ModProjectile.Texture + "Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+        }
+        int frameHeight = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
+        int startY = frameHeight * Projectile.frame;
+        Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+        Vector2 origin = sourceRectangle.Size() / 2f;
+        Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY), sourceRectangle, lightColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
+
+
+        return false;
     }
 }

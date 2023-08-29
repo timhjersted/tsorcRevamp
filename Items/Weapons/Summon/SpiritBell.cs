@@ -5,8 +5,8 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon
-{
+namespace tsorcRevamp.Items.Weapons.Summon;
+
 	public class SpiritBell : ModItem
 	{
 		public override void SetStaticDefaults()
@@ -16,8 +16,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
 			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
-        }
+        ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
+    }
 		public override void SetDefaults()
 		{
 			Item.damage = 24;
@@ -41,15 +41,14 @@ namespace tsorcRevamp.Items.Weapons.Summon
 		public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
 		{
 			position = Main.MouseWorld;
-        }
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-        {
-            player.AddBuff(Item.buffType, 2);
+    }
+    public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+    {
+        player.AddBuff(Item.buffType, 2);
 
-            var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
-            projectile.originalDamage = Item.damage;
+        var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
+        projectile.originalDamage = Item.damage;
 
-            return false;
-        }
+        return false;
     }
 }

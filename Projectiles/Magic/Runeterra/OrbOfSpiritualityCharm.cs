@@ -12,18 +12,18 @@ using Terraria.DataStructures;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 
-namespace tsorcRevamp.Projectiles.Magic.Runeterra
-{
+namespace tsorcRevamp.Projectiles.Magic.Runeterra;
 
-    public class OrbOfSpiritualityCharm : ModProjectile
-    {
+
+public class OrbOfSpiritualityCharm : ModProjectile
+{
 		public override void SetStaticDefaults()
 		{
 			// These lines facilitate the trail drawing
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-            Main.projFrames[Projectile.type] = 8;
-        }
+        Main.projFrames[Projectile.type] = 8;
+    }
 
 		public override void SetDefaults()
 		{
@@ -40,49 +40,48 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 
 		}
 
-        public override void OnSpawn(IEntitySource source)
-        {
-            Player player = Main.player[Projectile.owner];
-            Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 1.5f);
-            player.AddBuff(ModContent.BuffType<OrbOfFlameFireballCooldown>(), 1 * 60);
-        }
+    public override void OnSpawn(IEntitySource source)
+    {
+        Player player = Main.player[Projectile.owner];
+        Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 1.5f);
+        player.AddBuff(ModContent.BuffType<OrbOfFlameFireballCooldown>(), 1 * 60);
+    }
 
-        public override void AI()
+    public override void AI()
 		{
 			Player player = Main.player[Projectile.owner];
-            Projectile.rotation = Projectile.velocity.ToRotation();
-            Visuals();
+        Projectile.rotation = Projectile.velocity.ToRotation();
+        Visuals();
 		}
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
-            Player player = Main.player[Projectile.owner];
+    public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+    {
+        Player player = Main.player[Projectile.owner];
 			target.AddBuff(ModContent.BuffType<SunderedDebuff>(), 5 * 60);
-        }
+    }
 
-        public override bool PreDraw(ref Color lightColor)
+    public override bool PreDraw(ref Color lightColor)
 		{
 			return true;
 		}
-        private void Visuals()
+    private void Visuals()
+    {
+        int frameSpeed = 5;
+
+        Projectile.frameCounter++;
+
+        if (Projectile.frameCounter >= frameSpeed)
         {
-            int frameSpeed = 5;
+            Projectile.frameCounter = 0;
+            Projectile.frame++;
 
-            Projectile.frameCounter++;
-
-            if (Projectile.frameCounter >= frameSpeed)
+            if (Projectile.frame >= Main.projFrames[Projectile.type])
             {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
-
-                if (Projectile.frame >= Main.projFrames[Projectile.type])
-                {
-                    Projectile.frame = 0;
-                }
+                Projectile.frame = 0;
             }
-
-            Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 0.78f);
-            Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
         }
+
+        Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 0.78f);
+        Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
     }
 }

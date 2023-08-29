@@ -5,22 +5,22 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon
-{
+namespace tsorcRevamp.Items.Weapons.Summon;
+
 	public class TetsujinRemote : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Tetsujin Remote");
 			Tooltip.SetDefault("Summons a glowing Tetsujin to fight for you" +
-                "\nOrbits an enemy, bombarding them with light and fire" +
-                "\nUses 2 minion slots");
+            "\nOrbits an enemy, bombarding them with light and fire" +
+            "\nUses 2 minion slots");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
 			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 2;
-        }
+        ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 2;
+    }
 		public override void SetDefaults()
 		{
 			Item.damage = 40;
@@ -61,8 +61,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			// Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
 			return false;
 		}
-        public override void AddRecipes()
-        {
+    public override void AddRecipes()
+    {
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<DestructionElement>(), 1);
 			recipe.AddIngredient(ModContent.ItemType<CompactFrame>(), 1);
@@ -73,5 +73,4 @@ namespace tsorcRevamp.Items.Weapons.Summon
 
 			recipe.Register();
 		}
-    }
 }

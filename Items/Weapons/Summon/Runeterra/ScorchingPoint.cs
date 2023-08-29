@@ -9,11 +9,11 @@ using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 
-namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
-{
+namespace tsorcRevamp.Items.Weapons.Summon.Runeterra;
+
 	[LegacyName("CotUItem1")]
-    [Autoload(false)]
-    public class ScorchingPoint : ModItem
+[Autoload(false)]
+public class ScorchingPoint : ModItem
 	{
 		public static List<ScorchingPointFireball> projectiles = null;
 		public static int processedProjectilesCount = 0;
@@ -25,14 +25,14 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 								"\nUses half a minion slot" +
 								"\nWhile holding this item, increase their radius by holding Special Ability" +
 								"\nOr hold Shift + Special Ability to shrink their radius" +
-                                "\nApplies the Scorching debuff, which grants minions crit chance based on a fraction of your critical strike chance" +
-                				"\n'By the Ashen Lord of Runeterra!'");
+                            "\nApplies the Scorching debuff, which grants minions crit chance based on a fraction of your critical strike chance" +
+            				"\n'By the Ashen Lord of Runeterra!'");
 
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
-        }
-    public override void SetDefaults()
+        ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
+    }
+public override void SetDefaults()
 		{
 			projectiles = new List<ScorchingPointFireball>(){};
 
@@ -67,49 +67,48 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 			// This is needed so the buff that keeps your minion alive and allows you to despawn it properly applies
 			player.AddBuff(Item.buffType, 2);
 
-            // Minions have to be spawned manually, then have originalDamage assigned to the damage of the summon item
-            var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
-            projectiles.Add((ScorchingPointFireball)projectile.ModProjectile);
-            projectile.originalDamage = Item.damage;
+        // Minions have to be spawned manually, then have originalDamage assigned to the damage of the summon item
+        var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
+        projectiles.Add((ScorchingPointFireball)projectile.ModProjectile);
+        projectile.originalDamage = Item.damage;
 
-            // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
-            return false;
+        // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
+        return false;
 		}
 
-        public override void HoldItem(Player player)
-        {
+    public override void HoldItem(Player player)
+    {
 			Lighting.AddLight(player.Center, new Vector3(0.1f, 0.08f, 0.05f));
 		}
 
-        public static void ReposeProjectiles(Player player) 
+    public static void ReposeProjectiles(Player player) 
 		{
-            // repose projectiles relatively to the first one so they are evenly spread on the radial circumference
-            List<ScorchingPointFireball> projectileList = new List<ScorchingPointFireball>();
-            processedProjectilesCount = player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointFireball>()];
-            for (int i = 0; i < Main.maxProjectiles; i++)
+        // repose projectiles relatively to the first one so they are evenly spread on the radial circumference
+        List<ScorchingPointFireball> projectileList = new List<ScorchingPointFireball>();
+        processedProjectilesCount = player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointFireball>()];
+        for (int i = 0; i < Main.maxProjectiles; i++)
+        {
+            if (Main.projectile[i].type == ModContent.ProjectileType<ScorchingPointFireball>() && Main.projectile[i].owner == player.whoAmI)
             {
-                if (Main.projectile[i].type == ModContent.ProjectileType<ScorchingPointFireball>() && Main.projectile[i].owner == player.whoAmI)
-                {
-                    projectileList.Add((ScorchingPointFireball)Main.projectile[i].ModProjectile);
-                }
-            }
-
-            for (int i = 1; i < processedProjectilesCount; ++i)
-            {
-                projectileList[i].currentAngle = projectileList[i - 1].currentAngle + 2f * (float)Math.PI / processedProjectilesCount;
+                projectileList.Add((ScorchingPointFireball)Main.projectile[i].ModProjectile);
             }
         }
+
+        for (int i = 1; i < processedProjectilesCount; ++i)
+        {
+            projectileList[i].currentAngle = projectileList[i - 1].currentAngle + 2f * (float)Math.PI / processedProjectilesCount;
+        }
+    }
 		public override void AddRecipes()
 		{
 			Recipe recipe = CreateRecipe();
 
 			recipe.AddIngredient(ItemID.FeralClaws);
-            recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
+        recipe.AddIngredient(ModContent.ItemType<WorldRune>());
+        recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
 
 			recipe.AddTile(TileID.DemonAltar);
 
 			recipe.Register();
 		}
 	}
-}

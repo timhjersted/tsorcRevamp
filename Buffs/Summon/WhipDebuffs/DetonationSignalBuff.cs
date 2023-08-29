@@ -2,8 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
-{
+namespace tsorcRevamp.Buffs.Summon.WhipDebuffs;
+
 	public class DetonationSignalBuff : ModBuff
 	{
 		public override void SetStaticDefaults()
@@ -31,12 +31,11 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			exploded = false;
 		}
 
-        public override void ModifyHitPlayer(NPC npc, Player target, ref int damage, ref bool crit)
-        {
+    public override void ModifyHitPlayer(NPC npc, Player target, ref int damage, ref bool crit)
+    {
 			if (exploded)
 			{
 				damage *= 3;
 			}
-        }
     }
 }

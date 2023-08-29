@@ -1,47 +1,46 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy
+namespace tsorcRevamp.Projectiles.Enemy;
+
+class EnemySpellLightPillar : ModProjectile
 {
-    class EnemySpellLightPillar : ModProjectile
+
+    public override void SetStaticDefaults()
     {
+        Main.projFrames[Projectile.type] = 15;
+    }
 
-        public override void SetStaticDefaults()
+    public override void SetDefaults()
+    {
+        Projectile.height = 40;
+        Projectile.width = 220;
+        Projectile.hostile = true;
+        Projectile.tileCollide = true;
+        Projectile.ignoreWater = true;
+        Projectile.timeLeft = 360;
+        Projectile.penetrate = 50;
+    }
+
+    public override void AI()
+    {
+        #region
+        Projectile.direction = (int)Projectile.ai[0];
+        if (Projectile.spriteDirection == -1)
         {
-            Main.projFrames[Projectile.type] = 15;
+            Projectile.rotation -= 1.57f;
         }
-
-        public override void SetDefaults()
+        #endregion
+        Projectile.frameCounter++;
+        if (Projectile.frameCounter > 2)
         {
-            Projectile.height = 40;
-            Projectile.width = 220;
-            Projectile.hostile = true;
-            Projectile.tileCollide = true;
-            Projectile.ignoreWater = true;
-            Projectile.timeLeft = 360;
-            Projectile.penetrate = 50;
+            Projectile.frame++;
+            Projectile.frameCounter = 0;
         }
-
-        public override void AI()
+        if (Projectile.frame >= 15)
         {
-            #region
-            Projectile.direction = (int)Projectile.ai[0];
-            if (Projectile.spriteDirection == -1)
-            {
-                Projectile.rotation -= 1.57f;
-            }
-            #endregion
-            Projectile.frameCounter++;
-            if (Projectile.frameCounter > 2)
-            {
-                Projectile.frame++;
-                Projectile.frameCounter = 0;
-            }
-            if (Projectile.frame >= 15)
-            {
-                Projectile.Kill();
-                return;
-            }
+            Projectile.Kill();
+            return;
         }
     }
 }

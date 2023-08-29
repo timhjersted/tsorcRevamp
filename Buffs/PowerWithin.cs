@@ -1,34 +1,33 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs
+namespace tsorcRevamp.Buffs;
+
+class PowerWithin : ModBuff
 {
-    class PowerWithin : ModBuff
+
+    public override void SetStaticDefaults()
     {
+        DisplayName.SetDefault("Power Within");
+        Description.SetDefault("Excessive power is eating away at you!");
+        Main.buffNoTimeDisplay[Type] = false;
+        Main.debuff[Type] = true;
+        Terraria.ID.BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
 
-        public override void SetStaticDefaults()
+    }
+    public override void Update(Player player, ref int buffIndex)
+    {
+        if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
         {
-            DisplayName.SetDefault("Power Within");
-            Description.SetDefault("Excessive power is eating away at you!");
-            Main.buffNoTimeDisplay[Type] = false;
-            Main.debuff[Type] = true;
-            Terraria.ID.BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
-
+            player.GetDamage(DamageClass.Generic) *= 1.4f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.6f;
         }
-        public override void Update(Player player, ref int buffIndex)
+        else
         {
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {
-                player.GetDamage(DamageClass.Generic) *= 1.4f;
-                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.6f;
-            }
-            else
-            {
-                player.GetDamage(DamageClass.Generic) *= 1.2f;
-                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.3f;
-            }
-
-            player.GetModPlayer<tsorcRevampPlayer>().PowerWithin = true;
+            player.GetDamage(DamageClass.Generic) *= 1.2f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.3f;
         }
+
+        player.GetModPlayer<tsorcRevampPlayer>().PowerWithin = true;
     }
 }

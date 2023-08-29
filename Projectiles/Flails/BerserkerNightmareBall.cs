@@ -8,8 +8,8 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using ReLogic.Content;
 
-namespace tsorcRevamp.Projectiles.Flails
-{
+namespace tsorcRevamp.Projectiles.Flails;
+
 
 	public class BerserkerNightmareBall : ModProjectile
 	{
@@ -550,4 +550,3 @@ namespace tsorcRevamp.Projectiles.Flails
 			return true;
 		}
 	}
-}

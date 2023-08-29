@@ -3,53 +3,52 @@ using Terraria;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
-namespace tsorcRevamp.Projectiles.Enemy
+namespace tsorcRevamp.Projectiles.Enemy;
+
+class Spearhead : ModProjectile
 {
-    class Spearhead : ModProjectile
+    public override string Texture => "tsorcRevamp/Items/Weapons/Melee/ThrowingAxe"; //invis so doesnt matter
+
+    public override void SetDefaults()
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/ThrowingAxe"; //invis so doesnt matter
+        Projectile.hostile = true;
+        Projectile.penetrate = -1;
+        Projectile.width = 20;
+        Projectile.height = 20;
+        Projectile.alpha = 255; //invis
+        Projectile.tileCollide = false;
+        Projectile.ignoreWater = true;
+        Projectile.timeLeft = 35;
+    }
 
-        public override void SetDefaults()
+    Vector2 difference;
+    public override void AI()
+    {
+        NPC owner = Main.npc[(int)Projectile.ai[0]];
+
+        if (Projectile.ai[1] < 1)
         {
-            Projectile.hostile = true;
-            Projectile.penetrate = -1;
-            Projectile.width = 20;
-            Projectile.height = 20;
-            Projectile.alpha = 255; //invis
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.timeLeft = 35;
+            ++Projectile.ai[1];
+            difference = Projectile.Center - owner.Center;
         }
 
-        Vector2 difference;
-        public override void AI()
+        if (Projectile.ai[1] >= 1 && Projectile.ai[1] < 3)
         {
-            NPC owner = Main.npc[(int)Projectile.ai[0]];
-
-            if (Projectile.ai[1] < 1)
+            //Create a new Vector2 with length offsetDistance, and then rotate it toward the correct direction
+            //Add that to the npc's position
+            if (owner.direction == 1)
             {
-                ++Projectile.ai[1];
-                difference = Projectile.Center - owner.Center;
+                Projectile.Center = owner.Center + difference;
             }
-
-            if (Projectile.ai[1] >= 1 && Projectile.ai[1] < 3)
+            else
             {
-                //Create a new Vector2 with length offsetDistance, and then rotate it toward the correct direction
-                //Add that to the npc's position
-                if (owner.direction == 1)
-                {
-                    Projectile.Center = owner.Center + difference;
-                }
-                else
-                {
-                    Projectile.Center = owner.Center + difference;
-                }
+                Projectile.Center = owner.Center + difference;
             }
         }
+    }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<Crippled>(), 600);
-        }
+    public override void OnHitPlayer(Player target, int damage, bool crit)
+    {
+        target.AddBuff(ModContent.BuffType<Crippled>(), 600);
     }
 }

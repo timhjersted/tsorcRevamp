@@ -4,41 +4,40 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items
+namespace tsorcRevamp.Items;
+
+class CompactFrame : ModItem
 {
-    class CompactFrame : ModItem
+    public override void SetStaticDefaults()
     {
-        public override void SetStaticDefaults()
+        Tooltip.SetDefault("Used for making advanced weaponry, from a civilization not of this world\n" +
+                           "The strange way it is unaffected by gravity reminds you of somewhere...");
+
+        ItemID.Sets.ItemNoGravity[Item.type] = true;
+    }
+    float rotation = 0;
+    public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+    {
+        Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+        for (int i = 0; i < 4; i++)
         {
-            Tooltip.SetDefault("Used for making advanced weaponry, from a civilization not of this world\n" +
-                               "The strange way it is unaffected by gravity reminds you of somewhere...");
+            rotation += 0.01f;
+            Vector2 offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) + rotation) * 2f;
+            spriteBatch.Draw(texture, position + offsetPositon, null, Color.OrangeRed, 0, origin, scale, SpriteEffects.None, 0);
 
-            ItemID.Sets.ItemNoGravity[Item.type] = true;
+            offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) - rotation) * 2f;
+            spriteBatch.Draw(texture, position + offsetPositon, null, Color.OrangeRed, 0, origin, scale, SpriteEffects.None, 0);
         }
-        float rotation = 0;
-        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
-        {
-            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
-            for (int i = 0; i < 4; i++)
-            {
-                rotation += 0.01f;
-                Vector2 offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) + rotation) * 2f;
-                spriteBatch.Draw(texture, position + offsetPositon, null, Color.OrangeRed, 0, origin, scale, SpriteEffects.None, 0);
-
-                offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) - rotation) * 2f;
-                spriteBatch.Draw(texture, position + offsetPositon, null, Color.OrangeRed, 0, origin, scale, SpriteEffects.None, 0);
-            }
-            return true;
-        }
+        return true;
+    }
 
 
-        public override void SetDefaults()
-        {
-            Item.width = 20;
-            Item.height = 18;
-            Item.maxStack = 99;
-            Item.value = 350000;
-            Item.rare = ItemRarityID.Red;
-        }
+    public override void SetDefaults()
+    {
+        Item.width = 20;
+        Item.height = 18;
+        Item.maxStack = 99;
+        Item.value = 350000;
+        Item.rare = ItemRarityID.Red;
     }
 }

@@ -10,13 +10,13 @@ using ReLogic.Content;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using Terraria.DataStructures;
 
-namespace tsorcRevamp.Projectiles.Magic.Runeterra
-{
+namespace tsorcRevamp.Projectiles.Magic.Runeterra;
 
-    public class OrbOfSpiritualityOrb : ModProjectile
-    {
-        public int EssenceThiefTimer1 = 0;
-        private enum AIState
+
+public class OrbOfSpiritualityOrb : ModProjectile
+{
+    public int EssenceThiefTimer1 = 0;
+    private enum AIState
 		{
 			LaunchingForward,
 			Retracting
@@ -37,8 +37,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 			// These lines facilitate the trail drawing
 			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
 			ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-            Main.projFrames[Projectile.type] = 9;
-        }
+        Main.projFrames[Projectile.type] = 9;
+    }
 
 		public override void SetDefaults()
 		{
@@ -55,51 +55,51 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 
 		}
 
-        public override void OnSpawn(IEntitySource source)
-        {
-            Player player = Main.player[Projectile.owner];
-            player.GetModPlayer<tsorcRevampPlayer>().OrbExists = true;
-            //player.manaRegenDelay = 10;
-        }
+    public override void OnSpawn(IEntitySource source)
+    {
+        Player player = Main.player[Projectile.owner];
+        player.GetModPlayer<tsorcRevampPlayer>().OrbExists = true;
+        //player.manaRegenDelay = 10;
+    }
 
-        public override void AI()
+    public override void AI()
 		{
 			Player player = Main.player[Projectile.owner];
 
-            Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(player.Center).SafeNormalize(Vector2.Zero) * 30f;
-            switch (CurrentAIState)
+        Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(player.Center).SafeNormalize(Vector2.Zero) * 30f;
+        switch (CurrentAIState)
 			{
 				case AIState.LaunchingForward:
 				{
-                        if (Projectile.Distance(player.Center) > 800f)
+                    if (Projectile.Distance(player.Center) > 800f)
 						{
 							CurrentAIState = AIState.Retracting;
-                            StateTimer = 0f;
+                        StateTimer = 0f;
 							EssenceThiefTimer1 = 0;
-                            Projectile.ResetLocalNPCHitImmunity();
+                        Projectile.ResetLocalNPCHitImmunity();
 							break;
-                        }
+                    }
 					break;
 				}
 				case AIState.Retracting:
 				{
-                        Projectile.velocity = unitVectorTowardsPlayer;
+                    Projectile.velocity = unitVectorTowardsPlayer;
 
-                        if (Projectile.Hitbox.Intersects(player.Hitbox))
+                    if (Projectile.Hitbox.Intersects(player.Hitbox))
 						{
 							player.GetModPlayer<tsorcRevampPlayer>().OrbExists = false;
-                            if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief >= 9)
-                            {
-                                SoundEngine.PlaySound(SoundID.Item74, player.Center);
-                            }
-                            Projectile.Kill();
+                        if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief >= 9)
+                        {
+                            SoundEngine.PlaySound(SoundID.Item74, player.Center);
                         }
+                        Projectile.Kill();
+                    }
 					break;
 				}
 			}
 			Visuals();
 		}
-        public override void ModifyDamageScaling(ref float damageScale)
+    public override void ModifyDamageScaling(ref float damageScale)
 		{
 			if (CurrentAIState  == AIState.Retracting)
 				damageScale *= 2f;
@@ -112,21 +112,21 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 			base.ModifyHitNPC(target, ref damage, ref knockback, ref crit, ref hitDirection);
 		}
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
-            Player player = Main.player[Projectile.owner];
+    public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+    {
+        Player player = Main.player[Projectile.owner];
 			if (EssenceThiefTimer1 == 0)
+        {
+            player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
+            if (crit)
             {
                 player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
-                if (crit)
-                {
-                    player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
-                }
-				EssenceThiefTimer1 = 1;
             }
+				EssenceThiefTimer1 = 1;
         }
+    }
 
-        public override bool PreDraw(ref Color lightColor)
+    public override bool PreDraw(ref Color lightColor)
 		{
 			Vector2 playerArmPosition = Main.GetPlayerArmPosition(Projectile);
 
@@ -146,25 +146,24 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 			}
 			return true;
 		}
-        private void Visuals()
+    private void Visuals()
+    {
+        int frameSpeed = 5;
+
+        Projectile.frameCounter++;
+
+        if (Projectile.frameCounter >= frameSpeed)
         {
-            int frameSpeed = 5;
+            Projectile.frameCounter = 0;
+            Projectile.frame++;
 
-            Projectile.frameCounter++;
-
-            if (Projectile.frameCounter >= frameSpeed)
+            if (Projectile.frame >= Main.projFrames[Projectile.type])
             {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
-
-                if (Projectile.frame >= Main.projFrames[Projectile.type])
-                {
-                    Projectile.frame = 0;
-                }
+                Projectile.frame = 0;
             }
-
-            Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 0.78f);
-            Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
         }
+
+        Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 0.78f);
+        Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
     }
 }

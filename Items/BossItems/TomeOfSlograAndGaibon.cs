@@ -2,58 +2,57 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.BossItems
+namespace tsorcRevamp.Items.BossItems;
+
+class TomeOfSlograAndGaibon : ModItem
 {
-    class TomeOfSlograAndGaibon : ModItem
+
+    public override void SetStaticDefaults()
     {
+        DisplayName.SetDefault("Tome of Slogra and Gaibon");
+        Tooltip.SetDefault("Summons the nocturnal beast known as Slogra, a reptilian creature who fights alongside the demon \n" +
+            "known as Gaibon. Not much is known of Gaibon, though it is legend that Slogra was once a man,  \n" +
+            "whose rings he wore finally consumed him until the man was gone and only his lost soul remained");
+    }
 
-        public override void SetStaticDefaults()
+    public override void SetDefaults()
+    {
+        Item.width = 28;
+        Item.height = 28;
+        Item.useStyle = ItemUseStyleID.HoldUp;
+        Item.useAnimation = 45;
+        Item.useTime = 45;
+        Item.maxStack = 1;
+        Item.consumable = false;
+        Item.rare = ItemRarityID.LightRed;
+        Item.consumable = false;
+        
+    }
+
+
+    public override bool? UseItem(Player player)
+    {
+        if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Slogra>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gaibon>()))
         {
-            DisplayName.SetDefault("Tome of Slogra and Gaibon");
-            Tooltip.SetDefault("Summons the nocturnal beast known as Slogra, a reptilian creature who fights alongside the demon \n" +
-                "known as Gaibon. Not much is known of Gaibon, though it is legend that Slogra was once a man,  \n" +
-                "whose rings he wore finally consumed him until the man was gone and only his lost soul remained");
+            return false;
         }
+        Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar);
+        NPC.NewNPC(player.GetSource_ItemUse(Item), (int)player.position.X + 1000, (int)player.position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>(), 0);
+        NPC.NewNPC(player.GetSource_ItemUse(Item), (int)player.position.X - 1000, (int)player.position.Y - 200, ModContent.NPCType<NPCs.Bosses.Slogra>(), 0);
+        return true;
+    }
 
-        public override void SetDefaults()
+    public override void AddRecipes()
+    {
+        //if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
         {
-            Item.width = 28;
-            Item.height = 28;
-            Item.useStyle = ItemUseStyleID.HoldUp;
-            Item.useAnimation = 45;
-            Item.useTime = 45;
-            Item.maxStack = 1;
-            Item.consumable = false;
-            Item.rare = ItemRarityID.LightRed;
-            Item.consumable = false;
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.SpellTome, 1);
+            recipe.AddIngredient(ItemID.MeteoriteBar, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe.AddTile(TileID.DemonAltar);
             
-        }
-
-
-        public override bool? UseItem(Player player)
-        {
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Slogra>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gaibon>()))
-            {
-                return false;
-            }
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar);
-            NPC.NewNPC(player.GetSource_ItemUse(Item), (int)player.position.X + 1000, (int)player.position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>(), 0);
-            NPC.NewNPC(player.GetSource_ItemUse(Item), (int)player.position.X - 1000, (int)player.position.Y - 200, ModContent.NPCType<NPCs.Bosses.Slogra>(), 0);
-            return true;
-        }
-
-        public override void AddRecipes()
-        {
-            //if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-            {
-                Recipe recipe = CreateRecipe();
-                recipe.AddIngredient(ItemID.SpellTome, 1);
-                recipe.AddIngredient(ItemID.MeteoriteBar, 3);
-                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
-                recipe.AddTile(TileID.DemonAltar);
-                
-                recipe.Register();
-            }
+            recipe.Register();
         }
     }
 }

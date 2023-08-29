@@ -7,8 +7,8 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Summon.Whips
-{
+namespace tsorcRevamp.Projectiles.Summon.Whips;
+
 	public class NightsCrackerProjectile : ModProjectile
 	{
 		public static int NightCharges = 0;
@@ -99,53 +99,53 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 			ChargeTime++;
 
-            if (ChargeTime % 12 == 0) // 1 segment and 3% range per 12 tick of charge.
-            {
-                Projectile.WhipSettings.RangeMultiplier += 0.08f;
-                Projectile.WhipSettings.Segments++;
-            }
-            if (ChargeTime % 30 == 0) // Double damage every 60 ticks of charge.
-            {
-                Projectile.damage += (int)(Projectile.damage * 0.5f);
-            }
+        if (ChargeTime % 12 == 0) // 1 segment and 3% range per 12 tick of charge.
+        {
+            Projectile.WhipSettings.RangeMultiplier += 0.08f;
+            Projectile.WhipSettings.Segments++;
+        }
+        if (ChargeTime % 30 == 0) // Double damage every 60 ticks of charge.
+        {
+            Projectile.damage += (int)(Projectile.damage * 0.5f);
+        }
 
-            owner = Main.player[Projectile.owner];
-            Vector2 mountedCenter = owner.MountedCenter;
-            Vector2 unitVectorTowardsMouse = mountedCenter.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * owner.direction);
-            owner.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
-            Projectile.velocity = unitVectorTowardsMouse * 4;
+        owner = Main.player[Projectile.owner];
+        Vector2 mountedCenter = owner.MountedCenter;
+        Vector2 unitVectorTowardsMouse = mountedCenter.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * owner.direction);
+        owner.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
+        Projectile.velocity = unitVectorTowardsMouse * 4;
 
-            // Reset the animation and item timer while charging.
-            owner.itemAnimation = owner.itemAnimationMax;
+        // Reset the animation and item timer while charging.
+        owner.itemAnimation = owner.itemAnimationMax;
 			owner.itemTime = owner.itemTimeMax;
 
 			return false; // still charging
-        }
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    }
+    public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    {
+        Player player = Main.player[Main.myPlayer];
+        Vector2 WhipTip = new Vector2(11, 17) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
+        List<Vector2> points = Projectile.WhipPointsForCollision;
+        if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
         {
-            Player player = Main.player[Main.myPlayer];
-            Vector2 WhipTip = new Vector2(11, 17) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
-            List<Vector2> points = Projectile.WhipPointsForCollision;
-            if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
+            crit = true;
+            if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
             {
-                crit = true;
-                if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
-                {
-                    damage *= 5;
-                    damage /= 4;
-                }
+                damage *= 5;
+                damage /= 4;
             }
         }
+    }
 
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
-            NightCharges = (int)ChargeTime / 40 + 1;
-            Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerBuff>(), NightCharges * 150);
+    public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+    {
+        NightCharges = (int)ChargeTime / 40 + 1;
+        Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.NightsCrackerBuff>(), NightCharges * 150);
 			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.NightsCrackerDebuff>(), NightCharges * 150);
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
-            Projectile.damage = (int)(damage * ((float)NightCharges / 16 + 0.6f)); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
-        }
+        Projectile.damage = (int)(damage * ((float)NightCharges / 16 + 0.6f)); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
+    }
 
 		// This method draws a line between all points of the whip, in case there's empty space between the sprites.
 		private void DrawLine(List<Vector2> list)
@@ -228,4 +228,3 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			return false;
 		}
 	}
-}

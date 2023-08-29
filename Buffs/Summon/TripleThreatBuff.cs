@@ -6,8 +6,8 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Summon
-{
+namespace tsorcRevamp.Buffs.Summon;
+
 	public class TripleThreatBuff : ModBuff
 	{
 		public override void SetStaticDefaults()
@@ -36,4 +36,3 @@ namespace tsorcRevamp.Buffs.Summon
 			}
 		}
 	}
-}

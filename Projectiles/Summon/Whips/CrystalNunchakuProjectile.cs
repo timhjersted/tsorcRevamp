@@ -7,8 +7,8 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Summon.Whips
-{
+namespace tsorcRevamp.Projectiles.Summon.Whips;
+
 	public class CrystalNunchakuProjectile : ModProjectile
 	{
 
@@ -109,30 +109,30 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			owner.itemTime = owner.itemTimeMax;
 
 			return false; // still charging
-        }
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    }
+    public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    {
+        Player player = Main.player[Main.myPlayer];
+        Vector2 WhipTip = new Vector2(10, 32) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
+        List<Vector2> points = Projectile.WhipPointsForCollision;
+        if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
         {
-            Player player = Main.player[Main.myPlayer];
-            Vector2 WhipTip = new Vector2(10, 32) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
-            List<Vector2> points = Projectile.WhipPointsForCollision;
-            if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
+            crit = true;
+            if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
             {
-                crit = true;
-                if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
-                {
-                    damage *= 5;
-                    damage /= 4;
-                }
+                damage *= 5;
+                damage /= 4;
             }
         }
+    }
 
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+    public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
 			if (!target.HasBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.CrystalNunchakuDebuff>()))
 			{
-                target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.CrystalNunchakuDebuff>(), 15 * 60);
-            }
+            target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.CrystalNunchakuDebuff>(), 15 * 60);
+        }
 			Projectile.damage = (int)(damage * 0.7f); // Multihit penalty. Decrease the damage the more enemies the whip hits.
 		}
 
@@ -197,23 +197,23 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 					float t = Timer / timeToFlyOut;
 					scale = MathHelper.Lerp(0.5f, 1.5f, Utils.GetLerpValue(0.1f, 0.7f, t, true) * Utils.GetLerpValue(0.9f, 0.7f, t, true));
 				}
-                else if (i > 14)
-                {
-                    frame.Y = 64;
-                    frame.Height = 16;
-                }
-                else if (i > 7)
-                {
-                    frame.Y = 48;
-                    frame.Height = 16;
-                }
-                else if (i > 0)
-                {
-                    frame.Y = 32;
-                    frame.Height = 16;
-                }
+            else if (i > 14)
+            {
+                frame.Y = 64;
+                frame.Height = 16;
+            }
+            else if (i > 7)
+            {
+                frame.Y = 48;
+                frame.Height = 16;
+            }
+            else if (i > 0)
+            {
+                frame.Y = 32;
+                frame.Height = 16;
+            }
 
-                Vector2 element = list[i];
+            Vector2 element = list[i];
 				Vector2 diff = list[i + 1] - element;
 
 				float rotation = diff.ToRotation() - MathHelper.PiOver2; // This projectile's sprite faces down, so PiOver2 is used to correct rotation.
@@ -226,4 +226,3 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			return false;
 		}
 	}
-}

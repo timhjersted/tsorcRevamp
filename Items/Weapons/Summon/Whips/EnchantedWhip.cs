@@ -4,19 +4,19 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon.Whips
-{
+namespace tsorcRevamp.Items.Weapons.Summon.Whips;
+
 	public class EnchantedWhip : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-            DisplayName.SetDefault("Enchanted Whip");
-            Tooltip.SetDefault("4 summon tag damage" +
-                "\nStrike enemies with an enchantment" +
-                "\nEnchanted enemies will be showered by stars upon minion hits" +
-                "\nStar damage scales with half of this whips damage" +
-                "\nYour summons will focus struck enemies");
+        DisplayName.SetDefault("Enchanted Whip");
+        Tooltip.SetDefault("4 summon tag damage" +
+            "\nStrike enemies with an enchantment" +
+            "\nEnchanted enemies will be showered by stars upon minion hits" +
+            "\nStar damage scales with half of this whips damage" +
+            "\nYour summons will focus struck enemies");
 		}
 
 		public override void SetDefaults()
@@ -41,11 +41,11 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.noUseGraphic = true;
 
 		}
-        public override bool MeleePrefix()
-        {
-            return true;
-        }
-        public override void AddRecipes()
+    public override bool MeleePrefix()
+    {
+        return true;
+    }
+    public override void AddRecipes()
 		{
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.BlandWhip, 1);
@@ -56,4 +56,3 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.Register();
 		}
 	}
-}

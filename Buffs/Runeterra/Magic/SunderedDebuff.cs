@@ -2,8 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Runeterra.Magic
-{
+namespace tsorcRevamp.Buffs.Runeterra.Magic;
+
 	public class SunderedDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
@@ -28,19 +28,18 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
 			Sundered = false;
 		}
 
-        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    {
+        if (Sundered && !projectile.npcProj && !projectile.trap && projectile.DamageType == DamageClass.Magic)
         {
-            if (Sundered && !projectile.npcProj && !projectile.trap && projectile.DamageType == DamageClass.Magic)
-            {
-                    damage += (int)((float)projectile.damage * 0.2f);
-            }
+                damage += (int)((float)projectile.damage * 0.2f);
         }
-        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+    }
+    public override void ModifyHitByItem(NPC npc, Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+    {
+        if (Sundered && item.DamageType == DamageClass.Magic)
         {
-            if (Sundered && item.DamageType == DamageClass.Magic)
-            {
-                    damage += (int)((float)item.damage * 0.2f);
-            }
+                damage += (int)((float)item.damage * 0.2f);
         }
     }
 }

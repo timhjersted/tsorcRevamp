@@ -3,77 +3,76 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Okiku
+namespace tsorcRevamp.Projectiles.Enemy.Okiku;
+
+public class ObscureShot : ModProjectile
 {
-    public class ObscureShot : ModProjectile
+
+    public override void SetDefaults()
     {
+        Projectile.aiStyle = 0;
+        Projectile.hostile = true;
+        Projectile.height = 9;
+        Projectile.width = 9;
+        Projectile.scale = 2;
+        Projectile.tileCollide = false;
+        Projectile.timeLeft = 1500;
+    }
 
-        public override void SetDefaults()
+    public override bool PreKill(int timeLeft)
+    {
+        Projectile.type = 44; //killpretendtype
+        return true;
+    }
+
+    public override void AI()
+    {
+        Projectile.rotation++;
+        if (Projectile.ai[0] == 3)
         {
-            Projectile.aiStyle = 0;
-            Projectile.hostile = true;
-            Projectile.height = 9;
-            Projectile.width = 9;
-            Projectile.scale = 2;
-            Projectile.tileCollide = false;
-            Projectile.timeLeft = 1500;
+            Projectile.scale = 3;
         }
 
-        public override bool PreKill(int timeLeft)
+        if (Main.rand.NextBool(2))
         {
-            Projectile.type = 44; //killpretendtype
-            return true;
+            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 62, 0, 0, 100, Color.White, 2.0f);
+            Main.dust[dust].noGravity = true;
         }
 
-        public override void AI()
+        if (Projectile.velocity.X <= 6 && Projectile.velocity.Y <= 6 && Projectile.velocity.X >= -6 && Projectile.velocity.Y >= -6)
         {
-            Projectile.rotation++;
-            if (Projectile.ai[0] == 3)
-            {
-                Projectile.scale = 3;
-            }
-
-            if (Main.rand.NextBool(2))
-            {
-                int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 62, 0, 0, 100, Color.White, 2.0f);
-                Main.dust[dust].noGravity = true;
-            }
-
-            if (Projectile.velocity.X <= 6 && Projectile.velocity.Y <= 6 && Projectile.velocity.X >= -6 && Projectile.velocity.Y >= -6)
-            {
-                Projectile.velocity.X *= 1.02f;
-                Projectile.velocity.Y *= 1.02f;
-            }
+            Projectile.velocity.X *= 1.02f;
+            Projectile.velocity.Y *= 1.02f;
         }
+    }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+    public override void OnHitPlayer(Player target, int damage, bool crit)
+    {
+        target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DarkInferno>(), 100);
+    }
+
+    //This is too hard to see especially at night, so i'm making it ignore all lighting and always draw at full brightness
+    static Texture2D texture;
+    public override bool PreDraw(ref Color lightColor)
+    {
+        if (texture == null || texture.IsDisposed)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DarkInferno>(), 100);
+            texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/ObscureShot");
         }
-
-        //This is too hard to see especially at night, so i'm making it ignore all lighting and always draw at full brightness
-        static Texture2D texture;
-        public override bool PreDraw(ref Color lightColor)
+        SpriteEffects spriteEffects = SpriteEffects.None;
+        if (Projectile.spriteDirection == -1)
         {
-            if (texture == null || texture.IsDisposed)
-            {
-                texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/ObscureShot");
-            }
-            SpriteEffects spriteEffects = SpriteEffects.None;
-            if (Projectile.spriteDirection == -1)
-            {
-                spriteEffects = SpriteEffects.FlipHorizontally;
-            }
-            //Get the premultiplied, properly transparent texture
-            int frameHeight = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
-            int startY = frameHeight * Projectile.frame;
-            Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
-            Vector2 origin = sourceRectangle.Size() / 2f;
-            Main.EntitySpriteDraw(texture,
-                Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
-                sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
-
-            return false;
+            spriteEffects = SpriteEffects.FlipHorizontally;
         }
+        //Get the premultiplied, properly transparent texture
+        int frameHeight = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
+        int startY = frameHeight * Projectile.frame;
+        Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+        Vector2 origin = sourceRectangle.Size() / 2f;
+        Main.EntitySpriteDraw(texture,
+            Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+            sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
+
+        return false;
     }
 }

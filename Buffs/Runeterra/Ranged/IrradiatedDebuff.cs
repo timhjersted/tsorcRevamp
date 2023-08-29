@@ -3,8 +3,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Runeterra.Ranged
-{
+namespace tsorcRevamp.Buffs.Runeterra.Ranged;
+
 	public class IrradiatedDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
@@ -35,13 +35,12 @@ namespace tsorcRevamp.Buffs.Runeterra.Ranged
 		}
 		public override void UpdateLifeRegen(NPC npc, ref int damage)
 		{
-            Player player = Main.player[Main.myPlayer];
-            int DoTPerS = (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(220) + (int)(player.GetTotalCritChance(DamageClass.Ranged) / 100f * 220f);
-            if (Irradiated)
+        Player player = Main.player[Main.myPlayer];
+        int DoTPerS = (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(220) + (int)(player.GetTotalCritChance(DamageClass.Ranged) / 100f * 220f);
+        if (Irradiated)
 			{
 				npc.lifeRegen -= DoTPerS * 2;
 				damage += DoTPerS;
-            }
         }
+    }
 	}
-}

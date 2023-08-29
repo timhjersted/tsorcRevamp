@@ -3,8 +3,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Summon
-{
+namespace tsorcRevamp.Buffs.Summon;
+
 	public class NightsCrackerBuff : ModBuff
 	{
 		public int attackspeed;
@@ -16,8 +16,8 @@ namespace tsorcRevamp.Buffs.Summon
 			Main.buffNoTimeDisplay[Type] = false;
 		}
 
-        public override void Update(Player player, ref int buffIndex)
-        {
+    public override void Update(Player player, ref int buffIndex)
+    {
 			attackspeed = Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 6;
 			player.GetAttackSpeed(DamageClass.Summon) += attackspeed / 100;
 		}
@@ -26,4 +26,3 @@ namespace tsorcRevamp.Buffs.Summon
 			tip = $"+{attackspeed}% summon attack speed";
 		}
 	}
-}

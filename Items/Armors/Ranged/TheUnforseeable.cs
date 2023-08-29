@@ -2,46 +2,45 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Armors.Ranged
+namespace tsorcRevamp.Items.Armors.Ranged;
+
+[AutoloadEquip(EquipType.Body)]
+public class TheUnforseeable : ModItem
 {
-    [AutoloadEquip(EquipType.Body)]
-    public class TheUnforseeable : ModItem
+    public override void SetStaticDefaults()
     {
-        public override void SetStaticDefaults()
-        {
-            Tooltip.SetDefault("Increases ranged damage by 15%" +
-                "\nIncreases life regen by 2");
-        }
+        Tooltip.SetDefault("Increases ranged damage by 15%" +
+            "\nIncreases life regen by 2");
+    }
 
-        public override void SetDefaults()
-        {
-            Item.width = 18;
-            Item.height = 18;
-            Item.defense = 10;
-            Item.rare = ItemRarityID.Yellow;
-            Item.value = PriceByRarity.fromItem(Item);
-        }
+    public override void SetDefaults()
+    {
+        Item.width = 18;
+        Item.height = 18;
+        Item.defense = 10;
+        Item.rare = ItemRarityID.Yellow;
+        Item.value = PriceByRarity.fromItem(Item);
+    }
 
-        public override void UpdateEquip(Player player)
+    public override void UpdateEquip(Player player)
+    {
+        player.GetDamage(DamageClass.Ranged) += 0.15f;
+        player.lifeRegen += 2;
+
+        if (player.HasBuff(BuffID.ShadowDodge))
         {
             player.GetDamage(DamageClass.Ranged) += 0.15f;
             player.lifeRegen += 2;
-
-            if (player.HasBuff(BuffID.ShadowDodge))
-            {
-                player.GetDamage(DamageClass.Ranged) += 0.15f;
-                player.lifeRegen += 2;
-            }
         }
+    }
 
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.HallowedPlateMail, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
-            recipe.AddTile(TileID.DemonAltar);
-            
-            recipe.Register();
-        }
+    public override void AddRecipes()
+    {
+        Recipe recipe = CreateRecipe();
+        recipe.AddIngredient(ItemID.HallowedPlateMail, 1);
+        recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
+        recipe.AddTile(TileID.DemonAltar);
+        
+        recipe.Register();
     }
 }

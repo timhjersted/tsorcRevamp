@@ -3,53 +3,52 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.VanillaItems
+namespace tsorcRevamp.Items.VanillaItems;
+
+class MinorEdits : GlobalItem
 {
-    class MinorEdits : GlobalItem
+
+    public override void SetDefaults(Item item)
     {
-
-        public override void SetDefaults(Item item)
+        if (item.type == ItemID.StaffofRegrowth && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
         {
-            if (item.type == ItemID.StaffofRegrowth && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
-            {
-                item.createTile = -1; //block placing grass, thus allowing use
-            }
-            if (item.type == ItemID.DivingHelmet)
-            {
-                item.accessory = true;
-            }
-
+            item.createTile = -1; //block placing grass, thus allowing use
         }
-        public override void GrabRange(Item item, Player player, ref int grabRange)
+        if (item.type == ItemID.DivingHelmet)
         {
-            if (item.type == ItemID.ManaCloakStar)
-            {
-                if (player.manaMagnet)
-                {
-                    grabRange += 100;
-                }
-            }
+            item.accessory = true;
         }
 
-        public override bool CanUseItem(Item item, Player player)
+    }
+    public override void GrabRange(Item item, Player player, ref int grabRange)
+    {
+        if (item.type == ItemID.ManaCloakStar)
         {
-            if ((item.type == ItemID.DirtRod || item.type == ItemID.BoneWand) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if (player.manaMagnet)
             {
-                return false;
+                grabRange += 100;
             }
-            return true;
         }
+    }
 
-        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+    public override bool CanUseItem(Item item, Player player)
+    {
+        if ((item.type == ItemID.DirtRod || item.type == ItemID.BoneWand) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
         {
-            if (item.type == ItemID.MechanicalEye)
+            return false;
+        }
+        return true;
+    }
+
+    public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+    {
+        if (item.type == ItemID.MechanicalEye)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+            if (ttindex != -1)
             {
-                int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
-                if (ttindex != -1)
-                {
-                    tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "RealBossName", "Summons The Triad\nItem is non-consumable."));
-                }
+                tooltips.RemoveAt(ttindex);
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "RealBossName", "Summons The Triad\nItem is non-consumable."));
             }
         }
     }

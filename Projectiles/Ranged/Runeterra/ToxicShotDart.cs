@@ -5,8 +5,8 @@ using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 
-namespace tsorcRevamp.Projectiles.Ranged.Runeterra
-{
+namespace tsorcRevamp.Projectiles.Ranged.Runeterra;
+
 	public class ToxicShotDart : ModProjectile
 	{
 		public override void SetStaticDefaults()
@@ -27,23 +27,22 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 			Projectile.timeLeft = 300;
 			Projectile.ignoreWater = true;
 			Projectile.tileCollide = true;
-            Projectile.extraUpdates = 1;
+        Projectile.extraUpdates = 1;
 
-            AIType = ProjectileID.Bat;
+        AIType = ProjectileID.Bat;
 		}
 
-        public override void AI()
-        {
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            //Dust.NewDust(Projectile.Center + new Vector2(0, -5), 5, 5, DustID.VenomStaff, 0, 0, 0, Color.LightPink, 0.75f);
-        }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
+    public override void AI()
+    {
+        Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+        //Dust.NewDust(Projectile.Center + new Vector2(0, -5), 5, 5, DustID.VenomStaff, 0, 0, 0, Color.LightPink, 0.75f);
+    }
+    public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+    {
 			target.AddBuff(ModContent.BuffType<VenomDebuff>(), 2 * 60);
-        }
+    }
 		public override bool PreDraw(ref Color lightColor)
 		{
 			return true;
 		}
 	}
-}

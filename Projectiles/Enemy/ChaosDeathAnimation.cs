@@ -1,35 +1,35 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy
-{
-    class ChaosDeathAnimation : ModProjectile
-    {
-        public override void SetDefaults()
-        {
-            Main.projFrames[Projectile.type] = 14;
-            Projectile.height = 1;
-            Projectile.tileCollide = false;
-            Projectile.width = 1;
-            Projectile.scale = 2;
-        }
+namespace tsorcRevamp.Projectiles.Enemy;
 
-        //int chaosdacount1 = 0;
-        public override void AI()
+class ChaosDeathAnimation : ModProjectile
+{
+    public override void SetDefaults()
+    {
+        Main.projFrames[Projectile.type] = 14;
+        Projectile.height = 1;
+        Projectile.tileCollide = false;
+        Projectile.width = 1;
+        Projectile.scale = 2;
+    }
+
+    //int chaosdacount1 = 0;
+    public override void AI()
+    {
+        Projectile.frameCounter++;
+        if (Projectile.frameCounter > 3)
         {
-            Projectile.frameCounter++;
-            if (Projectile.frameCounter > 3)
-            {
-                Projectile.frame++;
-                Projectile.frameCounter = 0;
-            }
-            if (Projectile.frame >= 14)
-            {
-                Projectile.Kill();
-                return;
-            }
+            Projectile.frame++;
+            Projectile.frameCounter = 0;
         }
-        /**
+        if (Projectile.frame >= 14)
+        {
+            Projectile.Kill();
+            return;
+        }
+    }
+    /**
 		#region Frames
 		public override void FindFrame(int currentFrame)
 		{
@@ -64,5 +64,4 @@ namespace tsorcRevamp.Projectiles.Enemy
 			}
 		}
 		#endregion **/
-    }
 }

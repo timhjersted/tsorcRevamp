@@ -9,8 +9,8 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Summon
-{
+namespace tsorcRevamp.Projectiles.Summon;
+
 	// This minion shows a few mandatory things that make it behave properly.
 	// Its attack pattern is simple: If an enemy is in range of 43 tiles, it will fly to it and deal contact damage
 	// If the player targets a certain NPC with right-click, it will fly through tiles to it
@@ -117,7 +117,7 @@ namespace tsorcRevamp.Projectiles.Summon
 		}
 
 		private void Attack()
-        {
+    {
 			if (target != null && target.active && target.Distance(Projectile.Center) < 1000)
 			{
 				Vector2 projVel = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target.Center, 1);
@@ -257,7 +257,7 @@ namespace tsorcRevamp.Projectiles.Summon
 
 			float angle = 0;
 			if(totalTriadProjectiles > 0)
-            {
+        {
 				angle = (Main.GameUpdateCount / 120f) + (int)(Main.GameUpdateCount / 480f) + MathHelper.TwoPi * (Projectile.ai[0] / totalTriadProjectiles);
 
 			}
@@ -285,9 +285,9 @@ namespace tsorcRevamp.Projectiles.Summon
 					accelerationMagnitude = 0.7f + flyingTime / 60;
 					acceleration = UsefulFunctions.GenerateTargetingVector(Projectile.Center, targetCenter, accelerationMagnitude);
 					if(distance < 100)
-                    {
+                {
 						acceleration *= 5;
-                    }
+                }
 
 					if (!acceleration.HasNaNs())
 					{
@@ -298,12 +298,12 @@ namespace tsorcRevamp.Projectiles.Summon
 						Projectile.velocity.Normalize();
 						Projectile.velocity *= topSpeed;
 					}
-                }
-                else
+            }
+            else
 				{
 					Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, targetCenter, 1).RotatedBy(0);
 					Projectile.Center = targetCenter;
-                }
+            }
 			}
 			else
 			{
@@ -359,12 +359,12 @@ namespace tsorcRevamp.Projectiles.Summon
 					Projectile.frame = 0;
 				}
 			}
-            //TextureAssets.Npc[NPCID.Deerclops].t
+        //TextureAssets.Npc[NPCID.Deerclops].t
 		}
 
 		public static Effect catEffect;
-        public override bool PreDraw(ref Color lightColor)
-        {
+    public override bool PreDraw(ref Color lightColor)
+    {
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -439,5 +439,4 @@ namespace tsorcRevamp.Projectiles.Summon
 
 			return false;
 		}
-    }
 }

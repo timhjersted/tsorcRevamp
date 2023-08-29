@@ -2,22 +2,21 @@
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs;
 
-namespace tsorcRevamp.Buffs
+namespace tsorcRevamp.Buffs;
+
+public class ViruCatDrain : ModBuff
 {
-    public class ViruCatDrain : ModBuff
+    //Generic texture since this buff is enemy-only
+    public override string Texture => "tsorcRevamp/Buffs/ArmorDrug";
+
+    public override void SetStaticDefaults()
     {
-        //Generic texture since this buff is enemy-only
-        public override string Texture => "tsorcRevamp/Buffs/ArmorDrug";
+        DisplayName.SetDefault("Virulent Catalyzer Drain");
+        Description.SetDefault("Losing life");
+    }
 
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Virulent Catalyzer Drain");
-            Description.SetDefault("Losing life");
-        }
-
-        public override void Update(NPC npc, ref int buffIndex)
-        {
-            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ViruCatDrain = true;
-        }
+    public override void Update(NPC npc, ref int buffIndex)
+    {
+        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ViruCatDrain = true;
     }
 }

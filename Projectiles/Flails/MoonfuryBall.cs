@@ -8,11 +8,11 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using ReLogic.Content;
 
-namespace tsorcRevamp.Projectiles.Flails
-{
+namespace tsorcRevamp.Projectiles.Flails;
 
-    public class MoonfuryBall : ModProjectile
-    {
+
+public class MoonfuryBall : ModProjectile
+{
 
 		private const string ChainTexturePath = "tsorcRevamp/Projectiles/Flails/MoonfuryChain"; // The folder path to the flail chain sprite
 		private const string ChainTextureExtraPath = "tsorcRevamp/Projectiles/Flails/MoonfuryChain2";  // This texture and related code is optional and used for a unique effect
@@ -550,4 +550,3 @@ namespace tsorcRevamp.Projectiles.Flails
 			return true;
 		}
 	}
-}

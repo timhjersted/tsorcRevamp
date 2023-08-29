@@ -6,8 +6,8 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Summon
-{
+namespace tsorcRevamp.Projectiles.Summon;
+
 	// This minion shows a few mandatory things that make it behave properly.
 	// Its attack pattern is simple: If an enemy is in range of 43 tiles, it will fly to it and deal contact damage
 	// If the player targets a certain NPC with right-click, it will fly through tiles to it
@@ -69,7 +69,7 @@ namespace tsorcRevamp.Projectiles.Summon
 			{
 
 				if (!crit)
-                {
+            {
 					Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ModContent.ProjectileType<SummonProjectiles.PhoenixBoom>(), (int)(Projectile.damage * 0.075 * (ragestacks - 5)), 1f, Main.myPlayer);
 				}
 			}
@@ -108,11 +108,11 @@ namespace tsorcRevamp.Projectiles.Summon
 				ragestacks = 0;
 			}
 			if (ragestacks > 5)
-            {
+        {
 				Dust.NewDust(Projectile.Center, 10, 10, DustID.GoldFlame, 0f, 0f, 150, Color.Yellow, 0.5f);
 			} else
 			if (ragestacks > 10)
-            {
+        {
 				Dust.NewDust(Projectile.Center, 20, 20, DustID.GoldFlame, 0f, 0f, 200, Color.Orange, 1f);
 			} else
 			if (ragestacks > 19)
@@ -126,32 +126,32 @@ namespace tsorcRevamp.Projectiles.Summon
 				ragestacksfallofftimer++;
 			}
 			if (ragestacksfallofftimer >= 5)
-            {
+        {
 				if (Main.GameUpdateCount % 60 == 0)
 				{
 					ragestackstimer++;
 				}
 			}
 			if (ragestackstimer == 1)
-            {
+        {
 				ragestacks -= 1;
-            }
+        }
 			else if (ragestackstimer == 2)
-            {
+        {
 				ragestacks -= 1;
-            }
+        }
 			else if (ragestackstimer == 3)
-            {
+        {
 				ragestacks -= 2;
-            }
+        }
 			else if (ragestackstimer == 4)
-            {
+        {
 				ragestacks -= 2;
-            }
+        }
 			else if (ragestackstimer >= 5)
-            {
+        {
 				ragestacks -= 3;
-            }
+        }
 	}
 
 		// This is the "active check", makes sure the minion is alive while the player is alive, and despawns if not
@@ -376,5 +376,4 @@ namespace tsorcRevamp.Projectiles.Summon
 			// Some visuals here
 			Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
 		}
-    }
 }

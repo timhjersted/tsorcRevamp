@@ -5,8 +5,8 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon
-{
+namespace tsorcRevamp.Items.Weapons.Summon;
+
 	public class BeetleIdol : ModItem
 	{
 		public override void SetStaticDefaults()
@@ -17,8 +17,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
 			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 4;
-        }
+        ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 4;
+    }
 		public override void SetDefaults()
 		{
 			Item.damage = 20;
@@ -59,4 +59,3 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			return false;
 		}
 	}
-}

@@ -7,321 +7,320 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Friendly
+namespace tsorcRevamp.NPCs.Friendly;
+
+[AutoloadHead]
+class FreedFairy : ModNPC
 {
-    [AutoloadHead]
-    class FreedFairy : ModNPC
+    public override void SetStaticDefaults()
     {
-        public override void SetStaticDefaults()
+        DisplayName.SetDefault("Freed Fairy");
+        Main.npcFrameCount[NPC.type] = 6;
+        //NPCID.Sets.HatOffsetY[npc.type] = 4;
+    }
+
+    public override List<string> SetNPCNameList()
+    {
+        List<string> list = new List<string>();
+        list.Add("Freed Fairy");
+        return list;
+    }
+
+    public override void SetDefaults()
+    {
+        NPC.townNPC = true;
+        NPC.noGravity = true;
+        NPC.friendly = true;
+        NPC.width = 18;
+        NPC.height = 18;
+        NPC.aiStyle = 7;
+        NPC.damage = 90;
+        NPC.defense = 15;
+        NPC.lifeMax = 1000;
+        NPC.HitSound = SoundID.NPCHit1;
+        NPC.DeathSound = SoundID.NPCDeath1;
+        NPC.knockBackResist = 0.5f;
+        NPC.dontTakeDamage = true;
+
+    }
+
+    #region Frames
+    public override void FindFrame(int currentFrame)
+    {
+        int num = 1;
+        if (!Main.dedServ)
         {
-            DisplayName.SetDefault("Freed Fairy");
-            Main.npcFrameCount[NPC.type] = 6;
-            //NPCID.Sets.HatOffsetY[npc.type] = 4;
+            num = ((Texture2D)TextureAssets.Npc[NPC.type]).Height / Main.npcFrameCount[NPC.type];
         }
-
-        public override List<string> SetNPCNameList()
+        if (NPC.velocity.X < 0)
         {
-            List<string> list = new List<string>();
-            list.Add("Freed Fairy");
-            return list;
+            NPC.spriteDirection = -1;
         }
-
-        public override void SetDefaults()
+        else
         {
-            NPC.townNPC = true;
-            NPC.noGravity = true;
-            NPC.friendly = true;
-            NPC.width = 18;
-            NPC.height = 18;
-            NPC.aiStyle = 7;
-            NPC.damage = 90;
-            NPC.defense = 15;
-            NPC.lifeMax = 1000;
-            NPC.HitSound = SoundID.NPCHit1;
-            NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.knockBackResist = 0.5f;
-            NPC.dontTakeDamage = true;
-
+            NPC.spriteDirection = 1;
         }
+        NPC.rotation = NPC.velocity.X * 0.08f;
 
-        #region Frames
-        public override void FindFrame(int currentFrame)
+        NPC.frameCounter += 1.0;
+        if (NPC.frameCounter >= 8.0)
         {
-            int num = 1;
-            if (!Main.dedServ)
+            NPC.frame.Y = NPC.frame.Y + num;
+            NPC.frameCounter = 0.0;
+        }
+        if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
+        {
+            NPC.frame.Y = 0;
+        }
+    }
+    #endregion
+
+    #region Chat
+    public override string GetChat()
+    {
+        return "Thank you for freeing me! Have this [c/aa9911:glowing thing] I recovered from the bottom of the spring";
+    }
+    #endregion
+    public override void SetChatButtons(ref string button, ref string button2)
+    {
+        button = Language.GetTextValue("Accept");
+    }
+
+    bool droppedCrystallineShard = false;
+    public override void OnChatButtonClicked(bool firstButton, ref bool shop)
+    {
+        if (!droppedCrystallineShard)
+        {
+            //Drop one for each player
+            for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
             {
-                num = ((Texture2D)TextureAssets.Npc[NPC.type]).Height / Main.npcFrameCount[NPC.type];
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Summon.CrystallineShard>());
             }
-            if (NPC.velocity.X < 0)
+            droppedCrystallineShard = true;
+        }
+    }
+
+    #region AI
+    public override void AI()
+    {
+        //The despawning has to be done in AI(), because spawning dusts from within OnChatButtonClicked doesn't work specifically when autopause is on.
+        //I don't know why. I probably don't want to know why. This is as simple as workarounds get, though.
+        if (droppedCrystallineShard)
+        {
+            NPC.active = false;
+            for (int i = 0; i < 20; i++)
             {
-                NPC.spriteDirection = -1;
+                Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.BlueFairy, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3));
+            }
+            return;
+        }
+        NPC.TargetClosest(true);
+
+        this.NPC.directionY = -1;
+        if (this.NPC.direction == 0)
+        {
+            this.NPC.direction = 1;
+        }
+
+        if (Main.player[NPC.target].active && Main.player[NPC.target].talkNPC == this.NPC.whoAmI)
+        {
+            if (this.NPC.ai[0] != 0f)
+            {
+                this.NPC.netUpdate = true;
+            }
+            this.NPC.ai[0] = 0f;
+            this.NPC.ai[1] = 300f;
+            this.NPC.ai[2] = 100f;
+            if (Main.player[NPC.target].position.X + (float)(Main.player[NPC.target].width / 2) < this.NPC.position.X + (float)(this.NPC.width / 2))
+            {
+                this.NPC.direction = -1;
             }
             else
-            {
-                NPC.spriteDirection = 1;
-            }
-            NPC.rotation = NPC.velocity.X * 0.08f;
-
-            NPC.frameCounter += 1.0;
-            if (NPC.frameCounter >= 8.0)
-            {
-                NPC.frame.Y = NPC.frame.Y + num;
-                NPC.frameCounter = 0.0;
-            }
-            if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
-            {
-                NPC.frame.Y = 0;
-            }
-        }
-        #endregion
-
-        #region Chat
-        public override string GetChat()
-        {
-            return "Thank you for freeing me! Have this [c/aa9911:glowing thing] I recovered from the bottom of the spring";
-        }
-        #endregion
-        public override void SetChatButtons(ref string button, ref string button2)
-        {
-            button = Language.GetTextValue("Accept");
-        }
-
-        bool droppedCrystallineShard = false;
-        public override void OnChatButtonClicked(bool firstButton, ref bool shop)
-        {
-            if (!droppedCrystallineShard)
-            {
-                //Drop one for each player
-                for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Summon.CrystallineShard>());
-                }
-                droppedCrystallineShard = true;
-            }
-        }
-
-        #region AI
-        public override void AI()
-        {
-            //The despawning has to be done in AI(), because spawning dusts from within OnChatButtonClicked doesn't work specifically when autopause is on.
-            //I don't know why. I probably don't want to know why. This is as simple as workarounds get, though.
-            if (droppedCrystallineShard)
-            {
-                NPC.active = false;
-                for (int i = 0; i < 20; i++)
-                {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.BlueFairy, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3));
-                }
-                return;
-            }
-            NPC.TargetClosest(true);
-
-            this.NPC.directionY = -1;
-            if (this.NPC.direction == 0)
             {
                 this.NPC.direction = 1;
             }
+        }
 
-            if (Main.player[NPC.target].active && Main.player[NPC.target].talkNPC == this.NPC.whoAmI)
+        if (NPC.ai[2] >= 0f)
+        {
+            int num258 = 16;
+            bool flag26 = false;
+            bool flag27 = false;
+            if (NPC.position.X > NPC.ai[0] - (float)num258 && NPC.position.X < NPC.ai[0] + (float)num258)
             {
-                if (this.NPC.ai[0] != 0f)
-                {
-                    this.NPC.netUpdate = true;
-                }
-                this.NPC.ai[0] = 0f;
-                this.NPC.ai[1] = 300f;
-                this.NPC.ai[2] = 100f;
-                if (Main.player[NPC.target].position.X + (float)(Main.player[NPC.target].width / 2) < this.NPC.position.X + (float)(this.NPC.width / 2))
-                {
-                    this.NPC.direction = -1;
-                }
-                else
-                {
-                    this.NPC.direction = 1;
-                }
+                flag26 = true;
             }
-
-            if (NPC.ai[2] >= 0f)
+            else
             {
-                int num258 = 16;
-                bool flag26 = false;
-                bool flag27 = false;
-                if (NPC.position.X > NPC.ai[0] - (float)num258 && NPC.position.X < NPC.ai[0] + (float)num258)
+                if ((NPC.velocity.X < 0f && NPC.direction > 0) || (NPC.velocity.X > 0f && NPC.direction < 0))
                 {
                     flag26 = true;
                 }
-                else
-                {
-                    if ((NPC.velocity.X < 0f && NPC.direction > 0) || (NPC.velocity.X > 0f && NPC.direction < 0))
-                    {
-                        flag26 = true;
-                    }
-                }
-                num258 += 24;
-                if (NPC.position.Y > NPC.ai[1] - (float)num258 && NPC.position.Y < NPC.ai[1] + (float)num258)
-                {
-                    flag27 = true;
-                }
-                if (flag26 && flag27)
-                {
-                    NPC.ai[2] += 1f;
-                    if (NPC.ai[2] >= 60f)
-                    {
-                        NPC.ai[2] = -200f;
-                        NPC.direction *= -1;
-                        NPC.velocity.X = NPC.velocity.X * -1f;
-                        NPC.collideX = false;
-                    }
-                }
-                else
-                {
-                    NPC.ai[0] = NPC.position.X;
-                    NPC.ai[1] = NPC.position.Y;
-                    NPC.ai[2] = 0f;
-                }
-                NPC.TargetClosest(true);
             }
-            else
+            num258 += 24;
+            if (NPC.position.Y > NPC.ai[1] - (float)num258 && NPC.position.Y < NPC.ai[1] + (float)num258)
+            {
+                flag27 = true;
+            }
+            if (flag26 && flag27)
             {
                 NPC.ai[2] += 1f;
-                if (Main.player[NPC.target].position.X + (float)(Main.player[NPC.target].width / 2) > NPC.position.X + (float)(NPC.width / 2))
+                if (NPC.ai[2] >= 60f)
                 {
-                    NPC.direction = -1;
-                }
-                else
-                {
-                    NPC.direction = 1;
+                    NPC.ai[2] = -200f;
+                    NPC.direction *= -1;
+                    NPC.velocity.X = NPC.velocity.X * -1f;
+                    NPC.collideX = false;
                 }
             }
-            int num259 = (int)((NPC.position.X + (float)(NPC.width / 2)) / 16f) + NPC.direction * 2;
-            int num260 = (int)((NPC.position.Y + (float)NPC.height) / 16f);
-            if (NPC.position.Y > Main.player[NPC.target].position.Y)
+            else
             {
-                NPC.velocity.Y -= .2f;
-                if (NPC.velocity.Y < -1.8f)
-                {
-                    NPC.velocity.Y = -1.8f;
-                }
+                NPC.ai[0] = NPC.position.X;
+                NPC.ai[1] = NPC.position.Y;
+                NPC.ai[2] = 0f;
             }
-            if (NPC.position.Y < Main.player[NPC.target].position.Y)
+            NPC.TargetClosest(true);
+        }
+        else
+        {
+            NPC.ai[2] += 1f;
+            if (Main.player[NPC.target].position.X + (float)(Main.player[NPC.target].width / 2) > NPC.position.X + (float)(NPC.width / 2))
             {
-                NPC.velocity.Y += .2f;
-                if (NPC.velocity.Y > 1.8f)
-                {
-                    NPC.velocity.Y = 1.8f;
-                }
+                NPC.direction = -1;
             }
-            if (NPC.collideX)
+            else
             {
-                NPC.velocity.X = NPC.oldVelocity.X * -0.4f;
-                if (NPC.direction == -1 && NPC.velocity.X > 0f && NPC.velocity.X < 1f)
-                {
-                    NPC.velocity.X = 1f;
-                }
-                if (NPC.direction == 1 && NPC.velocity.X < 0f && NPC.velocity.X > -1f)
-                {
-                    NPC.velocity.X = -1f;
-                }
+                NPC.direction = 1;
             }
-            if (NPC.collideY)
+        }
+        int num259 = (int)((NPC.position.X + (float)(NPC.width / 2)) / 16f) + NPC.direction * 2;
+        int num260 = (int)((NPC.position.Y + (float)NPC.height) / 16f);
+        if (NPC.position.Y > Main.player[NPC.target].position.Y)
+        {
+            NPC.velocity.Y -= .2f;
+            if (NPC.velocity.Y < -1.8f)
             {
-                NPC.velocity.Y = NPC.oldVelocity.Y * -0.25f;
-                if (NPC.velocity.Y > 0f && NPC.velocity.Y < 1f)
-                {
-                    NPC.velocity.Y = 1f;
-                }
-                if (NPC.velocity.Y < 0f && NPC.velocity.Y > -1f)
-                {
-                    NPC.velocity.Y = -1f;
-                }
+                NPC.velocity.Y = -1.8f;
             }
-            float num270 = 2.5f;
-            if (NPC.direction == -1 && NPC.velocity.X > -num270)
+        }
+        if (NPC.position.Y < Main.player[NPC.target].position.Y)
+        {
+            NPC.velocity.Y += .2f;
+            if (NPC.velocity.Y > 1.8f)
+            {
+                NPC.velocity.Y = 1.8f;
+            }
+        }
+        if (NPC.collideX)
+        {
+            NPC.velocity.X = NPC.oldVelocity.X * -0.4f;
+            if (NPC.direction == -1 && NPC.velocity.X > 0f && NPC.velocity.X < 1f)
+            {
+                NPC.velocity.X = 1f;
+            }
+            if (NPC.direction == 1 && NPC.velocity.X < 0f && NPC.velocity.X > -1f)
+            {
+                NPC.velocity.X = -1f;
+            }
+        }
+        if (NPC.collideY)
+        {
+            NPC.velocity.Y = NPC.oldVelocity.Y * -0.25f;
+            if (NPC.velocity.Y > 0f && NPC.velocity.Y < 1f)
+            {
+                NPC.velocity.Y = 1f;
+            }
+            if (NPC.velocity.Y < 0f && NPC.velocity.Y > -1f)
+            {
+                NPC.velocity.Y = -1f;
+            }
+        }
+        float num270 = 2.5f;
+        if (NPC.direction == -1 && NPC.velocity.X > -num270)
+        {
+            NPC.velocity.X = NPC.velocity.X - 0.1f;
+            if (NPC.velocity.X > num270)
             {
                 NPC.velocity.X = NPC.velocity.X - 0.1f;
-                if (NPC.velocity.X > num270)
+            }
+            else
+            {
+                if (NPC.velocity.X > 0f)
                 {
-                    NPC.velocity.X = NPC.velocity.X - 0.1f;
+                    NPC.velocity.X = NPC.velocity.X + 0.05f;
                 }
-                else
-                {
-                    if (NPC.velocity.X > 0f)
-                    {
-                        NPC.velocity.X = NPC.velocity.X + 0.05f;
-                    }
-                }
+            }
+            if (NPC.velocity.X < -num270)
+            {
+                NPC.velocity.X = -num270;
+            }
+        }
+        else
+        {
+            if (NPC.direction == 1 && NPC.velocity.X < num270)
+            {
+                NPC.velocity.X = NPC.velocity.X + 0.1f;
                 if (NPC.velocity.X < -num270)
                 {
-                    NPC.velocity.X = -num270;
-                }
-            }
-            else
-            {
-                if (NPC.direction == 1 && NPC.velocity.X < num270)
-                {
                     NPC.velocity.X = NPC.velocity.X + 0.1f;
-                    if (NPC.velocity.X < -num270)
-                    {
-                        NPC.velocity.X = NPC.velocity.X + 0.1f;
-                    }
-                    else
-                    {
-                        if (NPC.velocity.X < 0f)
-                        {
-                            NPC.velocity.X = NPC.velocity.X - 0.05f;
-                        }
-                    }
-                    if (NPC.velocity.X > num270)
-                    {
-                        NPC.velocity.X = num270;
-                    }
-                }
-            }
-            if (NPC.directionY == -1 && (double)NPC.velocity.Y > -2.5)
-            {
-                NPC.velocity.Y = NPC.velocity.Y - 0.04f;
-                if ((double)NPC.velocity.Y > 2.5)
-                {
-                    NPC.velocity.Y = NPC.velocity.Y - 0.05f;
                 }
                 else
                 {
-                    if (NPC.velocity.Y > 0f)
+                    if (NPC.velocity.X < 0f)
                     {
-                        NPC.velocity.Y = NPC.velocity.Y + 0.03f;
+                        NPC.velocity.X = NPC.velocity.X - 0.05f;
                     }
                 }
-                if ((double)NPC.velocity.Y < -2.5)
+                if (NPC.velocity.X > num270)
                 {
-                    NPC.velocity.Y = -2.5f;
+                    NPC.velocity.X = num270;
                 }
+            }
+        }
+        if (NPC.directionY == -1 && (double)NPC.velocity.Y > -2.5)
+        {
+            NPC.velocity.Y = NPC.velocity.Y - 0.04f;
+            if ((double)NPC.velocity.Y > 2.5)
+            {
+                NPC.velocity.Y = NPC.velocity.Y - 0.05f;
             }
             else
             {
-                if (NPC.directionY == 1 && (double)NPC.velocity.Y < 2.5)
+                if (NPC.velocity.Y > 0f)
                 {
-                    NPC.velocity.Y = NPC.velocity.Y + 0.04f;
-                    if ((double)NPC.velocity.Y < -2.5)
-                    {
-                        NPC.velocity.Y = NPC.velocity.Y + 0.05f;
-                    }
-                    else
-                    {
-                        if (NPC.velocity.Y < 0f)
-                        {
-                            NPC.velocity.Y = NPC.velocity.Y - 0.03f;
-                        }
-                    }
-                    if ((double)NPC.velocity.Y > 2.5)
-                    {
-                        NPC.velocity.Y = 2.5f;
-                    }
+                    NPC.velocity.Y = NPC.velocity.Y + 0.03f;
                 }
             }
-
-            Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.6f, 0.3f, 0.0f);
-            return;
+            if ((double)NPC.velocity.Y < -2.5)
+            {
+                NPC.velocity.Y = -2.5f;
+            }
         }
-        #endregion
+        else
+        {
+            if (NPC.directionY == 1 && (double)NPC.velocity.Y < 2.5)
+            {
+                NPC.velocity.Y = NPC.velocity.Y + 0.04f;
+                if ((double)NPC.velocity.Y < -2.5)
+                {
+                    NPC.velocity.Y = NPC.velocity.Y + 0.05f;
+                }
+                else
+                {
+                    if (NPC.velocity.Y < 0f)
+                    {
+                        NPC.velocity.Y = NPC.velocity.Y - 0.03f;
+                    }
+                }
+                if ((double)NPC.velocity.Y > 2.5)
+                {
+                    NPC.velocity.Y = 2.5f;
+                }
+            }
+        }
+
+        Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.6f, 0.3f, 0.0f);
+        return;
     }
+    #endregion
 }

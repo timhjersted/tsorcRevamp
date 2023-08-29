@@ -4,51 +4,50 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles;
 
-namespace tsorcRevamp.Items.Weapons.Ranged
+namespace tsorcRevamp.Items.Weapons.Ranged;
+
+public class PyroclasticFlow : ModItem
 {
-    public class PyroclasticFlow : ModItem
+    public override void SetStaticDefaults()
     {
-        public override void SetStaticDefaults()
-        {
-            Tooltip.SetDefault("Precision rifle that launches an explosive fireball every 3 shots");
-        }
+        Tooltip.SetDefault("Precision rifle that launches an explosive fireball every 3 shots");
+    }
 
-        public override void SetDefaults()
-        {
-            Item.DamageType = DamageClass.Ranged;
-            Item.noMelee = true;
-            Item.useTime = Item.useAnimation = 15; //brrrrrr
-            Item.damage = 150;
-            Item.knockBack = 1;
-            Item.autoReuse = true;
-            Item.shootSpeed = 16;
-            Item.useAmmo = AmmoID.Bullet;
-            Item.rare = ItemRarityID.Cyan;
-            Item.value = PriceByRarity.Cyan_9;
-            Item.shoot = 10;
-            Item.height = 50;
-            Item.width = 32;
-            Item.useStyle = ItemUseStyleID.Shoot;
-            Item.UseSound = SoundID.Item40;
-        }
+    public override void SetDefaults()
+    {
+        Item.DamageType = DamageClass.Ranged;
+        Item.noMelee = true;
+        Item.useTime = Item.useAnimation = 15; //brrrrrr
+        Item.damage = 150;
+        Item.knockBack = 1;
+        Item.autoReuse = true;
+        Item.shootSpeed = 16;
+        Item.useAmmo = AmmoID.Bullet;
+        Item.rare = ItemRarityID.Cyan;
+        Item.value = PriceByRarity.Cyan_9;
+        Item.shoot = 10;
+        Item.height = 50;
+        Item.width = 32;
+        Item.useStyle = ItemUseStyleID.Shoot;
+        Item.UseSound = SoundID.Item40;
+    }
 
-        public override Vector2? HoldoutOffset()
+    public override Vector2? HoldoutOffset()
+    {
+        return new Vector2(-6, 0);
+    }
+    int tallyCounter;
+    public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+    {
+        if(tallyCounter == 2)
         {
-            return new Vector2(-6, 0);
+            type = ModContent.ProjectileType<Projectiles.Ranged.PyroclasticFlow>();
+            damage *= 2;
+            tallyCounter = 0;
         }
-        int tallyCounter;
-        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+        else
         {
-            if(tallyCounter == 2)
-            {
-                type = ModContent.ProjectileType<Projectiles.Ranged.PyroclasticFlow>();
-                damage *= 2;
-                tallyCounter = 0;
-            }
-            else
-            {
-                tallyCounter++;
-            }
+            tallyCounter++;
         }
     }
 }

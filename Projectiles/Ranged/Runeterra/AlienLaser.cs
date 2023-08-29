@@ -4,8 +4,8 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 
-namespace tsorcRevamp.Projectiles.Ranged.Runeterra
-{
+namespace tsorcRevamp.Projectiles.Ranged.Runeterra;
+
 	public class AlienLaser : ModProjectile
 	{
 		public override void SetStaticDefaults()
@@ -27,23 +27,22 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 			Projectile.light = 0.25f;
 			Projectile.ignoreWater = true;
 			Projectile.tileCollide = true;
-            Projectile.extraUpdates = 2;
+        Projectile.extraUpdates = 2;
 
-            AIType = ProjectileID.Bat;
+        AIType = ProjectileID.Bat;
 		}
 
-        public override void AI()
-        {
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            //Dust.NewDust(Projectile.Center + new Vector2(0, -5), 10, 10, DustID.VenomStaff, 0, 0, 0, Color.DarkRed, 0.75f);
-        }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
+    public override void AI()
+    {
+        Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+        //Dust.NewDust(Projectile.Center + new Vector2(0, -5), 10, 10, DustID.VenomStaff, 0, 0, 0, Color.DarkRed, 0.75f);
+    }
+    public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+    {
 			target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 2 * 60);
-        }
+    }
 		public override bool PreDraw(ref Color lightColor)
 		{
 			return true;
 		}
 	}
-}

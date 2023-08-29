@@ -2,58 +2,57 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles
+namespace tsorcRevamp.Projectiles;
+
+class Bolt3Bolt : ModProjectile
 {
-    class Bolt3Bolt : ModProjectile
+
+    public override void SetStaticDefaults()
     {
+        Main.projFrames[Projectile.type] = 12;
+    }
 
-        public override void SetStaticDefaults()
+    public override void SetDefaults()
+    {
+        Projectile.width = 130;
+        Projectile.height = 164;
+        Projectile.penetrate = 8;
+        Projectile.friendly = true;
+        Projectile.tileCollide = false;
+        Projectile.DamageType = DamageClass.Magic;
+        Projectile.light = 0.8f;
+        Projectile.usesLocalNPCImmunity = true;
+        Projectile.localNPCHitCooldown = 25;
+    }
+    public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+    {
+        target.AddBuff(Terraria.ID.BuffID.Slow, 60);
+        target.AddBuff(Terraria.ID.BuffID.Electrified, 240);
+    }
+    public override void AI()
+    {
+        if (Projectile.ai[0] == 0)
         {
-            Main.projFrames[Projectile.type] = 12;
+            Projectile.velocity.X *= 0.001f;
+            Projectile.velocity.Y *= 0.001f;
+            Projectile.ai[0] = 1;
         }
 
-        public override void SetDefaults()
+        Projectile.frameCounter++;
+        Projectile.frame = (int)Math.Floor((double)Projectile.frameCounter / 4);
+
+        if (Projectile.frame >= 12)
         {
-            Projectile.width = 130;
-            Projectile.height = 164;
-            Projectile.penetrate = 8;
-            Projectile.friendly = true;
-            Projectile.tileCollide = false;
-            Projectile.DamageType = DamageClass.Magic;
-            Projectile.light = 0.8f;
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 25;
+            Projectile.frame = 10;
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
-            target.AddBuff(Terraria.ID.BuffID.Slow, 60);
-            target.AddBuff(Terraria.ID.BuffID.Electrified, 240);
+        if (Projectile.frameCounter > 53)
+        { // (projFrames * 4.5) - 1
+            Projectile.alpha += 15;
         }
-        public override void AI()
+
+        if (Projectile.alpha >= 255)
         {
-            if (Projectile.ai[0] == 0)
-            {
-                Projectile.velocity.X *= 0.001f;
-                Projectile.velocity.Y *= 0.001f;
-                Projectile.ai[0] = 1;
-            }
-
-            Projectile.frameCounter++;
-            Projectile.frame = (int)Math.Floor((double)Projectile.frameCounter / 4);
-
-            if (Projectile.frame >= 12)
-            {
-                Projectile.frame = 10;
-            }
-            if (Projectile.frameCounter > 53)
-            { // (projFrames * 4.5) - 1
-                Projectile.alpha += 15;
-            }
-
-            if (Projectile.alpha >= 255)
-            {
-                Projectile.Kill();
-            }
+            Projectile.Kill();
         }
     }
 }

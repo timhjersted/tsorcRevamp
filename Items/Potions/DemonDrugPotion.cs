@@ -2,58 +2,57 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Potions
+namespace tsorcRevamp.Items.Potions;
+
+public class DemonDrugPotion : ModItem
 {
-    public class DemonDrugPotion : ModItem
+    public override void SetStaticDefaults()
     {
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Demon Drug");
-            Tooltip.SetDefault("Multiplies damage by 22%, lowers defense by 15\n" +
-                               "Does not stack with Armor Drug, Strength, or Battlefront Potions.");
-        }
+        DisplayName.SetDefault("Demon Drug");
+        Tooltip.SetDefault("Multiplies damage by 22%, lowers defense by 15\n" +
+                           "Does not stack with Armor Drug, Strength, or Battlefront Potions.");
+    }
 
-        public override void SetDefaults()
+    public override void SetDefaults()
+    {
+        Item.width = 14;
+        Item.height = 24;
+        Item.useStyle = ItemUseStyleID.EatFood;
+        Item.useAnimation = 15;
+        Item.useTime = 15;
+        Item.useTurn = true;
+        Item.UseSound = SoundID.Item3;
+        Item.maxStack = 9999;
+        Item.consumable = true;
+        Item.rare = ItemRarityID.Blue;
+        Item.value = 300000;
+        Item.buffType = ModContent.BuffType<Buffs.DemonDrug>();
+        Item.buffTime = 28800;
+    }
+    public override bool? UseItem(Player player)
+    {
+        int currentBuff = 0;
+        foreach (int buffType in player.buffType)
         {
-            Item.width = 14;
-            Item.height = 24;
-            Item.useStyle = ItemUseStyleID.EatFood;
-            Item.useAnimation = 15;
-            Item.useTime = 15;
-            Item.useTurn = true;
-            Item.UseSound = SoundID.Item3;
-            Item.maxStack = 9999;
-            Item.consumable = true;
-            Item.rare = ItemRarityID.Blue;
-            Item.value = 300000;
-            Item.buffType = ModContent.BuffType<Buffs.DemonDrug>();
-            Item.buffTime = 28800;
-        }
-        public override bool? UseItem(Player player)
-        {
-            int currentBuff = 0;
-            foreach (int buffType in player.buffType)
+            if (buffType == ModContent.BuffType<Buffs.Strength>() || buffType == ModContent.BuffType<Buffs.Battlefront>() || buffType == ModContent.BuffType<Buffs.ArmorDrug>())
             {
-                if (buffType == ModContent.BuffType<Buffs.Strength>() || buffType == ModContent.BuffType<Buffs.Battlefront>() || buffType == ModContent.BuffType<Buffs.ArmorDrug>())
-                {
-                    player.DelBuff(currentBuff);
-                }
-                currentBuff++;
+                player.DelBuff(currentBuff);
             }
-            return true;
+            currentBuff++;
         }
+        return true;
+    }
 
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe(4);
-            recipe.AddIngredient(ItemID.MagicPowerPotion, 4);
-            recipe.AddIngredient(ItemID.ArcheryPotion, 4);
-            recipe.AddIngredient(ItemID.Ale, 4);
-            recipe.AddIngredient(ItemID.SummoningPotion, 4);
-            recipe.AddIngredient(ItemID.SoulofNight, 4);
-            recipe.AddTile(TileID.Bottles);
+    public override void AddRecipes()
+    {
+        Recipe recipe = CreateRecipe(4);
+        recipe.AddIngredient(ItemID.MagicPowerPotion, 4);
+        recipe.AddIngredient(ItemID.ArcheryPotion, 4);
+        recipe.AddIngredient(ItemID.Ale, 4);
+        recipe.AddIngredient(ItemID.SummoningPotion, 4);
+        recipe.AddIngredient(ItemID.SoulofNight, 4);
+        recipe.AddTile(TileID.Bottles);
 
-            recipe.Register();
-        }
+        recipe.Register();
     }
 }

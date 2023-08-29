@@ -2,8 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
-{
+namespace tsorcRevamp.Buffs.Summon.WhipDebuffs;
+
 	public class SearingLashDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
@@ -40,9 +40,9 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			if (markedBySearingLash && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
 				if(npc.HasBuff(BuffID.BlandWhipEnemyDebuff))
-                {
+            {
 					tagbonusdamage += 4;
-                }
+            }
 				if (npc.HasBuff(BuffID.ThornWhipNPCDebuff))
 				{
 					tagbonusdamage += 6;
@@ -67,24 +67,23 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 				{
 					tagbonusdamage += 7;
 				}
-                if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()))
-                {
-                    tagbonusdamage += Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 2;
-                }
-                if (npc.HasBuff(ModContent.BuffType<PyrosulfateDebuff>()))
+            if (npc.HasBuff(ModContent.BuffType<NightsCrackerDebuff>()))
+            {
+                tagbonusdamage += Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 2;
+            }
+            if (npc.HasBuff(ModContent.BuffType<PyrosulfateDebuff>()))
 				{
 					tagbonusdamage += 8;
 				}
 				if (npc.HasBuff(ModContent.BuffType<DragoonLashDebuff>()))
-                {
+            {
 					tagbonusdamage += 3;
-                }
-                if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
-                {
-                    tagbonusdamage += Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 5;
-                }
-                damage += (int)((projectile.damage + tagbonusdamage) * 0.66f * whipDamage * 0.01);
+            }
+            if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
+            {
+                tagbonusdamage += Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 5;
+            }
+            damage += (int)((projectile.damage + tagbonusdamage) * 0.66f * whipDamage * 0.01);
 			}
 		}
 	}
-}

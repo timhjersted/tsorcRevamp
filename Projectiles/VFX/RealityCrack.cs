@@ -10,316 +10,315 @@ using Terraria.Graphics.Shaders;
 using System.Collections.Generic;
 using Terraria.Audio;
 
-namespace tsorcRevamp.Projectiles.VFX
+namespace tsorcRevamp.Projectiles.VFX;
+
+class RealityCrack : ModProjectile
 {
-    class RealityCrack : ModProjectile
+    public override void SetStaticDefaults()
     {
-        public override void SetStaticDefaults()
+        DisplayName.SetDefault("RealityCrack");
+        ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
+    }
+
+    public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
+
+    public override void SetDefaults()
+    {
+        Projectile.friendly = true;
+        Projectile.width = 48;
+        Projectile.height = 62;
+        Projectile.penetrate = -1;
+        Projectile.scale = 1;
+        Projectile.tileCollide = false;
+        Projectile.timeLeft = 999;
+    }        
+
+    string filterIndex;
+
+    float effectTimer = 0;
+    bool initialized = false;
+    public override void AI()
+    {
+        Projectile.timeLeft++;
+        effectTimer++;
+
+        //Get an unused copy of the effect from the scene filter dictionary, or create one if they're all in use
+        if (!initialized && Main.netMode != NetmodeID.Server)
         {
-            DisplayName.SetDefault("RealityCrack");
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
-        }
-
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
-
-        public override void SetDefaults()
-        {
-            Projectile.friendly = true;
-            Projectile.width = 48;
-            Projectile.height = 62;
-            Projectile.penetrate = -1;
-            Projectile.scale = 1;
-            Projectile.tileCollide = false;
-            Projectile.timeLeft = 999;
-        }        
-
-        string filterIndex;
-
-        float effectTimer = 0;
-        bool initialized = false;
-        public override void AI()
-        {
-            Projectile.timeLeft++;
-            effectTimer++;
-
-            //Get an unused copy of the effect from the scene filter dictionary, or create one if they're all in use
-            if (!initialized && Main.netMode != NetmodeID.Server)
+            SoundEngine.PlaySound(SoundID.Shatter  with { Volume = 0.5f });
+            int index = 0;
+            do
             {
-                SoundEngine.PlaySound(SoundID.Shatter  with { Volume = 0.5f });
-                int index = 0;
-                do
+                string currentIndex = "tsorcRevamp:realitycrack" + index;
+
+                //If there is an unused loaded shader, then start using it instead of creating a new one
+                if (Filters.Scene[currentIndex] != null && !Filters.Scene[currentIndex].Active)
                 {
-                    string currentIndex = "tsorcRevamp:realitycrack" + index;
+                    Filters.Scene.Activate(currentIndex, Projectile.Center).GetShader().UseTargetPosition(Projectile.Center);
+                    filterIndex = currentIndex;
+                    initialized = true;
+                    break;
+                }
 
-                    //If there is an unused loaded shader, then start using it instead of creating a new one
-                    if (Filters.Scene[currentIndex] != null && !Filters.Scene[currentIndex].Active)
+                //If we have reached the point no more entries exist, then create a new one
+                if (Filters.Scene[currentIndex] == null)
+                {
+                    Filters.Scene[currentIndex] = new Filter(new ScreenShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/RealityCrack", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "RealityCrackPass"), EffectPriority.VeryHigh);
+                    filterIndex = currentIndex;
+                    initialized = true;
+                    break;
+                }                    
+
+                //If more than 10 are already active at once, give up and just kill the shockwave instead of creating yet another one.
+                if(index >= 20)
+                {
+                    initialized = true;
+                    Projectile.Kill();
+                    break;
+                }
+                index++;
+
+            } while (index < 20);
+        }
+        if(filterIndex == null && Main.netMode != NetmodeID.Server)
+        {
+            Projectile.Kill();
+            return;
+        }
+
+        //Apply it
+        if (Main.netMode != NetmodeID.Server && !Filters.Scene[filterIndex].IsActive() && lightningTarget != null && !lightningTarget.IsDisposed)
+        {
+            Filters.Scene.Activate(filterIndex, Projectile.Center).GetShader().UseTargetPosition(storedPosition).UseProgress(1).UseOpacity(1).UseIntensity(1).UseColor(Color.White.ToVector3()).UseImage(lightningTarget, samplerState: SamplerState.LinearClamp).UseDirection(-Projectile.velocity);
+        }
+
+        if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex].IsActive() && lightningTarget != null && !lightningTarget.IsDisposed)
+        {
+            Filters.Scene[filterIndex].GetShader().UseTargetPosition(storedPosition).UseProgress(1).UseOpacity(1).UseIntensity(1).UseColor(Color.White.ToVector3()).UseImage(lightningTarget, samplerState: SamplerState.LinearClamp).UseDirection(-Projectile.velocity);
+        }
+
+
+        if (effectTimer > 1000)
+        {                
+            Projectile.Kill();
+        }
+    }
+
+    public override void Kill(int timeLeft)
+    {
+        if (Main.netMode != NetmodeID.Server && filterIndex != null && Filters.Scene[filterIndex].IsActive())
+        {
+            //Set its 'useimage' to this so that it doesn't hold onto a reference to the soon to be disposed rendertarget
+            Filters.Scene[filterIndex].GetShader().UseOpacity(0).UseImage(tsorcRevamp.tNoiseTexture1);
+            Filters.Scene[filterIndex].Deactivate();
+        }
+        if (lightningTarget != null && !lightningTarget.IsDisposed)
+        {
+            lightningTarget.Dispose();
+        }
+    }
+
+
+    public RenderTarget2D lightningTarget;
+    Vector2 storedPosition;
+    public override bool PreDraw(ref Color lightColor)
+    {
+        return false;
+    }
+
+
+    Vector2 targetOffset;
+    public void CreateRenderTarget()
+    {
+        //Store a reference to the graphics device to simplify code
+        GraphicsDevice device = Main.graphics.GraphicsDevice;
+
+        //Create a rendertarget. Instead of drawing all 200 lightning branches every frame, we will draw them once and store the results in this.
+        //Once that is done, we can simply draw this one rendertarget to display the full lightning strike
+        lightningTarget = new RenderTarget2D(device, device.PresentationParameters.BackBufferWidth * 2, device.PresentationParameters.BackBufferHeight * 3, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
+        targetOffset = lightningTarget.Size() / 2;
+        //Set the device target to the new rendertarget
+        device.SetRenderTarget(lightningTarget);
+
+        //Clear it, so that whatever was previously stored on the backbuffer (like other lightning) doesn't get put in this target
+        device.Clear(Color.Transparent);
+
+        //Start a new "default" texture-sorted spritebatch
+        Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend);
+
+        //Activate the living ocean shader to make it look nicer
+        //GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.LivingOceanDye), Main.LocalPlayer).Apply();
+
+        CreateLightningSegments();
+
+        //Draw the lightning
+        DrawSegments();
+
+        //End the spritebatch
+        Main.spriteBatch.End();
+        
+        
+
+        //Store the current screen position at time of drawing so it can be used to calculate where to draw the lightning later
+        storedPosition = Main.screenPosition - targetOffset;
+
+        //Re-set the old bindings
+        //If I do this instead, then everything drawn *before* the lightning (tiles, backrounds, etc) is blacked out this frame
+        //device.SetRenderTargets(bindings);
+        device.SetRenderTarget(null);
+    }
+    public void DrawSegments()
+    {
+
+        if (branches != null)
+        {
+            for (int i = 0; i < branches.Count; i++)
+            {
+                for (int j = 0; j < branches[i].Count - 1; j++)
+                {
+                    float scale = 0.7f;
+                    if (i == 0)
                     {
-                        Filters.Scene.Activate(currentIndex, Projectile.Center).GetShader().UseTargetPosition(Projectile.Center);
-                        filterIndex = currentIndex;
-                        initialized = true;
-                        break;
+                        scale = 1;
                     }
-
-                    //If we have reached the point no more entries exist, then create a new one
-                    if (Filters.Scene[currentIndex] == null)
-                    {
-                        Filters.Scene[currentIndex] = new Filter(new ScreenShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/RealityCrack", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "RealityCrackPass"), EffectPriority.VeryHigh);
-                        filterIndex = currentIndex;
-                        initialized = true;
-                        break;
-                    }                    
-
-                    //If more than 10 are already active at once, give up and just kill the shockwave instead of creating yet another one.
-                    if(index >= 20)
-                    {
-                        initialized = true;
-                        Projectile.Kill();
-                        break;
-                    }
-                    index++;
-
-                } while (index < 20);
-            }
-            if(filterIndex == null && Main.netMode != NetmodeID.Server)
-            {
-                Projectile.Kill();
-                return;
-            }
-
-            //Apply it
-            if (Main.netMode != NetmodeID.Server && !Filters.Scene[filterIndex].IsActive() && lightningTarget != null && !lightningTarget.IsDisposed)
-            {
-                Filters.Scene.Activate(filterIndex, Projectile.Center).GetShader().UseTargetPosition(storedPosition).UseProgress(1).UseOpacity(1).UseIntensity(1).UseColor(Color.White.ToVector3()).UseImage(lightningTarget, samplerState: SamplerState.LinearClamp).UseDirection(-Projectile.velocity);
-            }
-
-            if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex].IsActive() && lightningTarget != null && !lightningTarget.IsDisposed)
-            {
-                Filters.Scene[filterIndex].GetShader().UseTargetPosition(storedPosition).UseProgress(1).UseOpacity(1).UseIntensity(1).UseColor(Color.White.ToVector3()).UseImage(lightningTarget, samplerState: SamplerState.LinearClamp).UseDirection(-Projectile.velocity);
-            }
-
-
-            if (effectTimer > 1000)
-            {                
-                Projectile.Kill();
+                    DrawLightning(tsorcRevamp.tNoiseTexture2, branches[i][j],
+                            branches[i][j + 1], new Rectangle(0, 0, 10, 4), branchLengths[i][j], branchAngles[i][j], scale * 1, Color.White);
+                }
             }
         }
+    }
+    public void DrawLightning(Texture2D texture, Vector2 start, Vector2 unit, Rectangle bodyRect, float distance, float rotation = 0f, float scale = 1f, Color color = default)
+    {
+        
+        float i = 0;
+        Vector2 diff = unit - start;
+        diff.Normalize();
 
-        public override void Kill(int timeLeft)
+        Vector2 startPos = start - diff * 3;
+        for (; i <= distance; i += (bodyRect.Height) * scale)
         {
-            if (Main.netMode != NetmodeID.Server && filterIndex != null && Filters.Scene[filterIndex].IsActive())
-            {
-                //Set its 'useimage' to this so that it doesn't hold onto a reference to the soon to be disposed rendertarget
-                Filters.Scene[filterIndex].GetShader().UseOpacity(0).UseImage(tsorcRevamp.tNoiseTexture1);
-                Filters.Scene[filterIndex].Deactivate();
-            }
-            if (lightningTarget != null && !lightningTarget.IsDisposed)
-            {
-                lightningTarget.Dispose();
-            }
+            Vector2 drawStart = startPos + i * diff;
+            Main.EntitySpriteDraw(texture, drawStart - Main.screenPosition + targetOffset, bodyRect, color, rotation + MathHelper.PiOver2, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);
         }
+    }
 
-
-        public RenderTarget2D lightningTarget;
-        Vector2 storedPosition;
-        public override bool PreDraw(ref Color lightColor)
+    public bool randomized = false;
+    public List<List<Vector2>> branches;
+    List<List<float>> branchAngles;
+    List<List<float>> branchLengths;
+    public int segmentCount = 80;
+    public float segmentLength = 60;
+    public float randomness = 50;
+    bool positionSet = false;
+    //public float initialAngleLimit = MathHelper.ToRadians(75); //Can diverge up to 75 degrees from 
+    private void CreateLightningSegments()
+    {
+        if (!positionSet)
         {
-            return false;
-        }
+            branches = new List<List<Vector2>>();
+            branchAngles = new List<List<float>>();
+            branchLengths = new List<List<float>>();
 
+            Tuple<List<Vector2>, List<float>, List<float>> initialLine = GenerateLightningLine(Projectile.position, Projectile.velocity.ToRotation(), segmentCount, false);
 
-        Vector2 targetOffset;
-        public void CreateRenderTarget()
-        {
-            //Store a reference to the graphics device to simplify code
-            GraphicsDevice device = Main.graphics.GraphicsDevice;
+            branches.Add(initialLine.Item1);
+            branchAngles.Add(initialLine.Item2);
+            branchLengths.Add(initialLine.Item3);
 
-            //Create a rendertarget. Instead of drawing all 200 lightning branches every frame, we will draw them once and store the results in this.
-            //Once that is done, we can simply draw this one rendertarget to display the full lightning strike
-            lightningTarget = new RenderTarget2D(device, device.PresentationParameters.BackBufferWidth * 2, device.PresentationParameters.BackBufferHeight * 3, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
-            targetOffset = lightningTarget.Size() / 2;
-            //Set the device target to the new rendertarget
-            device.SetRenderTarget(lightningTarget);
-
-            //Clear it, so that whatever was previously stored on the backbuffer (like other lightning) doesn't get put in this target
-            device.Clear(Color.Transparent);
-
-            //Start a new "default" texture-sorted spritebatch
-            Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend);
-
-            //Activate the living ocean shader to make it look nicer
-            //GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.LivingOceanDye), Main.LocalPlayer).Apply();
-
-            CreateLightningSegments();
-
-            //Draw the lightning
-            DrawSegments();
-
-            //End the spritebatch
-            Main.spriteBatch.End();
-            
-            
-
-            //Store the current screen position at time of drawing so it can be used to calculate where to draw the lightning later
-            storedPosition = Main.screenPosition - targetOffset;
-
-            //Re-set the old bindings
-            //If I do this instead, then everything drawn *before* the lightning (tiles, backrounds, etc) is blacked out this frame
-            //device.SetRenderTargets(bindings);
-            device.SetRenderTarget(null);
-        }
-        public void DrawSegments()
-        {
-
-            if (branches != null)
+            for (int i = 0; i < branches.Count; i++)
             {
-                for (int i = 0; i < branches.Count; i++)
+                if (branches[i].Count > 0)
                 {
                     for (int j = 0; j < branches[i].Count - 1; j++)
                     {
-                        float scale = 0.7f;
-                        if (i == 0)
+                        if (Main.rand.NextBool(3) && j > 5)
                         {
-                            scale = 1;
-                        }
-                        DrawLightning(tsorcRevamp.tNoiseTexture2, branches[i][j],
-                                branches[i][j + 1], new Rectangle(0, 0, 10, 4), branchLengths[i][j], branchAngles[i][j], scale * 1, Color.White);
-                    }
-                }
-            }
-        }
-        public void DrawLightning(Texture2D texture, Vector2 start, Vector2 unit, Rectangle bodyRect, float distance, float rotation = 0f, float scale = 1f, Color color = default)
-        {
-            
-            float i = 0;
-            Vector2 diff = unit - start;
-            diff.Normalize();
-
-            Vector2 startPos = start - diff * 3;
-            for (; i <= distance; i += (bodyRect.Height) * scale)
-            {
-                Vector2 drawStart = startPos + i * diff;
-                Main.EntitySpriteDraw(texture, drawStart - Main.screenPosition + targetOffset, bodyRect, color, rotation + MathHelper.PiOver2, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);
-            }
-        }
-
-        public bool randomized = false;
-        public List<List<Vector2>> branches;
-        List<List<float>> branchAngles;
-        List<List<float>> branchLengths;
-        public int segmentCount = 80;
-        public float segmentLength = 60;
-        public float randomness = 50;
-        bool positionSet = false;
-        //public float initialAngleLimit = MathHelper.ToRadians(75); //Can diverge up to 75 degrees from 
-        private void CreateLightningSegments()
-        {
-            if (!positionSet)
-            {
-                branches = new List<List<Vector2>>();
-                branchAngles = new List<List<float>>();
-                branchLengths = new List<List<float>>();
-
-                Tuple<List<Vector2>, List<float>, List<float>> initialLine = GenerateLightningLine(Projectile.position, Projectile.velocity.ToRotation(), segmentCount, false);
-
-                branches.Add(initialLine.Item1);
-                branchAngles.Add(initialLine.Item2);
-                branchLengths.Add(initialLine.Item3);
-
-                for (int i = 0; i < branches.Count; i++)
-                {
-                    if (branches[i].Count > 0)
-                    {
-                        for (int j = 0; j < branches[i].Count - 1; j++)
-                        {
-                            if (Main.rand.NextBool(3) && j > 5)
+                            //If it's the first set of splits, let them go longer
+                            int segmentLimit = 3;
+                            if (i == 0)
                             {
-                                //If it's the first set of splits, let them go longer
-                                int segmentLimit = 3;
-                                if (i == 0)
-                                {
-                                    segmentLimit = 12;
-                                }
-                                Tuple<List<Vector2>, List<float>, List<float>> newBranch = GenerateLightningLine(branches[i][j], Projectile.velocity.ToRotation(), Main.rand.Next(segmentLimit), true);
-                                branches.Add(newBranch.Item1);
-                                branchAngles.Add(newBranch.Item2);
-                                branchLengths.Add(newBranch.Item3);
+                                segmentLimit = 12;
                             }
+                            Tuple<List<Vector2>, List<float>, List<float>> newBranch = GenerateLightningLine(branches[i][j], Projectile.velocity.ToRotation(), Main.rand.Next(segmentLimit), true);
+                            branches.Add(newBranch.Item1);
+                            branchAngles.Add(newBranch.Item2);
+                            branchLengths.Add(newBranch.Item3);
                         }
                     }
                 }
-
-                positionSet = true;
             }
-        }
 
-        public Tuple<List<Vector2>, List<float>, List<float>> GenerateLightningLine(Vector2 initialPoint, float initialAngle, int maxLength, bool branch)
+            positionSet = true;
+        }
+    }
+
+    public Tuple<List<Vector2>, List<float>, List<float>> GenerateLightningLine(Vector2 initialPoint, float initialAngle, int maxLength, bool branch)
+    {
+        List<Vector2> currentBranch = new List<Vector2>();
+        List<float> currentAngles = new List<float>();
+        List<float> currentLengths = new List<float>();
+
+        //Rotate it left or right by at least 0.35 radians if it's a branch
+        if (branch)
         {
-            List<Vector2> currentBranch = new List<Vector2>();
-            List<float> currentAngles = new List<float>();
-            List<float> currentLengths = new List<float>();
-
-            //Rotate it left or right by at least 0.35 radians if it's a branch
-            if (branch)
+            if (Main.rand.NextBool())
             {
-                if (Main.rand.NextBool())
-                {
-                    initialAngle += Main.rand.NextFloat(0.1f, 1.4f);
-                }
-                else
-                {
-                    initialAngle -= Main.rand.NextFloat(0.1f, 1.4f);
-                }
-
-                //initialAngle *= -1;
+                initialAngle += Main.rand.NextFloat(0.1f, 1.4f);
+            }
+            else
+            {
+                initialAngle -= Main.rand.NextFloat(0.1f, 1.4f);
             }
 
-            currentBranch.Add(Vector2.Zero);
-
-            for (int j = 0; j < maxLength; j++)
-            {
-                Vector2 next = currentBranch[j];
-                next.X += segmentLength;
-                currentBranch.Add(next);
-            }
-
-            for (int j = 1; j < maxLength; j++)
-            {
-                currentBranch[j] = new Vector2(currentBranch[j].X, Main.rand.NextFloat(-randomness, randomness));
-            }
-            for (int j = 0; j < maxLength; j++)
-            {
-                currentBranch[j] = currentBranch[j].RotatedBy(initialAngle) + initialPoint;
-            }
-
-
-            //Create a temporary list to store the in-progress values, to avoid modifying the real branch list while also reading from it
-            List<Vector2> newBranchPositions = new List<Vector2>();
-
-            //Subdivide the list of points, adding new ones in-between the existing ones with less randomness
-            for (int i = 0; i < maxLength - 1; i++)
-            {
-                newBranchPositions.Add(currentBranch[i]);
-
-                Vector2 newPos = (currentBranch[i + 1] + currentBranch[i]) / 2;
-                newPos += Main.rand.NextVector2Circular(randomness / 3, randomness / 3);
-                newBranchPositions.Add(newPos);
-            }
-
-            currentBranch = newBranchPositions;
-
-            for (int i = 0; i < currentBranch.Count - 1; i++)
-            {
-                currentAngles.Add((currentBranch[i] - currentBranch[i + 1]).ToRotation());
-                currentLengths.Add(Vector2.Distance(currentBranch[i], currentBranch[i + 1]));
-            }
-
-
-            return new Tuple<List<Vector2>, List<float>, List<float>>(currentBranch, currentAngles, currentLengths);
+            //initialAngle *= -1;
         }
 
-        public override bool? CanDamage()
+        currentBranch.Add(Vector2.Zero);
+
+        for (int j = 0; j < maxLength; j++)
         {
-            return false;
+            Vector2 next = currentBranch[j];
+            next.X += segmentLength;
+            currentBranch.Add(next);
         }
+
+        for (int j = 1; j < maxLength; j++)
+        {
+            currentBranch[j] = new Vector2(currentBranch[j].X, Main.rand.NextFloat(-randomness, randomness));
+        }
+        for (int j = 0; j < maxLength; j++)
+        {
+            currentBranch[j] = currentBranch[j].RotatedBy(initialAngle) + initialPoint;
+        }
+
+
+        //Create a temporary list to store the in-progress values, to avoid modifying the real branch list while also reading from it
+        List<Vector2> newBranchPositions = new List<Vector2>();
+
+        //Subdivide the list of points, adding new ones in-between the existing ones with less randomness
+        for (int i = 0; i < maxLength - 1; i++)
+        {
+            newBranchPositions.Add(currentBranch[i]);
+
+            Vector2 newPos = (currentBranch[i + 1] + currentBranch[i]) / 2;
+            newPos += Main.rand.NextVector2Circular(randomness / 3, randomness / 3);
+            newBranchPositions.Add(newPos);
+        }
+
+        currentBranch = newBranchPositions;
+
+        for (int i = 0; i < currentBranch.Count - 1; i++)
+        {
+            currentAngles.Add((currentBranch[i] - currentBranch[i + 1]).ToRotation());
+            currentLengths.Add(Vector2.Distance(currentBranch[i], currentBranch[i + 1]));
+        }
+
+
+        return new Tuple<List<Vector2>, List<float>, List<float>>(currentBranch, currentAngles, currentLengths);
+    }
+
+    public override bool? CanDamage()
+    {
+        return false;
     }
 }

@@ -5,21 +5,21 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon
-{
+namespace tsorcRevamp.Items.Weapons.Summon;
+
 	public class ShatteredReflection : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
 			Tooltip.SetDefault("What will you see next time you look at it?" +
 				"\nSplits off a fragment of your soul to fight for you" +
-                "\nUses 2 minion slots");
+            "\nUses 2 minion slots");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
 			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 2;
-        }
+        ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 2;
+    }
 		public override void SetDefaults()
 		{
 			Item.damage = 250;
@@ -60,5 +60,4 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			// Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
 			return false;
 		}
-    }
 }

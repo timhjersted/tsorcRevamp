@@ -3,11 +3,11 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
 
-namespace tsorcRevamp.Buffs.Runeterra.Summon
-{
+namespace tsorcRevamp.Buffs.Runeterra.Summon;
+
 	public class InterstellarCommander : ModBuff
-    {
-        public override void SetStaticDefaults()
+{
+    public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Interstellar Commander");
 			Description.SetDefault("You're the commander of these ships!");
@@ -26,7 +26,6 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 			{
 				player.DelBuff(buffIndex);
 				buffIndex--;
-            }
         }
+    }
 	}
-}

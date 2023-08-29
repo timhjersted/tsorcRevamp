@@ -3,18 +3,18 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon.Whips
-{
+namespace tsorcRevamp.Items.Weapons.Summon.Whips;
+
 	public class DetonationSignal : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-            DisplayName.SetDefault("Detonation Signal");
-            Tooltip.SetDefault("Enemies struck by this whip will explode once on minion hit" +
-                "\nExplosion triples the damage of the minion hit that triggered it" +
+        DisplayName.SetDefault("Detonation Signal");
+        Tooltip.SetDefault("Enemies struck by this whip will explode once on minion hit" +
+            "\nExplosion triples the damage of the minion hit that triggered it" +
 				"\nExploded enemies will also deal triple the contact damage to you for 4 seconds" +
-                "\nYour minions will focus struck enemies");
+            "\nYour minions will focus struck enemies");
 		}
 
 		public override void SetDefaults()
@@ -54,4 +54,3 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.Register();
 		}
 	}
-}

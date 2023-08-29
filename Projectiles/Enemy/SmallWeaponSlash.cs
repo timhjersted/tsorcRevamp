@@ -1,50 +1,49 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy
+namespace tsorcRevamp.Projectiles.Enemy;
+
+class SmallWeaponSlash : ModProjectile
 {
-    class SmallWeaponSlash : ModProjectile
+    public override string Texture => "tsorcRevamp/Items/Weapons/Melee/ThrowingAxe"; //invis so doesnt matter
+
+    public override void SetDefaults()
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/ThrowingAxe"; //invis so doesnt matter
+        Projectile.hostile = true;
+        Projectile.penetrate = -1;
+        Projectile.width = 24;
+        Projectile.height = 24;
+        Projectile.alpha = 255; //invis
+        Projectile.tileCollide = false;
+        Projectile.ignoreWater = true;
+        Projectile.timeLeft = 12;
+        //Projectile.DamageType = DamageClass.Melee;
+    }
 
-        public override void SetDefaults()
+    int difference;
+    public override void AI()
+    {
+        NPC owner = Main.npc[(int)Projectile.ai[0]];
+
+        if (Projectile.ai[1] < 1)
         {
-            Projectile.hostile = true;
-            Projectile.penetrate = -1;
-            Projectile.width = 24;
-            Projectile.height = 24;
-            Projectile.alpha = 255; //invis
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.timeLeft = 12;
-            //Projectile.DamageType = DamageClass.Melee;
+            ++Projectile.ai[1];
+            difference = (int)Projectile.position.X - (int)owner.position.X;
         }
 
-        int difference;
-        public override void AI()
+        if (Projectile.ai[1] >= 1)
         {
-            NPC owner = Main.npc[(int)Projectile.ai[0]];
-
-            if (Projectile.ai[1] < 1)
+            //Create a new Vector2 with length offsetDistance, and then rotate it toward the correct direction
+            //Add that to the npc's position
+            if (owner.direction == 1)
             {
-                ++Projectile.ai[1];
-                difference = (int)Projectile.position.X - (int)owner.position.X;
+                Projectile.position.X = owner.Center.X + difference - 10;
             }
-
-            if (Projectile.ai[1] >= 1)
+            else
             {
-                //Create a new Vector2 with length offsetDistance, and then rotate it toward the correct direction
-                //Add that to the npc's position
-                if (owner.direction == 1)
-                {
-                    Projectile.position.X = owner.Center.X + difference - 10;
-                }
-                else
-                {
-                    Projectile.position.X = owner.Center.X - difference - 42;
-                }
+                Projectile.position.X = owner.Center.X - difference - 42;
             }
-
         }
+
     }
 }

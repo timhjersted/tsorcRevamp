@@ -10,14 +10,14 @@ using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Buffs.Summon.WhipDebuffs;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace tsorcRevamp.Projectiles.Summon.Runeterra
-{
+namespace tsorcRevamp.Projectiles.Summon.Runeterra;
+
 	public class ScorchingPointFireball : DynamicTrail
 	{
 		public float angularSpeed = 0.03f;
 		public float currentAngle = 0;
 
-        public override void SetStaticDefaults()
+    public override void SetStaticDefaults()
 		{
 			Main.projFrames[Projectile.type] = 8;
 			Main.projPet[Projectile.type] = true;
@@ -36,10 +36,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Projectile.penetrate = -1;
 			Projectile.extraUpdates = 1;
 
-            Projectile.usesIDStaticNPCImmunity = true;
-            Projectile.idStaticNPCHitCooldown = 20;
+        Projectile.usesIDStaticNPCImmunity = true;
+        Projectile.idStaticNPCHitCooldown = 20;
 
-            trailWidth = 45;
+        trailWidth = 45;
 			trailPointLimit = 900;
 			trailMaxLength = 111;
 			collisionPadding = 50;
@@ -193,12 +193,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		{
 			if (crit)
 			{
-                target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 80);
-            }
+            target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 80);
+        }
 			else
 			{
-                target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 40);
-            }
+            target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 40);
+        }
 		}
-    }
 }

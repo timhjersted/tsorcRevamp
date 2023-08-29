@@ -7,7 +7,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
+namespace tsorcRevamp.Projectiles; 
 
 	public abstract class ChargedBowHeld : ModProjectile {
 		protected int minDamage;
@@ -41,10 +41,10 @@ namespace tsorcRevamp.Projectiles {
 			}
 		}
 
-        public override void SetStaticDefaults() {
+    public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Charged Bow");
 			ProjectileID.Sets.NeedsUUID[Projectile.type] = true;
-        }
+    }
 		public sealed override void SetDefaults() {
 			Projectile.width = 16;
 			Projectile.height = 16;
@@ -53,9 +53,9 @@ namespace tsorcRevamp.Projectiles {
 			Projectile.tileCollide = false;
 			Projectile.alpha = 0;
 			Projectile.timeLeft = 999999; //"ummm zeo if you hold left click for 4.6 irl hours the bow disappears!!!! please fix!!!" 
-            SetStats();
-            pointTexture = ModContent.Request<Texture2D>("tsorcRevamp/Textures/ChargePoint", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-        }
+        SetStats();
+        pointTexture = ModContent.Request<Texture2D>("tsorcRevamp/Textures/ChargePoint", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+    }
 
 		protected abstract void SetStats();
 
@@ -63,9 +63,9 @@ namespace tsorcRevamp.Projectiles {
 		}
 
 		protected virtual void Animate() {
-            Projectile.frame = (int)((Main.projFrames[Projectile.type] - 1) * charge);
+        Projectile.frame = (int)((Main.projFrames[Projectile.type] - 1) * charge);
 
-        }
+    }
 
 		protected abstract void Shoot();
 
@@ -121,32 +121,32 @@ namespace tsorcRevamp.Projectiles {
 			}
 			Projectile.spriteDirection = Projectile.direction;
 		}
-        public override void PostDraw(Color lightColor) {
-            DrawPoints();
+    public override void PostDraw(Color lightColor) {
+        DrawPoints();
+    }
+
+    protected virtual void DrawPoints() {
+        if (ModContent.GetInstance<tsorcRevampConfig>().ChargeCircleOpacity == 0) return;
+
+        //forces the projectile to be drawn after liquids, and incidentally wires
+        if (!Main.instance.DrawCacheProjsOverWiresUI.Contains(Projectile.whoAmI)) Main.instance.DrawCacheProjsOverWiresUI.Add(Projectile.whoAmI);
+
+        int maxPoints = 72;
+        int points = (int)(charge * maxPoints) + 1;
+        float opacity = (float)ModContent.GetInstance<tsorcRevampConfig>().ChargeCircleOpacity / 200;
+        if (pointTexture == null || pointTexture.IsDisposed) pointTexture = ModContent.Request<Texture2D>("tsorcRevamp/Textures/ChargePoint", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+        Rectangle srect = new(0, 0, pointTexture.Width, pointTexture.Height);
+        Vector2 origin = new(2, 2);
+        Main.spriteBatch.End();
+        Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+        for (int i = 0; i < points - 1; i++) {
+            Vector2 pos = (Main.MouseScreen + new Vector2(6, 6)) - (Vector2.UnitY * 24).RotatedBy(MathHelper.ToRadians((360 / maxPoints) * i));
+            Main.EntitySpriteDraw(pointTexture, pos, srect, Color.White * opacity, 0f, origin, 1f, SpriteEffects.None, 0);
         }
+        Main.spriteBatch.End();
+        Main.spriteBatch.Begin();
 
-        protected virtual void DrawPoints() {
-            if (ModContent.GetInstance<tsorcRevampConfig>().ChargeCircleOpacity == 0) return;
-
-            //forces the projectile to be drawn after liquids, and incidentally wires
-            if (!Main.instance.DrawCacheProjsOverWiresUI.Contains(Projectile.whoAmI)) Main.instance.DrawCacheProjsOverWiresUI.Add(Projectile.whoAmI);
-
-            int maxPoints = 72;
-            int points = (int)(charge * maxPoints) + 1;
-            float opacity = (float)ModContent.GetInstance<tsorcRevampConfig>().ChargeCircleOpacity / 200;
-            if (pointTexture == null || pointTexture.IsDisposed) pointTexture = ModContent.Request<Texture2D>("tsorcRevamp/Textures/ChargePoint", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            Rectangle srect = new(0, 0, pointTexture.Width, pointTexture.Height);
-            Vector2 origin = new(2, 2);
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
-            for (int i = 0; i < points - 1; i++) {
-                Vector2 pos = (Main.MouseScreen + new Vector2(6, 6)) - (Vector2.UnitY * 24).RotatedBy(MathHelper.ToRadians((360 / maxPoints) * i));
-                Main.EntitySpriteDraw(pointTexture, pos, srect, Color.White * opacity, 0f, origin, 1f, SpriteEffects.None, 0);
-            }
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin();
-
-        }
+    }
 
 
 		/// <summary>
@@ -161,4 +161,3 @@ namespace tsorcRevamp.Projectiles {
 			return min + diff * amount;
 		}
 	}
-}

@@ -9,8 +9,8 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Summon
-{
+namespace tsorcRevamp.Projectiles.Summon;
+
 	// This minion shows a few mandatory things that make it behave properly.
 	// Its attack pattern is simple: If an enemy is in range of 43 tiles, it will fly to it and deal contact damage
 	// If the player targets a certain NPC with right-click, it will fly through tiles to it
@@ -117,7 +117,7 @@ namespace tsorcRevamp.Projectiles.Summon
 		}
 
 		private void Attack()
-        {
+    {
 			if (target != null && target.active && target.Distance(Projectile.Center) < 1000)
 			{
 				UsefulFunctions.SmoothHoming(Projectile, target.Center, 0.5f, 25, bufferZone: false);
@@ -254,7 +254,7 @@ namespace tsorcRevamp.Projectiles.Summon
 
 			float angle = 0;
 			if(totalTriadProjectiles > 0)
-            {
+        {
 				angle = (Main.GameUpdateCount / 120f) + (int)(Main.GameUpdateCount / 480f) + MathHelper.TwoPi * (Projectile.ai[0] / totalTriadProjectiles);
 
 			}
@@ -335,8 +335,8 @@ namespace tsorcRevamp.Projectiles.Summon
 		}
 
 		public static Effect spazEffect;
-        public override bool PreDraw(ref Color lightColor)
-        {
+    public override bool PreDraw(ref Color lightColor)
+    {
 			Lighting.AddLight((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16, 0f, 0.4f, 0.8f);
 
 			Main.spriteBatch.End();
@@ -386,5 +386,4 @@ namespace tsorcRevamp.Projectiles.Summon
 
 			return false;
 		}
-    }
 }

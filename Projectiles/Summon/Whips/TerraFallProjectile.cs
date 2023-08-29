@@ -7,13 +7,13 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Summon.Whips
-{
-	public class TerraFallProjectile : ModProjectile
-    {
-        public static int TerraCharges = 0;
+namespace tsorcRevamp.Projectiles.Summon.Whips;
 
-        public override void SetStaticDefaults()
+	public class TerraFallProjectile : ModProjectile
+{
+    public static int TerraCharges = 0;
+
+    public override void SetStaticDefaults()
 		{
 			// This makes the projectile use whip collision detection and allows flasks to be applied to it.
 			ProjectileID.Sets.IsAWhip[Type] = true;
@@ -82,14 +82,14 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			{
 				SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Item/SummonerWhipcrack") with { Volume = 0.6f, PitchVariance = 0.3f }, points[points.Count - 1]);
 			}
-        }
+    }
 
 
-        // This method handles a charging mechanic.
-        // If you remove this, also remove Item.channel = true from the item's SetDefaults.
-        // Returns true if fully charged
-        //Causes sound error if removed idk why
-        private bool Charge(Player owner)
+    // This method handles a charging mechanic.
+    // If you remove this, also remove Item.channel = true from the item's SetDefaults.
+    // Returns true if fully charged
+    //Causes sound error if removed idk why
+    private bool Charge(Player owner)
 		{
 			// Like other whips, this whip updates twice per frame (Projectile.extraUpdates = 1), so 120 is equal to 1 second.
 			if (!owner.channel || ChargeTime >= 120)
@@ -125,27 +125,27 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			return false; // still charging
 		}
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    {
+        Player player = Main.player[Main.myPlayer];
+        Vector2 WhipTip = new Vector2(11, 14) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
+        List<Vector2> points = Projectile.WhipPointsForCollision;
+        if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
         {
-            Player player = Main.player[Main.myPlayer];
-            Vector2 WhipTip = new Vector2(11, 14) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
-            List<Vector2> points = Projectile.WhipPointsForCollision;
-            if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
+            crit = true;
+            if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
             {
-                crit = true;
-                if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
-                {
-                    damage *= 5;
-                    damage /= 4;
-                }
+                damage *= 5;
+                damage /= 4;
             }
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+    }
+    public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-            TerraCharges = (int)ChargeTime / 40 + 1;
-            Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.TerraFallBuff>(), TerraCharges * 150);
+        TerraCharges = (int)ChargeTime / 40 + 1;
+        Main.player[Projectile.owner].AddBuff(ModContent.BuffType<Buffs.Summon.TerraFallBuff>(), TerraCharges * 150);
 			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.TerraFallDebuff>(), TerraCharges * 150);
-            Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
+        Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 			Projectile.damage = (int)(damage * ((float)TerraCharges / 10 + 0.6f)); // Multihit penalty. Decrease the damage the more enemies the whip hits. Spinal Tap is at 0.9f
 		}
 
@@ -240,4 +240,3 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			return false;
 		}
 	}
-}

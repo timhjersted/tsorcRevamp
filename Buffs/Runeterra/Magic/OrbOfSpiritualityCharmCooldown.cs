@@ -1,16 +1,15 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Runeterra.Magic
+namespace tsorcRevamp.Buffs.Runeterra.Magic;
+
+class OrbOfSpiritualityCharmCooldown : ModBuff
 {
-    class OrbOfSpiritualityCharmCooldown : ModBuff
+    public override void SetStaticDefaults()
     {
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Charm Cooldown");
-            Description.SetDefault("You can't cast another Charm until this runs out");
-            Main.debuff[Type] = true;
-            Main.buffNoTimeDisplay[Type] = false;
-        }
+        DisplayName.SetDefault("Charm Cooldown");
+        Description.SetDefault("You can't cast another Charm until this runs out");
+        Main.debuff[Type] = true;
+        Main.buffNoTimeDisplay[Type] = false;
     }
 }

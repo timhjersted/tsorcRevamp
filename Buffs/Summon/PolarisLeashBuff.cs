@@ -3,11 +3,11 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Summon
-{
+namespace tsorcRevamp.Buffs.Summon;
+
 	public class PolarisLeashBuff : ModBuff
 	{
-        public override void SetStaticDefaults()
+    public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Polaris");
 			Description.SetDefault("Polaris will fight for you");
@@ -15,15 +15,14 @@ namespace tsorcRevamp.Buffs.Summon
 			Main.buffNoTimeDisplay[Type] = false;
 		}
 
-        public override void Update(Player player, ref int buffIndex)
+    public override void Update(Player player, ref int buffIndex)
+    {
+        if (player.whoAmI == Main.myPlayer)
         {
-            if (player.whoAmI == Main.myPlayer)
+            int whipDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo((int)(66f * 0.66f)); //66 is the base dmg of Polaris Leash
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Whips.PolarisLeashPolaris>()] == 0)
             {
-                int whipDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo((int)(66f * 0.66f)); //66 is the base dmg of Polaris Leash
-                if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Whips.PolarisLeashPolaris>()] == 0)
-                {
-                    Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.One, ModContent.ProjectileType<Projectiles.Summon.Whips.PolarisLeashPolaris>(), whipDamage, 1f, Main.myPlayer);
-                }
+                Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.One, ModContent.ProjectileType<Projectiles.Summon.Whips.PolarisLeashPolaris>(), whipDamage, 1f, Main.myPlayer);
             }
         }
     }

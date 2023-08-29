@@ -3,19 +3,19 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon.Whips
-{
+namespace tsorcRevamp.Items.Weapons.Summon.Whips;
+
 	public class SearingLash : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-            DisplayName.SetDefault("Searing Lash");
-            Tooltip.SetDefault("This whip can be charged up for increased range, damage and tag duration" +
-                "\nEnemies struck by this whip will burn horribly" +
-                "\nand increase minion damage by 66% of this whips base damage in +%" +
-                "\nThis stacks on top of other whip tag damage" +
-                "\nYour minions will focus struck enemies");
+        DisplayName.SetDefault("Searing Lash");
+        Tooltip.SetDefault("This whip can be charged up for increased range, damage and tag duration" +
+            "\nEnemies struck by this whip will burn horribly" +
+            "\nand increase minion damage by 66% of this whips base damage in +%" +
+            "\nThis stacks on top of other whip tag damage" +
+            "\nYour minions will focus struck enemies");
 		}
 
 		public override void SetDefaults()
@@ -41,11 +41,11 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.noUseGraphic = true;
 
 		}
-        public override bool MeleePrefix()
-        {
-            return true;
-        }
-        public override void AddRecipes()
+    public override bool MeleePrefix()
+    {
+        return true;
+    }
+    public override void AddRecipes()
 		{
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ItemID.HellstoneBar, 3);
@@ -56,4 +56,3 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.Register();
 		}
 	}
-}

@@ -11,14 +11,14 @@ using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using System.Collections.Generic;
 
-namespace tsorcRevamp.Projectiles.Summon.Runeterra
-{
+namespace tsorcRevamp.Projectiles.Summon.Runeterra;
+
 	public class InterstellarVesselShip : DynamicTrail
 	{
 		public float angularSpeed2 = 0.03f;
 		public float currentAngle2 = 0;
 
-        public override void SetStaticDefaults()
+    public override void SetStaticDefaults()
 		{
 			Main.projPet[Projectile.type] = true; 
 			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; 
@@ -51,15 +51,15 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			noFadeOut = true;
 			customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/InterstellarVessel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 		}
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    {
+        Player owner = Main.player[Projectile.owner];
+        if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
         {
-            Player owner = Main.player[Projectile.owner];
-            if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
-            {
-                damage += (Projectile.damage / 4);
-            }
+            damage += (Projectile.damage / 4);
         }
-        public override void OnSpawn(IEntitySource source) 
+    }
+    public override void OnSpawn(IEntitySource source) 
 		{
 			InterstellarVesselControls.projectiles.Add(this);
 		}
@@ -102,17 +102,17 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			if (!CheckActive(owner))
 			{
 				return;
-            }
+        }
 
-            if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
-            {
-                angularSpeed2 = 0.075f;
+        if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+        {
+            angularSpeed2 = 0.075f;
 				owner.statMana -= 1;
 				owner.manaRegenDelay = 10;
-            }
-            if (!owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost || (owner.statMana <= 0) || owner.HasBuff(BuffID.ManaSickness))
-            {
-                angularSpeed2 = 0.03f;
+        }
+        if (!owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost || (owner.statMana <= 0) || owner.HasBuff(BuffID.ManaSickness))
+        {
+            angularSpeed2 = 0.03f;
 				owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = false;
 				if (Main.netMode == NetmodeID.MultiplayerClient)
 				{
@@ -125,22 +125,22 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 				}
 			}
 
-            currentAngle2 += (angularSpeed2 / (modPlayer.MinionCircleRadius * 0.001f + 1f)); 
+        currentAngle2 += (angularSpeed2 / (modPlayer.MinionCircleRadius * 0.001f + 1f)); 
 
 			Vector2 offset = new Vector2(0, modPlayer.MinionCircleRadius).RotatedBy(-currentAngle2);
 
 			Projectile.Center = owner.Center + offset;
 
-            Visuals();
+        Visuals();
 		}
 
 
 		/*public override void SendExtraAI(BinaryWriter writer)
-        {
+    {
 			writer.Write(angularSpeed2);
 		}
-        public override void ReceiveExtraAI(BinaryReader reader)
-        {
+    public override void ReceiveExtraAI(BinaryReader reader)
+    {
 			angularSpeed2 = reader.ReadSingle();
 		}*/
 		Vector2 samplePointOffset1;
@@ -222,8 +222,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			return true;
 		}
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
+    public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+    {
 			if (crit)
 			{
 				target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 80);
@@ -232,7 +232,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			{
 				target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 40);
 			}
-        }
+    }
 		private void Visuals()
 		{
 			Projectile.rotation = currentAngle2 * -1f;
@@ -243,7 +243,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		public static Texture2D texture;
 		public static Texture2D glowTexture;
 		public override bool PreDraw(ref Color lightColor)
-        {
+    {
 			base.PreDraw(ref lightColor);
 			if (additiveContext)
 			{
@@ -270,5 +270,4 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			}
 			return false;
 		}
-    }	
-}
+}	

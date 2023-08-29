@@ -5,8 +5,8 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon.Sentry
-{
+namespace tsorcRevamp.Items.Weapons.Summon.Sentry;
+
 	public class GaleForce : ModItem
 	{
 		public override void SetStaticDefaults()
@@ -54,4 +54,3 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
 			return false;
 		}
 	}
-}

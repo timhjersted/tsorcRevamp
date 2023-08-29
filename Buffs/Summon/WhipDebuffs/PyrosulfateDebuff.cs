@@ -2,8 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
-{
+namespace tsorcRevamp.Buffs.Summon.WhipDebuffs;
+
 	public class PyrosulfateDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
@@ -45,4 +45,3 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			}
 		}
 	}
-}

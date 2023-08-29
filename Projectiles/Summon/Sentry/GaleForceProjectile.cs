@@ -6,20 +6,20 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Summon.Sentry
-{
+namespace tsorcRevamp.Projectiles.Summon.Sentry;
+
 	public class GaleForceProjectile : ModProjectile
 	{
 		
 		public override void SetStaticDefaults()
 		{
 
-            //Main.projFrames[Projectile.type] = 7;
+        //Main.projFrames[Projectile.type] = 7;
 			
-            ProjectileID.Sets.IsADD2Turret[Projectile.type] = false;
-            ProjectileID.Sets.TurretFeature[Projectile.type] = true;
+        ProjectileID.Sets.IsADD2Turret[Projectile.type] = false;
+        ProjectileID.Sets.TurretFeature[Projectile.type] = true;
 			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
-        }
+    }
 
 		public sealed override void SetDefaults()
 		{
@@ -31,8 +31,8 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
 			Projectile.penetrate = -1;
 			Projectile.timeLeft = 36000;
 
-            Projectile.sentry = true;
-        }
+        Projectile.sentry = true;
+    }
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
@@ -44,11 +44,11 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
 			Player owner = Main.player[Projectile.owner];
 
 
-            if (Main.GameUpdateCount % 180 == 0)
-            {
+        if (Main.GameUpdateCount % 180 == 0)
+        {
 				Projectile.NewProjectile(Projectile.GetSource_None(), Projectile.Center, Main.MouseWorld - Projectile.Center, ProjectileID.FrostBlastFriendly, Projectile.damage, 1f, Main.myPlayer);
-            }
         }
+    }
 
 		private void Visuals()
 		{
@@ -83,5 +83,4 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
 			// Some visuals here
 			Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
 		}
-    }
 }

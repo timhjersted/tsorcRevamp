@@ -4,8 +4,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Runeterra.Summon
-{
+namespace tsorcRevamp.Buffs.Runeterra.Summon;
+
 	public class ScorchingDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
@@ -36,15 +36,15 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 		}
 		public override void UpdateLifeRegen(NPC npc, ref int damage)
 		{
-            Player player = Main.player[Main.myPlayer];
+        Player player = Main.player[Main.myPlayer];
 			int DoTPerS = (int)player.GetTotalDamage(DamageClass.Summon).ApplyTo(10);
 
-            if (Scorched)
+        if (Scorched)
 			{
 				npc.lifeRegen -= DoTPerS * 2;
 				damage += DoTPerS;
 			}
-        }
+    }
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
 			if (Scorched && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type] || ProjectileID.Sets.IsAWhip[projectile.type]))
@@ -56,4 +56,3 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 			}
 		}
 	}
-}

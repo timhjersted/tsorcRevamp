@@ -3,18 +3,18 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon.Whips
-{
+namespace tsorcRevamp.Items.Weapons.Summon.Whips;
+
 	public class Pyrosulfate : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-            DisplayName.SetDefault("Pyrosulfate");
-            Tooltip.SetDefault("8 summon tag damage" +
-                "\n3% summon tag critical strike chance" +
-                "\nYour minions will focus struck enemies" +
-                "\nInflicts Cursed Inferno");
+        DisplayName.SetDefault("Pyrosulfate");
+        Tooltip.SetDefault("8 summon tag damage" +
+            "\n3% summon tag critical strike chance" +
+            "\nYour minions will focus struck enemies" +
+            "\nInflicts Cursed Inferno");
 		}
 
 		public override void SetDefaults()
@@ -39,11 +39,11 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.noUseGraphic = true;
 
 		}
-        public override bool MeleePrefix()
-        {
-            return true;
-        }
-        public override void AddRecipes()
+    public override bool MeleePrefix()
+    {
+        return true;
+    }
+    public override void AddRecipes()
 		{
 			
 			Recipe recipe = CreateRecipe();
@@ -56,4 +56,3 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.Register();
 		}
 	}
-}

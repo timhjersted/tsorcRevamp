@@ -7,8 +7,8 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Summon.Whips
-{
+namespace tsorcRevamp.Projectiles.Summon.Whips;
+
 	public class DominatrixProjectile : ModProjectile
 	{
 		public override void SetStaticDefaults()
@@ -112,22 +112,22 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 		}
 
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    {
+        Player player = Main.player[Main.myPlayer];
+        Vector2 WhipTip = new Vector2(16, 20) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
+        List<Vector2> points = Projectile.WhipPointsForCollision;
+        if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
         {
-            Player player = Main.player[Main.myPlayer];
-            Vector2 WhipTip = new Vector2(16, 20) * Main.player[Main.myPlayer].whipRangeMultiplier * Projectile.WhipSettings.RangeMultiplier;
-            List<Vector2> points = Projectile.WhipPointsForCollision;
-            if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
+            crit = true;
+            if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
             {
-                crit = true;
-                if (player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage250)
-                {
-                    damage *= 5;
-                    damage /= 4;
-                }
+                damage *= 5;
+                damage /= 4;
             }
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+    }
+    public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
 			target.AddBuff(ModContent.BuffType<Buffs.Summon.WhipDebuffs.DominatrixDebuff>(), 240);
 			//Make it inflict Blood Butcherer bleeding debuff
@@ -136,8 +136,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 		}
 
 
-        // This method draws a line between all points of the whip, in case there's empty space between the sprites.
-        private void DrawLine(List<Vector2> list)
+    // This method draws a line between all points of the whip, in case there's empty space between the sprites.
+    private void DrawLine(List<Vector2> list)
 		{
 			Texture2D texture = TextureAssets.FishingLine.Value;
 			Rectangle frame = texture.Frame();
@@ -227,4 +227,3 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			return false;
 		}
 	}
-}

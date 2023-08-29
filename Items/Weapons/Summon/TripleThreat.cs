@@ -5,8 +5,8 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon
-{
+namespace tsorcRevamp.Items.Weapons.Summon;
+
 	public class TripleThreat : ModItem
 	{
 		public override void SetStaticDefaults()
@@ -16,8 +16,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
 			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
-        }
+        ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
+    }
 		public override void SetDefaults()
 		{
 			Item.damage = 100;
@@ -46,9 +46,9 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			position = Main.MouseWorld;
 
 			if(triadType == 0)
-            {
+        {
 				type = ModContent.ProjectileType<Projectiles.Summon.FriendlyRetinazer>();
-            }
+        }
 			if (triadType == 1)
 			{
 				type = ModContent.ProjectileType<Projectiles.Summon.FriendlySpazmatism>();
@@ -60,9 +60,9 @@ namespace tsorcRevamp.Items.Weapons.Summon
 
 			triadType++;
 			if(triadType == 3)
-            {
+        {
 				triadType = 0;
-            }
+        }
 		}
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -91,4 +91,3 @@ namespace tsorcRevamp.Items.Weapons.Summon
 			recipe.Register();
 		}
 	}
-}

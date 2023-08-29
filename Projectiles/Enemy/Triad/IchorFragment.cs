@@ -9,52 +9,51 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.VFX;
 
-namespace tsorcRevamp.Projectiles.Enemy.Triad
+namespace tsorcRevamp.Projectiles.Enemy.Triad;
+
+class IchorFragment : DynamicTrail
 {
-    class IchorFragment : DynamicTrail
+    
+    public override void SetStaticDefaults()
     {
-        
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Ichor Fragment");
-        }
-        public override void SetDefaults()
-        {
-            Projectile.width = 20;
-            Projectile.height = 20;
-            Projectile.scale = 1.1f;
-            Projectile.timeLeft = 200;
-            Projectile.hostile = true;
-            Projectile.tileCollide = false;
-            Projectile.friendly = false;
+        DisplayName.SetDefault("Ichor Fragment");
+    }
+    public override void SetDefaults()
+    {
+        Projectile.width = 20;
+        Projectile.height = 20;
+        Projectile.scale = 1.1f;
+        Projectile.timeLeft = 200;
+        Projectile.hostile = true;
+        Projectile.tileCollide = false;
+        Projectile.friendly = false;
 
-            trailWidth = 20;
-            trailPointLimit = 50;
-            trailCollision = false;
-            NPCSource = false;
-            trailYOffset = 50;
-            trailMaxLength = 200;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/IchorTrackerShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-        }
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
+        trailWidth = 20;
+        trailPointLimit = 50;
+        trailCollision = false;
+        NPCSource = false;
+        trailYOffset = 50;
+        trailMaxLength = 200;
+        customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/IchorTrackerShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+    }
+    public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(BuffID.Ichor, 300);
-        }
+    public override void OnHitPlayer(Player target, int damage, bool crit)
+    {
+        target.AddBuff(BuffID.Ichor, 300);
+    }
 
-        public override void SetEffectParameters(Effect effect)
-        {
-            effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture2);
-            effect.Parameters["fadeOut"].SetValue(fadeOut);
-            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-            effect.Parameters["shaderColor"].SetValue(Color.Gold.ToVector4());
-            effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
-        }
+    public override void SetEffectParameters(Effect effect)
+    {
+        effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.tNoiseTexture2);
+        effect.Parameters["fadeOut"].SetValue(fadeOut);
+        effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+        effect.Parameters["shaderColor"].SetValue(Color.Gold.ToVector4());
+        effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
+    }
 
-        public override void Kill(int timeLeft)
-        {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.5f}, Projectile.Center);
-        }
+    public override void Kill(int timeLeft)
+    {
+        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.5f}, Projectile.Center);
     }
 }

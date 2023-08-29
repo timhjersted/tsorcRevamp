@@ -2,8 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Debuffs
-{
+namespace tsorcRevamp.Buffs.Debuffs;
+
 	public class MythrilRamDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
@@ -28,19 +28,18 @@ namespace tsorcRevamp.Buffs.Debuffs
 			RammedByMythril = false;
 		}
 
-        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    {
+        if (RammedByMythril && !projectile.npcProj && !projectile.trap)
         {
-            if (RammedByMythril && !projectile.npcProj && !projectile.trap)
-            {
-                    damage += (int)((float)projectile.damage * 0.2f);
-            }
+                damage += (int)((float)projectile.damage * 0.2f);
         }
-        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+    }
+    public override void ModifyHitByItem(NPC npc, Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+    {
+        if (RammedByMythril)
         {
-            if (RammedByMythril)
-            {
-                    damage += (int)((float)item.damage * 0.2f);
-            }
+                damage += (int)((float)item.damage * 0.2f);
         }
     }
 }

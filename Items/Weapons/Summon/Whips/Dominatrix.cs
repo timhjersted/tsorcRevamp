@@ -3,16 +3,16 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon.Whips
-{
+namespace tsorcRevamp.Items.Weapons.Summon.Whips;
+
 	public class Dominatrix : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-            DisplayName.SetDefault("Dominatrix");
-            Tooltip.SetDefault("7% summon tag critical strike chance" +
-                "\nInflicts bleeding debuff(Unimplemented)" +
+        DisplayName.SetDefault("Dominatrix");
+        Tooltip.SetDefault("7% summon tag critical strike chance" +
+            "\nInflicts bleeding debuff(Unimplemented)" +
 				"\nYour summons will focus struck enemies");
 		}
 
@@ -38,10 +38,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.noUseGraphic = true;
 
 		}
-        public override bool MeleePrefix()
-        {
-            return true;
-        }
+    public override bool MeleePrefix()
+    {
+        return true;
+    }
 		public override void AddRecipes()
 		{
 
@@ -72,4 +72,3 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe3.Register();
 		}
 	}
-}

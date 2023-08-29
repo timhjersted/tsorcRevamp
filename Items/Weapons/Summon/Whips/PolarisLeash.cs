@@ -3,21 +3,21 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon.Whips
-{
+namespace tsorcRevamp.Items.Weapons.Summon.Whips;
+
 	public class PolarisLeash : ModItem
 	{
 		public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
-            DisplayName.SetDefault("Polaris Leash");
-            Tooltip.SetDefault("6 summon tag damage" +
-                "\nStriking enemies will create Polaris, which scales with 66% of this whips damage" +
+        DisplayName.SetDefault("Polaris Leash");
+        Tooltip.SetDefault("6 summon tag damage" +
+            "\nStriking enemies will create Polaris, which scales with 66% of this whips damage" +
 				"\nPolaris stays on your cursor and hits enemies with a frigid enchantment" +
-                "\nEnchanted Enemies will also be showered by polar stars when struck by minions" +
-                "\nThese scale with half of this whips damage" +
+            "\nEnchanted Enemies will also be showered by polar stars when struck by minions" +
+            "\nThese scale with half of this whips damage" +
 				"\nYour summons will focus enemies struck by Polaris" +
-                "\nThis whip also inflicts Frostbite");
+            "\nThis whip also inflicts Frostbite");
 		}
 
 		public override void SetDefaults()
@@ -42,11 +42,11 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.noUseGraphic = true;
 
 		}
-        public override bool MeleePrefix()
-        {
-            return true;
-        }
-        public override void AddRecipes()
+    public override bool MeleePrefix()
+    {
+        return true;
+    }
+    public override void AddRecipes()
 		{
 			
 			Recipe recipe = CreateRecipe();
@@ -59,4 +59,3 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.Register();
 		}
 	}
-}

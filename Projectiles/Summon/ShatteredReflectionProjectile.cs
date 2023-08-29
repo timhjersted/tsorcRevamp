@@ -9,8 +9,8 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Summon
-{
+namespace tsorcRevamp.Projectiles.Summon;
+
 	public class ShatteredReflectionProjectile : ModProjectile
 	{
 		public override void SetStaticDefaults()
@@ -104,20 +104,20 @@ namespace tsorcRevamp.Projectiles.Summon
 
 			//Just skip the smoothing if it's in the despawn animation
 			if(Projectile.timeLeft < 60)
-            {
+        {
 				Projectile.Center = target;
-            }
+        }
 			
 
 			if (owner.whoAmI == Main.myPlayer && Main.GameUpdateCount % 60 == Projectile.ai[0] * 60f / ownedCount)
-            {
+        {
 				int? closest = UsefulFunctions.GetClosestEnemyNPC(Projectile.Center);
-                if (closest.HasValue && (Main.npc[closest.Value].type != NPCID.TargetDummy || Main.npc[closest.Value].Distance(Projectile.Center) < 2000))
-                {
+            if (closest.HasValue && (Main.npc[closest.Value].type != NPCID.TargetDummy || Main.npc[closest.Value].Distance(Projectile.Center) < 2000))
+            {
 					Vector2 velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.npc[closest.Value].Center, 3);
 					Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, velocity, ModContent.ProjectileType<SRBlackFire>(), Projectile.damage, 0, Main.myPlayer, 1);
 				}
-            }
+        }
 		}		
 
 		// This is the "active check", makes sure the minion is alive while the player is alive, and despawns if not
@@ -140,8 +140,8 @@ namespace tsorcRevamp.Projectiles.Summon
 
 		public static Effect attraidiesEffect;
 		float effectTimer;
-        public override bool PreDraw(ref Color lightColor)
-        {
+    public override bool PreDraw(ref Color lightColor)
+    {
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -177,5 +177,4 @@ namespace tsorcRevamp.Projectiles.Summon
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 			return false;
 		}
-    }
 }

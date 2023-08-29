@@ -2,12 +2,12 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Summon
-{
+namespace tsorcRevamp.Buffs.Summon;
+
 	public class KaleidoscopeTagNerfs : GlobalBuff
 	{
-        public override void Update(int type, NPC npc, ref int buffIndex)
-        {
+    public override void Update(int type, NPC npc, ref int buffIndex)
+    {
 			if(type == BuffID.RainbowWhipNPCDebuff)
 			npc.GetGlobalNPC<KaleidoscopeTagNerfsNPC>().markedByKaleidoscope = true;
 		}
@@ -41,4 +41,3 @@ namespace tsorcRevamp.Buffs.Summon
 			}
 		}
 	}
-}

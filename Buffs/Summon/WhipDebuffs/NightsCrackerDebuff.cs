@@ -3,8 +3,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
 
-namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
-{
+namespace tsorcRevamp.Buffs.Summon.WhipDebuffs;
+
 	public class NightsCrackerDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
@@ -81,10 +81,10 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 					tagbonusdamage += 12;
 				}
 				if (npc.HasBuff(ModContent.BuffType<TerraFallDebuff>()))
-                {
-                    tagbonusdamage += Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 5;
-                }
-                float searingdamagescaling = Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 8 * 0.01f;
+            {
+                tagbonusdamage += Projectiles.Summon.Whips.TerraFallProjectile.TerraCharges * 5;
+            }
+            float searingdamagescaling = Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 8 * 0.01f;
 				int tagdamagescaling = Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges * 2;
 				if (npc.HasBuff(ModContent.BuffType<SearingLashDebuff>()))
 				{
@@ -94,7 +94,7 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 				{
 					searingdamagescaling /= 2f;
 				}
-                damage += (int)((projectile.damage + tagbonusdamage) * searingdamagescaling * whipDamage * 0.01f);
+            damage += (int)((projectile.damage + tagbonusdamage) * searingdamagescaling * whipDamage * 0.01f);
 				damage += tagdamagescaling;
 				if (Main.rand.NextBool(100 / Projectiles.Summon.Whips.NightsCrackerProjectile.NightCharges))
 				{
@@ -103,4 +103,3 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			}
 		}
 	}
-}

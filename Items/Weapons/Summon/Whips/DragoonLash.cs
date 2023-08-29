@@ -3,8 +3,8 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Summon.Whips
-{
+namespace tsorcRevamp.Items.Weapons.Summon.Whips;
+
 	public class DragoonLash: ModItem
 	{
 		public override void SetStaticDefaults()
@@ -12,8 +12,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
 			DisplayName.SetDefault("Dragoon Lash");
 			Tooltip.SetDefault("Breathe fire at enemies struck by this whip and a minion on a cooldown" +
-                "\nRefresh the cooldown by whipping an enemy" +
-                "\nStrike enemies to gain attack speed" +
+            "\nRefresh the cooldown by whipping an enemy" +
+            "\nStrike enemies to gain attack speed" +
 				"\nYour summons will focus struck enemies");
 		}
 
@@ -55,4 +55,3 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			recipe.Register();
 		}
 	}
-}

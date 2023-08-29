@@ -9,24 +9,23 @@ using Terraria.UI;
 using tsorcRevamp.Items;
 using Terraria.Localization;
 
-namespace tsorcRevamp.Textures
+namespace tsorcRevamp.Textures;
+
+internal class ForceLoadTexture
 {
-    internal class ForceLoadTexture
+    public string _texturePath { get; private set; }
+    public Texture2D texture { get; private set; }
+
+    public ForceLoadTexture(string path)
     {
-        public string _texturePath { get; private set; }
-        public Texture2D texture { get; private set; }
+        _texturePath = path;
+    }
 
-        public ForceLoadTexture(string path)
+    internal void KeepLoaded()
+    {
+        if (texture == null || texture.IsDisposed)
         {
-            _texturePath = path;
-        }
-
-        internal void KeepLoaded()
-        {
-            if (texture == null || texture.IsDisposed)
-            {
-                texture = ModContent.Request<Texture2D>(_texturePath, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            }
+            texture = ModContent.Request<Texture2D>(_texturePath, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
     }
 }

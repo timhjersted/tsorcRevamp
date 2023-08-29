@@ -3,8 +3,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
-{
+namespace tsorcRevamp.Buffs.Summon.WhipDebuffs;
+
 	public class EnchantedWhipDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
@@ -36,28 +36,27 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
 			int whipDamage = (int)(Main.player[projectile.owner].GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(9)); //9 is half of the base dmg of the Enchanted Whip
-            Vector2 starvector1 = new Vector2(-640, -800) + npc.Center;
-            Vector2 starvector2 = new Vector2(640, -800) + npc.Center;
-            Vector2 starvector3 = new Vector2(0, -800) + npc.Center;
-            Vector2 starmove1 = new Vector2(+32, 40);
-            Vector2 starmove2 = new Vector2(-32, 40);
-            Vector2 starmove3 = new Vector2(0, 40);
-            // Only player attacks should benefit from this buff, hence the NPC and trap checks.
-            if (markedByEnchantedWhip && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
+        Vector2 starvector1 = new Vector2(-640, -800) + npc.Center;
+        Vector2 starvector2 = new Vector2(640, -800) + npc.Center;
+        Vector2 starvector3 = new Vector2(0, -800) + npc.Center;
+        Vector2 starmove1 = new Vector2(+32, 40);
+        Vector2 starmove2 = new Vector2(-32, 40);
+        Vector2 starmove3 = new Vector2(0, 40);
+        // Only player attacks should benefit from this buff, hence the NPC and trap checks.
+        if (markedByEnchantedWhip && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
 				if (Main.rand.NextBool(3))
 				{
 					Projectile.NewProjectile(Projectile.GetSource_None(), starvector1, starmove1, ModContent.ProjectileType<Projectiles.Summon.Whips.EnchantedWhipFallingStar>(), whipDamage, 1f, Main.myPlayer);
 				} else if (Main.rand.NextBool(3))
-                {
-                    Projectile.NewProjectile(Projectile.GetSource_None(), starvector2, starmove2, ModContent.ProjectileType<Projectiles.Summon.Whips.EnchantedWhipFallingStar>(), whipDamage, 1f, Main.myPlayer);
-                } else 
+            {
+                Projectile.NewProjectile(Projectile.GetSource_None(), starvector2, starmove2, ModContent.ProjectileType<Projectiles.Summon.Whips.EnchantedWhipFallingStar>(), whipDamage, 1f, Main.myPlayer);
+            } else 
 				{
-                    Projectile.NewProjectile(Projectile.GetSource_None(), starvector3, starmove3, ModContent.ProjectileType<Projectiles.Summon.Whips.EnchantedWhipFallingStar>(), whipDamage, 1f, Main.myPlayer);
+                Projectile.NewProjectile(Projectile.GetSource_None(), starvector3, starmove3, ModContent.ProjectileType<Projectiles.Summon.Whips.EnchantedWhipFallingStar>(), whipDamage, 1f, Main.myPlayer);
 
-                }
+            }
 			}
 			damage += 4;
 		}
 	}
-}

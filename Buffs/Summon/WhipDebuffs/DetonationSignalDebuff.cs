@@ -4,8 +4,8 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 using Microsoft.Xna.Framework;
 
-namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
-{
+namespace tsorcRevamp.Buffs.Summon.WhipDebuffs;
+
 	public class DetonationSignalDebuff : ModBuff
 	{
 		public override void SetStaticDefaults()
@@ -33,15 +33,15 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 			markedByDetonationSignal = false;
 		}
 
-        // TODO: Inconsistent with vanilla, increasing damage AFTER it is randomised, not before. Change to a different hook in the future.
-        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+    // TODO: Inconsistent with vanilla, increasing damage AFTER it is randomised, not before. Change to a different hook in the future.
+    public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
 			int buffIndex = 0;
 			if (markedByDetonationSignal && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
 			{
 				damage *= 3;
 				if (markedByDetonationSignal && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
-                {
+            {
 					Projectile.NewProjectile(Projectile.GetSource_None(), npc.Top, Vector2.Zero, ProjectileID.DD2ExplosiveTrapT2Explosion, 0, 0, Main.myPlayer);
 					SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 0.6f, PitchVariance = 0.3f });
 					npc.AddBuff(ModContent.BuffType<DetonationSignalBuff>(), 4 * 60);
@@ -56,5 +56,4 @@ namespace tsorcRevamp.Buffs.Summon.WhipDebuffs
 				}
 			}
 		}
-    }
 }

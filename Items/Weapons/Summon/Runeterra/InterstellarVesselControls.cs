@@ -9,10 +9,10 @@ using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 
-namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
-{
-    [Autoload(false)]
-    public class InterstellarVesselControls : ModItem
+namespace tsorcRevamp.Items.Weapons.Summon.Runeterra;
+
+[Autoload(false)]
+public class InterstellarVesselControls : ModItem
 	{
 		public static List<InterstellarVesselShip> projectiles = null;
 		public static int processedProjectilesCount = 0;
@@ -21,20 +21,20 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 		{
 			DisplayName.SetDefault("Interstellar Vessel Controls");
 			Tooltip.SetDefault("Summons spaceships to rotate around you and damage enemies in their way" +
-                                "\nUses half a minion slot" +
-                                "\nWhile holding this item, increase their radius by holding Special Ability" +
-                                "\nOr hold Shift + Special Ability to shrink their radius" +
-                                "\nPress Special Ability while not holding the remote to activate Turboboost" +
-                                "\nThis increases the spaceships damage and movement speed" +
-                                "\nTurboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness" +                           
+                            "\nUses half a minion slot" +
+                            "\nWhile holding this item, increase their radius by holding Special Ability" +
+                            "\nOr hold Shift + Special Ability to shrink their radius" +
+                            "\nPress Special Ability while not holding the remote to activate Turboboost" +
+                            "\nThis increases the spaceships damage and movement speed" +
+                            "\nTurboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness" +                           
 								"\nApplies the Shocked debuff, which grants minions crit chance based on a fraction of your critical strike chance" +
 								"\n'Adjusting trajectory for ASOL-13!'");
 
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
-        }
-    public override void SetDefaults()
+        ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
+    }
+public override void SetDefaults()
 		{
 			projectiles = new List<InterstellarVesselShip>(){};
 
@@ -78,23 +78,23 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 			return false;
 		}
 
-        public override void HoldItem(Player player)
-        {
+    public override void HoldItem(Player player)
+    {
 			Lighting.AddLight(player.Center, new Vector3(0.1f, 0.08f, 0.05f));
-        }
+    }
 
-        public static void ReposeProjectiles(Player player) 
+    public static void ReposeProjectiles(Player player) 
 		{
 			// repose projectiles relatively to the first one so they are evenly spread on the radial circumference
 			List<InterstellarVesselShip> projectileList = new List<InterstellarVesselShip>(); 
 			processedProjectilesCount = player.ownedProjectileCounts[ModContent.ProjectileType<InterstellarVesselShip>()];
 			for (int i = 0; i < Main.maxProjectiles; i++)
+        {
+            if (Main.projectile[i].type == ModContent.ProjectileType<InterstellarVesselShip>() && Main.projectile[i].owner == player.whoAmI)
             {
-                if (Main.projectile[i].type == ModContent.ProjectileType<InterstellarVesselShip>() && Main.projectile[i].owner == player.whoAmI)
-                {
 					projectileList.Add((InterstellarVesselShip)Main.projectile[i].ModProjectile);
 				}
-            }
+        }
 
 			for (int i = 1; i < processedProjectilesCount; ++i) {
 				projectileList[i].currentAngle2 = projectileList[i - 1].currentAngle2 + 2f * (float)Math.PI / processedProjectilesCount;
@@ -113,4 +113,3 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 			recipe.Register();
 		}
 	}
-}

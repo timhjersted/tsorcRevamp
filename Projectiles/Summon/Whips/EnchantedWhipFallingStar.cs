@@ -3,8 +3,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 
-namespace tsorcRevamp.Projectiles.Summon.Whips
-{
+namespace tsorcRevamp.Projectiles.Summon.Whips;
+
 
 	public class EnchantedWhipFallingStar : ModProjectile
 	{
@@ -21,10 +21,9 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = 30;
 		}
-        public override void AI()
-        {
-            base.AI();
+    public override void AI()
+    {
+        base.AI();
 			Dust.NewDust(Projectile.Center, Projectile.height, Projectile.width, 57, 0f, 0f, 10, Color.AliceBlue, 0.5f);
 		}
-    }
 }

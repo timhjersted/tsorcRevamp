@@ -6,8 +6,8 @@ using Terraria.Enums;
 using Terraria.ModLoader;
 using Terraria.DataStructures;
 
-namespace tsorcRevamp.Projectiles.Swords.Runeterra
-{
+namespace tsorcRevamp.Projectiles.Swords.Runeterra;
+
 	public class PlasmaWhirlwindThrust : ModProjectile
 	{
 		public int steeltempesthittimer2 = 0;
@@ -24,10 +24,10 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			set => Projectile.ai[0] = value;
 		}
 		public override void SetStaticDefaults()
-        {
-            Main.projFrames[Projectile.type] = 6;
+    {
+        Main.projFrames[Projectile.type] = 6;
 			DisplayName.SetDefault("Plasma Whirlwind Thrust");
-        }
+    }
 
 
 		public override void SetDefaults()
@@ -45,19 +45,19 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			Projectile.extraUpdates = 1; 
 			Projectile.timeLeft = 360;
 			Projectile.hide = true;
-            Projectile.width = 140;
-            Projectile.height = 136;
-        }
+        Projectile.width = 140;
+        Projectile.height = 136;
+    }
 		public override void OnSpawn(IEntitySource source)
-        {
-            Player player = Main.player[Projectile.owner];
-            Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 2f);
-        }
+    {
+        Player player = Main.player[Projectile.owner];
+        Projectile.damage = (int)(player.GetWeaponDamage(player.HeldItem) * 2f);
+    }
 		public override void AI()
-        {
-            Player player = Main.player[Projectile.owner];
+    {
+        Player player = Main.player[Projectile.owner];
 
-            Timer += 1;
+        Timer += 1;
 			if (Timer >= TotalDuration)
 			{
 				Projectile.Kill();
@@ -114,40 +114,39 @@ namespace tsorcRevamp.Projectiles.Swords.Runeterra
 			float collisionPoint = 0f;
 			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
 		}
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+    public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+    {
+        Player player = Main.player[Projectile.owner];
+        if (steeltempesthittimer2 == 0)
         {
-            Player player = Main.player[Projectile.owner];
-            if (steeltempesthittimer2 == 0)
+            player.GetModPlayer<tsorcRevampPlayer>().steeltempest += 1;
+            steeltempesthittimer2 = 1;
+            if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().steeltempest == 2)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().steeltempest += 1;
-                steeltempesthittimer2 = 1;
-                if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().steeltempest == 2)
-                {
-                    SoundEngine.PlaySound(SoundID.Item60, player.Center);
-                }
+                SoundEngine.PlaySound(SoundID.Item60, player.Center);
             }
         }
-        private void Visuals()
-        {
+    }
+    private void Visuals()
+    {
 			Projectile.frame = (int)((Timer / 28f) * 6f);
 			if (Timer > 28f)
 			{
 				Projectile.frame = 0;
 			}
-            /*float frameSpeed = 7f;
+        /*float frameSpeed = 7f;
 
-            Projectile.frameCounter++;
+        Projectile.frameCounter++;
 
-            if (Projectile.frameCounter >= frameSpeed)
+        if (Projectile.frameCounter >= frameSpeed)
+        {
+            Projectile.frameCounter = 0;
+            Projectile.frame++;
+
+            if (Projectile.frame >= Main.projFrames[Projectile.type])
             {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
-
-                if (Projectile.frame >= Main.projFrames[Projectile.type])
-                {
-                    Projectile.frame = 0;
-                }
-            }*/
-        }
+                Projectile.frame = 0;
+            }
+        }*/
     }
 }

@@ -3,8 +3,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 
-namespace tsorcRevamp.Projectiles.Summon.Whips
-{
+namespace tsorcRevamp.Projectiles.Summon.Whips;
+
 
 	public class PolarisLeashPolaris : ModProjectile
 	{
@@ -24,12 +24,12 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 		public override void AI()
 		{
-            if (Main.myPlayer == Projectile.owner && Main.MouseWorld != Projectile.Center)
-            {
-                Projectile.Center = Main.MouseWorld;
-                Projectile.netUpdate = true;
-            }
-            Player player = Main.player[Projectile.owner];
+        if (Main.myPlayer == Projectile.owner && Main.MouseWorld != Projectile.Center)
+        {
+            Projectile.Center = Main.MouseWorld;
+            Projectile.netUpdate = true;
+        }
+        Player player = Main.player[Projectile.owner];
 			if (player.dead || !player.active)
 			{
 				player.ClearBuff(ModContent.BuffType<Buffs.Summon.PolarisLeashBuff>());
@@ -46,4 +46,3 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 		}
 	}
-}

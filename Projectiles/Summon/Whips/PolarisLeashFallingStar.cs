@@ -3,8 +3,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 
-namespace tsorcRevamp.Projectiles.Summon.Whips
-{
+namespace tsorcRevamp.Projectiles.Summon.Whips;
+
 
 	public class PolarisLeashFallingStar : ModProjectile
 	{
@@ -29,4 +29,3 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, 15, 0f, 0f, 10, Color.AliceBlue, 0.5f);
 		}
 	}
-}
