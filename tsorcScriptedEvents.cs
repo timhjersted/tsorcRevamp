@@ -125,6 +125,7 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            Death,
             BlackKnightSHMDungeon,
             RedKnightOolicileForest,
             BlackKnightHallowed,
@@ -207,7 +208,10 @@ namespace tsorcRevamp
 
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
-
+            
+            //DEATH
+            ScriptedEvent Death = new ScriptedEvent(new Vector2(1066, 529), 30, ModContent.NPCType<NPCs.Bosses.Death>(), DustID.BoneTorch, true, true, true, LangUtils.GetTextValue("Events.Death"), Color.Black, false);
+            
             //BLACK KNIGHT IN BLUE SHM DUNGEON
             ScriptedEvent BlackKnightSHMDungeon = new ScriptedEvent(new Vector2(2282, 1650), 30, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
             BlackKnightSHMDungeon.SetCustomStats(25000, 30, 140, 16000);
@@ -487,6 +491,7 @@ namespace tsorcRevamp
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
+                {ScriptedEventType.Death, Death},
                 {ScriptedEventType.BlackKnightSHMDungeon, BlackKnightSHMDungeon},
                 {ScriptedEventType.RedKnightOolicileForest, RedKnightOolicileForest},
                 {ScriptedEventType.QueenSlimeEvent, QueenSlimeEvent},
