@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Armors.Melee;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
@@ -334,6 +335,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
         }
 
+
         public override bool? UseItem(Item item, Player player)
         {
             if (item.DamageType != DamageClass.Magic && item.mana > 0)
@@ -349,6 +351,14 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 return "GoldenGi";
             }
+            if (head.type == ItemID.ChlorophyteMask && body.type == ItemID.ChlorophytePlateMail && legs.type == ItemID.ChlorophyteGreaves)
+            {
+                return "ChlorophyteMask";
+            }
+            if (head.type == ItemID.TurtleHelmet && body.type == ItemID.TurtleScaleMail && legs.type == ItemID.TurtleLeggings)
+            {
+                return "TurtleSet";
+            }
             else return base.IsArmorSet(head, body, legs);
         }
         public static int GoldenGiFlatDamage = 3;
@@ -356,9 +366,17 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if (set == "GoldenGi")
             {
-                player.setBonus = Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.GoldenGi").FormatWith(GoldenGiFlatDamage);
+                player.setBonus = LangUtils.GetTextValue("Items.VanillaItems.GoldenGi", GoldenGiFlatDamage);
 
                 player.GetDamage(DamageClass.Melee).Flat += GoldenGiFlatDamage;
+            }
+            if (set == "ChlorophyteMask")
+            {
+                player.setBonus = LangUtils.GetTextValue("Items.VanillaItems.ChlorophyteMaskSet", 5);
+            }
+            if (set == "TurtleSet")
+            {
+                player.setBonus = LangUtils.GetTextValue("Items.VanillaItems.TurtleSet", 15);
             }
         }
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)

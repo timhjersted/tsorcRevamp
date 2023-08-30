@@ -5,7 +5,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Weapons.Melee;
+using tsorcRevamp.Buffs.Weapons;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Ranged;
@@ -23,16 +23,17 @@ namespace tsorcRevamp.Items.Weapons
         public override void SetStaticDefaults()
         {
             ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
+            Item.staff[Item.type] = true;
         }
         public override void SetDefaults()
         {
             Item.damage = BaseDmg;
             Item.knockBack = 5f;
-            Item.width = 73;
-            Item.height = 29;
+            Item.width = 100;
+            Item.height = 100;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.shoot = ModContent.ProjectileType<Nothing>();
-            Item.scale = 1.2f;
+            Item.scale = 1.1f;
             Item.shootSpeed = 5f;
             Item.useAmmo = AmmoID.Bullet;
             Item.DamageType = DamageClass.Generic;

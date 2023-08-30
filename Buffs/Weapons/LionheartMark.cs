@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons;
 using tsorcRevamp.NPCs;
 
-namespace tsorcRevamp.Buffs.Weapons.Melee
+namespace tsorcRevamp.Buffs.Weapons
 {
     public class LionheartMark : ModBuff
     {

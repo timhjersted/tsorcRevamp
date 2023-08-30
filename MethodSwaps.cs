@@ -37,6 +37,7 @@ using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
+using tsorcRevamp.Buffs;
 
 namespace tsorcRevamp
 {
@@ -141,6 +142,25 @@ namespace tsorcRevamp
             On_Player.ItemCheck_EmitUseVisuals += On_Player_ItemCheck_EmitUseVisuals;
 
             On_Player.GetPointOnSwungItemPath += On_Player_GetPointOnSwungItemPath;
+
+            On_Player.ApplyVanillaHurtEffectModifiers += On_Player_ApplyVanillaHurtEffectModifiers;
+        }
+        private static void On_Player_ApplyVanillaHurtEffectModifiers(On_Player.orig_ApplyVanillaHurtEffectModifiers orig, Player self, ref Player.HurtModifiers modifiers)
+        {
+            modifiers.FinalDamage *= Math.Max(100f / (100f + (self.endurance * 100f)), 0f);
+            bool flag4 = false;
+            for (int i = 0; i < 255; i++)
+            {
+                if (i != Main.myPlayer && Main.player[i].active && !Main.player[i].dead && !Main.player[i].immune && Main.player[i].hasPaladinShield && Main.player[i].team == self.team && (float)Main.player[i].statLife > (float)Main.player[i].statLifeMax2 * 0.25f)
+                {
+                    flag4 = true;
+                    break;
+                }
+            }
+            if (self.defendedByPaladin && self.whoAmI == Main.myPlayer && flag4)
+            {
+                modifiers.FinalDamage *= 0.75f;
+            }
         }
 
         private static Rectangle On_Player_ItemCheck_EmitUseVisuals(On_Player.orig_ItemCheck_EmitUseVisuals orig, Player self, Item sItem, Rectangle itemRectangle)

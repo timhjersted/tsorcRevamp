@@ -38,6 +38,7 @@ using Terraria.ModLoader.IO;
 using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.Buffs.Weapons;
 
 namespace tsorcRevamp.NPCs
 {
@@ -1220,8 +1221,45 @@ namespace tsorcRevamp.NPCs
             }
             return base.CanBeHitByProjectile(npc, projectile);
         }
+        Texture2D LionheartMarksSprite;
+        Texture2D LionheartMarksSpriteBackground;
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            if (npc.HasBuff(ModContent.BuffType<LionheartMark>()) && npc.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks > 0)
+            {
+                LionheartMarksSprite = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Buffs/Weapons/LionheartMarkVisual");
+                Rectangle LionheartSourceRectangle = new Rectangle(0, 0 * LionheartMarksSprite.Height / 5, LionheartMarksSprite.Width, LionheartMarksSprite.Height / 5);
+                switch (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks)
+                {
+                    case 1:
+                        {
+                            LionheartSourceRectangle = new Rectangle(0, 4 * LionheartMarksSprite.Height / 5, LionheartMarksSprite.Width, LionheartMarksSprite.Height / 5);
+                            break;
+                        }
+                    case 2:
+                        {
+                            LionheartSourceRectangle = new Rectangle(0, 3 * LionheartMarksSprite.Height / 5, LionheartMarksSprite.Width, LionheartMarksSprite.Height / 5);
+                            break;
+                        }
+                    case 3:
+                        {
+                            LionheartSourceRectangle = new Rectangle(0, 2 * LionheartMarksSprite.Height / 5, LionheartMarksSprite.Width, LionheartMarksSprite.Height / 5);
+                            break;
+                        }
+                    case 4:
+                        {
+                            LionheartSourceRectangle = new Rectangle(0, 1 * LionheartMarksSprite.Height / 5, LionheartMarksSprite.Width, LionheartMarksSprite.Height / 5);
+                            break;
+                        }
+                    case 5:
+                        {
+                            LionheartSourceRectangle = new Rectangle(0, 0 * LionheartMarksSprite.Height / 5, LionheartMarksSprite.Width, LionheartMarksSprite.Height / 5);
+                            break;
+                        }
+                }
+                Main.EntitySpriteDraw(LionheartMarksSprite, npc.Center - Main.screenPosition - new Vector2(0, npc.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks * LionheartMarksSprite.Height / 5 - 100), LionheartSourceRectangle, Color.White, 0, LionheartSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
+            }
+
             if (DodgeTimer > 0 && Main.GameUpdateCount % 10 < 5)
             {
                 return false;
@@ -1254,7 +1292,6 @@ namespace tsorcRevamp.NPCs
                 Main.spriteBatch.Draw(barEmpty, emptyDestination, Color.White);
                 Main.spriteBatch.Draw(barFill, fillDestination, Color.DodgerBlue);
             }
-
             return preDraw;
         }
 

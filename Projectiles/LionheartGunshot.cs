@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Weapons;
 using tsorcRevamp.Items.Weapons;
 using tsorcRevamp.NPCs;
 

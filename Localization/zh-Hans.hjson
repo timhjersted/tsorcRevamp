@@ -409,6 +409,21 @@ Mods: {
 					OnUseText3: 三子魔眼只在晚上醒来..
 				}
 
+				/* ChlorophyteMaskSet:
+					'''
+					Summons a powerful leaf crystal to shoot at nearby enemies
+					{$CommonItemTooltip.DRStat}
+					''' */
+				/* TurtleSet:
+					'''
+					Attackers also take double damage
+					{$CommonItemTooltip.DRStat}
+					''' */
+				/* FrozenTurtleShell:
+					'''
+					{$CommonItemTooltip.LifeThreshold}Puts a shell around the owner
+					{$CommonItemTooltip.DRStat@1} while the shell is active
+					''' */
 				SharpeningStation: "{$CommonItemTooltip.Melee.ArmorPenPercent}"
 				GoldenGi: "{$CommonItemTooltip.Melee.FlatDmg}"
 				ManaCost1: "消耗 "
@@ -7297,10 +7312,58 @@ Mods: {
 				DisplayName: 猎手面具
 				Tooltip: ""
 			}
+
+			AdventurersCard: {
+				// DisplayName: Adventurers Card
+				// Tooltip: Shows you your stats, right click to cycle between classes
+				/* Generic:
+					'''
+					Resistance: {0}, equal to {1}% damage reduction
+					Movement Speed: {2}%
+					Mana Efficiency: {3}%
+					''' */
+				/* Melee:
+					'''
+					Melee Stats:
+					Total Damage Multiplier: {0}%
+					Critical Strike Chance: {1}%
+					Attack Speed: {2}%
+					''' */
+				/* Ranged:
+					'''
+					Ranged Stats:
+					Total Damage Multiplier: {0}%
+					Critical Strike Chance: {1}%
+					Attack Speed: {2}%
+					''' */
+				/* Magic:
+					'''
+					Magic Stats:
+					Total Damage Multiplier: {0}%
+					Critical Strike Chance: {1}%
+					Attack Speed: {2}%
+					''' */
+				/* Summon:
+					'''
+					Summon Stats:
+					Total Damage Multiplier: {0}%
+					Critical Strike Chance: {0}%
+					Attack Speed: {0}%
+					Total Whip Damage Multiplier: {0}%
+					''' */
+				/* Throwing:
+					'''
+					Throwing Stats:
+					Total Damage Multiplier: {0}%
+					Critical Strike Chance: {0}%
+					Attack Speed: {0}%
+					''' */
+			}
 		}
 
 		Buffs: {
 			VanillaBuffs: {
+				// Warmth: Reduces damage taken from cold sources by {0}%
 				ManaSickness: 减少 {0}% 所有类型伤害
 				SolarShield: "{$CommonItemTooltip.ReducesDamageTakenByPercent}, 受到伤害时击退敌人"
 				WeaponImbue: 增加 {0}% 近战暴击伤害，乘算增加 {1}% 鞭子伤害
