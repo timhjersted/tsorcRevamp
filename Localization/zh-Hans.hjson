@@ -7360,6 +7360,11 @@ Mods: {
 					Attack Speed: {0}%
 					''' */
 			}
+
+			CreateJSON: {
+				// DisplayName: Create J S O N
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
