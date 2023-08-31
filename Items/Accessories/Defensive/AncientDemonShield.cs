@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public static float DamageReduction = 5f;
         public static float Thorns = 1f;
         public static int SoulCost = 4000;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageReduction, Thorns);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageReduction, Thorns*100);
         public override void SetStaticDefaults()
         {
         }
