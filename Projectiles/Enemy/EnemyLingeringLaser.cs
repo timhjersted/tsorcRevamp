@@ -196,8 +196,10 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
             }
 
+           
+
             //Projectile stays where it's spawned, and either fires at a point or at a small range around it
-            if (Projectile.ai[0] == -1 || Projectile.ai[0] == -2 || Projectile.ai[0] == -3)
+            if (Projectile.ai[0] == -1 || Projectile.ai[0] == -2 || Projectile.ai[0] == -3 || Projectile.ai[0] == -4)
             {
                 //Make it sit where it spawned
                 FollowHost = false;
@@ -207,6 +209,15 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
 
                 LaserOrigin = initialPosition;
+
+                //Stops the player from going above it during the big laser attack
+                if (Projectile.ai[0] == -4)
+                {
+                    TelegraphTime = 60;
+                    FiringDuration = 45;
+                    MaxCharge = 60;
+                    LaserName = "Confining Laser";
+                }
 
                 //Circle of lasers
                 if (Projectile.ai[0] == -3)

@@ -25,15 +25,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
             DrawOffsetX = -5;
             DrawOriginOffsetY = -5;
 
-            trailWidth = 25;
-            trailPointLimit = 150;
+            trailWidth = 35;
+            trailPointLimit = 15;
             trailYOffset = 30;
-            trailMaxLength = 150;
+            trailMaxLength = 75;
             NPCSource = false;
             collisionPadding = 0;
             collisionEndPadding = 1;
             collisionFrequency = 2;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            trailCollision = false;
+            normalCollision = true;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         float baseNoiseUOffset;
@@ -43,8 +45,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
             {
                 baseNoiseUOffset = Main.rand.NextFloat();
             }
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
             effect.Parameters["baseNoise"].SetValue(tsorcRevamp.NoiseSmooth);
             effect.Parameters["baseNoiseUOffset"].SetValue(baseNoiseUOffset);
@@ -120,6 +120,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
                     Projectile.damage = 38;
                 }
                 Projectile.knockBack = 9f;
+                Projectile.Damage();
             }
             else
             {
@@ -170,6 +171,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
         {
             // Play explosion sound
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with {PitchVariance = 0.5f }, Projectile.Center);
+            Projectile.Damage();
 
             // Fire Dust spawn
             for (int i = 0; i < 200; i++)
@@ -193,13 +195,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
                     Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y + 1f;
                 }
             }
-            // reset size to normal width and height.
-            Projectile.position.X = Projectile.position.X + (float)(Projectile.width / 2);
-            Projectile.position.Y = Projectile.position.Y + (float)(Projectile.height / 2);
-            Projectile.width = 10;
-            Projectile.height = 10;
-            Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
-            Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
         }
     }
 }

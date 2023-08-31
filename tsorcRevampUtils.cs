@@ -682,6 +682,11 @@ namespace tsorcRevamp
                 sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0);
         }
 
+        internal static Color RandomColor()
+        {
+            return new Color(Main.rand.Next(256), Main.rand.Next(256), Main.rand.Next(256));
+        }
+
         ///<summary> 
         ///Spawns a ring of dust around a point
         ///</summary>         

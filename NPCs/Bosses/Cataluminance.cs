@@ -8,7 +8,6 @@ using Terraria.Graphics;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.VFX;
 using Terraria.Graphics.Effects;
 using Terraria.Audio;
 using System.IO;
@@ -120,7 +119,7 @@ namespace tsorcRevamp.NPCs.Bosses
             FindFrame(0);
             if (despawnHandler.TargetAndDespawn(NPC.whoAmI))
             {
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.ColorToFloat(Color.White));
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.ColorToFloat(Color.White));
                 int? retID = UsefulFunctions.GetFirstNPC(ModContent.NPCType<RetinazerV2>());
                 if (retID.HasValue)
                 {
@@ -129,7 +128,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         int dustID = Dust.NewDust(Main.npc[retID.Value].position, Main.npc[retID.Value].width, Main.npc[retID.Value].height, DustID.RedTorch, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
                         Main.dust[dustID].noGravity = true;
                     }
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.npc[retID.Value].Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.ColorToFloat(Color.White));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.npc[retID.Value].Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.ColorToFloat(Color.White));
                 }
                 int? spazID = UsefulFunctions.GetFirstNPC(ModContent.NPCType<SpazmatismV2>());
                 if (spazID.HasValue)
@@ -139,7 +138,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         int dustID = Dust.NewDust(Main.npc[spazID.Value].position, Main.npc[spazID.Value].width, Main.npc[spazID.Value].height, DustID.CursedTorch, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
                         Main.dust[dustID].noGravity = true;
                     }
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.npc[spazID.Value].Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.ColorToFloat(Color.White));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.npc[spazID.Value].Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 0, UsefulFunctions.ColorToFloat(Color.White));
                 }
             }
 
@@ -707,7 +706,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.VFX.LightRay>());
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.HotPink));
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.HotPink));
                 }
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashCut") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
 

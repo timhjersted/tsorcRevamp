@@ -1,9 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.Graphics.Effects;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
@@ -80,6 +83,21 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.ai[1]++;
             hitTime++;
             if (NPC.ai[0] > 0) NPC.ai[0] -= hitTime / 10;
+
+
+            if (NPC.life == 1)
+            {
+                deathTimer++;
+                if (deathTimer > 60)
+                {
+                    NPC.StrikeNPC(NPC.CalculateHitInfo(9999, 1, true, 0), false, false);
+                }
+
+                if (deathTimer % 5 == 0 && Main.myPlayer != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.YellowGreen));
+                }
+            }
 
             Player player = Main.player[NPC.target];
             if (player.HasBuff(BuffID.Hunter) || player.HasItem(ModContent.ItemType<Items.Potions.PermanentPotions.PermanentHunterPotion>()))
@@ -402,7 +420,12 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[1] >= 0)
                 {
                     NPC.ai[3] = 0;
-                    for (int num36 = 0; num36 < 40; num36++)
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                    }
+                    for (int i = 0; i < 40; i++)
                     {
                         Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, 0, 0, 0, default, 1f); //was 3f
                     }
@@ -468,6 +491,115 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             */
         }
+        public static string FilterID = "HunterFilter";
+        public void HandleScreenShader()
+        {
+            if (Filters.Scene[FilterID] == null)
+            {
+                Filters.Scene[FilterID] = new Filter(new ScreenShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/Meltwater", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "EffectPass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
+                tsorcRevampWorld.boundShaders.Add(FilterID);
+            }
+
+            if (Main.netMode != NetmodeID.Server && !Filters.Scene[FilterID].IsActive())
+            {
+                Filters.Scene.Activate(FilterID, NPC.Center).GetShader().UseTargetPosition(NPC.Center);
+                if (!tsorcRevampWorld.boundShaders.Contains(FilterID))
+                {
+                    tsorcRevampWorld.boundShaders.Add(FilterID);
+                }
+            }
+
+            if (Main.netMode != NetmodeID.Server && Filters.Scene[FilterID].IsActive())
+            {
+                float exponent = 0.15f;
+                float intensity = 0.02f;
+                if (NPC.life < NPC.lifeMax / 2)
+                {
+                    exponent = MathHelper.Lerp(0.1f, 1, ((float)NPC.life / NPC.lifeMax) * 2);
+                }
+                else if (NPC.ai[3] == 0)
+                {
+                    intensity = 0;
+                }
+
+                if (NPC.ai[3] != 0)
+                {
+                    exponent *= 2;
+                    intensity *= 4;
+                }
+
+                Filters.Scene[FilterID].GetShader().UseTargetPosition(NPC.Center + new Vector2(0, -150)).UseOpacity(exponent).UseIntensity(intensity);
+            }
+        }
+
+        public static Texture2D blurTexture;
+        public static Texture2D glowmaskTexture;
+        public static Effect hunterEffect;
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            UsefulFunctions.StartAdditiveSpritebatch(ref spriteBatch);
+            UsefulFunctions.EnsureLoaded(ref blurTexture, "tsorcRevamp/NPCs/Bosses/TheHunterBlur");
+            UsefulFunctions.EnsureLoaded(ref glowmaskTexture, "tsorcRevamp/NPCs/Bosses/TheHunterGlowmask");
+
+            //if (hunterEffect == null || hunterEffect.IsDisposed)
+            {
+                hunterEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/HunterEffect", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+            hunterEffect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 252);
+            hunterEffect.Parameters["length"].SetValue(.07f * 1000);
+
+            hunterEffect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseWavy);
+            hunterEffect.Parameters["sourceRectY"].SetValue(NPC.frame.Y);
+
+            float opacity = NPC.ai[0] / (NPC.lifeMax / 10f) * 0.8f;
+            if (NPC.ai[3] != 0)
+            {
+                opacity = 1;
+            }
+
+            //Its death animation works a tad different from its normal draw code
+            if (deathTimer > 0)
+            {
+                opacity = deathTimer / 60f;
+
+                Main.spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, NPC.Center - Main.screenPosition, NPC.frame, drawColor, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+                Main.spriteBatch.Draw(glowmaskTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+                UsefulFunctions.StartAdditiveSpritebatch(ref spriteBatch);
+                hunterEffect.Parameters["opacity"].SetValue(opacity);
+                hunterEffect.CurrentTechnique.Passes[0].Apply();
+                Main.spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+                UsefulFunctions.RestartSpritebatch(ref spriteBatch);
+                return false;
+            }
+
+            hunterEffect.Parameters["opacity"].SetValue(opacity);
+            hunterEffect.CurrentTechnique.Passes[0].Apply();
+
+            //Only draw the bird if it's not enraged
+            if (NPC.ai[3] == 0)
+            {
+                Main.spriteBatch.Draw(blurTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+                UsefulFunctions.RestartSpritebatch(ref spriteBatch);
+                Main.spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, NPC.Center - Main.screenPosition, NPC.frame, drawColor, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+                UsefulFunctions.RestartSpritebatch(ref spriteBatch);
+                Main.spriteBatch.Draw(glowmaskTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+            }
+
+            return false;
+        }
+
+        int deathTimer;
+        public override bool CheckDead()
+        {
+            if (deathTimer < 60)
+            {
+                NPC.life = 1;
+                return false;
+            }
+            return true;
+        }
+
+
         public override bool CheckActive()
         {
             return false;
@@ -487,15 +619,19 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheHunter.Enrage"), Color.Orange);
 
-                NPC.ai[3] = 1;
-                Color color = new Color();
-                for (int num36 = 0; num36 < 50; num36++)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, color, 3f);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
                 }
-                for (int num36 = 0; num36 < 20; num36++)
+
+                NPC.ai[3] = 1;
+                for (int i = 0; i < 50; i++)
                 {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, 0, 0, 100, color, 3f);
+                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
+                }
+                for (int i = 0; i < 20; i++)
+                {
+                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, 0, 0, 100, default, 3f);
                 }
                 NPC.ai[1] = -200;
                 NPC.ai[0] = 0;
@@ -522,12 +658,26 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void OnKill()
         {
-            for (int num36 = 0; num36 < 100; num36++)
+            if (FilterID != null)
+            {
+                if (Main.netMode != NetmodeID.Server && Filters.Scene[FilterID] != null && Filters.Scene[FilterID].IsActive())
+                {
+                    Filters.Scene[FilterID].Deactivate();
+                    tsorcRevampWorld.boundShaders.Remove(FilterID);
+                }
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.YellowGreen));
+            }
+
+            for (int i = 0; i < 100; i++)
             {
                 int dust = Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 89, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, new Color(), 9f);
                 Main.dust[dust].noGravity = true;
             }
-            for (int num36 = 0; num36 < 100; num36++)
+            for (int i = 0; i < 100; i++)
             {
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 131, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, Color.Orange, 3f);
             }

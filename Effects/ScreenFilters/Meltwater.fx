@@ -36,7 +36,7 @@ float4 PixelShaderFunction(float4 position : SV_POSITION, float2 coords : TEXCOO
     float pixDist = distance(coords, float2(0.5, 0.5));
     float dist = 2 * distance(currentPixel, focusPoint) / uScreenResolution.x;
     float2 samplePoint = (currentPixel / uImageSize1) / 10;
-    samplePoint.y += uTime / 10;
+    samplePoint.y -= uTime / 10;
     float2 distortOffset = tex2D(uImage1, samplePoint).rg - float2(0.5, 0.5);
     
     

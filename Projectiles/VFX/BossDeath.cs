@@ -8,9 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria.Graphics.Shaders;
 
-namespace tsorcRevamp.Projectiles.Enemy.Triad
+namespace tsorcRevamp.Projectiles.VFX
 {
-    class TriadDeath : ModProjectile
+    class BossDeath : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -76,7 +76,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
             if (Main.netMode != NetmodeID.Server && Filters.Scene[FilterID].IsActive())
             {
-                float opacity = 2 * (1f - (effectTimer / effectLimit));
+                float opacity = 2 * (1f - effectTimer / effectLimit);
 
                 float progress = effectTimer / 100f;
 
@@ -91,7 +91,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 Filters.Scene[FilterID].GetShader().UseTargetPosition(Projectile.Center).UseProgress(progress).UseOpacity(5 * opacity).UseIntensity(0.000001f).UseColor(AuraColor.ToVector3());
             }
 
-            if(effectTimer > effectLimit)
+            if (effectTimer > effectLimit)
             {
                 if (Main.netMode != NetmodeID.Server && Filters.Scene[FilterID].IsActive())
                 {
@@ -152,7 +152,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 }
                 if (Projectile.ai[0] == 4)
                 {
-                    return;
                     AuraEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/PrimeAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
                 }
 
@@ -209,7 +208,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             }
 
             starRotation = 0;
-            Rectangle starRectangle = new Rectangle(0, 0, 12048, 12048); 
+            Rectangle starRectangle = new Rectangle(0, 0, 12048, 12048);
             if (Projectile.ai[0] == 1)
             {
                 starRectangle.Width = (int)(starRectangle.Width * 0.5f);

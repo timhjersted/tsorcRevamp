@@ -31,6 +31,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10;
 
+            trailCollision = true;
             trailWidth = 25;
             trailPointLimit = 150;
             trailYOffset = 30;

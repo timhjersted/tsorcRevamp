@@ -8746,6 +8746,8 @@ Mods: {
 			RageFirebreath.DisplayName: Rage Firebreath
 			LionheartGunshot.DisplayName: Lionheart Gunshot
 			LeonhardCMSCrescent.DisplayName: Leonhard C M S Crescent
+			CotUDragon.DisplayName: Cot U Dragon
+			BossDeath.DisplayName: Boss Death
 		}
 
 		NPCs: {

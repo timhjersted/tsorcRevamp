@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             collisionPadding = 0;
             collisionEndPadding = 1;
             collisionFrequency = 2;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/Slash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
         public override float CollisionWidthFunction(float progress)
         {
@@ -48,8 +48,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 baseNoiseUOffset = Main.rand.NextFloat();
             }
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
             effect.Parameters["baseNoise"].SetValue(tsorcRevamp.NoiseSmooth);
             effect.Parameters["baseNoiseUOffset"].SetValue(baseNoiseUOffset);

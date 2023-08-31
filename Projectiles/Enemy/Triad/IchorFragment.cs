@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
             trailWidth = 20;
             trailPointLimit = 50;
-            trailCollision = false;
+            trailCollision = true;
             NPCSource = false;
             trailYOffset = 50;
             trailMaxLength = 200;

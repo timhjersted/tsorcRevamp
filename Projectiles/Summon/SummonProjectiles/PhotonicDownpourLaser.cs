@@ -31,6 +31,7 @@ namespace tsorcRevamp.Projectiles.Summon
             Projectile.localNPCHitCooldown = 999;
             Projectile.DamageType = DamageClass.Summon;
 
+            trailCollision = true;
             trailWidth = 25;
             trailPointLimit = 150;
             trailYOffset = 30;

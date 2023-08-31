@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
@@ -102,6 +103,19 @@ namespace tsorcRevamp.NPCs.Bosses
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
             HandleScreenShader();
+            if(NPC.life == 1)
+            {
+                deathTimer++;
+                if(deathTimer > 60)
+                {
+                    NPC.StrikeNPC(NPC.CalculateHitInfo(9999, 1, true, 0), false, false);
+                }
+
+                if(deathTimer % 5 == 0 && Main.myPlayer != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<Projectiles.VFX.LightRay>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.OrangeRed));
+                }
+            }
 
             NPC.ai[2]++;
             NPC.ai[1]++;
@@ -351,13 +365,13 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                     {
-                        float num48 = 4f;
+                        float speed = 6f;
                         int type = ModContent.ProjectileType<FireTrails>();
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.5f, PitchVariance = 1f }, NPC.Center) ; //flame thrower
                         float rotation = (float)Math.Atan2(NPC.Center.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + 600, NPC.Center.Y - 120, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 120, (float)((Math.Cos(rotation + 0.2) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 600, NPC.Center.Y - 120, (float)((Math.Cos(rotation - 0.2) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + 600, NPC.Center.Y - 120, (float)((Math.Cos(rotation) * speed) * -1), (float)((Math.Sin(rotation) * speed) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 120, (float)((Math.Cos(rotation + 0.2) * speed) * -1), (float)((Math.Sin(rotation + 0.4) * speed) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 600, NPC.Center.Y - 120, (float)((Math.Cos(rotation - 0.2) * speed) * -1), (float)((Math.Sin(rotation - 0.4) * speed) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
                         NPC.ai[1] = -90;
                         // Added some dust so the projectiles aren't just appearing out of thin air
                         for (int num36 = 0; num36 < 20; num36++)
@@ -458,7 +472,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[1] >= 0)
                 {
                     NPC.ai[3] = 0;
-                    for (int num36 = 0; num36 < 40; num36++)
+                    for (int i = 0; i < 40; i++)
                     {
                         Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, 0, 0, 0, new Color(), 3f);
                     }
@@ -567,22 +581,43 @@ namespace tsorcRevamp.NPCs.Bosses
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheRageTrophy>(), 10));
         }
 
+        int deathTimer;
+        public override bool CheckDead()
+        {
+            if(deathTimer < 60)
+            {
+                NPC.life = 1;
+                return false;
+            }
+            return true;
+        }
+
         public override void OnKill()
         {
+            SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1.3f });
+
             if (FilterID != null)
             {
-                if (Main.netMode != NetmodeID.Server && Filters.Scene[FilterID].IsActive())
+                if (Main.netMode != NetmodeID.Server && Filters.Scene[FilterID] != null && Filters.Scene[FilterID].IsActive())
                 {
                     Filters.Scene[FilterID].Deactivate();
                     tsorcRevampWorld.boundShaders.Remove(FilterID);
                 }
             }
-            for (int num36 = 0; num36 < 100; num36++)
+
+            if(Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 1, UsefulFunctions.ColorToFloat(Color.OrangeRed));
+            }
+
+            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 1.3f });
+
+            for (int i = 0; i < 100; i++)
             {
                 int dust = Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 127, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, new Color(), 9f);
                 Main.dust[dust].noGravity = true;
             }
-            for (int num36 = 0; num36 < 70; num36++)
+            for (int i = 0; i < 70; i++)
             {
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 130, Main.rand.Next(-50, 50), Main.rand.Next(-40, 40), 100, Color.Orange, 3f);
             }
@@ -600,7 +635,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
-        public string FilterID = "RageFilter";
+        public static string FilterID = "RageFilter";
         public void HandleScreenShader()
         {
             if (Filters.Scene[FilterID] == null)
@@ -645,7 +680,6 @@ namespace tsorcRevamp.NPCs.Bosses
         public static Texture2D enrageTexture;
         public static Texture2D glowmaskTexture;
         public static Effect rageEffect;
-        public static Effect rageEnrageEffect;
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             UsefulFunctions.StartAdditiveSpritebatch(ref spriteBatch);
@@ -653,18 +687,35 @@ namespace tsorcRevamp.NPCs.Bosses
             UsefulFunctions.EnsureLoaded(ref enrageTexture, "tsorcRevamp/NPCs/Bosses/TheRageEnrage");
             UsefulFunctions.EnsureLoaded(ref glowmaskTexture, "tsorcRevamp/NPCs/Bosses/TheRageGlowmask");
 
-
-            rageEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/RageEffect", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            if (rageEffect == null || rageEffect.IsDisposed)
+            {
+                rageEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/RageEffect", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
             rageEffect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 252);
             rageEffect.Parameters["length"].SetValue(.07f * 1000);
             rageEffect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);
             rageEffect.Parameters["sourceRectY"].SetValue(NPC.frame.Y);
 
-            float opacity = NPC.ai[0] / (NPC.lifeMax / 10) * 0.8f;
+            float opacity = NPC.ai[0] / (NPC.lifeMax / 10f) * 0.8f;
             if (NPC.ai[3] != 0)
             {
                 opacity = 1;
             }
+
+            //Its death animation works a tad different from its normal draw code
+            if (deathTimer > 0)
+            {
+                opacity = deathTimer / 60f;
+
+                Main.spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, NPC.Center - Main.screenPosition, NPC.frame, drawColor, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+                Main.spriteBatch.Draw(glowmaskTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+                UsefulFunctions.RestartSpritebatch(ref spriteBatch);
+                rageEffect.Parameters["opacity"].SetValue(opacity);
+                rageEffect.CurrentTechnique.Passes[0].Apply();
+                Main.spriteBatch.Draw(enrageTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+                return false;
+            }
+
             rageEffect.Parameters["opacity"].SetValue(opacity);
             rageEffect.CurrentTechnique.Passes[0].Apply();
 

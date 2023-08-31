@@ -55,6 +55,46 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     //Calculate how close the current pixel is to the center line of the screen
     float intensity = 1.0 - abs(uv.y - 0.5);
     
+    
+    //Raise it to a high exponent, resulting in sharply increased intensity at the center that trails off smoothly
+    //Higher number = more narrow and compressed trail
+    float intensity2 = pow(intensity, 6.0);
+    
+    //Flat doubling to incrase the total intensity
+    intensity2 *= 2;
+    
+    //This controls where the front of the bolt starts to curve
+    float inflectionPoint = 0.82;
+    //inflectionPoint *= fadeOut;
+    
+    //Make it fade out towards the end
+    if (uv.x < inflectionPoint)
+    {
+        intensity2 = lerp(0.0, intensity2, pow(uv.x / inflectionPoint, 1));
+    }
+    
+    //Make it fade in towards the start
+    if (uv.x > inflectionPoint)
+    {
+        intensity2 = lerp(0.0, intensity2, pow((1.0 - uv.x) / (1 - inflectionPoint), 1));
+    }
+
+    //Pick where to sample the texture used for the flowing effect
+    float2 samplePoint = uv;
+    
+    //Zoom in on the noise texture, then shift it over time to make it appear to be flowing    
+    samplePoint /= 20;
+    samplePoint.x = (samplePoint.x + time * 0.05) * 1;
+    
+    //Compress it vertically
+    samplePoint.y = samplePoint.y / 2;
+
+    //Get the noise texture at that point
+    float sampleIntensity = tex2D(baseNoiseSampler, samplePoint).r;
+    
+    //Mix it with 2 times the laser color
+    float4 noiseColor = 4 * sampleIntensity.rrrr;
+    
     //Raise it to a high exponent, resulting in sharply increased intensity at the center that trails off smoothly
     //Higher number = more narrow and compressed trail
     intensity = pow(intensity, 6.0) * 3 * uv.x;
@@ -92,8 +132,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     
     float2 baseNoiseVector = float2((uv.x / 5) + time / 5, uv.y);
     float baseNoiseIntensity = tex2D(baseNoiseSampler, baseNoiseVector).r;
-    baseNoiseIntensity = pow(baseNoiseIntensity, 3) * 10;
-    
+    baseNoiseIntensity = pow(baseNoiseIntensity, 3) * 10;    
     
     intensity *= pow(baseNoiseIntensity, 1);
     
@@ -102,15 +141,14 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     {
         trailColor = slashEdge;
     }
-        
     
     //TODO: Replace this with actual tonemapping
     if (intensity > 1)
     {
-        intensity = 1;
+        //intensity = 1;
     }
     
-    return trailColor * intensity * fadeOut * fadeOut;
+    return 1.5 * (trailColor * intensity * noiseColor) * fadeOut * fadeOut;
 }
 
 technique FuriousEnergy

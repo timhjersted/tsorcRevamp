@@ -21,6 +21,7 @@ using Terraria.Localization;
 using Terraria.Graphics.Effects;
 using tsorcRevamp.Utilities;
 using System.Diagnostics;
+using tsorcRevamp.NPCs.Bosses;
 
 namespace tsorcRevamp
 {
@@ -1227,7 +1228,7 @@ namespace tsorcRevamp
             }
         }
 
-        //Clean up 'orphaned' screen shaders whose host projectile died in mysterious ways before it could do so itself
+        //Clean up 'orphaned' screen shaders whose host died in mysterious ways before it could do so itself
 
         public static List<string> boundShaders = new List<string>();
         public static void CleanUpScreenShaders()
@@ -1248,6 +1249,21 @@ namespace tsorcRevamp
                 {
                     Filters.Scene[currentIndex].GetShader().UseOpacity(0).UseImage(tsorcRevamp.NoiseTurbulent);
                     Filters.Scene[currentIndex].Deactivate();
+                }
+            }
+
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheRage>()))
+            {
+                if (Filters.Scene[TheRage.FilterID] != null && Filters.Scene[TheRage.FilterID].Active)
+                {
+                    Filters.Scene[TheRage.FilterID].Deactivate();
+                }
+            }
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
+            {
+                if (Filters.Scene[TheSorrow.FilterID] != null && Filters.Scene[TheSorrow.FilterID].Active)
+                {
+                    Filters.Scene[TheSorrow.FilterID].Deactivate();
                 }
             }
         }

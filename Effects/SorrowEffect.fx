@@ -1,8 +1,15 @@
 sampler uImage0 : register(s0);
 texture noiseTexture;
-sampler uImage1 = sampler_state
+sampler WavySampler = sampler_state
 {
     Texture = (noiseTexture);
+    AddressU = wrap;
+    AddressV = wrap;
+};
+texture noiseVoronoi;
+sampler VoronoiSampler = sampler_state
+{
+    Texture = (noiseVoronoi);
     AddressU = wrap;
     AddressV = wrap;
 };
@@ -33,30 +40,37 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     samplePoint.x /= 4;
     float pixelTime = time;
     //pixelTime -= pixelTime % 0.02;
-    samplePoint.y += 0.5 * pixelTime;
+    samplePoint.y -= 0.5 * pixelTime;
     
     //Check the alpha of the current texture
     float textureIntensity = tex2D(uImage0, coords).a * 1.5;
     
     //Calculate how intense a pixel should be based on the noise generator and the blur texture
-    float intensity = textureIntensity * tex2D(uImage1, samplePoint).r;
+    float intensity = textureIntensity * tex2D(WavySampler, samplePoint).r;
+    
+    float2 voronoiPoint = coords;
+    voronoiPoint.x *= 4;
+    voronoiPoint.y -= time / 10;
+    voronoiPoint.y *= 16;
+    float voronoiPercent = opacity / 2;
     
     //Pixelate it to limit the pallette
     //intensity = intensity - intensity % 0.08;
     
-    float yellowExp = 2.5;
-    float yellowScale = 0.1;
-    float whiteScale = 0.05;
+    float blueExp = 2.5;
+    float blueScale = 0.2;    
     if (opacity == 1)
     {
-        yellowExp = 1.8;
-        yellowScale = 0.02;
-        whiteScale = 0.007;
+        blueExp = 1.8;
+        blueScale = 0.02;
+        voronoiPercent =  0.7;
 
     }
+    
+    intensity *= lerp(1, tex2D(VoronoiSampler, voronoiPoint).r * 10, voronoiPercent);
 
     //Scale 'intensity' into the RGB channels. Values are fine-tuned to turn noise into a fire-like effect.
-    return float4(pow(intensity, 3.0), pow(intensity, yellowExp) * yellowScale, pow(intensity, 4.5) * whiteScale, 1) * 100 * opacity;
+    return float4(pow(intensity, 30.0), pow(intensity, blueExp) * blueScale, pow(intensity, 2), 1) * 100 * opacity;
 }
 
 technique SorrowEffectShader

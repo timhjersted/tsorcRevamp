@@ -5256,6 +5256,7 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
+            destroyerAttackIndex = 3;
             if (npc.type == NPCID.TheDestroyerBody && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 if (!destroyerJustSpawned)
@@ -5273,6 +5274,13 @@ namespace tsorcRevamp.NPCs
                         {
                             Vector2 projVel = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(220, 220), 1);
                             Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 80, 0, Main.myPlayer, 2000 + npc.target, npc.whoAmI);
+                        }
+
+                        //Shoot confining lasers above it to keep the player from circling
+                        if(destroyerChargeTimer > -60 && (Main.GameUpdateCount + npc.whoAmI * 5) % 300 == 0)
+                        {
+                            Vector2 projVel = new Vector2(Main.rand.NextFloat(-1, 1), Main.rand.NextFloat(-1, 0.05f));
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -4, npc.whoAmI);
                         }
                     }
 

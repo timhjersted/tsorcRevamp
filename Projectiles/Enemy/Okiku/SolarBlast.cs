@@ -23,6 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             Projectile.friendly = false;
             Projectile.tileCollide = false;
 
+            trailCollision = true;
             trailWidth = 25;
             trailPointLimit = 150;
             trailYOffset = 30;

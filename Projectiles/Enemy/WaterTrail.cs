@@ -5,10 +5,11 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
-    class WaterTrail : ModProjectile
+    class WaterTrail : DynamicTrail
     {
         public override void SetStaticDefaults()
         {
@@ -18,17 +19,29 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetDefaults()
         {
-            Projectile.penetrate = 6;
+            Projectile.penetrate = 5;
             Projectile.width = 16;
             Projectile.height = 16;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
             Projectile.hostile = true;
             Projectile.coldDamage = true;
-            
+
+            trailCollision = true;
+            trailWidth = 25;
+            trailPointLimit = 150;
+            trailYOffset = 30;
+            trailMaxLength = 450;
+            NPCSource = false;
+            collisionPadding = 0;
+            collisionEndPadding = 1;
+            collisionFrequency = 2;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/WaterTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
+
         public override void AI()
         {
+            base.AI();
             if (Projectile.ai[0] == 1)
             {
                 Projectile.tileCollide = false;
@@ -50,12 +63,49 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.velocity.Y *= accel;
             }
         }
+
+        public override float CollisionWidthFunction(float progress)
+        {
+            return 10;
+         }
+
+        float baseNoiseUOffset;
+        public override void SetEffectParameters(Effect effect)
+        {
+            if (baseNoiseUOffset == 0)
+            {
+                baseNoiseUOffset = Main.rand.NextFloat();
+            }
+
+            effect.Parameters["baseNoise"].SetValue(tsorcRevamp.NoiseSmooth);
+            effect.Parameters["baseNoiseUOffset"].SetValue(baseNoiseUOffset);
+            //effect.Parameters["secondaryNoise"].SetValue(noiseTexture);
+
+            visualizeTrail = false;
+
+            effect.Parameters["fadeOut"].SetValue(fadeOut);
+            effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            Color shaderColor = new Color(0.05f, 0.2f, 1f, 1.0f);
+            effect.Parameters["slashCenter"].SetValue(shaderColor.ToVector4());
+            effect.Parameters["slashEdge"].SetValue(shaderColor.ToVector4());
+            effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
+            collisionEndPadding = trailPositions.Count / 5;
+            collisionPadding = trailPositions.Count / 8;
+        }
+
         public override bool OnTileCollide(Vector2 oldVelocity)
         { //allow the projectile to bounce
             Projectile.penetrate--;
             if (Projectile.penetrate == 0)
             {
-                Projectile.Kill();
+                Projectile.tileCollide = false;
+                dying = true;
+                Projectile.penetrate++;
+                if (Projectile.timeLeft > 60)
+                {
+                    //Projectile.velocity = Vector2.Zero;
+                    Projectile.timeLeft = 60;
+                }
             }
             Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Drip, Projectile.position);
@@ -72,6 +122,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
+            return base.PreDraw(ref lightColor);
+
+            /*
             Main.instance.LoadProjectile(Projectile.type);
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             lightColor = Color.DeepSkyBlue;
@@ -85,7 +138,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Main.EntitySpriteDraw(texture, drawPos, null, color, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
             }
 
-            return true;
+            return true;*/
         }
     }
 }

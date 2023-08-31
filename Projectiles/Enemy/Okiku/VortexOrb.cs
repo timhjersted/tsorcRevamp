@@ -33,8 +33,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         Vector2 attraidiesPoint = Vector2.Zero;
         public override void AI()
         {
-            
-
             chargeTime++;
             angle += 0.02f;
             float maxRadius = 1000;

@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.damage = 45;
             Projectile.knockBack = 9;
 
-
+            trailCollision = true;
             trailWidth = 25;
             trailPointLimit = 150;
             trailYOffset = 30;

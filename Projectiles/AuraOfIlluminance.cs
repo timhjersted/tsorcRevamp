@@ -95,7 +95,7 @@ namespace tsorcRevamp.Projectiles
 
                 if (Projectile.owner == Main.myPlayer)
                 {
-                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), averageCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.TriadDeath>(), 10, 0, Main.myPlayer, 0);
+                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), averageCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 10, 0, Main.myPlayer, 0);
 
 
                     for (int i = 0; i < Main.maxNPCs; i++)

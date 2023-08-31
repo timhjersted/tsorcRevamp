@@ -13,11 +13,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
 {
     class RageDemonBolt : DynamicTrail
     {
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Death Laser");
-        }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
         public override void SetDefaults()
         {
@@ -32,11 +27,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
             trailPointLimit = 150;
             trailYOffset = 30;
             trailMaxLength = 150;
+            trailCollision = true;
             NPCSource = false;
             collisionPadding = 0;
             collisionEndPadding = 1;
             collisionFrequency = 2;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
@@ -53,7 +49,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
             if (!playedSound)
             {
                 realVelocity = Projectile.velocity;
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item33 with { Volume = 0.5f }, Projectile.Center);
                 playedSound = true;
             }
 
@@ -80,8 +75,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
             {
                 baseNoiseUOffset = Main.rand.NextFloat();
             }
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/FuriousEnergy", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
             effect.Parameters["baseNoise"].SetValue(tsorcRevamp.NoiseSmooth);
             effect.Parameters["baseNoiseUOffset"].SetValue(baseNoiseUOffset);
@@ -95,7 +88,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
             effect.Parameters["slashCenter"].SetValue(Color.White.ToVector4());
             effect.Parameters["slashEdge"].SetValue(shaderColor.ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
-            collisionEndPadding = trailPositions.Count / 3;
+            collisionEndPadding = trailPositions.Count / 5;
             collisionPadding = trailPositions.Count / 8;
         }
     }

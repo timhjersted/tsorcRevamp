@@ -24,6 +24,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             Projectile.tileCollide = false;
             Projectile.penetrate = 999;
 
+            trailCollision = true;
             trailWidth = 25;
             trailPointLimit = 150;
             trailYOffset = 30;

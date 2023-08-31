@@ -64,6 +64,11 @@ namespace tsorcRevamp.Projectiles.VFX
         public bool trailCollision = false;
 
         /// <summary>
+        /// Should it deal damage with its normal projectile hitbox?
+        /// </summary>
+        public bool normalCollision = false;
+
+        /// <summary>
         /// Controls how fine-tuned the collision checking is
         /// There is rarely a need to mess with this
         /// </summary>
@@ -433,6 +438,18 @@ namespace tsorcRevamp.Projectiles.VFX
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
+            //If it has normal collision, just do that
+            if (normalCollision)
+            {
+                return base.Colliding(projHitbox, targetHitbox);
+            }
+
+            //If normal collision and trail collision are both disabled, then it should never deal damage
+            if (!trailCollision)
+            {
+                return false;
+            }
+
             if (trailPositions == null)
             {
                 return false;

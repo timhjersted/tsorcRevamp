@@ -259,6 +259,14 @@ namespace tsorcRevamp.Projectiles.VFX
                     currentDownedList[i].ai[0] = 0;
                     currentDownedList[i].scale = 0.7f;
                 }
+                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheSorrow>())
+                {
+                    currentDownedList[i].ai[0] = 0;
+                }
+                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheHunter>())
+                {
+                    currentDownedList[i].ai[0] = 0;
+                }
 
                 if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())
                 {
@@ -305,7 +313,14 @@ namespace tsorcRevamp.Projectiles.VFX
                         {
                             currentDownedList[i].ai[0] = currentDownedList[i].lifeMax / 20f;
                             currentDownedList[i].scale = 0.8f;
-                            mouseOverHeight *= 1.0f;
+                        }
+                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheSorrow>())
+                        {
+                            currentDownedList[i].ai[0] = currentDownedList[i].lifeMax / 20f;
+                        }
+                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheHunter>())
+                        {
+                            currentDownedList[i].ai[0] = currentDownedList[i].lifeMax / 20f;
                         }
                         if (currentDownedList[i].type == NPCID.GolemHeadFree)
                         {

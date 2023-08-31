@@ -205,6 +205,7 @@ Mods: {
 		}
 
 		Events: {
+			// Death: The fated day of your death has arrived.
 			QueenSlime: 史莱姆女皇从她的神圣洞穴中现身！
 			GreatRedKnightInvasion: 一位卓越赭骑士入侵了你的世界！
 			Deerclops: 你惊动了远古巨鹿！
@@ -7314,7 +7315,7 @@ Mods: {
 			}
 
 			AdventurersCard: {
-				// DisplayName: Adventurers Card
+				// DisplayName: Adventurer's Card
 				// Tooltip: Shows you your stats, right click to cycle between classes
 				/* Generic:
 					'''
@@ -8748,6 +8749,8 @@ Mods: {
 			RageFirebreath.DisplayName: 烈火之息
 			LionheartGunshot.DisplayName: 狮心枪射
 			// LeonhardCMSCrescent.DisplayName: Leonhard C M S Crescent
+			// CotUDragon.DisplayName: Cot U Dragon
+			// BossDeath.DisplayName: Boss Death
 		}
 
 		NPCs: {
