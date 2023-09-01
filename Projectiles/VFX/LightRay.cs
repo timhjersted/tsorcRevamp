@@ -113,7 +113,7 @@ namespace tsorcRevamp.Projectiles.VFX
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
            
-            //if (effect == null)
+            if (effect == null)
             {
                 effect = ModContent.Request<Effect>("tsorcRevamp/Effects/LightBeam", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }            

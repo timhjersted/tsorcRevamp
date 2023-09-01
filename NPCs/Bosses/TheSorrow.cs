@@ -207,25 +207,24 @@ namespace tsorcRevamp.NPCs.Bosses
             breathTimer++;
 
             // Breath charges faster in phase 2
+            float breathCap = 480;
             if (secondPhase)
             {
-                breathTimer += 0.34f;
+                breathCap = 320;
             }
 
-            // Dust animation
-            if (breathTimer > 380)
+            if (breathTimer == breathCap - 200)
             {
-                UsefulFunctions.DustRing(NPC.Center, (int)(48 * ((480 - breathTimer) / 100)), DustID.IceTorch, 48, 4);
-                Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 5);
-
-                if (Main.GameUpdateCount % 5 == 0)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC.netUpdate = true;
-                    NPC.netSpam = 0;
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.GlowingEnergy>(), 0, 0, Main.myPlayer, NPC.whoAmI, UsefulFunctions.ColorToFloat(Color.Blue));
                 }
             }
+            if (breathTimer > breathCap - 200)
+            {
+                Lighting.AddLight(NPC.Center, Color.Cyan.ToVector3() * 5);
+            }
 
-            breathTimer++;
             // Longer breath at half health          
             if (breathTimer > 480)
             {
@@ -234,6 +233,13 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (secondPhase)
                 {
                     breathTimer = -180;
+                }
+
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 12);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, breathVel, ModContent.ProjectileType<Projectiles.Enemy.Birbs.SorrowFrozenBreath>(), waterTrailsDamage, 0f, Main.myPlayer, -breathTimer);
                 }
             }
 
@@ -252,13 +258,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (Main.rand.NextBool(3))
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.9f, PitchVariance = 1f }, NPC.Center); //flame thrower
-                }
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 9);
-                    breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<FrozenDragonsBreath>(), waterTrailsDamage, 0f, Main.myPlayer);
                 }
             }
         }
@@ -371,7 +370,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         else NPC.velocity.Y += 0.07f;
                     }
 
-                    if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
+                    if (NPC.ai[1] >= 0 && NPC.ai[2] > 180 && NPC.ai[2] < 600)
                     {
                         // If the sorrow doesn't have line of sight to the player due to blocks in the way, its projectiles will be able to phase through walls to hit them and travel much faster.
                         // PhasedBullets is passed to the projectile's ai[0] value (which takes a float) to tell it whether or not to collide with tiles

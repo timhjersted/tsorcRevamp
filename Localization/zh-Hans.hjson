@@ -8756,6 +8756,11 @@ Mods: {
 			// LeonhardCMSCrescent.DisplayName: Leonhard C M S Crescent
 			// CotUDragon.DisplayName: Cot U Dragon
 			// BossDeath.DisplayName: Boss Death
+			// EnergyGathering.DisplayName: Energy Gathering
+			// GlowingEnergy.DisplayName: Glowing Energy
+			// RageFireBreath.DisplayName: Rage Fire Breath
+			// SorrowFrozenBreath.DisplayName: Sorrow Frozen Breath
+			// HunterToxicBreath.DisplayName: Hunter Toxic Breath
 		}
 
 		NPCs: {

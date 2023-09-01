@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.Marilith
 {
-    class SyntheticFirestorm : ModProjectile
+    class HunterToxicBreath : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -31,58 +31,70 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Projectile.light = 1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.timeLeft = 120;
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
 
         float size = 0;
         Vector2 truePosition;
-        float maxSize = 1200;
+        float maxSize = 200;
         float fadeIn;
+        int? hostIndex;
+        bool initialized = false;
         public override void AI()
         {
-            int? index = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>());
-            if (index != null)
+            maxSize = 200;
+            if (!initialized)
             {
-                Projectile.Center = Main.npc[index.Value].Center;
-                Projectile.rotation = Main.npc[index.Value].ai[3] - MathHelper.PiOver2 + (Projectile.ai[0] * MathHelper.TwoPi / 3f);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, Projectile.Center);
+                hostIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.TheRage>());
+                Projectile.rotation = Projectile.velocity.ToRotation();
+                Projectile.velocity = Vector2.Zero;
+                initialized = true;
+            }
+            if (hostIndex != null)
+            {
+                Projectile.Center = Main.npc[hostIndex.Value].Center;
+                Projectile.position.X -= 7;
+                Projectile.position.Y -= 10;
+
+                Vector2 targetRotation = UsefulFunctions.Aim(Projectile.Center, Main.player[Main.npc[hostIndex.Value].target].Center, 1);
+                Vector2 currentRotation = Projectile.rotation.ToRotationVector2();
+                Vector2 nextRotationVector = Vector2.Lerp(currentRotation, targetRotation, 0.03f);
+                Projectile.rotation = MathHelper.WrapAngle(nextRotationVector.ToRotation());
+                if(Projectile.rotation < 0)
+                {
+                    Projectile.rotation += MathHelper.TwoPi;
+                }
             }
             else
             {
                 Projectile.active = false;
             }
 
-            if (fadeIn < 120)
-            {
-                fadeIn++;
-                if(fadeIn == 110)
-                {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, Projectile.Center);
-                }
-                return;
-            }
-
-            Projectile.timeLeft = 2;
-
             if (size < maxSize)
             {
-                size += 10f;            
+                size += 3;
             }
         }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
-            //behindNPCsAndTiles.Add(index);
+            overPlayers.Add(index);
         }
 
         //Custom collision
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if(fadeIn < 120)
+            if (Projectile.timeLeft < 15)
             {
-                return false;
+                 return false;
             }
+
             float distance = Vector2.Distance(Projectile.Center, Main.LocalPlayer.Center);
             float angleBetween = (float)UsefulFunctions.CompareAngles(Vector2.Normalize(Projectile.Center - targetHitbox.Center.ToVector2()), Projectile.rotation.ToRotationVector2());
-            return distance < size && Math.Abs(angleBetween - MathHelper.Pi) < angle / 2.85f;
+            //Main.NewText("Size " + distance  + " / " + size * 2.7f);
+            //Main.NewText("Angle " + (Math.Abs(angleBetween - MathHelper.Pi)) + " / " + angle / 2.85f);
+            return distance < size * 2.7f && Math.Abs(angleBetween - MathHelper.Pi) < angle / 2.85f;
         }
 
         public static Effect effect;
@@ -94,26 +106,25 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             if (effect == null)
             {
                 effect = ModContent.Request<Effect>("tsorcRevamp/Effects/SyntheticFirestorm", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-                //effect = new Effect(Main.graphics.GraphicsDevice, Mod.GetFileBytes("Effects/SyntheticFirestorm"));
             }
 
-            angle = MathHelper.TwoPi / 6f;
+            angle = MathHelper.TwoPi / 8f;
             float shaderRotation = Projectile.rotation + (MathHelper.Pi - angle / 2f);
             shaderRotation %= MathHelper.TwoPi;
             effect.Parameters["splitAngle"].SetValue(angle);
             effect.Parameters["rotation"].SetValue(shaderRotation);
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 312);
-            effect.Parameters["length"].SetValue(.35f * size / maxSize);
-            float opacity = 1;
-            if (fadeIn < 110)
-            {
-                opacity = 0.1f;
-            }
-            else if(fadeIn < 120)
-            {
-                MathHelper.Lerp(0.01f, 1, (fadeIn - 110f) / 10f);
-            }
+            effect.Parameters["length"].SetValue(.35f * size / 1200);
 
+            float opacity = 10;
+            if(Projectile.timeLeft < 45 && Projectile.timeLeft > 30)
+            {
+                opacity = MathHelper.Lerp(opacity, 1, (45f - Projectile.timeLeft) / 15f);
+            }
+            else
+            {
+                opacity = Projectile.timeLeft / 30f;
+            }
             effect.Parameters["opacity"].SetValue(opacity);
 
             //I precompute many values once here so that I don't have to calculate them for every single pixel in the shader. Enormous performance save.
@@ -128,7 +139,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Vector2 origin = new Vector2(recsize.Width * 0.5f, recsize.Height * 0.5f);
 
             //Draw the rendertarget with the shader
-            Main.spriteBatch.Draw(tsorcRevamp.NoiseTurbulent, Projectile.Center - Main.screenPosition, recsize, Color.White, 0, origin, 4.5f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tsorcRevamp.NoiseTurbulent, Projectile.Center - Main.screenPosition, recsize, Color.White, 0, origin, 4.5f * size / maxSize, SpriteEffects.None, 0);
 
             //Restart the spritebatch so the shader doesn't get applied to the rest of the game
             UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);

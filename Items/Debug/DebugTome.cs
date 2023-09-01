@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.Debug
             //NPCs.Bosses.PrimeV2.PrimeV2.ActuatePrimeArena();
 
             //NPC.NewNPC(Item.GetSource_FromThis(), (int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>());
-            Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragon.CotUDragon>(), 0, 0, Main.myPlayer);
+            Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.GlowingEnergy>(), 0, 0, Main.myPlayer, 600, UsefulFunctions.ColorToFloat(new Color(1.0f, 0.4f, 0.1f, 1.0f)));
 
             //Uncomment this to make the debug tome max out your perma potions
             //return false;
