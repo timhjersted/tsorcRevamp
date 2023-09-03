@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (item.type == ItemID.StaffoftheFrostHydra) //nerf, using static immunity frame in tml1.4.4, vanilla damage is 100
             {
-                item.damage = 80;
+                item.damage = 100;
             }
 
             //Lunar items

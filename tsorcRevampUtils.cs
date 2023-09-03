@@ -991,7 +991,8 @@ namespace tsorcRevamp
         {
             if (Main.projectile[type].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.CataluminanceTrail>() ||
                 Main.projectile[type].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>() ||
-                Main.projectile[type].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.CursedMalestrom>())
+                Main.projectile[type].type == ModContent.ProjectileType<Projectiles.Enemy.Triad.CursedMalestrom>() ||
+                Main.projectile[type].type == ProjectileID.PhantasmalDeathray || Main.projectile[type].type == ProjectileID.SaucerDeathray)
             {
                 return false;
             }

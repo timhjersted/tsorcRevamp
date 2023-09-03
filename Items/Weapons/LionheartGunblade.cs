@@ -16,9 +16,9 @@ namespace tsorcRevamp.Items.Weapons
     {
         public const int LionheartMarkDuration = 6;
         public const int MaxMarks = 5;
-        public const float MarkExtraDmgMultBase = 2f;
-        public const float MarkDistanceBasedDmgDivisor = 8f;
-        public const int BaseDmg = 80;
+        public const float MarkExtraDmgMultBase = 1.5f;
+        public const float MarkDistanceBasedDmgDivisor = 7f;
+        public const int BaseDmg = 70;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMarks);
         public override void SetStaticDefaults()
         {
@@ -109,6 +109,10 @@ namespace tsorcRevamp.Items.Weapons
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks < MaxMarks)
             {
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks++;
+                if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks == MaxMarks)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/LionheartGunbladeMarked") with { Volume = 1f }, player.Center);
+                }
             }
         }
     }

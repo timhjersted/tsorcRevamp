@@ -18,7 +18,8 @@ using Terraria.Audio;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Projectiles.Summon.Whips;
-using static Humanizer.In;
+using tsorcRevamp.Utilities;
+using tsorcRevamp.Buffs.Runeterra.Melee;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -64,8 +65,11 @@ namespace tsorcRevamp.Projectiles
 
             base.OnSpawn(projectile, source);
         }*/
+        public override bool InstancePerEntity => true;
         public static float WhipVolume = 0.4f;
         public static float WhipPitch = 0.3f;
+        public bool AppliedLethalTempo = false;
+        public bool HitSomething = false;
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
             /*Entitysource experiments
@@ -90,6 +94,7 @@ namespace tsorcRevamp.Projectiles
                 owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = true;
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = 1f }, owner.Center);
             }
+            AppliedLethalTempo = false;
         }
         public override bool PreAI(Projectile projectile)
         {
@@ -133,10 +138,10 @@ namespace tsorcRevamp.Projectiles
 
                 if (projectile.type == ProjectileID.FrostBlastFriendly)
                 {
-                    
                     projectile.penetrate = 6;
+                    projectile.usesIDStaticNPCImmunity = false;
+                    projectile.localNPCHitCooldown = 100;
                     projectile.usesLocalNPCImmunity = true;
-                    projectile.localNPCHitCooldown = 30;
                     projectile.extraUpdates = 3;
                 }
 
@@ -225,6 +230,26 @@ namespace tsorcRevamp.Projectiles
                         projectile.ai[1] = 1; //return flail smoothly, dont just kill it (doesn't work)
                     }
                     else projectile.Kill();
+                }
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    Projectile other = Main.projectile[i];
+
+                    if ((projectile.DamageType == DamageClass.Melee || projectile.DamageType == DamageClass.MeleeNoSpeed) && modPlayer.BearerOfTheCurse && projectile.Hitbox.Intersects(other.Hitbox) &&
+                        i != projectile.whoAmI && other.active && !other.friendly && other.hostile && other.damage > 0 && UsefulFunctions.IsProjectileSafeToFuckWith(i) && other.type != ModContent.ProjectileType<Nothing>() && other.type != ModContent.ProjectileType<Slash>() && !AppliedLethalTempo)
+                    {
+                        if (modPlayer.BotCLethalTempoStacks < modPlayer.BotCLethalTempoMaxStacks - 1)
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoStack") with { Volume = modPlayer.BotCClassMechanicsVolume * 0.2f }, player.Center);
+                        }
+                        else if (modPlayer.BotCLethalTempoStacks == modPlayer.BotCLethalTempoMaxStacks - 1)
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFullyStacked") with { Volume = modPlayer.BotCClassMechanicsVolume }, player.Center);
+                        }
+                        player.AddBuff(ModContent.BuffType<LethalTempo>(), player.GetModPlayer<tsorcRevampPlayer>().BotCLethalTempoDuration * 60);
+                        AppliedLethalTempo = true;
+                        other.GetGlobalProjectile<tsorcGlobalProjectile>().AppliedLethalTempo = true;
+                    }
                 }
             }
             if (projectile.type == ProjectileID.PhantasmalDeathray) //die
@@ -332,6 +357,23 @@ namespace tsorcRevamp.Projectiles
                 }
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[projectile.owner];
                 target.AddBuff(ModContent.BuffType<IrradiatedDebuff>(), 2 * 60);
+            }
+            if ((projectile.DamageType == DamageClass.Melee || projectile.DamageType == DamageClass.MeleeNoSpeed) && modPlayer.BearerOfTheCurse && !AppliedLethalTempo)
+            {
+                if (modPlayer.BotCLethalTempoStacks < modPlayer.BotCLethalTempoMaxStacks - 1)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoStack") with { Volume = modPlayer.BotCClassMechanicsVolume * 0.2f }, player.Center);
+                }
+                else if (modPlayer.BotCLethalTempoStacks == modPlayer.BotCLethalTempoMaxStacks - 1)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFullyStacked") with { Volume = modPlayer.BotCClassMechanicsVolume}, player.Center);
+                }
+                player.AddBuff(ModContent.BuffType<LethalTempo>(), player.GetModPlayer<tsorcRevampPlayer>().BotCLethalTempoDuration * 60);
+                AppliedLethalTempo = true;
+            }
+            if (projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse)
+            {
+                HitSomething = true;
             }
         }
 
@@ -456,14 +498,39 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
+
         public override void Kill(Projectile projectile, int timeLeft)
         {
             Player owner = Main.player[projectile.owner];
+            var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
             if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && projectile.type != ModContent.ProjectileType<TerraFallTerraprisma>() && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung)
             {
                 owner.AddBuff(ModContent.BuffType<GoredrinkerCooldown>(), Items.Accessories.Summon.Goredrinker.Cooldown * 60);
                 owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady = false;
                 owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = false;
+            }
+            if (projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse
+                && projectile.type != ProjectileID.ChlorophyteBullet && projectile.type != ProjectileID.ChlorophyteArrow && projectile.type != ModContent.ProjectileType<ElfinArrow>() //add any ranged homing projectiles
+                && projectile.aiStyle != ProjAIStyleID.SmallFlying)
+            {
+                if (HitSomething)
+                {
+                    modPlayer.BotCAccuracyPercent += modPlayer.BotCAccuracyGain;
+                    CombatText.NewText(projectile.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCHit"));
+                }
+                else if (!HitSomething)
+                {
+                    modPlayer.BotCAccuracyPercent -= modPlayer.BotCAccuracyLoss;
+                    CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCMiss"));
+                }
+                if (modPlayer.BotCAccuracyPercent > modPlayer.BotcAccuracyPercentMax)
+                {
+                    modPlayer.BotCAccuracyPercent = modPlayer.BotcAccuracyPercentMax;
+                }
+                if (modPlayer.BotCAccuracyPercent < 0)
+                {
+                    modPlayer.BotCAccuracyPercent = 0;
+                }
             }
             base.Kill(projectile, timeLeft);
         }

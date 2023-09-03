@@ -59,6 +59,10 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.useAnimation = 20;
                 item.mana = 25;
             }
+            if (item.type == ItemID.DD2SquireBetsySword)
+            {
+                item.mana = 20;
+            }
             if (item.type == ItemID.VampireKnives)
             {
                 item.mana = 35;

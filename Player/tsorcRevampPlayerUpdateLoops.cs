@@ -76,6 +76,21 @@ namespace tsorcRevamp
 
         public int MaxMinionTurretMultiplier;
 
+        public float BotCClassMechanicsVolume = 1f;
+
+        public float BotCMeleeBaseAttackSpeedMult = 0.85f;
+        public int BotCLethalTempoDuration = 3;
+        public float BotCLethalTempoStacks = 0;
+        public int BotCLethalTempoMaxStacks = 10;
+        public float BotCLethalTempoBonus = 0.03f;
+
+        public float BotCRangedBaseCritMult = 0.8f;
+        public float BotCAccuracyPercent = 0f;
+        public float BotcAccuracyPercentMax = 1f;
+        public float BotCAccuracyGain = 0.04f;
+        public float BotCAccuracyLoss = 0.1f;
+        public float BotCAccuracyBonusCrit = 0f;
+
         public bool SteraksGage;
         public bool InfinityEdge;
         public bool LudensTempest;
@@ -967,6 +982,11 @@ namespace tsorcRevamp
         {
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
+                Player.GetAttackSpeed(DamageClass.Melee) *= BotCMeleeBaseAttackSpeedMult + (BotCLethalTempoStacks * BotCLethalTempoBonus);
+
+                Player.GetCritChance(DamageClass.Ranged) += BotCAccuracyPercent * 8.5f;
+                Player.GetCritChance(DamageClass.Ranged) *= BotCRangedBaseCritMult + (BotCAccuracyPercent * 0.4f);
+
                 Player.GetDamage(DamageClass.Magic) *= 1f + (Darksign.BotCMagicDamageAmplifier / 100f);
                 Player.GetAttackSpeed(DamageClass.Magic) *= 1f + (Darksign.BotCMagicAttackSpeedAmplifier / 100f);
                 if (Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) || !Player.HasBuff(ModContent.BuffType<Bonfire>()))

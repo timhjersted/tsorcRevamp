@@ -304,6 +304,8 @@ Mods: {
 			SpawnRemoved: Spawn point removed!
 			AccessPiggyBank: Access Piggy Bank
 			AccessSafe: Access Safe
+			BotCHit: Hit!
+			BotCMiss: Miss!
 		}
 
 		World: {
@@ -8192,6 +8194,11 @@ Mods: {
 			LionheartMark: {
 				DisplayName: Lionheart Mark
 				Description: Mods.tsorcRevamp.Buffs.LionheartMark.Description
+			}
+
+			LethalTempo: {
+				DisplayName: Lethal Tempo
+				Description: Your melee speed is increased
 			}
 		}
 

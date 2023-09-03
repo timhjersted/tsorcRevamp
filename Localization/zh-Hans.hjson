@@ -304,6 +304,8 @@ Mods: {
 			SpawnRemoved: 重生点已移除！
 			AccessPiggyBank: 打开猪猪存钱罐
 			AccessSafe: 打开保险箱
+			// BotCHit: Hit!
+			// BotCMiss: Miss!
 		}
 
 		World: {
@@ -8195,6 +8197,11 @@ Mods: {
 			LionheartMark: {
 				DisplayName: 狮心印记
 				Description: Mods.tsorcRevamp.Buffs.LionheartMark.Description
+			}
+
+			LethalTempo: {
+				// DisplayName: Lethal Tempo
+				// Description: Mods.tsorcRevamp.Buffs.LethalTempo.Description
 			}
 		}
 

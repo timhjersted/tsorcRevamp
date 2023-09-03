@@ -15,6 +15,10 @@ using tsorcRevamp.Items.Debug;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Buffs.Runeterra.Melee;
+using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Items
 {
@@ -284,7 +288,6 @@ namespace tsorcRevamp.Items
                 player.lifeRegen += 1;
             }
         }
-
         public override void MeleeEffects(Item item, Player player, Rectangle hitbox)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
@@ -360,6 +363,26 @@ namespace tsorcRevamp.Items
                     Main.dust[dust].noGravity = true;
                 }
             }
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile other = Main.projectile[i];
+
+                if ((item.DamageType == DamageClass.Melee || item.DamageType == DamageClass.MeleeNoSpeed) && modPlayer.BearerOfTheCurse
+                    && other.active && !other.friendly && other.hostile && UsefulFunctions.IsProjectileSafeToFuckWith(i) && other.type != ModContent.ProjectileType<Nothing>() && other.type != ModContent.ProjectileType<Slash>() 
+                    && !other.GetGlobalProjectile<tsorcGlobalProjectile>().AppliedLethalTempo && hitbox.Intersects(other.Hitbox))
+                {
+                    if (modPlayer.BotCLethalTempoStacks < modPlayer.BotCLethalTempoMaxStacks - 1)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoStack") with { Volume = modPlayer.BotCClassMechanicsVolume * 0.2f }, player.Center);
+                    }
+                    else if (modPlayer.BotCLethalTempoStacks == modPlayer.BotCLethalTempoMaxStacks - 1)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFullyStacked") with { Volume = modPlayer.BotCClassMechanicsVolume }, player.Center);
+                    }
+                    player.AddBuff(ModContent.BuffType<LethalTempo>(), modPlayer.BotCLethalTempoDuration * 60);
+                    other.GetGlobalProjectile<tsorcGlobalProjectile>().AppliedLethalTempo = true;
+                }
+            }
         }
 
         public override void OnHitNPC(Item item, Player player, NPC target, NPC.HitInfo hit, int damageDone)
@@ -393,6 +416,19 @@ namespace tsorcRevamp.Items
             if (item.type == ItemID.DD2SquireBetsySword)
             {
                 target.AddBuff(BuffID.BetsysCurse, 600);
+            }
+
+            if ((item.DamageType == DamageClass.Melee || item.DamageType == DamageClass.MeleeNoSpeed) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                if (modPlayer.BotCLethalTempoStacks < modPlayer.BotCLethalTempoMaxStacks - 1)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoStack") with { Volume = modPlayer.BotCClassMechanicsVolume * 0.2f }, player.Center);
+                }
+                else if (modPlayer.BotCLethalTempoStacks == modPlayer.BotCLethalTempoMaxStacks - 1)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFullyStacked") with { Volume = modPlayer.BotCClassMechanicsVolume }, player.Center);
+                }
+                player.AddBuff(ModContent.BuffType<LethalTempo>(), player.GetModPlayer<tsorcRevampPlayer>().BotCLethalTempoDuration * 60);
             }
         }
         public static float BonusDamage1 = 50f;

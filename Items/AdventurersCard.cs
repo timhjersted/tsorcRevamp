@@ -19,14 +19,18 @@ namespace tsorcRevamp.Items
             Item.rare = ItemRarityID.Quest;
             Item.value = 0;
         }
+        public override bool CanRightClick()
+        {
+            return true;
+        }
         public override void RightClick(Player player)
         {
+            Item.stack++;
             ClassCounter++;
             if (ClassCounter > 5)
             {
                 ClassCounter = 1;
             }
-            Main.NewText(ClassCounter);
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

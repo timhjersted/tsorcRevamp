@@ -13,7 +13,8 @@ namespace tsorcRevamp.Projectiles {
     public class Nothing : ModProjectile {
 
         public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
-        public override void SetDefaults() {
+        public override void SetDefaults() 
+        {
             Projectile.damage = 0;
             Projectile.timeLeft = 0;
             Projectile.height = Projectile.width = 1;

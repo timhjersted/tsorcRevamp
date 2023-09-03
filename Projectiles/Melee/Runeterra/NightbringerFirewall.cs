@@ -79,14 +79,11 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             {
                 Projectile other = Main.projectile[i];
 
-                if (i != Projectile.whoAmI && other.active && !other.friendly && Projectile.Hitbox.Intersects(other.Hitbox))
+                if (i != Projectile.whoAmI && other.active && !other.friendly && Projectile.Hitbox.Intersects(other.Hitbox) && UsefulFunctions.IsProjectileSafeToFuckWith(i))
                 {
-                    if (other.type != ProjectileID.PhantasmalDeathray && other.type != ProjectileID.SaucerDeathray)
-                    {
-                        Dust.NewDust(other.position, other.width * 2, other.height * 2, DustID.Torch); 
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/FirewallHit") with { Volume = 1f }, player.Center);
-                        other.Kill();
-                    }
+                    Dust.NewDust(other.position, other.width * 2, other.height * 2, DustID.Torch);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/FirewallHit") with { Volume = 1f }, player.Center);
+                    other.Kill();
                 }
             }
             float frameSpeed = 5f;
