@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Weapons.Melee.Hammers;
 
 namespace tsorcRevamp.Items.Accessories.Summon
@@ -48,7 +49,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
             player.GetModPlayer<tsorcRevampPlayer>().Goredrinker = true;
             player.GetDamage(DamageClass.Summon) += SummonDamage / 100f;
             player.statLifeMax2 += MaxLife;
-            if (!player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()))
+            if (!player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && player.HeldItem.type != ModContent.ItemType<WitchkingsSword>())
             {
                 player.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady = true;
                 player.whipRangeMultiplier *= 1f + WhipDmgRange / 100f;

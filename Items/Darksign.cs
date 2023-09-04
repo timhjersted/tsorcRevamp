@@ -1,10 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items
 {
@@ -13,21 +15,13 @@ namespace tsorcRevamp.Items
     {
         public static float BotCSoulDropAmplifier = 20f;
         public static float BotCMaxHPLossPercentage = 20f;
-        public static float FlaskMaxManaScaling = 12f;
-        public static float BotCMagicDamageAmplifier = 15f;
-        public static float BotCMagicAttackSpeedAmplifier = 15f;
-        public static float MaxMinionDamageReduction = 90f;
-        public static float MinionDamageReductionDecrease = 22f;
-        public static int WhipDebuffCounterCap = 5;
-        public static float MinionDamageCeiling = MinionDamageReductionDecrease * WhipDebuffCounterCap + 10f;
-        public static float WhipRangeReduction = 33f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BotCSoulDropAmplifier, BotCMaxHPLossPercentage, FlaskMaxManaScaling, BotCMagicDamageAmplifier, BotCMagicAttackSpeedAmplifier, MaxMinionDamageReduction, MinionDamageReductionDecrease, WhipDebuffCounterCap, MinionDamageCeiling, WhipRangeReduction);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BotCSoulDropAmplifier, BotCMaxHPLossPercentage);
         public override void SetStaticDefaults()
         {
             ItemID.Sets.ItemNoGravity[Item.type] = true; // Makes item float in world.
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(20, 6));
         }
-
+        public int ClassCounter = 1;
         public override void SetDefaults()
         {
             Item refItem = new Item();
@@ -68,9 +62,23 @@ namespace tsorcRevamp.Items
             if (Main.expertMode || Main.masterMode)
             {
                 return true;
-            } else
+            }
+            else
             {
                 return false;
+            }
+        }
+        public override bool CanRightClick()
+        {
+            return true;
+        }
+        public override void RightClick(Player player)
+        {
+            Item.stack++;
+            ClassCounter++;
+            if (ClassCounter > 4)
+            {
+                ClassCounter = 1;
             }
         }
         public override bool? UseItem(Player player) // Won't consume item without this
@@ -202,6 +210,37 @@ namespace tsorcRevamp.Items
             }
 
             return false;
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            Player player = Main.LocalPlayer;
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+
+            switch (ClassCounter)
+            {
+                case 1:
+                    {
+                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "LethalTempo", LangUtils.GetTextValue("Items.Darksign.Melee", (int)(modPlayer.BotCMeleeBaseAttackSpeedMult * 100f), (int)(modPlayer.BotCLethalTempoBonus * 100f), (int)(modPlayer.BotCLethalTempoBonus * modPlayer.BotCLethalTempoMaxStacks * 100f) + 1, (int)modPlayer.BotCLethalTempoMaxStacks)));
+                        break;
+                    }
+                case 2:
+                    {
+                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Accuracy", LangUtils.GetTextValue("Items.Darksign.Ranged", (int)(modPlayer.BotCAccuracyGain), (int)(modPlayer.BotCAccuracyLoss), modPlayer.BotCAccuracyMaxFlatCrit, (int)(modPlayer.BotCAccuracyMaxCritMult * 100f))));
+                        break;
+                    }
+                case 3:
+                    {
+                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CeruleanFlask", LangUtils.GetTextValue("Items.Darksign.Magic", modPlayer.BotCCeruleanFlaskMaxManaScaling, modPlayer.BotCMagicDamageAmp, modPlayer.BotCMagicAttackSpeedAmp)));
+                        break;
+                    }
+                case 4:
+                    {
+                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Conqueror", LangUtils.GetTextValue("Items.Darksign.Summon", (int)(modPlayer.BotCSummonBaseDamageMult * 100f), (int)(modPlayer.BotCConquerorBonus * 100f), (int)(modPlayer.BotCConquerorMaxStacks * modPlayer.BotCConquerorBonus * 100f), (int)(modPlayer.BotCConquerorMaxStacks), (int)((1f - modPlayer.BotCWhipRangeMult) * 100f))));
+                        break;
+                    }
+            }
+            tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "LethalTempo", LangUtils.GetTextValue("Items.Darksign.End")));
         }
     }
 }

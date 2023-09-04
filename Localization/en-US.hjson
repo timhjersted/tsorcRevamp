@@ -137,7 +137,7 @@ Mods: {
 				MinionSentrySlot: Increases maximum minions by {0} and sentries by {1}
 				FlatDmg: Increases summon damage by {0} flat
 				CritChance: Increases summon crit chance by {0}%
-				TagCritMult: Multiplies summon tag critical strike chance by {0}
+				TagCritMult: Multiplies summon tag critical strike chance by {0}x
 				TagDmgMult: This weapon scales with only {0}% Tag Damage
 			}
 
@@ -3633,17 +3633,45 @@ Mods: {
 					However, [c/dd3333:using weapons drains stamina] and life regen is halved while stamina isn't at it's maximum.
 					Greater Magic Mirror use is prohibited, and instant-heal items won't heal you, but grants an Estus Flask to heal you.
 					Dying reduces your max HP by {1}% until you return to where you died.
-					Mana regeneration is disabled but grants a Cerulean Flask to restore mana, scaling with {2}% maximum mana,
-					mana regen bonuses increase total mana restored and mana regen delay penalties increase total mana restoration time,
-					magic damage is increased by {3}% and attack speed by {4}% multiplicatively,
-					Mana Potions still work and resting at a Bonfire restores mana.
-					Minion's final damage is reduced by {5}%, this reduction is lowered by {6}% for each whip debuff active on the enemy.
-					capping at {8}% final damage if {7} or more whip debuffs are active simultaneously and whip range is reduced by {9}%.
-					[c/ca1e00:This mode is intended for players experienced with the mod]
-					[c/ca1e00:It is not recommended on first playthroughs.]
 					'''
 				Enabled: You have become the Bearer of the Curse
 				Disabled: The curse has been lifted
+				Melee:
+					'''
+					[c/FF4500:Melee base attack speed is reduced to {0}%.]
+					[c/FF4500:Grazing enemy projectiles and hitting enemies with melee attacks will grant stacks of Lethal Tempo,]
+					[c/FF4500:these increase your attack speed temporarily and fall off after a few seconds, if not refreshed.]
+					[c/FF4500:Each stack grants {1}% attack speed, up to {2}% at the maximum of {3} stacks.]
+					'''
+				Ranged:
+					'''
+					[c/228B22:Ranged critical strike chance is now dependant on your accuracy,]
+					[c/228B22:missing shots will decrease it, while hitting shots will increase it.]
+					[c/228B22:A ranged projectile only needs to hit once to count as hit, ]
+					[c/228B22:can't increase your accuracy multiple times and can also only miss once.]
+					[c/228B22:A hit will increase your accuracy by {0}%, while missing will decrease your accuracy by {1}%.]
+					[c/228B22:You can gain up to {2}% crit chance flat and a {3}% multiplier at 100% accuracy, or lose all crit at 0% accuracy.]
+					'''
+				Magic:
+					'''
+					[c/00BFFF:Magic damage is increased by {1}% and attack speed by {2}% multiplicatively.]
+					[c/00BFFF:Mana regeneration is disabled but grants a Cerulean Flask to restore mana, scaling with {0}% maximum mana,]
+					[c/00BFFF:mana regen bonuses increase total mana restored and mana regen delay penalties increase total mana restoration time.]
+					[c/00BFFF:Mana Potions still work and resting at a Bonfire will restore mana.]
+					'''
+				Summon:
+					'''
+					[c/FFA500:Summon base damage is reduced to {0}%, but hitting enemies with whips will grant stacks of Conqueror,]
+					[c/FFA500:these increase summon damage temporarily and fall off after a few seconds, if not refreshed.]
+					[c/FFA500:Each stack grants {1}% damage, up to {2}% at the maximum of {3} stacks.]
+					[c/FFA500:Whip range is decreased by {4}%.]
+					'''
+				End:
+					'''
+					Right click this item in your inventory to cycle between descriptions of new mechanics for each class.
+					[c/ca1e00:This mode is intended for players experienced with the mod]
+					[c/ca1e00:It is not recommended on first playthroughs.]
+					'''
 			}
 
 			DarkSoul: {
@@ -5620,7 +5648,7 @@ Mods: {
 				Empowered:
 					'''
 					Inflicts 2 random whip debuffs each hit
-					Scales with whip damage and range instead of melee stats
+					Scales with whip damage, range and summon crit instead of melee stats
 					'''
 			}
 
@@ -7320,36 +7348,47 @@ Mods: {
 					'''
 					Resistance: {0}, equal to {1}% damage reduction
 					Movement Speed: {2}%
-					Mana Efficiency: {3}%
+					Life Regen: {3}
+					Mana Efficiency: {4}%
+					Mana Regen Bonus: {5}
+					Mana Regen Delay Bonus: {6}
+					Stamina Regen: {7}%
 					'''
 				Melee:
 					'''
-					Melee Stats:
+					[c/FF4500:Melee Stats:]
 					Total Damage Multiplier: {0}%
 					Critical Strike Chance: {1}%
-					Attack Speed: {2}%
+					Armor Penetration: {2}
+					Attack Speed: {3}%
 					'''
 				Ranged:
 					'''
-					Ranged Stats:
+					[c/228B22:Ranged Stats:]
 					Total Damage Multiplier: {0}%
 					Critical Strike Chance: {1}%
-					Attack Speed: {2}%
+					Armor Penetration: {2}
+					Attack Speed: {3}%
 					'''
 				Magic:
 					'''
-					Magic Stats:
+					[c/00BFFF:Magic Stats:]
 					Total Damage Multiplier: {0}%
 					Critical Strike Chance: {1}%
-					Attack Speed: {2}%
+					Armor Penetration: {2}
+					Attack Speed: {3}%
 					'''
 				Summon:
 					'''
-					Summon Stats:
+					[c/FFA500:Summon Stats:]
 					Total Damage Multiplier: {0}%
-					Critical Strike Chance: {0}%
-					Attack Speed: {0}%
-					Total Whip Damage Multiplier: {0}%
+					Critical Strike Chance: {1}%
+					Attack Speed: {2}%
+					Armor Penetration: {3}
+					Total Whip Damage Multiplier: {4}%
+					Minion Slots: {5}
+					Turret Slots: {6}
+					Whip Range: {7}%
 					'''
 				Throwing:
 					'''
@@ -8199,6 +8238,11 @@ Mods: {
 			LethalTempo: {
 				DisplayName: Lethal Tempo
 				Description: Your melee speed is increased
+			}
+
+			Conqueror: {
+				DisplayName: Conqueror
+				Description: Mods.tsorcRevamp.Buffs.Conqueror.Description
 			}
 		}
 

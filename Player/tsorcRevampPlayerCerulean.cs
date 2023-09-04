@@ -75,7 +75,7 @@ namespace tsorcRevamp
         }
         public override void PostUpdateMiscEffects()
         {
-            ceruleanManaGainMaxManaBonus = Player.statManaMax2 * Darksign.FlaskMaxManaScaling / 100f;
+            ceruleanManaGainMaxManaBonus = Player.statManaMax2 * Player.GetModPlayer<tsorcRevampPlayer>().BotCCeruleanFlaskMaxManaScaling / 100f;
             ceruleanManaGainManaRegenBonus = 1f + ((float)Player.manaRegenBonus / 200f); //manaRegenBonus is usually in the double digits so this is good scaling 
             ceruleanRestorationTimerBonus = 1f + (Player.manaRegenDelayBonus / 4f);  //manaRegenDelayBonus is given out at 1 or 0.5 by 2 sources in vanilla so this is also very good scaling
             if (Player.manaRegenBuff) //so mana regen pot does something

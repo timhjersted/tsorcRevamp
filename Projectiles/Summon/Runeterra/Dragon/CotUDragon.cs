@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 		public int WarmupStacksFallOffTimer = 0;
 		public int WarmupStacksTimer = 0;
 		public int WarmupStacks = 0;
-		public int BaseAttackSpeedCooldown = 33; //Lower is better
+		public int BaseAttackSpeedCooldown = 10; //Lower is better
 
         public override string Texture => "tsorcRevamp/Projectiles/Summon/Runeterra/Dragon/FullSample";
 
@@ -41,12 +41,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 			Projectile.width = 104;
 			Projectile.height = 93;
 			Projectile.tileCollide = false; // Makes the minion go through tiles freely
-
 			// These below are needed for a minion weapon
 			Projectile.friendly = true; // Only controls if it deals damage to enemies on contact (more on that later)
 			Projectile.minion = true; // Declares this as a minion (has many effects)
 			Projectile.DamageType = DamageClass.Summon; // Declares the damage type (needed for it to deal damage)
-			Projectile.minionSlots = 2f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
+			Projectile.minionSlots = 0f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
 			Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = BaseAttackSpeedCooldown;
@@ -85,6 +84,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 		// The AI of this minion is split into multiple methods to avoid bloat. This method just passes values between calls actual parts of the AI.
 		public override void AI()
 		{
+			BaseAttackSpeedCooldown = 20;
 			trailWidth = 45;
 			trailMaxLength = 200;
 			base.AI();
@@ -94,8 +94,18 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 			{
 				return;
 			}
+			if (Projectile.Center.Distance(Main.MouseWorld) > 100 && Projectile.Center.Distance(Main.MouseWorld) < 250)
+            {
+				UsefulFunctions.SmoothHoming(Projectile, Main.MouseWorld, 0.2f, 5, null, true, 0.03f);
+            } else if (Projectile.Center.Distance(Main.MouseWorld) > 250 && Projectile.Center.Distance(Main.MouseWorld) < 500)
+			{ 
+				UsefulFunctions.SmoothHoming(Projectile, Main.MouseWorld, 0.3f, 15, null, true, 0.03f); 
+			} else if (Projectile.Center.Distance(Main.MouseWorld) > 500)
+            {
+                UsefulFunctions.SmoothHoming(Projectile, Main.MouseWorld, 0.6f, 30, null, true, 0.03f);
+            }
 
-			GeneralBehavior(owner, out Vector2 vectorToIdlePosition, out float distanceToIdlePosition);
+            GeneralBehavior(owner, out Vector2 vectorToIdlePosition, out float distanceToIdlePosition);
 			SearchForTargets(owner, out bool foundTarget, out float distanceFromTarget, out Vector2 targetCenter);
 			Movement(foundTarget, distanceFromTarget, targetCenter, distanceToIdlePosition, vectorToIdlePosition);
 			Visuals();
@@ -123,12 +133,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 		{
 			Vector2 idlePosition = owner.Center + new Vector2(150, 0).RotatedBy(Main.GameUpdateCount / 20f);
 
-			// If your minion doesn't aimlessly move around when it's idle, you need to "put" it into the line of other summoned minions
-			// The index is projectile.minionPos
-			float minionPositionOffsetX = (10 + Projectile.minionPos * 40) * -owner.direction;
-			idlePosition.X += minionPositionOffsetX; // Go behind the player
-
-			// All of this code below this line is adapted from Spazmamini code (ID 388, aiStyle 66)
 
 			// Teleport to player if distance is too big
 			vectorToIdlePosition = idlePosition - Projectile.Center;
@@ -140,7 +144,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 				// and then set netUpdate to true
 				Projectile.position = idlePosition;
 				Projectile.velocity *= 0.1f;
-				Dust.NewDustPerfect(Projectile.Center, DustID.SolarFlare, null, 0, Color.DarkOrange, 1);
+				Dust.NewDustPerfect(Projectile.Center, DustID.CosmicEmber, null, 0, default, 1);
 				Projectile.netUpdate = true;
 			}
 		}
@@ -152,8 +156,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 			targetCenter = Projectile.position;
 			foundTarget = false;
 
-			// This code is required if your minion weapon has the targeting feature
-			if (owner.HasMinionAttackTargetNPC)
+            // This code is required if your minion weapon has the targeting feature
+            if (owner.HasMinionAttackTargetNPC)
 			{
 				NPC npc = Main.npc[owner.MinionAttackTargetNPC];
 				float between = Vector2.Distance(npc.Center, Projectile.Center);
@@ -167,7 +171,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 				}
 			}
 
-			if (!foundTarget)
+			 if (!foundTarget)
 			{
 				// This code is required either way, used for finding a target
 				for (int i = 0; i < Main.maxNPCs; i++)
@@ -180,8 +184,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 						bool closest = Vector2.Distance(Projectile.Center, targetCenter) > between;
 						bool inRange = between < distanceFromTarget;
 						bool lineOfSight = Collision.CanHitLine(Projectile.position, Projectile.width, Projectile.height, npc.position, npc.width, npc.height);
-						// Additional check for this specific minion behavior, otherwise it will stop attacking once it dashed through an enemy while flying though tiles afterwards
-						// The number depends on various parameters seen in the movement code below. Test different ones out until it works alright
+
 						bool closeThroughWall = between < 700f;
 
 						if (((closest && inRange) || (!foundTarget && inRange)) && (lineOfSight || closeThroughWall))
@@ -194,12 +197,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 					}
 				}
 			}
-
-			// friendly needs to be set to true so the minion can deal contact damage
-			// friendly needs to be set to false so it doesn't damage things like target dummies while idling
-			// Both things depend on if it has a target or not, so it's just one assignment here
-			// You don't need this assignment if your minion is shooting things instead of dealing contact damage
-			Projectile.friendly = foundTarget;
 		}
 
 		bool chargingTarget = false;
@@ -220,12 +217,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 					targetCenter = offsetPoint;
 				}
 
-				//UsefulFunctions.DustRing(targetCenter, 50, DustID.ShadowbeamStaff);
-
-				// Minion has a target: attack (here, fly towards the enemy)
-				if (Vector2.Distance(Projectile.Center, targetCenter) > 30)
+				if (Vector2.Distance(Projectile.Center, targetCenter) > 20)
 				{
-					UsefulFunctions.SmoothHoming(Projectile, targetCenter, 0.5f, 15f, bufferZone: false);
                     if (chargingTarget)
                     {
 						activelyCharging = true;
@@ -242,37 +235,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 			{
 				chargingTarget = true;
 				offsetPoint = Vector2.Zero;
-				float speed;
-				float inertia;
-				// Minion doesn't have a target: return to player and idle
-				if (distanceToIdlePosition > 100f)
-				{
-					// Speed up the minion if it's away from the player
-					speed = 24f;
-					inertia = 60f;
-				}
-				else
-				{
-					// Slow down the minion if closer to the player
-					speed = 8f;
-					inertia = 80f;
-				}
-
-				if (distanceToIdlePosition > 20f)
-				{
-					// The immediate range around the player (when it passively floats about)
-
-					// This is a simple movement formula using the two parameters and its desired direction to create a "homing" movement
-					vectorToIdlePosition.Normalize();
-					vectorToIdlePosition *= speed;
-					Projectile.velocity = (Projectile.velocity * (inertia - 1) + vectorToIdlePosition) / inertia;
-				}
-				else if (Projectile.velocity == Vector2.Zero)
-				{
-					// If there is a case where it's not moving at all, give it a little "poke"
-					Projectile.velocity.X = -0.15f;
-					Projectile.velocity.Y = -0.05f;
-				}
 			}
 		}
 
@@ -293,10 +255,19 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 
 			//Breath weapon size calculations
             if (activelyCharging)
-			{
-				if(trueSizeMultiplier < 0.8) //Its real max size (ignore the other variable)
+            {
+                if (Projectile.frameCounter > 3)
                 {
-					trueSizeMultiplier += 0.02f; //How fast the breath attack flame grows
+                    Projectile.frameCounter = 0;
+                    Projectile.frame++;
+                    if (Projectile.frame >= Main.projFrames[Projectile.type])
+                    {
+                        Projectile.frame = 5;
+                    }
+                }
+                if (trueSizeMultiplier < 1.5) //Its real max size (ignore the other variable)
+                {
+					trueSizeMultiplier += 0.03f; //How fast the breath attack flame grows
                 }
 				if (size < maxSize)
 				{

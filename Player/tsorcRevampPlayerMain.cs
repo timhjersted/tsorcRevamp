@@ -748,13 +748,13 @@ namespace tsorcRevamp
                     buffIndex++;
                 }
             }
-            if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && proj.type != ModContent.ProjectileType<TerraFallTerraprisma>() && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung)
+            if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type] && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung)
             {
                 Player.statLife += (int)(Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife) / GoredrinkerHits;
                 Player.HealEffect((int)(Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife) / GoredrinkerHits);
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerHit") with { Volume = 0.25f }, target.Center);
                 GoredrinkerHits++;
-            } else if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && proj.type != ModContent.ProjectileType<TerraFallTerraprisma>() && owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()))
+            } else if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type] && owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()))
             {
                 int buffIndex = 0;
                 foreach (int buffType in owner.buffType)
@@ -775,7 +775,7 @@ namespace tsorcRevamp
             {
                 target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
             }
-            if (DemonPower && hit.DamageType == (DamageClass.SummonMeleeSpeed) && hit.Crit)
+            if (DemonPower && hit.DamageType == (DamageClass.SummonMeleeSpeed) && ProjectileID.Sets.IsAWhip[proj.type] && hit.Crit)
             {
                 Projectile WhipCritBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center - new Vector2(0, target.height / 2), Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, (int)Main.player[proj.owner].GetTotalDamage(DamageClass.Summon).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, proj.owner);
                 WhipCritBoom.ArmorPenetration = 10;
@@ -915,12 +915,11 @@ namespace tsorcRevamp
             {
                 modifiers.FinalDamage *= 0.55f;
             }
-            if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung
-                && proj.type != ModContent.ProjectileType<TerraFallTerraprisma>() && proj.type != ModContent.ProjectileType<PolarisLeashFallingStar>() && proj.type != ModContent.ProjectileType<PolarisLeashPolaris>() && proj.type != ModContent.ProjectileType<EnchantedWhipFallingStar>())
+            if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung && ProjectileID.Sets.IsAWhip[proj.type])
             {
                 modifiers.SourceDamage += Items.Accessories.Summon.Goredrinker.WhipDmgRange / 100f;
             }
-            if (Player.GetModPlayer<tsorcRevampPlayer>().ChallengersGloveCritDamage && proj.DamageType == DamageClass.SummonMeleeSpeed)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().ChallengersGloveCritDamage && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type])
             {
                 modifiers.CritDamage += ChallengersGlove.WhipCritDamage / 100f;
             }

@@ -7,9 +7,9 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Runeterra.Melee
+namespace tsorcRevamp.Buffs.Runeterra.Summon
 {
-    public class LethalTempo : ModBuff
+    public class Conqueror : ModBuff
     {
         public const int FrameCount = 10;
         private Asset<Texture2D> animatedTexture;
@@ -24,25 +24,24 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
                 animatedTexture = ModContent.Request<Texture2D>(Texture + "Sheet");
             }
         }
-
         public override void Update(Player player, ref int buffIndex)
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            if (modPlayer.BotCLethalTempoStacks == 0)
+            if (modPlayer.BotCConquerorStacks == 0)
             {
-                modPlayer.BotCLethalTempoStacks = 1;
+                modPlayer.BotCConquerorStacks = 1;
             }
             if (player.buffTime[buffIndex] == 1)
             {
-                if (modPlayer.BotCLethalTempoStacks > 1)
+                if (modPlayer.BotCConquerorStacks > 1)
                 {
-                    modPlayer.BotCLethalTempoStacks--;
-                    player.buffTime[buffIndex] = (int)(((float)modPlayer.BotCLethalTempoDuration / 6f) * 60f);
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFallOff") with { Volume = modPlayer.BotCClassMechanicsVolume * 0.1f }, player.Center);
+                    modPlayer.BotCConquerorStacks--;
+                    player.buffTime[buffIndex] = (int)(((float)modPlayer.BotCConquerorDuration / 6f) * 60f);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFallOff") with { Volume = modPlayer.BotCClassMechanicsVolume * 0.3f }, player.Center);
                 } else 
                 {
-                    modPlayer.BotCLethalTempoStacks = 0;
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFallOff") with { Volume = modPlayer.BotCClassMechanicsVolume * 0.4f }, player.Center);
+                    modPlayer.BotCConquerorStacks = 0;
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFallOff") with { Volume = modPlayer.BotCClassMechanicsVolume * 0.4f }, player.Center);
                 }
             }
         }
@@ -55,7 +54,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
             // Use our animation spritesheet.
             Texture2D ourTexture = animatedTexture.Value;
             // Choose the frame to display, here based on constants and the game's tick count.
-            Rectangle ourSourceRectangle = animatedTexture.Frame(verticalFrames: FrameCount, frameY: (int)Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BotCLethalTempoStacks - 1);
+            Rectangle ourSourceRectangle = animatedTexture.Frame(verticalFrames: FrameCount, frameY: (int)Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BotCConquerorStacks - 1);
 
             // Other stuff you can do in this hook
             /*
@@ -88,12 +87,13 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
 			*/
         }
 
+
         public override bool ReApply(Player player, int time, int buffIndex)
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            if (modPlayer.BotCLethalTempoStacks < modPlayer.BotCLethalTempoMaxStacks)
+            if (modPlayer.BotCConquerorStacks < modPlayer.BotCConquerorMaxStacks)
             {
-                modPlayer.BotCLethalTempoStacks++;
+                modPlayer.BotCConquerorStacks++;
             }
 
             return false;

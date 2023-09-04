@@ -8,8 +8,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 	public class PolarisLeashFallingStar : ModProjectile
 	{
-
-		public override void SetDefaults()
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void SetDefaults()
 		{
 
 			Projectile.CloneDefaults(ProjectileID.FallingStar);

@@ -84,12 +84,24 @@ namespace tsorcRevamp
         public int BotCLethalTempoMaxStacks = 10;
         public float BotCLethalTempoBonus = 0.03f;
 
-        public float BotCRangedBaseCritMult = 0.8f;
-        public float BotCAccuracyPercent = 0f;
-        public float BotcAccuracyPercentMax = 1f;
-        public float BotCAccuracyGain = 0.04f;
-        public float BotCAccuracyLoss = 0.1f;
-        public float BotCAccuracyBonusCrit = 0f;
+        public float BotCRangedBaseCritMult = 0f;
+        public float BotCCurrentAccuracyPercent = 0f;
+        public float BotcAccuracyPercentMax = 100;
+        public float BotCAccuracyMaxFlatCrit = 8.5f;
+        public float BotCAccuracyMaxCritMult = 1.2f;
+        public float BotCAccuracyGain = 4f;
+        public float BotCAccuracyLoss = 10f;
+
+        public float BotCCeruleanFlaskMaxManaScaling = 12f;
+        public float BotCMagicDamageAmp = 15f;
+        public float BotCMagicAttackSpeedAmp = 15f;
+
+        public float BotCSummonBaseDamageMult = 0.2f;
+        public int BotCConquerorDuration = 3;
+        public float BotCConquerorStacks = 0;
+        public int BotCConquerorMaxStacks = 10;
+        public float BotCConquerorBonus = 0.09f;
+        public float BotCWhipRangeMult = 0.75f;
 
         public bool SteraksGage;
         public bool InfinityEdge;
@@ -973,28 +985,25 @@ namespace tsorcRevamp
                 PowerfulCurseLevel = 1; //Not sure why 1 is the default
             }
         }
-        
-        //public override void UpdateEquips()
-        //{
-            //base.UpdateEquips();
-        //}
         public override void PostUpdateEquips()
         {
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 Player.GetAttackSpeed(DamageClass.Melee) *= BotCMeleeBaseAttackSpeedMult + (BotCLethalTempoStacks * BotCLethalTempoBonus);
 
-                Player.GetCritChance(DamageClass.Ranged) += BotCAccuracyPercent * 8.5f;
-                Player.GetCritChance(DamageClass.Ranged) *= BotCRangedBaseCritMult + (BotCAccuracyPercent * 0.4f);
+                Player.GetCritChance(DamageClass.Ranged) += BotCCurrentAccuracyPercent * BotCAccuracyMaxFlatCrit;
+                Player.GetCritChance(DamageClass.Ranged) *= BotCRangedBaseCritMult + (BotCCurrentAccuracyPercent * BotCAccuracyMaxCritMult);
 
-                Player.GetDamage(DamageClass.Magic) *= 1f + (Darksign.BotCMagicDamageAmplifier / 100f);
-                Player.GetAttackSpeed(DamageClass.Magic) *= 1f + (Darksign.BotCMagicAttackSpeedAmplifier / 100f);
+                Player.GetDamage(DamageClass.Magic) *= 1f + (BotCMagicDamageAmp / 100f);
+                Player.GetAttackSpeed(DamageClass.Magic) *= 1f + (BotCMagicAttackSpeedAmp / 100f);
                 if (Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) || !Player.HasBuff(ModContent.BuffType<Bonfire>()))
                 {
                     Player.manaRegenDelay = 100;
                 }
 
-                Player.whipRangeMultiplier *= 1f - Darksign.WhipRangeReduction / 100f;
+                Player.GetAttackSpeed(DamageClass.SummonMeleeSpeed) *= 1.177f; //this is to neutralize the base melee attack speed nerf: 0.85 * 1.177 = 1.00045
+                Player.GetDamage(DamageClass.Summon) *= BotCSummonBaseDamageMult + (BotCConquerorStacks * BotCConquerorBonus);
+                Player.whipRangeMultiplier *= BotCWhipRangeMult;
 
                 if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().minionStaminaCap)
                 {

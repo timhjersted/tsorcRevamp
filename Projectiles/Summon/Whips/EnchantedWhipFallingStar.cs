@@ -8,8 +8,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 
 	public class EnchantedWhipFallingStar : ModProjectile
 	{
-
-		public override void SetDefaults()
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void SetDefaults()
 		{
 
 			Projectile.CloneDefaults(ProjectileID.FallingStar);

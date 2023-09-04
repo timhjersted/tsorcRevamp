@@ -1154,8 +1154,8 @@ namespace tsorcRevamp.NPCs
             }
             #endregion
 
-            #region BotC Whip Debuff Damage Scaling
-            int WhipDebuffCounter = 0;
+            #region BotC Whip Debuff Damage Scaling (disabled)
+            /*int WhipDebuffCounter = 0;
             if (projectile.IsMinionOrSentryRelated && Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse &&
                   projectile.type != ProjectileID.DD2BallistraProj && projectile.type != ProjectileID.DD2ExplosiveTrapT1Explosion && projectile.type != ProjectileID.DD2ExplosiveTrapT2Explosion
                 && projectile.type != ProjectileID.DD2ExplosiveTrapT3Explosion && projectile.type != ProjectileID.DD2FlameBurstTowerT1Shot && projectile.type != ProjectileID.DD2FlameBurstTowerT2Shot
@@ -1200,7 +1200,7 @@ namespace tsorcRevamp.NPCs
                     WhipDebuffCounter = Darksign.WhipDebuffCounterCap;
                 }
                 modifiers.FinalDamage *= 0.1f + (WhipDebuffCounter * Darksign.MinionDamageReductionDecrease / 100f);
-            }
+            }*/
             #endregion
         }
 
