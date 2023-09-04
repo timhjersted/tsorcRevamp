@@ -19,6 +19,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.VFX;
+using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.Items
 {
@@ -812,6 +813,14 @@ namespace tsorcRevamp.Items
 
 
             return base.UseItem(item, player);
+        }
+        public override bool CanRightClick(Item item)
+        {
+            if ((item.type == ItemID.OasisCrate || item.type == ItemID.OasisCrateHard || item.type == ItemID.DungeonFishingCrate || item.type == ItemID.DungeonFishingCrateHard) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+            {
+                return false;
+            }
+            return base.CanRightClick(item);
         }
     }
 }
