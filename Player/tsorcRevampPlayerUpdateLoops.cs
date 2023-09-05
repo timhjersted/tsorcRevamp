@@ -86,11 +86,11 @@ namespace tsorcRevamp
 
         public float BotCRangedBaseCritMult = 0f;
         public float BotCCurrentAccuracyPercent = 0f;
-        public float BotcAccuracyPercentMax = 100;
+        public float BotcAccuracyPercentMax = 1f;
         public float BotCAccuracyMaxFlatCrit = 8.5f;
-        public float BotCAccuracyMaxCritMult = 1.2f;
-        public float BotCAccuracyGain = 4f;
-        public float BotCAccuracyLoss = 10f;
+        public float BotCAccuracyMaxCritMult = 1.5f;
+        public float BotCAccuracyGain = 0.04f;
+        public float BotCAccuracyLoss = 0.1f;
 
         public float BotCCeruleanFlaskMaxManaScaling = 12f;
         public float BotCMagicDamageAmp = 15f;
