@@ -2,11 +2,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles.Summon.SummonProjectiles;
 using tsorcRevamp.Projectiles.VFX;
 
@@ -14,13 +16,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 {
 	public class CotUDragon : DynamicTrail
 	{
-		public int WarmupStacksFallOffTimer = 0;
-		public int WarmupStacksTimer = 0;
-		public int WarmupStacks = 0;
-		public int BaseAttackSpeedCooldown = 10; //Lower is better
-
         public override string Texture => "tsorcRevamp/Projectiles/Summon/Runeterra/Dragon/FullSample";
-
+		public const int BaseIFrames = 20;
 
 		public override void SetStaticDefaults()
 		{
@@ -48,7 +45,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 			Projectile.minionSlots = 0f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
 			Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
 			Projectile.usesLocalNPCImmunity = true;
-			Projectile.localNPCHitCooldown = BaseAttackSpeedCooldown;
+			Projectile.localNPCHitCooldown = BaseIFrames;
 
 			newPointDistance = 0.3f;
 			trailCollision = true;
@@ -63,10 +60,27 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 		}
 
 		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-		{
-		}
-        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
+            Player player = Main.player[Projectile.owner];
+            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = player;
+            if (hit.Crit)
+            {
+                target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 2 * 60);
+                target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks += 2;
+				if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks == 6 || target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks == 7)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/Marked") with { Volume = 2f }, player.Center);
+                }
+            }
+            else
+            {
+                target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 60);
+                target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks++;
+                if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks == 6)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/Marked") with { Volume = 2f }, player.Center);
+                }
+            }
         }
 
         // Here you can decide if your minion breaks things like grass or pots
@@ -83,12 +97,18 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 
 		// The AI of this minion is split into multiple methods to avoid bloat. This method just passes values between calls actual parts of the AI.
 		public override void AI()
-		{
-			BaseAttackSpeedCooldown = 20;
+        {
+            Player owner = Main.player[Projectile.owner];
+            if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+			{
+				Projectile.localNPCHitCooldown = BaseIFrames / 2;
+			} else
+			{
+				Projectile.localNPCHitCooldown = BaseIFrames;
+			}
 			trailWidth = 45;
 			trailMaxLength = 200;
 			base.AI();
-			Player owner = Main.player[Projectile.owner];
 
 			if (!CheckActive(owner))
 			{

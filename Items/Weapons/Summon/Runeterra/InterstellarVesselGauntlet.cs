@@ -10,6 +10,8 @@ using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Materials;
 using Terraria.Localization;
+using Terraria.Audio;
+using Microsoft.Xna.Framework.Input;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
@@ -27,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
             ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 0.5f;
         }
-    public override void SetDefaults()
+		public override void SetDefaults()
 		{
 			projectiles = new List<InterstellarVesselShip>(){};
 
@@ -44,7 +46,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 			Item.useTurn = false;
 			Item.value = Item.buyPrice(0, 30, 0, 0);
 			Item.rare = ItemRarityID.LightPurple;
-			Item.UseSound = SoundID.Item113;
 
 			Item.noMelee = true;
 			Item.DamageType = DamageClass.Summon;
@@ -67,8 +68,22 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 			projectiles.Add((InterstellarVesselShip)projectile.ModProjectile);
 			projectile.originalDamage = Item.damage;
 
-			// Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
-			return false;
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragon.CotUDragon>()] == 0)
+            {
+                Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragon.CotUDragon>(), 0, 0, Main.myPlayer);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/DragonCast") with { Volume = 1f }, player.Center);
+            }
+            else if (Main.rand.NextBool(2))
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/ShipCast1") with { Volume = 1f }, player.Center);
+            }
+            else
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/ShipCast2") with { Volume = 1f }, player.Center);
+            }
+
+            // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
+            return false;
 		}
 
         public override void HoldItem(Player player)
@@ -92,8 +107,41 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 			for (int i = 1; i < processedProjectilesCount; ++i) {
 				projectileList[i].currentAngle2 = projectileList[i - 1].currentAngle2 + 2f * (float)Math.PI / processedProjectilesCount;
 			}
-		}
-		public override void AddRecipes()
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            var SpecialAbilityKey = tsorcRevamp.specialAbility.GetAssignedKeys();
+            string SpecialAbilityString = SpecialAbilityKey.Count > 0 ? SpecialAbilityKey[0] : Language.GetTextValue("Mods.tsorcRevamp.Keybinds.Special Ability.DisplayName") + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.NotBound");
+            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip2");
+            if (ttindex1 != -1)
+            {
+                tooltips.RemoveAt(ttindex1);
+                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.ScorchingPoint.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.ScorchingPoint.Keybind2")));
+            }
+            int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip8");
+            if (ttindex2 != -1)
+            {
+                tooltips.RemoveAt(ttindex2);
+                tooltips.Insert(ttindex2, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.InterstellarVesselGauntlet.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.InterstellarVesselGauntlet.Keybind2")));
+            }
+            if (Main.keyState.IsKeyDown(Keys.LeftShift))
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", Language.GetTextValue("Mods.tsorcRevamp.Items.InterstellarVesselGauntlet.Details")));
+                }
+            }
+            else
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Shift", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Details")));
+                }
+            }
+        }
+        public override void AddRecipes()
 		{
 			Recipe recipe = CreateRecipe();
 

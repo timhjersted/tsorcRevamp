@@ -71,7 +71,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarked)
+            if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks >= LionheartGunblade.MaxMarks)
             {
                 modifiers.SetCrit();
                 modifiers.CritDamage += (float)Projectile.CritChance / 100f;
@@ -80,9 +80,8 @@ namespace tsorcRevamp.Projectiles
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarked)
+            if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks >= LionheartGunblade.MaxMarks)
             {
-                target.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarked = false;
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks = 0;
                 SoundEngine.PlaySound(SoundID.Item14);
             }

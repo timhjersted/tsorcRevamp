@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using tsorcRevamp.NPCs;
+using Terraria.Audio;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
@@ -73,9 +74,49 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         public override void Kill(int timeLeft)
 		{
 			ScorchingPoint.projectiles.Remove(this);
-		}
+        }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            Player owner = Main.player[Projectile.owner];
+            if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks >= 6)
+            {
+                modifiers.SetCrit();
+                modifiers.CritDamage += 0.5f;
+            }
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            Player player = Main.player[Projectile.owner];
+            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = player;
+            if (Main.rand.NextBool(3))
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit1") with { Volume = 1f }, player.Center);
+            }
+            else if (Main.rand.NextBool(3))
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit2") with { Volume = 1f }, player.Center);
+            }
+            else
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit3") with { Volume = 1f }, player.Center);
+            }
+            if (hit.Crit)
+            {
+                target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 2 * 60);
+            }
+            else
+            {
+                target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 60);
+            }
+            if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks >= 6)
+            {
+                target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks = 0;
+                Dust.NewDust(Projectile.position, 20, 20, DustID.FlameBurst, 1, 1, 0, default, 1.5f);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/MarkDetonation") with { Volume = 2f }, player.Center);
+            }
+        }
 
-		public override void AI()
+        public override void AI()
 		{
 			base.AI();
 			Player owner = Main.player[Projectile.owner];
@@ -172,19 +213,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
 			effect.Parameters["shaderColor"].SetValue(Color.Orange.ToVector4());
 			effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
-		}
-
-		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-			target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = Main.player[Projectile.owner];
-            if (hit.Crit)
-			{
-                target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 2 * 60);
-            }
-			else
-			{
-                target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 60);
-            }
 		}
     }
 }

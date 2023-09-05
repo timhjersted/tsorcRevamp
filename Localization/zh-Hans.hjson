@@ -6944,6 +6944,14 @@ Mods: {
 					{$CommonItemTooltip.Summon.TagDmgMult}
 					“献给Runeterra的灰烬之主！”
 					'''
+				// Keybind1: "Press Left/Right Alt + "
+				// Keybind2: " to increase or shrink their radius, "
+				/* Details:
+					'''
+					The ashen dragon itself does not use any minion slots
+					Scorched grants minions crit chance based on a fraction of your summon critical strike chance
+					Detonating marks will increase the debuff's strength by 3x for 3 seconds
+					''' */
 			}
 
 			InterstellarVesselGauntlet: {
@@ -6961,6 +6969,16 @@ Mods: {
 					{$CommonItemTooltip.Summon.TagDmgMult}
 					“调整 ASOL-13 的轨迹！”
 					'''
+				// Keybind1: "Press "
+				// Keybind2: " to activate Turboboost, overclocking the Vessel and it's spaceships"
+				/* Details:
+					'''
+					Turboboost increases the spaceships damage, movement speed and increase the vessel's attack speed
+					Turboboost will actively drain your mana
+					The interstellar vessel itself does not use any minion slots
+					Shocked grants minions crit chance based on a fraction of your summon critical strike chance
+					Detonating marks will increase the debuff's strength by 3x for 3 seconds
+					''' */
 			}
 
 			CenterOfTheUniverse: {
@@ -6979,6 +6997,17 @@ Mods: {
 					{$CommonItemTooltip.Summon.TagDmgMult}
 					“让他们一看到行星锻造者就肃然起敬！”
 					'''
+				// Keybind1: "Press "
+				// Keybind2: " to activate Turboboost, accelerating the Star Forger and it's stars"
+				/* Details:
+					'''
+					Falling Star deals massive damage in a massive area and leaves behind a shockwave
+					Turboboost increases the spaceships damage, movement speed and increase the vessel's attack speed
+					Turboboost will actively drain your mana
+					The interstellar vessel itself does not use any minion slots
+					Shocked grants minions crit chance based on a fraction of your summon critical strike chance
+					Detonating marks will increase the debuff's strength by 3x for 3 seconds
+					''' */
 			}
 
 			SteraksGage: {

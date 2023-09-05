@@ -1143,7 +1143,7 @@ namespace tsorcRevamp
                         DashHitbox.OriginalCritChance = SteelTempest.CritChance;
                         player.immune = true;
                     } //cooldown is added by On-Hit in the dash projectile hitbox
-                    if (!(Main.keyState.IsKeyDown(Keys.A) && Main.keyState.IsKeyDown(Keys.D)) && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<NightbringerDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<Nightbringer>())
+                    if (!(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<NightbringerDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<Nightbringer>())
                     {
                         player.immune = true;
                         SweepingBladeVelocity = player.DirectionTo(other.Center) * 17;
@@ -1154,7 +1154,7 @@ namespace tsorcRevamp
                         DashHitbox.OriginalCritChance = SteelTempest.CritChance;
                     } //cooldown is added by On-Hit in the dash projectile hitbox
                 }
-                if ((Main.keyState.IsKeyDown(Keys.A) && Main.keyState.IsKeyDown(Keys.D)) && Player.HeldItem.type == ModContent.ItemType<Nightbringer>() && !Player.HasBuff(ModContent.BuffType<NightbringerFirewallCooldown>()))
+                if ((Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && Player.HeldItem.type == ModContent.ItemType<Nightbringer>() && !Player.HasBuff(ModContent.BuffType<NightbringerFirewallCooldown>()))
                 {
                     Projectile Firewall = Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), player.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<NightbringerFirewall>(), player.HeldItem.damage / 3, 0, Main.myPlayer);
                     Firewall.OriginalCritChance = SteelTempest.CritChance;
@@ -1168,12 +1168,12 @@ namespace tsorcRevamp
                     player.AddBuff(ModContent.BuffType<ScoutsBoost2>(), ToxicShot.ScoutsBoost2Duration * 60);
                     player.AddBuff(ModContent.BuffType<ScoutsBoost2Cooldown>(), ToxicShot.ScoutsBoost2Cooldown * 60);
                 }
-                if (!(Main.keyState.IsKeyDown(Keys.A) && Main.keyState.IsKeyDown(Keys.D)) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2CooldownOmega>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
+                if (!(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2CooldownOmega>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
                 {
                     player.AddBuff(ModContent.BuffType<ScoutsBoost2Omega>(), ToxicShot.ScoutsBoost2Duration * 60);
                     player.AddBuff(ModContent.BuffType<ScoutsBoost2CooldownOmega>(), ToxicShot.ScoutsBoost2Cooldown * 60);
                 }
-                if ((Main.keyState.IsKeyDown(Keys.A) && Main.keyState.IsKeyDown(Keys.D)) && !Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
+                if ((Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && !Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
                 {
                     Projectile Shroom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Ranged.Runeterra.NuclearMushroom>(), player.GetWeaponDamage(player.HeldItem), player.GetWeaponKnockback(player.HeldItem), Main.myPlayer);
                     Shroom.OriginalCritChance = 100;
@@ -1218,9 +1218,25 @@ namespace tsorcRevamp
                 #region Interstellar Boost
                 bool holdingControls = Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() || Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>();
                 bool hasBuff = Player.HasBuff(ModContent.BuffType<InterstellarCommander>()) || Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
-                if (!holdingControls && hasBuff)
+                if (holdingControls && hasBuff)
                 {
                     player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
+                    if (player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() && player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostActivation") with { Volume = 1f }, player.Center);
+                    } else if (player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() && !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostDeactivation") with { Volume = 1f }, player.Center);
+                    }
+
+                    if (player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>() && player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostActivation") with { Volume = 1f }, player.Center);
+                    }
+                    else if (player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>() && !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostDeactivation") with { Volume = 1f }, player.Center);
+                    }
 
                     //Every time the player releases the button, sync this info to everyone else
                     if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -1239,7 +1255,7 @@ namespace tsorcRevamp
 
 
 
-            if (tsorcRevamp.specialAbility.Current && (Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>() || Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() || Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>()))
+            if (tsorcRevamp.specialAbility.Current && (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && (Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>() || Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() || Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>()))
             {
                 if (player.direction == 1)
                 {

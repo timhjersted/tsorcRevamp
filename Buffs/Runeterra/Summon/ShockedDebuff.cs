@@ -20,6 +20,14 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
             {
                 Dust.NewDust(npc.Center, 10, 10, DustID.Electric);
             }
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().SuperShockDuration > 0)
+            {
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().SuperShockDuration -= 0.0167f;
+            }
+            if (npc.buffTime[buffIndex] == 1)
+            {
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks = 0;
+            }
         }
 	}
 }

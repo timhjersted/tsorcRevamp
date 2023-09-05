@@ -6734,7 +6734,7 @@ Mods: {
 					{$Items.Nightbringer.Keybind1}Special Ability{$Items.Nightbringer.Keybind2}
 					[c/ff4500:'Harmony is a lie told to force Obedience']
 					'''
-				Keybind1: "Press A + D + "
+				Keybind1: "Press Left/Right Alt + "
 				Keybind2: " to create a stationary [c/ff4500:Firewall]"
 				Details:
 					'''
@@ -6822,7 +6822,7 @@ Mods: {
 					{$Items.OmegaSquadRifle.Keybind1}Special Ability{$Items.OmegaSquadRifle.Keybind2}
 					[c/adff2f:'There's a mushroom out there with your name on it']
 					'''
-				Keybind1: "Press A + D + "
+				Keybind1: "Press Left/Right Alt + "
 				Keybind2: " to drop a [c/adff2f:Nuclear Mushroom] using Mana"
 				Details:
 					'''
@@ -6925,13 +6925,23 @@ Mods: {
 				DisplayName: Scorching Point
 				Tooltip:
 					'''
-					Summons fireballs to rotate around you and damage enemies in their way
-					Uses half a minion slot, grants a fiery aura if enough fireballs are summoned
-					While holding this item, increase or shrink their radius by holding Special Ability,
-					 depending on which direction the player is facing
-					Applies the Scorching debuff, which grants minions crit chance based on a fraction of your critical strike chance
+					Summons an ashen dragon which will chase after your cursor and breathe fire at nearby enemies
+					Summons fireballs which rotate around you and damage enemies in their way
+					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
+					Applies the Scorching debuff, increasing minion crit chance
+					Dragon's hits mark enemies after 6 consecutive hits
+					Once fully marked you can detonate them by hitting the enemy with a fireball
+					Detonating the mark will deal bonus damage and increase the debuff's strength temporarily
 					{$CommonItemTooltip.Summon.TagDmgMult}
 					'By the Ashen Lord of Runeterra!'
+					'''
+				Keybind1: "Press Left/Right Alt + "
+				Keybind2: " to increase or shrink their radius, "
+				Details:
+					'''
+					The ashen dragon itself does not use any minion slots
+					Scorched grants minions crit chance based on a fraction of your summon critical strike chance
+					Detonating marks will increase the debuff's strength by 3x for 3 seconds
 					'''
 			}
 
@@ -6939,16 +6949,26 @@ Mods: {
 				DisplayName: Interstellar Vessel Gauntlet
 				Tooltip:
 					'''
-					Summons spaceships to rotate around you and damage enemies in their way
-					Uses half a minion slot, grants a stellar aura if enough spaceships are summoned
-					While holding this item, increase or shrink their radius by holding Special Ability,
-					 depending on which direction the player is facing
-					Press Special Ability while not holding the remote to activate Turboboost
-					This increases the spaceships damage and movement speed
-					Turboboost will drain your mana and cannot be activated whilst under the effects of Mana Sickness                        
-					Applies the Shocked debuff, which grants minions crit chance based on a fraction of your critical strike chance
+					Summons an interstellar vessel which will chase after your cursor and breathe fire at nearby enemies
+					Summons spaceships which rotate around you and damage enemies in their way
+					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
+					Applies the Shocked debuff, increasing minion crit chance
+					Vessel's hits mark enemies after 6 consecutive hits
+					Once fully marked you can detonate them by hitting the enemy with a spaceship
+					Detonating the mark will deal bonus damage and increase the debuff's strength temporarily
 					{$CommonItemTooltip.Summon.TagDmgMult}
+					{$Items.InterstellarVesselGauntlet.Keybind1}Special Ability{$Items.InterstellarVesselGauntlet.Keybind2}
 					'Adjusting trajectory for ASOL-13!'
+					'''
+				Keybind1: "Press "
+				Keybind2: " to activate Turboboost, overclocking the Vessel and it's spaceships"
+				Details:
+					'''
+					Turboboost increases the spaceships damage, movement speed and increase the vessel's attack speed
+					Turboboost will actively drain your mana
+					The interstellar vessel itself does not use any minion slots
+					Shocked grants minions crit chance based on a fraction of your summon critical strike chance
+					Detonating marks will increase the debuff's strength by 3x for 3 seconds
 					'''
 			}
 
@@ -6956,17 +6976,28 @@ Mods: {
 				DisplayName: Center of the Universe
 				Tooltip:
 					'''
-					WIP Summons stars to rotate around you and damage enemies in their way
-					Uses half a minion slot, grants a cosmic aura if enough stars are summoned
-					While holding this item, increase or shrink their radius by holding Special Ability,
-					 depending on which direction the player is facing
-					Press Special Ability while not holding the remote to activate Turboboost
-					This increases the stars damage and movement speed but drains your mana
-					Every 15 critical hits, rightclick with this item in hand to call in the Star Forger
-					The Star Forger will breathe cosmic dust at the mouse location
-					Applies the Sunburn debuff, which grants minions crit chance based on a fraction of your critical strike chance
+					Summons the Star Forger which will chase after your cursor and breathe fire at nearby enemies
+					Summons stars which rotate around you and damage enemies in their way
+					Applies the Sunburn debuff, increasing minion crit chance
+					Star Forger's hits mark enemies after 6 consecutive hits
+					Once fully marked you can detonate them by hitting the enemy with a star
+					Detonating the mark will deal bonus damage and increase the debuff's strength temporarily
 					{$CommonItemTooltip.Summon.TagDmgMult}
+					{$Items.CenterOfTheUniverse.Keybind1}Special Ability{$Items.CenterOfTheUniverse.Keybind2}
+					Gain Stardust every time you detonate a mark
+					<right> to summon a Falling Star at your cursor's location for 10 Stardust
 					'Leave them in awe at the sight of the Star Forger'
+					'''
+				Keybind1: "Press "
+				Keybind2: " to activate Turboboost, accelerating the Star Forger and it's stars"
+				Details:
+					'''
+					Falling Star deals massive damage in a massive area and leaves behind a shockwave
+					Turboboost increases the spaceships damage, movement speed and increase the vessel's attack speed
+					Turboboost will actively drain your mana
+					The interstellar vessel itself does not use any minion slots
+					Shocked grants minions crit chance based on a fraction of your summon critical strike chance
+					Detonating marks will increase the debuff's strength by 3x for 3 seconds
 					'''
 			}
 

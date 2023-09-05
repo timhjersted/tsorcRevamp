@@ -10,6 +10,10 @@ using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Materials;
 using Terraria.Localization;
+using Terraria.Audio;
+using Humanizer;
+using Microsoft.Xna.Framework.Input;
+using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
@@ -43,7 +47,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             Item.useTurn = false;
             Item.value = Item.buyPrice(0, 10, 0, 0);
             Item.rare = ItemRarityID.Green;
-            Item.UseSound = SoundID.Item117;
 
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
@@ -65,6 +68,19 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
             projectiles.Add((ScorchingPointFireball)projectile.ModProjectile);
             projectile.originalDamage = Item.damage;
+
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragon.CotUDragon>()] == 0)
+            {
+                Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragon.CotUDragon>(), 0, 0, Main.myPlayer);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/DragonCast") with { Volume = 1f }, player.Center);
+            }
+            else if (Main.rand.NextBool(2))
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballCast1") with { Volume = 1f }, player.Center);
+            } else
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballCast2") with { Volume = 1f }, player.Center);
+            }
 
             // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
             return false;
@@ -91,6 +107,33 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             for (int i = 1; i < processedProjectilesCount; ++i)
             {
                 projectileList[i].currentAngle = projectileList[i - 1].currentAngle + 2f * (float)Math.PI / processedProjectilesCount;
+            }
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            var SpecialAbilityKey = tsorcRevamp.specialAbility.GetAssignedKeys();
+            string SpecialAbilityString = SpecialAbilityKey.Count > 0 ? SpecialAbilityKey[0] : Language.GetTextValue("Mods.tsorcRevamp.Keybinds.Special Ability.DisplayName") + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.NotBound");
+            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip2");
+            if (ttindex1 != -1)
+            {
+                tooltips.RemoveAt(ttindex1);
+                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.ScorchingPoint.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.ScorchingPoint.Keybind2")));
+            }
+            if (Main.keyState.IsKeyDown(Keys.LeftShift))
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", Language.GetTextValue("Mods.tsorcRevamp.Items.ScorchingPoint.Details")));
+                }
+            }
+            else
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Shift", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Details")));
+                }
             }
         }
         public override void AddRecipes()

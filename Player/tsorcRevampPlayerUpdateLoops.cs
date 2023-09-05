@@ -179,6 +179,7 @@ namespace tsorcRevamp
         public int MinimumMinionCircleRadius = 150;
         public int MaximumMinionCircleRadius = 500;
         public float MinionCircleRadius = 150;
+        public int CotUStardustCount = 0;
 
         public bool WaspPower = false;
         public bool DemonPower = false;

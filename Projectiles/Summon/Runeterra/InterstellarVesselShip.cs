@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System;
 using tsorcRevamp.NPCs;
+using Terraria.Audio;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
@@ -63,6 +64,42 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
                 modifiers.SourceDamage *= 1.25f;
 				modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 3000, 150);
             }
+            if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks >= 6)
+            {
+                modifiers.SetCrit();
+                modifiers.CritDamage += 0.5f;
+            }
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            Player player = Main.player[Projectile.owner];
+            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = player;
+            if (Main.rand.NextBool(3))
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/ShipHit1") with { Volume = 1f }, player.Center);
+            }
+            else if (Main.rand.NextBool(3))
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/ShipHit2") with { Volume = 1f }, player.Center);
+            }
+            else
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/ShipHit3") with { Volume = 1f }, player.Center);
+            }
+            if (hit.Crit)
+            {
+                target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 2 * 60);
+            }
+            else
+            {
+                target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 60);
+            }
+            if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks >= 6)
+            {
+                target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks = 0;
+                Dust.NewDust(Projectile.position, 20, 20, DustID.MartianSaucerSpark, 1, 1, 0, default, 1.5f);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/MarkDetonation") with { Volume = 2f }, player.Center);
+            }
         }
         public override void OnSpawn(IEntitySource source) 
 		{
@@ -89,8 +126,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		{
 			base.AI();
 
-            Player owner = Main.player[Projectile.owner];
-            tsorcRevampPlayer modPlayer = owner.GetModPlayer<tsorcRevampPlayer>();
+            Player player = Main.player[Projectile.owner];
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
             if (angularSpeed2 > 0.03f)
 			{
@@ -104,26 +141,26 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			}
 
 
-            if (!CheckActive(owner))
+            if (!CheckActive(player))
 			{
 				return;
             }
 
-            if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+            if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
                 angularSpeed2 = 0.075f;
             }
-            if (!owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost || (owner.statMana <= 0))
+            if (!player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost || (player.statMana <= 0))
             {
                 angularSpeed2 = 0.03f;
-				owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = false;
+				player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = false;
 				if (Main.netMode == NetmodeID.MultiplayerClient)
 				{
 					ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
 					minionPacket.Write(tsorcPacketID.SyncMinionRadius);
-					minionPacket.Write((byte)owner.whoAmI);
-					minionPacket.Write(owner.GetModPlayer<tsorcRevampPlayer>().MinionCircleRadius);
-					minionPacket.Write(owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost);
+					minionPacket.Write((byte)player.whoAmI);
+					minionPacket.Write(player.GetModPlayer<tsorcRevampPlayer>().MinionCircleRadius);
+					minionPacket.Write(player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost);
 					minionPacket.Send();
 				}
 			}
@@ -132,7 +169,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			Vector2 offset = new Vector2(0, modPlayer.MinionCircleRadius).RotatedBy(-currentAngle2);
 
-			Projectile.Center = owner.Center + offset;
+			Projectile.Center = player.Center + offset;
             Projectile.velocity = Projectile.rotation.ToRotationVector2();
 
             Visuals();
@@ -225,18 +262,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
 			return true;
 		}
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = Main.player[Projectile.owner];
-            if (hit.Crit)
-			{
-				target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 2 * 60);
-			}
-			else
-			{
-				target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 60);
-			}
-        }
 		private void Visuals()
 		{
 			Projectile.rotation = currentAngle2 * -1f; 

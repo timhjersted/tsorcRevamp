@@ -85,8 +85,14 @@ namespace tsorcRevamp.NPCs
         public float CrystalNunchakuScalingDamage = 0f;
 
         public bool Scorched;
+        public int ScorchMarks = 0;
+        public float SuperScorchDuration = 0f;
         public bool Shocked;
+        public int ShockMarks = 0;
+        public float SuperShockDuration = 0f;
         public bool Sunburnt;
+        public int SunburnMarks = 0;
+        public float SuperSunburnDuration = 0f;
 
         //Stores the event this NPC belongs to
         public ScriptedEvent ScriptedEventOwner;
@@ -113,7 +119,6 @@ namespace tsorcRevamp.NPCs
         public bool PhazonCorruption;
 
         public int LionheartMarks = 0;
-        public bool LionheartMarked = false;
 
         public bool Sundered;
 
@@ -1484,6 +1489,10 @@ namespace tsorcRevamp.NPCs
             if (Scorched)
             {
                 int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(10);
+                if (SuperScorchDuration > 0)
+                {
+                    DoTPerS *= 3;
+                }
                 npc.lifeRegen -= DoTPerS * 2;
                 damage += DoTPerS;
             }
@@ -1491,6 +1500,10 @@ namespace tsorcRevamp.NPCs
             if (Shocked)
             {
                 int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(30);
+                if (SuperShockDuration > 0)
+                {
+                    DoTPerS *= 3;
+                }
                 npc.lifeRegen -= DoTPerS * 2;
                 damage += DoTPerS;
             }
@@ -1498,6 +1511,10 @@ namespace tsorcRevamp.NPCs
             if (Sunburnt)
             {
                 int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(110);
+                if (SuperSunburnDuration > 0)
+                {
+                    DoTPerS *= 3;
+                }
                 npc.lifeRegen -= DoTPerS * 2;
                 damage += DoTPerS;
             }
