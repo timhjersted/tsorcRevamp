@@ -226,7 +226,7 @@ namespace tsorcRevamp.Items
                     }
                 case 2:
                     {
-                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Accuracy", LangUtils.GetTextValue("Items.Darksign.Ranged", (int)(modPlayer.BotCAccuracyGain), (int)(modPlayer.BotCAccuracyLoss), modPlayer.BotCAccuracyMaxFlatCrit, (int)(modPlayer.BotCAccuracyMaxCritMult * 100f))));
+                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Accuracy", LangUtils.GetTextValue("Items.Darksign.Ranged", (int)(modPlayer.BotCAccuracyGain * 100f), (int)(modPlayer.BotCAccuracyLoss * 100f), modPlayer.BotCAccuracyMaxFlatCrit, (int)(modPlayer.BotCAccuracyMaxCritMult * 100f))));
                         break;
                     }
                 case 3:
