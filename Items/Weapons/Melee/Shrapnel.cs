@@ -47,12 +47,9 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DamagedFlameNozzle>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
-            recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 5);
-            recipe.AddIngredient(ItemID.SoulofMight, 5);
-            recipe.AddIngredient(ItemID.SoulofFright, 5);
-            recipe.AddIngredient(ItemID.SoulofSight, 5);
+            recipe.AddIngredient(ModContent.ItemType<DamagedMechanicalScrap>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+            recipe.AddIngredient(ItemID.SoulofFright, 15);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
