@@ -814,7 +814,7 @@
   "text": "\u0022奇怪…这里的水面上有一层厚厚的黏液…\u0022",
   "tileX": 3697,
   "tileY": 1269,
-  "textWidth": 300,
+  "textWidth": 320,
   "style": 1
 }
 {
@@ -828,7 +828,7 @@
   "text": "隧道坍塌了 --NEWLINE   --NEWLINE  \u0022我需要找到另外一条路\u0022",
   "tileX": 3749,
   "tileY": 1024,
-  "textWidth": 180,
+  "textWidth": 200,
   "style": 1
 }
 {

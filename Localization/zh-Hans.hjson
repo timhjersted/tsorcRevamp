@@ -14,7 +14,7 @@ Mods: {
 			RecipeTooltip: "[c/66fc03:黑暗之魂合成材料]"
 			WingsDisabled:
 				'''
-				这些翅膀已被一个凶残的[c/009400:猎手]Boss[c/383838:诅咒]
+				这些翅膀已被凶残的[c/009400:茂林飞鸟-猎手]Boss[c/383838:诅咒]
 				它们在其被击败之前不能使用
 				'''
 			TileEnabled: "[c/1cfc03:冒险模式下允许放置！]"
@@ -64,7 +64,7 @@ Mods: {
 			AtkSpeed: 增加 {0}% 攻击速度
 			StaminaRegen: 增加 {0}% 耐力再生
 			StaminaRecovery: 增加 {0}% 耐力回复速度
-			DRStat: 减少 {0}% 受到的伤害
+			DRStat: 增加 {0} 抵抗力
 			BadDRStat: 增加 {0}% 受到的伤害
 			Cooldown: "{0} 秒冷却"
 			CritDmg: 暴击时造成 {0}% 额外伤害
@@ -87,7 +87,7 @@ Mods: {
 			Melee: {
 				ArmorPenPercent: 增加 {0}% 近战护甲穿透
 				FlatDmg: 增加近战伤害 {0} 点
-				Bonus: （近战武器的加成再额外 x{0}）
+				Bonus: （近战武器获得 {0} 倍加成）
 				BadDmg: 减少 {0}% 近战伤害
 				Only: 仅供近战战士使用
 				DmgMult: 乘算增加 {0}% 近战伤害
@@ -169,9 +169,9 @@ Mods: {
 			05: 水晶碎块经常暗示附近的秘密、箱子或隐藏路径...
 			06: 在正常战斗中使用药剂通常是生存所必需的
 			07: 死亡时失去灵魂可以在模组配置中禁用，试试吧就像塞尔达传说那样
-			08: 某些黑暗区域的敌人掉落人性，可以恢复因诅咒而损失的生命值。
+			08: 某些黑暗区域的敌人掉落人性，可以恢复因诅咒而损失的生命值
 			09: 物品提示通常包含对你的生存至关重要的信息...
-			10: 留意您物品的描述，看看是否有能用黑暗之魂升级的物品。
+			10: 留意您物品的描述，看看是否有能用黑暗之魂升级的物品
 			11: 可以在BOSS掉落的独特物品上找到进展线索
 			12: 如果你感到迷茫，就探索在地图上未显示出来的地方，几乎每个方向都有秘密和路径
 			13: 蜡石文字泡消息提供了许多重要提示
@@ -179,13 +179,13 @@ Mods: {
 			15: 用鞭子尖端攻击敌人必定造成暴击
 			16: 青色压力板只能用小型实体射弹激活
 			17: 一些原版物品的合成配方已被禁用。你必须通过在世界上探索以找到这些物品
-			18: 在武器上有一个负面的修饰语？与绿宝石传令官Jade交谈。她可以用祝福来移除它
+			18: 在武器上有一个负面的修饰词缀？与绿宝石传令官Jade交谈，她可以用祝福来移除它
 			19: 你可能会在有能力打败BOSS之前就提前遭遇他们。如果陷入困境，等你变强了再回来
-			20: 推荐使用"Recipe Browser"辅助模组，轻松查看新获得的物品有哪些合成配方
+			20: 推荐使用 RecipeBrowser(合成表) 辅助模组，轻松查看新获得的物品有哪些合成配方
 			21: 欢迎来到泰拉瑞亚的类黑暗之魂模组
 			22: 绿花戒指大大提高了你的闪避能力，让你可以更好地躲避...
 			23: 青色压力板必须用小型实体射弹攻击以激活
-			24: 使用'Recipe Browser'辅助模组来查看被标记为'黑暗之魂合成材料'的物品
+			24: 使用 RecipeBrowser(合成表) 辅助模组查看被标记为<黑暗之魂合成材料>的物品
 			25: 不要忘记翻滚啊！
 			26: 我真是**的疯了
 			27: 石头构成的门不能被稿子挖开，必须用拉杆或开关打开
@@ -205,7 +205,7 @@ Mods: {
 		}
 
 		Events: {
-			// Death: The fated day of your death has arrived.
+			Death: 命定之死已至！
 			QueenSlime: 史莱姆女皇从她的神圣洞穴中现身！
 			GreatRedKnightInvasion: 一位卓越赭骑士入侵了你的世界！
 			Deerclops: 你惊动了远古巨鹿！
@@ -224,7 +224,7 @@ Mods: {
 			IceGolem: ！
 			KingSlime: 史莱姆王出现了！
 			HeroOfLumelia: “你杀了我的兄弟向导，瑞德！...你在这个世界上释放了地狱深处的灾难！”鲁米利亚的一位英雄来寻求正义...
-			FireLurker: 一个被诅咒的火焰潜伏者出现了...
+			FireLurker: 一个被诅咒的火炎潜伏者出现了...
 			RedKnight1: 你的世界被一位红骑士入侵了...
 			RedKnight2: 你的世界被一位红骑士入侵了...
 			JungleWyvern: 你打搅了失落之城的古林飞龙！
@@ -247,7 +247,7 @@ Mods: {
 			Artorias: 亚尔特留斯，深渊漫步者前来抹除你的存在...
 			BlackKnight: 一位黑骑士从阴影中显现...
 			SorrowAttraidies: '''[c/D3D3D3:阿卓迪斯:] "看你能不能搞定这个。"'''
-			TwinEaters: 双子吞噬者从大地深处爬升上来！
+			TwinEaters: 双子吞噬者从大地深处浮出水面！
 			DunlendingAmbush: 遭遇偷袭！
 			AlienAmbush: 检测到外星生命体
 			FirebombHollowAmbush: 遭遇偷袭！
@@ -304,8 +304,8 @@ Mods: {
 			SpawnRemoved: 重生点已移除！
 			AccessPiggyBank: 打开猪猪存钱罐
 			AccessSafe: 打开保险箱
-			// BotCHit: Hit!
-			// BotCMiss: Miss!
+			BotCHit: 中！
+			BotCMiss: 马…
 		}
 
 		World: {
@@ -393,7 +393,7 @@ Mods: {
 
 		Items: {
 			VanillaItems: {
-				// LockedCrates: "[c/383838:Cursed] by a ferocious [c/009400:Hunter]"
+				LockedCrates: 此物品被凶残的[c/009400:茂林飞鸟-猎手][c/383838:诅咒]
 				ObsidianSkinPotion: "{$CommonItemTooltip.Limited}"
 				SuspiciousLookingEye:
 					'''
@@ -413,21 +413,21 @@ Mods: {
 					OnUseText3: 三子魔眼只在晚上醒来..
 				}
 
-				/* ChlorophyteMaskSet:
+				ChlorophyteMaskSet:
 					'''
-					Summons a powerful leaf crystal to shoot at nearby enemies
+					召唤强大的叶状水晶射向附近的敌人
 					{$CommonItemTooltip.DRStat}
-					''' */
-				/* TurtleSet:
 					'''
-					Attackers also take double damage
+				TurtleSet:
+					'''
+					攻击者也会承受双倍伤害
 					{$CommonItemTooltip.DRStat}
-					''' */
-				/* FrozenTurtleShell:
 					'''
-					{$CommonItemTooltip.LifeThreshold}Puts a shell around the owner
-					{$CommonItemTooltip.DRStat@1} while the shell is active
-					''' */
+				FrozenTurtleShell:
+					'''
+					{$CommonItemTooltip.LifeThreshold}，在所有者周围生成护盾
+					护盾激活时{$CommonItemTooltip.DRStat@1}
+					'''
 				SharpeningStation: "{$CommonItemTooltip.Melee.ArmorPenPercent}"
 				GoldenGi: "{$CommonItemTooltip.Melee.FlatDmg}"
 				ManaCost1: "消耗 "
@@ -1241,7 +1241,7 @@ Mods: {
 				DisplayName: 清晰之戒
 				Tooltip:
 					'''
-					免疫 {$CommonItemTooltip.OnFire}、燃烧、冷冻、{$CommonItemTooltip.CursedInferno}、{$CommonItemTooltip.Ichor}
+					免疫{$CommonItemTooltip.OnFire}、燃烧、冷冻、{$CommonItemTooltip.CursedInferno}、{$CommonItemTooltip.Ichor}
 					免疫重力颠倒、流血、中毒和击退
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.LifeRegen@1}
@@ -1328,7 +1328,7 @@ Mods: {
 					'''
 					一排缓慢的在轨道上漂浮的陨石碎片
 					向附近的敌人一连串发射追踪火球
-					每击杀一个boss，火球的威力就会增加
+					每击杀一个Boss，火球的威力就会增加
 					燃烧的敌人受到其他攻击的伤害增加 {0}%
 					'''
 			}
@@ -1339,7 +1339,7 @@ Mods: {
 					'''
 					一块在发光发热的陨石
 					翻滚会召唤出一连串追踪火球
-					每击杀一个boss，火球的威力就会增加
+					每击杀一个Boss，火球的威力就会增加
 					燃烧的敌人受到其他攻击的伤害增加 {0}%
 					'''
 				Count: "当前累计次数： "
@@ -1616,7 +1616,7 @@ Mods: {
 			}
 
 			BerserkerEmblem: {
-				DisplayName: 狂战士纹章
+				DisplayName: 狂战士徽章
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamageCritChance}"
 			}
 
@@ -1789,7 +1789,7 @@ Mods: {
 			}
 
 			ArchmenEmblem: {
-				DisplayName: 神射手纹章
+				DisplayName: 神射手徽章
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedRangedDamage}
@@ -3476,9 +3476,9 @@ Mods: {
 					然而，他们仍会掉落剩下的正常战利品
 					[c/ff0000:开发者注：有些Boss还不能通过这种方式被正常召唤]
 					'''
-				None: 没有打败任何可以重召唤的boss！
-				Selected: 当前选择的boss：
-				Forbidden: 当前boss存活时不能召唤另一个！
+				None: 没有打败任何可以重召唤的Boss！
+				Selected: 当前选择的Boss：
+				Forbidden: 当前Boss存活时不能召唤另一个！
 				Duo1: 斯洛格拉和盖波
 				Attraidies1: 阿卓迪斯初始阶段
 				Attraidies2: 阿卓迪斯最终阶段
@@ -3495,19 +3495,19 @@ Mods: {
 					'''
 					一个古老的强大工具似乎已经碎成了几块，它损坏的太厉害已经无法被修复了
 					[c/00ffd4:残余物已流尽它们的力量，并安静的吟唱着黑魔法]
-					[c/ffbf00:看起来你得去找到其他的能打破神庙砖的东西...]...
+					[c/ffbf00:看起来你得去找到其他的能打破神庙砖的东西...]
 					这个东西在接下来的旅程中一无是处，还是扔了最好
 					'''
 			}
 
 			BrokenStrangeMagicRing: {
-				DisplayName: 破损的奇怪的魔法戒指
+				DisplayName: 破损的奇怪魔法戒指
 				Tooltip:
 					'''
-					奇怪的魔法戒指坏成了两半...
-					Miakoda: "为了恢复它的魔力，
-					你需要7个白钛矿,20诅咒之魂和1000黑暗之魂
-					为了找到我们要的东西，还得去腐化和地下"
+					奇怪的魔法戒指碎裂成了两半...
+					Miakoda: "为了恢复它的魔力
+					你需要5个白钛矿和1000黑暗之魂
+					为了找到需要的东西，我们要去探索邪恶群落和地牢"
 					'''
 			}
 
@@ -3550,7 +3550,7 @@ Mods: {
 					八分之一
 					[c/00ffd4:其中包含一个谜语：] 
 					[c/ffbf00:"有两条路通向入口。 在沙漠遗迹之下, 赛里斯开启了道路"]
-					[c/ffbf00:"山坡上的沙岩洞里，叶绿之门守护了秘密"]
+					[c/ffbf00:"大漠边缘的暗影之洞，叶绿之门守护着秘密"]
 					'''
 			}
 
@@ -3631,59 +3631,50 @@ Mods: {
 				Tooltip:
 					'''
 					使用成为[c/6d8827:被诅咒者]
-					以[c/6d8827:被诅咒者]游玩时具有以下效果：
+					以[c/6d8827:被诅咒者]身份游玩时具有以下效果：
 					你获得一个额外的饰品栏，额外得到 {0}% 黑暗之魂，同时你的耐力恢复大大提高
 					但是，[c/dd3333:使用武器会消耗耐力] ，当耐力未达到最大值时生命恢复减半
 					禁止使用大魔镜，即时治疗药水不会生效，作为补偿你获得了元素瓶的治疗，按快速治疗快捷键以使用
 					每次你死时会损失 {1}% 的最大生命值，但是当你回到死亡地点就会恢复
-					禁用魔力的自然恢复，作为补偿你获得了蓝露滴圣杯瓶，每次使用恢复 {2}% 最大魔力值
-					魔力再生速度 转化为 增加恢复的总魔力值，魔力再生延迟减少 转化为 减少恢复总魔力值所需的时间
-					乘算增加 {3}% 魔法伤害和 {4}% 魔法攻击速度
-					魔力药水仍然有效，同时在篝火休息会恢复魔力值
-					乘算减少 {5}% 仆从的最终伤害，玩家每对敌人施加一种鞭子减益，这个减少量就会降低 {6}% 
-					如果有 {7} 个或更多的鞭子减益同时生效，伤害减少量会固定为 {8}%  
-					鞭子范围减少 {9}%
-					[c/ca1e00:此模式适用于有红云物语模组游玩经验的玩家]
-					[c/ca1e00:第一次游玩时 【不】 推荐开启]
 					'''
 				Enabled: 你成为了被诅咒者
 				Disabled: 诅咒已被移除
-				/* Melee:
+				Melee:
 					'''
-					[c/FF4500:Melee base attack speed is reduced to {0}%.]
-					[c/FF4500:Grazing enemy projectiles and hitting enemies with melee attacks will grant stacks of Lethal Tempo,]
-					[c/FF4500:these increase your attack speed temporarily and fall off after a few seconds, if not refreshed.]
-					[c/FF4500:Each stack grants {1}% attack speed, up to {2}% at the maximum of {3} stacks.]
-					''' */
-				/* Ranged:
+					[c/FF4500:近战攻速减少至 {0}%]
+					[c/FF4500:攻击敌人或其射弹会增加致命节拍堆叠层数]
+					[c/FF4500:堆叠层数增加你的近战攻速，如果一段时间没有刷新则层数会减少]
+					[c/FF4500:每层增加 {1}% 近战攻速，最高到 {3} 层获得 {2}% 加成]
 					'''
-					[c/228B22:Ranged critical strike chance is now dependant on your accuracy,]
-					[c/228B22:missing shots will decrease it, while hitting shots will increase it.]
-					[c/228B22:A ranged projectile only needs to hit once to count as hit, ]
-					[c/228B22:can't increase your accuracy multiple times and can also only miss once.]
-					[c/228B22:A hit will increase your accuracy by {0}%, while missing will decrease your accuracy by {1}%.]
-					[c/228B22:You can gain up to {2}% crit chance flat and a {3}% multiplier at 100% accuracy, or lose all crit at 0% accuracy.]
-					''' */
-				/* Magic:
+				Ranged:
 					'''
-					[c/00BFFF:Magic damage is increased by {1}% and attack speed by {2}% multiplicatively.]
-					[c/00BFFF:Mana regeneration is disabled but grants a Cerulean Flask to restore mana, scaling with {0}% maximum mana,]
-					[c/00BFFF:mana regen bonuses increase total mana restored and mana regen delay penalties increase total mana restoration time.]
-					[c/00BFFF:Mana Potions still work and resting at a Bonfire will restore mana.]
-					''' */
-				/* Summon:
+					[c/228B22:远程暴击率将取决于你的射击准确度]
+					[c/228B22:命中敌人增加，未命中则减少]
+					[c/228B22:射弹每次只需命中一个敌人即可]
+					[c/228B22:穿透射弹的多次命中只计算一次，未命中的容错也只有一次]
+					[c/228B22:命中一次增加 {0}% 准确度，未命中则减少 {1}%]
+					[c/228B22:每 1% 准确度增加 {2}% 远程暴击率，最高到 {3}%]
 					'''
-					[c/FFA500:Summon base damage is reduced to {0}%, but hitting enemies with whips will grant stacks of Conqueror,]
-					[c/FFA500:these increase summon damage temporarily and fall off after a few seconds, if not refreshed.]
-					[c/FFA500:Each stack grants {1}% damage, up to {2}% at the maximum of {3} stacks.]
-					[c/FFA500:Whip range is decreased by {4}%.]
-					''' */
-				/* End:
+				Magic:
 					'''
-					Right click this item in your inventory to cycle between descriptions of new mechanics for each class.
-					[c/ca1e00:This mode is intended for players experienced with the mod]
-					[c/ca1e00:It is not recommended on first playthroughs.]
-					''' */
+					[c/00BFFF:乘算增加 {1}% 魔法伤害、 {2}% 攻击速度]
+					[c/00BFFF:禁用魔力的自然回复，作为补偿你获得了蓝露滴圣杯瓶，每次使用回复 {0}% 最大魔力值]
+					[c/00BFFF:魔力再生速度 转化为 增加回复的总魔力值，魔力再生延迟减少 转化为 减少回复总魔力值所需的时间]
+					[c/00BFFF:魔力药水仍然有效，在篝火旁会快速回复魔力值]
+					'''
+				Summon:
+					'''
+					[c/FFA500:召唤伤害减少至 {0}%，用鞭子攻击敌人会增加征服者堆叠层数]
+					[c/FFA500:堆叠层数增加你的召唤伤害，如果一段时间没有刷新则层数会减少]
+					[c/FFA500:每层增加 {1}% 伤害，最高到 {3} 层获得 {2}% 加成]
+					[c/FFA500:鞭子范围减少 {4}%]
+					'''
+				End:
+					'''
+					在背包中右键点击此物品来查看不同职业的新机制
+					[c/ca1e00:此模式适用于有红云物语模组游玩经验的玩家]
+					[c/ca1e00:第一次游玩时 【不】 推荐开启]
+					'''
 			}
 
 			DarkSoul: {
@@ -3783,7 +3774,7 @@ Mods: {
 				Tooltip:
 					'''
 					一份关于矮人守卫的契约
-					将召唤一个矮人去守卫一块财产
+					将召唤一个矮人保卫村庄
 					'''
 			}
 
@@ -5659,7 +5650,7 @@ Mods: {
 				Empowered:
 					'''
 					每次命中造成 2 种随机的鞭子状态效果
-					使用鞭子伤害和攻击范围加成，而不是近战的
+					受到鞭子伤害、范围和召唤暴击率加成，而不是近战
 					'''
 			}
 
@@ -6328,8 +6319,8 @@ Mods: {
 				Tooltip:
 					'''
 					召唤一个空精灵为你而战
-					空精灵造成永久性的可堆叠debuff
-					空精灵可以吃到所有来源的伤害加成
+					空精灵造成永久性的可堆叠减益
+					逐渐提高目标受到的任何来源的伤害
 					'''
 			}
 
@@ -6614,7 +6605,7 @@ Mods: {
 			}
 
 			FlameJetItem: {
-				DisplayName: 火焰喷射器
+				DisplayName: 喷火陷阱
 				Tooltip: 制造出玩家只有翻滚才能通过的喷射火焰
 			}
 
@@ -6936,11 +6927,13 @@ Mods: {
 				DisplayName: 灼热焦点
 				Tooltip:
 					'''
-					召唤火球围绕你旋转，并以敌人的方式伤害敌人
-					消耗半个召唤栏位，如果召唤出足够多的火球，就会产生炽热光环
-					手持该物品时，通过按 特殊能力键 来改变其半径
-					增大/减小半径的效果取决于玩家面对的方向
-					施加 灼热 增益, 由你暴击率的一小部分给予召唤物暴击率
+					Summons an ashen dragon which will chase after your cursor and breathe fire at nearby enemies
+					Summons fireballs which rotate around you and damage enemies in their way
+					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
+					Applies the Scorching debuff, increasing minion crit chance
+					Dragon's hits mark enemies after 6 consecutive hits
+					Once fully marked you can detonate them by hitting the enemy with a fireball
+					Detonating the mark will deal bonus damage and increase the debuff's strength temporarily
 					{$CommonItemTooltip.Summon.TagDmgMult}
 					“献给Runeterra的灰烬之主！”
 					'''
@@ -6958,15 +6951,15 @@ Mods: {
 				DisplayName: 星际飞船遥控器
 				Tooltip:
 					'''
-					召唤星际飞船围绕你旋转，并以敌人的方式伤害敌人
-					消耗半个召唤栏位，如果召唤出足够多的星际飞船，就会产生恒星光环
-					手持该物品时，通过按 特殊能力键 来改变其半径
-					增大/减小半径的效果取决于玩家面对的方向
-					在不持有遥控器的情况下按 特殊能力键 可以激活涡轮增压
-					这会增加星际飞船的伤害和移动速度
-					涡轮增压会消耗你的魔力，在受到魔力病减益时无法激活
-					施加 出其不意 增益, 由你暴击率的一小部分给予召唤物暴击率
+					Summons an interstellar vessel which will chase after your cursor and breathe fire at nearby enemies
+					Summons spaceships which rotate around you and damage enemies in their way
+					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
+					Applies the Shocked debuff, increasing minion crit chance
+					Vessel's hits mark enemies after 6 consecutive hits
+					Once fully marked you can detonate them by hitting the enemy with a spaceship
+					Detonating the mark will deal bonus damage and increase the debuff's strength temporarily
 					{$CommonItemTooltip.Summon.TagDmgMult}
+					{$Items.InterstellarVesselGauntlet.Keybind1}Special Ability{$Items.InterstellarVesselGauntlet.Keybind2}
 					“调整 ASOL-13 的轨迹！”
 					'''
 				// Keybind1: "Press "
@@ -6985,17 +6978,17 @@ Mods: {
 				DisplayName: 宇宙重心
 				Tooltip:
 					'''
-					召唤恒星围绕你旋转，并以敌人的方式伤害敌人
-					消耗半个召唤栏位，如果召唤出足够多的恒星，就会产生宇宙光环
-					手持该物品时，通过按 特殊能力键 来改变其半径
-					增大/减小半径的效果取决于玩家面对的方向
-					在不持有遥控器的情况下按 特殊能力键 可以激活涡轮增压
-					这会增加恒星的伤害和移动速度，但消耗你的魔力
-					每暴击15次后，右键 即可召唤行星锻造者
-					行星锻造者将在鼠标位置释放宇宙尘埃
-					施加 日照 增益, 由你暴击率的一小部分给予召唤物暴击率
+					Summons the Star Forger which will chase after your cursor and breathe fire at nearby enemies
+					Summons stars which rotate around you and damage enemies in their way
+					Applies the Sunburn debuff, increasing minion crit chance
+					Star Forger's hits mark enemies after 6 consecutive hits
+					Once fully marked you can detonate them by hitting the enemy with a star
+					Detonating the mark will deal bonus damage and increase the debuff's strength temporarily
 					{$CommonItemTooltip.Summon.TagDmgMult}
-					“让他们一看到行星锻造者就肃然起敬！”
+					{$Items.CenterOfTheUniverse.Keybind1}Special Ability{$Items.CenterOfTheUniverse.Keybind2}
+					Gain Stardust every time you detonate a mark
+					<right> to summon a Falling Star at your cursor's location for 10 Stardust
+					“让他们一看到行星吞噬者就浑身战栗！”
 					'''
 				// Keybind1: "Press "
 				// Keybind2: " to activate Turboboost, accelerating the Star Forger and it's stars"
@@ -7015,7 +7008,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					根据武器使用时间有多慢，获得近战伤害加成（加成最高到 {1}%）
+					根据武器使用时间快慢，获得近战伤害加成（加成最高到 {1}%）
 					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
 					当生命值低于{3}%时，回复{4}点生命值（{$CommonItemTooltip.Cooldown@5}）
 					'''
@@ -7383,72 +7376,72 @@ Mods: {
 			}
 
 			AdventurersCard: {
-				// DisplayName: Adventurer's Card
-				// Tooltip: Shows you your stats, right click to cycle between classes
-				/* Generic:
+				DisplayName: 冒险者卡牌
+				Tooltip: 查看你的各项基本属性，<right>切换不同的职业
+				Generic:
 					'''
-					Resistance: {0}, equal to {1}% damage reduction
-					Movement Speed: {2}%
-					Life Regen: {3}
-					Mana Efficiency: {4}%
-					Mana Regen Bonus: {5}
-					Mana Regen Delay Bonus: {6}
-					Stamina Regen: {7}%
-					''' */
-				/* Melee:
+					抵抗力: {0}，等同于{1}%伤害减免
+					移动速度: {2}%
+					生命回复: {3}
+					魔力消耗: {4}%
+					魔力再生速率: {5}
+					魔力再生延迟: {6}
+					耐力再生速率: {7}%
 					'''
-					[c/FF4500:Melee Stats:]
-					Total Damage Multiplier: {0}%
-					Critical Strike Chance: {1}%
-					Armor Penetration: {2}
-					Attack Speed: {3}%
-					''' */
-				/* Ranged:
+				Melee:
 					'''
-					[c/228B22:Ranged Stats:]
-					Total Damage Multiplier: {0}%
-					Critical Strike Chance: {1}%
-					Armor Penetration: {2}
-					Attack Speed: {3}%
-					''' */
-				/* Magic:
+					[c/FF4500:<近战>]
+					总伤害倍率: {0}%
+					暴击率: {1}%
+					护甲穿透: {2}
+					攻击速度: {3}%
 					'''
-					[c/00BFFF:Magic Stats:]
-					Total Damage Multiplier: {0}%
-					Critical Strike Chance: {1}%
-					Armor Penetration: {2}
-					Attack Speed: {3}%
-					''' */
-				/* Summon:
+				Ranged:
 					'''
-					[c/FFA500:Summon Stats:]
-					Total Damage Multiplier: {0}%
-					Critical Strike Chance: {1}%
-					Attack Speed: {2}%
-					Armor Penetration: {3}
-					Total Whip Damage Multiplier: {4}%
-					Minion Slots: {5}
-					Turret Slots: {6}
-					Whip Range: {7}%
-					''' */
-				/* Throwing:
+					[c/228B22:<远程>]
+					总伤害倍率: {0}%
+					暴击率: {1}%
+					护甲穿透: {2}
+					攻击速度: {3}%
 					'''
-					Throwing Stats:
-					Total Damage Multiplier: {0}%
-					Critical Strike Chance: {0}%
-					Attack Speed: {0}%
-					''' */
+				Magic:
+					'''
+					[c/00BFFF:<魔法>]
+					总伤害倍率: {0}%
+					暴击率: {1}%
+					护甲穿透: {2}
+					攻击速度: {3}%
+					'''
+				Summon:
+					'''
+					[c/FFA500:<召唤>]
+					总伤害倍率: {0}%
+					暴击率: {1}%
+					攻击速度: {2}%
+					护甲穿透: {3}
+					鞭子伤害倍率: {4}%
+					仆从栏: {5}
+					哨兵栏: {6}
+					鞭子范围: {7}%
+					'''
+				Throwing:
+					'''
+					<投掷>
+					总伤害倍率: {0}%
+					暴击率: {0}%
+					攻击速度: {0}%
+					'''
 			}
 
 			CreateJSON: {
-				// DisplayName: Create J S O N
-				// Tooltip: ""
+				DisplayName: 生成 soapstone_en-us.json
+				Tooltip: ""
 			}
 		}
 
 		Buffs: {
 			VanillaBuffs: {
-				// Warmth: Reduces damage taken from cold sources by {0}%
+				Warmth: 减少 {0}% 受到的冷系伤害
 				ManaSickness: 减少 {0}% 所有类型伤害
 				SolarShield: "{$CommonItemTooltip.ReducesDamageTakenByPercent}, 受到伤害时击退敌人"
 				WeaponImbue: 增加 {0}% 近战暴击伤害，乘算增加 {1}% 鞭子伤害
@@ -8277,13 +8270,13 @@ Mods: {
 			}
 
 			LethalTempo: {
-				// DisplayName: Lethal Tempo
-				// Description: Your melee speed is increased
+				DisplayName: 致命节拍
+				Description: 提高近战攻速
 			}
 
 			Conqueror: {
-				// DisplayName: Conqueror
-				// Description: Mods.tsorcRevamp.Buffs.Conqueror.Description
+				DisplayName: 征服者
+				Description: Mods.tsorcRevamp.Buffs.Conqueror.Description
 			}
 		}
 
@@ -8472,10 +8465,10 @@ Mods: {
 			JellyfishLightning.DisplayName: 激光
 			JungleWyvernFire.DisplayName: 丛林之息
 			CataclysmicFirestorm.DisplayName: 灾厄风暴燚
-			MarilithAura.DisplayName: 灾厄烈焰风暴
-			MarilithCataclysm.DisplayName: 灾变发生器
-			MarilithFireball.DisplayName: 火山灰引爆器
-			MarilithFirestorm.DisplayName: 火山灰爆破
+			MarilithAura.DisplayName: 马瑞丽斯烈焰风暴
+			MarilithCataclysm.DisplayName: 马瑞丽斯发生器
+			MarilithFireball.DisplayName: 马瑞丽斯灾祸之力
+			MarilithFirestorm.DisplayName: 马瑞丽斯风暴
 			MarilithFirewall.DisplayName: 马瑞丽斯火墙
 			MarilithHoldBall.DisplayName: 马瑞丽斯之球
 			MarilithLightning.DisplayName: 激光
@@ -8521,8 +8514,8 @@ Mods: {
 			RedKnightsSpear.DisplayName: 红骑士之矛
 			ScrewAttack.DisplayName: 弩箭打击
 			ShadowShot.DisplayName: 影弹
-			SmallFlameJet.DisplayName: 小型火焰喷射器
-			SmallWeaponSlash.DisplayName: 小型武器斩击
+			SmallFlameJet.DisplayName: 轻型火焰喷射
+			SmallWeaponSlash.DisplayName: 轻型武器斩击
 			Spearhead.DisplayName: 矛头
 			SpearheadCrimson.DisplayName: 猩红矛头
 			SpearheadFire.DisplayName: 矛头焰
@@ -8570,7 +8563,7 @@ Mods: {
 			HeavensTearBall.DisplayName: 天堂之泪
 			MoonfuryBall.DisplayName: 月煞球
 			SunderingLightBall.DisplayName: 肃杀光球
-			FlameJet.DisplayName: 火焰喷射器
+			FlameJet.DisplayName: 喷火陷阱
 			FlameStrike.DisplayName: 燎焱卷轴
 			ForgottenRisingSunProj.DisplayName: 被遗忘的旭日
 			FreezeBolt.DisplayName: 霜与电
@@ -8842,14 +8835,14 @@ Mods: {
 			RageFirebomb.DisplayName: 火焰炸弹
 			RageFirebreath.DisplayName: 烈火之息
 			LionheartGunshot.DisplayName: 狮心枪射
-			// LeonhardCMSCrescent.DisplayName: Leonhard C M S Crescent
-			// CotUDragon.DisplayName: Cot U Dragon
-			// BossDeath.DisplayName: Boss Death
-			// EnergyGathering.DisplayName: Energy Gathering
-			// GlowingEnergy.DisplayName: Glowing Energy
-			// RageFireBreath.DisplayName: Rage Fire Breath
-			// SorrowFrozenBreath.DisplayName: Sorrow Frozen Breath
-			// HunterToxicBreath.DisplayName: Hunter Toxic Breath
+			LeonhardCMSCrescent.DisplayName: 李奥纳德残月之光
+			CotUDragon.DisplayName: 行星吞噬者
+			BossDeath.DisplayName: Boss Death
+			EnergyGathering.DisplayName: 能量聚合
+			GlowingEnergy.DisplayName: 光辉能量
+			RageFireBreath.DisplayName: 愤怒火之吐息
+			SorrowFrozenBreath.DisplayName: 悲伤冰之吐息
+			HunterToxicBreath.DisplayName: 猎手毒之吐息
 		}
 
 		NPCs: {
@@ -9091,7 +9084,7 @@ Mods: {
 				DisplayName: 混沌
 				DespawnHandler: 混沌要把你撕成碎片...
 				Heal1: 混沌开始治疗自己...
-				Heal2: 混沌仍在治疗自己...
+				Heal2: 混沌被无形的护盾保护着 - 你离它太远了...
 				Rips: 混沌撕裂你的翅膀和盔甲！
 				OutOfRange: 混沌受到看不见的力量的保护—你离它太远了！
 			}
@@ -9245,8 +9238,8 @@ Mods: {
 			Faraam.DisplayName: 法拉姆
 			GwynBossVision.DisplayName: 葛温BOSS
 			LeonhardPhase1.DisplayName: ???
-			IchorGlob.DisplayName: 小团灵液
-			IchorMissile.DisplayName: 灵液飞弹
+			IchorGlob.DisplayName: 灵焰
+			IchorMissile.DisplayName: 灵焰飞弹
 			NamelessKing.DisplayName: 无名之王
 			ParasyticWormBody.DisplayName: 寄生蠕虫
 			ParasyticWormHead.DisplayName: 寄生蠕虫
@@ -9266,9 +9259,9 @@ Mods: {
 			Assassin: {
 				DisplayName: 刺客
 				Track: 一个刺客在追踪你的位置...
-				Draw: 你听到一声弓弦...
+				Draw: 你听到弓弦拉动的声音...
 				Steps: 你听到了脚步声...
-				Hunt: 你被刺客盯上狩猎了...
+				Hunt: 你被刺客盯上了...
 			}
 
 			AttraidiesIllusion: {
@@ -9304,7 +9297,7 @@ Mods: {
 			DworcVoodoomaster.DisplayName: 德沃克的炼金术士
 			DworcVoodooShaman.DisplayName: 德沃克的萨满
 			FirebombHollow.DisplayName: 燃烧瓶投掷者
-			FireLurker.DisplayName: 潜行纵火者
+			FireLurker.DisplayName: 火炎潜伏者
 			FlameBat.DisplayName: 烈焰蝙蝠
 			GaibonFireball.DisplayName: 盖波的火球
 			GhostOfTheDarkmoonKnight.DisplayName: 暗月骑士之灵
@@ -9496,7 +9489,7 @@ Mods: {
 				Name9: Biffidor
 				Name10: Koroin
 				Name11: Uorin
-				Quote1: 在这里为您服务。
+				Quote1: 在此为您服务。
 				Quote2: 我可以用一些酒...
 				Quote3: 我已经等不及力，快点端上来罢！（急迫）
 				Quote4: 嗨害嗨！
@@ -9872,12 +9865,12 @@ Mods: {
 				}
 			}
 
-			HomingMissile.DisplayName: 自瞄导弹
+			HomingMissile.DisplayName: 追踪导弹
 			Byakhee.DisplayName: 拜亚基
-			ClericOfSorrow.DisplayName: 哀悼牧师
+			ClericOfSorrow.DisplayName: 悲怆骑士
 			Willowisp.DisplayName: 飞絮
 			GreatRedThresher.DisplayName: 殷红勾魂使
-			// LeonhardPhase2.DisplayName: Leonhard Phase2
+			LeonhardPhase2.DisplayName: 李奥纳德
 		}
 
 		Prefixes: {
@@ -9903,7 +9896,7 @@ Mods: {
 
 		Tiles: {
 			BonfireCheckpoint.MapEntry: 篝火检查点
-			FlameJet.MapEntry: 火焰喷射器
+			FlameJet.MapEntry: 喷火陷阱
 			SoapstoneTile.MapEntry: 蜡石文字泡消息
 			SoulSkellyL.MapEntry: 灵魂骷髅
 			SoulSkellyR.MapEntry: 灵魂骷髅
@@ -9984,18 +9977,18 @@ Mods: {
 					Label: 禁止自动使用魔力回复药水
 					Tooltip:
 						'''
-						禁止魔力花及合成物的自动使用魔力回复药水效果，对于防止在被诅咒者模式下不小心使用蓝露滴圣杯瓶很有用。
+						禁用魔力花及合成物的自动使用魔力回复药水效果，对于防止在被诅咒者模式下不小心使用蓝露滴圣杯瓶很有用。
 						默认为关闭。
 						'''
 				}
 
 				DisableRifleScopeZoom: {
-					Label: Disable Rifle Scope Zoom
+					Label: 禁用步枪瞄准镜视野缩放
 					Tooltip:
 						'''
-						Disable the Off-Screen Zooming feature provided by the Rifle Scope and it's upgrades,
-						doesn't affect weapons like the Sniper Rifle which have this natively, 
-						useful for guns that have a right-click function. Defaults to Off.
+						禁用步枪瞄准镜及其升级物提供的屏幕外缩放功能，
+						不会影响像狙击步枪这样的武器。
+						对于具有右键能力的枪很有用。默认为关闭。
 						'''
 				}
 
