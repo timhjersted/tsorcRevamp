@@ -33,6 +33,12 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1400);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ItemID.AncientShadowHelmet);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 1400);
+            recipe2.AddTile(TileID.DemonAltar);
+            recipe2.Register();
         }
     }
 }

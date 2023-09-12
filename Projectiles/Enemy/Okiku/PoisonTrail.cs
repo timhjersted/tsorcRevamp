@@ -41,18 +41,19 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
-        float timer = 0;
+        float waitTimer = 0;
         float fixedSpeed = 1;
         public bool FinalStandMode = false;
         Vector2 trailVelocity;
         List<Vector2> trailVelocities;
         public override void AI()
         {
-            timer++;
-            float timerLimit = 45;
+            waitTimer++;
+            float waitTimerLimit = 45;
             if (Projectile.ai[0] == 2)
             {
-                if(timer == 1)
+                //Special ring mode during his final phase
+                if(waitTimer == 1)
                 {
                     Projectile.timeLeft = 800;
                     fadeOut = 0;
@@ -70,7 +71,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 }
                 else
                 {
-                    if(timer < 90 && fixedSpeed < 2)
+                    if(waitTimer < 90 && fixedSpeed < 2)
                     {
                         fixedSpeed += 0.01f;
                     }
@@ -92,12 +93,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             }
             else
             {
-                //A phase is 900 seconds long
-                //Once that is over, stop adding new positions
-                if (timer <= timerLimit)
+                //Normal sweeping mode
+                //If the 'wait timer' isn't up, then chill out
+                if (waitTimer <= waitTimerLimit)
                 {
                     if (!initialized)
                     {
+                        if(Projectile.timeLeft > 450)
+                        {
+                            Projectile.timeLeft = 450;
+                        }
+
                         trailVelocities = new List<Vector2>();
                         Initialize();
                     }
@@ -176,12 +182,20 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 }
                 else
                 {
+                    //Once the 'wait timer' is up, sweep toward the player
                     Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
                     if (trailVelocity == Vector2.Zero)
                     {
                         if (target != null)
                         {
-                            trailVelocity = UsefulFunctions.Aim(trailPositions[trailPositions.Count / 2], target.Center, 5f);
+                            //Calculate the vector from the middle of the trail aimed at the player, that makes the whole trail move in one direction
+                            trailVelocity = UsefulFunctions.Aim(trailPositions[trailPositions.Count / 2], target.Center, 5f); 
+
+                            for (int i = 0; i < trailPositions.Count; i++)
+                            {
+                                //The vector that makes each specific trail point move at the player
+                                trailVelocities[i] += UsefulFunctions.Aim(trailPositions[i], target.Center, 5f);
+                            }
                         }
                     }
                     else
@@ -189,7 +203,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                         //These *must* be done one then the other. Otherwise adding velocities in between adding new trail points can cause new trail points to be added infinitely.
                         for (int i = 0; i < trailPositions.Count; i++)
                         {
-                            trailPositions[i] += trailVelocity.RotatedBy(MathHelper.Pi  * (-0.5 + ((float)i / (float) trailPositions.Count)));
+                            //Mix them together at a ratio of 1:3
+                            trailPositions[i] += Vector2.Lerp(trailVelocity.RotatedBy(MathHelper.Pi * (-0.5 + ((float)i / (float)trailPositions.Count))), trailVelocities[i], 0.75f); 
                         }
 
                         for (int i = 0; i < trailPositions.Count; i++)
