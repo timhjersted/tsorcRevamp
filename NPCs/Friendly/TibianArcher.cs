@@ -87,11 +87,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.ThrowingSpearCrate>()) {
-                shopCustomPrice = 8,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            });
-
             shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.WoodenArrowCrate>()) {
                 shopCustomPrice = 6,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
@@ -121,28 +116,29 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopCustomPrice = 250,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
-
-            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.FrostburnArrowCrate>()) {
-                shopCustomPrice = 12,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            });
-
-            shop.Add(new Item(ModContent.ItemType<Items.Accessories.Ranged.InfinityEdge>())
-            {
-                shopCustomPrice = 1300,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            },
-            Condition.DownedEyeOfCthulhu);
-
+            
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Ranged.Crossbow>()) {
                 shopCustomPrice = 75,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-
+            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.FrostburnArrowCrate>()) {
+                shopCustomPrice = 12,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            },
+            Condition.DownedEyeOfCthulhu);
 
             shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.UnholyArrowCrate>()) {
                 shopCustomPrice = 25,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            },
+            Condition.DownedEyeOfCthulhu);
+
+
+
+            shop.Add(new Item(ModContent.ItemType<Items.Accessories.Ranged.InfinityEdge>())
+            {
+                shopCustomPrice = 1300,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             },
             Condition.DownedEyeOfCthulhu);

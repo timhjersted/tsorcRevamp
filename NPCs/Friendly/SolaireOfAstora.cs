@@ -98,11 +98,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ItemID.BladedGlove) {
-                shopCustomPrice = 50, 
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            });
-
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Broadswords.SunBlade>()) {
                 shopCustomPrice = 1000, 
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId,
@@ -126,12 +121,6 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ModContent.ItemType<Items.Armors.Melee.AncientGoldenGreaves>()) {
                 shopCustomPrice = 33, 
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            });
-
-            shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.ThrowingAxeCrate>())
-            {
-                shopCustomPrice = 8,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
