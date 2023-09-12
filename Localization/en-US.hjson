@@ -393,7 +393,7 @@ Mods: {
 
 		Items: {
 			VanillaItems: {
-				LockedCrates: "[c/383838:Cursed] by a ferocious [c/009400:Hunter]"
+				LockedCrates: "[c/383838:Cursed] by a ferocious [c/009400:Hunter](Can't be opened until later update)"
 				ObsidianSkinPotion: "{$CommonItemTooltip.Limited}"
 				SuspiciousLookingEye:
 					'''

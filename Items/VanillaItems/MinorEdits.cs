@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.VanillaItems
@@ -26,6 +27,10 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.useTime = 15;
                 item.useAnimation = 15;
+            }
+            if (item.type == ItemID.OasisCrate || item.type == ItemID.OasisCrateHard || item.type == ItemID.DungeonFishingCrate || item.type == ItemID.DungeonFishingCrateHard)
+            {
+                ItemID.Sets.OpenableBag[item.type] = false;
             }
         }
         public override void GrabRange(Item item, Player player, ref int grabRange)

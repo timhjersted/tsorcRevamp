@@ -754,7 +754,8 @@ namespace tsorcRevamp.Items
             };
         }
 
-        public override void OnConsumeItem(Item item, Player player) {
+        public override void OnConsumeItem(Item item, Player player) 
+        {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.consumedPotions ??= new Dictionary<ItemDefinition, int>();
 
@@ -813,14 +814,6 @@ namespace tsorcRevamp.Items
 
 
             return base.UseItem(item, player);
-        }
-        public override bool CanRightClick(Item item)
-        {
-            if ((item.type == ItemID.OasisCrate || item.type == ItemID.OasisCrateHard || item.type == ItemID.DungeonFishingCrate || item.type == ItemID.DungeonFishingCrateHard) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
-            {
-                return false;
-            }
-            return base.CanRightClick(item);
         }
     }
 }
