@@ -92,8 +92,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
 		{
 			Recipe recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<DamagedMechanicalScrap>());
-			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
-			recipe.AddIngredient(ItemID.SoulofFright, 5);
+			recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+			recipe.AddIngredient(ItemID.SoulofFright, 15);
 
 			recipe.AddTile(TileID.DemonAltar);
 			recipe.Register();
