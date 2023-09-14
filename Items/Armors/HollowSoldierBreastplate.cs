@@ -34,7 +34,8 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.lifeRegen = 0;
+            player.lifeRegenCount = 0;
+            player.lifeRegenTime = 0;
             player.GetDamage(DamageClass.Generic) *= 1f + DmgMult / 100f;
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + MaxStamina / 100f;
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1f + StaminaRegen / 100f;
