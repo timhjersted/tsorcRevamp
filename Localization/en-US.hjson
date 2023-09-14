@@ -6925,6 +6925,7 @@ Mods: {
 				DisplayName: Scorching Point
 				Tooltip:
 					'''
+					[c/FF0000:WIP DON'T USE AS A PLAYER]
 					Summons an ashen dragon which will chase after your cursor and breathe fire at nearby enemies
 					Summons fireballs which rotate around you and damage enemies in their way
 					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
@@ -6949,6 +6950,7 @@ Mods: {
 				DisplayName: Interstellar Vessel Gauntlet
 				Tooltip:
 					'''
+					[c/FF0000:WIP DON'T USE AS A PLAYER]
 					Summons an interstellar vessel which will chase after your cursor and breathe fire at nearby enemies
 					Summons spaceships which rotate around you and damage enemies in their way
 					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
@@ -6976,6 +6978,7 @@ Mods: {
 				DisplayName: Center of the Universe
 				Tooltip:
 					'''
+					[c/FF0000:WIP DON'T USE AS A PLAYER]
 					Summons the Star Forger which will chase after your cursor and breathe fire at nearby enemies
 					Summons stars which rotate around you and damage enemies in their way
 					Applies the Sunburn debuff, increasing minion crit chance
