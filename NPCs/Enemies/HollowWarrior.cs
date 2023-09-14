@@ -743,7 +743,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 if (NPC.direction == 1) //if enemy facing right
                 {
-                    if (projectile.oldPosition.X < NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if hit in the back
+                    if (projectile.oldPosition.X < NPC.Center.X && projectile.aiStyle != 19) //if hit in the back
                     {
                         CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
                         modifiers.FinalDamage *= 2; //bonus damage
@@ -758,7 +758,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 else //if enemy facing left
                 {
-                    if (projectile.oldPosition.X > NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if hit in the back
+                    if (projectile.oldPosition.X > NPC.Center.X &&  projectile.aiStyle != 19) //if hit in the back
                     {
                         CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
                         modifiers.FinalDamage *= 2; //bonus damage
