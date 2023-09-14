@@ -264,7 +264,7 @@ Mods: {
 
 		UI: {
 			Souls: Souls
-			StaminaUse: "Stamine Use: "
+			StaminaUse: "Stamina Use: "
 			14: "14"
 			StaminaRegenReduction:
 				'''
