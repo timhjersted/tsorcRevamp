@@ -104,7 +104,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ModContent.ItemType<Items.Potions.GreenBlossom>())
             {
-                shopCustomPrice = 6,
+                shopCustomPrice = 10,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
@@ -116,7 +116,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ItemID.WormholePotion)
             {
-                shopCustomPrice = 20,
+                shopCustomPrice = 5,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
