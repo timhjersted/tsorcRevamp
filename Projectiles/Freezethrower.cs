@@ -38,7 +38,6 @@ namespace tsorcRevamp.Projectiles
         float size = 0;
         Vector2 truePosition;
         float maxSize = 1000;
-        bool initialized = false;
         float fadeIn;
         float trueSize = 1;
         public override void AI()
