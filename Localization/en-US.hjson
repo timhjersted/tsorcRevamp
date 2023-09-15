@@ -208,7 +208,7 @@ Mods: {
 			Death: The fated day of your death has arrived.
 			QueenSlime: Queen Slime emerges from her Hallowed cave!
 			GreatRedKnightInvasion: A Great Red Knight has invaded your world!
-			Deerclops: The Ancenstral Spirit has been disturbed!
+			Deerclops: The Ancestral Spirit has been disturbed!
 			SkeletronHidden: Skeletron, Lord of Graves, has awoken!
 			EoC: The Eye sees you!
 			EoW: The Eater of Worlds is ready to feed!
@@ -393,7 +393,7 @@ Mods: {
 
 		Items: {
 			VanillaItems: {
-				LockedCrates: "[c/383838:Cursed] by a ferocious [c/009400:Hunter](Can't be opened until later update)"
+				LockedCrates: "[c/383838:Cursed] by a ferocious [c/009400:Hunter]"
 				ObsidianSkinPotion: "{$CommonItemTooltip.Limited}"
 				SuspiciousLookingEye:
 					'''
@@ -8853,6 +8853,11 @@ Mods: {
 			TheDestroyer.HullGlow: The Destroyer's hull begins glowing fiercely...
 			SkeletronPrime.Warning: WARNING: Laser power redirected......
 
+			Deerclops: {
+				TypeName: Ancestral Spirit
+				DespawnHandler: The Ancestral Spirit drags your broken body back to its den...
+			}
+
 			EmpressOfLight: {
 				Forcefield: Somewhere in the sky a forcefield collapses...
 				DespawnHandler: The Goddess of Light has returned to the sun
@@ -8871,7 +8876,6 @@ Mods: {
 			BrainOfCthulhu.DespawnHandler: The Brain grows bored of your weakness...
 			QueenBee.DespawnHandler: The Queen returns to her hive victorious...
 			Skeletron.DespawnHandler: Skeletron has fed off your death and grown satisfied...
-			Deerclops.DespawnHandler: Deerclops drags your broken body back to its den...
 			WallOfFlesh.DespawnHandler: The Wall's rage is satisfied...
 			QueenSlime.DespawnHandler: Queen Slime returns to her throne...
 			Destroyer.DespawnHandler: The Destroyer returns to the depths of the corruption...
@@ -10117,6 +10121,16 @@ Mods: {
 						Bonfirefly teasing you about a Bonfire which you can't reach yet?
 						This slider controls Bonfirefly's volume.
 						Set to 0 to disable Bonfirefly sounds.
+						'''
+				}
+
+				BotCMechanicsVolume: {
+					Label: Bearer of the Curse Class Mechanics Volume
+					Tooltip:
+						'''
+						Are the new Curse Bearer mechanics too loud or simply annoying?
+						This slider controls their volume.
+						Set to 0 to disable them.
 						'''
 				}
 

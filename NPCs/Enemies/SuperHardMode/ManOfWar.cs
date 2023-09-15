@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.DataStructures;
+using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -50,7 +51,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 NPC.knockBackResist = 0.3f;
             }
         }
-
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OilPot>(), 1, 1, 5));
+        }
         public override void AI()
         {
             DrawOffsetY = 20;

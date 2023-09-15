@@ -10,6 +10,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using Terraria.DataStructures;
+using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -366,7 +367,9 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OilPot>(), 1, 1, 4));
             npcLoot.Add(ItemDropRule.Common(ItemID.ShinePotion, 55));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 50));
             npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 35));

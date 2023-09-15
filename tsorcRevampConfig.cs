@@ -141,6 +141,11 @@ namespace tsorcRevamp
         [DefaultValue(100)]
         public uint BonfireFlyVolume { get; set; }
 
+        [BackgroundColor(60, 140, 80, 192)]
+        [Range(0, 100)]
+        [DefaultValue(100)]
+        public float BotCMechanicsVolume { get; set; }
+
         /*
         [Label("Auto-Update Adventure Map")]
         [BackgroundColor(60, 140, 80, 192)]

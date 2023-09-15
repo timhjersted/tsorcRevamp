@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -94,6 +96,11 @@ namespace tsorcRevamp.NPCs.Enemies
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, 98, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 70, default(Color), .8f);
                 }
             }
+        }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OilPot>(), 1, 1, 3));
         }
 
         //TO-DO

@@ -8852,6 +8852,11 @@ Mods: {
 			TheDestroyer.HullGlow: 毁灭者的身体发出耀眼的光芒......
 			SkeletronPrime.Warning: WARNING: 激光重定向......
 
+			Deerclops: {
+				// TypeName: Ancestral Spirit
+				DespawnHandler: 远古巨鹿将你破碎的身体拖回巢穴...
+			}
+
 			EmpressOfLight: {
 				Forcefield: 在天空的某个地方，一个力场坍塌了...
 				DespawnHandler: 光之女皇隐入太阳
@@ -8870,7 +8875,6 @@ Mods: {
 			BrainOfCthulhu.DespawnHandler: 克苏鲁之脑玩腻了，你太弱啦...
 			QueenBee.DespawnHandler: 蜂后大胜而归...
 			Skeletron.DespawnHandler: 骷髅王从你的死亡中得到了满足...
-			Deerclops.DespawnHandler: 远古巨鹿将你破碎的身体拖回巢穴...
 			WallOfFlesh.DespawnHandler: 血肉之墙的怒火得到了平息...
 			QueenSlime.DespawnHandler: 史莱姆女皇重返王位...
 			Destroyer.DespawnHandler: 毁灭者重回腐败的深处...
@@ -10116,6 +10120,16 @@ Mods: {
 						这个滑块控制篝火虫的音量。
 						设置为0禁用篝火虫声音。
 						'''
+				}
+
+				BotCMechanicsVolume: {
+					// Label: Bearer of the Curse Class Mechanics Volume
+					/* Tooltip:
+						'''
+						Are the new Curse Bearer mechanics too loud or simply annoying?
+						This slider controls their volume.
+						Set to 0 to disable them.
+						''' */
 				}
 
 				Headers: {

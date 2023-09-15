@@ -98,8 +98,7 @@ namespace tsorcRevamp
             UpdateResource();
         }
 
-
-        const float BoomerangDrainPerFrame = 0.6f;
+        //const float BoomerangDrainPerFrame = 0.6f;
         const float HeldProjectileDrainPerFrame = 1f;
         const float SpecialHeldProjectileDrainPerFrame = 0.6f;
         const float FlailDrainPerFrame = 0.4f;
@@ -138,12 +137,12 @@ namespace tsorcRevamp
 
                     //why did shortswords have a special per-frame drain in addition to their normal drain?
 
-                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == ProjAIStyleID.Boomerang) //Can't have boomerangs just not use any stamina, especially weapons like Bananarangs and Possessed Hatchet(their individual throws just do not use stamina currently)
+                    /*if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == ProjAIStyleID.Boomerang) //Can't have boomerangs just not use any stamina, especially weapons like Bananarangs and Possessed Hatchet(their individual throws just do not use stamina currently)
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0.34f;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= BoomerangDrainPerFrame;
                         break;
-                    }
+                    }*/
 
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.VortexBeater 
                         || Main.projectile[p].type == ProjectileID.Celeb2Weapon || Main.projectile[p].type == ProjectileID.FlyingKnife 
@@ -253,7 +252,8 @@ namespace tsorcRevamp
             staminaResourceCurrent = Utils.Clamp(staminaResourceCurrent, 0, staminaResourceMax2);
         }
 
-        static readonly List<int> HeldProjectileWeapons = new() {
+        static readonly List<int> HeldProjectileWeapons = new() 
+        {
             ItemID.Terragrim,
             ItemID.Arkhalis,
             ItemID.ChargedBlasterCannon,
@@ -269,12 +269,15 @@ namespace tsorcRevamp
             ItemID.ShadowFlameKnife
         };
 
-        static readonly List<int> SpecialHeldProjectileWeapons = new() {
+        static readonly List<int> SpecialHeldProjectileWeapons = new() 
+        {
             ItemID.ChainGuillotines,
             ItemID.PiranhaGun
         };
-        private class tsrStaminaGlobalItem : GlobalItem {
-            public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
+        private class tsrStaminaGlobalItem : GlobalItem 
+        {
+            public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) 
+            {
                 if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) return;
                 if (!ModContent.GetInstance<tsorcRevampConfig>().ShowStaminaTooltip) return;
                 if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.DamageType == DamageClass.Summon) return;
@@ -293,24 +296,28 @@ namespace tsorcRevamp
                 float drainPerFrame = 0f;
                 bool preventsRegen = false;
                 bool inhibitsRegen = false;
-                switch (shot.aiStyle) {
-                    case ProjAIStyleID.Boomerang: {
-                        drainPerFrame = BoomerangDrainPerFrame;
-                        inhibitsRegen = true;
-                        break;
-                    }
-                    case ProjAIStyleID.Flail: {
-                        drainPerFrame = FlailDrainPerFrame;
-                        preventsRegen = true;
-                        break;
-                    }
-                    case ProjAIStyleID.Yoyo: {
-                        drainPerFrame = YoyoDrainPerFrame;
-                        preventsRegen = true;
-                        break;
-                    }
+                switch (shot.aiStyle)
+                {
+                    /*case ProjAIStyleID.Boomerang:
+                        {
+                            drainPerFrame = BoomerangDrainPerFrame;
+                            inhibitsRegen = true;
+                            break;
+                        }*/
+                    case ProjAIStyleID.Flail:
+                        {
+                            drainPerFrame = FlailDrainPerFrame;
+                            preventsRegen = true;
+                            break;
+                        }
+                    case ProjAIStyleID.Yoyo:
+                        {
+                            drainPerFrame = YoyoDrainPerFrame;
+                            preventsRegen = true;
+                            break;
+                        }
                     default: break;
-                        
+
                 }
                 #endregion
 

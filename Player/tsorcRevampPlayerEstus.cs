@@ -19,7 +19,7 @@ namespace tsorcRevamp
         }
 
 
-        public int estusChargesCurrent; //Current amount of charges left
+        public int estusChargesCurrent = 3; //Current amount of charges left
         public const int DefaultEstusChargesMax = 3; //How many charges the player starts with
         public int estusChargesMax; //The max amount of charges the player has
                                     //public int estusChargesMax2; //The temporary amount of charges left

@@ -14,74 +14,167 @@ namespace tsorcRevamp.Items.VanillaItems
 {
     class MeleeEdits : GlobalItem
     {
-        public static int ManaBase1 = 40;
-        public static int ManaBase2 = 20;
-        public static int ManaBase3 = 50;
         public static int ManaDelay = 720;
         public override void SetDefaults(Item item)
         {
             SetMeleeSlashColor(item);
 
-            if (item.type == ItemID.DayBreak)
+            if (item.type == ItemID.WoodenBoomerang)
             {
-                item.mana = 88;
+                item.mana = 5;
             }
-            if (item.type == ItemID.Terrarian)
+            if (item.type == ItemID.EnchantedBoomerang)
             {
-                item.mana = ManaBase1;
+                item.mana = 7;
+            }
+            if (item.type == ItemID.Shroomerang)
+            {
+                item.mana = 7;
+            }
+            if (item.type == ItemID.IceBoomerang)
+            {
+                item.mana = 6;
+            }
+            if (item.type == ItemID.Trimarang)
+            {
+                item.mana = 6;
+            }
+            if (item.type == ItemID.IceBlade)
+            {
+                item.mana = 8;
+            }
+            if (item.type == ItemID.EnchantedSword)
+            {
+                item.mana = 9;
+            }
+            if (item.type == ItemID.FruitcakeChakram)
+            {
+                item.mana = 5;
+            }
+            if (item.type == ItemID.BloodyMachete)
+            {
+                item.mana = 4;
+            }
+            if (item.type == ItemID.ThunderSpear)
+            {
+                item.mana = 7;
+            }
+            if (item.type == ItemID.Starfury)
+            {
+                item.mana = 10;
+            }
+            if (item.type == ItemID.LightsBane)
+            {
+                item.mana = 9;
+            }
+            if (item.type == ItemID.BladeofGrass)
+            {
+                item.mana = 13;
+            }
+            if (item.type == ItemID.ThornChakram)
+            {
+                item.mana = 8;
+            }
+            if (item.type == ItemID.CombatWrench)
+            {
+                item.mana = 9;
+            }
+            if (item.type == ItemID.Flamarang)
+            {
+                item.mana = 10;
             }
             if (item.type == ItemID.NightsEdge)
             {
-                item.mana = 25;
+                item.mana = 20;
             }
-            if (item.type == ItemID.TrueNightsEdge)
+            if (item.type == ItemID.FlyingKnife)
             {
-                item.damage = 85;
-                item.mana = 35;
+                item.mana = 20;
+            }
+            if (item.type == ItemID.BeamSword)
+            {
+                item.mana = 15;
+            }
+            if (item.type == ItemID.Frostbrand)
+            {
+                item.mana = 14;
+            }
+            if (item.type == ItemID.Bananarang)
+            {
+                item.mana = 14;
+            }
+            if (item.type == ItemID.LightDisc)
+            {
+                item.mana = 16;
+            }
+            if (item.type == ItemID.BouncingShield)
+            {
+                item.mana = 22;
             }
             if (item.type == ItemID.Excalibur)
             {
-                item.mana = 24;
+                item.mana = 20;
             }
             if (item.type == ItemID.TrueExcalibur)
             {
                 item.damage = 75;
-                item.mana = 30;
+                item.mana = 26;
+            }
+            if (item.type == ItemID.TrueNightsEdge)
+            {
+                item.damage = 85;
+                item.mana = 33;
+            }
+            if (item.type == ItemID.PossessedHatchet)
+            {
+                item.mana = 20;
+            }
+            if (item.type == ItemID.PaladinsHammer)
+            {
+                item.mana = 20;
             }
             if (item.type == ItemID.TerraBlade)
             {
-                item.mana = ManaBase1;
+                item.mana = 35;
             }
             if (item.type == ItemID.TheHorsemansBlade)
             {
                 item.damage = 200;
                 item.useTime = 20;
                 item.useAnimation = 20;
-                item.mana = 25;
+                item.mana = 28;
             }
             if (item.type == ItemID.DD2SquireBetsySword)
             {
-                item.mana = 20;
+                item.mana = 22;
+            }
+            if (item.type == ItemID.PiercingStarlight)
+            {
+                item.damage = 50;
             }
             if (item.type == ItemID.VampireKnives)
             {
                 item.mana = 35;
             }
-            if (item.type == ItemID.IceBlade | item.type == ItemID.EnchantedSword | item.type == ItemID.BeamSword | item.type == ItemID.Frostbrand | item.type == ItemID.Starfury)
+            if (item.type == ItemID.ScourgeoftheCorruptor)
             {
-                item.mana = ManaBase1;
+                item.mana = 17;
             }
-            if (item.type == ItemID.LightsBane | item.type == ItemID.BladeofGrass)
+            if (item.type == ItemID.DayBreak)
             {
-                item.mana = ManaBase2;
+                item.mana = 40;
             }
-            if (item.type == ItemID.Meowmere | item.type == ItemID.StarWrath)
+            if (item.type == ItemID.Terrarian)
             {
-                item.mana = ManaBase3;
+                item.mana = 50;
             }
-            if (item.type == ItemID.PiercingStarlight)
+            if (item.type == ItemID.Meowmere)
             {
-                item.damage = 50;
+                item.mana = 50;
+            }
+            if (item.type == ItemID.StarWrath)
+            {
+                item.mana = 60;
             }
         }
 

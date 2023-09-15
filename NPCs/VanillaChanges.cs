@@ -3173,6 +3173,14 @@ namespace tsorcRevamp.NPCs
 
         #endregion
 
+        public override void ModifyTypeName(NPC npc, ref string typeName)
+        {
+            if (npc.type == NPCID.Deerclops)
+            {
+                typeName = LangUtils.GetTextValue("NPCs.Deerclops.TypeName");
+            }
+        }
+
 
         //BLOCKED NPCS
         public override void AI(NPC npc)

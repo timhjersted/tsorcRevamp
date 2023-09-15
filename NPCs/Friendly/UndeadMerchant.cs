@@ -7,6 +7,7 @@ using Terraria.ModLoader.Config;
 using Terraria.Utilities;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -75,6 +76,12 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.Add(new Item(ModContent.ItemType<CharcoalPineResin>())
             {
                 shopCustomPrice = 20,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+            shop.Add(new Item(ModContent.ItemType<OilPot>())
+            {
+                shopCustomPrice = 5,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 

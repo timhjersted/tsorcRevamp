@@ -178,6 +178,9 @@ namespace tsorcRevamp
 
         public override void Load()
         {
+            TextureAssets.Npc[NPCID.Deerclops] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/AncestorSpirit");
+            TextureAssets.NpcHeadBoss[39] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/AncestorSpirit_Head_Boss");
+
             toggleDragoonBoots = KeybindLoader.RegisterKeybind(this, "Dragoon Boots", Microsoft.Xna.Framework.Input.Keys.Z);
             reflectionShiftKey = KeybindLoader.RegisterKeybind(this, "Reflection Shift", Microsoft.Xna.Framework.Input.Keys.O);
             DodgerollKey = KeybindLoader.RegisterKeybind(this, "Dodge Roll", Microsoft.Xna.Framework.Input.Keys.LeftAlt);
@@ -993,6 +996,8 @@ namespace tsorcRevamp
 
         public override void Unload()
         {
+            TextureAssets.Npc[NPCID.Deerclops] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.Deerclops}");
+            TextureAssets.NpcHeadBoss[39] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_Head_Boss_39");
             tsorcItemDropRuleConditions.SuperHardmodeRule       = null;
             tsorcItemDropRuleConditions.FirstBagRule            = null;
             tsorcItemDropRuleConditions.CursedRule              = null;
