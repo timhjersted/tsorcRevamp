@@ -42,6 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             return false;
         }
 
+
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

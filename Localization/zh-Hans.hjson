@@ -208,7 +208,7 @@ Mods: {
 			Death: 命定之死已至！
 			QueenSlime: 史莱姆女皇从她的神圣洞穴中现身！
 			GreatRedKnightInvasion: 一位卓越赭骑士入侵了你的世界！
-			Deerclops: 你惊动了远古巨鹿！
+			// Deerclops: The Ancestral Spirit has been disturbed!
 			SkeletronHidden: 坟墓之主骷髅王已苏醒！
 			EoC: 克苏鲁之眼盯上你了！
 			EoW: 世界吞噬者已经准备好饱餐一顿！
@@ -7290,17 +7290,17 @@ Mods: {
 				Tooltip: ""
 			}
 
-			AncestorSpiritRelic: {
+			AncestralSpiritRelic: {
 				DisplayName: 远古巨鹿圣物
 				Tooltip: ""
 			}
 
-			AncestorSpiritTrophy: {
+			AncestralSpiritTrophy: {
 				DisplayName: 远古巨鹿纪念章
 				Tooltip: ""
 			}
 
-			AncestorSpiritMask: {
+			AncestralSpiritMask: {
 				DisplayName: 远古巨鹿面具
 				Tooltip: ""
 			}
@@ -7436,6 +7436,11 @@ Mods: {
 			CreateJSON: {
 				DisplayName: 生成 soapstone_en-us.json
 				Tooltip: ""
+			}
+
+			AncestralSpiritBag: {
+				// DisplayName: Ancestral Spirit Bag
+				// Tooltip: ""
 			}
 		}
 
@@ -8852,8 +8857,8 @@ Mods: {
 			TheDestroyer.HullGlow: 毁灭者的身体发出耀眼的光芒......
 			SkeletronPrime.Warning: WARNING: 激光重定向......
 
-			Deerclops: {
-				// TypeName: Ancestral Spirit
+			AncestralSpirit: {
+				DisplayName: Ancestral Spirit
 				DespawnHandler: 远古巨鹿将你破碎的身体拖回巢穴...
 			}
 

@@ -71,7 +71,7 @@ namespace tsorcRevamp.Items
                 case 5:
                     {
                         tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "ThrowingStats", LangUtils.GetTextValue("Items.AdventurersCard.Throwing",
-                            (int)(player.GetTotalDamage(DamageClass.Throwing).ApplyTo(100)), (int)player.GetTotalCritChance(DamageClass.Throwing), (int)(player.GetTotalAttackSpeed(DamageClass.Throwing) * 100), player.GetTotalArmorPenetration(DamageClass.Throwing))));
+                            (int)(player.GetTotalDamage(DamageClass.Throwing).ApplyTo(100)), (int)player.GetTotalCritChance(DamageClass.Throwing), (int)(player.GetTotalAttackSpeed(DamageClass.Throwing) * 100), player.GetTotalArmorPenetration(DamageClass.Throwing), player.ThrownVelocity)));
                         break;
                     }
             }

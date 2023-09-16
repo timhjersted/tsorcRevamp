@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 			Projectile.localNPCHitCooldown = -1;
 			Projectile.WhipSettings.Segments = 20;
 			Projectile.WhipSettings.RangeMultiplier = 1.42f; //only thing affecting the actual whip range
-		}
+        }
 
 		private float Timer
 		{
@@ -101,7 +101,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public float MaxChargeTime = 300; //Updates twice a tick so /2 this for the actual amount of ticks this needs
         private bool Charge(Player owner)
 		{
-            // Like other whips, this whip updates twice per frame (Projectile.extraUpdates = 1), so 120 is equal to 1 second.
+			// Like other whips, this whip updates twice per frame (Projectile.extraUpdates = 1), so 120 is equal to 1 second.
             if (!owner.channel || ChargeTime >= MaxChargeTime)
             {
                 return true; // finished charging

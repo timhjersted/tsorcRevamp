@@ -16,6 +16,7 @@ using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.NPCs.Bosses;
 
 namespace tsorcRevamp
 {
@@ -132,7 +133,7 @@ namespace tsorcRevamp
             QueenSlimeEvent,
             GreatRedKnightTropicalIsland,
             GreatRedKnightInDesert,
-            Deerclops,
+            AncestralSpirit,
             SkeletronHidden,
             AlienAmbush,
             EoC,
@@ -237,8 +238,8 @@ namespace tsorcRevamp
             GreatRedKnightInDesert.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion, ModContent.ItemType<HolyWarElixir>() }, new List<int>() { 5, 3, 1 });
             GreatRedKnightInDesert.SetCustomStats(null, null, null, 20000);
 
-            //Deerclops
-            ScriptedEvent DeerclopsEvent = new ScriptedEvent(new Vector2(4043, 143), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.Deerclops"), Color.Blue, false, null, SetNightCustomAction);
+            //Ancestral Spirit
+            ScriptedEvent AncestralSpiritEvent = new ScriptedEvent(new Vector2(4043, 143), 30, ModContent.NPCType<AncestralSpirit>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.Blue, false, null, SetNightCustomAction);
 
             //SkeletronHidden
             ScriptedEvent SkeletronHiddenEvent = new ScriptedEvent(new Vector2(5563, 1676), 16, NPCID.SkeletronHead, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.SkeletronHidden"), Color.Blue, false, null, SetNightCustomAction);
@@ -498,7 +499,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.BlackKnightHallowed, BlackKnightHallowed},
                 {ScriptedEventType.GreatRedKnightTropicalIsland, GreatRedKnightTropicalIsland},
                 {ScriptedEventType.GreatRedKnightInDesert, GreatRedKnightInDesert},
-                {ScriptedEventType.Deerclops, DeerclopsEvent},
+                {ScriptedEventType.AncestralSpirit, AncestralSpiritEvent},
                 {ScriptedEventType.OldManEvent, OldManEvent},
                 {ScriptedEventType.SkeletronHidden, SkeletronHiddenEvent},
                 {ScriptedEventType.AlienAmbush, AlienAmbush},

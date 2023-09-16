@@ -178,8 +178,8 @@ namespace tsorcRevamp
 
         public override void Load()
         {
-            TextureAssets.Npc[NPCID.Deerclops] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/AncestorSpirit");
-            TextureAssets.NpcHeadBoss[39] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/AncestorSpirit_Head_Boss");
+            TextureAssets.Npc[NPCID.Deerclops] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/AncestralSpirit");
+            TextureAssets.NpcHeadBoss[39] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/AncestralSpirit_Head_Boss");
 
             toggleDragoonBoots = KeybindLoader.RegisterKeybind(this, "Dragoon Boots", Microsoft.Xna.Framework.Input.Keys.Z);
             reflectionShiftKey = KeybindLoader.RegisterKeybind(this, "Reflection Shift", Microsoft.Xna.Framework.Input.Keys.O);
@@ -403,7 +403,7 @@ namespace tsorcRevamp
             {
                 ModContent.TileType<NecromancyAltarTile>(),
                 ModContent.TileType<EnemyBannerTile>(),
-                ModContent.TileType<AncestorSpiritTrophyTile>(), ModContent.TileType<AncestorSpiritRelicTile>(),
+                ModContent.TileType<AncestralSpiritTrophyTile>(), ModContent.TileType<AncestralSpiritRelicTile>(),
                 ModContent.TileType<TheRageTrophyTile>(), ModContent.TileType<TheRageRelicTile>(),
                 ModContent.TileType<TheSorrowTrophyTile>(), ModContent.TileType<TheSorrowRelicTile>(),
                 ModContent.TileType<TheHunterTrophyTile>(), ModContent.TileType<TheHunterRelicTile>(),
@@ -695,6 +695,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<SlograBag>()                , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<GaibonBag>()                , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<JungleWyvernBag>()          , BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<AncestralSpiritBag>()       , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<AncientDemonBag>()          , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<HeroOfLumeliaBag>()         , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<TheRageBag>()               , BossExtras.DarkSoulsOnly      },

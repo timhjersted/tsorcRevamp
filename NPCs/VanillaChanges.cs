@@ -1962,8 +1962,6 @@ namespace tsorcRevamp.NPCs
                 #region Deerclops
                 case (NPCID.Deerclops):
                     {
-                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Deerclops.DespawnHandler"), Color.White, DustID.Snow);
-
                         npc.value = 103520; //is dearclops that hard?
                         break;
                     }
@@ -3173,13 +3171,13 @@ namespace tsorcRevamp.NPCs
 
         #endregion
 
-        public override void ModifyTypeName(NPC npc, ref string typeName)
+        /*public override void ModifyTypeName(NPC npc, ref string typeName)
         {
             if (npc.type == NPCID.Deerclops)
             {
                 typeName = LangUtils.GetTextValue("NPCs.Deerclops.TypeName");
             }
-        }
+        }*/
 
 
         //BLOCKED NPCS

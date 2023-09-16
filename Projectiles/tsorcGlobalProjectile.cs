@@ -66,6 +66,7 @@ namespace tsorcRevamp.Projectiles
             base.OnSpawn(projectile, source);
         }*/
         public override bool InstancePerEntity => true;
+        public bool ChargedWhip = false;
         public static float WhipVolume = 0.4f;
         public static float WhipPitch = 0.3f;
         public bool AppliedLethalTempo = false;
@@ -373,18 +374,30 @@ namespace tsorcRevamp.Projectiles
             }
             if (projectile.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[projectile.type] && modPlayer.BearerOfTheCurse && !AppliedConqueror)
             {
-                if (modPlayer.BotCConquerorStacks < modPlayer.BotCConquerorMaxStacks - 1)
+                if (modPlayer.BotCConquerorStacks < modPlayer.BotCConquerorMaxStacks - 1 && !hit.Crit)
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume / 100f * 0.2f }, player.Center);
+                }
+                else if (modPlayer.BotCConquerorStacks < modPlayer.BotCConquerorMaxStacks - 2 && hit.Crit)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume / 100f * 0.3f }, player.Center);
                 }
                 else if (modPlayer.BotCConquerorStacks == modPlayer.BotCConquerorMaxStacks - 1)
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume / 100f * 1f }, player.Center);
                 }
-                player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
+                else if (modPlayer.BotCConquerorStacks == modPlayer.BotCConquerorMaxStacks - 2 && hit.Crit)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume / 100f * 1f }, player.Center);
+                }
+                player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60); 
+                if (hit.Crit)
+                {
+                    player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
+                }
                 AppliedConqueror = true;
             }
-            if (projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse)
+            if (projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse && projectile.friendly)
             {
                 HitSomething = true;
             }
@@ -522,7 +535,7 @@ namespace tsorcRevamp.Projectiles
                 owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady = false;
                 owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = false;
             }
-            if (projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse
+            if (projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse && projectile.friendly
                 && projectile.type != ProjectileID.ChlorophyteBullet && projectile.type != ProjectileID.ChlorophyteArrow && projectile.type != ModContent.ProjectileType<ElfinArrow>() //add any ranged homing projectiles
                 && projectile.aiStyle != ProjAIStyleID.SmallFlying)
             {

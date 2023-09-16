@@ -121,6 +121,10 @@ namespace tsorcRevamp
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item21 with { Volume = 0.5f }, Player.position);
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item3, Player.position);
+                if (Player.HasBuff(BuffID.ManaSickness))
+                {
+                    Player.DelBuff(Player.FindBuffIndex(BuffID.ManaSickness));
+                }
 
                 for (int i = 0; i <= 15; i++)
                 {

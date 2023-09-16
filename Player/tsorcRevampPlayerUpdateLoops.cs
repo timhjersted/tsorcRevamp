@@ -29,6 +29,7 @@ using Terraria.Audio;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Projectiles.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon;
+using Steamworks;
 
 namespace tsorcRevamp
 {
@@ -734,8 +735,7 @@ namespace tsorcRevamp
             #endregion
 
 
-            if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 10 && (Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.SagittariusBow>() || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.ArtemisBow>()
-                || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>() || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
+            if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 10 && (Player.HeldItem.channel = true))
             {
                 Player.channel = false;
             }
@@ -995,8 +995,11 @@ namespace tsorcRevamp
                 Player.GetCritChance(DamageClass.Ranged) -= Player.GetTotalCritChance(DamageClass.Ranged); //subtract total ranged crit chance from ranged crit chance because you can't alter total ranged crit chance
                 Player.GetCritChance(DamageClass.Ranged) += (CurrentTotalRangedCritChance + (BotCCurrentAccuracyPercent * BotCAccuracyMaxFlatCrit)) * (BotCRangedBaseCritMult + (BotCCurrentAccuracyPercent * BotCAccuracyMaxCritMult)); //return total ranged crit chance in a way that lets you multiply it with accuracy
 
-                Player.GetDamage(DamageClass.Magic) *= 1f + (BotCMagicDamageAmp / 100f);
-                Player.GetAttackSpeed(DamageClass.Magic) *= 1f + (BotCMagicAttackSpeedAmp / 100f);
+                if (!Player.HasBuff(BuffID.ManaSickness))
+                {
+                    Player.GetDamage(DamageClass.Magic) *= 1f + (BotCMagicDamageAmp / 100f);
+                    Player.GetAttackSpeed(DamageClass.Magic) *= 1f + (BotCMagicAttackSpeedAmp / 100f);
+                }
                 if (Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) || !Player.HasBuff(ModContent.BuffType<Bonfire>()))
                 {
                     Player.manaRegenDelay = 100;

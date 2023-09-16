@@ -360,7 +360,6 @@ namespace tsorcRevamp.Projectiles.Summon
 					Projectile.frame = 0;
 				}
 			}
-            //TextureAssets.Npc[NPCID.Deerclops].t
 		}
 
 		public static Effect catEffect;

@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Vanity
 {
     [AutoloadEquip(EquipType.Head)]
-    public class AncestorSpiritMask : ModItem
+    public class AncestralSpiritMask : ModItem
     {
         public override void SetStaticDefaults()
         {

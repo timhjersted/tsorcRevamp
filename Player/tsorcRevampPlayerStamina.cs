@@ -101,9 +101,9 @@ namespace tsorcRevamp
         //const float BoomerangDrainPerFrame = 0.6f;
         const float HeldProjectileDrainPerFrame = 1f;
         const float SpecialHeldProjectileDrainPerFrame = 0.6f;
-        const float FlailDrainPerFrame = 0.4f;
-        const float YoyoDrainPerFrame = 0.4f;
-        const float ChargedWhipDrainPerFrame = 0.3f;
+        const float FlailDrainPerFrame = 0.2f;
+        const float YoyoDrainPerFrame = 0.3f;
+        const float ChargedWhipDrainPerFrame = 0.2f;
 
         // Lets do all our logic for the custom resource here, such as limiting it, increasing it and so on.
         private void UpdateResource()
@@ -194,8 +194,7 @@ namespace tsorcRevamp
                         }
                     }
 
-                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ModContent.ProjectileType<SearingLashProjectile>() || Main.projectile[p].type == ModContent.ProjectileType<NightsCrackerProjectile>() || Main.projectile[p].type == ModContent.ProjectileType<TerraFallProjectile>()))
-
+                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ModContent.ProjectileType<SearingLashProjectile>() || Main.projectile[p].type == ModContent.ProjectileType<NightsCrackerProjectile>() || Main.projectile[p].type == ModContent.ProjectileType<TerraFallProjectile>()) && Player.channel)
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ChargedWhipDrainPerFrame;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;

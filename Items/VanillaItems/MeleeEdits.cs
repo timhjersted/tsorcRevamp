@@ -18,7 +18,11 @@ namespace tsorcRevamp.Items.VanillaItems
         public override void SetDefaults(Item item)
         {
             SetMeleeSlashColor(item);
-
+            if (item.type == ItemID.BoneSword)
+            {
+                item.width = 50;
+                item.height = 50;
+            }
             if (item.type == ItemID.WoodenBoomerang)
             {
                 item.mana = 5;

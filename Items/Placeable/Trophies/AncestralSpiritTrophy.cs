@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Placeable.Trophies
 {
-	public class AncestorSpiritTrophy : ModItem
+	public class AncestralSpiritTrophy : ModItem
 	{
 		public override void SetStaticDefaults() 
 		{
@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Placeable.Trophies
 
 		public override void SetDefaults() 
 		{
-			Item.DefaultToPlaceableTile(ModContent.TileType<Tiles.Trophies.AncestorSpiritTrophyTile>());
+			Item.DefaultToPlaceableTile(ModContent.TileType<Tiles.Trophies.AncestralSpiritTrophyTile>());
 
 			Item.width = 32;
 			Item.height = 32;

@@ -3655,14 +3655,14 @@ Mods: {
 					'''
 				Magic:
 					'''
-					[c/00BFFF:Magic damage is increased by {1}% and attack speed by {2}% multiplicatively.]
+					[c/00BFFF:Magic damage is increased by {1}% and attack speed by {2}% multiplicatively while NOT afflicted by Mana Sickness.]
 					[c/00BFFF:Mana regeneration is disabled but grants a Cerulean Flask to restore mana, scaling with {0}% maximum mana,]
 					[c/00BFFF:mana regen bonuses increase total mana restored and mana regen delay penalties increase total mana restoration time.]
-					[c/00BFFF:Mana Potions still work and resting at a Bonfire will restore mana.]
+					[c/00BFFF:Mana Potions still work and resting at a Bonfire will restore mana, drinking the Cerulean Flask also cures Mana Sickness.]
 					'''
 				Summon:
 					'''
-					[c/FFA500:Summon base damage is reduced to {0}%, but hitting enemies with whips will grant stacks of Conqueror,]
+					[c/FFA500:Summon base damage is reduced to {0}%, but hitting enemies with whips will grant a stack of Conqueror(2 on a crit),]
 					[c/FFA500:these increase summon damage temporarily and fall off after a few seconds, if not refreshed.]
 					[c/FFA500:Each stack grants {1}% damage, up to {2}% at the maximum of {3} stacks.]
 					[c/FFA500:Whip range is decreased by {4}%.]
@@ -7291,18 +7291,18 @@ Mods: {
 				Tooltip: ""
 			}
 
-			AncestorSpiritRelic: {
-				DisplayName: Ancestor Spirit Relic
+			AncestralSpiritRelic: {
+				DisplayName: Ancestral Spirit Relic
 				Tooltip: ""
 			}
 
-			AncestorSpiritTrophy: {
-				DisplayName: Ancestor Spirit Trophy
+			AncestralSpiritTrophy: {
+				DisplayName: Ancestral Spirit Trophy
 				Tooltip: ""
 			}
 
-			AncestorSpiritMask: {
-				DisplayName: Ancestor Spirit Mask
+			AncestralSpiritMask: {
+				DisplayName: Ancestral Spirit Mask
 				Tooltip: ""
 			}
 
@@ -7394,24 +7394,24 @@ Mods: {
 					[c/FF4500:Melee Stats:]
 					Total Damage Multiplier: {0}%
 					Critical Strike Chance: {1}%
-					Armor Penetration: {2}
-					Attack Speed: {3}%
+					Attack Speed: {2}%
+					Armor Penetration: {3}
 					'''
 				Ranged:
 					'''
 					[c/228B22:Ranged Stats:]
 					Total Damage Multiplier: {0}%
 					Critical Strike Chance: {1}%
-					Armor Penetration: {2}
-					Attack Speed: {3}%
+					Attack Speed: {2}%
+					Armor Penetration: {3}
 					'''
 				Magic:
 					'''
 					[c/00BFFF:Magic Stats:]
 					Total Damage Multiplier: {0}%
 					Critical Strike Chance: {1}%
-					Armor Penetration: {2}
-					Attack Speed: {3}%
+					Attack Speed: {2}%
+					Armor Penetration: {3}
 					'''
 				Summon:
 					'''
@@ -7429,13 +7429,20 @@ Mods: {
 					'''
 					Throwing Stats:
 					Total Damage Multiplier: {0}%
-					Critical Strike Chance: {0}%
-					Attack Speed: {0}%
+					Critical Strike Chance: {1}%
+					Attack Speed: {2}%
+					Armor Penetration: {3}
+					Throwing Velocity: {4}
 					'''
 			}
 
 			CreateJSON: {
 				DisplayName: Create J S O N
+				Tooltip: ""
+			}
+
+			AncestralSpiritBag: {
+				DisplayName: Ancestral Spirit Bag
 				Tooltip: ""
 			}
 		}
@@ -8277,7 +8284,7 @@ Mods: {
 
 			Conqueror: {
 				DisplayName: Conqueror
-				Description: Mods.tsorcRevamp.Buffs.Conqueror.Description
+				Description: Your summon damage is increased
 			}
 		}
 
@@ -8853,8 +8860,8 @@ Mods: {
 			TheDestroyer.HullGlow: The Destroyer's hull begins glowing fiercely...
 			SkeletronPrime.Warning: WARNING: Laser power redirected......
 
-			Deerclops: {
-				TypeName: Ancestral Spirit
+			AncestralSpirit: {
+				DisplayName: Ancestral Spirit
 				DespawnHandler: The Ancestral Spirit drags your broken body back to its den...
 			}
 

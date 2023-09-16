@@ -200,6 +200,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift = true;
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);
+                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.AdventurersCard>());
 
                     if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
@@ -216,6 +217,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulCoin>(), 100);
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.Lifegem>(), 10);
                     Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.StarlightShard>(), 4);
+                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.AdventurersCard>());
 
                     if (Main.netMode == NetmodeID.MultiplayerClient)
                     {

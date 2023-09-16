@@ -148,6 +148,17 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ItemID.Diamond, 1, 2, 10));
         }
     }
+    public class AncestralSpiritBag : BossBag
+    {
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ItemID.BoneHelm));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<AncestralSpiritMask>(), 7));
+        }
+    }
     public class AncientDemonBag : BossBag
     {
         public override void SetStaticDefaults()

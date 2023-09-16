@@ -5,13 +5,13 @@ using tsorcRevamp.Tiles.Relics;
 
 namespace tsorcRevamp.Items.Placeable.Relics
 {
-    public class AncestorSpiritRelic : ModItem
+    public class AncestralSpiritRelic : ModItem
     {
         public override void SetDefaults()
         {
             // Vanilla has many useful methods like these, use them! This substitutes setting Item.createTile and Item.placeStyle aswell as setting a few values that are common across all placeable items
             // The place style (here by default 0) is important if you decide to have more than one relic share the same tile type (more on that in the tiles' code)
-            Item.DefaultToPlaceableTile(ModContent.TileType<AncestorSpiritRelicTile>(), 0);
+            Item.DefaultToPlaceableTile(ModContent.TileType<AncestralSpiritRelicTile>(), 0);
 
             Item.width = 30;
             Item.height = 40;
