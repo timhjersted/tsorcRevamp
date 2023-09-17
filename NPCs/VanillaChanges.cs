@@ -16,6 +16,9 @@ using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Utilities;
 using System.Diagnostics;
+using tsorcRevamp.Items.Vanity;
+using tsorcRevamp.Items.Placeable.Relics;
+using tsorcRevamp.Items.Placeable.Trophies;
 
 namespace tsorcRevamp.NPCs
 {
@@ -1962,6 +1965,7 @@ namespace tsorcRevamp.NPCs
                 #region Deerclops
                 case (NPCID.Deerclops):
                     {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Deerclops.DespawnHandler"), Color.Gold, DustID.GoldFlame);
                         npc.value = 103520; //is dearclops that hard?
                         break;
                     }
@@ -3171,13 +3175,13 @@ namespace tsorcRevamp.NPCs
 
         #endregion
 
-        /*public override void ModifyTypeName(NPC npc, ref string typeName)
+        public override void ModifyTypeName(NPC npc, ref string typeName)
         {
             if (npc.type == NPCID.Deerclops)
             {
                 typeName = LangUtils.GetTextValue("NPCs.Deerclops.TypeName");
             }
-        }*/
+        }
 
 
         //BLOCKED NPCS
@@ -5923,6 +5927,16 @@ namespace tsorcRevamp.NPCs
         {
             if (npc.type == NPCID.CultistBoss) {
                 npcLoot.Add(ItemDropRule.BossBag(ItemID.CultistBossBag));
+            }
+
+            if (npc.type == NPCID.Deerclops){
+                npcLoot.RemoveWhere(_ => true);
+                npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.AncestralSpiritBag>()));
+                IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+                notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<AncestralSpiritMask>(), 7));
+                npcLoot.Add(notExpertCondition);
+                npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<AncestralSpiritRelic>()));
+                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AncestralSpiritTrophy>(), 10));
             }
         }
 

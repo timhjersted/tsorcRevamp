@@ -208,7 +208,7 @@ Mods: {
 			Death: 命定之死已至！
 			QueenSlime: 史莱姆女皇从她的神圣洞穴中现身！
 			GreatRedKnightInvasion: 一位卓越赭骑士入侵了你的世界！
-			// Deerclops: The Ancestral Spirit has been disturbed!
+			AncestralSpirit: 你惊扰了先祖之灵！
 			SkeletronHidden: 坟墓之主骷髅王已苏醒！
 			EoC: 克苏鲁之眼盯上你了！
 			EoW: 世界吞噬者已经准备好饱餐一顿！
@@ -3657,15 +3657,15 @@ Mods: {
 					'''
 				Magic:
 					'''
-					[c/00BFFF:乘算增加 {1}% 魔法伤害、 {2}% 攻击速度]
+					[c/00BFFF:不受魔力病减益时，乘算增加 {1}% 魔法伤害、 {2}% 攻击速度]
 					[c/00BFFF:禁用魔力的自然回复，作为补偿你获得了蓝露滴圣杯瓶，每次使用回复 {0}% 最大魔力值]
 					[c/00BFFF:魔力再生速度 转化为 增加回复的总魔力值，魔力再生延迟减少 转化为 减少回复总魔力值所需的时间]
-					[c/00BFFF:魔力药水仍然有效，在篝火旁会快速回复魔力值]
+					[c/00BFFF:魔力药水仍然有效，在篝火旁会快速回复魔力值，使用蓝露滴圣杯瓶可以治愈魔力病]
 					'''
 				Summon:
 					'''
-					[c/FFA500:召唤伤害减少至 {0}%，用鞭子攻击敌人会增加征服者堆叠层数]
-					[c/FFA500:堆叠层数增加你的召唤伤害，如果一段时间没有刷新则层数会减少]
+					[c/FFA500:召唤伤害减少至 {0}%，用鞭子攻击敌人会增加一层征服者堆叠（暴击时增加两层）]
+					[c/FFA500:堆叠层数增加你的召唤伤害，如果一段时间没有刷新则堆叠层数会减少]
 					[c/FFA500:每层增加 {1}% 伤害，最高到 {3} 层获得 {2}% 加成]
 					[c/FFA500:鞭子范围减少 {4}%]
 					'''
@@ -3832,8 +3832,8 @@ Mods: {
 			}
 
 			EventReset: {
-				DisplayName: 事件重置器
-				Tooltip: 重新启用所有事件并取消保存已保存的事件。 开发测试项目，你不应该有这个！！！
+				DisplayName: Event 重置器
+				Tooltip: 重置所有 Event （开发测试物品，你不应该有这个！！！
 			}
 
 			FadingSoul: {
@@ -6042,7 +6042,7 @@ Mods: {
 			}
 
 			RadiantStrand: {
-				DisplayName: 璀璨之星
+				DisplayName: 烜赫之光
 				Tooltip: 发射光箭，飞行时留下破坏性的能量痕迹
 			}
 
@@ -7291,17 +7291,17 @@ Mods: {
 			}
 
 			AncestralSpiritRelic: {
-				DisplayName: 远古巨鹿圣物
+				DisplayName: 先祖之灵圣物
 				Tooltip: ""
 			}
 
 			AncestralSpiritTrophy: {
-				DisplayName: 远古巨鹿纪念章
+				DisplayName: 先祖之灵纪念章
 				Tooltip: ""
 			}
 
 			AncestralSpiritMask: {
-				DisplayName: 远古巨鹿面具
+				DisplayName: 先祖之灵面具
 				Tooltip: ""
 			}
 
@@ -7393,24 +7393,24 @@ Mods: {
 					[c/FF4500:<近战>]
 					总伤害倍率: {0}%
 					暴击率: {1}%
-					护甲穿透: {2}
-					攻击速度: {3}%
+					攻击速度: {2}%
+					护甲穿透: {3}
 					'''
 				Ranged:
 					'''
 					[c/228B22:<远程>]
 					总伤害倍率: {0}%
 					暴击率: {1}%
-					护甲穿透: {2}
-					攻击速度: {3}%
+					攻击速度: {2}%
+					护甲穿透: {3}
 					'''
 				Magic:
 					'''
 					[c/00BFFF:<魔法>]
 					总伤害倍率: {0}%
 					暴击率: {1}%
-					护甲穿透: {2}
-					攻击速度: {3}%
+					攻击速度: {2}%
+					护甲穿透: {3}
 					'''
 				Summon:
 					'''
@@ -7428,8 +7428,10 @@ Mods: {
 					'''
 					<投掷>
 					总伤害倍率: {0}%
-					暴击率: {0}%
-					攻击速度: {0}%
+					暴击率: {1}%
+					攻击速度: {2}%
+					护甲穿透: {3}
+					投掷物速度：{4}
 					'''
 			}
 
@@ -7439,8 +7441,8 @@ Mods: {
 			}
 
 			AncestralSpiritBag: {
-				// DisplayName: Ancestral Spirit Bag
-				// Tooltip: ""
+				DisplayName: 宝藏袋（先祖之灵）
+				Tooltip: ""
 			}
 		}
 
@@ -8281,7 +8283,7 @@ Mods: {
 
 			Conqueror: {
 				DisplayName: 征服者
-				Description: Mods.tsorcRevamp.Buffs.Conqueror.Description
+				Description: 增加召唤伤害
 			}
 		}
 
@@ -8793,7 +8795,7 @@ Mods: {
 			PrimeSaw.DisplayName: 旧日机械支配者的电锯
 			IonBomb.DisplayName: 离子炸弹
 			MoltenWeld.DisplayName: 热熔裂缝
-			SyntheticFirestorm.DisplayName: 人造火风暴
+			SyntheticFirestorm.DisplayName: 烈焰风暴
 			PlasmaWhirlwindDashHitbox.DisplayName: 等离子旋风
 			PlasmaWhirlwindSpin.DisplayName: 等离子旋风
 			NightbringerSpin.DisplayName: 夜之使者
@@ -8851,6 +8853,11 @@ Mods: {
 		}
 
 		NPCs: {
+			Deerclops: {
+				TypeName: 先祖之灵
+				DespawnHandler: 先祖之灵将你破碎的身体拖回巢穴...
+			}
+
 			GoblinTinkerer.GivenName: Elijah
 			Mechanic.GivenName: Asha
 			Wizard.GivenName: Araz
@@ -8858,8 +8865,8 @@ Mods: {
 			SkeletronPrime.Warning: WARNING: 激光重定向......
 
 			AncestralSpirit: {
-				DisplayName: Ancestral Spirit
-				DespawnHandler: 远古巨鹿将你破碎的身体拖回巢穴...
+				DisplayName: 先祖之灵
+				DespawnHandler: 先祖之灵将你破碎的身体拖回巢穴...
 			}
 
 			EmpressOfLight: {
@@ -10113,7 +10120,7 @@ Mods: {
 						'''
 						让Miakoda带着你深入游戏探索？
 						这个滑块控制Miakoda的音量。
-						设置为0禁用Miakoda声音。
+						设置为0禁用Miakoda的声音。
 						'''
 				}
 
@@ -10123,18 +10130,18 @@ Mods: {
 						'''
 						不想让篝火虫再挑逗你去找不到的篝火？
 						这个滑块控制篝火虫的音量。
-						设置为0禁用篝火虫声音。
+						设置为0禁用篝火虫的声音。
 						'''
 				}
 
 				BotCMechanicsVolume: {
-					// Label: Bearer of the Curse Class Mechanics Volume
-					/* Tooltip:
+					Label: 被诅咒者机制音量
+					Tooltip:
 						'''
-						Are the new Curse Bearer mechanics too loud or simply annoying?
-						This slider controls their volume.
-						Set to 0 to disable them.
-						''' */
+						被诅咒者新机制的音量是不是过于吵闹和烦人了？
+						这个滑块控制篝被诅咒者机制的音量。
+						设置为0禁用被诅咒者机制的声音。
+						'''
 				}
 
 				Headers: {

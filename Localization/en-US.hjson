@@ -208,7 +208,7 @@ Mods: {
 			Death: The fated day of your death has arrived.
 			QueenSlime: Queen Slime emerges from her Hallowed cave!
 			GreatRedKnightInvasion: A Great Red Knight has invaded your world!
-			Deerclops: The Ancestral Spirit has been disturbed!
+			AncestralSpirit: The Ancestral Spirit has been disturbed!
 			SkeletronHidden: Skeletron, Lord of Graves, has awoken!
 			EoC: The Eye sees you!
 			EoW: The Eater of Worlds is ready to feed!
@@ -8854,6 +8854,11 @@ Mods: {
 		}
 
 		NPCs: {
+			Deerclops: {
+				TypeName: Ancestral Spirit
+				DespawnHandler: The Ancestral Spirit drags your broken body back to its den...
+			}
+
 			GoblinTinkerer.GivenName: Elijah
 			Mechanic.GivenName: Asha
 			Wizard.GivenName: Araz
