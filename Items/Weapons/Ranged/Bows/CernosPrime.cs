@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.height = 76;
             Item.useTime = 48;
             Item.useAnimation = 48;
-            Item.reuseDelay = 4;
+            //Item.reuseDelay = 4;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.noUseGraphic = true;

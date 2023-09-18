@@ -83,6 +83,14 @@ namespace tsorcRevamp.Projectiles {
 			Projectile.damage = 0;
 			if (!player.channel)
 				Projectile.Kill();
+
+            float stamina = player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
+			Main.NewText(stamina);
+            if (stamina <= 0) {
+				Projectile.Kill();
+				player.channel = false;
+				return;
+			}
 			Animate();
 			SpecialBehavior();
 			UpdateAim();
