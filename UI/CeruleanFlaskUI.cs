@@ -29,6 +29,9 @@ namespace tsorcRevamp.UI
             Append(area);
         }
 
+        Texture2D textureFull;
+        Texture2D textureEmpty;
+        Texture2D textureCharges;
         public override void Draw(SpriteBatch spriteBatch)
         {
             // This prevents drawing unless we are BotC and haven't hidden it
@@ -48,10 +51,10 @@ namespace tsorcRevamp.UI
                 float chargesPercentage = (float)chargesCurrent / chargesMax;
                 chargesPercentage = Utils.Clamp(chargesPercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
 
-                Texture2D textureFull = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/CeruleanFlask_full");
-                //Texture2D textureHalfFull = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/CeruleanFlask_half_full");
-                Texture2D textureEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/CeruleanFlask_empty");
-                Texture2D textureCharges = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/CeruleanFlask_charges");
+
+                UsefulFunctions.EnsureLoaded(ref textureFull, "tsorcRevamp/UI/CeruleanFlask_full");
+                UsefulFunctions.EnsureLoaded(ref textureEmpty, "tsorcRevamp/UI/CeruleanFlask_empty");
+                UsefulFunctions.EnsureLoaded(ref textureCharges, "tsorcRevamp/UI/CeruleanFlask_charges");
 
                 int frameHeight = textureCharges.Height / chargesFrameCount;
                 int frame;
@@ -65,12 +68,13 @@ namespace tsorcRevamp.UI
 
 
                 int cropAmount = (int)(textureFull.Height * (1 - chargesPercentage));
-                Texture2D croppedTextureFull = UsefulFunctions.Crop(textureFull, new Rectangle(0, cropAmount, textureFull.Width, textureFull.Height));
                 Main.spriteBatch.Draw(textureEmpty, new Rectangle(Main.screenWidth - ConfigInstance.CeruleanFlaskPosX + 4, Main.screenHeight - ConfigInstance.CeruleanFlaskPosY, textureFull.Width, textureFull.Height), Color.White);
                 Main.spriteBatch.Draw(textureCharges, new Vector2(Main.screenWidth - ConfigInstance.CeruleanFlaskPosX + 4, Main.screenHeight - ConfigInstance.CeruleanFlaskPosY - 20), sourceRectangle, numbercolor, 0, new Vector2(0, 0), 1.3f, SpriteEffects.None, 1);
 
                 //the cropped texture is shorter, so its Y position needs to be offset by the height difference
-                Main.spriteBatch.Draw(croppedTextureFull, new Rectangle(Main.screenWidth - ConfigInstance.CeruleanFlaskPosX + 4, Main.screenHeight + cropAmount - ConfigInstance.CeruleanFlaskPosY, textureFull.Width, textureFull.Height), Color.White);
+                Rectangle overlaySourceRectangle = new Rectangle(0, cropAmount, textureFull.Width, textureFull.Height - cropAmount);
+                Main.spriteBatch.Draw(textureFull, new Vector2(Main.screenWidth - ConfigInstance.CeruleanFlaskPosX + 4, Main.screenHeight - ConfigInstance.CeruleanFlaskPosY + cropAmount), overlaySourceRectangle, numbercolor, 0, new Vector2(0, 0), 1f, SpriteEffects.None, 1);
+
             }
             base.Draw(spriteBatch);
         }

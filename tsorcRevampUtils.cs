@@ -1339,25 +1339,6 @@ namespace tsorcRevamp
             return player.GetModPlayer<tsorcRevampPlayer>().oldPos[index];
         }
 
-        public static Texture2D Crop(Texture2D image, Rectangle source) {
-            Texture2D croppedImage = new Texture2D(image.GraphicsDevice, source.Width, source.Height);
-
-            Color[] imageData = new Color[image.Width * image.Height];
-            Color[] cropData = new Color[source.Width * source.Height];
-
-            image.GetData<Color>(imageData);
-
-            int index = 0;
-
-            for (int y = source.Y; y < source.Height; y++) {
-                for (int x = source.X; x < source.Width; x++) {
-                    cropData[index] = imageData[y * image.Width + x];
-                    index++;
-                }
-            }
-            croppedImage.SetData<Color>(cropData);
-            return croppedImage;
-        }
 
         /// <summary>
         /// Automatically insert new lines into strings when they exceed a given width.

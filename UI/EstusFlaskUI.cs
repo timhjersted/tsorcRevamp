@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -29,6 +30,9 @@ namespace tsorcRevamp.UI
             Append(area);
         }
 
+        Texture2D textureFull;
+        Texture2D textureEmpty;
+        Texture2D textureCharges;
         public override void Draw(SpriteBatch spriteBatch)
         {
             // This prevents drawing unless we are BotC
@@ -48,29 +52,32 @@ namespace tsorcRevamp.UI
                 float chargesPercentage = (float)chargesCurrent / chargesMax;
                 chargesPercentage = Utils.Clamp(chargesPercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
 
-                Texture2D textureFull = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/EstusFlask_full");
-                //Texture2D textureHalfFull = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/EstusFlask_half_full");
-                Texture2D textureEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/EstusFlask_empty");
-                Texture2D textureCharges = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/EstusFlask_charges");
+                UsefulFunctions.EnsureLoaded(ref textureFull, "tsorcRevamp/UI/EstusFlask_full");
+                UsefulFunctions.EnsureLoaded(ref textureEmpty, "tsorcRevamp/UI/EstusFlask_empty");
+                UsefulFunctions.EnsureLoaded(ref textureCharges, "tsorcRevamp/UI/EstusFlask_charges");
 
                 int frameHeight = textureCharges.Height / chargesFrameCount;
-                int frame;
-                frame = estusPlayer.estusChargesCurrent;
 
-                int drawFrame = frameHeight * frame;
+                int drawFrame = (int)(frameHeight * estusPlayer.estusChargesCurrent);
                 Rectangle sourceRectangle = new Rectangle(0, drawFrame, textureCharges.Width, frameHeight);
                 Color numbercolor;
-                if (estusPlayer.estusChargesCurrent == 0) { numbercolor = Color.LightPink; }
-                else { numbercolor = Color.White; }
+                if (estusPlayer.estusChargesCurrent == 0)
+                {
+                    numbercolor = Color.LightPink;
+                }
+                else
+                {
+                    numbercolor = Color.White;
+                }
 
 
                 int cropAmount = (int)(textureFull.Height * (1 - chargesPercentage));
-                Texture2D croppedTextureFull = UsefulFunctions.Crop(textureFull, new Rectangle(0, cropAmount, textureFull.Width, textureFull.Height));
                 Main.spriteBatch.Draw(textureEmpty, new Rectangle(Main.screenWidth - ConfigInstance.EstusFlaskPosX + 4, Main.screenHeight - ConfigInstance.EstusFlaskPosY, textureFull.Width, textureFull.Height), Color.White);
                 Main.spriteBatch.Draw(textureCharges, new Vector2(Main.screenWidth - ConfigInstance.EstusFlaskPosX + 4, Main.screenHeight - ConfigInstance.EstusFlaskPosY - 20), sourceRectangle, numbercolor, 0, new Vector2(0, 0), 1.3f, SpriteEffects.None, 1);
 
                 //the cropped texture is shorter, so its Y position needs to be offset by the height difference
-                Main.spriteBatch.Draw(croppedTextureFull, new Rectangle(Main.screenWidth - ConfigInstance.EstusFlaskPosX + 4, Main.screenHeight + cropAmount - ConfigInstance.EstusFlaskPosY, textureFull.Width, textureFull.Height), Color.White);
+                Rectangle overlaySourceRectangle = new Rectangle(0, cropAmount, textureFull.Width, textureFull.Height - cropAmount);
+                Main.spriteBatch.Draw(textureFull, new Vector2(Main.screenWidth - ConfigInstance.EstusFlaskPosX + 4, Main.screenHeight - ConfigInstance.EstusFlaskPosY + cropAmount), overlaySourceRectangle, numbercolor, 0, new Vector2(0, 0), 1f, SpriteEffects.None, 1);
             }
             base.Draw(spriteBatch);
         }

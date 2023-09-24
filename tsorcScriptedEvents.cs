@@ -333,7 +333,7 @@ namespace tsorcRevamp
             ScriptedEvent SerrisEvent = new ScriptedEvent(new Vector2(1136, 956), 30, SerrisEnemyTypeList, SerrisEnemyLocations, DustID.FireworkFountain_Blue, false, true, true, LangUtils.GetTextValue("Events.Serris"), Color.Blue, false, SerrisCustomCondition);
 
             //MARILITH 
-            ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(3235, 1770), 100, ModContent.NPCType<MarilithIntro>(), DustID.RedTorch, false, true, true, LangUtils.GetTextValue("Events.Marilith"), Color.Red, false, MarilithCustomCondition);
+            ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(3235, 1770), 100, ModContent.NPCType<MarilithIntro>(), DustID.RedTorch, false, true, true, LangUtils.GetTextValue("Events.Marilith"), Color.Red, false, MarilithCustomCondition, disablePeaceCandle: true);
 
             //SKELETRON PRIME
             ScriptedEvent PrimeEvent = new ScriptedEvent(new Vector2(5090, 1103), 75, ModContent.NPCType<NPCs.Bosses.PrimeV2.PrimeIntro>(), DustID.RedTorch, false, false, true, LangUtils.GetTextValue("Events.TheMachine"), Color.Gray, false, PrimeCustomCondition);
@@ -1216,6 +1216,11 @@ namespace tsorcRevamp
                     {
                         float distance = Vector2.DistanceSquared(Main.player[index].position, EnabledEvents[i].centerpoint);
 
+                        if (distance < EnabledEvents[i].radius * 6 && !Main.player[index].dead && EnabledEvents[i].bossEvent && !EnabledEvents[i].disablePeaceCandle)
+                        {
+                            Main.player[index].AddBuff(BuffID.PeaceCandle, 30, false);
+                        }
+
                         if (!EnabledEvents[i].square)
                         {
 
@@ -1248,10 +1253,6 @@ namespace tsorcRevamp
                                 }
                             }
 
-                            if (distance < EnabledEvents[i].radius * 6)
-                            {
-                                Main.player[index].AddBuff(BuffID.PeaceCandle, 30, false);
-                            }
                             if (distance < EnabledEvents[i].radius && !Main.player[index].dead)
                             {
                                 if (EnabledEvents[i].visible)
@@ -1742,8 +1743,13 @@ namespace tsorcRevamp
 
         public int eventCooldownTimer = 300;
 
+        /// <summary>
+        /// Prevents the peace candle effect from happening, even if it's a boss
+        /// </summary>
+        internal bool disablePeaceCandle;
+
         //This basically just creates a list spawn event with 1 entry
-        public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, int? npcType = null, int DustType = 31, bool saveEvent = false, bool visibleRange = false, bool bossEvent = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<ScriptedEvent, EventActionStatus> customAction = null, bool peaceCandleEffect = false)
+        public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, int? npcType = null, int DustType = 31, bool saveEvent = false, bool visibleRange = false, bool bossEvent = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<ScriptedEvent, EventActionStatus> customAction = null, bool disablePeaceCandle = false)
         {
             List<int> npcList = null;
             if(npcType != null)
@@ -1756,6 +1762,8 @@ namespace tsorcRevamp
             {
                 npcCoords = new List<Vector2> { rangeCenterpoint };
             }
+
+            this.disablePeaceCandle = disablePeaceCandle;
 
             ConstructScriptedEvent(rangeCenterpoint, rangeRadius, npcList, npcCoords, DustType, saveEvent, visibleRange, bossEvent, flavorText, flavorTextColor, squareRange, customCondition, customAction);           
         }
