@@ -13,9 +13,9 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
     public class DragonCrestShield : ModItem
     {
-        public static float damageResistance = 100f;
-        public static float damageResistance2 = 10f;
-        public static float damageResistance3 = 40f;
+        public static float damageResistance = 85f;
+        public static float damageResistance2 = 8f;
+        public static float damageResistance3 = 35f;
         public static int staminaCost = 75;
         public static float BadStaminaRegen = 15f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(damageResistance, damageResistance2, damageResistance3, staminaCost, BadStaminaRegen);

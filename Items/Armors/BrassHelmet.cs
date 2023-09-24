@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class BrassHelmet : ModItem
     {
-        public static float BadDmg = 15f;
-        public static int LifeRegen = 4;
+        public static float BadDmg = 25f;
+        public static int LifeRegen = 3;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BadDmg, LifeRegen);
         public override void SetStaticDefaults()
         {

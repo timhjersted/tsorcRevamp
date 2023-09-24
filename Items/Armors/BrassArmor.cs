@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class BrassArmor : ModItem
     {
-        public static float DR = 10f;
+        public static float DR = 8f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DR);
         public override void SetStaticDefaults()
         {
