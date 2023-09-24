@@ -51,7 +51,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/BlindingLaserHit") with { Volume = 1f }, target.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/BlindingLaserHit") with { Volume = 1f });
             target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[Projectile.owner];
             target.AddBuff(ModContent.BuffType<IrradiatedDebuff>(), 2 * 60);
             target.AddBuff(BuffID.Confused, 2 * 60);

@@ -1951,6 +1951,16 @@ namespace tsorcRevamp.NPCs
                     });
                     break;
                     }
+                case NPCID.Dryad:
+                    {
+                        shop.Add(new Item(ItemID.Seed)
+                        {
+                            shopCustomPrice = 1,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        },
+                        new Condition("", () => Main.LocalPlayer.HasItem(ItemID.Blowpipe) || Main.LocalPlayer.HasItem(ItemID.Blowgun) || Main.LocalPlayer.HasItem(ModContent.ItemType<ToxicShot>()) || Main.LocalPlayer.HasItem(ModContent.ItemType<AlienGun>()) || Main.LocalPlayer.HasItem(ModContent.ItemType<OmegaSquadRifle>())));
+                        break;
+                    }
                 case NPCID.Mechanic:
                     {
                         foreach (NPCShop.Entry item in shop.ActiveEntries)

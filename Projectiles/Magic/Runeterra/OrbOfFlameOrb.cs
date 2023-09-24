@@ -58,7 +58,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         {
             Player player = Main.player[Projectile.owner];
 			Projectile.originalDamage = Projectile.damage;
-            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbCast") with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbCast") with { Volume = OrbOfDeception.OrbSoundVolume });
 			if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief > 8)
 			{
 				Full = true;
@@ -81,7 +81,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 							Hit = false;
 							Projectile.damage = Projectile.originalDamage;
                             Projectile.ResetLocalNPCHitImmunity();
-                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbReturn") with { Volume = OrbOfDeception.OrbSoundVolume }, Projectile.Center);
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbReturn") with { Volume = OrbOfDeception.OrbSoundVolume });
                             break;
                         }
 					break;
@@ -93,10 +93,10 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 						{
                             if (player.GetModPlayer<tsorcRevampPlayer>().EssenceThief > 8 && !Full)
                             {
-                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbFull") with { Volume = OrbOfDeception.OrbSoundVolume * 2 }, player.Center);
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbFull") with { Volume = OrbOfDeception.OrbSoundVolume * 2 });
                             } else
                             {
-                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbReturned") with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center);
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbReturned") with { Volume = OrbOfDeception.OrbSoundVolume });
                             }
 							if (Full)
 							{
@@ -156,11 +156,11 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                 if (hit.Crit)
                 {
                     player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 2; 
-					SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbCrit") with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center);
+					SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbCrit") with { Volume = OrbOfDeception.OrbSoundVolume });
                 } else
                 {
                     player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbHit") with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/OrbHit") with { Volume = OrbOfDeception.OrbSoundVolume });
                 }
 				if (Full)
                 {

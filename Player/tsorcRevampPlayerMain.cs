@@ -724,7 +724,7 @@ namespace tsorcRevamp
         public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
         {
             Player owner = Main.player[proj.owner];
-            if (LudensTempest && hit.DamageType == DamageClass.Magic && !owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()))
+            if (LudensTempest && hit.DamageType == DamageClass.Magic && !owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()) && !owner.DeadOrGhost)
             {
                 int? closest = UsefulFunctions.GetClosestEnemyNPC(target.Center);
                 if (closest.HasValue && (Main.npc[closest.Value].type != NPCID.TargetDummy || Main.npc[closest.Value].Distance(target.Center) < 2000))
@@ -1085,10 +1085,10 @@ namespace tsorcRevamp
                     player.AddBuff(ModContent.BuffType<ShunpoBlinkCooldown>(), ShunpoBlink.Cooldown * 60);
                     if (Main.rand.NextBool(2))
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo1") with { Volume = 1f }, player.Center);
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo1") with { Volume = 1f });
                     } else
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo2") with { Volume = 1f }, player.Center);
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo2") with { Volume = 1f });
                     }
                     ShunpoTimer = 3;
                 }
@@ -1138,7 +1138,7 @@ namespace tsorcRevamp
                         player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 2));
                         SweepingBladeVelocity = player.DirectionTo(other.Center) * 17;
                         player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Dash") with { Volume = 1f }, player.Center);
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Dash") with { Volume = 1f });
                         Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaWhirlwindDashHitbox>(), PlasmaWhirlwind.BaseDamage, 0, player.whoAmI);
                         DashHitbox.OriginalCritChance = SteelTempest.CritChance;
                         player.immune = true;
@@ -1149,7 +1149,7 @@ namespace tsorcRevamp
                         SweepingBladeVelocity = player.DirectionTo(other.Center) * 17;
                         player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 2));
                         player.AddBuff(ModContent.BuffType<NightbringerDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/Dash") with { Volume = 1f }, player.Center);
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/Dash") with { Volume = 1f });
                         Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<NightbringerDashHitbox>(), Nightbringer.BaseDamage, 0, player.whoAmI);
                         DashHitbox.OriginalCritChance = SteelTempest.CritChance;
                     } //cooldown is added by On-Hit in the dash projectile hitbox
@@ -1196,19 +1196,19 @@ namespace tsorcRevamp
                     player.SetImmuneTimeForAllTypes((int)(SpiritRushCooldown * 60f));
                     if (SpiritRushSoundStyle == 0)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash1") with { Volume = 1f }, player.Center);
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash1") with { Volume = 1f });
                         SpiritRushSoundStyle += 1;
                     }
                     else
                     if (SpiritRushSoundStyle == 1)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash2") with { Volume = 1f }, player.Center);
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash2") with { Volume = 1f });
                         SpiritRushSoundStyle += 1;
                     }
                     else
                     if (SpiritRushSoundStyle == 2)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash3") with { Volume = 1f }, player.Center);
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/Dash3") with { Volume = 1f });
                         SpiritRushSoundStyle = 0;
                     }
                     SpiritRushCharges--;
@@ -1223,19 +1223,19 @@ namespace tsorcRevamp
                     player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
                     if (player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() && player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostActivation") with { Volume = 1f }, player.Center);
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostActivation") with { Volume = 1f });
                     } else if (player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() && !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostDeactivation") with { Volume = 1f }, player.Center);
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostDeactivation") with { Volume = 1f });
                     }
 
                     if (player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>() && player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostActivation") with { Volume = 1f }, player.Center);
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostActivation") with { Volume = 1f });
                     }
                     else if (player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>() && !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostDeactivation") with { Volume = 1f }, player.Center);
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostDeactivation") with { Volume = 1f });
                     }
 
                     //Every time the player releases the button, sync this info to everyone else

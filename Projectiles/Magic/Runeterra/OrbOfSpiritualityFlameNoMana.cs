@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/FireCast") with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/FireCast") with { Volume = OrbOfDeception.OrbSoundVolume });
         }
         public float maxDetectRadius = 500f;
         public override void AI()
@@ -143,16 +143,16 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             Player player = Main.player[Projectile.owner];
             if (hit.Crit)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/FireCrit") with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/FireCrit") with { Volume = OrbOfDeception.OrbSoundVolume });
             } else
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/FireHit") with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/FireHit") with { Volume = OrbOfDeception.OrbSoundVolume });
             }
         }
         public override void Kill(int timeLeft)
         {
             Player player = Main.player[Projectile.owner];
-            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/FireDespawn") with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/FireDespawn") with { Volume = OrbOfDeception.OrbSoundVolume });
         }
     }
 }

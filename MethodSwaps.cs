@@ -1234,11 +1234,12 @@ namespace tsorcRevamp
         private static void CustomQuickMana(Terraria.On_Player.orig_QuickMana orig, Player player)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
             tsorcRevampCeruleanPlayer ceruleanPlayer = player.GetModPlayer<tsorcRevampCeruleanPlayer>();
             if (modPlayer.BearerOfTheCurse && player.statMana < player.statManaMax2 && ceruleanPlayer.ceruleanChargesCurrent > 0)
             {
                 if (player == Main.LocalPlayer && !player.mouseInterface && ceruleanPlayer.ceruleanChargesCurrent > 0 && player.itemAnimation == 0
-                && !modPlayer.isDodging && !ceruleanPlayer.isDrinking && !player.CCed)
+                && !modPlayer.isDodging && !ceruleanPlayer.isDrinking && !player.CCed && !estusPlayer.isDrinking)
                 {
                     ceruleanPlayer.isDrinking = true;
                     ceruleanPlayer.ceruleanDrinkTimer = 0;
@@ -1293,7 +1294,7 @@ namespace tsorcRevamp
             if (modPlayer.BearerOfTheCurse && player.statLife < player.statLifeMax2)
             {
                 if (player == Main.LocalPlayer && !player.mouseInterface && estusPlayer.estusChargesCurrent > 0 && player.itemAnimation == 0
-                && !modPlayer.isDodging && !estusPlayer.isDrinking && !player.CCed)
+                && !modPlayer.isDodging && !estusPlayer.isDrinking && !player.CCed && !ceruleanPlayer.isDrinking)
                 {
                     estusPlayer.isDrinking = true;
                     estusPlayer.estusDrinkTimer = 0;

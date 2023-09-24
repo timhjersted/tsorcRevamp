@@ -25,6 +25,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.value = 5;
             Item.width = 22;
             Item.shoot = ModContent.ProjectileType<Projectiles.ThrowingAxe>();
+
+            Item.mana = 3;
         }
 
         public override void AddRecipes()

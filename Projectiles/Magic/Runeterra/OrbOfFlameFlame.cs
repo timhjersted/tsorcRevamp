@@ -36,9 +36,9 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FireCast") with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FireCast") with { Volume = OrbOfDeception.OrbSoundVolume });
         }
-        public float maxDetectRadius = 500f;
+        public float maxDetectRadius = 400f;
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
@@ -142,13 +142,13 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         {
             Player player = Main.player[Projectile.owner];
             player.statMana += player.GetManaCost(player.HeldItem) / 2;
-            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FireHit") with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FireHit") with { Volume = OrbOfDeception.OrbSoundVolume });
             target.AddBuff(BuffID.OnFire3, 4 * 60);
         }
         public override void Kill(int timeLeft)
         {
             Player player = Main.player[Projectile.owner];
-            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FireDespawn") with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FireDespawn") with { Volume = OrbOfDeception.OrbSoundVolume });
         }
     }
 }

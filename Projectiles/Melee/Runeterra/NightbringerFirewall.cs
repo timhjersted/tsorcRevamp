@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Player player = Main.player[Projectile.owner];
             Vector2 unitVectorTowardsMouse = player.Center.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * player.direction);
             player.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
-            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/FirewallCast") with { Volume = 1f }, player.Center);
+            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/FirewallCast") with { Volume = 1f });
         }
         public override void AI()
         {
@@ -48,7 +48,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             if (!playedSound)
             {
                 playedSound = true;
-                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/FirewallAmbient") with { Volume = 1f }, player.Center); //can give funny pitch hehe
+                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/FirewallAmbient") with { Volume = 1f }); //can give funny pitch hehe
             }
             if (playedSound)
             {
@@ -82,7 +82,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
                 if (i != Projectile.whoAmI && other.active && !other.friendly && Projectile.Hitbox.Intersects(other.Hitbox) && UsefulFunctions.IsProjectileSafeToFuckWith(i))
                 {
                     Dust.NewDust(other.position, other.width * 2, other.height * 2, DustID.Torch);
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/FirewallHit") with { Volume = 1f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/FirewallHit") with { Volume = 1f });
                     other.Kill();
                 }
             }

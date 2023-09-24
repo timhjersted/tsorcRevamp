@@ -40,11 +40,11 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         {
             if (hit.Crit)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/ShotCrit") with { Volume = 0.5f }, target.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/ShotCrit") with { Volume = 0.5f });
             }
             else
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/ShotHit") with { Volume = 0.5f }, target.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/ShotHit") with { Volume = 0.5f });
             }
             target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[Projectile.owner];
             target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 2 * 60);

@@ -72,15 +72,15 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragon.CotUDragon>()] == 0)
             {
                 Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragon.CotUDragon>(), 0, 0, Main.myPlayer);
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/DragonCast") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/DragonCast") with { Volume = 1f });
             }
             else if (Main.rand.NextBool(2))
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarCast1") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarCast1") with { Volume = 1f });
             }
             else
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarCast2") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarCast2") with { Volume = 1f });
             }
 
             // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false

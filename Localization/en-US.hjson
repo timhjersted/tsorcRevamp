@@ -31,7 +31,7 @@ Mods: {
 				You can see a strange [c/878787:skull] symbol glowing on its surface...	
 				'''
 			CorruptionCursed: This item has been [c/383838:cursed] by the [c/701070:corruption] and can't be used yet
-			BotCNoHeal: Doesn't heal the [c/6d8827:Bearer of the Curse]
+			BotCNoHeal: Decreases the time needed to drink the Estus Flask by 25%
 			DSPickUpRange: " increases Dark Soul pick-up range"
 			VanityFunction: Also works in vanity slots
 			DragoonGearCompatible: Compatible with Dragoon Boots and Dragoon Gear.
@@ -265,6 +265,7 @@ Mods: {
 		UI: {
 			Souls: Souls
 			StaminaUse: "Stamina Use: "
+			StaminaUseOnHitOnly: "Stamina Use on-hit: "
 			14: "14"
 			StaminaRegenReduction:
 				'''
@@ -2756,6 +2757,7 @@ Mods: {
 					'''
 					Increases the effectiveness of the Dragon Crest Shield
 					Set Bonus: Decreases all attack speed by {0}% multiplicatively but grants {1}% increased critical strike chance
+					Also increases mana costs by {0}%
 					'''
 			}
 
@@ -5601,8 +5603,8 @@ Mods: {
 				Tooltip:
 					'''
 					A curiously simple but deadly weapon - its short reach seems to be its only weakness.
-					Uses mana to slash enemy multiple times on-hit
-					Refunds {0} mana on-hit
+					Uses mana to slash hit enemys multiple times over time on-hit
+					Refunds {0} mana on-hit with the Sickle
 					'''
 			}
 
@@ -6848,7 +6850,7 @@ Mods: {
 				Tooltip:
 					'''
 					Throws a [c/87cefa:magical Orb] which will return to you after a certain distance
-					Casts homing flames while the [c/87cefa:Orb] is sent out
+					Casts homing flames while the [c/87cefa:Orb] is sent out when used
 					Gathers stacks of [c/87cefa:Essence Thief] on [c/87cefa:Orb] hits and kills
 					Upon reaching 9 stacks, the next [c/87cefa:Orb] cast will consume 9 stacks, [c/87cefa:heal you and deal massive damage]
 					[c/87cefa:'Unleashed, but in control']
@@ -6869,7 +6871,7 @@ Mods: {
 				Tooltip:
 					'''
 					Throws a flaming [c/87cefa:Orb] which will return to you after a certain distance
-					Casts homing flames while the Orb is sent out
+					Casts homing flames while the [c/87cefa:Orb] is sent out when used
 					Gathers stacks of [c/87cefa:Essence Thief] on [c/87cefa:Orb] hits and kills
 					Upon reaching 9 stacks, the next Orb cast will consume 9 stacks, [c/87cefa:heal you and deal massive damage]
 					<right> to cast a [c/ff7f50:Fireball] which sunders enemies, increasing their vulnerability to magic damage
@@ -6894,7 +6896,7 @@ Mods: {
 				Tooltip:
 					'''
 					Throws a spiritual [c/87cefa:Orb] which will return to you after a certain distance
-					Casts homing flames while the Orb is sent out
+					Casts homing flames while the [c/87cefa:Orb] is sent out when used
 					Gathers stacks of [c/87cefa:Essence Thief] on [c/87cefa:Orb] hits and kills
 					Upon reaching 9 stacks, the next [c/87cefa:Orb] cast will consume 9 stacks, [c/87cefa:heal you and deal massive damage]
 					<right> to cast a [c/ff7f50:Charm] which sunders enemies, increasing their vulnerability to magic damage
@@ -7013,6 +7015,7 @@ Mods: {
 					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
 					Heals you for {4} life when life goes below {3}%({$CommonItemTooltip.Cooldown@5})
 					'''
+				Bonus: Currently granting {0}% based on the current held weapon
 			}
 
 			InfinityEdge: {

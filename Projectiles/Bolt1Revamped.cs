@@ -18,6 +18,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.friendly = true;
             Projectile.penetrate = 999;
             Projectile.tileCollide = false;
+            Projectile.DamageType = DamageClass.Magic;
         }
 
         Vector2 lightingVector;

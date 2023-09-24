@@ -60,19 +60,19 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         {
             if (ShootSoundStyle == 0)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot1") with { Volume = ShootSoundVolume }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot1") with { Volume = ShootSoundVolume });
                 ShootSoundStyle += 1;
             }
             else
             if (ShootSoundStyle == 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot2") with { Volume = ShootSoundVolume }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot2") with { Volume = ShootSoundVolume });
                 ShootSoundStyle += 1;
             }
             else
             if (ShootSoundStyle == 2)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot3") with { Volume = ShootSoundVolume }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot3") with { Volume = ShootSoundVolume });
                 ShootSoundStyle = 0;
             }
             return true;

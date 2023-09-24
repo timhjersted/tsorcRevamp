@@ -39,12 +39,16 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public int SoundCD = 0;
         public override void AI()
 		{
-			Player player = Main.player[Projectile.owner];
+			Player player = Main.player[Projectile.owner]; 
+            if (player.HeldItem.type == ModContent.ItemType<OrbOfFlame>())
+            {
+                Projectile.timeLeft = 600;
+            }
             player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, player.direction * -1.9f);
             if (!playedSound && Main.rand.NextBool(2000) && !player.HasBuff(ModContent.BuffType<InCombat>()))
             {
                 playedSound = true;
-                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/OrbAmbient", SoundType.Ambient) with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center); //can give funny pitch hehe
+                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/OrbAmbient", SoundType.Ambient) with { Volume = OrbOfDeception.OrbSoundVolume }); //can give funny pitch hehe
             }
             if (!playedSound)
             {

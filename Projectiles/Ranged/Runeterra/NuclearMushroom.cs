@@ -41,15 +41,15 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
             BuiltSoundStyle = Main.rand.Next(1, 4);
             if (BuiltSoundStyle == 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBuilt1") with { Volume = 1f }, Projectile.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBuilt1") with { Volume = 1f });
             }
             else if (BuiltSoundStyle == 2)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBuilt2") with { Volume = 1f }, Projectile.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBuilt2") with { Volume = 1f });
             }
             else
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBuilt3") with { Volume = 1f }, Projectile.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBuilt3") with { Volume = 1f });
             }
             owner.statMana -= (int)(OmegaSquadRifle.BaseShroomManaCost * owner.manaCost);
             owner.ManaEffect(-(int)(OmegaSquadRifle.BaseShroomManaCost * owner.manaCost));
@@ -103,13 +103,13 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
             BoomSoundStyle = Main.rand.Next(1, 4);
             if (BoomSoundStyle == 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBoom1") with { Volume = 1f }, target.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBoom1") with { Volume = 1f });
             } else if (BoomSoundStyle == 2)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBoom2") with { Volume = 1f }, target.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBoom2") with { Volume = 1f });
             } else
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBoom3") with { Volume = 1f }, target.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBoom3") with { Volume = 1f });
             }
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearMushroomExplosion>(), Projectile.damage / 4, Projectile.knockBack * 10, Projectile.owner);
         }

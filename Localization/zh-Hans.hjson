@@ -265,6 +265,7 @@ Mods: {
 		UI: {
 			Souls: 黑暗之魂
 			StaminaUse: "耐力消耗: "
+			// StaminaUseOnHitOnly: "Stamina Use on-hit: "
 			14: "14"
 			StaminaRegenReduction:
 				'''
@@ -7012,6 +7013,7 @@ Mods: {
 					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
 					当生命值低于{3}%时，回复{4}点生命值（{$CommonItemTooltip.Cooldown@5}）
 					'''
+				// Bonus: Currently granting {0}% based on the current held weapon
 			}
 
 			InfinityEdge: {

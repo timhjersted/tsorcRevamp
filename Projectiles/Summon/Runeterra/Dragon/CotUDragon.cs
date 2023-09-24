@@ -69,7 +69,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks += 2;
 				if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks == 6 || target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks == 7)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/Marked") with { Volume = 2f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/Marked") with { Volume = 2f });
                 }
             }
             else
@@ -78,7 +78,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks++;
                 if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks == 6)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/Marked") with { Volume = 2f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/Marked") with { Volume = 2f });
                 }
             }
         }

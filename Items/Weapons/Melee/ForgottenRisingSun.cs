@@ -26,6 +26,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<Projectiles.ForgottenRisingSunProj>();
             Item.rare = ItemRarityID.Red;
+
+            Item.mana = 15;
         }
 
         public override bool CanUseItem(Player player)

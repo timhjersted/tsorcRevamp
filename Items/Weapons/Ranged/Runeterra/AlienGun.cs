@@ -93,24 +93,24 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             {
                 if (ShootSoundStyle == 0)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot1") with { Volume = ShootSoundVolume }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot1") with { Volume = ShootSoundVolume });
                     ShootSoundStyle += 1;
                 }
                 else
                 if (ShootSoundStyle == 1)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot2") with { Volume = ShootSoundVolume }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot2") with { Volume = ShootSoundVolume });
                     ShootSoundStyle += 1;
                 }
                 else
                 if (ShootSoundStyle == 2)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot3") with { Volume = ShootSoundVolume }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot3") with { Volume = ShootSoundVolume });
                     ShootSoundStyle = 0;
                 }
             } else
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/BlindingLaserShot") with { Volume = ShootSoundVolume * 2 }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/BlindingLaserShot") with { Volume = ShootSoundVolume * 2 });
             }
             return true;
         }

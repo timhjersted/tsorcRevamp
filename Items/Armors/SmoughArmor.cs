@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Armors
     public class SmoughArmor : ModItem
     {
         public static int StaminaShieldCost = 40;
-        public static float BadAtkSpeed = 35f;
+        public static float BadAtkSpeedManaCost = 40f;
         public static float CritChance = 100f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BadAtkSpeed, CritChance);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BadAtkSpeedManaCost, CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -35,7 +35,8 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateArmorSet(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().SmoughAttackSpeedReduction = true;
-            player.GetAttackSpeed(DamageClass.Generic) *= 1f - BadAtkSpeed / 100f;
+            player.GetAttackSpeed(DamageClass.Generic) *= 1f - BadAtkSpeedManaCost / 100f;
+            player.manaCost += BadAtkSpeedManaCost / 100f;
             player.GetCritChance(DamageClass.Generic) += CritChance;
         }
         public override void AddRecipes()

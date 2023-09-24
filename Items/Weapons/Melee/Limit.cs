@@ -29,6 +29,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.crit = 10;
             Item.rare = ItemRarityID.Red;
             //item.glowMask = 271; was this actually trying to do something?
+
+            Item.mana = 10;
         }
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)

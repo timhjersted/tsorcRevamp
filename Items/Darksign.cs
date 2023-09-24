@@ -240,7 +240,7 @@ namespace tsorcRevamp.Items
                         break;
                     }
             }
-            tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "LethalTempo", LangUtils.GetTextValue("Items.Darksign.End")));
+            tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "EndLine", LangUtils.GetTextValue("Items.Darksign.End")));
         }
     }
 }

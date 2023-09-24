@@ -43,15 +43,19 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void AI()
 		{
 			Player player = Main.player[Projectile.owner];
+            if (player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>())
+            {
+                Projectile.timeLeft = 600;
+            }
             player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, player.direction * -1.9f);
             if (!playedSound1 && !playedSound2 && Main.rand.NextBool(2000) && !player.HasBuff(ModContent.BuffType<InCombat>()))
             {
                 playedSound1 = true;
-                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbAmbient1", SoundType.Ambient) with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center); //can give funny pitch hehe
+                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbAmbient1", SoundType.Ambient) with { Volume = OrbOfDeception.OrbSoundVolume }); //can give funny pitch hehe
             } else if (!playedSound1 && !playedSound2 && Main.rand.NextBool(2000) && !player.HasBuff(ModContent.BuffType<InCombat>()))
             {
                 playedSound2 = true;
-                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbAmbient2", SoundType.Ambient) with { Volume = OrbOfDeception.OrbSoundVolume }, player.Center); //can give funny pitch hehe
+                SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbAmbient2", SoundType.Ambient) with { Volume = OrbOfDeception.OrbSoundVolume }); //can give funny pitch hehe
             }
             if (playedSound1 || playedSound2)
             {

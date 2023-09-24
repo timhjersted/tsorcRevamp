@@ -8,6 +8,7 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Accessories.Magic;
+using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Armors.Magic;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Utilities;
@@ -106,6 +107,11 @@ namespace tsorcRevamp.Items.VanillaItems
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.healLife > 0)
             {
                 SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.BotCNoHeal"));
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && (item.type == ItemID.PhilosophersStone || item.type == ItemID.CharmofMyths || item.type == ModContent.ItemType<DragoonHelmet2>()))
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.BotCPStone"));
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.buffType == BuffID.WellFed)

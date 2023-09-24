@@ -67,17 +67,17 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         {
             if (SwingSoundStyle == 1) //Shoot will always run before this can occur, so they have to be incremented by 1
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/SwingHit1") with { Volume = SwingSoundVolume }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/SwingHit1") with { Volume = SwingSoundVolume });
             }
             else
             if (SwingSoundStyle == 2)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/SwingHit2") with { Volume = SwingSoundVolume }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/SwingHit2") with { Volume = SwingSoundVolume });
             }
             else
             if (SwingSoundStyle == 0)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/SwingHit3") with { Volume = SwingSoundVolume }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/SwingHit3") with { Volume = SwingSoundVolume });
             }
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -89,19 +89,19 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 Item.noMelee = false;
                 if (SwingSoundStyle == 0)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Swing1") with { Volume = SwingSoundVolume }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Swing1") with { Volume = SwingSoundVolume });
                     SwingSoundStyle += 1;
                 }
                 else
                 if (SwingSoundStyle == 1)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Swing2") with { Volume = SwingSoundVolume }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Swing2") with { Volume = SwingSoundVolume });
                     SwingSoundStyle += 1;
                 }
                 else
                 if (SwingSoundStyle == 2)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Swing3") with { Volume = SwingSoundVolume }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Swing3") with { Volume = SwingSoundVolume });
                     SwingSoundStyle = 0;
                 }
                 return true;
@@ -113,7 +113,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
                 player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Thrust") with { Volume = SwingSoundVolume }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/Thrust") with { Volume = SwingSoundVolume });
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<SteelTempestThrust>(), damage, 7, player.whoAmI);
             }
             else if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
@@ -122,7 +122,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 Item.noUseGraphic = false;
                 Item.noMelee = false;
                 player.AddBuff(ModContent.BuffType<SteelTempestThrustCooldown>(), AttackSpeedScalingDuration);
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoCast") with { Volume = SwingSoundVolume }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/TornadoCast") with { Volume = SwingSoundVolume });
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<SteelTempestTornado>(), damage, 7, player.whoAmI);
             }
             return true;

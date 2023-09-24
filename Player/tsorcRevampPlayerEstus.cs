@@ -25,12 +25,15 @@ namespace tsorcRevamp
                                     //public int estusChargesMax2; //The temporary amount of charges left
         public const int DefaultEstusHealthGain = 60; //How much 1 charge heals to begin with
         public int estusHealthGain; //The amount of health restored per charge
+        public float estusDrinkTimeReduction = 0;
 
 
         public bool isDrinking; //Whether or not the player is currently drinking estus
         public bool isEstusHealing; //Whether or not the player is currently healing after drinking estus
 
-        public float estusDrinkTimerMax => 2f; //This is actually seconds. How long it takes to drink a charge
+        public const float estusDrinkTimerMaxBase = 2f;
+        public float estusDrinkTimerReductionPStone = 0.5f;
+        public float estusDrinkTimerMax = estusDrinkTimerMaxBase; //This is actually seconds. How long it takes to drink a charge
         public float estusDrinkTimer; //How far through the animation we are
         public float estusHealthPerTick; //How much health to restore per tick
         public float estusHealingTimerMax = 90; //Timer for how long drinking the estus will heal for
@@ -88,7 +91,13 @@ namespace tsorcRevamp
         }
         public override void PostUpdateMiscEffects()
         {
-            UpdateResource();
+            if (Player.pStone)
+            {
+                estusDrinkTimerMax = estusDrinkTimerMaxBase - estusDrinkTimerReductionPStone;
+            } else
+            {
+                estusDrinkTimerMax = estusDrinkTimerMaxBase;
+            }
         }
 
         private void UpdateResource()

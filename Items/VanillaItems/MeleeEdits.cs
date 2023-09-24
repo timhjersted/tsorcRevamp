@@ -23,6 +23,16 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.width = 50;
                 item.height = 50;
             }
+            if (item.type == ItemID.BloodLustCluster)
+            {
+                item.width = 58;
+                item.height = 48;
+            }
+            if (item.type == ItemID.Katana)
+            {
+                item.width = 48;
+                item.height = 54;
+            }
             if (item.type == ItemID.WoodenBoomerang)
             {
                 item.mana = 5;
@@ -70,10 +80,14 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.LightsBane)
             {
                 item.mana = 9;
+                item.width = 50;
+                item.height = 50;
             }
             if (item.type == ItemID.BladeofGrass)
             {
                 item.mana = 13;
+                item.width = 68;
+                item.height = 68;
             }
             if (item.type == ItemID.ThornChakram)
             {
@@ -89,7 +103,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.NightsEdge)
             {
-                item.mana = 20;
+                item.mana = 14;
             }
             if (item.type == ItemID.FlyingKnife)
             {

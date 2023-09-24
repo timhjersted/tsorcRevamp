@@ -136,7 +136,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (AI_State == State_Idle)
             {
-                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/CosmicSparkle"), NPC.Center);
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/CosmicSparkle") with { }, NPC.Center);
 
                 NPC.TargetClosest(true);
                 AI_Timer++;

@@ -33,6 +33,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.maxStack = 1;
             Item.UseSound = SoundID.Item1;
             Item.shoot = ModContent.ProjectileType<Projectiles.Melee.ShrapnelSaw>();
+
+            Item.mana = 6;
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)

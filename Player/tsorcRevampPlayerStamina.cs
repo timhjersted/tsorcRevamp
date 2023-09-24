@@ -101,7 +101,7 @@ namespace tsorcRevamp
         //const float BoomerangDrainPerFrame = 0.6f;
         const float HeldProjectileDrainPerFrame = 1f;
         const float SpecialHeldProjectileDrainPerFrame = 0.6f;
-        const float FlailDrainPerFrame = 0.2f;
+        const float FlailDrainPerFrame = 0.1f;
         const float YoyoDrainPerFrame = 0.3f;
         const float ChargedWhipDrainPerFrame = 0.2f;
 
@@ -279,12 +279,18 @@ namespace tsorcRevamp
             {
                 if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) return;
                 if (!ModContent.GetInstance<tsorcRevampConfig>().ShowStaminaTooltip) return;
-                if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.DamageType == DamageClass.Summon) return;
+                if (item.DamageType == DamageClass.Summon) return;
                 if (item.damage <= 0 && item.type != ItemID.CoinGun) return;
                 if (item.ammo != AmmoID.None) return; //ammo does not consume stamina
                 if (item.type == ItemID.EoCShield) return;
                 StringBuilder tipToAdd = new();
-                tipToAdd.Append(LangUtils.GetTextValue("UI.StaminaUse"));
+                if (item.pick != 0 || item.axe != 0 || item.hammer != 0)
+                {
+                    tipToAdd.Append(LangUtils.GetTextValue("UI.StaminaUseOnHitOnly"));
+                } else
+                {
+                    tipToAdd.Append(LangUtils.GetTextValue("UI.StaminaUse"));
+                }
 
                 int preModificationLength = tipToAdd.Length;
 
@@ -330,11 +336,6 @@ namespace tsorcRevamp
                 if (tipToAdd.Length == preModificationLength) {
                     int staminaUse = (int)(item.useAnimation / Main.LocalPlayer.GetAttackSpeed(item.DamageType));
                     staminaUse = (int)tsorcRevampPlayer.ReduceStamina(staminaUse);
-                    /*if (item.DamageType == DamageClass.Magic)
-                    {
-                        staminaUse *= 8;
-                        staminaUse /= 10;
-                    }*/
                     tipToAdd.Append($"{staminaUse}"); 
                 }
 

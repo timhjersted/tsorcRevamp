@@ -10,6 +10,7 @@ namespace tsorcRevamp.Items
 {
     class GlintstonePebble : ModItem
     {
+        public const int BaseDamage = 36;
         public override void SetStaticDefaults()
         {
         }
@@ -111,7 +112,7 @@ namespace tsorcRevamp.Items
                     }
                 }
 
-                int damage = (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(48));
+                int damage = (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(BaseDamage));
 
                 if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                 {

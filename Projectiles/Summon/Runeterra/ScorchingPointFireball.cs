@@ -90,15 +90,15 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = player;
             if (Main.rand.NextBool(3))
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit1") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit1") with { Volume = 1f });
             }
             else if (Main.rand.NextBool(3))
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit2") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit2") with { Volume = 1f });
             }
             else
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit3") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit3") with { Volume = 1f });
             }
             if (hit.Crit)
             {
@@ -112,7 +112,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             {
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks = 0;
                 Dust.NewDust(Projectile.position, 20, 20, DustID.FlameBurst, 1, 1, 0, default, 1.5f);
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/MarkDetonation") with { Volume = 2f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/MarkDetonation") with { Volume = 2f });
             }
         }
 

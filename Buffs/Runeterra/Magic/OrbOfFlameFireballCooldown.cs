@@ -16,7 +16,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
         {
             if (player.buffTime[buffIndex] == 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/FireballReady") with { Volume = OrbOfDeception.OrbSoundVolume * 2 }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/FireballReady") with { Volume = OrbOfDeception.OrbSoundVolume * 2 });
             }
         }
     }

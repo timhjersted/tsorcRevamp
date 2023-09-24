@@ -78,15 +78,15 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = player;
             if (Main.rand.NextBool(3))
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit1") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit1") with { Volume = 1f });
             }
             else if (Main.rand.NextBool(3))
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit2") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit2") with { Volume = 1f });
             }
             else
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit3") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit3") with { Volume = 1f });
             }
             if (hit.Crit)
             {
@@ -102,7 +102,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().SuperSunburnDuration = 3f;
                 player.GetModPlayer<tsorcRevampPlayer>().CotUStardustCount++;
                 Dust.NewDust(Projectile.position, 20, 20, DustID.AncientLight, 1, 1, 0, default, 1.5f);
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/MarkDetonation") with { Volume = 2f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/MarkDetonation") with { Volume = 2f });
             }
         }
         public override void OnSpawn(IEntitySource source) 

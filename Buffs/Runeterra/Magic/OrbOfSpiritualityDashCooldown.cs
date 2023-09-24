@@ -15,7 +15,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
         {
             if (player.buffTime[buffIndex] == 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/DashReady") with { Volume = 1f }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/DashReady") with { Volume = 1f });
             }
         }
     }

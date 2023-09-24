@@ -25,7 +25,6 @@ namespace tsorcRevamp.Projectiles.Spears
             Projectile.hide = true;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 5;
-            Projectile.scale = 1.1f;
 
         }
         public float moveFactor
