@@ -49,7 +49,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.velocity *= 1.03f;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (!Projectile.active)
             {

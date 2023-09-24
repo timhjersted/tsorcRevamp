@@ -115,7 +115,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/ThrustHit") with { Volume = 1f });
             }
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Player player = Main.player[Projectile.owner];
             player.itemAnimation = 0;

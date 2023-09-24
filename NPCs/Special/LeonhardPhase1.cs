@@ -21,13 +21,7 @@ namespace tsorcRevamp.NPCs.Special
             Main.npcFrameCount[NPC.type] = 27;
             NPCID.Sets.TrailCacheLength[NPC.type] = 5; //How many copies of shadow/trail
             NPCID.Sets.TrailingMode[NPC.type] = 0;
-            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
-            {
-                SpecificallyImmuneTo = new int[] {
-                    BuffID.Confused
-                }
-            };
-            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
         }
 
         public override void SetDefaults()

@@ -25,15 +25,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 15;
-            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
-            {
-                SpecificallyImmuneTo = new int[] {
-                    BuffID.CursedInferno,
-                    BuffID.Ichor,
-                    BuffID.Confused
-                }
-            };
-            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.CursedInferno] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Ichor] = true;
         }
         public override void SetDefaults()
         {

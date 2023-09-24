@@ -27,19 +27,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
-            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
-            {
-                SpecificallyImmuneTo = new int[]
-                {
-                    BuffID.Poisoned,
-                    BuffID.Frostburn,
-                    BuffID.Confused,
-                    BuffID.CursedInferno,
-                    BuffID.Ichor,
-                    BuffID.Venom
-                }
-            };
-            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.CursedInferno] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Ichor] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Venom] = true;
         }
         public override void SetDefaults()
         {

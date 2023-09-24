@@ -53,7 +53,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) - 2.355f;
             }
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);

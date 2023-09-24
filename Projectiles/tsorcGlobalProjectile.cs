@@ -546,7 +546,7 @@ namespace tsorcRevamp.Projectiles
         }
 
 
-        public override void Kill(Projectile projectile, int timeLeft)
+        public override void OnKill(Projectile projectile, int timeLeft)
         {
             Player owner = Main.player[projectile.owner];
             var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
@@ -579,7 +579,7 @@ namespace tsorcRevamp.Projectiles
                     modPlayer.BotCCurrentAccuracyPercent = 0;
                 }
             }
-            base.Kill(projectile, timeLeft);
+            base.OnKill(projectile, timeLeft);
         }
     }
 }

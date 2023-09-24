@@ -27,16 +27,9 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
-            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
-            {
-                SpecificallyImmuneTo = new int[] 
-                {
-                    BuffID.Poisoned,
-                    BuffID.Venom,
-                    BuffID.Confused
-                }
-            };
-            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Venom] = true;
         }
         public override void SetDefaults()
         {

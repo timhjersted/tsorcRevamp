@@ -886,7 +886,7 @@ namespace tsorcRevamp.NPCs
                 int debuffCounter = 1;
                 foreach (int buffType in npc.buffType)
                 {
-                    if (Main.debuff[buffType] && !(BuffID.Sets.IsAnNPCWhipDebuff[buffType]))
+                    if (Main.debuff[buffType] && !(BuffID.Sets.IsATagBuff[buffType]))
                     {
                         debuffCounter++;
                     }

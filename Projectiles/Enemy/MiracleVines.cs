@@ -95,7 +95,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Projectile.active = false;
             if (Main.netMode == NetmodeID.MultiplayerClient)

@@ -38,7 +38,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         #endregion
 
         #region Kill
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (!Projectile.active)
             {

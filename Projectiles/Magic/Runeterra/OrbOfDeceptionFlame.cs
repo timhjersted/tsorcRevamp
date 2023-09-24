@@ -144,7 +144,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             player.statMana += player.GetManaCost(player.HeldItem) / 2;
             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FireHit") with { Volume = OrbOfDeception.OrbSoundVolume });
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Player player = Main.player[Projectile.owner];
             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfDeception/FireDespawn") with { Volume = OrbOfDeception.OrbSoundVolume });

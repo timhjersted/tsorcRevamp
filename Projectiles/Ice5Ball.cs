@@ -47,7 +47,7 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 5, ModContent.ProjectileType<Ice5Icicle>(), (int)(this.Projectile.damage), 3f, Projectile.owner);

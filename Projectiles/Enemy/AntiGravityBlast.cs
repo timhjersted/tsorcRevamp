@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 600;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Projectile.type = 79;
         }

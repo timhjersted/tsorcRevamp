@@ -34,15 +34,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Main.npcFrameCount[NPC.type] = 16;
             NPCID.Sets.TrailCacheLength[NPC.type] = 3; //How many copies of shadow/trail
             NPCID.Sets.TrailingMode[NPC.type] = 0;
-            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
-            {
-                SpecificallyImmuneTo = new int[]
-                {
-                    BuffID.OnFire,
-                    BuffID.OnFire3
-                }
-            };
-            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire3] = true;
         }
         public override void SetDefaults()
         {

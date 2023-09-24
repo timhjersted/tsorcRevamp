@@ -105,7 +105,7 @@ namespace tsorcRevamp.Projectiles
             return new Vector2(speed * 23, 0).RotatedBy(angle);
 
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
 
         }

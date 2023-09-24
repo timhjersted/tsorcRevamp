@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
 
         #region AI
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             //int num98 = -1;
             if (!Projectile.active)

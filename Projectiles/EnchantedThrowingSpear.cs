@@ -49,7 +49,7 @@ namespace tsorcRevamp.Projectiles
             }
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90f); //simplified rotation code (no trig!)
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
             for (int i = 0; i < 10; i++)

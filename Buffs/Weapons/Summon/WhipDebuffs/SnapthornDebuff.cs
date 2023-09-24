@@ -9,7 +9,7 @@ namespace tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs
     {
         public override void SetStaticDefaults()
         {
-            BuffID.Sets.IsAnNPCWhipDebuff[Type] = true;
+            BuffID.Sets.IsATagBuff[Type] = true;
         }
 
         public override void Update(NPC npc, ref int buffIndex)

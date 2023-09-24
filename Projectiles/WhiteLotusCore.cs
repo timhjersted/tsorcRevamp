@@ -62,9 +62,9 @@ namespace tsorcRevamp.Projectiles {
                 Projectile.Kill();
         }
 
-        public override void Kill(int timeLeft) {
+        public override void OnKill(int timeLeft) {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass, Projectile.Center);
-            base.Kill(timeLeft);
+            base.OnKill(timeLeft);
         }
     }
 }

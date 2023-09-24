@@ -42,7 +42,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
                 modifiers.SourceDamage *= CruelArrow.DmgMult;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.position);

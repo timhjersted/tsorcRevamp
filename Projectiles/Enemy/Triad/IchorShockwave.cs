@@ -89,7 +89,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             }
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.5f}, Projectile.Center);
         }

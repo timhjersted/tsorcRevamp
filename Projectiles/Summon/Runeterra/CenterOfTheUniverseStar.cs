@@ -121,7 +121,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 		{
 			behindNPCs.Add(index);
 		}
-		public override void Kill(int timeLeft) 
+		public override void OnKill(int timeLeft) 
 		{
 			CenterOfTheUniverse.projectiles.Remove(this);
 		}

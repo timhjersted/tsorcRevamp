@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.width = 14;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
             for (int i = 0; i < 10; i++)

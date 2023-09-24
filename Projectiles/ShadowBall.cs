@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 52, Projectile.velocity.X * 0, -4, 100, default, 2.5f);
             Main.dust[dust].noGravity = true;
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             for (int d = 0; d < 25; d++)
             {

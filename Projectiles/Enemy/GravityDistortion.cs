@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = false;
             Projectile.timeLeft = 200;
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Projectile.type = 79;
             for (int num36 = 0; num36 < 20; num36++)

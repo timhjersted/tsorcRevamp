@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Armors
             player.moveSpeed += MoveSpeed / 100f;
             if (!ModContent.GetInstance<tsorcRevampConfig>().DisableDragoonGreavesDoubleJump)
             {
-                player.hasJumpOption_Unicorn = true;
+                player.GetJumpState(ExtraJump.UnicornMount).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
             }
             player.jumpBoost = true;
             player.maxMinions += MinionSlots;

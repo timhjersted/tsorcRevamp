@@ -10,7 +10,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
 	{
 		public override void SetStaticDefaults()
 		{
-			BuffID.Sets.IsAnNPCWhipDebuff[Type] = true;
+			BuffID.Sets.IsATagBuff[Type] = true;
 		}
 
 		public override void Update(NPC npc, ref int buffIndex)

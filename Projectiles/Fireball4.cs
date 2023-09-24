@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles
                 Dust.NewDustPerfect(Projectile.Center, DustID.InfernoFork, Main.rand.NextVector2Circular(2, 2)).noGravity = true;
             }
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Projectile.penetrate = 2;
             Projectile.width = Projectile.width << 3;

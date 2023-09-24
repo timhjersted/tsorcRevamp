@@ -137,7 +137,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             return;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             // Play explosion sound
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath55 with {PitchVariance = 2f }, Projectile.Center);

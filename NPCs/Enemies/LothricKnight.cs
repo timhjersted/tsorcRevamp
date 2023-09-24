@@ -41,7 +41,6 @@ namespace tsorcRevamp.NPCs.Enemies
                     BuffID.Confused
                 }
             };
-            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
         }
         public override void SetDefaults()
         {

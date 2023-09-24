@@ -42,7 +42,7 @@ namespace tsorcRevamp.Projectiles {
             Projectile.rotation = (offset.ToRotation() + MathHelper.ToRadians(90));
         }
 
-        public override void Kill(int timeLeft) {
+        public override void OnKill(int timeLeft) {
             for (int i = 0; i < 10; i++) {
                 Dust dust = Dust.NewDustDirect(Projectile.Center, 1, 1, DustID.BubbleBurst_White);
                 dust.noGravity = true;

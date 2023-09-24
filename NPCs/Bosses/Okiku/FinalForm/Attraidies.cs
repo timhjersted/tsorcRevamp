@@ -31,14 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
-            NPCDebuffImmunityData debuffData = new NPCDebuffImmunityData
-            {
-                SpecificallyImmuneTo = new int[]
-                {
-                    BuffID.Confused
-                }
-            };
-            NPCID.Sets.DebuffImmunitySets.Add(Type, debuffData);
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
         }
         public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/SecondForm/DarkDragonMask";
         public override void SetDefaults()

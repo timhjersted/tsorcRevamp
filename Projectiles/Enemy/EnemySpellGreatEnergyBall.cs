@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item94 with { Volume = 0.09f }, Projectile.Center); // electric thud quick
             //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);

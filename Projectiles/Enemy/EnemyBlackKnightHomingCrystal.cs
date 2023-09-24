@@ -101,7 +101,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
 
         #region Kill   
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie82 with { Volume = 0.6f, Pitch = -3f, PitchVariance = 2f }, Projectile.Center); //wraith
         

@@ -74,7 +74,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62, Projectile.Center);
 

@@ -80,7 +80,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<DarkInferno>(), 240, false);
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (!Projectile.active)
             {

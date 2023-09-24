@@ -58,7 +58,7 @@ namespace tsorcRevamp.Projectiles
             int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 57, 0f, 0f, 80, color, 1f);
             Main.dust[dust].noGravity = true;
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
 
             if (!Projectile.active)

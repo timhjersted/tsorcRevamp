@@ -122,7 +122,7 @@ namespace tsorcRevamp.Projectiles
         }
 
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);

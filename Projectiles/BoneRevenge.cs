@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles
             }
             return false;
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
             // Smoke Dust spawn

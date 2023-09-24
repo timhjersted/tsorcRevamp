@@ -102,7 +102,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             }
             Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 5f);
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (FirewallSound == null)
             {

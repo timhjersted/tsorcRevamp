@@ -51,7 +51,7 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62 with { Volume = 0.5f, Pitch = 1.1f}, Projectile.Center);
             Projectile.penetrate = 2;

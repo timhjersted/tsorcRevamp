@@ -124,7 +124,7 @@ namespace tsorcRevamp.Projectiles.VFX
             }
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (Main.netMode != NetmodeID.Server && filterIndex != null && Filters.Scene[filterIndex].IsActive())
             {

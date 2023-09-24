@@ -555,7 +555,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Main.EntitySpriteDraw(texture, start, drawRect, Color.White, rotation - rotato, drawOrigin, drawScale, 0, 0);
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (lightningTarget != null && !lightningTarget.IsDisposed)
             {

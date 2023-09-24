@@ -38,7 +38,7 @@ namespace tsorcRevamp.Projectiles
                 target.AddBuff(BuffID.OnFire, 300);
             }
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             for (int d = 0; d < 15; d++)
             {

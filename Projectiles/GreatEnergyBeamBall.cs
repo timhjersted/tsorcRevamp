@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.localNPCHitCooldown = 25;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (!Projectile.active)
             {

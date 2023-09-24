@@ -61,7 +61,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
         {
             player.jumpSpeedBoost += JumpSpeed / 100f;
             player.jumpBoost = true;
-            player.hasJumpOption_Sandstorm = true;
+            player.GetJumpState(ExtraJump.SandstormInABottle).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
         }
 
     }

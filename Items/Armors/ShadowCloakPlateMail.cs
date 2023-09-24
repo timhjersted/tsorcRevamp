@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items.Armors
                 Main.dust[dust2].noGravity = true;
             }
 
-            player.hasJumpOption_Santank = true; //so it stacks with commonly used Cloud in a Bottle
+            player.GetJumpState(ExtraJump.SantankMount).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */; //so it stacks with commonly used Cloud in a Bottle
             player.shadowArmor = true;
         }
 

@@ -115,7 +115,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                 Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 2f);
             }
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (OrbSound == null)
             {

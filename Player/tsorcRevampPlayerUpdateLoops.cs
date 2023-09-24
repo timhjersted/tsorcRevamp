@@ -1096,11 +1096,11 @@ namespace tsorcRevamp
 
             if (ShadowWeight)
             {
-                Player.hasJumpOption_Blizzard = false;
-                Player.hasJumpOption_Fart = false;
-                Player.hasJumpOption_Sail = false;
-                Player.hasJumpOption_Sandstorm = false;
-                Player.hasJumpOption_Unicorn = false;
+                Player.GetJumpState(ExtraJump.BlizzardInABottle).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
+                Player.GetJumpState(ExtraJump.FartInAJar).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
+                Player.GetJumpState(ExtraJump.TsunamiInABottle).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
+                Player.GetJumpState(ExtraJump.SandstormInABottle).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
+                Player.GetJumpState(ExtraJump.UnicornMount).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
                 Player.canRocket = false;
                 Player.rocketTime = 0;
                 Player.jumpBoost = false;
@@ -1124,12 +1124,12 @@ namespace tsorcRevamp
 
             if (Crippled)
             {
-                Player.hasJumpOption_Blizzard = false;
-                Player.hasJumpOption_Cloud = false;
-                Player.hasJumpOption_Fart = false;
-                Player.hasJumpOption_Sail = false;
-                Player.hasJumpOption_Sandstorm = false;
-                Player.hasJumpOption_Unicorn = false;
+                Player.GetJumpState(ExtraJump.BlizzardInABottle).Disable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
+                Player.GetJumpState(ExtraJump.CloudInABottle).Disable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
+                Player.GetJumpState(ExtraJump.FartInAJar).Disable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
+                Player.GetJumpState(ExtraJump.TsunamiInABottle).Disable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
+                Player.GetJumpState(ExtraJump.SandstormInABottle).Disable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
+                Player.GetJumpState(ExtraJump.UnicornMount).Disable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
                 Player.canRocket = false;
                 Player.rocketTime = 0;
                 Player.jumpBoost = false;

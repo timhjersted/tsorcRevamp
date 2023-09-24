@@ -128,7 +128,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
                 Lighting.AddLight(Projectile.Center, OrbOfSpirituality.FilledColor.ToVector3() * 2f);
             }
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (OrbSound == null)
             {

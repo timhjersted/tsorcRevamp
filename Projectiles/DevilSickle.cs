@@ -58,7 +58,7 @@ namespace tsorcRevamp.Projectiles
                 target.AddBuff(BuffID.OnFire, 7 * 60);
             }
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
         }
