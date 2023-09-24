@@ -438,6 +438,10 @@ namespace tsorcRevamp.Projectiles
         public override void ModifyHitNPC(Projectile projectile, NPC target, ref NPC.HitModifiers modifiers)
         {
             Player player = Main.player[projectile.owner];
+            if (!Main.hardMode && (projectile.type == ProjectileID.StarCloakStar || projectile.type == ProjectileID.StarVeilStar || projectile.type == ProjectileID.BeeCloakStar || projectile.type == ProjectileID.ManaCloakStar))
+            {
+                modifiers.FinalDamage *= 0.5f;
+            }
             if (tsorcRevampWorld.NewSlain != null)
             {
                 if (projectile.type == ProjectileID.EmpressBlade & !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())))
