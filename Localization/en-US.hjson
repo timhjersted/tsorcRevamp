@@ -1409,7 +1409,7 @@ Mods: {
 				Tooltip:
 					'''
 					Unique shield of a nameless knight
-					[c/ffbf00:{$CommonItemTooltip.DRStat} when not attacking or {2}% when attacking, but drains {3} stamina per hit]
+					[c/ffbf00:{$CommonItemTooltip.DRStat} when not attacking or {2} when attacking, but drains {3} stamina per hit]
 					{$CommonItemTooltip.NoKnockback} and protects against {$CommonItemTooltip.OnFire} but reduces stamina regen by {4}%
 					{$CommonItemTooltip.DRStat@1} if you can't afford the stamina cost
 					'''
@@ -3639,33 +3639,33 @@ Mods: {
 				Disabled: The curse has been lifted
 				Melee:
 					'''
-					[c/FF4500:Melee base attack speed is reduced to {0}%.]
-					[c/FF4500:Grazing enemy projectiles and hitting enemies with melee attacks will grant stacks of Lethal Tempo,]
-					[c/FF4500:these increase your attack speed temporarily and fall off after a few seconds, if not refreshed.]
-					[c/FF4500:Each stack grants {1}% attack speed, up to {2}% at the maximum of {3} stacks.]
+					[c/ff8400:Melee base attack speed is reduced to {0}%.]
+					[c/ff8400:Grazing enemy projectiles and hitting enemies with melee attacks will grant stacks of Lethal Tempo,]
+					[c/ff8400:these increase your attack speed temporarily and fall off after a few seconds, if not refreshed.]
+					[c/ff8400:Each stack grants {1}% attack speed, up to {2}% at the maximum of {3} stacks.]
 					'''
 				Ranged:
 					'''
-					[c/228B22:Ranged critical strike chance is now dependant on your accuracy,]
-					[c/228B22:missing shots will decrease it, while hitting shots will increase it.]
-					[c/228B22:A ranged projectile only needs to hit once to count as hit, ]
-					[c/228B22:can't increase your accuracy multiple times and can also only miss once.]
-					[c/228B22:A hit will increase your accuracy by {0}%, while missing will decrease your accuracy by {1}%.]
-					[c/228B22:You can gain up to {2}% crit chance flat and a {3}% multiplier at 100% accuracy, or lose all crit at 0% accuracy.]
+					[c/22dd96:Ranged critical strike chance is now dependant on your accuracy,]
+					[c/22dd96:missing shots will decrease it, while hitting shots will increase it.]
+					[c/22dd96:A ranged projectile only needs to hit once to count as hit, ]
+					[c/22dd96:can't increase your accuracy multiple times and can also only miss once.]
+					[c/22dd96:A hit will increase your accuracy by {0}%, while missing will decrease your accuracy by {1}%.]
+					[c/22dd96:You can gain up to {2}% crit chance flat and a {3}% multiplier at 100% accuracy, or lose all crit at 0% accuracy.]
 					'''
 				Magic:
 					'''
-					[c/00BFFF:Magic damage is increased by {1}% and attack speed by {2}% multiplicatively while NOT afflicted by Mana Sickness.]
-					[c/00BFFF:Mana regeneration is disabled but grants a Cerulean Flask to restore mana, scaling with {0}% maximum mana,]
-					[c/00BFFF:mana regen bonuses increase total mana restored and mana regen delay penalties increase total mana restoration time.]
-					[c/00BFFF:Mana Potions still work and resting at a Bonfire will restore mana, drinking the Cerulean Flask also cures Mana Sickness.]
+					[c/ea00ea:Magic damage is increased by {1}% and attack speed by {2}% multiplicatively while NOT afflicted by Mana Sickness.]
+					[c/ea00ea:Mana regeneration is disabled but grants a Cerulean Flask to restore mana, scaling with {0}% maximum mana,]
+					[c/ea00ea:mana regen bonuses increase total mana restored and mana regen delay penalties increase total mana restoration time.]
+					[c/ea00ea:Mana Potions still work and resting at a Bonfire will restore mana, drinking the Cerulean Flask also cures Mana Sickness.]
 					'''
 				Summon:
 					'''
-					[c/FFA500:Summon base damage is reduced to {0}%, but hitting enemies with whips will grant a stack of Conqueror(2 on a crit),]
-					[c/FFA500:these increase summon damage temporarily and fall off after a few seconds, if not refreshed.]
-					[c/FFA500:Each stack grants {1}% damage, up to {2}% at the maximum of {3} stacks.]
-					[c/FFA500:Whip range is decreased by {4}%.]
+					[c/6efaff:Summon base damage is reduced to {0}%, but hitting enemies with whips will grant a stack of Conqueror(2 on a crit),]
+					[c/6efaff:these increase summon damage temporarily and fall off after a few seconds, if not refreshed.]
+					[c/6efaff:Each stack grants {1}% damage, up to {2}% at the maximum of {3} stacks.]
+					[c/6efaff:Whip range is decreased by {4}%.]
 					'''
 				End:
 					'''
@@ -3793,12 +3793,12 @@ Mods: {
 				Obscured:
 					'''
 					[c/ffbf00:Congratulations! You have unlocked the true ending of the game!]
-					               Having defeated Gwyn, the portal that Attraidies opened at the moment of his death has closed.
-					               At last, you can finally feel the energies of the corruption losing their hold on the world,
-					               the darkness receding back into the earth, growing in harmony with the light once again.
-					               You think of Asha, waiting for you, and rejoice upon the thought of your return home.
-					               You take a moment to think about all that you have been through... Forever you shall be known
-					               as the hero of the age. Centuries from now, elders will be telling your story. The story of Red Cloud.
+					Having defeated Gwyn, the portal that Attraidies opened at the moment of his death has closed.
+					At last, you can finally feel the energies of the corruption losing their hold on the world,
+					the darkness receding back into the earth, growing in harmony with the light once again.
+					You think of Asha, waiting for you, and rejoice upon the thought of your return home.
+					You take a moment to think about all that you have been through... Forever you shall be known
+					as the hero of the age. Centuries from now, elders will be telling your story. The story of Red Cloud.
 					'''
 			}
 
@@ -4807,11 +4807,11 @@ Mods: {
 				Obscured:
 					'''
 					As the burning remains of the Mindflayer King lay before you, you look up and out to the horizon.
-					               You feel relieved, but notice your heart is still not at peace. Attraidies was known for his games.
-					               Even in death you suspect his sway over the world has not ended.
-					               You remember the magic spell that he put on Aaron and wonder if he cast the same spell on himself...
-					               [c/00ffd4:Looking down, you notice a drill lying in the ashes, still hot to the touch...]
-					               [c/ffbf00:Congratulations on beating the game! We hope you enjoyed it!- Tim Hjersted & the Revamp Team]
+					You feel relieved, but notice your heart is still not at peace. Attraidies was known for his games.
+					Even in death you suspect his sway over the world has not ended.
+					You remember the magic spell that he put on Aaron and wonder if he cast the same spell on himself...
+					[c/00ffd4:Looking down, you notice a drill lying in the ashes, still hot to the touch...]
+					[c/ffbf00:Congratulations on beating the game! We hope you enjoyed it!- Tim Hjersted & the Revamp Team]
 					'''
 			}
 
@@ -7381,6 +7381,7 @@ Mods: {
 				Tooltip: Shows you your stats, right click to cycle between classes
 				Generic:
 					'''
+					Enemy SpawnRate: {8}%
 					Resistance: {0}, equal to {1}% damage reduction
 					Movement Speed: {2}%
 					Life Regen: {3}
@@ -7391,7 +7392,7 @@ Mods: {
 					'''
 				Melee:
 					'''
-					[c/FF4500:Melee Stats:]
+					[c/ff8400:Melee Stats:]
 					Total Damage Multiplier: {0}%
 					Critical Strike Chance: {1}%
 					Attack Speed: {2}%
@@ -7399,7 +7400,7 @@ Mods: {
 					'''
 				Ranged:
 					'''
-					[c/228B22:Ranged Stats:]
+					[c/22dd96:Ranged Stats:]
 					Total Damage Multiplier: {0}%
 					Critical Strike Chance: {1}%
 					Attack Speed: {2}%
@@ -7407,7 +7408,7 @@ Mods: {
 					'''
 				Magic:
 					'''
-					[c/00BFFF:Magic Stats:]
+					[c/ea00ea:Magic Stats:]
 					Total Damage Multiplier: {0}%
 					Critical Strike Chance: {1}%
 					Attack Speed: {2}%
@@ -7415,7 +7416,7 @@ Mods: {
 					'''
 				Summon:
 					'''
-					[c/FFA500:Summon Stats:]
+					[c/6efaff:Summon Stats:]
 					Total Damage Multiplier: {0}%
 					Critical Strike Chance: {1}%
 					Attack Speed: {2}%
@@ -9543,7 +9544,7 @@ Mods: {
 				HasShard:
 					'''
 					Is that a shard you've found? Here, let me see it.
-					So that I may help you. To see light, to see hope� However faint it might be�
+					So that I may help you. To see light, to see hope. No matter how faint it might be
 					'''
 				RewardTip: Listen to everything I have to say and I may give you a reward.
 				AttraidiesTip: Seek misery. For misery will lead you to greater, stronger souls. You will never defeat Attraidies with a soul so frail and palid.
@@ -9566,7 +9567,7 @@ Mods: {
 				button2v1: Seek knowledge...
 				button2v2: Recieve gift
 				button2v3: Give Shard
-				BringShards: If you happen to find another Estus Flask Shard, bring it to me. So that I may ease your burden.
+				BringShards: If you happen to find another Restoration Flask Shard, bring it to me. So that I may ease your burden.
 				EstusUpgrade: "Estus Flask size increased! Max charges: "
 				CeruleanUpgrade: "Cerulean Flask size increased! Max charges: "
 

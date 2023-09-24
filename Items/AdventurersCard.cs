@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items
@@ -39,7 +40,7 @@ namespace tsorcRevamp.Items
 
             tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "GenericStats", LangUtils.GetTextValue("Items.AdventurersCard.Generic",
                 (int)(player.endurance * 100), 100 - (int)(100f / (100f + (player.endurance * 100f)) * 100f), (int)(player.moveSpeed * 100), player.lifeRegen, (int)(player.manaCost * 100), player.manaRegenBonus, player.manaRegenDelayBonus,
-                (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGain * 100f))));
+                (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGain * 100f), (float)System.Math.Round(60f / (player.GetModPlayer<tsorcRevampPlayer>().spawnRate) * 100, 1))));
 
             switch (ClassCounter)
             {
@@ -75,6 +76,20 @@ namespace tsorcRevamp.Items
                         break;
                     }
             }
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25);
+            recipe.AddIngredient(ItemID.Book, 1);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.Register(); 
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 25);
+            recipe2.AddIngredient(ItemID.SpellTome, 1);
+            recipe2.AddTile(TileID.DemonAltar);
+            recipe2.Register();
         }
     }
 }

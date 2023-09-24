@@ -156,6 +156,14 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ItemDropRule.Common(ItemID.BoneHelm));
+            itemLoot.Add(ItemDropRule.Common(ItemID.ChesterPetItem));
+            itemLoot.Add(ItemDropRule.Common(ItemID.Eyebrella));
+            itemLoot.Add(ItemDropRule.Common(ItemID.DontStarveShaderItem));
+            itemLoot.Add(ItemDropRule.Common(ItemID.DizzyHat));
+            itemLoot.Add(ItemDropRule.Common(ItemID.LucyTheAxe));
+            itemLoot.Add(ItemDropRule.Common(ItemID.WeatherPain));
+            itemLoot.Add(ItemDropRule.Common(ItemID.PewMaticHorn));
+            itemLoot.Add(ItemDropRule.Common(ItemID.HoundiusShootius));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<AncestralSpiritMask>(), 7));
         }
     }

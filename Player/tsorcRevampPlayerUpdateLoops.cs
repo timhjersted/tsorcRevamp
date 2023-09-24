@@ -30,6 +30,7 @@ using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Projectiles.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using Steamworks;
+using System.Reflection;
 
 namespace tsorcRevamp
 {
@@ -333,6 +334,9 @@ namespace tsorcRevamp
         public string DeathText;
         bool setDeathText = false;
         public static List<string> DeathTextList;
+
+		public int spawnRate;// For adventure card spwanRate display
+		static FieldInfo spawnRateFieldInfo;
 
         public override void ResetEffects()
         {
@@ -1805,6 +1809,9 @@ namespace tsorcRevamp
                     }
                 } 
             }
+            // spawnRate means how much enemy can spawn every tick, 1 second equals 60 ticks
+			spawnRateFieldInfo = typeof(NPC).GetField("spawnRate", BindingFlags.Static | BindingFlags.NonPublic);
+			spawnRate = (int)spawnRateFieldInfo.GetValue(null);
         }
 
         public override void PostUpdate()
