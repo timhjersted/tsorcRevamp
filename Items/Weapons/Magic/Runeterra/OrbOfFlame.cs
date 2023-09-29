@@ -77,7 +77,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         {
             if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfFlameOrbIdle>()] == 0 && !player.dead)
             {
-                Projectile.NewProjectile(Projectile.InheritSource(player), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbOfFlameOrbIdle>(), 0, 0);
+                Projectile.NewProjectile(Projectile.InheritSource(player), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbOfFlameOrbIdle>(), 0, 0, player.whoAmI);
             }
         }
         public override bool AltFunctionUse(Player player)
