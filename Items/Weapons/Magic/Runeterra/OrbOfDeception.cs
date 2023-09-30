@@ -92,7 +92,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ShadowOrb);
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

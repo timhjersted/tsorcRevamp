@@ -196,8 +196,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.Flairon)
             {
-                item.damage = 50;
-                item.mana = 40;
+                item.mana = 25;
             }
         }
 

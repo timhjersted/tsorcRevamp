@@ -8290,6 +8290,11 @@ Mods: {
 				DisplayName: Conqueror
 				Description: Your summon damage is increased
 			}
+
+			Stiff: {
+				DisplayName: Stiff
+				Description: You can't roll!
+			}
 		}
 
 		Projectiles: {

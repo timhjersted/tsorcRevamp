@@ -144,7 +144,1015 @@ namespace tsorcRevamp
             On_Player.GetPointOnSwungItemPath += On_Player_GetPointOnSwungItemPath;
 
             On_Player.ApplyVanillaHurtEffectModifiers += On_Player_ApplyVanillaHurtEffectModifiers;
+
+            On_NPC.AI_069_DukeFishron += DukeFishronAdjustment;
         }
+
+        private static void DukeFishronAdjustment(On_NPC.orig_AI_069_DukeFishron orig, NPC self)
+        { 
+            //ai[0] decides which kind of attack it will use (0 = nothing, 1 = dash, 2 = bubbles, 3 = tsunami, 4 = phase change 1 -> 2,
+            // 5 = dash p2, 6 = nothing, 7 = bubbles p2, 8 = tsunami p2, 9 = phase change 2 -> 3,
+            // 10 = ???, 11 = ???, 12 = teleport after dashes complete,
+            bool IsExpertMode = Main.expertMode;
+            float ExpertModeScale = (IsExpertMode ? 1.2f : 1f);
+            bool Phase2LifeThreshold = (double)self.life <= (double)self.lifeMax * 0.5;
+            bool Phase3LifeThreshold = IsExpertMode && (double)self.life <= (double)self.lifeMax * 0.15;
+            bool HasEnteredPhase2 = self.ai[0] > 4f;
+            bool HasEnteredPhase3 = self.ai[0] > 9f;
+            bool IsNotDoingBubbleAttackInPhase1 = self.ai[3] < 10f;
+            int num12 = (IsExpertMode ? 40 : 60);
+            float num23 = (IsExpertMode ? 0.55f : 0.45f);
+            float num34 = (IsExpertMode ? 8.5f : 7.5f);
+            int DashDuration = (IsExpertMode ? 22 : 28);
+            float DashSpeed = (IsExpertMode ? 22f : 17f);
+            Vector2 FishronCenter = self.Center;
+            Player player = Main.player[self.target];
+            bool IsEnragedOutOfOcean = (double)player.position.Y > 18600 || (player.position.X > 12800 && player.position.X < (float)(Main.maxTilesX * 16 - 6400));
+            bool IsUnderwater = player.wet;
+            int BubbleSpewAttackDurationPhase1 = 120;
+            int BubbleRatio = 3; //lower = more bubbles
+            float num40 = 0.3f;
+            float num2 = 5f;
+            int PreparingSharknadoDuration = 60;
+            int Phase1To2ChangeDuration = 240;
+            int Phase2To3ChangeDuration = 240;
+            int CooldownAfterChargesPhase3 = 30;
+            int Phase2BubbleCircleSize = 120;
+            int Phase2BubbleCircleRatio = 4; //lower = more bubbles
+            float Phase2BubbleCircleBubbleOutwardsKnockback = 6f;
+            float Phase2BubbleCirclingVelocity = 20f;
+            float num11 = (float)Math.PI * 2f / (float)(Phase2BubbleCircleSize / 2);
+            int StartOfBattleInvincibilityDuration = 75;
+            bool IsVulnerable = true;
+            float num15 = 0.04f;
+            float num14 = (float)Math.Atan2(player.Center.Y - FishronCenter.Y, player.Center.X - FishronCenter.X);
+            if (HasEnteredPhase3)
+            {
+                self.damage = (int)((float)self.defDamage * 1.1f * ExpertModeScale);
+                self.defense = 0;
+            }
+            else if (HasEnteredPhase2)
+            {
+                self.damage = (int)((float)self.defDamage * 1.2f * ExpertModeScale);
+                self.defense = (int)((float)self.defDefense * 0.8f);
+            }
+            else
+            {
+                self.damage = self.defDamage;
+                self.defense = self.defDefense;
+            }
+            if (HasEnteredPhase3)
+            {
+                num23 = 0.7f;
+                num34 = 12f;
+                num12 = 30;
+                DashDuration = 13;
+                DashSpeed = 28f;
+                if (IsUnderwater)
+                {
+                    DashDuration -= 3;
+                }
+            }
+            else if (HasEnteredPhase2 && IsNotDoingBubbleAttackInPhase1)
+            {
+                num23 = (IsExpertMode ? 0.6f : 0.5f);
+                num34 = (IsExpertMode ? 10f : 8f);
+                num12 = (IsExpertMode ? 40 : 20);
+                DashDuration = (IsExpertMode ? 18 : 30);
+                if (IsExpertMode)
+                {
+                    DashSpeed = 33f;
+                }
+            }
+            else if (IsNotDoingBubbleAttackInPhase1 && !HasEnteredPhase2 && !HasEnteredPhase3)
+            {
+                num12 = 30;
+            }
+            if (self.target < 0 || self.target == 255 || player.dead || !player.active || Vector2.Distance(player.Center, FishronCenter) > 5600f)
+            {
+                self.TargetClosest();
+                player = Main.player[self.target];
+                self.netUpdate = true;
+            }
+            if (player.dead || Vector2.Distance(player.Center, FishronCenter) > 5600f)
+            {
+                self.velocity.Y -= 0.4f;
+                self.EncourageDespawn(10);
+                if (self.ai[0] > 4f)
+                {
+                    self.ai[0] = 5f;
+                }
+                else
+                {
+                    self.ai[0] = 0f;
+                }
+                self.ai[2] = 0f;
+            }
+            if (IsUnderwater)
+            {
+                DashSpeed += 10f;
+                DashDuration -= 3;
+            }
+            if (IsEnragedOutOfOcean)
+            {
+                num12 = 10;
+                DashSpeed += 6f;
+                self.damage = self.defDamage * 3;
+                self.defense = self.defDefense * 3;
+            }
+            if (self.localAI[0] == 0f)
+            {
+                self.localAI[0] = 1f;
+                self.alpha = 255;
+                self.rotation = 0f;
+                if (Main.netMode != 1)
+                {
+                    self.ai[0] = -1f;
+                    self.netUpdate = true;
+                }
+            }
+            if (self.spriteDirection == 1)
+            {
+                num14 += (float)Math.PI;
+            }
+            if (num14 < 0f)
+            {
+                num14 += (float)Math.PI * 2f;
+            }
+            if (num14 > (float)Math.PI * 2f)
+            {
+                num14 -= (float)Math.PI * 2f;
+            }
+            if (self.ai[0] == -1f)
+            {
+                num14 = 0f;
+            }
+            if (self.ai[0] == 3f)
+            {
+                num14 = 0f;
+            }
+            if (self.ai[0] == 4f)
+            {
+                num14 = 0f;
+            }
+            if (self.ai[0] == 8f)
+            {
+                num14 = 0f;
+            }
+            if (self.ai[0] == 1f || self.ai[0] == 6f)
+            {
+                num15 = 0f;
+            }
+            if (self.ai[0] == 7f)
+            {
+                num15 = 0f;
+            }
+            if (self.ai[0] == 3f)
+            {
+                num15 = 0.01f;
+            }
+            if (self.ai[0] == 4f)
+            {
+                num15 = 0.01f;
+            }
+            if (self.ai[0] == 8f)
+            {
+                num15 = 0.01f;
+            }
+            if (self.rotation < num14)
+            {
+                if ((double)(num14 - self.rotation) > Math.PI)
+                {
+                    self.rotation -= num15;
+                }
+                else
+                {
+                    self.rotation += num15;
+                }
+            }
+            if (self.rotation > num14)
+            {
+                if ((double)(self.rotation - num14) > Math.PI)
+                {
+                    self.rotation += num15;
+                }
+                else
+                {
+                    self.rotation -= num15;
+                }
+            }
+            if (self.rotation > num14 - num15 && self.rotation < num14 + num15)
+            {
+                self.rotation = num14;
+            }
+            if (self.rotation < 0f)
+            {
+                self.rotation += (float)Math.PI * 2f;
+            }
+            if (self.rotation > (float)Math.PI * 2f)
+            {
+                self.rotation -= (float)Math.PI * 2f;
+            }
+            if (self.rotation > num14 - num15 && self.rotation < num14 + num15)
+            {
+                self.rotation = num14;
+            }
+            if (self.ai[0] != -1f && self.ai[0] < 9f)
+            {
+                if (Collision.SolidCollision(self.position, self.width, self.height))
+                {
+                    self.alpha += 15;
+                }
+                else
+                {
+                    self.alpha -= 15;
+                }
+                if (self.alpha < 0)
+                {
+                    self.alpha = 0;
+                }
+                if (self.alpha > 150)
+                {
+                    self.alpha = 150;
+                }
+            }
+            if (self.ai[0] == -1f)
+            {
+                IsVulnerable = false;
+                self.velocity *= 0.98f;
+                int num16 = Math.Sign(player.Center.X - FishronCenter.X);
+                if (num16 != 0)
+                {
+                    self.direction = num16;
+                    self.spriteDirection = -self.direction;
+                }
+                if (self.ai[2] > 20f)
+                {
+                    self.velocity.Y = -2f;
+                    self.alpha -= 5;
+                    if (Collision.SolidCollision(self.position, self.width, self.height))
+                    {
+                        self.alpha += 15;
+                    }
+                    if (self.alpha < 0)
+                    {
+                        self.alpha = 0;
+                    }
+                    if (self.alpha > 150)
+                    {
+                        self.alpha = 150;
+                    }
+                }
+                if (self.ai[2] == (float)(PreparingSharknadoDuration - 30))
+                {
+                    int num17 = 36;
+                    for (int i = 0; i < num17; i++)
+                    {
+                        Vector2 val = (Vector2.Normalize(self.velocity) * new Vector2((float)self.width / 2f, (float)self.height) * 0.75f * 0.5f).RotatedBy((float)(i - (num17 / 2 - 1)) * ((float)Math.PI * 2f) / (float)num17) + self.Center;
+                        Vector2 vector15 = val - self.Center;
+                        int num18 = Dust.NewDust(val + vector15, 0, 0, 172, vector15.X * 2f, vector15.Y * 2f, 100, default(Color), 1.4f);
+                        Main.dust[num18].noGravity = true;
+                        Main.dust[num18].noLight = true;
+                        Main.dust[num18].velocity = Vector2.Normalize(vector15) * 3f;
+                    }
+                    SoundEngine.PlaySound(SoundID.Zombie20, new Vector2((int)FishronCenter.X, (int)FishronCenter.Y));
+                }
+                self.ai[2] += 1f;
+                if (self.ai[2] >= (float)StartOfBattleInvincibilityDuration)
+                {
+                    self.ai[0] = 0f;
+                    self.ai[1] = 0f;
+                    self.ai[2] = 0f;
+                    self.netUpdate = true;
+                }
+            }
+            else if (self.ai[0] == 0f && !player.dead)
+            {
+                if (self.ai[1] == 0f)
+                {
+                    self.ai[1] = 300 * Math.Sign((FishronCenter - player.Center).X);
+                }
+                Vector2 vector16 = Vector2.Normalize(player.Center + new Vector2(self.ai[1], -200f) - FishronCenter - self.velocity) * num34;
+                if (self.velocity.X < vector16.X)
+                {
+                    self.velocity.X += num23;
+                    if (self.velocity.X < 0f && vector16.X > 0f)
+                    {
+                        self.velocity.X += num23;
+                    }
+                }
+                else if (self.velocity.X > vector16.X)
+                {
+                    self.velocity.X -= num23;
+                    if (self.velocity.X > 0f && vector16.X < 0f)
+                    {
+                        self.velocity.X -= num23;
+                    }
+                }
+                if (self.velocity.Y < vector16.Y)
+                {
+                    self.velocity.Y += num23;
+                    if (self.velocity.Y < 0f && vector16.Y > 0f)
+                    {
+                        self.velocity.Y += num23;
+                    }
+                }
+                else if (self.velocity.Y > vector16.Y)
+                {
+                    self.velocity.Y -= num23;
+                    if (self.velocity.Y > 0f && vector16.Y < 0f)
+                    {
+                        self.velocity.Y -= num23;
+                    }
+                }
+                int num19 = Math.Sign(player.Center.X - FishronCenter.X);
+                if (num19 != 0)
+                {
+                    if (self.ai[2] == 0f && num19 != self.direction)
+                    {
+                        self.rotation += (float)Math.PI;
+                    }
+                    self.direction = num19;
+                    if (self.spriteDirection != -self.direction)
+                    {
+                        self.rotation += (float)Math.PI;
+                    }
+                    self.spriteDirection = -self.direction;
+                }
+                self.ai[2] += 1f;
+                if (self.ai[2] >= (float)num12)
+                {
+                    int num20 = 0;
+                    switch ((int)self.ai[3])
+                    {
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 6:
+                        case 7:
+                        case 8:
+                        case 9:
+                            num20 = 1;
+                            break;
+                        case 10:
+                            self.ai[3] = 1f;
+                            num20 = 2;
+                            break;
+                        case 11:
+                            self.ai[3] = 0f;
+                            num20 = 3;
+                            break;
+                    }
+                    if (IsEnragedOutOfOcean && num20 == 2)
+                    {
+                        num20 = 3;
+                    }
+                    if (Phase2LifeThreshold)
+                    {
+                        num20 = 4;
+                    }
+                    switch (num20)
+                    {
+                        case 1:
+                            self.ai[0] = 1f;
+                            self.ai[1] = 0f;
+                            self.ai[2] = 0f;
+                            self.velocity = Vector2.Normalize(player.Center - FishronCenter) * DashSpeed;
+                            self.rotation = (float)Math.Atan2(self.velocity.Y, self.velocity.X);
+                            if (num19 != 0)
+                            {
+                                self.direction = num19;
+                                if (self.spriteDirection == 1)
+                                {
+                                    self.rotation += (float)Math.PI;
+                                }
+                                self.spriteDirection = -self.direction;
+                            }
+                            break;
+                        case 2:
+                            self.ai[0] = 2f;
+                            self.ai[1] = 0f;
+                            self.ai[2] = 0f;
+                            break;
+                        case 3:
+                            self.ai[0] = 3f;
+                            self.ai[1] = 0f;
+                            self.ai[2] = 0f;
+                            if (IsEnragedOutOfOcean)
+                            {
+                                self.ai[2] = PreparingSharknadoDuration - 40;
+                            }
+                            break;
+                        case 4:
+                            self.ai[0] = 4f;
+                            self.ai[1] = 0f;
+                            self.ai[2] = 0f;
+                            break;
+                    }
+                    self.netUpdate = true;
+                }
+            }
+            else if (self.ai[0] == 1f)
+            {
+                int num21 = 7;
+                for (int j = 0; j < num21; j++)
+                {
+                    Vector2 val2 = (Vector2.Normalize(self.velocity) * new Vector2((float)(self.width + 50) / 2f, (float)self.height) * 0.75f).RotatedBy((double)(j - (num21 / 2 - 1)) * Math.PI / (double)(float)num21) + FishronCenter;
+                    Vector2 vector17 = ((float)(Main.rand.NextDouble() * 3.1415927410125732) - (float)Math.PI / 2f).ToRotationVector2() * (float)Main.rand.Next(3, 8);
+                    int num22 = Dust.NewDust(val2 + vector17, 0, 0, 172, vector17.X * 2f, vector17.Y * 2f, 100, default(Color), 1.4f);
+                    Main.dust[num22].noGravity = true;
+                    Main.dust[num22].noLight = true;
+                    Dust obj = Main.dust[num22];
+                    obj.velocity /= 4f;
+                    Dust obj2 = Main.dust[num22];
+                    obj2.velocity -= self.velocity;
+                }
+                self.ai[2] += 1f;
+                if (self.ai[2] >= (float)DashDuration)
+                {
+                    self.ai[0] = 0f;
+                    self.ai[1] = 0f;
+                    self.ai[2] = 0f;
+                    self.ai[3] += 2f;
+                    self.netUpdate = true;
+                }
+            }
+            else if (self.ai[0] == 2f)
+            {
+                if (self.ai[1] == 0f)
+                {
+                    self.ai[1] = 300 * Math.Sign((FishronCenter - player.Center).X);
+                }
+                Vector2 vector18 = Vector2.Normalize(player.Center + new Vector2(self.ai[1], -200f) - FishronCenter - self.velocity) * num2;
+                if (self.velocity.X < vector18.X)
+                {
+                    self.velocity.X += num40;
+                    if (self.velocity.X < 0f && vector18.X > 0f)
+                    {
+                        self.velocity.X += num40;
+                    }
+                }
+                else if (self.velocity.X > vector18.X)
+                {
+                    self.velocity.X -= num40;
+                    if (self.velocity.X > 0f && vector18.X < 0f)
+                    {
+                        self.velocity.X -= num40;
+                    }
+                }
+                if (self.velocity.Y < vector18.Y)
+                {
+                    self.velocity.Y += num40;
+                    if (self.velocity.Y < 0f && vector18.Y > 0f)
+                    {
+                        self.velocity.Y += num40;
+                    }
+                }
+                else if (self.velocity.Y > vector18.Y)
+                {
+                    self.velocity.Y -= num40;
+                    if (self.velocity.Y > 0f && vector18.Y < 0f)
+                    {
+                        self.velocity.Y -= num40;
+                    }
+                }
+                if (self.ai[2] == 0f)
+                {
+                    SoundEngine.PlaySound(SoundID.Zombie20, new Vector2((int)FishronCenter.X, (int)FishronCenter.Y));
+                }
+                if (self.ai[2] % (float)BubbleRatio == 0f)
+                {
+                    SoundEngine.PlaySound(SoundID.NPCDeath19, new Vector2((int)self.Center.X, (int)self.Center.Y));
+                    if (Main.netMode != 1)
+                    {
+                        Vector2 vector19 = Vector2.Normalize(player.Center - FishronCenter) * (float)(self.width + 20) / 2f + FishronCenter;
+                        NPC.NewNPC(self.GetSource_FromAI(), (int)vector19.X, (int)vector19.Y + 45, NPCID.DetonatingBubble);
+                    }
+                }
+                int num24 = Math.Sign(player.Center.X - FishronCenter.X);
+                if (num24 != 0)
+                {
+                    self.direction = num24;
+                    if (self.spriteDirection != -self.direction)
+                    {
+                        self.rotation += (float)Math.PI;
+                    }
+                    self.spriteDirection = -self.direction;
+                }
+                self.ai[2] += 1f;
+                if (self.ai[2] >= (float)BubbleSpewAttackDurationPhase1)
+                {
+                    self.ai[0] = 0f;
+                    self.ai[1] = 0f;
+                    self.ai[2] = 0f;
+                    self.netUpdate = true;
+                }
+            }
+            else if (self.ai[0] == 3f)
+            {
+                self.velocity *= 0.98f;
+                self.velocity.Y = MathHelper.Lerp(self.velocity.Y, 0f, 0.02f);
+                if (self.ai[2] == (float)(PreparingSharknadoDuration - 30))
+                {
+                    SoundEngine.PlaySound(SoundID.Zombie9, new Vector2((int)FishronCenter.X, (int)FishronCenter.Y));
+                }
+                if (Main.netMode != 1 && self.ai[2] == (float)(PreparingSharknadoDuration - 30))
+                {
+                    Vector2 vector20 = self.rotation.ToRotationVector2() * (Vector2.UnitX * (float)self.direction) * (float)(self.width + 20) / 2f + FishronCenter;
+                    Projectile.NewProjectile(self.GetSource_FromAI(), vector20.X, vector20.Y, 0, -1f, ProjectileID.SharknadoBolt, 0, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(self.GetSource_FromAI(), vector20.X, vector20.Y, self.direction * 2, 8f, ProjectileID.SharknadoBolt, 0, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(self.GetSource_FromAI(), vector20.X, vector20.Y, -self.direction * 2, 8f, ProjectileID.SharknadoBolt, 0, 0f, Main.myPlayer);
+                }
+                self.ai[2] += 1f;
+                if (self.ai[2] >= (float)PreparingSharknadoDuration)
+                {
+                    self.ai[0] = 0f;
+                    self.ai[1] = 0f;
+                    self.ai[2] = 0f;
+                    self.netUpdate = true;
+                }
+            }
+            else if (self.ai[0] == 4f)
+            {
+                IsVulnerable = false;
+                self.velocity *= 0.98f;
+                self.velocity.Y = MathHelper.Lerp(self.velocity.Y, 0f, 0.02f);
+                if (self.ai[2] == (float)(Phase1To2ChangeDuration - 60))
+                {
+                    SoundEngine.PlaySound(SoundID.Zombie20, new Vector2((int)FishronCenter.X, (int)FishronCenter.Y));
+                }
+                self.ai[2] += 1f;
+                if (self.ai[2] >= (float)Phase1To2ChangeDuration)
+                {
+                    self.ai[0] = 5f;
+                    self.ai[1] = 0f;
+                    self.ai[2] = 0f;
+                    self.ai[3] = 0f;
+                    self.netUpdate = true;
+                }
+            }
+            else if (self.ai[0] == 5f && !player.dead)
+            {
+                if (self.ai[1] == 0f)
+                {
+                    self.ai[1] = 300 * Math.Sign((FishronCenter - player.Center).X);
+                }
+                Vector2 vector21 = Vector2.Normalize(player.Center + new Vector2(self.ai[1], -200f) - FishronCenter - self.velocity) * num34;
+                if (self.velocity.X < vector21.X)
+                {
+                    self.velocity.X += num23;
+                    if (self.velocity.X < 0f && vector21.X > 0f)
+                    {
+                        self.velocity.X += num23;
+                    }
+                }
+                else if (self.velocity.X > vector21.X)
+                {
+                    self.velocity.X -= num23;
+                    if (self.velocity.X > 0f && vector21.X < 0f)
+                    {
+                        self.velocity.X -= num23;
+                    }
+                }
+                if (self.velocity.Y < vector21.Y)
+                {
+                    self.velocity.Y += num23;
+                    if (self.velocity.Y < 0f && vector21.Y > 0f)
+                    {
+                        self.velocity.Y += num23;
+                    }
+                }
+                else if (self.velocity.Y > vector21.Y)
+                {
+                    self.velocity.Y -= num23;
+                    if (self.velocity.Y > 0f && vector21.Y < 0f)
+                    {
+                        self.velocity.Y -= num23;
+                    }
+                }
+                int num25 = Math.Sign(player.Center.X - FishronCenter.X);
+                if (num25 != 0)
+                {
+                    if (self.ai[2] == 0f && num25 != self.direction)
+                    {
+                        self.rotation += (float)Math.PI;
+                    }
+                    self.direction = num25;
+                    if (self.spriteDirection != -self.direction)
+                    {
+                        self.rotation += (float)Math.PI;
+                    }
+                    self.spriteDirection = -self.direction;
+                }
+                self.ai[2] += 1f;
+                if (self.ai[2] >= (float)num12)
+                {
+                    int num26 = 0;
+                    switch ((int)self.ai[3])
+                    {
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                            num26 = 1;
+                            break;
+                        case 6:
+                            self.ai[3] = 1f;
+                            num26 = 2;
+                            break;
+                        case 7:
+                            self.ai[3] = 0f;
+                            num26 = 3;
+                            break;
+                    }
+                    if (Phase3LifeThreshold)
+                    {
+                        num26 = 4;
+                    }
+                    if (IsEnragedOutOfOcean && num26 == 2)
+                    {
+                        num26 = 3;
+                    }
+                    switch (num26)
+                    {
+                        case 1:
+                            self.ai[0] = 6f;
+                            self.ai[1] = 0f;
+                            self.ai[2] = 0f;
+                            self.velocity = Vector2.Normalize(player.Center - FishronCenter) * DashSpeed;
+                            self.rotation = (float)Math.Atan2(self.velocity.Y, self.velocity.X);
+                            if (num25 != 0)
+                            {
+                                self.direction = num25;
+                                if (self.spriteDirection == 1)
+                                {
+                                    self.rotation += (float)Math.PI;
+                                }
+                                self.spriteDirection = -self.direction;
+                            }
+                            break;
+                        case 2:
+                            self.velocity = Vector2.Normalize(player.Center - FishronCenter) * Phase2BubbleCirclingVelocity;
+                            self.rotation = (float)Math.Atan2(self.velocity.Y, self.velocity.X);
+                            if (num25 != 0)
+                            {
+                                self.direction = num25;
+                                if (self.spriteDirection == 1)
+                                {
+                                    self.rotation += (float)Math.PI;
+                                }
+                                self.spriteDirection = -self.direction;
+                            }
+                            self.ai[0] = 7f;
+                            self.ai[1] = 0f;
+                            self.ai[2] = 0f;
+                            break;
+                        case 3:
+                            self.ai[0] = 8f;
+                            self.ai[1] = 0f;
+                            self.ai[2] = 0f;
+                            break;
+                        case 4:
+                            self.ai[0] = 9f;
+                            self.ai[1] = 0f;
+                            self.ai[2] = 0f;
+                            break;
+                    }
+                    self.netUpdate = true;
+                }
+            }
+            else if (self.ai[0] == 6f)
+            {
+                int num27 = 7;
+                for (int k = 0; k < num27; k++)
+                {
+                    Vector2 val3 = (Vector2.Normalize(self.velocity) * new Vector2((float)(self.width + 50) / 2f, (float)self.height) * 0.75f).RotatedBy((double)(k - (num27 / 2 - 1)) * Math.PI / (double)(float)num27) + FishronCenter;
+                    Vector2 vector11 = ((float)(Main.rand.NextDouble() * 3.1415927410125732) - (float)Math.PI / 2f).ToRotationVector2() * (float)Main.rand.Next(3, 8);
+                    int num28 = Dust.NewDust(val3 + vector11, 0, 0, 172, vector11.X * 2f, vector11.Y * 2f, 100, default(Color), 1.4f);
+                    Main.dust[num28].noGravity = true;
+                    Main.dust[num28].noLight = true;
+                    Dust obj3 = Main.dust[num28];
+                    obj3.velocity /= 4f;
+                    Dust obj4 = Main.dust[num28];
+                    obj4.velocity -= self.velocity;
+                }
+                self.ai[2] += 1f;
+                if (self.ai[2] >= (float)DashDuration)
+                {
+                    self.ai[0] = 5f;
+                    self.ai[1] = 0f;
+                    self.ai[2] = 0f;
+                    self.ai[3] += 2f;
+                    self.netUpdate = true;
+                }
+            }
+            else if (self.ai[0] == 7f)
+            {
+                if (self.ai[2] == 0f)
+                {
+                    SoundEngine.PlaySound(SoundID.Zombie20, new Vector2((int)FishronCenter.X, (int)FishronCenter.Y));
+                }
+                if (self.ai[2] % (float)Phase2BubbleCircleRatio == 0f)
+                {
+                    SoundEngine.PlaySound(SoundID.NPCDeath19, new Vector2((int)self.Center.X, (int)self.Center.Y));
+                    if (Main.netMode != 1)
+                    {
+                        Vector2 vector12 = Vector2.Normalize(self.velocity) * (float)(self.width + 20) / 2f + FishronCenter;
+                        int num29 = NPC.NewNPC(self.GetSource_FromAI(), (int)vector12.X, (int)vector12.Y + 45, NPCID.DetonatingBubble);
+                        Main.npc[num29].target = self.target;
+                        Main.npc[num29].velocity = Vector2.Normalize(self.velocity).RotatedBy((float)Math.PI / 2f * (float)self.direction) * Phase2BubbleCircleBubbleOutwardsKnockback;
+                        Main.npc[num29].netUpdate = true;
+                        Main.npc[num29].ai[3] = (float)Main.rand.Next(80, 121) / 100f;
+                    }
+                }
+                self.velocity = self.velocity.RotatedBy((0f - num11) * (float)self.direction);
+                self.rotation -= num11 * (float)self.direction;
+                self.ai[2] += 1f;
+                if (self.ai[2] >= (float)Phase2BubbleCircleSize)
+                {
+                    self.ai[0] = 5f;
+                    self.ai[1] = 0f;
+                    self.ai[2] = 0f;
+                    self.netUpdate = true;
+                }
+            }
+            else if (self.ai[0] == 8f)
+            {
+                self.velocity *= 0.98f;
+                self.velocity.Y = MathHelper.Lerp(self.velocity.Y, 0f, 0.02f);
+                if (self.ai[2] == (float)(PreparingSharknadoDuration - 30))
+                {
+                    SoundEngine.PlaySound(SoundID.Zombie20, new Vector2((int)FishronCenter.X, (int)FishronCenter.Y));
+                }
+                if (Main.netMode != 1 && self.ai[2] == (float)(PreparingSharknadoDuration - 30))
+                {
+                    Projectile.NewProjectile(self.GetSource_FromAI(), FishronCenter.X, FishronCenter.Y, self.direction * 3, -2f, ProjectileID.SharknadoBolt, 0, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(self.GetSource_FromAI(), FishronCenter.X, FishronCenter.Y, -self.direction * 3, -2f, ProjectileID.SharknadoBolt, 0, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(self.GetSource_FromAI(), FishronCenter.X, FishronCenter.Y, 0f, 0f, ProjectileID.SharknadoBolt, 0, 0f, Main.myPlayer, 1f, self.target + 1, IsEnragedOutOfOcean ? 1 : 0);
+                }
+                self.ai[2] += 1f;
+                if (self.ai[2] >= (float)PreparingSharknadoDuration)
+                {
+                    self.ai[0] = 5f;
+                    self.ai[1] = 0f;
+                    self.ai[2] = 0f;
+                    self.netUpdate = true;
+                }
+            }
+            else if (self.ai[0] == 9f)
+            {
+                IsVulnerable = false;
+                if (self.ai[2] < (float)(Phase2To3ChangeDuration - 90))
+                {
+                    if (Collision.SolidCollision(self.position, self.width, self.height))
+                    {
+                        self.alpha += 15;
+                    }
+                    else
+                    {
+                        self.alpha -= 15;
+                    }
+                    if (self.alpha < 0)
+                    {
+                        self.alpha = 0;
+                    }
+                    if (self.alpha > 150)
+                    {
+                        self.alpha = 150;
+                    }
+                }
+                else if (self.alpha < 255)
+                {
+                    self.alpha += 4;
+                    if (self.alpha > 255)
+                    {
+                        self.alpha = 255;
+                    }
+                }
+                self.velocity *= 0.98f;
+                self.velocity.Y = MathHelper.Lerp(self.velocity.Y, 0f, 0.02f);
+                if (self.ai[2] == (float)(Phase2To3ChangeDuration - 60))
+                {
+                    SoundEngine.PlaySound(SoundID.Zombie20, new Vector2((int)FishronCenter.X, (int)FishronCenter.Y));
+                }
+                self.ai[2] += 1f;
+                if (self.ai[2] >= (float)Phase2To3ChangeDuration)
+                {
+                    self.ai[0] = 10f;
+                    self.ai[1] = 0f;
+                    self.ai[2] = 0f;
+                    self.ai[3] = 0f;
+                    self.netUpdate = true;
+                }
+            }
+            else if (self.ai[0] == 10f && !player.dead)
+            {
+                self.chaseable = false;
+                if (self.alpha < 255)
+                {
+                    self.alpha += 25;
+                    if (self.alpha > 255)
+                    {
+                        self.alpha = 255;
+                    }
+                }
+                if (self.ai[1] == 0f)
+                {
+                    self.ai[1] = 360 * Math.Sign((FishronCenter - player.Center).X);
+                }
+                Vector2 desiredVelocity = Vector2.Normalize(player.Center + new Vector2(self.ai[1], -200f) - FishronCenter - self.velocity) * num34;
+                self.SimpleFlyMovement(desiredVelocity, num23);
+                int num30 = Math.Sign(player.Center.X - FishronCenter.X);
+                if (num30 != 0)
+                {
+                    if (self.ai[2] == 0f && num30 != self.direction)
+                    {
+                        self.rotation += (float)Math.PI;
+                        for (int l = 0; l < self.oldPos.Length; l++)
+                        {
+                            self.oldPos[l] = Vector2.Zero;
+                        }
+                    }
+                    self.direction = num30;
+                    if (self.spriteDirection != -self.direction)
+                    {
+                        self.rotation += (float)Math.PI;
+                    }
+                    self.spriteDirection = -self.direction;
+                }
+                self.ai[2] += 1f;
+                if (self.ai[2] >= (float)num12)
+                {
+                    int num31 = 0;
+                    switch ((int)self.ai[3])
+                    {
+                        case 0:
+                        case 2:
+                        case 3:
+                        case 5:
+                        case 6:
+                        case 7:
+                            num31 = 1;
+                            break;
+                        case 1:
+                        case 4:
+                        case 8:
+                            num31 = 2;
+                            break;
+                    }
+                    switch (num31)
+                    {
+                        case 1:
+                            self.ai[0] = 11f;
+                            self.ai[1] = 0f;
+                            self.ai[2] = 0f;
+                            self.velocity = Vector2.Normalize(player.Center - FishronCenter) * DashSpeed;
+                            self.rotation = (float)Math.Atan2(self.velocity.Y, self.velocity.X);
+                            if (num30 != 0)
+                            {
+                                self.direction = num30;
+                                if (self.spriteDirection == 1)
+                                {
+                                    self.rotation += (float)Math.PI;
+                                }
+                                self.spriteDirection = -self.direction;
+                            }
+                            break;
+                        case 2:
+                            self.ai[0] = 12f;
+                            self.ai[1] = 0f;
+                            self.ai[2] = 0f;
+                            break;
+                        case 3:
+                            self.ai[0] = 13f;
+                            self.ai[1] = 0f;
+                            self.ai[2] = 0f;
+                            break;
+                    }
+                    self.netUpdate = true;
+                }
+            }
+            else if (self.ai[0] == 11f)
+            {
+                self.chaseable = true;
+                self.alpha -= 25;
+                if (self.alpha < 0)
+                {
+                    self.alpha = 0;
+                }
+                int num32 = 7;
+                for (int m = 0; m < num32; m++)
+                {
+                    Vector2 val4 = (Vector2.Normalize(self.velocity) * new Vector2((float)(self.width + 50) / 2f, (float)self.height) * 0.75f).RotatedBy((double)(m - (num32 / 2 - 1)) * Math.PI / (double)(float)num32) + FishronCenter;
+                    Vector2 vector13 = ((float)(Main.rand.NextDouble() * 3.1415927410125732) - (float)Math.PI / 2f).ToRotationVector2() * (float)Main.rand.Next(3, 8);
+                    int num33 = Dust.NewDust(val4 + vector13, 0, 0, 172, vector13.X * 2f, vector13.Y * 2f, 100, default(Color), 1.4f);
+                    Main.dust[num33].noGravity = true;
+                    Main.dust[num33].noLight = true;
+                    Dust obj5 = Main.dust[num33];
+                    obj5.velocity /= 4f;
+                    Dust obj6 = Main.dust[num33];
+                    obj6.velocity -= self.velocity;
+                }
+                self.ai[2] += 1f;
+                if (self.ai[2] >= (float)DashDuration)
+                {
+                    self.ai[0] = 10f;
+                    self.ai[1] = 0f;
+                    self.ai[2] = 0f;
+                    self.ai[3] += 1f;
+                    self.netUpdate = true;
+                }
+            }
+            else if (self.ai[0] == 12f)
+            {
+                IsVulnerable = false;
+                self.chaseable = false;
+                if (self.alpha < 255)
+                {
+                    self.alpha += 17;
+                    if (self.alpha > 255)
+                    {
+                        self.alpha = 255;
+                    }
+                }
+                self.velocity *= 0.98f;
+                self.velocity.Y = MathHelper.Lerp(self.velocity.Y, 0f, 0.02f);
+                if (self.ai[2] == (float)(CooldownAfterChargesPhase3 / 2))
+                {
+                    SoundEngine.PlaySound(SoundID.Zombie20, new Vector2((int)FishronCenter.X, (int)FishronCenter.Y));
+                }
+                if (Main.netMode != 1 && self.ai[2] == (float)(CooldownAfterChargesPhase3 / 2))
+                {
+                    if (self.ai[1] == 0f)
+                    {
+                        self.ai[1] = 300 * Math.Sign((FishronCenter - player.Center).X);
+                    }
+                    Vector2 vector14 = player.Center + new Vector2(0f - self.ai[1], -200f);
+                    Vector2 val6 = (self.Center = vector14);
+                    FishronCenter = val6;
+                    int num35 = Math.Sign(player.Center.X - FishronCenter.X);
+                    if (num35 != 0)
+                    {
+                        if (self.ai[2] == 0f && num35 != self.direction)
+                        {
+                            self.rotation += (float)Math.PI;
+                            for (int n = 0; n < self.oldPos.Length; n++)
+                            {
+                                self.oldPos[n] = Vector2.Zero;
+                            }
+                        }
+                        self.direction = num35;
+                        if (self.spriteDirection != -self.direction)
+                        {
+                            self.rotation += (float)Math.PI;
+                        }
+                        self.spriteDirection = -self.direction;
+                    }
+                }
+                self.ai[2] += 1f;
+                if (self.ai[2] >= (float)CooldownAfterChargesPhase3)
+                {
+                    self.ai[0] = 10f;
+                    self.ai[1] = 0f;
+                    self.ai[2] = 0f;
+                    self.ai[3] += 1f;
+                    if (self.ai[3] >= 9f)
+                    {
+                        self.ai[3] = 0f;
+                    }
+                    self.netUpdate = true;
+                }
+            }
+            else if (self.ai[0] == 13f)
+            {
+                if (self.ai[2] == 0f)
+                {
+                    SoundEngine.PlaySound(SoundID.Zombie20, new Vector2((int)FishronCenter.X, (int)FishronCenter.Y));
+                }
+                self.velocity = self.velocity.RotatedBy((0f - num11) * (float)self.direction);
+                self.rotation -= num11 * (float)self.direction;
+                self.ai[2] += 1f;
+                if (self.ai[2] >= (float)Phase2BubbleCircleSize)
+                {
+                    self.ai[0] = 10f;
+                    self.ai[1] = 0f;
+                    self.ai[2] = 0f;
+                    self.ai[3] += 1f;
+                    self.netUpdate = true;
+                }
+            }
+            self.dontTakeDamage = !IsVulnerable;
+            if (self.Hitbox.Intersects(player.Hitbox) && !IsUnderwater)
+            {
+                player.AddBuff(ModContent.BuffType<Stiff>(), 10 * 60);
+            }
+        }
+
         private static void On_Player_ApplyVanillaHurtEffectModifiers(On_Player.orig_ApplyVanillaHurtEffectModifiers orig, Player self, ref Player.HurtModifiers modifiers)
         {
             modifiers.FinalDamage *= Math.Max(100f / (100f + (self.endurance * 100f)), 0f);
@@ -319,8 +1327,8 @@ namespace tsorcRevamp
             }
             if (self.manaRegenBuff && self.manaRegenDelay > 20f)
             {
-                //self.manaRegenDelay = 20f;//this is what it usually gives and it breaks any sort of longer mana regen delays
-                self.manaRegenDelayBonus += 1f; //this mostly has the same effect for usual mana regen delay applied by magic weapons
+                //self.manaRegenDelay = 20f;//self is what it usually gives and it breaks any sort of longer mana regen delays
+                self.manaRegenDelayBonus += 1f; //self mostly has the same effect for usual mana regen delay applied by magic weapons
             }
             if (self.manaRegenDelay > 0f)
             {

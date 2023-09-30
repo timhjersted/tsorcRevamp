@@ -8288,6 +8288,11 @@ Mods: {
 				DisplayName: 征服者
 				Description: 增加召唤伤害
 			}
+
+			Stiff: {
+				// DisplayName: Stiff
+				// Description: You can't roll!
+			}
 		}
 
 		Projectiles: {

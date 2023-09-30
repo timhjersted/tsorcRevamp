@@ -235,7 +235,7 @@ namespace tsorcRevamp
 
             if (isLocal && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !Player.mouseInterface
                 && Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30 && !Player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking && !Player.GetModPlayer<tsorcRevampCeruleanPlayer>().isDrinking
-                && !Player.HasBuff(BuffID.Frozen) && !Player.HasBuff(ModContent.BuffType<Hold>()) && !Player.HasBuff(BuffID.Stoned))
+                && !Player.HasBuff(BuffID.Frozen) && !Player.HasBuff(ModContent.BuffType<Hold>()) && !Player.HasBuff(BuffID.Stoned) && !Player.HasBuff(ModContent.BuffType<Stiff>()))
             {
                 QueueDodgeroll(0.25f, (sbyte)KeyDirection(Player));
             }

@@ -4,7 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 
-namespace tsorcRevamp.Buffs.Debuffs
+namespace tsorcRevamp.Buffs.Weapons.Melee
 {
     public class SickleSlashes : ModBuff
 	{

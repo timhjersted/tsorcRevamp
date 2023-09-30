@@ -1207,6 +1207,21 @@ namespace tsorcRevamp.NPCs
                 modifiers.FinalDamage *= 0.1f + (WhipDebuffCounter * Darksign.MinionDamageReductionDecrease / 100f);
             }*/
             #endregion
+            if (npc.type == NPCID.DukeFishron && projectileOwner.wet)
+            {
+                modifiers.FinalDamage *= 2;
+            }
+            if (npc.type == NPCID.DukeFishron && projectileOwner.wet && projectile.DamageType == DamageClass.Melee)
+            {
+                modifiers.FinalDamage *= 2;
+            }
+        }
+        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
+        {
+            if (npc.type == NPCID.DukeFishron && player.wet)
+            {
+                modifiers.FinalDamage *= 4;
+            }
         }
 
         public override bool? CanBeHitByItem(NPC npc, Player player, Item item)

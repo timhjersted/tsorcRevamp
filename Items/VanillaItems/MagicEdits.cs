@@ -8,7 +8,7 @@ using tsorcRevamp.Items.Armors.Magic;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
-    class MageEdits : GlobalItem
+    class MagicEdits : GlobalItem
     {
         public static int RedClothMaxManaBoost = 40;
         public static float RedClothManaCostReduction = 5f;
