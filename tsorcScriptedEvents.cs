@@ -274,7 +274,7 @@ namespace tsorcRevamp
             AODE.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
             
             //GOBLIN SUMMONER IN WMF
-            ScriptedEvent GoblinWizardWMF = new ScriptedEvent(new Vector2(7153, 411), 20, NPCID.GoblinSummoner, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.GoblinSUmmoner1"), Color.MediumPurple, false);
+            ScriptedEvent GoblinWizardWMF = new ScriptedEvent(new Vector2(7153, 411), 20, NPCID.GoblinSummoner, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.GoblinSummoner1"), Color.MediumPurple, false);
             GoblinWizardWMF.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
 
             //GOBLIN SUMMONER IN THE CLOUDS (WMF)
