@@ -56,6 +56,12 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.mana = 30;
             }
+
+            //same damage as Gastraphetes, vanilla damage is 53
+            if(item.type == ItemID.Tsunami)
+            {
+                item.damage = 25;
+            }
         }
         public override void ModifyWeaponCrit(Item item, Player player, ref float crit)
         {

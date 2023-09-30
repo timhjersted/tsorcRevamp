@@ -194,6 +194,11 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.mana = 60;
             }
+            if (item.type == ItemID.Flairon)
+            {
+                item.damage = 50;
+                item.mana = 40;
+            }
         }
 
         public static void SetMeleeSlashColor(Item item)
