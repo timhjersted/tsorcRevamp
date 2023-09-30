@@ -469,6 +469,11 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void FindFrame(int currentFrame)
         {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
             NPC.frame.Width = TextureAssets.Npc[NPC.type].Value.Width;
             NPC.frame.Height = TextureAssets.Npc[NPC.type].Value.Height;
 
@@ -620,7 +625,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public static string FilterID = "RageFilter";
         public void HandleScreenShader()
         {
-            if (Filters.Scene[FilterID] == null)
+            if (Main.netMode != NetmodeID.Server && Filters.Scene[FilterID] == null)
             {
                 Filters.Scene[FilterID] = new Filter(new ScreenShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/HeatWave", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "HeatWavePass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
                 tsorcRevampWorld.boundShaders.Add(FilterID);

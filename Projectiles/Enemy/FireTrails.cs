@@ -105,8 +105,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Projectile.rotation += 4f;
 
-            int rand = Main.rand.Next(-1, 2);
-            Projectile.velocity = RotateAboutOrigin(Projectile.velocity, (float)((Math.PI * rand) / 40f)); //the 40f controls the curve strength. too low and the projectile spins in circles
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
+                int rand = Main.rand.Next(-1, 2);
+                Projectile.velocity = RotateAboutOrigin(Projectile.velocity, (float)((Math.PI * rand) / 40f)); //the 40f controls the curve strength. too low and the projectile spins in circles
+            }
 
             AI_Timer++;
             if (AI_Timer == AI_Split_Time)

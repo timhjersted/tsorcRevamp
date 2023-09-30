@@ -528,6 +528,10 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void FindFrame(int frameHeight)
         {
+            if (Main.dedServ)
+            {
+                return;
+            }
             int num = 1;
             if (!Main.dedServ)
             {
@@ -565,7 +569,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public static string FilterID = "SorrowFilter";
         public void HandleScreenShader()
         {
-            if (Filters.Scene[FilterID] == null)
+            if (Main.netMode != NetmodeID.Server && Filters.Scene[FilterID] == null)
             {
                 Filters.Scene[FilterID] = new Filter(new ScreenShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/Meltwater", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "EffectPass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
                 tsorcRevampWorld.boundShaders.Add(FilterID);
