@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
     {
         public int ShootSoundStyle = 0;
         public float ShootSoundVolume = 0.3f;
-        public const int BaseDamage = 330;
+        public const int BaseDamage = 260;
         public const int ShroomCooldown = 5;
         public const int ShroomBonusCritChance = 100;
         public static int ShroomSetupTime = 3;

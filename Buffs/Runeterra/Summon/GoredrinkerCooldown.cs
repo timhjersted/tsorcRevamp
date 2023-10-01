@@ -16,7 +16,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
             if (player.buffTime[buffIndex] == 1)
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerHit") with { Volume = 1f }, player.Center);
-                player.GetModPlayer<tsorcRevampPlayer>().GoredrinkerHits = 1;
+                player.GetModPlayer<tsorcRevampPlayer>().GoredrinkerHits = 0;
             }
         }
     }

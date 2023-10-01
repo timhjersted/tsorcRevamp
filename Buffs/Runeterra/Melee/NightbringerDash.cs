@@ -25,7 +25,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
 
             if (player.buffTime[buffIndex] >= (int)(PlasmaWhirlwind.DashDuration * 60))
             {
-                player.velocity = player.GetModPlayer<tsorcRevampPlayer>().SweepingBladeVelocity;
+                player.GetModPlayer<tsorcRevampPlayer>().SweepingBladeTimer = 2;
             }
             if (player.velocity.X > 0) 
             {

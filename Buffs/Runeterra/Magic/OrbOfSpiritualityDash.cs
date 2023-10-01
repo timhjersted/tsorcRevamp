@@ -22,10 +22,9 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
             {
                 player.immune = true;
             }
-            if (player.GetModPlayer<tsorcRevampPlayer>().SpiritRushTimer >= 0f)
+            if (player.GetModPlayer<tsorcRevampPlayer>().SpiritRushTimer > 0f)
             {
                 player.immune = true;
-                player.velocity = player.GetModPlayer<tsorcRevampPlayer>().SpiritRushVelocity;
                 if (Main.GameUpdateCount % 3 == 0)
                 {
                     Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.One, ModContent.ProjectileType<OrbOfSpiritualityFlameNoMana>(), player.HeldItem.damage, player.HeldItem.knockBack, player.whoAmI);

@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using Terraria.Localization;
 using Humanizer;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
@@ -64,6 +65,15 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2 && player.ownedProjectileCounts[ModContent.ProjectileType<PlasmaWhirlwindTornado>()] < 1)
             {
                 Dust.NewDust(player.TopLeft + playerCenter, 50, 50, DustID.ApprenticeStorm, Scale: 1);
+            }
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC other = Main.npc[i];
+
+                if (other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, player.GetModPlayer<tsorcRevampPlayer>().MouseHitboxSize)) & other.Distance(player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()))
+                {
+                    UsefulFunctions.DustRing(other.Center, other.width / 2, DustID.CoralTorch, 5, 2);
+                }
             }
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)

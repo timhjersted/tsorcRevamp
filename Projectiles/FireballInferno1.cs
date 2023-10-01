@@ -78,6 +78,7 @@ namespace tsorcRevamp.Projectiles
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             modifiers.DefenseEffectiveness /= 2;
+            modifiers.DisableCrit();
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

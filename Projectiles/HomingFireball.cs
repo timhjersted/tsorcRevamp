@@ -34,7 +34,11 @@ namespace tsorcRevamp.Projectiles
 
             Projectile.rotation += 0.25f;
         }
-
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            modifiers.DefenseEffectiveness /= 2;
+            modifiers.DisableCrit();
+        }
         public override bool PreKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item100 with { Volume = 0.5f }, Projectile.Center); // cursed flame wall, lasts a bit longer than flame

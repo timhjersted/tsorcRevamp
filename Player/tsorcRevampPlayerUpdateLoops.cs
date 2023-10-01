@@ -31,6 +31,7 @@ using tsorcRevamp.Projectiles.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using Steamworks;
 using System.Reflection;
+using tsorcRevamp.Projectiles.Magic.Runeterra;
 
 namespace tsorcRevamp
 {
@@ -104,13 +105,13 @@ namespace tsorcRevamp
         public float BotCConquerorBonus = 0.09f;
         public float BotCWhipRangeMult = 0.75f;
 
-        public bool SteraksGage;
-        public bool InfinityEdge;
-        public bool LudensTempest;
-        public bool Goredrinker;
+        public bool SteraksGage = false;
+        public bool InfinityEdge = false;
+        public bool LudensTempest = false;
+        public bool Goredrinker = false;
         public bool GoredrinkerReady = false;
         public bool GoredrinkerSwung = false;
-        public int GoredrinkerHits = 1;
+        public int GoredrinkerHits = 0;
 
         public bool BoneRing;
         public bool CelestialCloak;
@@ -152,7 +153,9 @@ namespace tsorcRevamp
         public bool PhoenixSkull = false;
 
         public int SteelTempestStacks = 0;
+        public int SweepingBladeTimer = 0;
         public Vector2 SweepingBladeVelocity;
+        public Vector2 MouseHitboxSize = new Vector2(125, 125);
 
         public int EssenceThief = 0;
         public int SpiritRushCharges = 3;
@@ -1730,6 +1733,17 @@ namespace tsorcRevamp
             if (ShunpoTimer == 1)
             {
                 Player.velocity = Vector2.Zero;
+                Player.RefreshMovementAbilities();
+            }
+            if (SweepingBladeTimer > 0)
+            {
+                Player.velocity = Player.GetModPlayer<tsorcRevampPlayer>().SweepingBladeVelocity;
+                SweepingBladeTimer--;
+                Player.RefreshMovementAbilities();
+            }
+            if (SpiritRushTimer > 0f)
+            {
+                Player.velocity = SpiritRushVelocity;
                 Player.RefreshMovementAbilities();
             }
         }

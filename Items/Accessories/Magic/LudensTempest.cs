@@ -14,6 +14,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
         public static float ArmorPen = 3f;
         public static int Mana = 20;
         public static int Cooldown = 13;
+        public static float ProcDmg = 1f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, ArmorPen, Mana, Cooldown);
         public override void SetStaticDefaults()
         {

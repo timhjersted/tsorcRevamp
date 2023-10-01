@@ -24,9 +24,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.knockBack = 6f;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 60;
+            Item.useTime = 60;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 60;
             Item.value = 13500;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();

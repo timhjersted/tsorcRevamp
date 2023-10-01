@@ -45,6 +45,7 @@ using tsorcRevamp.Projectiles.Summon.Whips;
 using static Humanizer.In;
 using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Projectiles.Magic.Runeterra.LudensTempest;
+using tsorcRevamp.Items.Accessories.Magic;
 
 namespace tsorcRevamp
 {
@@ -730,9 +731,9 @@ namespace tsorcRevamp
                 if (closest.HasValue && (Main.npc[closest.Value].type != NPCID.TargetDummy || Main.npc[closest.Value].Distance(target.Center) < 2000))
                 {
                     Vector2 velocity = UsefulFunctions.Aim(target.Bottom, Main.npc[closest.Value].Top, 3);
-                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(-1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * 1.5f), 0, Main.myPlayer, 0);
-                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(0, -3), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * 1.5f), 0, Main.myPlayer, 0);
-                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * 1.5f), 0, Main.myPlayer, 0);
+                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(-1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
+                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(0, -3), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
+                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
                     Main.player[proj.owner].AddBuff(ModContent.BuffType<LudensTempestCooldown>(), Items.Accessories.Magic.LudensTempest.Cooldown * 60);
                 }
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/LudensTempest") with { Volume = 0.25f }, target.Center);
@@ -750,8 +751,8 @@ namespace tsorcRevamp
             }
             if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type] && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung)
             {
-                Player.statLife += (int)(Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife) / GoredrinkerHits;
-                Player.HealEffect((int)(Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife) / GoredrinkerHits);
+                Player.statLife += (int)MathF.Max(MathF.Min((Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife), 20) / (int)((float)GoredrinkerHits * 1.5f + 1), 1);
+                Player.HealEffect((int)MathF.Max(MathF.Min((Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife), 20) / (int)((float)GoredrinkerHits * 1.5f + 1), 1));
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerHit") with { Volume = 0.25f }, target.Center);
                 GoredrinkerHits++;
             } else if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type] && owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()))
@@ -761,6 +762,10 @@ namespace tsorcRevamp
                 {
                     if (buffType == ModContent.BuffType<GoredrinkerCooldown>())
                     {
+                        if (Player.buffTime[buffIndex] < 15)
+                        {
+                            GoredrinkerHits = 0;
+                        }
                         Player.buffTime[buffIndex] -= 15;
                     }
                     buffIndex++;
@@ -857,10 +862,6 @@ namespace tsorcRevamp
         public static float MythrilOcrichalcumCritDmg = 25f;
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            if (modifiers.DamageType == DamageClass.Ranged)
-            {
-                modifiers.CritDamage += Items.Accessories.Ranged.InfinityEdge.CritDmgIncrease / 100f;
-            }
             if (Player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread)
             {
                 modifiers.DamageVariationScale *= 0;
@@ -911,6 +912,10 @@ namespace tsorcRevamp
         {
             Player owner = Main.player[proj.owner];
             int critLevel = (int)(Math.Floor(proj.CritChance / 100f));
+            if (modifiers.DamageType == DamageClass.Ranged && owner.GetModPlayer<tsorcRevampPlayer>().InfinityEdge)
+            {
+                modifiers.CritDamage += Items.Accessories.Ranged.InfinityEdge.CritDmgIncrease / 100f;
+            }
             if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>())
             {
                 modifiers.FinalDamage *= 0.55f;
@@ -1130,24 +1135,22 @@ namespace tsorcRevamp
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC other = Main.npc[i];
-                    Vector2 MouseHitboxSize = new Vector2(100, 100);
 
                     if (other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<PlasmaWhirlwind>())
                     {
                         player.immune = true;
-                        player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 2));
+                        player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 5));
                         SweepingBladeVelocity = player.DirectionTo(other.Center) * 17;
                         player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Dash") with { Volume = 1f });
                         Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaWhirlwindDashHitbox>(), PlasmaWhirlwind.BaseDamage, 0, player.whoAmI);
                         DashHitbox.OriginalCritChance = SteelTempest.CritChance;
-                        player.immune = true;
                     } //cooldown is added by On-Hit in the dash projectile hitbox
                     if (!(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<NightbringerDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<Nightbringer>())
                     {
                         player.immune = true;
                         SweepingBladeVelocity = player.DirectionTo(other.Center) * 17;
-                        player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 2));
+                        player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 5));
                         player.AddBuff(ModContent.BuffType<NightbringerDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/Dash") with { Volume = 1f });
                         Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<NightbringerDashHitbox>(), Nightbringer.BaseDamage, 0, player.whoAmI);

@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.width = 60;
 
 			Item.DamageType = DamageClass.SummonMeleeSpeed;
-			Item.damage = 13;
+			Item.damage = 12;
 			Item.knockBack = 0.5f;
 			Item.rare = ItemRarityID.Blue;
 			Item.value = Item.buyPrice(0, 2, 0, 0);

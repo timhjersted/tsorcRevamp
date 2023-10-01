@@ -15,11 +15,11 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
     public class OrbOfDeception : ModItem
     {
         public static Color FilledColor = Color.YellowGreen;
-        public static float OrbDmgMod = 125f;
+        public static float OrbDmgMod = 200f;
         public static float OrbReturnDmgMod = 150f;
-        public static float DmgLossOnPierce = 5f;
+        public static float DmgLossOnPierce = 12f;
         public static float EssenceThiefOnKillChance = 17f;
-        public static float FilledOrbDmgMod = 160f;
+        public static float FilledOrbDmgMod = 175f;
         public static float ShootSpeed = 20f;
         public static float OrbSoundVolume = 0.5f;
         public static int HealManaDivisor = 100;
@@ -35,9 +35,10 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.height = 32;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.channel = false;
-            Item.useAnimation = 20;
-            Item.useTime = 20;
-            Item.damage = 20;
+            Item.useAnimation = 17;
+            Item.useTime = 17;
+            Item.damage = 25;
+            Item.crit = 6;
             Item.mana = 25;
             Item.knockBack = 8;
             Item.UseSound = null;
@@ -52,6 +53,10 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
+            OrbDmgMod = 200;
+            DmgLossOnPierce = 12;
+            OrbReturnDmgMod = 150;
+            FilledOrbDmgMod = 175;
             if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrb>()] != 0)
             {
                 type = ModContent.ProjectileType<OrbOfDeceptionFlame>();

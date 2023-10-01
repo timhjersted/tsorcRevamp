@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
 using tsorcRevamp.Buffs.Runeterra.Melee;
+using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
@@ -51,7 +52,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             {
                 player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks = 0;
             }
-            if (Projectile.velocity == Vector2.Zero && player.HasBuff(ModContent.BuffType<NightbringerDash>()))
+            if (Projectile.velocity == Vector2.Zero && Projectile.timeLeft > baseTimeLeft - PlasmaWhirlwind.DashDuration * 60)
             {
                 Projectile.Center = mountedCenter;
             }

@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
     {
         public int SwingSoundStyle = 0;
         public float SwingSoundVolume = 0.3f;
-        public const int BaseDamage = 220;
+        public const int BaseDamage = 250;
         public int AttackSpeedScalingDuration = 240;
         public const int DashCooldown = 6;
         public const int WindwallDuration = 5;
@@ -62,6 +62,15 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2 && player.ownedProjectileCounts[ModContent.ProjectileType<NightbringerTornado>()] < 1)
             {
                 Dust.NewDust(player.TopLeft + playerCenter, 50, 50, DustID.DesertTorch, Scale: 2);
+            }
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC other = Main.npc[i];
+
+                if (other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, player.GetModPlayer<tsorcRevampPlayer>().MouseHitboxSize)) & other.Distance(player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()))
+                {
+                    UsefulFunctions.DustRing(other.Center, other.width / 2, DustID.Torch, 5, 2);
+                }
             }
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)

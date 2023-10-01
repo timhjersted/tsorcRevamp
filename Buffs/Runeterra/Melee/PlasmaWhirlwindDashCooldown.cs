@@ -14,8 +14,6 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
         }
         public override void Update(NPC npc, ref int buffIndex)
         {
-            var dust = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.CoralTorch, Scale: 3f);
-            dust.noGravity = true;
             if (npc.buffTime[buffIndex] == 1)
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/DashReady") with { Volume = 2f }, npc.Center);

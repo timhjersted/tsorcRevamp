@@ -30,9 +30,10 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.height = 32;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.channel = false;
-            Item.useAnimation = 20;
-            Item.useTime = 20;
+            Item.useAnimation = 17;
+            Item.useTime = 17;
             Item.damage = 330;
+            Item.crit = 6;
             Item.mana = 60;
             Item.knockBack = 8;
             Item.UseSound = null;

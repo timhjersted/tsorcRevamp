@@ -19,17 +19,17 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Green;
-            Item.damage = 26;
+            Item.damage = 39;
             Item.width = 42;
             Item.height = 34;
             Item.knockBack = 10;
             Item.maxStack = 1;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
-            Item.useAnimation = 25;
+            Item.useAnimation = 30;
+            Item.useTime = 30;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 25;
             Item.value = PriceByRarity.Green_2;
             Item.scale = 1.3f;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();

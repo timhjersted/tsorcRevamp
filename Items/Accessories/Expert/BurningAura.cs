@@ -43,8 +43,6 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
             tsorcRevampPlayer ModPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             ModPlayer.BurningAura = true;
-
-            
         }
 
         public override void UpdateVanity(Player player)
