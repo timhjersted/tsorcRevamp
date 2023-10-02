@@ -9898,6 +9898,10 @@ Mods: {
 			Willowisp.DisplayName: Willowisp
 			GreatRedThresher.DisplayName: Great Red Thresher
 			LeonhardPhase2.DisplayName: Leonhard Phase2
+			MountedSandsprog.DisplayName: Mounted Sandsprog
+			MountedSandsprogMage.DisplayName: Mounted Sandsprog Mage
+			Sandsprog.DisplayName: Sandsprog
+			SandsprogMage.DisplayName: Sandsprog Mage
 		}
 
 		Prefixes: {

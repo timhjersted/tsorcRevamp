@@ -9895,6 +9895,10 @@ Mods: {
 			Willowisp.DisplayName: 飞絮
 			GreatRedThresher.DisplayName: 殷红勾魂使
 			LeonhardPhase2.DisplayName: 李奥纳德
+			// MountedSandsprog.DisplayName: Mounted Sandsprog
+			// MountedSandsprogMage.DisplayName: Mounted Sandsprog Mage
+			// Sandsprog.DisplayName: Sandsprog
+			// SandsprogMage.DisplayName: Sandsprog Mage
 		}
 
 		Prefixes: {
