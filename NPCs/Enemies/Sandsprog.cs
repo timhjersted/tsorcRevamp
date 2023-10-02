@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 12;
+            Main.npcFrameCount[NPC.type] = 15;
         }
         public override void SetDefaults()
         {

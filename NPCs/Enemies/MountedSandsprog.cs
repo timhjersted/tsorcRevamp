@@ -31,6 +31,20 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.GiantWalkingAntlion;
             NPC.DeathSound = SoundID.DD2_KoboldHurt;
 
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 300;
+                NPC.defense = 40;
+                NPC.damage = 50;
+                NPC.value = 0;
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 900;
+                NPC.defense = 70;
+                NPC.damage = 70;
+                NPC.value = 0;
+            }
         }
 
         #region Spawning
@@ -62,11 +76,16 @@ namespace tsorcRevamp.NPCs.Enemies
             if (NPC.velocity.X > 3.5f || NPC.velocity.X < -3.5f)
             {
                 NPC.damage = 80;
+                if (Main.hardMode) { NPC.damage = 125; }
+                if (Main.hardMode) { NPC.damage = 160; }
+
                 NPC.knockBackResist = 0;
             }
             else
             {
                 NPC.damage = 66;
+                if (Main.hardMode) { NPC.damage = 100; }
+                if (Main.hardMode) { NPC.damage = 140; }
                 NPC.knockBackResist = 0.3f;
 
             }

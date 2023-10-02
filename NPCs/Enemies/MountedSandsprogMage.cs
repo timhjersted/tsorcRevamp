@@ -14,6 +14,8 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     public class MountedSandsprogMage : ModNPC
     {
+        int boltDamage = 12;
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.GiantWalkingAntlion];
@@ -24,13 +26,29 @@ namespace tsorcRevamp.NPCs.Enemies
             AIType = NPCID.GiantWalkingAntlion;
             NPC.height = 44;
             NPC.damage = 34;
-            NPC.lifeMax = 75;
+            NPC.lifeMax = 80;
             NPC.defense = 28;
             NPC.value = 0;
             NPC.knockBackResist = 0.2f;
             AnimationType = NPCID.GiantWalkingAntlion;
             NPC.DeathSound = SoundID.DD2_KoboldHurt;
 
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 300;
+                NPC.defense = 40;
+                NPC.damage = 55;
+                NPC.value = 0;
+                boltDamage = 20;
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 900;
+                NPC.defense = 70;
+                NPC.damage = 80;
+                NPC.value = 0;
+                boltDamage = 36;
+            }
         }
 
         #region Spawning
@@ -56,7 +74,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
 
             bool lineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-            
+
             #region check if standing on a solid tile
 
             int y_below_feet = (int)(NPC.position.Y + (float)NPC.height + 8f) / 16;
@@ -130,7 +148,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 }
 
-                if (boltTimer > 190 && Main.rand.Next(5) == 0 && Main.player[NPC.target].Distance(NPC.Center) < 700f) 
+                if (boltTimer > 190 && Main.rand.Next(5) == 0 && Main.player[NPC.target].Distance(NPC.Center) < 700f)
                 {
 
                     int dust = Dust.NewDust(new Vector2(NPC.Center.X + 12, NPC.Center.Y - 20), 6, 3, 226, NPC.velocity.X * 0f, NPC.velocity.Y * 0f, 100, default(Color), .4f);
@@ -154,7 +172,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         speedX *= num51;
                         speedY *= num51;
                         int type = ProjectileID.MartianTurretBolt;
-                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + 12, vector8.Y - 18, speedX, speedY, type, 12, 0f, Main.myPlayer, 0, 1);
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + 12, vector8.Y - 18, speedX, speedY, type, boltDamage, 0f, Main.myPlayer, 0, 1);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_GoblinBomberThrow, NPC.Center);
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot") with { Volume = 0.6f, PitchVariance = 0.3f }, NPC.Center);
                         boltTimer = 1;
@@ -166,7 +184,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
-            else 
+            else
             {
 
                 if (NPC.oldPosition.X < NPC.position.X && boltTimer > 180) //This prevents shooting bolt visually too soon after player has just rolled through enemy
@@ -215,7 +233,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Jaw dust
 
-            float quantity = ((NPC.life * -0.18f) + 35f);
+            float quantity = (float)((float)NPC.lifeMax / (float)NPC.life * 100) / 10f -8f; //Fun. quantity is 2 at 100% hp, 30+ with low hp.
+
             if (Main.rand.Next((int)quantity) == 0 && NPC.spriteDirection == 1) { Dust.NewDust(new Vector2(NPC.Center.X + 18, NPC.Center.Y + 6), 26, -2, 226, NPC.velocity.X * 0f, NPC.velocity.Y * 0f, 100, default(Color), .4f); }
             if (Main.rand.Next((int)quantity) == 0 && NPC.spriteDirection != 1) { Dust.NewDust(new Vector2(NPC.Center.X - 48, NPC.Center.Y + 6), 26, -2, 226, NPC.velocity.X * 0f, NPC.velocity.Y * 0f, 100, default(Color), .4f); }
 
@@ -263,10 +282,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            float chance = ((NPC.life * -0.04f) + 7f); //Higher chance the higher the enemy hp
+            //float chance = ((NPC.life * -0.04f) + 7f); //Higher chance the higher the enemy hp. DONT USE
+            float chance = (9f * (NPC.life / (float)NPC.lifeMax)) + 1f; // 100% chance of applying debuff at max hp, 10% chance at 0hp
             //Main.NewText(chance);
-
-            if (Main.rand.Next((int)chance) == 0) 
+            if (Main.rand.NextFloat(0, 10) <= chance)
             {
                 target.AddBuff(BuffID.Electrified, 3 * 60, false);
             }
