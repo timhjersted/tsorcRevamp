@@ -1,9 +1,9 @@
 Mods: {
 	tsorcRevamp: {
 		CommonItemTooltip: {
-			Details: 按住左Shift以显示详细信息
+			Details: 按住 左Shift 以显示详细信息
 			AggroBoost: 敌人更可能瞄准你
-			SetBonus: "套装奖励: "
+			SetBonus: 套装奖励：
 			NoKnockback: 对击退免疫
 			ObsidianShield: "{$CommonItemTooltip.NoKnockback}、对火块免疫"
 			ForBotCOnly: 仅限[c/6d8827:被诅咒者]：
@@ -32,7 +32,7 @@ Mods: {
 				'''
 			CorruptionCursed: 该物品已被[c/701070:腐化]力量[c/338338:诅咒]，目前无法使用
 			BotCNoHeal: 无法治愈[c/6d8827:被诅咒者]
-			// BotCPStone: Decreases the time needed to drink the Estus Flask by 25%
+			BotCPStone: 减少 25% 元素瓶的使用时间
 			DSPickUpRange: 增加黑暗之魂拾取范围
 			VanityFunction: 在时装栏中也生效
 			DragoonGearCompatible: 与龙骑士套装和龙靴兼容.
@@ -100,8 +100,8 @@ Mods: {
 				CritDmg: 增加 {0}% 远程暴击伤害
 				NonCritDmg: 减少 {0}% 远程非暴击伤害
 				FlatDmg: 增加 {0} 点远程伤害
-				// SeedBag: The Dryad will sell seeds while this is in your inventory
-				// CurrentAccuracy: Current Accuracy: {0}%
+				SeedBag: 当此物品在背包中时，树妖会出售种子
+				CurrentAccuracy: 当前准确度：{0}%
 			}
 
 			Magic: {
@@ -268,7 +268,7 @@ Mods: {
 		UI: {
 			Souls: 黑暗之魂
 			StaminaUse: "耐力消耗: "
-			// StaminaUseOnHitOnly: "Stamina Use on-hit: "
+			StaminaUseOnHitOnly: "命中时耐力消耗: "
 			14: "14"
 			StaminaRegenReduction:
 				'''
@@ -308,8 +308,8 @@ Mods: {
 			SpawnRemoved: 重生点已移除！
 			AccessPiggyBank: 打开猪猪存钱罐
 			AccessSafe: 打开保险箱
-			BotCHit: 中！
-			BotCMiss: 马…
+			BotCHit: 中！{0}%
+			BotCMiss: 马… {0}%
 		}
 
 		World: {
@@ -522,9 +522,9 @@ Mods: {
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:一个类似于大金字塔的符号，月亮在它的右侧，刻在上面]"
 				LargeSapphire: "[c/ffbf00:城堡附近的一座雪山的符号被刻在上面]"
-				VulnerabilityHex: 使用一个脆弱的魔法
-				StarinaBottle: 增加10点魔力再生同时减少50%魔力再生延迟
-				ManaRegenerationBand: 增加25点魔力再生同时减少100%魔力再生延迟
+				VulnerabilityHex: 如果已击败双足翼龙，则施加双足翼龙诅咒减益
+				StarinaBottle: 增加 10 点魔力再生同时减少 50% 魔力再生延迟
+				ManaRegenerationBand: 增加 25 点魔力再生同时减少 100% 魔力再生延迟
 				WellFedItemsBotC: 为[c/6d8827:被诅咒者]增加 {0}% 耐力再生
 				ManaRegenerationPotionBotC: 增加 {0} 蓝露滴圣杯瓶恢复速度
 				CelestialMagnetBotC: 魔力星只固定恢复[c/6d8827:被诅咒者]最大魔力值的4%
@@ -990,7 +990,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamage}
-					{$CommonItemTooltip.BadDefense@1}，（gkd快带着这玩意打无伤）
+					{$CommonItemTooltip.BadDefense@1}（gkd 带着这玩意打无伤）
 					'''
 			}
 
@@ -1010,8 +1010,8 @@ Mods: {
 					'''
 					敌人每受到一个负面状态的影响
 					将会受到指数级增加的额外伤害
-					"H Deimos CO farm 3/4 LF despoil"
 					这不包括鞭子造成的效果
+					"H Deimos CO farm 3/4 LF despoil"
 					'''
 			}
 
@@ -1237,7 +1237,7 @@ Mods: {
 				Tooltip:
 					'''
 					与死亡对抗的指环
-					为佩戴者提供 "守护之力"— ({$CommonItemTooltip.IncreasesDefenseBy})
+					为佩戴者提供"守护之力"—{$CommonItemTooltip.IncreasesDefenseBy}
 					'''
 			}
 
@@ -2127,7 +2127,7 @@ Mods: {
 				Tooltip:
 					'''
 					乘算增加10%伤害
-					套装奖励：禁用生命再生，再乘算增加15%的伤害
+					{$CommonItemTooltip.SetBonus}禁用生命再生，再乘算增加15%的伤害
 					增加10%最大耐力与耐力恢复速度
 					'''
 			}
@@ -2480,18 +2480,18 @@ Mods: {
 			}
 
 			MagmaBreastplate: {
-				DisplayName: 熔岩胸甲
+				DisplayName: 岩浆胸甲
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					套装奖励： 击中燃烧的敌人会炙烤他们
+					{$CommonItemTooltip.SetBonus}击中燃烧的敌人会炙烤他们
 					被炙烤的敌人额外受到 {1} 点伤害，同时对它们造成更猛烈的燃烧效果
 					免疫着火
 					'''
 			}
 
 			MagmaGreaves: {
-				DisplayName: 熔岩腿甲
+				DisplayName: 岩浆腿甲
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
@@ -2500,7 +2500,7 @@ Mods: {
 			}
 
 			MagmaHelmet: {
-				DisplayName: 熔岩头盔
+				DisplayName: 岩浆头盔
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
 			}
 
@@ -2759,7 +2759,8 @@ Mods: {
 				Tooltip:
 					'''
 					加强龙纹盾的效果。
-					套装奖励：乘算降低 {0}% 攻击速度，但是增加 {1}% 暴击率
+					{$CommonItemTooltip.SetBonus}增加 {1}% 暴击率
+					乘算降低 {0}% 攻击速度，增加 {0}% 魔力消耗
 					'''
 			}
 
@@ -3638,7 +3639,7 @@ Mods: {
 					以[c/6d8827:被诅咒者]身份游玩时具有以下效果：
 					你获得一个额外的饰品栏，额外得到 {0}% 黑暗之魂，同时你的耐力恢复大大提高
 					但是，[c/dd3333:使用武器会消耗耐力] ，当耐力未达到最大值时生命恢复减半
-					禁止使用大魔镜，即时治疗药水不会生效，作为补偿你获得了元素瓶的治疗，按快速治疗快捷键以使用
+					禁止使用大魔镜，治疗药水不会生效，作为补偿你获得了元素瓶，按快速治疗快捷键以使用
 					每次你死时会损失 {1}% 的最大生命值，但是当你回到死亡地点就会恢复
 					'''
 				Enabled: 你成为了被诅咒者
@@ -3653,11 +3654,11 @@ Mods: {
 				Ranged:
 					'''
 					[c/22dd96:远程暴击率将取决于你的射击准确度]
-					[c/22dd96:命中敌人增加，未命中则减少]
-					[c/22dd96:射弹每次只需命中一个敌人即可]
-					[c/22dd96:穿透射弹的多次命中只计算一次，未命中的容错也只有一次]
-					[c/22dd96:命中一次增加 {0}% 准确度，未命中则减少 {1}%]
-					[c/22dd96:每 1% 准确度增加 {2}% 远程暴击率，最高到 {3}%]
+					[c/22dd96:命中时增加 {0}% 准确度，未命中则减少 {1}% 准确度，每次只需命中一个敌人]
+					[c/22dd96:穿透敌人的射弹，多次命中只计算一次，未命中的容错也只有一次]
+					[c/22dd96:实际暴击率= (原有暴击率 +准确度x{2}%) x ({4} +准确度x0.75)]
+					[c/22dd96:满准确度时增加 {2}% 暴击率，同时再将总暴击率额外乘算 {3}]
+					[c/22dd96:准确度为 0% 时将总暴击率额外乘算 {4}]
 					'''
 				Magic:
 					'''
@@ -5607,7 +5608,7 @@ Mods: {
 					'''
 					一个出奇的普通但致命的武器—它的短距离似乎是它唯一的弱点
 					命中时使用魔力以撕裂敌人
-					命中后返还 {0} 点魔力值
+					镰刀命中时返还 {0} 点魔力值
 					'''
 			}
 
@@ -5797,8 +5798,8 @@ Mods: {
 				DisplayName: 巴罗之刃
 				Tooltip:
 					'''
-					一把无形的剑，加上了强大的魔法
-					[c/ffbf00:驱散亚尔特留斯和巫师王的防御盾]
+					一把无形的剑，承载了强大的魔法
+					[c/ffbf00:驱散亚尔特留斯和巫师王的防御护盾]
 					黑夜揭示了它与深渊的联系...
 					有几率把灵液传染给被它刺穿的人
 					'''
@@ -6931,87 +6932,79 @@ Mods: {
 				DisplayName: 灼热焦点
 				Tooltip:
 					'''
-					Summons an ashen dragon which will chase after your cursor and breathe fire at nearby enemies
-					Summons fireballs which rotate around you and damage enemies in their way
+					[c/FF0000:WIP DON'T USE AS A PLAYER]
+					召唤一条灰烬之龙，它会向你的光标移动并向附近的敌人喷火
+					召唤围绕你旋转的火球，并伤害经过的敌人
 					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
-					Applies the Scorching debuff, increasing minion crit chance
-					Dragon's hits mark enemies after 6 consecutive hits
-					Once fully marked you can detonate them by hitting the enemy with a fireball
-					Detonating the mark will deal bonus damage and increase the debuff's strength temporarily
 					{$CommonItemTooltip.Summon.TagDmgMult}
 					“献给Runeterra的灰烬之主！”
 					'''
-				// Keybind1: "Press Left/Right Alt + "
-				// Keybind2: " to increase or shrink their radius, depending on where the player is facing"
-				/* Details:
+				Keybind1: "按 Alt 和 "
+				Keybind2: " 根据玩家所面对的方向来增加或缩小它们的旋转半径"
+				Details:
 					'''
-					The ashen dragon itself uses half a minion slot and scales with the amount of fireballs summoned
-					Dragon's hits apply the Scorched debuff and can mark enemies
-					Each hit has a {0}% chance to add a mark, 6 Marks can be detonated by hitting the enemy with a fireball
-					Detonating marks will increase the debuff's strength for {1} seconds
-					The empowered debuff increases fireball damage, damage over time and applies {2}% summon tag critical strike chance
-					''' */
+					灰烬之龙本身消耗半个仆从栏，并根据召唤的火球数量进行缩放
+					灰烬之龙对敌人施加炽热减益，并且可以标记敌人
+					每次攻击有 {0}% 的几率施加标记，标记 6 次后的敌人被火球攻击可引发爆炸
+					爆炸会增强炽热减益的效果，持续 {1} 秒
+					炽热减益随时间增加火球的伤害，并施加 {2}% 的召唤标记暴击率
+					'''
 			}
 
 			InterstellarVesselGauntlet: {
 				DisplayName: 星际飞船遥控器
 				Tooltip:
 					'''
-					Summons an interstellar vessel which will chase after your cursor and breathe fire at nearby enemies
-					Summons spaceships which rotate around you and damage enemies in their way
+					[c/FF0000:WIP DON'T USE AS A PLAYER]
+					召唤一条指挥舰，它会向你的光标移动并向附近的敌人喷火
+					召唤围绕你旋转的飞船，并伤害经过的敌人
 					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
-					Applies the Shocked debuff, increasing minion crit chance
-					Vessel's hits mark enemies after 6 consecutive hits
-					Once fully marked you can detonate them by hitting the enemy with a spaceship
-					Detonating the mark will deal bonus damage and increase the debuff's strength temporarily
 					{$CommonItemTooltip.Summon.TagDmgMult}
 					{$Items.InterstellarVesselGauntlet.Keybind1}Special Ability{$Items.InterstellarVesselGauntlet.Keybind2}
 					“调整 ASOL-13 的轨迹！”
 					'''
-				// Keybind1: "Press "
-				// Keybind2: " to activate Turboboost, overclocking the Vessel and it's spaceships"
-				/* Details:
+				Keybind1: "按 "
+				Keybind2: " 启用涡轮增压，超载指挥舰和飞船"
+				Details:
 					'''
-					Turboboost increases the spaceships damage, movement speed and increase the vessel's attack speed
-					Turboboost will actively drain your mana
-					The vessel itself uses half a minion slot and scales with the amount of spaceships summoned
-					Vessel's hits apply the Shocked debuff and can mark enemies
-					Each hit has a {0}% chance to add a mark, 6 Marks can be detonated by hitting the enemy with a spaceship
-					Detonating marks will increase the debuff's strength for {1} seconds
-					The empowered debuff increases spaceship damage, damage over time and applies {2}% summon tag critical strike chance
-					''' */
+					涡轮增压增加飞船的伤害、移动速度和指挥舰的攻击速度
+					涡轮增压会快速消耗你的魔力
+					指挥舰本身消耗半个仆从栏，并根据召唤的飞船数量进行缩放
+					指挥舰对敌人施加出其不意减益，并且可以标记敌人
+					每次攻击有 {0}% 的几率施加标记，标记 6 次后的敌人被飞船攻击可引发爆炸
+					爆炸会增强出其不意减益的效果，持续 {1} 秒
+					出其不意减益随时间增加飞船的伤害，并施加 {2}% 的召唤标记暴击率
+					'''
 			}
 
 			CenterOfTheUniverse: {
 				DisplayName: 宇宙重心
 				Tooltip:
 					'''
-					Summons the Star Forger which will chase after your cursor and breathe fire at nearby enemies
-					Summons stars which rotate around you and damage enemies in their way
-					Applies the Sunburn debuff, increasing minion crit chance
-					Star Forger's hits mark enemies after 6 consecutive hits
-					Once fully marked you can detonate them by hitting the enemy with a star
-					Detonating the mark will deal bonus damage and increase the debuff's strength temporarily
+					[c/FF0000:WIP DON'T USE AS A PLAYER]
+					召唤一条行星吞噬者，它会向你的光标移动并向附近的敌人喷火
+					召唤围绕你旋转的流星，并伤害经过的敌人
+					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
 					{$CommonItemTooltip.Summon.TagDmgMult}
 					{$Items.CenterOfTheUniverse.Keybind1}Special Ability{$Items.CenterOfTheUniverse.Keybind2}
-					Gain Stardust every time you detonate a mark
-					<right> to summon a Falling Star at your cursor's location for 10 Stardust
+					每次引爆标记会获得星尘
+					<right>消耗 10 星尘在光标位置召唤一颗大彗星
 					“让他们一看到行星吞噬者就浑身战栗！”
 					'''
-				// Keybind1: "Press "
-				// Keybind2: " to activate Turboboost, accelerating the Star Forger and it's stars"
-				/* Details:
+				Keybind1: "按 "
+				Keybind2: " 启用涡轮增压，超载行星吞噬者和流星"
+				Details:
 					'''
-					Grand Comet deals massive damage in a massive area and leaves behind a shockwave
-					Grand Comet applies the Awestruck debuff, further increasing star damage and dealing massive damage over time
-					Turboboost increases star damage, movement speed and increase the Star Forger's attack speed
-					Turboboost will actively drain your mana
-					The Star Forger itself uses half a minion slot and scales with the amount of spaceships summoned
-					Star Forger's hits apply the Sunburnt debuff and can mark enemies
-					Each hit has a {0}% chance to add a mark, 6 Marks can be detonated by hitting the enemy with a star
-					Detonating marks will increase the debuff's strength for {1} seconds
-					The empowered debuff increases star damage, damage over time and applies {2}% summon tag critical strike chance
-					''' */
+					大彗星在大范围内造成巨大破坏并留下冲击波
+					大彗星施加 Awestruck 减益，随时间增加流星的伤害，其本身也会造成高额伤害
+					涡轮增压增加流星的伤害、移动速度和行星吞噬者的攻击速度
+					涡轮增压会快速消耗你的魔力
+					行星吞噬者本身消耗半个仆从栏，并根据召唤的流星数量进行缩放
+					行星吞噬者对敌人施加日照减益，并且可以标记敌人
+					每次攻击有 {0}% 的几率施加标记，标记 6 次后的敌人被流星攻击可引发爆炸
+					爆炸会增强日照减益的效果，持续 {1} 秒
+					日照减益随时间增加流星的伤害，并施加 {2}% 的召唤标记暴击率
+					'''
 			}
 
 			SteraksGage: {
@@ -7021,9 +7014,9 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
 					根据武器使用时间快慢，获得近战伤害加成（加成最高到 {1}%）
 					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
-					当生命值低于{3}%时，回复{4}点生命值（{$CommonItemTooltip.Cooldown@5}）
+					当生命值低于 {3}% 时，回复 {4} 点生命值（{$CommonItemTooltip.Cooldown@5}）
 					'''
-				// Bonus: Currently granting {0}% based on the current held weapon
+				Bonus: 当前手持武器获得 {0}% 近战伤害加成
 			}
 
 			InfinityEdge: {
@@ -7393,12 +7386,11 @@ Mods: {
 				Generic:
 					'''
 					敌怪刷新率: {8}%
-					抵抗力: {0}，等同于 {1}% 伤害减免
+					抵抗力：{0} 等同于 {1}% 伤害减免
 					移动速度: {2}%
-					生命回复: {3}
+					生命回复: {3}/s
 					魔力消耗: {4}%
-					魔力再生速率: {5}
-					魔力再生延迟: {6}
+					魔力回复: {5}/s
 					耐力再生速率: {7}%
 					'''
 				Melee:
@@ -7459,8 +7451,8 @@ Mods: {
 			}
 
 			SeedBag: {
-				// DisplayName: Seed Bag
-				// Tooltip: ""
+				DisplayName: 种子袋
+				Tooltip: ""
 			}
 		}
 
@@ -8305,8 +8297,8 @@ Mods: {
 			}
 
 			Stiff: {
-				// DisplayName: Stiff
-				// Description: You can't roll!
+				DisplayName: 呆板
+				Description: 你无法翻滚！
 			}
 		}
 
@@ -9910,10 +9902,10 @@ Mods: {
 			Willowisp.DisplayName: 飞絮
 			GreatRedThresher.DisplayName: 殷红勾魂使
 			LeonhardPhase2.DisplayName: 李奥纳德
-			// MountedSandsprog.DisplayName: Mounted Sandsprog
-			// MountedSandsprogMage.DisplayName: Mounted Sandsprog Mage
-			// Sandsprog.DisplayName: Sandsprog
-			// SandsprogMage.DisplayName: Sandsprog Mage
+			MountedSandsprog.DisplayName: 沙盗骑手
+			MountedSandsprogMage.DisplayName: 沙盗骑手
+			Sandsprog.DisplayName: 沙盗士兵
+			SandsprogMage.DisplayName: 沙盗法师
 		}
 
 		Prefixes: {

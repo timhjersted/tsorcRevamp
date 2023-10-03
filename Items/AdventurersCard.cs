@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items
             int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
 
             tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "GenericStats", LangUtils.GetTextValue("Items.AdventurersCard.Generic",
-                (int)(player.endurance * 100), 100 - (int)(100f / (100f + (player.endurance * 100f)) * 100f), (int)(player.moveSpeed * 100), player.lifeRegen, (int)(player.manaCost * 100), player.manaRegenBonus, player.manaRegenDelayBonus,
+                (int)(player.endurance * 100), 100 - (int)(100f / (100f + (player.endurance * 100f)) * 100f), (int)(player.moveSpeed * 100), player.lifeRegen / 2f, (int)(player.manaCost * 100), player.manaRegen / 2f, player.manaRegenDelayBonus,
                 (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGain * 100f), (float)System.Math.Round(60f / (player.GetModPlayer<tsorcRevampPlayer>().spawnRate) * 100, 1))));
 
             switch (ClassCounter)
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items
                 case 2:
                     {
                         tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "RangedStats", LangUtils.GetTextValue("Items.AdventurersCard.Ranged",
-                            (int)(player.GetTotalDamage(DamageClass.Ranged).ApplyTo(100)), (int)player.GetTotalCritChance(DamageClass.Ranged), (int)(player.GetTotalAttackSpeed(DamageClass.Ranged) * 100), player.GetTotalArmorPenetration(DamageClass.Ranged))));
+                            (int)(player.GetTotalDamage(DamageClass.Ranged).ApplyTo(100)), (float)System.Math.Round(player.GetTotalCritChance(DamageClass.Ranged), 1), (int)(player.GetTotalAttackSpeed(DamageClass.Ranged) * 100), player.GetTotalArmorPenetration(DamageClass.Ranged))));
                         break;
                     }
                 case 3:

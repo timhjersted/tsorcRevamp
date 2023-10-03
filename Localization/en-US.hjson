@@ -7387,9 +7387,9 @@ Mods: {
 					Enemy SpawnRate: {8}%
 					Resistance: {0}, equal to {1}% damage reduction
 					Movement Speed: {2}%
-					Life Regen: {3}
+					Life Regen: {3} per second
 					Mana Efficiency: {4}%
-					Mana Regen Bonus: {5}
+					Mana Regen: {5} per second
 					Mana Regen Delay Bonus: {6}
 					Stamina Regen: {7}%
 					'''
