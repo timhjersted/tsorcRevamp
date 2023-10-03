@@ -135,7 +135,7 @@
   "text": "- 你发现了猎手的巢穴 - --NEWLINE   --NEWLINE Miakoda：\u0022打开大门的拉杆可能就在附近……\u0022",
   "tileX": 460,
   "tileY": 1520,
-  "textWidth": 550,
+  "textWidth": 400,
   "style": 1
 }
 {
@@ -576,7 +576,7 @@
   "text": "\u0022看起来人们试图在这里挖掘宝石，但他们都不见了…\u0022",
   "tileX": 3188,
   "tileY": 985,
-  "textWidth": 370,
+  "textWidth": 400,
   "style": 1
 }
 {
@@ -618,7 +618,7 @@
   "text": "\u0022这条路似乎被另一个开关挡住了……\u0022",
   "tileX": 3271,
   "tileY": 62,
-  "textWidth": 320,
+  "textWidth": 280,
   "style": 1
 }
 {
@@ -671,7 +671,7 @@
   "style": 1
 }
 {
-  "text": "- 腐化神殿之口 - --NEWLINE   --NEWLINE 你需要一段助跑到达对面，只有你小时候读到的神话里的赫尔墨斯之靴才能达到需要的速度。 --NEWLINE   --NEWLINE 园艺老妇人提到过，靴子可能在村庄下面的大地神庙里找到。",
+  "text": "- 腐化神殿入口 - --NEWLINE   --NEWLINE 你需要一段助跑到达对面，只有你小时候读到的神话里的赫尔墨斯之靴才能达到需要的速度。 --NEWLINE   --NEWLINE 园艺老妇人提到过，靴子可能在村庄下面的大地神庙里找到。",
   "tileX": 3413,
   "tileY": 713,
   "textWidth": 700,
@@ -787,13 +787,6 @@
   "tileX": 3567,
   "tileY": 1919,
   "textWidth": 230,
-  "style": 1
-}
-{
-  "text": "一个老矿工的屋舍…",
-  "tileX": 3599,
-  "tileY": 513,
-  "textWidth": 180,
   "style": 1
 }
 {
@@ -951,10 +944,10 @@
   "style": 1
 }
 {
-  "text": "你发现一具骷髅手中紧紧地握着地图。 --NEWLINE   --NEWLINE 上面提到了巫师的房子，坐标似乎指向地下室…",
+  "text": "你发现一具骷髅手中紧紧地握着地图。 --NEWLINE   --NEWLINE 上面提到了雪山上巫师的住所，坐标似乎指向地下室…",
   "tileX": 4032,
   "tileY": 1374,
-  "textWidth": 350,
+  "textWidth": 400,
   "style": 1
 }
 {
@@ -1266,7 +1259,7 @@
   "style": 1
 }
 {
-  "text": "你在骷髅手上发现一张纸条：\u0022探索时使用药水对你的生存至关重要。 --NEWLINE   --NEWLINE 当你身上有很多黑暗之魂的时候使用它们。 --NEWLINE   --NEWLINE  --NEWLINE   --NEWLINE 在找回失去的黑暗之魂时使用它们。 --NEWLINE   --NEWLINE 在探索新领域时使用它们。 --NEWLINE   --NEWLINE 当你看到危险的敌人时使用它们。 --NEWLINE   --NEWLINE 不要像我一样因吝啬而丢掉性命。\u0022",
+  "text": "你在骷髅手上发现一张纸条：\u0022探索时使用药水对你的生存至关重要。 --NEWLINE   --NEWLINE 当你身上有很多黑暗之魂的时候使用它们。 --NEWLINE   --NEWLINE 在找回失去的黑暗之魂时使用它们。 --NEWLINE   --NEWLINE 在探索新领域时使用它们。 --NEWLINE   --NEWLINE 当你看到危险的敌人时使用它们。 --NEWLINE   --NEWLINE 不要像我一样因吝啬而丢掉性命。\u0022",
   "tileX": 4335,
   "tileY": 1030,
   "textWidth": 500,
@@ -1882,7 +1875,7 @@
   "style": 1
 }
 {
-  "text": "Miakoda：\u0022墙上的紫色圣草非常聪明。它可能会将我们带到有趣的地方……\u0022",
+  "text": "Miakoda：\u0022墙上的紫色圣草蕴含智慧，可能会将我们带到有趣的地方……\u0022",
   "tileX": 5939,
   "tileY": 1259,
   "textWidth": 520,
@@ -2312,7 +2305,7 @@
   "text": "瞧瞧旁边那是什么好东西",
   "tileX": 8053,
   "tileY": 1918,
-  "textWidth": 180,
+  "textWidth": 200,
   "style": 1
 }
 {
