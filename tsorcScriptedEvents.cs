@@ -126,6 +126,7 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            FireLurkerAmbush1,
             Death,
             BlackKnightSHMDungeon,
             RedKnightOolicileForest,
@@ -209,7 +210,14 @@ namespace tsorcRevamp
 
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
-            
+
+            //FIRELURKER AMBUSH 1 - Path of Ambition main room
+            List<int> FireLurkerAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.FireLurker>(), ModContent.NPCType<NPCs.Enemies.FireLurker>() };
+            List<Vector2> FireLurkerAmbush1EnemyLocations = new List<Vector2>() { new Vector2(3559, 1248), new Vector2(3629, 1248) };
+            ScriptedEvent FireLurkerAmbush1 = new ScriptedEvent(new Vector2(3591, 1248), 6, FireLurkerAmbush1EnemyTypeList, FireLurkerAmbush1EnemyLocations, DustID.DungeonWater, true, false, false, LangUtils.GetTextValue("Events.FireLurker"), Color.Red, false, default, FireLurkerPainCustomAction);
+            FireLurkerAmbush1.SetCustomStats(500, 12, 70, 650);
+            FireLurkerAmbush1.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.GreenBlossom>() }, new List<int>() { 5 }, true);
+
             //DEATH
             ScriptedEvent Death = new ScriptedEvent(new Vector2(1066, 529), 30, ModContent.NPCType<NPCs.Bosses.Death>(), DustID.BoneTorch, true, true, true, LangUtils.GetTextValue("Events.Death"), Color.Black, false);
             
@@ -220,7 +228,7 @@ namespace tsorcRevamp
             //RED KNIGHT IN OOLICILE FOREST
             ScriptedEvent RedKnightOolicileForest = new ScriptedEvent(new Vector2(5596, 926), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.RedKnight2"), Color.Purple, false, default, RedKnightMountainCustomAction);
             RedKnightOolicileForest.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<SoulCoin>() }, new List<int>() { 4, 3, 2, 40 });
-            RedKnightOolicileForest.SetCustomStats(1200, 9, 55, 1500);
+            RedKnightOolicileForest.SetCustomStats(1000, 9, 55, 1250);
 
             //BLACK KNIGHT IN HALLOWED CAVES
             ScriptedEvent BlackKnightHallowed = new ScriptedEvent(new Vector2(7454, 1413), 40, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, false, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
@@ -298,7 +306,7 @@ namespace tsorcRevamp
 
             //FIRE LURKER PATH OF PAIN
             ScriptedEvent FireLurkerPain = new ScriptedEvent(new Vector2(3245, 1252), 9, ModContent.NPCType<NPCs.Enemies.FireLurker>(), DustID.CursedTorch, true, true, true, LangUtils.GetTextValue("Events.FireLurker"), Color.Purple, false, default, FireLurkerPainCustomAction);
-            FireLurkerPain.SetCustomStats(2000, 12, 85, 1250);
+            FireLurkerPain.SetCustomStats(1800, 12, 85, 1500);
             FireLurkerPain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion }, new List<int>() { 3, 4 });
 
             //RED KNIGHT IN PATH OF PAIN
@@ -494,6 +502,7 @@ namespace tsorcRevamp
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
+                {ScriptedEventType.FireLurkerAmbush1, FireLurkerAmbush1},
                 {ScriptedEventType.Death, Death},
                 {ScriptedEventType.BlackKnightSHMDungeon, BlackKnightSHMDungeon},
                 {ScriptedEventType.RedKnightOolicileForest, RedKnightOolicileForest},

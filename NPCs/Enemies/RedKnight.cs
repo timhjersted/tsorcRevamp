@@ -86,6 +86,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //redKnightGlobalNPC.Swiftness = 1.3f;
             //redKnightGlobalNPC.CastingSpeed = Main.rand.NextFloat(0.6f, 1.4f);
             //redKnightGlobalNPC.Strength = Main.rand.NextFloat(0.7f, 1.4f);
+
             redKnightGlobalNPC.Agility = 0.2f;
           
         }
@@ -248,7 +249,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.ai[1] == 180f && NPC.Distance(player.Center) > 400)
                 {
                     NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(16, 19f);                
+                    float spearProjectileSpeed = Main.rand.NextFloat(14, 16f);                
                   
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
                     //speed += Main.rand.NextVector2Circular(-6, -2);
@@ -274,7 +275,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (NPC.ai[1] == 180f && NPC.Distance(player.Center) <= 400)
                 {
                     NPC.TargetClosest(true);
-                    float spearProjectileSpeed = Main.rand.NextFloat(10, 12f);
+                    float spearProjectileSpeed = Main.rand.NextFloat(11, 13f);
 
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
                     //speed += Main.rand.NextVector2Circular(-6, -2);

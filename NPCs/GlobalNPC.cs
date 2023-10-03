@@ -397,9 +397,18 @@ namespace tsorcRevamp.NPCs
                 pool.Add(ModContent.NPCType<Enemies.HumanityPhantom>(), 10f);
             }
 
-            //VANILLA NPC SPAWN EDITS
+            //VANILLA AND SOME MOD NPC SPAWN EDITS
 
             //PRE-HARD MODE
+
+            // Path of Ambition Temple (not in water)
+            if (!spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.SandstoneBrick && !Main.hardMode && !tsorcRevampWorld.SuperHardMode)
+            {
+                pool.Add(ModContent.NPCType<Enemies.HollowSoldier>(), 0.2f);
+                pool.Add(ModContent.NPCType<Enemies.HollowWarrior>(), 0.2f);
+                pool.Add(ModContent.NPCType<Enemies.FirebombHollow>(), 0.2f);
+            }
+
             //jungle
             if (spawnInfo.Player.ZoneJungle && !Main.hardMode)
             {
@@ -422,7 +431,7 @@ namespace tsorcRevamp.NPCs
             if (spawnInfo.Player.ZoneCrimson && !Main.hardMode)
             {
                 pool.Add(NPCID.LacBeetle, 0.02f);
-                pool.Add(NPCID.Drippler, 0.1f);
+                pool.Add(NPCID.Drippler, 0.2f);
                 pool.Add(NPCID.BloodCrawler, 0.002f);
                 pool.Add(NPCID.BloodCrawlerWall, 0.002f);
             }
