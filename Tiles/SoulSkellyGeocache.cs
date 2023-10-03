@@ -84,11 +84,14 @@ namespace tsorcRevamp.Tiles
 
             //SOUL SKULLS - They are 2x2, so use 2, 2 in the rectangle. In TEdit, these are SlimeBlock-PinkSlimeBlock(facing left) and PinkSlimeBlock-SlimeBlock(facing right)
 
+            //In Village Mountain in cave accessible from rope vine jumping puzzle
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3689, 414, 2, 2), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1));
+
             //Earth temple, by the first altar
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4248, 984, 2, 2), ModContent.ItemType<GreatMagicMirror>(), 1));
 
             //Giant Tree, bottom left by roots.
-            //SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(2542, 1486, 2, 2), ModContent.ItemType<Items.Accessories.SoulReaper2>(), 1, ModContent.BuffType<Buffs.Revitalizing>()));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(2542, 1486, 2, 2), ModContent.ItemType<Items.ProudKnightSoul>(), 3));
 
             //Big Queen Bee Larvae trap room, above the pyramid
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(5832, 1531, 2, 2), ItemID.WaspGun, 1, -1));
@@ -127,12 +130,17 @@ namespace tsorcRevamp.Tiles
 
 
             //HANGING SOUL SKELLYS - They are 3x3, so use 3, 3 in the rectangle. In TEdit, these are a ConfettiBlock (hanging from wrists) and BlackConfettiBlock, also called MidnightConfettiBlock (hanging from ankles)
+            //Near end of Path of Ambition at the top of the parkour section
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3467, 944, 3, 3), ModContent.ItemType<Items.NamelessSoldierSoul>(), 2));
 
-            //In EoC2 arena, on Path of Pain
+            //Above FireLurker arena, in hanging prison cell with chest in Path of Ambition
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3585, 1209, 3, 3), ModContent.ItemType<Items.NamelessSoldierSoul>(), 2));
+
+            //In FireLurker arena (in left cave beside main big room), on Path of Ambition
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3541, 1242, 3, 3), ModContent.ItemType<Items.StaminaVessel>(), 1));
 
             //By bonfire leading up to Earth Temple EoC arena, by shortcut
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4170, 1133, 3, 3), ModContent.ItemType<Items.Weapons.Throwing.Firebomb>(), 5));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4170, 1133, 3, 3), ModContent.ItemType<Items.Weapons.Throwing.Firebomb>(), 7));
 
             //Ceiling of Red Knight event arena on PoP
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3897, 1195, 3, 3), ModContent.ItemType<Items.PurgingStone>(), 1));
