@@ -100,14 +100,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit3") with { Volume = 1f });
             }
-            if (hit.Crit)
-            {
-                target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 2 * 60);
-            }
-            else
-            {
-                target.AddBuff(ModContent.BuffType<ScorchingDebuff>(), 60);
-            }
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks >= 6)
             {
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks = 0;

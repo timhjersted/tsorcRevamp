@@ -31,7 +31,8 @@ Mods: {
 				You can see a strange [c/878787:skull] symbol glowing on its surface...	
 				'''
 			CorruptionCursed: This item has been [c/383838:cursed] by the [c/701070:corruption] and can't be used yet
-			BotCNoHeal: Decreases the time needed to drink the Estus Flask by 25%
+			BotCNoHeal: Doesn't heal the [c/6d8827:Bearer of the Curse]
+			BotCPStone: Decreases the time needed to drink the Estus Flask by 25%
 			DSPickUpRange: " increases Dark Soul pick-up range"
 			VanityFunction: Also works in vanity slots
 			DragoonGearCompatible: Compatible with Dragoon Boots and Dragoon Gear.
@@ -99,6 +100,8 @@ Mods: {
 				CritDmg: Increases ranged critical strike damage by {0}%
 				NonCritDmg: Decreases ranged non-critical strike damage by {0}%
 				FlatDmg: Increases ranged damage by {0} flat
+				SeedBag: The Dryad will sell seeds while this is in your inventory
+				CurrentAccuracy: Current Accuracy: {0}%
 			}
 
 			Magic: {
@@ -519,7 +522,7 @@ Mods: {
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:A symbol resembling a large pyramid with the moon to its right side is carved into it]"
 				LargeSapphire: "[c/ffbf00:A symbol resembling a snow-capped mountain near a fortress is carved into it]"
-				VulnerabilityHex: Applies a vulnerability hex
+				VulnerabilityHex: Applies a vulnerability hex if Betsy has been defeated
 				StarinaBottle: Increases mana regen by 10 and decreases mana regen delay by 50%
 				ManaRegenerationBand: Increases mana regen by 25 and decreases mana regen delay by 100%
 				WellFedItemsBotC: Increases stamina regen by {0}% for the [c/6d8827:Bearer of the Curse]
@@ -3653,7 +3656,8 @@ Mods: {
 					[c/22dd96:A ranged projectile only needs to hit once to count as hit, ]
 					[c/22dd96:can't increase your accuracy multiple times and can also only miss once.]
 					[c/22dd96:A hit will increase your accuracy by {0}%, while missing will decrease your accuracy by {1}%.]
-					[c/22dd96:You can gain up to {2}% crit chance flat and a {3}% multiplier at 100% accuracy, or lose all crit at 0% accuracy.]
+					[c/22dd96:You can gain up to {2}% crit chance flat and a {3}x multiplier at 100% accuracy,]
+					[c/22dd96: or have a {4}x multiplier to your total crit at 0% accuracy.]
 					'''
 				Magic:
 					'''
@@ -6931,20 +6935,18 @@ Mods: {
 					Summons an ashen dragon which will chase after your cursor and breathe fire at nearby enemies
 					Summons fireballs which rotate around you and damage enemies in their way
 					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
-					Applies the Scorching debuff, increasing minion crit chance
-					Dragon's hits mark enemies after 6 consecutive hits
-					Once fully marked you can detonate them by hitting the enemy with a fireball
-					Detonating the mark will deal bonus damage and increase the debuff's strength temporarily
 					{$CommonItemTooltip.Summon.TagDmgMult}
 					'By the Ashen Lord of Runeterra!'
 					'''
 				Keybind1: "Press Left/Right Alt + "
-				Keybind2: " to increase or shrink their radius, "
+				Keybind2: " to increase or shrink their radius, depending on where the player is facing"
 				Details:
 					'''
-					The ashen dragon itself does not use any minion slots
-					Scorched grants minions crit chance based on a fraction of your summon critical strike chance
-					Detonating marks will increase the debuff's strength by 3x for 3 seconds
+					The ashen dragon itself uses half a minion slot and scales with the amount of fireballs summoned
+					Dragon's hits apply the Scorched debuff and can mark enemies
+					Each hit has a {0}% chance to add a mark, 6 Marks can be detonated by hitting the enemy with a fireball
+					Detonating marks will increase the debuff's strength for {1} seconds
+					The empowered debuff increases fireball damage, damage over time and applies {2}% summon tag critical strike chance
 					'''
 			}
 
@@ -6956,10 +6958,6 @@ Mods: {
 					Summons an interstellar vessel which will chase after your cursor and breathe fire at nearby enemies
 					Summons spaceships which rotate around you and damage enemies in their way
 					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
-					Applies the Shocked debuff, increasing minion crit chance
-					Vessel's hits mark enemies after 6 consecutive hits
-					Once fully marked you can detonate them by hitting the enemy with a spaceship
-					Detonating the mark will deal bonus damage and increase the debuff's strength temporarily
 					{$CommonItemTooltip.Summon.TagDmgMult}
 					{$Items.InterstellarVesselGauntlet.Keybind1}Special Ability{$Items.InterstellarVesselGauntlet.Keybind2}
 					'Adjusting trajectory for ASOL-13!'
@@ -6970,9 +6968,11 @@ Mods: {
 					'''
 					Turboboost increases the spaceships damage, movement speed and increase the vessel's attack speed
 					Turboboost will actively drain your mana
-					The interstellar vessel itself does not use any minion slots
-					Shocked grants minions crit chance based on a fraction of your summon critical strike chance
-					Detonating marks will increase the debuff's strength by 3x for 3 seconds
+					The vessel itself uses half a minion slot and scales with the amount of spaceships summoned
+					Vessel's hits apply the Shocked debuff and can mark enemies
+					Each hit has a {0}% chance to add a mark, 6 Marks can be detonated by hitting the enemy with a spaceship
+					Detonating marks will increase the debuff's strength for {1} seconds
+					The empowered debuff increases spaceship damage, damage over time and applies {2}% summon tag critical strike chance
 					'''
 			}
 
@@ -6983,26 +6983,26 @@ Mods: {
 					[c/FF0000:WIP DON'T USE AS A PLAYER]
 					Summons the Star Forger which will chase after your cursor and breathe fire at nearby enemies
 					Summons stars which rotate around you and damage enemies in their way
-					Applies the Sunburn debuff, increasing minion crit chance
-					Star Forger's hits mark enemies after 6 consecutive hits
-					Once fully marked you can detonate them by hitting the enemy with a star
-					Detonating the mark will deal bonus damage and increase the debuff's strength temporarily
+					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
 					{$CommonItemTooltip.Summon.TagDmgMult}
 					{$Items.CenterOfTheUniverse.Keybind1}Special Ability{$Items.CenterOfTheUniverse.Keybind2}
 					Gain Stardust every time you detonate a mark
-					<right> to summon a Falling Star at your cursor's location for 10 Stardust
+					<right> to summon a Grand Comet at your cursor's location for 10 Stardust
 					'Leave them in awe at the sight of the Star Forger'
 					'''
 				Keybind1: "Press "
 				Keybind2: " to activate Turboboost, accelerating the Star Forger and it's stars"
 				Details:
 					'''
-					Falling Star deals massive damage in a massive area and leaves behind a shockwave
-					Turboboost increases the spaceships damage, movement speed and increase the vessel's attack speed
+					Grand Comet deals massive damage in a massive area and leaves behind a shockwave
+					Grand Comet applies the Awestruck debuff, further increasing star damage and dealing massive damage over time
+					Turboboost increases star damage, movement speed and increase the Star Forger's attack speed
 					Turboboost will actively drain your mana
-					The interstellar vessel itself does not use any minion slots
-					Shocked grants minions crit chance based on a fraction of your summon critical strike chance
-					Detonating marks will increase the debuff's strength by 3x for 3 seconds
+					The Star Forger itself uses half a minion slot and scales with the amount of spaceships summoned
+					Star Forger's hits apply the Sunburnt debuff and can mark enemies
+					Each hit has a {0}% chance to add a mark, 6 Marks can be detonated by hitting the enemy with a star
+					Detonating marks will increase the debuff's strength for {1} seconds
+					The empowered debuff increases star damage, damage over time and applies {2}% summon tag critical strike chance
 					'''
 			}
 
@@ -7447,6 +7447,11 @@ Mods: {
 
 			AncestralSpiritBag: {
 				DisplayName: Ancestral Spirit Bag
+				Tooltip: ""
+			}
+
+			SeedBag: {
+				DisplayName: Seed Bag
 				Tooltip: ""
 			}
 		}

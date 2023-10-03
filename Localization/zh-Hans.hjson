@@ -32,6 +32,7 @@ Mods: {
 				'''
 			CorruptionCursed: 该物品已被[c/701070:腐化]力量[c/338338:诅咒]，目前无法使用
 			BotCNoHeal: 无法治愈[c/6d8827:被诅咒者]
+			// BotCPStone: Decreases the time needed to drink the Estus Flask by 25%
 			DSPickUpRange: 增加黑暗之魂拾取范围
 			VanityFunction: 在时装栏中也生效
 			DragoonGearCompatible: 与龙骑士套装和龙靴兼容.
@@ -99,6 +100,8 @@ Mods: {
 				CritDmg: 增加 {0}% 远程暴击伤害
 				NonCritDmg: 减少 {0}% 远程非暴击伤害
 				FlatDmg: 增加 {0} 点远程伤害
+				// SeedBag: The Dryad will sell seeds while this is in your inventory
+				// CurrentAccuracy: Current Accuracy: {0}%
 			}
 
 			Magic: {
@@ -6939,12 +6942,14 @@ Mods: {
 					“献给Runeterra的灰烬之主！”
 					'''
 				// Keybind1: "Press Left/Right Alt + "
-				// Keybind2: " to increase or shrink their radius, "
+				// Keybind2: " to increase or shrink their radius, depending on where the player is facing"
 				/* Details:
 					'''
-					The ashen dragon itself does not use any minion slots
-					Scorched grants minions crit chance based on a fraction of your summon critical strike chance
-					Detonating marks will increase the debuff's strength by 3x for 3 seconds
+					The ashen dragon itself uses half a minion slot and scales with the amount of fireballs summoned
+					Dragon's hits apply the Scorched debuff and can mark enemies
+					Each hit has a {0}% chance to add a mark, 6 Marks can be detonated by hitting the enemy with a fireball
+					Detonating marks will increase the debuff's strength for {1} seconds
+					The empowered debuff increases fireball damage, damage over time and applies {2}% summon tag critical strike chance
 					''' */
 			}
 
@@ -6969,9 +6974,11 @@ Mods: {
 					'''
 					Turboboost increases the spaceships damage, movement speed and increase the vessel's attack speed
 					Turboboost will actively drain your mana
-					The interstellar vessel itself does not use any minion slots
-					Shocked grants minions crit chance based on a fraction of your summon critical strike chance
-					Detonating marks will increase the debuff's strength by 3x for 3 seconds
+					The vessel itself uses half a minion slot and scales with the amount of spaceships summoned
+					Vessel's hits apply the Shocked debuff and can mark enemies
+					Each hit has a {0}% chance to add a mark, 6 Marks can be detonated by hitting the enemy with a spaceship
+					Detonating marks will increase the debuff's strength for {1} seconds
+					The empowered debuff increases spaceship damage, damage over time and applies {2}% summon tag critical strike chance
 					''' */
 			}
 
@@ -6995,12 +7002,15 @@ Mods: {
 				// Keybind2: " to activate Turboboost, accelerating the Star Forger and it's stars"
 				/* Details:
 					'''
-					Falling Star deals massive damage in a massive area and leaves behind a shockwave
-					Turboboost increases the spaceships damage, movement speed and increase the vessel's attack speed
+					Grand Comet deals massive damage in a massive area and leaves behind a shockwave
+					Grand Comet applies the Awestruck debuff, further increasing star damage and dealing massive damage over time
+					Turboboost increases star damage, movement speed and increase the Star Forger's attack speed
 					Turboboost will actively drain your mana
-					The interstellar vessel itself does not use any minion slots
-					Shocked grants minions crit chance based on a fraction of your summon critical strike chance
-					Detonating marks will increase the debuff's strength by 3x for 3 seconds
+					The Star Forger itself uses half a minion slot and scales with the amount of spaceships summoned
+					Star Forger's hits apply the Sunburnt debuff and can mark enemies
+					Each hit has a {0}% chance to add a mark, 6 Marks can be detonated by hitting the enemy with a star
+					Detonating marks will increase the debuff's strength for {1} seconds
+					The empowered debuff increases star damage, damage over time and applies {2}% summon tag critical strike chance
 					''' */
 			}
 
@@ -7446,6 +7456,11 @@ Mods: {
 			AncestralSpiritBag: {
 				DisplayName: 宝藏袋（先祖之灵）
 				Tooltip: ""
+			}
+
+			SeedBag: {
+				// DisplayName: Seed Bag
+				// Tooltip: ""
 			}
 		}
 

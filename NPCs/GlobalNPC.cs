@@ -39,6 +39,8 @@ using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Buffs.Weapons;
+using tsorcRevamp.Items.ItemCrates;
+using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 
 namespace tsorcRevamp.NPCs
 {
@@ -1020,9 +1022,9 @@ namespace tsorcRevamp.NPCs
             if (projectile.IsMinionOrSentryRelated)
             {
                 #region Runeterra effects
-                if (Scorched || Shocked || Sunburnt)
+                if ((Scorched || Shocked || Sunburnt) && (SuperScorchDuration > 0 || SuperShockDuration > 0 || SuperSunburnDuration > 0))
                 {
-                    BaseSummonTagCriticalStrikeChance += 10f;
+                    BaseSummonTagCriticalStrikeChance += ScorchingPoint.SummonTagCrit;
                 }
                 #endregion
                 #region Modded Whip Special Effects
@@ -1968,9 +1970,9 @@ namespace tsorcRevamp.NPCs
                     }
                 case NPCID.Dryad:
                     {
-                        shop.Add(new Item(ItemID.Seed)
+                        shop.Add(new Item(ModContent.ItemType<SeedBag>())
                         {
-                            shopCustomPrice = 1,
+                            shopCustomPrice = 5,
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         },
                         new Condition("", () => Main.LocalPlayer.HasItem(ItemID.Blowpipe) || Main.LocalPlayer.HasItem(ItemID.Blowgun) || Main.LocalPlayer.HasItem(ModContent.ItemType<ToxicShot>()) || Main.LocalPlayer.HasItem(ModContent.ItemType<AlienGun>()) || Main.LocalPlayer.HasItem(ModContent.ItemType<OmegaSquadRifle>())));

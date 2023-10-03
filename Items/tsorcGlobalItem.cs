@@ -835,6 +835,14 @@ namespace tsorcRevamp.Items
             if (item.type == ItemID.TorchGodsFavor)
             {
                 player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<WorldRune>());
+                player.QuickSpawnItem(item.GetSource_Misc("meep"), ItemID.MagicLantern);
+                if (Main.masterMode)
+                {
+                    player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoul>(), (int)(1500 * 1.2f * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
+                } else
+                {
+                    player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoul>(), (int)(1500 * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
+                }
             }
 
 

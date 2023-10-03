@@ -88,14 +88,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit3") with { Volume = 1f });
             }
-            if (hit.Crit)
-            {
-                target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 2 * 60);
-            }
-            else
-            {
-                target.AddBuff(ModContent.BuffType<SunburnDebuff>(), 60);
-            }
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks >= 6)
             {
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks = 0;

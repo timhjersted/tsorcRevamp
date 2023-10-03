@@ -86,14 +86,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/ShipHit3") with { Volume = 1f });
             }
-            if (hit.Crit)
-            {
-                target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 2 * 60);
-            }
-            else
-            {
-                target.AddBuff(ModContent.BuffType<ShockedDebuff>(), 60);
-            }
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks >= 6)
             {
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks = 0;

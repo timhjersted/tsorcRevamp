@@ -27,11 +27,7 @@ namespace tsorcRevamp
 {
     public class tsorcRevampWorld : ModSystem
     {
-
-        public static bool DownedVortex;
-        public static bool DownedNebula;
-        public static bool DownedStardust;
-        public static bool DownedSolar;
+        public static bool DownedBetsy;
         public static bool SuperHardMode;
         public static bool TheEnd;
         public static bool CustomMap;
@@ -47,10 +43,7 @@ namespace tsorcRevamp
 
         public override void OnWorldLoad()
         {
-            DownedVortex = false;
-            DownedNebula = false;
-            DownedStardust = false;
-            DownedSolar = false;
+            DownedBetsy = false;
             SuperHardMode = false;
             TheEnd = false;
             CustomMap = false;
@@ -69,15 +62,6 @@ namespace tsorcRevamp
         {
             List<string> downed = new List<string>();
 
-            if (DownedVortex)
-                downed.Add("DownedVortex");
-            if (DownedNebula)
-                downed.Add("DownedNebula");
-            if (DownedStardust)
-                downed.Add("DownedStardust");
-            if (DownedSolar)
-                downed.Add("DownedSolar");
-
             List<string> world_state = new List<string>();
             if (SuperHardMode)
                 world_state.Add("SuperHardMode");
@@ -91,6 +75,10 @@ namespace tsorcRevamp
             if (CustomMap)
                 world_state.Add("CustomMap");
 
+            if (DownedBetsy)
+            {
+                downed.Add("DownedBetsy");
+            }
             tag.Add("downed", downed);
             tag.Add("world_state", world_state);
             SaveSlain(tag);
@@ -108,10 +96,7 @@ namespace tsorcRevamp
             tsorcScriptedEvents.LoadScriptedEvents(tag);
 
             IList<string> downedList = tag.GetList<string>("downed");
-            DownedVortex = downedList.Contains("DownedVortex");
-            DownedNebula = downedList.Contains("DownedNebula");
-            DownedStardust = downedList.Contains("DownedStardust");
-            DownedSolar = downedList.Contains("DownedSolar");
+            DownedBetsy = downedList.Contains("DownedBetsy");
 
             IList<string> worldStateList = tag.GetList<string>("world_state");
             SuperHardMode = worldStateList.Contains("SuperHardMode");

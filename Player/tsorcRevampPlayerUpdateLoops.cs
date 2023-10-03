@@ -85,13 +85,13 @@ namespace tsorcRevamp
         public int BotCLethalTempoMaxStacks = 10;
         public float BotCLethalTempoBonus = 0.03f;
 
-        public float BotCRangedBaseCritMult = 0f;
+        public float BotCRangedBaseCritMult = 0.5f;
         public float BotCCurrentAccuracyPercent = 0f;
         public float BotcAccuracyPercentMax = 1f;
         public float BotCAccuracyMaxFlatCrit = 8.5f;
-        public float BotCAccuracyMaxCritMult = 1.25f;
+        public float BotCAccuracyMaxCritMult = 0.75f;
         public float BotCAccuracyGain = 0.04f;
-        public float BotCAccuracyLoss = 0.1f;
+        public float BotCAccuracyLoss = 0.08f;
         public float CurrentTotalRangedCritChance;
 
         public float BotCCeruleanFlaskMaxManaScaling = 12f;
@@ -998,8 +998,8 @@ namespace tsorcRevamp
             {
                 Player.GetAttackSpeed(DamageClass.Melee) *= BotCMeleeBaseAttackSpeedMult + (BotCLethalTempoStacks * BotCLethalTempoBonus);
 
-                CurrentTotalRangedCritChance = Player.GetTotalCritChance(DamageClass.Ranged); //catch total ranged crit chance
-                Player.GetCritChance(DamageClass.Ranged) -= Player.GetTotalCritChance(DamageClass.Ranged); //subtract total ranged crit chance from ranged crit chance because you can't alter total ranged crit chance
+                CurrentTotalRangedCritChance = Player.GetTotalCritChance(DamageClass.Ranged) + Player.HeldItem.crit; //catch total ranged crit chance
+                Player.GetCritChance(DamageClass.Ranged) -= Player.GetTotalCritChance(DamageClass.Ranged) + Player.HeldItem.crit; //subtract total ranged crit chance from ranged crit chance because you can't alter total ranged crit chance
                 Player.GetCritChance(DamageClass.Ranged) += (CurrentTotalRangedCritChance + (BotCCurrentAccuracyPercent * BotCAccuracyMaxFlatCrit)) * (BotCRangedBaseCritMult + (BotCCurrentAccuracyPercent * BotCAccuracyMaxCritMult)); //return total ranged crit chance in a way that lets you multiply it with accuracy
 
                 if (!Player.HasBuff(BuffID.ManaSickness))

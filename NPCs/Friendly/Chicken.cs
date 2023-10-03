@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Friendly
             if (!Main.dedServ && (Main.rand.NextBool(360)))
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/ChickenBokbok") with { Volume = 0.8f, Pitch = 0.3f }, NPC.Center);
-            } else if (!Main.dedServ && Main.rand.NextBool(2000))
+            } else if (!Main.dedServ && Main.rand.NextBool(5000))
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/EvilChicken") with { Volume = 1f }, NPC.Center);
             }

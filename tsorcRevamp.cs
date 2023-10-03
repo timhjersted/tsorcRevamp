@@ -2770,7 +2770,7 @@ namespace tsorcRevamp
                     switch (style)
                     {
                         case 0:
-                            if (!NPC.AnyNPCs(NPCID.LunarTowerVortex) && !tsorcRevampWorld.DownedVortex)
+                            if (!NPC.AnyNPCs(NPCID.LunarTowerVortex) && !NPC.downedTowerVortex)
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {
@@ -2792,7 +2792,7 @@ namespace tsorcRevamp
                             break;
 
                         case 1:
-                            if (!NPC.AnyNPCs(NPCID.LunarTowerNebula) && !tsorcRevampWorld.DownedNebula)
+                            if (!NPC.AnyNPCs(NPCID.LunarTowerNebula) && !NPC.downedTowerNebula)
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {
@@ -2814,7 +2814,7 @@ namespace tsorcRevamp
                             break;
 
                         case 2:
-                            if (!NPC.AnyNPCs(NPCID.LunarTowerStardust) && !tsorcRevampWorld.DownedStardust)
+                            if (!NPC.AnyNPCs(NPCID.LunarTowerStardust) && !NPC.downedTowerStardust)
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {
@@ -2836,7 +2836,7 @@ namespace tsorcRevamp
                             break;
 
                         case 3:
-                            if (!NPC.AnyNPCs(NPCID.LunarTowerSolar) && !tsorcRevampWorld.DownedSolar)
+                            if (!NPC.AnyNPCs(NPCID.LunarTowerSolar) && !NPC.downedTowerSolar)
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {

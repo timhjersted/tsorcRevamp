@@ -5917,12 +5917,6 @@ namespace tsorcRevamp.NPCs
 
 
             #endregion
-            #region Pillar ModWorld bools
-            if (npc.type == NPCID.LunarTowerVortex) tsorcRevampWorld.DownedVortex = true;
-            if (npc.type == NPCID.LunarTowerNebula) tsorcRevampWorld.DownedNebula = true;
-            if (npc.type == NPCID.LunarTowerStardust) tsorcRevampWorld.DownedStardust = true;
-            if (npc.type == NPCID.LunarTowerSolar) tsorcRevampWorld.DownedSolar = true;
-            #endregion
         }
 
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot) 

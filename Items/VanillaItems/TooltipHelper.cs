@@ -10,6 +10,7 @@ using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Accessories.Magic;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Armors.Magic;
+using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Utilities;
 
@@ -94,6 +95,11 @@ namespace tsorcRevamp.Items.VanillaItems
                 SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("Items.VanillaItems.LockedCrates"));
             }
 
+            if (item.type == ItemID.Blowpipe || item.type == ItemID.Blowgun || item.type == ModContent.ItemType<ToxicShot>() || item.type == ModContent.ItemType<AlienGun>() || item.type == ModContent.ItemType<OmegaSquadRifle>())
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("CommonItemTooltip.Ranged.SeedBag"));
+            }
+
             if (ItemID.Sets.StaffMinionSlotsRequired[item.type] > 1f)
             {
                 SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("CommonItemTooltip.Summon.SlotsRequired", ItemID.Sets.StaffMinionSlotsRequired[item.type]));
@@ -107,6 +113,11 @@ namespace tsorcRevamp.Items.VanillaItems
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.healLife > 0)
             {
                 SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.BotCNoHeal"));
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.DamageType == DamageClass.Ranged)
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("CommonItemTooltip.Ranged.CurrentAccuracy", (int)(player.GetModPlayer<tsorcRevampPlayer>().BotCCurrentAccuracyPercent * 100f)));
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && (item.type == ItemID.PhilosophersStone || item.type == ItemID.CharmofMyths || item.type == ModContent.ItemType<DragoonHelmet2>()))

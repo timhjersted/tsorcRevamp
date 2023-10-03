@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class ShadowCloakPlateHelm : ModItem
     {
-        public static float CritChance = 18f;
+        public static float CritChance = 17f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {

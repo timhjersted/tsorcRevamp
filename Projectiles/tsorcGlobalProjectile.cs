@@ -320,7 +320,7 @@ namespace tsorcRevamp.Projectiles
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.3f }, target.position);
             }
 
-            if (projectile.type >= ProjectileID.MonkStaffT3 && projectile.type <= ProjectileID.DD2BetsyArrow || projectile.type == ProjectileID.DD2SquireSonicBoom)
+            if ((projectile.type >= ProjectileID.MonkStaffT3 && projectile.type <= ProjectileID.DD2BetsyArrow || projectile.type == ProjectileID.DD2SquireSonicBoom) && tsorcRevampWorld.DownedBetsy)
             {
                 target.AddBuff(BuffID.BetsysCurse, 10 * 60);
             }
@@ -441,7 +441,7 @@ namespace tsorcRevamp.Projectiles
             Player player = Main.player[projectile.owner];
             if (!Main.hardMode && (projectile.type == ProjectileID.StarCloakStar || projectile.type == ProjectileID.StarVeilStar || projectile.type == ProjectileID.BeeCloakStar || projectile.type == ProjectileID.ManaCloakStar))
             {
-                modifiers.FinalDamage *= 0.5f;
+                modifiers.FinalDamage *= 0.25f;
             }
             if (tsorcRevampWorld.NewSlain != null)
             {

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class ShadowCloakPlateMail : ModItem
     {
-        public static float Dmg = 8f;
+        public static float Dmg = 7f;
         public static float LifeThreshold = 50f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, LifeThreshold);
         public override void SetStaticDefaults()
@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Armors
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 9;
+            Item.defense = 8;
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.fromItem(Item);
         }

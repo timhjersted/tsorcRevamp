@@ -34,6 +34,16 @@ namespace tsorcRevamp.Items.ItemCrates
             player.QuickSpawnItem(player.GetSource_ItemUse(Item), ItemID.WoodenArrow, 100);
         }
     }
+    public class SeedBag : ItemCrates
+    {
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void RightClick(Player player)
+        {
+            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ItemID.Seed, 100);
+        }
+    }
 
     public class BoltCrate : ItemCrates
     {
