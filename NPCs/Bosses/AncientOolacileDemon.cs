@@ -131,7 +131,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //TELEPORT MELEE
                 if (Main.rand.NextBool(12))
                 {
-                    tsorcRevampAIs.QueueTeleport(NPC, 25, true, 60);
+                    tsorcRevampAIs.QueueTeleport(NPC, 25, true, 180);
                     NPC.localAI[1] = 0f;
                 }
             }
@@ -153,7 +153,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //TELEPORT RANGED
             if (Main.rand.NextBool(24) && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown == 0)
             {
-                tsorcRevampAIs.QueueTeleport(NPC, 25, true, 60);
+                tsorcRevampAIs.QueueTeleport(NPC, 25, true, 180);
                 NPC.localAI[1] = 0f;
             }
             //RANGED
@@ -192,7 +192,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (stuckTeleport == 60)
                 {
                     //NPC.localAI[1] = 0;
-                    tsorcRevampAIs.QueueTeleport(NPC, 60, false, 120);
+                    tsorcRevampAIs.QueueTeleport(NPC, 60, false, 240);
                     stuckTeleport = 0;
                     //breathTimer = 1;
                 }
@@ -209,28 +209,29 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 if (boredTeleport == 900)
                 {
-
-                    int Skull = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.CursedSkull, 0);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
-
-                    if (Main.netMode == NetmodeID.Server)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Skull, 0f, 0f, 0f, 0);
+                        int Skull = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.CursedSkull, 0);
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Skull, 0f, 0f, 0f, 0);
+                        }
                     }
 
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
                 }
 
                 if (boredTeleport == 1000)
                 {
                     NPC.localAI[1] = 0;
-                    tsorcRevampAIs.QueueTeleport(NPC, 40, true, 120);
+                    tsorcRevampAIs.QueueTeleport(NPC, 40, true, 240);
                     boredTeleport = 0;
                 }
 
             }
 
-
+            //Oh this is totally gonna desync in MP
             int choice = Main.rand.Next(6);
 
 
@@ -250,7 +251,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             }
 
-            //play creature sounds
+            //play creature sounds (it's fine if this sound is under a random because it doesn't matter when it plays)
             if (Main.rand.NextBool(1700))
             {
                 Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/low-dragon-growl") with { Volume = 0.5f }, NPC.Center);
@@ -270,20 +271,22 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.rand.NextBool(200))
                 {
+                    //SOUND BROKEN IN MP (can not be under a random, they must be synced)
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 0.1f), ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.myPlayer);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17);
                     }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17);
                     NPC.localAI[1] = 0;
                 }
                 if (Main.rand.NextBool(20))
                 {
+                    //SOUND BROKEN IN MP (can not be under a random, they must be synced)
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 0.1f), ProjectileID.CultistBossFireBall, cultistFireDamage, 0.1f, Main.myPlayer);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit34);
                     }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit34);
                     NPC.localAI[1] = 0;
                 }
             }
@@ -298,8 +301,6 @@ namespace tsorcRevamp.NPCs.Bosses
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoblinSorcerer, NPC.velocity.X, NPC.velocity.Y); //pink dusts
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoblinSorcerer, NPC.velocity.X, NPC.velocity.Y);
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoblinSorcerer, NPC.velocity.X, NPC.velocity.Y); //pink dusts
-
-
                 }
             }
             //LAST SECOND TELEGRAPH
@@ -337,18 +338,19 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (breathTimer < 0)
             {
+                //play breath sound (on every client) (it's fine if this one is under a random because breathTimer is deterministic)
+                if (Main.rand.NextBool(3))
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item103 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center); //flame thrower
+                }
+
+                //spawn the projectile (not on every client!)
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     //npc.velocity.Y = -1.1f;
                     NPC.velocity.Y = Main.rand.NextFloat(-4f, -1.1f);
                     NPC.velocity.X = 0.5f;
 
-                    //play breath sound
-                    if (Main.rand.NextBool(3))
-                    {
-
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item103 with { Volume = 0.4f, Pitch = 0.1f }, NPC.Center); //flame thrower
-                    }
 
                     Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].OldPos(9), 9);
                     breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
@@ -382,6 +384,7 @@ namespace tsorcRevamp.NPCs.Bosses
             Player player3 = Main.player[NPC.target];
             if (Main.rand.NextBool(100) && NPC.Distance(player3.Center) > 600)
             {
+                //SOUND BROKEN IN MP (can not be under a random, they must be synced)
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8f, 1.06f, true, true);
@@ -435,13 +438,18 @@ namespace tsorcRevamp.NPCs.Bosses
                     //speed += Main.rand.NextVector2Circular(-10, -8);
                     if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                     {
-                        int lob2 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, fireBreathDamage, 0f, Main.myPlayer);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, fireBreathDamage, 0f, Main.myPlayer);
+                        }
 
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -.5f }, NPC.Center);
-
                     }
+
                     if (NPC.localAI[1] >= 195f)
-                    { NPC.localAI[1] = 1f; }
+                    { 
+                        NPC.localAI[1] = 1f;
+                    }
                 }
                 //LOB ATTACK >> BOUNCING FIRE
                 if (NPC.life >= NPC.lifeMax / 3 * 2 && clearSpace)
@@ -452,15 +460,19 @@ namespace tsorcRevamp.NPCs.Bosses
                     //speed += Main.rand.NextVector2Circular(-10, -8);
                     if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                     {
-                        int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, fireBreathDamage, 0f, Main.myPlayer);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, fireBreathDamage, 0f, Main.myPlayer);
+                        }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
+
                         if (NPC.localAI[1] >= 186f)
-                        { NPC.localAI[1] = 1f; }
+                        {
+                            NPC.localAI[1] = 1f; 
+                        }
                     }
-
                 }
-
             }
 
             
@@ -471,8 +483,12 @@ namespace tsorcRevamp.NPCs.Bosses
                 //speed.Y += Main.rand.NextFloat(2f, -2f); //just added
                 if (Main.rand.NextBool(3) && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
+                    //SOUND BROKEN IN MP (can not be under a random, they must be synced)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 5f, Main.myPlayer); //5f was 0f in the example that works                    
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
+                    }
                 }
 
                 if (NPC.localAI[1] >= 175f)
@@ -488,8 +504,12 @@ namespace tsorcRevamp.NPCs.Bosses
                 speed.Y += Main.rand.NextFloat(2f, -2f);
                 if (Main.rand.NextBool(2) && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, cultistFireDamage, 3f, Main.myPlayer); //5f was 0f in the example that works
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center); //fire
+                    //SOUND BROKEN IN MP (can not be under a random, they must be synced)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, cultistFireDamage, 3f, Main.myPlayer); //5f was 0f in the example that works
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center); //fire
+                    }
                 }
 
                 if (NPC.localAI[1] >= 190f) //was 126
@@ -508,10 +528,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 //speed += Main.rand.NextVector2Circular(-10, -8);
                 if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                 {
-                    int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.CultistBossLightningOrb, cultistLightningDamage, 0f, Main.myPlayer);
-                   
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.CultistBossLightningOrb, cultistLightningDamage, 0f, Main.myPlayer);                   
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-
                 }
                 
                 NPC.localAI[1] = -50f;
@@ -545,7 +563,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.JungleWyvernFire>(), fireBreathDamage, 0f, Main.myPlayer); //5f was 0f in the example that works
-
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.1f, Pitch = 0.2f }, NPC.Center);
                 }
 

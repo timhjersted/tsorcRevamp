@@ -1115,6 +1115,16 @@ namespace tsorcRevamp
             }
             else
             {
+                if(!NPC.AnyNPCs(NPCID.EaterofWorldsHead) && !NPC.AnyNPCs(NPCID.EaterofWorldsBody) && !NPC.AnyNPCs(NPCID.EaterofWorldsTail))
+                {
+                    for (int i = 0; i < Main.maxPlayers; i++)
+                    {
+                        if (Main.player[i].active)
+                        {
+                            Item.NewItem(new EntitySource_Misc("Scripted Event"), Main.player[i].Center, ModContent.ItemType<Items.EstusFlaskShard>());
+                        }
+                    }
+                }
                 return EventActionStatus.Continue;
             }
         }
