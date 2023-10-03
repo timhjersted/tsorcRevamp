@@ -20,6 +20,7 @@ using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Projectiles.Summon.Whips;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Buffs.Runeterra.Melee;
+using System;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -563,12 +564,12 @@ namespace tsorcRevamp.Projectiles
                 if (HitSomething)
                 {
                     modPlayer.BotCCurrentAccuracyPercent += modPlayer.BotCAccuracyGain;
-                    CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCHit"));
+                    CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCHit", (int)(MathF.Min(modPlayer.BotCCurrentAccuracyPercent, 1f) * 100f)));
                 }
                 else if (!HitSomething)
                 {
                     modPlayer.BotCCurrentAccuracyPercent -= modPlayer.BotCAccuracyLoss;
-                    CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCMiss"));
+                    CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCMiss", (int)(MathF.Max(modPlayer.BotCCurrentAccuracyPercent, 0) * 100f)));
                 }
                 if (modPlayer.BotCCurrentAccuracyPercent > modPlayer.BotcAccuracyPercentMax)
                 {

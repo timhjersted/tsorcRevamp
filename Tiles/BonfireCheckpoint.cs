@@ -135,16 +135,20 @@ namespace tsorcRevamp.Tiles
                     }
                 }
 
-                // Only heal when no bosses are alive, hp isn't full and the player is standing still
-                if (!bossActive && player.statLife < player.statLifeMax2 && player.velocity == Vector2.Zero)
+                if (!bossActive && player.velocity == Vector2.Zero)
                 {
                     foreach (int buffType in player.buffType)
                     {
                         if (Main.debuff[buffType] && buffType != BuffID.HeartLamp)
                         {
-                            player.buffImmune[buffType] = true;
+                            player.ClearBuff(buffType);
                         }
                     }
+                }
+
+                // Only heal when no bosses are alive, hp isn't full and the player is standing still
+                if (!bossActive && player.statLife < player.statLifeMax2 && player.velocity == Vector2.Zero)
+                {
 
                     // Wind up 1
                     if (bonfireEffectTimer > 0 && bonfireEffectTimer <= 60)

@@ -305,8 +305,8 @@ Mods: {
 			SpawnRemoved: Spawn point removed!
 			AccessPiggyBank: Access Piggy Bank
 			AccessSafe: Access Safe
-			BotCHit: Hit!
-			BotCMiss: Miss!
+			BotCHit: Hit! {0}%
+			BotCMiss: Miss! {0}%
 		}
 
 		World: {

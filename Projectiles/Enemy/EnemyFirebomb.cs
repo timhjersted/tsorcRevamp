@@ -16,7 +16,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 240;
             Projectile.penetrate = -1;
             Projectile.knockBack = 9;
-            Projectile.DamageType = DamageClass.Throwing;
             Projectile.scale = .8f;
             Projectile.light = 1f;
 

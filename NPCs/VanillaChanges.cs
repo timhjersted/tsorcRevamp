@@ -2447,7 +2447,7 @@ namespace tsorcRevamp.NPCs
                         {
                             npc.damage = 40;
                             npc.defense = 15;
-                            npc.lifeMax = 260;
+                            npc.lifeMax = 180;
                             npc.knockBackResist = 0f;
                         }
                         if (npc.type == NPCID.GoblinSorcerer)

@@ -17,7 +17,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.hostile = true;
             Projectile.height = 5;
             Projectile.light = 1f;
-            Projectile.DamageType = DamageClass.Melee;
             Projectile.penetrate = 4;
             Projectile.scale = 1;
             Projectile.tileCollide = true;

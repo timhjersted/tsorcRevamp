@@ -671,7 +671,7 @@ namespace tsorcRevamp
                 {   ItemID.KingSlimeBossBag         , BossExtras.StaminaVessel      },
                 {   ItemID.EyeOfCthulhuBossBag      , BossExtras.StaminaVessel  
                                                     | BossExtras.SublimeBoneDust    },
-                {   ItemID.EaterOfWorldsBossBag     , BossExtras.EstusFlaskShard    },
+                {   ItemID.EaterOfWorldsBossBag     , BossExtras.DarkSoulsOnly      },
                 {   ItemID.BrainOfCthulhuBossBag    , BossExtras.StaminaVessel      },
                 {   ItemID.QueenBeeBossBag          , BossExtras.DarkSoulsOnly      },
                 {   ItemID.SkeletronBossBag         , BossExtras.SublimeBoneDust    },
