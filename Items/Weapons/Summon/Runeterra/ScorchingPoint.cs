@@ -71,9 +71,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             projectiles.Add((ScorchingPointFireball)projectile.ModProjectile);
             projectile.originalDamage = Item.damage;
 
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragon.CotUDragon>()] == 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.AshenLord>()] == 0)
             {
-                Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragon.CotUDragon>(), 0, 0, Main.myPlayer);
+                Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.AshenLord>(), 0, 0, Main.myPlayer);
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/DragonCast") with { Volume = 1f });
             }
             else if (Main.rand.NextBool(2))
