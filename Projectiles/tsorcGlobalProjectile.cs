@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
@@ -292,7 +293,20 @@ namespace tsorcRevamp.Projectiles
                     projectile.Kill();
                 }
             }
-            return true;
+
+
+            if (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] != 0)
+            {
+                projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                for (int i = 0; i < 5; i++)
+                {
+                    int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 156, 0, 0, 0, default(Color), 1f);
+                    Main.dust[dust].noGravity = true;
+                }
+            }
+
+
+                return true;
 
 
         }
@@ -320,7 +334,7 @@ namespace tsorcRevamp.Projectiles
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.3f }, target.position);
             }
 
-            if ((projectile.type >= ProjectileID.MonkStaffT3 && projectile.type <= ProjectileID.DD2BetsyArrow || projectile.type == ProjectileID.DD2SquireSonicBoom) && tsorcRevampWorld.DownedBetsy)
+            if ((projectile.type >= ProjectileID.MonkStaffT3 && projectile.type <= ProjectileID.DD2BetsyArrow || (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] == 0)) && tsorcRevampWorld.DownedBetsy)
             {
                 target.AddBuff(BuffID.BetsysCurse, 10 * 60);
             }
@@ -546,7 +560,7 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
-
+     
         public override void OnKill(Projectile projectile, int timeLeft)
         {
             Player owner = Main.player[projectile.owner];
@@ -580,7 +594,33 @@ namespace tsorcRevamp.Projectiles
                     modPlayer.BotCCurrentAccuracyPercent = 0;
                 }
             }
+
+            if (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] != 0)
+            {
+                projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                for (int i = 0; i < 30; i++)
+                {
+                    int dust = Dust.NewDust(new Vector2(projectile.position.X - 50, projectile.position.Y - 50), 100, 100, 156, 0, 0, 0, default(Color), 1f);
+                    Main.dust[dust].noGravity = true;
+                    Main.dust[dust].velocity.Y *= Main.rand.NextFloat(-3f, 3f);
+                    Main.dust[dust].velocity.X *= Main.rand.NextFloat(-3f, 3f);
+                }
+            }
+
             base.OnKill(projectile, timeLeft);
         }
+
+        public override bool PreDraw(Projectile projectile, ref Color lightColor)
+        {
+            if (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] != 0)
+            {
+                Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[projectile.type];
+                Main.EntitySpriteDraw(texture, projectile.Center - Main.screenPosition, null, Color.LightCyan, projectile.rotation, texture.Size() / 2f, projectile.scale, SpriteEffects.None, 0);
+                return false;
+            }
+
+            return base.PreDraw(projectile, ref lightColor);
+        }
+
     }
 }
