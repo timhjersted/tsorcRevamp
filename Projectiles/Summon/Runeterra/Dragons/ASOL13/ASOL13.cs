@@ -82,11 +82,16 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 LastNeckSegment = NeckSegment;
             }
 
-            Head = new BodySegment(12, 0, 0, 4);
+            Head = new BodySegment(12, 0, -1, -1);
             Head.Texture = ModContent.Request<Texture2D>(Texture + "/Dragon_Head");
             Head.segmentOrigin = new Vector2(30, 51);
             Head.offset = new Vector2(0, 0);
             LastNeckSegment.AddSegment(Head, false);
+
+            Mouth = new BodySegment(0, 0, -1, -1);
+            Mouth.offset = new Vector2(20, 20); // might need "some" calibration
+            Mouth.rotation = 0f; // might need "some" calibration
+            Head.AddSegment(Mouth, false);
         }
 
         public override void AltSequenceEnd()
@@ -97,17 +102,14 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         public override bool PreDraw(ref Color lightColor)
         {
             FrontBody.Draw(lightColor);
-            Head.Draw(lightColor);
-            
-            /*
-            if (Head.frame < 5)
+
+            if (Head.frame < 8)
                 return false;
-            */
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/DragonBreath", AssetRequestMode.ImmediateLoad).Value;
+            effect = ModContent.Request<Effect>("Testing/TestStuff/DragonBreath", AssetRequestMode.ImmediateLoad).Value;
 
             float angle = MathHelper.TwoPi / 10f;
             float shaderRotation = MathF.PI * 0.9f;
@@ -116,7 +118,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             effect.Parameters["rotation"].SetValue(shaderRotation);
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 252);
             effect.Parameters["length"].SetValue(.01f * breathSize / maxBreathSize);
-            float opacity = 1.5f;
+            float opacity = 0.5f;
 
             /*
             if (fade < 30)
@@ -126,9 +128,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 opacity *= fade / 30f;
             }*/
 
-            string NoiseTexturePath = "tsorcRevamp/Textures/Noise/";
-            Texture2D NoiseWavy = (Texture2D)ModContent.Request<Texture2D>(NoiseTexturePath + "WavyNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            Texture2D NoiseSmooth = (Texture2D)ModContent.Request<Texture2D>(NoiseTexturePath + "SmoothNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            Texture2D NoiseWavy = (Texture2D)ModContent.Request<Texture2D>("Testing/TestStuff/WavyNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            Texture2D NoiseSmooth = (Texture2D)ModContent.Request<Texture2D>("Testing/TestStuff/SmoothNoise", ReLogic.Content.AssetRequestMode.ImmediateLoad);
 
             effect.Parameters["opacity"].SetValue(opacity * 5);
             effect.Parameters["texScale"].SetValue(NoiseSmooth.Size() / 500);
@@ -145,10 +146,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             Rectangle recsize = new Rectangle(0, 0, NoiseSmooth.Width, NoiseSmooth.Height);
             Vector2 origin = new Vector2(recsize.Width * 0.5f, recsize.Height * 0.5f);
-            
+
             //Draw the rendertarget with the shader
             float trueSizeMultiplier = 1f;
-            Main.spriteBatch.Draw(NoiseSmooth, Head.finalPosition - Main.screenPosition, recsize, Color.White, Head.finalRotation - MathF.PI * (Head.curEffect == SpriteEffects.None ? 0 : 1), origin, trueSizeMultiplier * trueSizeMultiplier * 7.5f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(NoiseSmooth, Mouth.finalPosition - Main.screenPosition, recsize, Color.White, Mouth.finalRotation - MathF.PI * (Mouth.curEffect == SpriteEffects.None ? 0 : 1), origin, trueSizeMultiplier * trueSizeMultiplier * 7.5f, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin();

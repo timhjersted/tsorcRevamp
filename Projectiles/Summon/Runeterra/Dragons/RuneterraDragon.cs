@@ -21,11 +21,12 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {
     public class BodySegment
     {
+        public Vector2 offset;
+
         private float Scale;
         public static float BaseScale;
 
-        public Vector2 offset;
-
+        BodySegment parent;
         public List<BodySegment> frontSegments = new List<BodySegment>();
         public List<BodySegment> backSegments = new List<BodySegment>();
 
@@ -33,9 +34,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         public int totalFrames;
         public int targetFrame = -1;
         public int frameUpdateTimer = 0;
-        public int timePrFrameUpdate = 10;
+        public static int timePrFrameUpdate = 10;
+        public static int altTimePrFrameUpdate = 10;
 
-        public int stage = 0;
+        public int dir = 0;
 
         int startFrame;
         int endFrame;
@@ -44,17 +46,18 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
         public SpriteEffects curEffect;
 
-        public Asset<Texture2D> Texture;
+        public Asset<Texture2D> Texture = null;
         public float rotation;
         public float highSpeedRotaiton;
         public Vector2 segmentOrigin;
+
+        public Vector2 zeroRotOffset;
 
         public Vector2 finalPosition;
         public float finalRotation;
 
         public BodySegment(int totalFrames, int startFrame, int loopStartFrame, int loopEndFrame, int loopAltStartFrame = -1, int loopAltEndFrame = -1)
         {
-            this.Scale = BaseScale;
             this.totalFrames = totalFrames;
             this.frame = startFrame;
 
@@ -62,18 +65,23 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             this.endFrame = loopEndFrame;
             this.altStartFrame = loopAltStartFrame;
             this.altEndFrame = loopAltEndFrame;
+
+            this.Scale = BaseScale;
         }
 
         public void AddSegment(BodySegment seg, bool behind)
         {
+            seg.parent = this;
             if (!behind)
                 frontSegments.Add(seg);
             else
                 backSegments.Add(seg);
         }
 
-        public void Update(Vector2 vel, Vector2 origin, float usedRotations, SpriteEffects effect, bool altAnimation = false)
+        public bool Update(int frameWorth, Vector2 origin, float usedRotations, SpriteEffects effect, bool altAnimation = false)
         {
+            bool finishedAltSeq = false;
+
             finalRotation = usedRotations;
             finalPosition = origin;
             curEffect = effect;
@@ -81,6 +89,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             int maxFrame = (altAnimation ? (altEndFrame == -1 ? endFrame : altEndFrame) : endFrame);
             int minFrame = (altAnimation ? (altStartFrame == -1 ? startFrame : altStartFrame) : startFrame);
 
+            int trueTimePrFrameUpdate = altAnimation ? (altEndFrame == -1 ? timePrFrameUpdate : altTimePrFrameUpdate) : timePrFrameUpdate;
 
             if (!(maxFrame == -1 || minFrame == -1))
             {
@@ -90,16 +99,21 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                     frameUpdateTimer = 0;
                 }
 
-                frameUpdateTimer++;
+                frameUpdateTimer += frameWorth;
 
-                if (frameUpdateTimer > timePrFrameUpdate)
+                if (frameUpdateTimer > trueTimePrFrameUpdate)
                 {
                     frameUpdateTimer = 0;
 
                     frame++;
 
                     if (frame > maxFrame)
+                    {
                         frame = minFrame;
+
+                        if (altAnimation && altEndFrame != -1)
+                            finishedAltSeq = true;
+                    }
                 }
             }
 
@@ -112,7 +126,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
                 offsetAdd = offsetAdd.RotatedBy(finalRotation) * Scale;
 
-                backSegment.Update(vel, finalPosition + offsetAdd, finalRotation + backSegment.rotation, curEffect, altAnimation);
+                if (backSegment.Update(frameWorth, finalPosition + offsetAdd, finalRotation + backSegment.rotation, curEffect, altAnimation))
+                    finishedAltSeq = true;
             }
 
             foreach (BodySegment frontSegment in frontSegments)
@@ -124,17 +139,27 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
                 offsetAdd = offsetAdd.RotatedBy(finalRotation) * Scale;
 
-                frontSegment.Update(vel, finalPosition + offsetAdd, finalRotation + frontSegment.rotation, curEffect, altAnimation);
+                if (frontSegment.Update(frameWorth, finalPosition + offsetAdd, finalRotation + frontSegment.rotation, curEffect, altAnimation))
+                    finishedAltSeq = true;
             }
+
+            return finishedAltSeq;
         }
 
         public void Draw(Color lightColor)
         {
+            if (Texture == null)
+                return;
+
             Rectangle drawRec = new Rectangle(0, Texture.Height() / totalFrames * frame, Texture.Width(), Texture.Height() / totalFrames);
 
             Vector2 orig = segmentOrigin;
+            dir = 1;
             if (curEffect == SpriteEffects.FlipHorizontally)
+            {
+                dir = -1;
                 orig.X = Texture.Width() - orig.X;
+            }
 
             foreach (BodySegment backSegment in backSegments)
                 backSegment.Draw(lightColor);
@@ -150,6 +175,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
     {
         public static Effect effect;
 
+        public BodySegment Mouth;
         public BodySegment Head;
         public BodySegment BackBody;
         public BodySegment BackLLeg;
@@ -307,11 +333,21 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             Projectile.rotation = movementVec.ToRotation() - (Projectile.velocity.X > 0f ? 0f : MathF.PI);
 
-            NPC targetMob = GetTargetWithinXDegree(Main.player[Projectile.owner], 300f); // 90f
+            NPC targetMob = GetTargetWithinXDegree(Main.player[Projectile.owner], 240f, out bool keepCharge);
 
             int dir = 1;
-            if (Projectile.velocity.X < 0f)
+            if (Projectile.velocity.X < 0)
                 dir = -1;
+
+            if (AltSequence)
+            {
+                targetMob = null;
+                Projectile.velocity *= 0.01f;
+                Projectile.rotation = 0f;
+                dir = FrontBody.dir;
+            }
+
+            int baseHeadFrames = (DragonType == 3 ? 0 : 4);
 
             float totalRotationTarget = 0f;
             if (targetMob != null)
@@ -323,10 +359,70 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
                 while (totalRotationTarget < -MathF.PI)
                     totalRotationTarget += MathF.PI * 2f;
+
+                Head.frameUpdateTimer++;
+
+                if (Head.frameUpdateTimer > 20) // head update timer
+                {
+                    Head.frameUpdateTimer = 0;
+
+                    Head.frame++;
+
+                    if (Head.frame > baseHeadFrames + 7)
+                        Head.frame = baseHeadFrames + 4;
+                }
+            }
+            else if (keepCharge)
+            {
+                if (Head.frame > baseHeadFrames + 3)
+                    Head.frame = baseHeadFrames + 3;
+
+                if (Head.frame < baseHeadFrames + 1)
+                    Head.frame = baseHeadFrames + 1;
+
+                Head.frameUpdateTimer++;
+
+                if (Head.frameUpdateTimer > 20) // head update timer
+                {
+                    Head.frameUpdateTimer = 0;
+
+                    Head.frame++;
+
+                    if (Head.frame > baseHeadFrames + 3)
+                        Head.frame = baseHeadFrames + 3;
+                }
+            }
+            else if (!keepCharge)
+            {
+                Head.frameUpdateTimer++;
+
+                if (Head.frameUpdateTimer > 10) // head update timer
+                {
+                    Head.frameUpdateTimer = 0;
+
+                    Head.frame--;
+
+                    if (Head.frame < baseHeadFrames)
+                        Head.frame = baseHeadFrames;
+                }
             }
 
-            float segmentRotation = -totalRotationTarget / (NeckSegments.Length - 1);
+            Mouth.rotation = Math.Abs(Mouth.rotation) * dir;
 
+            if (targetMob != null)
+                totalRotationTarget += Mouth.rotation;
+
+            float segmentRotation = -totalRotationTarget / (NeckSegments.Length - 1);
+            bool flipped = dir < 0;
+
+            // clear rotation;
+            foreach (BodySegment NS in NeckSegments)
+                NS.rotation = 0f;
+            Head.rotation = 0f;
+
+            FrontBody.Update(0, Projectile.Center, Projectile.rotation, flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, AltSequence);
+            Mouth.zeroRotOffset = Mouth.finalPosition; // save zeroRotOffset
+            // set rotation;
             foreach (BodySegment NS in NeckSegments)
             {
                 if (totalRotationTarget == 0)
@@ -337,47 +433,37 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             Head.rotation = -segmentRotation;
 
-            bool flipped = dir < 0;
-            FrontBody.Update(Projectile.velocity, Projectile.Center, Projectile.rotation, flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, AltSequence);
-
-            /*
-            if (Main.mouseLeft)
+            if (FrontBody.Update(1, Projectile.Center, Projectile.rotation, flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, AltSequence))
             {
-                Head.targetFrame = 7;
-
-                if (Head.frame == 7)
-                    Head.frame = 5;
+                // end alt seq
+                AltSequence = false;
+                AltSequenceEnd();
             }
-            else
-            {
-                Head.targetFrame = 0;
-                if (Head.frame > 5)
-                    Head.frame = 5;
-            }
-            */
         }
 
-        public NPC GetTargetWithinXDegree(Player owner, float degree)
+        public NPC GetTargetWithinXDegree(Player owner, float degree, out bool keepCharge)
         {
+            keepCharge = false;
+
             float targetRRange = (0.5f - (degree / 360)) * 2f;
-            float MaxDist = 2000f;
-            float MinDist = 90f;
+            float MaxDist = (320f * size / maxSize) * 1.4f;
+            float MinDist = 75f * Scale;
 
             // This code is required if your minion weapon has the targeting feature
             if (owner.HasMinionAttackTargetNPC)
             {
                 NPC npc = Main.npc[owner.MinionAttackTargetNPC];
-                Vector2 between = npc.Center - Projectile.Center;
+                Vector2 between = npc.Center - Mouth.zeroRotOffset;
 
                 float distBetween = between.Length();
-
-                float rotationDiff = Vector2.Dot(Vector2.Normalize(between), Vector2.Normalize(Projectile.velocity));
+                float rotationDiff = Vector2.Dot(Vector2.Normalize(between), Vector2.Normalize(Projectile.velocity).RotatedBy(Mouth.rotation));
 
                 bool canHit = rotationDiff > targetRRange;
 
                 // Reasonable distance away so it doesn't target across multiple screens
                 if (canHit && MinDist < distBetween && distBetween < MaxDist)
                 {
+                    keepCharge = true;
                     return npc;
                 }
             }
@@ -391,22 +477,27 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
                 if (npc.CanBeChasedBy() || npc.type == 488)
                 {
-                    Vector2 between = npc.Center - Projectile.Center;
+                    Vector2 between = npc.Center - Mouth.zeroRotOffset; // 
 
                     float distBetween = between.Length();
                     bool closest = closestDist > distBetween;
 
-                    float rotationDiff = Vector2.Dot(Vector2.Normalize(between), Vector2.Normalize(Projectile.velocity));
+                    float rotationDiff = Vector2.Dot(Vector2.Normalize(between), Vector2.Normalize(Projectile.velocity).RotatedBy(Mouth.rotation));
 
                     bool canHit = rotationDiff > targetRRange;
 
-                    //Console.WriteLine(canHit + " : " + rotationDiff);
-
                     if (canHit && closest && (MinDist < distBetween && distBetween < MaxDist))
                     {
+                        keepCharge = true;
                         closestDist = distBetween;
 
                         foundNPC = npc;
+                    }
+
+
+                    if (distBetween < MaxDist * 1.7f)
+                    {
+                        keepCharge = true;
                     }
                 }
             }
@@ -424,16 +515,19 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            Vector2 between = Head.finalPosition - targetHitbox.Center();
+            if (Head.frame < 4)
+                return false;
+
+            Vector2 between = Mouth.finalPosition - targetHitbox.Center();
 
             float angle = MathHelper.TwoPi / 10f;
             float shaderRotation = MathF.PI * 0.9f;
             float degree = (shaderRotation + angle - MathHelper.Pi - 0.2f) / MathF.PI;
 
-            float HeadRotation = Projectile.velocity.X < 0f ? MathF.PI - MathF.Abs(Head.finalRotation) : Head.finalRotation;
+            float ShootRotation = (Head.dir < 0 ? MathF.PI + Mouth.finalRotation : Mouth.finalRotation);
 
             float targetRRange = (0.5f - degree) * 2f;
-            float rotationDiff = Vector2.Dot(Vector2.Normalize(between), -HeadRotation.ToRotationVector2());
+            float rotationDiff = Vector2.Dot(Vector2.Normalize(between), -ShootRotation.ToRotationVector2());
             bool canHit = rotationDiff > targetRRange;
 
             //Console.WriteLine(rotationDiff + ": " + Vector2.Normalize(between) + " x " + Head.finalRotation.ToRotationVector2());
