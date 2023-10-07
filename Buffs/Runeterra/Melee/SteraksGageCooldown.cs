@@ -17,7 +17,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
         {
             if (player.buffTime[buffIndex] == 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteraksGageReady") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteraksGageReady") with { Volume = 0.8f });
             }
         }
     }

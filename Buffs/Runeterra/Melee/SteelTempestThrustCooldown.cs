@@ -15,7 +15,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
         {
             if (player.buffTime[buffIndex] == 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/ThrustReady") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/ThrustReady") with { Volume = 0.5f });
             }
         }
     }
