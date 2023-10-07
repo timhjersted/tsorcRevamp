@@ -23,8 +23,8 @@ namespace tsorcRevamp.NPCs.Enemies
         int shieldAnimTimer;
         bool countingUP = false;
 
-        public int hollowLesserSlashDamage = 18;
-        public int hollowGreaterSlashDamage = 22;
+        public int hollowLesserSlashDamage = 17;
+        public int hollowGreaterSlashDamage = 20;
 
         public override void SetStaticDefaults()
         {

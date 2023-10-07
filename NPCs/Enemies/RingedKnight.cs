@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Net.Security;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -23,7 +24,8 @@ namespace tsorcRevamp.NPCs.Enemies
         bool hasEnraged = false;
         int enrageTimer;
 
-        public int ringedKnightDamage = 10; // was 8 or life / 4
+        public int ringedKnightDamage = 14;
+        public int fireDamage = 18;
 
         //Anim
         //int shieldFrame;
@@ -57,7 +59,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.defense = 45; 
                 NPC.damage = 82; 
                 NPC.value = 4000;
-                ringedKnightDamage = 20;
+                ringedKnightDamage = 25;
+                fireDamage = 28;
             }
             if (tsorcRevampWorld.SuperHardMode) 
             { 
@@ -66,7 +69,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.damage = 130; 
                 NPC.value = 10000; // was 600
                 NPC.knockBackResist = 0.0f;
-                ringedKnightDamage = 30;
+                ringedKnightDamage = 35;
+                fireDamage = 38;
             } 
             NPC.value = 2000; // was 150
             NPC.HitSound = SoundID.NPCHit48;
@@ -102,7 +106,6 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             Player player = Main.player[NPC.target];
-
             var projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>();
             var projStab = ModContent.ProjectileType<Projectiles.Enemy.Spearhead>();
             int lifePercentage = (NPC.life * 100) / NPC.lifeMax;
@@ -112,8 +115,8 @@ namespace tsorcRevamp.NPCs.Enemies
             float braking_power = 0.15f; //Breaking power to slow down after moving above top_speed
                                          //Main.NewText(Math.Abs(npc.velocity.X));
 
-
-            int damage = NPC.damage / 4;
+            //Main.NewText(NPC.ai[1]);
+            //int damage = NPC.damage / 4;
 
             Lighting.AddLight(NPC.Center, .28f, .16f, .04f);
 
@@ -122,7 +125,6 @@ namespace tsorcRevamp.NPCs.Enemies
             if (lifePercentage <= 60)
             {
                 top_speed *= 1.4f;
-                damage = (int)(1.2f * damage);
                 projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlashFire>();
                 projStab = ModContent.ProjectileType<Projectiles.Enemy.SpearheadFire>();
 
@@ -151,13 +153,20 @@ namespace tsorcRevamp.NPCs.Enemies
                     Main.dust[dust].noGravity = true;
                 }
 
-                if (enrageTimer > 90)
+                if (enrageTimer >= 90)
                 {
-
                     hasEnraged = true;
                     enrage = false;
                 }
+
+                if (hasEnraged)
+                {
+                    ringedKnightDamage += (int)(ringedKnightDamage * 0.25f);
+                }
+
             }
+
+            Main.NewText(ringedKnightDamage);
 
             if (!stabbing && !slashing && !jumpSlashing && lifePercentage <= 60 && Main.rand.NextBool(4))
             {
@@ -799,7 +808,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
 
-                if (NPC.ai[1] > 450 && NPC.ai[1] < 489)
+                if (NPC.ai[1] > 450 && NPC.ai[1] < 520)
                 {
                     if (NPC.direction == 1)
                     {
@@ -820,7 +829,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
 
-                if (NPC.ai[1] > 489)
+                if (NPC.ai[1] > 520)
                 {
                     NPC.ai[1] = 280;
                     stabbing = false;
@@ -854,7 +863,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (20f * NPC.direction), NPC.Center.Y, 8f * NPC.direction, Main.rand.NextFloat(-1f, 0), ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>(), 20, 0f, Main.myPlayer);
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (20f * NPC.direction), NPC.Center.Y, 8f * NPC.direction, Main.rand.NextFloat(-1.5f, 0f), ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>(), fireDamage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 25;
                         //play breath sound
                         if (Main.rand.NextBool(3))
@@ -1265,7 +1274,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     NPC.frame.Y = 16 * frameHeight;
                 }
-                else if (NPC.ai[1] < 489)
+                else if (NPC.ai[1] < 520)
                 {
                     NPC.frame.Y = 17 * frameHeight;
                 }

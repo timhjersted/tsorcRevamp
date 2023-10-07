@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Enemies
         int shieldAnimTimer;
         bool countingUP = false;
 
-        public int lothricDamage = 12;
+        public int lothricDamage = 16;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 18;
@@ -44,6 +44,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void SetDefaults()
         {
+            NPC.timeLeft = 60;
             NPC.npcSlots = 5;
             NPC.knockBackResist = 0.15f;
             NPC.aiStyle = -1;
@@ -57,7 +58,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.lifeMax = 1400; 
                 NPC.defense = 40; 
                 NPC.value = 7000; 
-                lothricDamage = 22; 
+                lothricDamage = 24; 
             }
             if (tsorcRevampWorld.SuperHardMode) 
             { 
@@ -65,7 +66,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.defense = 60; 
                 NPC.damage = 80; 
                 NPC.value = 10000; // was 390
-                lothricDamage = 32; 
+                lothricDamage = 34; 
             } 
             NPC.value = 3750;
             NPC.HitSound = SoundID.NPCHit1;

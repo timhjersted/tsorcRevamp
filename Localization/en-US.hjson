@@ -261,6 +261,7 @@ Mods: {
 			BridgeAmbush1: Ambush!
 			LothricAmbush1: Ambush!
 			LothricAmbush2: Ambush!
+			DualSandsprogAmbush1: Ambush!
 			HellkiteDragon: The village is under attack! A Hellkite Dragon has come to feed...
 			Bossduration: "Boss duration: "
 		}
@@ -5661,7 +5662,7 @@ Mods: {
 
 			YianBlade: {
 				DisplayName: Yian Blade
-				Tooltip: Random chance to steal life from attacks
+				Tooltip: Steals mana on-hit
 			}
 
 			ForgottenBurningFist: {

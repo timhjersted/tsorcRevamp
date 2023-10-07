@@ -2,6 +2,8 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Armors.Magic;
+using tsorcRevamp.Items.Armors.Ranged;
 using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
@@ -35,6 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.DarkMagenta;
+
         }
 
         public override void AddRecipes()
@@ -50,14 +53,16 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (Main.rand.NextBool(15))
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                player.HealEffect(damageDone / 2);
-                player.statLife += (damageDone / 2);
+                player.ManaEffect(3);
+                player.statMana += (3);
             }
-        }
-        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
-        {
+            else
+            {
+                player.ManaEffect(5);
+                player.statMana += (5);
+            }
         }
 
         public override void MeleeEffects(Player player, Rectangle rectangle)

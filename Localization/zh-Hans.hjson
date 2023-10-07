@@ -261,6 +261,7 @@ Mods: {
 			BridgeAmbush1: 遭遇偷袭！
 			LothricAmbush1: 遭遇偷袭！
 			LothricAmbush2: 遭遇偷袭！
+			// DualSandsprogAmbush1: Ambush!
 			HellkiteDragon: 村庄受到袭击！一条炼狱鸢龙前来捕食...
 			Bossduration: "耗时: "
 		}
