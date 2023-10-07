@@ -4,12 +4,17 @@ using ReLogic.Content;
 using System;
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Runeterra.Summon;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {
     public class ASOL13 : RuneterraDragon
     {
-        public override float Scale => 1f;
+        public override float Scale => 0.8f;
+        public override int BuffType => ModContent.BuffType<InterstellarCommander>();
+        public override int DebuffType => ModContent.BuffType<ShockedDebuff>();
+        public override int PairedProjectileType => ModContent.ProjectileType<InterstellarVesselShip>();
+        public override int DragonType => 2;
         override public void SetupBody()
         {
             NeckSegments = new BodySegment[5];
@@ -48,12 +53,12 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             FrontLLeg.offset = new Vector2(26, 15);
             FrontBody.AddSegment(FrontLLeg, true);
 
-            Vector2 neckOrigin = new Vector2(26, 38);
+            Vector2 neckOrigin = new Vector2(2, 18);
 
             BodySegment NeckSegment = new BodySegment(1, 0, 0, 0);
             NeckSegment.Texture = ModContent.Request<Texture2D>(Texture + "/Neck_Segment");
             NeckSegment.segmentOrigin = neckOrigin;
-            NeckSegment.offset = new Vector2(48, 41);
+            NeckSegment.offset = new Vector2(24, 20);
             NeckSegments[0] = NeckSegment;
             FrontBody.AddSegment(NeckSegment, true);
             BodySegment LastNeckSegment = NeckSegment;
@@ -63,7 +68,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             NeckSegment.segmentOrigin = neckOrigin;
             NeckSegment.offset = new Vector2(14, 0);
             NeckSegments[1] = NeckSegment;
-            LastNeckSegment.AddSegment(NeckSegment, false);
+            LastNeckSegment.AddSegment(NeckSegment, true);
             LastNeckSegment = NeckSegment;
 
             for (int i = 2; i < NeckSegments.Length; i++) // 2 cuz ^^ 
@@ -73,14 +78,14 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 NeckSegment.segmentOrigin = neckOrigin;
                 NeckSegment.offset = new Vector2(14, 0);
                 NeckSegments[i] = NeckSegment;
-                LastNeckSegment.AddSegment(NeckSegment, false);
+                LastNeckSegment.AddSegment(NeckSegment, true);
                 LastNeckSegment = NeckSegment;
             }
 
             Head = new BodySegment(12, 0, 0, 4);
             Head.Texture = ModContent.Request<Texture2D>(Texture + "/Dragon_Head");
             Head.segmentOrigin = new Vector2(30, 51);
-            Head.offset = new Vector2(-40, -20);
+            Head.offset = new Vector2(0, 0);
             LastNeckSegment.AddSegment(Head, false);
         }
 
@@ -92,6 +97,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         public override bool PreDraw(ref Color lightColor)
         {
             FrontBody.Draw(lightColor);
+            Head.Draw(lightColor);
             
             /*
             if (Head.frame < 5)
@@ -110,7 +116,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             effect.Parameters["rotation"].SetValue(shaderRotation);
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 252);
             effect.Parameters["length"].SetValue(.01f * breathSize / maxBreathSize);
-            float opacity = 0.5f;
+            float opacity = 1.5f;
 
             /*
             if (fade < 30)

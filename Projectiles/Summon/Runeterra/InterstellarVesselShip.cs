@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             Main.projPet[Projectile.type] = true;
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
-            ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = ScorchingPoint.SummonTagDmgMult / 100f;
+            ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = ScorchingPoint.BallSummonTagDmgMult / 100f;
         }
 		public sealed override void SetDefaults()
 		{
@@ -59,6 +59,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Player owner = Main.player[Projectile.owner];
+            if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().SuperShockDuration > 0)
+            {
+                modifiers.SourceDamage += ScorchingPoint.SuperBurnDmgAmp / 100f;
+            }
             if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
                 modifiers.SourceDamage *= 1.25f;
@@ -89,6 +93,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks >= 6)
             {
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks = 0;
+                target.GetGlobalNPC<tsorcRevampGlobalNPC>().SuperShockDuration = ScorchingPoint.SuperBurnDuration;
                 Dust.NewDust(Projectile.position, 20, 20, DustID.MartianSaucerSpark, 1, 1, 0, default, 1.5f);
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/MarkDetonation") with { Volume = 2f });
             }
@@ -142,10 +147,9 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             {
                 angularSpeed2 = 0.075f;
             }
-            if (!player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost || (player.statMana <= 0))
+            if (!player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
                 angularSpeed2 = 0.03f;
-				player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = false;
 				if (Main.netMode == NetmodeID.MultiplayerClient)
 				{
 					ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();

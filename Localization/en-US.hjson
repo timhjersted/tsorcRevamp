@@ -6935,7 +6935,7 @@ Mods: {
 					Summons an ashen dragon which will chase after your cursor and breathe fire at nearby enemies
 					Summons fireballs which rotate around you and damage enemies in their way
 					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
-					{$CommonItemTooltip.Summon.TagDmgMult}
+					The fireballs scale with {0}% Tag Damage, but the ashen dragon only with {1}% Tag Damage
 					'By the Ashen Lord of Runeterra!'
 					'''
 				Keybind1: "Press Left/Right Alt + "
@@ -6958,12 +6958,12 @@ Mods: {
 					Summons an interstellar vessel which will chase after your cursor and breathe fire at nearby enemies
 					Summons spaceships which rotate around you and damage enemies in their way
 					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
-					{$CommonItemTooltip.Summon.TagDmgMult}
+					The spaceships scale with {0}% Tag Damage, but the vessel only with {1}% Tag Damage
 					{$Items.InterstellarVesselGauntlet.Keybind1}Special Ability{$Items.InterstellarVesselGauntlet.Keybind2}
 					'Adjusting trajectory for ASOL-13!'
 					'''
 				Keybind1: "Press "
-				Keybind2: " to activate Turboboost, overclocking the Vessel and it's spaceships"
+				Keybind2: " to activate Turboboost, overclocking the vessel and it's spaceships"
 				Details:
 					'''
 					Turboboost increases the spaceships damage, movement speed and increase the vessel's attack speed
@@ -6984,7 +6984,7 @@ Mods: {
 					Summons the Star Forger which will chase after your cursor and breathe fire at nearby enemies
 					Summons stars which rotate around you and damage enemies in their way
 					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
-					{$CommonItemTooltip.Summon.TagDmgMult}
+					The stars scale with {0}% Tag Damage, but the Star Forger only with {1}% Tag Damage
 					{$Items.CenterOfTheUniverse.Keybind1}Special Ability{$Items.CenterOfTheUniverse.Keybind2}
 					Gain Stardust every time you detonate a mark
 					<right> to summon a Grand Comet at your cursor's location for 10 Stardust
@@ -8865,6 +8865,9 @@ Mods: {
 			RageFireBreath.DisplayName: Rage Fire Breath
 			SorrowFrozenBreath.DisplayName: Sorrow Frozen Breath
 			HunterToxicBreath.DisplayName: Hunter Toxic Breath
+			AshenLord.DisplayName: Ashen Lord
+			ASOL13.DisplayName: A S O L13
+			StarForger.DisplayName: Star Forger
 		}
 
 		NPCs: {

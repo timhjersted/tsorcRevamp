@@ -14,6 +14,7 @@ using Terraria.Audio;
 using Mono.Cecil;
 using static Terraria.ModLoader.PlayerDrawLayer;
 using Microsoft.Xna.Framework.Input;
+using tsorcRevamp.Projectiles.Summon.Runeterra.Dragons;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
@@ -22,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public static List<CenterOfTheUniverseStar> projectiles = null;
         public static int processedProjectilesCount = 0;
 
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ScorchingPoint.SummonTagDmgMult);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ScorchingPoint.BallSummonTagDmgMult, ScorchingPoint.DragonSummonTagDmgMult);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
@@ -59,6 +60,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             // Here you can change where the minion is spawned. Most vanilla minions spawn at the cursor position
             position = player.Bottom;
         }
+        Projectile Dragon;
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             // This is needed so the buff that keeps your minion alive and allows you to despawn it properly applies
@@ -71,7 +73,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 
             if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.StarForger>()] == 0)
             {
-                Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.StarForger>(), 0, 0, Main.myPlayer);
+                Dragon = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.StarForger>(), damage, knockback, Main.myPlayer);
+                Dragon.originalDamage = Item.damage;
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/DragonCast") with { Volume = 1f });
             }
             else if (Main.rand.NextBool(2))
@@ -88,10 +91,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         }
         public override bool? UseItem(Player player)
         {
-            if (Main.mouseRight && player.GetModPlayer<tsorcRevampPlayer>().CotUStardustCount > 10)
+            if (Main.mouseRight && player.GetModPlayer<tsorcRevampPlayer>().CotUStardustCount == 10)
             {
-                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragon.CotUDragon>(), 0, 0, Main.myPlayer);
-                //Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.FallingStar>(), 0, 0, Main.myPlayer); //for summoning the comet
+                (Dragon.ModProjectile as RuneterraDragon).StartAltSequence();
                 player.GetModPlayer<tsorcRevampPlayer>().CotUStardustCount = 0;
             }
             return base.UseItem(player);

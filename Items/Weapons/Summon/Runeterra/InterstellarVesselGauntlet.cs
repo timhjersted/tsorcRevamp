@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 		public static List<InterstellarVesselShip> projectiles = null;
 		public static int processedProjectilesCount = 0;
 
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ScorchingPoint.SummonTagDmgMult);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ScorchingPoint.BallSummonTagDmgMult, ScorchingPoint.DragonSummonTagDmgMult);
         public override void SetStaticDefaults()
 		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
@@ -70,7 +70,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 
             if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.ASOL13>()] == 0)
             {
-                Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.ASOL13>(), 0, 0, Main.myPlayer);
+                Projectile Dragon = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.ASOL13>(), damage, knockback, Main.myPlayer);
+                Dragon.originalDamage = Item.damage;
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/DragonCast") with { Volume = 1f });
             }
             else if (Main.rand.NextBool(2))

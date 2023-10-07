@@ -17,9 +17,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
     public class OmegaSquadRifle : ModItem
     {
+        public int ShootTimer = 0;
+        public int ShootCooldown = 60;
         public int ShootSoundStyle = 0;
         public float ShootSoundVolume = 0.3f;
-        public const int BaseDamage = 260;
+        public const int BaseDamage = 350;
         public const int ShroomCooldown = 5;
         public const int ShroomBonusCritChance = 100;
         public static int ShroomSetupTime = 3;
@@ -76,6 +78,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
+            ShootTimer = ShootCooldown;
             if (player.altFunctionUse != 2)
             {
                 if (ShootSoundStyle == 0)
@@ -104,6 +107,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override void HoldItem(Player player)
         {
+            ShootTimer--;
             if (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldownOmega>()) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2Omega>()))
             {
                 player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1); //ScoutsBoost buff itself does nto play any sounds in it's code so I didn't need to make an Omega version
@@ -171,10 +175,15 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             {
                 return true;
             }
-            else
+            if (ShootTimer <= 0)
             {
-                return false;
+                return true;
             }
+            if (Main.mouseRight & !Main.mouseLeft & !player.HasBuff(ModContent.BuffType<RadioactiveBlindingLaserCooldown>()))
+            {
+                return true;
+            }
+            return false;
         }
         public override void AddRecipes()
         {

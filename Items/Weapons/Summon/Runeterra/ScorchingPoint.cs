@@ -20,11 +20,14 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
     {
         public static List<ScorchingPointFireball> projectiles = null;
         public static int processedProjectilesCount = 0;
-        public static float SummonTagDmgMult = 75f;
+        public static float BallSummonTagDmgMult = 80f;
+        public const float DragonSummonTagDmgMult = 40f;
         public const float MarkChance = 20f;
+        public const int DragonDebuffDuration = 5;
         public const int SuperBurnDuration = 5;
+        public const float SuperBurnDmgAmp = 50f;
         public const float SummonTagCrit = 10f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagDmgMult);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BallSummonTagDmgMult, DragonSummonTagDmgMult);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
@@ -73,7 +76,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 
             if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.AshenLord>()] == 0)
             {
-                Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.AshenLord>(), 0, 0, Main.myPlayer);
+                Projectile Dragon = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.AshenLord>(), damage, knockback, Main.myPlayer);
+                Dragon.originalDamage = Item.damage;
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/DragonCast") with { Volume = 1f });
             }
             else if (Main.rand.NextBool(2))

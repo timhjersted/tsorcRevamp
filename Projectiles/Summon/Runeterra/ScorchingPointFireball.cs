@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 			Main.projPet[Projectile.type] = true;
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
-			ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = ScorchingPoint.SummonTagDmgMult / 100f;
+			ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = ScorchingPoint.BallSummonTagDmgMult / 100f;
 		}
 		public sealed override void SetDefaults()
 		{
@@ -78,6 +78,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Player owner = Main.player[Projectile.owner];
+            if ( target.GetGlobalNPC<tsorcRevampGlobalNPC>().SuperScorchDuration > 0)
+            {
+				modifiers.SourceDamage += ScorchingPoint.SuperBurnDmgAmp / 100f;
+            }
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks >= 6)
             {
                 modifiers.SetCrit();
@@ -103,6 +107,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks >= 6)
             {
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks = 0;
+				target.GetGlobalNPC<tsorcRevampGlobalNPC>().SuperScorchDuration = ScorchingPoint.SuperBurnDuration;
                 Dust.NewDust(Projectile.position, 20, 20, DustID.FlameBurst, 1, 1, 0, default, 1.5f);
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/MarkDetonation") with { Volume = 2f });
             }

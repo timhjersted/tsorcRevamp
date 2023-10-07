@@ -17,11 +17,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
     public class ToxicShot : ModItem
     {
+        public int ShootTimer = 0;
+        public int ShootCooldown = 60;
+        public const int DebuffDuration = 5;
         public int ShootSoundStyle = 0;
         public float ShootSoundVolume = 0.5f;
         public static float ScoutsBoostMoveSpeedMult = 20f;
         public static float ScoutsBoostStaminaRegenMult = 10f;
-        public const int BaseDamage = 20;
+        public const int BaseDamage = 30;
         public const int ScoutsBoostOnHitCooldown = 3;
         public const int ScoutsBoost2Duration = 5;
         public const int ScoutsBoost2Cooldown = 25;
@@ -39,8 +42,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Item.height = 24;
             Item.rare = ItemRarityID.Green;
             Item.value = Item.buyPrice(0, 10, 0, 0);
-            Item.useTime = 22;
-            Item.useAnimation = 22;
+            Item.useTime = 30;
+            Item.useAnimation = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item63;
@@ -58,6 +61,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
+            ShootTimer = ShootCooldown;
             if (ShootSoundStyle == 0)
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot1") with { Volume = ShootSoundVolume });
@@ -90,18 +94,27 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override void HoldItem(Player player)
         {
+            ShootTimer--;
             if (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
             {
                 player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
             }
-            if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoost>())) //Scouts Boost 2 blocks Scouts Boost 1 and its cooldown so this won't occur then
+            if (player.itemAnimation > 18 && player.HasBuff(ModContent.BuffType<ScoutsBoost>())) //Scouts Boost 2 blocks Scouts Boost 1 and its cooldown so this won't occur then
             {
                 player.velocity *= 0.92f;
             }
-            else if (player.itemAnimation > 14 && player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()))
+            else if (player.itemAnimation > 18 && player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()))
             {
                 player.velocity *= 0.01f;
             }
+        }
+        public override bool CanUseItem(Player player)
+        {
+            if (ShootTimer <= 0)
+            {
+                return true;
+            }
+            return false;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

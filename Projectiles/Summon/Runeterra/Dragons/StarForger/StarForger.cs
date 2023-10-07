@@ -4,15 +4,20 @@ using ReLogic.Content;
 using System;
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Runeterra.Summon;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {
     public class StarForger : RuneterraDragon
     {
-        public override float Scale => 1f;
+        public override float Scale => 0.8f;
+        public override int BuffType => ModContent.BuffType<CenterOfTheUniverseBuff>();
+        public override int DebuffType => ModContent.BuffType<SunburnDebuff>();
+        public override int PairedProjectileType => ModContent.ProjectileType<CenterOfTheUniverseStar>();
+        public override int DragonType => 3;
         override public void SetupBody()
         {
-            NeckSegments = new BodySegment[5];
+            NeckSegments = new BodySegment[4];
 
             FrontBody = new BodySegment(8, 0, 0, 7);
             FrontBody.Texture = ModContent.Request<Texture2D>(Texture + "/Front_Body");
@@ -48,12 +53,12 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             FrontLLeg.offset = new Vector2(54, 4);
             FrontBody.AddSegment(FrontLLeg, true);
 
-            Vector2 neckOrigin = new Vector2(16, 22);
+            Vector2 neckOrigin = new Vector2(16, 26);
 
             BodySegment NeckSegment = new BodySegment(1, 0, 0, 0);
             NeckSegment.Texture = ModContent.Request<Texture2D>(Texture + "/Neck_Segment");
             NeckSegment.segmentOrigin = neckOrigin;
-            NeckSegment.offset = new Vector2(62, -2);
+            NeckSegment.offset = new Vector2(52, -2);
             NeckSegments[0] = NeckSegment;
             FrontBody.AddSegment(NeckSegment, true);
             BodySegment LastNeckSegment = NeckSegment;
@@ -61,7 +66,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             NeckSegment = new BodySegment(1, 0, 0, 0);
             NeckSegment.Texture = ModContent.Request<Texture2D>(Texture + "/Neck_Segment");
             NeckSegment.segmentOrigin = neckOrigin;
-            NeckSegment.offset = new Vector2(22, 0);
+            NeckSegment.offset = new Vector2(20, 0);
             NeckSegments[1] = NeckSegment;
             LastNeckSegment.AddSegment(NeckSegment, false);
             LastNeckSegment = NeckSegment;
@@ -71,7 +76,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 NeckSegment = new BodySegment(1, 0, 0, 0);
                 NeckSegment.Texture = ModContent.Request<Texture2D>(Texture + "/Neck_Segment");
                 NeckSegment.segmentOrigin = neckOrigin;
-                NeckSegment.offset = new Vector2(10, 0);
+                NeckSegment.offset = new Vector2(20, 0);
                 NeckSegments[i] = NeckSegment;
                 LastNeckSegment.AddSegment(NeckSegment, false);
                 LastNeckSegment = NeckSegment;
@@ -108,7 +113,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             effect.Parameters["rotation"].SetValue(shaderRotation);
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 252);
             effect.Parameters["length"].SetValue(.01f * breathSize / maxBreathSize);
-            float opacity = 0.5f;
+            float opacity = 1.5f;
 
             /*
             if (fade < 30)

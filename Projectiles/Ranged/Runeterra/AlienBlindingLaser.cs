@@ -52,8 +52,8 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         {
 			SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/BlindingLaserHit") with { Volume = 1f });
             target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[Projectile.owner];
-            target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), 2 * 60);
-            target.AddBuff(BuffID.Confused, 2 * 60);
+            target.AddBuff(ModContent.BuffType<ElectrifiedDebuff>(), ToxicShot.DebuffDuration * 60);
+            target.AddBuff(BuffID.Confused, ToxicShot.DebuffDuration * 60);
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {

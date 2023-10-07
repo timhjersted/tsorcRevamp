@@ -112,7 +112,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             if (!Hit)
             {
                 Hit = true;
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/ThrustHit") with { Volume = 1f });
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/ThrustHit") with { Volume = 0.75f });
             }
         }
         public override void OnKill(int timeLeft)
@@ -125,7 +125,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
                 player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks += 1;
                 if (Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks >= 2)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/TornadoReady") with { Volume = 1f });
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/TornadoReady") with { Volume = 0.75f });
                 }
             }
         }

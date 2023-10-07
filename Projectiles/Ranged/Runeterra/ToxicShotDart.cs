@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.NPCs;
 using Terraria.Audio;
+using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
@@ -46,7 +47,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/ShotHit") with { Volume = 0.5f });
             }
             target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[Projectile.owner];
-            target.AddBuff(ModContent.BuffType<VenomDebuff>(), 2 * 60);
+            target.AddBuff(ModContent.BuffType<VenomDebuff>(), ToxicShot.DebuffDuration * 60);
         }
 	}
 }

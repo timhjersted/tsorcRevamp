@@ -11,6 +11,11 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Default;
+using static Humanizer.In;
+using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.NPCs;
+using Terraria.Audio;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {
@@ -161,6 +166,13 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
         public BodySegment[] NeckSegments;
         public abstract float Scale { get; }
+        public abstract int PairedProjectileType { get; }
+        public abstract int BuffType { get; }
+        public abstract int DebuffType { get; }
+        public abstract int DragonType { get; }
+
+        public float BaseOriginalDamage;
+        public int BaseAttackSpeed = 15;
         public abstract void SetupBody();
 
         public override void AutoStaticDefaults()
@@ -175,25 +187,32 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+            ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = ScorchingPoint.DragonSummonTagDmgMult / 100f;
         }
 
         public override void SetDefaults()
         {
             // Projectile.width = 40; Projectile.height = 40;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 120;
+            Projectile.timeLeft = 2;
 
             Projectile.minion = true;
-            Projectile.minionSlots = 1f;
+            Projectile.minionSlots = 0.5f;
 
             Projectile.friendly = true;
             Projectile.ignoreWater = true;
             Projectile.DamageType = DamageClass.Summon;
+            Projectile.ContinuouslyUpdateDamageStats = true;
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = BaseAttackSpeed;
 
             BodySegment.BaseScale = Scale;
             SetupBody();
+        }
+        public override void OnSpawn(IEntitySource source)
+        {
+            BaseOriginalDamage = Projectile.originalDamage;
         }
 
         public abstract void AltSequenceEnd();
@@ -202,20 +221,84 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             AltSequence = true;
             SyncAltSequence = true;
         }
-
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            Player player = Main.player[Projectile.owner];
+            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = player;
+            target.AddBuff(DebuffType, ScorchingPoint.DragonDebuffDuration * 60);
+            if (Main.rand.NextBool((int)(100f / ScorchingPoint.MarkChance)))
+            {
+                switch (DragonType)
+                {
+                    case 1:
+                        {
+                            if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks < 6)
+                            {
+                                target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks++;
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/Marked") with { Volume = 0.5f });
+                            }
+                            break;
+                        }
+                    case 2:
+                        {
+                            if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks < 6)
+                            {
+                                target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks++;
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/Marked") with { Volume = 0.5f });
+                            }
+                            break;
+                        }
+                    case 3:
+                        {
+                            if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks < 6)
+                            {
+                                target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks++;
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/Marked") with { Volume = 0.5f });
+                            }
+                            break;
+                        }
+                }
+            }
+        }
         public override void AI()
         {
-            //SetupBody();
-            Projectile.timeLeft = 120;
+            Player player = Main.player[Projectile.owner];
+            if (player.HasBuff(BuffType))
+            {
+                Projectile.timeLeft = 2;
+            }
+            Projectile.originalDamage = (int)(BaseOriginalDamage / 19f * (float)player.ownedProjectileCounts[PairedProjectileType]);
+            if (Projectile.damage < 1)
+            {
+                Projectile.damage = 1;
+            }
+            if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+            {
+                Projectile.localNPCHitCooldown = BaseAttackSpeed - (BaseAttackSpeed / 3);
+            } else { Projectile.localNPCHitCooldown = BaseAttackSpeed; }
 
             Vector2 movementVec = Main.MouseWorld - Projectile.Center;
 
             float length = movementVec.Length();
 
-            if (length < 25f)
-                Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.01f;
-            else
-                Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.08f;
+            switch (length)
+            {
+                case float gear1 when (gear1 < 25f):
+                    {
+                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.01f;
+                        break;
+                    }
+                case float gear2 when (gear2 < 100f && gear2 >= 25f):
+                    {
+                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.08f;
+                        break;
+                    }
+                case float gear3 when (gear3 >= 100f):
+                    {
+                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.15f;
+                        break;
+                    }
+            }
 
             Projectile.velocity *= 0.84f;
 
@@ -224,7 +307,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             Projectile.rotation = movementVec.ToRotation() - (Projectile.velocity.X > 0f ? 0f : MathF.PI);
 
-            NPC targetMob = GetTargetWithinXDegree(Main.player[Projectile.owner], 135f); // 90f
+            NPC targetMob = GetTargetWithinXDegree(Main.player[Projectile.owner], 300f); // 90f
 
             int dir = 1;
             if (Projectile.velocity.X < 0f)

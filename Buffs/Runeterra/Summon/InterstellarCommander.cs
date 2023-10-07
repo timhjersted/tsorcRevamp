@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
@@ -31,10 +32,15 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 				buffIndex--;
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+            if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost && player.statMana > 0)
             {
                 player.statMana -= 1;
-                player.manaRegenDelay = 10f;
+                player.manaRegenDelay = 10;
+            }
+            else if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost && player.statMana == 0)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = false;
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostDeactivation") with { Volume = 1f });
             }
         }
 	}

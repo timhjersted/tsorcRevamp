@@ -8865,6 +8865,9 @@ Mods: {
 			RageFireBreath.DisplayName: 愤怒火之吐息
 			SorrowFrozenBreath.DisplayName: 悲伤冰之吐息
 			HunterToxicBreath.DisplayName: 猎手毒之吐息
+			// AshenLord.DisplayName: Ashen Lord
+			// ASOL13.DisplayName: A S O L13
+			// StarForger.DisplayName: Star Forger
 		}
 
 		NPCs: {

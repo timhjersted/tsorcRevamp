@@ -4,15 +4,21 @@ using ReLogic.Content;
 using System;
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {
     public class AshenLord : RuneterraDragon
     {
-        public override float Scale => 1f;
+        public override float Scale => 0.8f;
+        public override int BuffType => ModContent.BuffType<CenterOfTheHeat>();
+        public override int DebuffType => ModContent.BuffType<ScorchingDebuff>();
+        public override int PairedProjectileType => ModContent.ProjectileType<ScorchingPointFireball>();
+        public override int DragonType => 1;
         override public void SetupBody()
         {
-            NeckSegments = new BodySegment[5];
+            NeckSegments = new BodySegment[4];
 
             FrontBody = new BodySegment(8, 0, 0, 7);
             FrontBody.Texture = ModContent.Request<Texture2D>(Texture + "/Front_Body");
@@ -88,7 +94,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         {
             // Do meteor thingy...
         }
-
         public override bool PreDraw(ref Color lightColor)
         {
             FrontBody.Draw(lightColor);
@@ -110,7 +115,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             effect.Parameters["rotation"].SetValue(shaderRotation);
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 252);
             effect.Parameters["length"].SetValue(.01f * breathSize / maxBreathSize);
-            float opacity = 0.5f;
+            float opacity = 1.5f;
 
             /*
             if (fade < 30)

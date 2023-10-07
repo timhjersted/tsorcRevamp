@@ -41,7 +41,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             if (!Hit)
             {
                 Hit = true;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/DashHit") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/DashHit") with { Volume = 1.5f });
             }
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)

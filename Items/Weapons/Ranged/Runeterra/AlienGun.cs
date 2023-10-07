@@ -17,9 +17,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
     public class AlienGun : ModItem
     {
+        public int ShootTimer = 0;
+        public int ShootCooldown = 60;
         public int ShootSoundStyle = 0;
         public float ShootSoundVolume = 1f;
-        public const int BaseDamage = 60;
+        public const int BaseDamage = 80;
         public static int BlindingLaserSeedDmgMult = 2;
         public const int BlindingLaserCooldown = 5;
         public const float BlindingLaserDmgMult = 3;
@@ -108,6 +110,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot3") with { Volume = ShootSoundVolume });
                     ShootSoundStyle = 0;
                 }
+                ShootTimer = ShootCooldown;
             } else
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/BlindingLaserShot") with { Volume = ShootSoundVolume * 2 });
@@ -143,6 +146,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override void HoldItem(Player player)
         {
+            ShootTimer--;
             if (!player.HasBuff(ModContent.BuffType<ScoutsBoostCooldown>()) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2>()))
             {
                 player.AddBuff(ModContent.BuffType<ScoutsBoost>(), 1);
@@ -166,10 +170,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             {
                 return true;
             }
-            else
+            if (ShootTimer <= 0)
             {
-                return false;
+                return true;
             }
+            return false;
         }
         public override void AddRecipes()
         {
