@@ -388,10 +388,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                     totalRotationTarget -= MathF.PI;
                 }
                 
-                if (!SoundEngine.TryGetActiveSound(BreathLoopID, out var ActiveSound))
-                {
-                    BreathLoopID = SoundEngine.PlaySound(BreathLoopStyle);
-                }
 
                 while (totalRotationTarget < -MathF.PI)
                 {
@@ -407,6 +403,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
                     if (Head.frame > baseHeadFrames + 7)
                         Head.frame = baseHeadFrames + 4;
+                }
+                if (Head.frame >= baseHeadFrames + 4 && !SoundEngine.TryGetActiveSound(BreathLoopID, out var ActiveSound))
+                {
+                    BreathLoopID = SoundEngine.PlaySound(BreathLoopStyle);
                 }
             }
             else if (keepCharge)
