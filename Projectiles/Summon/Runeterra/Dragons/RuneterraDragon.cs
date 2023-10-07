@@ -16,6 +16,7 @@ using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.NPCs;
 using Terraria.Audio;
+using ReLogic.Utilities;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {
@@ -215,7 +216,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
             ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = ScorchingPoint.DragonSummonTagDmgMult / 100f;
         }
-
+        SoundStyle BreathLoopStyle;
+        SlotId BreathLoopID;
         public override void SetDefaults()
         {
             // Projectile.width = 40; Projectile.height = 40;
@@ -234,11 +236,38 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             Projectile.localNPCHitCooldown = BaseAttackSpeed;
 
             BodySegment.BaseScale = Scale;
+
+            switch (DragonType)
+            {
+                case 1:
+                    {
+                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/BreathLoop") with { Volume = 0.75f, IsLooped = true, MaxInstances = 1 };
+                        break;
+                    }
+                case 2:
+                    {
+                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BreathLoop") with { Volume = 1f, IsLooped = true, MaxInstances = 1 };
+                        break;
+                    }
+                case 3:
+                    {
+                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BreathLoop") with { Volume = 0.35f, IsLooped = true, MaxInstances = 1 };
+                        break;
+                    }
+            }
+
             SetupBody();
         }
         public override void OnSpawn(IEntitySource source)
         {
             BaseOriginalDamage = Projectile.originalDamage;
+        }
+        public override void OnKill(int timeLeft)
+        {
+            if (SoundEngine.TryGetActiveSound(BreathLoopID, out var ActiveSound))
+            {
+                ActiveSound.Stop();
+            }
         }
 
         public abstract void AltSequenceEnd();
@@ -333,7 +362,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             Projectile.rotation = movementVec.ToRotation() - (Projectile.velocity.X > 0f ? 0f : MathF.PI);
 
-            NPC targetMob = GetTargetWithinXDegree(Main.player[Projectile.owner], 240f, out bool keepCharge);
+            NPC targetMob = GetTargetWithinXDegree(Main.player[Projectile.owner], 300f, out bool keepCharge);
 
             int dir = 1;
             if (Projectile.velocity.X < 0)
@@ -355,13 +384,21 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 totalRotationTarget = Projectile.rotation - (Head.finalPosition - targetMob.Center).ToRotation();
 
                 if (dir == 1)
+                {
                     totalRotationTarget -= MathF.PI;
+                }
+                
+                if (!SoundEngine.TryGetActiveSound(BreathLoopID, out var ActiveSound))
+                {
+                    BreathLoopID = SoundEngine.PlaySound(BreathLoopStyle);
+                }
 
                 while (totalRotationTarget < -MathF.PI)
+                {
                     totalRotationTarget += MathF.PI * 2f;
+                }
 
                 Head.frameUpdateTimer++;
-
                 if (Head.frameUpdateTimer > 20) // head update timer
                 {
                     Head.frameUpdateTimer = 0;
@@ -374,6 +411,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             }
             else if (keepCharge)
             {
+                if (SoundEngine.TryGetActiveSound(BreathLoopID, out var ActiveSound))
+                {
+                    ActiveSound.Pause();
+                }
                 if (Head.frame > baseHeadFrames + 3)
                     Head.frame = baseHeadFrames + 3;
 
@@ -505,8 +546,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             return foundNPC;
         }
 
-        float maxSize = 2700;
-        float size = 2700;
+        public abstract float maxSize {  get; }
+        public abstract float size {  get; }
 
         public override bool? CanDamage()
         {
