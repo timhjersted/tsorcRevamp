@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,6 +9,10 @@ namespace tsorcRevamp.Projectiles
 {
     class BiohazardShot : ModProjectile
     {
+        private int biohazTimer;
+        int sinkTimer;
+        bool hasCollided;
+
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 2;
@@ -15,8 +20,8 @@ namespace tsorcRevamp.Projectiles
         public override void SetDefaults()
         {
 
-            Projectile.width = 10;
-            Projectile.height = 10;
+            Projectile.width = 12;
+            Projectile.height = 12;
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = true;
@@ -25,8 +30,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
 
-            DrawOffsetX = -2;
-            DrawOriginOffsetY = 0;
+            DrawOffsetX = -3;
+            DrawOriginOffsetY = -5;
         }
 
 
@@ -42,10 +47,10 @@ namespace tsorcRevamp.Projectiles
         public override void AI()
         {
             //Change these two variables to affect the rotation of your projectile
-            float rotationsPerSecond = 4f;
+            float rotationsPerSecond = Math.Abs(Projectile.velocity.X) * 0.25f + Math.Abs(Projectile.velocity.Y) * 0.25f;
             bool rotateClockwise = true;
             //The rotation is set here
-            Projectile.rotation += (rotateClockwise ? 1 : -1) * MathHelper.ToRadians(rotationsPerSecond * 30f);
+            if (Math.Abs(Projectile.velocity.X) != 0 || Math.Abs(Projectile.velocity.Y) != 0) { Projectile.rotation += (rotateClockwise ? 1 : -1) * MathHelper.ToRadians(rotationsPerSecond * 30f); }
 
             Lighting.AddLight(Projectile.position, 0.2496f, 0.4584f, 0.130f);
 
@@ -66,10 +71,42 @@ namespace tsorcRevamp.Projectiles
         private void NormalAI()
         {
             Projectile.damage = 1;
-            int? closestNPC = UsefulFunctions.GetClosestEnemyNPC(Projectile.Center);
+            /*int? closestNPC = UsefulFunctions.GetClosestEnemyNPC(Projectile.Center);
             if(closestNPC.HasValue && Main.npc[closestNPC.Value].Center.Distance(Projectile.Center) < 300)
             {
                 UsefulFunctions.SmoothHoming(Projectile, Main.npc[closestNPC.Value].Center, 0.5f, 30, bufferZone: false);
+            }*/
+
+            if (Math.Abs(Projectile.velocity.X) == 0 && Math.Abs(Projectile.velocity.Y) == 0)
+            {
+                if (biohazTimer > 40)
+                {
+                    biohazTimer = 0;
+                }
+
+                if (++Projectile.frameCounter >= 20) //ticks spent on each frame
+                {
+                    Projectile.frameCounter = 0;
+
+                    if (++Projectile.frame >= 2)
+                    {
+                        Projectile.frame = 0;
+                    }
+                }
+            }
+
+            if (hasCollided)
+            {
+                sinkTimer++;
+                Projectile.tileCollide = false;
+                if (sinkTimer < 6)
+                {
+                    Projectile.velocity = Projectile.oldVelocity * 0.3f;
+                }
+                else
+                {
+                    Projectile.velocity = new Vector2(0, 0);
+                }
             }
         }
 
@@ -115,9 +152,9 @@ namespace tsorcRevamp.Projectiles
             }
 
             //ANIMATION
-            if (biohazardtimer > 40)
+            if (biohazTimer > 40)
             {
-                biohazardtimer = 0;
+                biohazTimer = 0;
             }
 
             if (++Projectile.frameCounter >= 20) //ticks spent on each frame
@@ -145,16 +182,11 @@ namespace tsorcRevamp.Projectiles
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath9 with { Volume = 0.8f }, Projectile.Center);
-            for (int d = 0; d < 20; d++)
-            {
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 75, Projectile.velocity.X * 1f, Projectile.velocity.Y * 1f, 30, default(Color), 1f);
-                Main.dust[dust].velocity.X = +Main.rand.Next(-50, 51) * 0.05f;
-                Main.dust[dust].velocity.Y = +Main.rand.Next(-50, 51) * 0.05f;
-                Main.dust[dust].noGravity = true;
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath9 with { Volume = 0.5f }, Projectile.Center);
+            hasCollided = true;
 
-            }
-            return true;
+            Projectile.timeLeft = 240; //Lives for 4 seconds on surfaces
+            return false;
 
         }
 

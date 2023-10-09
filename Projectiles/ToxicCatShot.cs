@@ -1,5 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,6 +10,11 @@ namespace tsorcRevamp.Projectiles
 {
     class ToxicCatShot : ModProjectile
     {
+
+        private int toxiccattimer;
+        int sinkTimer;
+        bool hasCollided;
+
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 2;
@@ -23,18 +30,19 @@ namespace tsorcRevamp.Projectiles
             Projectile.timeLeft = 145;
             Projectile.penetrate = 3;
 
-            DrawOffsetX = -2;
-            DrawOriginOffsetY = -2;
+            DrawOffsetX = -3;
+            DrawOriginOffsetY = -5;
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
 
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 16, 10, 16), Color.White, Projectile.rotation, new Vector2(7, 8), Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 16, 10, 16), Color.White, Projectile.rotation, new Vector2(5, 9), Projectile.scale, SpriteEffects.None, 0);
 
             return false;
         }
+
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             // Inflate some target hitboxes if they are beyond 8,8 size
@@ -48,7 +56,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnKill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath9 with { Volume = 0.4f }, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath9 with { Volume = 0.3f }, Projectile.Center);
             for (int d = 0; d < 20; d++)
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 75, Projectile.velocity.X * 1.2f, Projectile.velocity.Y * 1.2f, 30, default(Color), 1f);
@@ -143,21 +151,20 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
+
         public override void AI()
         {
             if (IsStickingToTarget) StickyAI();
             else NormalAI();
-
         }
         private void NormalAI()
         {
             Projectile.damage = 1;
-
             //Change these two variables to affect the rotation of your projectile
-            float rotationsPerSecond = 3f;
+            float rotationsPerSecond = Math.Abs(Projectile.velocity.X) * 0.25f + Math.Abs(Projectile.velocity.Y) * 0.25f;
             bool rotateClockwise = true;
             //The rotation is set here
-            Projectile.rotation += (rotateClockwise ? 1 : -1) * MathHelper.ToRadians(rotationsPerSecond * 30f);
+            if (Math.Abs(Projectile.velocity.X) != 0 || Math.Abs(Projectile.velocity.Y) != 0) { Projectile.rotation += (rotateClockwise ? 1 : -1) * MathHelper.ToRadians(rotationsPerSecond * 30f); }
 
             Lighting.AddLight(Projectile.position, 0.2496f, 0.4584f, 0.130f);
 
@@ -169,9 +176,43 @@ namespace tsorcRevamp.Projectiles
                     dust.noGravity = true;
                 }
             }
+
+            if (Math.Abs(Projectile.velocity.X) == 0 && Math.Abs(Projectile.velocity.Y) == 0)
+            {
+                if (toxiccattimer > 40)
+                {
+                    toxiccattimer = 0;
+                }
+
+                if (++Projectile.frameCounter >= 20) //ticks spent on each frame
+                {
+                    Projectile.frameCounter = 0;
+
+                    if (++Projectile.frame >= 2)
+                    {
+                        Projectile.frame = 0;
+                    }
+                }
+            }
+
+            if (hasCollided)
+            {
+                sinkTimer++;
+                Projectile.knockBack = 0;
+                Projectile.tileCollide = false;
+                Projectile.height = 12;
+                Projectile.width = 12;
+                if (sinkTimer < 6)
+                { 
+                    Projectile.velocity = Projectile.oldVelocity * 0.3f;
+                }
+                else
+                {
+                    Projectile.velocity = new Vector2(0, 0);
+                }
+            }
         }
 
-        private int toxiccattimer;
         private void StickyAI()
         {
             // These 2 could probably be moved to the ModifyNPCHit hook, but in vanilla they are present in the AI
@@ -243,16 +284,10 @@ namespace tsorcRevamp.Projectiles
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath9 with { Volume = 0.8f }, Projectile.Center);
-            for (int d = 0; d < 20; d++)
-            {
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 75, Projectile.velocity.X * 1f, Projectile.velocity.Y * 1f, 30, default(Color), 1f);
-                Main.dust[dust].velocity.X = +Main.rand.Next(-50, 51) * 0.05f;
-                Main.dust[dust].velocity.Y = +Main.rand.Next(-50, 51) * 0.05f;
-                Main.dust[dust].noGravity = true;
-
-            }
-            return true;
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath9 with { Volume = 0.4f }, Projectile.Center);
+            hasCollided = true;
+            Projectile.timeLeft = 240; //Lives for 4 seconds on surfaces
+            return false;
         }
     }
 }

@@ -129,9 +129,10 @@ namespace tsorcRevamp.NPCs.Enemies
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimerCap * 3f/4f)
             {
                 float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
+                SpriteEffects effects = NPC.spriteDirection > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
                 UsefulFunctions.EnsureLoaded(ref knifeTexture, "tsorcRevamp/NPCs/Enemies/TibianAmazon_Knife");
-                spriteBatch.Draw(knifeTexture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 60, 56), drawColor, rotation, new Vector2(30, 32), NPC.scale, SpriteEffects.None, 0);
+                spriteBatch.Draw(knifeTexture, NPC.Center - Main.screenPosition - new Vector2(0, NPC.gfxOffY), new Rectangle(NPC.frame.X, NPC.frame.Y, 60, 56), drawColor, rotation, new Vector2(30, 32), NPC.scale, effects, 0);
             }
         }
 

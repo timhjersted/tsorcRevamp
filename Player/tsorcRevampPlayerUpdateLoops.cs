@@ -1133,12 +1133,22 @@ namespace tsorcRevamp
                 Player.GetJumpState(ExtraJump.TsunamiInABottle).Disable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
                 Player.GetJumpState(ExtraJump.SandstormInABottle).Disable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
                 Player.GetJumpState(ExtraJump.UnicornMount).Disable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
+                Player.GetJumpState(ExtraJump.BasiliskMount).Disable() ;
+                Player.GetJumpState(ExtraJump.GoatMount).Disable();
+                Player.GetJumpState(ExtraJump.SantankMount).Disable();
+
                 Player.canRocket = false;
                 Player.rocketTime = 0;
                 Player.jumpBoost = false;
                 Player.jumpSpeedBoost = 0f;
                 Player.wingTime = 0;
                 Player.moveSpeed *= 0.9f;
+
+                for (int d = 0; d < 3; d++)
+                {
+                    int dust = Dust.NewDust(new Vector2(Player.position.X - 6, Player.position.Y + 36), 32, 4, 184, 0, 0, 30, default(Color), 1f);
+                    Main.dust[dust].noGravity = true;
+                }
             }
 
             for (int i = 0; i < 50; i++)

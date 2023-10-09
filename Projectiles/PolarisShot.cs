@@ -54,10 +54,10 @@ namespace tsorcRevamp.Projectiles
                 {
                     target.AddBuff(ModContent.BuffType<Buffs.PolarisElectrocutedBuff>(), 240);
                 }
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                /*if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 200, 30);
-                }
+                }*/
 
                 Projectile.timeLeft = 0;
             }
@@ -70,12 +70,12 @@ namespace tsorcRevamp.Projectiles
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
 
-            
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(16, 16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(-16, 16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(16, -16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(-16, -16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
-            
+
+            //Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(16, 16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
+            //Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(-16, 16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
+            //Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(16, -16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
+            //Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(-16, -16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
+            //I hate it I'm sorry xD
 
 
             return false;
@@ -109,7 +109,7 @@ namespace tsorcRevamp.Projectiles
                 if (Main.netMode != NetmodeID.Server)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 200, 30);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 18, 18);
                 }
                 for (int i = 0; i < 100; i++)
                 {
@@ -256,6 +256,7 @@ namespace tsorcRevamp.Projectiles
                 if (Main.netMode != NetmodeID.Server)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 18, 18);
                 }
                 for (int i = 0; i < 200; i++)
                 {
@@ -306,6 +307,7 @@ namespace tsorcRevamp.Projectiles
                 if (Main.netMode != NetmodeID.Server)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 18, 18);
                 }
                 for (int i = 0; i < 70; i++)
                 {

@@ -1837,7 +1837,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (BiohazardShotCount >= 4)
                 {
-                    npc.lifeRegen -= BiohazardShotCount * 9 * 4; //I use 1st N for damage, second N can be used to make it tick faster.
+                    npc.lifeRegen -= BiohazardShotCount * 12 * 2; //I use 1st N for damage, second N can be used to make it tick faster.
                     if (damage < BiohazardShotCount * 1)
                     {
                         damage = BiohazardShotCount * 1;
@@ -1845,7 +1845,7 @@ namespace tsorcRevamp.NPCs
                 }
                 else
                 {
-                    npc.lifeRegen -= BiohazardShotCount * 6 * 4;
+                    npc.lifeRegen -= BiohazardShotCount * 9 * 2;
                     if (damage < BiohazardShotCount * 1)
                     {
                         damage = BiohazardShotCount * 1;

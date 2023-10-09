@@ -166,8 +166,6 @@ namespace tsorcRevamp.NPCs.Enemies
 
             }
 
-            Main.NewText(ringedKnightDamage);
-
             if (!stabbing && !slashing && !jumpSlashing && lifePercentage <= 60 && Main.rand.NextBool(4))
             {
                 if (NPC.direction == 1)

@@ -195,7 +195,8 @@ namespace tsorcRevamp
             HellkiteDragonEvent,
             EoL,
             DungeonGuardian,
-            OldManEvent
+            OldManEvent,
+            DualSandsprogAmbush1
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -468,6 +469,13 @@ namespace tsorcRevamp
             GoblinAmbush1.SetCustomStats(400, null, null); //I haven't set this one to save so players can farm the goblin scout and tattered cloth if they really feel the need to
             GoblinAmbush1.SetCustomDrops(new List<int>() { ItemID.TatteredCloth }, new List<int>() { 1 }, true);
 
+            //SANDSPROG AMBUSH 1 - IN LONG SANDY ROOM LEFTMOST OF CORRUPTION TEMPLE
+            List<int> DualSandsprog1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.MountedSandsprogMage>(), ModContent.NPCType<NPCs.Enemies.MountedSandsprog>() };
+            List<Vector2> DualSandsprog1EnemyLocations = new List<Vector2>() { new Vector2(2606, 806), new Vector2(2673, 817) };
+            ScriptedEvent DualSandsprogAmbush1 = new ScriptedEvent(new Vector2(2637, 807.5f), 9, DualSandsprog1EnemyTypeList, DualSandsprog1EnemyLocations, DustID.GemTopaz, true, true, false, LangUtils.GetTextValue("Events.DualSandsprogAmbush1"), Color.Red, false, null, null);
+            DualSandsprogAmbush1.SetCustomStats(400, null, null, 300);
+            DualSandsprogAmbush1.SetCustomDrops(new List<int>() { ItemID.SandBoots }, new List<int>() { 1 }, true);
+
             //SHADOW MAGE AMBUSH - IN TUNNEL AFTER TWIN EOW FIGHT
             List<int> ShadowMageAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowSoldier>(), ModContent.NPCType<NPCs.Enemies.ShadowMage>() };
             List<Vector2> ShadowMageAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4029, 1429), new Vector2(4074, 1399) };
@@ -475,8 +483,8 @@ namespace tsorcRevamp
             ShadowMageAmbush1.SetCustomStats(700, 18, null); // Lowers the mage's HP, and raises the soldiers
 
             //BRIDGE AMBUSH 1 - ON BRIDGE POST EOW
-            List<int> BridgeAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowWarrior>(), ModContent.NPCType<NPCs.Enemies.HollowSoldier>(), ModContent.NPCType<NPCs.Enemies.ManHunter>(), ModContent.NPCType<NPCs.Enemies.TibianAmazon>(), NPCID.Piranha, NPCID.Piranha, NPCID.Piranha };
-            List<Vector2> BridgeAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4593, 858), new Vector2(4640, 858), new Vector2(4643f, 841), new Vector2(4588f, 858), new Vector2(4608f, 870), new Vector2(4616f, 872), new Vector2(4626f, 870) };
+            List<int> BridgeAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowWarrior>(), ModContent.NPCType<NPCs.Enemies.HollowSoldier>(), ModContent.NPCType<NPCs.Enemies.ManHunter>(), ModContent.NPCType<NPCs.Enemies.TibianAmazon>() };
+            List<Vector2> BridgeAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4593, 858), new Vector2(4640, 858), new Vector2(4643f, 841), new Vector2(4588f, 858) };
             ScriptedEvent BridgeAmbush1 = new ScriptedEvent(new Vector2(4615, 852), 6, BridgeAmbush1EnemyTypeList, BridgeAmbush1EnemyLocations, DustID.Cloud, true, false, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red, false, PostEoWCustomCondition, null);
 
             //LOTHRIC AMBUSH 1 - IN ROOM BELOW ARTORIAS BOSS FIGHT ROOM, APPROACHING JUNGLE PYRAMID FROM FORGOTTEN CITY
@@ -573,6 +581,8 @@ namespace tsorcRevamp
                 {ScriptedEventType.HellkiteDragonEvent, HellkiteDragonEvent},
                 {ScriptedEventType.EoL, EoL},
                 {ScriptedEventType.DungeonGuardian, DungeonGuardianEvent },
+                {ScriptedEventType.DualSandsprogAmbush1, DualSandsprogAmbush1 },
+
 
             };
 

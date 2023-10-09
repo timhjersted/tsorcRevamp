@@ -5876,16 +5876,17 @@ namespace tsorcRevamp.NPCs
             if (npc.type == NPCID.GoblinArcher || npc.type == NPCID.GoblinPeon || npc.type == NPCID.GoblinWarrior || npc.type == NPCID.GoblinSorcerer || npc.type == NPCID.GoblinThief)
             {
 
-                if (Main.rand.NextBool(200))
-                { // 0.5%
+                if (Main.rand.NextBool(100))
+                { // 1%
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.Pulsar>(), 1, false, -1);
                 }
 
-                else if (Main.rand.NextBool(200))
-                { // 0.5% 
+                else if (Main.rand.NextBool(100))
+                { // 1% 
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.ToxicCatalyzer>(), 1, false, -1);
                 }
             }
+
             if (npc.type == NPCID.Plantera && !Main.expertMode)
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
@@ -5934,6 +5935,31 @@ namespace tsorcRevamp.NPCs
                 npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<AncestralSpiritRelic>()));
                 npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AncestralSpiritTrophy>(), 10));
             }
+
+            if (npc.type == NPCID.GoblinArcher){
+                npcLoot.Add(ItemDropRule.Common(ItemID.HunterPotion, 15, 1, 1));
+                npcLoot.Add(ItemDropRule.Common(ItemID.ArcheryPotion, 15, 1, 1));
+            }
+            if (npc.type == NPCID.GoblinThief){
+                npcLoot.Add(ItemDropRule.Common(ItemID.Gi, 20, 1, 1));
+                npcLoot.Add(ItemDropRule.Common(ItemID.BattlePotion, 15, 1, 1));
+            }
+            if (npc.type == NPCID.GoblinWarrior){
+                npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 12, 1, 1));
+                npcLoot.Add(ItemDropRule.Common(ItemID.EndurancePotion, 15, 1, 1));
+            }
+            if (npc.type == NPCID.GoblinPeon){
+                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<GlowingMushroomSkewer>(), 5, 1, 1));
+            }
+            if (npc.type == NPCID.GoblinSorcerer){
+                npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 15, 1, 1));
+                npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 15, 1, 1));
+                npcLoot.Add(ItemDropRule.Common(ItemID.SummoningPotion, 20, 1, 1));
+            }
+            if (npc.type == NPCID.GoblinSummoner){
+                npcLoot.Add(ItemDropRule.Common(ItemID.SummoningPotion, 2, 1, 1));
+            }
+
         }
 
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)

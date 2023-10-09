@@ -50,10 +50,10 @@ namespace tsorcRevamp.Projectiles
                 Projectile.damage = (int)(originalDamage * 1f);
                 Projectile.knockBack = 2.5f;
                 Projectile.DamageType = DamageClass.Ranged;
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                /*if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 120, 30);
-                }
+                }*/
                 target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 300);
 
                 Projectile.timeLeft = 0;
@@ -68,8 +68,9 @@ namespace tsorcRevamp.Projectiles
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
 
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(16, 16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(-16, -16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
+            //Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(16, 16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
+            //Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(-16, -16).RotatedBy(rotation), new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
+            //I hate it I'm sorry xD
 
             return false;
         }
@@ -103,7 +104,7 @@ namespace tsorcRevamp.Projectiles
                 if (Main.netMode != NetmodeID.Server)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = 0.3f }, Projectile.Center);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 120, 30);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 18, 18);
                 }
                 for (int i = 0; i < 120; i++)
                 {
@@ -248,6 +249,7 @@ namespace tsorcRevamp.Projectiles
                 if (Main.netMode != NetmodeID.Server)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = 0.3f }, Projectile.Center);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 18, 18);
                 }
                 for (int i = 0; i < 120; i++)
                 {
@@ -298,6 +300,7 @@ namespace tsorcRevamp.Projectiles
                 if (Main.netMode != NetmodeID.Server)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = 0.3f }, Projectile.Center);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 18, 18);
                 }
                 for (int i = 0; i < 120; i++)
                 {
