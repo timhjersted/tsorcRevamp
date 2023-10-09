@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies
             float chance = 0;
 
             if (spawnInfo.Player.ZoneJungle && NPC.CountNPCS(ModContent.NPCType<JungleSentree>()) < 2
-                && TileID.Sets.Conversion.Grass[spawnInfo.SpawnTileType]
+                && TileID.Sets.Conversion.JungleGrass[spawnInfo.SpawnTileType]
                 && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.MudUnsafe)
                 && Main.tile[spawnInfo.SpawnTileX - 1, spawnInfo.SpawnTileY].TileType == TileID.JungleGrass && !Main.tile[spawnInfo.SpawnTileX - 1, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX - 1, spawnInfo.SpawnTileY].LeftSlope //all this is to prevent the npc spawning in really odd looking places
                 && Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY].TileType == TileID.JungleGrass && !Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY].IsHalfBlock && !Main.tile[spawnInfo.SpawnTileX + 1, spawnInfo.SpawnTileY].RightSlope//make sure block to left and right are jungle grass
