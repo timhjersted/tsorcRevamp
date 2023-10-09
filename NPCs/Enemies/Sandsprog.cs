@@ -255,6 +255,17 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.BoneDagger, 1, 3, 8));
         }
+        public override void OnKill()
+        {
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.Defeated"), 150, 150, 150);
+            if (!Main.dedServ)
+            {
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Sandsprog_Gore_1").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Sandsprog_Gore_1").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Sandsprog_Gore_2").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Sandsprog_Gore_3").Type, 1f);
+            }
+        }
 
         #region Drawing and Animation
 

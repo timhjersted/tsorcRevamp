@@ -241,6 +241,17 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StarlightShard>(), 4, 1));
         }
+        public override void OnKill()
+        {
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.Defeated"), 150, 150, 150);
+            if (!Main.dedServ)
+            {
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Sandsprog_Gore_1").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Sandsprog_Gore_1").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Sandsprog_Mage_Gore_1").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Sandsprog_Mage_Gore_2").Type, 1f);
+            }
+        }
 
         #region Drawing and Animation
 
