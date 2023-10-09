@@ -14,7 +14,7 @@ Mods: {
 			RecipeTooltip: "[c/66fc03:黑暗之魂合成材料]"
 			WingsDisabled:
 				'''
-				这些翅膀已被凶残的[c/009400:茂林飞鸟-猎手]Boss[c/383838:诅咒]
+				这些翅膀已被凶残的[c/009400:茂林飞鸟-猎手][c/383838:诅咒]
 				它们在其被击败之前不能使用
 				'''
 			TileEnabled: "[c/1cfc03:冒险模式下允许放置！]"
@@ -261,7 +261,7 @@ Mods: {
 			BridgeAmbush1: 遭遇偷袭！
 			LothricAmbush1: 遭遇偷袭！
 			LothricAmbush2: 遭遇偷袭！
-			// DualSandsprogAmbush1: Ambush!
+			DualSandsprogAmbush1: 遭遇偷袭！
 			HellkiteDragon: 村庄受到袭击！一条炼狱鸢龙前来捕食...
 			Bossduration: "耗时: "
 		}
@@ -5662,7 +5662,7 @@ Mods: {
 
 			YianBlade: {
 				DisplayName: 魇刃
-				Tooltip: 造成伤害后有1/15的几率将伤害的一半转化为生命
+				Tooltip: 造成伤害恢复魔力
 			}
 
 			ForgottenBurningFist: {
@@ -6934,18 +6934,18 @@ Mods: {
 				Tooltip:
 					'''
 					[c/FF0000:WIP DON'T USE AS A PLAYER]
-					召唤一条灰烬之龙，它会向你的光标移动并向附近的敌人喷火
+					召唤一条灰烬领主，它会向你的光标移动并向附近的敌人喷火
 					召唤围绕你旋转的火球，并伤害经过的敌人
 					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
-					{$CommonItemTooltip.Summon.TagDmgMult}
-					“献给Runeterra的灰烬之主！”
+					火球受到 {0}% 标记伤害加成，灰烬领主只受到 {1}% 加成
+					“献给符文之地的灰烬领主！”
 					'''
 				Keybind1: "按 Alt 和 "
 				Keybind2: " 根据玩家所面对的方向来增加或缩小它们的旋转半径"
 				Details:
 					'''
-					灰烬之龙本身消耗半个仆从栏，并根据召唤的火球数量进行缩放
-					灰烬之龙对敌人施加炽热减益，并且可以标记敌人
+					灰烬领主本身消耗半个仆从栏，并根据召唤的火球数量进行缩放
+					灰烬领主对敌人施加炽热减益，并且可以标记敌人
 					每次攻击有 {0}% 的几率施加标记，标记 6 次后的敌人被火球攻击可引发爆炸
 					爆炸会增强炽热减益的效果，持续 {1} 秒
 					炽热减益随时间增加火球的伤害，并施加 {2}% 的召唤标记暴击率
@@ -6957,21 +6957,21 @@ Mods: {
 				Tooltip:
 					'''
 					[c/FF0000:WIP DON'T USE AS A PLAYER]
-					召唤一条指挥舰，它会向你的光标移动并向附近的敌人喷火
+					召唤一条霸天龙神，它会向你的光标移动并向附近的敌人喷火
 					召唤围绕你旋转的飞船，并伤害经过的敌人
 					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
-					{$CommonItemTooltip.Summon.TagDmgMult}
+					飞船受到 {0}% 标记伤害加成，霸天龙神只受到 {1}% 加成
 					{$Items.InterstellarVesselGauntlet.Keybind1}Special Ability{$Items.InterstellarVesselGauntlet.Keybind2}
 					“调整 ASOL-13 的轨迹！”
 					'''
 				Keybind1: "按 "
-				Keybind2: " 启用涡轮增压，超载指挥舰和飞船"
+				Keybind2: " 启用涡轮增压，超载霸天龙神和飞船"
 				Details:
 					'''
-					涡轮增压增加飞船的伤害、移动速度和指挥舰的攻击速度
+					涡轮增压增加飞船的伤害、移动速度和霸天龙神的攻击速度
 					涡轮增压会快速消耗你的魔力
-					指挥舰本身消耗半个仆从栏，并根据召唤的飞船数量进行缩放
-					指挥舰对敌人施加出其不意减益，并且可以标记敌人
+					霸天龙神本身消耗半个仆从栏，并根据召唤的飞船数量进行缩放
+					霸天龙神对敌人施加出其不意减益，并且可以标记敌人
 					每次攻击有 {0}% 的几率施加标记，标记 6 次后的敌人被飞船攻击可引发爆炸
 					爆炸会增强出其不意减益的效果，持续 {1} 秒
 					出其不意减益随时间增加飞船的伤害，并施加 {2}% 的召唤标记暴击率
@@ -6983,25 +6983,25 @@ Mods: {
 				Tooltip:
 					'''
 					[c/FF0000:WIP DON'T USE AS A PLAYER]
-					召唤一条行星吞噬者，它会向你的光标移动并向附近的敌人喷火
+					召唤一条铸星龙王，它会向你的光标移动并向附近的敌人喷火
 					召唤围绕你旋转的流星，并伤害经过的敌人
 					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
-					{$CommonItemTooltip.Summon.TagDmgMult}
+					流星受到 {0}% 标记伤害加成，铸星龙王只受到 {1}% 加成
 					{$Items.CenterOfTheUniverse.Keybind1}Special Ability{$Items.CenterOfTheUniverse.Keybind2}
 					每次引爆标记会获得星尘
-					<right>消耗 10 星尘在光标位置召唤一颗大彗星
-					“让他们一看到行星吞噬者就浑身战栗！”
+					<right>消耗 10 星尘在光标位置召唤一颗彗星
+					“瑟缩，崇拜，惊叹。人之常态，概莫能外。”
 					'''
 				Keybind1: "按 "
-				Keybind2: " 启用涡轮增压，超载行星吞噬者和流星"
+				Keybind2: " 启用涡轮增压，超载铸星龙王和流星"
 				Details:
 					'''
-					大彗星在大范围内造成巨大破坏并留下冲击波
-					大彗星施加 Awestruck 减益，随时间增加流星的伤害，其本身也会造成高额伤害
-					涡轮增压增加流星的伤害、移动速度和行星吞噬者的攻击速度
+					彗星在大范围内造成巨大破坏并释放冲击波
+					彗星施加 Awestruck 减益，随时间增加流星的伤害，其本身也会造成高额伤害
+					涡轮增压增加流星的伤害、移动速度和铸星龙王的攻击速度
 					涡轮增压会快速消耗你的魔力
-					行星吞噬者本身消耗半个仆从栏，并根据召唤的流星数量进行缩放
-					行星吞噬者对敌人施加日照减益，并且可以标记敌人
+					铸星龙王本身消耗半个仆从栏，并根据召唤的流星数量进行缩放
+					铸星龙王对敌人施加日照减益，并且可以标记敌人
 					每次攻击有 {0}% 的几率施加标记，标记 6 次后的敌人被流星攻击可引发爆炸
 					爆炸会增强日照减益的效果，持续 {1} 秒
 					日照减益随时间增加流星的伤害，并施加 {2}% 的召唤标记暴击率
@@ -7170,7 +7170,7 @@ Mods: {
 
 			DamagedMechanicalScrap: {
 				DisplayName: 损坏的机械废料
-				Tooltip: 一堆损坏但部分完好无损的废金属。或许它能被修复...
+				Tooltip: 一堆损坏但部分完好的废金属。或许它能被修复...
 			}
 
 			Meltdown: {
@@ -7389,9 +7389,9 @@ Mods: {
 					敌怪刷新率: {8}%
 					抵抗力：{0} 等同于 {1}% 伤害减免
 					移动速度: {2}%
-					生命回复: {3}/s
+					生命回复: {3}/秒
 					魔力消耗: {4}%
-					魔力回复: {5}/s
+					魔力回复: {5}/秒
 					耐力再生速率: {7}%
 					'''
 				Melee:
@@ -8859,16 +8859,16 @@ Mods: {
 			RageFirebreath.DisplayName: 烈火之息
 			LionheartGunshot.DisplayName: 狮心枪射
 			LeonhardCMSCrescent.DisplayName: 李奥纳德残月之光
-			CotUDragon.DisplayName: 行星吞噬者
+			CotUDragon.DisplayName: 铸星龙王
 			BossDeath.DisplayName: Boss Death
 			EnergyGathering.DisplayName: 能量聚合
 			GlowingEnergy.DisplayName: 光辉能量
 			RageFireBreath.DisplayName: 愤怒火之吐息
 			SorrowFrozenBreath.DisplayName: 悲伤冰之吐息
 			HunterToxicBreath.DisplayName: 猎手毒之吐息
-			// AshenLord.DisplayName: Ashen Lord
-			// ASOL13.DisplayName: A S O L13
-			// StarForger.DisplayName: Star Forger
+			AshenLord.DisplayName: 灰烬领主
+			ASOL13.DisplayName: 霸天龙神
+			StarForger.DisplayName: 铸星龙王
 		}
 
 		NPCs: {
@@ -8881,7 +8881,7 @@ Mods: {
 			Mechanic.GivenName: Asha
 			Wizard.GivenName: Araz
 			TheDestroyer.HullGlow: 毁灭者的身体发出耀眼的光芒......
-			SkeletronPrime.Warning: WARNING: 激光重定向......
+			SkeletronPrime.Warning: 警告：激光重定向......
 
 			AncestralSpirit: {
 				DisplayName: 先祖之灵

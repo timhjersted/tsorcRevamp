@@ -1179,7 +1179,7 @@ namespace tsorcRevamp
                         UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.CosmicWatch.Day"), Color.Orange);
                     }
                     else {
-                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items:CosmicWatch.Night"), new Color(175, 75, 255));
+                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.CosmicWatch.Night"), new Color(175, 75, 255));
                     }
 
                     //Sync it to clients
