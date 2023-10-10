@@ -11,23 +11,21 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("The blade hits with a powerful magic flame.\n" +
-                                "Knocks back foes with a force that also sets them ablaze, doing damage over time."); */
 
         }
 
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Green;
-            Item.damage = 39;
+            Item.damage = 23;
             Item.width = 42;
             Item.height = 34;
             Item.knockBack = 10;
             Item.maxStack = 1;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
-            Item.useAnimation = 30;
-            Item.useTime = 30;
+            Item.useAnimation = 35;
+            Item.useTime = 35;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Green_2;
@@ -41,8 +39,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ItemID.GoldAxe, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
+            recipe.AddIngredient(ItemID.GoldAxe);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
 
             recipe.AddTile(TileID.DemonAltar);
 
@@ -51,10 +49,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            //if (Main.rand.NextBool(2))
-            //{ //50% chance to occur
-                target.AddBuff(BuffID.OnFire, 12 * 60, false);
-            //}
+            target.AddBuff(BuffID.OnFire, 12 * 60, false);
+            Projectile Fireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 5f), ProjectileID.BallofFire, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
+            Fireball.DamageType = DamageClass.Melee;
         }
 
         public override void MeleeEffects(Terraria.Player player, Rectangle rectangle)

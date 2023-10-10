@@ -10,23 +10,16 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("The blade is a magic flame, slicing quickly. \n" +
-                                "Will set enemies ablaze and do damage over time."); */
-
         }
 
         public override void SetDefaults()
         {
-
-            Item.stack = 1;
             //item.prefixType=121;
             Item.rare = ItemRarityID.Green;
-            Item.damage = 20;
+            Item.damage = 15;
             Item.width = 34;
             Item.height = 38;
             Item.knockBack = 5.5f;
-            Item.autoReuse = true;
-            Item.maxStack = 1;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 17;
             Item.UseSound = SoundID.Item1;
@@ -42,8 +35,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ItemID.GoldBroadsword, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
+            recipe.AddIngredient(ItemID.GoldBroadsword);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
 
             recipe.AddTile(TileID.DemonAltar);
 
@@ -52,10 +45,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (Main.rand.NextBool(2))
-            { //50% chance to occur
-                target.AddBuff(BuffID.OnFire, 6 * 60, false);
-            }
+            target.AddBuff(BuffID.OnFire, 6 * 60, false);
+            Projectile Flamethrower = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 3f), ProjectileID.Flames, (int)(player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage) / 4f), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
+            Flamethrower.DamageType = DamageClass.Melee;
         }
 
         public override void MeleeEffects(Player player, Rectangle rectangle)

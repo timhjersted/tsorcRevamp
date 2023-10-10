@@ -23,12 +23,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 33;
             Item.useTime = 33;
-            Item.maxStack = 1;
-            Item.damage = 30;
+            Item.damage = 33;
             Item.knockBack = 3.3f;
             Item.UseSound = SoundID.Item1;
-            Item.rare = ItemRarityID.Green;
-            Item.value = PriceByRarity.Green_2;
+            Item.rare = ItemRarityID.Orange;
+            Item.value = PriceByRarity.Orange_3;
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
@@ -37,7 +36,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 10), ProjectileID.Bone, damageDone, 1, player.whoAmI);
+            Projectile Bone = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 10), ProjectileID.Bone, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
+            Bone.DamageType = DamageClass.Melee;
         }
 
         //TODO: Remove this

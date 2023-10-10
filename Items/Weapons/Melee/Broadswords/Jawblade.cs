@@ -14,20 +14,19 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             /* Tooltip.SetDefault("'A blade of bone and fangs'" +
                 "\nShoots out a homing skull upon hitting enemies with the blade"); */
         }
-        public bool canitshoot = false;
 
         public override void SetDefaults()
         {
             Item.width = 68;
             Item.height = 76;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 30;
-            Item.useTime = 30;
-            Item.damage = 56;
+            Item.useAnimation = 40;
+            Item.useTime = 40;
+            Item.damage = 70;
             Item.knockBack = 5f;
             Item.UseSound = SoundID.Item1;
-            Item.rare = ItemRarityID.Orange;
-            Item.value = PriceByRarity.Orange_3;
+            Item.rare = ItemRarityID.LightRed;
+            Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
@@ -35,7 +34,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 10), ProjectileID.BookOfSkullsSkull, damageDone, 1, player.whoAmI);
+            Projectile Skull = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 10), ProjectileID.BookOfSkullsSkull, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
+            Skull.DamageType = DamageClass.Melee;
         }
 
         //TODO: Remove this
@@ -49,7 +49,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ModContent.ItemType<CalciumBlade>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ItemID.MythrilBar, 5);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
 
             recipe.AddTile(TileID.DemonAltar);
 

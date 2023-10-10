@@ -17,7 +17,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                                 "\n[c/ffbf00:Does up to 8x damage to mages]" +
                                 "\nEvery third hit with the Blade generates a magic slash"); */
         }
-        public int shootstacks = 0;
 
         public override void SetDefaults()
         {
@@ -40,17 +39,19 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Cyan;
 
         }
+        public int HitStacks = 0;
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            shootstacks += 1;
+            HitStacks += 1;
 
-            if (shootstacks >= 3)
+            if (HitStacks >= 3)
             {
-                int proj = Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Main.MouseWorld - player.Center, ProjectileID.DD2SquireSonicBoom, (int)((float)damageDone * 1.5f), hit.Knockback, Main.myPlayer, 0, 0, 1);
-                Main.projectile[proj].timeLeft = 15;
-                Main.projectile[proj].scale = 0.8f;
-                Main.projectile[proj].penetrate = 3;
-                shootstacks = 0;
+                Projectile Slash = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Main.MouseWorld - player.Center, ProjectileID.DD2SquireSonicBoom, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), hit.Knockback, Main.myPlayer, 0, 0, 1);
+                Slash.damage += Slash.damage / 2; //basically 1.5x
+                Slash.timeLeft = 15;
+                Slash.scale = 0.8f;
+                Slash.penetrate = 3;
+                HitStacks = 0;
             }
         }
 
@@ -60,10 +61,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Vector2 spawnPosition = new Vector2(30, 0).RotatedBy(difference.ToRotation()); //30 is the distance we will spawn the dusts away from the swords rectangle
             for (int i = 0; i < 2; i++)                                                   //I-m drawing the dusts like this because they spawn all over the player otherwise, this separates them from the player
             {
-                int dust = Dust.NewDust(new Vector2(rectangle.X - 6, rectangle.Y - 6) - spawnPosition, 1, 1, 90, player.velocity.X, player.velocity.Y, 150, Color.Red, 1f); // -6, -6 because it doesnt actually seem to be centered otherwise
-                Main.dust[dust].noGravity = true;
-                Main.dust[dust].velocity.Y *= 0;
-                Main.dust[dust].velocity.X *= 0;
+                Dust RuneDust = Dust.NewDustDirect(new Vector2(rectangle.X - 6, rectangle.Y - 6) - spawnPosition, 1, 1, 90, player.velocity.X, player.velocity.Y, 150, Color.Red, 1f); // -6, -6 because it doesnt actually seem to be centered otherwise
+                RuneDust.noGravity = true;
+                RuneDust.velocity.Y *= 0;
+                RuneDust.velocity.X *= 0;
 
             }
 

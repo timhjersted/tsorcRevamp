@@ -35,11 +35,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ProjectileID.Volcano, damageDone, hit.Knockback, Main.myPlayer);
-            if (Main.rand.NextBool(2))
-            {
-                target.AddBuff(BuffID.OnFire3, 600, false);
-            }
+            Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ProjectileID.Volcano, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), hit.Knockback, Main.myPlayer);
+            target.AddBuff(BuffID.OnFire3, 300, false);
         }
         public override void MeleeEffects(Player player, Rectangle hitbox)
         {

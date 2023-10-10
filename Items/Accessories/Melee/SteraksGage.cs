@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
     public class SteraksGage : ModItem
     {
         public static float MeleeDmg = 10f;
-        public static float UseTimeRatio = 2f;
+        public static float UseTimeRatio = 1.5f;
         public static float MaxDmg = 20f;
         public static int MaxLife = 45;
         public static float LifeThreshold = 30f;

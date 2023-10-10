@@ -22,13 +22,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public const int DebuffDuration = 5;
         public int ShootSoundStyle = 0;
         public float ShootSoundVolume = 0.5f;
-        public static float ScoutsBoostMoveSpeedMult = 20f;
-        public static float ScoutsBoostStaminaRegenMult = 10f;
+        public static float ScoutsBoostMoveSpeedMult = 30f;
+        public static float ScoutsBoostStaminaRegenMult = 15f;
         public const int BaseDamage = 30;
         public const int ScoutsBoostOnHitCooldown = 3;
         public const int ScoutsBoost2Duration = 5;
         public const int ScoutsBoost2Cooldown = 25;
-        public static float PoisonDartDmgMult = 1.25f;
+        public static float PoisonDartDmgMult = 1.5f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PoisonDartDmgMult);
         public override void SetStaticDefaults()
         {

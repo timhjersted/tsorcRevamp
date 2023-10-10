@@ -40,13 +40,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 )
             {
                 modifiers.SourceDamage *= 3;
-                player.statLife += modifiers.GetDamage(Item.damage / 15, true);
-                player.HealEffect(modifiers.GetDamage(Item.damage / 15, true));
+                player.statLife += modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 15, true);
+                player.HealEffect(modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 15, true));
             }
             else
             {
-                player.statLife += modifiers.GetDamage(Item.damage / 10, true);
-                player.HealEffect(modifiers.GetDamage(Item.damage / 10, true));
+                player.statLife += modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 10, true);
+                player.HealEffect(modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 10, true));
             }
             if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.GuardianCorruptor>())
             {

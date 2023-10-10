@@ -74,7 +74,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 thisWatch.Start();
             }
 
-            watchTimer = 600;
+            watchTimer = 100;
             damageCounter += damageDone;
             if (hit.Crit)
             {
@@ -95,7 +95,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 thisWatch.Start();
             }
 
-            watchTimer = 600;
+            watchTimer = 100;
             damageCounter += damageDone;
             lastTimer = (float)thisWatch.Elapsed.TotalSeconds;
         }

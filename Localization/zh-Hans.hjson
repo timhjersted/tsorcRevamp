@@ -5663,6 +5663,11 @@ Mods: {
 			YianBlade: {
 				DisplayName: 魇刃
 				Tooltip: 造成伤害恢复魔力
+				/* Tooltip2:
+					'''
+					Right click to cast a homing blaze projectile for {0} mana
+					Blaze deals {1}x the swords damage
+					''' */
 			}
 
 			ForgottenBurningFist: {

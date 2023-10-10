@@ -5403,6 +5403,7 @@ Mods: {
 				Tooltip:
 					'''
 					The blade hits with a powerful magic flame.
+					Spawns a fireball on-hit.
 					Knocks back foes with a force that also sets them ablaze, doing damage over time.
 					'''
 			}
@@ -5436,6 +5437,7 @@ Mods: {
 				Tooltip:
 					'''
 					The blade is a magic flame, slicing quickly. 
+					Spawns a gust of fire on-hit.
 					Will set enemies ablaze and do damage over time.
 					'''
 			}
@@ -5618,6 +5620,7 @@ Mods: {
 				Tooltip:
 					'''
 					Praise the sun!
+					Spawns an inferno on-hit
 					Does quadruple damage against the heartless
 					'''
 			}
@@ -5662,7 +5665,12 @@ Mods: {
 
 			YianBlade: {
 				DisplayName: Yian Blade
-				Tooltip: Steals mana on-hit
+				Tooltip: Restores {0} mana on-hit, crits restore mana twice
+				Tooltip2:
+					'''
+					Right click to cast a homing blaze projectile for {0} mana
+					Blaze deals {1}x the swords damage
+					'''
 			}
 
 			ForgottenBurningFist: {
