@@ -1442,8 +1442,35 @@ namespace tsorcRevamp
 
         private static void On_Projectile_StatusNPC(On_Projectile.orig_StatusNPC orig, Projectile self, int i)
         {
+            NPC nPC = Main.npc[i];
             if (self.type == ProjectileID.BlandWhip || self.type == ProjectileID.ThornWhip || self.type == ProjectileID.BoneWhip || self.type == ProjectileID.FireWhip || self.type == ProjectileID.CoolWhip || self.type == ProjectileID.SwordWhip || self.type == ProjectileID.MaceWhip || self.type == ProjectileID.ScytheWhip || self.type == ProjectileID.RainbowWhip)
             {
+                return;
+            }
+            if (self.type == ProjectileID.Flames)
+            {
+                int DebuffID;
+                int Duration = 1200;
+                switch (self.ai[0])
+                {
+                    case 1f:
+                        {
+                            DebuffID = BuffID.Frostburn2; //Elf Melter
+                            break;
+                        }
+                    case 2f:
+                        {
+                            DebuffID = BuffID.OnFire; //Custom, Ancient Fire Sword flames
+                            Duration = 3 * 60;
+                            break;
+                        }
+                    default:
+                        {
+                            DebuffID = BuffID.OnFire3; //Flamethrower
+                            break;
+                        }
+                }
+                nPC.AddBuff(DebuffID, Duration);
                 return;
             }
             orig(self, i);

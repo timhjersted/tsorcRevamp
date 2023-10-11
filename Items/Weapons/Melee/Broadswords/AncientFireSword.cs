@@ -19,12 +19,12 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.damage = 15;
             Item.width = 34;
             Item.height = 38;
-            Item.knockBack = 5.5f;
+            Item.knockBack = 4f;
             Item.DamageType = DamageClass.Melee;
+            Item.useTime = 17;
             Item.useAnimation = 17;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 17;
             Item.value = PriceByRarity.Green_2;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
@@ -46,8 +46,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.OnFire, 6 * 60, false);
-            Projectile Flamethrower = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 3f), ProjectileID.Flames, (int)(player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage) / 4f), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
+            Projectile Flamethrower = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 2f), ProjectileID.Flames, (int)(player.GetTotalDamage(DamageClass.Melee).ApplyTo((float)Item.damage / 4f)), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
             Flamethrower.DamageType = DamageClass.Melee;
+            Flamethrower.ai[0] = 2f; //inflicts OnFire instead of Hellfire and for less time
+            Flamethrower.usesLocalNPCImmunity = false;
+            Flamethrower.localNPCHitCooldown = 0;
+            Flamethrower.usesIDStaticNPCImmunity = true;
+            Flamethrower.idStaticNPCHitCooldown = 20;
+            Flamethrower.ArmorPenetration = 0;
         }
 
         public override void MeleeEffects(Player player, Rectangle rectangle)
