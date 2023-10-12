@@ -95,7 +95,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
         public override bool AltFunctionUse(Player player)
         {
-            if (player.statMana > player.manaCost * BaseManaCost)
+            if (player.statMana >= player.manaCost * BaseManaCost)
             {
                 return true;
             } else 

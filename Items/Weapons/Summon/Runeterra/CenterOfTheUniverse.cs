@@ -126,13 +126,13 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         {
             var SpecialAbilityKey = tsorcRevamp.specialAbility.GetAssignedKeys();
             string SpecialAbilityString = SpecialAbilityKey.Count > 0 ? SpecialAbilityKey[0] : Language.GetTextValue("Mods.tsorcRevamp.Keybinds.Special Ability.DisplayName") + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.NotBound");
-            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip3");
+            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip2");
             if (ttindex1 != -1)
             {
                 tooltips.RemoveAt(ttindex1);
                 tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.ScorchingPoint.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.ScorchingPoint.Keybind2")));
             }
-            int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip5");
+            int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip4");
             if (ttindex2 != -1)
             {
                 tooltips.RemoveAt(ttindex2);

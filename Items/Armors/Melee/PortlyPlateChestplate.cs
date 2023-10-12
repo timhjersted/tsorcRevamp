@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         public static int LifeRegen1 = 2;
         public static float LifeThreshold = 25f;
         public static int LifeRegen2 = 3;
-        public static int BaseDamage = 60;
+        public static int BaseDamage = 45;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageIncrease, LifeRegen1, LifeThreshold, LifeRegen2);
         public override void SetStaticDefaults()
         {

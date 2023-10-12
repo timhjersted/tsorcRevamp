@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
 {
     public class BurningStone : ModItem
     {
-        public static float DamageIncrease = 5f;
+        public static float DamageIncrease = 8f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageIncrease);
         public override void SetStaticDefaults()
         {
@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
                         if (target != null && Main.npc[target.Value].Distance(player.Center) < 1000)
                         {
                             Vector2 velocity = UsefulFunctions.Aim(player.Center, Main.npc[target.Value].Center, 10);
-                            int damage = 1 + (tsorcRevampWorld.NewSlain.Count * 3);
+                            int damage = 1 + (tsorcRevampWorld.NewSlain.Count * 2);
                             if (tsorcRevampWorld.SuperHardMode)
                             {
                                 damage *= 2;

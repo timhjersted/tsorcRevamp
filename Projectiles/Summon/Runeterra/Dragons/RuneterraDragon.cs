@@ -572,7 +572,22 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if (Head.frame < 4)
+            int HeadFrameForBreathing = 4;
+            switch (DragonType)
+            {
+                default: break;
+                case 1:
+                    {
+                        HeadFrameForBreathing = 8;
+                        break;
+                    }
+                case 2:
+                    {
+                        HeadFrameForBreathing = 8;
+                        break;
+                    }
+            }
+            if (Head.frame < HeadFrameForBreathing)
                 return false;
 
             Vector2 between = Mouth.finalPosition - targetHitbox.Center();

@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public static int TagDuration = 2;
         public override void SetStaticDefaults()
         {
-            ItemID.Sets.BonusAttackSpeedMultiplier[Item.type] = 0.75f;
+            ItemID.Sets.BonusAttackSpeedMultiplier[Item.type] = 0.5f;
         }
         public override void SetDefaults()
         {

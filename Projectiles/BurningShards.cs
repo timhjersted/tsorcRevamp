@@ -90,7 +90,7 @@ namespace tsorcRevamp.Projectiles
                     if (Main.netMode != NetmodeID.Server && Main.player[Projectile.owner] == Main.LocalPlayer)
                     {
                         Vector2 velocity = UsefulFunctions.Aim(Projectile.Center, Main.npc[target.Value].Center, 10);
-                        int damage = 1 + (int)(tsorcRevampWorld.NewSlain.Count * 2.5f);
+                        int damage = 1 + (int)(tsorcRevampWorld.NewSlain.Count * 2f);
                         if (tsorcRevampWorld.SuperHardMode)
                         {
                             damage *= 2;
