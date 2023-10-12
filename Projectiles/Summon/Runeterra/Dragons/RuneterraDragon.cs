@@ -85,6 +85,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             finalRotation = usedRotations;
             finalPosition = origin;
+
             curEffect = effect;
 
             int maxFrame = (altAnimation ? (altEndFrame == -1 ? endFrame : altEndFrame) : endFrame);
@@ -362,11 +363,16 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             Projectile.rotation = movementVec.ToRotation() - (Projectile.velocity.X > 0f ? 0f : MathF.PI);
 
-            NPC targetMob = GetTargetWithinXDegree(Main.player[Projectile.owner], 300f, out bool keepCharge);
+            NPC targetMob = GetTargetWithinXDegree(Main.player[Projectile.owner], 300f, out bool keepCharge, out bool flip);
 
             int dir = 1;
             if (Projectile.velocity.X < 0)
                 dir = -1;
+
+            if (flip)
+            {
+                dir *= -1;
+            }
 
             if (AltSequence)
             {
@@ -381,7 +387,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             float totalRotationTarget = 0f;
             if (targetMob != null)
             {
-                totalRotationTarget = Projectile.rotation - (Head.finalPosition - targetMob.Center).ToRotation();
+                totalRotationTarget = Projectile.rotation - (NeckSegments[0].finalPosition - targetMob.Center).ToRotation();
 
                 if (dir == 1)
                 {
@@ -482,13 +488,14 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             }
         }
 
-        public NPC GetTargetWithinXDegree(Player owner, float degree, out bool keepCharge)
+        public NPC GetTargetWithinXDegree(Player owner, float degree, out bool keepCharge, out bool flip)
         {
             keepCharge = false;
+            flip = false;
 
             float targetRRange = (0.5f - (degree / 360)) * 2f;
             float MaxDist = (320f * size / maxSize) * 1.4f;
-            float MinDist = 75f * Scale;
+            float MinDist = 150f * Scale;
 
             // This code is required if your minion weapon has the targeting feature
             if (owner.HasMinionAttackTargetNPC)
@@ -502,9 +509,13 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 bool canHit = rotationDiff > targetRRange;
 
                 // Reasonable distance away so it doesn't target across multiple screens
-                if (canHit && MinDist < distBetween && distBetween < MaxDist)
+                if (MinDist < distBetween && distBetween < MaxDist)
                 {
-                    keepCharge = true;
+                    if (canHit)
+                        flip = false;
+                    else
+                        flip = true;
+
                     return npc;
                 }
             }
@@ -518,7 +529,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
                 if (npc.CanBeChasedBy() || npc.type == 488)
                 {
-                    Vector2 between = npc.Center - Mouth.zeroRotOffset; // 
+                    Vector2 between = npc.Center - Projectile.Center; // 
 
                     float distBetween = between.Length();
                     bool closest = closestDist > distBetween;
@@ -527,10 +538,15 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
                     bool canHit = rotationDiff > targetRRange;
 
-                    if (canHit && closest && (MinDist < distBetween && distBetween < MaxDist))
+                    if (closest && (MinDist < distBetween && distBetween < MaxDist))
                     {
                         keepCharge = true;
                         closestDist = distBetween;
+
+                        if (canHit)
+                            flip = false;
+                        else
+                            flip = true;
 
                         foundNPC = npc;
                     }
