@@ -37,6 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Cyan;
             Item.shootSpeed = 1f;
+            Item.scale = 0.8f;
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {

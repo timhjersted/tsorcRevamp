@@ -85,7 +85,7 @@ namespace tsorcRevamp.Projectiles
             if (Main.GameUpdateCount % 225 == 45 * Projectile.ai[0])
             {
                 int? target = UsefulFunctions.GetClosestEnemyNPC(player.Center);
-                if (target != null && Main.npc[target.Value].Distance(player.Center) < 1000)
+                if (target != null && Main.npc[target.Value].Distance(player.Center) < 600)
                 {
                     if (Main.netMode != NetmodeID.Server && Main.player[Projectile.owner] == Main.LocalPlayer)
                     {

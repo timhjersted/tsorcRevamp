@@ -43,10 +43,11 @@ namespace tsorcRevamp.Items.Accessories.Expert
                     int? target = UsefulFunctions.GetClosestEnemyNPC(player.Center);
                     if (Main.netMode != NetmodeID.Server && player == Main.LocalPlayer)
                     {
-                        if (target != null && Main.npc[target.Value].Distance(player.Center) < 1000)
+                        if (target != null && Main.npc[target.Value].Distance(player.Center) < 600)
                         {
                             Vector2 velocity = UsefulFunctions.Aim(player.Center, Main.npc[target.Value].Center, 10);
                             int damage = 1 + (tsorcRevampWorld.NewSlain.Count * 2);
+
                             if (tsorcRevampWorld.SuperHardMode)
                             {
                                 damage *= 2;

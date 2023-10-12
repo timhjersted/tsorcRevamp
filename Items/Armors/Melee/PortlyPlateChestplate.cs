@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Armors.Melee
             player.GetModPlayer<tsorcRevampPlayer>().PortlyPlateArmor = true;
             if (player.ownedProjectileCounts[ModContent.ProjectileType<PortlyPlateRollHitbox>()] == 0)
             {
-                int projectile = Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<PortlyPlateRollHitbox>(), BaseDamage, 11.5f, player.whoAmI);
+                int projectile = Projectile.NewProjectile(Projectile.GetSource_None(), player.position, Vector2.Zero, ModContent.ProjectileType<PortlyPlateRollHitbox>(), BaseDamage, 11.5f, player.whoAmI);
                 Main.projectile[projectile].originalDamage = BaseDamage;
             }
             if (player.statLife <= (int)(player.statLifeMax2 * (LifeThreshold / 100f)))

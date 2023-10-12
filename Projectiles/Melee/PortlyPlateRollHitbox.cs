@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Melee
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.position = player.Center;
+            Projectile.position = player.position;
             if (player.GetModPlayer<tsorcRevampPlayer>().PortlyPlateArmor)
             {
                 Projectile.timeLeft = 2;
