@@ -28,6 +28,12 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
+            if (Projectile.ai[0] == 1)
+            {
+                Projectile.timeLeft = 110;
+                Projectile.ai[0] = 0;
+            }
+
             Lighting.AddLight(Projectile.position, 0.1f, .35f, 1f); //1f was .25f
             Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.X, (double)Projectile.velocity.Y);
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 75, 0, 0, 100, default, 2.0f);
