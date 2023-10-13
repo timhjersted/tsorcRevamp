@@ -74,12 +74,9 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (NPC.ai[0] >= 12 && NPC.ai[2] < 5 && Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 500)
                 {
-                    float num48 = 2f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                    int damage = 18;
-                    int type = ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>();
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                    int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
+                    int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * 2f) * -1), (float)((Math.Sin(rotation) * 2f) * -1), ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), 18, 0f, Main.myPlayer);
                     Main.projectile[proj].timeLeft = 120;
 
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);

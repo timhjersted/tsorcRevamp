@@ -86,17 +86,20 @@ namespace tsorcRevamp.Projectiles
                     Main.NewText("a");
                 }
             }*/
-            Player owner = Main.player[projectile.owner];
-            if (projectile.type == ProjectileID.CrystalDart)
+            if (projectile.friendly)
             {
-                projectile.damage = 1 + owner.GetWeaponDamage(owner.HeldItem);
-            }
-            if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady
-                &&  projectile.type != ModContent.ProjectileType<TerraFallProjectile>() && projectile.type != ModContent.ProjectileType<NightsCrackerProjectile>() && projectile.type != ModContent.ProjectileType<SearingLashProjectile>() // charged whips need this in their code directly so the sound plays after they've been charged up, not as you start charging
-                && ProjectileID.Sets.IsAWhip[projectile.type])
-            {
-                owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = true;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = 1f }, owner.Center);
+                Player owner = Main.player[projectile.owner];
+                if (projectile.type == ProjectileID.CrystalDart)
+                {
+                    projectile.damage = 1 + owner.GetWeaponDamage(owner.HeldItem);
+                }
+                if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady
+                    && projectile.type != ModContent.ProjectileType<TerraFallProjectile>() && projectile.type != ModContent.ProjectileType<NightsCrackerProjectile>() && projectile.type != ModContent.ProjectileType<SearingLashProjectile>() // charged whips need this in their code directly so the sound plays after they've been charged up, not as you start charging
+                    && ProjectileID.Sets.IsAWhip[projectile.type])
+                {
+                    owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = true;
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = 1f }, owner.Center);
+                }
             }
         }
         public override bool PreAI(Projectile projectile)
@@ -563,35 +566,38 @@ namespace tsorcRevamp.Projectiles
      
         public override void OnKill(Projectile projectile, int timeLeft)
         {
-            Player owner = Main.player[projectile.owner];
-            var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
-            if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[projectile.type] && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung)
+            if (projectile.friendly)
             {
-                owner.AddBuff(ModContent.BuffType<GoredrinkerCooldown>(), Items.Accessories.Summon.Goredrinker.Cooldown * 60);
-                owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady = false;
-                owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = false;
-            }
-            if (projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse && projectile.friendly
-                && projectile.type != ProjectileID.ChlorophyteBullet && projectile.type != ProjectileID.ChlorophyteArrow && projectile.type != ModContent.ProjectileType<ElfinArrow>() //add any ranged homing projectiles
-                && projectile.aiStyle != ProjAIStyleID.SmallFlying)
-            {
-                if (HitSomething)
+                Player owner = Main.player[projectile.owner];
+                var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
+                if (modPlayer.Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[projectile.type] && modPlayer.GoredrinkerSwung)
                 {
-                    modPlayer.BotCCurrentAccuracyPercent += modPlayer.BotCAccuracyGain;
-                    CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCHit", (int)(MathF.Min(modPlayer.BotCCurrentAccuracyPercent, 1f) * 100f)));
+                    owner.AddBuff(ModContent.BuffType<GoredrinkerCooldown>(), Items.Accessories.Summon.Goredrinker.Cooldown * 60);
+                    modPlayer.GoredrinkerReady = false;
+                    modPlayer.GoredrinkerSwung = false;
                 }
-                else if (!HitSomething)
+                if (projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse
+                    && projectile.type != ProjectileID.ChlorophyteBullet && projectile.type != ProjectileID.ChlorophyteArrow && projectile.type != ModContent.ProjectileType<ElfinArrow>() //add any ranged homing projectiles
+                    && projectile.aiStyle != ProjAIStyleID.SmallFlying)
                 {
-                    modPlayer.BotCCurrentAccuracyPercent -= modPlayer.BotCAccuracyLoss;
-                    CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCMiss", (int)(MathF.Max(modPlayer.BotCCurrentAccuracyPercent, 0) * 100f)));
-                }
-                if (modPlayer.BotCCurrentAccuracyPercent > modPlayer.BotcAccuracyPercentMax)
-                {
-                    modPlayer.BotCCurrentAccuracyPercent = modPlayer.BotcAccuracyPercentMax;
-                }
-                if (modPlayer.BotCCurrentAccuracyPercent < 0)
-                {
-                    modPlayer.BotCCurrentAccuracyPercent = 0;
+                    if (HitSomething)
+                    {
+                        modPlayer.BotCCurrentAccuracyPercent += modPlayer.BotCAccuracyGain;
+                        CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCHit", (int)(MathF.Min(modPlayer.BotCCurrentAccuracyPercent, 1f) * 100f)));
+                    }
+                    else if (!HitSomething)
+                    {
+                        modPlayer.BotCCurrentAccuracyPercent -= modPlayer.BotCAccuracyLoss;
+                        CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCMiss", (int)(MathF.Max(modPlayer.BotCCurrentAccuracyPercent, 0) * 100f)));
+                    }
+                    if (modPlayer.BotCCurrentAccuracyPercent > modPlayer.BotcAccuracyPercentMax)
+                    {
+                        modPlayer.BotCCurrentAccuracyPercent = modPlayer.BotcAccuracyPercentMax;
+                    }
+                    if (modPlayer.BotCCurrentAccuracyPercent < 0)
+                    {
+                        modPlayer.BotCCurrentAccuracyPercent = 0;
+                    }
                 }
             }
 
