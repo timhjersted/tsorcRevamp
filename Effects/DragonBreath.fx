@@ -23,6 +23,8 @@ float opacity; //Multiplies the output by this to let it fade in
 float texScale;
 float texScale2;
 float texScale3;
+float4 Color = float4(0, 0, 0, 0);
+float4 Color2 = float4(0, 0, 0, 0);
 
 
 //I precomputed what values I could, to save on instruction count
@@ -37,7 +39,8 @@ const float INVERSETWOPI = 0.1591549;
 const float4 empty = float4(0, 0, 0, 0);
 
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
-{    
+{
+    float3 Color1 = Color;
     //Convert uv from rectangular to polar coordinates
     float2 dir = coords - float2(0.5, 0.5);
     float angle = atan2(dir.y, dir.x);        
@@ -110,18 +113,16 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     intensity *= tex2D(uImage0, samplePoint).r;
 
     //Scale 'intensity' into the RGB channels. Values are fine-tuned to turn noise into a fire-like effect.
-    float4 color = float4(0.2, 0.05, 0.35, 1); //Purple
     if (intensity > 0.2)
     {
         float shift = pow(1 - (intensity - 0.2), 9);
         //color.a *= shift;
-        color.rgb *= shift;
+        Color1.rgb *= shift;
     }
     
-    float4 goldColor = float4(1, 0.75, 0.00, 1);
     //goldIntensity = 0;
     
-    return ((color * pow(intensity, 1.25) * 2.1) + (goldColor * goldIntensity)) * opacity;
+    return ((Color * pow(intensity, 1.25) * 2.1) + (Color2 * goldIntensity)) * opacity;
 }
 
 technique DragonBreath

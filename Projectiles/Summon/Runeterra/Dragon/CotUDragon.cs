@@ -14,6 +14,7 @@ using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
 {
+	[Autoload(false)]
 	public class CotUDragon : DynamicTrail
 	{
         public override string Texture => "tsorcRevamp/Projectiles/Summon/Runeterra/Dragon/FullSample";

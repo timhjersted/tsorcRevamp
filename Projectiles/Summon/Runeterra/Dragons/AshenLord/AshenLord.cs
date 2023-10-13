@@ -117,6 +117,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             float angle = MathHelper.TwoPi / 10f;
             float shaderRotation = MathF.PI * 0.9f;
 
+            effect.Parameters["Color"].SetValue(new Vector4(0.886f, 0.17f, 0.15f, 1f));
+            effect.Parameters["Color2"].SetValue(new Vector4(1f, 0.75f, 0.00f, 0.1f));
             effect.Parameters["splitAngle"].SetValue(angle);
             effect.Parameters["rotation"].SetValue(shaderRotation);
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 252);

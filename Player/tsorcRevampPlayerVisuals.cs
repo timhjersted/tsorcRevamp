@@ -687,7 +687,7 @@ namespace tsorcRevamp
             if (drawPlayer.HeldItem.type == ModContent.ItemType<Items.Weapons.Summon.Runeterra.InterstellarVesselGauntlet>() && drawPlayer.HeldItem.type != 0)
             {
                 //1) Get texture
-                Texture2D scorchingPointTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Summon/Runeterra/InterstellarVesselGauntlet_Hand");
+                Texture2D interstellarVesselGauntletTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Summon/Runeterra/InterstellarVesselGauntlet_Hand");
 
                 //2) Get the players hand position
                 Vector2 drawPosition = drawPlayer.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, drawPlayer.itemRotation);
@@ -739,16 +739,16 @@ namespace tsorcRevamp
                 drawPosition += handOffset;
 
                 //3) Set up its sprite sheet source and origin variables
-                Rectangle sourceRectangle = new Rectangle(0, 0, scorchingPointTexture.Width, scorchingPointTexture.Height);
+                Rectangle sourceRectangle = new Rectangle(0, 0, interstellarVesselGauntletTexture.Width, interstellarVesselGauntletTexture.Height);
                 Vector2 origin = sourceRectangle.Size() / 2f;
 
                 //4) Call the draw function with all the info
-                drawInfo.DrawDataCache.Add(new DrawData(scorchingPointTexture, drawPosition - Main.screenPosition, sourceRectangle, Color.White, drawRotation, origin, 1, effect, 0));
+                drawInfo.DrawDataCache.Add(new DrawData(interstellarVesselGauntletTexture, drawPosition - Main.screenPosition, sourceRectangle, Color.White, drawRotation, origin, 1, effect, 0));
             }
             if (drawPlayer.HeldItem.type == ModContent.ItemType<Items.Weapons.Summon.Runeterra.CenterOfTheUniverse>() && drawPlayer.HeldItem.type != 0)
             {
                 //1) Get texture
-                Texture2D scorchingPointTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Summon/Runeterra/CenterOfTheUniverse_Hand");
+                Texture2D centerOfTheUniverseTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Summon/Runeterra/CenterOfTheUniverse_Hand");
 
                 //2) Get the players hand position
                 Vector2 drawPosition = drawPlayer.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, drawPlayer.itemRotation);
@@ -800,11 +800,11 @@ namespace tsorcRevamp
                 drawPosition += handOffset;
 
                 //3) Set up its sprite sheet source and origin variables
-                Rectangle sourceRectangle = new Rectangle(0, 0, scorchingPointTexture.Width, scorchingPointTexture.Height);
+                Rectangle sourceRectangle = new Rectangle(0, 0, centerOfTheUniverseTexture.Width, centerOfTheUniverseTexture.Height);
                 Vector2 origin = sourceRectangle.Size() / 2f;
 
                 //4) Call the draw function with all the info
-                drawInfo.DrawDataCache.Add(new DrawData(scorchingPointTexture, drawPosition - Main.screenPosition, sourceRectangle, Color.White, drawRotation, origin, 1, effect, 0));
+                drawInfo.DrawDataCache.Add(new DrawData(centerOfTheUniverseTexture, drawPosition - Main.screenPosition, sourceRectangle, Color.White, drawRotation, origin, 1, effect, 0));
             }
             #endregion
         }

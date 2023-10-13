@@ -414,6 +414,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 {
                     BreathLoopID = SoundEngine.PlaySound(BreathLoopStyle);
                 }
+                else if (Head.frame < baseHeadFrames + 4 && SoundEngine.TryGetActiveSound(BreathLoopID, out var activeSound))
+                {
+                    activeSound.Pause();
+                }
             }
             else if (keepCharge)
             {
@@ -441,6 +445,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             }
             else if (!keepCharge)
             {
+                if (SoundEngine.TryGetActiveSound(BreathLoopID, out var ActiveSound))
+                {
+                    ActiveSound.Pause();
+                }
                 Head.frameUpdateTimer++;
 
                 if (Head.frameUpdateTimer > 10) // head update timer
