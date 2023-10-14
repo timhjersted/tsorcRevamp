@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesManifestation>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1
                && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1)
             {
-                chance += 0.03f;
+                chance += 0.05f;
             }
             return chance;
         }

@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.defense = 20;
                 NPC.damage = 80;
                 NPC.value = 10000; // life * 1.25
-                demonSpiritDamage = 20;//gets doubled
+                demonSpiritDamage = 25;//gets doubled
                 poisonFieldDamage = 30;//gets doubled
                 NPC.knockBackResist = 0.1f;
             }
@@ -56,7 +56,7 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.AttraidiesManifestationBanner>();
         }
 
-        int demonSpiritDamage = 9;//gets doubled
+        int demonSpiritDamage = 15;//gets doubled
         int poisonFieldDamage = 12;//gets doubled
 
 
@@ -64,13 +64,13 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !spawnInfo.Water && Main.rand.NextBool(100)) return 1;
 
-            if (!Main.hardMode && spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(40) && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1
+            if (!Main.hardMode && spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1
                 && NPC.CountNPCS(ModContent.NPCType<AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<DungeonMage>()) < 1)
             {
                 //MaxSpawns = 1;
                 if (!NPC.AnyNPCs(ModContent.NPCType<AttraidiesManifestation>()))
                 {
-                    return 1;
+                    return 0.04f;
                 }
             }
             return 0;
@@ -361,11 +361,10 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.GillsPotion, 50));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.WandOfFrost>(), 20));
             npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 2));
-            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 2));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 5, 2, 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<HealingElixir>()));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<HealingElixir>(), 2));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<RadiantLifegem>(), 5));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 5));
         }
     }

@@ -804,7 +804,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spawnInfo.Player.ZoneGlowshroom) return 0f;
 
             if (!Main.hardMode && spawnInfo.SpawnTileType == TileID.GreenDungeonBrick && !spawnInfo.Water) return 0.15f;
-
+            if (!spawnInfo.Water && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonUnsafe) && !Main.hardMode && !tsorcRevampWorld.SuperHardMode) return 0.1f;
             if (Main.hardMode && spawnInfo.Lihzahrd) return 0.2f;
             if (Main.hardMode && p.ZoneNormalCaverns && !spawnInfo.Water) return 0.02f;
             if (Main.hardMode && p.ZoneDesert && p.ZoneOverworldHeight && !spawnInfo.Water) return 0.05f;
