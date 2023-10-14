@@ -1226,19 +1226,19 @@ namespace tsorcRevamp
                     player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
                     if (player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() && player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostActivation") with { Volume = 1f });
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostActivation") with { Volume = InterstellarVesselGauntlet.SoundVolume });
                     } else if (player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() && !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostDeactivation") with { Volume = 1f });
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostDeactivation") with { Volume = InterstellarVesselGauntlet.SoundVolume });
                     }
 
                     if (player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>() && player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostActivation") with { Volume = 1f });
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostActivation") with { Volume = CenterOfTheUniverse.SoundVolume });
                     }
                     else if (player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>() && !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostDeactivation") with { Volume = 1f });
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostDeactivation") with { Volume = CenterOfTheUniverse.SoundVolume });
                     }
 
                     //Every time the player releases the button, sync this info to everyone else

@@ -41,7 +41,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
             } else if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost && player.statMana == 0)
             {
                 player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = false;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostDeactivation") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostDeactivation") with { Volume = CenterOfTheUniverse.SoundVolume });
             }
         }
     }

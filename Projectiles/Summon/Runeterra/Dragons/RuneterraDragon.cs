@@ -242,17 +242,17 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             {
                 case 1:
                     {
-                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/BreathLoop") with { Volume = 0.75f, IsLooped = true, MaxInstances = 1 };
+                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/BreathLoop") with { Volume = ScorchingPoint.SoundVolume * 0.75f, IsLooped = true, MaxInstances = 1 };
                         break;
                     }
                 case 2:
                     {
-                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BreathLoop") with { Volume = 1f, IsLooped = true, MaxInstances = 1 };
+                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BreathLoop") with { Volume = InterstellarVesselGauntlet.SoundVolume, IsLooped = true, MaxInstances = 1 };
                         break;
                     }
                 case 3:
                     {
-                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BreathLoop") with { Volume = 0.35f, IsLooped = true, MaxInstances = 1 };
+                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BreathLoop") with { Volume = CenterOfTheUniverse.SoundVolume * 0.35f, IsLooped = true, MaxInstances = 1 };
                         break;
                     }
             }
@@ -291,7 +291,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks < 6)
                             {
                                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks++;
-                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/Marked") with { Volume = 0.5f });
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/Marked") with { Volume = ScorchingPoint.SoundVolume * 0.5f });
                             }
                             break;
                         }
@@ -300,7 +300,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks < 6)
                             {
                                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks++;
-                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/Marked") with { Volume = 0.5f });
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/Marked") with { Volume = InterstellarVesselGauntlet.SoundVolume * 0.5f });
                             }
                             break;
                         }
@@ -309,7 +309,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks < 6)
                             {
                                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks++;
-                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/Marked") with { Volume = 0.5f });
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/Marked") with { Volume = CenterOfTheUniverse.SoundVolume * 0.5f });
                             }
                             break;
                         }

@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.IronPickaxe);
             recipe.AddIngredient(ModContent.ItemType<AncientWarhammer>());
-            recipe.AddIngredient(ItemID.LifeCrystal);
+            recipe.AddIngredient(ItemID.LifeCrystal, 2);
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3200);
             recipe.AddTile(TileID.DemonAltar);

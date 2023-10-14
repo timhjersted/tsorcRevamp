@@ -10,6 +10,8 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Buffs.Runeterra.Melee;
+using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Placeable;
 using tsorcRevamp.NPCs.Special;
 using tsorcRevamp.UI;
@@ -117,12 +119,6 @@ namespace tsorcRevamp.Tiles
             {
                 player.AddBuff(ModContent.BuffType<Buffs.Bonfire>(), 30);
 
-                // Clears incombat debuff near bonfire
-                if (player.HasBuff(ModContent.BuffType<InCombat>()))
-                {
-                    player.ClearBuff(ModContent.BuffType<InCombat>());
-                }
-
                 player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff = true;
 
                 bool bossActive = false;
@@ -139,7 +135,7 @@ namespace tsorcRevamp.Tiles
                 {
                     foreach (int buffType in player.buffType)
                     {
-                        if (Main.debuff[buffType] && buffType != BuffID.HeartLamp)
+                        if (Main.debuff[buffType] && buffType != BuffID.HeartLamp && buffType != BuffID.PeaceCandle && buffType != BuffID.Sunflower && buffType != ModContent.BuffType<Conqueror>() && buffType != ModContent.BuffType<LethalTempo>() && buffType != BuffID.Tipsy)
                         {
                             player.ClearBuff(buffType);
                         }

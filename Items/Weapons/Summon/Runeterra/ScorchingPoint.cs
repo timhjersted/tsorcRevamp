@@ -27,6 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public const int SuperBurnDuration = 5;
         public const float SuperBurnDmgAmp = 50f;
         public const float SummonTagCrit = 10f;
+        public const float SoundVolume = 0.5f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BallSummonTagDmgMult, DragonSummonTagDmgMult);
         public override void SetStaticDefaults()
         {
@@ -78,14 +79,14 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             {
                 Projectile Dragon = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.AshenLord>(), damage, knockback, Main.myPlayer);
                 Dragon.originalDamage = Item.damage;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/DragonCast") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/DragonCast") with { Volume = SoundVolume });
             }
             else if (Main.rand.NextBool(2))
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballCast1") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballCast1") with { Volume = SoundVolume });
             } else
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballCast2") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballCast2") with { Volume = SoundVolume });
             }
 
             // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false

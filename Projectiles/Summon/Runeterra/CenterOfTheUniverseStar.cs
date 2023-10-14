@@ -82,15 +82,15 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = player;
             if (Main.rand.NextBool(3))
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit1") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit1") with { Volume = CenterOfTheUniverse.SoundVolume });
             }
             else if (Main.rand.NextBool(3))
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit2") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit2") with { Volume = CenterOfTheUniverse.SoundVolume });
             }
             else
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit3") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit3") with { Volume = CenterOfTheUniverse.SoundVolume });
             }
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks >= 6)
             {
@@ -106,7 +106,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 					}
                 }
                 Dust.NewDust(Projectile.position, 20, 20, DustID.AncientLight, 1, 1, 0, default, 1.5f);
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/MarkDetonation") with { Volume = 2f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/MarkDetonation") with { Volume = CenterOfTheUniverse.SoundVolume * 1.2f });
             }
         }
         public override void OnSpawn(IEntitySource source) 

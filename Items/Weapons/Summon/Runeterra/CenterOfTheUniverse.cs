@@ -22,6 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
     {
         public static List<CenterOfTheUniverseStar> projectiles = null;
         public static int processedProjectilesCount = 0;
+        public const float SoundVolume = 1f;
 
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ScorchingPoint.BallSummonTagDmgMult, ScorchingPoint.DragonSummonTagDmgMult);
         public override void SetStaticDefaults()
@@ -75,15 +76,15 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             {
                 Dragon = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.StarForger>(), damage, knockback, Main.myPlayer);
                 Dragon.originalDamage = Item.damage;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/DragonCast") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/DragonCast") with { Volume = SoundVolume });
             }
             else if (Main.rand.NextBool(2))
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarCast1") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarCast1") with { Volume = SoundVolume });
             }
             else
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarCast2") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarCast2") with { Volume = SoundVolume });
             }
 
             // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false

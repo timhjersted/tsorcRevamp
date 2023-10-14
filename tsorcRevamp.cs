@@ -349,7 +349,7 @@ namespace tsorcRevamp
                 21, 467, 29, 97, 463, 91, 287, 354, 377, 506, 621, 464,//chests, piggy bank, safe, defenders forge, banners, buff stations
                 33, 49, 174, 372, 78, 209, 129, 324, //all candles, clay pot, cannons, crystal/gelatin shards, seashells
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
-                128, 269, 470, 378, 240, 560, //all mannequins, target dummy, trophies and relics
+                128, 269, 470, 378, 240, 560, 617, //all mannequins, target dummy, trophies and relics
                 320, //thin ice (breakable kind), seaweed/herb planters, all sands
                 27, 215, 42, 621, 506 //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle), Slice of Cake, Bast Statue
             };
