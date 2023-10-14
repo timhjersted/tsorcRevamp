@@ -442,13 +442,6 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.Salamander4, 0.4f);
                 pool.Add(NPCID.MeteorHead, 0.01f);
             }
-            // forgotten city dungeon
-            if (!spawnInfo.Water && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonUnsafe) && !Main.hardMode && !tsorcRevampWorld.SuperHardMode)
-            {
-                pool.Add(ModContent.NPCType<Enemies.HollowSoldier>(), 0.2f);
-                pool.Add(ModContent.NPCType<Enemies.HollowWarrior>(), 0.2f);
-                pool.Add(ModContent.NPCType<Enemies.FirebombHollow>(), 0.2f);
-            }
 
             //HARD MODE SECTION
 
@@ -2268,7 +2261,7 @@ namespace tsorcRevamp.NPCs
                         p.timeLeft = 2;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.ToxicCatExplosion>(), (int)(projectile.damage * 1.8f), projectile.knockBack, projectile.owner, tags, 0);
+                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.ToxicCatExplosion>(), (int)(projectile.damage * 1.8f), tags + 3, projectile.owner, tags, 0);
                         }
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ToxicCatDrain>());
 
@@ -2318,7 +2311,7 @@ namespace tsorcRevamp.NPCs
                         p.timeLeft = 2;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.VirulentCatExplosion>(), (projectile.damage * 2), projectile.knockBack, projectile.owner, tags, 0);
+                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.VirulentCatExplosion>(), (projectile.damage * 2), tags + 3, projectile.owner, tags, 0);
                         }
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ViruCatDrain>());
 
@@ -2370,7 +2363,7 @@ namespace tsorcRevamp.NPCs
                         p.timeLeft = 2;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.BiohazardExplosion>(), (projectile.damage * 2), projectile.knockBack, projectile.owner, tags, 0);
+                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.BiohazardExplosion>(), (projectile.damage * 2), tags + 3, projectile.owner, tags, 0);
                         }
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.BiohazardDrain>());
 

@@ -8,6 +8,8 @@ namespace tsorcRevamp.Projectiles
 {
     class BiohazardDetonator : ModProjectile
     {
+        int pensLeft = 5; //I use this to allow the projectile to still pierce the first enemy, but to grow and hit up to 3 more enemies (if they are bunched very closely) the next enemy it hits
+
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 4;
@@ -23,7 +25,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = true;
             Projectile.timeLeft = 87;
-            Projectile.penetrate = 3;
+            Projectile.penetrate = 5;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
             Projectile.scale = 0.8f;
@@ -76,6 +78,8 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            pensLeft--;
+
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath9 with { Volume = 0.8f });
             for (int d = 0; d < 20; d++)
             {
@@ -83,6 +87,18 @@ namespace tsorcRevamp.Projectiles
                 Main.dust[dust].velocity.X = +Main.rand.Next(-50, 51) * 0.05f;
                 Main.dust[dust].velocity.Y = +Main.rand.Next(-50, 51) * 0.05f;
                 Main.dust[dust].noGravity = true;
+            }
+
+            if (pensLeft < 3)
+            {
+                Projectile.timeLeft = 2;
+
+                Projectile.position.X = Projectile.position.X + (float)(Projectile.width / 2);
+                Projectile.position.Y = Projectile.position.Y + (float)(Projectile.height / 2);
+                Projectile.width = 50;
+                Projectile.height = 50;
+                Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
+                Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
             }
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
@@ -96,7 +112,18 @@ namespace tsorcRevamp.Projectiles
                 Main.dust[dust].noGravity = true;
 
             }
-            return true;
+
+            Projectile.position.X = Projectile.position.X + (float)(Projectile.width / 2);
+            Projectile.position.Y = Projectile.position.Y + (float)(Projectile.height / 2);
+            Projectile.width = 60;
+            Projectile.height = 60;
+            Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
+            Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
+            Projectile.tileCollide = false;
+            Projectile.velocity = Projectile.oldVelocity * 0.3f;
+            Projectile.timeLeft = 2;
+
+            return false;
 
         }
 

@@ -578,7 +578,8 @@ namespace tsorcRevamp.Projectiles
                 }
                 if (projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse
                     && projectile.type != ProjectileID.ChlorophyteBullet && projectile.type != ProjectileID.ChlorophyteArrow && projectile.type != ModContent.ProjectileType<ElfinArrow>() //add any ranged homing projectiles
-                    && projectile.aiStyle != ProjAIStyleID.SmallFlying)
+                    && projectile.aiStyle != ProjAIStyleID.SmallFlying && projectile.type != ModContent.ProjectileType<ToxicCatExplosion>() && projectile.type != ModContent.ProjectileType<VirulentCatExplosion>()
+                    && projectile.type != ModContent.ProjectileType<BiohazardExplosion>())
                 {
                     if (HitSomething)
                     {

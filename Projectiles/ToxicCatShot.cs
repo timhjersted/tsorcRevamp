@@ -14,6 +14,7 @@ namespace tsorcRevamp.Projectiles
         private int toxiccattimer;
         int sinkTimer;
         bool hasCollided;
+        bool hasExploded;
 
         public override void SetStaticDefaults()
         {
@@ -203,12 +204,30 @@ namespace tsorcRevamp.Projectiles
                 Projectile.height = 12;
                 Projectile.width = 12;
                 if (sinkTimer < 6)
-                { 
+                {
                     Projectile.velocity = Projectile.oldVelocity * 0.3f;
                 }
                 else
                 {
                     Projectile.velocity = new Vector2(0, 0);
+                }
+            }
+
+            Player player = Main.player[Projectile.owner];
+            if (!hasExploded)
+            {
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i].active == true && Projectile.Hitbox.Intersects(Main.projectile[i].Hitbox) && (Main.projectile[i].type == ModContent.ProjectileType<ToxicCatDetonator>() || Main.projectile[i].type == ModContent.ProjectileType<ToxicCatExplosion>()))
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = 1f, Pitch = 0.2f }, Main.projectile[i].Center);
+                            Projectile.NewProjectile(player.GetSource_FromThis(), Main.projectile[i].Center, Main.projectile[i].velocity, ModContent.ProjectileType<Projectiles.ToxicCatExplosion>(), Projectile.damage * 2, 6f, Projectile.owner, 6, 0);
+                            Projectile.Kill();
+                            hasExploded = true;
+                        }
+                    }
                 }
             }
         }
@@ -286,7 +305,7 @@ namespace tsorcRevamp.Projectiles
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath9 with { Volume = 0.4f }, Projectile.Center);
             hasCollided = true;
-            Projectile.timeLeft = 240; //Lives for 4 seconds on surfaces
+            Projectile.timeLeft = 300; //Lives for 5 seconds on surfaces
             return false;
         }
     }
