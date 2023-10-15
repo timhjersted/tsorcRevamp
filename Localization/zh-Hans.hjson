@@ -123,7 +123,6 @@ Mods: {
 				TagStrength: 增加 {0}% 召唤标记伤害和护甲穿透
 				BadTagStrengthMult: 乘算减少 {0}% 召唤标记伤害和护甲穿透
 				TagDuration: 增加 {0}% 召唤标记持续时间
-				BotCSummonTagDoubleBuffCount: 完全充能的鞭子对敌人造成2倍的减益效果
 				ChargedWhip: 这个鞭子的属性随着你充能的时间长短而变化
 				ChargedWhipTagDmg: "{0}-{1} 召唤标记伤害"
 				ChargedWhipTagCrit: "{0}-{1}% 召唤标记暴击率"
@@ -6471,7 +6470,6 @@ Mods: {
 					{$CommonItemTooltip.CritDmg@7}
 					{$CommonItemTooltip.Whips}
 					'''
-				BotCTooltip: "{$CommonItemTooltip.Summon.BotCSummonTagDoubleBuffCount}"
 			}
 
 			PolarisLeash: {
@@ -6507,7 +6505,6 @@ Mods: {
 					{$CommonItemTooltip.Summon.TagCritMult}
 					{$CommonItemTooltip.Whips}
 					'''
-				BotCTooltip: "{$CommonItemTooltip.Summon.BotCSummonTagDoubleBuffCount}"
 			}
 
 			TerraFall: {
@@ -6524,7 +6521,6 @@ Mods: {
 					{$CommonItemTooltip.CritDmg@7}
 					{$CommonItemTooltip.Whips}
 					'''
-				BotCTooltip: "{$CommonItemTooltip.Summon.BotCSummonTagDoubleBuffCount}"
 			}
 
 			Urumi: {

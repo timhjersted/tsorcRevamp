@@ -68,12 +68,13 @@ namespace tsorcRevamp.Projectiles
             base.OnSpawn(projectile, source);
         }*/
         public override bool InstancePerEntity => true;
-        public bool ChargedWhip = false;
         public static float WhipVolume = 0.4f;
         public static float WhipPitch = 0.3f;
         public bool AppliedLethalTempo = false;
         public bool AppliedConqueror = false;
         public bool HitSomething = false;
+        public bool ModdedWhip = false;
+        public bool ChargedWhip = false;
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
             /*Entitysource experiments
@@ -94,8 +95,7 @@ namespace tsorcRevamp.Projectiles
                     projectile.damage = 1 + owner.GetWeaponDamage(owner.HeldItem);
                 }
                 if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady
-                    && projectile.type != ModContent.ProjectileType<TerraFallProjectile>() && projectile.type != ModContent.ProjectileType<NightsCrackerProjectile>() && projectile.type != ModContent.ProjectileType<SearingLashProjectile>() // charged whips need this in their code directly so the sound plays after they've been charged up, not as you start charging
-                    && ProjectileID.Sets.IsAWhip[projectile.type])
+                    && ProjectileID.Sets.IsAWhip[projectile.type] && !ModdedWhip) //Modded whips have this in their code itself because some of them can be charged
                 {
                     owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = true;
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = 1f }, owner.Center);

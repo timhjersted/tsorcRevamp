@@ -35,7 +35,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.rare = ItemRarityID.Red;
 			Item.value = Item.buyPrice(3, 33, 33, 33);
 
-			Item.channel = true;
 
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.TerraFallProjectile>();
 			Item.shootSpeed = 4;
@@ -45,7 +44,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 			Item.useAnimation = 30;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
-		}
+            Item.channel = true;
+        }
 		public override bool MeleePrefix()
 		{
 			return true;

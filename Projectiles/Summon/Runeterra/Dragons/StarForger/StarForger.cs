@@ -122,7 +122,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             effect.Parameters["rotation"].SetValue(shaderRotation);
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 252);
             effect.Parameters["length"].SetValue(.01f * breathSize / maxBreathSize);
-            float opacity = 1.5f;
+            float opacity = 0.5f;
 
             /*
             if (fade < 30)

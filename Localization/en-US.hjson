@@ -123,7 +123,6 @@ Mods: {
 				TagStrength: Increases Summon Tag Damage and Armor Penetration by {0}%
 				BadTagStrengthMult: Decreases Summon Tag Damage and Armor Penetration by {0}% multiplicatively
 				TagDuration: Increases the duration of Summon Tag effects by {0}%
-				BotCSummonTagDoubleBuffCount: Fully charged whip debuff counts as 2
 				ChargedWhip: Stats of this whip scale with how long you've charged it
 				ChargedWhipTagDmg: "{0}-{1} summon tag damage"
 				ChargedWhipTagCrit: "{0}-{1}% summon tag critical strike chance"
@@ -6473,7 +6472,6 @@ Mods: {
 					{$CommonItemTooltip.CritDmg@7}
 					{$CommonItemTooltip.Whips}
 					'''
-				BotCTooltip: "{$CommonItemTooltip.Summon.BotCSummonTagDoubleBuffCount}"
 			}
 
 			PolarisLeash: {
@@ -6509,7 +6507,6 @@ Mods: {
 					{$CommonItemTooltip.Summon.TagCritMult}
 					{$CommonItemTooltip.Whips}
 					'''
-				BotCTooltip: "{$CommonItemTooltip.Summon.BotCSummonTagDoubleBuffCount}"
 			}
 
 			TerraFall: {
@@ -6526,7 +6523,6 @@ Mods: {
 					{$CommonItemTooltip.CritDmg@7}
 					{$CommonItemTooltip.Whips}
 					'''
-				BotCTooltip: "{$CommonItemTooltip.Summon.BotCSummonTagDoubleBuffCount}"
 			}
 
 			Urumi: {
@@ -6535,7 +6531,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.TagArmorPen}
 					{$CommonItemTooltip.PercentSummonTagCritChance@1}
-					Ignores a substantial amount of defense
+					The whip itself ignores {2} defense
 					{$CommonItemTooltip.Whips}
 					'''
 			}

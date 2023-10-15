@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Items.Weapons.Melee;
+using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Summon.Whips;
 using tsorcRevamp.Utilities;
 
@@ -194,10 +195,10 @@ namespace tsorcRevamp
                         }
                     }
 
-                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ModContent.ProjectileType<SearingLashProjectile>() || Main.projectile[p].type == ModContent.ProjectileType<NightsCrackerProjectile>() || Main.projectile[p].type == ModContent.ProjectileType<TerraFallProjectile>()) && Player.channel)
+                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].GetGlobalProjectile<tsorcGlobalProjectile>().ChargedWhip && Player.channel)
                     {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ChargedWhipDrainPerFrame;
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
+                        staminaResourceCurrent -= ChargedWhipDrainPerFrame;
+                        staminaResourceRegenRate *= 0f;
                         if (staminaResourceCurrent < 1)
                         {
                             Main.projectile[p].Kill();

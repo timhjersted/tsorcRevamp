@@ -30,14 +30,14 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 
 			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.SearingLashProjectile>();
 			Item.shootSpeed = 4;
-			Item.channel = true;
 
 			Item.useStyle = ItemUseStyleID.Swing;
 			Item.useTime = 30;
 			Item.useAnimation = 30;
 			Item.noMelee = true;
 			Item.noUseGraphic = true;
-		}
+            Item.channel = true;
+        }
         public override bool MeleePrefix()
         {
             return true;
