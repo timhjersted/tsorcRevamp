@@ -3,11 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
 using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -125,9 +124,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     if (chargeTelegraphTimer > 130)
                     {
                         chargeDamageFlag = false;
-                        
+
                         chargeTelegraphTimer = 0;
-                        
+
                     }
 
                 }
@@ -143,29 +142,29 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
                 if (breath)
                 {
-                        Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                        if (Main.rand.NextBool(2))
-                        {
-                            int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.IceTorch, NPC.velocity.X, NPC.velocity.Y, Scale: 3f);
+                    Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                    if (Main.rand.NextBool(2))
+                    {
+                        int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.IceTorch, NPC.velocity.X, NPC.velocity.Y, Scale: 3f);
 
-                            Main.dust[pink].noGravity = true;
-                        }
+                        Main.dust[pink].noGravity = true;
+                    }
 
-                        if (breathCD <= 60)
-                        {
-                            float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, (float)((Math.Cos(rotation) * 15) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 30;
-                        }
-                        
+                    if (breathCD <= 60)
+                    {
+                        float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, (float)((Math.Cos(rotation) * 15) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 0f, Main.myPlayer);
+                        Main.projectile[num54].timeLeft = 30;
+                    }
+
                     breathCD--;
-                   
+
                 }
                 if (breathCD <= 0)
                 {
                     breath = false;
                     breathCD = 120;
-                    
+
                 }
                 //end breath attack
 
@@ -412,7 +411,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 1, 3, 3));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.PurgingStone>(), 50));
@@ -472,8 +471,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
 
                 target.AddBuff(BuffID.BrokenArmor, 10 * 60, false);
-                target.AddBuff(BuffID.Frostburn, 10 * 60, false); 
-                target.AddBuff(BuffID.Chilled, 10 * 60, false); 
+                target.AddBuff(BuffID.Frostburn, 10 * 60, false);
+                target.AddBuff(BuffID.Chilled, 10 * 60, false);
                 target.AddBuff(ModContent.BuffType<CurseBuildup>(), 600 * 60, false); //-20 life after several hits
                 target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 600 * 60, false); //-100 life after several hits
             }

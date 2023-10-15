@@ -1,17 +1,17 @@
-using tsorcRevamp.Projectiles.Ranged.Runeterra;
+using Humanizer;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Items.Materials;
-using Terraria.Audio;
-using Terraria.DataStructures;
-using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
-using Terraria.Localization;
-using Humanizer;
+using tsorcRevamp.Projectiles.Ranged.Runeterra;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
 {
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item99;
-            Item.DamageType = DamageClass.Ranged; 
+            Item.DamageType = DamageClass.Ranged;
             Item.damage = BaseDamage;
             Item.knockBack = 6f;
             Item.noMelee = true;

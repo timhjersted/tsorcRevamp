@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
@@ -40,13 +39,13 @@ namespace tsorcRevamp.Projectiles.Enemy
             // DisplayName.SetDefault("Ice Storm Shards");
 
         }
-        
+
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             //target.AddBuff(BuffID.Blackout, 360, false); //darkness
             target.AddBuff(ModContent.BuffType<Frostbite>(), 180, false);
-               
+
         }
 
         public override void OnKill(int timeLeft)

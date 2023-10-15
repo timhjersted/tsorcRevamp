@@ -1,12 +1,12 @@
 ﻿
 using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.Graphics.Effects;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using Terraria;
+using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.VFX
 {

@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -42,8 +41,8 @@ namespace tsorcRevamp.Projectiles
         public override bool PreKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item100 with { Volume = 0.5f }, Projectile.Center); // cursed flame wall, lasts a bit longer than flame
-                                                                                                                            //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 125, 0.3f, .2f); //phantasmal bolt fire 2
-                                                                                                                            //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
+                                                                                                                         //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 125, 0.3f, .2f); //phantasmal bolt fire 2
+                                                                                                                         //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
             if (Projectile.owner == Main.myPlayer)
             {
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X, Projectile.position.Y, 0, 0, ModContent.ProjectileType<Projectiles.FireballInferno1>(), 0, 6f, Projectile.owner);

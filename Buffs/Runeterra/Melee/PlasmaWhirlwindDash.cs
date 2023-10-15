@@ -1,10 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.Audio;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
-using tsorcRevamp.Projectiles.Melee.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra.Melee
 {
@@ -22,7 +19,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
             dust.noGravity = true;
 
             player.immune = true;
-            
+
             if (player.buffTime[buffIndex] >= (int)(PlasmaWhirlwind.DashDuration * 60))
             {
                 player.GetModPlayer<tsorcRevampPlayer>().SweepingBladeTimer = 2;

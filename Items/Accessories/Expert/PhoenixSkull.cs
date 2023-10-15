@@ -1,7 +1,6 @@
 ﻿using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Accessories;
 
 namespace tsorcRevamp.Items.Accessories.Expert
 {

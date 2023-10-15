@@ -8,91 +8,104 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace  tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Core.Networking;
+namespace tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Core.Networking;
 
 public sealed class MultiplayerSystem : ModSystem
 {
-	public static MultiplayerSystem Instance => ModContent.GetInstance<MultiplayerSystem>();
+    public static MultiplayerSystem Instance => ModContent.GetInstance<MultiplayerSystem>();
 
-	private static readonly List<NetPacket> packets = new();
-	private static readonly Dictionary<Type, NetPacket> packetsByType = new();
+    private static readonly List<NetPacket> packets = new();
+    private static readonly Dictionary<Type, NetPacket> packetsByType = new();
 
-	public override void Load()
-	{
+    public override void Load()
+    {
 
-		foreach (var type in Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(NetPacket)))) {
-			var instance = (NetPacket)FormatterServices.GetUninitializedObject(type);
+        foreach (var type in Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(NetPacket))))
+        {
+            var instance = (NetPacket)FormatterServices.GetUninitializedObject(type);
 
-			instance.Id = packets.Count;
-			packetsByType[type] = instance;
+            instance.Id = packets.Count;
+            packetsByType[type] = instance;
 
-			packets.Add(instance);
+            packets.Add(instance);
 
-			ContentInstance.Register(instance);
-		}
-	}
+            ContentInstance.Register(instance);
+        }
+    }
 
-	public override void Unload()
-	{
-		packets?.Clear();
-		packetsByType?.Clear();
-	}
+    public override void Unload()
+    {
+        packets?.Clear();
+        packetsByType?.Clear();
+    }
 
-	// Get
-	public static NetPacket GetPacket(byte id)
-		=> packets[id];
+    // Get
+    public static NetPacket GetPacket(byte id)
+        => packets[id];
 
-	public static NetPacket GetPacket(Type type)
-		=> packetsByType[type];
+    public static NetPacket GetPacket(Type type)
+        => packetsByType[type];
 
-	public static T GetPacket<T>() where T : NetPacket
-		=> ModContent.GetInstance<T>();
+    public static T GetPacket<T>() where T : NetPacket
+        => ModContent.GetInstance<T>();
 
-	// Send
-	public static void SendPacket<T>(T packet, int toClient = -1, int ignoreClient = -1, Func<Player, bool>? sendDelegate = null) where T : NetPacket
-	{
-		if (Main.netMode == NetmodeID.SinglePlayer) {
-			return;
-		}
+    // Send
+    public static void SendPacket<T>(T packet, int toClient = -1, int ignoreClient = -1, Func<Player, bool>? sendDelegate = null) where T : NetPacket
+    {
+        if (Main.netMode == NetmodeID.SinglePlayer)
+        {
+            return;
+        }
 
-		ModPacket modPacket = Instance.Mod.GetPacket();
+        ModPacket modPacket = Instance.Mod.GetPacket();
 
-		modPacket.Write((byte)packet.Id);
-		packet.WriteAndDispose(modPacket);
+        modPacket.Write((byte)packet.Id);
+        packet.WriteAndDispose(modPacket);
 
-		try {
-			if (Main.netMode == NetmodeID.MultiplayerClient) {
-				modPacket.Send();
-			} else if (toClient != -1) {
-				modPacket.Send(toClient, ignoreClient);
-			} else {
-				for (int i = 0; i < Main.player.Length; i++) {
-					var player = Main.player[i];
+        try
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                modPacket.Send();
+            }
+            else if (toClient != -1)
+            {
+                modPacket.Send(toClient, ignoreClient);
+            }
+            else
+            {
+                for (int i = 0; i < Main.player.Length; i++)
+                {
+                    var player = Main.player[i];
 
-					if (i != ignoreClient && Netplay.Clients[i].State >= 10 && (sendDelegate?.Invoke(player) ?? true)) {
-						modPacket.Send(i);
-					}
-				}
-			}
-		}
-		catch { }
-	}
+                    if (i != ignoreClient && Netplay.Clients[i].State >= 10 && (sendDelegate?.Invoke(player) ?? true))
+                    {
+                        modPacket.Send(i);
+                    }
+                }
+            }
+        }
+        catch { }
+    }
 
-	internal static void HandlePacket(BinaryReader reader, int sender)
-	{
-		try {
-			byte packetId = reader.ReadByte();
+    internal static void HandlePacket(BinaryReader reader, int sender)
+    {
+        try
+        {
+            byte packetId = reader.ReadByte();
 
-			if (packetId > packets.Count) {
-				return;
-			}
+            if (packetId > packets.Count)
+            {
+                return;
+            }
 
-			var packet = packets[packetId];
+            var packet = packets[packetId];
 
-			packet.Read(reader, sender);
-		}
-		catch {
-			//TODO: Log
-		}
-	}
+            packet.Read(reader, sender);
+        }
+        catch
+        {
+            //TODO: Log
+        }
+    }
 }

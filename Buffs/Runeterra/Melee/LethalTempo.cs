@@ -6,7 +6,6 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.Buffs.Runeterra.Melee
 {
@@ -40,7 +39,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
                     modPlayer.BotCLethalTempoStacks--;
                     player.buffTime[buffIndex] = (int)(((float)modPlayer.BotCLethalTempoDuration / 6f) * 60f);
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFallOff") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.2f }, player.Center);
-                } else 
+                }
+                else
                 {
                     modPlayer.BotCLethalTempoStacks = 0;
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFallOff") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.4f }, player.Center);

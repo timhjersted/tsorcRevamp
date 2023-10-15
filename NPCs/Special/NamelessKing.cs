@@ -3,10 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
@@ -42,7 +39,7 @@ namespace tsorcRevamp.NPCs.Special
             NPC.height = 40;
             NPC.width = 20;
             NPC.damage = 68;
-            NPC.lifeMax = 30000; 
+            NPC.lifeMax = 30000;
             NPC.defense = 20;
             NPC.value = 250000;
             NPC.HitSound = SoundID.NPCHit48;
@@ -597,7 +594,7 @@ namespace tsorcRevamp.NPCs.Special
             return true;
         }
 
-        
+
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
@@ -615,7 +612,7 @@ namespace tsorcRevamp.NPCs.Special
                 }
             }
 
-            
+
         }
 
         public override void FindFrame(int frameHeight)

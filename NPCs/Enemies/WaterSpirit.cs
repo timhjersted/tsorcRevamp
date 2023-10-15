@@ -1,8 +1,7 @@
 using Terraria;
-using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Tools;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -62,7 +61,7 @@ namespace tsorcRevamp.NPCs.Enemies
             return 0;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(new CommonDrop(ModContent.ItemType<GreatMagicShieldScroll>(), 100, 1, 1, 3));
         }

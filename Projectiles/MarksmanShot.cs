@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles
         }
 
         public override void AI()
-        {           
+        {
 
             // Rotation increased by velocity.X 
             Projectile.rotation += Projectile.velocity.X * 0.08f;
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles
                     Projectile.alpha = 225;
                 }
             }
-        }        
+        }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

@@ -1,11 +1,11 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.DataStructures;
 using tsorcRevamp.Buffs.Runeterra.Magic;
-using Terraria.Audio;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
@@ -13,28 +13,28 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 
     public class OrbOfSpiritualityCharm : ModProjectile
     {
-		public override void SetStaticDefaults()
-		{
-			// These lines facilitate the trail drawing
-			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
-			ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+        public override void SetStaticDefaults()
+        {
+            // These lines facilitate the trail drawing
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             Main.projFrames[Projectile.type] = 8;
         }
 
-		public override void SetDefaults()
-		{
-			Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
-			Projectile.width = 66; // The width of your projectile
+        public override void SetDefaults()
+        {
+            Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
+            Projectile.width = 66; // The width of your projectile
             Projectile.scale = 1.2f;
-			Projectile.height = 28; // The height of your projectile
-			Projectile.friendly = true; // Deals damage to enemies
-			Projectile.penetrate = 1;
-			Projectile.DamageType = DamageClass.Magic;
-			Projectile.usesLocalNPCImmunity = true; // Used for hit cooldown changes in the ai hook
-			Projectile.localNPCHitCooldown = 10; // This facilitates custom hit cooldown logic
-			Projectile.tileCollide = false;
-			Projectile.aiStyle = -1;
-		}
+            Projectile.height = 28; // The height of your projectile
+            Projectile.friendly = true; // Deals damage to enemies
+            Projectile.penetrate = 1;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.usesLocalNPCImmunity = true; // Used for hit cooldown changes in the ai hook
+            Projectile.localNPCHitCooldown = 10; // This facilitates custom hit cooldown logic
+            Projectile.tileCollide = false;
+            Projectile.aiStyle = -1;
+        }
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
@@ -44,10 +44,10 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         }
         public int frameSpeed = 5;
         public override void AI()
-		{
-			Player player = Main.player[Projectile.owner];
+        {
+            Player player = Main.player[Projectile.owner];
             Projectile.rotation = Projectile.velocity.ToRotation();
-            if (Projectile.velocity.X < 0) 
+            if (Projectile.velocity.X < 0)
             {
                 Projectile.rotation -= MathHelper.Pi;
             }
@@ -115,7 +115,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
-			target.AddBuff(ModContent.BuffType<Charmed>(), 7 * 60);
+            target.AddBuff(ModContent.BuffType<Charmed>(), 7 * 60);
             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/CharmHit") with { Volume = OrbOfDeception.OrbSoundVolume * 4 });
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)

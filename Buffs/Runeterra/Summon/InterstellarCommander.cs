@@ -9,12 +9,12 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
     public class InterstellarCommander : ModBuff
     {
         public override void SetStaticDefaults()
-		{
-			Main.buffNoSave[Type] = true;
-			Main.buffNoTimeDisplay[Type] = true;
-		}
+        {
+            Main.buffNoSave[Type] = true;
+            Main.buffNoTimeDisplay[Type] = true;
+        }
 
-		public override void Update(Player player, ref int buffIndex)
+        public override void Update(Player player, ref int buffIndex)
         {
             if (player.HeldItem.type == ModContent.ItemType<ScorchingPoint>())
             {
@@ -22,14 +22,14 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
             }
 
             if (player.ownedProjectileCounts[ModContent.ProjectileType<InterstellarVesselShip>()] > 0)
-			{
-				InterstellarVesselGauntlet.ReposeProjectiles(player);
-				player.buffTime[buffIndex] = 18000;
-			}
-			else
-			{
-				player.DelBuff(buffIndex);
-				buffIndex--;
+            {
+                InterstellarVesselGauntlet.ReposeProjectiles(player);
+                player.buffTime[buffIndex] = 18000;
+            }
+            else
+            {
+                player.DelBuff(buffIndex);
+                buffIndex--;
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost && player.statMana > 0)
@@ -43,5 +43,5 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostDeactivation") with { Volume = InterstellarVesselGauntlet.SoundVolume });
             }
         }
-	}
+    }
 }

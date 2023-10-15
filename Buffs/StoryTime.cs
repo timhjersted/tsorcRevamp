@@ -23,7 +23,7 @@ namespace tsorcRevamp.Buffs
                 // Clears incombat debuff near sign
                 if (player.HasBuff(ModContent.BuffType<InCombat>()))
                 {
-                    player.ClearBuff(ModContent.BuffType<InCombat>());                  
+                    player.ClearBuff(ModContent.BuffType<InCombat>());
                 }
 
                 player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff = true;
@@ -46,10 +46,10 @@ namespace tsorcRevamp.Buffs
                 }
 
                 // Only heal when no bosses are alive, hp isn't full and the player is standing still
-                if (!bossActive && player.statLife < player.statLifeMax2 && player.velocity == Vector2.Zero) 
+                if (!bossActive && player.statLife < player.statLifeMax2 && player.velocity == Vector2.Zero)
                 {
                     // Wind up 1
-                    if (storyEffectTimer > 0 && storyEffectTimer <= 60) 
+                    if (storyEffectTimer > 0 && storyEffectTimer <= 60)
                     {
                         player.lifeRegen = player.statLifeMax2 / 80;
                         if (Main.rand.NextBool(8))
@@ -60,7 +60,7 @@ namespace tsorcRevamp.Buffs
 
 
                     // Wind up 2
-                    if (storyEffectTimer > 60 && storyEffectTimer <= 100) 
+                    if (storyEffectTimer > 60 && storyEffectTimer <= 100)
                     {
                         player.lifeRegen = player.statLifeMax2 / 60;
 
@@ -82,7 +82,7 @@ namespace tsorcRevamp.Buffs
                     }
 
                     // Full effect
-                    if (storyEffectTimer > 140) 
+                    if (storyEffectTimer > 140)
                     {
                         player.lifeRegen = player.statLifeMax2 / 15;
                         GenerateDusts(player, Main.rand.Next(80, 95) * 0.043f, 25f);

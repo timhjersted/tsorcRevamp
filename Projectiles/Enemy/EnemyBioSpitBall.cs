@@ -29,13 +29,13 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreKill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass with { Volume = 0.04f}, Projectile.Center); //grass cut / acid singe sound
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass with { Volume = 0.04f }, Projectile.Center); //grass cut / acid singe sound
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, 50, Color.Green, 3.0f);
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 71, 0.3f, 0.3f, 200, default, 1f);
             Dust.NewDust(Projectile.position, Projectile.height, Projectile.width, 71, 0.2f, 0.2f, 200, default, 2f);
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 71, 0.2f, 0.2f, 200, default, 2f);
             Main.dust[dust].noGravity = false;
-            
+
             return true;
         }
 
@@ -47,7 +47,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.rotation += 1f;
             if (Main.rand.NextBool(3))
             {
-                
+
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, 50, Color.Green, 3.0f);
                 Main.dust[dust].noGravity = false;
             }
@@ -65,7 +65,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            
+
             target.AddBuff(BuffID.Blackout, 120, false); //darkness
 
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EaterofWorldsHead)))

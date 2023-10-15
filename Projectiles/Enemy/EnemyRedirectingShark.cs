@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         bool delayedMode = false;
         public override void PostAI()
         {
-            
+
             Projectile.rotation = Projectile.velocity.ToRotation();
 
 
@@ -85,14 +85,14 @@ namespace tsorcRevamp.Projectiles.Enemy
         public static Texture2D texture;
         public override bool PreDraw(ref Color lightColor)
         {
-            if(texture == null || texture.IsDisposed)
+            if (texture == null || texture.IsDisposed)
             {
                 texture = (Texture2D)ModContent.Request<Texture2D>(Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
 
             Projectile.frameCounter++;
-            
-            if(Projectile.frameCounter > 4)
+
+            if (Projectile.frameCounter > 4)
             {
                 Projectile.frame++;
                 if (Projectile.frame >= Main.projFrames[Projectile.type])

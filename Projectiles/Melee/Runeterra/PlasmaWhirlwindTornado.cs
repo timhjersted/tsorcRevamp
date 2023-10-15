@@ -1,12 +1,11 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
-using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra
@@ -85,9 +84,9 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             //Draw code goes here
             for (var j = 0; j < 1; j++) //this would be changed if you needed the tornado to redraw itself multiple times. looked neat with random offset but also makes the tornado brighter white
             {
-                for (var i = 0; i < numrings*2; i++) //some weird stuff going on with ring offset i think. multiplying numrings by 2 to make it taller for now
+                for (var i = 0; i < numrings * 2; i++) //some weird stuff going on with ring offset i think. multiplying numrings by 2 to make it taller for now
                 {
-                    float _xscale = ((ringScale.X * i/2) * 0.1f) + 0.005f * i; //controls how wide each individual ring will be
+                    float _xscale = ((ringScale.X * i / 2) * 0.1f) + 0.005f * i; //controls how wide each individual ring will be
                     if (Projectile.velocity == Vector2.Zero)
                     {
                         _xscale += 0.1f;

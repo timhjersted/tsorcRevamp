@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -54,7 +53,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             if (fadeIn < 120)
             {
                 fadeIn++;
-                if(fadeIn == 110)
+                if (fadeIn == 110)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, Projectile.Center);
                 }
@@ -65,7 +64,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
             if (size < maxSize)
             {
-                size += 10f;            
+                size += 10f;
             }
         }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
@@ -76,7 +75,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         //Custom collision
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if(fadeIn < 120)
+            if (fadeIn < 120)
             {
                 return false;
             }
@@ -109,7 +108,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             {
                 opacity = 0.1f;
             }
-            else if(fadeIn < 120)
+            else if (fadeIn < 120)
             {
                 MathHelper.Lerp(0.01f, 1, (fadeIn - 110f) / 10f);
             }

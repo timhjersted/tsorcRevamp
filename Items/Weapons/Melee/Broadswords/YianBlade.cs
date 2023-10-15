@@ -5,11 +5,8 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Armors.Magic;
-using tsorcRevamp.Items.Armors.Ranged;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.VanillaItems;
-using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -98,8 +95,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             if (player.statMana >= player.manaCost * BaseManaCost)
             {
                 return true;
-            } else 
-            { 
+            }
+            else
+            {
                 return false;
             }
         }

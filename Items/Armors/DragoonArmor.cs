@@ -33,11 +33,11 @@ namespace tsorcRevamp.Items.Armors
         {
             //If the tier 1 head is on, it will handle the set bonus.
             //Applying it again here would make it apply twice.
-            if(head.type == ModContent.ItemType<DragoonHelmet>())
+            if (head.type == ModContent.ItemType<DragoonHelmet>())
             {
                 return false;
             }
-            
+
             //If the head has been upgraded, check if the greaves are valid. If so, apply the set bonus.
             if (head.type == ModContent.ItemType<DragoonHelmet2>())
             {

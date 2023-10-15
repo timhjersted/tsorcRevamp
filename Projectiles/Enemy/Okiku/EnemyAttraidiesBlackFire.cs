@@ -101,7 +101,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                     Main.dust[particle2].noLight = true;
                     Main.dust[particle2].fadeIn = 3f;
                 }
-            }            
+            }
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
@@ -169,7 +169,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             return true;
         }
 
-        
+
         public override float CollisionWidthFunction(float progress)
         {
             return 12;

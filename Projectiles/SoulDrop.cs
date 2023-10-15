@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.width = 48;
             Projectile.height = 48;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 9999; 
+            Projectile.timeLeft = 9999;
             playerRespawned = false;
         }
 
@@ -51,7 +51,7 @@ namespace tsorcRevamp.Projectiles
                             {
                                 if (Main.player[i] != null && Main.player[i].active && !Main.player[i].dead)
                                 {
-                                    if(Main.myPlayer == Main.player[i].whoAmI)
+                                    if (Main.myPlayer == Main.player[i].whoAmI)
                                     {
                                         Main.player[i].QuickSpawnItem(Main.player[i].GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), (int)Projectile.ai[0]);
 
@@ -60,7 +60,7 @@ namespace tsorcRevamp.Projectiles
                                     //CombatText.NewText(player.Hitbox, Color.Purple, itemText);
                                 }
                             }
-                            else if(distance < 200 * 200)
+                            else if (distance < 200 * 200)
                             {
                                 Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, Main.player[i].Center, 7);
                             }
@@ -83,12 +83,12 @@ namespace tsorcRevamp.Projectiles
             {
                 //Generate a list of fake soul positions
                 soulPositions = new Vector2[(int)Math.Log10((int)Projectile.ai[0]) * 2];
-                if(soulPositions.Length < 1)
+                if (soulPositions.Length < 1)
                 {
                     soulPositions = new Vector2[1];
                 }
 
-                for(int i = 0; i < soulPositions.Length; i++)
+                for (int i = 0; i < soulPositions.Length; i++)
                 {
                     soulPositions[i] = Main.rand.NextVector2Circular(48, 48);
                 }
@@ -106,7 +106,7 @@ namespace tsorcRevamp.Projectiles
                 Vector2 origin = sourceRectangle.Size() / 2f;
 
                 float easedAnimation = 1;
-                if(animationProgress < 30)
+                if (animationProgress < 30)
                 {
                     easedAnimation = (float)Math.Sin((animationProgress / 30f) * MathHelper.PiOver2);
                 }
@@ -114,7 +114,7 @@ namespace tsorcRevamp.Projectiles
                 Main.EntitySpriteDraw(texture,
                 Projectile.Center - Main.screenPosition + (soulPositions[i] * easedAnimation),
                 sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
-            }           
+            }
 
             return false;
         }

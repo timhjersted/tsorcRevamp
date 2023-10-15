@@ -2,12 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Enums;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -132,7 +129,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                                         lerpPercent = 0;
                                     }
 
-                                    
+
                                     for (int k = 0; k < dustCount; k++)
                                     {
                                         dustSpawned++;
@@ -176,7 +173,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 //Main.NewText("Branches: " + branchCount);
 
                 int dustCounter = 0;
-                for(int i = 0; i < Main.maxDust; i++)
+                for (int i = 0; i < Main.maxDust; i++)
                 {
                     if (Main.dust[i].active)
                     {
@@ -549,7 +546,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {            
+        {
             return false;
         }
 

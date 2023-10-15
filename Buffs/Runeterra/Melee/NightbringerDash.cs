@@ -1,10 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.Audio;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
-using tsorcRevamp.Projectiles.Melee.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra.Melee
 {
@@ -27,10 +24,11 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
             {
                 player.GetModPlayer<tsorcRevampPlayer>().SweepingBladeTimer = 2;
             }
-            if (player.velocity.X > 0) 
+            if (player.velocity.X > 0)
             {
                 player.direction = 1;
-            } else
+            }
+            else
             { player.direction = -1; }
         }
     }

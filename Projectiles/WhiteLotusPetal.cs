@@ -4,10 +4,13 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class WhiteLotusPetal : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class WhiteLotusPetal : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 20;
             Projectile.height = 20;
             Projectile.timeLeft = 200;
@@ -21,7 +24,8 @@ namespace tsorcRevamp.Projectiles {
         public int ownerWAI;
         public float dir;
         public int count;
-        public override void AI() {
+        public override void AI()
+        {
             Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.NorthPole, Vector2.Zero);
             dust.noGravity = true;
             Projectile owner = Main.projectile[ownerWAI];
@@ -30,10 +34,12 @@ namespace tsorcRevamp.Projectiles {
             Projectile.ai[0] += 0.15f;
 
             Vector2 offset;
-            if (dir == 1) {
+            if (dir == 1)
+            {
                 offset = new((float)(18 * Math.Cos(Projectile.ai[0])), (float)(18 * Math.Sin(Projectile.ai[0])));
             }
-            else {
+            else
+            {
                 offset = new((float)(18 * Math.Sin(Projectile.ai[0])), (float)(18 * Math.Cos(Projectile.ai[0])));
             }
             offset = offset.RotatedBy(MathHelper.ToRadians(Projectile.ai[1] * (360 / count)));
@@ -42,8 +48,10 @@ namespace tsorcRevamp.Projectiles {
             Projectile.rotation = (offset.ToRotation() + MathHelper.ToRadians(90));
         }
 
-        public override void OnKill(int timeLeft) {
-            for (int i = 0; i < 10; i++) {
+        public override void OnKill(int timeLeft)
+        {
+            for (int i = 0; i < 10; i++)
+            {
                 Dust dust = Dust.NewDustDirect(Projectile.Center, 1, 1, DustID.BubbleBurst_White);
                 dust.noGravity = true;
             }

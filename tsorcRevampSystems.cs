@@ -1,25 +1,26 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Graphics;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
-using tsorcRevamp.Items.Tools;
-using tsorcRevamp.UI;
-using Terraria.Localization;
-using System;
-using tsorcRevamp.Textures;
-using ReLogic.Graphics;
-using tsorcRevamp.Tiles;
-using System.Linq;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Textures;
+using tsorcRevamp.Tiles;
+using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp
 {
-    class tsorcRevampSystems : ModSystem {
+    class tsorcRevampSystems : ModSystem
+    {
         public static RecipeGroup UpgradedMirrors;
         public static RecipeGroup CobaltHelmets;
 
@@ -38,7 +39,8 @@ namespace tsorcRevamp
 
         public override void PostDrawFullscreenMap(ref string mouseText)
         {
-            foreach (ForceLoadTexture texture in mapTextures) {
+            foreach (ForceLoadTexture texture in mapTextures)
+            {
                 texture.KeepLoaded();
             }
 
@@ -92,17 +94,21 @@ namespace tsorcRevamp
                     //Step 4: Check if they're left-clicking, and close the minimap + teleport them if so
                     if (Main.mouseLeft && Main.mouseLeftRelease && !tsorcRevampWorld.BossAlive)
                     {
-                        if (Main.LocalPlayer.HasBuff(ModContent.BuffType<InCombat>())) {
-                            if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().TextCooldown >= 0) {
+                        if (Main.LocalPlayer.HasBuff(ModContent.BuffType<InCombat>()))
+                        {
+                            if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().TextCooldown >= 0)
+                            {
                                 Main.NewText(LangUtils.GetTextValue("World.NoTPCombat"));
                             }
                         }
-                        else {
+                        else
+                        {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, Main.LocalPlayer.position);
                             UsefulFunctions.SafeTeleport(Main.LocalPlayer, new Vector2(bonfirePoint.X, bonfirePoint.Y - 1) * 16);
                             Main.mapFullscreen = false;
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, bonfirePoint * 16);
-                            if (Main.netMode == NetmodeID.MultiplayerClient) {
+                            if (Main.netMode == NetmodeID.MultiplayerClient)
+                            {
                                 Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.Loading>(), 15);
                             }
                         }
@@ -112,7 +118,8 @@ namespace tsorcRevamp
                     {
                         mouseText = LangUtils.GetTextValue("World.NoTPBoss");
                     }
-                    else if (Main.LocalPlayer.HasBuff(ModContent.BuffType<InCombat>())) {
+                    else if (Main.LocalPlayer.HasBuff(ModContent.BuffType<InCombat>()))
+                    {
                         mouseText = LangUtils.GetTextValue("World.NoTPCombat");
                     }
                 }
@@ -133,14 +140,15 @@ namespace tsorcRevamp
                 fissureTexture.KeepLoaded();
                 Texture2D minimapFissureTexture = fissureTexture.texture;
                 Main.spriteBatch.Draw(minimapFissureTexture, abyssFissureCoords, null, Color.White, 0, minimapFissureTexture.Size() / 2, 1, SpriteEffects.None, 1);
-                if((mouseTile - tsorcRevampWorld.AbyssPortalLocation / 16).Length() <= hoverRange)
+                if ((mouseTile - tsorcRevampWorld.AbyssPortalLocation / 16).Length() <= hoverRange)
                 {
                     mouseText = LangUtils.GetTextValue("World.AbyssalFissure");
                 }
             }
 
 
-            foreach (KeyValuePair<Vector2, int> marker in tsorcRevampWorld.MapMarkers) {
+            foreach (KeyValuePair<Vector2, int> marker in tsorcRevampWorld.MapMarkers)
+            {
                 Vector2 markerDrawCoords = marker.Key;
                 markerDrawCoords.X += 1.5f;
                 markerDrawCoords.Y += 1f;
@@ -151,25 +159,30 @@ namespace tsorcRevamp
 
                 mouseTile = new Vector2((float)Math.Floor(mouseTile.X), (float)Math.Floor(mouseTile.Y));
 
-                if (tsorcRevamp.MarkerSelected == 4 && (mouseTile - marker.Key).Length() < hoverRange && Main.mouseLeft) { //delete mode
+                if (tsorcRevamp.MarkerSelected == 4 && (mouseTile - marker.Key).Length() < hoverRange && Main.mouseLeft)
+                { //delete mode
                     tsorcRevampWorld.MapMarkers.Remove(marker.Key);
                 }
             }
 
-            if (!MapMarkersUIState.Switching && tsorcRevamp.MarkerSelected > -1 && tsorcRevamp.MarkerSelected != 4 && Main.mouseLeft && !tsorcRevampWorld.MapMarkers.ContainsKey(mouseTile)) {
+            if (!MapMarkersUIState.Switching && tsorcRevamp.MarkerSelected > -1 && tsorcRevamp.MarkerSelected != 4 && Main.mouseLeft && !tsorcRevampWorld.MapMarkers.ContainsKey(mouseTile))
+            {
                 tsorcRevampWorld.MapMarkers.Add(mouseTile, tsorcRevamp.MarkerSelected);
                 tsorcRevamp.MarkerSelected = -1;
             }
 
-            else if (MapMarkersUIState.HoveringOver > -1) {
+            else if (MapMarkersUIState.HoveringOver > -1)
+            {
                 string hoverText = LangUtils.GetTextValue("UI.SelectMarker");
 
 
-                if (MapMarkersUIState.HoveringOver == MapMarkersUIState.REMOVE_ID) {
+                if (MapMarkersUIState.HoveringOver == MapMarkersUIState.REMOVE_ID)
+                {
                     hoverText = LangUtils.GetTextValue("UI.EraseMarkers");
                 }
 
-                if (tsorcRevamp.MarkerSelected == MapMarkersUIState.HoveringOver) {
+                if (tsorcRevamp.MarkerSelected == MapMarkersUIState.HoveringOver)
+                {
                     hoverText = LangUtils.GetTextValue("UI.StopEditMarkers");
                 }
 
@@ -177,7 +190,8 @@ namespace tsorcRevamp
 
             }
 
-            if (tsorcRevamp.MarkerSelected > -1) {
+            if (tsorcRevamp.MarkerSelected > -1)
+            {
                 Main.spriteBatch.Draw(mapTextures[tsorcRevamp.MarkerSelected].texture, new Vector2(Main.MouseScreen.X - 24, Main.MouseScreen.Y + 24), Color.White);
             }
             ModContent.GetInstance<tsorcRevamp>().MarkerInterface.Draw(Main.spriteBatch, new GameTime());
@@ -324,18 +338,20 @@ namespace tsorcRevamp
         {
             tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.Draw(spriteBatch);
-            if (tsorcRevamp.NearbySoapstone != null) {
+            if (tsorcRevamp.NearbySoapstone != null)
+            {
                 SoapstoneTileEntity soapstone = tsorcRevamp.NearbySoapstone;
                 float scaleMod = (float)((ModContent.GetInstance<tsorcRevampConfig>().SoapstoneScale / 100f) + 1) / Main.GameViewMatrix.Zoom.X;
 
-                if (soapstone.timer > 0 && !soapstone.hidden) {
+                if (soapstone.timer > 0 && !soapstone.hidden)
+                {
                     float textWidth = soapstone.textWidth > 0 ? soapstone.textWidth : SoapstoneMessage.DEFAULT_WIDTH;
                     textWidth *= scaleMod;
 
                     string text = UsefulFunctions.WrapString(soapstone.text, FontAssets.ItemStack.Value, textWidth, scaleMod);
                     textWidth += FontAssets.ItemStack.Value.MeasureString(" ").X * scaleMod;
                     float alpha = (soapstone.timer / 20f);
-                    if(soapstone.timer >= 20)
+                    if (soapstone.timer >= 20)
                     {
                         alpha = 1;
                     }
@@ -363,7 +379,8 @@ namespace tsorcRevamp
                     DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, text, textPosition, textColor, 0, Vector2.Zero, scaleMod, SpriteEffects.None, 0);
                     return;
                 }
-                else {
+                else
+                {
                     if (!soapstone.nearPlayer)
                     {
                         return;
@@ -392,9 +409,11 @@ namespace tsorcRevamp
 
                     UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
 
-                    if (drectWorld.Contains(tsorcRevampPlayer.RealMouseWorld.ToPoint())) {
+                    if (drectWorld.Contains(tsorcRevampPlayer.RealMouseWorld.ToPoint()))
+                    {
                         Main.LocalPlayer.mouseInterface = true;
-                        if (Main.mouseLeft && Main.mouseLeftRelease) {
+                        if (Main.mouseLeft && Main.mouseLeftRelease)
+                        {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
                             soapstone.timer = 25;
                             soapstone.hidden = false;

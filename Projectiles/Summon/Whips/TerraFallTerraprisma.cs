@@ -1,9 +1,9 @@
 using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System;
-using System.Collections.Generic;
 using tsorcRevamp.Buffs.Weapons.Summon;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
@@ -57,23 +57,23 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
                 player.ClearBuff(ModContent.BuffType<TerraFallBuff>());
             }
             if (player.HasBuff(ModContent.BuffType<TerraFallBuff>()))
-                {
-                    Projectile.timeLeft = 2;
-                }
-                DelegateMethods.v3_1 = Projectile.AI_156_GetColor().ToVector3();
-                Point point2 = Projectile.Center.ToTileCoordinates();
-                DelegateMethods.CastLightOpen(point2.X, point2.Y);
+            {
+                Projectile.timeLeft = 2;
+            }
+            DelegateMethods.v3_1 = Projectile.AI_156_GetColor().ToVector3();
+            Point point2 = Projectile.Center.ToTileCoordinates();
+            DelegateMethods.CastLightOpen(point2.X, point2.Y);
             ai156_blacklistedTargets.Clear();
             AI_156_Think(ai156_blacklistedTargets);
             Dust.NewDust(Projectile.Center, Projectile.width / 2, Projectile.height / 2, DustID.TerraBlade);
         }
         private void AI_156_Think(List<int> blacklist)
         {
-                int num = 40;
-                int num12 = num - 1;
-                int num17 = num + 40;
-                int num18 = num17 - 1;
-                int num19 = num + 1;
+            int num = 40;
+            int num12 = num - 1;
+            int num17 = num + 40;
+            int num18 = num17 - 1;
+            int num19 = num + 1;
             Player player = Main.player[Projectile.owner];
             if (player.active && Vector2.Distance(player.Center, Projectile.Center) > 2000f)
             {
@@ -294,14 +294,14 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             Player player = Main.player[Projectile.owner];
             idleRotation = 0f;
             idleSpot = Vector2.Zero;
-                int num3 = stackedIndex + 1;
-                idleRotation = (float)num3 * ((float)Math.PI * 2f) * (1f / 60f) * (float)player.direction + (float)Math.PI / 2f;
-                idleRotation = MathHelper.WrapAngle(idleRotation);
-                int num4 = num3 % totalIndexes;
-                Vector2 vector = new Vector2(0f, 0.5f).RotatedBy((player.miscCounterNormalized * (2f + (float)num4) + (float)num4 * 0.5f + (float)player.direction * 1.3f) * ((float)Math.PI * 2f)) * 4f;
-                idleSpot = idleRotation.ToRotationVector2() * 10f + player.MountedCenter + new Vector2(player.direction * (num3 * -6 - 16), player.gravDir * -15f);
-                idleSpot += vector;
-                idleRotation += (float)Math.PI / 2f;
+            int num3 = stackedIndex + 1;
+            idleRotation = (float)num3 * ((float)Math.PI * 2f) * (1f / 60f) * (float)player.direction + (float)Math.PI / 2f;
+            idleRotation = MathHelper.WrapAngle(idleRotation);
+            int num4 = num3 % totalIndexes;
+            Vector2 vector = new Vector2(0f, 0.5f).RotatedBy((player.miscCounterNormalized * (2f + (float)num4) + (float)num4 * 0.5f + (float)player.direction * 1.3f) * ((float)Math.PI * 2f)) * 4f;
+            idleSpot = idleRotation.ToRotationVector2() * 10f + player.MountedCenter + new Vector2(player.direction * (num3 * -6 - 16), player.gravDir * -15f);
+            idleSpot += vector;
+            idleRotation += (float)Math.PI / 2f;
         }
 
         public override bool PreDraw(ref Color lightColor)

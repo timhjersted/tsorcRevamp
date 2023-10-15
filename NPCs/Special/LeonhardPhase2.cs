@@ -366,7 +366,7 @@ namespace tsorcRevamp.NPCs.Special
                             NPC.netUpdate = true;
                         }
                     } // END moving forward, still: standing on solid tile but not in front of a passable door
-                    
+
                 }
 
                 #endregion
@@ -598,9 +598,9 @@ namespace tsorcRevamp.NPCs.Special
 
                 //No teleporting if he has line of sight and the player isn't high above or below him
                 //Allow teleporting if the boss is wet and the player is not (aka it fell in a lake lol)
-                if(Collision.CanHit(NPC, Main.player[NPC.target]) && Math.Abs(Main.player[NPC.target].Center.Y - NPC.Center.Y) < 50 && (!NPC.wet || Main.player[NPC.target].wet))
+                if (Collision.CanHit(NPC, Main.player[NPC.target]) && Math.Abs(Main.player[NPC.target].Center.Y - NPC.Center.Y) < 50 && (!NPC.wet || Main.player[NPC.target].wet))
                 {
-                    if(Boredom > 1201)
+                    if (Boredom > 1201)
                     {
                         Boredom = 1201;
                     }
@@ -744,7 +744,7 @@ namespace tsorcRevamp.NPCs.Special
                     }
                     else
                     {
-                        Dust dust2 = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 32 , NPC.position.Y - 14), 36, 36, 89, 0, 0, 50, default(Color), Main.rand.NextFloat(.7f, 1.2f))];
+                        Dust dust2 = Main.dust[Dust.NewDust(new Vector2(NPC.position.X - 32, NPC.position.Y - 14), 36, 36, 89, 0, 0, 50, default(Color), Main.rand.NextFloat(.7f, 1.2f))];
                         dust2.noGravity = true;
                         dust2.velocity *= 0;
                     }

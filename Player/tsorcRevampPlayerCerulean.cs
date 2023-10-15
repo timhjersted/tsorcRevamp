@@ -4,7 +4,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using tsorcRevamp.Items;
 
 namespace tsorcRevamp
 {
@@ -80,7 +79,7 @@ namespace tsorcRevamp
             ceruleanRestorationTimerBonus = 1f + (Player.manaRegenDelayBonus / 4f);  //manaRegenDelayBonus is given out at 1 or 0.5 by 2 sources in vanilla so this is also very good scaling
             if (Player.manaRegenBuff) //so mana regen pot does something
             {
-                ceruleanRestorationTimerBonus = 1f + (ManaRegenPotRestorationTimerBonus / 100f) + (Player.manaRegenDelayBonus / 3.5f); 
+                ceruleanRestorationTimerBonus = 1f + (ManaRegenPotRestorationTimerBonus / 100f) + (Player.manaRegenDelayBonus / 3.5f);
             }
             ceruleanRestorationTimerMax = 300 * ceruleanRestorationTimerBonus; //base value does not affect the total mana restored
         }

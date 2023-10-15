@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.IO;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -42,7 +40,7 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.ArchdeaconBanner>();
         }
 
-       
+
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
@@ -61,7 +59,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 chance += 0.15f;
             }
-                return chance;
+            return chance;
         }
 
         public override void AI()
@@ -75,7 +73,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             bool validTarget = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
 
-            
+
             if (NPC.life > NPC.lifeMax * 3 / 10)
             {
                 Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
@@ -114,28 +112,28 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (choice == 0)
                 {
-                        if (NPC.ai[0] >= 12 && NPC.ai[2] < 1 && Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 250) 
+                    if (NPC.ai[0] >= 12 && NPC.ai[2] < 1 && Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 250)
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                float num48 = 5f;
-                                Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                                int damage = 16;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellHoldBall>();
-                                float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                                int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
-                                Main.projectile[proj].timeLeft = 420;
-                            }
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, PitchVariance = 2f }, NPC.Center);
-                            NPC.ai[0] = 0;
-                            NPC.ai[2]++;
-
-
+                            float num48 = 5f;
+                            Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                            int damage = 16;
+                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellHoldBall>();
+                            float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                            int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
+                            Main.projectile[proj].timeLeft = 420;
                         }
-                        
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, PitchVariance = 2f }, NPC.Center);
+                        NPC.ai[0] = 0;
+                        NPC.ai[2]++;
+
+
+                    }
+
                 }
-   
-                
+
+
             }
 
             if (NPC.ai[1] >= 20)
@@ -170,7 +168,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
                 else
-                {       
+                {
                     tsorcRevampAIs.QueueTeleport(NPC, 38, true, 60);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 }
@@ -187,21 +185,21 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (Main.rand.NextBool(2) && Player.position.Y < NPC.position.Y && NPC.Distance(Player.Center) < 400) //1 in 2chance boss will use attack when player is above enemy
                 {
 
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            float num48 = 1f;
-                            Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                            int damage = 22;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyIceBallUp>();
-                            float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                            int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
-                            Main.projectile[proj].timeLeft = 1;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        float num48 = 1f;
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        int damage = 22;
+                        int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyIceBallUp>();
+                        float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                        int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
+                        Main.projectile[proj].timeLeft = 1;
 
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.AncientLight, NPC.velocity.X, NPC.velocity.Y, 0, Color.Black, 2f);
-                            Main.dust[dust].noGravity = true;
-                        }
-                        NPC.ai[3] = 0;
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                        int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.AncientLight, NPC.velocity.X, NPC.velocity.Y, 0, Color.Black, 2f);
+                        Main.dust[dust].noGravity = true;
+                    }
+                    NPC.ai[3] = 0;
 
                 }
             }
@@ -229,7 +227,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(new CommonDrop(ModContent.ItemType<HealingElixir>(), 10, 1, 1, 3));
             npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 25));

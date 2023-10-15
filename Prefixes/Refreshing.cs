@@ -23,7 +23,7 @@ namespace tsorcRevamp.Prefixes
             => PrefixCategory.Accessory;
 
         public override void Apply(Item item)
-			=> item.GetGlobalItem<tsorcInstancedGlobalItem>().refreshing = _power;
+            => item.GetGlobalItem<tsorcInstancedGlobalItem>().refreshing = _power;
 
         public override void ModifyValue(ref float valueMult)
         {

@@ -44,28 +44,33 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             recipe.Register();
         }
 
-        public override bool? UseItem(Player player) {
+        public override bool? UseItem(Player player)
+        {
             canHeal = true;
             return base.UseItem(player);
         }
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (canHeal) {
+            if (canHeal)
+            {
                 player.statLife += HEAL_AMOUNT;
-                if (player.statLife > player.statLifeMax2) {
+                if (player.statLife > player.statLifeMax2)
+                {
                     player.statLife = player.statLifeMax2;
                 }
                 player.HealEffect(HEAL_AMOUNT);
-                canHeal = false; 
+                canHeal = false;
             }
         }
 
         public override void OnHitPvp(Player player, Player target, Player.HurtInfo hurtInfo)
         {
-            if (canHeal) {
+            if (canHeal)
+            {
                 player.statLife += HEAL_AMOUNT;
-                if (player.statLife > player.statLifeMax2) {
+                if (player.statLife > player.statLifeMax2)
+                {
                     player.statLife = player.statLifeMax2;
                 }
                 player.HealEffect(HEAL_AMOUNT);

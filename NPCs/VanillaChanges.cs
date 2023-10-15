@@ -8,17 +8,16 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Pets;
 using Terraria.ModLoader.Config;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items;
 using tsorcRevamp.Items.Lore;
-using tsorcRevamp.Utilities;
-using System.Diagnostics;
-using tsorcRevamp.Items.Vanity;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Pets;
 using tsorcRevamp.Items.Placeable.Relics;
 using tsorcRevamp.Items.Placeable.Trophies;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Vanity;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs
 {
@@ -710,7 +709,7 @@ namespace tsorcRevamp.NPCs
                         {
                             npc.defense = 20;
                             npc.damage = 60;
-                            npc.timeLeft = 720; 
+                            npc.timeLeft = 720;
 
                         }
                         break;
@@ -1834,7 +1833,7 @@ namespace tsorcRevamp.NPCs
                 #region Eye of Cthulhu
                 case (NPCID.EyeofCthulhu):
                     {
-                      npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.EyeOfCthulhu.DespawnHandler"), Color.Red, DustID.RedTorch);
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.EyeOfCthulhu.DespawnHandler"), Color.Red, DustID.RedTorch);
 
                         //damage changes here are for first phase
                         npc.damage = 27; //legacy: 37
@@ -2054,16 +2053,16 @@ namespace tsorcRevamp.NPCs
                 #endregion
 
                 #region The Twins
-                case int thetwins when (thetwins ==NPCID.Retinazer || thetwins == NPCID.Spazmatism):
+                case int thetwins when (thetwins == NPCID.Retinazer || thetwins == NPCID.Spazmatism):
                     {
                         npc.value = 174540;
-                        if(npc.type == NPCID.Retinazer)
+                        if (npc.type == NPCID.Retinazer)
                         {
                             npc.defense = 28;
                             npc.damage = 85; //legacy: 80 //recent was 56
                             npc.lifeMax = 25000;
                         }
-                        if(npc.type == NPCID.Spazmatism)
+                        if (npc.type == NPCID.Spazmatism)
                         {
                             npc.damage = 90;
                             npc.defense = 36;
@@ -3164,10 +3163,10 @@ namespace tsorcRevamp.NPCs
                     }
                     #endregion
 
-                #endregion
+                    #endregion
 
 
-                #endregion
+                    #endregion
             }
         }
 
@@ -3193,22 +3192,22 @@ namespace tsorcRevamp.NPCs
             {
                 //Block vanilla enemies in certain regions/conditions
                 if (Main.hardMode)
-                {                    
+                {
                     if (npc.type == NPCID.AngryBones //All these pre-hardmode dungeon spawns take up a million spawn slots and die in one hit
-                        || npc.type == NPCID.DarkCaster 
+                        || npc.type == NPCID.DarkCaster
                         || npc.type == NPCID.AngryBonesBig
-                        || npc.type == NPCID.AngryBonesBigHelmet 
+                        || npc.type == NPCID.AngryBonesBigHelmet
                         || npc.type == NPCID.AngryBonesBigMuscle
-                        || npc.type == NPCID.BlazingWheel 
+                        || npc.type == NPCID.BlazingWheel
                         || npc.type == NPCID.DesertDjinn //Literally make the lava/spike section near the entrance to the Hunter's dungeon in the underground desert impossible        
-                        
+
                         )
                     {
                         npc.active = false;
                     }
                 }
-                
-                if (   npc.type == NPCID.BigRainZombie
+
+                if (npc.type == NPCID.BigRainZombie
                     || npc.type == NPCID.BigZombie
                     || npc.type == NPCID.SmallZombie
                     || npc.type == NPCID.Zombie //zombies are lame and old at this point and take up spawn slots too often, experience will be fresher without them
@@ -3874,7 +3873,7 @@ namespace tsorcRevamp.NPCs
             }
             if (npc.type == NPCID.Spazmatism)
             {
-               // npc.active = false;
+                // npc.active = false;
                 //return false;                
             }
 
@@ -3915,7 +3914,7 @@ namespace tsorcRevamp.NPCs
                             num474 = 135;
                             break;
                     }
-                    if (Main.rand.NextBool(5)&& npc.ai[1] < 120f)
+                    if (Main.rand.NextBool(5) && npc.ai[1] < 120f)
                     {
                         for (int num475 = 0; num475 < 3; num475++)
                         {
@@ -3943,7 +3942,7 @@ namespace tsorcRevamp.NPCs
                             }
                         }
                     }
-                    if (Main.rand.NextBool(5)&& npc.ai[1] < 150f)
+                    if (Main.rand.NextBool(5) && npc.ai[1] < 150f)
                     {
                         for (int num477 = 0; num477 < 3; num477++)
                         {
@@ -3961,7 +3960,7 @@ namespace tsorcRevamp.NPCs
                             }
 
                             Terraria.Audio.SoundStyle randomStyle = SoundID.NPCHit1;
-                            
+
                             if (Main.rand.NextBool())
                             {
                                 randomStyle = SoundID.NPCHit18;
@@ -3969,7 +3968,7 @@ namespace tsorcRevamp.NPCs
                             Terraria.Audio.SoundEngine.PlaySound(randomStyle, position6);
                         }
                     }
-                    if (!Main.rand.NextBool(3)&& npc.ai[1] < 150f)
+                    if (!Main.rand.NextBool(3) && npc.ai[1] < 150f)
                     {
                         Dust dust79 = Main.dust[Dust.NewDust(npc.Left, npc.width, npc.height / 2, 241)];
                         dust79.position = npc.Center + Vector2.UnitY.RotatedByRandom(4.1887903213500977) * new Vector2(npc.width / 2, npc.height / 2) * (0.8f + Main.rand.NextFloat() * 0.2f);
@@ -4114,7 +4113,7 @@ namespace tsorcRevamp.NPCs
                                 Vector2 item = list2[0].Item1;
                                 int num488 = 1;
                                 int num489 = 1;
-                                if (num486 > 0 && num484 > 0 && (!Main.rand.NextBool(3)|| num486 == 1))
+                                if (num486 > 0 && num484 > 0 && (!Main.rand.NextBool(3) || num486 == 1))
                                 {
                                     num489 = Main.rand.Next(Math.Max(1, list2[0].Item2));
                                     num488++;
@@ -5219,7 +5218,7 @@ namespace tsorcRevamp.NPCs
             if (npc.type == NPCID.SkeletronPrime)
             {
                 PrimeLaserCooldown--;
-                if(npc.ai[1] == 1)
+                if (npc.ai[1] == 1)
                 {
                     float partCount = 0;
                     if (NPC.AnyNPCs(NPCID.PrimeLaser))
@@ -5242,7 +5241,7 @@ namespace tsorcRevamp.NPCs
                     //Bosses speed is cut to 40% of base, but ramps up to almost full speed as its pieces die
                     float speedMultiplier = 0.8f - (0.4f * partCount / 4);
                     npc.velocity *= speedMultiplier;
-                }               
+                }
 
                 //Laser attack speed ramps up as pieces die
                 //TODO: Add orbiting probes that spawn around head when pieces die, which actually shoot the laser. Looks awkward just coming out of its head randomly.
@@ -5290,7 +5289,7 @@ namespace tsorcRevamp.NPCs
                         }
 
                         //Shoot confining lasers above it to keep the player from circling
-                        if(destroyerChargeTimer > -60 && (Main.GameUpdateCount + npc.whoAmI * 5) % 300 == 0)
+                        if (destroyerChargeTimer > -60 && (Main.GameUpdateCount + npc.whoAmI * 5) % 300 == 0)
                         {
                             Vector2 projVel = new Vector2(Main.rand.NextFloat(-1, 1), Main.rand.NextFloat(-1, 0.05f));
                             Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -4, npc.whoAmI);
@@ -5348,7 +5347,7 @@ namespace tsorcRevamp.NPCs
                     }
 
                     laserToggle = !laserToggle;
-                }                
+                }
             }
 
 
@@ -5551,10 +5550,10 @@ namespace tsorcRevamp.NPCs
                             {
                                 Vector2 sum = Vector2.Zero;
                                 float count = 0;
-                                for(int i = 0; i < Main.maxNPCs; i++)
+                                for (int i = 0; i < Main.maxNPCs; i++)
                                 {
                                     NPC thisNPC = Main.npc[i];
-                                    if(thisNPC.type == NPCID.TheDestroyerBody)
+                                    if (thisNPC.type == NPCID.TheDestroyerBody)
                                     {
                                         sum += UsefulFunctions.Aim(thisNPC.Center, Main.player[npc.target].Center, 5);
                                         count++;
@@ -5569,7 +5568,7 @@ namespace tsorcRevamp.NPCs
                 }
                 else
                 {
-                    if(destroyerChargeTimer > 300)
+                    if (destroyerChargeTimer > 300)
                     {
                         destroyerChargeTimer = 0;
                         destroyerJustSpawned = false;
@@ -5642,7 +5641,7 @@ namespace tsorcRevamp.NPCs
             SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
             Vector2 origin = sourceRectangle.Size() / 2f;
-            
+
             spriteBatch.Draw((Texture2D)TextureAssets.Dest[1], npc.Center - Main.screenPosition, sourceRectangle, Color.White * 0.45f, npc.rotation, origin, npc.scale, effects, 0f);
             spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, Color.Orange * 0.2f, npc.rotation, origin, npc.scale, effects, 0f);
         }
@@ -5706,13 +5705,13 @@ namespace tsorcRevamp.NPCs
 
             #region Loot Changes
 
-            if(npc.type == NPCID.PrimeLaser)
+            if (npc.type == NPCID.PrimeLaser)
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.SkeletronPrime.Warning"), Color.Red);
                 PrimeLaserCooldown = 500;
             }
 
-            if(npc.target > Main.maxPlayers || Main.player[npc.target] == null || Main.player[npc.target].active == false)
+            if (npc.target > Main.maxPlayers || Main.player[npc.target] == null || Main.player[npc.target].active == false)
             {
                 npc.target = 0;
             }
@@ -5829,7 +5828,7 @@ namespace tsorcRevamp.NPCs
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.Broadswords.CoralSword>(), 1, false, -1);
             }
 
-            if (Main.rand.NextBool(25)&& ((npc.type >= NPCID.BigPantlessSkeleton && npc.type <= NPCID.SmallSkeleton) ||
+            if (Main.rand.NextBool(25) && ((npc.type >= NPCID.BigPantlessSkeleton && npc.type <= NPCID.SmallSkeleton) ||
                                 (npc.type >= NPCID.HeadacheSkeleton && npc.type <= NPCID.PantlessSkeleton) ||
                                 (npc.type >= NPCID.SkeletonTopHat && npc.type <= NPCID.SkeletonAlien) ||
                                 (npc.type >= NPCID.BoneThrowingSkeleton && npc.type <= NPCID.BoneThrowingSkeleton4) ||
@@ -5859,7 +5858,7 @@ namespace tsorcRevamp.NPCs
             }
 
 
-            if (Main.rand.NextBool(25)&& ((npc.type >= NPCID.BigFemaleZombie && npc.type <= NPCID.SmallFemaleZombie) ||
+            if (Main.rand.NextBool(25) && ((npc.type >= NPCID.BigFemaleZombie && npc.type <= NPCID.SmallFemaleZombie) ||
                                 (npc.type >= NPCID.BigTwiggyZombie && npc.type <= NPCID.SmallZombie) ||
                                 (npc.type >= NPCID.ZombieDoctor && npc.type <= NPCID.ZombiePixie) ||
                                 (npc.type >= NPCID.ZombieXmas && npc.type <= NPCID.ZombieSweater) ||
@@ -5913,20 +5912,22 @@ namespace tsorcRevamp.NPCs
             if (npc.type == NPCID.WallCreeper || npc.type == NPCID.WallCreeperWall || npc.type == NPCID.BlackRecluse || npc.type == NPCID.BlackRecluseWall || npc.type == NPCID.JungleCreeper || npc.type == NPCID.JungleCreeperWall || npc.type == NPCID.DesertScorpionWalk || npc.type == NPCID.DesertScorpionWall)
             {
                 if (Main.rand.NextBool(5)) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Humanity>());
-                if (Main.rand.NextBool(5)&& Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Humanity>());
+                if (Main.rand.NextBool(5) && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Humanity>());
             }
 
 
             #endregion
         }
 
-        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
-            if (npc.type == NPCID.CultistBoss) {
+            if (npc.type == NPCID.CultistBoss)
+            {
                 npcLoot.Add(ItemDropRule.BossBag(ItemID.CultistBossBag));
             }
 
-            if (npc.type == NPCID.Deerclops){
+            if (npc.type == NPCID.Deerclops)
+            {
                 npcLoot.RemoveWhere(_ => true);
                 npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.AncestralSpiritBag>()));
                 IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
@@ -5936,27 +5937,33 @@ namespace tsorcRevamp.NPCs
                 npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AncestralSpiritTrophy>(), 10));
             }
 
-            if (npc.type == NPCID.GoblinArcher){
+            if (npc.type == NPCID.GoblinArcher)
+            {
                 npcLoot.Add(ItemDropRule.Common(ItemID.HunterPotion, 15, 1, 1));
                 npcLoot.Add(ItemDropRule.Common(ItemID.ArcheryPotion, 15, 1, 1));
             }
-            if (npc.type == NPCID.GoblinThief){
+            if (npc.type == NPCID.GoblinThief)
+            {
                 npcLoot.Add(ItemDropRule.Common(ItemID.Gi, 20, 1, 1));
                 npcLoot.Add(ItemDropRule.Common(ItemID.BattlePotion, 15, 1, 1));
             }
-            if (npc.type == NPCID.GoblinWarrior){
+            if (npc.type == NPCID.GoblinWarrior)
+            {
                 npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 12, 1, 1));
                 npcLoot.Add(ItemDropRule.Common(ItemID.EndurancePotion, 15, 1, 1));
             }
-            if (npc.type == NPCID.GoblinPeon){
+            if (npc.type == NPCID.GoblinPeon)
+            {
                 npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<GlowingMushroomSkewer>(), 5, 1, 1));
             }
-            if (npc.type == NPCID.GoblinSorcerer){
+            if (npc.type == NPCID.GoblinSorcerer)
+            {
                 npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 15, 1, 1));
                 npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 15, 1, 1));
                 npcLoot.Add(ItemDropRule.Common(ItemID.SummoningPotion, 20, 1, 1));
             }
-            if (npc.type == NPCID.GoblinSummoner){
+            if (npc.type == NPCID.GoblinSummoner)
+            {
                 npcLoot.Add(ItemDropRule.Common(ItemID.SummoningPotion, 2, 1, 1));
             }
 

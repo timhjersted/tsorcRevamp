@@ -5,7 +5,6 @@ using System;
 using Terraria;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {

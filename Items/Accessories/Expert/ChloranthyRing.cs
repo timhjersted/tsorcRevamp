@@ -1,5 +1,4 @@
 ﻿using Terraria;
-using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
@@ -13,7 +12,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StaminaRecoverySpeed);
         public override void SetStaticDefaults()
         {
-                               // [c/ffbf00:text] is a great yellow for highlights
+            // [c/ffbf00:text] is a great yellow for highlights
         }
 
         public override void SetDefaults()

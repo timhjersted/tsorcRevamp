@@ -58,12 +58,12 @@ namespace tsorcRevamp.Projectiles.Enemy
                 //Vanilla Debuffs cut in half to counter expert mode doubling them
                 target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 36000, false);
                 //target.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel += 10;
-                
+
             }
 
             if (Main.rand.NextBool(3))
             {
-                
+
                 target.AddBuff(30, 1800, false); //bleeding
                 target.AddBuff(33, 1800, false); //weak
             }

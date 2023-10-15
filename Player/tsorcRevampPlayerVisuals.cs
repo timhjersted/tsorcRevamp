@@ -6,10 +6,9 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs;
-using tsorcRevamp.Projectiles;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp
 {
@@ -55,7 +54,7 @@ namespace tsorcRevamp
 
         public override void ModifyDrawInfo(ref PlayerDrawSet drawInfo)
         {
-            
+
         }
         public override void FrameEffects()
         {
@@ -294,7 +293,7 @@ namespace tsorcRevamp
                         //Idk why this was necessary, but it was
                         if (modPlayer.Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.Tomes.LightOfDawn>())
                         {
-                            originOffset.X += 10; 
+                            originOffset.X += 10;
                             Color baseColor = Color.Lerp(new Color(0.1f, 0.5f, 1f), new Color(1f, 0.3f, 0.85f), (float)Math.Pow(Math.Sin((float)Main.timeForVisualEffects / 60f), 2));
                             drawColor = UsefulFunctions.ShiftColor(baseColor, (float)Main.timeForVisualEffects, 0.03f);
 
@@ -334,7 +333,7 @@ namespace tsorcRevamp
                         }
 
 
-                        
+
 
 
                         //DrawData data = new DrawData(texture, drawPos, sourceRectangle, Color.White, drawPlayer.itemRotation, origin, modPlayer.Player.HeldItem.scale, drawInfo.spriteEffects, 3);
@@ -617,7 +616,7 @@ namespace tsorcRevamp
 
                     Main.spriteBatch.Draw(meterEmpty, barDestination, Color.White);
                     Main.spriteBatch.Draw(meterFull, fullBarDestination, new Rectangle(0, (int)(meterFull.Height * (1 - cursePercentage)), meterFull.Width, meterFull.Height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
-                    Main.spriteBatch.Draw(powerfulMeterFull, powerfulFullBarDestination, new Rectangle(0, (int)(powerfulMeterFull.Height * (1 - powerfulCursePercentage)), powerfulMeterFull.Width, powerfulMeterFull.Height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);                   
+                    Main.spriteBatch.Draw(powerfulMeterFull, powerfulFullBarDestination, new Rectangle(0, (int)(powerfulMeterFull.Height * (1 - powerfulCursePercentage)), powerfulMeterFull.Width, powerfulMeterFull.Height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
                 }
             }
             #endregion
@@ -825,7 +824,7 @@ namespace tsorcRevamp
         protected override void Draw(ref PlayerDrawSet drawInfo)
         {
             if (!drawInfo.drawPlayer.dead &&
-               ((drawInfo.drawPlayer.armor[1].type == ModContent.ItemType<Items.Armors.Summon.TarantulaCarapace>() && drawInfo.drawPlayer.armor[11].type == 0) || 
+               ((drawInfo.drawPlayer.armor[1].type == ModContent.ItemType<Items.Armors.Summon.TarantulaCarapace>() && drawInfo.drawPlayer.armor[11].type == 0) ||
                (drawInfo.drawPlayer.armor[11].type == ModContent.ItemType<Items.Armors.Summon.TarantulaCarapace>())))
             {
                 Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Armors/Summon/TarantulaCarapace_Backpack");
@@ -879,7 +878,7 @@ namespace tsorcRevamp
             }
             modPlayer.effectIntensity = intensity;
             modPlayer.collapseSpeed = collapseSpeed;
-            
+
         }
 
         public static void HandleAura(tsorcRevampPlayer modPlayer)
@@ -909,8 +908,8 @@ namespace tsorcRevamp
                     modPlayer.effectRadius = tsorcRevampPlayer.baseRadius;
                 }
             }
-            
-            if(modPlayer.effectIntensity < 0.1f)
+
+            if (modPlayer.effectIntensity < 0.1f)
             {
                 modPlayer.effectIntensity = 0.1f;
             }
@@ -989,7 +988,7 @@ namespace tsorcRevamp
             tsorcRevampPlayer modPlayer = drawPlayer.GetModPlayer<tsorcRevampPlayer>();
             if (IonEffect == null)
             {
-                IonEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/SimpleRing", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;                
+                IonEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/SimpleRing", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
@@ -1139,7 +1138,7 @@ namespace tsorcRevamp
             }
             else
             {
-                if(modPlayer.effectRadius > 150)
+                if (modPlayer.effectRadius > 150)
                 {
                     modPlayer.effectRadius -= 5;
                 }
@@ -1158,7 +1157,7 @@ namespace tsorcRevamp
             modPlayer.effectTimer++;
             Color rgbColor = Main.hslToRgb(hslColor);
 
-            
+
 
             //Pass relevant data to the shader via these parameters
             retEffect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseTurbulent.Width);
@@ -1203,10 +1202,10 @@ namespace tsorcRevamp
             tsorcRevampPlayer modPlayer = drawPlayer.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.effectRadius = 200;
             Lighting.AddLight((int)drawPlayer.Center.X / 16, (int)drawPlayer.Center.Y / 16, 0f, 0.4f, 0.8f);
-            
+
             if (drawPlayer.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Spears.FetidExhaust>()] != 0)
             {
-                if(modPlayer.fadeValue > -5)
+                if (modPlayer.fadeValue > -5)
                 {
                     modPlayer.fadeValue -= 0.2f;
                 }

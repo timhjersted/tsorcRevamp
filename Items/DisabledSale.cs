@@ -3,15 +3,16 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 
-namespace tsorcRevamp.Items 
+namespace tsorcRevamp.Items
 {
-    class DisabledSale : ModItem 
+    class DisabledSale : ModItem
     {
-        public override void SetStaticDefaults() 
+        public override void SetStaticDefaults()
         {
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.Red;
             Item.value = 999999999;
         }

@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics;
-using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.VFX;
 
@@ -49,7 +47,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             lifeTimer++;
             if (hostNPC != null && Projectile.ai[0] == 1)
             {
-                if(lifeTimer == 0)
+                if (lifeTimer == 0)
                 {
                     hostNPC = null;
                 }
@@ -74,7 +72,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
                     deathProgress = 1;
                     Projectile.Kill();
                 }
-                if(lifeTimer > 540)
+                if (lifeTimer > 540)
                 {
                     fadeOut = 1f - ((lifeTimer - 540f) / 60f);
                     trailCollision = false;
@@ -136,7 +134,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             }
         }
 
-        
+
 
         public override float CollisionWidthFunction(float progress)
         {

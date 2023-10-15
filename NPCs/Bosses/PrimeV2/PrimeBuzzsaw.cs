@@ -1,16 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
+using System;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Enemy.DarkCloud;
-using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
-using System;
-using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
@@ -21,7 +15,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             Main.npcFrameCount[NPC.type] = 2;
             NPCID.Sets.TrailCacheLength[NPC.type] = (int)TRAIL_LENGTH;    //The length of old position to be recorded
             NPCID.Sets.TrailingMode[NPC.type] = 1;
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            {
                 Hide = true
             };
             NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
@@ -99,7 +94,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         {
             SawTimer++;
             NPC.rotation = 0;
-            if(NPC.life == 1)
+            if (NPC.life == 1)
             {
                 damaged = true;
             }
@@ -163,7 +158,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 drawOffset = Vector2.Zero;
                 //Simply sweep left and right, stopping to realign with the player after each pass
-                if(Math.Abs(NPC.Center.X - Target.Center.X) > 800)
+                if (Math.Abs(NPC.Center.X - Target.Center.X) > 800)
                 {
                     seekingPlayer = true;
                 }
@@ -172,15 +167,15 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 {
                     NPC.velocity.Y = 0;
                     NPC.Center = new Vector2(NPC.Center.X, MathHelper.Lerp(NPC.Center.Y, Target.Center.Y, 0.05f));
-                    if(Math.Abs(NPC.Center.Y - Target.Center.Y) < 10)
+                    if (Math.Abs(NPC.Center.Y - Target.Center.Y) < 10)
                     {
                         seekingPlayer = false;
                         movingLeft = NPC.Center.X > Target.Center.X;
                     }
                 }
-                
 
-                if(!seekingPlayer)
+
+                if (!seekingPlayer)
                 {
                     NPC.velocity.X = 5;
 

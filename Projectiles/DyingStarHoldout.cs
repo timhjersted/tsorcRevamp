@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles
 {
     class DyingStarHoldout : ModProjectile
-    {         
+    {
         public static float MaxCharge = 60f;
 
         public override void SetStaticDefaults()
@@ -38,11 +38,11 @@ namespace tsorcRevamp.Projectiles
             {
                 if (charge < trueChargeTime)
                 {
-                    
-                    float radius = (trueChargeTime - charge) / 3f;
-                    radius = ((radius * radius) / 4) + 64;                
 
-                   
+                    float radius = (trueChargeTime - charge) / 3f;
+                    radius = ((radius * radius) / 4) + 64;
+
+
 
                     for (int j = 0; j < 50f * (charge / trueChargeTime) * (charge / trueChargeTime); j++)
                     {
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Projectiles
                         Vector2 dustPos = player.Center + dir;
                         Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
                         Dust.NewDustPerfect(dustPos, DustID.MagicMirror, Vector2.Zero, 200, default, 0.75f).noGravity = true;
-                    }                   
+                    }
                 }
                 else
                 {
@@ -69,7 +69,7 @@ namespace tsorcRevamp.Projectiles
                     diff.Normalize();
                     Vector2 offset = Vector2.Zero;
 
-                    for(int i = 0; i < 50; i++)
+                    for (int i = 0; i < 50; i++)
                     {
                         Dust.NewDustPerfect(player.Center, DustID.InfernoFork, Main.rand.NextVector2Circular(6, 6), 200, default, 2f).noGravity = true;
                     }
@@ -96,7 +96,7 @@ namespace tsorcRevamp.Projectiles
                                 Dust.NewDustPerfect(player.Center + dustPoint, DustID.MagicMirror, (diff * 2).RotatedBy(Main.rand.NextFloat(MathHelper.Pi / -3, MathHelper.Pi / 3)) + (diff * 5), 200, default, 1f).noGravity = true;
                             }
                         }
-                    }                    
+                    }
 
                     for (int i = 0; i < 30; i++)
                     {
@@ -145,7 +145,7 @@ namespace tsorcRevamp.Projectiles
                 player.statMana -= (int)(10 * player.manaCost);
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), player.Center, velocity, ModContent.ProjectileType<Projectiles.Fireball3>(), Projectile.damage / 30, 0, Projectile.owner).rotation = velocity.ToRotation() + MathHelper.PiOver2;
             }
-            
+
 
 
             UpdatePlayerVisuals(player, rrp);
@@ -154,9 +154,9 @@ namespace tsorcRevamp.Projectiles
             {
                 UpdateAim(rrp, player.HeldItem.shootSpeed);
 
-                bool stillInUse = player.channel || player.altFunctionUse == 2;                
+                bool stillInUse = player.channel || player.altFunctionUse == 2;
 
-                if(player.altFunctionUse == 2 && altFunctionTimer > 32)
+                if (player.altFunctionUse == 2 && altFunctionTimer > 32)
                 {
                     stillInUse = false;
                 }

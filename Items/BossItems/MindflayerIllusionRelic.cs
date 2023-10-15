@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -79,7 +78,7 @@ namespace tsorcRevamp.Items.BossItems
                 Main.time = 0;
             }
             return true;
-        }        
+        }
 
         //Was gonna make it have to charge up for a second to activate, but... eh
         //int cast = 0;

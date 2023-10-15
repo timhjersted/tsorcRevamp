@@ -2,12 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -119,7 +118,8 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
             //"0.5f scale phantoms have 20% chance of dropping, scaling up towards 1f scale phantoms dropping humanity 70% of the time"
             //haha fuck that, 45% flat it is
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Humanity>(), 100, 1, 1, 45));

@@ -82,7 +82,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if((randomDelaySet && Projectile.ai[0] <= 0) || Projectile.ai[0] == -999)
+            if ((randomDelaySet && Projectile.ai[0] <= 0) || Projectile.ai[0] == -999)
             {
                 return base.Colliding(projHitbox, targetHitbox);
             }
@@ -93,7 +93,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override void OnKill(int timeLeft)
         {
-            
+
         }
 
         public override bool PreDraw(ref Color lightColor)

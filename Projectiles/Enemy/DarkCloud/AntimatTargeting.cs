@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 {
@@ -35,14 +31,14 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
         public override void AI()
         {
             base.AI();
-            if(Projectile.ai[0] > 3)
+            if (Projectile.ai[0] > 3)
             {
                 amplitude = 0.1f;
                 TelegraphTime = (int)Projectile.ai[0];
                 Projectile.ai[0] = 0;
             }
 
-            if(TelegraphTime == 60)
+            if (TelegraphTime == 60)
             {
                 TargetingMode = 2;
             }

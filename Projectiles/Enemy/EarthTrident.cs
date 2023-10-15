@@ -68,7 +68,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.velocity.Y += 0.1f;
         }
 
-        
+
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gaibon>()))

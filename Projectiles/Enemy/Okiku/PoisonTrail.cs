@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics;
-using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.VFX;
 
@@ -53,7 +51,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             if (Projectile.ai[0] == 2)
             {
                 //Special ring mode during his final phase
-                if(waitTimer == 1)
+                if (waitTimer == 1)
                 {
                     Projectile.timeLeft = 800;
                     fadeOut = 0;
@@ -71,7 +69,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 }
                 else
                 {
-                    if(waitTimer < 90 && fixedSpeed < 2)
+                    if (waitTimer < 90 && fixedSpeed < 2)
                     {
                         fixedSpeed += 0.01f;
                     }
@@ -99,7 +97,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 {
                     if (!initialized)
                     {
-                        if(Projectile.timeLeft > 450)
+                        if (Projectile.timeLeft > 450)
                         {
                             Projectile.timeLeft = 450;
                         }
@@ -189,7 +187,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                         if (target != null)
                         {
                             //Calculate the vector from the middle of the trail aimed at the player, that makes the whole trail move in one direction
-                            trailVelocity = UsefulFunctions.Aim(trailPositions[trailPositions.Count / 2], target.Center, 5f); 
+                            trailVelocity = UsefulFunctions.Aim(trailPositions[trailPositions.Count / 2], target.Center, 5f);
 
                             for (int i = 0; i < trailPositions.Count; i++)
                             {
@@ -204,7 +202,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                         for (int i = 0; i < trailPositions.Count; i++)
                         {
                             //Mix them together at a ratio of 1:3
-                            trailPositions[i] += Vector2.Lerp(trailVelocity.RotatedBy(MathHelper.Pi * (-0.5 + ((float)i / (float)trailPositions.Count))), trailVelocities[i], 0.75f); 
+                            trailPositions[i] += Vector2.Lerp(trailVelocity.RotatedBy(MathHelper.Pi * (-0.5 + ((float)i / (float)trailPositions.Count))), trailVelocities[i], 0.75f);
                         }
 
                         for (int i = 0; i < trailPositions.Count; i++)

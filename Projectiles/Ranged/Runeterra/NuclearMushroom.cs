@@ -1,34 +1,34 @@
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.ID;
+using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
-	public class NuclearMushroom: ModProjectile
-	{
+    public class NuclearMushroom : ModProjectile
+    {
         public bool Activated;
-		public override void SetStaticDefaults()
-		{
-			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5; // The length of old position to be recorded
-			ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // The recording mode
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5; // The length of old position to be recorded
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // The recording mode
             Main.projFrames[Projectile.type] = 12;
         }
 
-		public override void SetDefaults()
-		{
-			Projectile.width = 50;
-			Projectile.height = 50;
+        public override void SetDefaults()
+        {
+            Projectile.width = 50;
+            Projectile.height = 50;
 
-			Projectile.friendly = true;
-			Projectile.DamageType = DamageClass.Ranged;
-			Projectile.penetrate = 1;
-			Projectile.timeLeft = 100 * 60;
-			Projectile.ignoreWater = true;
-			Projectile.tileCollide = false;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.penetrate = 1;
+            Projectile.timeLeft = 100 * 60;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
             Projectile.knockBack = 0f;
             Projectile.ContinuouslyUpdateDamageStats = true;
         }
@@ -104,10 +104,12 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
             if (BoomSoundStyle == 1)
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBoom1") with { Volume = 1f });
-            } else if (BoomSoundStyle == 2)
+            }
+            else if (BoomSoundStyle == 2)
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBoom2") with { Volume = 1f });
-            } else
+            }
+            else
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBoom3") with { Volume = 1f });
             }

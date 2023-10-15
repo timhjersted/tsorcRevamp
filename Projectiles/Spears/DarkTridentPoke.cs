@@ -1,8 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.Graphics.Shaders;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 //using tsorcRevamp.Dusts;
@@ -74,7 +72,7 @@ namespace tsorcRevamp.Projectiles.Spears
 
         public static Texture2D texture;
         public override bool PreDraw(ref Color lightColor)
-        {           
+        {
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (Projectile.spriteDirection == -1)
             {

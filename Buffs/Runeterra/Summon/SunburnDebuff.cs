@@ -6,15 +6,15 @@ using tsorcRevamp.NPCs;
 namespace tsorcRevamp.Buffs.Runeterra.Summon
 {
     public class SunburnDebuff : ModBuff
-	{
-		public override void SetStaticDefaults()
-		{
-			BuffID.Sets.IsATagBuff[Type] = true;
-		}
+    {
+        public override void SetStaticDefaults()
+        {
+            BuffID.Sets.IsATagBuff[Type] = true;
+        }
 
-		public override void Update(NPC npc, ref int buffIndex)
-		{
-			npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Sunburnt = true;
+        public override void Update(NPC npc, ref int buffIndex)
+        {
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Sunburnt = true;
 
             if (Main.GameUpdateCount % 5 == 0)
             {
@@ -29,5 +29,5 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks = 0;
             }
         }
-	}
+    }
 }

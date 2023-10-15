@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Armors
             //The way it works is that the head checks if the others are valid. If the head isn't on, the chest checks. If that isn't on either, then the greaves check.
             //This way only one of them ever applies it at a time.
 
-            if(body.type == ModContent.ItemType<DragoonArmor>() || body.type == ModContent.ItemType<DragoonArmor2>())
+            if (body.type == ModContent.ItemType<DragoonArmor>() || body.type == ModContent.ItemType<DragoonArmor2>())
             {
                 if (legs.type == ModContent.ItemType<DragoonGreaves>() || legs.type == ModContent.ItemType<DragoonGreaves2>())
                 {

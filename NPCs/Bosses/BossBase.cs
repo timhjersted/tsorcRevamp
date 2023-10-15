@@ -2,15 +2,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Terraria;
-using Terraria.DataStructures;
-using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
-using tsorcRevamp.Buffs;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -242,18 +236,18 @@ namespace tsorcRevamp.NPCs.Bosses
         /// Add all the moves for your boss in here!
         /// You need the function name, the time the attack lasts, and optionally can specify a color (for use with things like VFX or lighting)
         /// </summary>
-        public virtual void InitializeMovesAndDamage(){}
+        public virtual void InitializeMovesAndDamage() { }
 
         /// <summary>
         /// Controls what this boss does during its intro
         /// If it doesn't have one, this gets skipped
         /// </summary>
-        public virtual void HandleIntro(){}
+        public virtual void HandleIntro() { }
 
         /// <summary>
         /// If your boss has multiple phases or does things at certain health percents, it goes in here
         /// </summary>
-        public virtual void HandleLife(){}
+        public virtual void HandleLife() { }
 
         /// <summary>
         /// Override this to make things happen when this boss is killed
@@ -290,7 +284,7 @@ namespace tsorcRevamp.NPCs.Bosses
         /// <summary>
         /// Override this to add custom animation to your boss
         /// </summary>
-        public override void FindFrame(int currentFrame){}
+        public override void FindFrame(int currentFrame) { }
 
         /// <summary>
         /// Override this to set what type of potion the boss should drop on death.
@@ -333,7 +327,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 attackTransitionTimeRemaining--;
                 return;
             }
-            
+
             //If it's doing an attack or phase transition, then do nothing else until it's done
             if (phaseTransitionTimeRemaining > 0)
             {
@@ -351,7 +345,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             //If the NPC is dying, then do nothing else until it's done
-            if(NPC.life == 1)
+            if (NPC.life == 1)
             {
                 if (deathAnimationProgress <= deathAnimationDuration)
                 {
@@ -385,7 +379,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (testAttack != -1)
             {
                 MoveIndex = 0;
-            }                       
+            }
 
             //Run the current move, then increment the timer by 1 afterward
             CurrentMove.Move();
@@ -393,7 +387,7 @@ namespace tsorcRevamp.NPCs.Bosses
             MoveTimer++;
 
             //If the time is up, then switch to the next move
-            if(MoveTimer > CurrentMove.timeLimit)
+            if (MoveTimer > CurrentMove.timeLimit)
             {
                 NextMove();
             }
@@ -446,9 +440,9 @@ namespace tsorcRevamp.NPCs.Bosses
         /// </summary>
         public override bool CheckDead()
         {
-            if(deathAnimationProgress < deathAnimationDuration)
+            if (deathAnimationProgress < deathAnimationDuration)
             {
-                if(NPC.life <= 0)
+                if (NPC.life <= 0)
                 {
                     NPC.life = 1;
                 }

@@ -1,28 +1,28 @@
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
-using System;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
-	public class PlasmaWhirlwindSpin : ModProjectile
-	{
+    public class PlasmaWhirlwindSpin : ModProjectile
+    {
         public bool Hit = false;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 7;
         }
         public override void SetDefaults()
-		{
-			Projectile.aiStyle = -1; 
-			Projectile.friendly = true;
-			Projectile.penetrate = -1;
-			Projectile.tileCollide = false;
-			Projectile.scale = 1f;
-			Projectile.DamageType = DamageClass.Melee;
-			Projectile.ownerHitCheck = true;
+        {
+            Projectile.aiStyle = -1;
+            Projectile.friendly = true;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.scale = 1f;
+            Projectile.DamageType = DamageClass.Melee;
+            Projectile.ownerHitCheck = true;
             Projectile.usesOwnerMeleeHitCD = true;
             Projectile.timeLeft = 40;
             Projectile.hide = true;

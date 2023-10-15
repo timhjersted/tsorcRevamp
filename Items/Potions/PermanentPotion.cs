@@ -3,14 +3,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs;
-using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Potions.PermanentPotions
@@ -46,24 +44,31 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             get;
         }
 
-        public abstract int BuffType {
+        public abstract int BuffType
+        {
             get;
         }
-        public virtual string BuffName {
+        public virtual string BuffName
+        {
             get;
         }
 
-        public int ConsumedAmount {
-            get {
+        public int ConsumedAmount
+        {
+            get
+            {
                 //this all seems a bit scary to do every frame but i cant think of a better way ;-;
                 tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
                 int consumedAmount = 0;
-                if (modPlayer.consumedPotions.Count > 0) {
-                    foreach (ItemDefinition def in modPlayer.consumedPotions.Keys) {
+                if (modPlayer.consumedPotions.Count > 0)
+                {
+                    foreach (ItemDefinition def in modPlayer.consumedPotions.Keys)
+                    {
                         int itemID = def.Type;
                         Item potion = new();
                         potion.SetDefaults(itemID);
-                        if (potion.buffType == BuffType) {
+                        if (potion.buffType == BuffType)
+                        {
                             consumedAmount += modPlayer.consumedPotions[def];
                         }
                     }
@@ -72,21 +77,26 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             }
         }
 
-        public virtual bool CanScale {
+        public virtual bool CanScale
+        {
             get => false;
         }
-        public virtual int ScalingFactor {
+        public virtual int ScalingFactor
+        {
             get => 44;
         }
 
-        public virtual float EffectPotency {
-            get {
+        public virtual float EffectPotency
+        {
+            get
+            {
                 float potency = (float)ConsumedAmount / (float)ScalingFactor;
                 potency += 0.1f;
                 return Math.Min(potency, 1.5f);
             }
         }
-        public virtual List<PermanentPotion> ExclusivePermanents {
+        public virtual List<PermanentPotion> ExclusivePermanents
+        {
             get;
         }
         public override void SetDefaults()
@@ -139,8 +149,10 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.PermanentBuffToggles[PermanentID] = !modPlayer.PermanentBuffToggles[PermanentID];
 
-            if (ExclusivePermanents != null) {
-                foreach (PermanentPotion checkID in ExclusivePermanents) {
+            if (ExclusivePermanents != null)
+            {
+                foreach (PermanentPotion checkID in ExclusivePermanents)
+                {
                     //dont disable self
                     if (checkID.PermanentID == PermanentID)
                         continue;
@@ -176,13 +188,16 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
                 {
                     player.buffImmune[BuffType] = true;
                 }
-                else if (player.HasBuff(BuffType)) {
+                else if (player.HasBuff(BuffType))
+                {
                     canGiveEffect = false;
                 }
 
                 if (!canGiveEffect) return;
-                if (ExclusivePermanents != null) {
-                    foreach (PermanentPotion checkID in ExclusivePermanents) {
+                if (ExclusivePermanents != null)
+                {
+                    foreach (PermanentPotion checkID in ExclusivePermanents)
+                    {
                         if (checkID.PermanentID == PermanentID) continue;
                         if (player.HasBuff(checkID.BuffType)) canGiveEffect = false;
                     }
@@ -193,7 +208,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         }
 
         public abstract void PotionEffect(Player player);
-        public float ApplyScaling(float value) {
+        public float ApplyScaling(float value)
+        {
             return value * EffectPotency;
         }
     }
@@ -217,7 +233,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_289";
         public override int PermanentID => 1;
         public override int BuffType => BuffID.Regeneration;
-        public override bool CanScale => true; 
+        public override bool CanScale => true;
         public override float EffectPotency
         {
             get
@@ -437,8 +453,10 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int PermanentID => 18;
         public override int BuffType => BuffID.Tipsy;
         public override bool CanScale => true;
-        public override float EffectPotency {
-            get {
+        public override float EffectPotency
+        {
+            get
+            {
                 //higher base, slower scaling
                 //because having more stats to scale means a low base value hurts a lot more
                 //still capped at 150%
@@ -811,7 +829,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_2345";
         public override int PermanentID => 36;
         public override int BuffType => BuffID.Lifeforce;
-        public override bool CanScale => true; 
+        public override bool CanScale => true;
         public override float EffectPotency
         {
             get
@@ -835,7 +853,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_2346";
         public override int PermanentID => 37;
         public override int BuffType => BuffID.Endurance;
-        public override bool CanScale => true; 
+        public override bool CanScale => true;
         public override float EffectPotency
         {
             get
@@ -1190,10 +1208,12 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int BuffType => BuffID.WellFed2;
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetWellFed;
         public override bool CanScale => true;
-        public override int ScalingFactor => 14; 
-        public override float EffectPotency {
-            get {
-                float potency = (float)ConsumedAmount / (float)ScalingFactor; 
+        public override int ScalingFactor => 14;
+        public override float EffectPotency
+        {
+            get
+            {
+                float potency = (float)ConsumedAmount / (float)ScalingFactor;
                 potency += 0.75f; //with how long these things last, decent base values is basically required
                 //theres probably some math about "break points" and "decimal rounding" that makes these numbers bad, but whatever, it's 6 am, fight me
                 //they last 8 minutes..... not 30 anymore
@@ -1225,15 +1245,17 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetWellFed;
         public override bool CanScale => true;
         public override int ScalingFactor => 14;
-        public override float EffectPotency {
-            get {
+        public override float EffectPotency
+        {
+            get
+            {
                 float potency = (float)ConsumedAmount / (float)ScalingFactor;
                 potency += 0.25f;
                 return Math.Min(potency, 1.5f);
             }
         }
 
-        public override void PotionEffect(Player player) 
+        public override void PotionEffect(Player player)
         {
             player.wellFed = true;
             player.statDefense += (int)ApplyScaling(4);
@@ -1267,7 +1289,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override int PermanentID => 57;
         public override int BuffType => BuffID.Lucky;
         public override bool CanScale => true;
-        public override int ScalingFactor => 14; 
+        public override int ScalingFactor => 14;
         public override float EffectPotency
         {
             get

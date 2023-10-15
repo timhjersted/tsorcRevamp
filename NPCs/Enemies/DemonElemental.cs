@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -23,7 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             NPC.aiStyle = 22;
             NPC.npcSlots = 5;
-            AnimationType = -1; 
+            AnimationType = -1;
             NPC.width = 30;
             NPC.height = 80;
             NPC.damage = 41;
@@ -37,7 +36,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lavaImmune = true;
             NPC.noGravity = true;
             NPC.knockBackResist = 0f;
-            NPC.alpha = 70; 
+            NPC.alpha = 70;
             NPC.value = 1250; // health divided by 2 in pre-HM : was 50
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DemonSpiritBanner>();
@@ -89,7 +88,7 @@ namespace tsorcRevamp.NPCs.Enemies
             bool undergroundJungle = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && p.ZoneJungle;
             bool undergroundEvil = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && (p.ZoneCorrupt || p.ZoneCrimson);
             bool undergroundHoly = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && p.ZoneHallow;
-            
+
             if (underworld && !Main.hardMode && Main.rand.NextBool(15)) return 1;
             if (spawnInfo.Player.ZoneCrimson && Main.hardMode && Main.rand.NextBool(25)) return 1;
             if (spawnInfo.Player.ZoneDesert && Main.hardMode && Main.rand.NextBool(45)) return 1;

@@ -69,7 +69,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spawnInfo.Player.ZoneGlowshroom) return 0f;
 
             //Hollow enemies
-           
+
             if (!Main.hardMode && spawnInfo.Player.ZoneDungeon) return 0.1f;
             if (Main.hardMode && spawnInfo.Player.ZoneDungeon) return 0.05f;
             if (Main.hardMode && spawnInfo.Lihzahrd) return 0.2f;
@@ -95,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies
             return chance;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 2, 4));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Throwing.Firebomb>(), 1, 1, 3));
@@ -103,7 +103,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 5));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>()));
 
-            int[] armorIDs = new int[] 
+            int[] armorIDs = new int[]
             {
                 ModContent.ItemType<Items.Armors.Magic.RedClothHat>(),
                 ModContent.ItemType<Items.Armors.Magic.RedClothTunic>(),

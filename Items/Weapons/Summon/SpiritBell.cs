@@ -11,39 +11,39 @@ namespace tsorcRevamp.Items.Weapons.Summon
 {
     [Autoload(false)]
     public class SpiritBell : ModItem
-	{
-		public override void SetStaticDefaults()
-		{
-			// Tooltip.SetDefault("Summons a Barrow Wight to fight for you");
+    {
+        public override void SetStaticDefaults()
+        {
+            // Tooltip.SetDefault("Summons a Barrow Wight to fight for you");
 
-			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-			ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
-			ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
+            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
+            ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
+            ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
             ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
         }
-		public override void SetDefaults()
-		{
-			Item.damage = 24;
-			Item.knockBack = 3f;
-			Item.mana = 10;
-			Item.width = 50;
-			Item.height = 50;
-			Item.useTime = 30;
-			Item.useAnimation = 30;
-			Item.useStyle = ItemUseStyleID.Swing;
-			Item.value = Item.buyPrice(0, 2, 80, 0);
-			Item.rare = ItemRarityID.Blue;
-			Item.UseSound = SoundID.Item44;
+        public override void SetDefaults()
+        {
+            Item.damage = 24;
+            Item.knockBack = 3f;
+            Item.mana = 10;
+            Item.width = 50;
+            Item.height = 50;
+            Item.useTime = 30;
+            Item.useAnimation = 30;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = Item.buyPrice(0, 2, 80, 0);
+            Item.rare = ItemRarityID.Blue;
+            Item.UseSound = SoundID.Item44;
 
 
-			Item.noMelee = true;
-			Item.DamageType = DamageClass.Summon;
-			Item.buffType = ModContent.BuffType<BarrowWightBuff>();
-			Item.shoot = ModContent.ProjectileType<Projectiles.Summon.SpiritBell.BarrowWightMinion>();
-		}
-		public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
-		{
-			position = Main.MouseWorld;
+            Item.noMelee = true;
+            Item.DamageType = DamageClass.Summon;
+            Item.buffType = ModContent.BuffType<BarrowWightBuff>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.SpiritBell.BarrowWightMinion>();
+        }
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+        {
+            position = Main.MouseWorld;
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {

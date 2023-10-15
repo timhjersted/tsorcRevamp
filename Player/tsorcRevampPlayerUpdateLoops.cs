@@ -1,37 +1,25 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
+using System.Linq;
+using System.Reflection;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using TerraUI.Objects;
 using tsorcRevamp.Buffs;
-using tsorcRevamp.Items;
+using tsorcRevamp.Buffs.Accessories;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Buffs.Runeterra.Melee;
+using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.UI;
-using tsorcRevamp.Buffs.Debuffs;
-using Terraria.ModLoader.Config;
-using System.Linq;
-using Terraria.UI.Gamepad;
-using tsorcRevamp.Items.VanillaItems;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Accessories.Ranged;
-using tsorcRevamp.Items.Armors.Melee;
-using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
-using tsorcRevamp.Buffs.Armor;
-using tsorcRevamp.Buffs.Runeterra.Magic;
-using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Buffs.Accessories;
-using Terraria.Audio;
-using tsorcRevamp.Buffs.Runeterra.Melee;
-using tsorcRevamp.Projectiles.Summon;
-using tsorcRevamp.Buffs.Weapons.Summon;
-using Steamworks;
-using System.Reflection;
-using tsorcRevamp.Projectiles.Magic.Runeterra;
 
 namespace tsorcRevamp
 {
@@ -338,8 +326,8 @@ namespace tsorcRevamp
         bool setDeathText = false;
         public static List<string> DeathTextList;
 
-		public int spawnRate;// For adventure card spwanRate display
-		static FieldInfo spawnRateFieldInfo;
+        public int spawnRate;// For adventure card spwanRate display
+        static FieldInfo spawnRateFieldInfo;
 
         public override void ResetEffects()
         {
@@ -385,7 +373,7 @@ namespace tsorcRevamp
 
             MaxMinionTurretMultiplier = 1;
 
-            MythrilBulwark = false; 
+            MythrilBulwark = false;
             IceboundMythrilAegis = false;
 
             Celestriad = false;
@@ -519,7 +507,7 @@ namespace tsorcRevamp
 
             //the item in the soul slot will only ever be souls, so we dont need to check type
             if (SoulSlot.Item.stack > 0) { darkSoulQuantity += SoulSlot.Item.stack; }
-            
+
             if (!Player.HasBuff(ModContent.BuffType<Bonfire>()))
             { //this ensures that BonfireUIState is only visible when within Bonfire range
                 if (Player.whoAmI == Main.LocalPlayer.whoAmI)
@@ -765,7 +753,8 @@ namespace tsorcRevamp
                 MaxAcquiredHP = Player.statLifeMax;
             }
 
-            if (Player.HasBuff(ModContent.BuffType<NondescriptOwlBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Archer.NondescriptOwlProjectile>()] == 0) {
+            if (Player.HasBuff(ModContent.BuffType<NondescriptOwlBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Archer.NondescriptOwlProjectile>()] == 0)
+            {
                 Item staff = new();
                 staff.SetDefaults(ModContent.ItemType<Items.Weapons.Summon.PeculiarSphere>());
                 int damage = staff.damage;
@@ -773,7 +762,8 @@ namespace tsorcRevamp
                 Main.projectile[p].originalDamage = damage;
             }
 
-            if (Player.HasBuff(ModContent.BuffType<SunsetQuasarBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarMinion>()] == 0) {
+            if (Player.HasBuff(ModContent.BuffType<SunsetQuasarBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarMinion>()] == 0)
+            {
                 Item staff = new();
                 staff.SetDefaults(ModContent.ItemType<Items.Weapons.Summon.SunsetQuasar>());
                 int damage = staff.damage;
@@ -794,7 +784,8 @@ namespace tsorcRevamp
                 return;
             //{72, 492} is the house on the very left edge, where the shaman elder lives
             //64x32 rectangle to start the quest
-            if (Collision.CheckAABBvAABBCollision(Player.position, new Vector2(Player.width, Player.height), new Vector2(72, 492) * 16, new Vector2(64, 32) * 16) && !startedQuest) {
+            if (Collision.CheckAABBvAABBCollision(Player.position, new Vector2(Player.width, Player.height), new Vector2(72, 492) * 16, new Vector2(64, 32) * 16) && !startedQuest)
+            {
                 startedQuest = true;
                 Main.NewText(LangUtils.GetTextValue("Quest.Start"));
             }
@@ -804,16 +795,19 @@ namespace tsorcRevamp
                 return;
 
             //stay underground!
-            if (!Player.ShoppingZone_BelowSurface) {
+            if (!Player.ShoppingZone_BelowSurface)
+            {
                 touchedSurface = true;
             }
 
             //if the player is on the left edge of the world and hasnt gone past the angler's house, they're in the grace zone
-            if (Player.position.ToTileCoordinates16().X < 350) {
+            if (Player.position.ToTileCoordinates16().X < 350)
+            {
                 touchedSurface = false;
             }
 
-            if (touchedSurface) {
+            if (touchedSurface)
+            {
                 startedQuest = false;
                 Main.NewText(LangUtils.GetTextValue("Quest.Surface"));
             }
@@ -825,13 +819,15 @@ namespace tsorcRevamp
             //because there are no ceilings, and at that point youre already disqualified.
             //its possible to get over 36f by flying up the side of the pyramid though...
             //just dont do that, i guess? its kinda hard anyway
-            if (Vector2.Distance(Player.OldPos(1), Player.position) > 36f) {
+            if (Vector2.Distance(Player.OldPos(1), Player.position) > 36f)
+            {
                 startedQuest = false;
                 Main.NewText(LangUtils.GetTextValue("Quest.Teleport"));
             }
 
             //{7909, 1081} is the underwater observatory's top left corner, and {320, 119} is its rectangular size
-            if (Collision.CheckAABBvAABBCollision(Player.position, new Vector2(Player.width, Player.height), new Vector2(7909, 1081) * 16, new Vector2(320, 119) * 16)) {
+            if (Collision.CheckAABBvAABBCollision(Player.position, new Vector2(Player.width, Player.height), new Vector2(7909, 1081) * 16, new Vector2(320, 119) * 16))
+            {
                 Main.NewText(LangUtils.GetTextValue("Quest.Finish"));
                 Player.QuickSpawnItem(Player.GetSource_GiftOrReward(), ItemID.RodofDiscord);
                 finishedQuest = true;
@@ -871,7 +867,7 @@ namespace tsorcRevamp
             }
 
 
-            
+
             if (!NPC.downedGolemBoss && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !NPC.downedEmpressOfLight)
             {
                 Vector2 arena = new Vector2(4468, 365);
@@ -1133,7 +1129,7 @@ namespace tsorcRevamp
                 Player.GetJumpState(ExtraJump.TsunamiInABottle).Disable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
                 Player.GetJumpState(ExtraJump.SandstormInABottle).Disable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
                 Player.GetJumpState(ExtraJump.UnicornMount).Disable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
-                Player.GetJumpState(ExtraJump.BasiliskMount).Disable() ;
+                Player.GetJumpState(ExtraJump.BasiliskMount).Disable();
                 Player.GetJumpState(ExtraJump.GoatMount).Disable();
                 Player.GetJumpState(ExtraJump.SantankMount).Disable();
 
@@ -1445,7 +1441,7 @@ namespace tsorcRevamp
         public override void PostUpdateRunSpeeds()
         {
             if (supersonicLevel != 0)
-            {                
+            {
                 float moveSpeedPercentBoost = 1;
                 float baseSpeed = 1;
 
@@ -1682,7 +1678,7 @@ namespace tsorcRevamp
                 {
                     text = LangUtils.GetTextValue("DeathText.BossDeath1");
                 }
-                else if (Main.rand.NextBool() && (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>() || 
+                else if (Main.rand.NextBool() && (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>() ||
                     Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.SpazmatismV2>() || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Cataluminance>()
                     || Main.npc[currentBoss].type == NPCID.Plantera || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Death>()
                     || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()
@@ -1705,7 +1701,7 @@ namespace tsorcRevamp
             }
 
             if (projectile != null && projectile.type == ModContent.ProjectileType<Projectiles.Enemy.Marilith.CataclysmicFirestorm>())
-            {                
+            {
                 if (Main.rand.NextBool())
                 {
                     text = LangUtils.GetTextValue("DeathText.Marilith");
@@ -1764,16 +1760,17 @@ namespace tsorcRevamp
                 if (DeathText == null)
                 {
                     DeathText = PickDeathText();
-                    
+
                 }
                 if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath)
                 {
-                    if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>() && Main.mouseItem.stack > 0) {
+                    if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>() && Main.mouseItem.stack > 0)
+                    {
                         SoulSlot.Item.stack += Main.mouseItem.stack;
                         Player.inventory[58].TurnToAir();
                         Main.mouseItem.TurnToAir();
                     }
-                    int soulCount  = 0;
+                    int soulCount = 0;
                     foreach (Item item in Player.inventory)
                     {
                         //leaving this in case someone decides to move souls to their normal inventory to stop them from being dropped on death :)
@@ -1789,11 +1786,11 @@ namespace tsorcRevamp
                         soulCount += SoulSlot.Item.stack;
                         SoulSlot.Item.TurnToAir();
                     }
-                    
-                    if(soulCount > 0)
+
+                    if (soulCount > 0)
                     {
                         Projectile.NewProjectileDirect(Player.GetSource_Death(), Player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.SoulDrop>(), 0, 0, Player.whoAmI, soulCount, Player.whoAmI);
-                    }                    
+                    }
                 }
 
 
@@ -1809,33 +1806,39 @@ namespace tsorcRevamp
                 ceruleanPlayer.ceruleanDrinkTimer = 0;
             }
 
-            if(Player.respawnTimer > 240 && !tsorcRevampWorld.BossAlive)
-            {  
+            if (Player.respawnTimer > 240 && !tsorcRevampWorld.BossAlive)
+            {
                 Player.respawnTimer = 240;
             }
         }
 
-        public override void PostUpdateMiscEffects() 
+        public override void PostUpdateMiscEffects()
         {
-            if (GravityField) {
-                if (InSpace(Player)) {
+            if (GravityField)
+            {
+                if (InSpace(Player))
+                {
                     Player.gravity = Player.defaultGravity;
-                    if (Player.wet) {
-                        if (Player.honeyWet) {
+                    if (Player.wet)
+                    {
+                        if (Player.honeyWet)
+                        {
                             Player.gravity = 0.1f;
                         }
-                        else if (Player.merman) {
+                        else if (Player.merman)
+                        {
                             Player.gravity = 0.3f;
                         }
-                        else {
+                        else
+                        {
                             Player.gravity = 0.2f;
                         }
                     }
-                } 
+                }
             }
             // spawnRate means how much enemy can spawn every tick, 1 second equals 60 ticks
-			spawnRateFieldInfo = typeof(NPC).GetField("spawnRate", BindingFlags.Static | BindingFlags.NonPublic);
-			spawnRate = (int)spawnRateFieldInfo.GetValue(null);
+            spawnRateFieldInfo = typeof(NPC).GetField("spawnRate", BindingFlags.Static | BindingFlags.NonPublic);
+            spawnRate = (int)spawnRateFieldInfo.GetValue(null);
         }
 
         public override void PostUpdate()
@@ -1921,7 +1924,8 @@ namespace tsorcRevamp
         }
 
         //taken straight from player.update, dont ask why it does what it does because i have NO idea
-        public static bool InSpace(Player player) {
+        public static bool InSpace(Player player)
+        {
             float x = (float)Main.maxTilesX / 4200f;
             x *= x;
             return (float)((double)(player.position.Y / 16f - (60f + 10f * x)) / (Main.worldSurface / 6.0)) < 1f;

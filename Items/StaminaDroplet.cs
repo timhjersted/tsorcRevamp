@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items
                 tsorcRevampStaminaPlayer stamPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
                 float amount = stamPlayer.staminaResourceMax2 / 2;
 
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Drip with { Volume = 0.3f});
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Drip with { Volume = 0.3f });
 
 
                 if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)

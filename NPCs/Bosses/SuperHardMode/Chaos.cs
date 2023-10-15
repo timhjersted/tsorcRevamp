@@ -1,19 +1,14 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Magic.Tomes;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Weapons.Ranged.Bows;
 using tsorcRevamp.Utilities;
 
@@ -88,8 +83,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Proximity Debuffs
             if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1800)
             {
-                player.AddBuff(BuffID.BrokenArmor, 120, false); 
-                player.AddBuff(ModContent.BuffType<FracturingArmor>(), 60, false); 
+                player.AddBuff(BuffID.BrokenArmor, 120, false);
+                player.AddBuff(ModContent.BuffType<FracturingArmor>(), 60, false);
                 player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
 
                 if (holdTimer2 <= 0)
@@ -479,7 +474,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             potionType = ItemID.SuperHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.ChaosBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());

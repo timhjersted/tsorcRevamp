@@ -9,18 +9,18 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.Buffs.Weapons.Summon
 {
     public class TerraFallBuff : ModBuff
-	{
+    {
         public float AttackSpeed;
 
         public override LocalizedText Description => base.Description.WithFormatArgs(AttackSpeed);
 
         public override void SetStaticDefaults()
-		{
-			Main.buffNoSave[Type] = true;
-			Main.buffNoTimeDisplay[Type] = false;
-		}
+        {
+            Main.buffNoSave[Type] = true;
+            Main.buffNoTimeDisplay[Type] = false;
+        }
 
-		public override void Update(Player player, ref int buffIndex)
+        public override void Update(Player player, ref int buffIndex)
         {
             AttackSpeed = player.GetModPlayer<tsorcRevampPlayer>().TerraFallStacks * TerraFall.MinSummonTagAttackSpeed;
             player.GetAttackSpeed(DamageClass.Summon) += AttackSpeed / 100f;

@@ -3,8 +3,6 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 {

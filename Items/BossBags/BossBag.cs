@@ -1,27 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.ModLoader;
-using tsorcRevamp;
-using tsorcRevamp.Items.Pets;
-using tsorcRevamp.NPCs.Bosses;
-using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using System.Collections.Generic;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Weapons.Magic;
+using Terraria;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.ID;
+using Terraria.ModLoader;
+using tsorcRevamp.Items.Accessories.Expert;
 using tsorcRevamp.Items.Accessories.Mobility;
-using tsorcRevamp.Items.Potions.PermanentPotions;
-using tsorcRevamp.Items.Tools;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Items.Lore;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Potions.PermanentPotions;
+using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Items.Vanity;
+using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
-using tsorcRevamp.Items.Accessories.Expert;
 
 namespace tsorcRevamp.Items.BossBags
 {
@@ -70,7 +65,7 @@ namespace tsorcRevamp.Items.BossBags
             for (int i = 0; i < 4; ++i)
             {
                 Vector2 offsetPositon = Vector2.UnitY.RotatedBy(((Main.GameUpdateCount % 300) / 30f) + MathHelper.PiOver2 * i) * 5;
-                spriteBatch.Draw(texture,offsetPositon + new Vector2(Item.position.X - Main.screenPosition.X + Item.width * 0.5f, Item.position.Y - Main.screenPosition.Y + Item.height - texture.Height * 0.5f + 2f),
+                spriteBatch.Draw(texture, offsetPositon + new Vector2(Item.position.X - Main.screenPosition.X + Item.width * 0.5f, Item.position.Y - Main.screenPosition.Y + Item.height - texture.Height * 0.5f + 2f),
                 new Rectangle(0, 0, texture.Width, texture.Height), Main.DiscoColor, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0);
             }
 
@@ -558,7 +553,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 3, 6));
         }
     }
-    public class GwynBag : BossBag 
+    public class GwynBag : BossBag
     {
         public override void SetStaticDefaults()
         {
@@ -577,9 +572,11 @@ namespace tsorcRevamp.Items.BossBags
 
     public class VanillaBossBag : GlobalItem
     {
-        public static void GiveDarkSouls(int bossBagID, Player player) {
+        public static void GiveDarkSouls(int bossBagID, Player player)
+        {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            if (modPlayer.bagsOpened.Contains(bossBagID)) {
+            if (modPlayer.bagsOpened.Contains(bossBagID))
+            {
                 return;
             }
             NPC boss = new NPC();
@@ -594,47 +591,64 @@ namespace tsorcRevamp.Items.BossBags
             modPlayer.bagsOpened.Add(bossBagID);
         }
 
-        public override void RightClick(Item item, Player player) 
+        public override void RightClick(Item item, Player player)
         {
             // check if an item is a Treasure Bag
-            if (!tsorcRevamp.BossBagIDtoNPCID.ContainsKey(item.type)) {
+            if (!tsorcRevamp.BossBagIDtoNPCID.ContainsKey(item.type))
+            {
                 return;
             }
             GiveDarkSouls(item.type, player);
         }
 
-        public override void ModifyItemLoot(Item item, ItemLoot loot) 
+        public override void ModifyItemLoot(Item item, ItemLoot loot)
         {
             // check if an item is a Treasure Bag
-            if (!tsorcRevamp.BossBagIDtoNPCID.ContainsKey(item.type)) {
+            if (!tsorcRevamp.BossBagIDtoNPCID.ContainsKey(item.type))
+            {
                 return;
             }
 
-			int itemID = item.type;
+            int itemID = item.type;
 
             // take into account blocked items
-            if (tsorcRevamp.RemovedBossBagLoot.ContainsKey(itemID)) {
+            if (tsorcRevamp.RemovedBossBagLoot.ContainsKey(itemID))
+            {
                 List<IItemDropRule> dropRules = loot.Get();
-                foreach (var rule in dropRules) {
-                    List<int> ruleItems = new List<int>(){};
-                    if (rule is CommonDrop) {
+                foreach (var rule in dropRules)
+                {
+                    List<int> ruleItems = new List<int>() { };
+                    if (rule is CommonDrop)
+                    {
                         ruleItems.Add(((CommonDrop)rule).itemId);
-                    } else if (rule is DropOneByOne) {
+                    }
+                    else if (rule is DropOneByOne)
+                    {
                         ruleItems.Add(((DropOneByOne)rule).itemId);
-                    } else if (rule is OneFromOptionsDropRule) {
-                        foreach (var dropId in ((OneFromOptionsDropRule)rule).dropIds) {
+                    }
+                    else if (rule is OneFromOptionsDropRule)
+                    {
+                        foreach (var dropId in ((OneFromOptionsDropRule)rule).dropIds)
+                        {
                             ruleItems.Add(dropId);
                         }
-                    } else if (rule is OneFromOptionsNotScaledWithLuckDropRule) {
-                        foreach (var dropId in ((OneFromOptionsNotScaledWithLuckDropRule)rule).dropIds) {
+                    }
+                    else if (rule is OneFromOptionsNotScaledWithLuckDropRule)
+                    {
+                        foreach (var dropId in ((OneFromOptionsNotScaledWithLuckDropRule)rule).dropIds)
+                        {
                             ruleItems.Add(dropId);
                         }
-                    } else {
+                    }
+                    else
+                    {
                         continue;
                     }
 
-                    foreach (var itemToRemove in tsorcRevamp.RemovedBossBagLoot[itemID]) {
-                        if (ruleItems.Contains(itemToRemove)) {
+                    foreach (var itemToRemove in tsorcRevamp.RemovedBossBagLoot[itemID])
+                    {
+                        if (ruleItems.Contains(itemToRemove))
+                        {
                             loot.Remove(rule);
                             continue;
                         }
@@ -644,18 +658,22 @@ namespace tsorcRevamp.Items.BossBags
 
             // add needed extras to Treasure Bags
             tsorcRevamp.BossExtras assignedExtras = tsorcRevamp.AssignedBossExtras[itemID];
-            foreach (var it in tsorcRevamp.BossExtrasDescription) {
-                if ((assignedExtras & it.Key) != 0) {
+            foreach (var it in tsorcRevamp.BossExtrasDescription)
+            {
+                if ((assignedExtras & it.Key) != 0)
+                {
                     loot.Add(ItemDropRule.ByCondition(it.Value.Condition, it.Value.ID));
                 }
             }
 
             // add other extra items to Treasure Bags
-            if (tsorcRevamp.AddedBossBagLoot.ContainsKey(itemID)) {
-                foreach (var dropRule in tsorcRevamp.AddedBossBagLoot[itemID]) {
+            if (tsorcRevamp.AddedBossBagLoot.ContainsKey(itemID))
+            {
+                foreach (var dropRule in tsorcRevamp.AddedBossBagLoot[itemID])
+                {
                     loot.Add(dropRule);
                 }
             }
-		}
+        }
     }
 }

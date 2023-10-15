@@ -3,7 +3,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Hammers
 {
@@ -36,9 +35,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (hit.Crit)
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center, Vector2.Zero, ProjectileID.Electrosphere, (int)(damageDone * 0.75f), hit.Knockback, Main.myPlayer);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center, Vector2.Zero, ProjectileID.Electrosphere, (int)(damageDone * 0.75f), hit.Knockback, Main.myPlayer);
             else
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center, Vector2.Zero, ProjectileID.Electrosphere, damageDone, hit.Knockback, Main.myPlayer);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center, Vector2.Zero, ProjectileID.Electrosphere, damageDone, hit.Knockback, Main.myPlayer);
         }
         public override void AddRecipes()
         {

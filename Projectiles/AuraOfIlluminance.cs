@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -31,7 +30,7 @@ namespace tsorcRevamp.Projectiles
 
             trailWidth = 45;
             trailPointLimit = 2000;
-            trailMaxLength = 2000; 
+            trailMaxLength = 2000;
             trailCollision = true;
             collisionFrequency = 3;
             noFadeOut = false;
@@ -63,7 +62,7 @@ namespace tsorcRevamp.Projectiles
 
             //Main.NewText(totalDisplacement + " " + widthDisplacement + " " + heightDisplacement);
 
-            if(trailCurrentLength > 1900 && totalDisplacement > 8000000 && intersection && widthDisplacement > 10000 && heightDisplacement > 10000)
+            if (trailCurrentLength > 1900 && totalDisplacement > 8000000 && intersection && widthDisplacement > 10000 && heightDisplacement > 10000)
             {
                 Projectile.Kill();
                 if (Main.rand.NextBool(20))

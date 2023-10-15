@@ -2,16 +2,14 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using tsorcRevamp.Items;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items;
 using tsorcRevamp.Items.Ammo;
 using tsorcRevamp.Items.Potions;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
-using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Utilities;
 
@@ -47,7 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.rarity = 4;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.HeroofLumelia.DespawnHandler"), Color.Gold, DustID.GoldFlame);
         }
-        
+
 
         bool wolfSpawned1 = false;
         bool wolfSpawned2 = false;
@@ -504,8 +502,8 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
 
-                
-       
+
+
 
                 bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
 
@@ -523,8 +521,8 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (boredTeleport == 300)
                     {
- 
-                        int Sword = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.EnchantedSword, 0); 
+
+                        int Sword = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.EnchantedSword, 0);
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
 
@@ -534,7 +532,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         }
 
                     }
-                    
+
                     if (boredTeleport == 600)
                     {
                         customAi1 = 1f;
@@ -666,7 +664,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //THROW KNIFE               
                 if (customAi1 == 152)
                 {
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12);                                                                                                                          
+                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12);
                     speed += Main.player[NPC.target].velocity / 2;
                     if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                     {
@@ -1061,7 +1059,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.HeroOfLumeliaBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));

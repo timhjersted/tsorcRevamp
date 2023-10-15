@@ -1,13 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Enemy.DarkCloud;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Projectiles.Enemy.DarkCloud;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -23,7 +20,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Main.npcFrameCount[NPC.type] = 16;
             NPCID.Sets.TrailCacheLength[NPC.type] = (int)TRAIL_LENGTH;    //The length of old position to be recorded
             NPCID.Sets.TrailingMode[NPC.type] = 1;
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            {
                 Hide = true
             };
             NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
@@ -307,7 +305,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.BrokenArmor, 2 * 60 / expertScale, false);
-                target.AddBuff(BuffID.OnFire, 3 * 60 / expertScale, false); 
+                target.AddBuff(BuffID.OnFire, 3 * 60 / expertScale, false);
                 target.AddBuff(ModContent.BuffType<FracturingArmor>(), 60 * 60, false); //defense goes time on every hit
             }
         }

@@ -154,7 +154,7 @@ namespace tsorcRevamp.Items
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.5f, PitchVariance = 0.3f }, player.Center); // Plays sound.
 
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
-                {   
+                {
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), 800); // Gives player souls.
                 }
 
@@ -266,7 +266,7 @@ namespace tsorcRevamp.Items
 
         public override bool? UseItem(Player player) // Won't consume item without this
         {
-            
+
             return true;
         }
 

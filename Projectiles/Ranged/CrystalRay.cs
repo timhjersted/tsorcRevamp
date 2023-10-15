@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -68,7 +67,7 @@ namespace tsorcRevamp.Projectiles.Ranged
                         LaserColor = Color.Brown;
                         break;
                     }
-                    //This is also meteor shot, but the reflected one
+                //This is also meteor shot, but the reflected one
                 case -999:
                     {
                         LaserColor = Color.Brown;
@@ -134,7 +133,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             CastLight = true;
             LightColor = LaserColor;
 
-            
+
             if (Projectile.ai[0] == ProjectileID.MeteorShot || Projectile.ai[0] == ProjectileID.MoonlordBullet)
             {
                 PierceNPCs = true;
@@ -275,7 +274,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             float percentage = ((float)FiringTimeLeft) / (float)FiringDuration;
             scale *= percentage;
 
-            if(scale == 0)
+            if (scale == 0)
             {
                 return;
             }

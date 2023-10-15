@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -88,5 +87,5 @@ namespace tsorcRevamp.NPCs.Enemies
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofFlight));
             npcLoot.Add(hmCondition);
         }
-}
+    }
 }

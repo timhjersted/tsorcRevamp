@@ -6,7 +6,6 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
-using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 {
@@ -57,11 +56,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             get => (int)NPC.ai[3];
             set => NPC.ai[3] = value;
         }
-        
+
         List<float> foundIndicies = new List<float>();
         float RotSpeed = 0.015f;
         bool RotDir = false;
-        NPCDespawnHandler despawnHandler;        
+        NPCDespawnHandler despawnHandler;
         public override void AI()
         {
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
@@ -188,7 +187,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             if (NPC.life - modifiers.GetDamage(projectile.damage, false) <= 1000)
             {
                 AttraidiesMask.ShieldBroken = true;
-                if(NPC.realLife != -1)
+                if (NPC.realLife != -1)
                 {
                     Main.npc[NPC.realLife].life = 1001;
                 }
@@ -199,7 +198,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                 modifiers.FinalDamage *= 0;
             }
 
-            for(int i = 0; i < Main.maxNPCs; i++)
+            for (int i = 0; i < Main.maxNPCs; i++)
             {
 
             }

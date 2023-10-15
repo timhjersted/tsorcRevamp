@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.localNPCHitCooldown = 25;
         }
 
-        
+
         public override void AI()
         {
 

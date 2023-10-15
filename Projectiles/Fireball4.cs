@@ -46,7 +46,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.position.Y -= Projectile.height / 2;
 
             // do explosion
-           // Projectile.Damage();
+            // Projectile.Damage();
 
             // create glowing red embers that fill the explosion's radius
             for (int i = 0; i < 70; i++)

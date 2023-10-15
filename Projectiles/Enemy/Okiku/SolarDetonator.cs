@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         float maxSize = 200;
         float detonationPercent
         {
-            get =>  1f - (DetonationProgress / DetonationTime);
+            get => 1f - (DetonationProgress / DetonationTime);
         }
         float easeInOutQuad(float x)
         {
@@ -126,7 +126,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             return false;
         }
 
-        
+
         public override bool PreKill(int timeLeft)
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -134,7 +134,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 700, 60);
                 for (int i = 0; i < 16; i++)
                 {
-                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(12, 0).RotatedBy( (MathHelper.PiOver2 / 16f) + i * MathHelper.TwoPi / 16f), ModContent.ProjectileType<SolarBlast>(), Projectile.damage, .5f, Main.myPlayer);
+                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(12, 0).RotatedBy((MathHelper.PiOver2 / 16f) + i * MathHelper.TwoPi / 16f), ModContent.ProjectileType<SolarBlast>(), Projectile.damage, .5f, Main.myPlayer);
                 }
             }
 

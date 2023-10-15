@@ -2,12 +2,10 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
-using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
 
@@ -189,7 +187,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             int closestSegmentID = ClosestSegment(NPC, ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody2>(), ModContent.NPCType<MechaDragonBody3>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonTail>());
             NPC.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
 
-            return true;        
+            return true;
         }
 
         public override bool CheckActive()

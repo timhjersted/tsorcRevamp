@@ -2,13 +2,12 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static tsorcRevamp.SpawnHelper;
-using Terraria.GameContent.ItemDropRules;
-using tsorcRevamp.Utilities;
-using tsorcRevamp.Projectiles;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Projectiles;
+using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -39,19 +38,19 @@ namespace tsorcRevamp.NPCs.Enemies
             sprogletGlobalNPC.Cowardice = 0.1f; //low cowardice
 
 
-            if (Main.hardMode) 
-            { 
-                NPC.lifeMax = 200; 
-                NPC.defense = 18; 
-                NPC.damage = 26; 
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 200;
+                NPC.defense = 18;
+                NPC.damage = 26;
                 NPC.value = 100;
                 projDamage = 24;
-    }
-            if (tsorcRevampWorld.SuperHardMode) 
-            { 
-                NPC.lifeMax = 900; 
-                NPC.defense = 45; 
-                NPC.damage = 34; 
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 900;
+                NPC.defense = 45;
+                NPC.damage = 34;
                 NPC.value = 3000;
                 projDamage = 36;
             }
@@ -62,7 +61,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //BannerItem = ModContent.ItemType<Banners.HollowWarriorBanner>();
 
             NPC.buffImmune[BuffID.Confused] = true;
-            
+
         }
 
         public override void HitEffect(NPC.HitInfo hit)
@@ -89,7 +88,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            
+
             if (!channeling) { tsorcRevampAIs.FighterAI(NPC, 1.2f, 0.05f, 0.2f, false, 4, false, null, 0, 0.5f, 2.3f, true, true, false); }
             else { tsorcRevampAIs.FighterAI(NPC, 1.2f, 0.05f, 0.2f, false, 4, false, null, 0, 0f, 2.5f, true, false, false); }
 
@@ -237,7 +236,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StarlightShard>(), 4, 1));
         }
@@ -302,7 +301,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             }
         }
-            
+
         #endregion
 
     }

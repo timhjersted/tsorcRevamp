@@ -107,7 +107,8 @@ namespace tsorcRevamp.Items.Potions
                 if (player.manaRegenBuff)
                 {
                     player.AddBuff(ModContent.BuffType<Buffs.StarlightShardRestoration>(), (int)(BaseDuration * 60f * (1.5f + player.manaRegenDelayBonus)));
-                } else
+                }
+                else
                 {
                     player.AddBuff(ModContent.BuffType<Buffs.StarlightShardRestoration>(), (int)(BaseDuration * 60f * (1f + player.manaRegenDelayBonus)));
                 }

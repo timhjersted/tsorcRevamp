@@ -1,18 +1,15 @@
 ﻿
 using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.Graphics.Effects;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using Terraria.Graphics.Shaders;
-using tsorcRevamp.Items.BossItems;
-using System.Collections.Generic;
-using Terraria.ModLoader.Config;
 using ReLogic.Graphics;
+using System;
+using System.Collections.Generic;
+using Terraria;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.Projectiles.VFX
 {
@@ -55,7 +52,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 foreach (int id in tsorcRevampWorld.HardmodeBossIDs.Keys)
                 {
                     HardmodeDownedBosses.Add(new NPC());
-                    
+
                     if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(id)) || (id == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>() && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))) || Main.player[Projectile.owner].HasItem(ModContent.ItemType<Items.Debug.DebugTome>()))
                     {
                         //Draw golems head instead of its body
@@ -126,7 +123,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
             if (Main.player[Projectile.owner].HeldItem.type != ModContent.ItemType<Items.BossItems.BossRematchTome>())
             {
-                if (Main.netMode != NetmodeID.MultiplayerClient) 
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < currentDownedList.Count; i++)
                     {
@@ -278,7 +275,7 @@ namespace tsorcRevamp.Projectiles.VFX
                     bool inHitbox = currentDownedList[i].Hitbox.Contains(Main.MouseWorld.ToPoint());
                     if (currentDownedList[i].type == NPCID.GolemHeadFree)
                     {
-                        if(new Rectangle(currentDownedList[i].Hitbox.X - 20, currentDownedList[i].Hitbox.Y - 50, currentDownedList[i].Hitbox.Width + 40, currentDownedList[i].Hitbox.Height + 100).Contains(Main.MouseWorld.ToPoint()))
+                        if (new Rectangle(currentDownedList[i].Hitbox.X - 20, currentDownedList[i].Hitbox.Y - 50, currentDownedList[i].Hitbox.Width + 40, currentDownedList[i].Hitbox.Height + 100).Contains(Main.MouseWorld.ToPoint()))
                         {
                             inHitbox = true;
                         }
@@ -292,7 +289,7 @@ namespace tsorcRevamp.Projectiles.VFX
                         mouseOver = currentDownedList[i].TypeName;
                         mouseOverPos = currentDownedList[i].Center;
                         mouseOverHeight = currentDownedList[i].height;
-                        if(currentDownedList[i].type == NPCID.BrainofCthulhu)
+                        if (currentDownedList[i].type == NPCID.BrainofCthulhu)
                         {
                             mouseOverHeight *= 1.3f;
                         }
@@ -351,11 +348,11 @@ namespace tsorcRevamp.Projectiles.VFX
                 }
 
                 //Golem's head doesn't scale up *or* down right
-                if(currentDownedList[i].type == NPCID.GolemHeadFree)
+                if (currentDownedList[i].type == NPCID.GolemHeadFree)
                 {
                     currentDownedList[i].scale = 1f;
                 }
-                
+
                 //EoL is just way too big
                 if (currentDownedList[i].type == NPCID.HallowBoss)
                 {
@@ -387,7 +384,7 @@ namespace tsorcRevamp.Projectiles.VFX
             {
                 id = NPCID.Golem;
             }
-            
+
             //Moon lords eye gets drawn, but its body must be spawned
             if (id == NPCID.MoonLordFreeEye)
             {
@@ -434,11 +431,11 @@ namespace tsorcRevamp.Projectiles.VFX
             }
 
             //Spawn serris worms with a random offset around the player
-            if(id == ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>())
+            if (id == ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>())
             {
                 spawnOffset = Main.rand.NextVector2CircularEdge(600, 600);
             }
-           
+
             //Spawn in the partners of various bosses
             if (id == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>())
             {

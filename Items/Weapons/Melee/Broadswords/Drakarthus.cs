@@ -8,11 +8,11 @@ using tsorcRevamp.Projectiles.Melee.Swords;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
-    class Drakarthus : ModItem 
+    class Drakarthus : ModItem
     {
 
 
-        public override void SetStaticDefaults() 
+        public override void SetStaticDefaults()
         {
             /* Tooltip.SetDefault("Right click to throw a dagger that\n" +
                                "sticks to enemies and tiles it hits\n" + 
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
 
         const int MANA_COST = 100;
-        public override void SetDefaults() 
+        public override void SetDefaults()
         {
             Item.rare = ModContent.RarityType<CDW_Drakarthus>();
             Item.damage = 182;
@@ -42,51 +42,59 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.MediumVioletRed;
         }
 
-        public override bool AltFunctionUse(Player player) 
+        public override bool AltFunctionUse(Player player)
         {
             //only allow right clicking when there's already a dagger out
             //or when the player has enough mana to throw a new one
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<DrakarthusDagger>()] != 0) {
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<DrakarthusDagger>()] != 0)
+            {
                 return true;
             }
             return player.statMana > MANA_COST;
 
         }
 
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) 
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.altFunctionUse != 2) //shoot Nothing
                 return true;
-            
 
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<DrakarthusDagger>()] == 0) {
+
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<DrakarthusDagger>()] == 0)
+            {
                 if (player.statMana <= MANA_COST) return false;
                 player.statMana -= MANA_COST;
                 player.manaRegenDelay = 220;
                 Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<DrakarthusDagger>(), damage, knockback, player.whoAmI);
             }
-            else {
+            else
+            {
                 if (Main.myPlayer != player.whoAmI) return false;
-                for (int i = 0; i < Main.maxProjectiles; i++) {
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
                     Projectile proj = Main.projectile[i];
                     if (!proj.active) continue;
-                    if (proj.owner != player.whoAmI || proj.type != ModContent.ProjectileType<DrakarthusDagger>()) {
+                    if (proj.owner != player.whoAmI || proj.type != ModContent.ProjectileType<DrakarthusDagger>())
+                    {
                         continue;
                     }
                     Vector2 teleportOffset = player.Center - proj.Center;
                     teleportOffset.Normalize();
                     teleportOffset *= 96;
-                    for (int j = 0; j < 32; j++) {
+                    for (int j = 0; j < 32; j++)
+                    {
                         Vector2 dir = Main.rand.NextVector2CircularEdge(32, 32);
                         Vector2 dustPos = proj.Center + dir;
                         Dust.NewDustPerfect(dustPos, DustID.GemRuby, Vector2.Zero, 200).noGravity = true;
                     }
                     Point tpDestination = (proj.Center + teleportOffset).ToTileCoordinates();
-                    if (!WorldGen.SolidTile(tpDestination) && (Collision.CanHit(proj.Center, 1, 1, proj.Center + teleportOffset, 1, 1) || Collision.CanHitLine(proj.Center, 1, 1, proj.Center + teleportOffset, 1, 1) )) {
+                    if (!WorldGen.SolidTile(tpDestination) && (Collision.CanHit(proj.Center, 1, 1, proj.Center + teleportOffset, 1, 1) || Collision.CanHitLine(proj.Center, 1, 1, proj.Center + teleportOffset, 1, 1)))
+                    {
                         player.SafeTeleport(proj.Center + teleportOffset);
                     }
                     float randOffset = Main.rand.NextVector2CircularEdge(4, 4).ToRotation();
-                    for (int j = 0; j < 6; j++) {
+                    for (int j = 0; j < 6; j++)
+                    {
                         Vector2 shotDir = new Vector2(0, 12).RotatedBy(MathHelper.ToRadians(0 - (60f * j)) + randOffset);
                         Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, shotDir, ModContent.ProjectileType<DrakarthusDagger2>(), damage, knockback, player.whoAmI);
                     }
@@ -98,13 +106,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
 
 
-        public override void MeleeEffects(Player player, Rectangle hitbox) 
+        public override void MeleeEffects(Player player, Rectangle hitbox)
         {
             int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, DustID.GemRuby, player.velocity.X, player.velocity.Y, 100, default, .8f);
             Main.dust[dust].noGravity = true;
         }
 
-        public override void AddRecipes() 
+        public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
@@ -115,7 +123,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
     }
     //Color for Dedicated Weapon
-    class CDW_Drakarthus : ModRarity 
+    class CDW_Drakarthus : ModRarity
     {
         public override Color RarityColor => new Color(238, 192, 63);
     }

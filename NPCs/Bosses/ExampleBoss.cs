@@ -1,15 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
-using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -197,7 +192,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             //And spawn a shockwave at the end
-            if(introTimer == introDuration)
+            if (introTimer == introDuration)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -213,7 +208,7 @@ namespace tsorcRevamp.NPCs.Bosses
         /// </summary>
         public override void HandleLife()
         {
-            if(NPC.life < NPC.lifeMax / 2f && Phase == 0)
+            if (NPC.life < NPC.lifeMax / 2f && Phase == 0)
             {
                 NextPhase();
             }
@@ -257,7 +252,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.velocity *= 0.95f;
             Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2CircularEdge(100, 100), DustID.ShadowbeamStaff, Main.rand.NextVector2Circular(10, 10), Scale: 5);
-            if(phaseTransitionTimeRemaining % (phaseTransitionDuration / 3f) == 0)
+            if (phaseTransitionTimeRemaining % (phaseTransitionDuration / 3f) == 0)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -273,7 +268,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             return base.PreDraw(spriteBatch, screenPos, drawColor);
         }
-                
+
 
         public override void BossLoot(ref string name, ref int potionType)
         {

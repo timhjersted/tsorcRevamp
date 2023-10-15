@@ -63,7 +63,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
         }
         public static int[] bodyTypes;
-        
+
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {

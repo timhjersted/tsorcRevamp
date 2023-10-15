@@ -34,14 +34,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
         float size = 0;
         int dustCount = 0;
-        Vector2 truePosition; 
+        Vector2 truePosition;
         float maxSize = 8000;
         float explosionTime = 4000;
         public override void AI()
         {
             maxSize = 8000;
             explosionTime = 4000;
-            if(truePosition == Vector2.Zero)
+            if (truePosition == Vector2.Zero)
             {
                 truePosition = Projectile.Center;
             }
@@ -50,8 +50,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Projectile.timeLeft = 2;
             Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
 
-            
-            
+
+
             if (size < maxSize)
             {
                 size += (maxSize / explosionTime) * 3.5f;

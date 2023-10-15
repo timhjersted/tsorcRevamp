@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.Triad
@@ -33,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             trailPointLimit = 900;
             trailMaxLength = 9999999;
             collisionPadding = 50;
-            NPCSource = true;           
+            NPCSource = true;
             trailCollision = true;
             collisionFrequency = 5;
             noFadeOut = true;
@@ -55,7 +53,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             if (Projectile.ai[0] == 5)
             {
                 FinalStandMode = true;
-            }            
+            }
 
             if (FinalStandMode)
             {
@@ -64,7 +62,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                     fadeOut = 0;
                     trailPositions = new List<Vector2>();
                     trailRotations = new List<float>();
-                    for(int i = 0; i < 905; i++)
+                    for (int i = 0; i < 905; i++)
                     {
                         float angle = MathHelper.TwoPi * i / 900f;
                         trailPositions.Add(Projectile.Center + new Vector2(1350, 0).RotatedBy(angle));
@@ -82,7 +80,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                         Projectile.Kill();
                     }
                 }
-                else if(fadeOut < 1)
+                else if (fadeOut < 1)
                 {
                     fadeOut += 0.01f;
                 }
@@ -112,7 +110,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 //Once the boss is all the way back to that stage again, then start removing the old positions
                 bool finalStandInitiated = false;
                 int? cat = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Cataluminance>());
-                if (cat != null) {
+                if (cat != null)
+                {
                     if (Main.npc[cat.Value].life <= 1000)
                     {
                         finalStandInitiated = true;
@@ -122,7 +121,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 {
                     Projectile.damage = 0;
                     fadeOut -= 1f / 120f;
-                    if(fadeOut <= 0)
+                    if (fadeOut <= 0)
                     {
                         Projectile.Kill();
                     }

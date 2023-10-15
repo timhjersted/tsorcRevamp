@@ -11,7 +11,7 @@ using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
-	public class TerraFallProjectile : ModdedWhip
+    public class TerraFallProjectile : ModdedWhipProjectile
     {
         public override int WhipWidth => 11;
         public override int WhipHeight => 14;
@@ -39,71 +39,71 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.TerraFallStacks = ChargeTime / (MaxChargeTime / 4) + 1;
             player.AddBuff(ModContent.BuffType<TerraFallBuff>(), (int)(modPlayer.TerraFallStacks * 120 * modPlayer.SummonTagDuration));
-			target.AddBuff(ModContent.BuffType<TerraFallDebuff>(), (int)(modPlayer.TerraFallStacks * 120 * modPlayer.SummonTagDuration));
-			Projectile.damage = (int)(Projectile.damage * (modPlayer.TerraFallStacks / 25f + 0.8f)); 
-		}
+            target.AddBuff(ModContent.BuffType<TerraFallDebuff>(), (int)(modPlayer.TerraFallStacks * 120 * modPlayer.SummonTagDuration));
+            Projectile.damage = (int)(Projectile.damage * (modPlayer.TerraFallStacks / 25f + 0.8f));
+        }
 
-		public override bool PreDraw(ref Color lightColor)
-		{
-			List<Vector2> list = new List<Vector2>();
-			Projectile.FillWhipControlPoints(Projectile, list);
+        public override bool PreDraw(ref Color lightColor)
+        {
+            List<Vector2> list = new List<Vector2>();
+            Projectile.FillWhipControlPoints(Projectile, list);
 
-			DrawLine(list);
+            DrawLine(list);
 
-			SpriteEffects flip = Projectile.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            SpriteEffects flip = Projectile.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-			Main.instance.LoadProjectile(Type);
-			Texture2D texture = TextureAssets.Projectile[Type].Value;
+            Main.instance.LoadProjectile(Type);
+            Texture2D texture = TextureAssets.Projectile[Type].Value;
 
-			Vector2 pos = list[0];
+            Vector2 pos = list[0];
 
-			for (int i = 0; i < list.Count - 1; i++)
-			{
-				// These two values are set to suit this projectile's sprite, but won't necessarily work for your own.
-				// You can change them if they don't!
-				Rectangle frame = new Rectangle(0, 0, 11, 14);
-				Vector2 origin = new Vector2(5, 5);
-				float scale = 2;
+            for (int i = 0; i < list.Count - 1; i++)
+            {
+                // These two values are set to suit this projectile's sprite, but won't necessarily work for your own.
+                // You can change them if they don't!
+                Rectangle frame = new Rectangle(0, 0, 11, 14);
+                Vector2 origin = new Vector2(5, 5);
+                float scale = 2;
 
-				// These statements determine what part of the spritesheet to draw for the current segment.
-				// They can also be changed to suit your sprite.
-				if (i == list.Count - 2)
-				{
-					frame.Y = 39;
-					frame.Height = 14;
+                // These statements determine what part of the spritesheet to draw for the current segment.
+                // They can also be changed to suit your sprite.
+                if (i == list.Count - 2)
+                {
+                    frame.Y = 39;
+                    frame.Height = 14;
 
-					// For a more impactful look, this scales the tip of the whip up when fully extended, and down when curled up.
-					Projectile.GetWhipSettings(Projectile, out float timeToFlyOut, out int _, out float _);
-					float t = Timer / timeToFlyOut;
-					scale = MathHelper.Lerp(0.5f, 1.5f, Utils.GetLerpValue(0.1f, 0.7f, t, true) * Utils.GetLerpValue(0.9f, 0.7f, t, true));
-				}
-				else if (i > 20)
-				{
-					frame.Y = 30;
-					frame.Height = 9;
-				}
-				else if (i > 10)
-				{
-					frame.Y = 21;
-					frame.Height = 9;
-				}
-				else if (i > 0)
-				{
-					frame.Y = 14;
-					frame.Height = 7;
-				}
+                    // For a more impactful look, this scales the tip of the whip up when fully extended, and down when curled up.
+                    Projectile.GetWhipSettings(Projectile, out float timeToFlyOut, out int _, out float _);
+                    float t = Timer / timeToFlyOut;
+                    scale = MathHelper.Lerp(0.5f, 1.5f, Utils.GetLerpValue(0.1f, 0.7f, t, true) * Utils.GetLerpValue(0.9f, 0.7f, t, true));
+                }
+                else if (i > 20)
+                {
+                    frame.Y = 30;
+                    frame.Height = 9;
+                }
+                else if (i > 10)
+                {
+                    frame.Y = 21;
+                    frame.Height = 9;
+                }
+                else if (i > 0)
+                {
+                    frame.Y = 14;
+                    frame.Height = 7;
+                }
 
-				Vector2 element = list[i];
-				Vector2 diff = list[i + 1] - element;
+                Vector2 element = list[i];
+                Vector2 diff = list[i + 1] - element;
 
-				float rotation = diff.ToRotation() - MathHelper.PiOver2; // This projectile's sprite faces down, so PiOver2 is used to correct rotation.
-				Color color = Lighting.GetColor(element.ToTileCoordinates());
+                float rotation = diff.ToRotation() - MathHelper.PiOver2; // This projectile's sprite faces down, so PiOver2 is used to correct rotation.
+                Color color = Lighting.GetColor(element.ToTileCoordinates());
 
-				Main.EntitySpriteDraw(texture, pos - Main.screenPosition, frame, color, rotation, origin, scale, flip, 0);
+                Main.EntitySpriteDraw(texture, pos - Main.screenPosition, frame, color, rotation, origin, scale, flip, 0);
 
-				pos += diff;
-			}
-			return false;
-		}
-	}
+                pos += diff;
+            }
+            return false;
+        }
+    }
 }

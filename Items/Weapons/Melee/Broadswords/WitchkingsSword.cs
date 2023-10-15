@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -45,9 +44,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             {
                 Item.DamageType = DamageClass.SummonMeleeSpeed;
                 Item.scale = player.whipRangeMultiplier;
-            } else 
-            { 
-                Item.DamageType = DamageClass.Melee; 
+            }
+            else
+            {
+                Item.DamageType = DamageClass.Melee;
                 Item.scale = 1;
             }
         }
@@ -64,7 +64,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (player.GetModPlayer<tsorcRevampPlayer>().WitchPower) 
+            if (player.GetModPlayer<tsorcRevampPlayer>().WitchPower)
             {
                 int buffSelection = Main.rand.Next(19 + 1);
                 for (int i = 0; i < 2; i++)

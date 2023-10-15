@@ -1,22 +1,21 @@
-﻿using System;
+﻿using MonoMod.Cil;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using Mono.Cecil.Cil;
-using MonoMod.Cil;
 using Terraria;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Core.ItemComponents;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities;
 
-namespace  tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
+namespace tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
 
-public sealed class ItemMeleeCooldownReplacement : ItemComponent {
+public sealed class ItemMeleeCooldownReplacement : ItemComponent
+{
 
     private static readonly Dictionary<int, bool> isDebugCheckCache = new();
-    public override void Load() {
+    public override void Load()
+    {
         // Disable attackCD for melee whenever this component is present on the held item and enabled.
-        IL_Player.ItemCheck_MeleeHitNPCs += context => {
+        IL_Player.ItemCheck_MeleeHitNPCs += context =>
+        {
             var il = new ILCursor(context);
             Assembly assembly = typeof(ModLoader).Assembly;
             //bool debugAssembly = OverhaulMod.TMLAssembly.IsDebugAssembly();
@@ -24,7 +23,8 @@ public sealed class ItemMeleeCooldownReplacement : ItemComponent {
             int hash = assembly.GetHashCode();
             bool debugAssembly = false;
 
-            if (isDebugCheckCache.TryGetValue(hash, out bool result)) {
+            if (isDebugCheckCache.TryGetValue(hash, out bool result))
+            {
                 debugAssembly = true;
             }
 
@@ -94,10 +94,12 @@ public sealed class ItemMeleeCooldownReplacement : ItemComponent {
         };
     }
 
-    private static bool? CanAttackNPC(Player player, int npcId) {
+    private static bool? CanAttackNPC(Player player, int npcId)
+    {
         var npc = Main.npc[npcId];
 
-        if (player.HeldItem?.IsAir == false && player.HeldItem.TryGetGlobalItem(out ItemMeleeCooldownReplacement replacement) && replacement.Enabled) {
+        if (player.HeldItem?.IsAir == false && player.HeldItem.TryGetGlobalItem(out ItemMeleeCooldownReplacement replacement) && replacement.Enabled)
+        {
             return true;
         }
 

@@ -114,90 +114,105 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             NPCShop shop = new(NPC.type);
 
-            shop.Add(new Item(ModContent.ItemType<DwarvenContract>()) 
+            shop.Add(new Item(ModContent.ItemType<DwarvenContract>())
             {
-                shopCustomPrice = 100, 
+                shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ItemID.Flipper) {
-                shopCustomPrice = 100, 
+            shop.Add(new Item(ItemID.Flipper)
+            {
+                shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ItemID.FairyBell) {
-                shopCustomPrice = 100, 
+            shop.Add(new Item(ItemID.FairyBell)
+            {
+                shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ItemID.Silk) {
-                shopCustomPrice = 1, 
+            shop.Add(new Item(ItemID.Silk)
+            {
+                shopCustomPrice = 1,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ItemID.HealingPotion) {
-                shopCustomPrice = 1, 
+            shop.Add(new Item(ItemID.HealingPotion)
+            {
+                shopCustomPrice = 1,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.StuddedLeatherHelmet>()) {
-                shopCustomPrice = 25, 
+            shop.Add(new Item(ModContent.ItemType<Items.Armors.StuddedLeatherHelmet>())
+            {
+                shopCustomPrice = 25,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.StuddedLeatherArmor>()) {
-                shopCustomPrice = 40, 
+            shop.Add(new Item(ModContent.ItemType<Items.Armors.StuddedLeatherArmor>())
+            {
+                shopCustomPrice = 40,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.StuddedLeatherGreaves>()) {
-                shopCustomPrice = 33, 
+            shop.Add(new Item(ModContent.ItemType<Items.Armors.StuddedLeatherGreaves>())
+            {
+                shopCustomPrice = 33,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
 
 
-            shop.Add(new Item(ItemID.DivingHelmet) {
-                shopCustomPrice = 100, 
+            shop.Add(new Item(ItemID.DivingHelmet)
+            {
+                shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedEowOrBoc);
 
-            shop.Add(new Item(ItemID.StickyBomb) {
-                shopCustomPrice = 1, 
+            shop.Add(new Item(ItemID.StickyBomb)
+            {
+                shopCustomPrice = 1,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedEowOrBoc);
 
-            shop.Add(new Item(ItemID.TungstenBar) {
-                shopCustomPrice = 5, 
+            shop.Add(new Item(ItemID.TungstenBar)
+            {
+                shopCustomPrice = 5,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedEowOrBoc);
 
 
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenIceBrand>()) {
-                shopCustomPrice = 4000, 
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenIceBrand>())
+            {
+                shopCustomPrice = 4000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.SorrowDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))));
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Spears.ForgottenPearlSpear>()) {
-                shopCustomPrice = 4000, 
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Spears.ForgottenPearlSpear>())
+            {
+                shopCustomPrice = 4000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.SorrowDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))));
-            
 
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Axes.ForgottenPoisonAxe>()) {
-                shopCustomPrice = 6000, 
+
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Axes.ForgottenPoisonAxe>())
+            {
+                shopCustomPrice = 6000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedMechBossAny);
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenSwordbreaker>()) {
-                shopCustomPrice = 6000, 
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenSwordbreaker>())
+            {
+                shopCustomPrice = 6000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedMechBossAny);
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Spears.ForgottenImpHalberd>()) {
-                shopCustomPrice = 6000, 
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Spears.ForgottenImpHalberd>())
+            {
+                shopCustomPrice = 6000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedMechBossAny);
 

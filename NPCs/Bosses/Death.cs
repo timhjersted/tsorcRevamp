@@ -2,21 +2,17 @@ using Microsoft.Xna.Framework;
 using System;
 using System.IO;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items;
-using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
+using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Tools;
-using tsorcRevamp.Utilities;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -139,10 +135,10 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             //this made death always look in one direction
             //if (NPC.velocity.X > 0)
-           //{
-           //     NPC.spriteDirection = 1;
-           // }
-           // else NPC.spriteDirection = -1;
+            //{
+            //     NPC.spriteDirection = 1;
+            // }
+            // else NPC.spriteDirection = -1;
         }
         public override void SendExtraAI(BinaryWriter writer)
         {
@@ -206,7 +202,7 @@ namespace tsorcRevamp.NPCs.Bosses
             potionType = ItemID.SuperHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.DeathBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());

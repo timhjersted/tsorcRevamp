@@ -53,7 +53,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override void OnKill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig with { Volume = 0.6f}, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig with { Volume = 0.6f }, Projectile.Center);
             for (int i = 0; i < 10; i++)
             {
                 Vector2 projPosition = new Vector2(Projectile.position.X, Projectile.position.Y);

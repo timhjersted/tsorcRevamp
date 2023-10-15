@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         }
         public override void SetDefaults()
         {
-			Projectile.width = 20;
+            Projectile.width = 20;
             Projectile.height = 32;
             Projectile.scale = 0f;
             Projectile.DamageType = DamageClass.Magic;

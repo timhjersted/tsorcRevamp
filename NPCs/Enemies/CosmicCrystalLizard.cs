@@ -1,15 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -206,7 +205,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 int tilePosY = (int)(NPC.position.Y + NPC.height / 2) / 16;
                 tilePosX -= NPC.direction;
                 tilePosX += (int)NPC.velocity.X;
-                if (WorldGen.SolidTile(tilePosX, tilePosY) && NPC.collideY) {
+                if (WorldGen.SolidTile(tilePosX, tilePosY) && NPC.collideY)
+                {
                     AI_State = State_Jump;
                     peaceouttimer += 1;
                     AI_Timer = 0;
@@ -1025,7 +1025,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.15f, (float)Main.rand.Next(-30, 31) * 0.15f), Mod.Find<ModGore>("CosmicCrystalLizard_Gore4").Type, 1f);
             }
         }
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 500, 1000));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<EternalCrystal>()));

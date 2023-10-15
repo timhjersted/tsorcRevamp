@@ -1,10 +1,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
-using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 {

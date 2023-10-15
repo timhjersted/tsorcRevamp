@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -52,7 +51,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
         int frozenSawDamage = 30;
         int lightningDamage = 40;
-       
+
         int plasmaDamage = 40;
         int lifeTimer = 0;
 
@@ -92,7 +91,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             Lighting.AddLight(NPC.Center, Color.BlueViolet.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
 
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            
+
 
             Player player = Main.player[NPC.target];
             //chaos code: announce proximity debuffs once
@@ -102,14 +101,14 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             }
 
             //Proximity Debuffs
-            if ( NPC.life < NPC.lifeMax / 2)//NPC.Distance(player.Center) < 3550 &&
+            if (NPC.life < NPC.lifeMax / 2)//NPC.Distance(player.Center) < 3550 &&
             {
 
-                
+
                 player.AddBuff(BuffID.Chilled, 30, false);
                 player.AddBuff(BuffID.Ichor, 30, false);
                 //player.AddBuff(ModContent.BuffType<Buffs.Chilled>(), 60, false);
-                
+
 
                 if (holdTimer <= 0)
                 {
@@ -118,8 +117,8 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 }
 
             }
-            
-            
+
+
 
 
             //Count up the timers

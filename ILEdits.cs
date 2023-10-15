@@ -1,9 +1,6 @@
 ﻿using Mono.Cecil.Cil;
-using static Mono.Cecil.Cil.OpCodes;
 using MonoMod.Cil;
-using MonoMod.RuntimeDetour.HookGen;
 using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -103,7 +100,7 @@ namespace tsorcRevamp
             //move the cursor, this doesnt actually change anything in game
             c.Index++;
             c.Index++;
-            
+
             //set the label to after the offending op codes
             c.MarkLabel(label);
 
@@ -111,7 +108,7 @@ namespace tsorcRevamp
         }
 
         internal static void DrawWires_Patch(ILContext il)
-		{
+        {
             var c = new ILCursor(il);
             var label = il.DefineLabel();
 
@@ -125,9 +122,9 @@ namespace tsorcRevamp
 
             c.MarkLabel(label);
 
-		}
+        }
 
-		internal static void Player_Update(ILContext il)
+        internal static void Player_Update(ILContext il)
         {
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
 

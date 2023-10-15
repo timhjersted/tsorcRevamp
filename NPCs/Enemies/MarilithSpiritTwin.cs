@@ -1,11 +1,10 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 
@@ -424,7 +423,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
         #endregion
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.HolyWarElixir>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Ice3Tome>(), 10));

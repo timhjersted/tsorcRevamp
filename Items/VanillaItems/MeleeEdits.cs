@@ -1,11 +1,7 @@
-using Humanizer;
-using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Utilities;
@@ -30,15 +26,15 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.width = 36;
                 item.height = 40;
             }
-            if (item.type == ItemID.BluePhaseblade || item.type == ItemID.GreenPhaseblade || item.type == ItemID.YellowPhaseblade || item.type == ItemID.RedPhaseblade 
+            if (item.type == ItemID.BluePhaseblade || item.type == ItemID.GreenPhaseblade || item.type == ItemID.YellowPhaseblade || item.type == ItemID.RedPhaseblade
                 || item.type == ItemID.WhitePhaseblade || item.type == ItemID.PurplePhaseblade || item.type == ItemID.OrangePhaseblade || item.type == ItemID.Seedler)
             {
                 item.width = 48;
                 item.height = 48;
             }
-            if (item.type == ItemID.BluePhasesaber || item.type == ItemID.GreenPhasesaber || item.type == ItemID.YellowPhasesaber || item.type == ItemID.RedPhasesaber 
+            if (item.type == ItemID.BluePhasesaber || item.type == ItemID.GreenPhasesaber || item.type == ItemID.YellowPhasesaber || item.type == ItemID.RedPhasesaber
                 || item.type == ItemID.WhitePhasesaber || item.type == ItemID.PurplePhasesaber || item.type == ItemID.OrangePhasesaber || item.type == ItemID.AdamantiteSword
-                || item.type == ItemID.CobaltSword || item.type == ItemID.MythrilSword || item.type == ItemID.Keybrand || item.type == ItemID.TitaniumSword 
+                || item.type == ItemID.CobaltSword || item.type == ItemID.MythrilSword || item.type == ItemID.Keybrand || item.type == ItemID.TitaniumSword
                 || item.type == ItemID.DeathSickle || item.type == ItemID.DD2SquireDemonSword)
             {
                 item.width = 56;
@@ -381,7 +377,7 @@ namespace tsorcRevamp.Items.VanillaItems
                     instancedGlobal.slashColor = Color.DarkCyan;
                     break;
                 case ItemID.FetidBaghnakhs:
-                    instancedGlobal.slashColor = Color.BurlyWood; 
+                    instancedGlobal.slashColor = Color.BurlyWood;
                     break;
                 case ItemID.Seedler:
                     instancedGlobal.slashColor = Color.YellowGreen;

@@ -1,8 +1,8 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -61,7 +61,7 @@ namespace tsorcRevamp.NPCs.Enemies
             return 0;
         }
         #endregion
-        
+
         int chaosElementalTimer;
         int chaosElementalsSpawned = 0;
         public override void AI()
@@ -117,7 +117,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationBand, 10));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 10));

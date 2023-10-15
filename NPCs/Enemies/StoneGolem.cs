@@ -31,7 +31,8 @@ namespace tsorcRevamp.NPCs.Enemies
             return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.15f;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
             //npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.StoneBlock, 1, 5, 10));
             //npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.IronOre, 1, 1, 4));
             npcLoot.Add(ItemDropRule.Common(ItemID.EndurancePotion, 16));

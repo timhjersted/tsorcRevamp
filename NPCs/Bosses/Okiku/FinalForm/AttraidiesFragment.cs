@@ -3,12 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 {
@@ -81,12 +78,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 currentRotation += 0.006f;
                 float radius = 700;
                 float offset = 0;
-                if(AttackTimer < 60)
+                if (AttackTimer < 60)
                 {
                     radius *= AttackTimer / 60f;
                     offset = 1 - AttackTimer / 60f;
                 }
-                if(AttackTimer > timeLimit - 60)
+                if (AttackTimer > timeLimit - 60)
                 {
                     radius *= (AttackTimer - timeLimit) / 60f;
                     offset = 1 - (AttackTimer - timeLimit) / 60f;
@@ -106,7 +103,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
             if (NPC.ai[3] == 3)
             {
-                if(AttackTimer % 720 == 690)
+                if (AttackTimer % 720 == 690)
                 {
                     animationState = 1;
                     animationTimer = 30;
@@ -125,7 +122,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                         clockwise *= -1;
                     }
                 }
-                
+
             }
             else
             {
@@ -146,8 +143,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                         }
                     }
                 }
-                
-                
+
+
                 if (AttackTimer > timeLimit)
                 {
                     NPC.active = false;
@@ -200,7 +197,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 1f, 0.4f, 0.4f);
-            
+
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 

@@ -29,7 +29,7 @@ namespace tsorcRevamp.Tiles
             // name.SetDefault("Soul Skelly");
             AddMapEntry(new Color(120, 250, 0), name);
             DustType = 30;
-            TileID.Sets.DisableSmartCursor[Type] = true; 
+            TileID.Sets.DisableSmartCursor[Type] = true;
             Main.tileLighted[Type] = true;
             Main.tileFrameImportant[Type] = true;
             Main.tileSpelunker[Type] = true;

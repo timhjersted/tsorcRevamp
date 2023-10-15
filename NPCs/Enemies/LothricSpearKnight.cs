@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -39,26 +38,26 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 750;
-            if (Main.hardMode) 
-            { 
-                NPC.lifeMax = 1200; 
-                NPC.defense = 60; 
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 1200;
+                NPC.defense = 60;
                 NPC.value = 6000;
                 lothricDamage = 30;
                 lothricSmallDamage = 23;
                 lothricBigDamage = 40;
-    }
-            if (tsorcRevampWorld.SuperHardMode) 
-            { 
-                NPC.lifeMax = 3000; 
-                NPC.defense = 80; 
-                NPC.damage = 85; 
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 3000;
+                NPC.defense = 80;
+                NPC.damage = 85;
                 NPC.value = 12000; // was 460
                 NPC.knockBackResist = 0.0f;
                 lothricDamage = 35;
                 lothricSmallDamage = 28;
                 lothricBigDamage = 45;
-            } 
+            }
             NPC.value = 3750;
             NPC.noGravity = false;
             NPC.HitSound = SoundID.NPCHit1;
@@ -77,7 +76,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
-        {          
+        {
             player.AddBuff(36, 3 * 60, false); //broken armor         
             player.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 15 * 60, false);
         }
@@ -455,7 +454,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         AI_State = State_LungeThrust;
                     }
 
-                  
+
 
                     /*for (int i = 0; i < Main.maxNPCs; i++)
                     {
@@ -553,7 +552,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (AI_Timer == 34)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f}, NPC.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
                         stab.timeLeft = 6;
                         stab.velocity.X = 5;
@@ -561,7 +560,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (AI_Timer == 50)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f}, NPC.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
                         stab.timeLeft = 6;
                         stab.velocity.X = 5;
@@ -569,7 +568,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (AI_Timer == 77)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f}, NPC.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
                         stab.timeLeft = 6;
                         stab.velocity.X = 5;
@@ -579,7 +578,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (AI_Timer == 34)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f}, NPC.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
                         stab.timeLeft = 6;
                         stab.velocity.X = -5;
@@ -587,7 +586,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (AI_Timer == 50)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f}, NPC.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
                         stab.timeLeft = 6;
                         stab.velocity.X = -5;
@@ -595,7 +594,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (AI_Timer == 76)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f}, NPC.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                         Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), lothricSmallDamage, 5, Main.myPlayer, NPC.whoAmI, 3)];
                         stab.timeLeft = 6;
                         stab.velocity.X = -5;
@@ -1039,7 +1038,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 12, 24));
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
@@ -1093,7 +1092,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             return false; //Don't draw base sprite
         }
-        
+
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {

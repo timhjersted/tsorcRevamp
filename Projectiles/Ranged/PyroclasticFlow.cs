@@ -58,18 +58,18 @@ namespace tsorcRevamp.Projectiles.Ranged
             }
         }
 
-        
+
         public override float CollisionWidthFunction(float progress)
         {
             if (progress > 0.9)
             {
                 return 0;
             }
-            if(progress > 0.8)
+            if (progress > 0.8)
             {
                 return MathHelper.Lerp(45, 0, (progress - 0.8f) / 0.1f);
             }
-            else if(progress > 0.7)
+            else if (progress > 0.7)
             {
                 return MathHelper.Lerp(0, 45, (progress - 0.7f) / 0.1f);
             }
@@ -94,7 +94,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             }
             trailMaxLength = 1500;
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);
-            effect.Parameters["fadeOut"].SetValue(fadeOut); 
+            effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(timeFactor);
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }

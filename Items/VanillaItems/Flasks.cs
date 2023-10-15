@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items.VanillaItems
             recipe.AddIngredient(ItemID.Fireblossom, 4);
             recipe.AddTile(TileID.Bottles);
             recipe.Register();
-            
+
         }
     }
 }

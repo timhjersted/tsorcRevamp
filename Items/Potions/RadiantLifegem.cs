@@ -109,7 +109,7 @@ namespace tsorcRevamp.Items.Potions
                     }
                 }
 
-                player.AddBuff(ModContent.BuffType<Buffs.RadiantLifegemHealing>(), DurationInSeconds * 60); 
+                player.AddBuff(ModContent.BuffType<Buffs.RadiantLifegemHealing>(), DurationInSeconds * 60);
                 player.AddBuff(BuffID.PotionSickness, player.pStone ? (SicknessBaseDuration / 4 * 3 * 60) : (SicknessBaseDuration * 60));
 
                 if (Item.stack == 1) Item.TurnToAir();

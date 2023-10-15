@@ -3,41 +3,34 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.GameContent.Personalities;
+using Terraria.Graphics;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
+using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.Utilities;
-using tsorcRevamp.Items;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Enemy;
-using tsorcRevamp.UI;
-using Terraria.DataStructures;
-using tsorcRevamp.Projectiles.Enemy.Marilith;
-using tsorcRevamp.Projectiles.VFX;
-using tsorcRevamp.Projectiles.Enemy.Triad;
-using Terraria.Graphics;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.Drawing;
-using Terraria.WorldBuilding;
-using System.ComponentModel.Design;
+using tsorcRevamp.Items;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.VanillaItems;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.VanillaItems;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Utilities;
 using tsorcRevamp.NPCs;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
-using tsorcRevamp.Buffs;
+using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.Enemy;
+using tsorcRevamp.Projectiles.Enemy.Marilith;
+using tsorcRevamp.Projectiles.Enemy.Triad;
+using tsorcRevamp.Projectiles.VFX;
+using tsorcRevamp.UI;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp
 {
@@ -95,9 +88,9 @@ namespace tsorcRevamp
             Terraria.On_Main.DrawInterface_35_YouDied += Main_DrawInterface_35_YouDied;
 
             Terraria.On_Player.InZonePurity += Player_InZonePurity;
-			//On.Terraria.GameContent.ItemDropRules.ItemDropResolver.ResolveRule += ItemDropResolver_ResolveRule;
+            //On.Terraria.GameContent.ItemDropRules.ItemDropResolver.ResolveRule += ItemDropResolver_ResolveRule;
 
-			Terraria.On_Player.DashMovement += Player_DashMovement;
+            Terraria.On_Player.DashMovement += Player_DashMovement;
 
             Terraria.On_Player.DropTombstone += On_Player_DropTombstone;
 
@@ -149,7 +142,7 @@ namespace tsorcRevamp
         }
 
         private static void DukeFishronAdjustment(On_NPC.orig_AI_069_DukeFishron orig, NPC self)
-        { 
+        {
             //ai[0] decides which kind of attack it will use (0 = nothing, 1 = dash, 2 = bubbles, 3 = tsunami, 4 = phase change 1 -> 2,
             // 5 = dash p2, 6 = nothing, 7 = bubbles p2, 8 = tsunami p2, 9 = phase change 2 -> 3,
             // 10 = ???, 11 = ???, 12 = teleport after dashes complete,
@@ -1174,7 +1167,7 @@ namespace tsorcRevamp
         private static Rectangle On_Player_ItemCheck_EmitUseVisuals(On_Player.orig_ItemCheck_EmitUseVisuals orig, Player self, Item sItem, Rectangle itemRectangle)
         {
             Rectangle oldRectangle = itemRectangle;
-            
+
             //Find a random point along the length of the weapon, aimed at its current swing angle
             bool flippedSwing = false;
             if (self.HeldItem.TryGetGlobalItem(out ItemMeleeAttackAiming aiming))
@@ -1195,14 +1188,17 @@ namespace tsorcRevamp
             return oldRectangle;
         }
 
-        private static void On_Player_GetPointOnSwungItemPath(On_Player.orig_GetPointOnSwungItemPath orig, Player self, float spriteWidth, float spriteHeight, float normalizedPointOnPath, float itemScale, out Vector2 location, out Vector2 outwardDirection) {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().BroadswordRework) {
+        private static void On_Player_GetPointOnSwungItemPath(On_Player.orig_GetPointOnSwungItemPath orig, Player self, float spriteWidth, float spriteHeight, float normalizedPointOnPath, float itemScale, out Vector2 location, out Vector2 outwardDirection)
+        {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().BroadswordRework)
+            {
                 orig(self, spriteWidth, spriteHeight, normalizedPointOnPath, itemScale, out location, out outwardDirection);
                 return;
             }
             float length = (float)Math.Sqrt(spriteWidth * spriteWidth + spriteHeight * spriteHeight);
             float dir = (self.direction == 1).ToInt() * ((float)Math.PI / 2f);
-            if (self.gravDir == -1f) {
+            if (self.gravDir == -1f)
+            {
                 dir += (float)Math.PI / 2f * (float)self.direction;
             }
             Item item = self.HeldItem;
@@ -1249,7 +1245,7 @@ namespace tsorcRevamp
 
         private static void On_NPC_TargetClosest(On_NPC.orig_TargetClosest orig, NPC self, bool faceTarget)
         {
-            if(self.ModNPC == null)
+            if (self.ModNPC == null)
             {
                 orig(self, faceTarget);
                 return;
@@ -1290,7 +1286,7 @@ namespace tsorcRevamp
 
         private static void DrawPlayerAuras(On_Main.orig_DrawPlayers_BehindNPCs orig, Main self)
         {
-            for(int i = 0; i < Main.maxPlayers; i++)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active && !Main.player[i].dead)
                 {
@@ -1419,12 +1415,12 @@ namespace tsorcRevamp
         private static void On_Player_ApplyEquipFunctional(On_Player.orig_ApplyEquipFunctional orig, Player self, Item currentItem, bool hideVisual)
         {
             var modPlayer = self.GetModPlayer<tsorcRevampPlayer>();
-            if(currentItem.type == ItemID.NecromanticScroll)
+            if (currentItem.type == ItemID.NecromanticScroll)
             {
                 self.GetDamage(DamageClass.Summon) -= 0.1f;
                 modPlayer.SummonTagDuration += SummonTagDurationBoost / 100f;
             }
-            if(currentItem.type == ItemID.HerculesBeetle)
+            if (currentItem.type == ItemID.HerculesBeetle)
             {
                 self.GetKnockback(DamageClass.Summon) -= 2f;
                 self.GetDamage(DamageClass.Summon) -= 0.15f;
@@ -1547,7 +1543,7 @@ namespace tsorcRevamp
         {
             if (Main.IsGraphicsDeviceAvailable)
             {
-                if(startSpriteBatch == false)
+                if (startSpriteBatch == false)
                 {
                     Main.spriteBatch.End();
                 }
@@ -1576,7 +1572,7 @@ namespace tsorcRevamp
                     }
                     Main.spriteBatch.End();
                 }
-                
+
                 //Draw anything additive that needs to be drawn on a different layer in one big batch
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                 for (int i = 0; i < Main.maxProjectiles; i++)
@@ -1715,7 +1711,7 @@ namespace tsorcRevamp
             {
                 bool restrictedHook = false;
 
-                if(self.miscEquips[3].type == ItemID.SlimySaddle && !NPC.downedBoss2)
+                if (self.miscEquips[3].type == ItemID.SlimySaddle && !NPC.downedBoss2)
                 {
                     restrictedHook = true;
                 }
@@ -1752,7 +1748,7 @@ namespace tsorcRevamp
                             item = self.inventory[i];
                             break;
                         }
-                        
+
                     }
                 }
             }
@@ -1761,51 +1757,51 @@ namespace tsorcRevamp
         }
 
 
-		private static void Player_DashMovement(Terraria.On_Player.orig_DashMovement orig, Player self)
-		{
+        private static void Player_DashMovement(Terraria.On_Player.orig_DashMovement orig, Player self)
+        {
             float originalVelocity = self.velocity.X;
             bool wasInDash = false;
 
             if (self.dashDelay < 0) //we are mid-dash.
                 wasInDash = true;
-            
+
             orig(self);
 
             //fix for auto-acceleration post-dash with a high max speed
             if (wasInDash && self.dashDelay > 0 && self.eocDash <= 0)
             {
-				//we are no longer mid-dash; it must've just ended self frame.
-				//(we have just passed below 12 / above -12 velocity, and our speed now equals our max speed)
-                
+                //we are no longer mid-dash; it must've just ended self frame.
+                //(we have just passed below 12 / above -12 velocity, and our speed now equals our max speed)
+
                 //eocDash seems to be a SoC dash hit timer. not sure what it's used for...
                 // but if it's more than 0 then we just hit something and shouldn't reset the speed.
 
-				if ((double)self.velocity.X < 0.0) //not completely sure why the cast, but thats wha
-				{
-					//moving left
+                if ((double)self.velocity.X < 0.0) //not completely sure why the cast, but thats wha
+                {
+                    //moving left
                     if (!self.controlLeft)
-    					self.velocity.X = originalVelocity;
-				}
-    			else
-				{
-					//moving right
+                        self.velocity.X = originalVelocity;
+                }
+                else
+                {
+                    //moving right
                     if (!self.controlRight)
-    					self.velocity.X = originalVelocity;
-				}
-			}
+                        self.velocity.X = originalVelocity;
+                }
+            }
 
-			//fix for not being able to dash until stopping with a high max speed
-			if (wasInDash && Math.Abs(self.velocity.X) > 17)
-			{
-				//our speed has gone above 16.9. the dash is not doing self - in fact the dash continuously slows you down even without friction. we should end it.
-				self.dashDelay = 20; //different dashes have different cooldowns (i think Tabi & SoC have 30), but self is the most conservative one. It will never be *worse* than the regular dash.
-			}
+            //fix for not being able to dash until stopping with a high max speed
+            if (wasInDash && Math.Abs(self.velocity.X) > 17)
+            {
+                //our speed has gone above 16.9. the dash is not doing self - in fact the dash continuously slows you down even without friction. we should end it.
+                self.dashDelay = 20; //different dashes have different cooldowns (i think Tabi & SoC have 30), but self is the most conservative one. It will never be *worse* than the regular dash.
+            }
 
-		}
+        }
 
-		//The reason the dungeon code is getting inserted here isn't because it has anything to do with ZonePurity
-		//It's just because self is a function that has the player as a parameter, and is called in UpdateBiomes *after* ZoneDungeon is set but before it is used.
-		private static bool Player_InZonePurity(Terraria.On_Player.orig_InZonePurity orig, Player self)
+        //The reason the dungeon code is getting inserted here isn't because it has anything to do with ZonePurity
+        //It's just because self is a function that has the player as a parameter, and is called in UpdateBiomes *after* ZoneDungeon is set but before it is used.
+        private static bool Player_InZonePurity(Terraria.On_Player.orig_InZonePurity orig, Player self)
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && NPC.downedBoss3)
             {
@@ -1840,7 +1836,7 @@ namespace tsorcRevamp
             if (Main.player[Main.myPlayer].dead)
             {
                 string textValue2 = Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().DeathText;
-                if(textValue2 == null)
+                if (textValue2 == null)
                 {
                     textValue2 = "";
                 }
@@ -1950,7 +1946,7 @@ namespace tsorcRevamp
                     if (Main.projHook[self.inventory[i].shoot])
                     {
                         restrictedHook = false;
-                        if(self.inventory[i].type == ItemID.SlimeHook || self.inventory[i].type == ItemID.SquirrelHook)
+                        if (self.inventory[i].type == ItemID.SlimeHook || self.inventory[i].type == ItemID.SquirrelHook)
                         {
                             restrictedHook = true;
                         }
@@ -1986,31 +1982,40 @@ namespace tsorcRevamp
             tsorcRevamp.ActuationBypassActive = false;
         }
 
-        private static void Player_HandleBeingInChestRange(Terraria.On_Player.orig_HandleBeingInChestRange orig, Player self) {
-            if (self.chest != -1) {
-                if (self.chest != -2) {
+        private static void Player_HandleBeingInChestRange(Terraria.On_Player.orig_HandleBeingInChestRange orig, Player self)
+        {
+            if (self.chest != -1)
+            {
+                if (self.chest != -2)
+                {
                     self.piggyBankProjTracker.Clear();
                 }
-                if (self.chest != -5) {
+                if (self.chest != -5)
+                {
                     self.voidLensChest.Clear();
                 }
                 bool flag = false;
                 int projectileLocalIndex = self.piggyBankProjTracker.ProjectileLocalIndex;
-                if (projectileLocalIndex >= 0) {
+                if (projectileLocalIndex >= 0)
+                {
                     flag = true;
-                    if (!Main.projectile[projectileLocalIndex].active || (Main.projectile[projectileLocalIndex].type != 525 && Main.projectile[projectileLocalIndex].type != 960)) {
+                    if (!Main.projectile[projectileLocalIndex].active || (Main.projectile[projectileLocalIndex].type != 525 && Main.projectile[projectileLocalIndex].type != 960))
+                    {
                         Main.PlayInteractiveProjectileOpenCloseSound(Main.projectile[projectileLocalIndex].type, false);
                         self.chest = -1;
                         Recipe.FindRecipes(false);
                     }
-                    else {
+                    else
+                    {
                         int num = (int)(((double)self.position.X + (double)self.width * 0.5) / 16.0);
                         int num2 = (int)(((double)self.position.Y + (double)self.height * 0.5) / 16.0);
                         Vector2 vector = Main.projectile[projectileLocalIndex].Hitbox.ClosestPointInRect(self.Center);
                         self.chestX = (int)vector.X / 16;
                         self.chestY = (int)vector.Y / 16;
-                        if (num < self.chestX - Player.tileRangeX || num > self.chestX + Player.tileRangeX + 1 || num2 < self.chestY - Player.tileRangeY || num2 > self.chestY + Player.tileRangeY + 1) {
-                            if (self.chest != -1) {
+                        if (num < self.chestX - Player.tileRangeX || num > self.chestX + Player.tileRangeX + 1 || num2 < self.chestY - Player.tileRangeY || num2 > self.chestY + Player.tileRangeY + 1)
+                        {
+                            if (self.chest != -1)
+                            {
                                 Main.PlayInteractiveProjectileOpenCloseSound(Main.projectile[projectileLocalIndex].type, false);
                             }
                             self.chest = -1;
@@ -2019,21 +2024,26 @@ namespace tsorcRevamp
                     }
                 }
                 int projectileLocalIndex2 = self.voidLensChest.ProjectileLocalIndex;
-                if (projectileLocalIndex2 >= 0) {
+                if (projectileLocalIndex2 >= 0)
+                {
                     flag = true;
-                    if (!Main.projectile[projectileLocalIndex2].active || Main.projectile[projectileLocalIndex2].type != 734) {
+                    if (!Main.projectile[projectileLocalIndex2].active || Main.projectile[projectileLocalIndex2].type != 734)
+                    {
                         SoundEngine.PlaySound(SoundID.Item130, null);
                         self.chest = -1;
                         Recipe.FindRecipes(false);
                     }
-                    else {
+                    else
+                    {
                         int num3 = (int)(((double)self.position.X + (double)self.width * 0.5) / 16.0);
                         int num4 = (int)(((double)self.position.Y + (double)self.height * 0.5) / 16.0);
                         Vector2 vector2 = Main.projectile[projectileLocalIndex2].Hitbox.ClosestPointInRect(self.Center);
                         self.chestX = (int)vector2.X / 16;
                         self.chestY = (int)vector2.Y / 16;
-                        if (num3 < self.chestX - Player.tileRangeX || num3 > self.chestX + Player.tileRangeX + 1 || num4 < self.chestY - Player.tileRangeY || num4 > self.chestY + Player.tileRangeY + 1) {
-                            if (self.chest != -1) {
+                        if (num3 < self.chestX - Player.tileRangeX || num3 > self.chestX + Player.tileRangeX + 1 || num4 < self.chestY - Player.tileRangeY || num4 > self.chestY + Player.tileRangeY + 1)
+                        {
+                            if (self.chest != -1)
+                            {
                                 SoundEngine.PlaySound(SoundID.Item130, null);
                             }
                             self.chest = -1;
@@ -2041,25 +2051,30 @@ namespace tsorcRevamp
                         }
                     }
                 }
-                if (flag) {
+                if (flag)
+                {
                     return;
                 }
-                if (!self.IsInInteractionRangeToMultiTileHitbox(self.chestX, self.chestY)) {
-                    if (self.chest != -1) {
+                if (!self.IsInInteractionRangeToMultiTileHitbox(self.chestX, self.chestY))
+                {
+                    if (self.chest != -1)
+                    {
                         //SoundEngine.PlaySound(11, -1, -1, 1, 1f, 0f);
                     }
                     self.chest = -1;
                     Recipe.FindRecipes(false);
                     return;
                 }
-                if (!Main.tile[self.chestX, self.chestY].HasTile) {
+                if (!Main.tile[self.chestX, self.chestY].HasTile)
+                {
                     //SoundEngine.PlaySound(11, -1, -1, 1, 1f, 0f);
                     self.chest = -1;
                     Recipe.FindRecipes(false);
                     return;
                 }
             }
-            else {
+            else
+            {
                 self.piggyBankProjTracker.Clear();
                 self.voidLensChest.Clear();
             }
@@ -2102,7 +2117,7 @@ namespace tsorcRevamp
             }
         }
 
-       
+
 
         private static void DrawNPCsPatch(Terraria.On_Main.orig_DrawNPCs orig, Main self, bool behindTiles)
         {
@@ -2184,7 +2199,7 @@ namespace tsorcRevamp
             if (item.stack <= 0 || item.type <= 0 || item.buffType <= 0 || item.CountsAsClass(DamageClass.Summon) || item.buffType == 90)
                 return;
 
-            if(item.type == ModContent.ItemType<Items.Potions.HealingElixir>() || item.type == ModContent.ItemType<Items.Potions.HolyWarElixir>())
+            if (item.type == ModContent.ItemType<Items.Potions.HealingElixir>() || item.type == ModContent.ItemType<Items.Potions.HolyWarElixir>())
             {
                 return;
             }
@@ -2193,7 +2208,7 @@ namespace tsorcRevamp
             bool validItem = ItemLoader.CanUseItem(item, player);
 
             //Block using finite or inconvienent potions on accident
-            if(item.type == ItemID.ObsidianSkinPotion && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if (item.type == ItemID.ObsidianSkinPotion && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 validItem = false;
             }
@@ -2226,7 +2241,8 @@ namespace tsorcRevamp
                     validItem = false;
                     break;
                 }
-                if (player.buffImmune[buffType]) {
+                if (player.buffImmune[buffType])
+                {
                     validItem = false;
                     break;
                 }
@@ -2289,8 +2305,8 @@ namespace tsorcRevamp
             }
             Item selectedItem = player.QuickMana_GetItemToUse();
             if (player.HasItem(ModContent.ItemType<Items.Potions.SupremeManaPotion>()))
-            {                
-                for(int i = 0; i < player.inventory.Length; i++)
+            {
+                for (int i = 0; i < player.inventory.Length; i++)
                 {
                     if (player.inventory[i] != null && player.inventory[i].type == ModContent.ItemType<Items.Potions.SupremeManaPotion>())
                     {
@@ -2365,7 +2381,7 @@ namespace tsorcRevamp
         //Generic "use item" code. Since items can be any or all of the 3 categories at once, self handles all of it.
         private static void UsePotion(Item item, Player player)
         {
-            if(item.UseSound != null)
+            if (item.UseSound != null)
             {
                 SoundEngine.PlaySound((SoundStyle)item.UseSound, player.position);
             }
@@ -2404,7 +2420,7 @@ namespace tsorcRevamp
                 if (Main.myPlayer == player.whoAmI)
                     player.ManaEffect(healMana);
             }
-            if(item.type == ModContent.ItemType<Items.Potions.SupremeManaPotion>())
+            if (item.type == ModContent.ItemType<Items.Potions.SupremeManaPotion>())
             {
                 player.AddBuff(BuffID.ManaSickness, SupremeManaPotion.SicknessDuration * 60);
                 if (Main.myPlayer == player.whoAmI)
@@ -2469,14 +2485,17 @@ namespace tsorcRevamp
                 {
                     //Player.AdjustRespawnTimerForWorldJoining(self);
                     {
-                        if (Main.myPlayer != self.whoAmI || !self.dead) {
+                        if (Main.myPlayer != self.whoAmI || !self.dead)
+                        {
                             return;
                         }
                         long num = DateTime.UtcNow.ToBinary() - self.lastTimePlayerWasSaved;
-                        if (num > 0) {
+                        if (num > 0)
+                        {
                             int num2 = Utils.Clamp((int)(Utils.Clamp(new TimeSpan(num).TotalSeconds, 0.0, 1000.0) * 60.0), 0, self.respawnTimer);
                             self.respawnTimer -= num2;
-                            if (self.respawnTimer == 0) {
+                            if (self.respawnTimer == 0)
+                            {
                                 self.dead = false;
                             }
                         }
@@ -2557,30 +2576,39 @@ namespace tsorcRevamp
                 self.position.X = self.SpawnX * 16 + 8 - self.width / 2;
                 self.position.Y = self.SpawnY * 16 - self.height;
             }
-            else {
+            else
+            {
                 int spawnTileX = Main.spawnTileX;
                 int spawnTileY = Main.spawnTileY;
-                if (!IsAreaAValidWorldSpawn(spawnTileX, spawnTileY)) {
+                if (!IsAreaAValidWorldSpawn(spawnTileX, spawnTileY))
+                {
                     bool test = false;
-                    if (!test) {
-                        for (int i = 0; i < 30; i++) {
-                            if (IsAreaAValidWorldSpawn(spawnTileX, spawnTileY - i)) {
+                    if (!test)
+                    {
+                        for (int i = 0; i < 30; i++)
+                        {
+                            if (IsAreaAValidWorldSpawn(spawnTileX, spawnTileY - i))
+                            {
                                 spawnTileY -= i;
                                 test = true;
                                 break;
                             }
                         }
                     }
-                    if (!test) {
-                        for (int j = 0; j < 30; j++) {
-                            if (IsAreaAValidWorldSpawn(spawnTileX, spawnTileY - j)) {
+                    if (!test)
+                    {
+                        for (int j = 0; j < 30; j++)
+                        {
+                            if (IsAreaAValidWorldSpawn(spawnTileX, spawnTileY - j))
+                            {
                                 spawnTileY -= j;
                                 test = true;
                                 break;
                             }
                         }
                     }
-                    if (test) {
+                    if (test)
+                    {
                         //self.Spawn_SetPosition(spawnTileX, spawnTileY);
                         self.position.X = spawnTileX * 16 + 8 - self.width / 2;
                         self.position.Y = spawnTileY * 16 - self.height;
@@ -2589,25 +2617,31 @@ namespace tsorcRevamp
                     //self.Spawn_SetPosition(Main.spawnTileX, Main.spawnTileY);
                     self.position.X = Main.spawnTileX * 16 + 8 - self.width / 2;
                     self.position.Y = Main.spawnTileY * 16 - self.height;
-                    if (!IsAreaAValidWorldSpawn(Main.spawnTileX, Main.spawnTileY)) {
+                    if (!IsAreaAValidWorldSpawn(Main.spawnTileX, Main.spawnTileY))
+                    {
                         ForceClearArea(Main.spawnTileX, Main.spawnTileY);
                     }
                 }
-                else {
+                else
+                {
                     //spawnTileY = Player.Spawn_DescendFromDefaultSpace(spawnTileX, spawnTileY);
                     {
                         int x = spawnTileX;
                         int y = spawnTileY;
-                        for (int i = 0; i < 50; i++) {
+                        for (int i = 0; i < 50; i++)
+                        {
                             bool test = false;
-                            for (int j = -1; j <= 1; j++) {
+                            for (int j = -1; j <= 1; j++)
+                            {
                                 Tile tile = Main.tile[x + j, y + i];
-                                if (tile.HasUnactuatedTile && (Main.tileSolid[tile.TileType] || !Main.tileSolidTop[tile.TileType])) {
+                                if (tile.HasUnactuatedTile && (Main.tileSolid[tile.TileType] || !Main.tileSolidTop[tile.TileType]))
+                                {
                                     test = true;
                                     break;
                                 }
                             }
-                            if (test) {
+                            if (test)
+                            {
                                 y += i;
                                 break;
                             }
@@ -2617,7 +2651,8 @@ namespace tsorcRevamp
                     //self.Spawn_SetPosition(spawnTileX, spawnTileY);
                     self.position.X = spawnTileX * 16 + 8 - self.width / 2;
                     self.position.Y = spawnTileY * 16 - self.height;
-                    if (!IsAreaAValidWorldSpawn(spawnTileX, spawnTileY)) {
+                    if (!IsAreaAValidWorldSpawn(spawnTileX, spawnTileY))
+                    {
                         ForceClearArea(spawnTileX, spawnTileY);
                     }
                 }
@@ -2703,15 +2738,19 @@ namespace tsorcRevamp
             //im exhausted okay? im tired. im so tired. i never stop being tired.
             Assembly tml = self.GetType().Assembly;
             Type playerclass = null;
-            foreach (Type T in tml.GetTypes()) {
-                if (T.Name == "Player") {
+            foreach (Type T in tml.GetTypes())
+            {
+                if (T.Name == "Player")
+                {
                     playerclass = T;
                     break;
                 }
             }
             MethodInfo[] methods = playerclass.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
-            for (int i = 0; i < methods.Length - 1; i++) {
-                if (methods[i].Name == "UpdateGraveyard") {
+            for (int i = 0; i < methods.Length - 1; i++)
+            {
+                if (methods[i].Name == "UpdateGraveyard")
+                {
                     methods[i].Invoke(self, new object[] { true });
                 }
             }
@@ -2730,15 +2769,21 @@ namespace tsorcRevamp
                 Player.Hooks.EnterWorld(self.whoAmI);
             }
         }
-        
-        internal static bool IsAreaAValidWorldSpawn(int floorX, int floorY) {
-            for (int i = floorX - 1; i < floorX + 2; i++) {
-                for (int j = floorY - 3; j < floorY; j++) {
-                    if (Main.tile[i, j] != null) {
-                        if (Main.tile[i, j].HasUnactuatedTile && Main.tileSolid[Main.tile[i, j].TileType] && !Main.tileSolidTop[Main.tile[i, j].TileType]) {
+
+        internal static bool IsAreaAValidWorldSpawn(int floorX, int floorY)
+        {
+            for (int i = floorX - 1; i < floorX + 2; i++)
+            {
+                for (int j = floorY - 3; j < floorY; j++)
+                {
+                    if (Main.tile[i, j] != null)
+                    {
+                        if (Main.tile[i, j].HasUnactuatedTile && Main.tileSolid[Main.tile[i, j].TileType] && !Main.tileSolidTop[Main.tile[i, j].TileType])
+                        {
                             return false;
                         }
-                        if (Main.tile[i, j].LiquidAmount > 0) {
+                        if (Main.tile[i, j].LiquidAmount > 0)
+                        {
                             return false;
                         }
                     }
@@ -2747,26 +2792,34 @@ namespace tsorcRevamp
             return true;
         }
 
-        internal static void ForceClearArea(int floorX, int floorY) {
-            for (int i = floorX - 1; i < floorX + 2; i++) {
-                for (int j = floorY - 3; j < floorY; j++) {
-                    if (!(Main.tile[i, j] != null)) {
+        internal static void ForceClearArea(int floorX, int floorY)
+        {
+            for (int i = floorX - 1; i < floorX + 2; i++)
+            {
+                for (int j = floorY - 3; j < floorY; j++)
+                {
+                    if (!(Main.tile[i, j] != null))
+                    {
                         continue;
                     }
                     Tile tile = Main.tile[i, j];
-                    if (tile.HasUnactuatedTile) {
+                    if (tile.HasUnactuatedTile)
+                    {
                         bool[] tileSolid = Main.tileSolid;
                         tile = Main.tile[i, j];
-                        if (tileSolid[tile.TileType]) {
+                        if (tileSolid[tile.TileType])
+                        {
                             bool[] tileSolidTop = Main.tileSolidTop;
                             tile = Main.tile[i, j];
-                            if (!tileSolidTop[tile.TileType]) {
+                            if (!tileSolidTop[tile.TileType])
+                            {
                                 WorldGen.KillTile(i, j);
                             }
                         }
                     }
                     tile = Main.tile[i, j];
-                    if (tile.LiquidAmount > 0) {
+                    if (tile.LiquidAmount > 0)
+                    {
                         tile = Main.tile[i, j];
                         tile.LiquidType = 0;
                         tile = Main.tile[i, j];
@@ -2883,7 +2936,7 @@ namespace tsorcRevamp
         //stop sign text from drawing when the player is too far away / does not have line of sight to the sign
         internal static void SignTextPatch(Terraria.On_Player.orig_TileInteractionsCheckLongDistance orig, Player self, int myX, int myY)
         {
-            if(myX >= Main.tile.Width || myY >= Main.tile.Height || myX < 0 || myY < 0)
+            if (myX >= Main.tile.Width || myY >= Main.tile.Height || myX < 0 || myY < 0)
             {
                 return;
             }
@@ -2955,7 +3008,7 @@ namespace tsorcRevamp
 
             if (BossZen)
             {
-                return; 
+                return;
             }
             else
             {
@@ -2998,7 +3051,7 @@ namespace tsorcRevamp
                     if (tsorcRevamp.DownloadingMusic)
                     {
                         musicText = LangUtils.GetTextValue("UI.UpdateMusic") + (int)tsorcRevamp.MusicDownloadProgress + "%";
-                    }                    
+                    }
                     else if (!File.Exists(musicModDir))
                     {
                         musicText = LangUtils.GetTextValue("UI.GetMusic");
@@ -3041,11 +3094,11 @@ namespace tsorcRevamp
                 }
 
 
-                if(tsorcRevamp.MapDownloadTotalBytes > 0)
+                if (tsorcRevamp.MapDownloadTotalBytes > 0)
                 {
                     string mapText = LangUtils.GetTextValue("UI.AdvMapDownloadProgress") + (int)(((float)tsorcRevamp.MapDownloadProgress / (float)tsorcRevamp.MapDownloadTotalBytes) * 100) + "%";// (" + tsorcRevamp.MapDownloadProgress + " / " + tsorcRevamp.MapDownloadTotalBytes + " bytes)";
 
-                    if(tsorcRevamp.MapDownloadProgress == tsorcRevamp.MapDownloadTotalBytes)
+                    if (tsorcRevamp.MapDownloadProgress == tsorcRevamp.MapDownloadTotalBytes)
                     {
                         mapText = LangUtils.GetTextValue("UI.AdvMapUpdated");
                     }
@@ -3058,7 +3111,7 @@ namespace tsorcRevamp
 
                     musicTextPosition.X -= musicTextOrigin.X;
                     Color musicTextColor = Main.DiscoColor;
-                   
+
 
                     Main.spriteBatch.Begin();
                     DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, mapText, new Vector2(musicTextPosition.X + 2, musicTextPosition.Y + 2), Color.Black, 0, Vector2.Zero, musicTextScale, SpriteEffects.None, 0);
@@ -3532,13 +3585,15 @@ namespace tsorcRevamp
 
         }
 
-        
-        private static void PaperMarioMode(Terraria.DataStructures.On_PlayerDrawLayers.orig_DrawPlayer_TransformDrawData orig, ref Terraria.DataStructures.PlayerDrawSet drawinfo) {
+
+        private static void PaperMarioMode(Terraria.DataStructures.On_PlayerDrawLayers.orig_DrawPlayer_TransformDrawData orig, ref Terraria.DataStructures.PlayerDrawSet drawinfo)
+        {
             orig(ref drawinfo);
-            for (int k = 0; k < drawinfo.DrawDataCache.Count; k++) {
+            for (int k = 0; k < drawinfo.DrawDataCache.Count; k++)
+            {
                 drawinfo.DrawDataCache[k] = ManipulateDrawInfo(drawinfo.DrawDataCache[k], drawinfo.drawPlayer);
             }
-        }        
+        }
         //allow the soul slot to be included in recipes
         private static void Recipe_CollectItemsToCraftWithFrom(On_Recipe.orig_CollectItemsToCraftWithFrom orig, Player player)
         {
@@ -3563,10 +3618,11 @@ namespace tsorcRevamp
                 mi.Invoke(default, new object[] { asArray, 1 });
             }
         }
-        private static DrawData ManipulateDrawInfo(DrawData input, Player Player) {
+        private static DrawData ManipulateDrawInfo(DrawData input, Player Player)
+        {
             float rotation = Player.GetModPlayer<tsorcRevampPlayer>().rotation3d;
 
-            if (rotation != 0) 
+            if (rotation != 0)
             {
                 float sin = (float)Math.Sin(rotation + 1.57f * Player.direction);
                 int offset = Math.Abs((int)((input.useDestinationRectangle ? input.destinationRectangle.Width : input.sourceRect?.Width ?? input.texture.Width) * sin));
@@ -3575,7 +3631,8 @@ namespace tsorcRevamp
                 if (input.effect == SpriteEffects.FlipHorizontally) effect = effect == SpriteEffects.FlipHorizontally ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
                 DrawData newData = new(input.texture, new Rectangle((int)input.position.X, (int)input.position.Y, offset, input.useDestinationRectangle ? input.destinationRectangle.Height : input.sourceRect?.Height ?? input.texture.Height),
-                    input.sourceRect, input.color, input.rotation, input.origin, effect, 0) {
+                    input.sourceRect, input.color, input.rotation, input.origin, effect, 0)
+                {
                     shader = input.shader
                 };
 

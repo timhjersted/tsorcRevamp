@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
-using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Tools;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -148,7 +148,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.GoldenKey, 10));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<EphemeralDust>(), 1, 2, 4));

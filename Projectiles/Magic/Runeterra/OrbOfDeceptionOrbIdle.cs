@@ -1,13 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
+using ReLogic.Utilities;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using tsorcRevamp.Items.Weapons.Magic.Runeterra;
-using Terraria.DataStructures;
-using System.Collections.Generic;
-using ReLogic.Utilities;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
 {
@@ -15,33 +14,33 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
     public class OrbOfDeceptionOrbIdle : ModProjectile
     {
 
-		public override void SetStaticDefaults()
-		{
-			// These lines facilitate the trail drawing
-			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
-			ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+        public override void SetStaticDefaults()
+        {
+            // These lines facilitate the trail drawing
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             Main.projFrames[Projectile.type] = 8;
         }
 
-		public override void SetDefaults()
-		{
-			Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
+        public override void SetDefaults()
+        {
+            Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
             Projectile.aiStyle = -1;
-			Projectile.width = 50; // The width of your projectile
-			Projectile.height = 50; // The height of your projectile
-			Projectile.friendly = true; // Deals damage to enemies
-			Projectile.penetrate = -1; // Infinite pierce
-			Projectile.DamageType = DamageClass.Magic;
-			Projectile.tileCollide = false;
-		}
+            Projectile.width = 50; // The width of your projectile
+            Projectile.height = 50; // The height of your projectile
+            Projectile.friendly = true; // Deals damage to enemies
+            Projectile.penetrate = -1; // Infinite pierce
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.tileCollide = false;
+        }
         SlotId SoundSlotID;
         bool soundPaused;
         bool playedSound = false;
         ActiveSound OrbSound;
         public int SoundCD = 0;
         public override void AI()
-		{
-			Player player = Main.player[Projectile.owner];
+        {
+            Player player = Main.player[Projectile.owner];
             if (player.HeldItem.type == ModContent.ItemType<OrbOfDeception>())
             {
                 Projectile.timeLeft = 600;
@@ -83,10 +82,11 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             {
                 Projectile.Kill();
             }
-            if (player.direction == 1) 
+            if (player.direction == 1)
             {
                 Projectile.Center = new Vector2(player.Center.X + player.width * 2 - 10, player.Center.Y - 20);
-            } else
+            }
+            else
             {
                 Projectile.Center = new Vector2(player.Center.X - player.width * 2 + 10, player.Center.Y - 20);
             }
@@ -109,7 +109,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             {
                 Dust.NewDust(Projectile.Center, 2, 2, DustID.PoisonStaff, 0, 0, 150, default, 0.5f);
                 Lighting.AddLight(Projectile.Center, OrbOfDeception.FilledColor.ToVector3() * 2f);
-            } else
+            }
+            else
             {
                 Dust.NewDust(Projectile.Center, 2, 2, DustID.MagicMirror, 0, 0, 150, default, 0.5f);
                 Lighting.AddLight(Projectile.Center, Color.LightSteelBlue.ToVector3() * 2f);

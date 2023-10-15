@@ -34,7 +34,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
                 player.statDefense += AbyssDef;
             }
         }
-        public override void UpdateAccessory(Player player, bool hideVisual) {
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
             if (!hideVisual) player.AddBuff(BuffID.WeaponImbueVenom, 1, false);
         }
 

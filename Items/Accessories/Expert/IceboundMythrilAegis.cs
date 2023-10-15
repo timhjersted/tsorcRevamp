@@ -7,7 +7,7 @@ using tsorcRevamp.Items.Materials;
 namespace tsorcRevamp.Items.Accessories.Expert
 {
     [AutoloadEquip(EquipType.Shield)]
-    public class IceboundMythrilAegis: ModItem
+    public class IceboundMythrilAegis : ModItem
     {
         public override void SetStaticDefaults()
         {

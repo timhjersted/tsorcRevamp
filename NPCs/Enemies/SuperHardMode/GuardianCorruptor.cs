@@ -1,12 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
-using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -52,7 +51,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             return chance;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 1, 8, 16));
             npcLoot.Add(new CommonDrop(ItemID.RottenChunk, 100, 1, 5, 33));

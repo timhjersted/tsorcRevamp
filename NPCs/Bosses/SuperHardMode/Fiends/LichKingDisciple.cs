@@ -4,14 +4,6 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Weapons.Magic;
-using tsorcRevamp.Items.Weapons.Melee.Shortswords;
-using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
@@ -98,12 +90,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             }
             if (NPC.life > NPC.lifeMax / 5 * 2)
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X - 70, (float)NPC.position.Y - 60), NPC.width * 7, NPC.height * 7 , DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, 150, Color.Black, 2f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X - 70, (float)NPC.position.Y - 60), NPC.width * 7, NPC.height * 7, DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, 150, Color.Black, 2f);
                 Main.dust[dust].noGravity = true;
             }
             else if (NPC.life <= NPC.lifeMax / 5 * 2)
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X - 70, (float)NPC.position.Y-60), NPC.width * 7, NPC.height * 7, DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, 100, Color.Yellow, 3f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X - 70, (float)NPC.position.Y - 60), NPC.width * 7, NPC.height * 7, DustID.Wraith, NPC.velocity.X, NPC.velocity.Y, 100, Color.Yellow, 3f);
                 Main.dust[dust].noGravity = true;
             }
 

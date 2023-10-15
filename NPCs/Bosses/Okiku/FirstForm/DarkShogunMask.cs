@@ -4,8 +4,6 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
@@ -120,9 +118,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                     {
                         NPC.ai[1] = 0;
                         ShieldBroken = false;
-                        for(int i = 0; i < Main.maxNPCs; i++)
+                        for (int i = 0; i < Main.maxNPCs; i++)
                         {
-                            if(Main.npc[i] != null && Main.npc[i].type == ModContent.NPCType<DamnedSoul>() && Main.npc[i].ai[1] == NPC.whoAmI)
+                            if (Main.npc[i] != null && Main.npc[i].type == ModContent.NPCType<DamnedSoul>() && Main.npc[i].ai[1] == NPC.whoAmI)
                             {
                                 Main.npc[i].life = Main.npc[i].lifeMax;
                             }
@@ -132,8 +130,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 
                 NPC.ai[3] += 0.01f;
 
-                
-                for(int i = 0; i < Main.maxPlayers; i++)
+
+                for (int i = 0; i < Main.maxPlayers; i++)
                 {
                     if (Main.player[i] != null && Main.player[i].active && !Main.player[i].dead)
                     {
@@ -174,7 +172,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                         }
                     }
                     OptionSpawned = true;
-                }                
+                }
 
                 if (NPC.ai[2] < 600)
                 {
@@ -212,11 +210,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                     }
                 }
 
-                for(int i = 0; i < 4f * NPC.ai[2] / 600f; i++)
+                for (int i = 0; i < 4f * NPC.ai[2] / 600f; i++)
                 {
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, default, 4f);
                     Main.dust[dust].noGravity = true;
-                }                
+                }
 
                 if (NPC.ai[2] > 600)
                 {

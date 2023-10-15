@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         int dashTimer;
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if(player.altFunctionUse == 2)
+            if (player.altFunctionUse == 2)
             {
                 tsorcRevampStaminaPlayer playerStamina = player.GetModPlayer<tsorcRevampStaminaPlayer>();
                 if (playerStamina.staminaResourceCurrent > 30)
@@ -63,7 +63,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             {
                 player.immune = true;
                 dashTimer--;
-                if(dashTimer == 0)
+                if (dashTimer == 0)
                 {
                     player.velocity *= 0.1f;
                     if (Main.netMode != NetmodeID.SinglePlayer)
@@ -71,7 +71,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                         NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, player.whoAmI, 0f, 0f, 0f, 0);
                     }
                 }
-                for(int i = 0; i < Main.maxNPCs; i++)
+                for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC npc = Main.npc[i];
                     if (npc.active && !npc.friendly && npc.Distance(player.Center) < 70)

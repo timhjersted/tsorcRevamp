@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -12,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 {
     class IchorShockwave : ModProjectile
     {
-        
+
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Ichor Shockwave");
@@ -44,9 +42,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (!playedSound)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item43 with { Volume = 0.5f}, Projectile.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item43 with { Volume = 0.5f }, Projectile.Center);
 
-                if(Projectile.ai[1] == 1)
+                if (Projectile.ai[1] == 1)
                 {
                     //Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.VFX.HomingStarTrail>(), Projectile.damage, 0, Main.myPlayer, 0, UsefulFunctions.EncodeID(Projectile));
                     Projectile.timeLeft = 400;
@@ -66,7 +64,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                     Projectile.velocity.Y += 1f;
                 }
                 homingAcceleration = 0;
-                if(Projectile.Center.Y < target.Center.Y)
+                if (Projectile.Center.Y < target.Center.Y)
                 {
                     Projectile.tileCollide = false;
                 }
@@ -75,7 +73,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                     Projectile.tileCollide = true;
                 }
             }
-            
+
             //No homing
             if (Projectile.ai[0] == 2)
             {
@@ -91,7 +89,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
         public override void OnKill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.5f}, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.5f }, Projectile.Center);
         }
 
         float Progress(float progress)

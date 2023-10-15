@@ -33,8 +33,8 @@ namespace tsorcRevamp.UI
             PotionBagUI.Width.Set(500, 0f);
             PotionBagUI.Height.Set(304, 0f);
             PotionBagUI.BackgroundColor = new Color(30, 29, 43);
-            
-            PotionBagUI.OnUpdate += (UIElement affectedElement) => 
+
+            PotionBagUI.OnUpdate += (UIElement affectedElement) =>
             {
                 //Don't use the player's held item if the mouse is hovering over this.
                 if (affectedElement.ContainsPoint(Main.MouseScreen))
@@ -42,7 +42,7 @@ namespace tsorcRevamp.UI
                     Main.LocalPlayer.mouseInterface = true;
                 }
             };
-            
+
             int slotIndex = 0;
             for (int i = 0; i < 6; i++)
             {
@@ -140,7 +140,7 @@ namespace tsorcRevamp.UI
             //Was going to remove this, but also lmao //why this is cringe
             if (item.type == Terraria.ID.ItemID.ToxicFlask)
             {
-            valid = false;
+                valid = false;
             }
 
             //Excluding these specifically because for now they need to be used by hand. May change in the future.

@@ -1,46 +1,39 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
-using Terraria.Chat;
 using Terraria.GameContent.Drawing;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Buffs.Weapons;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Accessories.Expert;
+using tsorcRevamp.Items.Armors.Melee;
+using tsorcRevamp.Items.ItemCrates;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Items.Weapons.Throwing;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
-using tsorcRevamp.Projectiles.Summon.Runeterra;
-using tsorcRevamp.Projectiles.Summon.Sentry;
-using tsorcRevamp.Projectiles.Summon.Whips;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Armors.Melee;
-using tsorcRevamp.Items.Accessories.Expert;
 using tsorcRevamp.Projectiles.Magic.Runeterra;
+using tsorcRevamp.Projectiles.Summon.Whips;
 using tsorcRevamp.Utilities;
-using Terraria.ModLoader.IO;
-using System.IO;
-using Microsoft.Xna.Framework.Graphics;
-using tsorcRevamp.NPCs.Enemies;
-using tsorcRevamp.Buffs.Weapons;
-using tsorcRevamp.Items.ItemCrates;
-using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 
 namespace tsorcRevamp.NPCs
 {
@@ -286,9 +279,9 @@ namespace tsorcRevamp.NPCs
             Scorched = false;
             Shocked = false;
             Sunburnt = false;
-            
+
         }
-               
+
         public override bool PreAI(NPC npc)
         {
             if (needsNetUpdate)
@@ -448,7 +441,7 @@ namespace tsorcRevamp.NPCs
             //golem temple
             if (spawnInfo.SpawnTileType == TileID.LihzahrdBrick && spawnInfo.Lihzahrd && Main.hardMode)
             {
-                pool.Add(NPCID.DesertDjinn, 0.075f); 
+                pool.Add(NPCID.DesertDjinn, 0.075f);
                 pool.Add(NPCID.DiabolistWhite, 0.02f); //was 0.1
                 pool.Add(ModContent.NPCType<Enemies.RingedKnight>(), 0.25f);
                 pool.Add(ModContent.NPCType<Enemies.LothricSpearKnight>(), 0.05f);
@@ -480,7 +473,7 @@ namespace tsorcRevamp.NPCs
             //machine temple (not in water)
             if (!spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode && !tsorcRevampWorld.SuperHardMode)
             {
-                pool.Add(ModContent.NPCType<Enemies.SuperHardMode.IceSkeleton>(), 0.2f); 
+                pool.Add(ModContent.NPCType<Enemies.SuperHardMode.IceSkeleton>(), 0.2f);
             }
             //sky
             if (spawnInfo.Player.ZoneSkyHeight && Main.hardMode)
@@ -543,7 +536,7 @@ namespace tsorcRevamp.NPCs
 
             Player thisPlayer = spawnInfo.Player;
             bool invasion = Main.invasionType != 0;
-            if(thisPlayer.Center.X > 82016 || thisPlayer.Center.X < 74560 || thisPlayer.Center.Y > 16000)
+            if (thisPlayer.Center.X > 82016 || thisPlayer.Center.X < 74560 || thisPlayer.Center.Y > 16000)
             {
                 invasion = false;
             }
@@ -572,7 +565,7 @@ namespace tsorcRevamp.NPCs
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
         {
             //reduces max spawns by 40% and rate by 60% until player exceeds 160 health
-            if(player.statLifeMax2 <= 160)
+            if (player.statLifeMax2 <= 160)
             {
                 spawnRate = (int)(spawnRate * 1.6f);
                 maxSpawns = (int)(maxSpawns * 0.6f);
@@ -592,8 +585,8 @@ namespace tsorcRevamp.NPCs
             //only reduces spawn rate by 30% above 400 health
             if (player.statLifeMax2 > 400)
             {
-                spawnRate = (int)(spawnRate * 1.3f);   
-            }           
+                spawnRate = (int)(spawnRate * 1.3f);
+            }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff || tsorcRevampWorld.BossAlive || player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()))
             {
@@ -643,10 +636,12 @@ namespace tsorcRevamp.NPCs
             if (npc.active && !npc.friendly && LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfDeception>() && Main.rand.NextBool((int)(100f / OrbOfDeception.EssenceThiefOnKillChance)))
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ModContent.ProjectileType<EssenceThiefDelivery>(), 0, 0, LocalPlayer.whoAmI, 0);
-            } else if (npc.active && !npc.friendly && LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfFlame>() && Main.rand.NextBool((int)(100f / OrbOfDeception.EssenceThiefOnKillChance)))
+            }
+            else if (npc.active && !npc.friendly && LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfFlame>() && Main.rand.NextBool((int)(100f / OrbOfDeception.EssenceThiefOnKillChance)))
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ModContent.ProjectileType<EssenceThiefDelivery>(), 0, 0, LocalPlayer.whoAmI, 1);
-            } else if (npc.active && !npc.friendly && LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() && Main.rand.NextBool((int)(100f / OrbOfDeception.EssenceThiefOnKillChance)))
+            }
+            else if (npc.active && !npc.friendly && LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() && Main.rand.NextBool((int)(100f / OrbOfDeception.EssenceThiefOnKillChance)))
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ModContent.ProjectileType<EssenceThiefDelivery>(), 0, 0, LocalPlayer.whoAmI, 2);
             }
@@ -731,7 +726,8 @@ namespace tsorcRevamp.NPCs
                         }
                         tsorcRevampWorld.PopulatePairedBosses();
                         //Paired bosses have to have their slain entries work different
-                        if (tsorcRevampWorld.PairedBosses.Contains(npc.type)) {
+                        if (tsorcRevampWorld.PairedBosses.Contains(npc.type))
+                        {
                             for (int i = 0; i < tsorcRevampWorld.PairedBosses.Count; i++)
                             {
                                 if (tsorcRevampWorld.PairedBosses[i] == npc.type)
@@ -839,7 +835,7 @@ namespace tsorcRevamp.NPCs
                 }
 
                 bool oneAlive = false;
-                foreach(EventNPC eventNPC in ScriptedEventOwner.eventNPCs)
+                foreach (EventNPC eventNPC in ScriptedEventOwner.eventNPCs)
                 {
                     if (!eventNPC.killed)
                     {
@@ -999,7 +995,7 @@ namespace tsorcRevamp.NPCs
             {
                 SummonTagFlatDamage += SummonerEdits.SpinalTapTagDmg;
             }
-            if(markedByFirecracker)
+            if (markedByFirecracker)
             {
                 SummonTagScalingDamage += SummonerEdits.FirecrackerScalingDmg / 100f;
             }
@@ -1237,7 +1233,7 @@ namespace tsorcRevamp.NPCs
 
         public override bool? CanBeHitByItem(NPC npc, Player player, Item item)
         {
-            if(DodgeTimer > 0)
+            if (DodgeTimer > 0)
             {
                 return false;
             }
@@ -1445,7 +1441,8 @@ namespace tsorcRevamp.NPCs
             return preDraw;
         }
 
-        public override void ModifyGlobalLoot(GlobalLoot globalLoot) {
+        public override void ModifyGlobalLoot(GlobalLoot globalLoot)
+        {
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
@@ -1457,20 +1454,20 @@ namespace tsorcRevamp.NPCs
                     {
                         globalLoot.Remove(ruleList[i]);
                     }
-                }                
+                }
             }
         }
 
         public override bool PreKill(NPC npc)
         {
-            for(int i = 0; i < tsorcRevamp.BannedItems.Count; i++)
+            for (int i = 0; i < tsorcRevamp.BannedItems.Count; i++)
             {
                 NPCLoader.blockLoot.Add(tsorcRevamp.BannedItems[i]);
             }
 
             return base.PreKill(npc);
         }
-        
+
         public override void UpdateLifeRegen(NPC npc, ref int damage)
         {
             #region Dragon Stone Potency for Vanilla Buffs
@@ -1588,12 +1585,13 @@ namespace tsorcRevamp.NPCs
                 }
                 if (npc.HasBuff(BuffID.Oiled))
                 {
-                    if(tsorcRevampPlayer.DragonStonePotency)
+                    if (tsorcRevampPlayer.DragonStonePotency)
                     {
                         DoTPerS += 25 * DragonStone.Potency;
-                    } else 
+                    }
+                    else
                     {
-                        DoTPerS += 25; 
+                        DoTPerS += 25;
                     }
                 }
                 if (npc.lifeRegen > 0)
@@ -1680,7 +1678,8 @@ namespace tsorcRevamp.NPCs
                     if (tsorcRevampPlayer.DragonStonePotency)
                     {
                         DoTPerS += 25 * DragonStone.Potency;
-                    } else
+                    }
+                    else
                     {
                         DoTPerS += 25;
                     }
@@ -1879,12 +1878,12 @@ namespace tsorcRevamp.NPCs
             {
                 int DoTPerS = 6;
                 if (npc.lifeRegen > 0)
-                { 
+                {
                     npc.lifeRegen = 0;
                 }
                 npc.lifeRegen -= DoTPerS * 2;
                 damage += DoTPerS;
-                if (Main.hardMode) 
+                if (Main.hardMode)
                 {
                     npc.lifeRegen -= DoTPerS * 2;
                     damage += DoTPerS;
@@ -1892,13 +1891,16 @@ namespace tsorcRevamp.NPCs
             }
         }
 
-        public override void ModifyShop(NPCShop shop) {
+        public override void ModifyShop(NPCShop shop)
+        {
 
-            switch (shop.NpcType) {
-                case NPCID.Merchant: {
-                    shop.Add(ItemID.Bottle);
-                    break;
-                }
+            switch (shop.NpcType)
+            {
+                case NPCID.Merchant:
+                    {
+                        shop.Add(ItemID.Bottle);
+                        break;
+                    }
                 case NPCID.DyeTrader:
                     {
                         //Basic dyes (most others can be crafted from a combination of these)
@@ -2071,30 +2073,36 @@ namespace tsorcRevamp.NPCs
 
                         break;
                     }
-                case NPCID.SkeletonMerchant: {
-                    shop.Add(new Item(ModContent.ItemType<Firebomb>()) {
-                        shopCustomPrice = 5,
-                        shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-                    });
+                case NPCID.SkeletonMerchant:
+                    {
+                        shop.Add(new Item(ModContent.ItemType<Firebomb>())
+                        {
+                            shopCustomPrice = 5,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
 
-                    shop.Add(new Item(ModContent.ItemType<EternalCrystal>()) {
-                        shopCustomPrice = 2000,
-                        shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-                    });
-                    break;
-                }
-                case NPCID.GoblinTinkerer: {
-                    shop.Add(new Item(ModContent.ItemType<Pulsar>()) {
-                        shopCustomPrice = 800,
-                        shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-                    });
+                        shop.Add(new Item(ModContent.ItemType<EternalCrystal>())
+                        {
+                            shopCustomPrice = 2000,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        break;
+                    }
+                case NPCID.GoblinTinkerer:
+                    {
+                        shop.Add(new Item(ModContent.ItemType<Pulsar>())
+                        {
+                            shopCustomPrice = 800,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
 
 
-                    shop.Add(new Item(ModContent.ItemType<ToxicCatalyzer>()) {
-                        shopCustomPrice = 800,
-                        shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-                    });
-                    break;
+                        shop.Add(new Item(ModContent.ItemType<ToxicCatalyzer>())
+                        {
+                            shopCustomPrice = 800,
+                            shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+                        });
+                        break;
                     }
                 case NPCID.Dryad:
                     {
@@ -2137,7 +2145,7 @@ namespace tsorcRevamp.NPCs
                         }
                         break;
                     }
-                default:break;
+                default: break;
             }
         }
         public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
@@ -2164,9 +2172,9 @@ namespace tsorcRevamp.NPCs
         public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             //If this hit takes it below 1/5th health, roll a chance to flee based on its Cowardice trait
-            if(npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5)
+            if (npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5)
             {
-                if(Main.rand.NextFloat() < npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Cowardice && !npc.boss)
+                if (Main.rand.NextFloat() < npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Cowardice && !npc.boss)
                 {
                     Fleeing = true;
                 }
@@ -2234,7 +2242,7 @@ namespace tsorcRevamp.NPCs
                 Projectile.NewProjectile(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner);
                 Projectile.NewProjectile(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner);
             }
-                if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>()))
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>()))
             {
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetToxicCatBlobs = true;
                 int tags;
@@ -2256,7 +2264,7 @@ namespace tsorcRevamp.NPCs
                         }
                         float volume = (tags * 0.3f) + 0.7f;
                         float pitch = tags * 0.08f;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = volume, Pitch = -pitch}, projectile.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = volume, Pitch = -pitch }, projectile.Center);
 
                         p.timeLeft = 2;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -3052,8 +3060,8 @@ namespace tsorcRevamp.NPCs
         {
             despawnText = despawnFlavorText;
             despawnTextColor = textColor;
-            despawnDustType = DustType; 
-            
+            despawnDustType = DustType;
+
             if (range > 0) //Pre-emptively square it so we don't have to do so later
             {
                 range *= range;
@@ -3141,21 +3149,21 @@ namespace tsorcRevamp.NPCs
                             closestPlayerDistance = distance;
                             Main.npc[npcID].target = targetIDs[i];
                         }
-                        if(despawnRange > 0 && !foundOutOfBoundsPlayer && Vector2.DistanceSquared(Main.player[targetIDs[i]].Center, tsorcRevampWorld.BossIDsAndCoordinates[Main.npc[npcID].type])* 16 > despawnRange)
+                        if (despawnRange > 0 && !foundOutOfBoundsPlayer && Vector2.DistanceSquared(Main.player[targetIDs[i]].Center, tsorcRevampWorld.BossIDsAndCoordinates[Main.npc[npcID].type]) * 16 > despawnRange)
                         {
-                            if(OutOfBoundsTimer == 600)
+                            if (OutOfBoundsTimer == 600)
                             {
                                 UsefulFunctions.BroadcastText(Main.npc[npcID].TypeName + " " + LangUtils.GetTextValue("NPCs.BossOutOfRange"), Color.Yellow);
                             }
                             OutOfBoundsTimer--;
-                            
+
                             //If players have been out of bounds for more than 10 seconds, then despawn the boss
-                            if(OutOfBoundsTimer == 0)
+                            if (OutOfBoundsTimer == 0)
                             {
-                                for(int j = 0; j < targetAlive.Length; j++)
+                                for (int j = 0; j < targetAlive.Length; j++)
                                 {
                                     targetAlive[j] = false;
-                                }                                
+                                }
                             }
                             foundOutOfBoundsPlayer = true;
                         }
@@ -3189,7 +3197,7 @@ namespace tsorcRevamp.NPCs
                         int dustID = Dust.NewDust(Main.npc[npcID].position, Main.npc[npcID].width, Main.npc[npcID].height, despawnDustType, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
                         Main.dust[dustID].noGravity = true;
                     }
-                    if(Main.netMode != NetmodeID.MultiplayerClient)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         UsefulFunctions.DespawnFlash(Main.npc[npcID].Center);
                     }
@@ -3263,7 +3271,7 @@ namespace tsorcRevamp.NPCs
             BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, doorBreakingDamage, hatesLight, randomSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping, canDodgeroll, false);
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            if(telegraphColor == null)
+            if (telegraphColor == null)
             {
                 telegraphColor = Color.Gray;
             }
@@ -3333,7 +3341,7 @@ namespace tsorcRevamp.NPCs
 
                         SoundEngine.PlaySound(shootSound.Value);
                     }
-                    if(globalNPC.ProjectileTimer - 15 == (projectileCooldown / 2))
+                    if (globalNPC.ProjectileTimer - 15 == (projectileCooldown / 2))
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -3396,10 +3404,10 @@ namespace tsorcRevamp.NPCs
                 npc.scale *= (float)Math.Pow(globalNPC.Strength, 0.5f); //Make 'scale' only increase with the square root of strength, to make it change less dramatically
 
                 //Make low-frequency attacks somewhat more likely
-                foreach(ProjectileData data in globalNPC.AttackList)
+                foreach (ProjectileData data in globalNPC.AttackList)
                 {
                     data.timerCap = (int)(data.timerCap * globalNPC.CastingSpeed);
-                    if(data.weight < 1)
+                    if (data.weight < 1)
                     {
                         data.weight += (1 - data.weight) * globalNPC.Adeptness;
                     }
@@ -3414,11 +3422,11 @@ namespace tsorcRevamp.NPCs
                 SimpleProjectile(npc);
             }
 
-            if(globalNPC.PounceTimer > 0)
+            if (globalNPC.PounceTimer > 0)
             {
                 globalNPC.PounceTimer--;
 
-                if(globalNPC.PounceTimer % 5 == 0)
+                if (globalNPC.PounceTimer % 5 == 0)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -3441,7 +3449,7 @@ namespace tsorcRevamp.NPCs
                             pounceSpeed += topSpeed * 2;
 
                             //If it requires more than 20 units of speed to make it to the player, give up and just launch normally instead of using a ballistic trajectory
-                            if(pounceSpeed > 20)
+                            if (pounceSpeed > 20)
                             {
                                 npc.velocity = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center + new Vector2(0, -100), 20);
                                 npc.netUpdate = true;
@@ -3457,7 +3465,7 @@ namespace tsorcRevamp.NPCs
                     }
                 }
             }
-            else if(globalNPC.PounceCooldown > 0)
+            else if (globalNPC.PounceCooldown > 0)
             {
                 globalNPC.PounceCooldown--;
             }
@@ -3484,7 +3492,7 @@ namespace tsorcRevamp.NPCs
             }
 
             //Stop moving when teleporting, and handle the logic to execute it
-            if(globalNPC.TeleportCountdown > 0)
+            if (globalNPC.TeleportCountdown > 0)
             {
                 globalNPC.BoredTimer = 0;
                 npc.velocity.X = 0;
@@ -3496,7 +3504,7 @@ namespace tsorcRevamp.NPCs
             }
 
             //Block firing and reset cooldowns if it's busy doing other things
-            if(globalNPC.TeleportCountdown > 0 || globalNPC.BoredTimer < 0 || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
+            if (globalNPC.TeleportCountdown > 0 || globalNPC.BoredTimer < 0 || globalNPC.DodgeTimer > 0 || globalNPC.PounceTimer > 0)
             {
                 globalNPC.ProjectileTimer = 0;
                 globalNPC.ArcherAimDirection = 0;
@@ -3554,24 +3562,24 @@ namespace tsorcRevamp.NPCs
             {
                 float distance = 9999999;
                 int target = -1;
-                for(int i = 0; i < Main.maxPlayers; i++)
+                for (int i = 0; i < Main.maxPlayers; i++)
                 {
                     if (Main.player[i].active && !Main.player[i].dead)
                     {
                         if (Main.player[i].CanHit(npc))
                         {
                             float playerDistance = Main.player[i].Distance(npc.Center);
-                            if(playerDistance < distance)
+                            if (playerDistance < distance)
                             {
                                 distance = playerDistance;
                                 target = i;
                             }
                         }
                     }
-                    if(target != -1)
+                    if (target != -1)
                     {
                         npc.target = target;
-                    }                    
+                    }
                     else
                     {
                         npc.TargetClosest(false);
@@ -3682,10 +3690,10 @@ namespace tsorcRevamp.NPCs
                 {
                     //3 blocks above ground level (head height) blocked
                     if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 2))
-                    { 
+                    {
                         //4 blocks above ground level (over head) blocked
                         if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 3))
-                        { 
+                        {
                             npc.velocity.Y = -8f; //Jump with power 8 (for 4 block steps)
                             npc.netUpdate = true;
                         }
@@ -3694,7 +3702,7 @@ namespace tsorcRevamp.NPCs
                             npc.velocity.Y = -7f; //Jump with power 7 (for 3 block steps)
                             npc.netUpdate = true;
                         }
-                    } 
+                    }
                     //For everything else, head height clear:
                     else if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1))
                     {
@@ -3704,7 +3712,7 @@ namespace tsorcRevamp.NPCs
                     }
                     else if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet))
                     {
-                       // 1 block above ground level(foot height) blocked
+                        // 1 block above ground level(foot height) blocked
                         npc.velocity.Y = -5f; //Jump with power 5 (for 1 block steps)
                         npc.netUpdate = true;
                     }
@@ -3718,7 +3726,7 @@ namespace tsorcRevamp.NPCs
 
                     //Door breaking
                     //First, it checks if the tile in front of it is solid, a door, and the npc can break it
-                    if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1)  && Main.tile[x_in_front, y_above_feet - 1].TileType == 10 && (doorBreakingDamage > 0))
+                    if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1) && Main.tile[x_in_front, y_above_feet - 1].TileType == 10 && (doorBreakingDamage > 0))
                     {
                         npc.velocity.Y = 0;
                         globalNPC.BoredTimer = 0; // not bored if working on breaking a door
@@ -3757,7 +3765,7 @@ namespace tsorcRevamp.NPCs
             {
                 for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
                 {
-                    if(TileID.Sets.Platforms[Main.tile[l, y_below_feet].TileType])
+                    if (TileID.Sets.Platforms[Main.tile[l, y_below_feet].TileType])
                     {
                         atLeastOnePlatform = true;
                     }
@@ -3826,7 +3834,8 @@ namespace tsorcRevamp.NPCs
             }
 
             //Dodging
-            if (globalNPC.BoredTimer == 0 && globalNPC.TeleportCountdown == 0 && globalNPC.DodgeCooldown == 0) {
+            if (globalNPC.BoredTimer == 0 && globalNPC.TeleportCountdown == 0 && globalNPC.DodgeCooldown == 0)
+            {
                 if (canDodgeroll && npc.Distance(Main.player[npc.target].Center) > 160)
                 {
                     for (int i = 0; i < Main.maxProjectiles; i++)
@@ -3979,12 +3988,12 @@ namespace tsorcRevamp.NPCs
         /// <returns></returns>
         public static int WeightedRandomAttackSelection(tsorcRevampGlobalNPC globalNPC)
         {
-            if(globalNPC.AttackList.Count == 0 || globalNPC.AttackList.Count == 1)
+            if (globalNPC.AttackList.Count == 0 || globalNPC.AttackList.Count == 1)
             {
                 return 0;
             }
             float weightMax = 0;
-            foreach(ProjectileData data in globalNPC.AttackList)
+            foreach (ProjectileData data in globalNPC.AttackList)
             {
                 weightMax += data.weight;
             }
@@ -3992,10 +4001,10 @@ namespace tsorcRevamp.NPCs
             float randomVal = Main.rand.NextFloat(weightMax);
 
             float runningTotal = 0;
-            for(int i = 0; i < globalNPC.AttackList.Count; i++)
+            for (int i = 0; i < globalNPC.AttackList.Count; i++)
             {
                 runningTotal += globalNPC.AttackList[i].weight;
-                if(randomVal < runningTotal)
+                if (randomVal < runningTotal)
                 {
                     return i;
                 }
@@ -4081,7 +4090,7 @@ namespace tsorcRevamp.NPCs
             {
                 //Pick a random point to target. Make sure it's at least 11 blocks away from the player to avoid cheap hits.
                 Vector2 teleportTarget = Vector2.Zero;
-                if(range < 12)
+                if (range < 12)
                 {
                     range = 12;
                 }
@@ -4118,7 +4127,7 @@ namespace tsorcRevamp.NPCs
                         {
                             //Main.NewText("Fail 1");
                             continue;
-                        }          
+                        }
 
                         //If it requires line of sight, and there is not a clear path, and it has not tried at least 50 times, then skip to the next try
                         else if (requireLineofSight && !(Collision.CanHit(new Vector2(teleportTarget.X, (int)teleportTarget.Y + y), 2, 2, Main.player[npc.target].Center / 16, 2, 2) && Collision.CanHitLine(new Vector2(teleportTarget.X, (int)teleportTarget.Y + y), 2, 2, Main.player[npc.target].Center / 16, 2, 2)))
@@ -4194,7 +4203,7 @@ namespace tsorcRevamp.NPCs
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
             SoundEngine.PlaySound(SoundID.Item8, npc.Center);
-            
+
 
             Vector2 diff = globalNPC.TeleportTelegraph - npc.Center;
             float length = diff.Length();
@@ -4229,92 +4238,92 @@ namespace tsorcRevamp.NPCs
             npc.Center = globalNPC.TeleportTelegraph;
         }
 
-        public static void FighterOnHit(NPC npc, bool melee) 
-        {        
-                if (melee)
-                {
-                    npc.localAI[1] = 80f; // was 100
-                    npc.knockBackResist = 0.09f;
+        public static void FighterOnHit(NPC npc, bool melee)
+        {
+            if (melee)
+            {
+                npc.localAI[1] = 80f; // was 100
+                npc.knockBackResist = 0.09f;
 
-                    //TELEPORT MELEE
-                    if (Main.rand.NextBool(18))
-                    {
-                        TeleportImmediately(npc, 25, true);
-                    }
-                    //WHEN HIT, CHANCE TO JUMP BACKWARDS 
-                    else if (Main.rand.NextBool(8))
-                    {
-                        //npc.TargetClosest(false);
-                        npc.velocity.Y = -8f;
-                        npc.velocity.X = -4f * npc.direction;
-                        npc.localAI[1] = 150f;
-                        npc.netUpdate = true;
-                    }
-                    //WHEN HIT, CHANCE TO DASH STEP BACKWARDS 
-                    else if (Main.rand.NextBool(8))
-                    {
-                        npc.velocity.Y = -4f;
-                        npc.velocity.X = -7f * npc.direction;
-                        npc.localAI[1] = 150f;                                       
-                        npc.netUpdate = true;
-                    }
-                    else if (Main.rand.NextBool(4))
-                    {
-                        npc.TargetClosest(true);
-                        npc.velocity.Y = -7f;
-                        npc.velocity.X = -10f * npc.direction;
-                        npc.localAI[1] = 150f;
-                        npc.netUpdate = true;
-                    }
-                    
+                //TELEPORT MELEE
+                if (Main.rand.NextBool(18))
+                {
+                    TeleportImmediately(npc, 25, true);
                 }
-                if (!melee && Main.rand.NextBool())
+                //WHEN HIT, CHANCE TO JUMP BACKWARDS 
+                else if (Main.rand.NextBool(8))
                 {
-                    if (Main.rand.NextBool(4))
+                    //npc.TargetClosest(false);
+                    npc.velocity.Y = -8f;
+                    npc.velocity.X = -4f * npc.direction;
+                    npc.localAI[1] = 150f;
+                    npc.netUpdate = true;
+                }
+                //WHEN HIT, CHANCE TO DASH STEP BACKWARDS 
+                else if (Main.rand.NextBool(8))
+                {
+                    npc.velocity.Y = -4f;
+                    npc.velocity.X = -7f * npc.direction;
+                    npc.localAI[1] = 150f;
+                    npc.netUpdate = true;
+                }
+                else if (Main.rand.NextBool(4))
+                {
+                    npc.TargetClosest(true);
+                    npc.velocity.Y = -7f;
+                    npc.velocity.X = -10f * npc.direction;
+                    npc.localAI[1] = 150f;
+                    npc.netUpdate = true;
+                }
+
+            }
+            if (!melee && Main.rand.NextBool())
+            {
+                if (Main.rand.NextBool(4))
+                {
+
+                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 1f);
+                    Main.dust[dust].noGravity = true;
+
+                    npc.velocity.Y = -9f;
+                    npc.velocity.X = 4f * npc.direction;
+                    npc.TargetClosest(true);
+
+                    if ((float)npc.direction * npc.velocity.X > 4)
                     {
-                        
-                        int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 1f);
-                        Main.dust[dust].noGravity = true;
-
-                        npc.velocity.Y = -9f; 
-                        npc.velocity.X = 4f * npc.direction; 
-                        npc.TargetClosest(true);
-
-                        if ((float)npc.direction * npc.velocity.X > 4)
-                        {
-                            npc.velocity.X = (float)npc.direction * 4; 
-                        }
-                        npc.netUpdate = true;
+                        npc.velocity.X = (float)npc.direction * 4;
                     }
-                    if (Main.rand.NextBool(6))
-                    {
+                    npc.netUpdate = true;
+                }
+                if (Main.rand.NextBool(6))
+                {
 
+                    npc.ai[0] = 0f;
+                    npc.velocity.Y = -5f;
+                    npc.velocity.X *= 4f; // burst forward
+                    npc.TargetClosest(true);
+
+                    npc.velocity.X += (float)npc.direction * 5f;  //  accellerate fwd; can happen midair
+                    if ((float)npc.direction * npc.velocity.X > 5)
+                    {
+                        npc.velocity.X = (float)npc.direction * 5;  //  but cap at top speed
+                    }
+                    //CHANCE TO JUMP AFTER DASH
+                    if (Main.rand.NextBool(8))
+                    {
+                        npc.TargetClosest(true);
+                        npc.spriteDirection = npc.direction;
                         npc.ai[0] = 0f;
-                        npc.velocity.Y = -5f;
-                        npc.velocity.X *= 4f; // burst forward
-                        npc.TargetClosest(true);
-
-                        npc.velocity.X += (float)npc.direction * 5f;  //  accellerate fwd; can happen midair
-                        if ((float)npc.direction * npc.velocity.X > 5)
-                        {
-                            npc.velocity.X = (float)npc.direction * 5;  //  but cap at top speed
-                        }
-                        //CHANCE TO JUMP AFTER DASH
-                        if (Main.rand.NextBool(8))
-                        {
-                            npc.TargetClosest(true);
-                            npc.spriteDirection = npc.direction;
-                            npc.ai[0] = 0f;
-                            npc.velocity.Y = -6f;
-                        }
-                        npc.netUpdate = true;
+                        npc.velocity.Y = -6f;
                     }
-                    if (npc.Distance(Main.player[npc.target].Center) > 300 && Main.rand.NextBool(24))
-                    {
-                        TeleportImmediately(npc, 20, false);
-                    }
+                    npc.netUpdate = true;
                 }
-            
+                if (npc.Distance(Main.player[npc.target].Center) > 300 && Main.rand.NextBool(24))
+                {
+                    TeleportImmediately(npc, 20, false);
+                }
+            }
+
         }
         #region Red Knight Hit AI
         public static void RedKnightOnHit(NPC npc, bool melee) //ref int stunlockBreak
@@ -4344,7 +4353,7 @@ namespace tsorcRevamp.NPCs
             {
                 // Ensures melee can't interrupt attack once the flash telegraph triggers
                 if ((npc.ai[1] < 155f) || (npc.ai[1] > 180f && npc.ai[1] < 300f) || (npc.ai[1] > 325f && npc.ai[1] < 900f) || npc.ai[1] > 925f)
-                {                  
+                {
                     int randomChoice = Main.rand.Next(10);
 
                     switch (randomChoice)
@@ -4473,7 +4482,7 @@ namespace tsorcRevamp.NPCs
                                 npc.ai[1] = 280f;
                             }
                             break;
-                            
+
 
                     }
                     npc.netUpdate = true;
@@ -4572,7 +4581,7 @@ namespace tsorcRevamp.NPCs
                                 npc.velocity.X = -9f * npc.direction;
                                 npc.ai[1] = 140f;
                                 npc.netUpdate = true;
-                            }                            
+                            }
                             break;
                         case 5:
                             // Small dash backwards - Bomb
@@ -4602,7 +4611,7 @@ namespace tsorcRevamp.NPCs
                                 npc.velocity.Y = -8f;
                                 npc.velocity.X = -11f * npc.direction;
                                 npc.netUpdate = true;
-                            }                           
+                            }
                             break;
                         case 7:
                             // Teleport
@@ -4640,14 +4649,14 @@ namespace tsorcRevamp.NPCs
                                 npc.ai[1] = 130f;
                                 npc.netUpdate = true;
                             }
-                            break;  
+                            break;
                         case 9:
                             // Attack interrupt; for Great Red Knight it cycles to DD2 attack at 1/2 health
                             npc.ai[1] = 700f;
                             break;
                     }
                     npc.netUpdate = true;
-                }              
+                }
             }
         }
         #endregion
@@ -4655,7 +4664,7 @@ namespace tsorcRevamp.NPCs
         #region Gwyn Hit AI
         public static void GwynOnHit(NPC npc, bool melee) //ref int stunlockBreak
         {
-            
+
             if (melee)
             {
                 // Ensures melee can't interrupt attack once the flash telegraph triggers
@@ -4967,6 +4976,6 @@ namespace tsorcRevamp.NPCs
             }
         }
         #endregion
-#endregion
+        #endregion
     }
 }

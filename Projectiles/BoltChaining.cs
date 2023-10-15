@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Enums;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -46,7 +45,7 @@ namespace tsorcRevamp.Projectiles
             }
 
             //Cast light
-            DelegateMethods.v3_1 = Color.Cyan.ToVector3() * 0.25f;            
+            DelegateMethods.v3_1 = Color.Cyan.ToVector3() * 0.25f;
             Utils.PlotTileLine(Projectile.Center, Projectile.Center + lightingVector * Projectile.ai[1], 1, DelegateMethods.CastLight);
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
             DelegateMethods.tileCutIgnore = TileID.Sets.TileCutIgnore.None;
@@ -58,8 +57,8 @@ namespace tsorcRevamp.Projectiles
             if (Main.GameUpdateCount % 3 == 0)
             {
                 Projectile.frame++;
-            }            
-            if(Projectile.frame > 6)
+            }
+            if (Projectile.frame > 6)
             {
                 Projectile.Kill();
             }
@@ -90,7 +89,7 @@ namespace tsorcRevamp.Projectiles
                             NPC newTarget = Main.npc[i];
                             Vector2 direction = UsefulFunctions.Aim(target.Center, newTarget.Center, 1);
                             Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, direction, ModContent.ProjectileType<BoltChaining>(), (int)(Projectile.damage * 0.5f), 0.5f, Projectile.owner, Projectile.ai[0] + 1, distance);
-                            
+
                             //Each bolt can only spawn one other bolt per hit. We could make later upgrades able to spawn more
                             return;
                         }
@@ -115,7 +114,7 @@ namespace tsorcRevamp.Projectiles
         public override bool PreDraw(ref Color lightColor)
         {
             //Load all the textures if any are not loaded
-            if(BoltStart == null || BoltStart.IsDisposed)
+            if (BoltStart == null || BoltStart.IsDisposed)
             {
                 BoltStart = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/BoltBounceStart", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
@@ -130,8 +129,8 @@ namespace tsorcRevamp.Projectiles
             if (BoltEnd == null || BoltEnd.IsDisposed)
             {
                 BoltEnd = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/BoltEnd", ReLogic.Content.AssetRequestMode.ImmediateLoad);
-            }       
-            
+            }
+
 
             //Draw the first bit
             Rectangle frame = new Rectangle(0, (BoltStart.Height) / 7 * Projectile.frame, BoltStart.Width, BoltStart.Height / 7);
@@ -148,7 +147,7 @@ namespace tsorcRevamp.Projectiles
                 {
                     break;
                 }
-                
+
                 if (i % 2 == 0)
                 {
                     //Draw the second bit, which overlaps with the first bit (hence why they share the same origin)
@@ -171,7 +170,7 @@ namespace tsorcRevamp.Projectiles
 
                     //Shift the origin again
                     origin.X -= frame.Width - 10;
-                }                
+                }
             }
 
             //We don't need that last - 10 shift for the final piece, so we revert it

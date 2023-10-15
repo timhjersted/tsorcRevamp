@@ -2,17 +2,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
-using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
@@ -60,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         public override void AI()
         {
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            
+
             NPC.ai[0]++; // Timer Scythe
 
             NPC.ai[1]++; // Timer Teleport
@@ -145,7 +140,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
             }
 
-            
+
             Timer2++;
             if (Timer2 >= 60)
             {
@@ -176,12 +171,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                                 int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, 80, 0f, Main.myPlayer);
                                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, PitchVariance = 1f }, NPC.Center);
                             }
-                            
+
                         }
 
                         if (Timer2 >= 250)
                         {
-                          
+
                             if (Main.rand.NextBool(2))
                             {
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -208,7 +203,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                                 }
                             }
 
-                            Timer2 = -300; 
+                            Timer2 = -300;
                         }
                     }
                 }
@@ -218,30 +213,30 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 }
 
             }
-            
+
 
             NPC.ai[3]++;
             mageShadowTimer++;
 
             if (NPC.ai[3] >= 100) //how often the attack can happen in frames per second
             {
-               
+
                 if (mageShadowTimer >= 700 && Main.netMode != NetmodeID.MultiplayerClient) //700 was 900
                 {
-                        
-                        int Paraspawn = 0;
-                        Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 676 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
-                        Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
-                        Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 676 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
-                        Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
 
-                        if (Main.netMode == NetmodeID.Server)
-                        {
-                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Paraspawn, 0f, 0f, 0f, 0);
-                        }
+                    int Paraspawn = 0;
+                    Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 676 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
+                    Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
+                    Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 676 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
+                    Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
+
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Paraspawn, 0f, 0f, 0f, 0);
+                    }
 
                     mageShadowTimer = 0;
-                    
+
                 }
                 NPC.ai[3] = 0;
 

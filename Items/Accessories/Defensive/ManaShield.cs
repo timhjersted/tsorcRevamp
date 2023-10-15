@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
             recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 1);
             recipe.AddTile(TileID.DemonAltar);
-           //recipe.AddCondition(tsorcRevampWorld.SHM1Downed);
+            //recipe.AddCondition(tsorcRevampWorld.SHM1Downed);
             recipe.Register();
         }
 

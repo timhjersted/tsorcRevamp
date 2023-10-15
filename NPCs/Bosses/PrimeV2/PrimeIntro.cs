@@ -1,14 +1,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Enemy.Marilith;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
@@ -47,7 +42,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         bool tripped = false;
         public override void AI()
         {
-            if(Main.GameUpdateCount % 180 == 0)
+            if (Main.GameUpdateCount % 180 == 0)
             {
                 SoundEngine.PlaySound(SoundID.NPCHit4 with { Volume = 0.1f, Pitch = Main.rand.NextFloat(-0.2f, 0.2f) }, NPC.Center);
             }
@@ -64,8 +59,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
 
             NPC.Center = TheMachine.PrimeCeilingPoint + new Vector2(0, -200);
-            
-            for(int i = 0; i < Main.maxPlayers; i++)
+
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].Distance(NPC.Center) < 550 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -90,7 +85,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             return false;
         }
-        
+
         public override bool CheckActive()
         {
             return false;

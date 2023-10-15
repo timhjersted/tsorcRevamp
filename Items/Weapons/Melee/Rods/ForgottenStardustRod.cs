@@ -1,7 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Rods
 {

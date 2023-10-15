@@ -8,13 +8,10 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Summon;
-using Terraria.DataStructures;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -103,7 +100,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.knockBackResist = 0;
                 //Throw tridents
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                {                    
+                {
                     if (Main.GameUpdateCount % 60 == 0)
                     {
                         int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y - 48, NPCID.BurningSphere, 0);
@@ -146,8 +143,8 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
 
-        
-        
+
+
         bool movingLeft = true;
         int passCount = 0;
         void Bombardment()
@@ -157,16 +154,16 @@ namespace tsorcRevamp.NPCs.Bosses
             targetPoint = Target.Center;
             if (movingLeft)
             {
-                targetPoint += new Vector2(-550, -300);   
+                targetPoint += new Vector2(-550, -300);
             }
             else
             {
                 targetPoint += new Vector2(550, -300);
             }
 
-            
 
-            if(Vector2.Distance(NPC.Center, targetPoint) < 80)
+
+            if (Vector2.Distance(NPC.Center, targetPoint) < 80)
             {
                 movingLeft = !movingLeft;
                 passCount++;
@@ -176,7 +173,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                {                    
+                {
                     int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<NPCs.Enemies.GaibonFireball>(), ai0: burningSphereDamage, ai1: 0, ai2: 5);
                     Main.npc[spawned].damage = burningSphereDamage;
                     Main.npc[spawned].velocity = new Vector2(0, 8);
@@ -188,7 +185,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
 
-            if(passCount >= 4)
+            if (passCount >= 4)
             {
                 ChangeMove();
             }
@@ -212,7 +209,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 targetPoint += new Vector2(550, -300);
             }
-            if(shotsFired == 1)
+            if (shotsFired == 1)
             {
                 targetPoint += new Vector2(0, -350);
             }
@@ -282,7 +279,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             }
 
-            if(shotsFired >= 3)
+            if (shotsFired >= 3)
             {
                 shotsFired = 0;
                 ChangeMove();
@@ -302,7 +299,7 @@ namespace tsorcRevamp.NPCs.Bosses
             else
             {
                 targetPoint = NPC.Center;
-                NPC.velocity *= 0.9f;                
+                NPC.velocity *= 0.9f;
 
                 if (Timer >= 120 && Timer % 120 == 0)
                 {
@@ -344,7 +341,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             }
 
-            if(Timer >= 360)
+            if (Timer >= 360)
             {
                 ChangeMove();
             }
@@ -358,7 +355,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.knockBackResist = 2f;
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
-            {                
+            {
                 if (Timer % 120 == 0)
                 {
                     Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8, .1f, true, true);
@@ -371,7 +368,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
 
-            if(Timer > 600)
+            if (Timer > 600)
             {
                 ChangeMove();
             }
@@ -407,7 +404,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     targetPoint = NPC.Center;
                 }
 
-                if(Timer > 20)
+                if (Timer > 20)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 1f }, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -434,7 +431,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
 
-            if(movePhase == 1)
+            if (movePhase == 1)
             {
                 flightTimer++;
                 topSpeed = 25;
@@ -448,7 +445,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (reachedTarget)
                 {
                     Timer++;
-                }                
+                }
 
                 if (Timer > 40)
                 {

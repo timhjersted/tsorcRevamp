@@ -53,7 +53,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnKill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62 with { Volume = 0.5f, Pitch = 1.1f}, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62 with { Volume = 0.5f, Pitch = 1.1f }, Projectile.Center);
             Projectile.penetrate = 2;
             Projectile.width = Projectile.width << 3;
             Projectile.height = Projectile.height << 3;
@@ -81,7 +81,7 @@ namespace tsorcRevamp.Projectiles
         public static Texture2D texture;
         public override bool PreDraw(ref Color lightColor)
         {
-            if(Projectile.timeLeft > 115)
+            if (Projectile.timeLeft > 115)
             {
                 return false;
             }

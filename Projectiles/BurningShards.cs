@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.timeLeft = 2;
             if (!initialized)
             {
-                for(int i = 0; i < Main.maxProjectiles; i++)
+                for (int i = 0; i < Main.maxProjectiles; i++)
                 {
                     if (Main.projectile[i].active && Main.projectile[i].type == Projectile.type && Main.projectile[i].owner == Projectile.owner && Main.projectile[i].whoAmI != Projectile.whoAmI)
                     {
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles
                     }
                 }
 
-                for(int i = 0; i < 5; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     if (foundIndicies.Contains(i))
                     {
@@ -59,7 +59,7 @@ namespace tsorcRevamp.Projectiles
                 initialized = true;
             }
 
-            if(shotCooldown > 0)
+            if (shotCooldown > 0)
             {
                 shotCooldown--;
             }
@@ -139,7 +139,7 @@ namespace tsorcRevamp.Projectiles
                 sourceRectangle, lightColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
-            
+
             return false;
         }
 

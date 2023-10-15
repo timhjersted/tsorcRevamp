@@ -128,7 +128,8 @@ namespace tsorcRevamp.Projectiles
                 Projectile.height = Projectile.height << 3;
 
                 Projectile.Damage();
-            } else
+            }
+            else
 
             if (Projectile.owner == Main.myPlayer)
             {

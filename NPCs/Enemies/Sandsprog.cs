@@ -2,11 +2,10 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static tsorcRevamp.SpawnHelper;
-using Terraria.GameContent.ItemDropRules;
-using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -38,19 +37,19 @@ namespace tsorcRevamp.NPCs.Enemies
             sprogletGlobalNPC.Cowardice = 0.1f; //low cowardice
 
 
-            if (Main.hardMode) 
-            { 
-                NPC.lifeMax = 200; 
-                NPC.defense = 18; 
-                NPC.damage = 40; 
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 200;
+                NPC.defense = 18;
+                NPC.damage = 40;
                 NPC.value = 100;
                 knivesDamage = 20;
-    }
-            if (tsorcRevampWorld.SuperHardMode) 
-            { 
-                NPC.lifeMax = 900; 
-                NPC.defense = 45; 
-                NPC.damage = 60; 
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 900;
+                NPC.defense = 45;
+                NPC.damage = 60;
                 NPC.value = 3000;
                 knivesDamage = 30;
             }
@@ -61,7 +60,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //BannerItem = ModContent.ItemType<Banners.HollowWarriorBanner>();
 
             NPC.buffImmune[BuffID.Confused] = true;
-            
+
         }
 
         public override void HitEffect(NPC.HitInfo hit)
@@ -135,7 +134,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 whirlingTimer += 300;
             }
 
-            if (whirlingTimer > 15) 
+            if (whirlingTimer > 15)
             {
                 knife2timer++;
             }
@@ -144,7 +143,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 whirlingTimer++;
             }
-             
+
             if (NPC.HasValidTarget && whirlingTimer > 300 && Main.player[NPC.target].Distance(NPC.Center) < 350f && Main.player[NPC.target].position.Y + 16 >= NPC.position.Y && standing_on_solid_tile && lineOfSight && !whirling)
             {
                 whirling = true;
@@ -251,7 +250,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.BoneDagger, 1, 3, 8));
         }
@@ -461,7 +460,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
         }
-            
+
         #endregion
 
     }

@@ -1,9 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -53,7 +52,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 6));
             npcLoot.Add(ItemDropRule.Common(ItemID.HolyArrow, 1, 30, 60));
             npcLoot.Add(ItemDropRule.Common(ItemID.UnicornHorn, 3, 1, 1));

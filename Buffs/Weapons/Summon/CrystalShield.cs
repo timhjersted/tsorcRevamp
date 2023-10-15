@@ -1,5 +1,4 @@
 ﻿using Terraria;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon

@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
         {
             if (!Main.dayTime)
             {
-                
+
                 Item.shoot = ModContent.ProjectileType<Projectiles.CrescentTrue>();
                 Item.shootSpeed = 14f;
                 Item.useTime = 40;
@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             }
             if (Main.dayTime)
             {
-                
+
                 Item.shoot = ModContent.ProjectileType<Projectiles.CMSCrescent>();
                 Item.shootSpeed = 4.5f;
                 Item.UseSound = SoundID.Item28;

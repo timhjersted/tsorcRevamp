@@ -1,18 +1,17 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Materials;
-using Terraria.Localization;
-using Terraria.Audio;
-using Humanizer;
-using Microsoft.Xna.Framework.Input;
+using tsorcRevamp.Projectiles.Summon.Runeterra;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
@@ -84,7 +83,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             else if (Main.rand.NextBool(2))
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballCast1") with { Volume = SoundVolume });
-            } else
+            }
+            else
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballCast2") with { Volume = SoundVolume });
             }

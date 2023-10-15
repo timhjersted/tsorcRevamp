@@ -3,7 +3,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Axes
 {

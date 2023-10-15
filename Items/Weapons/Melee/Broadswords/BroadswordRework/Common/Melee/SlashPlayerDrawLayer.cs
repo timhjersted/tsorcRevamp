@@ -4,111 +4,117 @@ using ReLogic.Content;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.TextureColors;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 
-namespace  tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
+namespace tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
 
 [Autoload(Side = ModSide.Client)]
 public class SlashPlayerDrawLayer : PlayerDrawLayer
 {
-	private static readonly SpriteFrame TextureFrame = new(1, 3);
-	private static Asset<Texture2D>? texture;
+    private static readonly SpriteFrame TextureFrame = new(1, 3);
+    private static Asset<Texture2D>? texture;
 
-	public override void Load()
-	{
-		texture = Mod.Assets.Request<Texture2D>($"{GetType().GetDirectory()}/Slash");
-	}
+    public override void Load()
+    {
+        texture = Mod.Assets.Request<Texture2D>($"{GetType().GetDirectory()}/Slash");
+    }
 
-	public override Position GetDefaultPosition()
-		=> new BeforeParent(PlayerDrawLayers.HeldItem);
+    public override Position GetDefaultPosition()
+        => new BeforeParent(PlayerDrawLayers.HeldItem);
 
-	public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
-		=> false;
+    public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
+        => false;
 
-	protected override void Draw(ref PlayerDrawSet drawInfo)
-	{
-		if (!ModContent.GetInstance<tsorcRevampConfig>().BroadswordRework) {
-			return;
-		}
+    protected override void Draw(ref PlayerDrawSet drawInfo)
+    {
+        if (!ModContent.GetInstance<tsorcRevampConfig>().BroadswordRework)
+        {
+            return;
+        }
 
-		// Wait for the texture to load
-		if (texture?.IsLoaded != true) {
-			return;
-		}
+        // Wait for the texture to load
+        if (texture?.IsLoaded != true)
+        {
+            return;
+        }
 
-		var player = drawInfo.drawPlayer;
+        var player = drawInfo.drawPlayer;
 
-		// Don't render as after-image
-		if (drawInfo.shadow != 0f) {
-			return;
-		}
+        // Don't render as after-image
+        if (drawInfo.shadow != 0f)
+        {
+            return;
+        }
 
-		// Only render while a use is in progress
-		if (player.itemAnimation <= 0 || player.itemAnimationMax <= 0) {
-			return;
-		}
+        // Only render while a use is in progress
+        if (player.itemAnimation <= 0 || player.itemAnimationMax <= 0)
+        {
+            return;
+        }
 
-		float useProgress = player.itemAnimation / (float)player.itemAnimationMax;
+        float useProgress = player.itemAnimation / (float)player.itemAnimationMax;
 
-		useProgress = useProgress * 2f - 1f;
+        useProgress = useProgress * 2f - 1f;
 
-		if (useProgress < 0) {
-			return;
-		}
+        if (useProgress < 0)
+        {
+            return;
+        }
 
-		var item = player.HeldItem;
+        var item = player.HeldItem;
 
-		// Ignore weapons that don't have melee damage
-		if (item.noMelee) {
-			return;
-		}
+        // Ignore weapons that don't have melee damage
+        if (item.noMelee)
+        {
+            return;
+        }
 
-		if (!item.TryGetGlobalItem<ItemMeleeAttackAiming>(out var meleeAiming) || !meleeAiming.Enabled) {
-			return;
-		}
+        if (!item.TryGetGlobalItem<ItemMeleeAttackAiming>(out var meleeAiming) || !meleeAiming.Enabled)
+        {
+            return;
+        }
 
-		bool flipped = item.TryGetGlobalItem(out QuickSlashMeleeAnimation animation) && animation.IsAttackFlipped; // Hardcode.............
+        bool flipped = item.TryGetGlobalItem(out QuickSlashMeleeAnimation animation) && animation.IsAttackFlipped; // Hardcode.............
 
-		// Framing
-		var frame = TextureFrame;
+        // Framing
+        var frame = TextureFrame;
 
-		frame.CurrentRow = (byte)(useProgress * frame.RowCount);
+        frame.CurrentRow = (byte)(useProgress * frame.RowCount);
 
-		// Attack info
-		var attackDirection = meleeAiming.AttackDirection;
-		float attackAngle = meleeAiming.AttackAngle;
-		float attackRange = ItemMeleeAttackAiming.GetAttackRange(item, player);
+        // Attack info
+        var attackDirection = meleeAiming.AttackDirection;
+        float attackAngle = meleeAiming.AttackAngle;
+        float attackRange = ItemMeleeAttackAiming.GetAttackRange(item, player);
 
-		// Drawing info
-		var tex = texture.Value;
-		var position = player.Center + attackDirection * 2f;
-		var sourceRectangle = frame.GetSourceRectangle(tex);
-		float rotation = attackAngle;
-		Vector2 origin = sourceRectangle.Size() * 0.5f;
-		float scale = attackRange / 30f;
-		var effect = player.direction > 0 ^ flipped ? SpriteEffects.FlipVertically : SpriteEffects.None;
+        // Drawing info
+        var tex = texture.Value;
+        var position = player.Center + attackDirection * 2f;
+        var sourceRectangle = frame.GetSourceRectangle(tex);
+        float rotation = attackAngle;
+        Vector2 origin = sourceRectangle.Size() * 0.5f;
+        float scale = attackRange / 30f;
+        var effect = player.direction > 0 ^ flipped ? SpriteEffects.FlipVertically : SpriteEffects.None;
 
-		// Color calculation
-		Main.instance.LoadItem(item.type);
+        // Color calculation
+        Main.instance.LoadItem(item.type);
 
-		const float MaxAlpha = 0.33f;
+        const float MaxAlpha = 0.33f;
 
-		var alphaGradient = new Gradient<float>(
-			(0.00f, 0f),
-			(0.25f, MaxAlpha),
-			(0.75f, MaxAlpha),
-			(1.00f, 0f)
-		);
+        var alphaGradient = new Gradient<float>(
+            (0.00f, 0f),
+            (0.25f, MaxAlpha),
+            (0.75f, MaxAlpha),
+            (1.00f, 0f)
+        );
 
-		var itemTextureAsset = TextureAssets.Item[item.type];
-		var color = Lighting.GetColor(position.ToTileCoordinates()).MultiplyRGB(TextureColorSystem.GetAverageColor(itemTextureAsset)) * alphaGradient.GetValue(useProgress);
-		if (item.type == ModContent.ItemType<SteelTempest>())
-		{
-			color = Lighting.GetColor(position.ToTileCoordinates()).MultiplyRGB(Color.WhiteSmoke) * alphaGradient.GetValue(useProgress);
+        var itemTextureAsset = TextureAssets.Item[item.type];
+        var color = Lighting.GetColor(position.ToTileCoordinates()).MultiplyRGB(TextureColorSystem.GetAverageColor(itemTextureAsset)) * alphaGradient.GetValue(useProgress);
+        if (item.type == ModContent.ItemType<SteelTempest>())
+        {
+            color = Lighting.GetColor(position.ToTileCoordinates()).MultiplyRGB(Color.WhiteSmoke) * alphaGradient.GetValue(useProgress);
         }
         if (item.type == ModContent.ItemType<PlasmaWhirlwind>())
         {
@@ -117,5 +123,5 @@ public class SlashPlayerDrawLayer : PlayerDrawLayer
 
         // Drawing
         drawInfo.DrawDataCache.Add(new DrawData(tex, position - Main.screenPosition, sourceRectangle, color, rotation, origin, scale, effect, 0));
-	}
+    }
 }

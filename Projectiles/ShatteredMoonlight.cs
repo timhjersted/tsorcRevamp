@@ -4,7 +4,6 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.NPCs.Enemies;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -205,7 +204,7 @@ namespace tsorcRevamp.Projectiles
 
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
-                    for(int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
+                    for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
                     {
                         Item.NewItem(Projectile.GetSource_FromThis(), Projectile.position, ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), 1, false, -1);
                     }

@@ -1,16 +1,15 @@
-﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using Terraria;
+﻿using System.Collections.Generic;
 using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.Tiles {
-    public enum SoapstoneStyle {
+namespace tsorcRevamp.Tiles
+{
+    public enum SoapstoneStyle
+    {
         Dialogue = 1,
     }
-    public class SoapstoneMessage {
+    public class SoapstoneMessage
+    {
         public static List<SoapstoneMessage> SoapstoneList;
 
         public string text;
@@ -21,16 +20,18 @@ namespace tsorcRevamp.Tiles {
         public const int DEFAULT_WIDTH = 320;
         public const SoapstoneStyle DEFAULT_STYLE = SoapstoneStyle.Dialogue;
 
-        public SoapstoneMessage(string text, Point16 location, int textWidth = DEFAULT_WIDTH, SoapstoneStyle style = DEFAULT_STYLE) {
+        public SoapstoneMessage(string text, Point16 location, int textWidth = DEFAULT_WIDTH, SoapstoneStyle style = DEFAULT_STYLE)
+        {
             this.text = text;
             this.location = location;
             this.textWidth = textWidth;
             this.style = style;
-        }   
+        }
 
-        public static void InitSoapstones() {
+        public static void InitSoapstones()
+        {
             SoapstoneList = new();
-            
+
 
             //SoapstoneList.Add(new SoapstoneMessage("Glowing green skulls and hanging skeletons hold important secrets. Right-click to discover.", new Point16(4278, 951)));
             SoapstoneList.Add(new SoapstoneMessage(LangUtils.GetTextValue("UI.Soapstone"), new Point16(4960, 878)));
@@ -63,7 +64,8 @@ namespace tsorcRevamp.Tiles {
     }
 
     //exists only so vanilla signs can be de/serialized from/to json
-    public class SignJSONSerializable {
+    public class SignJSONSerializable
+    {
         public string text { get; set; }
         public int tileX { get; set; }
         public int tileY { get; set; }

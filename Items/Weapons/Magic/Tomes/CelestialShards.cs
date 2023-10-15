@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -15,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             // Tooltip.SetDefault("Summons an array of shards which unleash divine wrath upon your foes");
 
         }
-               
+
 
         public override void SetDefaults()
         {

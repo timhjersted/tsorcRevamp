@@ -1,14 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
     class SagittariusBowHeld : ChargedBowHeld
     {
-        protected override void SetStats() 
+        protected override void SetStats()
         {
             Player owner = Main.LocalPlayer;
             Item bow = owner.inventory[owner.selectedItem];
@@ -24,14 +22,14 @@ namespace tsorcRevamp.Projectiles
             Main.projFrames[Projectile.type] = 7;
         }
 
-        protected override void Shoot() 
+        protected override void Shoot()
         {
             Player player = Main.player[Projectile.owner];
             if (player.whoAmI != Main.myPlayer)
                 return;
             int arrow = ammoType; //directly using ammoType in the NewProjectile call eats it on the first shot, making subsequent shots empty
 
-            for (int i = 0; i < 2; i++) 
+            for (int i = 0; i < 2; i++)
             {
                 float velocity = LerpFloat(minVelocity, maxVelocity, charge);
                 int damage = (int)LerpFloat(minDamage, maxDamage, charge);

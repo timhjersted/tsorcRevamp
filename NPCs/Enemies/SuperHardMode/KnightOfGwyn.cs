@@ -2,10 +2,9 @@
 using System;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
 
@@ -732,7 +731,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<GuardianSoul>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BossItems.DarkMirror>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>(), 1, 5000, 5000));

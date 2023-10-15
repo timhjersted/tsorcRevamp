@@ -4,7 +4,6 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
@@ -36,10 +35,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 
         public override bool AltFunctionUse(Player player)
         {
-            if(!Main.mouseLeft && player.ItemTimeIsZero)
+            if (!Main.mouseLeft && player.ItemTimeIsZero)
             {
                 return true;
-            } else
+            }
+            else
             {
                 player.altFunctionUse = 1;
                 return false;

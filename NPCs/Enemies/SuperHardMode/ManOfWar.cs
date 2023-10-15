@@ -1,10 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
 using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -54,7 +53,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (Main.GameUpdateCount % 60 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Player closestPlayer = UsefulFunctions.GetClosestPlayer(NPC.Center);
-                if (closestPlayer != null && Collision.CanHit(NPC, closestPlayer)) {
+                if (closestPlayer != null && Collision.CanHit(NPC, closestPlayer))
+                {
                     Vector2 targetVector = UsefulFunctions.Aim(NPC.Center, closestPlayer.Center, 1);
                     Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<Projectiles.Enemy.JellyfishLightning>(), 30, 1, Main.myPlayer, 0, NPC.whoAmI);
                 }

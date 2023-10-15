@@ -1,15 +1,11 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using Terraria;
-using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using tsorcRevamp;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp.NPCs.Special
@@ -50,7 +46,7 @@ namespace tsorcRevamp.NPCs.Special
         //Location in world, "is the boss downed", and "has the vision shattered when the player walked by"
         BossVision[] bossVisions;
         public override void AI()
-        {            
+        {
             //Make the npc last forever
             NPC.timeLeft++;
 
@@ -71,7 +67,7 @@ namespace tsorcRevamp.NPCs.Special
             }
 
             //Lighting
-            for(int i = 0; i < bossVisions.Length; i++)
+            for (int i = 0; i < bossVisions.Length; i++)
             {
                 if (bossVisions[i].activationProgress == 0)
                 {
@@ -95,7 +91,7 @@ namespace tsorcRevamp.NPCs.Special
             {
                 if (Main.player[i].active && !Main.player[i].dead)
                 {
-                    for(int j = 0; j < 7; j++)
+                    for (int j = 0; j < 7; j++)
                     {
                         if (Math.Abs(Main.player[i].Center.X - bossVisions[j].Center.X) < 50 && Math.Abs(Main.player[i].Center.Y - bossVisions[j].Center.Y) < 400)
                         {
@@ -125,18 +121,18 @@ namespace tsorcRevamp.NPCs.Special
             }
         }
 
-        
+
         public static Texture2D[] textures;
         public static Texture2D[] outlines;
         //public static ArmorShaderData data;
-        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)        
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if(bossVisions == null)
+            if (bossVisions == null)
             {
                 return false;
             }
             //Initialize texture arrays
-            if(textures == null)
+            if (textures == null)
             {
                 textures = new Texture2D[7];
             }
@@ -203,7 +199,7 @@ namespace tsorcRevamp.NPCs.Special
                 Vector2 offset = new Vector2(0, 16 * diff);
                 offset -= new Vector2(textures[i].Width / 2, textures[i].Height / 2);
                 Color thisColor = Color.White;
-                if(bossVisions[i].activationProgress > 0)
+                if (bossVisions[i].activationProgress > 0)
                 {
                     ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.ReflectiveMetalDye), Main.LocalPlayer);
                     data.Apply(null);
@@ -216,10 +212,10 @@ namespace tsorcRevamp.NPCs.Special
             //Restart the spritebatch so the shader doesn't get applied to the rest of the game
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
-                        
+
             return false;
         }
-        
+
         public override bool CheckActive()
         {
             return false;
@@ -233,7 +229,8 @@ namespace tsorcRevamp.NPCs.Special
 
         public bool canActivate
         {
-            get { 
+            get
+            {
                 return tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(bossID));
             }
         }

@@ -25,13 +25,14 @@ namespace tsorcRevamp.NPCs.Friendly
             //NPCID.Sets.HatOffsetY[npc.type] = 4;
         }
 
-        public override List<string> SetNPCNameList() {
+        public override List<string> SetNPCNameList()
+        {
             return Names;
         }
 
         public static List<string> Names = new List<string> {
-			"Harrison", "Han", "Indie", "Rick"
-		};
+            "Harrison", "Han", "Indie", "Rick"
+        };
 
         public override void SetDefaults()
         {

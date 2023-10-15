@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -353,7 +352,8 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
             npcLoot.Add(ItemDropRule.Common(ItemID.ShinePotion, 5));
             npcLoot.Add(ItemDropRule.Common(ItemID.RegenerationPotion, 10));
             npcLoot.Add(new CommonDrop(ItemID.MagicPowerPotion, 10, 1, 1, 6));

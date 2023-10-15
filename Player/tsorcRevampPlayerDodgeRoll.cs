@@ -1,17 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Buffs.Runeterra.Melee;
-using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
-using tsorcRevamp.Items.Accessories.Expert;
 
 namespace tsorcRevamp
 {
@@ -122,26 +117,26 @@ namespace tsorcRevamp
                 blockVisuals = Player.itemAnimation;
                 return false;
             }
-            
-            if(blockVisuals > 0)
+
+            if (blockVisuals > 0)
             {
                 blockVisuals--;
             }
-            
+
 
 
             #region BotC Stamina Usage
 
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                
+
                 tsorcRevampStaminaPlayer modPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
                 int scaledUseAnimation = (int)(item.useAnimation / Player.GetAttackSpeed(item.DamageType));
 
                 bool startedAnimation = (Player.itemAnimation > oldItemAnimation && Player.itemAnimationMax > 0);
                 oldItemAnimation = Player.itemAnimation;
 
-                if (!startedAnimation && item.type != ItemID.Harpoon) return true; 
+                if (!startedAnimation && item.type != ItemID.Harpoon) return true;
 
                 /*if (item.DamageType == DamageClass.Magic)
                 {
@@ -162,12 +157,14 @@ namespace tsorcRevamp
                 }
 
                 //piranha gun works differently enough to warrant a special case
-                else if (item.type != ItemID.PiranhaGun && item.type != ItemID.Harpoon) {
+                else if (item.type != ItemID.PiranhaGun && item.type != ItemID.Harpoon)
+                {
                     modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation);
-                     
+
                 }
                 //i have no clue how they made this item behave the way it does, but it is deeply cursed
-                else if (item.type == ItemID.Harpoon && Player.itemAnimation == 4) {
+                else if (item.type == ItemID.Harpoon && Player.itemAnimation == 4)
+                {
                     modPlayer.staminaResourceCurrent -= 14;
                 }
                 if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
@@ -177,7 +174,7 @@ namespace tsorcRevamp
             }
 
             #endregion
-            
+
             return true;
         }
 
@@ -315,7 +312,7 @@ namespace tsorcRevamp
             dodgeDirection = wantedDodgerollDir != 0 ? wantedDodgerollDir : (sbyte)Player.direction;
             dodgeCooldown = DodgeDefaultCooldown;
             Player.channel = false;
-            
+
             Player.TryInterruptingItemUsage();
 
             if (!isLocal)
@@ -476,7 +473,7 @@ namespace tsorcRevamp
                         DodgeImmuneTime = 23;
                         dodgeCooldown = 8;
                     }
-                        DodgeImmuneTime = 21;
+                    DodgeImmuneTime = 21;
                     dodgeCooldown = 10;
                 }
 
@@ -486,15 +483,16 @@ namespace tsorcRevamp
                     DodgeImmuneTime = 16;
                     dodgeCooldown = 35;
                 }
-                if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1) 
+                if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1)
                 {
-                    decelerationRate = 0.88f;       
+                    decelerationRate = 0.88f;
                     DodgeImmuneTime = 21;
                     dodgeCooldown = 10;
                 }
-                
+
                 //chloranthy ring II effect
-                if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2) {
+                if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2)
+                {
                     decelerationRate = 0.91f;
                     DodgeImmuneTime = 24;
                     dodgeCooldown = 0;
@@ -503,7 +501,7 @@ namespace tsorcRevamp
                 if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1 && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
                 {
                     decelerationRate = 0.85f;
-                    DodgeImmuneTime = 18; 
+                    DodgeImmuneTime = 18;
                     dodgeCooldown = 30;
                 }
 
@@ -514,7 +512,7 @@ namespace tsorcRevamp
                     dodgeCooldown = 10;
                 }
 
-                    if (Player.GetModPlayer<tsorcRevampPlayer>().BurdenOfSmough)
+                if (Player.GetModPlayer<tsorcRevampPlayer>().BurdenOfSmough)
                 {
                     decelerationRate = 0.6f;
                     DodgeImmuneTime = 14;
@@ -545,7 +543,7 @@ namespace tsorcRevamp
                             other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), Items.Accessories.Expert.MythrilBulwark.VulnerabilityDuration * 60);
                             other.AddBuff(BuffID.Frostburn2, Items.Accessories.Expert.MythrilBulwark.VulnerabilityDuration * 60);
 
-                            if (Main.rand.NextBool(3)) 
+                            if (Main.rand.NextBool(3))
                             {
                                 other.AddBuff(BuffID.Confused, Items.Accessories.Expert.MythrilBulwark.VulnerabilityDuration * 60);
                             }
@@ -563,7 +561,7 @@ namespace tsorcRevamp
 
 
                 //normal effect
-                Player.velocity.X *= decelerationRate; 
+                Player.velocity.X *= decelerationRate;
             }
 
             if (dodgeTime >= DodgeTimeMax)
@@ -578,11 +576,13 @@ namespace tsorcRevamp
             }
         }
 
-        public override bool CanBeHitByNPC(NPC npc, ref int cooldownSlot) {
+        public override bool CanBeHitByNPC(NPC npc, ref int cooldownSlot)
+        {
             return !isDodging;
         }
 
-        public override bool CanBeHitByProjectile(Projectile proj) {
+        public override bool CanBeHitByProjectile(Projectile proj)
+        {
             return !isDodging;
         }
     }

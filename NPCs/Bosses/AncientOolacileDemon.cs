@@ -1,16 +1,14 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
 using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Accessories;
+using tsorcRevamp.Items.Accessories.Mobility;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Potions.PermanentPotions;
-using tsorcRevamp.Items.Accessories.Mobility;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
@@ -124,7 +122,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             //JUSTHIT CODE
             //MELEE RANGE
-            if (NPC.Distance(player.Center) < 100 && NPC.localAI[1] < 70f) 
+            if (NPC.Distance(player.Center) < 100 && NPC.localAI[1] < 70f)
             {
                 NPC.localAI[1] = 40f;
 
@@ -141,7 +139,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
                 float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-10f, -7f);
                 NPC.velocity.X = v;
-                
+
                 NPC.netUpdate = true;
             }
 
@@ -394,7 +392,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 NPC.localAI[1] = 1f;
 
-                
+
             }
             //tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], ProjectileID.LostSoulHostile, lostSoulDamage, 3, lineOfSight, true, 4, 9);
 
@@ -447,7 +445,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
 
                     if (NPC.localAI[1] >= 195f)
-                    { 
+                    {
                         NPC.localAI[1] = 1f;
                     }
                 }
@@ -469,15 +467,15 @@ namespace tsorcRevamp.NPCs.Bosses
 
                         if (NPC.localAI[1] >= 186f)
                         {
-                            NPC.localAI[1] = 1f; 
+                            NPC.localAI[1] = 1f;
                         }
                     }
                 }
             }
 
-            
+
             //MULTI-FIRE 1 ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life >= NPC.lifeMax / 3 && choice == 1) 
+            if (NPC.localAI[1] >= 160f && NPC.life >= NPC.lifeMax / 3 && choice == 1)
             {
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(4), 7);
                 //speed.Y += Main.rand.NextFloat(2f, -2f); //just added
@@ -518,8 +516,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
             //LIGHTNING ATTACK
-            if (NPC.localAI[1] == 160f && NPC.life >= NPC.lifeMax / 6 && NPC.life <= NPC.lifeMax / 3 * 2 && (choice == 5 || choice == 4)) 
-            {                
+            if (NPC.localAI[1] == 160f && NPC.life >= NPC.lifeMax / 6 && NPC.life <= NPC.lifeMax / 3 * 2 && (choice == 5 || choice == 4))
+            {
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(1), 1);
                 //speed += Main.player[npc.target].velocity / 4;
 
@@ -528,10 +526,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 //speed += Main.rand.NextVector2Circular(-10, -8);
                 if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.CultistBossLightningOrb, cultistLightningDamage, 0f, Main.myPlayer);                   
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.CultistBossLightningOrb, cultistLightningDamage, 0f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
                 }
-                
+
                 NPC.localAI[1] = -50f;
             }
 

@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
         {
             player.GetModPlayer<tsorcRevampPlayer>().SteraksGage = true;
             player.GetDamage(DamageClass.Melee) += MeleeDmg / 100f;
-            player.GetDamage(DamageClass.Melee) += MathF.Min((float)(player.HeldItem.useAnimation - 18) / UseTimeRatio / 100f, MaxDmg / 100f); 
+            player.GetDamage(DamageClass.Melee) += MathF.Min((float)(player.HeldItem.useAnimation - 18) / UseTimeRatio / 100f, MaxDmg / 100f);
             player.statLifeMax2 += MaxLife;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)

@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Armors.Magic
             player.moveSpeed += MoveSpeed / 100f;
             player.GetDamage(DamageClass.Magic) += Dmg / 100f;
 
-            if(player.HasBuff(BuffID.ShadowDodge))
+            if (player.HasBuff(BuffID.ShadowDodge))
             {
                 player.moveSpeed += MoveSpeed / 100f;
                 player.GetDamage(DamageClass.Magic) += Dmg / 100f;

@@ -308,7 +308,7 @@ namespace tsorcRevamp
                 }
             }
 
-            if(closestCollision < (start - currentPosition).Length())
+            if (closestCollision < (start - currentPosition).Length())
             {
                 currentPosition = start + (unitVector * closestCollision);
             }
@@ -357,7 +357,7 @@ namespace tsorcRevamp
         ///<param name="path">The path</param>
         public static void EnsureLoaded(ref Texture2D texture, string path)
         {
-            if(texture == null || texture.IsDisposed)
+            if (texture == null || texture.IsDisposed)
             {
                 texture = (Texture2D)ModContent.Request<Texture2D>(path, ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
@@ -440,7 +440,7 @@ namespace tsorcRevamp
         public static Vector2 Aim(Vector2 source, Vector2 target, float speed)
         {
             Vector2 distance = target - source;
-            if(distance == Vector2.Zero)
+            if (distance == Vector2.Zero)
             {
                 return Vector2.Zero;
             }
@@ -512,7 +512,7 @@ namespace tsorcRevamp
         ///<param name="owner">The owner of the projectile</param>
         public static int GetLocalWhoAmIFromIdentity(int identity, int owner)
         {
-            for(int i = 0; i < Main.maxProjectiles; i++)
+            for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 if (Main.projectile[i].identity == identity && Main.projectile[i].owner == owner && Main.projectile[i].active)
                 {
@@ -530,7 +530,7 @@ namespace tsorcRevamp
             int identity = encodedInt % 1000;
             return GetLocalWhoAmIFromIdentity(identity, owner);
         }
-        
+
         public static float EncodeID(Projectile proj)
         {
             return EncodeID(proj.identity, proj.owner);
@@ -729,7 +729,7 @@ namespace tsorcRevamp
 
         }
 
-        
+
         ///<summary> 
         ///This syncs a few extra stats that the default SyncNPC does not
         ///</summary>         
@@ -748,7 +748,7 @@ namespace tsorcRevamp
             npcExtrasPacket.Send();
         }
 
-        
+
 
         ///<summary> 
         ///Broadcasts a message from the server to all players. Safe to use in either multiplayer or singleplayer contexts, where it simply defaults to a NewText() instead.
@@ -879,7 +879,7 @@ namespace tsorcRevamp
         {
             //If the target has a velocity then factor it in
             Vector2 velTarget = Vector2.Zero;
-            if(targetVelocity != null)
+            if (targetVelocity != null)
             {
                 velTarget = targetVelocity.Value;
             }
@@ -910,7 +910,7 @@ namespace tsorcRevamp
 
             //Generate a vector with length 'acceleration' pointing at that future location
             Vector2 fixedAcceleration = Aim(actor.Center, impactPos, acceleration);
-            
+
             //If distance or acceleration is 0 it will have nans, this deals with that
             if (fixedAcceleration.HasNaNs())
             {
@@ -921,7 +921,7 @@ namespace tsorcRevamp
             actor.velocity += fixedAcceleration;
 
             //Slow it down to the speed limit if it is above it
-            if(actor.velocity.Length() > topSpeed)
+            if (actor.velocity.Length() > topSpeed)
             {
                 actor.velocity.Normalize();
                 actor.velocity *= topSpeed;
@@ -963,11 +963,11 @@ namespace tsorcRevamp
         ///<param name="type">The type of projectile to clear</param>
         public static void ClearProjectileType(int type)
         {
-            for(int i = 0; i < Main.maxProjectiles; i++)
+            for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 if (Main.projectile[i].type == type && Main.projectile[i].active)
                 {
-                    if(Main.projectile[i].ModProjectile is DynamicTrail)
+                    if (Main.projectile[i].ModProjectile is DynamicTrail)
                     {
                         ((DynamicTrail)Main.projectile[i].ModProjectile).dying = true;
                     }
@@ -1093,7 +1093,7 @@ namespace tsorcRevamp
                     {
                         if (includeThesePlayers.Contains(i))
                         {
-                            
+
                             NetMessage.SendData(MessageID.InstancedItem, i, number: dummyItemIndex);
                         }
                     }
@@ -1334,7 +1334,8 @@ namespace tsorcRevamp
         /// Returns the character's position from (pos) frames ago. Max 59
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 OldPos(this Player player, int pos) {
+        public static Vector2 OldPos(this Player player, int pos)
+        {
             int index = pos > 59 ? 59 : pos;
             return player.GetModPlayer<tsorcRevampPlayer>().oldPos[index];
         }
@@ -1348,21 +1349,26 @@ namespace tsorcRevamp
         /// <param name="font">Whichever font you are using to draw the string</param>
         /// <param name="scale">The text scale</param>
         /// <returns></returns>
-        public static string WrapString(string input, DynamicSpriteFont font, float maxWidth = 240, float scale = 1f) {
+        public static string WrapString(string input, DynamicSpriteFont font, float maxWidth = 240, float scale = 1f)
+        {
             if (input == null || input == string.Empty) return string.Empty;
             StringBuilder finalText = new("");
             string[] array = input.Split();
             StringBuilder currentLine = new("");
-            foreach (string currentWord in array) {
-                if (currentWord == "--NEWLINE") {
+            foreach (string currentWord in array)
+            {
+                if (currentWord == "--NEWLINE")
+                {
                     finalText.Append('\n');
                     currentLine.Clear();
                 }
-                else if (font.MeasureString(currentLine + " " + currentWord).X * scale <= (float)maxWidth) {
+                else if (font.MeasureString(currentLine + " " + currentWord).X * scale <= (float)maxWidth)
+                {
                     finalText.Append(" " + currentWord);
                     currentLine.Append(" " + currentWord);
                 }
-                else {
+                else
+                {
                     finalText.Append("\n " + currentWord);
                     currentLine.Clear();
                     currentLine.Append(currentWord);
@@ -1377,12 +1383,14 @@ namespace tsorcRevamp
         /// <typeparam name="T">The class to deserialize to</typeparam>
         /// <param name="input">The input json</param>
         /// <returns></returns>
-        public static IEnumerable<T> DeserializeMultiple<T>(string input) {
+        public static IEnumerable<T> DeserializeMultiple<T>(string input)
+        {
             JsonSerializer serializer = new();
             using var sr = new StringReader(input);
             using var reader = new JsonTextReader(sr);
             reader.SupportMultipleContent = true;
-            while (reader.Read()) {
+            while (reader.Read())
+            {
                 yield return serializer.Deserialize<T>(reader);
             }
         }

@@ -2,21 +2,16 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Graphics.Effects;
-using Terraria.Audio;
-using System.IO;
-using Terraria.DataStructures;
-using Terraria.GameContent.ItemDropRules;
-using tsorcRevamp.Utilities;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Weapons.Magic;
-using tsorcRevamp.Items;
 using tsorcRevamp.Items.Placeable.Trophies;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -152,7 +147,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 MoveIndex = testAttack;
             }
-            
+
             if (MoveTimer < 900)
             {
                 CurrentMove.Move();
@@ -160,7 +155,7 @@ namespace tsorcRevamp.NPCs.Bosses
             else if (MoveTimer < 960)
             {
                 //Phase transition
-                if(MoveTimer == 901)
+                if (MoveTimer == 901)
                 {
                     StartAura(800, 1.08f, 0.07f);
                 }
@@ -256,14 +251,15 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (PhaseTwo)
             {
-                if(MoveTimer > 120 && MoveTimer % 120 == 80)
+                if (MoveTimer > 120 && MoveTimer % 120 == 80)
                 {
                     StartAura(500);
                 }
                 if (MoveTimer > 120 && MoveTimer % 120 == 0)
                 {
                     SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, NPC.Center);
-                    if (Main.netMode != NetmodeID.MultiplayerClient) {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
                         Vector2 offset = new Vector2(-50, 0).RotatedBy((NPC.Center - target.Center).ToRotation());
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + offset, UsefulFunctions.Aim(NPC.Center, target.Center, 3), ModContent.ProjectileType<Projectiles.Enemy.Triad.CursedMalestrom>(), CursedMalestromDamage, 0.5f, Main.myPlayer);
                     }
@@ -273,7 +269,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (MoveTimer % 90 == 0)
                 {
-                    SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Volume= 0.5f, Pitch = 0.9f }, NPC.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Volume = 0.5f, Pitch = 0.9f }, NPC.Center);
                     baseFade = 0.3f;
                     baseRadius = 0.4f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -286,7 +282,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         }
                     }
                 }
-            }            
+            }
         }
 
         //Spaz aims down and breathes cursed fire into the earth
@@ -303,8 +299,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 homingTarget.X *= -1;
             }
             UsefulFunctions.SmoothHoming(NPC, target.Center + homingTarget, 0.5f, 20);
-            
-            if(MoveTimer < 120)
+
+            if (MoveTimer < 120)
             {
                 return;
             }
@@ -832,7 +828,7 @@ namespace tsorcRevamp.NPCs.Bosses
             Vector2 origin = sourceRectangle.Size() / 2f;
 
             Vector3 hslColor = Main.rgbToHsl(Color.GreenYellow);
-            if(MoveIndex == 2)
+            if (MoveIndex == 2)
             {
                 hslColor = Main.rgbToHsl(Color.Yellow);
             }
@@ -861,7 +857,7 @@ namespace tsorcRevamp.NPCs.Bosses
             Rectangle baseRectangle = new Rectangle(0, 0, 400, 400);
             Vector2 baseOrigin = baseRectangle.Size() / 2f;
 
-            
+
 
             //Pass relevant data to the shader via these parameters
             effect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseTurbulent.Width);

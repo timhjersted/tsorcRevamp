@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,7 +8,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
-using System.Threading;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Terraria;
@@ -18,57 +19,53 @@ using Terraria.GameContent.UI;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 using Terraria.UI;
+using tsorcRevamp.Banners;
+using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.BossBags;
+using tsorcRevamp.Items.Lore;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Pets;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Weapons.Summon;
+using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.NPCs.Bosses;
+using tsorcRevamp.NPCs.Bosses.JungleWyvern;
+using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
+using tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm;
+using tsorcRevamp.NPCs.Bosses.Serris;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
+using tsorcRevamp.NPCs.Bosses.WyvernMage;
+using tsorcRevamp.NPCs.Special;
+using tsorcRevamp.Projectiles.Summon;
+using tsorcRevamp.Projectiles.Summon.Archer;
+using tsorcRevamp.Projectiles.Summon.Runeterra;
+using tsorcRevamp.Projectiles.Summon.SpiritBell;
+using tsorcRevamp.Projectiles.Summon.SunsetQuasar;
+using tsorcRevamp.Tiles;
+using tsorcRevamp.Tiles.BuffStations;
+using tsorcRevamp.Tiles.Relics;
+using tsorcRevamp.Tiles.Trophies;
 using tsorcRevamp.UI;
+using tsorcRevamp.Utilities;
 using static tsorcRevamp.ILEdits;
 using static tsorcRevamp.MethodSwaps;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Potions.PermanentPotions;
-using Terraria.ModLoader.Core;
-using System.Security.Cryptography;
-using tsorcRevamp.Tiles;
-using tsorcRevamp.Tiles.Trophies;
-using tsorcRevamp.Banners;
-using tsorcRevamp.Items.Weapons.Summon;
-using tsorcRevamp.Buffs.Weapons.Summon;
-using tsorcRevamp.Projectiles.Summon;
-using tsorcRevamp.Projectiles.Summon.SunsetQuasar;
-using tsorcRevamp.Items.Weapons.Summon.Runeterra;
-using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Projectiles.Summon.Runeterra;
-using tsorcRevamp.Projectiles.Summon.Archer;
-using tsorcRevamp.Projectiles.Summon.SpiritBell;
-using Terraria.ModLoader.Config;
-using tsorcRevamp.Tiles.BuffStations;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Lore;
-using tsorcRevamp.Utilities;
-using Terraria.Localization;
-using tsorcRevamp.Tiles.Relics;
-using tsorcRevamp.NPCs.Special;
-using ReLogic.Content;
-using tsorcRevamp.NPCs.Bosses.JungleWyvern;
-using tsorcRevamp.NPCs.Bosses.WyvernMage;
-using tsorcRevamp.NPCs.Bosses.Serris;
-using tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm;
-using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
-using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
-using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
-using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
-using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 
 namespace tsorcRevamp
 {
     public class tsorcRevamp : Mod
     {
-        public class tsorcItemDropRuleConditions 
+        public class tsorcItemDropRuleConditions
         {
             public static IItemDropRuleCondition SuperHardmodeRule;
             public static IItemDropRuleCondition FirstBagRule;
@@ -82,11 +79,11 @@ namespace tsorcRevamp
         public enum BossExtras
         {
             EstusFlaskShard = 0b1000,
-            GuardianSoul    = 0b0100,
-            StaminaVessel   = 0b0010,
+            GuardianSoul = 0b0100,
+            StaminaVessel = 0b0010,
             SublimeBoneDust = 0b0001,
-            DarkSoulsOnly   = 0b0000,
-            SoulVessel      = 0b10000
+            DarkSoulsOnly = 0b0000,
+            SoulVessel = 0b10000
         };
 
         public static ModKeybind toggleDragoonBoots;
@@ -240,7 +237,7 @@ namespace tsorcRevamp
             Main.QueueMainThreadAction(TransparentTextureHandler.TransparentTextureFix);
 
             tsorcRevamp Instance = this;
-            
+
             SpazmatismV2.secondStageHeadSlot = AddBossHeadTexture("tsorcRevamp/NPCs/Bosses/SpazmatismV2_Head_Boss_2", -1);
             RetinazerV2.secondStageHeadSlot = AddBossHeadTexture("tsorcRevamp/NPCs/Bosses/RetinazerV2_Head_Boss_2", -1);
             Cataluminance.secondStageHeadSlot = AddBossHeadTexture("tsorcRevamp/NPCs/Bosses/Cataluminance_Head_Boss_2", -1);
@@ -248,7 +245,7 @@ namespace tsorcRevamp
             TheAbyssEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TheAbyssShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
 
-            
+
             RetShockwaveEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TriadShockwave", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             Filters.Scene["tsorcRevamp:RetShockwave"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(RetShockwaveEffect), "TriadShockwavePass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
             SpazShockwaveEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TriadShockwave", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
@@ -428,7 +425,7 @@ namespace tsorcRevamp
             #endregion
             //--------
             #region RestrictedHooks list
-            RestrictedHooks = new List<int>() 
+            RestrictedHooks = new List<int>()
             {
                 ItemID.SlimeHook,
                 ItemID.SquirrelHook,
@@ -439,7 +436,7 @@ namespace tsorcRevamp
             #endregion
             //--------
             #region DisabledRecipes list
-            DisabledRecipes = new List<int>() 
+            DisabledRecipes = new List<int>()
             {
                 #region Accessories IDs
                 ItemID.ObsidianSkull,
@@ -665,11 +662,11 @@ namespace tsorcRevamp
             #endregion
             //--------
             #region AssignedBossExtras dictionary
-            AssignedBossExtras = new Dictionary<int, BossExtras>() 
+            AssignedBossExtras = new Dictionary<int, BossExtras>()
             {   
                 #region Vanilla
                 {   ItemID.KingSlimeBossBag         , BossExtras.StaminaVessel      },
-                {   ItemID.EyeOfCthulhuBossBag      , BossExtras.StaminaVessel  
+                {   ItemID.EyeOfCthulhuBossBag      , BossExtras.StaminaVessel
                                                     | BossExtras.SublimeBoneDust    },
                 {   ItemID.EaterOfWorldsBossBag     , BossExtras.DarkSoulsOnly      },
                 {   ItemID.BrainOfCthulhuBossBag    , BossExtras.StaminaVessel      },
@@ -728,7 +725,7 @@ namespace tsorcRevamp
             #endregion
             //--------
             #region BossExtrasDescription dictionary
-            BossExtrasDescription = new Dictionary<BossExtras, (IItemDropRuleCondition Condition, int ID)>() 
+            BossExtrasDescription = new Dictionary<BossExtras, (IItemDropRuleCondition Condition, int ID)>()
             {
                 {   BossExtras.EstusFlaskShard  , ( tsorcItemDropRuleConditions.FirstBagCursedRule , ModContent.ItemType<EstusFlaskShard>() )   },
                 {   BossExtras.GuardianSoul     , ( tsorcItemDropRuleConditions.FirstBagRule       , ModContent.ItemType<GuardianSoul>()    )   },
@@ -739,7 +736,7 @@ namespace tsorcRevamp
             #endregion
             //--------
             #region BossBagIDtoNPCID dictionary
-            BossBagIDtoNPCID = new Dictionary<int, int>() 
+            BossBagIDtoNPCID = new Dictionary<int, int>()
             {
                 #region Vanilla
                 {   ItemID.KingSlimeBossBag         , NPCID.KingSlime           },
@@ -774,8 +771,8 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<TheSorrowBag>()             , ModContent.NPCType<TheSorrow>()                                                   },
                 {   ModContent.ItemType<TheHunterBag>()             , ModContent.NPCType<TheHunter>()                                                   },
                 {   ModContent.ItemType<TriadBag>()                 , ModContent.NPCType<Cataluminance>()                                               },
-                {   ModContent.ItemType<WyvernMageBag>()            , ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()                           },     
-                {   ModContent.ItemType<SerrisBag>()                , ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()                                  },     
+                {   ModContent.ItemType<WyvernMageBag>()            , ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()                           },
+                {   ModContent.ItemType<SerrisBag>()                , ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()                                  },
                 {   ModContent.ItemType<DeathBag>()                 , ModContent.NPCType<NPCs.Bosses.Death>()                                           },
                 {   ModContent.ItemType<MindflayerIllusionBag>()    , ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>()                     },
                 {   ModContent.ItemType<AttraidiesBag>()            , ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()                      },
@@ -834,14 +831,14 @@ namespace tsorcRevamp
             #endregion
             //--------
             #region AddedBossBagLoot dictionary
-            AddedBossBagLoot = new Dictionary<int, List<IItemDropRule>>() 
+            AddedBossBagLoot = new Dictionary<int, List<IItemDropRule>>()
             {
                 #region Vanilla
                 {   ItemID.KingSlimeBossBag         ,   new List<IItemDropRule>()   {
                                                             ItemDropRule.Common(ItemID.SlimySaddle),
                                                             ItemDropRule.Common(ItemID.Katana)
                                                         }                                                          },
-                {   ItemID.EyeOfCthulhuBossBag      ,   new List<IItemDropRule>()                           
+                {   ItemID.EyeOfCthulhuBossBag      ,   new List<IItemDropRule>()
                                                         {
                                                             ItemDropRule.Common(ItemID.HermesBoots),
                                                             ItemDropRule.Common(ItemID.HerosHat),
@@ -855,29 +852,29 @@ namespace tsorcRevamp
                                                          }                                                        },
                 {   ItemID.BrainOfCthulhuBossBag    ,   new List<IItemDropRule>()                                                        },
                 {   ItemID.QueenBeeBossBag          ,   new List<IItemDropRule>()                                                        },
-                {   ItemID.SkeletronBossBag         ,   new List<IItemDropRule>()                           
+                {   ItemID.SkeletronBossBag         ,   new List<IItemDropRule>()
                                                         {
                                                             ItemDropRule.Common(ModContent.ItemType<MiakodaFull>())
                                                         }                                                                                },
-                {   ItemID.WallOfFleshBossBag       ,   new List<IItemDropRule>()                           
+                {   ItemID.WallOfFleshBossBag       ,   new List<IItemDropRule>()
                                                         {
                                                             ItemDropRule.Common(ItemID.MoltenPickaxe)
                                                         }                                                                                },
-                {   ItemID.DestroyerBossBag         ,   new List<IItemDropRule>()                           
+                {   ItemID.DestroyerBossBag         ,   new List<IItemDropRule>()
                                                         {
                                                             ItemDropRule.Common(ModContent.ItemType<CrestOfCorruption>()),
                                                             ItemDropRule.Common(ModContent.ItemType<RTQ2>())
-                                                        }                                                                                },                
-                {   ItemID.SkeletronPrimeBossBag    ,   new List<IItemDropRule>()                           
+                                                        }                                                                                },
+                {   ItemID.SkeletronPrimeBossBag    ,   new List<IItemDropRule>()
                                                         {
                                                             ItemDropRule.Common(ModContent.ItemType<CrestOfSteel>())
                                                         }                                                                                },
-                {   ItemID.PlanteraBossBag          ,   new List<IItemDropRule>()                           
+                {   ItemID.PlanteraBossBag          ,   new List<IItemDropRule>()
                                                         {
                                                             ItemDropRule.Common(ModContent.ItemType<CrestOfLife>()),
                                                             ItemDropRule.Common(ModContent.ItemType<SoulOfLife>(), 1, 30, 30)
                                                         }                                                                                },
-                {   ItemID.GolemBossBag             ,   new List<IItemDropRule>()                           
+                {   ItemID.GolemBossBag             ,   new List<IItemDropRule>()
                                                         {
                                                             ItemDropRule.Common(ModContent.ItemType<CrestOfStone>()),
                                                             ItemDropRule.ByCondition(tsorcItemDropRuleConditions.AdventureModeRule,
@@ -915,35 +912,35 @@ namespace tsorcRevamp
                 #region Hooks
                 { ItemID.IvyWhip,       new List<(int ItemID, int Count)>()
                                         {
-                                            (ItemID.BeeWax, 1) 
+                                            (ItemID.BeeWax, 1)
                                         }                                       },
                 { ItemID.GrapplingHook, new List<(int ItemID, int Count)>()
                                         {
-                                            (ItemID.BeeWax, 1) 
+                                            (ItemID.BeeWax, 1)
                                         }                                       },
                 { ItemID.AmethystHook,  new List<(int ItemID, int Count)>()
                                         {
-                                            (ItemID.BeeWax, 1) 
+                                            (ItemID.BeeWax, 1)
                                         }                                       },
                 { ItemID.TopazHook,     new List<(int ItemID, int Count)>()
                                         {
-                                            (ItemID.BeeWax, 1) 
+                                            (ItemID.BeeWax, 1)
                                         }                                       },
                 { ItemID.SapphireHook,  new List<(int ItemID, int Count)>()
                                         {
-                                            (ItemID.BeeWax, 1) 
+                                            (ItemID.BeeWax, 1)
                                         }                                       },
                 { ItemID.EmeraldHook,   new List<(int ItemID, int Count)>()
                                         {
-                                            (ItemID.BeeWax, 1) 
+                                            (ItemID.BeeWax, 1)
                                         }                                       },
                 { ItemID.RubyHook,      new List<(int ItemID, int Count)>()
                                         {
-                                            (ItemID.BeeWax, 1) 
+                                            (ItemID.BeeWax, 1)
                                         }                                       },
                 { ItemID.DiamondHook,   new List<(int ItemID, int Count)>()
                                         {
-                                            (ItemID.BeeWax, 1) 
+                                            (ItemID.BeeWax, 1)
                                         }                                       },
                 { ItemID.AmberHook,   new List<(int ItemID, int Count)>()
                                         {
@@ -999,33 +996,33 @@ namespace tsorcRevamp
         {
             TextureAssets.Npc[NPCID.Deerclops] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.Deerclops}");
             TextureAssets.NpcHeadBoss[39] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_Head_Boss_39");
-            tsorcItemDropRuleConditions.SuperHardmodeRule       = null;
-            tsorcItemDropRuleConditions.FirstBagRule            = null;
-            tsorcItemDropRuleConditions.CursedRule              = null;
-            tsorcItemDropRuleConditions.FirstBagCursedRule      = null;
-            tsorcItemDropRuleConditions.AdventureModeRule       = null;
-            tsorcItemDropRuleConditions.NonAdventureModeRule    = null;
-            tsorcItemDropRuleConditions.NonExpertFirstKillRule   = null;
-            toggleDragoonBoots                                  = null;
-            reflectionShiftKey                                  = null;
-            specialAbility                                      = null;
-            WolfRing                                            = null;
-            WingsOfSeath                                        = null;
-            Shunpo                                              = null;
-            KillAllowed                                         = null;
-            PlaceAllowed                                        = null;
-            Unbreakable                                         = null;
-            IgnoredTiles                                        = null;
-            CrossModTiles                                       = null;
-            BannedItems                                         = null;
-            RestrictedHooks                                     = null;
-            DisabledRecipes                                     = null;
-            BossExtrasDescription                               = null;
-            AssignedBossExtras                                  = null;
-            BossBagIDtoNPCID                                    = null;
-            tsorcRevampWorld.NewSlain                           = null;
-            RemovedBossBagLoot                                  = null;
-            ModifiedRecipes                                     = null;
+            tsorcItemDropRuleConditions.SuperHardmodeRule = null;
+            tsorcItemDropRuleConditions.FirstBagRule = null;
+            tsorcItemDropRuleConditions.CursedRule = null;
+            tsorcItemDropRuleConditions.FirstBagCursedRule = null;
+            tsorcItemDropRuleConditions.AdventureModeRule = null;
+            tsorcItemDropRuleConditions.NonAdventureModeRule = null;
+            tsorcItemDropRuleConditions.NonExpertFirstKillRule = null;
+            toggleDragoonBoots = null;
+            reflectionShiftKey = null;
+            specialAbility = null;
+            WolfRing = null;
+            WingsOfSeath = null;
+            Shunpo = null;
+            KillAllowed = null;
+            PlaceAllowed = null;
+            Unbreakable = null;
+            IgnoredTiles = null;
+            CrossModTiles = null;
+            BannedItems = null;
+            RestrictedHooks = null;
+            DisabledRecipes = null;
+            BossExtrasDescription = null;
+            AssignedBossExtras = null;
+            BossBagIDtoNPCID = null;
+            tsorcRevampWorld.NewSlain = null;
+            RemovedBossBagLoot = null;
+            ModifiedRecipes = null;
             //the following sun and moon texture changes are failsafes. they should be set back to default in PreSaveAndQuit 
             TextureAssets.Sun = ModContent.Request<Texture2D>("Terraria/Images/Sun", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             TextureAssets.Sun2 = ModContent.Request<Texture2D>("Terraria/Images/Sun2");
@@ -1040,7 +1037,7 @@ namespace tsorcRevamp
             }
             DarkSoulCounterUIState.ConfigInstance = null;
 
-            if(TransparentTextureHandler.TransparentTextures != null)
+            if (TransparentTextureHandler.TransparentTextures != null)
             {
                 TransparentTextureHandler.TransparentTextures.Clear();
                 TransparentTextureHandler.TransparentTextures = null;
@@ -1115,11 +1112,12 @@ namespace tsorcRevamp
             // add new recipes
             ModRecipeHelper.AddRecipes();
         }
-        
+
         public override void HandlePacket(BinaryReader reader, int whoAmI)
         {
             int message = reader.ReadByte();
-            switch (message) {
+            switch (message)
+            {
                 case tsorcPacketID.SyncSoulSlot:
                     {
                         byte player = reader.ReadByte(); //player.whoAmI
@@ -1131,153 +1129,177 @@ namespace tsorcRevamp
                         }
                         break;
                     }
-                case tsorcPacketID.SyncEventDust: {
-                    if (Main.netMode != NetmodeID.Server) {
-                        tsorcScriptedEvents.NetworkEvents = new List<NetworkEvent>();
+                case tsorcPacketID.SyncEventDust:
+                    {
+                        if (Main.netMode != NetmodeID.Server)
+                        {
+                            tsorcScriptedEvents.NetworkEvents = new List<NetworkEvent>();
 
-                        int count = reader.ReadInt32();
-                        /*
-                         * 
-                        eventPacket.WriteVector2(thisEvent.centerpoint);
-                        eventPacket.Write(thisEvent.radius);
-                        eventPacket.Write(thisEvent.dustID);
-                        eventPacket.Write(thisEvent.square);
-                        eventPacket.Write(thisEvent.queued);
-                         */
-                        for (int i = 0; i < count; i++) {
-                            //Main.NewText("Recieved event:");
-                            Vector2 center = reader.ReadVector2();
-                            //Main.NewText("center: " + center);
-                            float radius = reader.ReadSingle();
-                            //Main.NewText("radius: " + radius);
-                            int dustID = reader.ReadInt32();
-                            //Main.NewText("DustID: " + dustID);
-                            bool square = reader.ReadBoolean();
-                            //Main.NewText("Square: " + square);
-                            bool queued = reader.ReadBoolean();
-                            //Main.NewText("Queued: " + queued);
+                            int count = reader.ReadInt32();
+                            /*
+                             * 
+                            eventPacket.WriteVector2(thisEvent.centerpoint);
+                            eventPacket.Write(thisEvent.radius);
+                            eventPacket.Write(thisEvent.dustID);
+                            eventPacket.Write(thisEvent.square);
+                            eventPacket.Write(thisEvent.queued);
+                             */
+                            for (int i = 0; i < count; i++)
+                            {
+                                //Main.NewText("Recieved event:");
+                                Vector2 center = reader.ReadVector2();
+                                //Main.NewText("center: " + center);
+                                float radius = reader.ReadSingle();
+                                //Main.NewText("radius: " + radius);
+                                int dustID = reader.ReadInt32();
+                                //Main.NewText("DustID: " + dustID);
+                                bool square = reader.ReadBoolean();
+                                //Main.NewText("Square: " + square);
+                                bool queued = reader.ReadBoolean();
+                                //Main.NewText("Queued: " + queued);
 
-                            if (queued) {
-                               //Main.NewText("Recieved queued event");
+                                if (queued)
+                                {
+                                    //Main.NewText("Recieved queued event");
+                                }
+                                if (center.Y < 2000)
+                                {
+                                    //Main.NewText("Recieved broken centerpoint " + center.Y);
+                                }
+
+                                tsorcScriptedEvents.NetworkEvents.Add(new NetworkEvent(center, radius, dustID, square, queued));
                             }
-                            if (center.Y < 2000) {
-                                //Main.NewText("Recieved broken centerpoint " + center.Y);
-                            }
-
-                            tsorcScriptedEvents.NetworkEvents.Add(new NetworkEvent(center, radius, dustID, square, queued));
                         }
+                        break;
                     }
-                    break;
-                }
 
                 //Sync time change
-                case tsorcPacketID.SyncTimeChange: {
-                    Main.dayTime = reader.ReadBoolean();
-                    Main.time = reader.ReadInt32();
+                case tsorcPacketID.SyncTimeChange:
+                    {
+                        Main.dayTime = reader.ReadBoolean();
+                        Main.time = reader.ReadInt32();
 
-                    if (Main.dayTime) {
-                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.CosmicWatch.Day"), Color.Orange);
-                    }
-                    else {
-                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.CosmicWatch.Night"), new Color(175, 75, 255));
-                    }
-
-                    //Sync it to clients
-                    NetMessage.SendData(MessageID.WorldData);
-                    
-                    break;
-                }
-
-                case tsorcPacketID.DispelShadow: {
-                    int npcID = reader.ReadInt32();
-                    Main.npc[npcID].AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
-                    break;
-                }
-
-                case tsorcPacketID.DropSouls: {
-                    Vector2 position = reader.ReadVector2();
-                    int count = reader.ReadInt32();
-                    if (Main.netMode == NetmodeID.Server) {
-                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("World.DropSouls1") + count + LangUtils.GetTextValue("World.DropSouls2"));
-                        //You can not drop items in a stack larger than 32766 in multiplayer, because the stack size gets converted to a short when syncing
-                        while (count > 32000) {
-                            //UsefulFunctions.ServerText("Dropping " + 32000 + "souls");
-                            Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position + Main.rand.NextVector2Circular(10, 10), ModContent.ItemType<DarkSoul>(), 32000);
-                            count -= 32000;
+                        if (Main.dayTime)
+                        {
+                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.CosmicWatch.Day"), Color.Orange);
+                        }
+                        else
+                        {
+                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.CosmicWatch.Night"), new Color(175, 75, 255));
                         }
 
-                        Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position, ModContent.ItemType<DarkSoul>(), count);
-                        //UsefulFunctions.NewItemInstanced(position, new Vector2(1, 1), ModContent.ItemType<Items.DarkSoul>(), count);
+                        //Sync it to clients
+                        NetMessage.SendData(MessageID.WorldData);
+
+                        break;
                     }
-                    break;
-                }
 
-                case tsorcPacketID.SyncPlayerDodgeroll: {
-                    //First, check whether this is a new packet originating from a client who just rolled, or a packet that has been bounced by the server to the other clients
-                    bool bounced = reader.ReadBoolean();
-                    byte who = reader.ReadByte();
+                case tsorcPacketID.DispelShadow:
+                    {
+                        int npcID = reader.ReadInt32();
+                        Main.npc[npcID].AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
+                        break;
+                    }
 
-                    //If we're a client, go ahead and sync based on it. If we're the server, only sync and bounce it if this is a new packet
-                    if (Main.netMode == NetmodeID.MultiplayerClient || !bounced) {
-                        //Sync everything
-                        Player player = Main.player[who];
-                        tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-                        modPlayer.forceDodgeroll = true;
-                        modPlayer.wantedDodgerollDir = reader.ReadSByte();
-                        player.velocity = reader.ReadVector2();
+                case tsorcPacketID.DropSouls:
+                    {
+                        Vector2 position = reader.ReadVector2();
+                        int count = reader.ReadInt32();
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("World.DropSouls1") + count + LangUtils.GetTextValue("World.DropSouls2"));
+                            //You can not drop items in a stack larger than 32766 in multiplayer, because the stack size gets converted to a short when syncing
+                            while (count > 32000)
+                            {
+                                //UsefulFunctions.ServerText("Dropping " + 32000 + "souls");
+                                Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position + Main.rand.NextVector2Circular(10, 10), ModContent.ItemType<DarkSoul>(), 32000);
+                                count -= 32000;
+                            }
 
-                        //If we're the server in specific, bounce it to the other clients, passing "true" as the bounced flag to ensure this only happens once
-                        if (Main.netMode == NetmodeID.Server) {
-                            ModPacket rollPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                            rollPacket.Write(tsorcPacketID.SyncPlayerDodgeroll);
-                            rollPacket.Write(true);
-                            rollPacket.Write((byte)player.whoAmI);
-                            rollPacket.Write(modPlayer.wantedDodgerollDir);
-                            rollPacket.WriteVector2(player.velocity);
+                            Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position, ModContent.ItemType<DarkSoul>(), count);
+                            //UsefulFunctions.NewItemInstanced(position, new Vector2(1, 1), ModContent.ItemType<Items.DarkSoul>(), count);
+                        }
+                        break;
+                    }
 
-                            //Iterate through all active clients and send it specifically to them
-                            for (int i = 0; i < Main.maxPlayers; i++) {
-                                if (Main.player[i].active && i != player.whoAmI) {
-                                    rollPacket.Send(i);
+                case tsorcPacketID.SyncPlayerDodgeroll:
+                    {
+                        //First, check whether this is a new packet originating from a client who just rolled, or a packet that has been bounced by the server to the other clients
+                        bool bounced = reader.ReadBoolean();
+                        byte who = reader.ReadByte();
+
+                        //If we're a client, go ahead and sync based on it. If we're the server, only sync and bounce it if this is a new packet
+                        if (Main.netMode == NetmodeID.MultiplayerClient || !bounced)
+                        {
+                            //Sync everything
+                            Player player = Main.player[who];
+                            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                            modPlayer.forceDodgeroll = true;
+                            modPlayer.wantedDodgerollDir = reader.ReadSByte();
+                            player.velocity = reader.ReadVector2();
+
+                            //If we're the server in specific, bounce it to the other clients, passing "true" as the bounced flag to ensure this only happens once
+                            if (Main.netMode == NetmodeID.Server)
+                            {
+                                ModPacket rollPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                                rollPacket.Write(tsorcPacketID.SyncPlayerDodgeroll);
+                                rollPacket.Write(true);
+                                rollPacket.Write((byte)player.whoAmI);
+                                rollPacket.Write(modPlayer.wantedDodgerollDir);
+                                rollPacket.WriteVector2(player.velocity);
+
+                                //Iterate through all active clients and send it specifically to them
+                                for (int i = 0; i < Main.maxPlayers; i++)
+                                {
+                                    if (Main.player[i].active && i != player.whoAmI)
+                                    {
+                                        rollPacket.Send(i);
+                                    }
                                 }
                             }
                         }
+                        break;
                     }
-                    break;
-                }
-                case tsorcPacketID.SyncBonfire: {
-                    if (tsorcRevampWorld.LitBonfireList == null) {
-                        tsorcRevampWorld.LitBonfireList = new List<Vector2>();
-                    }
+                case tsorcPacketID.SyncBonfire:
+                    {
+                        if (tsorcRevampWorld.LitBonfireList == null)
+                        {
+                            tsorcRevampWorld.LitBonfireList = new List<Vector2>();
+                        }
 
-                    Vector2 bonfireLocation = reader.ReadVector2();
-                    if (!tsorcRevampWorld.LitBonfireList.Contains(bonfireLocation)) {
-                        tsorcRevampWorld.LitBonfireList.Add(bonfireLocation);
-                    }
+                        Vector2 bonfireLocation = reader.ReadVector2();
+                        if (!tsorcRevampWorld.LitBonfireList.Contains(bonfireLocation))
+                        {
+                            tsorcRevampWorld.LitBonfireList.Add(bonfireLocation);
+                        }
 
-                    if (Main.netMode == NetmodeID.Server) {
-                        NetMessage.SendData(MessageID.WorldData);
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendData(MessageID.WorldData);
+                        }
+                        break;
                     }
-                    break;
-                }
-                case tsorcPacketID.SpawnNPC: {
-                    int npcID = reader.ReadInt32();
-                    Vector2 npcLocation = reader.ReadVector2();
+                case tsorcPacketID.SpawnNPC:
+                    {
+                        int npcID = reader.ReadInt32();
+                        Vector2 npcLocation = reader.ReadVector2();
 
-                    int Spawned = NPC.NewNPC(null, (int)npcLocation.X, (int)npcLocation.Y, npcID, 0);
-                    if (Main.netMode == NetmodeID.Server) {
-                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
+                        int Spawned = NPC.NewNPC(null, (int)npcLocation.X, (int)npcLocation.Y, npcID, 0);
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
+                        }
+                        break;
                     }
-                    break;
-                }
-                case tsorcPacketID.SyncNPCExtras: {
-                    int npcIndex = reader.ReadInt32();
-                    Main.npc[npcIndex].lifeMax = reader.ReadInt32();
-                    Main.npc[npcIndex].defense = reader.ReadInt32();
-                    Main.npc[npcIndex].damage = reader.ReadInt32();
-                    Main.npc[npcIndex].value = reader.ReadInt32();
-                    break;
-                }
+                case tsorcPacketID.SyncNPCExtras:
+                    {
+                        int npcIndex = reader.ReadInt32();
+                        Main.npc[npcIndex].lifeMax = reader.ReadInt32();
+                        Main.npc[npcIndex].defense = reader.ReadInt32();
+                        Main.npc[npcIndex].damage = reader.ReadInt32();
+                        Main.npc[npcIndex].value = reader.ReadInt32();
+                        break;
+                    }
 
                 case tsorcPacketID.SyncMasterScroll:
                     {
@@ -1294,7 +1316,7 @@ namespace tsorcRevamp
                         modPlayer.InterstellarBoost = reader.ReadBoolean();
 
                         //If the server recieved this from a client, then forward it to all the other clients
-                        if(Main.netMode == NetmodeID.Server)
+                        if (Main.netMode == NetmodeID.Server)
                         {
                             ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
                             minionPacket.Write(tsorcPacketID.SyncMinionRadius);
@@ -1308,7 +1330,7 @@ namespace tsorcRevamp
                 case tsorcPacketID.TeleportAllPlayers:
                     {
                         Vector2 targetLocation = reader.ReadVector2();
-                        for(int i = 0; i < Main.maxPlayers; i++)
+                        for (int i = 0; i < Main.maxPlayers; i++)
                         {
                             if (Main.player[i].active && !Main.player[i].dead)
                             {
@@ -1325,10 +1347,11 @@ namespace tsorcRevamp
                         break;
                     }
 
-                default: {
-                    Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
+                default:
+                    {
+                        Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
                         break;
-                }
+                    }
             }
         }
 
@@ -1352,7 +1375,7 @@ namespace tsorcRevamp
                     ModContent.ItemType<PhoenixEgg>(),
                     ModContent.BuffType<PhoenixBuff>(),
                     ModContent.ProjectileType<PhoenixProjectile>(),
-                    2f                    
+                    2f
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
@@ -1465,32 +1488,38 @@ namespace tsorcRevamp
                 public const float LunaticCultist = 17f;
                 public const float LunarEvent = 17.01f;
                 public const float Moonlord = 18f;*/
-                var SlograAndGaibonPortrait = (SpriteBatch sb, Rectangle rect, Color color) => {
+                var SlograAndGaibonPortrait = (SpriteBatch sb, Rectangle rect, Color color) =>
+                {
                     Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/SlograAndGaibon_Portrait").Value;
                     Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
                     sb.Draw(texture, centered, color);
                 };
-                var JungleWyvernPortrait = (SpriteBatch sb, Rectangle rect, Color color) => {
+                var JungleWyvernPortrait = (SpriteBatch sb, Rectangle rect, Color color) =>
+                {
                     Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/JungleWyvern_Portrait").Value;
                     Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
                     sb.Draw(texture, centered, color);
-                }; 
-                var WyvernMagePortrait = (SpriteBatch sb, Rectangle rect, Color color) => {
+                };
+                var WyvernMagePortrait = (SpriteBatch sb, Rectangle rect, Color color) =>
+                {
                     Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/WyvernMage_Portrait").Value;
                     Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
                     sb.Draw(texture, centered, color);
                 };
-                var SerrisPortrait = (SpriteBatch sb, Rectangle rect, Color color) => {
+                var SerrisPortrait = (SpriteBatch sb, Rectangle rect, Color color) =>
+                {
                     Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/Serris_Portrait").Value;
                     Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
                     sb.Draw(texture, centered, color);
                 };
-                var HellkiteDragonPortrait = (SpriteBatch sb, Rectangle rect, Color color) => {
+                var HellkiteDragonPortrait = (SpriteBatch sb, Rectangle rect, Color color) =>
+                {
                     Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/HellkiteDragon_Portrait").Value;
                     Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
                     sb.Draw(texture, centered, color);
                 };
-                var SeathPortrait = (SpriteBatch sb, Rectangle rect, Color color) => {
+                var SeathPortrait = (SpriteBatch sb, Rectangle rect, Color color) =>
+                {
                     Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/Seath_Portrait").Value;
                     Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
                     sb.Draw(texture, centered, color);
@@ -1939,7 +1968,8 @@ namespace tsorcRevamp
             List<int> toDisable = new List<int>();
             Mod magicStorage;
             bool magicStorageUsed = ModLoader.TryGetMod("MagicStorageExtra", out magicStorage);
-            if (!magicStorageUsed) {
+            if (!magicStorageUsed)
+            {
                 magicStorageUsed = ModLoader.TryGetMod("MagicStorage", out magicStorage);
             }
             if (magicStorageUsed)
@@ -1952,7 +1982,8 @@ namespace tsorcRevamp
                 toDisable.Add(magicStorage.Find<ModTile>("StorageUnit").Type);
                 toDisable.Add(magicStorage.Find<ModTile>("StorageConnector").Type);
             }
-            foreach (var tileID in toDisable) {
+            foreach (var tileID in toDisable)
+            {
                 Main.tileSolidTop[tileID] = false;
             }
             #endregion
@@ -1980,16 +2011,18 @@ namespace tsorcRevamp
             {
                 FileInfo musicModFileInfo = new FileInfo(musicTempPath);
 
-                
+
                 if (IsMusicInvalid(musicTempPath))
                 {
                     //System.Windows.Forms.MessageBox.Show("The Story of Red Cloud failed to download the music mod automatically!\nYou must download it manually from our discord instead: https://discord.gg/UGE6Mstrgz", "TSORC: Music Mod Download Failure!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    try{
-                    musicModFileInfo.Delete();
-                    musicModDownloadFailures++;
-                    ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("", "000000");
+                    try
+                    {
+                        musicModFileInfo.Delete();
+                        musicModDownloadFailures++;
+                        ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("", "000000");
                     }
-                    catch {
+                    catch
+                    {
                         //do nothing
                     }
                 }
@@ -2003,14 +2036,14 @@ namespace tsorcRevamp
             if (IsMapInvalid(mapBasePath))
             {
                 ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("000000", "");
-            }            
+            }
 
             try
             {
                 using StreamReader reader = await GetChangelogAsync();
 
                 //If it's null, that means the changelog download failed
-                if(reader == null)
+                if (reader == null)
                 {
                     throw new Exception("Failed to download changelog");
                 }
@@ -2062,7 +2095,8 @@ namespace tsorcRevamp
                         Tuple<int, int> versionInfo = ReadVersionInfo();
 
                         //If the current map template is a lower version than the new update, then update it
-                        if(versionInfo.Item1 < Int32.Parse(mapString)){
+                        if (versionInfo.Item1 < Int32.Parse(mapString))
+                        {
                             newMapUpdateString = mapString;
                             MapDownload();
                         }
@@ -2317,9 +2351,9 @@ namespace tsorcRevamp
                 _ = reader.ReadInt32();
                 byte[] computedHash = SHA1.Create().ComputeHash(musicModStream);
                 bool mismatchFound = false;
-                for(int i = 0; i < computedHash.Length; i++)
+                for (int i = 0; i < computedHash.Length; i++)
                 {
-                    if(hash[i] != computedHash[i])
+                    if (hash[i] != computedHash[i])
                     {
                         mismatchFound = true;
                         break;

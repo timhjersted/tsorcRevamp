@@ -1,27 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
+using Terraria.ModLoader.Config;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Buffs.Runeterra.Melee;
+using tsorcRevamp.Buffs.Runeterra.Ranged;
+using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Projectiles.VFX;
-using tsorcRevamp.Buffs.Debuffs;
-using Terraria.ModLoader.Config;
-using tsorcRevamp.Items.VanillaItems;
-using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
-using tsorcRevamp.Buffs.Runeterra.Ranged;
-using tsorcRevamp.NPCs;
-using Terraria.Audio;
-using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
-using tsorcRevamp.Projectiles.Summon.Whips;
 using tsorcRevamp.Utilities;
-using tsorcRevamp.Buffs.Runeterra.Melee;
-using System;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -113,7 +108,8 @@ namespace tsorcRevamp.Projectiles
                 if (projectile.type == ProjectileID.Terrarian && player.statMana >= (int)(player.manaCost * 2f))
                 {
                     player.statMana -= (int)(player.manaCost * 2f);
-                } else
+                }
+                else
                 {
                     if (projectile.type == ProjectileID.Terrarian)
                     {
@@ -128,7 +124,7 @@ namespace tsorcRevamp.Projectiles
                     projectile.usesLocalNPCImmunity = true;
                     projectile.localNPCHitCooldown = 20;
                     projectile.extraUpdates = 5;
-                } 
+                }
 
                 else if (!modPlayer.WaspPower & projectile.type == ProjectileID.HornetStinger)
                 {
@@ -309,7 +305,7 @@ namespace tsorcRevamp.Projectiles
             }
 
 
-                return true;
+            return true;
 
 
         }
@@ -412,7 +408,7 @@ namespace tsorcRevamp.Projectiles
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 2f }, player.Center);
                 }
-                player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60); 
+                player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
                 if (hit.Crit)
                 {
                     player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
@@ -563,7 +559,7 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
-     
+
         public override void OnKill(Projectile projectile, int timeLeft)
         {
             if (projectile.friendly)

@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateArmorSet(Player player)
         {
             player.GetAttackSpeed(DamageClass.Melee) += AtkSpeed / 100f;
-            if(player.statDefense > MaxDefense)
+            if (player.statDefense > MaxDefense)
             {
                 player.statDefense *= 0;
                 player.statDefense += MaxDefense;

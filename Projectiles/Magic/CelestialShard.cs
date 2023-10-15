@@ -1,6 +1,4 @@
-using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Magic
@@ -21,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Magic
         }
         public override void AI()
         {
-            Projectile.rotation += 0.05f;            
+            Projectile.rotation += 0.05f;
         }
     }
 

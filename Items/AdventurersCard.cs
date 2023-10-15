@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
@@ -83,7 +82,7 @@ namespace tsorcRevamp.Items
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25);
             recipe.AddIngredient(ItemID.Book, 1);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.Register(); 
+            recipe.Register();
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 25);

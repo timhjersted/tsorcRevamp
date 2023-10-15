@@ -7,13 +7,13 @@ using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 namespace tsorcRevamp.Buffs.Weapons.Melee
 {
     public class SickleSlashes : ModBuff
-	{
-		public override void SetStaticDefaults()
-		{
-			BuffID.Sets.IsATagBuff[Type] = true;
-		}
+    {
+        public override void SetStaticDefaults()
+        {
+            BuffID.Sets.IsATagBuff[Type] = true;
+        }
 
-		public override void Update(NPC npc, ref int buffIndex)
+        public override void Update(NPC npc, ref int buffIndex)
         {
             var player = Main.LocalPlayer;
             if (player.GetModPlayer<tsorcRevampPlayer>().HasShadowSickle)
@@ -29,5 +29,5 @@ namespace tsorcRevamp.Buffs.Weapons.Melee
                 }
             }
         }
-	}
+    }
 }

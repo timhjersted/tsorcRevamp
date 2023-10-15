@@ -1,7 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -22,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.height = 20;
             Projectile.scale = 1f;
             Projectile.timeLeft = 240;
-            Projectile.hostile = true;          
+            Projectile.hostile = true;
             Projectile.penetrate = 1;
             Projectile.DamageType = DamageClass.Magic;
             //Projectile.tileCollide = false;
@@ -59,7 +56,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                     // Smoke and fuse dust spawn.
                     if (Main.rand.NextBool(2))
                     {
-                       
+
                         int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 6, 0f, 0f, 100, Color.MediumPurple, 1f);
                         Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;
                         Main.dust[dustIndex].fadeIn = .5f + (float)Main.rand.Next(5) * 0.1f;
@@ -72,10 +69,10 @@ namespace tsorcRevamp.Projectiles.Enemy
                             int wither = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, 0f, 0f, 100, Color.MediumPurple, 0.5f);
                             Main.dust[wither].noGravity = true;
                         }
-                        
+
                     }
 
-                    
+
                     /*
                     for (int i = 0; i < 10; i++)
                     {
@@ -104,7 +101,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie82 with { Volume = 0.6f, Pitch = -3f, PitchVariance = 2f }, Projectile.Center); //wraith
-        
+
 
             // setup projectile for explosion
             Projectile.damage = Projectile.damage * 2;
@@ -122,7 +119,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             // Fire Dust spawn
             for (int i = 0; i < 200; i++)
             {
-                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width * 2, Projectile.height  * 2, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 3f);
+                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width * 2, Projectile.height * 2, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 3f);
                 Main.dust[dustIndex].noGravity = true;
                 Main.dust[dustIndex].velocity *= 2.5f;
             }
@@ -157,7 +154,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             }
 
-        
+
 
         }
         #endregion
@@ -182,7 +179,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000);       
+            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000);
             target.AddBuff(BuffID.Weak, 180);
         }
 

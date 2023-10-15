@@ -2,21 +2,18 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
 using Terraria.ModLoader.Config;
-using tsorcRevamp.NPCs.Enemies;
-using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Lore;
-using tsorcRevamp.Utilities;
+using Terraria.ModLoader.IO;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Lore;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
-using tsorcRevamp.NPCs.Bosses;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp
 {
@@ -221,7 +218,7 @@ namespace tsorcRevamp
 
             //DEATH
             ScriptedEvent Death = new ScriptedEvent(new Vector2(1066, 529), 30, ModContent.NPCType<NPCs.Bosses.Death>(), DustID.BoneTorch, true, true, true, LangUtils.GetTextValue("Events.Death"), Color.Black, false);
-            
+
             //BLACK KNIGHT IN BLUE SHM DUNGEON
             ScriptedEvent BlackKnightSHMDungeon = new ScriptedEvent(new Vector2(2282, 1650), 30, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
             BlackKnightSHMDungeon.SetCustomStats(25000, 30, 140, 16000);
@@ -237,7 +234,7 @@ namespace tsorcRevamp
 
             //QUEEN SLIME
             ScriptedEvent QueenSlimeEvent = new ScriptedEvent(new Vector2(7059, 1289), 25, NPCID.QueenSlimeBoss, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.QueenSlime"), Color.Blue, false);
-            
+
             //GREAT RED KNIGHT IN DESERT
             ScriptedEvent GreatRedKnightInDesert = new ScriptedEvent(new Vector2(2229, 856), 100, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(), DustID.Shadowflame, true, false, true, LangUtils.GetTextValue("Events.GreatRedKnightInvasion"), Color.Red, false, SuperHardModeCustomCondition);
             GreatRedKnightInDesert.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<Humanity>() }, new List<int>() { 2, 2, 2 });
@@ -282,7 +279,7 @@ namespace tsorcRevamp
             //ANCIENT OOLACILE DEMON (EARLY-GAME)
             ScriptedEvent AODE = new ScriptedEvent(new Vector2(5652, 971), 27, ModContent.NPCType<NPCs.Bosses.AncientOolacileDemon>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.AncientOolacileDemon"), Color.MediumPurple, false);
             AODE.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
-            
+
             //GOBLIN SUMMONER IN WMF
             ScriptedEvent GoblinWizardWMF = new ScriptedEvent(new Vector2(7153, 411), 20, NPCID.GoblinSummoner, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.GoblinSummoner1"), Color.MediumPurple, false);
             GoblinWizardWMF.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 1500 });
@@ -319,7 +316,7 @@ namespace tsorcRevamp
             ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.RedKnight2"), Color.Purple, false, default, RedKnightMountainCustomAction);
             RedKnightTwinMountain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ItemID.AmmoReservationPotion }, new List<int>() { 3, 4, 5 });
             RedKnightTwinMountain.SetCustomStats(2000, 10, 55, 2500);
-     
+
             //JUNGLE WYVERN
             ScriptedEvent JungleWyvernEvent = new ScriptedEvent(new Vector2(4331, 1713), 16, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), DustID.CursedTorch, true, true, true, LangUtils.GetTextValue("Events.JungleWyvern"), Color.Green, false);
 
@@ -354,7 +351,7 @@ namespace tsorcRevamp
 
             //GWYN's TOMB VISIONS
             ScriptedEvent GwynsTombEvent = new ScriptedEvent(new Vector2(670, 1164), 150, ModContent.NPCType<NPCs.Special.GwynBossVision>(), DustID.RedTorch, false, true, true, LangUtils.GetTextValue("Events.GwynTombVisions"), default, false, GwynsTombVisionCustomCondition);
-            
+
             //ABYSS PORTAL
             ScriptedEvent AbyssPortalEvent = new ScriptedEvent(new Vector2(670, 1164), 9999999, ModContent.NPCType<NPCs.Special.AbyssPortal>(), DustID.RedTorch, false, false, false, LangUtils.GetTextValue("Events.AbyssPortal"), default, false, AbyssPortalCustomCondition);
 
@@ -502,7 +499,7 @@ namespace tsorcRevamp
             LothricAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.RadiantLifegem>() }, new List<int>() { 5 });
 
             ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, SuperHardModeCustomCondition, SetNightCustomAction);
-            
+
             ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, () => !NPC.downedBoss3);
 
 
@@ -675,8 +672,8 @@ namespace tsorcRevamp
         {
             return !Main.dayTime;
         }
-        
-        
+
+
         public static bool HardModeCustomCondition()
         {
             return Main.hardMode;
@@ -700,7 +697,7 @@ namespace tsorcRevamp
             }
         }
         public static bool PrimeCustomCondition()
-        {            
+        {
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>())) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.PrimeV2.PrimeIntro>()))
             {
                 return false;
@@ -758,7 +755,7 @@ namespace tsorcRevamp
 
         public static bool TwinEoWCustomCondition()
         {
-            if(NPC.AnyNPCs(NPCID.EaterofWorldsHead) || NPC.AnyNPCs(NPCID.EaterofWorldsBody) || NPC.AnyNPCs(NPCID.EaterofWorldsTail))
+            if (NPC.AnyNPCs(NPCID.EaterofWorldsHead) || NPC.AnyNPCs(NPCID.EaterofWorldsBody) || NPC.AnyNPCs(NPCID.EaterofWorldsTail))
             {
                 return false;
             }
@@ -818,7 +815,7 @@ namespace tsorcRevamp
                 return true;
             }
             else
-            { 
+            {
                 return false;
             }
         }
@@ -956,7 +953,7 @@ namespace tsorcRevamp
             if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
                 NPCs.Enemies.RedKnight ourRedKnight = (NPCs.Enemies.RedKnight)thisEvent.eventNPCs[0].npc.ModNPC;
-                ourRedKnight.redKnightsSpearDamage = 15; 
+                ourRedKnight.redKnightsSpearDamage = 15;
                 ourRedKnight.redMagicDamage = 11;
                 ourRedKnight.redKnightsGreatDamage = 13;
             }
@@ -1117,12 +1114,12 @@ namespace tsorcRevamp
         {
             bool validPlayer = false;
 
-            if(thisEvent.eventTimer == 0)
+            if (thisEvent.eventTimer == 0)
             {
                 NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)thisEvent.centerpoint.X - 100, (int)thisEvent.centerpoint.Y, NPCID.EaterofWorldsHead);
                 NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)thisEvent.centerpoint.X + 100, (int)thisEvent.centerpoint.Y, NPCID.EaterofWorldsHead);
             }
-            for(int i = 0; i < Main.maxPlayers; i++)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].ZoneCorrupt && !Main.player[i].dead)
                 {
@@ -1238,7 +1235,7 @@ namespace tsorcRevamp
                 if (!Main.player[index].active)
                 {
                     continue;
-                }                
+                }
 
                 //Check if the player is in range of any inactive events
                 for (int i = 0; i < EnabledEvents.Count; i++)
@@ -1331,7 +1328,7 @@ namespace tsorcRevamp
                             }
                         }
                     }
-                }                
+                }
             }
 
             //Send events that need to be drawn to the clients
@@ -1377,14 +1374,14 @@ namespace tsorcRevamp
 
 
         public static void RestoreQueuedEvents()
-        {            
+        {
             //Initialize the list if needed
             if (QueuedEvents == null)
             {
                 QueuedEvents = new List<ScriptedEvent>();
             }
 
-            for(int i = QueuedEvents.Count - 1; i >= 0 && QueuedEvents.Count > 0; i--)
+            for (int i = QueuedEvents.Count - 1; i >= 0 && QueuedEvents.Count > 0; i--)
             {
 
                 //Do not re-add a queued event if it has been disabled
@@ -1409,7 +1406,7 @@ namespace tsorcRevamp
                         QueuedEvents[i].eventCooldownTimer = 300;
 
                         //Longer in multiplayer
-                        if(Main.netMode != NetmodeID.SinglePlayer)
+                        if (Main.netMode != NetmodeID.SinglePlayer)
                         {
                             QueuedEvents[i].eventCooldownTimer = 600;
                         }
@@ -1422,7 +1419,7 @@ namespace tsorcRevamp
         }
 
         public static void SendDrawnEvents()
-        {            
+        {
             ModPacket eventPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
             eventPacket.Write((byte)tsorcPacketID.SyncEventDust);
             eventPacket.Write(NetworkEvents.Count);
@@ -1542,7 +1539,7 @@ namespace tsorcRevamp
             if (queued)
             {
                 dustPerTick = 1;
-                if(Main.GameUpdateCount % 60 == 0)
+                if (Main.GameUpdateCount % 60 == 0)
                 {
                     dustPerTick = 150;
                 }
@@ -1625,7 +1622,7 @@ namespace tsorcRevamp
                     }
                 }
             }
-            
+
         }
     }
 
@@ -1639,7 +1636,7 @@ namespace tsorcRevamp
         //Custom condition
         public Func<bool> condition = DefaultCondition;
 
-        
+
 
         //The list of NPCs spawned by this event
         public List<EventNPC> eventNPCs;
@@ -1670,13 +1667,13 @@ namespace tsorcRevamp
             get
             {
                 //This means the check only ever has to happen once, and its result is saved
-                if(checkedBossResult != null)
+                if (checkedBossResult != null)
                 {
                     return checkedBossResult.Value;
                 }
                 else
                 {
-                    if(eventNPCs == null || eventNPCs.Count == 0)
+                    if (eventNPCs == null || eventNPCs.Count == 0)
                     {
                         checkedBossResult = false;
                         return false;
@@ -1783,7 +1780,7 @@ namespace tsorcRevamp
         public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, int? npcType = null, int DustType = 31, bool saveEvent = false, bool visibleRange = false, bool bossEvent = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<ScriptedEvent, EventActionStatus> customAction = null, bool disablePeaceCandle = false)
         {
             List<int> npcList = null;
-            if(npcType != null)
+            if (npcType != null)
             {
                 npcList = new List<int> { npcType.GetValueOrDefault() };
             }
@@ -1796,7 +1793,7 @@ namespace tsorcRevamp
 
             this.disablePeaceCandle = disablePeaceCandle;
 
-            ConstructScriptedEvent(rangeCenterpoint, rangeRadius, npcList, npcCoords, DustType, saveEvent, visibleRange, bossEvent, flavorText, flavorTextColor, squareRange, customCondition, customAction);           
+            ConstructScriptedEvent(rangeCenterpoint, rangeRadius, npcList, npcCoords, DustType, saveEvent, visibleRange, bossEvent, flavorText, flavorTextColor, squareRange, customCondition, customAction);
         }
 
         public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, List<int> npcs = null, List<Vector2> coords = null, int DustType = 31, bool saveEvent = false, bool visibleRange = false, bool bossEvent = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<ScriptedEvent, EventActionStatus> customAction = null)
@@ -1810,7 +1807,7 @@ namespace tsorcRevamp
             //Player position is stored as 16 times block distances
             centerpoint = rangeCenterpoint * 16;
             //Radius is stored squared, because comparing the squares of distances is WAY faster than comparing their true values
-            radius =  (float)Math.Pow(rangeRadius * 16, 2);
+            radius = (float)Math.Pow(rangeRadius * 16, 2);
 
             if (npcs == null)
             {
@@ -1841,7 +1838,7 @@ namespace tsorcRevamp
             {
                 hasCustomAction = true;
                 CustomAction = customAction;
-            }           
+            }
         }
 
 
@@ -1879,7 +1876,7 @@ namespace tsorcRevamp
             }
             else
             {
-                for(int i = 0; i < eventNPCs.Count; i++)
+                for (int i = 0; i < eventNPCs.Count; i++)
                 {
                     eventNPCs[i].extraLootItems = dropIDs;
                     eventNPCs[i].extraLootAmounts = dropStackSizes;
@@ -1993,7 +1990,7 @@ namespace tsorcRevamp
                 {
                     EndEvent(true);
                 }
-            }            
+            }
         }
 
         public void SpawnNPCs()
@@ -2003,8 +2000,8 @@ namespace tsorcRevamp
                 eventNPCs[i].index = NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)eventNPCs[i].spawnCoords.X * 16, (int)eventNPCs[i].spawnCoords.Y * 16, eventNPCs[i].type);
 
                 NPC thisNPC = eventNPCs[i].npc;
-                
-                thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ScriptedEventOwner = this; 
+
+                thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ScriptedEventOwner = this;
                 thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ScriptedEventIndex = i;
 
                 if (eventNPCs[i].customHealth != null)
@@ -2128,7 +2125,7 @@ namespace tsorcRevamp
 
         public NetworkEvent(Vector2 position, float range, int DustType, bool squareRange, bool queuedEvent)
         {
-            if(position.Y < 2000)
+            if (position.Y < 2000)
             {
                 UsefulFunctions.BroadcastText("Broken center");
             }
@@ -2164,7 +2161,8 @@ namespace tsorcRevamp
         public int? customDefense;
         public int? customSouls;
 
-        public NPC npc{
+        public NPC npc
+        {
             get
             {
                 return Main.npc[index];
@@ -2178,11 +2176,12 @@ namespace tsorcRevamp
         }
     }
 
-    public enum EventActionStatus {
+    public enum EventActionStatus
+    {
         Continue,
         EndAction,
         FailedEvent,
-        CompletedEvent    
+        CompletedEvent
     }
 
 }

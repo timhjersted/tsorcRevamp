@@ -1,10 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles

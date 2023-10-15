@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
         public override void SetStaticDefaults()
         {
             // Tooltip.SetDefault("Converts bullets into a beam of crystal light, which inherits their properties");//\n" +
-                //"Fire rate oscillates over time");
+            //"Fire rate oscillates over time");
         }
         public override void SetDefaults()
         {

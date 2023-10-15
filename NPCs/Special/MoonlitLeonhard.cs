@@ -1,16 +1,4 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using System;
-using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using System.IO;
-using Terraria.GameContent.NetModules;
-using Terraria.Localization;
-using tsorcRevamp.Projectiles;
-
-namespace tsorcRevamp.NPCs.Special
+﻿namespace tsorcRevamp.NPCs.Special
 {
     /*
     [AutoloadBossHead]

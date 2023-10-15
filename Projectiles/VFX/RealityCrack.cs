@@ -1,14 +1,14 @@
 ﻿
 using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.Graphics.Effects;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using Terraria.Graphics.Shaders;
 using System.Collections.Generic;
+using Terraria;
 using Terraria.Audio;
+using Terraria.Graphics.Effects;
+using Terraria.Graphics.Shaders;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.VFX
 {
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles.VFX
         {
             Projectile.timeLeft++;
             effectTimer++;
-                        
+
             if (Projectile.ai[0] == 1)
             {
                 effectLimit = 250;
@@ -64,7 +64,7 @@ namespace tsorcRevamp.Projectiles.VFX
             //Get an unused copy of the effect from the scene filter dictionary, or create one if they're all in use
             if (!initialized && Main.netMode != NetmodeID.Server)
             {
-                SoundEngine.PlaySound(SoundID.Shatter  with { Volume = 0.5f });
+                SoundEngine.PlaySound(SoundID.Shatter with { Volume = 0.5f });
                 int index = 0;
                 do
                 {
@@ -87,10 +87,10 @@ namespace tsorcRevamp.Projectiles.VFX
                         filterIndex = currentIndex;
                         initialized = true;
                         break;
-                    }                    
+                    }
 
                     //If more than 10 are already active at once, give up and just kill the shockwave instead of creating yet another one.
-                    if(index >= 20)
+                    if (index >= 20)
                     {
                         initialized = true;
                         Projectile.Kill();
@@ -100,7 +100,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
                 } while (index < 20);
             }
-            if(filterIndex == null && Main.netMode != NetmodeID.Server)
+            if (filterIndex == null && Main.netMode != NetmodeID.Server)
             {
                 Projectile.Kill();
                 return;
@@ -119,7 +119,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
 
             if (effectTimer > effectLimit)
-            {                
+            {
                 Projectile.Kill();
             }
         }
@@ -170,7 +170,7 @@ namespace tsorcRevamp.Projectiles.VFX
             {
                 renTarget = new RenderTarget2D(device, device.PresentationParameters.BackBufferWidth * 2, device.PresentationParameters.BackBufferHeight * 3, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
 
-                targetOffset = renTarget.Size() / 2; 
+                targetOffset = renTarget.Size() / 2;
                 storedPosition = Main.screenPosition - targetOffset;
             }
 
@@ -198,8 +198,8 @@ namespace tsorcRevamp.Projectiles.VFX
 
             //End the spritebatch
             Main.spriteBatch.End();
-            
-            
+
+
 
             //Store the current screen position at time of drawing so it can be used to calculate where to draw the lightning later
 
@@ -230,7 +230,7 @@ namespace tsorcRevamp.Projectiles.VFX
         }
         public void DrawLightning(Texture2D texture, Vector2 start, Vector2 unit, Rectangle bodyRect, float distance, float rotation = 0f, float scale = 1f, Color color = default)
         {
-            
+
             float i = 0;
             Vector2 diff = unit - start;
             diff.Normalize();

@@ -54,7 +54,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height * -2), 0, 0, ModContent.ProjectileType<Explosion>(), Projectile.damage, 8f, Projectile.owner);
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height * 4), 0, 0, ModContent.ProjectileType<Explosion>(), Projectile.damage, 8f, Projectile.owner);
 
-           
+
         }
     }
 }

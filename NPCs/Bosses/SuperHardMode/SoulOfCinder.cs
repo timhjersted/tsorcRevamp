@@ -5,12 +5,10 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Enemy.Gwyn;
-using static tsorcRevamp.UsefulFunctions;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
+using tsorcRevamp.Projectiles.Enemy.Gwyn;
 using tsorcRevamp.Utilities;
+using static tsorcRevamp.UsefulFunctions;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -846,11 +844,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             statePicker = (int)States.TheArchivist;
                             AI_State_Counter = -1f;
                             break;
-/*                        case 5:
-                            statePicker = (int)States.FarronHail;
-                            AI_State_Counter = -1f;
-                            break;*/
-                        
+                        /*                        case 5:
+                                                    statePicker = (int)States.FarronHail;
+                                                    AI_State_Counter = -1f;
+                                                    break;*/
+
                         default:
                             AI_State_Counter = -1f;
                             break;
@@ -876,14 +874,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.Center = ArenaCenter;
             }
 
-            if (DustType != null) {
-                if (timer >= 16 && timer < 30) {
-                    for (int i = 0; i < 10; i++) {
+            if (DustType != null)
+            {
+                if (timer >= 16 && timer < 30)
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
                         Vector2 velocity = MakeDustShape(shape, i);
                         Dust.NewDustPerfect(NPC.Center, (int)DustType, velocity).noGravity = true;
 
                     }
-                } 
+                }
             }
 
             else if (timer >= 30 && timer < 60)

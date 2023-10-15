@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons;
 using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Buffs.Weapons

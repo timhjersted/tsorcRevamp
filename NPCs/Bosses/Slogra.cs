@@ -2,12 +2,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Ranged;
@@ -76,7 +74,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 else
                 {
                     JumpAttack();
-                }                
+                }
             }
 
             //Do basic movement
@@ -100,7 +98,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (gaibonDead)
                     {
-                        for(int i = 0; i < 9; i++)
+                        for (int i = 0; i < 9; i++)
                         {
                             Vector2 targetPoint = Main.player[NPC.target].Center + new Vector2(-480 + 120 * i, 0);
                             Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPoint, 12, .1f, true, true);
@@ -119,7 +117,7 @@ namespace tsorcRevamp.NPCs.Bosses
                             Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.player[NPC.target].velocity / 1.5f, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);
                         }
                     }
-                    
+
                 }
             }
 
@@ -190,7 +188,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.Center = Main.player[NPC.target].Center + warpPoint;
                 moveTimer = 0;
                 NPC.netUpdate = true;
-            }            
+            }
         }
 
         void DashAttack()
@@ -211,12 +209,12 @@ namespace tsorcRevamp.NPCs.Bosses
                     {
                         NPC.velocity.Y = 0;
                     }
-                    NPC.velocity *= 0.9f;                   
+                    NPC.velocity *= 0.9f;
                 }
 
-                if(moveTimer == baseCooldown + 45)
+                if (moveTimer == baseCooldown + 45)
                 {
-                    for(int i = 0; i < 40; i++)
+                    for (int i = 0; i < 40; i++)
                     {
                         Vector2 dustPos = NPC.Center + Main.rand.NextVector2Circular(30, 30);
                         Vector2 dustVel = pickedTrajectory.RotatedBy(MathHelper.Pi);
@@ -249,7 +247,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
                 if (moveTimer < baseCooldown + 160 && moveTimer >= baseCooldown + 45)
-                { 
+                {
                     if (moveTimer % 10 == 0)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -268,8 +266,8 @@ namespace tsorcRevamp.NPCs.Bosses
                         }
                     }
                 }
-                
-                if(moveTimer > baseCooldown + 71 && pickedTrajectory == Vector2.Zero)
+
+                if (moveTimer > baseCooldown + 71 && pickedTrajectory == Vector2.Zero)
                 {
                     moveTimer = 0;
                     dashAttack = !dashAttack;
@@ -287,7 +285,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         void JumpAttack()
         {
-            
+
             if (moveTimer <= baseCooldown + 70)
             {
                 pickedTrajectory = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12, 0.035f, false, false);
@@ -308,7 +306,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 1.4f).noGravity = true;
                 }
             }
-           
+
 
             if (moveTimer < baseCooldown + 70)
             {
@@ -338,7 +336,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     if (moveTimer % 15 == 0)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 7), ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);                        
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 7), ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 0.5f, Main.myPlayer);
                     }
 
                     if (moveTimer % 15 == 7)
@@ -362,7 +360,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 moveTimer = 0;
                 dashAttack = !dashAttack;
             }
-            
+
         }
 
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
@@ -430,7 +428,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (Projectiles.Enemy.EarthTrident.texture != null && !Projectiles.Enemy.EarthTrident.texture.IsDisposed)
                 {
                     float rotation = 0;
-                    if(NPC.direction == 1)
+                    if (NPC.direction == 1)
                     {
                         rotation += 0.15f;
                     }
@@ -461,7 +459,7 @@ namespace tsorcRevamp.NPCs.Bosses
             potionType = ItemID.GreaterHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBagByCondition(new SlograDropCondition(), ModContent.ItemType<Items.BossBags.SlograBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());

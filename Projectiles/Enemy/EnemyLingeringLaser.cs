@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -121,7 +120,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 else if (Projectile.ai[0] >= 1000)
                 {
                     TileCollide = false;
-                    if(TelegraphTime == 180)
+                    if (TelegraphTime == 180)
                     {
                         TelegraphTime = 85 + Main.rand.Next(0, 15);
                         MaxCharge = 85 + Main.rand.Next(0, 15);
@@ -196,7 +195,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 }
             }
 
-           
+
 
             //Projectile stays where it's spawned, and either fires at a point or at a small range around it
             if (Projectile.ai[0] == -1 || Projectile.ai[0] == -2 || Projectile.ai[0] == -3 || Projectile.ai[0] == -4)

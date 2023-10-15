@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -68,7 +67,7 @@ namespace tsorcRevamp.NPCs.Enemies
             bool oCavern = P.ZoneRockLayerHeight;
             bool InHell = P.ZoneUnderworldHeight;
             bool Ocean = spawnInfo.SpawnTileX < 3600 || spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
-            
+
             //Ensuring it can't spawn if one already exists.
             int count = 0;
             for (int i = 0; i < Main.npc.Length; i++)
@@ -197,7 +196,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.LifeforcePotion));
             npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 10));
@@ -230,7 +229,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 8, 1, 2));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 10, 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 8));      
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 8));
 
         }
     }

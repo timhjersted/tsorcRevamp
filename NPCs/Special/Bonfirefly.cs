@@ -5,15 +5,15 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Special 
+namespace tsorcRevamp.NPCs.Special
 {
-    public class Bonfirefly : ModNPC 
+    public class Bonfirefly : ModNPC
     {
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 2;
         }
-        public override void SetDefaults() 
+        public override void SetDefaults()
         {
             NPC.width = 20;
             NPC.height = 20;
@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Special
             NPC.dontTakeDamageFromHostiles = true;
         }
 
-        public override void AI() 
+        public override void AI()
         {
 
             int h = (Math.Sign(NPC.position.X - NPC.oldPos[0].X) * 2) - 1;
@@ -36,18 +36,20 @@ namespace tsorcRevamp.NPCs.Special
             NPC.oldPos[0] = NPC.position;
 
 
-            bool homeBonfireLit  = Framing.GetTileSafely((int)NPC.ai[0], (int)NPC.ai[1]).TileFrameY >= 74;
-            if (!homeBonfireLit) {
+            bool homeBonfireLit = Framing.GetTileSafely((int)NPC.ai[0], (int)NPC.ai[1]).TileFrameY >= 74;
+            if (!homeBonfireLit)
+            {
                 //orbit around the unlit fire
                 Vector2 homePos = new Vector2(((int)NPC.ai[0] + 1) * 16, ((int)NPC.ai[1] + 2) * 16);
                 NPC.position = homePos + new Vector2(2, -16).RotatedBy(Math.Sin(Main.GlobalTimeWrappedHourly / 2));
             }
-            else 
+            else
             {
                 //run awaaaaaaay
-                if (NPC.ai[2] > 0) {
+                if (NPC.ai[2] > 0)
+                {
                     NPC.ai[2] = -1;
-                    SoundStyle flee = new("tsorcRevamp/Sounds/Custom/BonfireflyFlee") 
+                    SoundStyle flee = new("tsorcRevamp/Sounds/Custom/BonfireflyFlee")
                     {
                         PitchRange = (-0.1f, 0.3f),
                         PlayOnlyIfFocused = true,
@@ -65,9 +67,9 @@ namespace tsorcRevamp.NPCs.Special
 
             NPC.ai[2]++;
 
-            if (NPC.ai[2] >= 180 && Main.rand.NextBool(60)) 
+            if (NPC.ai[2] >= 180 && Main.rand.NextBool(60))
             {
-                SoundStyle twinkle = new("tsorcRevamp/Sounds/Custom/Bonfirefly") 
+                SoundStyle twinkle = new("tsorcRevamp/Sounds/Custom/Bonfirefly")
                 {
                     PitchRange = (-0.1f, 0.3f),
                     PlayOnlyIfFocused = true,
@@ -78,13 +80,15 @@ namespace tsorcRevamp.NPCs.Special
             }
         }
 
-        public override void FindFrame(int frameHeight) 
+        public override void FindFrame(int frameHeight)
         {
             NPC.frameCounter++;
-            if (NPC.frameCounter == 2) {
+            if (NPC.frameCounter == 2)
+            {
                 NPC.frame.Y = 0;
             }
-            if (NPC.frameCounter == 4) {
+            if (NPC.frameCounter == 4)
+            {
                 NPC.frame.Y = 1 * frameHeight;
                 NPC.frameCounter = 0;
             }

@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework.Audio;
-
-namespace tsorcRevamp.Sounds.Item
+﻿namespace tsorcRevamp.Sounds.Item
 {
     /* 1.4 Porting Note: ModSound no longer exists! I am unsure if this is necessary anymore
     class MasterBuster : ModSound

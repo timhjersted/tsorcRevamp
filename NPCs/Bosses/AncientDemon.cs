@@ -1,12 +1,9 @@
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Potions;
@@ -119,7 +116,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
 
-        
+
         //int breathTimer gives weird cool arrow shape, float does the circle
         float breathTimer = 0;
         int spawnedDemons = 0;
@@ -241,7 +238,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].OldPos(9), 9);
                     breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
 
-                    
+
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y - 40f, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
                     NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
                     NPC.localAI[1] = -50;
@@ -262,9 +259,9 @@ namespace tsorcRevamp.NPCs.Bosses
             if (breathTimer == 0)
             {
                 NPC.localAI[1] = -150;
-                
+
                 NPC.velocity.X = 0f;
-               
+
             }
 
             //PLAYER RUNNING AWAY? SPAWN DesertDjinnCurse, 
@@ -273,13 +270,13 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8f, 1.06f, true, true);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ProjectileID.DesertDjinnCurse, lostSoulDamage, 7f, Main.myPlayer);
-               
+
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, NPC.Center); //wobble
                 NPC.localAI[1] = 1f;
 
                 NPC.netUpdate = true;
             }
-            
+
 
             //SPAWN FIRE LURKER
             if ((spawnedDemons < 6) && NPC.life >= NPC.lifeMax / 3 && Main.rand.NextBool(3000))
@@ -348,10 +345,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
 
             }
-        
+
 
             //MULTI-FIRE 1 ATTACK
-            if (NPC.localAI[1] >= 160f && NPC.life >= NPC.lifeMax / 3 && choice == 1) 
+            if (NPC.localAI[1] >= 160f && NPC.life >= NPC.lifeMax / 3 && choice == 1)
             {
 
                 Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(4), 7);
@@ -392,7 +389,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 speed.Y += Main.rand.NextFloat(-2, -5f);//was -2, -6
 
-                
+
                 if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                 {
                     int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.CultistBossLightningOrb, cultistLightningDamage, 0f, Main.myPlayer);
@@ -400,7 +397,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
                 }
-               
+
                 NPC.localAI[1] = -50f;
             }
 

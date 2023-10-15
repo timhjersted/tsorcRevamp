@@ -94,7 +94,8 @@ namespace tsorcRevamp
             if (Player.pStone)
             {
                 estusDrinkTimerMax = estusDrinkTimerMaxBase - estusDrinkTimerReductionPStone;
-            } else
+            }
+            else
             {
                 estusDrinkTimerMax = estusDrinkTimerMaxBase;
             }

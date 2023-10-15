@@ -3,20 +3,15 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.Weapons.Melee;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
 using tsorcRevamp.Utilities;
@@ -93,8 +88,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         public float introTimer = 0;
         bool displayedWarning = false;
         public override void AI()
-        {            
-            if(introTimer < 120)
+        {
+            if (introTimer < 120)
             {
                 introTimer++;
             }
@@ -112,11 +107,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0.8f, 0f, 0.2f);
             MoveTimer++;
-            
+
             if (MoveList == null)
             {
                 InitializeMoves();
-                InitializeFirewalls();                
+                InitializeFirewalls();
             }
 
             if (testAttack != -1)
@@ -130,7 +125,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
             CurrentMove.Move();
 
-            for(int i = 0; i < Main.maxPlayers; i++)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active && !Main.player[i].dead)
                 {
@@ -143,7 +138,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                         Main.player[i].AddBuff(BuffID.Burning, 180);
                     }
 
-                    if(distance <  2000)
+                    if (distance < 2000)
                     {
                         Main.player[i].AddBuff(BuffID.OnFire, 180);
 
@@ -178,11 +173,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
                 Vector2 predictiveVector = new Vector2(0, speed).RotatedByRandom(MathHelper.Pi);
 
-                
+
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, predictiveVector, ModContent.ProjectileType<MarilithCataclysm>(), fireStormDamage, 0, Main.myPlayer, 0, Target.whoAmI);
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, predictiveVector.RotatedBy(2 * MathHelper.Pi / 3), ModContent.ProjectileType<MarilithCataclysm>(), fireStormDamage, 0, Main.myPlayer, 0, Target.whoAmI);
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, predictiveVector.RotatedBy(-2 * MathHelper.Pi / 3), ModContent.ProjectileType<MarilithCataclysm>(), fireStormDamage, 0, Main.myPlayer, 0, Target.whoAmI);
-                
+
             }
 
             if (MoveTimer >= 1300)
@@ -196,8 +191,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         //When the attack ends and the fire around the arena border re-ignites
         private void VolcanicStorm()
         {
-            MarilithFloat();            
-            if(MoveTimer < 300)
+            MarilithFloat();
+            if (MoveTimer < 300)
             {
                 Vector2 smokeOrigin = NPC.Center;
                 smokeOrigin.Y -= 100;
@@ -207,7 +202,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 int heightToTop = 0;
                 for (int index = 1; index < 800; index++)
                 {
-                    if(j - index < 0)
+                    if (j - index < 0)
                     {
                         continue;
                     }
@@ -225,7 +220,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 {
                     float height;
 
-                    if(heightToTop * 16 <= 100)
+                    if (heightToTop * 16 <= 100)
                     {
                         height = 0;
                     }
@@ -235,7 +230,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                     }
 
                     float percent = (MoveTimer / 180f);
-                    if(percent > 1)
+                    if (percent > 1)
                     {
                         percent = 1;
                     }
@@ -293,13 +288,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         private void Barrage()
         {
             MarilithFloat();
-            if(MoveTimer % 60 == 0)
+            if (MoveTimer % 60 == 0)
             {
                 float distance = NPC.Distance(Target.Center);
                 targetVector = UsefulFunctions.Aim(NPC.Center, Target.Center, distance / 30);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 0, NPC.whoAmI);
-                
-                
+
+
 
                 targetVector = Main.rand.NextVector2Circular(1, 1);
                 targetVector.Normalize();
@@ -307,7 +302,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector.RotatedBy(MathHelper.Pi), ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
                 //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector.RotatedBy(MathHelper.PiOver2 * 3), ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
             }
-            if(MoveTimer % 60 == 1)
+            if (MoveTimer % 60 == 1)
             {
                 targetVector += Target.velocity;
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 0, NPC.whoAmI);
@@ -335,11 +330,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         float[] angles;
         private void HoldBallStorm()
         {
-            if(NPC.Distance(new Vector2(3228, 1731) * 16) > 90 && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if (NPC.Distance(new Vector2(3228, 1731) * 16) > 90 && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 MoveTimer = 0;
                 MoveCounter++;
-                if(MoveCounter > 15)
+                if (MoveCounter > 15)
                 {
                     MoveCounter = 15;
                 }
@@ -365,7 +360,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    
+
                     if (MoveTimer >= 60)
                     {
                         if (MoveTimer % 4 == 0)
@@ -412,7 +407,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                     dustVel *= 12 * intensity;
                     Dust.NewDustPerfect(NPC.Center + dustVec, 57, dustVel, 0, default, 2).noGravity = true;
                 }
-            }           
+            }
 
 
             if (MoveTimer > 960)
@@ -595,7 +590,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         {
             potionType = ItemID.SuperHealingPotion;
         }
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.MarilithBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AdventureModeRule, ItemID.LargeSapphire));
@@ -610,8 +605,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             npcLoot.Add(notExpertCondition);
         }
         public override void OnKill()
-        {           
-            if(Main.netMode != NetmodeID.MultiplayerClient)
+        {
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<MarilithDeath>(), ai0: NPC.velocity.X, ai1: NPC.velocity.Y);
             }

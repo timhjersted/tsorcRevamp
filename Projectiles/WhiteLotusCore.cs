@@ -1,13 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class WhiteLotusCore : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class WhiteLotusCore : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 16;
             Projectile.height = 16;
             Projectile.timeLeft = 200;
@@ -22,10 +24,13 @@ namespace tsorcRevamp.Projectiles {
 
         int count = 5;
         float dir = 0;
-        public override void AI() {
-            if (Projectile.ai[0] == 0) {
+        public override void AI()
+        {
+            if (Projectile.ai[0] == 0)
+            {
                 dir = (Projectile.ai[1] * 2) - 1;
-                for (int i = 0; i < count; i++) {
+                for (int i = 0; i < count; i++)
+                {
                     int proj = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position, Vector2.Zero, ModContent.ProjectileType<WhiteLotusPetal>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0, i);
                     WhiteLotusPetal petal = Main.projectile[proj].ModProjectile as WhiteLotusPetal;
                     petal.ownerWAI = Projectile.whoAmI;
@@ -42,17 +47,21 @@ namespace tsorcRevamp.Projectiles {
             Dust.NewDust(Projectile.Center, 1, 1, DustID.WhiteTorch, Projectile.velocity.X * -0.5f, Projectile.velocity.Y * -0.5f);
 
             //after 20 frames, swerve a bit
-            if (Projectile.ai[0] >= 3) {
+            if (Projectile.ai[0] >= 3)
+            {
                 Projectile.velocity = Projectile.velocity.RotatedBy(Projectile.ai[1]);
             }
             if (Main.GameUpdateCount % 3 != 0)
                 return;
             bool hasPetals = false;
-            for (int i = 0; i < Main.maxProjectiles; i++) {
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
                 Projectile p = Main.projectile[i];
-                if (p.active && p.type == ModContent.ProjectileType<WhiteLotusPetal>()) {
+                if (p.active && p.type == ModContent.ProjectileType<WhiteLotusPetal>())
+                {
                     WhiteLotusPetal h = Main.projectile[i].ModProjectile as WhiteLotusPetal;
-                    if (h.ownerWAI == Projectile.whoAmI) {
+                    if (h.ownerWAI == Projectile.whoAmI)
+                    {
                         hasPetals = true;
                         break;
                     }
@@ -62,7 +71,8 @@ namespace tsorcRevamp.Projectiles {
                 Projectile.Kill();
         }
 
-        public override void OnKill(int timeLeft) {
+        public override void OnKill(int timeLeft)
+        {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass, Projectile.Center);
             base.OnKill(timeLeft);
         }

@@ -1,10 +1,10 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using System;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.ID;
+using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 
@@ -13,29 +13,29 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 
     public class OrbOfFlameFireball : ModProjectile
     {
-		public override void SetStaticDefaults()
-		{
-			// These lines facilitate the trail drawing
-			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
-			ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+        public override void SetStaticDefaults()
+        {
+            // These lines facilitate the trail drawing
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             Main.projFrames[Projectile.type] = 8;
         }
 
-		public override void SetDefaults()
-		{
-			Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
-			Projectile.width = 66; // The width of your projectile
-			Projectile.height = 28; // The height of your projectile
-			Projectile.friendly = true; // Deals damage to enemies
+        public override void SetDefaults()
+        {
+            Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
+            Projectile.width = 66; // The width of your projectile
+            Projectile.height = 28; // The height of your projectile
+            Projectile.friendly = true; // Deals damage to enemies
             Projectile.scale = 1.3f;
-			Projectile.penetrate = 1;
-			Projectile.DamageType = DamageClass.Magic;
-			Projectile.usesLocalNPCImmunity = true; // Used for hit cooldown changes in the ai hook
-			Projectile.localNPCHitCooldown = 10; // This facilitates custom hit cooldown logic
-			Projectile.tileCollide = false;
-			Projectile.aiStyle = -1;
+            Projectile.penetrate = 1;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.usesLocalNPCImmunity = true; // Used for hit cooldown changes in the ai hook
+            Projectile.localNPCHitCooldown = 10; // This facilitates custom hit cooldown logic
+            Projectile.tileCollide = false;
+            Projectile.aiStyle = -1;
 
-		}
+        }
 
         public override void OnSpawn(IEntitySource source)
         {
@@ -46,8 +46,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         }
 
         public override void AI()
-		{
-			Player player = Main.player[Projectile.owner];
+        {
+            Player player = Main.player[Projectile.owner];
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.velocity.X < 0)
             {
@@ -76,7 +76,7 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
-			target.AddBuff(ModContent.BuffType<Charmed>(), 5 * 60);
+            target.AddBuff(ModContent.BuffType<Charmed>(), 5 * 60);
             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/FireballHit") with { Volume = OrbOfDeception.OrbSoundVolume * 4 });
             target.AddBuff(BuffID.OnFire3, 4 * 60);
         }

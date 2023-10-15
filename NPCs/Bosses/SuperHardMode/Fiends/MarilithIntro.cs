@@ -1,10 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -47,20 +44,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         bool tripped = false;
         public override void AI()
         {
-            if(Main.GameUpdateCount % 180 == 0)
+            if (Main.GameUpdateCount % 180 == 0)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Thunder with { Volume = 0.1f, Pitch = Main.rand.NextFloat(-0.2f, 0.2f) }, NPC.Center);
             }
 
             NPC.aiStyle = -1;
-            
+
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0.8f, 0f, 0.2f);
             if (tripped)
             {
                 progress++;
             }
-            
-            for(int i = 0; i < Main.maxPlayers; i++)
+
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active && !Main.player[i].dead && NPC.Distance(Main.player[i].Center) < 400)
                 {
@@ -70,7 +67,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
             if (progress == 120)
             {
-                if(Main.netMode != NetmodeID.MultiplayerClient)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Thunder_0") with { Volume = 1f }, NPC.Center);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62 with { Volume = 1.2f, Pitch = 0.9f }, NPC.Center);
@@ -83,16 +80,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)NPC.Center.X - 3, (int)NPC.Center.Y + 60 , ModContent.NPCType<FireFiendMarilith>());
+                    NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)NPC.Center.X - 3, (int)NPC.Center.Y + 60, ModContent.NPCType<FireFiendMarilith>());
                 }
 
                 NPC.active = false;
             }
         }
 
-        
+
         public static ArmorShaderData data;
-        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)        
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
@@ -122,7 +119,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
             return false;
         }
-        
+
         public override bool CheckActive()
         {
             return false;

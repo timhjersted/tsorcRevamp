@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
@@ -41,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             else
             {
                 FireFiendMarilith marl = Main.npc[UsefulFunctions.GetFirstNPC(ModContent.NPCType<FireFiendMarilith>()).Value].ModNPC as FireFiendMarilith;
-                if(Projectile.ai[0] == 2 && marl.MoveIndex == 1 && marl.MoveTimer < 1800)
+                if (Projectile.ai[0] == 2 && marl.MoveIndex == 1 && marl.MoveTimer < 1800)
                 {
                     cloudProgress++;
                     if (cloudProgress > 300)
@@ -52,20 +51,20 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 else
                 {
                     cloudProgress--;
-                    if(cloudProgress < 0)
+                    if (cloudProgress < 0)
                     {
                         cloudProgress = 0;
                     }
                 }
             }
 
-            if(progress < 100)
+            if (progress < 100)
             {
                 progress++;
             }
 
             Projectile.alpha = (int)(progress * 2.5f);
-            
+
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
 
@@ -73,14 +72,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 int longLength = 268;
                 int shortLength = 122;
                 //Left
-                if (Projectile.ai[0] == 0) 
+                if (Projectile.ai[0] == 0)
                 {
                     Projectile.width = width;
                     Projectile.height = 16 * shortLength;
                     Projectile.Center = new Vector2(3107, 1731) * 16;
                 }
                 //Right
-                else if(Projectile.ai[0] == 1)
+                else if (Projectile.ai[0] == 1)
                 {
                     Projectile.width = width;
                     Projectile.height = 16 * shortLength;
@@ -99,7 +98,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                     Projectile.Center = new Vector2(3228.5f, 1779.8f) * 16;
                 }
             }
-            
+
 
 
             DelegateMethods.v3_1 = Color.OrangeRed.ToVector3() * 2f;
@@ -131,7 +130,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 Projectile.frame = 0;
             }
 
-            for (int i = 0; i < Main.maxPlayers; i++) {
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
                 if (Projectile.Hitbox.Contains(Main.player[i].Center.ToPoint()))
                 {
                     Main.player[i].statLife -= 5;
@@ -166,7 +166,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         float modifiedTime;
         public override bool PreDraw(ref Color lightColor)
         {
-            
+
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -175,18 +175,18 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             {
                 data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/FireWallShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "FireWallShaderPass");
             }
-                        
+
             //Pass relevant data to the shader via these parameters
             data.UseSaturation(Projectile.ai[0]);
             data.UseSecondaryColor(progress, cloudProgress, modifiedTime);
-            if(Projectile.ai[0] == 2)
+            if (Projectile.ai[0] == 2)
             {
                 modifiedTime += 1 - (cloudProgress / 300f);
             }
 
             //Apply the shader
             data.Apply(null);
-            
+
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (Projectile.spriteDirection == -1)
             {

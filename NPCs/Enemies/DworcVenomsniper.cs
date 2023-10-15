@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -39,7 +38,7 @@ namespace tsorcRevamp.NPCs.Enemies
         //these mfs drop Every Potion too 
         //why : no more! now warlock has them
         public override void ModifyNPCLoot(NPCLoot npcLoot)
-        {     
+        {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 2, 1, 2));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 5, 1, 4));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FadingSoul>(), 10));

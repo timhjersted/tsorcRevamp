@@ -65,7 +65,7 @@ namespace tsorcRevamp.Projectiles.Magic
 
             UpdatePlayerVisuals(player, rrp);
 
-            
+
 
             //If the charge is negative, that means we're in the "firing" state
             if (charge < trueChargeTime)
@@ -101,7 +101,7 @@ namespace tsorcRevamp.Projectiles.Magic
                 if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                 {
                     player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30;
-                    if(player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 0)
+                    if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 0)
                     {
                         player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent = 0;
                     }
@@ -188,7 +188,7 @@ namespace tsorcRevamp.Projectiles.Magic
             }
 
 
-            
+
 
             Projectile.timeLeft = 2;
         }

@@ -9,19 +9,19 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-    public class PeculiarSphere : ModItem 
+    public class PeculiarSphere : ModItem
     {
         public static float ScalingPerSlot = 0.15f;
         public static int DoubleShotMinimumSlots = 4;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs((int)System.Math.Round(ScalingPerSlot*100), DoubleShotMinimumSlots);
-        public override void SetStaticDefaults() 
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs((int)System.Math.Round(ScalingPerSlot * 100), DoubleShotMinimumSlots);
+        public override void SetStaticDefaults()
         {
             ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
         }
-        public override void SetDefaults() 
+        public override void SetDefaults()
         {
             Item.damage = 80;
             Item.knockBack = 1f;
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.buffType = ModContent.BuffType<NondescriptOwlBuff>();
             Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Archer.ArcherToken>();
         }
-        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) 
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             player.AddBuff(Item.buffType, 2);
             int p = Projectile.NewProjectile(source, position, speed, type, damage, knockBack);

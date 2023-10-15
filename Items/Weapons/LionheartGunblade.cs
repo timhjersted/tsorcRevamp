@@ -8,7 +8,6 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Ranged;
 
 namespace tsorcRevamp.Items.Weapons
 {

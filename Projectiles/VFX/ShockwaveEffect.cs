@@ -1,12 +1,12 @@
 ﻿
 using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.Graphics.Effects;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using Terraria;
+using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.VFX
 {
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.VFX
         }
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
-        
+
         public override void SetDefaults()
         {
             Projectile.friendly = true;
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.VFX
             Projectile.tileCollide = false;
             Projectile.timeLeft = 999;
         }
-        
+
 
         public string filterIndex;
 
@@ -67,7 +67,7 @@ namespace tsorcRevamp.Projectiles.VFX
                     }
 
                     //If more than 10 are already active at once, give up and just kill the shockwave instead of creating yet another one.
-                    if(index >= 10)
+                    if (index >= 10)
                     {
                         initialized = true;
                         Projectile.Kill();
@@ -78,7 +78,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 } while (index < 10);
             }
 
-            if(filterIndex == null && Main.netMode != NetmodeID.Server)
+            if (filterIndex == null && Main.netMode != NetmodeID.Server)
             {
                 Projectile.Kill();
                 return;
@@ -94,7 +94,7 @@ namespace tsorcRevamp.Projectiles.VFX
             {
                 effectSpeed = 0.1f;
             }
-           
+
             if (Main.netMode != NetmodeID.Server && !Filters.Scene[filterIndex].IsActive())
             {
                 Filters.Scene.Activate(filterIndex, Projectile.Center).GetShader().UseTargetPosition(Projectile.Center);
@@ -106,14 +106,14 @@ namespace tsorcRevamp.Projectiles.VFX
                 float progress = 0.00125f * effectRadius;
                 float opacity = 1 - (float)Math.Pow(effectTimer / effectLimit, 0.0001);
                 opacity *= 20048;
-                if(opacity < 0)
+                if (opacity < 0)
                 {
                     opacity = 0;
                 }
                 Filters.Scene[filterIndex].GetShader().UseTargetPosition(Projectile.Center).UseProgress(progress).UseOpacity(opacity).UseIntensity(0.00000000000001f).UseColor(Color.White.ToVector3());
             }
 
-            if(effectTimer > effectLimit * 0.99f)
+            if (effectTimer > effectLimit * 0.99f)
             {
                 Projectile.Kill();
             }
@@ -163,7 +163,7 @@ namespace tsorcRevamp.Projectiles.VFX
             }
 
             starRotation = 0;
-            Rectangle starRectangle = new Rectangle(0, 0, 12048, 12048); 
+            Rectangle starRectangle = new Rectangle(0, 0, 12048, 12048);
             if (Projectile.ai[0] == 1)
             {
                 starRectangle.Width = (int)(starRectangle.Width * 0.5f);

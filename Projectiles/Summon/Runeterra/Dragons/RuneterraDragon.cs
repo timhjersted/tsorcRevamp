@@ -1,22 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml.Schema;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Default;
-using static Humanizer.In;
-using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.NPCs;
-using Terraria.Audio;
-using ReLogic.Utilities;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {
@@ -331,7 +327,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
                 Projectile.localNPCHitCooldown = BaseAttackSpeed - (BaseAttackSpeed / 3);
-            } else { Projectile.localNPCHitCooldown = BaseAttackSpeed; }
+            }
+            else { Projectile.localNPCHitCooldown = BaseAttackSpeed; }
 
             Vector2 movementVec = Main.MouseWorld - Projectile.Center;
 
@@ -393,7 +390,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 {
                     totalRotationTarget -= MathF.PI;
                 }
-                
+
 
                 while (totalRotationTarget < -MathF.PI)
                 {
@@ -570,8 +567,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             return foundNPC;
         }
 
-        public abstract float maxSize {  get; }
-        public abstract float size {  get; }
+        public abstract float maxSize { get; }
+        public abstract float size { get; }
 
         public override bool? CanDamage()
         {

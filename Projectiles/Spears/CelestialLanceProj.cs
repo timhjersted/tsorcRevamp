@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Spears
     {
         bool hasHealed = false;
         public override void SetDefaults()
-        {  
+        {
             Projectile.width = 45;
             Projectile.height = 45;
             Projectile.aiStyle = 19;

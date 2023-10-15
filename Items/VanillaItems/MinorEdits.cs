@@ -3,7 +3,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.VanillaItems

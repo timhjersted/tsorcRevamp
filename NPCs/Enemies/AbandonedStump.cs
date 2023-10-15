@@ -1,21 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
+using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
-using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.NPCs.Friendly;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.Ranged.Ammo;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Whips;
-using Terraria.GameContent.ItemDropRules;
-using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
-using tsorcRevamp.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -48,7 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
 				// Sets the spawning conditions of this NPC that is listed in the bestiary.
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
-				new FlavorTextBestiaryInfoElement(LangUtils.GetTextValue("NPCs.AbandonedStump.BestiaryDescription"))
+                new FlavorTextBestiaryInfoElement(LangUtils.GetTextValue("NPCs.AbandonedStump.BestiaryDescription"))
             });
         }
 
@@ -351,7 +348,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (projectile.Name.Contains("Fire") || projectile.Name.Contains("fire") || projectile.Name.Contains("Flame") || projectile.Name.Contains("flame") || projectile.Name.Contains("Curse") ||
                 projectile.Name.Contains("Flare") || projectile.Name.Contains("Molotov") || projectile.Name.Contains("Meteor") || projectile.type == ProjectileID.Hellwing || projectile.type == ModContent.ProjectileType<ScorchingPointFireball>() || projectile.type == ModContent.ProjectileType<SearingLashProjectile>() || projectile.type == ModContent.ProjectileType<DetonationSignalProjectile>() ||
                 projectile.type == ProjectileID.Spark || projectile.type == ProjectileID.Cascade || projectile.type == ProjectileID.SolarWhipSword || projectile.type == ProjectileID.SolarWhipSwordExplosion ||
-                projectile.type == ProjectileID.Daybreak ||  projectile.type == ProjectileID.DD2PhoenixBowShot ||
+                projectile.type == ProjectileID.Daybreak || projectile.type == ProjectileID.DD2PhoenixBowShot ||
                 (projectile.ModProjectile != null && (projectile.ModProjectile.Name.Contains("Fire") || projectile.ModProjectile.Name.Contains("Flame") || projectile.ModProjectile.Name.Contains("Explosion") || projectile.ModProjectile.Name.Contains("Meteor"))) ||
                 projectile.type == ModContent.ProjectileType<DevilSickle>() || projectile.type == ModContent.ProjectileType<RedLaserBeam>() ||
                 (projectile.DamageType == DamageClass.Melee && player.meleeEnchant == 3))
@@ -390,7 +387,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.Wood, 1, 2, 4));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.GreenBlossom>(), 5, 1, 1, 4));

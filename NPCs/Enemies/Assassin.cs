@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -21,14 +20,14 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.damage = 35; //normal mode stat
             NPC.lifeMax = 500; //normal mode stat
-            if (tsorcRevampWorld.SuperHardMode) 
-            { 
-                NPC.lifeMax = 2000; 
-                NPC.defense = 60; 
-                NPC.damage = 80; 
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 2000;
+                NPC.defense = 60;
+                NPC.damage = 80;
                 NPC.value = 20000; // life / 1 bc rare : was 690
-            } 
-            NPC.scale = 1.0f; 
+            }
+            NPC.scale = 1.0f;
             NPC.defense = 40;
             NPC.value = 5000; // life / 1 bc rare : was 460
             NPC.width = 18;
@@ -41,10 +40,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
             AnimationType = NPCID.SkeletonArcher;
         }
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Ammo.ArrowOfBard>(), 6, 3, 5));
-            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion,25));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.ArcheryPotion, 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.FlaskofFire, 25));
@@ -62,14 +61,14 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(hmCondition);
         }
 
-        
-            
+
+
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0f;
-            
+
 
             if (Main.hardMode && !Main.dayTime && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneOverworldHeight && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(140))
             {
@@ -119,12 +118,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 return 1f;
             }
 
-            
+
             if (tsorcRevampWorld.SuperHardMode)
             {
                 if (spawnInfo.Player.ZoneDirtLayerHeight)
                 {
-                    chance = 0.002f;                 
+                    chance = 0.002f;
                 }
                 if (spawnInfo.Player.ZoneRockLayerHeight)
                 {
@@ -170,7 +169,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
 
             tsorcRevampAIs.FighterOnHit(NPC, true);
-           
+
             if (Main.rand.NextBool(15))
             {
                 tsorcRevampAIs.TeleportImmediately(NPC, 30, false);

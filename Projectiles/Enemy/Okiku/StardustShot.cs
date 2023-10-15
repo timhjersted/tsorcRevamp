@@ -55,7 +55,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
             Projectile.velocity.X *= .95f;
             Projectile.velocity.Y *= .95f;
-            Projectile.rotation++;                        
+            Projectile.rotation++;
         }
         static Texture2D texture;
         public override bool PreDraw(ref Color lightColor)

@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework.Audio;
-
-namespace tsorcRevamp.Sounds.Custom
+﻿namespace tsorcRevamp.Sounds.Custom
 {
     /* 1.4 Porting Note: ModSound no longer exists! I am unsure if this is necessary anymore
     class CosmicSparkle : ModSound

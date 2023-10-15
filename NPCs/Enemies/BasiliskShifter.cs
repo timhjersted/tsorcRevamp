@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -30,7 +29,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 55;
             NPC.height = 54;
             NPC.width = 54;
-            NPC.lifeMax = 350; 
+            NPC.lifeMax = 350;
             NPC.HitSound = SoundID.NPCHit20;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 1750; // health / 2 : was 233
@@ -40,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         float breathTimer = 60;
-       
+
 
         float shotTimer;
         int chargeDamage = 0;
@@ -141,7 +140,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 5f, Main.myPlayer);
                         //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, player.Center); //wobble
-                                                                                                                            //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                                                                                                                                   //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                         shotTimer = 1f;
 
                         NPC.netUpdate = true;
@@ -151,7 +150,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     //FOR MAIN
                     if (shotTimer == 105 && Main.rand.NextBool(3) && NPC.life >= NPC.lifeMax / 2)
                     {
-                        
+
                         NPC.velocity.Y = Main.rand.NextFloat(-10f, -4f);
                     }
                     //FOR FINAL
@@ -218,7 +217,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     speed.Y += Main.rand.NextFloat(-2f, -6f);
                     if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                     {
-                        int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, bioSpitDamage, 0f, Main.myPlayer);                       
+                        int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, bioSpitDamage, 0f, Main.myPlayer);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
                     }
 
@@ -396,7 +395,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (Main.rand.NextBool(4))
             {
-                target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 300 * 60, false);   
+                target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 300 * 60, false);
             }
         }
         #endregion
@@ -420,7 +419,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 25));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 2, 1, 2));

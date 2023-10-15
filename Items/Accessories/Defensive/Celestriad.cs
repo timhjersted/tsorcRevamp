@@ -1,10 +1,10 @@
-﻿using Terraria;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Accessories.Magic;
 using tsorcRevamp.Items.Materials;
-using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
 {
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public static float BadDmgMultiplier = 25f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(damageResistance, manaCost, MaxManaPercentIncrease, StaminaRegen, regenDelay, BadDmgMultiplier);
         public override void SetStaticDefaults()
-        {                 
+        {
         }
 
         public override void SetDefaults()
@@ -64,7 +64,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.GetModPlayer<tsorcRevampPlayer>().manaShield = 2;
             if (player.statMana >= manaCost)
             {
-                player.endurance += damageResistance / 100f; 
+                player.endurance += damageResistance / 100f;
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, DustID.AncientLight, player.velocity.X, player.velocity.Y, 150, Color.White, 0.5f);
                 Main.dust[dust].noGravity = true;
             }

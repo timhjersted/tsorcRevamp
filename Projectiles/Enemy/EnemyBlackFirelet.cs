@@ -86,7 +86,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
         }
-        
+
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {

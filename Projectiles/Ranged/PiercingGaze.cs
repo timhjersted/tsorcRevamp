@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -40,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             LaserTextureTail = new Rectangle(0, 58, 30, 24);
             LaserSound = SoundID.Item12 with { Volume = 0.5f };
 
-            LaserDebuffs = new List<int>(); 
+            LaserDebuffs = new List<int>();
             DebuffTimers = new List<int>();
 
             CastLight = false;
@@ -79,9 +78,9 @@ namespace tsorcRevamp.Projectiles.Ranged
                         dir = -1;
                     }
                     Main.player[Projectile.owner].ChangeDir(dir);
-                    
+
                     Main.player[Projectile.owner].itemRotation = Projectile.rotation;
-                    if(dir == 1)
+                    if (dir == 1)
                     {
                         Main.player[Projectile.owner].itemRotation += MathHelper.Pi;
                     }
@@ -199,9 +198,9 @@ namespace tsorcRevamp.Projectiles.Ranged
             //Draw the laser
             Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.velocity.ToRotation(), origin, Projectile.scale, SpriteEffects.None, 0);
 
-            if(Charge >= MaxCharge)
+            if (Charge >= MaxCharge)
             {
-                for(int i = 0; i < 3; i++)
+                for (int i = 0; i < 3; i++)
                 {
                     Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.velocity.ToRotation(), origin, Projectile.scale, SpriteEffects.None, 0);
                 }

@@ -3,23 +3,17 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Accessories;
-using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
-using tsorcRevamp.Items.Potions;
-using Terraria.DataStructures;
 using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.BossItems;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Utilities;
-using Terraria.UI;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Projectiles.Melee.Shortswords;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -74,7 +68,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (NPC.justHit && Main.rand.NextBool(12))
             {
                 tsorcRevampAIs.QueueTeleport(NPC, 25, true, 60);
-                
+
             }
             if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(12))//
             {
@@ -93,7 +87,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 70f;
                 NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f);
                 NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 4f);
-               
+
                 NPC.netUpdate = true;
 
             }
@@ -107,7 +101,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 0.8f, canTeleport: false, enragePercent: 0.5f, enrageTopSpeed: 1.6f); 
+            tsorcRevampAIs.FighterAI(NPC, 0.8f, canTeleport: false, enragePercent: 0.5f, enrageTopSpeed: 1.6f);
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             if (NPC.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
             {
@@ -151,11 +145,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             }
 
-            
+
             customAi1++;
 
             //Proximity Debuffs
-            for(int i = 0; i < Main.maxPlayers; i++)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active && !Main.player[i].dead)
                 {
@@ -195,7 +189,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
                 }
             }
-           
+
 
 
 
@@ -316,7 +310,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             potionType = ItemID.SuperHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.WitchkingBag>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkMirror>()));

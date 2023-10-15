@@ -1,14 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 using System.Text;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Summon.Whips;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp
@@ -109,7 +106,7 @@ namespace tsorcRevamp
         // Lets do all our logic for the custom resource here, such as limiting it, increasing it and so on.
         private void UpdateResource()
         {
-            
+
             //Main.NewText("Stamina: " + staminaResourceCurrent + "/" + staminaResourceMax2);
             //Main.NewText("Stamina regen rate: " + staminaResourceRegenRate);
             //Main.NewText("Stamina regen gain mult: " + staminaResourceGainMult);
@@ -145,8 +142,8 @@ namespace tsorcRevamp
                         break;
                     }*/
 
-                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.VortexBeater 
-                        || Main.projectile[p].type == ProjectileID.Celeb2Weapon || Main.projectile[p].type == ProjectileID.FlyingKnife 
+                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.VortexBeater
+                        || Main.projectile[p].type == ProjectileID.Celeb2Weapon || Main.projectile[p].type == ProjectileID.FlyingKnife
                         || Main.projectile[p].type == ProjectileID.ShadowFlameKnife))
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= HeldProjectileDrainPerFrame;
@@ -208,8 +205,9 @@ namespace tsorcRevamp
             }
 
             //Stamina capping for summoners - First minion costs 18, second one 16, third one 14, etc. Once the cost hits 2, at 9 minions, it keeps costing 2 for subsequent minions
-            if (Player.numMinions > 0) {
-                minionStaminaCap = (int)(staminaResourceMax2 * 1f); 
+            if (Player.numMinions > 0)
+            {
+                minionStaminaCap = (int)(staminaResourceMax2 * 1f);
             }
             else { minionStaminaCap = (int)staminaResourceMax2; }
 
@@ -252,7 +250,7 @@ namespace tsorcRevamp
             staminaResourceCurrent = Utils.Clamp(staminaResourceCurrent, 0, staminaResourceMax2);
         }
 
-        static readonly List<int> HeldProjectileWeapons = new() 
+        static readonly List<int> HeldProjectileWeapons = new()
         {
             ItemID.Terragrim,
             ItemID.Arkhalis,
@@ -269,14 +267,14 @@ namespace tsorcRevamp
             ItemID.ShadowFlameKnife
         };
 
-        static readonly List<int> SpecialHeldProjectileWeapons = new() 
+        static readonly List<int> SpecialHeldProjectileWeapons = new()
         {
             ItemID.ChainGuillotines,
             ItemID.PiranhaGun
         };
-        private class tsrStaminaGlobalItem : GlobalItem 
+        private class tsrStaminaGlobalItem : GlobalItem
         {
-            public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) 
+            public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
             {
                 if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) return;
                 if (!ModContent.GetInstance<tsorcRevampConfig>().ShowStaminaTooltip) return;
@@ -288,7 +286,8 @@ namespace tsorcRevamp
                 if (item.pick != 0 || item.axe != 0 || item.hammer != 0)
                 {
                     tipToAdd.Append(LangUtils.GetTextValue("UI.StaminaUseOnHitOnly"));
-                } else
+                }
+                else
                 {
                     tipToAdd.Append(LangUtils.GetTextValue("UI.StaminaUse"));
                 }
@@ -329,44 +328,52 @@ namespace tsorcRevamp
 
                 #region unique cases
                 //it's just harpoon. seriously, what IS this weapon? i dont understand.
-                if (item.type == ItemID.Harpoon) {
+                if (item.type == ItemID.Harpoon)
+                {
                     tipToAdd.Append(LangUtils.GetTextValue("UI.14"));
                 }
                 #endregion
 
-                if (tipToAdd.Length == preModificationLength) {
+                if (tipToAdd.Length == preModificationLength)
+                {
                     int staminaUse = (int)(item.useAnimation / Main.LocalPlayer.GetAttackSpeed(item.DamageType));
                     staminaUse = (int)tsorcRevampPlayer.ReduceStamina(staminaUse);
-                    tipToAdd.Append($"{staminaUse}"); 
+                    tipToAdd.Append($"{staminaUse}");
                 }
 
                 #region special drain per frame
-                if (HeldProjectileWeapons.Contains(item.type)) {
+                if (HeldProjectileWeapons.Contains(item.type))
+                {
                     drainPerFrame = HeldProjectileDrainPerFrame;
                     preventsRegen = true;
                 }
 
-                else if (SpecialHeldProjectileWeapons.Contains(item.type)) {
+                else if (SpecialHeldProjectileWeapons.Contains(item.type))
+                {
                     drainPerFrame = SpecialHeldProjectileDrainPerFrame;
                     //these dont prevent regen
                 }
                 #endregion
 
                 #region drain per frame tooltips
-                if (drainPerFrame != 0f) {
+                if (drainPerFrame != 0f)
+                {
                     tipToAdd.Append($" + {drainPerFrame * 60} " + LangUtils.GetTextValue("UI.PerSecond"));
                 }
 
-                if (inhibitsRegen) {
+                if (inhibitsRegen)
+                {
                     tipToAdd.Append(LangUtils.GetTextValue("UI.StaminaRegenReduction"));
                 }
-                if (preventsRegen) {
+                if (preventsRegen)
+                {
                     tipToAdd.Append(LangUtils.GetTextValue("UI.StaminaRegenNullification"));
                 }
                 #endregion
                 int ttindex = tooltips.FindLastIndex(t => t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
-                if (ttindex != -1) {// if we find one
-                                    //insert the extra tooltip line
+                if (ttindex != -1)
+                {// if we find one
+                 //insert the extra tooltip line
                     tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "",
                     tipToAdd.ToString()));
                 }

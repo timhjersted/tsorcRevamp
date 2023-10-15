@@ -3,19 +3,14 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Weapons.Magic;
-using tsorcRevamp.Items.Weapons.Melee.Shortswords;
-using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
@@ -455,7 +450,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), projCenter.X, projCenter.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.InkGeyser>(), geyserDamage, 0f, Main.myPlayer, Target.whoAmI);
             }
-                        
+
             if (MoveCounter > 1200)
             {
                 NextAttack();
@@ -465,7 +460,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         {
 
             //Don't flood anything if outside of adventure mode or far from the arena center
-            if(!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode || NPC.Center.Y < 1660 * 16 || NPC.Center.Y > 1744 * 16 || NPC.Center.X < 1560 * 16 || NPC.Center.X > 2011 * 16)
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode || NPC.Center.Y < 1660 * 16 || NPC.Center.Y > 1744 * 16 || NPC.Center.X < 1560 * 16 || NPC.Center.X > 2011 * 16)
             {
                 return;
             }
@@ -656,7 +651,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             potionType = ItemID.SuperHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.KrakenBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));

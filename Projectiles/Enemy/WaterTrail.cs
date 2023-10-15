@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -67,7 +66,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override float CollisionWidthFunction(float progress)
         {
             return 10;
-         }
+        }
 
         float baseNoiseUOffset;
         public override void SetEffectParameters(Effect effect)

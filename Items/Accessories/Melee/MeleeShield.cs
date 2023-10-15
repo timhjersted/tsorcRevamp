@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -48,7 +47,8 @@ namespace tsorcRevamp.Items.Accessories.Melee
         {
             foreach (Item i in player.armor)
             {
-                if (i.ModItem is MeleeShield) {
+                if (i.ModItem is MeleeShield)
+                {
                     return false;
                 }
             }
