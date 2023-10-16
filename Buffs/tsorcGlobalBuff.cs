@@ -8,11 +8,9 @@ namespace tsorcRevamp.Buffs
 {
     public class tsorcGlobalBuff : GlobalBuff
     {
-        public static float SolarDR = 8f;
-        public static float BeetleDR = 15f;
-        public static float NebulaDMG1 = 8f;
-        public static float NebulaDMG2 = 16f;
-        public static float NebulaDMG3 = 24f;
+        public const float SolarDR = 8f;
+        public const float BeetleDR = 15f;
+        public const float NebulaDMG = 8f;
         public override void Update(int type, Player player, ref int buffIndex)
         {
             if (type == BuffID.ManaSickness)
@@ -76,17 +74,17 @@ namespace tsorcRevamp.Buffs
 
             if (type == BuffID.NebulaUpDmg1)
             {
-                player.GetDamage(DamageClass.Generic) += -0.15f + NebulaDMG1 / 100f;
+                player.GetDamage(DamageClass.Generic) += -0.15f + NebulaDMG / 100f;
             }
 
             if (type == BuffID.NebulaUpDmg2)
             {
-                player.GetDamage(DamageClass.Generic) += -0.3f + NebulaDMG2 / 100f;
+                player.GetDamage(DamageClass.Generic) += -0.3f + NebulaDMG / 100f * 2f;
             }
 
             if (type == BuffID.NebulaUpDmg3)
             {
-                player.GetDamage(DamageClass.Generic) += -0.45f + NebulaDMG3 / 100f;
+                player.GetDamage(DamageClass.Generic) += -0.45f + NebulaDMG / 100f * 3f;
             }
         }
 
@@ -164,17 +162,17 @@ namespace tsorcRevamp.Buffs
 
             if (type == BuffID.NebulaUpDmg1)
             {
-                tip = Language.GetTextValue("CommonItemTooltip.PercentIncreasedDamage", NebulaDMG1);
+                tip = Language.GetTextValue("CommonItemTooltip.PercentIncreasedDamage", NebulaDMG);
             }
 
             if (type == BuffID.NebulaUpDmg2)
             {
-                tip = Language.GetTextValue("CommonItemTooltip.PercentIncreasedDamage", NebulaDMG2);
+                tip = Language.GetTextValue("CommonItemTooltip.PercentIncreasedDamage", NebulaDMG * 2f);
             }
 
             if (type == BuffID.NebulaUpDmg3)
             {
-                tip = Language.GetTextValue("CommonItemTooltip.PercentIncreasedDamage", NebulaDMG3);
+                tip = Language.GetTextValue("CommonItemTooltip.PercentIncreasedDamage", NebulaDMG * 3f);
             }
         }
 

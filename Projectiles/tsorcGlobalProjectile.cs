@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -67,9 +68,40 @@ namespace tsorcRevamp.Projectiles
         public static float WhipPitch = 0.3f;
         public bool AppliedLethalTempo = false;
         public bool AppliedConqueror = false;
+        public bool IgnoresAccuracyOrSpecialCase = true;
         public bool HitSomething = false;
         public bool ModdedWhip = false;
         public bool ChargedWhip = false;
+        public override void SetDefaults(Projectile entity)
+        {
+            if (entity.DamageType == DamageClass.Ranged && entity.friendly)
+            {
+                Player player = Main.player[entity.owner];
+                if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                {
+                    switch (entity.type)
+                    {
+                        case ProjectileID.ChlorophyteBullet or ProjectileID.ChlorophyteArrow:
+                            {
+                                break;
+                            }
+                        case int ModProjectile when (ModProjectile == ModContent.ProjectileType<ElfinArrow>() || ModProjectile == ModContent.ProjectileType<ToxicCatExplosion>() || ModProjectile == ModContent.ProjectileType<VirulentCatExplosion>() || ModProjectile == ModContent.ProjectileType<BiohazardExplosion>()):
+                            {
+                                break;
+                            }
+                        default:
+                            {
+                                IgnoresAccuracyOrSpecialCase = false;
+                                break;
+                            }
+                    }
+                }
+            }
+            if (entity.aiStyle == ProjAIStyleID.SmallFlying)
+            {
+                IgnoresAccuracyOrSpecialCase = true;
+            }
+        }
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
             /*Entitysource experiments
@@ -428,7 +460,7 @@ namespace tsorcRevamp.Projectiles
                 player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
                 AppliedConqueror = true;
             }
-            if (projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse && projectile.friendly)
+            if (!IgnoresAccuracyOrSpecialCase)
             {
                 HitSomething = true;
             }
@@ -572,10 +604,7 @@ namespace tsorcRevamp.Projectiles
                     modPlayer.GoredrinkerReady = false;
                     modPlayer.GoredrinkerSwung = false;
                 }
-                if (projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse
-                    && projectile.type != ProjectileID.ChlorophyteBullet && projectile.type != ProjectileID.ChlorophyteArrow && projectile.type != ModContent.ProjectileType<ElfinArrow>() //add any ranged homing projectiles
-                    && projectile.aiStyle != ProjAIStyleID.SmallFlying && projectile.type != ModContent.ProjectileType<ToxicCatExplosion>() && projectile.type != ModContent.ProjectileType<VirulentCatExplosion>()
-                    && projectile.type != ModContent.ProjectileType<BiohazardExplosion>())
+                if (!IgnoresAccuracyOrSpecialCase)
                 {
                     if (HitSomething)
                     {

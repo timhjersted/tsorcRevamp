@@ -9,8 +9,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
-using tsorcRevamp.Buffs.Runeterra.Melee;
-using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Placeable;
 using tsorcRevamp.NPCs.Special;
 using tsorcRevamp.UI;
@@ -130,17 +129,6 @@ namespace tsorcRevamp.Tiles
                     }
                 }
 
-                if (!bossActive && player.velocity == Vector2.Zero)
-                {
-                    foreach (int buffType in player.buffType)
-                    {
-                        if (Main.debuff[buffType] && buffType != BuffID.HeartLamp && buffType != BuffID.PeaceCandle && buffType != BuffID.Sunflower && buffType != ModContent.BuffType<Conqueror>() && buffType != ModContent.BuffType<LethalTempo>() && buffType != BuffID.Tipsy)
-                        {
-                            player.ClearBuff(buffType);
-                        }
-                    }
-                }
-
                 // Only heal when no bosses are alive, hp isn't full and the player is standing still
                 if (!bossActive && player.statLife < player.statLifeMax2 && player.velocity == Vector2.Zero)
                 {
@@ -201,6 +189,22 @@ namespace tsorcRevamp.Tiles
                         if (Main.rand.NextBool(12))
                         {
                             player.statLife++;
+                        }
+
+                        if (player.HasBuff(ModContent.BuffType<InCombat>()))
+                        {
+                            player.ClearBuff(ModContent.BuffType<InCombat>());
+                        }
+
+                        if (!bossActive && player.velocity == Vector2.Zero)
+                        {
+                            foreach (int buffType in player.buffType)
+                            {
+                                if (Main.debuff[buffType] && !BuffID.Sets.NurseCannotRemoveDebuff[buffType])
+                                {
+                                    player.ClearBuff(buffType);
+                                }
+                            }
                         }
 
                         var dust = Dust.NewDustDirect(player.position, player.width, player.height, DustID.FlameBurst, Alpha: 120);

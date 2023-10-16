@@ -1,4 +1,5 @@
 ﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Runeterra.Magic
@@ -9,6 +10,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
         {
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
+            BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
         }
     }
 }

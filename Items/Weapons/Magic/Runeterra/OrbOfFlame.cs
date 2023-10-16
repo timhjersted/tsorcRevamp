@@ -39,11 +39,11 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.mana = 40;
             Item.knockBack = 8;
             Item.UseSound = null;
-            Item.rare = ItemRarityID.LightRed;
+            Item.rare = ItemRarityID.LightPurple;
             Item.shootSpeed = OrbOfDeception.ShootSpeed;
             Item.noUseGraphic = true;
             Item.noMelee = true;
-            Item.value = PriceByRarity.LightRed_4;
+            Item.value = PriceByRarity.LightPurple_6;
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<OrbOfFlameOrb>();
             Item.holdStyle = ItemHoldStyleID.HoldLamp;

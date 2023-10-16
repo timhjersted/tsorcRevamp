@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.Audio;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Runeterra.Melee
@@ -10,6 +11,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
         {
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
+            BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
         }
         public override void Update(Player player, ref int buffIndex)
         {

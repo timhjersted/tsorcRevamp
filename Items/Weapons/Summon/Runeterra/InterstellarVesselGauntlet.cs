@@ -12,6 +12,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
+using tsorcRevamp.Projectiles.Summon.Runeterra.Dragons;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
@@ -65,13 +66,13 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             player.AddBuff(Item.buffType, 2);
 
             // Minions have to be spawned manually, then have originalDamage assigned to the damage of the summon item
-            var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
-            projectiles.Add((InterstellarVesselShip)projectile.ModProjectile);
-            projectile.originalDamage = Item.damage;
+            Projectile Spaceship = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
+            projectiles.Add((InterstellarVesselShip)Spaceship.ModProjectile);
+            Spaceship.originalDamage = Item.damage;
 
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.ASOL13>()] == 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<ASOL13>()] == 0)
             {
-                Projectile Dragon = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.ASOL13>(), damage, knockback, Main.myPlayer);
+                Projectile Dragon = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<ASOL13>(), damage, 0, Main.myPlayer);
                 Dragon.originalDamage = Item.damage;
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/DragonCast") with { Volume = SoundVolume });
             }

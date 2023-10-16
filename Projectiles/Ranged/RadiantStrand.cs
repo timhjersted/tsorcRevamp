@@ -16,6 +16,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             Projectile.friendly = true;
             Projectile.tileCollide = true;
             Projectile.DamageType = DamageClass.Ranged;
+            Projectile.timeLeft = 120;
             Projectile.knockBack = 0f;
             Projectile.tileCollide = false;
             Projectile.usesIDStaticNPCImmunity = true;

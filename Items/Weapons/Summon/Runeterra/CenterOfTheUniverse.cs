@@ -66,13 +66,13 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             player.AddBuff(Item.buffType, 2);
 
             // Minions have to be spawned manually, then have originalDamage assigned to the damage of the summon item
-            Projectile projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
-            projectiles.Add((CenterOfTheUniverseStar)projectile.ModProjectile);
-            projectile.originalDamage = Item.damage;
+            Projectile Star = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
+            projectiles.Add((CenterOfTheUniverseStar)Star.ModProjectile);
+            Star.originalDamage = Item.damage;
 
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.StarForger>()] == 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<StarForger>()] == 0)
             {
-                Dragon = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.StarForger>(), damage, knockback, Main.myPlayer);
+                Dragon = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<StarForger>(), damage, 0, Main.myPlayer);
                 Dragon.originalDamage = Item.damage;
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/DragonCast") with { Volume = SoundVolume });
             }
