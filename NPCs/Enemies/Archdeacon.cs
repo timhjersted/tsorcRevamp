@@ -45,20 +45,13 @@ namespace tsorcRevamp.NPCs.Enemies
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0;
-            if (spawnInfo.Player.ZoneSkyHeight && spawnInfo.Player.ZoneSnow && Main.hardMode && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.Archdeacon>()) < 3 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1
-               && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.BarrowWight>()) < 3 && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>())))
-            {
-                chance += 0.35f;
-            }
-            if (spawnInfo.Player.ZoneSkyHeight && Main.hardMode && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1
-               && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.BarrowWight>()) < 3 && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>())))
-            {
-                chance += 0.2f;
-            }
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>())))
-            {
-                chance += 0.15f;
-            }
+            // high chance before killing Wyvern Mage in Wyvern Fortress
+            if (spawnInfo.Player.ZoneSkyHeight && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.MeteoriteBrick || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.Glass) && Main.hardMode && !tsorcRevampWorld.SuperHardMode && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()))) return chance = 0.3f;
+            // low chance after killing fortress boss
+            if (spawnInfo.Player.ZoneSkyHeight && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.MeteoriteBrick || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.Glass) && Main.hardMode && !tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()))) return chance = 0.01f;
+            // high chance returns for SHM only in fortress before Wyvern Mage Shadow is defeated
+            if (spawnInfo.Player.ZoneSkyHeight && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.MeteoriteBrick || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.Glass) && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()))) return chance = 0.2f;
+
             return chance;
         }
 
