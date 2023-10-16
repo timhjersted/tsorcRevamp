@@ -6881,7 +6881,7 @@ Mods: {
 					Throws a flaming [c/87cefa:Orb] which will return to you after a certain distance
 					Casts [c/87cefa:homing flames] while the [c/87cefa:Orb] is sent out when used
 					Gathers stacks of [c/87cefa:Essence Thief] on [c/87cefa:Orb] hits and kills
-					Upon reaching 9 stacks, the next Orb cast will consume 9 stacks, [c/87cefa:heal you and deal massive damage]
+					Upon reaching 9 stacks, the next [c/87cefa:Orb] cast will consume 9 stacks, [c/87cefa:heal you and deal massive damage]
 					<right> to cast a [c/ff7f50:Fireball which sunders enemies, increasing their vulnerability to magic damage]
 					[c/ff7f50:'There's beauty in even the most painful memories']
 					'''
