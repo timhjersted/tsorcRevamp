@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -7,7 +8,7 @@ using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles
 {
-    class CursedFlamelash : DynamicTrail
+    class CursedTormentorProjectile : DynamicTrail
     {
         public override void SetDefaults()
         {
@@ -31,7 +32,7 @@ namespace tsorcRevamp.Projectiles
             trailMaxLength = 350;
             NPCSource = false;
             noDiscontinuityCheck = true;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedTormentor", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         public override void AI()
@@ -71,26 +72,16 @@ namespace tsorcRevamp.Projectiles
 
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {/*
-            int originalDamage = damage;
-            damage *= (int)Projectile.velocity.Length() / 6;
-            damage += originalDamage / 3;*/
-            modifiers.SourceDamage *= Projectile.velocity.Length() / 6;
-            modifiers.FinalDamage += modifiers.GetDamage(Projectile.damage, false) / 3;
+        {
+            modifiers.SourceDamage *= MathF.Max(MathF.Min(Projectile.velocity.Length() / 3f, 2f), 1f); //holy shit this was overtuned to hell, don't use GetDamage it's wack
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (Main.rand.NextBool(5))
-            {
-                target.AddBuff(BuffID.CursedInferno, 5 * 60);
-            }
+            target.AddBuff(BuffID.CursedInferno, 5 * 60);
         }
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if (Main.rand.NextBool(5) && info.PvP)
-            {
-                target.AddBuff(BuffID.CursedInferno, 5 * 60);
-            }
+            target.AddBuff(BuffID.CursedInferno, 5 * 60);
         }
         Vector2 samplePointOffset1;
         Vector2 samplePointOffset2;

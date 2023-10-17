@@ -5,14 +5,12 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
-    class CursedFlamelash : ModItem
+    [LegacyName("CursedFlamelash")]
+    class CursedTormentor : ModItem
     {
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Cursed Tormentor");
-            /* Tooltip.SetDefault("Summons a lash of cursed flame to blight your foes" +
-                "\nDeals more damage the faster it is moving when it strikes an enemy"); */
         }
 
         public override void SetDefaults()
@@ -23,20 +21,20 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useAnimation = 19;
             Item.useTime = 19;
             Item.channel = true;
-            Item.damage = 47;
+            Item.damage = 44;
             Item.knockBack = 4;
             Item.UseSound = SoundID.Item20;
             Item.rare = ItemRarityID.LightRed;
-            Item.crit = 4;
+            Item.crit = 4; //it has 4 extra crit I guess, sure?
             Item.mana = 200;
             Item.noMelee = true;
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Magic;
-            Item.shoot = ModContent.ProjectileType<Projectiles.CursedFlamelash>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.CursedTormentorProjectile>();
         }
         public override bool CanUseItem(Player player)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.CursedFlamelash>()] > 0 && player.channel)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.CursedTormentorProjectile>()] > 0 && player.channel)
             {
                 return false;
             }
@@ -46,9 +44,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Flamelash, 1);
-            recipe.AddIngredient(ItemID.CursedFlame, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+            recipe.AddIngredient(ItemID.Flamelash);
+            recipe.AddIngredient(ItemID.CursedFlame, 5);
+            recipe.AddIngredient(ItemID.SoulofNight, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

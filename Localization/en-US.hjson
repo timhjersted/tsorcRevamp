@@ -4930,7 +4930,7 @@ Mods: {
 					'''
 			}
 
-			CursedFlamelash: {
+			CursedTormentor: {
 				DisplayName: Cursed Tormentor
 				Tooltip:
 					'''
@@ -8345,7 +8345,7 @@ Mods: {
 			CrescentTrue.DisplayName: Crescent True
 			Crissaegrim.DisplayName: Crissaegrim
 			CruelArrow.DisplayName: Cruel Arrow
-			CursedFlamelash.DisplayName: Cursed Flamelash
+			CursedTormentor.DisplayName: Cursed Tormentor
 			CursedFlames.DisplayName: Cursed Flames
 			DeathStrike.DisplayName: Death Strike
 			DevilSickle.DisplayName: Devil Sickle
@@ -8869,6 +8869,7 @@ Mods: {
 			AshenLord.DisplayName: Ashen Lord
 			ASOL13.DisplayName: A S O L13
 			StarForger.DisplayName: Star Forger
+			CursedTormentorProjectile.DisplayName: Cursed Tormentor Projectile
 		}
 
 		NPCs: {

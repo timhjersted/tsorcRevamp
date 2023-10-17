@@ -51,7 +51,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             trailCollision = true;
             collisionFrequency = 5;
             noFadeOut = true;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFlamelash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedTormentor", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
         public override void OnSpawn(IEntitySource source)
         {
