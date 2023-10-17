@@ -443,9 +443,9 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.DesertDjinn, 0.075f);
                 pool.Add(NPCID.DiabolistWhite, 0.02f); //was 0.1
-                pool.Add(ModContent.NPCType<Enemies.RingedKnight>(), 0.25f);
-                pool.Add(ModContent.NPCType<Enemies.LothricSpearKnight>(), 0.05f);
-                pool.Add(ModContent.NPCType<Enemies.LothricKnight>(), 0.05f);
+                //pool.Add(ModContent.NPCType<Enemies.RingedKnight>(), 0.25f);
+                pool.Add(ModContent.NPCType<Enemies.LothricSpearKnight>(), 0.08f);
+                pool.Add(ModContent.NPCType<Enemies.LothricKnight>(), 0.08f);
 
             }
 
@@ -467,8 +467,8 @@ namespace tsorcRevamp.NPCs
                     pool.Remove(ModContent.NPCType<Enemies.MutantToad>());
                 }
 
-                pool.Add(NPCID.GreenJellyfish, 8f);
-                pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 2f);
+                pool.Add(NPCID.GreenJellyfish, 6f);
+                pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 4f);
             }
             //machine temple (not in water)
             if (!spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode && !tsorcRevampWorld.SuperHardMode)
@@ -497,6 +497,7 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.DD2LightningBugT3, 0.28f);
             }
+            //underground 
             if (spawnInfo.Player.ZoneUnderworldHeight && !spawnInfo.Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.SolarCrawltipedeHead, 0.002f);
@@ -514,10 +515,10 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.NebulaBeast, 0.6f); //.1 is 3%
                 pool.Add(NPCID.NebulaSoldier, 0.5f); //.1 is 3%
             }
-            //spaceships
-            if (spawnInfo.SpawnTileType == TileID.MartianConduitPlating && tsorcRevampWorld.SuperHardMode)
+            //spaceships or flesh background of crimson biome
+            if ((spawnInfo.SpawnTileType == TileID.MartianConduitPlating ||  Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.Flesh || spawnInfo.Player.ZoneCrimson) && tsorcRevampWorld.SuperHardMode)
             {
-                pool.Add(NPCID.VortexLarva, 1f); //.1 is 3%
+                pool.Add(NPCID.VortexLarva, 2f); //.1 is 3%
             }
             //one of the outer thirds of the map
             if ((Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3) && tsorcRevampWorld.SuperHardMode)
@@ -564,28 +565,28 @@ namespace tsorcRevamp.NPCs
 
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
         {
-            //reduces max spawns by 40% and rate by 60% until player exceeds 160 health
+            //reduces max spawns by 30% and rate by 50% until player exceeds 160 health
             if (player.statLifeMax2 <= 160)
-            {
-                spawnRate = (int)(spawnRate * 1.6f);
-                maxSpawns = (int)(maxSpawns * 0.6f);
-            }
-            //reduces max spawns by 30% and spawn rate by 50% after 160 health
-            if (player.statLifeMax2 > 160 && player.statLifeMax2 <= 200)
             {
                 spawnRate = (int)(spawnRate * 1.5f);
                 maxSpawns = (int)(maxSpawns * 0.7f);
             }
-            //reduces max spawns by 20% and spawn rate by 40% from 200-400 health
-            if (player.statLifeMax2 > 200 && player.statLifeMax2 <= 400)
+            //reduces max spawns by 20% and spawn rate by 40% after 160 health
+            if (player.statLifeMax2 > 160 && player.statLifeMax2 <= 200)
             {
                 spawnRate = (int)(spawnRate * 1.4f);
                 maxSpawns = (int)(maxSpawns * 0.8f);
             }
-            //only reduces spawn rate by 30% above 400 health
-            if (player.statLifeMax2 > 400)
+            //reduces max spawns by 10% and spawn rate by 30% from 200-400 health
+            if (player.statLifeMax2 > 200 && player.statLifeMax2 <= 400)
             {
                 spawnRate = (int)(spawnRate * 1.3f);
+                maxSpawns = (int)(maxSpawns * 0.9f);
+            }
+            //only reduces spawn rate by 20% above 400 health
+            if (player.statLifeMax2 > 400)
+            {
+                spawnRate = (int)(spawnRate * 1.2f);
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff || tsorcRevampWorld.BossAlive || player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()))

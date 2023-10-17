@@ -6,6 +6,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
 
@@ -1065,9 +1066,11 @@ namespace tsorcRevamp.NPCs.Enemies
             float chance = 0;
             if (spawnInfo.Player.townNPCs > 1f) return 0f;
 
-            if (spawnInfo.Player.ZoneUnderworldHeight) return 0.15f;
+            if (spawnInfo.Player.ZoneUnderworldHeight) return 0.1f;
+            
+            if (spawnInfo.Player.ZoneUnderworldHeight && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.LavaMossBlockWall || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.LavaUnsafe2 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.LavaUnsafe1)) return chance = 0.15f;
 
-            if (Main.hardMode && spawnInfo.Player.ZoneUndergroundDesert) return 0.16f; // now spawns in desert HM
+            if (Main.hardMode && spawnInfo.Player.ZoneUndergroundDesert) return 0.1f; // now spawns in desert HM
 
             return chance;
         }
