@@ -72,51 +72,47 @@ namespace tsorcRevamp.Projectiles
         public bool HitSomething = false;
         public bool ModdedWhip = false;
         public bool ChargedWhip = false;
-        public override void SetDefaults(Projectile entity)
-        {
-            if (entity.DamageType == DamageClass.Ranged && entity.friendly)
-            {
-                Player player = Main.player[entity.owner];
-                if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-                {
-                    switch (entity.type)
-                    {
-                        case ProjectileID.ChlorophyteBullet or ProjectileID.ChlorophyteArrow:
-                            {
-                                break;
-                            }
-                        case int ModProjectile when (ModProjectile == ModContent.ProjectileType<ElfinArrow>() || ModProjectile == ModContent.ProjectileType<ToxicCatExplosion>() || ModProjectile == ModContent.ProjectileType<VirulentCatExplosion>() || ModProjectile == ModContent.ProjectileType<BiohazardExplosion>()):
-                            {
-                                break;
-                            }
-                        default:
-                            {
-                                IgnoresAccuracyOrSpecialCase = false;
-                                break;
-                            }
-                    }
-                }
-            }
-            if (entity.aiStyle == ProjAIStyleID.SmallFlying)
-            {
-                IgnoresAccuracyOrSpecialCase = true;
-            }
-        }
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
-            /*Entitysource experiments
+            /*projectilesource experiments
              * if (projectile.type == ModContent.ProjectileType<Projectiles.Spears.FetidExhaust>())
             {
-                EntitySource_ItemUse_WithAmmo itemSource = source as EntitySource_ItemUse_WithAmmo;
+                projectileSource_ItemUse_WithAmmo itemSource = source as projectileSource_ItemUse_WithAmmo;
 
                 if (itemSource != null && itemSource.Item.type == ModContent.ItemType<Items.Weapons.Melee.Spears.FetidExhaust>())
                 {
                     Main.NewText("a");
                 }
             }*/
+            if (projectile.aiStyle == ProjAIStyleID.SmallFlying)
+            {
+                IgnoresAccuracyOrSpecialCase = true;
+            }
             if (projectile.friendly)
             {
                 Player owner = Main.player[projectile.owner];
+                if (projectile.DamageType == DamageClass.Ranged)
+                {
+                    if (owner.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                    {
+                        switch (projectile.type)
+                        {
+                            case ProjectileID.ChlorophyteBullet or ProjectileID.ChlorophyteArrow:
+                                {
+                                    break;
+                                }
+                            case int ModProjectile when (ModProjectile == ModContent.ProjectileType<ElfinArrow>() || ModProjectile == ModContent.ProjectileType<ToxicCatExplosion>() || ModProjectile == ModContent.ProjectileType<VirulentCatExplosion>() || ModProjectile == ModContent.ProjectileType<BiohazardExplosion>()):
+                                {
+                                    break;
+                                }
+                            default:
+                                {
+                                    IgnoresAccuracyOrSpecialCase = false;
+                                    break;
+                                }
+                        }
+                    }
+                }
                 if (projectile.type == ProjectileID.CrystalDart)
                 {
                     projectile.damage = 1 + owner.GetWeaponDamage(owner.HeldItem);
