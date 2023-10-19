@@ -130,6 +130,7 @@ namespace tsorcRevamp
         public bool PortlyPlateArmor;
 
         public bool OldWeapon = false;
+        public bool PhoenixSkull = false;
 
         public bool MythrilOrichalcumCritDamage = false;
         public bool Shunpo = false;
@@ -137,8 +138,6 @@ namespace tsorcRevamp
         public Vector2 ShunpoVelocity;
         public bool ChallengersGloveCritDamage = false;
         public float WhipCritHitboxSize = 1f;
-
-        public bool PhoenixSkull = false;
 
         public int SteelTempestStacks = 0;
         public int SweepingBladeTimer = 0;
@@ -151,6 +150,13 @@ namespace tsorcRevamp
         public int SpiritRushSoundStyle = 0;
         public float SpiritRushCooldown = 0f;
         public Vector2 SpiritRushVelocity;
+
+        public int FireballHitSoundCooldown = 0;
+        public bool InterstellarBoost = false;
+        public int MinimumMinionCircleRadius = 150;
+        public int MaximumMinionCircleRadius = 500;
+        public float MinionCircleRadius = 150;
+        public int CotUStardustCount = 0;
 
         public float CrystalNunchakuDefenseDamage;
 
@@ -165,13 +171,6 @@ namespace tsorcRevamp
 
         public bool MythrilBulwark = false;
         public bool IceboundMythrilAegis = false;
-
-
-        public bool InterstellarBoost = false;
-        public int MinimumMinionCircleRadius = 150;
-        public int MaximumMinionCircleRadius = 500;
-        public float MinionCircleRadius = 150;
-        public int CotUStardustCount = 0;
 
         public bool WaspPower = false;
         public bool DemonPower = false;

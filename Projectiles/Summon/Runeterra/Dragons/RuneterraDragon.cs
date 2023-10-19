@@ -238,7 +238,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             {
                 case 1:
                     {
-                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/BreathLoop") with { Volume = ScorchingPoint.SoundVolume * 0.75f, IsLooped = true, MaxInstances = 1 };
+                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/BreathLoop") with { Volume = ScorchingPoint.SoundVolume * 0.5f, IsLooped = true, MaxInstances = 1 };
                         break;
                     }
                 case 2:

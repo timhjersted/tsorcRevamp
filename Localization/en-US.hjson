@@ -7455,6 +7455,11 @@ Mods: {
 				DisplayName: Seed Bag
 				Tooltip: ""
 			}
+
+			Galeforce: {
+				DisplayName: Galeforce
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -8870,6 +8875,7 @@ Mods: {
 			ASOL13.DisplayName: A S O L13
 			StarForger.DisplayName: Star Forger
 			CursedTormentorProjectile.DisplayName: Cursed Tormentor Projectile
+			GaleforceProjectile.DisplayName: Galeforce Projectile
 		}
 
 		NPCs: {

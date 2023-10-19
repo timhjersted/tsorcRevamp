@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public const int SuperBurnDuration = 5;
         public const float SuperBurnDmgAmp = 50f;
         public const float SummonTagCrit = 10f;
-        public const float SoundVolume = 0.5f;
+        public const float SoundVolume = 0.35f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BallSummonTagDmgMult, DragonSummonTagDmgMult);
         public override void SetStaticDefaults()
         {

@@ -83,24 +83,38 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks >= 6)
             {
                 modifiers.SetCrit();
-                modifiers.CritDamage += 0.5f;
+                modifiers.CritDamage += 1f;
             }
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = player;
-            if (Main.rand.NextBool(3))
+            int HitSound = Main.rand.Next(3);
+            if (modPlayer.FireballHitSoundCooldown > 0)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit1") with { Volume = ScorchingPoint.SoundVolume });
-            }
-            else if (Main.rand.NextBool(3))
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit2") with { Volume = ScorchingPoint.SoundVolume });
-            }
-            else
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit3") with { Volume = ScorchingPoint.SoundVolume });
+                switch (HitSound)
+                {
+                    case 0:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit1") with { Volume = ScorchingPoint.SoundVolume });
+                            modPlayer.FireballHitSoundCooldown = 20;
+                            break;
+                        }
+                    case 1:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit2") with { Volume = ScorchingPoint.SoundVolume });
+                            modPlayer.FireballHitSoundCooldown = 20;
+                            break;
+                        }
+                    case 2:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit3") with { Volume = ScorchingPoint.SoundVolume });
+                            modPlayer.FireballHitSoundCooldown = 20;
+                            break;
+                        }
+                }
             }
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks >= 6)
             {

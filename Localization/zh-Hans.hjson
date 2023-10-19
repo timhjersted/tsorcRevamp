@@ -7455,6 +7455,11 @@ Mods: {
 				DisplayName: 种子袋
 				Tooltip: ""
 			}
+
+			Galeforce: {
+				// DisplayName: Galeforce
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -8870,6 +8875,7 @@ Mods: {
 			ASOL13.DisplayName: 霸天龙神
 			StarForger.DisplayName: 铸星龙王
 			// CursedTormentorProjectile.DisplayName: Cursed Tormentor Projectile
+			// GaleforceProjectile.DisplayName: Galeforce Projectile
 		}
 
 		NPCs: {

@@ -20,6 +20,8 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
                 player.maxMinions += 1;
             }
 
+            player.GetModPlayer<tsorcRevampPlayer>().FireballHitSoundCooldown--;
+
             // If the minions exist reset the buff time, otherwise remove the buff from the player
             if (player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointFireball>()] > 0)
             {
