@@ -13,6 +13,10 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.NPCs;
+using Terraria.Audio;
+using ReLogic.Utilities;
+using Terraria.GameContent.Biomes;
+using Terraria.IO;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {
@@ -35,6 +39,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         public static int altTimePrFrameUpdate = 10;
 
         public int dir = 0;
+        public bool isFlipped = false;
 
         int startFrame;
         int endFrame;
@@ -45,7 +50,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
         public Asset<Texture2D> Texture = null;
         public float rotation;
-        public float highSpeedRotaiton;
+        public float internalRotation;
         public Vector2 segmentOrigin;
 
         public Vector2 zeroRotOffset;
@@ -75,14 +80,41 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 backSegments.Add(seg);
         }
 
-        public bool Update(int frameWorth, Vector2 origin, float usedRotations, SpriteEffects effect, bool altAnimation = false)
+        public bool Update(int frameWorth, Vector2 origin, float usedRotations, SpriteEffects effect, bool flip, bool altAnimation = false)
         {
             bool finishedAltSeq = false;
-
-            finalRotation = usedRotations;
-            finalPosition = origin;
-
             curEffect = effect;
+
+            if (isFlipped != flip) // flip only counts for rotation flip
+            {
+                isFlipped = flip;
+                // Console.WriteLine("f");
+                internalRotation *= -1;
+            }
+
+            /*
+            float rot = internalRotation - rotation;
+            Console.WriteLine("|--------------------------------------------|");
+            Console.WriteLine(internalRotation + " | " + rotation + " |: " + rot);
+            rot *= 0.94f;
+            internalRotation = rotation + rot;
+            Console.WriteLine(internalRotation + " | " + rotation + " |: " + rot);
+            Console.WriteLine((internalRotation - rotation) + " | " + (rotation+rot));
+            */
+
+            for (int i = 0; i < frameWorth; i++)
+            {
+                //Console.WriteLine("|--------------------------------------------|");
+                float t = 0.1f;
+                //Console.WriteLine(internalRotation + " -> " + rotation + " |" + (rotation - internalRotation));
+                internalRotation = internalRotation + t * (rotation - internalRotation);
+                //Console.WriteLine(internalRotation + " |" + (rotation - internalRotation));
+            }
+
+            usedRotations += internalRotation;
+            finalRotation = usedRotations;
+
+            finalPosition = origin;
 
             int maxFrame = (altAnimation ? (altEndFrame == -1 ? endFrame : altEndFrame) : endFrame);
             int minFrame = (altAnimation ? (altStartFrame == -1 ? startFrame : altStartFrame) : startFrame);
@@ -124,7 +156,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
                 offsetAdd = offsetAdd.RotatedBy(finalRotation) * Scale;
 
-                if (backSegment.Update(frameWorth, finalPosition + offsetAdd, finalRotation + backSegment.rotation, curEffect, altAnimation))
+                if (backSegment.Update(frameWorth, finalPosition + offsetAdd, finalRotation, curEffect, flip, altAnimation))
                     finishedAltSeq = true;
             }
 
@@ -137,7 +169,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
                 offsetAdd = offsetAdd.RotatedBy(finalRotation) * Scale;
 
-                if (frontSegment.Update(frameWorth, finalPosition + offsetAdd, finalRotation + frontSegment.rotation, curEffect, altAnimation))
+                if (frontSegment.Update(frameWorth, finalPosition + offsetAdd, finalRotation, curEffect, flip, altAnimation))
                     finishedAltSeq = true;
             }
 
@@ -312,6 +344,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 }
             }
         }
+        private float mod(float x, float m)
+        {
+            return (x % m + m) % m;
+        }
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
@@ -384,18 +420,21 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             float totalRotationTarget = 0f;
             if (targetMob != null)
             {
-                totalRotationTarget = Projectile.rotation - (NeckSegments[0].finalPosition - targetMob.Center).ToRotation();
+                totalRotationTarget = -(NeckSegments[0].finalPosition - targetMob.Center).RotatedBy(-Projectile.rotation).ToRotation();
+
+                //Console.WriteLine(":- " + totalRotationTarget);
 
                 if (dir == 1)
                 {
-                    totalRotationTarget -= MathF.PI;
+                    if (totalRotationTarget > MathF.PI)
+                        totalRotationTarget += MathF.PI;
+                    else if (totalRotationTarget > 0)
+                        totalRotationTarget -= MathF.PI;
+                    else
+                        totalRotationTarget += MathF.PI;
                 }
 
-
-                while (totalRotationTarget < -MathF.PI)
-                {
-                    totalRotationTarget += MathF.PI * 2f;
-                }
+                //Console.WriteLine(totalRotationTarget);
 
                 Head.frameUpdateTimer++;
                 if (Head.frameUpdateTimer > 20) // head update timer
@@ -472,7 +511,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 NS.rotation = 0f;
             Head.rotation = 0f;
 
-            FrontBody.Update(0, Projectile.Center, Projectile.rotation, flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, AltSequence);
+            FrontBody.Update(0, Projectile.Center, Projectile.rotation, flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, flip, AltSequence);
             Mouth.zeroRotOffset = Mouth.finalPosition; // save zeroRotOffset
             // set rotation;
             foreach (BodySegment NS in NeckSegments)
@@ -485,7 +524,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             Head.rotation = -segmentRotation;
 
-            if (FrontBody.Update(1, Projectile.Center, Projectile.rotation, flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, AltSequence))
+            if (FrontBody.Update(1, Projectile.Center, Projectile.rotation, flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, flip, AltSequence))
             {
                 // end alt seq
                 AltSequence = false;
@@ -506,7 +545,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             if (owner.HasMinionAttackTargetNPC)
             {
                 NPC npc = Main.npc[owner.MinionAttackTargetNPC];
-                Vector2 between = npc.Center - Mouth.zeroRotOffset;
+                Vector2 between = npc.Center - Projectile.Center;
 
                 float distBetween = between.Length();
                 float rotationDiff = Vector2.Dot(Vector2.Normalize(between), Vector2.Normalize(Projectile.velocity).RotatedBy(Mouth.rotation));
