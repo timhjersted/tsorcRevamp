@@ -3,11 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
 
 namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 {
@@ -381,7 +380,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
             return true;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.GoldenKey, 4));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.GreenBlossom>(), 1));

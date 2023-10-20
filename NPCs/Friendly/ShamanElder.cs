@@ -4,18 +4,17 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.Utilities;
 using tsorcRevamp.Items.Accessories;
-using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.BossItems;
-using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
     [AutoloadHead]
     class ShamanElder : ModNPC
     {
-        public static List<string> Names = new List<string> 
+        public static List<string> Names = new List<string>
         {
             Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Name1"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Name2"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Name3"),
             Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Name4"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Name5"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.ShamanElder.Name6"),
@@ -65,12 +64,13 @@ namespace tsorcRevamp.NPCs.Friendly
                 NPC.homeless = false;
             }
 
-            for(int i = 0; i < 5; i++)
+            for (int i = 0; i < 5; i++)
             {
-                if(UsefulFunctions.IsTileReallySolid(new Vector2(NPC.Center.X / 16 + 1, NPC.Center.Y / 16 + i))){
+                if (UsefulFunctions.IsTileReallySolid(new Vector2(NPC.Center.X / 16 + 1, NPC.Center.Y / 16 + i)))
+                {
                     return;
                 }
-                if(i == 4 && NPC.velocity.X > 0) //Then they're about to walk off the fucking cliff lol
+                if (i == 4 && NPC.velocity.X > 0) //Then they're about to walk off the fucking cliff lol
                 {
                     NPC.velocity.X = 0;
                 }
@@ -193,34 +193,40 @@ namespace tsorcRevamp.NPCs.Friendly
         {
             NPCShop shop = new(NPC.type);
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.Summon.OldChainCoif>()) {
-                shopCustomPrice = 25, 
+            shop.Add(new Item(ModContent.ItemType<Items.Armors.Summon.OldChainCoif>())
+            {
+                shopCustomPrice = 25,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.Summon.OldChainArmor>()) {
-                shopCustomPrice = 50, 
+            shop.Add(new Item(ModContent.ItemType<Items.Armors.Summon.OldChainArmor>())
+            {
+                shopCustomPrice = 50,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Armors.Summon.OldChainGreaves>()) {
-                shopCustomPrice = 33, 
+            shop.Add(new Item(ModContent.ItemType<Items.Armors.Summon.OldChainGreaves>())
+            {
+                shopCustomPrice = 33,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<CosmicWatch>()) {
-                shopCustomPrice = 5, 
+            shop.Add(new Item(ModContent.ItemType<CosmicWatch>())
+            {
+                shopCustomPrice = 5,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
- 
-            shop.Add(new Item(ModContent.ItemType<BossRematchTome>()) { 
-                shopCustomPrice = 5,  
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId 
+
+            shop.Add(new Item(ModContent.ItemType<BossRematchTome>())
+            {
+                shopCustomPrice = 5,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
 
 
-            shop.Add(new Item(ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>()) {
+            shop.Add(new Item(ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>())
+            {
                 shopCustomPrice = 4000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.SuperHardMode));

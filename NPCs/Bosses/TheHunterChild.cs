@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -18,7 +17,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             Main.npcFrameCount[NPC.type] = 7;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
-        } 
+        }
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
@@ -45,10 +44,10 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
-                return false;   
+            return false;
         }
 
-        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo) 
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(BuffID.Bleeding, 30 * 60, false);
         }
@@ -92,11 +91,11 @@ namespace tsorcRevamp.NPCs.Bosses
 
             bool hunterAlive = NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheHunter>());
 
-            
+
             if (!hunterAlive)
             {
-                if(NPC.life > 500)
-                { NPC.life = 500; } 
+                if (NPC.life > 500)
+                { NPC.life = 500; }
             }
 
             if (NPC.ai[3] == 0)
@@ -143,7 +142,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         }
                         NPC.ai[1] = -90;
                     }
-                    NPC.netUpdate = true; 
+                    NPC.netUpdate = true;
                 }
                 else if (NPC.ai[2] >= 600 && NPC.ai[2] < 950)
                 {
@@ -169,7 +168,7 @@ namespace tsorcRevamp.NPCs.Bosses
             else
             {
                 // Enrage phase
-                NPC.ai[3]++;               
+                NPC.ai[3]++;
                 NPC.defense = 66;
 
                 if (Main.player[NPC.target].position.X < vector8.X)
@@ -193,7 +192,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                 {
                     float num48 = 15f;
-                    float invulnDamageMult = 1.74f; 
+                    float invulnDamageMult = 1.74f;
                     int type = ModContent.ProjectileType<MiracleSprouter>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);
                     float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
@@ -211,9 +210,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[3] == 100)
                 {
                     if (NPC.ai[3] == 100)
-                
-                    
-                    NPC.ai[3] = 1;
+
+
+                        NPC.ai[3] = 1;
                     // NPC.life -= 500;
                     // No longer loses health on enrage now
 
@@ -259,28 +258,28 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             if (NPC.ai[3] == 0)
             {
-                
+
                 if (player.HasBuff(BuffID.Hunter) || player.HasItem(ModContent.ItemType<Items.Potions.PermanentPotions.PermanentHunterPotion>()))
-                { 
-                    NPC.alpha = 50; 
+                {
+                    NPC.alpha = 50;
                 }
                 else
-                { 
-                    NPC.alpha = 255; 
+                {
+                    NPC.alpha = 255;
                 }
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1f); 
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1f);
             }
             else
             {
                 if (player.HasBuff(BuffID.Hunter) || player.HasItem(ModContent.ItemType<Items.Potions.PermanentPotions.PermanentHunterPotion>()))
-                { 
-                    NPC.alpha = 150; 
+                {
+                    NPC.alpha = 150;
                 }
                 else
-                { 
-                    NPC.alpha = 255; 
+                {
+                    NPC.alpha = 255;
                 }
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f); 
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f);
             }
         }
         public override bool CheckActive()

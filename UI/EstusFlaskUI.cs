@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Diagnostics;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -84,7 +83,7 @@ namespace tsorcRevamp.UI
 
         public override void Update(GameTime gameTime)
         {
-            if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse )
+            if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 return;
             }

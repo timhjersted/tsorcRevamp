@@ -1,46 +1,46 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.Enums;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Microsoft.Xna.Framework.Graphics;
+using Terraria.Enums;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
-	public class NightbringerThrust : ModProjectile
-	{
-		public bool Hit = false;
-		public const int FadeInDuration = 7;
-		public const int FadeOutDuration = 4;
+    public class NightbringerThrust : ModProjectile
+    {
+        public bool Hit = false;
+        public const int FadeInDuration = 7;
+        public const int FadeOutDuration = 4;
 
-		public const int TotalDuration = 32;
+        public const int TotalDuration = 32;
 
-		public float CollisionWidth => 10f * Projectile.scale;
+        public float CollisionWidth => 10f * Projectile.scale;
 
-		public int Timer
-		{
-			get => (int)Projectile.ai[0];
-			set => Projectile.ai[0] = value;
+        public int Timer
+        {
+            get => (int)Projectile.ai[0];
+            set => Projectile.ai[0] = value;
         }
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 12;
         }
         public override void SetDefaults()
-		{
-			Projectile.Size = new Vector2(18);
-			Projectile.aiStyle = -1;
-			Projectile.friendly = true;
-			Projectile.penetrate = -1;
-			Projectile.tileCollide = false;
-			Projectile.scale = 1f;
+        {
+            Projectile.Size = new Vector2(18);
+            Projectile.aiStyle = -1;
+            Projectile.friendly = true;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.scale = 1f;
             Projectile.usesOwnerMeleeHitCD = true;
             Projectile.DamageType = DamageClass.Melee;
-			Projectile.ownerHitCheck = true; 
-			Projectile.extraUpdates = 1; 
-			Projectile.timeLeft = 360;
-			Projectile.hide = true;
+            Projectile.ownerHitCheck = true;
+            Projectile.extraUpdates = 1;
+            Projectile.timeLeft = 360;
+            Projectile.hide = true;
         }
         public override void OnSpawn(IEntitySource source)
         {
@@ -51,24 +51,24 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             modifiers.SourceDamage *= 2;
         }
         public override void AI()
-		{
-			Player player = Main.player[Projectile.owner];
+        {
+            Player player = Main.player[Projectile.owner];
 
-			Timer += 1;
-			if (Timer >= TotalDuration)
-			{
-				Projectile.Kill();
-				return;
-			}
-			else
-			{
-				player.heldProj = Projectile.whoAmI;
-			}
+            Timer += 1;
+            if (Timer >= TotalDuration)
+            {
+                Projectile.Kill();
+                return;
+            }
+            else
+            {
+                player.heldProj = Projectile.whoAmI;
+            }
 
-			Projectile.Opacity = Utils.GetLerpValue(0f, FadeInDuration, Timer, clamped: true) * Utils.GetLerpValue(TotalDuration, TotalDuration - FadeOutDuration, Timer, clamped: true);
+            Projectile.Opacity = Utils.GetLerpValue(0f, FadeInDuration, Timer, clamped: true) * Utils.GetLerpValue(TotalDuration, TotalDuration - FadeOutDuration, Timer, clamped: true);
 
-			Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter, reverseRotation: false, addGfxOffY: false);
-			Projectile.Center = playerCenter + Projectile.velocity * (Timer - 1f);
+            Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter, reverseRotation: false, addGfxOffY: false);
+            Projectile.Center = playerCenter + Projectile.velocity * (Timer - 1f);
 
             //Projectile.spriteDirection = (Vector2.Dot(Projectile.velocity, Vector2.UnitX) >= 0f).ToDirectionInt();
 
@@ -100,27 +100,27 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             }
             Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.78f);
         }
-		public override bool ShouldUpdatePosition()
-		{
-			return false;
-		}
+        public override bool ShouldUpdatePosition()
+        {
+            return false;
+        }
 
-		public override void CutTiles()
-		{
-			DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+        public override void CutTiles()
+        {
+            DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
             DelegateMethods.tileCutIgnore = Terraria.ID.TileID.Sets.TileCutIgnore.None;
             Vector2 start = Projectile.Center;
-			Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
-			Utils.PlotTileLine(start, end, CollisionWidth, DelegateMethods.CutTiles);
-		}
+            Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
+            Utils.PlotTileLine(start, end, CollisionWidth, DelegateMethods.CutTiles);
+        }
 
-		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-		{
-			Vector2 start = Projectile.Center;
-			Vector2 end = start + Projectile.velocity * 17f;
-			float collisionPoint = 0f;
-			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
-		}
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            Vector2 start = Projectile.Center;
+            Vector2 end = start + Projectile.velocity * 17f;
+            float collisionPoint = 0f;
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
+        }
         public static Texture2D texture;
         public static Texture2D glowTexture;
         public override bool PreDraw(ref Color lightColor)
@@ -129,7 +129,8 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
 
             if (Main.player[Projectile.owner].direction == 1)
             {
-            } else if (Main.player[Projectile.owner].direction != 1)
+            }
+            else if (Main.player[Projectile.owner].direction != 1)
             {
                 spriteEffects = SpriteEffects.FlipVertically;
             }

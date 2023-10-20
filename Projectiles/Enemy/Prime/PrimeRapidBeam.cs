@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -40,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             LaserTextureTail = new Rectangle(0, 58, 30, 24);
             LaserSound = SoundID.Item12 with { Volume = 0.5f };
 
-            LaserDebuffs = new List<int>(); 
+            LaserDebuffs = new List<int>();
             DebuffTimers = new List<int>();
             LaserDebuffs.Add(BuffID.OnFire);
             DebuffTimers.Add(300);

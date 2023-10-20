@@ -1,11 +1,7 @@
-using Humanizer;
-using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Utilities;
@@ -18,20 +14,66 @@ namespace tsorcRevamp.Items.VanillaItems
         public override void SetDefaults(Item item)
         {
             SetMeleeSlashColor(item);
-            if (item.type == ItemID.BoneSword)
+            if (item.type == ItemID.BoneSword || item.type == ItemID.Bladetongue || item.type == ItemID.BloodButcherer || item.type == ItemID.Muramasa || item.type == ItemID.BeamSword
+                || item.type == ItemID.Frostbrand || item.type == ItemID.BeeKeeper || item.type == ItemID.PalladiumSword || item.type == ItemID.OrichalcumSword || item.type == ItemID.InfluxWaver
+                || item.type == ItemID.Meowmere || item.type == ItemID.StarWrath)
             {
                 item.width = 50;
                 item.height = 50;
+            }
+            if (item.type == ItemID.FalconBlade)
+            {
+                item.width = 36;
+                item.height = 40;
+            }
+            if (item.type == ItemID.BluePhaseblade || item.type == ItemID.GreenPhaseblade || item.type == ItemID.YellowPhaseblade || item.type == ItemID.RedPhaseblade
+                || item.type == ItemID.WhitePhaseblade || item.type == ItemID.PurplePhaseblade || item.type == ItemID.OrangePhaseblade || item.type == ItemID.Seedler)
+            {
+                item.width = 48;
+                item.height = 48;
+            }
+            if (item.type == ItemID.BluePhasesaber || item.type == ItemID.GreenPhasesaber || item.type == ItemID.YellowPhasesaber || item.type == ItemID.RedPhasesaber
+                || item.type == ItemID.WhitePhasesaber || item.type == ItemID.PurplePhasesaber || item.type == ItemID.OrangePhasesaber || item.type == ItemID.AdamantiteSword
+                || item.type == ItemID.CobaltSword || item.type == ItemID.MythrilSword || item.type == ItemID.Keybrand || item.type == ItemID.TitaniumSword
+                || item.type == ItemID.DeathSickle || item.type == ItemID.DD2SquireDemonSword)
+            {
+                item.width = 56;
+                item.height = 56;
+            }
+            if (item.type == ItemID.ChlorophyteClaymore)
+            {
+                item.width = 66;
+                item.height = 66;
             }
             if (item.type == ItemID.BloodLustCluster)
             {
                 item.width = 58;
                 item.height = 48;
             }
+            if (item.type == ItemID.FieryGreatsword || item.type == ItemID.DD2SquireBetsySword)
+            {
+                item.width = 70;
+                item.height = 70;
+            }
             if (item.type == ItemID.Katana)
             {
                 item.width = 48;
                 item.height = 54;
+            }
+            if (item.type == ItemID.IronBroadsword || item.type == ItemID.IceBlade)
+            {
+                item.width = 36;
+                item.height = 36;
+            }
+            if (item.type == ItemID.TungstenBroadsword || item.type == ItemID.SilverBroadsword)
+            {
+                item.width = 38;
+                item.height = 38;
+            }
+            if (item.type == ItemID.GoldBroadsword || item.type == ItemID.Cutlass || item.type == ItemID.IceSickle)
+            {
+                item.width = 40;
+                item.height = 40;
             }
             if (item.type == ItemID.WoodenBoomerang)
             {
@@ -335,7 +377,7 @@ namespace tsorcRevamp.Items.VanillaItems
                     instancedGlobal.slashColor = Color.DarkCyan;
                     break;
                 case ItemID.FetidBaghnakhs:
-                    instancedGlobal.slashColor = Color.BurlyWood; 
+                    instancedGlobal.slashColor = Color.BurlyWood;
                     break;
                 case ItemID.Seedler:
                     instancedGlobal.slashColor = Color.YellowGreen;

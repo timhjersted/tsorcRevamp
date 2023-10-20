@@ -1,13 +1,9 @@
 ﻿
 using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.Graphics.Effects;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using Terraria.Graphics.Shaders;
-using tsorcRevamp.NPCs;
+using Terraria;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.VFX
 {
@@ -41,7 +37,7 @@ namespace tsorcRevamp.Projectiles.VFX
             else
             {
                 effectBaseSize = 170 * (effectTimer / Projectile.ai[1]);
-                if(effectBaseSize > 120)
+                if (effectBaseSize > 120)
                 {
                     effectBaseSize = 120;
                 }

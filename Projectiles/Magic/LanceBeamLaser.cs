@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -40,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Magic
             LaserTextureBody = new Rectangle(0, 26, 30, 30);
             LaserTextureTail = new Rectangle(0, 58, 30, 24);
             LaserSound = SoundID.Item12 with { Volume = 0.5f };
-            LaserDebuffs = new List<int>(); 
+            LaserDebuffs = new List<int>();
             DebuffTimers = new List<int>();
             LaserDebuffs.Add(BuffID.OnFire);
             DebuffTimers.Add(300);
@@ -95,7 +94,7 @@ namespace tsorcRevamp.Projectiles.Magic
                 return;
             }
 
-            if (FiringTimeLeft > 0  && Main.GameUpdateCount % 9 == 0)
+            if (FiringTimeLeft > 0 && Main.GameUpdateCount % 9 == 0)
             {
                 Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/LaserLoopable") with { Volume = 0.5f }, Projectile.Center);
             }

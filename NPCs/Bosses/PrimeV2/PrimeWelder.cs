@@ -1,14 +1,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Enemy.DarkCloud;
-using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
-using System;
 
 namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 {
@@ -19,7 +14,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             Main.npcFrameCount[NPC.type] = 2;
             NPCID.Sets.TrailCacheLength[NPC.type] = (int)TRAIL_LENGTH;    //The length of old position to be recorded
             NPCID.Sets.TrailingMode[NPC.type] = 1;
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            {
                 Hide = true
             };
             NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
@@ -53,7 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         {
             get
             {
-                if(Main.npc[(int)NPC.ai[1]].active && Main.npc[(int)NPC.ai[1]].type == ModContent.NPCType<TheMachine>())
+                if (Main.npc[(int)NPC.ai[1]].active && Main.npc[(int)NPC.ai[1]].type == ModContent.NPCType<TheMachine>())
                 {
                     return Main.npc[(int)NPC.ai[1]];
                 }
@@ -124,7 +120,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 {
                     aiZero = 1;
                 }
-                if(Main.netMode != NetmodeID.MultiplayerClient)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Prime.MoltenWeld>(), WeldDamage / 4, 0.5f, Main.myPlayer, ai0: aiZero, ai1: NPC.whoAmI);
                 }
@@ -245,7 +241,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             return false;
         }
 
-       
+
         public static Effect CoreEffect;
         float starRotation;
         void DrawSpark()

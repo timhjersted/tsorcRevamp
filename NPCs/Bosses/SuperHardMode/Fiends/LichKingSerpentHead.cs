@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
-using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 {
@@ -77,7 +73,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             return closestSegment; //the whoAmI of the closest segment
         }
 
-        public override bool PreKill() 
+        public override bool PreKill()
         {
             int closestSegmentID = ClosestSegment(NPC, ModContent.NPCType<LichKingSerpentBody>(), ModContent.NPCType<LichKingSerpentTail>());
             NPC.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot

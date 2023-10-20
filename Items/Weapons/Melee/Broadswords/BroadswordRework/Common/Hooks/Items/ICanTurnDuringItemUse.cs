@@ -1,32 +1,37 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Core;
-using Hook =  tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Hooks.Items.ICanTurnDuringItemUse;
+using Hook = tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Hooks.Items.ICanTurnDuringItemUse;
 
-namespace  tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Hooks.Items;
+namespace tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Hooks.Items;
 
 public interface ICanTurnDuringItemUse
 {
-	public static readonly GlobalHookList<GlobalItem> Hook = ItemLoader.AddModHook(new GlobalHookList<GlobalItem>(typeof(Hook).GetMethod(nameof(CanTurnDuringItemUse))));
+    public static readonly GlobalHookList<GlobalItem> Hook = ItemLoader.AddModHook(new GlobalHookList<GlobalItem>(typeof(Hook).GetMethod(nameof(CanTurnDuringItemUse))));
 
-	bool? CanTurnDuringItemUse(Item item, Player player);
+    bool? CanTurnDuringItemUse(Item item, Player player);
 
-	public static bool Invoke(Item item, Player player)
-	{
-		bool? globalResult = null;
+    public static bool Invoke(Item item, Player player)
+    {
+        bool? globalResult = null;
 
-		foreach (Hook g in Hook.Enumerate(item)) {
-			bool? result = g.CanTurnDuringItemUse(item, player);
+        foreach (Hook g in Hook.Enumerate(item))
+        {
+            bool? result = g.CanTurnDuringItemUse(item, player);
 
-			if (result.HasValue) {
-				if (result.Value) {
-					globalResult = true;
-				} else {
-					return false;
-				}
-			}
-		}
+            if (result.HasValue)
+            {
+                if (result.Value)
+                {
+                    globalResult = true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
 
-		return globalResult ?? item.useTurn;
-	}
+        return globalResult ?? item.useTurn;
+    }
 }

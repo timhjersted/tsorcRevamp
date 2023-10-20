@@ -4,16 +4,11 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
 using tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
-using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Accessories;
-using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
@@ -358,7 +353,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             potionType = ItemID.GreaterHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.JungleWyvernBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());

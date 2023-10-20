@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -33,7 +32,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
         float maxSize = 200;
         float detonationPercent
         {
-            get =>  1f - (DetonationProgress / DetonationTime);
+            get => 1f - (DetonationProgress / DetonationTime);
         }
         float easeInOutQuad(float x)
         {
@@ -56,12 +55,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             size -= sizeChange;
             sizeChange += 0.01f;
 
-            if(DetonationProgress == 30 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (DetonationProgress == 30 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 240, 25);
                 float randomRadius = 200;
 
-                if(Projectile.ai[1] == 1)
+                if (Projectile.ai[1] == 1)
                 {
                     randomRadius = 400;
                 }
@@ -85,14 +84,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if(Projectile.Distance(targetHitbox.Center.ToVector2()) < 230 && DetonationTime == DetonationProgress + 1)
+            if (Projectile.Distance(targetHitbox.Center.ToVector2()) < 230 && DetonationTime == DetonationProgress + 1)
             {
                 return true;
             }
             return false;
         }
 
-        
+
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.Electrified, 300);

@@ -1,14 +1,13 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
-using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
@@ -29,7 +28,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.width = 45;
             NPC.height = 45;
             DrawOffsetY = drawOffset;
-            NPC.aiStyle = 6; 
+            NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22750;
             NPC.damage = 96;
@@ -64,10 +63,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
             //AIWorm does not call SimpleProjectile on its own, so we've gotta do it manually here
             tsorcRevampAIs.SimpleProjectile(NPC);
-            
+
             //this makes the head always stay in the same position even when it flips upside down
             if (NPC.velocity.X < 0f) { NPC.spriteDirection = 1; }
-            else  
+            else
             if (NPC.velocity.X > 0f) { NPC.spriteDirection = -1; }
         }
 

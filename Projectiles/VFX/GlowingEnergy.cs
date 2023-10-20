@@ -1,12 +1,10 @@
 ﻿
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Graphics.Effects;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using Terraria.Graphics.Shaders;
 
 namespace tsorcRevamp.Projectiles.VFX
 {
@@ -34,7 +32,7 @@ namespace tsorcRevamp.Projectiles.VFX
         public override void AI()
         {
             Projectile.Center = Main.npc[(int)Projectile.ai[0]].Center;
-            if(Main.GameUpdateCount % 4 == 0 && Main.netMode != NetmodeID.MultiplayerClient && effectTimer < 100)
+            if (Main.GameUpdateCount % 4 == 0 && Main.netMode != NetmodeID.MultiplayerClient && effectTimer < 100)
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Main.npc[(int)Projectile.ai[0]].velocity, ModContent.ProjectileType<Projectiles.VFX.EnergyGathering>(), 0, 0, Main.myPlayer, Projectile.ai[0], Projectile.ai[1]);
             }
@@ -92,7 +90,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
             float effectFactor = (float)Math.Pow(effectTimer / effectLimit, 2);
 
-            if(effectLimit - effectTimer < 30)
+            if (effectLimit - effectTimer < 30)
             {
                 effectFactor = MathHelper.Lerp(0, effectFactor, (effectLimit - effectTimer) / 30f);
             }

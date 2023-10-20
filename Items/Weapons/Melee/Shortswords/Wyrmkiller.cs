@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             Item.value = 140000;
             Item.width = 32;
             Item.noUseGraphic = true;
-            Item.noMelee= true;
+            Item.noMelee = true;
             Item.shoot = ModContent.ProjectileType<WyrmkillerProjectile>(); // The projectile is what makes a shortsword work
             Item.shootSpeed = 2.1f; // This value bleeds into the behavior of the projectile as velocity, keep that in mind when tweaking values
         }

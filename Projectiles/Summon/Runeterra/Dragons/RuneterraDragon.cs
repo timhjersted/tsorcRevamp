@@ -1,18 +1,16 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml.Schema;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Default;
-using static Humanizer.In;
-using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.NPCs;
 using Terraria.Audio;
@@ -272,17 +270,17 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             {
                 case 1:
                     {
-                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/BreathLoop") with { Volume = 0.75f, IsLooped = true, MaxInstances = 1 };
+                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/BreathLoop") with { Volume = ScorchingPoint.SoundVolume * 0.5f, IsLooped = true, MaxInstances = 1 };
                         break;
                     }
                 case 2:
                     {
-                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BreathLoop") with { Volume = 1f, IsLooped = true, MaxInstances = 1 };
+                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BreathLoop") with { Volume = InterstellarVesselGauntlet.SoundVolume, IsLooped = true, MaxInstances = 1 };
                         break;
                     }
                 case 3:
                     {
-                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BreathLoop") with { Volume = 0.35f, IsLooped = true, MaxInstances = 1 };
+                        BreathLoopStyle = new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BreathLoop") with { Volume = CenterOfTheUniverse.SoundVolume * 0.35f, IsLooped = true, MaxInstances = 1 };
                         break;
                     }
             }
@@ -321,7 +319,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks < 6)
                             {
                                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks++;
-                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/Marked") with { Volume = 0.5f });
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/Marked") with { Volume = ScorchingPoint.SoundVolume * 0.5f });
                             }
                             break;
                         }
@@ -330,7 +328,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks < 6)
                             {
                                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks++;
-                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/Marked") with { Volume = 0.5f });
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/Marked") with { Volume = InterstellarVesselGauntlet.SoundVolume * 0.5f });
                             }
                             break;
                         }
@@ -339,7 +337,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks < 6)
                             {
                                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks++;
-                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/Marked") with { Volume = 0.5f });
+                                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/Marked") with { Volume = CenterOfTheUniverse.SoundVolume * 0.5f });
                             }
                             break;
                         }
@@ -365,7 +363,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
                 Projectile.localNPCHitCooldown = BaseAttackSpeed - (BaseAttackSpeed / 3);
-            } else { Projectile.localNPCHitCooldown = BaseAttackSpeed; }
+            }
+            else { Projectile.localNPCHitCooldown = BaseAttackSpeed; }
 
             Vector2 movementVec = Main.MouseWorld - Projectile.Center;
 
@@ -451,6 +450,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 {
                     BreathLoopID = SoundEngine.PlaySound(BreathLoopStyle);
                 }
+                else if (Head.frame < baseHeadFrames + 4 && SoundEngine.TryGetActiveSound(BreathLoopID, out var activeSound))
+                {
+                    activeSound.Pause();
+                }
             }
             else if (keepCharge)
             {
@@ -478,6 +481,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             }
             else if (!keepCharge)
             {
+                if (SoundEngine.TryGetActiveSound(BreathLoopID, out var ActiveSound))
+                {
+                    ActiveSound.Pause();
+                }
                 Head.frameUpdateTimer++;
 
                 if (Head.frameUpdateTimer > 10) // head update timer
@@ -599,8 +606,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             return foundNPC;
         }
 
-        public abstract float maxSize {  get; }
-        public abstract float size {  get; }
+        public abstract float maxSize { get; }
+        public abstract float size { get; }
 
         public override bool? CanDamage()
         {
@@ -609,7 +616,22 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if (Head.frame < 4)
+            int HeadFrameForBreathing = 4;
+            switch (DragonType)
+            {
+                default: break;
+                case 1:
+                    {
+                        HeadFrameForBreathing = 8;
+                        break;
+                    }
+                case 2:
+                    {
+                        HeadFrameForBreathing = 8;
+                        break;
+                    }
+            }
+            if (Head.frame < HeadFrameForBreathing)
                 return false;
 
             Vector2 between = Mouth.finalPosition - targetHitbox.Center();

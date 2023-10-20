@@ -4,14 +4,12 @@ using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
 using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Items.Placeable.Relics;
 using tsorcRevamp.Items.Placeable.Trophies;
@@ -129,7 +127,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int Turtle = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.IceTortoise, 0); 
+                    int Turtle = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.IceTortoise, 0);
 
                     if (Main.netMode == NetmodeID.Server)
                     {
@@ -173,7 +171,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 // Storing the distance means we don't have to re-calculate it multiple times
                 float distance = NPC.Distance(player.Center);
 
-               
+
                 // Phase 2 triggers chilled, slow and frostburn
                 if (distance < 1550 && secondPhase)
                 {
@@ -192,7 +190,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         announcedDebuffs = true;
                     }
                 }
-            }            
+            }
         }
 
         void BreathAttack()
@@ -486,13 +484,13 @@ namespace tsorcRevamp.NPCs.Bosses
                     iceSpiritTimer = 900;
                     turtleTimer += 500;
                     NPC.ai[3] = 1;
-                    
+
                     // Lose health on enrage
                     //if (NPC.life > 550)
                     //{
                     //    NPC.life -= 350; //amount boss takes damage when becoming enraged
                     //}
-                        
+
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                     NPC.netUpdate = true;
                 }
@@ -636,7 +634,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             //Its death animation works a tad different from its normal draw code
-            if(deathTimer > 0)
+            if (deathTimer > 0)
             {
                 opacity = deathTimer / 60f;
 
@@ -711,7 +709,7 @@ namespace tsorcRevamp.NPCs.Bosses
             potionType = ItemID.GreaterHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TheSorrowBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());

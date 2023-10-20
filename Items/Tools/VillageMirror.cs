@@ -1,13 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using tsorcRevamp.Buffs.Debuffs;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
-using static tsorcRevamp.Items.Tools.GreatMagicMirror;
-using tsorcRevamp.Utilities;
-using tsorcRevamp.Items.Materials;
 using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
+using static tsorcRevamp.Items.Tools.GreatMagicMirror;
 
 namespace tsorcRevamp.Items.Tools
 {

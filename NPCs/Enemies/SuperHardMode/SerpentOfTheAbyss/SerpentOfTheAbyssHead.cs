@@ -1,16 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles.Enemy;
-using tsorcRevamp.Buffs.Debuffs;
-using Terraria.DataStructures;
-using Terraria.GameContent.ItemDropRules;
-using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Accessories;
-using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
 {

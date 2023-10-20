@@ -1,13 +1,13 @@
-﻿using Terraria.GameContent.ItemDropRules;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.DataStructures;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -53,21 +53,21 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 44;
             NPC.width = 20;
             NPC.lifeMax = 750;
-            if (Main.hardMode) 
-            { 
-                NPC.lifeMax = 1400; 
-                NPC.defense = 40; 
-                NPC.value = 7000; 
-                lothricDamage = 24; 
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 1400;
+                NPC.defense = 40;
+                NPC.value = 7000;
+                lothricDamage = 24;
             }
-            if (tsorcRevampWorld.SuperHardMode) 
-            { 
-                NPC.lifeMax = 2500; 
-                NPC.defense = 60; 
-                NPC.damage = 80; 
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 2500;
+                NPC.defense = 60;
+                NPC.damage = 80;
                 NPC.value = 10000; // was 390
-                lothricDamage = 34; 
-            } 
+                lothricDamage = 34;
+            }
             NPC.value = 3750;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
@@ -414,7 +414,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (NPC.ai[3] == 26) //If timer is 46
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f}, NPC.Center); //Play slash/swing sound
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center); //Play slash/swing sound
 
                         if (NPC.direction == 1)
                         {
@@ -553,7 +553,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (NPC.ai[1] == 442) //If timer is 50
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f}, NPC.Center); //Play slash/swing sound
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center); //Play slash/swing sound
 
                         if (NPC.direction == 1)
                         {
@@ -920,7 +920,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 12, 24));
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());

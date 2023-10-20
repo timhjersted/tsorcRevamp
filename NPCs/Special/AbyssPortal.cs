@@ -1,17 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
-using Terraria.Audio;
-using Terraria.GameContent;
+using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
-using tsorcRevamp;
-using Terraria.Graphics.Shaders;
-using Terraria.Graphics.Effects;
 
 namespace tsorcRevamp.NPCs.Special
 {
@@ -86,7 +79,7 @@ namespace tsorcRevamp.NPCs.Special
             //Make its centerpoint fixed
             NPC.Center = tsorcRevampWorld.AbyssPortalLocation;
 
-            for(int i = 0; i < Main.maxPlayers; i++)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active && Main.player[i].Center.Distance(NPC.Center) < 400 * tsorcRevampWorld.SHMScale)
                 {
@@ -97,7 +90,7 @@ namespace tsorcRevamp.NPCs.Special
                     Main.player[i].statLife--;
                 }
             }
-                        
+
 
             if (Filters.Scene[filterIndex] == null)
             {
@@ -113,11 +106,11 @@ namespace tsorcRevamp.NPCs.Special
             {
                 float progress = startupPercent;
                 float intensity = MathHelper.Lerp(1, 1.7f, tsorcRevampWorld.SHMScale - 1) * startupPercent;
-                Filters.Scene[filterIndex].GetShader().UseTargetPosition(NPC.Center).UseProgress(progress).UseOpacity(0.1f).UseIntensity(intensity).UseColor(new Vector3(flashOpacity, 0,0));
+                Filters.Scene[filterIndex].GetShader().UseTargetPosition(NPC.Center).UseProgress(progress).UseOpacity(0.1f).UseIntensity(intensity).UseColor(new Vector3(flashOpacity, 0, 0));
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)        
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             return false;
         }

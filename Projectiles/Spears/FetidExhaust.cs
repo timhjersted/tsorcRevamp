@@ -1,11 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -68,11 +66,11 @@ namespace tsorcRevamp.Projectiles.Spears
                 lastPositions = new List<Vector2>();
                 lastRotations = new List<float>();
             }
-            
+
             //Trick to double accuracy on the trail lists. Ended up being unnecessary.
-            if(lastPositions.Count > 1)
+            if (lastPositions.Count > 1)
             {
-                lastPositions.Add((lastPositions[lastPositions.Count - 1] + Projectile.Center)/ 2f);
+                lastPositions.Add((lastPositions[lastPositions.Count - 1] + Projectile.Center) / 2f);
                 lastRotations.Add((lastRotations[lastRotations.Count - 1] + Projectile.rotation) / 2f);
             }
             lastPositions.Add(Projectile.Center);
@@ -87,7 +85,7 @@ namespace tsorcRevamp.Projectiles.Spears
 
             //Cast light
             Vector3 colorVector = Color.GreenYellow.ToVector3() * 2f;
-            
+
             Vector2 startPoint = Projectile.Center;
             Vector2 endpoint = Projectile.Center + Projectile.rotation.ToRotationVector2() * laserWidth;
 
@@ -190,15 +188,15 @@ namespace tsorcRevamp.Projectiles.Spears
             //Apply the shader
 
             SpriteEffects spriteEffects = SpriteEffects.None;
-            
+
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
 
             int drawCap = 120;
-            if(lastPositions.Count < drawCap)
+            if (lastPositions.Count < drawCap)
             {
                 drawCap = lastPositions.Count;
             }
-            for(int i = 0; i < drawCap; i++)
+            for (int i = 0; i < drawCap; i++)
             {
                 float opacity = 0.5f * ((float)Math.Pow(1f - (float)i / (float)drawCap, 0.5f));
                 data.UseOpacity(opacity * scaleDown);

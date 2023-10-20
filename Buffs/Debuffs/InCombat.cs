@@ -1,4 +1,5 @@
 ﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
@@ -9,7 +10,7 @@ namespace tsorcRevamp.Buffs.Debuffs
         {
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
-            Terraria.ID.BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
+            BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
         }
     }
 }

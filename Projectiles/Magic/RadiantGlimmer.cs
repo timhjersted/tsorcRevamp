@@ -1,7 +1,5 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -50,13 +48,13 @@ namespace tsorcRevamp.Projectiles.Magic
             Main.NewText(count);*/
 
             //Target the position of its owners mouse
-            if(Projectile.owner == Main.myPlayer)
+            if (Projectile.owner == Main.myPlayer)
             {
                 targetPoint = Main.MouseWorld;
             }
 
             //Slow down right before reaching its target so it doesn't overshoot
-            if(Vector2.Distance(targetPoint, Projectile.Center) < 300)
+            if (Vector2.Distance(targetPoint, Projectile.Center) < 300)
             {
                 Projectile.velocity *= 0.85f;
             }
@@ -66,7 +64,7 @@ namespace tsorcRevamp.Projectiles.Magic
             float dist = Vector2.Distance(Projectile.Center, targetPoint);
             if ((Projectile.velocity + nextVel).Length() < 20 && dist > 16)
             {
-                
+
                 Projectile.velocity += nextVel;
                 Projectile.velocity = Vector2.Lerp(Projectile.velocity, UsefulFunctions.Aim(Projectile.Center, Main.MouseWorld, Math.Min(dist / 20, 20)), 0.2f);
             }
@@ -98,7 +96,7 @@ namespace tsorcRevamp.Projectiles.Magic
                 }
             }
 
-            if(Projectile.timeLeft <= 20)
+            if (Projectile.timeLeft <= 20)
             {
                 Projectile.Center = Vector2.Lerp(Projectile.Center, UsefulFunctions.GetPlayerHandOffset(Main.player[Projectile.owner]), (21f - Projectile.timeLeft) / 20f);
                 radius = 8f * Projectile.timeLeft / 4f;
@@ -137,7 +135,7 @@ namespace tsorcRevamp.Projectiles.Magic
                             dustIndex = 0;
                         }
                     }
-                    
+
                 }
                 else
                 {
@@ -154,7 +152,7 @@ namespace tsorcRevamp.Projectiles.Magic
                     Dust.NewDustPerfect(Projectile.Center + dustOffset, DustID.PurificationPowder, UsefulFunctions.Aim(Projectile.Center + dustOffset, Main.npc[i].Center, Main.rand.NextFloat(0.01f, 4f))); ;
                 }
             }
-            
+
             //For every dust on the edge, move it to its proper position on the radius so that it "keeps up" with the projectile perfectly
             for (int i = 0; i < 500; i++)
             {
@@ -190,7 +188,7 @@ namespace tsorcRevamp.Projectiles.Magic
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if(Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2()) < radius)
+            if (Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2()) < radius)
             {
                 return true;
             }
@@ -200,7 +198,7 @@ namespace tsorcRevamp.Projectiles.Magic
             }
         }
 
-       
+
 
         public override bool PreDraw(ref Color lightColor)
         {

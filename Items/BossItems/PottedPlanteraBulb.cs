@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items.BossItems
             recipe.AddIngredient(ItemID.JungleSpores, 9);
             recipe.AddIngredient(ItemID.HallowedBar, 1);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

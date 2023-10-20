@@ -62,7 +62,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.ShadowScalemail);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
 
             Recipe recipe2 = CreateRecipe();

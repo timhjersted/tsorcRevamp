@@ -49,8 +49,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
-        {           
-            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false);        
+        {
+            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false);
             target.AddBuff(33, 300, false); //weak          
         }
 

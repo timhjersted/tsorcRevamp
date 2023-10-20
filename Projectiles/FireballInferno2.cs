@@ -34,11 +34,11 @@ namespace tsorcRevamp.Projectiles
         int originalDamage = 0;
         public override void AI()
         {
-            if(Projectile.timeLeft > 295)
+            if (Projectile.timeLeft > 295)
             {
                 return;
             }
-            if(originalDamage == 0)
+            if (originalDamage == 0)
             {
                 originalDamage = Projectile.damage;
                 Projectile.damage /= 50;
@@ -68,7 +68,7 @@ namespace tsorcRevamp.Projectiles
                 {
                     Vector2 dir = Main.rand.NextVector2CircularEdge(size, size);
                     Vector2 dustPos = Projectile.Center + dir + Main.rand.NextVector2Circular(8, 8);
-                    
+
                     if (!Collision.IsWorldPointSolid(dustPos))
                     {
                         dir.Normalize();
@@ -80,7 +80,7 @@ namespace tsorcRevamp.Projectiles
                 {
                     Vector2 dir = Main.rand.NextVector2CircularEdge(size, size);
                     Vector2 dustPos = Projectile.Center + dir;
-                    
+
                     if (!Collision.IsWorldPointSolid(dustPos))
                     {
                         dir.Normalize();
@@ -100,7 +100,7 @@ namespace tsorcRevamp.Projectiles
                 Vector2 diff = target.Center - Projectile.Center;
                 diff.Normalize();
 
-                 target.velocity = -diff * 5;
+                target.velocity = -diff * 5;
             }
         }
 

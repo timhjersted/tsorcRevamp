@@ -7,7 +7,7 @@ using tsorcRevamp.Items.Materials;
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Head)]
-    public class SmoughHelmet : ModItem 
+    public class SmoughHelmet : ModItem
     {
         public static float Dmg = 15f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);

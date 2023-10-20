@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -140,7 +139,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
                 Main.EntitySpriteDraw(sawTexture, drawPos + new Vector2(0, 44), shadowRectangle, color, 0, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
 
                 shadowFrame--;
-                if(shadowFrame < 0)
+                if (shadowFrame < 0)
                 {
                     shadowFrame = 3;
                 }

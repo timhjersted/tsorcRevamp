@@ -2,11 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static tsorcRevamp.SpawnHelper;
-using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Utilities;
+using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -36,20 +36,20 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 100;
-            if (Main.hardMode) 
-            { 
-                NPC.lifeMax = 250; 
-                NPC.defense = 25; 
-                NPC.damage = 28; 
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 250;
+                NPC.defense = 25;
+                NPC.damage = 28;
                 NPC.value = 1250;
                 smallSlashDamage = 20;
                 bigSlashDamage = 25;
-    }
-            if (tsorcRevampWorld.SuperHardMode) 
-            { 
-                NPC.lifeMax = 1000; 
-                NPC.defense = 45; 
-                NPC.damage = 38; 
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 1000;
+                NPC.defense = 45;
+                NPC.damage = 38;
                 NPC.value = 4000;
                 smallSlashDamage = 30;
                 bigSlashDamage = 35;
@@ -61,7 +61,7 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.HollowWarriorBanner>();
 
             NPC.buffImmune[BuffID.Confused] = true;
-            
+
         }
 
         public override void HitEffect(NPC.HitInfo hit)
@@ -363,7 +363,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (NPC.ai[3] == 26) //If timer is 46
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f}, NPC.Center); //Play slash/swing sound
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center); //Play slash/swing sound
 
                         if (NPC.direction == 1)
                         {
@@ -501,7 +501,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (NPC.ai[1] == 442) //If timer is 50
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f}, NPC.Center); //Play slash/swing sound
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center); //Play slash/swing sound
 
                         if (NPC.direction == 1)
                         {
@@ -758,7 +758,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 else //if enemy facing left
                 {
-                    if (projectile.oldPosition.X > NPC.Center.X &&  projectile.aiStyle != 19) //if hit in the back
+                    if (projectile.oldPosition.X > NPC.Center.X && projectile.aiStyle != 19) //if hit in the back
                     {
                         CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
                         modifiers.FinalDamage *= 2; //bonus damage
@@ -804,7 +804,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spawnInfo.Player.ZoneGlowshroom) return 0f;
 
             if (!Main.hardMode && spawnInfo.SpawnTileType == TileID.GreenDungeonBrick && !spawnInfo.Water) return 0.15f;
-
+            if (!spawnInfo.Water && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonUnsafe) && !Main.hardMode && !tsorcRevampWorld.SuperHardMode) return 0.1f;
             if (Main.hardMode && spawnInfo.Lihzahrd) return 0.2f;
             if (Main.hardMode && p.ZoneNormalCaverns && !spawnInfo.Water) return 0.02f;
             if (Main.hardMode && p.ZoneDesert && p.ZoneOverworldHeight && !spawnInfo.Water) return 0.05f;
@@ -835,7 +835,7 @@ namespace tsorcRevamp.NPCs.Enemies
             return chance;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 2, 4));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 30));

@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -24,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             NPC.height = 40;
             NPC.scale = 1.1f;
             NPC.noTileCollide = true;
-            NPC.friendly = false;            
+            NPC.friendly = false;
             NPC.noGravity = true;
             NPC.aiStyle = -1;
             NPC.lifeMax = 6;

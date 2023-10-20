@@ -2,17 +2,13 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Magic;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -56,7 +52,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int cometDamage = 50;
         int darkAstronomyDamage = 60;
         int antimatterCannonDamage = 70;
-        
+
         //chaos
         int holdTimer = 0;
         int chargeDamage = 0;
@@ -91,7 +87,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             int num54;
 
-            
+
 
 
             //If it's too far away, target the closest player and charge them
@@ -468,7 +464,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             potionType = ItemID.SuperHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.BlightBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));

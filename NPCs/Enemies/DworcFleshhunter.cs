@@ -1,9 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -20,7 +19,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit29;
             NPC.DeathSound = SoundID.NPCDeath29;
             NPC.damage = 30;
-            NPC.lifeMax = 45;
+            NPC.lifeMax = 50;
             NPC.defense = 12;
             NPC.value = 220;
             NPC.width = 18;
@@ -34,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         //oh sweet jesus why do you drop so many potions - lol
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.BattlePotion, 50));
             npcLoot.Add(ItemDropRule.Common(ItemID.WaterWalkingPotion, 30));

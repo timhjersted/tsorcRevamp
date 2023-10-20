@@ -1,12 +1,10 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
@@ -185,7 +183,8 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 12));
             npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 100, 1, 1, 30));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 20));

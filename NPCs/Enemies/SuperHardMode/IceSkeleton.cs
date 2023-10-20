@@ -2,8 +2,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -58,7 +56,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 return 0.15f;
             }
-                if (tsorcRevampWorld.SuperHardMode && spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f)
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f)
             {
                 if (p.ZoneDirtLayerHeight)
                 {

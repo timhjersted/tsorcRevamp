@@ -44,11 +44,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             {
                 maxRadius = 1300;
             }
-            if(radius < maxRadius)
+            if (radius < maxRadius)
             {
                 radius += 5;
             }
-            if(originPoint == Vector2.Zero)
+            if (originPoint == Vector2.Zero)
             {
                 SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Thunder_0"), Projectile.Center);
                 if (Projectile.ai[1] == 2)
@@ -128,7 +128,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             trailWidth = 70;
             trailPointLimit = 2000;
             trailMaxLength = 2250;
-            if(Projectile.ai[1] >= 2)
+            if (Projectile.ai[1] >= 2)
             {
                 trailPointLimit = 50;
                 trailMaxLength = 200;

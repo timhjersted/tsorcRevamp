@@ -2,12 +2,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
 
@@ -206,7 +205,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
-        {         
+        {
             target.AddBuff(ModContent.BuffType<CurseBuildup>(), 600 * 60, false); //-20 HP curse
             target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 300 * 60, false);
             target.AddBuff(ModContent.BuffType<TornWings>(), 60 * 60, false);
@@ -215,7 +214,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 target.AddBuff(BuffID.BrokenArmor, 60 * 60, false);
                 target.AddBuff(BuffID.Cursed, 3 * 60, false);
-            }           
+            }
         }
         #endregion
 
@@ -289,7 +288,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 2, 2));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Humanity>(), 100, 1, 1, 30));

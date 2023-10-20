@@ -98,7 +98,7 @@ namespace tsorcRevamp.Projectiles
                 }
             }
 
-            Projectile.rotation += 0.12f;            
+            Projectile.rotation += 0.12f;
 
             Lighting.AddLight(Projectile.position, 0.0452f, 0.24f, 0.24f);
 
@@ -119,18 +119,18 @@ namespace tsorcRevamp.Projectiles
             float coinDistance = 0;
             Vector2 coinCenter = Vector2.Zero;
             for (int i = 0; i < Main.maxProjectiles; i++)
-            {                
+            {
                 if (Main.projectile[i].active && Main.projectile[i].type == Projectile.type && i != Projectile.whoAmI)
                 {
                     float distance = Projectile.DistanceSQ(Main.projectile[i].Center);
-                    if(distance > coinDistance && Collision.CanHit(Main.projectile[i], Projectile))
+                    if (distance > coinDistance && Collision.CanHit(Main.projectile[i], Projectile))
                     {
                         coinDistance = distance;
                         coinCenter = Main.projectile[i].Center;
                     }
                 }
             }
-            if(coinCenter != Vector2.Zero)
+            if (coinCenter != Vector2.Zero)
             {
                 return coinCenter;
             }
@@ -153,7 +153,7 @@ namespace tsorcRevamp.Projectiles
                 }
             }
 
-            if(closestNPC != null)
+            if (closestNPC != null)
             {
                 return Main.npc[closestNPC.Value].Center;
             }

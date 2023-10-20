@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Debuffs;
 
 
 namespace tsorcRevamp.Projectiles.Melee
@@ -26,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Melee
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.position = player.Center;
+            Projectile.position = player.position;
             if (player.GetModPlayer<tsorcRevampPlayer>().PortlyPlateArmor)
             {
                 Projectile.timeLeft = 2;

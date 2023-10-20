@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.VFX;
@@ -12,7 +8,7 @@ using tsorcRevamp.Projectiles.VFX;
 namespace tsorcRevamp.Projectiles.Summon
 {
     class PhotonicDownpourLaser : DynamicTrail
-    {        
+    {
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Death Laser");
@@ -54,11 +50,11 @@ namespace tsorcRevamp.Projectiles.Summon
             Lighting.AddLight(Projectile.Center, Color.GreenYellow.ToVector3());
             if (!playedSound)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item33 with { Volume = 0.5f}, Projectile.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item33 with { Volume = 0.5f }, Projectile.Center);
                 playedSound = true;
             }
         }
-        
+
         public override float CollisionWidthFunction(float progress)
         {
             return 9;

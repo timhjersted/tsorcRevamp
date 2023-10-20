@@ -24,6 +24,11 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override bool PreAI()
         {
+            if (Projectile.ai[0] == 1)
+            {
+                Projectile.timeLeft = 120;
+            }
+
             Projectile.rotation += 1f;
 
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 75, 0, 0, 50, Color.Chartreuse, 3.0f);

@@ -103,7 +103,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
                                 for (int k = 0; k < dustCount; k++)
                                 {
-                                    
+
                                     Dust thisDust = Dust.NewDustPerfect(branches[i][j] + diff * k, DustID.AncientLight, Scale: scale);
                                     thisDust.noGravity = true;
                                     thisDust.velocity = Vector2.Zero;
@@ -328,7 +328,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
                     Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                     ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer);
-                    
+
                     data.Apply(null);
                     if (branches.Count > 0)
                     {
@@ -622,7 +622,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer);
-            
+
 
             float i = 0;
             Vector2 diff = unit - start;

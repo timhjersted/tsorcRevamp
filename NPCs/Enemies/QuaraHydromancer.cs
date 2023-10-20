@@ -111,7 +111,8 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Magic.GreatEnergyBeamScroll>(), 50));
             npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 50));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 50));

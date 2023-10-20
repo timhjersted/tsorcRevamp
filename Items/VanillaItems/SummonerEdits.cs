@@ -152,7 +152,8 @@ namespace tsorcRevamp.Items.VanillaItems
                 {
                     tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Nerfed", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.TerraprismaTier1")));
                 }
-            } else
+            }
+            else
             if (item.type == ItemID.EmpressBlade && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())))
             {
                 int ttindex1 = tooltips.FindLastIndex(t => t.Name == "Tooltip0");
@@ -235,62 +236,62 @@ namespace tsorcRevamp.Items.VanillaItems
                 }
                 else
                     switch (item.prefix)
-                {
+                    {
 
-                    case PrefixID.Large:
+                        case PrefixID.Large:
 
-                        scaleDelta = 0.12f;
-                        break;
+                            scaleDelta = 0.12f;
+                            break;
 
-                    case PrefixID.Massive:
+                        case PrefixID.Massive:
 
-                        scaleDelta = 0.18f;
-                        break;
+                            scaleDelta = 0.18f;
+                            break;
 
-                    case PrefixID.Dangerous:
+                        case PrefixID.Dangerous:
 
-                        scaleDelta = 0.06f;
-                        break;
+                            scaleDelta = 0.06f;
+                            break;
 
-                    case PrefixID.Tiny:
+                        case PrefixID.Tiny:
 
-                        scaleDelta = -0.18f;
-                        break;
+                            scaleDelta = -0.18f;
+                            break;
 
-                    case PrefixID.Terrible:
+                        case PrefixID.Terrible:
 
-                        scaleDelta = -0.14f;
-                        break;
+                            scaleDelta = -0.14f;
+                            break;
 
-                    case PrefixID.Small:
+                        case PrefixID.Small:
 
-                        scaleDelta = -0.1f;
-                        break;
+                            scaleDelta = -0.1f;
+                            break;
 
-                    case PrefixID.Unhappy:
+                        case PrefixID.Unhappy:
 
-                        scaleDelta = -0.1f;
-                        break;
+                            scaleDelta = -0.1f;
+                            break;
 
-                    case PrefixID.Bulky:
+                        case PrefixID.Bulky:
 
-                        scaleDelta = 0.1f;
-                        break;
+                            scaleDelta = 0.1f;
+                            break;
 
-                    case PrefixID.Shameful:
+                        case PrefixID.Shameful:
 
-                        scaleDelta = 0.1f;
-                        break;
+                            scaleDelta = 0.1f;
+                            break;
 
-                    case PrefixID.Legendary:
+                        case PrefixID.Legendary:
 
-                        scaleDelta = 0.1f;
-                        break;
+                            scaleDelta = 0.1f;
+                            break;
 
-                    default:
-                        scaleDelta = 0;
-                        break;
-                }
+                        default:
+                            scaleDelta = 0;
+                            break;
+                    }
                 player.whipRangeMultiplier += scaleDelta;
             }
         }

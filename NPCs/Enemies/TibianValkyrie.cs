@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static tsorcRevamp.SpawnHelper;
-using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Materials;
+using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -35,7 +35,8 @@ namespace tsorcRevamp.NPCs.Enemies
             UsefulFunctions.AddAttack(NPC, 190, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 10, 8, shootSound: SoundID.Item17);
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
             int[] armorIDs = new int[] {
                 ModContent.ItemType<Items.Armors.Magic.RedClothHat>(),
                 ModContent.ItemType<Items.Armors.Magic.RedClothTunic>(),
@@ -94,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            tsorcRevampAIs.FighterOnHit(NPC, true);            
+            tsorcRevampAIs.FighterOnHit(NPC, true);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)

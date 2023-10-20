@@ -1,5 +1,4 @@
 using Terraria;
-using Microsoft.Xna.Framework;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -23,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 33;
             Item.useTime = 33;
-            Item.damage = 33;
+            Item.damage = 36;
             Item.knockBack = 3.3f;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Orange;
@@ -38,6 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Projectile Bone = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 10), ProjectileID.Bone, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
             Bone.DamageType = DamageClass.Melee;
+            Bone.damage -= Bone.damage / 4;
         }
 
         //TODO: Remove this

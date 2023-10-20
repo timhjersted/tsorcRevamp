@@ -1,11 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Utilities;
-using System;
 using Terraria;
-using Terraria.Audio;
-using Terraria.DataStructures;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -73,7 +68,7 @@ namespace tsorcRevamp.Projectiles.VFX
             if (!initialized)
             {
                 float radius = 400;
-                if(Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.TheRage>())
+                if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.TheRage>())
                 {
                     //The rage fight is already chaotic as fuck, these lessen that very slightly
                     radius = 200;
@@ -96,10 +91,10 @@ namespace tsorcRevamp.Projectiles.VFX
             }
 
 
-            if(widthPercent < 1)
+            if (widthPercent < 1)
             {
                 widthPercent *= 1.06f;
-                if(widthPercent > 1)
+                if (widthPercent > 1)
                 {
                     widthPercent = 1;
                 }

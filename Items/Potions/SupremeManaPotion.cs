@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Potions
             Item.value = 10000;
             Item.UseSound = SoundID.Item3;
         }
-        public override bool? UseItem(Player player)    
+        public override bool? UseItem(Player player)
         {
             player.statMana += Mana;
             return true;

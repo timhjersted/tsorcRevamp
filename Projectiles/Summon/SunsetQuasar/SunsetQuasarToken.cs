@@ -3,19 +3,19 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 
-namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar 
+namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
 {
-    internal class SunsetQuasarToken : ModProjectile 
+    internal class SunsetQuasarToken : ModProjectile
     {
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Gwyn/Petal";
-        public override void SetStaticDefaults() 
+        public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Sunset Quasar");
             Main.projPet[Projectile.type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
         }
 
-        public override void SetDefaults() 
+        public override void SetDefaults()
         {
             Projectile.width = 40;
             Projectile.height = 40;
@@ -27,14 +27,15 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
             Projectile.alpha = 255;
         }
 
-        public override void AI() 
+        public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            if (player.dead || !player.active) {
+            if (player.dead || !player.active)
+            {
                 player.ClearBuff(ModContent.BuffType<SunsetQuasarBuff>());
             }
 
-            if (player.HasBuff(ModContent.BuffType<SunsetQuasarBuff>())) 
+            if (player.HasBuff(ModContent.BuffType<SunsetQuasarBuff>()))
             {
                 Projectile.timeLeft = 2;
             }
@@ -42,7 +43,7 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
             Projectile.Center = player.Center;
         }
 
-        public override bool? CanDamage() 
+        public override bool? CanDamage()
         {
             return false;
         }

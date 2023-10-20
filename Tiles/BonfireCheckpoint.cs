@@ -21,7 +21,8 @@ namespace tsorcRevamp.Tiles
     {
         int bonfireEffectTimer = 0;
         int boneDustEffectTimer = 0;
-
+        int bonfireHealTimer = 0;
+        float healquantity = 0f;
         public override void SetStaticDefaults()
         {
             Main.tileFrameImportant[Type] = true;
@@ -117,12 +118,6 @@ namespace tsorcRevamp.Tiles
             {
                 player.AddBuff(ModContent.BuffType<Buffs.Bonfire>(), 30);
 
-                // Clears incombat debuff near bonfire
-                if (player.HasBuff(ModContent.BuffType<InCombat>()))
-                {
-                    player.ClearBuff(ModContent.BuffType<InCombat>());
-                }
-
                 player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff = true;
 
                 bool bossActive = false;
@@ -135,28 +130,33 @@ namespace tsorcRevamp.Tiles
                     }
                 }
 
-                if (!bossActive && player.velocity == Vector2.Zero)
+                if (player.velocity != Vector2.Zero)
                 {
-                    foreach (int buffType in player.buffType)
-                    {
-                        if (Main.debuff[buffType] && buffType != BuffID.HeartLamp)
-                        {
-                            player.ClearBuff(buffType);
-                        }
-                    }
+                    bonfireHealTimer = 0;
+                    healquantity = 0;
                 }
+
 
                 // Only heal when no bosses are alive, hp isn't full and the player is standing still
                 if (!bossActive && player.statLife < player.statLifeMax2 && player.velocity == Vector2.Zero)
                 {
 
-                    // Wind up 1
-                    if (bonfireEffectTimer > 0 && bonfireEffectTimer <= 60)
+                    if (player.velocity.X == 0 && player.velocity.Y == 0)
                     {
-                        player.lifeRegen += player.statLifeMax2 / 16 + 20;
-                        if (Main.rand.NextBool(30))
+                        bonfireHealTimer++;
+                    }
+
+                    // Wind up 1
+                    if (bonfireEffectTimer > 0 && bonfireEffectTimer <= 12)
+                    {
+                        healquantity += (float)player.statLifeMax2 / 4000f;
+                        if (bonfireHealTimer % 6 == 0)
                         {
-                            player.statLife++;
+                            player.statLife += (int)healquantity;
+                            if (healquantity >= 1)
+                            {
+                                healquantity = 0;
+                            }
                         }
 
                         if (Main.rand.NextBool(8))
@@ -168,12 +168,16 @@ namespace tsorcRevamp.Tiles
 
 
                     // Wind up 2
-                    if (bonfireEffectTimer > 60 && bonfireEffectTimer <= 100)
+                    if (bonfireEffectTimer > 12 && bonfireEffectTimer <= 20)
                     {
-                        player.lifeRegen += player.statLifeMax2 / 8 + 40;
-                        if (Main.rand.NextBool(24))
+                        healquantity += (float)player.statLifeMax2 / 3500f;
+                        if (bonfireHealTimer % 6 == 0)
                         {
-                            player.statLife++;
+                            player.statLife += (int)healquantity;
+                            if (healquantity >= 1)
+                            {
+                                healquantity = 0;
+                            }
                         }
 
                         if (Main.rand.NextBool(4))
@@ -184,12 +188,16 @@ namespace tsorcRevamp.Tiles
                     }
 
                     // Wind up 3
-                    if (bonfireEffectTimer > 100 && bonfireEffectTimer <= 140)
+                    if (bonfireEffectTimer > 20 && bonfireEffectTimer <= 28)
                     {
-                        player.lifeRegen += player.statLifeMax2 / 4 + 80;
-                        if (Main.rand.NextBool(18))
+                        healquantity += (float)player.statLifeMax2 / 2800f;
+                        if (bonfireHealTimer % 6 == 0)
                         {
-                            player.statLife++;
+                            player.statLife += (int)healquantity;
+                            if (healquantity >= 1)
+                            {
+                                healquantity = 0;
+                            }
                         }
 
                         if (Main.rand.NextBool(2))
@@ -198,14 +206,35 @@ namespace tsorcRevamp.Tiles
                             HandleDust(ref dust, Main.rand.Next(50, 100) * 0.035f, 20f, player.Center);
                         }
                     }
+                    Main.NewText(healquantity);
 
                     // Full effect
-                    if (bonfireEffectTimer > 140)
+                    if (bonfireEffectTimer > 28)
                     {
-                        player.lifeRegen += player.statLifeMax2 / 2 + 160;
-                        if (Main.rand.NextBool(12))
+                        healquantity += (float)player.statLifeMax2 / 2000f;
+                        if (bonfireHealTimer % 6 == 0)
                         {
-                            player.statLife++;
+                            player.statLife += (int)healquantity;
+                            if (healquantity >= 1)
+                            {
+                                healquantity = 0;
+                            }
+                        }
+
+                        if (player.HasBuff(ModContent.BuffType<InCombat>()))
+                        {
+                            player.ClearBuff(ModContent.BuffType<InCombat>());
+                        }
+
+                        if (!bossActive && player.velocity == Vector2.Zero)
+                        {
+                            foreach (int buffType in player.buffType)
+                            {
+                                if (Main.debuff[buffType] && !BuffID.Sets.NurseCannotRemoveDebuff[buffType])
+                                {
+                                    player.ClearBuff(buffType);
+                                }
+                            }
                         }
 
                         var dust = Dust.NewDustDirect(player.position, player.width, player.height, DustID.FlameBurst, Alpha: 120);

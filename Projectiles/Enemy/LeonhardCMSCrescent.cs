@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 60;
         }
-       
+
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
@@ -38,9 +38,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             if (Main.rand.NextBool(10))
             {
-              target.AddBuff(BuffID.Ichor, 1200);
+                target.AddBuff(BuffID.Ichor, 1200);
             }
-            
+
         }
 
         public override bool PreDraw(ref Color lightColor)

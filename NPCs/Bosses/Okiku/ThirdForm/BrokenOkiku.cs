@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -30,7 +29,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            {
                 Hide = true
             };
             NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
@@ -254,7 +254,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
 
                 Teleport(nextTeleport);
 
-                if(nextPhase == 0)
+                if (nextPhase == 0)
                 {
                     nextTeleport = Main.player[NPC.target].Center + new Vector2(500, 400);
                     if (Main.rand.NextBool())
@@ -262,7 +262,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
                         nextTeleport.X -= 1000;
                     }
                 }
-                else if(nextPhase == 1)
+                else if (nextPhase == 1)
                 {
                     nextTeleport = Main.player[NPC.target].Center + Main.rand.NextVector2Circular(50, 50) - new Vector2(0, 300);
                 }

@@ -4,19 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Enemy.DarkCloud;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
-using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Items.Weapons.Summon;
-using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Enemy.DarkCloud;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -134,7 +130,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             get
             {
-                if(NPC.target >= 0 && NPC.target < Main.maxPlayers)
+                if (NPC.target >= 0 && NPC.target < Main.maxPlayers)
                 {
                     return Main.player[NPC.target];
                 }
@@ -453,7 +449,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
 
-            
+
             if (AttackModeCounter % turnLength == 0)
             {
                 DarkCloudParticleEffect(-2);
@@ -493,7 +489,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 nextWarpPoint = DivineSparkTeleport();
                 DarkCloudParticleEffect(6);
             }
-            
+
             if (AttackModeCounter % turnLength <= 15)
             {
                 initialTargetRotation = (Target.Center - NPC.Center).ToRotation();
@@ -2040,13 +2036,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 //if (Target != null)
                 //{
-                    for (int i = 0; i < 500; i++)
-                    {
-                        Vector2 dustPos = Target.Center;
-                        dustPos.X -= 1500;
-                        dustPos.Y -= 500;
-                        Dust.NewDust(dustPos, 3000, 1500, DustID.ShadowbeamStaff, Main.rand.Next(-500, 500), Main.rand.Next(-500, 500), Scale: 9);
-                    }
+                for (int i = 0; i < 500; i++)
+                {
+                    Vector2 dustPos = Target.Center;
+                    dustPos.X -= 1500;
+                    dustPos.Y -= 500;
+                    Dust.NewDust(dustPos, 3000, 1500, DustID.ShadowbeamStaff, Main.rand.Next(-500, 500), Main.rand.Next(-500, 500), Scale: 9);
+                }
                 //}
 
                 DarkCloudParticleEffect(-12, 120, 64);
@@ -2054,8 +2050,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             return true;
         }
 
-       
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.DarkCloudBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
@@ -2082,9 +2078,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Clean up projectiles
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.GenericLaser>() 
-                    || Main.projectile[i].type == ModContent.ProjectileType<DarkFlow>() 
-                    || Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>() 
+                if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.GenericLaser>()
+                    || Main.projectile[i].type == ModContent.ProjectileType<DarkFlow>()
+                    || Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>()
                     || Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkFreezeBolt>())
                 {
                     Main.projectile[i].Kill();

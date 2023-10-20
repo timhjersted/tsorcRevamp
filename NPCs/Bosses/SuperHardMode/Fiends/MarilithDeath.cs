@@ -1,11 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
@@ -50,13 +47,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         float progress = 0;
         public override void AI()
         {
-            if(NPC.velocity == Vector2.Zero)
+            if (NPC.velocity == Vector2.Zero)
             {
                 NPC.velocity = new Vector2(NPC.ai[0], NPC.ai[1]);
             }
             NPC.velocity *= 0.95f;
             progress++;
-            if(progress % 10 == 0)
+            if (progress % 10 == 0)
             {
                 SoundEngine.PlaySound(SoundID.Item62 with { Volume = 0.5f, Pitch = Main.rand.NextFloat(-0.2f, 0.2f) }, NPC.Center);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(150, 150), Vector2.Zero, ModContent.ProjectileType<CataclysmicFirestorm>(), 55, 0.5f, Main.myPlayer);

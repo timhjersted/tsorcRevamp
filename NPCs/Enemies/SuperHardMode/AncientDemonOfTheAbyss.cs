@@ -1,10 +1,9 @@
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -113,7 +112,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             //JUSTHIT CODE
             //MELEE RANGE
-            if (NPC.Distance(player.Center) < 100 && NPC.localAI[1] < 70f) 
+            if (NPC.Distance(player.Center) < 100 && NPC.localAI[1] < 70f)
             {
                 NPC.localAI[1] = 50f;
 
@@ -548,7 +547,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.StrengthPotion>(), 100, 10, 10, 40));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 10, 5, 10));

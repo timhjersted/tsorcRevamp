@@ -1,6 +1,4 @@
-using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Ranged
@@ -25,7 +23,7 @@ namespace tsorcRevamp.Projectiles.Ranged
         }
         public override void OnKill(int timeLeft)
         {
-            
+
         }
     }
 

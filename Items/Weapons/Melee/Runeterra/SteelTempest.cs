@@ -1,20 +1,20 @@
+using Humanizer;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Melee;
-using Terraria.DataStructures;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Projectiles.Melee.Runeterra;
-using Terraria.Audio;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Input;
-using Terraria.Localization;
-using Humanizer;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
-    public class SteelTempest: ModItem
+    public class SteelTempest : ModItem
     {
         public int SwingSoundStyle = 0;
         public float SwingSoundVolume = 0.15f;
@@ -146,7 +146,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 {
                     tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", Language.GetTextValue("Mods.tsorcRevamp.Items.SteelTempest.Details").FormatWith((float)AttackSpeedScalingDuration / 60f)));
                 }
-            } else
+            }
+            else
             {
                 int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
                 if (ttindex != -1)

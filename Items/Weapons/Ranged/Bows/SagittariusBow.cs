@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.useAmmo = AmmoID.Arrow;
         }
 
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) 
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<Projectiles.SagittariusBowHeld>(), damage, knockback, player.whoAmI, type);
             return false;

@@ -1,20 +1,17 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Graphics.Effects;
-using Terraria.Audio;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
-using tsorcRevamp.Utilities;
 using tsorcRevamp.Items.Placeable.Trophies;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -135,7 +132,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (testAttack != -1)
             {
                 MoveIndex = testAttack;
-            }            
+            }
 
             if (MoveTimer < 900)
             {
@@ -281,7 +278,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     aimingDown = true;
                     rotationTarget = -MathHelper.PiOver4 - MathHelper.PiOver2;
                     NPC.rotation = -MathHelper.PiOver4 - MathHelper.PiOver2;
-                    if(NPC.Center.X > target.Center.X)
+                    if (NPC.Center.X > target.Center.X)
                     {
                         rotationTarget *= -1;
                         NPC.rotation *= -1;
@@ -303,7 +300,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     {
                         rotationTarget = -MathHelper.PiOver4;
                     }
-                    if(target.Center.X < NPC.Center.X)
+                    if (target.Center.X < NPC.Center.X)
                     {
                         rotationTarget *= -1;
                     }
@@ -317,14 +314,14 @@ namespace tsorcRevamp.NPCs.Bosses
                     aimingDown = !aimingDown;
                 }
 
-                if(MoveTimer % laserCooldown > 30 && MoveTimer % laserCooldown < 90 && MoveTimer < 750)
+                if (MoveTimer % laserCooldown > 30 && MoveTimer % laserCooldown < 90 && MoveTimer < 750)
                 {
                     baseFade = 0;
                     baseRadius = 0.35f;
                 }
             }
 
-            if(MoveTimer == 870)
+            if (MoveTimer == 870)
             {
                 rotationSpeed = 0.2f;
                 rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
@@ -460,7 +457,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(40, 0).RotatedBy(NPC.rotation + MathHelper.PiOver2), new Vector2(12, 0).RotatedBy(NPC.rotation + MathHelper.PiOver4 / 2f + MathHelper.PiOver2), ModContent.ProjectileType<Projectiles.Enemy.Triad.RetDeathLaser>(), DeathLaserDamage, 0.5f, Main.myPlayer);
                         }
-                    }      
+                    }
                 }
             }
             else
@@ -693,7 +690,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 OnKill();
                 NPC.active = false;
             }
-            else if(NPC.realLife >= 0)
+            else if (NPC.realLife >= 0)
             {
                 NPC.life = Main.npc[NPC.realLife].life;
                 NPC.lifeMax = Main.npc[NPC.realLife].lifeMax;
@@ -827,9 +824,9 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override bool? CanBeHitByProjectile(Projectile projectile)
         {
-            if(deathTimer > 0)
+            if (deathTimer > 0)
             {
-                 return false;
+                return false;
             }
 
             return base.CanBeHitByProjectile(projectile);
@@ -1112,7 +1109,7 @@ namespace tsorcRevamp.NPCs.Bosses
             starRotation += 0.02f;
             Rectangle starRectangle = new Rectangle(0, 0, 4, 4);
             float attackFadePercent = (float)Math.Pow(1 - (transformationTimer / 60f), 2);
-            if(transformationTimer > 60)
+            if (transformationTimer > 60)
             {
                 attackFadePercent = 0;
             }

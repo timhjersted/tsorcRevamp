@@ -22,18 +22,18 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.friendly = false;
             Projectile.light = 0.8f;
             Projectile.penetrate = 4; //was 4, was causing curse buildup way too fast
-            Projectile.tileCollide = false; 
+            Projectile.tileCollide = false;
             //AIType = 96;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
-            
+
         }
         public override void AI()
         {
             Projectile.rotation += 5f;
 
-            
+
             for (int num36 = 0; num36 < 2; num36++)
             {
                 int pink = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Wraith, Projectile.velocity.X, Projectile.velocity.Y, Scale: 1f, Alpha: 200);
@@ -44,11 +44,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
-        {         
-                //Vanilla Debuffs cut in half to counter expert mode doubling them
-                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false);
-                //target.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel += 10;        
-                target.AddBuff(33, 300, false); //weak          
+        {
+            //Vanilla Debuffs cut in half to counter expert mode doubling them
+            target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false);
+            //target.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel += 10;        
+            target.AddBuff(33, 300, false); //weak          
         }
     }
 }

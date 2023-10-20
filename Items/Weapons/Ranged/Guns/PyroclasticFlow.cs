@@ -2,7 +2,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 {
@@ -39,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
         int tallyCounter;
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            if(tallyCounter == 2)
+            if (tallyCounter == 2)
             {
                 type = ModContent.ProjectileType<Projectiles.Ranged.PyroclasticFlow>();
                 damage *= 2;

@@ -13,9 +13,9 @@ namespace tsorcRevamp.Projectiles.Pets
             Main.projFrames[Projectile.type] = 8;
             Main.projPet[Projectile.type] = true;
             ProjectileID.Sets.CharacterPreviewAnimations[Projectile.type] = ProjectileID.Sets.SimpleLoop(0, Main.projFrames[Projectile.type], 8)
-				.WithOffset(11, -36f)
-				.WithSpriteDirection(-1)
-				.WithCode(DelegateMethods.CharacterPreview.Float);
+                .WithOffset(11, -36f)
+                .WithSpriteDirection(-1)
+                .WithCode(DelegateMethods.CharacterPreview.Float);
         }
 
         public override void SetDefaults()

@@ -4,8 +4,8 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -94,7 +94,8 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
             IItemDropRule drop = ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 5, 10);
             IItemDropRule drop2 = ItemDropRule.Common(ModContent.ItemType<WhiteTitanite>(), 1, 5, 10);
             IItemDropRule drop3 = ItemDropRule.Common(ModContent.ItemType<BlueTitanite>(), 1, 5, 10);
@@ -122,7 +123,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyThrowingKnifeSmall");
             }
-            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimerCap * 2f/3f)
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimerCap * 2f / 3f)
             {
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 if (NPC.spriteDirection == -1)

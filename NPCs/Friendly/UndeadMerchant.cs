@@ -3,7 +3,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using Terraria.Utilities;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Items.Potions;
@@ -26,7 +25,8 @@ namespace tsorcRevamp.NPCs.Friendly
             NPCID.Sets.AttackAverageChance[NPC.type] = 10;
             NPCID.Sets.HatOffsetY[NPC.type] = 4;
         }
-        public override List<string> SetNPCNameList() {
+        public override List<string> SetNPCNameList()
+        {
             return new List<string> { Language.GetTextValue("Mods.tsorcRevamp.NPCs.UndeadMerchant.Name1") };
         }
         public override void SetDefaults()

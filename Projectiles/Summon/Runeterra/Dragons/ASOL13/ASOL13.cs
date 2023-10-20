@@ -116,11 +116,13 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             float angle = MathHelper.TwoPi / 10f;
             float shaderRotation = MathF.PI * 0.9f;
 
+            effect.Parameters["Color"].SetValue(new Vector4(0.286f, 0.162f, 0.053f, 1f));
+            effect.Parameters["Color2"].SetValue(new Vector4(0.133f, 0.886f, 0.345f, 1f));
             effect.Parameters["splitAngle"].SetValue(angle);
             effect.Parameters["rotation"].SetValue(shaderRotation);
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 252);
             effect.Parameters["length"].SetValue(.01f * breathSize / maxBreathSize);
-            float opacity = 1.5f;
+            float opacity = 0.5f;
 
             /*
             if (fade < 30)

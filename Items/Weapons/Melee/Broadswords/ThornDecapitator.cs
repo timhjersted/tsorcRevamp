@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -26,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.autoReuse = true;
             Item.useTime = 25;
             Item.maxStack = 1;
-            Item.damage = 35;
+            Item.damage = 33;
             Item.knockBack = 5;
             Item.useTurn = false;
             Item.UseSound = SoundID.Item1;
@@ -37,13 +36,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Cyan;
             Item.shootSpeed = 1f;
+            Item.scale = 0.8f;
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.Poisoned, 3 * 60);
             Projectile Spore = Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), target.Center, Vector2.Zero, ProjectileID.SporeTrap, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
             Spore.DamageType = DamageClass.Melee;
-            Spore.damage /= 2;
+            Spore.damage /= 3;
         }
         public override void AddRecipes()
         {

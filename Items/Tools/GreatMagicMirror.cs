@@ -1,12 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using tsorcRevamp.Buffs.Debuffs;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
-using tsorcRevamp.Utilities;
-using tsorcRevamp.Items.Materials;
 using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Tools
 {
@@ -103,7 +102,7 @@ namespace tsorcRevamp.Items.Tools
             {
                 return;
             }
-                        
+
             if (player.itemTime > (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)
             {
                 player.velocity.X = 0;
@@ -139,7 +138,7 @@ namespace tsorcRevamp.Items.Tools
                     Dust.NewDust(player.position, player.width, player.height, 57, player.velocity.X * 0.5f, (player.velocity.Y * 0.5f) + 0.5f * 0.5f, 150, default(Color), 1.5f);
                 }
 
-            }            
+            }
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)

@@ -1,6 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -9,12 +7,15 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
-    class WhiteLotus : ModItem {
+    class WhiteLotus : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             // Tooltip.SetDefault("Shoots flowers. Each petal hits separately \n'You can hear the cries of angels when you close your eyes'");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 26;
             Item.mana = 14;
             Item.knockBack = 1;
@@ -34,12 +35,13 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override Vector2? HoldoutOffset() => new Vector2(-6, 0);
 
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
+        {
             Projectile.NewProjectile(source, player.Center, speed, ModContent.ProjectileType<Projectiles.WhiteLotusCore>(), damage, knockBack, Main.myPlayer, 0, Main.rand.Next(2));
             return false;
         }
 
-        public override void AddRecipes() 
+        public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.FlowerPacketWhite);

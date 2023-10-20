@@ -40,7 +40,7 @@ namespace tsorcRevamp.Buffs.Debuffs
                 modPlayer.CurseLevel = 0; // Reset it to 0
 
                 player.AddBuff(ModContent.BuffType<Invincible>(), 480, false); // 8 seconds
-                player.AddBuff(ModContent.BuffType<GreenBlossom>(), 3600, false); 
+                player.AddBuff(ModContent.BuffType<GreenBlossom>(), 3600, false);
                 player.AddBuff(ModContent.BuffType<Strength>(), 3600, false);
                 Main.NewText(LangUtils.GetTextValue("Buffs.Curse.CurseText2"));
 

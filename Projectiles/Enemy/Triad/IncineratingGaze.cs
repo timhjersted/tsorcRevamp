@@ -53,7 +53,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 Projectile.active = false;
                 laserWidth = 1;
             }
-            if(chargeProgress < firingTime)
+            if (chargeProgress < firingTime)
             {
                 if (chargeProgress == 0)
                 {
@@ -66,7 +66,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 laserWidth += 60;
             }
 
-            
+
             if (laserSound == null)
             {
                 SoundEngine.TryGetActiveSound(soundSlotID, out laserSound);
@@ -96,7 +96,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             //If ret is dead then fade out
             else
             {
-                if(Projectile.timeLeft > 130)
+                if (Projectile.timeLeft > 130)
                 {
                     if (laserSound != null)
                     {
@@ -108,10 +108,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
             //Cast light
             Vector3 colorVector = Color.OrangeRed.ToVector3() * 2f;
-            
+
             Vector2 startPoint = Projectile.Center;
             Vector2 endpoint = Projectile.Center + Projectile.rotation.ToRotationVector2() * laserWidth;
-            
+
             //Normal charging
             if (chargeProgress < (firingTime - 30))
             {
@@ -181,7 +181,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             {
                 laserColor = Color.GreenYellow;
             }
-            
+
             if (Projectile.ai[1] == 2)
             {
                 laserColor = new Color(0.1f, 0.5f, 1f);
@@ -206,7 +206,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 {
                     targetingScaleUp = (float)Math.Pow(chargeProgress / firingTime, 0.2f);
                 }
-                else if(chargeProgress < firingTime - 20)
+                else if (chargeProgress < firingTime - 20)
                 {
                     targetingScaleUp = (float)Math.Pow(1 - ((chargeProgress - (firingTime - 40)) / 20), 0.2f);
                 }
@@ -241,7 +241,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
                 data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/IncineratingGaze", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "IncineratingGazePass");
             }
 
-            
+
 
             Rectangle sourceRectangle = new Rectangle(0, 0, (int)laserWidth, Projectile.height);
 
@@ -257,11 +257,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             {
                 scaleDown = (float)Math.Pow(chargeProgress / firingTime, 0.2f);
             }
-            else if(chargeProgress < firingTime - 20)
+            else if (chargeProgress < firingTime - 20)
             {
                 scaleDown = (float)Math.Pow(1 - ((chargeProgress - (firingTime - 40)) / 20), 0.2f);
             }
-            else if(chargeProgress < firingTime)
+            else if (chargeProgress < firingTime)
             {
                 scaleDown = 0;
             }
@@ -278,7 +278,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
-            
+
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
 
             Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
@@ -291,6 +291,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         }
     }
 
-    public class MaliciousGaze : IncineratingGaze {}
-    public class BlindingGaze : IncineratingGaze {}
+    public class MaliciousGaze : IncineratingGaze { }
+    public class BlindingGaze : IncineratingGaze { }
 }

@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Accessories.Ranged
             recipe.AddIngredient(ItemID.IronPickaxe);
             recipe.AddIngredient(ItemID.HunterCloak);
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3600);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3400);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

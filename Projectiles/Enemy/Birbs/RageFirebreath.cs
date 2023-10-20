@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -62,7 +61,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
                 Vector2 currentRotation = Projectile.rotation.ToRotationVector2();
                 Vector2 nextRotationVector = Vector2.Lerp(currentRotation, targetRotation, 0.03f);
                 Projectile.rotation = MathHelper.WrapAngle(nextRotationVector.ToRotation());
-                if(Projectile.rotation < 0)
+                if (Projectile.rotation < 0)
                 {
                     Projectile.rotation += MathHelper.TwoPi;
                 }
@@ -87,7 +86,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
         {
             if (Projectile.timeLeft < 15)
             {
-                 return false;
+                return false;
             }
 
             float distance = Vector2.Distance(Projectile.Center, Main.LocalPlayer.Center);
@@ -117,7 +116,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
             effect.Parameters["length"].SetValue(.35f * size / 1200);
 
             float opacity = 10;
-            if(Projectile.timeLeft < 45 && Projectile.timeLeft > 30)
+            if (Projectile.timeLeft < 45 && Projectile.timeLeft > 30)
             {
                 opacity = MathHelper.Lerp(opacity, 1, (45f - Projectile.timeLeft) / 15f);
             }

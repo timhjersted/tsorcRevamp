@@ -1,16 +1,14 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.DataStructures;
+using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Items;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
-using Terraria.GameContent;
-using Terraria.UI;
-using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -23,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public int redKnightsGreatDamage = 50;
 
         Vector2 storedPlayerPosition = Vector2.Zero;
-        
+
         public int framesSinceStoredPosition = 0;
 
         NPCDespawnHandler despawnHandler;
@@ -44,8 +42,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.height = 40;
             NPC.width = 20;
             NPC.damage = 100;
-            NPC.defense = 61; 
-            NPC.lifeMax = 30000; 
+            NPC.defense = 61;
+            NPC.lifeMax = 30000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 0;
@@ -56,9 +54,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             BannerItem = ModContent.ItemType<Banners.GreatRedKnightBanner>();
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.RedKnight.DespawnHandler"), Color.Red, DustID.RedTorch);
             tsorcRevampGlobalNPC redKnightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-          
-            redKnightGlobalNPC.Agility = 0.4f;           
-        }      
+
+            redKnightGlobalNPC.Agility = 0.4f;
+        }
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
             poisonStrikeDamage = (int)(poisonStrikeDamage * tsorcRevampWorld.SHMScale);
@@ -156,9 +154,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 2, canTeleport: true, enragePercent: 0.5f, enrageTopSpeed: 4, canDodgeroll: true) ;
+            tsorcRevampAIs.FighterAI(NPC, 2, canTeleport: true, enragePercent: 0.5f, enrageTopSpeed: 4, canDodgeroll: true);
             tsorcRevampAIs.LeapAtPlayer(NPC, 7, 5, 1.5f, 128);
-            
+
             // Proximity Debuffs
             if (NPC.Distance(player.Center) < 700)
             {
@@ -233,7 +231,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
 
                     // Use the stored player's position from 25 frames ago to calculate the targetPosition.
-                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);               
+                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
                 }
 
                 // Spear Telegraph
@@ -292,7 +290,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     NPC.TargetClosest(true);
                     float spearProjectileSpeed = Main.rand.NextFloat(11, 13f);
-                    
+
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, spearProjectileSpeed, fallback: true);
                     //speed += Main.rand.NextVector2Circular(-6, -2);
                     speed += Main.player[NPC.target].velocity;
@@ -365,7 +363,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 2f }, NPC.Center);
                         }
-                       
+
                     }
 
                     // Reset the targetPosition 
@@ -415,7 +413,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         }
                     }
 
-                    
+
                 }
                 // Poison Attack 3 Telegraph: Dusts
                 // Part 1: Dusts
@@ -442,21 +440,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Poison Attack 3
-                if (NPC.ai[1] >= 475 && NPC.ai[1] <= 485 && Main.rand.NextBool(2)) 
+                if (NPC.ai[1] >= 475 && NPC.ai[1] <= 485 && Main.rand.NextBool(2))
                 {
-                        NPC.TargetClosest(true);
-                        if (Collision.CanHitLine(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
-                        {
-                            Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 10); //0.4f, true, true																								
-                            speed2 += Main.player[NPC.target].velocity;
+                    NPC.TargetClosest(true);
+                    if (Collision.CanHitLine(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
+                    {
+                        Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 10); //0.4f, true, true																								
+                        speed2 += Main.player[NPC.target].velocity;
 
-                            if (((speed2.X < 0f) && (NPC.velocity.X < 0f)) || ((speed2.X > 0f) && (NPC.velocity.X > 0f)))
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.4f, PitchVariance = 2f }, NPC.Center);
-                            }                           
+                        if (((speed2.X < 0f) && (NPC.velocity.X < 0f)) || ((speed2.X > 0f) && (NPC.velocity.X > 0f)))
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.4f, PitchVariance = 2f }, NPC.Center);
                         }
-                        NPC.netUpdate = true;
+                    }
+                    NPC.netUpdate = true;
                 }
 
                 if (NPC.ai[1] == 525)
@@ -509,7 +507,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, poisonStrikeDamage, 0f, Main.myPlayer);
 
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-                        }                  
+                        }
                     }
                 }
 
@@ -710,18 +708,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // Rain of Cursed Flame at 1/3 life
                 if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 60 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                        Player nT = Main.player[NPC.target];
+                    Player nT = Main.player[NPC.target];
 
-                        for (int pcy = 0; pcy < 3; pcy++)
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 550f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), poisonStrikeDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.2f, Pitch = 0.01f }); //flamethrower
-                        }                  
+                    for (int pcy = 0; pcy < 3; pcy++)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 550f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), poisonStrikeDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.2f, Pitch = 0.01f }); //flamethrower
+                    }
                 }
 
             }
 
-       
+
             /*
             
             //TELEGRAPH DUSTS
@@ -849,7 +847,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 1));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 20, 50));
@@ -867,7 +865,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         #region Debuffs
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
-        {          
+        {
             player.AddBuff(BuffID.OnFire, 30 * 60, false);
             player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 6 * 60, false); // knockback on hit
             player.AddBuff(ModContent.BuffType<DarkInferno>(), 6 * 60, false); // no health regen

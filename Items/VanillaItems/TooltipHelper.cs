@@ -5,13 +5,9 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using tsorcRevamp.Items.Accessories;
-using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Accessories.Magic;
 using tsorcRevamp.Items.Armors;
-using tsorcRevamp.Items.Armors.Magic;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
-using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.VanillaItems
@@ -57,13 +53,13 @@ namespace tsorcRevamp.Items.VanillaItems
             //SimpleModTooltip(mod, item, tooltips, ItemID., "a");
             //SimpleModTooltip(mod, item, tooltips, ItemID., "a", "b");
             //SimpleModTooltip(mod, item, tooltips, ItemID.FlaskofFire, "Adds 10% melee damage");  don't do this. flask of fire's tooltip goes at a specific index, not the end
-            
+
             if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
             {
                 SimpleModTooltip(Mod, item, tooltips, ItemID.AngelWings, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.AngelWings"));
             }
 
-            SimpleModTooltip(Mod, item, tooltips, ItemID.AdamantiteDrill, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.AdamantiteDrill"));            
+            SimpleModTooltip(Mod, item, tooltips, ItemID.AdamantiteDrill, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.AdamantiteDrill"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.BandofRegeneration, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.BandOfRegeneration"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.BandofStarpower, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.BandOfStarpower"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.CobaltDrill, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.CobaltDrill"));
@@ -144,21 +140,6 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 SimpleGlobalModTooltip(Mod, tooltips, "May make the [c/6d8827:Bearer of the Curse] more vulnerable");
             }*/
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ModContent.ItemType<SearingLash>())
-            {
-                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.SearingLash.BotCTooltip"));
-            }
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ModContent.ItemType<NightsCracker>())
-            {
-                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.NightsCracker.BotCTooltip"));
-            }
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ModContent.ItemType<TerraFall>())
-            {
-                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.TerraFall.BotCTooltip"));
-            }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ItemID.ManaRegenerationPotion)
             {

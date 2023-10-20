@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -13,7 +12,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public static float DamageReduction = 5f;
         public static float Thorns = 1f;
         public static int SoulCost = 4000;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageReduction, Thorns*100);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageReduction, Thorns * 100);
         public override void SetStaticDefaults()
         {
         }

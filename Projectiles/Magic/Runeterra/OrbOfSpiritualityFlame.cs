@@ -145,7 +145,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             if (hit.Crit)
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/FireCrit") with { Volume = OrbOfDeception.OrbSoundVolume });
-            } else
+            }
+            else
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/FireHit") with { Volume = OrbOfDeception.OrbSoundVolume });
             }

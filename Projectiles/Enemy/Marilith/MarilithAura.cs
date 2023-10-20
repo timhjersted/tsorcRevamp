@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
@@ -42,7 +41,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             if (!NPC.AnyNPCs(ModContent.NPCType<FireFiendMarilith>()))
             {
                 marilithDeadTimer++;
-                if(marilithDeadTimer > 45)
+                if (marilithDeadTimer > 45)
                 {
                     Projectile.Kill();
                 }
@@ -61,7 +60,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                     {
                         targetVector = Vector2.Lerp(targetVector, playerVector, marl.MoveTimer / 120f);
                     }
-                    else if(marl.MoveTimer < 780)
+                    else if (marl.MoveTimer < 780)
                     {
                         targetVector = playerVector;
                     }
@@ -80,8 +79,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
             Projectile.timeLeft = 2;
             //Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
-            
-            
+
+
         }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
@@ -100,7 +99,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            
+
             //Apply the shader, caching it as well
             //if (data == null)
             {
@@ -116,7 +115,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             offset -= targetVector;
             //offset += new Vector2(-3f, 1.2f) / 300f;
             float saturation = intro / 120f;
-            if(marilithDeadTimer > 0)
+            if (marilithDeadTimer > 0)
             {
                 saturation = (45f - marilithDeadTimer) / 45f;
             }
@@ -124,7 +123,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             //Apply the shader
             data.Apply(null);
 
-            
+
 
             Rectangle recsize = new Rectangle(0, 0, tsorcRevamp.NoiseTurbulent.Width, tsorcRevamp.NoiseTurbulent.Height);
 

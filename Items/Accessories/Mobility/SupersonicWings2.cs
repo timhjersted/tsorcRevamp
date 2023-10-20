@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.Register(); 
+            recipe.Register();
         }
 
         public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising,
@@ -88,7 +88,8 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             player.jumpSpeedBoost = 3.2f;
             player.wingTimeMax = 1200;
 
-            if (!ModContent.GetInstance<tsorcRevampConfig>().DisableSupersonicWings2ExtraJumps) {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().DisableSupersonicWings2ExtraJumps)
+            {
                 player.GetJumpState(ExtraJump.CloudInABottle).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
                 player.GetJumpState(ExtraJump.BlizzardInABottle).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;
                 player.GetJumpState(ExtraJump.SandstormInABottle).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;

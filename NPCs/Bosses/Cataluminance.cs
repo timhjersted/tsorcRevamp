@@ -2,26 +2,22 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.Graphics;
-using Terraria.Graphics.Shaders;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Graphics.Effects;
-using Terraria.Audio;
-using System.IO;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
-using tsorcRevamp.Items.Weapons.Magic.Tomes;
-using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Lore;
-using tsorcRevamp.Utilities;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Placeable.Relics;
 using tsorcRevamp.Items.Placeable.Trophies;
 using tsorcRevamp.Items.Vanity;
-using tsorcRevamp.Items.Placeable.Relics;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -140,7 +136,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             //Prevents time from flowing past midnight while the boss is alive
             Main.dayTime = false;
-            if(Main.time > 16240.0)
+            if (Main.time > 16240.0)
             {
                 Main.time = 16240.0;
             }
@@ -187,7 +183,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (MoveList == null)
             {
                 InitializeMoves();
-            }            
+            }
 
             if (MoveTimer < 900)
             {
@@ -310,7 +306,7 @@ namespace tsorcRevamp.NPCs.Bosses
             rotationSpeed = 0.05f;
 
             Vector2 homingTarget = new Vector2(750, -350);
-            if(NPC.Center.X < target.Center.X)
+            if (NPC.Center.X < target.Center.X)
             {
                 homingTarget.X *= -1;
             }
@@ -427,7 +423,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     Vector2 spawnPos = target.Center + new Vector2(Main.rand.NextFloat(-2500, 2500), -700);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, new Vector2(0, 7).RotatedBy(angle), ModContent.ProjectileType<Projectiles.Enemy.Triad.HomingStar>(), StarBlastDamage, 0.5f, Main.myPlayer, 2);
                 }
-            }            
+            }
         }
 
         float targetAngle;
@@ -447,11 +443,11 @@ namespace tsorcRevamp.NPCs.Bosses
                 laserCountdown = 616;
                 StartAura(650, 1.004f, 0.00f);
                 targetAngle += MathHelper.Pi * 5f / 3f;
-                
+
             }
             else
             {
-                if(laserCountdown > 516)
+                if (laserCountdown > 516)
                 {
                     UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -700).RotatedBy(targetAngle + (MathHelper.Pi * 4f / 3f)), 1f, 45);
                 }
@@ -539,18 +535,18 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             //Limit player radius
-            for(int i = 0; i < Main.maxPlayers; i++)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active && !Main.player[i].dead)
                 {
-                    if(Vector2.Distance(NPC.Center, Main.player[i].Center) > 1350)
+                    if (Vector2.Distance(NPC.Center, Main.player[i].Center) > 1350)
                     {
                         Main.player[i].velocity = UsefulFunctions.Aim(Main.player[i].Center, NPC.Center, 6);
                     }
                 }
             }
 
-            if(finalStandTimer < 180)
+            if (finalStandTimer < 180)
             {
                 UsefulFunctions.SmoothHoming(NPC, target.Center + new Vector2(0, -300), 0.5f, 20);
                 return;
@@ -564,7 +560,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             NPC.velocity *= 0.95f;
-            if(NPC.velocity.Length() < 0.05f)
+            if (NPC.velocity.Length() < 0.05f)
             {
                 NPC.velocity = Vector2.Zero;
             }
@@ -586,7 +582,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     fireRotationRotation += 0.15f / 300f;
                 }
-                if(finalStandTimer % 120 == 0)
+                if (finalStandTimer % 120 == 0)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -649,7 +645,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.dontTakeDamage = true;
             NPC.velocity *= 0.95f;
-            if(deathTimer == 30)
+            if (deathTimer == 30)
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashPre") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
             }
@@ -797,7 +793,7 @@ namespace tsorcRevamp.NPCs.Bosses
         float fadeInPercent;
         void HandleAura()
         {
-            if(fadeInPercent < 1)
+            if (fadeInPercent < 1)
             {
                 fadeInPercent += 1f / 30f;
             }
@@ -815,7 +811,7 @@ namespace tsorcRevamp.NPCs.Bosses
             float radiusMinimum = 0.25f;
 
 
-            if(finalStandTimer > 0)
+            if (finalStandTimer > 0)
             {
                 intensityMinimum = 0.45f;
                 radiusMinimum = 0.4f;
@@ -933,7 +929,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 hslColor = Main.rgbToHsl(new Color(1f, 0.3f, 0.85f));
             }
-            if(finalStandLevel == 1)
+            if (finalStandLevel == 1)
             {
                 hslColor = Main.rgbToHsl(Color.GreenYellow);
             }
@@ -943,7 +939,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             DrawAura(rgbColor);
 
-            if(finalStandLevel == 2)
+            if (finalStandLevel == 2)
             {
                 DrawFinalStandAttack();
             }
@@ -967,7 +963,7 @@ namespace tsorcRevamp.NPCs.Bosses
             Color lightingColor = Color.Lerp(Color.White, crystalColor, 0.5f);
             lightingColor = Color.Lerp(drawColor, lightingColor, 0.6f);
             spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, sourceRectangle, lightingColor, NPC.rotation, origin, 1, SpriteEffects.None, 0f);
-            
+
             if (PhaseTwo)
             {
                 spriteBatch.Draw(crystalTexture, NPC.Center - Main.screenPosition, sourceRectangle, crystalColor, NPC.rotation, origin, 1, SpriteEffects.None, 0f);
@@ -993,7 +989,7 @@ namespace tsorcRevamp.NPCs.Bosses
             Rectangle sourceRectangle = new Rectangle(0, 0, (int)(effectRadius / 0.7f), (int)(effectRadius / 0.7f));
             Vector2 origin = sourceRectangle.Size() / 2f;
 
-            
+
 
             //Pass relevant data to the shader via these parameters
             effect.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseWavy.Width);
@@ -1093,17 +1089,17 @@ namespace tsorcRevamp.NPCs.Bosses
                 starRectangle = new Rectangle(0, 0, finalStandTimer - 700, finalStandTimer - 700);
             }
             float attackFadePercent = 0;
-            if(finalStandTimer < 60)
+            if (finalStandTimer < 60)
             {
                 attackFadePercent = (float)Math.Pow(1 - (finalStandTimer / 60f), 2);
                 starRectangle.Width = (int)(starRectangle.Width * (1 - attackFadePercent));
                 starRectangle.Height = (int)(starRectangle.Height * (1 - attackFadePercent));
             }
 
-            if(finalStandTimer > 2360)
+            if (finalStandTimer > 2360)
             {
                 attackFadePercent = (finalStandTimer - 2360f) / 120f;
-                if(attackFadePercent > 1)
+                if (attackFadePercent > 1)
                 {
                     attackFadePercent = 1;
                 }
@@ -1126,7 +1122,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-            
+
             //Pass relevant data to the shader via these parameters
             FinalStandAttack.Parameters["textureSize"].SetValue(tsorcRevamp.NoiseWavy.Width);
             FinalStandAttack.Parameters["effectSize"].SetValue(starRectangle.Size());
@@ -1232,8 +1228,8 @@ namespace tsorcRevamp.NPCs.Bosses
             potionType = ItemID.GreaterHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
-        { 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TriadBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());

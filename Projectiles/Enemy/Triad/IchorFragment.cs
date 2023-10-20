@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.VFX;
@@ -13,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 {
     class IchorFragment : DynamicTrail
     {
-        
+
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Ichor Fragment");
@@ -54,7 +50,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 
         public override void OnKill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.5f}, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.5f }, Projectile.Center);
         }
     }
 }

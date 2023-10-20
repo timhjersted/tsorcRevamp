@@ -57,7 +57,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 0;
             {
                 Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item93 with { Volume = 0.09f }, Projectile.Center); //electric zap long
-                                                                                                                                //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
+                                                                                                                             //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
                 if (Projectile.position.X + (float)(Projectile.width / 2) > Main.player[Projectile.owner].position.X + (float)(Main.player[Projectile.owner].width / 2))
                 {
                     if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -13), Projectile.position.Y + (float)(Projectile.height - 0.5f), 0, 0, ModContent.ProjectileType<EnemySpellGreatEnergyBeam>(), Projectile.damage, 8f, Projectile.owner);

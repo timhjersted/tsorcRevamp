@@ -1,16 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections;
 using System.IO;
 using System.Windows.Forms;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Utilities;
@@ -88,7 +85,7 @@ namespace tsorcRevamp.UI
                 Top = StyleDimension.FromPixels(450f),
                 BackgroundColor = new Color(33, 43, 79),
                 TextHAlign = 0.5f,
-                
+
             };
 
             backButton.OnMouseOver += HoverVanillaMap;
@@ -127,20 +124,20 @@ namespace tsorcRevamp.UI
             }
         }
 
-        
+
 
         private void HoverVanillaMap(UIMouseEvent evt, UIElement listeningElement)
         {
             UITextPanel<string> targetPanel = evt.Target as UITextPanel<string>;
 
-            if(targetPanel != null)
+            if (targetPanel != null)
             {
                 SoundEngine.PlaySound(SoundID.MenuTick);
 
                 targetPanel.BackgroundColor = new Color(73, 94, 171);
                 targetPanel.BorderColor = Colors.FancyUIFatButtonMouseOver;
 
-            }            
+            }
         }
         private void UnselectCustomMap(UIMouseEvent evt, UIElement listeningElement)
         {
@@ -268,7 +265,7 @@ namespace tsorcRevamp.UI
 
         }
 
-        private void BackButtonPressed (UIMouseEvent evt, UIElement listeningElement)
+        private void BackButtonPressed(UIMouseEvent evt, UIElement listeningElement)
         {
             SoundEngine.PlaySound(SoundID.MenuClose);
             Main.OpenWorldSelectUI();

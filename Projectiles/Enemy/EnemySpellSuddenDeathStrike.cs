@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -41,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         #endregion
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
-        {           
+        {
             target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 36000);
             target.AddBuff(BuffID.Poisoned, 3600);
             target.AddBuff(BuffID.Weak, 180);

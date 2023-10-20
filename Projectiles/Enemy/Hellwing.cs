@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     class Hellwing : ModProjectile
     {
 
-      
+
 
         public override void SetDefaults()
         {
@@ -69,14 +69,14 @@ namespace tsorcRevamp.Projectiles.Enemy
             //{
             //    Projectile.Kill();
             //    return;
-           // }
+            // }
 
 
             Color color = new Color();
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 160, color, 3.0f);
             Main.dust[dust].noGravity = true;
 
-            
+
             #region Homing Code
             Vector2 move = Vector2.Zero;
             float distance = 900f;
@@ -128,8 +128,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 
 
-        
-        
+
+
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {

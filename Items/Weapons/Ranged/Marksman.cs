@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         int ammoleft = 6;
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
-            if(player.altFunctionUse == 2)
+            if (player.altFunctionUse == 2)
             {
                 if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Coin>()] < 4)
                 {
@@ -76,7 +76,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             else
             {
                 return true;
-            }            
+            }
         }
 
         public override bool AltFunctionUse(Player player)

@@ -1,15 +1,13 @@
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Terraria.GameContent.Bestiary;
-using Terraria.GameContent.ItemDropRules;
-using System;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-	public class Willowisp : ModNPC
-	{
+    public class Willowisp : ModNPC
+    {
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Pixie];
@@ -17,7 +15,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         public override void SetDefaults()
-		{
+        {
             NPC.noGravity = true;
             NPC.width = 20;
             NPC.height = 20;
@@ -84,7 +82,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            
+
         }
         Vector2 initialVelocity;
         public override void AI()
@@ -101,11 +99,11 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if ((!Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height + 200)))
             {
-                NPC.noTileCollide = true;   
+                NPC.noTileCollide = true;
             }
 
-            
-            int dust = Dust.NewDust(NPC.position, NPC.width*2, NPC.height*2, DustID.MagicMirror, 0.0f, 0.0f, 200);
+
+            int dust = Dust.NewDust(NPC.position, NPC.width * 2, NPC.height * 2, DustID.MagicMirror, 0.0f, 0.0f, 200);
             Main.dust[dust].velocity *= 0.3f;
 
             Lighting.AddLight(NPC.position, 0.82f, 0.99f, 10f);

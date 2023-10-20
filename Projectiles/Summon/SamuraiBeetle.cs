@@ -7,24 +7,24 @@ using tsorcRevamp.Buffs.Weapons.Summon;
 
 namespace tsorcRevamp.Projectiles.Summon
 {
-	public class SamuraiBeetle : ModProjectile
+    public class SamuraiBeetle : ModProjectile
     {
         bool IsPirate = false; //set an ai for it to follow
         bool IsFrog = false;
         bool IsFlinx = true;
         public override void SetStaticDefaults()
-		{
-			// DisplayName.SetDefault("Samurai Beetle");
-			Main.projFrames[Projectile.type] = 36; //Flinx: 12, Pirate: 15, Frog: 24
-			ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+        {
+            // DisplayName.SetDefault("Samurai Beetle");
+            Main.projFrames[Projectile.type] = 36; //Flinx: 12, Pirate: 15, Frog: 24
+            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
 
-			Main.projPet[Projectile.type] = true;
+            Main.projPet[Projectile.type] = true;
 
-			ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
-			ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
-		}
+            ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
+            ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
+        }
 
-		public sealed override void SetDefaults()
+        public sealed override void SetDefaults()
         {
             Projectile.width = 100;
             Projectile.height = 64;
@@ -839,12 +839,12 @@ namespace tsorcRevamp.Projectiles.Summon
         }
 
         public override bool? CanCutTiles()
-		{
-			return false;
-		}
-		public override bool MinionContactDamage()
-		{
-			return true;
-		}
+        {
+            return false;
+        }
+        public override bool MinionContactDamage()
+        {
+            return true;
+        }
     }
 }

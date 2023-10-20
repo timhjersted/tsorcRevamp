@@ -13,9 +13,9 @@ namespace tsorcRevamp.NPCs.Friendly
     [AutoloadHead]
     class DwarvenGuard : ModNPC
     {
-        public static List<string> Names = new List<string> 
+        public static List<string> Names = new List<string>
         {
-            Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name1"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name2"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name3"), 
+            Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name1"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name2"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name3"),
             Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name4"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name5"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name6"),
             Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name7"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name8"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name9"),
             Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name10"), Language.GetTextValue("Mods.tsorcRevamp.NPCs.DwarvenGuard.Name11")

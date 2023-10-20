@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -26,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Accessories
         float DetonationProgress = 0;
         float DetonationPercent
         {
-            get =>  1f - (DetonationProgress / DetonationTime);
+            get => 1f - (DetonationProgress / DetonationTime);
         }
 
         NPC targetNPC;
@@ -36,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Accessories
             DetonationProgress++;
             Projectile.rotation++;
 
-            if(DetonationProgress == 30 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (DetonationProgress == 30 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Projectile.owner, 240, 25);
 
@@ -64,13 +63,13 @@ namespace tsorcRevamp.Projectiles.Accessories
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if(Projectile.Distance(targetHitbox.Center.ToVector2()) < 230 && DetonationTime == DetonationProgress + 1)
+            if (Projectile.Distance(targetHitbox.Center.ToVector2()) < 230 && DetonationTime == DetonationProgress + 1)
             {
                 return true;
             }
             return false;
         }
-                
+
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
@@ -79,7 +78,7 @@ namespace tsorcRevamp.Projectiles.Accessories
 
         public override bool PreKill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with {Volume = 0.5f}, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.5f }, Projectile.Center);
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {

@@ -1,9 +1,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
 
@@ -119,7 +119,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Lighting.AddLight(NPC.Center, Color.Yellow.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
 
             bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-            
+
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer == 125f)
             {
                 if (Main.rand.NextBool(2))
@@ -235,7 +235,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer >= 117 && Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
             {
                 float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
-             
+
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 if (NPC.spriteDirection == -1)
                 {
@@ -269,7 +269,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 1, 1, 2));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 3, 6));

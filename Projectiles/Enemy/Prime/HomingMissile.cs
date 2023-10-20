@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -12,7 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 {
     class HomingMissile : ModNPC
     {
-        
+
         public override void SetStaticDefaults()
         {
         }
@@ -144,7 +141,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
-            if(NPC.velocity.X < 0 && NPC.ai[0] != 2)
+            if (NPC.velocity.X < 0 && NPC.ai[0] != 2)
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
@@ -159,7 +156,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             Rectangle sourceRectangle = new Rectangle(0, (int)openingProgress * (texture.Height / 4), texture.Width, texture.Height / 4);
             Vector2 origin = sourceRectangle.Size() / 2f;
             Main.EntitySpriteDraw(texture,
-                NPC.Center - Main.screenPosition ,
+                NPC.Center - Main.screenPosition,
                 sourceRectangle, Color.White, NPC.rotation + MathHelper.PiOver2, origin, NPC.scale, spriteEffects, 0);
             return false;
         }

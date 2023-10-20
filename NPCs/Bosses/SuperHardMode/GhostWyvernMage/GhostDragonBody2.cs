@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -73,7 +72,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 NPC.HitEffect(0, 10.0);
                 NPC.active = false;
             }
-            
+
 
             if (Timer >= 0)
             {
@@ -88,7 +87,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 }
             }
 
-            
+
         }
 
         public static Texture2D texture;

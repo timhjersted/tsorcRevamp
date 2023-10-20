@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -55,8 +54,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
 
         public override bool CanUseItem(Player player)
-        {            
-            if (player.statMana <= (int)(50 * player.manaCost) ||  player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 30)
+        {
+            if (player.statMana <= (int)(50 * player.manaCost) || player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 30)
             {
                 return false;
             }

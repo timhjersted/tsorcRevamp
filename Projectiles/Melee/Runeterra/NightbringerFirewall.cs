@@ -1,16 +1,15 @@
-using Terraria;
 using Microsoft.Xna.Framework;
+using ReLogic.Utilities;
+using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
-using Terraria.Audio;
-using ReLogic.Utilities;
-using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
-    public class NightbringerFirewall: ModProjectile
+    public class NightbringerFirewall : ModProjectile
     {
         public override void SetStaticDefaults()
         {

@@ -1,12 +1,11 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -165,7 +164,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 Main.dust[dust3].noGravity = true;
 
                 NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f);
-                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(6f, 5f);              
+                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(6f, 5f);
 
                 NPC.netUpdate = true;
             }
@@ -245,7 +244,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             #region Projectiles
             if (Main.netMode != 1)
-            {               
+            {
                 NPC.localAI[1]++;
                 NPC.localAI[2]++;
 
@@ -260,7 +259,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     //BREATH ATTACK                  
                     if (NPC.localAI[2] >= 301 && NPC.localAI[2] <= 395 && NPC.Distance(player.Center) > 20 && NPC.life >= NPC.lifeMax / 5)
                     {
-                        
+
                         if (NPC.localAI[2] == 301)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item6 with { Volume = 0.01f, Pitch = -0.5f }, NPC.Center); //magic mirror
@@ -273,17 +272,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
 
                         if (Main.rand.NextBool(2))
-                        {                           
+                        {
                             Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 1.0f); //purple magic outward fire
                             Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 1.0f);
                             Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 2.0f); //purple magic outward fire
-                            Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 2.0f);                          
+                            Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 21, 0, 0, 50, Color.Yellow, 2.0f);
                         }
 
                     }
                     if (NPC.localAI[2] == 396)
                     {
-                        breath = true; 
+                        breath = true;
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit30 with { Volume = 0.8f, Pitch = -0.3f }, NPC.Center); //3, 21 demon; 3,30 nimbus
                     }
 
@@ -293,7 +292,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         NPC.velocity.X = 0f;
                         NPC.velocity.Y = 0f;
                         Lighting.AddLight(NPC.Center, Color.YellowGreen.ToVector3() * 3f);
-                       
+
 
                         //play breath sound
                         if (Main.rand.NextBool(3))
@@ -310,8 +309,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                         //if (Main.rand.NextBool(35))
                         //{
-                            //int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X + Main.rand.Next(-500, 500), npc.Center.Y + Main.rand.Next(-500, 500), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
-                            //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-100, 100), NPC.Center.Y + Main.rand.Next(-100, 100), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>(), bioSpitDamage, 0f, Main.myPlayer);
+                        //int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X + Main.rand.Next(-500, 500), npc.Center.Y + Main.rand.Next(-500, 500), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
+                        //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-100, 100), NPC.Center.Y + Main.rand.Next(-100, 100), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>(), bioSpitDamage, 0f, Main.myPlayer);
                         //}
                         breathCD--;
 
@@ -323,7 +322,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         {
                             tsorcRevampAIs.TeleportImmediately(NPC, 15, true);
                         }
-                        
+
                     }
 
                     if (breathCD <= 0)
@@ -341,7 +340,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 //TELEGRAPH DUSTS
                 if (NPC.localAI[1] >= 85)
                 {
-                    Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 0.5f); 
+                    Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 0.5f);
                     if (Main.rand.NextBool(3))
                     {
                         Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemEmerald, NPC.velocity.X, NPC.velocity.Y);
@@ -423,7 +422,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         {
                             NPC.localAI[1] = 1f;
                         }
-                        
+
                         NPC.netUpdate = true;
                     }
 
@@ -435,7 +434,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
-                            
+
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = 0.5f }, NPC.Center); //fire
                         }
 
@@ -451,15 +450,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     {
                         int dust2 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Blue, 1f);
                         Main.dust[dust2].noGravity = true;
-     
+
                         NPC.netUpdate = true;
                     }
 
                     //FINAL DESPERATE ATTACK
                     if (NPC.localAI[1] >= 155f && NPC.life <= NPC.lifeMax / 5)
-                    
+
                     {
-                        Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 2f); 
+                        Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 2f);
                         if (Main.rand.NextBool(2))
                         {
                             int dust3 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.OrangeRed, 1f);
@@ -472,7 +471,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitfinalDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
-                            
+
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.1f, Pitch = 0.2f }, NPC.Center);
                         }
 
@@ -485,7 +484,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
 
-           
+
         }
 
         #endregion
@@ -546,9 +545,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (Main.rand.NextBool(2))
             {
-                
+
                 player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 1800, false);
-                
+
             }
 
 
@@ -578,7 +577,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 1, 3, 6));
             npcLoot.Add(new CommonDrop(ItemID.GreaterHealingPotion, 100, 1, 1, 8));

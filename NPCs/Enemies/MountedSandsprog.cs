@@ -1,12 +1,9 @@
-﻿using Terraria;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using Terraria.GameContent;
-using Terraria.GameContent.ItemDropRules;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Potions;
 using static tsorcRevamp.SpawnHelper;
 
 
@@ -161,7 +158,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
             }
-            else 
+            else
             {
                 if (boostTimer > 270)
                 {

@@ -6,8 +6,8 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
-    public class CrescentMoonSword : ModItem 
-    {                                        
+    public class CrescentMoonSword : ModItem
+    {
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Crescent Moon Sword");

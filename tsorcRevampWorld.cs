@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -11,17 +12,15 @@ using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
-using Terraria.ModLoader.Config;
-using tsorcRevamp.Textures;
-using tsorcRevamp.Tiles;
-using Terraria.Localization;
 using Terraria.Graphics.Effects;
-using tsorcRevamp.Utilities;
-using System.Diagnostics;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
+using Terraria.ModLoader.IO;
 using tsorcRevamp.NPCs.Bosses;
+using tsorcRevamp.Tiles;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp
 {
@@ -104,7 +103,7 @@ namespace tsorcRevamp
             CustomMap = worldStateList.Contains("CustomMap");
 
             AbyssPortalLocation = tag.Get<Vector2>("AbyssPortal");
-            if(AbyssPortalLocation == Vector2.Zero)
+            if (AbyssPortalLocation == Vector2.Zero)
             {
                 AbyssPortalLocation = new Vector2(1400.5f, 256.5f) * 16;
             }
@@ -199,7 +198,7 @@ namespace tsorcRevamp
                 writer.Write(slainSize);
                 foreach (KeyValuePair<NPCDefinition, int> pair in NewSlain)
                 {
-                    
+
                     //Fuck it, i'm encoding each entry of slain as a Vector2. It's probably more sane than doing it byte by byte.
                     writer.WriteVector2(new Vector2(pair.Key.Type, pair.Value));
                 }
@@ -744,24 +743,31 @@ namespace tsorcRevamp
             {
                 mod.Logger.Info("Attempting to read soapstone JSON");
 
-                for (int x = 0; x < Main.maxTilesX - 2; x++) {
-                    for (int y = 0; y < Main.maxTilesY - 2; y++) {
+                for (int x = 0; x < Main.maxTilesX - 2; x++)
+                {
+                    for (int y = 0; y < Main.maxTilesY - 2; y++)
+                    {
                         Tile worldTile = Framing.GetTileSafely(x, y);
-                        if (worldTile.HasTile && worldTile.TileType == TileID.Signs) {
-                            for (int q = x; q < x + 2; q++) {
-                                for (int w = y; w < y + 2; w++) {
+                        if (worldTile.HasTile && worldTile.TileType == TileID.Signs)
+                        {
+                            for (int q = x; q < x + 2; q++)
+                            {
+                                for (int w = y; w < y + 2; w++)
+                                {
                                     WorldGen.KillTile(q, w);
                                 }
                             }
                         }
                     }
                 }
-                for (int i = 0; i < 400; i++) {
-                    if (Main.item[i].type == ItemID.Sign && Main.item[i].active) {
+                for (int i = 0; i < 400; i++)
+                {
+                    if (Main.item[i].type == ItemID.Sign && Main.item[i].active)
+                    {
                         Main.item[i].active = false; //delete ground items
                     }
                 }
-                for(int i = 0; i < Main.maxDust; i++)
+                for (int i = 0; i < Main.maxDust; i++)
                 {
                     Main.dust[i].active = false;
                 }
@@ -769,7 +775,7 @@ namespace tsorcRevamp
                 Byte[] jsonBytes = ModContent.GetFileBytes(jsonPath);
 
                 string bigJson = System.Text.Encoding.UTF8.GetString(jsonBytes);
-                
+
                 List<SignJSONSerializable> texts = UsefulFunctions.DeserializeMultiple<SignJSONSerializable>(bigJson).ToList();
                 foreach (SignJSONSerializable sign in texts)
                 {
@@ -917,7 +923,7 @@ namespace tsorcRevamp
 
         public override void PostUpdateWorld()
         {
-            Terraria.GameContent.Creative.CreativePowerManager.Instance.GetPower<Terraria.GameContent.Creative.CreativePowers.StopBiomeSpreadPower>().SetPowerInfo(false);            
+            Terraria.GameContent.Creative.CreativePowerManager.Instance.GetPower<Terraria.GameContent.Creative.CreativePowers.StopBiomeSpreadPower>().SetPowerInfo(false);
         }
 
         bool initialized = false;
@@ -944,13 +950,13 @@ namespace tsorcRevamp
                     }
                     if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                     {
-                        Tiles.SoulSkellyGeocache.InitializeSkellys();                   
+                        Tiles.SoulSkellyGeocache.InitializeSkellys();
                     }
 
                     //Stuff that should only be done by either a solo player or the server
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        
+
                         if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID)
                         {
                             Main.worldID = Main.rand.Next(9999999);
@@ -1035,13 +1041,15 @@ namespace tsorcRevamp
                     }
                 }
             }
-            if (tsorcRevamp.NearbySoapstone != null) {
+            if (tsorcRevamp.NearbySoapstone != null)
+            {
                 if (tsorcRevamp.NearbySoapstone.timer <= 0 && !tsorcRevamp.NearbySoapstone.nearPlayer)
                     tsorcRevamp.NearbySoapstone = null;
             }
         }
 
-        internal static void HandleDevKeys() {
+        internal static void HandleDevKeys()
+        {
             char separator = Path.DirectorySeparatorChar;
 
             string jsonPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcSoapstones.json"; //Where the music mod is downloaded to
@@ -1051,10 +1059,13 @@ namespace tsorcRevamp
             if (JustPressed(Keys.NumPad7) && JustPressed(Keys.Home))
             {
 
-                for (int x = 0; x < Main.maxTilesX - 2; x++) {
-                    for (int y = 0; y < Main.maxTilesY - 2; y++) {
+                for (int x = 0; x < Main.maxTilesX - 2; x++)
+                {
+                    for (int y = 0; y < Main.maxTilesY - 2; y++)
+                    {
                         Tile worldTile = Framing.GetTileSafely(x, y);
-                        if (worldTile.HasTile && worldTile.TileType == TileID.Signs) {
+                        if (worldTile.HasTile && worldTile.TileType == TileID.Signs)
+                        {
                             string h = Main.sign[Sign.ReadSign(x, y, false)].text;
                             string result = Regex.Replace(h, @"\r\n?|\n", " --NEWLINE ");
 
@@ -1069,16 +1080,20 @@ namespace tsorcRevamp
                             string rawJson = JsonSerializer.Serialize(signJson, opt);
                             List<string> asList = new() { rawJson };
                             File.AppendAllLines(jsonPath, asList);
-                            for (int q = x; q < x + 2; q++) {
-                                for (int w = y; w < y + 2; w++) {
+                            for (int q = x; q < x + 2; q++)
+                            {
+                                for (int w = y; w < y + 2; w++)
+                                {
                                     WorldGen.KillTile(q, w);
                                 }
                             }
                         }
                     }
                 }
-                for (int i = 0; i < 400; i++) {
-                    if (Main.item[i].type == ItemID.Sign && Main.item[i].active) {
+                for (int i = 0; i < 400; i++)
+                {
+                    if (Main.item[i].type == ItemID.Sign && Main.item[i].active)
+                    {
                         Main.item[i].active = false; //delete ground items (in this case campfires)
                     }
                 }
@@ -1088,22 +1103,30 @@ namespace tsorcRevamp
 
             //kill signs and place soapstones from the json. for testing manual json edits
             //eventually can be done on world load, or something
-            if (JustPressed(Keys.NumPad5) && JustPressed(Keys.Home)) {
+            if (JustPressed(Keys.NumPad5) && JustPressed(Keys.Home))
+            {
 
-                for (int x = 0; x < Main.maxTilesX - 2; x++) {
-                    for (int y = 0; y < Main.maxTilesY - 2; y++) {
+                for (int x = 0; x < Main.maxTilesX - 2; x++)
+                {
+                    for (int y = 0; y < Main.maxTilesY - 2; y++)
+                    {
                         Tile worldTile = Framing.GetTileSafely(x, y);
-                        if (worldTile.HasTile && worldTile.TileType == TileID.Signs) {
-                            for (int q = x; q < x + 2; q++) {
-                                for (int w = y; w < y + 2; w++) {
+                        if (worldTile.HasTile && worldTile.TileType == TileID.Signs)
+                        {
+                            for (int q = x; q < x + 2; q++)
+                            {
+                                for (int w = y; w < y + 2; w++)
+                                {
                                     WorldGen.KillTile(q, w);
                                 }
                             }
                         }
                     }
                 }
-                for (int i = 0; i < 400; i++) {
-                    if (Main.item[i].type == ItemID.Sign && Main.item[i].active) {
+                for (int i = 0; i < 400; i++)
+                {
+                    if (Main.item[i].type == ItemID.Sign && Main.item[i].active)
+                    {
                         Main.item[i].active = false;
                     }
                 }
@@ -1111,14 +1134,16 @@ namespace tsorcRevamp
 
                 string bigJson = File.ReadAllText(jsonPath);
                 List<SignJSONSerializable> texts = UsefulFunctions.DeserializeMultiple<SignJSONSerializable>(bigJson).ToList();
-                foreach (SignJSONSerializable sign in texts) {
+                foreach (SignJSONSerializable sign in texts)
+                {
                     int locX = sign.tileX;
                     int locY = sign.tileY;
                     Dust.QuickBox(new Vector2(locX, locY) * 16, new Vector2(locX + 1, locY + 1) * 16, 2, Color.YellowGreen, null);
 
-                    
+
                     Tile tile = Framing.GetTileSafely(locX, locY);
-                    if (tile.TileType != ModContent.TileType<SoapstoneTile>()) {
+                    if (tile.TileType != ModContent.TileType<SoapstoneTile>())
+                    {
 
                         //tip: i am so fucking mad
                         if (!tile.HasTile) tile.HasTile = true;
@@ -1128,11 +1153,12 @@ namespace tsorcRevamp
                         tile.TileFrameNumber = 0;
 
                         ModContent.GetInstance<SoapstoneTileEntity>().Place(locX, locY);
-                        if (TileUtils.TryGetTileEntityAs(locX, locY, out SoapstoneTileEntity entity)) {
+                        if (TileUtils.TryGetTileEntityAs(locX, locY, out SoapstoneTileEntity entity))
+                        {
                             entity.text = sign.text;
                             entity.textWidth = sign.textWidth;
                             entity.style = sign.style;
-                        } 
+                        }
                     }
                 }
                 Main.NewText("attempted to read json!");
@@ -1218,7 +1244,7 @@ namespace tsorcRevamp
         public static List<string> boundShaders = new List<string>();
         public static void CleanUpScreenShaders()
         {
-            for(int i = 0; i < 16; i++)
+            for (int i = 0; i < 16; i++)
             {
                 string currentIndex = "tsorcRevamp:shockwave" + i;
                 if (Filters.Scene[currentIndex] != null && !boundShaders.Contains(currentIndex))
@@ -1252,7 +1278,8 @@ namespace tsorcRevamp
                 }
             }
         }
-        public override void OnWorldUnload() {
+        public override void OnWorldUnload()
+        {
             tsorcRevamp.NearbySoapstone = null;
         }
 
@@ -1304,7 +1331,7 @@ namespace tsorcRevamp
         {
             get
             {
-                for(int i = 0; i < Main.maxNPCs; i++)
+                for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (Main.npc[i].active && Main.npc[i].boss)
                     {

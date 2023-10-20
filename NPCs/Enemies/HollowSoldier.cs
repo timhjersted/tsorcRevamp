@@ -39,20 +39,20 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 40;
             NPC.width = 20;
             NPC.lifeMax = 250;
-            if (Main.hardMode) 
-            { 
-                NPC.lifeMax = 500; 
-                NPC.defense = 30; 
-                NPC.damage = 42; 
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 500;
+                NPC.defense = 30;
+                NPC.damage = 42;
                 NPC.value = 2500; // was 150
                 hollowLesserSlashDamage = 26;
                 hollowGreaterSlashDamage = 30; // scaling damage added
-    }
-            if (tsorcRevampWorld.SuperHardMode) 
-            { 
-                NPC.lifeMax = 1500; 
-                NPC.defense = 70; 
-                NPC.damage = 58; 
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 1500;
+                NPC.defense = 70;
+                NPC.damage = 58;
                 NPC.value = 6000; //was 250, now has scaling damage
                 hollowLesserSlashDamage = 30;
                 hollowGreaterSlashDamage = 34;
@@ -373,8 +373,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (NPC.ai[3] == 26) //If timer is 46
                     {
-                        
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f}, NPC.Center); //Play slash/swing sound
+
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center); //Play slash/swing sound
 
                         if (NPC.direction == 1)
                         {
@@ -511,7 +511,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (NPC.ai[1] == 442) //If timer is 50
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f}, NPC.Center); //Play slash/swing sound
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center); //Play slash/swing sound
 
                         if (NPC.direction == 1)
                         {
@@ -803,7 +803,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spawnInfo.Player.townNPCs > 1f) return 0f;
 
             if (!Main.hardMode && spawnInfo.SpawnTileType == TileID.GreenDungeonBrick && !spawnInfo.Water) return 0.12f;
-
+            if (!spawnInfo.Water && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonUnsafe) && !Main.hardMode && !tsorcRevampWorld.SuperHardMode) return 0.12f;
             if (Main.hardMode && spawnInfo.Lihzahrd) return 0.2f;
             if (Main.hardMode && p.ZoneNormalCaverns && !spawnInfo.Water) return 0.02f;
             if (Main.hardMode && p.ZoneDesert && p.ZoneOverworldHeight && !spawnInfo.Water) return 0.05f;
@@ -832,7 +832,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 3, 9));
             npcLoot.Add(ItemDropRule.Common(ItemID.EndurancePotion, 30));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 30));

@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.DataStructures;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -38,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.shoot = ModContent.ProjectileType<Projectiles.DyingStarHoldout>();
             Item.channel = true;
             Item.noMelee = true;
-            
+
         }
 
         public override void ModifyManaCost(Player player, ref float reduce, ref float mult)
@@ -66,7 +64,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         }
 
         public override bool AltFunctionUse(Player player)
-        {            
+        {
             return true;
         }
 
@@ -75,7 +73,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<FireSpiritTome3>(), 1);
             recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Magic.Tomes.FlareTome > (), 1);
+            recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Magic.Tomes.FlareTome>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
             recipe.AddTile(TileID.DemonAltar);
 

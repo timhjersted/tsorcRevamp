@@ -77,7 +77,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                     for (int num154 = 0; num154 < 1; num154++)
                     {
                         int num155 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, num153, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
-                        if (!Main.rand.NextBool(3)|| (num153 == 76 && Main.rand.NextBool(3)))
+                        if (!Main.rand.NextBool(3) || (num153 == 76 && Main.rand.NextBool(3)))
                         {
                             Main.dust[num155].noGravity = true;
                             Main.dust[num155].scale *= 2f; //was 3 but 1.5 too small
@@ -111,12 +111,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
-        { 
+        {
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())))
             {
                 if (Main.rand.NextBool(5))
                 {
-                    
+
                     target.AddBuff(BuffID.Frozen, 10, false);
                     target.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 18000, false); //may lose -100 max HP after taking enough hits. It had 100% trigger before. I think that was the problem.
                 }
@@ -125,12 +125,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             target.AddBuff(BuffID.Chilled, 90, false);
             target.AddBuff(BuffID.Slow, 60, false);
             target.AddBuff(BuffID.Frostburn, 90, false);
-            
+
         }
 
-        
 
-       
+
+
 
     }
 

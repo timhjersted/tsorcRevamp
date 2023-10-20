@@ -1,14 +1,14 @@
-﻿using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
-using tsorcRevamp.Projectiles.Magic.Runeterra;
-using Terraria.DataStructures;
+﻿using Humanizer;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using tsorcRevamp.Items.Materials;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using Terraria;
+using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.Localization;
-using Humanizer;
+using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Magic.Runeterra;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
@@ -68,9 +68,9 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void HoldItem(Player player)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrbIdle>()] == 0 && !player.dead) 
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrb>()] == 0 && player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrbIdle>()] == 0 && !player.dead)
             {
-                Projectile.NewProjectile(Projectile.InheritSource(player), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbOfDeceptionOrbIdle>(), 0, 0, player.whoAmI); 
+                Projectile.NewProjectile(Projectile.InheritSource(player), player.Center, Vector2.Zero, ModContent.ProjectileType<OrbOfDeceptionOrbIdle>(), 0, 0, player.whoAmI);
             }
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)

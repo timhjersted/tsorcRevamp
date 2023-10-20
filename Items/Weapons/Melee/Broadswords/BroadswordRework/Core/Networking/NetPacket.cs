@@ -1,39 +1,39 @@
 ﻿using System;
 using System.IO;
 
-namespace  tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Core.Networking;
+namespace tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Core.Networking;
 
 public abstract class NetPacket : IDisposable
 {
-	public int Id { get; internal set; }
+    public int Id { get; internal set; }
 
-	protected BinaryWriter Writer { get; private set; }
+    protected BinaryWriter Writer { get; private set; }
 
-	private MemoryStream stream;
+    private MemoryStream stream;
 
-	protected NetPacket()
-	{
-		Id = MultiplayerSystem.GetPacket(GetType()).Id;
-		Writer = new BinaryWriter(stream = new MemoryStream());
-	}
+    protected NetPacket()
+    {
+        Id = MultiplayerSystem.GetPacket(GetType()).Id;
+        Writer = new BinaryWriter(stream = new MemoryStream());
+    }
 
-	public abstract void Read(BinaryReader reader, int sender);
+    public abstract void Read(BinaryReader reader, int sender);
 
-	public void WriteAndDispose(BinaryWriter writer)
-	{
-		writer.Write(stream.ToArray());
+    public void WriteAndDispose(BinaryWriter writer)
+    {
+        writer.Write(stream.ToArray());
 
-		Dispose();
-	}
+        Dispose();
+    }
 
-	public void Dispose()
-	{
-		GC.SuppressFinalize(this);
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
 
-		Writer?.Dispose();
-		stream?.Dispose();
+        Writer?.Dispose();
+        stream?.Dispose();
 
-		Writer = null!;
-		stream = null!;
-	}
+        Writer = null!;
+        stream = null!;
+    }
 }

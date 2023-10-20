@@ -11,6 +11,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
         {
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
+            BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
         }
         public override void Update(NPC npc, ref int buffIndex)
         {

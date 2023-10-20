@@ -88,7 +88,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
             }
         }
 
-        
+
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             Projectile.timeLeft = 2;
@@ -170,7 +170,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
         public override void OnKill(int timeLeft)
         {
             // Play explosion sound
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with {PitchVariance = 0.5f }, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { PitchVariance = 0.5f }, Projectile.Center);
             Projectile.Damage();
 
             // Fire Dust spawn

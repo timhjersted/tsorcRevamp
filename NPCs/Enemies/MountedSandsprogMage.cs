@@ -1,12 +1,9 @@
-﻿using Terraria;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using Terraria.GameContent;
-using Terraria.GameContent.ItemDropRules;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Potions;
 using static tsorcRevamp.SpawnHelper;
 
 
@@ -233,7 +230,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Jaw dust
 
-            float quantity = (float)((float)NPC.lifeMax / (float)NPC.life * 100) / 10f -8f; //Fun. quantity is 2 at 100% hp, 30+ with low hp.
+            float quantity = (float)((float)NPC.lifeMax / (float)NPC.life * 100) / 10f - 8f; //Fun. quantity is 2 at 100% hp, 30+ with low hp.
 
             if (Main.rand.Next((int)quantity) == 0 && NPC.spriteDirection == 1) { Dust.NewDust(new Vector2(NPC.Center.X + 18, NPC.Center.Y + 6), 26, -2, 226, NPC.velocity.X * 0f, NPC.velocity.Y * 0f, 100, default(Color), .4f); }
             if (Main.rand.Next((int)quantity) == 0 && NPC.spriteDirection != 1) { Dust.NewDust(new Vector2(NPC.Center.X - 48, NPC.Center.Y + 6), 26, -2, 226, NPC.velocity.X * 0f, NPC.velocity.Y * 0f, 100, default(Color), .4f); }

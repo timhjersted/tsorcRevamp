@@ -1,15 +1,15 @@
-﻿using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
-using tsorcRevamp.Projectiles.Magic.Runeterra;
-using Terraria.DataStructures;
+﻿using Humanizer;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using Terraria;
+using Terraria.DataStructures;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Items.Materials;
-using Microsoft.Xna.Framework.Input;
-using Terraria.Localization;
-using Humanizer;
+using tsorcRevamp.Projectiles.Magic.Runeterra;
 
 namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 {
@@ -39,11 +39,11 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.mana = 40;
             Item.knockBack = 8;
             Item.UseSound = null;
-            Item.rare = ItemRarityID.LightRed;
+            Item.rare = ItemRarityID.LightPurple;
             Item.shootSpeed = OrbOfDeception.ShootSpeed;
             Item.noUseGraphic = true;
             Item.noMelee = true;
-            Item.value = PriceByRarity.LightRed_4;
+            Item.value = PriceByRarity.LightPurple_6;
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<OrbOfFlameOrb>();
             Item.holdStyle = ItemHoldStyleID.HoldLamp;

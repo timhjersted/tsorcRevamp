@@ -14,8 +14,6 @@ namespace tsorcRevamp.Projectiles
         }
         public override void SetDefaults()
         {
-
-            // while the sprite is actually bigger than 15x15, we use 15x15 since it lets the projectile clip into tiles as it bounces. It looks better.
             Projectile.width = 16;
             Projectile.height = 16;
             Projectile.friendly = true;
@@ -23,6 +21,9 @@ namespace tsorcRevamp.Projectiles
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = true;
             Projectile.timeLeft = 145;
+            Projectile.penetrate = 3; //Doesn't actually penetrate 3 enemies, but the projectile is enlarged on enemy contact and can hit up to three enemies. This is to help detonate tags on enemies 1 pixel behind an enemie without tags
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = -1;
 
             //These 2 help the projectile hitbox be centered on the projectile sprite.
             DrawOffsetX = -9;
@@ -91,6 +92,15 @@ namespace tsorcRevamp.Projectiles
                 Main.dust[dust].velocity.Y = +Main.rand.Next(-50, 51) * 0.05f;
                 Main.dust[dust].noGravity = true;
             }
+            // change the hitbox size, centered about the original projectile center. This makes the projectile have small aoe.
+            Projectile.position.X = Projectile.position.X + (float)(Projectile.width / 2);
+            Projectile.position.Y = Projectile.position.Y + (float)(Projectile.height / 2);
+            Projectile.width = 30;
+            Projectile.height = 30;
+            Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
+            Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
+
+            Projectile.timeLeft = 2;
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
@@ -103,7 +113,17 @@ namespace tsorcRevamp.Projectiles
                 Main.dust[dust].noGravity = true;
 
             }
-            return true;
+            Projectile.position.X = Projectile.position.X + (float)(Projectile.width / 2);
+            Projectile.position.Y = Projectile.position.Y + (float)(Projectile.height / 2);
+            Projectile.width = 30;
+            Projectile.height = 30;
+            Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
+            Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
+            Projectile.tileCollide = false;
+            Projectile.velocity = Projectile.oldVelocity * 0.3f;
+            Projectile.timeLeft = 2;
+
+            return false;
 
         }
 

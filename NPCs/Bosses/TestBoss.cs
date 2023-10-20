@@ -56,7 +56,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (watchTimer > 0)
             {
                 watchTimer--;
-            }           
+            }
         }
 
 
@@ -68,7 +68,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            if(damageCounter == 0)
+            if (damageCounter == 0)
             {
                 thisWatch = new Stopwatch();
                 thisWatch.Start();

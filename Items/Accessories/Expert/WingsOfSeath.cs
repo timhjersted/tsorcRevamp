@@ -1,9 +1,9 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.DataStructures;
-using System.Collections.Generic;
+using Terraria.ID;
 using Terraria.Localization;
+using Terraria.ModLoader;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Accessories.Expert
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             Item.accessory = true;
             Item.value = PriceByRarity.Purple_11;
             Item.expert = true;
-            
+
         }
 
         public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising,

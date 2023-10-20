@@ -1,20 +1,20 @@
+using Humanizer;
 using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.Audio;
-using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra.Melee;
-using Terraria.DataStructures;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Projectiles.Melee.Runeterra;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.Localization;
-using Humanizer;
+using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Runeterra.Melee;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Melee.Runeterra;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
-    public class Nightbringer: ModItem
+    public class Nightbringer : ModItem
     {
         public int SwingSoundStyle = 0;
         public float SwingSoundVolume = 0.3f;

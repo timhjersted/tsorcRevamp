@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -64,7 +63,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
             {
                 player.noKnockback = false;
                 player.endurance += damageResistance2 / 100f;
-                
+
             }
             else player.noKnockback = true;
 

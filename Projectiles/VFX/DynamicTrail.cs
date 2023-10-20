@@ -502,7 +502,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 return false;
             }
 
-            if(trailPositions.Count < 2)
+            if (trailPositions.Count < 2)
             {
                 return false;
             }
@@ -639,7 +639,7 @@ namespace tsorcRevamp.Projectiles.VFX
             {
                 offset = Vector2.Zero;
             }
-            
+
             //Add an extra vertex before the very first one, to make the end square
             AddVertex(ColorFunction, WidthFunction, trailPositions[0] + offset, MathHelper.WrapAngle(trailRotations[0]), 0, 0, false);
 

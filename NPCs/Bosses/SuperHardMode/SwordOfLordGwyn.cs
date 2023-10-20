@@ -2,7 +2,6 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {

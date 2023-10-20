@@ -1,11 +1,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Enums;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -47,14 +45,14 @@ namespace tsorcRevamp.Projectiles.Ranged
             if (dying)
             {
                 fadeIn--;
-                if(fadeIn <= 0)
+                if (fadeIn <= 0)
                 {
                     Projectile.Kill();
                     return;
                 }
             }
 
-            if(Main.GameUpdateCount % 20 == 0)
+            if (Main.GameUpdateCount % 20 == 0)
             {
                 SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.5f }, truePosition);
             }
@@ -102,15 +100,15 @@ namespace tsorcRevamp.Projectiles.Ranged
 
 
             float newTrueSize = (float)Math.Pow((UsefulFunctions.GetFirstCollision(Projectile.Center, Projectile.rotation.ToRotationVector2(), ignoreNPCs: true) - Projectile.Center).Length() / 600f, 0.5f);
-            if(newTrueSize < trueSize)
+            if (newTrueSize < trueSize)
             {
                 trueSize = newTrueSize;
             }
-            else if(newTrueSize > trueSize + 0.01)
+            else if (newTrueSize > trueSize + 0.01)
             {
                 trueSize += 0.01f;
             }
-            if(trueSize > 1)
+            if (trueSize > 1)
             {
                 trueSize = 1;
             }
@@ -139,7 +137,7 @@ namespace tsorcRevamp.Projectiles.Ranged
 
             if (size < maxSize)
             {
-                size += 10f;            
+                size += 10f;
             }
         }
 
@@ -171,8 +169,8 @@ namespace tsorcRevamp.Projectiles.Ranged
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 252);
             effect.Parameters["length"].SetValue(.05f * size / maxSize);
             float opacity = 1;
-            
-            if(fadeIn < 30)
+
+            if (fadeIn < 30)
             {
                 MathHelper.Lerp(0.01f, 1, fadeIn / 30f);
                 opacity *= fadeIn / 30f;

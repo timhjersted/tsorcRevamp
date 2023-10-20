@@ -1,4 +1,3 @@
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -7,7 +6,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories.Expert
 {
     [AutoloadEquip(EquipType.Shield)]
-    public class MythrilBulwark: ModItem
+    public class MythrilBulwark : ModItem
     {
         public static float Vulnerability = 25f;
         public static int VulnerabilityDuration = 10;

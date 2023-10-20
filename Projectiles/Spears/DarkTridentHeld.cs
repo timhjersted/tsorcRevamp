@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -8,7 +7,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Spears
 {
-    class DarkTridentHeld : ChargedBowHeld {
+    class DarkTridentHeld : ChargedBowHeld
+    {
 
         protected override void SetStats()
         {
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Projectiles.Spears
         {
             Projectile.timeLeft = 2;
             Player player = Main.player[Projectile.owner];
-            
+
             if (player.altFunctionUse != 2)
             {
                 if (charge >= 1 && !playedSound)
@@ -135,7 +135,7 @@ namespace tsorcRevamp.Projectiles.Spears
         }
 
         public static Texture2D texture;
-     
+
         public override void PostDraw(Color lightColor)
         {
             Main.spriteBatch.End();

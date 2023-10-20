@@ -3,11 +3,11 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Melee.Swords 
+namespace tsorcRevamp.Projectiles.Melee.Swords
 {
-    public class DrakarthusDagger : ModProjectile 
+    public class DrakarthusDagger : ModProjectile
     {
-        public override void SetDefaults() 
+        public override void SetDefaults()
         {
             Projectile.height = Projectile.width = 16;
             Projectile.timeLeft = 900; //15 seconds, the cooldown
@@ -24,18 +24,18 @@ namespace tsorcRevamp.Projectiles.Melee.Swords
             DrawOriginOffsetX = DrawOriginOffsetY = -10;
         }
 
-        public bool Stuck 
+        public bool Stuck
         {
             get => Projectile.ai[0] == 1f;
             set => Projectile.ai[0] = value ? 1f : 0f;
         }
-        public int TargetWhoAmI 
+        public int TargetWhoAmI
         {
             get => (int)Projectile.ai[1];
             set => Projectile.ai[1] = value;
         }
 
-        public override bool OnTileCollide(Vector2 oldVelocity) 
+        public override bool OnTileCollide(Vector2 oldVelocity)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
             Stuck = true;
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles.Melee.Swords
         }
 
 
-        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) 
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Stuck = true;
             TargetWhoAmI = target.whoAmI;
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Projectiles.Melee.Swords
         }
 
 
-        public override void AI() 
+        public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(45);
             if (!Stuck) return;
@@ -61,9 +61,10 @@ namespace tsorcRevamp.Projectiles.Melee.Swords
             Projectile.tileCollide = false;
 
             int target = TargetWhoAmI;
-            if (target > 0 && target <= Main.maxNPCs) 
+            if (target > 0 && target <= Main.maxNPCs)
             {
-                if (Main.npc[target].active && Main.npc[target].life > 0) {
+                if (Main.npc[target].active && Main.npc[target].life > 0)
+                {
                     NPC npc = Main.npc[target];
                     Projectile.Center = npc.Center - Projectile.velocity * 2.5f;
                     Projectile.gfxOffY = npc.gfxOffY;

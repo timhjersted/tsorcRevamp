@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Enums;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -61,17 +60,17 @@ namespace tsorcRevamp.Projectiles
             }
 
             //Aka it didn't draw *any* segments* last frame, which means it's done
-            if (minX == 0 && maxX == 0) 
+            if (minX == 0 && maxX == 0)
             {
                 Projectile.Kill();
             }
-            
+
 
             Vector2 startpoint = Projectile.Center + lightingVector * minX;
-            Vector2 endpoint = Projectile.Center + lightingVector * maxX;            
+            Vector2 endpoint = Projectile.Center + lightingVector * maxX;
 
             //Cast light
-            DelegateMethods.v3_1 = Color.Cyan.ToVector3() * 1f;            
+            DelegateMethods.v3_1 = Color.Cyan.ToVector3() * 1f;
             Utils.PlotTileLine(startpoint, endpoint, 1, DelegateMethods.CastLight);
 
             //Cut plants
@@ -94,7 +93,7 @@ namespace tsorcRevamp.Projectiles
             if (Main.GameUpdateCount % ticksPerTick == 0)
             {
                 Projectile.frame++;
-            }            
+            }
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -145,7 +144,7 @@ namespace tsorcRevamp.Projectiles
         public override bool PreDraw(ref Color lightColor)
         {
             //Load all the textures if any are not loaded
-            if(BoltStart == null || BoltStart.IsDisposed)
+            if (BoltStart == null || BoltStart.IsDisposed)
             {
                 BoltStart = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/BoltBounceStart", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
@@ -172,7 +171,7 @@ namespace tsorcRevamp.Projectiles
             {
                 Main.EntitySpriteDraw(BoltStart, Projectile.Center - Main.screenPosition, frame, Color.White, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
                 minX = 1;
-                maxX = -(origin.X -frame.Width);
+                maxX = -(origin.X - frame.Width);
             }
 
             int i = 0;
@@ -243,7 +242,7 @@ namespace tsorcRevamp.Projectiles
             if (Projectile.frame - (i / 2) < 6 && Projectile.frame - (i / 2) >= 0)
             {
                 Main.EntitySpriteDraw(BoltEnd, Projectile.Center - Main.screenPosition + new Vector2(-6, 2).RotatedBy(Projectile.rotation), frame, Color.White, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
-            }            
+            }
             return false;
         }
     }

@@ -1,8 +1,8 @@
-﻿using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
-using tsorcRevamp.Items.Materials;
+﻿using Terraria;
+using Terraria.ID;
 using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Armors
 {
@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.IronChainmail);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1250);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

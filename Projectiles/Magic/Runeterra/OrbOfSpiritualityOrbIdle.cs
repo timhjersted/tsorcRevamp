@@ -1,13 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
+using ReLogic.Utilities;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using tsorcRevamp.Items.Weapons.Magic.Runeterra;
-using Terraria.DataStructures;
-using System.Collections.Generic;
-using ReLogic.Utilities;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
 {
@@ -15,25 +14,25 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
     public class OrbOfSpiritualityOrbIdle : ModProjectile
     {
 
-		public override void SetStaticDefaults()
-		{
-			// These lines facilitate the trail drawing
-			ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
-			ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+        public override void SetStaticDefaults()
+        {
+            // These lines facilitate the trail drawing
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             Main.projFrames[Projectile.type] = 8;
         }
 
-		public override void SetDefaults()
-		{
-			Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
+        public override void SetDefaults()
+        {
+            Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
             Projectile.aiStyle = -1;
-			Projectile.width = 50; // The width of your projectile
-			Projectile.height = 50; // The height of your projectile
-			Projectile.friendly = true; // Deals damage to enemies
-			Projectile.penetrate = -1; // Infinite pierce
-			Projectile.DamageType = DamageClass.Magic;
-			Projectile.tileCollide = false;
-		}
+            Projectile.width = 50; // The width of your projectile
+            Projectile.height = 50; // The height of your projectile
+            Projectile.friendly = true; // Deals damage to enemies
+            Projectile.penetrate = -1; // Infinite pierce
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.tileCollide = false;
+        }
         SlotId SoundSlotID;
         bool soundPaused;
         bool playedSound1 = false;
@@ -41,8 +40,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         ActiveSound OrbSound;
         public int SoundCD = 0;
         public override void AI()
-		{
-			Player player = Main.player[Projectile.owner];
+        {
+            Player player = Main.player[Projectile.owner];
             if (player.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>())
             {
                 Projectile.timeLeft = 600;
@@ -52,7 +51,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             {
                 playedSound1 = true;
                 SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbAmbient1", SoundType.Ambient) with { Volume = OrbOfDeception.OrbSoundVolume }); //can give funny pitch hehe
-            } else if (!playedSound1 && !playedSound2 && Main.rand.NextBool(2000) && !player.HasBuff(ModContent.BuffType<InCombat>()))
+            }
+            else if (!playedSound1 && !playedSound2 && Main.rand.NextBool(2000) && !player.HasBuff(ModContent.BuffType<InCombat>()))
             {
                 playedSound2 = true;
                 SoundSlotID = SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfSpirituality/OrbAmbient2", SoundType.Ambient) with { Volume = OrbOfDeception.OrbSoundVolume }); //can give funny pitch hehe
@@ -95,10 +95,11 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             {
                 Projectile.Kill();
             }
-            if (player.direction == 1) 
+            if (player.direction == 1)
             {
                 Projectile.Center = new Vector2(player.Center.X + player.width + 10, player.Center.Y - 70);
-            } else
+            }
+            else
             {
                 Projectile.Center = new Vector2(player.Center.X - player.width - 24, player.Center.Y - 70);
             }
@@ -122,7 +123,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
             {
                 Dust.NewDust(Projectile.Center, 2, 2, DustID.PoisonStaff, 0, 0, 150, default, 0.5f);
                 Lighting.AddLight(Projectile.Center, Color.GreenYellow.ToVector3() * 2f);
-            } else
+            }
+            else
             {
                 Dust.NewDust(Projectile.Center, 2, 2, DustID.VenomStaff, 0, 0, 150, default, 0.5f);
                 Lighting.AddLight(Projectile.Center, OrbOfSpirituality.FilledColor.ToVector3() * 2f);

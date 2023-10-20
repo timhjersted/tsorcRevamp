@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Armors
             player.endurance += DR / 100f;
             if ((float)player.statLife > ((float)player.statLifeMax2 * 0.25f))
             {
-                player.hasPaladinShield = true; 
+                player.hasPaladinShield = true;
                 if (player.whoAmI != Main.myPlayer && player.miscCounter % 10 == 0)
                 {
                     int myPlayer = Main.myPlayer;
@@ -56,15 +56,15 @@ namespace tsorcRevamp.Items.Armors
                 }
             }
         }
-                public override void AddRecipes()
-                {
-                    Recipe recipe = CreateRecipe();
-                    recipe.AddIngredient(ItemID.PlatinumChainmail, 1);
-                    recipe.AddIngredient(ItemID.BeeWax, 3);
-                    recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
-                    recipe.AddTile(TileID.DemonAltar);
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.PlatinumChainmail, 1);
+            recipe.AddIngredient(ItemID.BeeWax, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
+            recipe.AddTile(TileID.DemonAltar);
 
-                    recipe.Register();
-                }
+            recipe.Register();
+        }
     }
 }

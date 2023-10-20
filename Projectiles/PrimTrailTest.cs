@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Graphics;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -27,7 +26,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.alpha = 100;
             Projectile.timeLeft = 9999999;
             Projectile.friendly = true;
-            Projectile.tileCollide = true;            
+            Projectile.tileCollide = true;
         }
 
         public override void AI()
@@ -49,7 +48,7 @@ namespace tsorcRevamp.Projectiles
         Color ColorValue(float progress)
         {
             float timeFactor = (float)Math.Sin(Math.Abs(progress - Main.GlobalTimeWrappedHourly * 3));
-            Color result = Color.Lerp(Color.Cyan, Color.DeepPink,  (timeFactor + 1f) / 2f);
+            Color result = Color.Lerp(Color.Cyan, Color.DeepPink, (timeFactor + 1f) / 2f);
             Main.NewText(timeFactor + 1);
             //result = ;
             result.A = 0;
@@ -70,7 +69,7 @@ namespace tsorcRevamp.Projectiles
 
             effect.CurrentTechnique.Passes[0].Apply();
 
-            VertexStrip vertexStrip = new VertexStrip(); 
+            VertexStrip vertexStrip = new VertexStrip();
             vertexStrip.PrepareStrip(Projectile.oldPos, Projectile.oldRot, ColorValue, Progress, includeBacksides: true);
             vertexStrip.DrawTrail();
             effect.Dispose();

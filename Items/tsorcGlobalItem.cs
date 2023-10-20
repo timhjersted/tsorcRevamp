@@ -1,25 +1,21 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.Utilities;
-using tsorcRevamp.UI;
-using Terraria.ModLoader.Config;
 using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
+using Terraria.Utilities;
+using tsorcRevamp.Buffs.Runeterra.Melee;
+using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Debug;
 using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
-using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.VFX;
-using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.UI;
 
 namespace tsorcRevamp.Items
 {
@@ -32,7 +28,7 @@ namespace tsorcRevamp.Items
 
         public override bool CanUseItem(Item item, Player player)
         {
-            if(item.type == ItemID.MagicMirror || item.type == ItemID.RecallPotion)
+            if (item.type == ItemID.MagicMirror || item.type == ItemID.RecallPotion)
             {
                 if (tsorcRevampWorld.BossAlive)
                 {
@@ -40,20 +36,20 @@ namespace tsorcRevamp.Items
                     return false;
                 }
             }
-            if(item.type == ItemID.Picksaw && !tsorcRevampWorld.SuperHardMode && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if (item.type == ItemID.Picksaw && !tsorcRevampWorld.SuperHardMode && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 return false;
             }
 
-            if(item.type == ItemID.SlimySaddle && !NPC.downedBoss2)
+            if (item.type == ItemID.SlimySaddle && !NPC.downedBoss2)
             {
                 return false;
             }
-            if(item.type == ItemID.QueenSlimeMountSaddle && !NPC.downedMechBoss3)
+            if (item.type == ItemID.QueenSlimeMountSaddle && !NPC.downedMechBoss3)
             {
                 return false;
             }
-            if(tsorcRevamp.RestrictedHooks.Contains(item.type) && !NPC.downedBoss3)
+            if (tsorcRevamp.RestrictedHooks.Contains(item.type) && !NPC.downedBoss3)
             {
                 return false;
             }
@@ -119,10 +115,10 @@ namespace tsorcRevamp.Items
 
         }
 
-        
+
         public override bool CanEquipAccessory(Item item, Player player, int slot, bool modded)
         {
-            if(item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0 && !player.HasItem(ModContent.ItemType<DebugTome>()))
+            if (item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0 && !player.HasItem(ModContent.ItemType<DebugTome>()))
             {
                 if (item.type != ItemID.CreativeWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
                 {
@@ -131,7 +127,7 @@ namespace tsorcRevamp.Items
             }
             return base.CanEquipAccessory(item, player, slot, modded);
         }
-        
+
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
             if (hasSoulRecipe.Contains(item.type))
@@ -146,7 +142,7 @@ namespace tsorcRevamp.Items
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.WingsDisabled")));
                 }
             }
-            
+
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
@@ -160,7 +156,7 @@ namespace tsorcRevamp.Items
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.TileDisabled")));
                 }
 
-                if(item.createTile > -1)
+                if (item.createTile > -1)
                 {
                     if (tsorcRevamp.PlaceAllowed.Contains(item.createTile) || tsorcRevamp.CrossModTiles.Contains(item.createTile) || tsorcRevamp.PlaceAllowedModTiles.Contains(item.createTile))
                     {
@@ -186,7 +182,7 @@ namespace tsorcRevamp.Items
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Cursed")));
                 }
-                if(item.type == ItemID.SlimySaddle && !NPC.downedBoss2)
+                if (item.type == ItemID.SlimySaddle && !NPC.downedBoss2)
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.CorruptionCursed")));
                 }
@@ -369,7 +365,7 @@ namespace tsorcRevamp.Items
                 Projectile other = Main.projectile[i];
 
                 if ((item.DamageType == DamageClass.Melee || item.DamageType == DamageClass.MeleeNoSpeed) && modPlayer.BearerOfTheCurse
-                    && other.active && !other.friendly && other.hostile && UsefulFunctions.IsProjectileSafeToFuckWith(i) && other.type != ModContent.ProjectileType<Nothing>() && other.type != ModContent.ProjectileType<Slash>() 
+                    && other.active && !other.friendly && other.hostile && UsefulFunctions.IsProjectileSafeToFuckWith(i) && other.type != ModContent.ProjectileType<Nothing>() && other.type != ModContent.ProjectileType<Slash>()
                     && !other.GetGlobalProjectile<tsorcGlobalProjectile>().AppliedLethalTempo && hitbox.Intersects(other.Hitbox))
                 {
                     if (modPlayer.BotCLethalTempoStacks < modPlayer.BotCLethalTempoMaxStacks - 1)
@@ -444,7 +440,7 @@ namespace tsorcRevamp.Items
                 else if (modPlayer.BotCConquerorStacks == modPlayer.BotCConquerorMaxStacks - 1)
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 2f }, player.Center);
-                } 
+                }
                 else if (modPlayer.BotCConquerorStacks == modPlayer.BotCConquerorMaxStacks - 2 && hit.Crit)
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 2f }, player.Center);
@@ -491,7 +487,7 @@ namespace tsorcRevamp.Items
                     float bonusDamage = ((player.GetDamage(DamageClass.Magic).Additive * player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * BonusDamage1 / 100f;
                     if (bonusDamage >= 0)
                     {
-                        player.GetDamage(DamageClass.Melee) += bonusDamage; 
+                        player.GetDamage(DamageClass.Melee) += bonusDamage;
                     }
                 }
                 if (modPlayer.GreatMagicWeapon)
@@ -499,7 +495,7 @@ namespace tsorcRevamp.Items
                     float bonusDamage = ((player.GetDamage(DamageClass.Magic).Additive * player.GetDamage(DamageClass.Magic).Multiplicative) - 1) * BonusDamage2 / 100f;
                     if (bonusDamage >= 0)
                     {
-                        player.GetDamage(DamageClass.Melee) += bonusDamage; 
+                        player.GetDamage(DamageClass.Melee) += bonusDamage;
                     }
                 }
                 if (modPlayer.CrystalMagicWeapon)
@@ -556,7 +552,7 @@ namespace tsorcRevamp.Items
                     return false;
                 }
             }
-                       
+
             return base.OnPickup(item, player);
         }
 
@@ -627,17 +623,17 @@ namespace tsorcRevamp.Items
             potionList = new List<int>()
             {
                 ItemID.LesserHealingPotion,
-				ItemID.LesserManaPotion,
-				ItemID.LesserRestorationPotion,
+                ItemID.LesserManaPotion,
+                ItemID.LesserRestorationPotion,
                 ItemID.HealingPotion,
-			    ItemID.ManaPotion,
-				ItemID.RestorationPotion,
-				ItemID.GreaterHealingPotion,
-				ItemID.GreaterManaPotion,
-				ItemID.SuperHealingPotion,
-				ItemID.SuperManaPotion,
+                ItemID.ManaPotion,
+                ItemID.RestorationPotion,
+                ItemID.GreaterHealingPotion,
+                ItemID.GreaterManaPotion,
+                ItemID.SuperHealingPotion,
+                ItemID.SuperManaPotion,
 
-				ItemID.BowlofSoup,
+                ItemID.BowlofSoup,
                 ItemID.SwiftnessPotion,
                 ItemID.AmmoReservationPotion,
                 ItemID.ArcheryPotion,
@@ -779,29 +775,35 @@ namespace tsorcRevamp.Items
             };
         }
 
-        public override void OnConsumeItem(Item item, Player player) 
+        public override void OnConsumeItem(Item item, Player player)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.consumedPotions ??= new Dictionary<ItemDefinition, int>();
 
             bool isPotion = false;
-            if (potionList.Contains(item.type)) {
+            if (potionList.Contains(item.type))
+            {
                 isPotion = true;
             }
 
-            if (!isPotion) {
-                if (item.buffType > 0 && item.consumable) {
+            if (!isPotion)
+            {
+                if (item.buffType > 0 && item.consumable)
+                {
                     isPotion = true;
                 }
             }
-            
 
-            if (isPotion) {
+
+            if (isPotion)
+            {
                 ItemDefinition pot = new(item.type);
-                if (modPlayer.consumedPotions.ContainsKey(pot)) {
+                if (modPlayer.consumedPotions.ContainsKey(pot))
+                {
                     modPlayer.consumedPotions[pot] += 1;
                 }
-                else {
+                else
+                {
                     modPlayer.consumedPotions.Add(pot, 1);
                 }
             }
@@ -815,7 +817,7 @@ namespace tsorcRevamp.Items
         {
             hasSoulRecipe = new List<int>();
 
-            for(int i = 0; i < Recipe.numRecipes; i++)
+            for (int i = 0; i < Recipe.numRecipes; i++)
             {
                 if (Main.recipe[i].HasIngredient<DarkSoul>())
                 {
@@ -839,7 +841,8 @@ namespace tsorcRevamp.Items
                 if (Main.masterMode)
                 {
                     player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoul>(), (int)(1500 * 1.2f * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
-                } else
+                }
+                else
                 {
                     player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoul>(), (int)(1500 * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
                 }

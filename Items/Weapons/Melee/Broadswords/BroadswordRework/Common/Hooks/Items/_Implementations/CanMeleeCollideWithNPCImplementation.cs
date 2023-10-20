@@ -1,17 +1,19 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using Terraria;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities;
-using Hook =  tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Hooks.Items.ICanMeleeCollideWithNPC;
+using Hook = tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Hooks.Items.ICanMeleeCollideWithNPC;
 
-namespace  tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Hooks.Items;
+namespace tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Hooks.Items;
 
-internal sealed class CanMeleeCollideWithNPCImplementation : GlobalItem {
-    public override void Load() {
-        IL_Player.ProcessHitAgainstNPC += context => {
+internal sealed class CanMeleeCollideWithNPCImplementation : GlobalItem
+{
+    public override void Load()
+    {
+        IL_Player.ProcessHitAgainstNPC += context =>
+        {
             var cursor = new ILCursor(context);
 
             // Match:
@@ -45,7 +47,8 @@ internal sealed class CanMeleeCollideWithNPCImplementation : GlobalItem {
 
             // Insert our changes
 
-            static bool TryGetOverride(Item item, Player player, NPC npc, in Rectangle itemRectangle, out bool result) {
+            static bool TryGetOverride(Item item, Player player, NPC npc, in Rectangle itemRectangle, out bool result)
+            {
                 bool? hookResult = Hook.Invoke(item, player, npc, itemRectangle);
 
                 result = hookResult ?? false;

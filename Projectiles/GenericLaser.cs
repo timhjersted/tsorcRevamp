@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Enums;
@@ -217,7 +216,7 @@ namespace tsorcRevamp.Projectiles
         /// Contains the ID of the player, projectile, or NPC that this laser is attached to (if any).
         /// Note: Projectile.ai[0] is unused, feel free to use it for custom behavior
         /// </summary>
-        
+
         public int HostIdentifier
         {
             get => (int)Projectile.ai[1];
@@ -308,7 +307,7 @@ namespace tsorcRevamp.Projectiles
                 else
                 {
                     fadePercent += FadeInSpeed;
-                    if(fadePercent > 1)
+                    if (fadePercent > 1)
                     {
                         fadePercent = 1;
                     }
@@ -414,7 +413,7 @@ namespace tsorcRevamp.Projectiles
             //drawWatch.Stop();
             //Main.NewText(count + " segments drawn in " + drawWatch.Elapsed);
 
-            
+
             //Laser tail
             i -= (LaserTextureBody.Height) * scale;
             i += (LaserTextureTail.Height + 3) * scale; //Slightly fudged, need to find out why the laser tail is still misaligned for certain texture sizes
@@ -423,7 +422,7 @@ namespace tsorcRevamp.Projectiles
             if (FastContainsPoint(screenRect, startPos))
             {
                 Main.EntitySpriteDraw(texture, startPos - Main.screenPosition, tailFrame, color, r, new Vector2(tailRect.Width * .5f, tailRect.Height * .5f), scale, 0, 0);
-            }         
+            }
         }
 
         public static Tuple<Vector2, Vector2> Intersections(Rectangle screenRect, Vector2 lineStart, Vector2 lineDirection)
@@ -436,9 +435,9 @@ namespace tsorcRevamp.Projectiles
             diff *= -1;
 
             float leftIntersection = (diff * screenRect.Left) + lineStart.Y;
-            if(leftIntersection > screenRect.Top && leftIntersection < screenRect.Bottom)
+            if (leftIntersection > screenRect.Top && leftIntersection < screenRect.Bottom)
             {
-                if(firstResult == Vector2.Zero)
+                if (firstResult == Vector2.Zero)
                 {
                     firstResult = new Vector2(screenRect.Left, leftIntersection);
                 }
@@ -485,7 +484,7 @@ namespace tsorcRevamp.Projectiles
                 {
                     secondResult = new Vector2(bottomIntersection, screenRect.Bottom);
                 }
-            }            
+            }
 
             return new Tuple<Vector2, Vector2>(firstResult, secondResult);
         }
@@ -598,7 +597,7 @@ namespace tsorcRevamp.Projectiles
             else
             {
                 int decodedID = UsefulFunctions.DecodeID(HostIdentifier);
-                if(decodedID == -1)
+                if (decodedID == -1)
                 {
                     Projectile.Kill();
                     Projectile.active = false;
@@ -679,7 +678,7 @@ namespace tsorcRevamp.Projectiles
 
             Vector2? collision = UsefulFunctions.GetFirstCollision(GetOrigin(), Projectile.velocity, LaserLength, true, PierceNPCs);
 
-            if(collision != null)
+            if (collision != null)
             {
                 Distance = Vector2.Distance(GetOrigin(), collision.Value) + 32;
             }
@@ -720,21 +719,21 @@ namespace tsorcRevamp.Projectiles
                 }
             }
 
-            if(TargetingMode == 0)
+            if (TargetingMode == 0)
             {
                 if (FiringTimeLeft > 0)
                 {
-                    FiringTimeLeft--; 
+                    FiringTimeLeft--;
                     if (FiringTimeLeft == 0)
                     {
                         Projectile.Kill();
                     }
-                }                
+                }
             }
             else
             {
                 TelegraphTime--;
-                if(TelegraphTime <= 0)
+                if (TelegraphTime <= 0)
                 {
                     Projectile.Kill();
                 }
@@ -793,7 +792,7 @@ namespace tsorcRevamp.Projectiles
                 if (ProjectileSource)
                 {
                     int decodedID = UsefulFunctions.DecodeID(HostIdentifier);
-                    if(decodedID == -1)
+                    if (decodedID == -1)
                     {
                         Projectile.Kill();
                         Projectile.active = false;

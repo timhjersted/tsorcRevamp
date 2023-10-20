@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             Projectile.timeLeft = 0;
             {
-                Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Grass with { Volume = 0.3f, Pitch = -4.7f}, Projectile.Center); //grass cut slowed down (1.4 Porting note: Pitch was set to -4.7 here but it's supposed to be between -1 and 1. Was that intentional, or a typo?)
+                Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Grass with { Volume = 0.3f, Pitch = -4.7f }, Projectile.Center); //grass cut slowed down (1.4 Porting note: Pitch was set to -4.7 here but it's supposed to be between -1 and 1. Was that intentional, or a typo?)
                 if (Projectile.owner == Main.myPlayer)
 
                 {

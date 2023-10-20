@@ -8,11 +8,11 @@ namespace tsorcRevamp.Items.VanillaItems
     {
         public override void SetDefaults(Item item)
         {
-            if(item.type == ItemID.Minishark)
+            if (item.type == ItemID.Minishark)
             {
                 item.damage = 4;
             }
-            if(item.type == ItemID.CrystalBullet)
+            if (item.type == ItemID.CrystalBullet)
             {
                 item.damage = 1;
             }
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.mana = 10;
             }
 
-            if(item.type == ItemID.HolyArrow)
+            if (item.type == ItemID.HolyArrow)
             {
                 item.damage = 1;
             }
@@ -58,7 +58,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
 
             //same damage as Gastraphetes, vanilla damage is 53
-            if(item.type == ItemID.Tsunami)
+            if (item.type == ItemID.Tsunami)
             {
                 item.damage = 25;
             }

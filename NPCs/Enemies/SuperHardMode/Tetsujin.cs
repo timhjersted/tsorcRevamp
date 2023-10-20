@@ -2,9 +2,9 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -134,7 +134,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         //LASER
                         //Fire 5 times at the start of each second with a 3 frame gap between shots
                         //Don't fire if no line of sight
-                        if (Main.GameUpdateCount % 60 < 15 && Main.GameUpdateCount % 3 == 0 && (Main.player[NPC.target].DistanceSQ(NPC.Center) < 887100) && Collision.CanHit(NPC, Main.player[NPC.target])) 
+                        if (Main.GameUpdateCount % 60 < 15 && Main.GameUpdateCount % 3 == 0 && (Main.player[NPC.target].DistanceSQ(NPC.Center) < 887100) && Collision.CanHit(NPC, Main.player[NPC.target]))
                         {
                             float num48 = 17f;
                             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -419,7 +419,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
 
                 target.AddBuff(BuffID.BrokenArmor, 10 * 60, false);
-                                                //player.AddBuff(23, 120, false); //cursed
+                //player.AddBuff(23, 120, false); //cursed
 
             }
 
@@ -489,7 +489,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Ammo.TeslaBolt>(), 1, 200, 230));
             npcLoot.Add(ItemDropRule.OneFromOptions(1, ModContent.ItemType<CompactFrame>(), ModContent.ItemType<DestructionElement>()));

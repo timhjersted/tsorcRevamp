@@ -1,14 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
     class ArtemisBowHeld : ChargedBowHeld
     {
-        protected override void SetStats() {
+        protected override void SetStats()
+        {
             Player owner = Main.LocalPlayer;
             Item bow = owner.inventory[owner.selectedItem];
             StatModifier rangedDamage = owner.GetTotalDamage(DamageClass.Ranged);
@@ -23,7 +22,8 @@ namespace tsorcRevamp.Projectiles
             Main.projFrames[Projectile.type] = 7;
         }
 
-        protected override void Shoot() {
+        protected override void Shoot()
+        {
             Player player = Main.player[Projectile.owner];
             if (player.whoAmI != Main.myPlayer)
                 return;

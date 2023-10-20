@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         public static int LifeRegen1 = 2;
         public static float LifeThreshold = 25f;
         public static int LifeRegen2 = 3;
-        public static int BaseDamage = 60;
+        public static int BaseDamage = 45;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageIncrease, LifeRegen1, LifeThreshold, LifeRegen2);
         public override void SetStaticDefaults()
         {
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Armors.Melee
             player.GetModPlayer<tsorcRevampPlayer>().PortlyPlateArmor = true;
             if (player.ownedProjectileCounts[ModContent.ProjectileType<PortlyPlateRollHitbox>()] == 0)
             {
-                int projectile = Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<PortlyPlateRollHitbox>(), BaseDamage, 11.5f, player.whoAmI);
+                int projectile = Projectile.NewProjectile(Projectile.GetSource_None(), player.position, Vector2.Zero, ModContent.ProjectileType<PortlyPlateRollHitbox>(), BaseDamage, 11.5f, player.whoAmI);
                 Main.projectile[projectile].originalDamage = BaseDamage;
             }
             if (player.statLife <= (int)(player.statLifeMax2 * (LifeThreshold / 100f)))

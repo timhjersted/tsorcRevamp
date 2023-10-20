@@ -1,10 +1,10 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Hooks.Items;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities;
 
-namespace  tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
+namespace tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
 
 /// <summary>
 /// Quick swing that lasts 1/2 of the use animation time.
@@ -12,105 +12,113 @@ namespace  tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.M
 /// </summary>
 public class QuickSlashMeleeAnimation : MeleeAnimation, ICanDoMeleeDamage
 {
-	public bool IsAttackFlipped { get; set; }
-	public bool FlipAttackEachSwing { get; set; }
-	public bool AnimateLegs { get; set; }
+    public bool IsAttackFlipped { get; set; }
+    public bool FlipAttackEachSwing { get; set; }
+    public bool AnimateLegs { get; set; }
 
-	public override float GetItemRotation(Player player, Item item)
-	{
-		return MeleeSwingRotation(player, item, IsAttackFlipped);
-	}
-
-	//This is public static so I can access it anywhere
-	public static float MeleeSwingRotation(Player player, Item item, bool IsAttackFlipped)
+    public override float GetItemRotation(Player player, Item item)
     {
-		float baseAngle;
+        return MeleeSwingRotation(player, item, IsAttackFlipped);
+    }
 
-		if (item.TryGetGlobalItem(out ItemMeleeAttackAiming meleeAiming))
-		{
-			baseAngle = meleeAiming.AttackAngle;
-		}
-		else
-		{
-			baseAngle = 0f;
-		}
+    //This is public static so I can access it anywhere
+    public static float MeleeSwingRotation(Player player, Item item, bool IsAttackFlipped)
+    {
+        float baseAngle;
 
-		float step = 1f - MathHelper.Clamp(player.itemAnimation / (float)player.itemAnimationMax, 0f, 1f);
-		int dir = player.direction * (IsAttackFlipped ? -1 : 1);
+        if (item.TryGetGlobalItem(out ItemMeleeAttackAiming meleeAiming))
+        {
+            baseAngle = meleeAiming.AttackAngle;
+        }
+        else
+        {
+            baseAngle = 0f;
+        }
 
-		float minValue = baseAngle - MathHelper.PiOver2 * 1.25f;
-		float maxValue = baseAngle + MathHelper.PiOver2 * 1.0f;
+        float step = 1f - MathHelper.Clamp(player.itemAnimation / (float)player.itemAnimationMax, 0f, 1f);
+        int dir = player.direction * (IsAttackFlipped ? -1 : 1);
 
-		if (dir < 0)
-		{
-			Utils.Swap(ref minValue, ref maxValue);
-		}
+        float minValue = baseAngle - MathHelper.PiOver2 * 1.25f;
+        float maxValue = baseAngle + MathHelper.PiOver2 * 1.0f;
 
-		//sword visual rotation
-		//T1 is itemAnimation progress percentage, T2 is sword rotation angle at that percentage
-		//lerps between consecutive angles
-		var animation = new Gradient<float>(
-			(0.0f, minValue),
-			(0.1f, MathHelper.Lerp(minValue, maxValue, 0.1f)),
-			(0.15f, MathHelper.Lerp(minValue, maxValue, 0.125f)),
-			(0.3f, MathHelper.Lerp(minValue, maxValue, 0.5f)),
-			(0.5f, MathHelper.Lerp(minValue, maxValue, 0.75f)),
-			(0.6f, MathHelper.Lerp(minValue, maxValue, 0.9f)),
-			(0.75f, MathHelper.Lerp(minValue, maxValue, 0.96f)),
-			(0.9f, maxValue),
-			(1.0f, maxValue)
-		);
-		//Main.NewText("New: " + (float)(MathHelper.Pi * step - (Math.Sin(2 * MathHelper.Pi * step) / 2f) / 2f) / MathHelper.Pi);
-		return animation.GetValue(step);
-	}
+        if (dir < 0)
+        {
+            Utils.Swap(ref minValue, ref maxValue);
+        }
 
-	// Direction switching
-	public override void UseAnimation(Item item, Player player)
-	{
-		base.UseAnimation(item, player);
+        //sword visual rotation
+        //T1 is itemAnimation progress percentage, T2 is sword rotation angle at that percentage
+        //lerps between consecutive angles
+        var animation = new Gradient<float>(
+            (0.0f, minValue),
+            (0.1f, MathHelper.Lerp(minValue, maxValue, 0.1f)),
+            (0.15f, MathHelper.Lerp(minValue, maxValue, 0.125f)),
+            (0.3f, MathHelper.Lerp(minValue, maxValue, 0.5f)),
+            (0.5f, MathHelper.Lerp(minValue, maxValue, 0.75f)),
+            (0.6f, MathHelper.Lerp(minValue, maxValue, 0.9f)),
+            (0.75f, MathHelper.Lerp(minValue, maxValue, 0.96f)),
+            (0.9f, maxValue),
+            (1.0f, maxValue)
+        );
+        //Main.NewText("New: " + (float)(MathHelper.Pi * step - (Math.Sin(2 * MathHelper.Pi * step) / 2f) / 2f) / MathHelper.Pi);
+        return animation.GetValue(step);
+    }
 
-		if (!Enabled || !FlipAttackEachSwing) {
-			return;
-		}
+    // Direction switching
+    public override void UseAnimation(Item item, Player player)
+    {
+        base.UseAnimation(item, player);
 
-		if (item.TryGetGlobalItem(out ItemMeleeAttackAiming aiming)) {
-			IsAttackFlipped = aiming.AttackId % 2 != 0;
-		}
-	}
+        if (!Enabled || !FlipAttackEachSwing)
+        {
+            return;
+        }
 
-	// Leg framing
-	public override void UseItemFrame(Item item, Player player)
-	{
-		base.UseItemFrame(item, player);
+        if (item.TryGetGlobalItem(out ItemMeleeAttackAiming aiming))
+        {
+            IsAttackFlipped = aiming.AttackId % 2 != 0;
+        }
+    }
 
-		if (!Enabled || !AnimateLegs) {
-			return;
-		}
+    // Leg framing
+    public override void UseItemFrame(Item item, Player player)
+    {
+        base.UseItemFrame(item, player);
 
-		var aiming = item.GetGlobalItem<ItemMeleeAttackAiming>();
+        if (!Enabled || !AnimateLegs)
+        {
+            return;
+        }
 
-		if (player.velocity.Y == 0f && player.KeyDirection().X == 0f) {
-			if (Math.Abs(aiming.AttackDirection.X) > 0.5f) {
-				player.legFrame = (IsAttackFlipped ? PlayerFrames.Walk8 : PlayerFrames.Jump).ToRectangle();
-			} else {
-				player.legFrame = PlayerFrames.Walk13.ToRectangle();
-			}
-		}
-	}
+        var aiming = item.GetGlobalItem<ItemMeleeAttackAiming>();
 
-	public bool CanDoMeleeDamage(Item item, Player player)
-	{
-		if (!Enabled) {
-			return true;
-		}
+        if (player.velocity.Y == 0f && player.KeyDirection().X == 0f)
+        {
+            if (Math.Abs(aiming.AttackDirection.X) > 0.5f)
+            {
+                player.legFrame = (IsAttackFlipped ? PlayerFrames.Walk8 : PlayerFrames.Jump).ToRectangle();
+            }
+            else
+            {
+                player.legFrame = PlayerFrames.Walk13.ToRectangle();
+            }
+        }
+    }
+
+    public bool CanDoMeleeDamage(Item item, Player player)
+    {
+        if (!Enabled)
+        {
+            return true;
+        }
         //allows the player to hit multiple targets with one swing
         player.attackCD = 0;
         //in practice, because there is one frame between each hit and the weapon's active period is so restricted, the amount depends on the speed of the weapon
         //in other words, slower weapons have a larger hit window, and thus can hit more targets with each swing, which is exactly what i wanted. convenient
-		//something something "programming by coincidence" i literally dont care
+        //something something "programming by coincidence" i literally dont care
 
 
         //only deal melee damage when the swing visually occurs
         return (player.itemAnimation <= player.itemAnimationMax * 0.9f);
-	}
+    }
 }

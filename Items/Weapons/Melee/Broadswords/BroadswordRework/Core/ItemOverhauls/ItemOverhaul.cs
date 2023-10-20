@@ -3,7 +3,7 @@ using System.Reflection;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace  tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Core.ItemOverhauls;
+namespace tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Core.ItemOverhauls;
 
 // Maybe this should be a separate type that doesn't contain anything but ShouldApplyItemOverhaul & SetDefaults.
 // -- Mirsario.
@@ -13,56 +13,61 @@ namespace  tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Core.Ite
 /// </summary>
 public abstract class ItemOverhaul : GlobalItem
 {
-	private static readonly List<ItemOverhaul> ItemOverhauls = new();
-	private static readonly Dictionary<int, int> ItemIdMapping = new();
+    private static readonly List<ItemOverhaul> ItemOverhauls = new();
+    private static readonly Dictionary<int, int> ItemIdMapping = new();
 
-	public override bool InstancePerEntity => true;
+    public override bool InstancePerEntity => true;
 
-	public abstract bool ShouldApplyItemOverhaul(Item item);
+    public abstract bool ShouldApplyItemOverhaul(Item item);
 
-	public override bool AppliesToEntity(Item item, bool lateInstantiation)
-		=> lateInstantiation && ChooseItemOverhaul(item) == this;
+    public override bool AppliesToEntity(Item item, bool lateInstantiation)
+        => lateInstantiation && ChooseItemOverhaul(item) == this;
 
-	public override void Load()
-	{
-		int id = ItemOverhauls.Count;
-		var attachments = GetType().GetCustomAttribute<ItemAttachmentAttribute>();
+    public override void Load()
+    {
+        int id = ItemOverhauls.Count;
+        var attachments = GetType().GetCustomAttribute<ItemAttachmentAttribute>();
 
-		if (attachments != null) {
-			foreach (int itemId in attachments.ItemIds) {
-				ItemIdMapping[itemId] = id;
-			}
-		}
+        if (attachments != null)
+        {
+            foreach (int itemId in attachments.ItemIds)
+            {
+                ItemIdMapping[itemId] = id;
+            }
+        }
 
-		ItemOverhauls.Add(this);
-	}
+        ItemOverhauls.Add(this);
+    }
 
-	public override void Unload()
-	{
-		ItemOverhauls.Clear();
-		ItemIdMapping.Clear();
-	}
+    public override void Unload()
+    {
+        ItemOverhauls.Clear();
+        ItemIdMapping.Clear();
+    }
 
-	public override GlobalItem Clone(Item item, Item itemClone)
-	{
-		return base.Clone(item, itemClone);
-	}
+    public override GlobalItem Clone(Item item, Item itemClone)
+    {
+        return base.Clone(item, itemClone);
+    }
 
-	public static ItemOverhaul? ChooseItemOverhaul(Item item)
-	{
-		if (ItemIdMapping.TryGetValue(item.type, out int overhaulId)) {
-			return ItemOverhauls[overhaulId];
-		}
+    public static ItemOverhaul? ChooseItemOverhaul(Item item)
+    {
+        if (ItemIdMapping.TryGetValue(item.type, out int overhaulId))
+        {
+            return ItemOverhauls[overhaulId];
+        }
 
-		// May need some sort of priority system in the future. And cache?
-		for (int i = 0; i < ItemOverhauls.Count; i++) {
-			var itemOverhaul = ItemOverhauls[i];
+        // May need some sort of priority system in the future. And cache?
+        for (int i = 0; i < ItemOverhauls.Count; i++)
+        {
+            var itemOverhaul = ItemOverhauls[i];
 
-			if (itemOverhaul.ShouldApplyItemOverhaul(item)) {
-				return itemOverhaul;
-			}
-		}
+            if (itemOverhaul.ShouldApplyItemOverhaul(item))
+            {
+                return itemOverhaul;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

@@ -122,7 +122,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
                 int option = Main.rand.Next(3);
                 if (option == 0)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/RicochetUno") with { Volume = 0.6f, PitchVariance = 0.3f }, Projectile.Center);;
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/RicochetUno") with { Volume = 0.6f, PitchVariance = 0.3f }, Projectile.Center); ;
                 }
                 else if (option == 1)
                 {

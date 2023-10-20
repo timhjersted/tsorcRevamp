@@ -1,14 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using tsorcRevamp.Items.Materials;
-using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp.Items.BossItems
 {
@@ -34,9 +29,9 @@ namespace tsorcRevamp.Items.BossItems
             Item.shoot = ModContent.ProjectileType<Projectiles.BlackFirelet>();
         }
 
-        
 
-        
+
+
 
 
         public override bool CanUseItem(Player player)
@@ -77,7 +72,7 @@ namespace tsorcRevamp.Items.BossItems
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25);
             recipe.AddIngredient(ItemID.Book, 1);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.Register(); 
+            recipe.Register();
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 25);

@@ -71,7 +71,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             target.AddBuff(BuffID.Slow, 300 / buffLengthMod);
             target.AddBuff(BuffID.BrokenArmor, 300 / buffLengthMod);
             target.AddBuff(ModContent.BuffType<FracturingArmor>(), 1200);
-            
+
         }
     }
 }

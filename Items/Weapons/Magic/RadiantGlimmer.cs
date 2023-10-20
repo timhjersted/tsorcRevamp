@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -48,7 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override bool CanUseItem(Player player)
         {
             if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Magic.RadiantGlimmer>()] == 0)
-            {                
+            {
                 return true;
             }
             else
@@ -64,7 +63,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         float[] dustRotationArray = new float[100];
         bool[] dustActiveArray = new bool[100];
         public override void HoldItem(Player player)
-        {           
+        {
 
             if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Magic.RadiantGlimmer>()] == 0)
             {
@@ -112,7 +111,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             if (psuedoDusts == null || psuedoDusts.Length != dustCount)
             {
                 psuedoDusts = new PsuedoDust[dustCount];
-                for(int i = 0; i < dustCount - 1; i++)
+                for (int i = 0; i < dustCount - 1; i++)
                 {
                     Vector2 drawPosition = position;
                     if (Main.rand.NextBool(5))
@@ -166,7 +165,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null, Main.UIScaleMatrix);
 
-            
+
 
             return base.PreDrawInInventory(spriteBatch, position, frame, drawColor, itemColor, origin, scale);
         }
@@ -176,7 +175,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Lighting.AddLight(Item.Center, new Vector3(0, 0.4f, 1f));
 
             float lightingQuality = 50;
-            for(float i = 0; i < lightingQuality; i++)
+            for (float i = 0; i < lightingQuality; i++)
             {
                 Lighting.AddLight(Item.Center + new Vector2(0, 250).RotatedBy(MathHelper.TwoPi * i / lightingQuality), new Vector3(0, 0.4f, 1f));
             }
@@ -246,7 +245,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CrystalShard, 1);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
-            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(),5);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);

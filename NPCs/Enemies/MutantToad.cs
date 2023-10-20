@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -47,13 +46,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {              
+        {
             // Spawns in the Western Sea
             if (Main.hardMode && spawnInfo.Water && spawnInfo.SpawnTileX < 900 && Main.rand.NextBool(15))
             {
                 return 1;
             }
-      
+
             for (int num36 = 0; num36 < 200; num36++)
             {
                 if (Main.npc[num36].active && Main.npc[num36].type == NPC.type)
@@ -116,7 +115,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //flame thrower
             if (NPC.life <= NPC.lifeMax / 4 && breath == false && Main.hardMode)
-            { 
+            {
                 breath = true;
             }
 
@@ -152,7 +151,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 breath = false;
                 //breathCD = 30;
-                NPC.life= 0;
+                NPC.life = 0;
                 if (!Main.dedServ)
                 {
                     Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Mutant Toad Gore 1").Type, 1f);
@@ -165,8 +164,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
             if (Main.rand.NextBool(1000))
-            { 
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie13 with { Volume = 0.5f, PitchVariance = 1f }, NPC.Center); 
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie13 with { Volume = 0.5f, PitchVariance = 1f }, NPC.Center);
             }
             //I made decent swim code yay
             Player Player = Main.player[NPC.target];
@@ -177,10 +176,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 //couldn't figure out how to do the resting frame when falling 
             }
 
-            if ( NPC.wet && Player.position.Y < NPC.position.Y)
-            { 
+            if (NPC.wet && Player.position.Y < NPC.position.Y)
+            {
                 swimTime++;
-                
+
 
                 //Swim at intervals
                 if (swimTime >= 55 && swimTime <= 65 || swimTime >= 95 && swimTime <= 105)
@@ -204,12 +203,12 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (Player.position.X < NPC.position.X)
                     {
                         NPC.direction = 1;
-                        
+
                     }
                     if (Player.position.X > NPC.position.X)
                     {
                         NPC.direction = -1;
-                       
+
                     }
                     NPC.velocity.Y -= 1.4f;
                     NPC.netUpdate = true;

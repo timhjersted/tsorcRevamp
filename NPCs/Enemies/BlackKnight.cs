@@ -1,23 +1,22 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
     class BlackKnight : ModNPC
-    {       
+    {
         public int redKnightsSpearDamage = 15;
         public int redMagicDamage = 14;
         public int redKnightsGreatDamage = 18;
         Vector2 storedPlayerPosition = Vector2.Zero;
         public int framesSinceStoredPosition = 0;
-        
+
 
         NPCDespawnHandler despawnHandler;
 
@@ -62,7 +61,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
-            
+
             NPC.knockBackResist = 0.15f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BlackKnightBanner>();
@@ -145,7 +144,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.TargetClosest(true);
                     NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * 2f;
                     if ((float)NPC.direction * NPC.velocity.X > 2)
-                    NPC.velocity.X = (float)NPC.direction * 2;
+                        NPC.velocity.X = (float)NPC.direction * 2;
                     NPC.netUpdate = true;
                 }
                 // Chance to dash step forward
@@ -184,7 +183,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
 
                     // Use the stored player's position from 25 frames ago to calculate the targetPosition.
-                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);  
+                    targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
                 }
 
                 // Spear Telegraph
@@ -388,7 +387,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     int direction = (storedPlayerPosition.X > NPC.Center.X) ? 1 : -1;
 
                     targetPosition = new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y); //trying + 10 again
-                  
+
                 }
 
                 // Bomb Telegraph
@@ -567,7 +566,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 // No Attack yet at 1/3 life
                 if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 500 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    
+
                 }
 
             }
@@ -595,8 +594,8 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 600, false);
             player.AddBuff(36, 600, false); //broken armor         
-            player.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);      
-            player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 30 * 60, false);          
+            player.AddBuff(ModContent.BuffType<CurseBuildup>(), 18000, false);
+            player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 30 * 60, false);
         }
         #endregion
 
@@ -620,7 +619,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 float spriteScale = 0.8f; // Set the desired scale value (0.7 means 70% of the original size)
                 float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
 
-               
+
                 if (NPC.spriteDirection == -1)
                 {
                     spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, rotation, new Vector2(8, 38), NPC.scale * spriteScale, SpriteEffects.None, 0); // facing left (8, 38 work)
@@ -635,7 +634,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (NPC.ai[1] >= 865)
             {
                 float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
-                
+
                 if (NPC.spriteDirection == -1)
                 {
                     spriteBatch.Draw(bombTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, rotation, new Vector2(14, 4), NPC.scale, SpriteEffects.None, 0); // facing left (8, 38 work)

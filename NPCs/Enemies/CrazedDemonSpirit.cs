@@ -1,16 +1,14 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs;
-using Terraria.GameContent.ItemDropRules;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Utilities;
-using Terraria.GameContent.Personalities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -496,7 +494,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Tools.GreatMagicShieldScroll>(), 100, 1, 1, 3));
             npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 25));

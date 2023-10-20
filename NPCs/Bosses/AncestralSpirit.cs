@@ -1,19 +1,10 @@
-using FullSerializer.Internal;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.DataStructures;
-using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Accessories;
-using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Items.Placeable.Relics;
 using tsorcRevamp.Items.Placeable.Trophies;
-using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Vanity;
 using tsorcRevamp.Utilities;
 

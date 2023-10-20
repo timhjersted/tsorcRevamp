@@ -2,7 +2,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.Projectiles.Summon
 {
@@ -69,7 +68,7 @@ namespace tsorcRevamp.Projectiles.Summon
                 {
                     if (rotDirection == 0) //Only set this once, so no flipping
                     {
-                        rotDirection = 1;                        
+                        rotDirection = 1;
                     }
                     Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, target.Center, 1).RotatedBy(rotDirection * MathHelper.Pi / 3);
                 }

@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -48,7 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             rotation += MathHelper.TwoPi / 6f;
             position += new Vector2(80, 0).RotatedBy(rotation);
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            
+
             modPlayer.collapseDelay = 30;
             //tsorcRevampPlayerAuraDrawLayers.StartAura(player, 150, fadeOutSpeed: 30);
         }
@@ -61,7 +60,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         public static Texture2D crystalTexture;
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            if(crystalTexture == null || crystalTexture.IsDisposed)
+            if (crystalTexture == null || crystalTexture.IsDisposed)
             {
                 crystalTexture = (Texture2D)ModContent.Request<Texture2D>(Texture + "Crystal", ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }

@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -33,11 +33,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_EtherianPortalDryadTouch with { Volume = 0.5f }, Projectile.Center); //lightning sound
                 Projectile.ai[1] = 1f;
-                
-            }
-           
 
-            
+            }
+
+
+
 
             Projectile.frameCounter++;
             Projectile.frame = (int)Math.Floor((double)Projectile.frameCounter / 4);

@@ -1,18 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
-using tsorcRevamp.Items.Weapons.Melee;
-using tsorcRevamp.Items;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Summon.Runeterra;
-using tsorcRevamp.Projectiles.Summon.Whips;
-using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Utilities;
+using tsorcRevamp.Items.Weapons.Melee;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Ranged.Ammo;
+using tsorcRevamp.Projectiles.Summon.Runeterra;
+using tsorcRevamp.Projectiles.Summon.Whips;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -96,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 projectile.type == ModContent.ProjectileType<DevilSickle>() || projectile.type == ModContent.ProjectileType<RedLaserBeam>() ||
                 (projectile.DamageType == DamageClass.Melee && player.meleeEnchant == 3))
             {
-                modifiers.FinalDamage *= 2; 
+                modifiers.FinalDamage *= 2;
                 if (modifiers.GetDamage(projectile.damage, false) < 10)
                 {
                     modifiers.FinalDamage += 10 - modifiers.GetDamage(projectile.damage, false);
@@ -129,7 +128,8 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoul>()));
             npcLoot.Add(ItemDropRule.Common(ItemID.Wood));
             npcLoot.Add(ItemDropRule.Common(ItemID.Wood, 3));

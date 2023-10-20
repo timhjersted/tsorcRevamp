@@ -127,7 +127,7 @@ namespace tsorcRevamp.Items
 
                 //if (Main.mouseItem == null) // Not sure why but seems like it's not null if you're using something
                 //{
-                
+
                 if (Item.stack == 1) Item.TurnToAir();
                 else Item.stack--;
                 //}

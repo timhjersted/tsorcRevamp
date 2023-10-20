@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -56,12 +55,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 }
                 instantiated = true;
             }
-            
+
             /*
             for (int i = 0; i < 5; i++)
             {
                 Dust.NewDustPerfect(Projectile.Center, 54, new Vector2(8, 0).RotatedBy(RotationProgress + (i * 2 * Math.PI / 5))).noGravity = true;
-            } */           
+            } */
         }
 
         public override bool PreDraw(ref Color lightColor)

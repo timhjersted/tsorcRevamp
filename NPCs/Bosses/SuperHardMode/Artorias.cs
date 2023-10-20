@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
@@ -11,9 +10,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Accessories.Defensive;
-using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Projectiles.Melee.Shortswords;
 using tsorcRevamp.Utilities;
 
@@ -53,7 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         int darkBeadDamage = 72;
 
-        
+
         public int blackBreathDamage = 108;
         public int phantomSeekerDamage = 112;
 
@@ -92,7 +89,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         float customspawn2;
         NPCDespawnHandler despawnHandler;
-        
+
 
         //PROJECTILE HIT LOGIC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
@@ -106,27 +103,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(7))//
             {
-                    NPC.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
-                    float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-9f, -6f);
-                    NPC.velocity.X = v;
-                    DarkBeadShotCounter = 0;
-                    DarkBeadShotTimer = 0;
-                    NPC.netUpdate = true;
+                NPC.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
+                float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-9f, -6f);
+                NPC.velocity.X = v;
+                DarkBeadShotCounter = 0;
+                DarkBeadShotTimer = 0;
+                NPC.netUpdate = true;
             }
-            
+
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(8))
             {
-                    
-                    NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f);
-                    NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 4f);
-                    poisonTimer = 1f;
-                    DarkBeadShotCounter = 0;
-                    DarkBeadShotTimer = 0;
-                    NPC.netUpdate = true;
+
+                NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f);
+                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 4f);
+                poisonTimer = 1f;
+                DarkBeadShotCounter = 0;
+                DarkBeadShotTimer = 0;
+                NPC.netUpdate = true;
 
             }
 
@@ -154,7 +151,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 Vector2 origin = NPC.frame.Size() / 2f;
                 Vector2 offset = new Vector2(16, 20);
-                spriteBatch.Draw(texture, NPC.position - Main.screenPosition + offset, NPC.frame, Color.White, NPC.rotation, origin, 1.1f, effects, 0f); 
+                spriteBatch.Draw(texture, NPC.position - Main.screenPosition + offset, NPC.frame, Color.White, NPC.rotation, origin, 1.1f, effects, 0f);
                 UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
             }
         }
@@ -162,7 +159,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 1.1f, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 1.6f);
-   
+
             Player player = Main.player[NPC.target];
 
             //announce magical barrier warning once
@@ -173,7 +170,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //proximity debuff and warning
             if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1200)
             {
-                
+
                 player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
 
                 if (holdTimer <= 0)
@@ -199,10 +196,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 //DARK BEAD ATTACK
                 DarkBeadShotTimer++;
-                
-                 //Counts up each tick. Used to space out shots
+
+                //Counts up each tick. Used to space out shots
                 if (DarkBeadShotTimer <= 81)
-                { 
+                {
                     Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                     if (Main.rand.NextBool(2))
                     {
@@ -210,18 +207,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                         Main.dust[pink2].noGravity = true;
                     }
-                  
+
                 }
                 if (DarkBeadShotTimer == 55)
                 {
-                    if (NPC.Distance(player.Center) >= 221 )
+                    if (NPC.Distance(player.Center) >= 221)
                     {
                         NPC.velocity.Y = Main.rand.NextFloat(-12f, -3f); //was 6 and 3 && NPC.velocity.Y == 0
                         float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-9f, 9f);
                         NPC.velocity.X = v;
 
                     }
-                    if (NPC.Distance(player.Center) <= 220 )
+                    if (NPC.Distance(player.Center) <= 220)
                     {
                         NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f); //was 6 and 3 && NPC.velocity.Y == 0
                         float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-16f, -11f);
@@ -242,7 +239,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
 
                     DarkBeadShotCounter++;
-                    
+
                 }
 
 
@@ -256,7 +253,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 poisonTimer++; ;
 
-                
+
                 //TELEGRAPH DUSTS
                 if (poisonTimer >= 150 && poisonTimer <= 179)
                 {
@@ -468,7 +465,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Main.npc[spawned].velocity += Main.player[NPC.target].velocity;
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
                     poisonTimer = 185f;
-                    
+
                     if (Main.netMode == NetmodeID.Server)
                     {
                         NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
@@ -510,8 +507,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                             if (poisonTimer >= 255)
                             {
-                                
-                                if(Main.rand.NextBool(3))
+
+                                if (Main.rand.NextBool(3))
                                 {
                                     DarkBeadShotCounter = 0;
                                     DarkBeadShotTimer = 0;
@@ -524,62 +521,62 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 }
 
-                    //DD2DrakinShot FINAL ATTACK
-                    if (poisonTimer >= 186f && NPC.life <= NPC.lifeMax / 2)
+                //DD2DrakinShot FINAL ATTACK
+                if (poisonTimer >= 186f && NPC.life <= NPC.lifeMax / 2)
+                {
+                    bool clearSpace = true;
+                    for (int i = 0; i < 10; i++)
                     {
-                        bool clearSpace = true;
-                        for (int i = 0; i < 10; i++)
+                        if (UsefulFunctions.IsTileReallySolid((int)NPC.Center.X / 16, ((int)NPC.Center.Y / 16) - i))
                         {
-                            if (UsefulFunctions.IsTileReallySolid((int)NPC.Center.X / 16, ((int)NPC.Center.Y / 16) - i))
-                            {
-                                clearSpace = false;
-                            }
-                        }
-
-                        if (clearSpace)
-                        {
-                            Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
-
-                            speed.Y += Main.rand.NextFloat(-2f, -6f);
-                            //speed += Main.rand.NextVector2Circular(-10, -8);
-                            if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                            {
-                                int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, poisonStrikeDamage, 0f, Main.myPlayer);
-
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
-
-                            }
-
-                            if (poisonTimer >= 230f)
-                            {
-                                poisonTimer = 1f;
-                            }
+                            clearSpace = false;
                         }
                     }
-                    
-                      
 
-
-                    //old code
-                    customAi1 += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
-                    if (customAi1 >= 10f)
+                    if (clearSpace)
                     {
+                        Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
 
-                        if ((customspawn2 < 27) && Main.rand.NextBool(1500))
+                        speed.Y += Main.rand.NextFloat(-2f, -6f);
+                        //speed += Main.rand.NextVector2Circular(-10, -8);
+                        if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.LothricBlackKnight>(), 0); // Spawns Lothric Black Knight
-                            Main.npc[Spawned].velocity.Y = -8;
-                            Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                            NPC.ai[0] = 20 - Main.rand.Next(80);
-                            customspawn2 += 1f;
-                            if (Main.netMode == NetmodeID.Server)
-                            {
-                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-                            }
+                            int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, poisonStrikeDamage, 0f, Main.myPlayer);
+
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
+
+                        }
+
+                        if (poisonTimer >= 230f)
+                        {
+                            poisonTimer = 1f;
                         }
                     }
-                    
-                
+                }
+
+
+
+
+                //old code
+                customAi1 += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
+                if (customAi1 >= 10f)
+                {
+
+                    if ((customspawn2 < 27) && Main.rand.NextBool(1500))
+                    {
+                        int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.LothricBlackKnight>(), 0); // Spawns Lothric Black Knight
+                        Main.npc[Spawned].velocity.Y = -8;
+                        Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
+                        NPC.ai[0] = 20 - Main.rand.Next(80);
+                        customspawn2 += 1f;
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
+                        }
+                    }
+                }
+
+
             }
         }
 
@@ -664,7 +661,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (!defenseBroken)
             {
-                if(textCooldown == 0)
+                if (textCooldown == 0)
                 {
                     //Only a fabled blade can break this shield!
                     UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Artorias.BarrowBladeHint"));
@@ -711,7 +708,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             potionType = ItemID.SuperHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.ArtoriasBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AdventureModeRule, ItemID.LargeAmethyst));
@@ -781,6 +778,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        
+
     }
 }

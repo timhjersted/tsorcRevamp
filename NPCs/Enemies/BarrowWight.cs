@@ -2,15 +2,14 @@
 using System;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using static tsorcRevamp.oSpawnHelper;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
-using Terraria.DataStructures;
 using tsorcRevamp.Items.Weapons.Throwing;
+using static tsorcRevamp.oSpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -71,13 +70,13 @@ namespace tsorcRevamp.NPCs.Enemies
             if (NPC.ai[1] >= 10f)
             {
                 NPC.TargetClosest(true);
-                
+
 
                 // charge forward code 
                 if (Main.rand.NextBool(400) && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     chargeDamageFlag = true;
-                    
+
                 }
                 if (chargeDamageFlag == true)
                 {
@@ -105,11 +104,11 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (chargeTelegraphTimer > 130)
                     {
                         chargeDamageFlag = false;
-                        chargeTelegraphTimer = 0;     
+                        chargeTelegraphTimer = 0;
                     }
 
                 }
-                
+
 
 
 
@@ -367,7 +366,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 50));
             npcLoot.Add(ItemDropRule.Common(ItemID.MagicPowerPotion, 35));
             npcLoot.Add(ItemDropRule.Common(ItemID.RegenerationPotion, 35));
-            npcLoot.Add(ItemDropRule.Common(ItemID.SpelunkerPotion, 35));       
+            npcLoot.Add(ItemDropRule.Common(ItemID.SpelunkerPotion, 35));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 40));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Summon.SpiritBell>(), 20));
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());

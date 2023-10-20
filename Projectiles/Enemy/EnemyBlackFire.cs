@@ -88,7 +88,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             Projectile.timeLeft = 0;
 
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item117 with { Volume = 0.4f}, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item117 with { Volume = 0.4f }, Projectile.Center);
 
             float len = 4f;
             int flam = ModContent.ProjectileType<EnemyBlackFirelet>();

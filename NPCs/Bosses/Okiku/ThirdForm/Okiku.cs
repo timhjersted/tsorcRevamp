@@ -2,10 +2,8 @@ using Microsoft.Xna.Framework;
 using System;
 using System.IO;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 using tsorcRevamp.Utilities;
 

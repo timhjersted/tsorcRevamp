@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Utilities;
-using System;
 using Terraria;
-using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -94,11 +90,11 @@ namespace tsorcRevamp.Projectiles.VFX
                 Projectile.rotation += 0.003f * direction;
             }
 
-            if(Projectile.timeLeft == 1)
+            if (Projectile.timeLeft == 1)
             {
                 Projectile.timeLeft++;
                 beamWidth *= 0.90f;
-                if(beamWidth < 1)
+                if (beamWidth < 1)
                 {
                     Projectile.Kill();
                 }
@@ -112,11 +108,11 @@ namespace tsorcRevamp.Projectiles.VFX
         {
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-           
+
             if (effect == null)
             {
                 effect = ModContent.Request<Effect>("tsorcRevamp/Effects/LightBeam", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            }            
+            }
 
             Rectangle sourceRectangle = new Rectangle(0, 0, (int)beamLength, (int)beamWidth);
 
@@ -135,7 +131,7 @@ namespace tsorcRevamp.Projectiles.VFX
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
-            
+
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
 
             Main.EntitySpriteDraw(tsorcRevamp.NoiseTurbulent, Projectile.Center - Main.screenPosition, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);

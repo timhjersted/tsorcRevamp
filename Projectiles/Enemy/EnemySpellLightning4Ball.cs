@@ -52,7 +52,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void OnKill(int timeLeft)
         {
-           
+
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {

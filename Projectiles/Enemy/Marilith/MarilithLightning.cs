@@ -2,12 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Enums;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -93,7 +90,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
 
             //Dust along lightning lines
-            
+
             if (FiringTimeLeft == 28)
             {
                 Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f });
@@ -125,7 +122,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 //Main.NewText("Branches: " + branchCount);
 
                 int dustCounter = 0;
-                for(int i = 0; i < Main.maxDust; i++)
+                for (int i = 0; i < Main.maxDust; i++)
                 {
                     if (Main.dust[i].active)
                     {
@@ -310,7 +307,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //Apply the shader, caching it as well
-            if(lightningEffect == null)
+            if (lightningEffect == null)
             {
                 lightningEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/LightningLine", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
@@ -354,7 +351,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             //Potential better version of this: Rotate them just like is done when drawing them, and calcualte their max X and Y offset of every single branch node
             //Probably an unnecessary optimization, but an option for if it does become necessary in the future
             lightningMaxDimensions.X = 0;
-            for(int i = 0; i < branches.Count - 1; i++)
+            for (int i = 0; i < branches.Count - 1; i++)
             {
                 if (branches[i].Count > 2)
                 {
@@ -411,7 +408,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 blurEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/BlurEffect", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
             blurEffect.CurrentTechnique.Passes[0].Apply();
-            
+
             Main.spriteBatch.Draw(tempTarget, Vector2.Zero, new Rectangle(0, 0, tempTarget.Width, tempTarget.Height), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
             Main.spriteBatch.Draw(tempTarget, Vector2.Zero, new Rectangle(0, 0, tempTarget.Width, tempTarget.Height), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
             Main.spriteBatch.Draw(tempTarget, Vector2.Zero, new Rectangle(0, 0, tempTarget.Width, tempTarget.Height), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
@@ -549,7 +546,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             start.Y += lightningMaxDimensions.Y / 2;
 
             float drawScale = 1.5f;
-            Rectangle drawRect = new Rectangle(0, 0, (int)(distance * 1.4f / drawScale) , 12);
+            Rectangle drawRect = new Rectangle(0, 0, (int)(distance * 1.4f / drawScale), 12);
             Vector2 drawOrigin = drawRect.Size() / 2;
             drawOrigin.X = distance / drawScale;
             Main.EntitySpriteDraw(texture, start, drawRect, Color.White, rotation - rotato, drawOrigin, drawScale, 0, 0);
@@ -603,7 +600,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {            
+        {
             return false;
         }
 

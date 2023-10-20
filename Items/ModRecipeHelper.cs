@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Terraria;
+﻿using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -16,7 +15,7 @@ namespace tsorcRevamp.Items
         {
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
 
-            
+
 
             #region add s tier potion recipes
             PermaPotionRecipeS(mod, ModContent.ItemType<ArmorDrugPotion>(), ModContent.ItemType<PermanentArmorDrug>());
@@ -91,7 +90,7 @@ namespace tsorcRevamp.Items
             .AddIngredient(ItemID.SoulofFlight)
             .AddIngredient(ModContent.ItemType<EternalCrystal>(), 4)
             .AddTile(TileID.DemonAltar);
-            recipe.Register(); 
+            recipe.Register();
             Recipe recipe2 = Recipe.Create(ModContent.ItemType<PermanentLuckPotion>(), 1)
             .AddIngredient(ModContent.ItemType<DarkSoul>(), 4444)
             .AddIngredient(ItemID.Waterleaf, 4)
@@ -126,7 +125,7 @@ namespace tsorcRevamp.Items
 
             recipe = Recipe.Create(ItemID.WormholePotion)
             .AddIngredient(ItemID.BottledWater)
-            .AddTile(TileID.DemonAltar);            
+            .AddTile(TileID.DemonAltar);
             recipe.Register();
         }
 

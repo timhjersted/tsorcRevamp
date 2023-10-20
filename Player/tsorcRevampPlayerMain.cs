@@ -9,43 +9,35 @@ using Terraria.DataStructures;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 using Terraria.UI;
 using TerraUI.Objects;
 using tsorcRevamp.Buffs;
-using tsorcRevamp.Items;
-using tsorcRevamp.Projectiles.Pets;
-using tsorcRevamp.UI;
-using Terraria.ModLoader.Config;
+using tsorcRevamp.Buffs.Accessories;
+using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Weapons.Melee.Runeterra;
-using tsorcRevamp.Items.Weapons.Magic.Runeterra;
-using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
-using tsorcRevamp.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Buffs.Runeterra.Magic;
-using Terraria.Localization;
-using tsorcRevamp.Items.Accessories.Summon;
+using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories.Expert;
-using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Accessories.Summon;
 using tsorcRevamp.Items.Armors;
-using tsorcRevamp.Items.Tools;
-using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Armors.Summon;
-using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
-using tsorcRevamp.Buffs.Armor;
-using tsorcRevamp.Projectiles.Melee.Runeterra;
-using tsorcRevamp.Utilities;
-using tsorcRevamp.Items.Vanity;
-using tsorcRevamp.Buffs.Accessories;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Summon.Whips;
-using static Humanizer.In;
-using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Items.Weapons.Magic.Runeterra;
+using tsorcRevamp.Items.Weapons.Melee.Runeterra;
+using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Magic.Runeterra.LudensTempest;
-using tsorcRevamp.Items.Accessories.Magic;
+using tsorcRevamp.Projectiles.Melee.Runeterra;
+using tsorcRevamp.Projectiles.Pets;
+using tsorcRevamp.UI;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp
 {
@@ -178,7 +170,7 @@ namespace tsorcRevamp
             int warpX = tag.GetInt("warpX");
             int warpY = tag.GetInt("warpY");
             greatMirrorWarpPoint = tag.Get<Vector2>("greatMirrorWarp");
-            if(greatMirrorWarpPoint == Vector2.Zero)
+            if (greatMirrorWarpPoint == Vector2.Zero)
             {
                 //This migrates old saves to the new system.
                 greatMirrorWarpPoint.X = warpX;
@@ -232,12 +224,14 @@ namespace tsorcRevamp
             List<bool> permaBuffs = (List<bool>)tag.GetList<bool>("PermanentBuffToggles");
 
             //characters created before this was added would otherwise crash from OOB
-            if (permaBuffs.Count == 0) {
-                for (int i = 0; i < PermanentBuffCount; i++) {
+            if (permaBuffs.Count == 0)
+            {
+                for (int i = 0; i < PermanentBuffCount; i++)
+                {
                     permaBuffs.Add(false);
                 }
             }
-            PermanentBuffToggles = permaBuffs.ToArray<bool>(); 
+            PermanentBuffToggles = permaBuffs.ToArray<bool>();
             if (PermanentBuffToggles.Length < PermanentBuffCount)
             {
                 bool[] tempToggles = new bool[PermanentBuffCount];
@@ -252,10 +246,12 @@ namespace tsorcRevamp
             finishedQuest = quest ?? false;
 
             consumedPotions ??= new Dictionary<ItemDefinition, int>();
-            if (tag.ContainsKey("consumedPotionsKeys")) {
+            if (tag.ContainsKey("consumedPotionsKeys"))
+            {
                 List<ItemDefinition> potKey = tag.GetList<ItemDefinition>("consumedPotionsKeys") as List<ItemDefinition>;
                 List<int> potValue = tag.GetList<int>("consumedPotionsValues") as List<int>;
-                for (int i = 0; i < potKey.Count; i++) {
+                for (int i = 0; i < potKey.Count; i++)
+                {
                     consumedPotions.Add(potKey[i], potValue[i]);
                 }
             }
@@ -343,13 +339,13 @@ namespace tsorcRevamp
                     return true;
                 }
             }
-                return false;
+            return false;
         }
 
-        public override void ModifyHurt(ref Player.HurtModifiers modifiers) 
+        public override void ModifyHurt(ref Player.HurtModifiers modifiers)
         {
             float REDUCE = CheckReduceDefense(Player.position, Player.width, Player.height, Player.fireWalk);
-            if (REDUCE != 0) 
+            if (REDUCE != 0)
             {
             }
             modifiers.FinalDamage.ApplyTo(modifiers.SourceDamage.Base);
@@ -379,7 +375,8 @@ namespace tsorcRevamp
                 {
                     Player.ownedProjectileCounts[ProjectileID.TitaniumStormShard]++;
                     Projectile.NewProjectile(Player.GetSource_OnHit(victim), Player.Center, Vector2.Zero, ProjectileID.TitaniumStormShard, 50, 15f, Player.whoAmI);
-                } else
+                }
+                else
                 {
                     int buffIndex = 0;
                     foreach (int buffType in Player.buffType)
@@ -392,12 +389,12 @@ namespace tsorcRevamp
                     }
                 }
             }
-            if (CelestialCloak) 
+            if (CelestialCloak)
             {
                 if (Main.rand.NextBool(25))
                 {
                     Vector2 starvector1 = new Vector2(-40, -200) + victim.Center;
-                    Vector2 starvector2 = new Vector2(40, -200) +victim.Center;
+                    Vector2 starvector2 = new Vector2(40, -200) + victim.Center;
                     Vector2 starvector3 = new Vector2(0, -200) + victim.Center;
                     Vector2 starmove1 = new Vector2(+4, 20);
                     Vector2 starmove2 = new Vector2(-4, 20);
@@ -424,7 +421,7 @@ namespace tsorcRevamp
                 dust2.velocity.Y = Main.rand.NextFloat(-5, -2.5f);
                 dust2.velocity.X = Main.rand.NextFloat(-1, 1);
                 Projectile.NewProjectile(Player.GetSource_None(), Player.Top, Player.velocity, ProjectileID.DD2ExplosiveTrapT2Explosion, 250, 15, Player.whoAmI);
-                SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 4f});
+                SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 4f });
 
                 for (int d = 0; d < 90; d++) // Upwards
                 {
@@ -472,7 +469,7 @@ namespace tsorcRevamp
 
             //you died sound
             Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/you-died") with { Volume = 0.4f });
-            
+
 
             bool onePlayerAlive = false;
             for (int i = 0; i < Main.maxPlayers; i++)
@@ -617,7 +614,8 @@ namespace tsorcRevamp
             MastersScroll.SetDefaults(ModContent.ItemType<MastersScroll>());
             startingItems.Add(MastersScroll);
 
-            if (ModLoader.TryGetMod("MagicStorage", out Mod MagicStorage)) {
+            if (ModLoader.TryGetMod("MagicStorage", out Mod MagicStorage))
+            {
                 Item StorageHeart = new();
                 MagicStorage.TryFind("StorageHeart", out ModItem heart);
                 StorageHeart.SetDefaults(heart.Type);
@@ -737,7 +735,8 @@ namespace tsorcRevamp
                     Main.player[proj.owner].AddBuff(ModContent.BuffType<LudensTempestCooldown>(), Items.Accessories.Magic.LudensTempest.Cooldown * 60);
                 }
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/LudensTempest") with { Volume = 0.25f }, target.Center);
-            } else if (LudensTempest && hit.DamageType == DamageClass.Magic && owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()) && proj.type != ModContent.ProjectileType<LudensTempestFire>() && proj.type != ModContent.ProjectileType<LudensTempestFirelet>())
+            }
+            else if (LudensTempest && hit.DamageType == DamageClass.Magic && owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()) && proj.type != ModContent.ProjectileType<LudensTempestFire>() && proj.type != ModContent.ProjectileType<LudensTempestFirelet>())
             {
                 int buffIndex = 0;
                 foreach (int buffType in owner.buffType)
@@ -755,7 +754,8 @@ namespace tsorcRevamp
                 Player.HealEffect((int)MathF.Max(MathF.Min((Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife), 20) / (int)((float)GoredrinkerHits * 1.5f + 1), 1));
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerHit") with { Volume = 0.25f }, target.Center);
                 GoredrinkerHits++;
-            } else if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type] && owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()))
+            }
+            else if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type] && owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()))
             {
                 int buffIndex = 0;
                 foreach (int buffType in owner.buffType)
@@ -847,10 +847,10 @@ namespace tsorcRevamp
             }
 
 
-            if(proj.type == ModContent.ProjectileType<Projectiles.Ranged.PiercingPlasma>())
+            if (proj.type == ModContent.ProjectileType<Projectiles.Ranged.PiercingPlasma>())
             {
                 PiercingGazeCharge++;
-                if(PiercingGazeCharge == 16)
+                if (PiercingGazeCharge == 16)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item113, Player.Center);
                     UsefulFunctions.DustRing(Player.Center, 70, DustID.FireworkFountain_Red, 100, 18);
@@ -1015,7 +1015,7 @@ namespace tsorcRevamp
             {
                 DeathText = PickDeathText();
             }
-            if(Player.HasBuff(ModContent.BuffType<MagicPlating>()))
+            if (Player.HasBuff(ModContent.BuffType<MagicPlating>()))
             {
                 MagicPlatingStacks = 0;
             }
@@ -1055,7 +1055,7 @@ namespace tsorcRevamp
             }
         }
 
-        
+
 
         public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)
         {
@@ -1091,7 +1091,8 @@ namespace tsorcRevamp
                     if (Main.rand.NextBool(2))
                     {
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo1") with { Volume = 1f });
-                    } else
+                    }
+                    else
                     {
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Shunpo2") with { Volume = 1f });
                     }
@@ -1120,7 +1121,7 @@ namespace tsorcRevamp
                     }
                 }
             }
-           if (tsorcRevamp.WolfRing.JustReleased)
+            if (tsorcRevamp.WolfRing.JustReleased)
             {
                 if (Player.GetModPlayer<tsorcRevampPlayer>().WolfRing && !Player.HasBuff(ModContent.BuffType<RejuvenationCooldown>()))
                 {
@@ -1129,7 +1130,7 @@ namespace tsorcRevamp
                 }
             }
 
-           if (tsorcRevamp.specialAbility.JustReleased)
+            if (tsorcRevamp.specialAbility.JustReleased)
             {
                 #region Sweeping Blade & Firewall
                 for (int i = 0; i < Main.maxNPCs; i++)
@@ -1226,19 +1227,20 @@ namespace tsorcRevamp
                     player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
                     if (player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() && player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostActivation") with { Volume = 1f });
-                    } else if (player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() && !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostActivation") with { Volume = InterstellarVesselGauntlet.SoundVolume });
+                    }
+                    else if (player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() && !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostDeactivation") with { Volume = 1f });
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostDeactivation") with { Volume = InterstellarVesselGauntlet.SoundVolume });
                     }
 
                     if (player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>() && player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostActivation") with { Volume = 1f });
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostActivation") with { Volume = CenterOfTheUniverse.SoundVolume });
                     }
                     else if (player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>() && !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostDeactivation") with { Volume = 1f });
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostDeactivation") with { Volume = CenterOfTheUniverse.SoundVolume });
                     }
 
                     //Every time the player releases the button, sync this info to everyone else
@@ -1287,7 +1289,7 @@ namespace tsorcRevamp
         //This means you can tank until your mana bar is exhausted, then have to back off for a bit and actually dodge
         public override void OnHurt(Player.HurtInfo info)
         {
-            
+
             if (manaShield == 1)
             {
                 if (Player.statMana >= Items.Accessories.Defensive.ManaShield.manaCost)
@@ -1313,7 +1315,7 @@ namespace tsorcRevamp
                 {
                     Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= Items.Accessories.Expert.DragonCrestShield.staminaCost;
                     //return;
-                }                
+                }
             }
         }
 

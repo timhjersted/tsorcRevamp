@@ -2,12 +2,11 @@
 using System;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Enemy;
-using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Potions;
-using Terraria.DataStructures;
+using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -375,7 +374,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Player player = Main.player[NPC.target];
             UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.AttraidiesIllusion.Death"), 190, 140, 150);
         }
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.ShinePotion, 55));
             npcLoot.Add(new CommonDrop(ItemID.RegenerationPotion, 35, 1, 1, 4));

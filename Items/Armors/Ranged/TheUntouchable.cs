@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
             recipe.AddIngredient(ItemID.HallowedGreaves, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
 
 

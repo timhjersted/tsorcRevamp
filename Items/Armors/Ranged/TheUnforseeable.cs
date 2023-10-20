@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
             recipe.AddIngredient(ItemID.HallowedPlateMail, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
 
 

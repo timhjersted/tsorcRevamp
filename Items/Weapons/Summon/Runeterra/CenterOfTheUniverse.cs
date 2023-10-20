@@ -1,19 +1,17 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Materials;
-using Terraria.Localization;
-using Terraria.Audio;
-using Mono.Cecil;
-using static Terraria.ModLoader.PlayerDrawLayer;
-using Microsoft.Xna.Framework.Input;
+using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Runeterra.Dragons;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
@@ -22,6 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
     {
         public static List<CenterOfTheUniverseStar> projectiles = null;
         public static int processedProjectilesCount = 0;
+        public const float SoundVolume = 1f;
 
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ScorchingPoint.BallSummonTagDmgMult, ScorchingPoint.DragonSummonTagDmgMult);
         public override void SetStaticDefaults()
@@ -67,23 +66,23 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             player.AddBuff(Item.buffType, 2);
 
             // Minions have to be spawned manually, then have originalDamage assigned to the damage of the summon item
-            Projectile projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
-            projectiles.Add((CenterOfTheUniverseStar)projectile.ModProjectile);
-            projectile.originalDamage = Item.damage;
+            Projectile Star = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
+            projectiles.Add((CenterOfTheUniverseStar)Star.ModProjectile);
+            Star.originalDamage = Item.damage;
 
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.StarForger>()] == 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<StarForger>()] == 0)
             {
-                Dragon = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Runeterra.Dragons.StarForger>(), damage, knockback, Main.myPlayer);
+                Dragon = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<StarForger>(), damage, 0, Main.myPlayer);
                 Dragon.originalDamage = Item.damage;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/DragonCast") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/DragonCast") with { Volume = SoundVolume });
             }
             else if (Main.rand.NextBool(2))
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarCast1") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarCast1") with { Volume = SoundVolume });
             }
             else
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarCast2") with { Volume = 1f });
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarCast2") with { Volume = SoundVolume });
             }
 
             // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
@@ -126,13 +125,13 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         {
             var SpecialAbilityKey = tsorcRevamp.specialAbility.GetAssignedKeys();
             string SpecialAbilityString = SpecialAbilityKey.Count > 0 ? SpecialAbilityKey[0] : Language.GetTextValue("Mods.tsorcRevamp.Keybinds.Special Ability.DisplayName") + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.NotBound");
-            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip3");
+            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip2");
             if (ttindex1 != -1)
             {
                 tooltips.RemoveAt(ttindex1);
                 tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.ScorchingPoint.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.ScorchingPoint.Keybind2")));
             }
-            int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip5");
+            int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip4");
             if (ttindex2 != -1)
             {
                 tooltips.RemoveAt(ttindex2);

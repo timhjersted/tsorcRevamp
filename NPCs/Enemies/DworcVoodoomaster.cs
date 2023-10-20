@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -50,7 +49,7 @@ namespace tsorcRevamp.NPCs.Enemies
         //these dudes oughtta be called alchemists or something
         //actually you know what? i have the ability to change that
         //goodbye dworc voodoomaster, hello dworc alchemist
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             Player player = Main.player[NPC.target];
 
@@ -132,7 +131,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
                 {
                     NPC.velocity = Vector2.Zero;
-                }                
+                }
             }
 
             //IF HIT BEFORE PINK DUST TELEGRAPH, RESET TIMER, BUT CHANCE TO BREAK STUN LOCK

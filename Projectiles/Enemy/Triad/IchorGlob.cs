@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
-using Terraria.Graphics;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -12,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 {
     class IchorGlob : ModNPC
     {
-        
+
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Ichor Glob");

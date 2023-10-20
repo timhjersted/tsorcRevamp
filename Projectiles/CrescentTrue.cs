@@ -55,7 +55,7 @@ namespace tsorcRevamp.Projectiles
         {
             target.AddBuff(ModContent.BuffType<Buffs.CrescentMoonlight>(), 180);
 
-           
+
             target.AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
             if (Main.netMode != NetmodeID.SinglePlayer)
             {

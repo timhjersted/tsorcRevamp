@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -34,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 8;
             NPC.height = 50;
             NPC.width = 24;
-            NPC.lifeMax = 100;  
+            NPC.lifeMax = 100;
             NPC.HitSound = SoundID.NPCHit20;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 500; // health / 2
@@ -263,9 +262,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
         }
-        
-        
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnFailedConditions(new CommonDrop(ItemID.HealingPotion, 15, 1, 1, 3));

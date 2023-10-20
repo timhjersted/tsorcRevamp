@@ -1,8 +1,9 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Magic.Runeterra;
-using Microsoft.Xna.Framework;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
+using tsorcRevamp.Projectiles.Magic.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra.Magic
 {
@@ -12,6 +13,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
         {
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
+            BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
         }
 
         public override void Update(Player player, ref int buffIndex)

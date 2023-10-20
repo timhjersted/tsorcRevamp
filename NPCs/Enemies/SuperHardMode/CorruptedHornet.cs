@@ -1,10 +1,9 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.ItemDropRules;
 using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -64,8 +63,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.Confused, 3 * 60, false); 
-               
+                target.AddBuff(BuffID.Confused, 3 * 60, false);
+
             }
         }
 
@@ -111,7 +110,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 4, 0.2f, 0.2f, 100, default(Color), 1f);
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 4, 0.2f, 0.2f, 100, default(Color), 1f);
         }
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FlameOfTheAbyss>(), 2));
         }

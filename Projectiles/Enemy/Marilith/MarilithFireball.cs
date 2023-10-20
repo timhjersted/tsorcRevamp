@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 {
     class MarilithFireball : ModProjectile
     {
-        
+
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Pyroclastic Detonator");
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Projectile.friendly = false;
             Projectile.DamageType = DamageClass.Magic;
         }
-        
+
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.OnFire, 300);
@@ -51,7 +51,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 Main.dust[Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.InfernoFork, dustSpeed.X, dustSpeed.Y)].noGravity = true;
             }
             Player target = null;
-            for(int i = 0; i < Main.maxPlayers; i++)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
                 if (Main.player[i].active && !Main.player[i].dead)
                 {
@@ -60,10 +60,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 }
             }
 
-            if(target != null)
+            if (target != null)
             {
                 float dist = Vector2.Distance(Projectile.Center, target.Center);
-                if(dist < 32)
+                if (dist < 32)
                 {
                     Projectile.Kill();
                 }

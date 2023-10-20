@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void AI()
         {
-            if(Projectile.timeLeft == 5)
+            if (Projectile.timeLeft == 5)
             {
                 if (Projectile.owner == Main.myPlayer)
                 {
@@ -79,7 +79,7 @@ namespace tsorcRevamp.Projectiles
             //And another 50% chance to flip it on the y-axis
             if (Main.rand.NextBool())
             {
-               angle += MathHelper.Pi;
+                angle += MathHelper.Pi;
             }
             if (Main.rand.NextBool(2))
             {

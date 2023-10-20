@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Magic
 {
@@ -48,11 +47,11 @@ namespace tsorcRevamp.Projectiles.Magic
             {
                 MaxCharge = Projectile.ai[1] * 5;
             }
-            if(LaserOrigin == Vector2.Zero)
+            if (LaserOrigin == Vector2.Zero)
             {
                 LaserOrigin = Projectile.Center;
             }
-           // LaserColor *= 0.95f;
+            // LaserColor *= 0.95f;
             base.AI();
         }
     }

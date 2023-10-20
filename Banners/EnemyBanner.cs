@@ -8,7 +8,6 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
-using tsorcRevamp.NPCs.Bosses;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;

@@ -1,13 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using Terraria;
-using Terraria.GameContent;
-using Terraria.ID;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Terraria.ModLoader;
-using Terraria.UI;
-using tsorcRevamp.Items;
-using Terraria.Localization;
 
 namespace tsorcRevamp.Textures
 {

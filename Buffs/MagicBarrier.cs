@@ -14,7 +14,7 @@ namespace tsorcRevamp.Buffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.statDefense += DefenseIncrease;            
+            player.statDefense += DefenseIncrease;
             Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.Barrier>(), 0, 0f, player.whoAmI);
             Lighting.AddLight(player.Center, .450f, .450f, .600f);
         }

@@ -1,26 +1,23 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Graphics;
-using System;
 using System.IO;
-using System.Linq;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.ObjectData;
-using Terraria.UI.Chat;
 
-namespace tsorcRevamp.Tiles {
+namespace tsorcRevamp.Tiles
+{
 
-    public class SoapstoneTile : ModTile {
+    public class SoapstoneTile : ModTile
+    {
 
         public override string Texture => "tsorcRevamp/Projectiles/InvisibleProj";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Main.tileFrameImportant[Type] = true;
 
             TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
@@ -41,14 +38,17 @@ namespace tsorcRevamp.Tiles {
             Main.tileSolid[Type] = false;
         }
 
-        public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak) {
+        public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
+        {
             return false;
         }
 
-        public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem) {
-            fail = true; 
+        public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
+        {
+            fail = true;
         }
-        public override void PostDraw(int i, int j, SpriteBatch spriteBatch) {
+        public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
+        {
             if (TileUtils.TryGetTileEntityAs(i, j, out SoapstoneTileEntity entity))
             {
                 Vector2 zero = new(Main.offScreenRange, Main.offScreenRange);
@@ -85,7 +85,8 @@ namespace tsorcRevamp.Tiles {
                     if (mouseDistance < tsorcRevamp.NearbySoapstoneMouseDistance && mouseInRange && distance < 600)
                     {
                         tsorcRevamp.NearbySoapstone = entity;
-                        if (!entity.hidden) {
+                        if (!entity.hidden)
+                        {
                             Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.StoryTime>(), 30);
                         }
 
@@ -99,8 +100,9 @@ namespace tsorcRevamp.Tiles {
                 else if (playerInRange || (mouseInRange && distance < 200))
                 {
                     tsorcRevamp.NearbySoapstone = entity;
-                    if (!entity.hidden) {
-                        Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.StoryTime>(), 30); 
+                    if (!entity.hidden)
+                    {
+                        Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.StoryTime>(), 30);
                     }
 
                     if (mouseInRange)
@@ -152,7 +154,8 @@ namespace tsorcRevamp.Tiles {
             }
         }
     }
-    public class SoapstoneTileEntity : ModTileEntity {
+    public class SoapstoneTileEntity : ModTileEntity
+    {
         public string text;
         public int textWidth;
         public SoapstoneStyle style;
@@ -161,8 +164,10 @@ namespace tsorcRevamp.Tiles {
         public bool read = false;
         public bool hidden = false;
 
-        public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate) {
-            if (Main.netMode == NetmodeID.MultiplayerClient) {
+        public override int Hook_AfterPlacement(int i, int j, int type, int style, int direction, int alternate)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
                 NetMessage.SendTileSquare(Main.myPlayer, i, j, 1, 1);
 
                 //Sync the placement of the tile entity with other clients
@@ -175,18 +180,21 @@ namespace tsorcRevamp.Tiles {
             return placedEntity;
         }
 
-        
-        public override bool IsTileValidForEntity(int x, int y) {
+
+        public override bool IsTileValidForEntity(int x, int y)
+        {
             Tile tile = Framing.GetTileSafely(x, y);
             return tile.HasTile && tile.TileType == ModContent.TileType<SoapstoneTile>();
         }
 
-        public override void OnNetPlace() {
-            if (Main.netMode == NetmodeID.Server) 
+        public override void OnNetPlace()
+        {
+            if (Main.netMode == NetmodeID.Server)
                 NetMessage.SendData(MessageID.TileEntitySharing, -1, -1, null, ID, Position.X, Position.Y);
         }
 
-        public override void Update() {
+        public override void Update()
+        {
 
             if (text == null)
             {
@@ -201,25 +209,29 @@ namespace tsorcRevamp.Tiles {
             }
         }
 
-        public override void NetSend(BinaryWriter writer) {
+        public override void NetSend(BinaryWriter writer)
+        {
             writer.Write(text);
             writer.Write(textWidth);
             writer.Write(read);
         }
 
-        public override void NetReceive(BinaryReader reader) {
+        public override void NetReceive(BinaryReader reader)
+        {
             text = reader.ReadString();
             textWidth = reader.ReadInt32();
             read = reader.ReadBoolean();
         }
 
-        public override void SaveData(TagCompound tag) {
+        public override void SaveData(TagCompound tag)
+        {
             tag.Add("text", text);
             tag.Add("boxWidth", textWidth);
             tag.Add("read", read);
         }
 
-        public override void LoadData(TagCompound tag) {
+        public override void LoadData(TagCompound tag)
+        {
             string? saved = tag.GetString("text");
             text = saved;
 

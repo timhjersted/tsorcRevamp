@@ -6,20 +6,20 @@ using tsorcRevamp.NPCs;
 namespace tsorcRevamp.Buffs.Runeterra.Ranged
 {
     public class IrradiatedByShroomDebuff : ModBuff
-	{
-		public override void SetStaticDefaults()
-		{
-			BuffID.Sets.IsATagBuff[Type] = false;
-		}
+    {
+        public override void SetStaticDefaults()
+        {
+            BuffID.Sets.IsATagBuff[Type] = false;
+        }
 
-		public override void Update(NPC npc, ref int buffIndex)
-		{
-			npc.GetGlobalNPC<tsorcRevampGlobalNPC>().IrradiatedByShroom = true;
+        public override void Update(NPC npc, ref int buffIndex)
+        {
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().IrradiatedByShroom = true;
 
-			if (Main.GameUpdateCount % 5 == 0)
-			{
-				Dust.NewDust(npc.Top, 20, 20, DustID.PoisonStaff);
-			}
-		}
-	}
+            if (Main.GameUpdateCount % 5 == 0)
+            {
+                Dust.NewDust(npc.Top, 20, 20, DustID.PoisonStaff);
+            }
+        }
+    }
 }

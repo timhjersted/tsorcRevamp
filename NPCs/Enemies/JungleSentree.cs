@@ -2,18 +2,14 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Melee;
-using tsorcRevamp.Items;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.Ranged.Ammo;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Whips;
-using tsorcRevamp.Projectiles;
-using Terraria.DataStructures;
-using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Buffs;
-using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
-using tsorcRevamp.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -349,10 +345,12 @@ namespace tsorcRevamp.NPCs.Enemies
         public int resindropped = 0;
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
-            bool weakness = (item.Name.Contains("Axe") || item.Name.Contains("axe") || item.Name.Contains("saw") || (item.type == ItemID.BloodLustCluster) || (item.type == ItemID.SawtoothShark) || (item.type == ItemID.Drax) 
+            bool weakness = (item.Name.Contains("Axe") || item.Name.Contains("axe") || item.Name.Contains("saw") || (item.type == ItemID.BloodLustCluster) || (item.type == ItemID.SawtoothShark) || (item.type == ItemID.Drax)
                 || (item.type == ItemID.ShroomiteDiggingClaw)) && !item.Name.Contains("Pick");
-            if (item.ModItem != null) {
-                if ((item.ModItem.Name.Contains("Axe") || item.ModItem.Name.Contains("Halberd") && !item.ModItem.Name.Contains("Pick")) && !item.ModItem.Name.Contains("Pick")) {
+            if (item.ModItem != null)
+            {
+                if ((item.ModItem.Name.Contains("Axe") || item.ModItem.Name.Contains("Halberd") && !item.ModItem.Name.Contains("Pick")) && !item.ModItem.Name.Contains("Pick"))
+                {
                     weakness = true;
                 }
             }
@@ -444,7 +442,7 @@ namespace tsorcRevamp.NPCs.Enemies
         #endregion
 
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RichMahogany, 1, 3, 5));
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 1, 3, 5));

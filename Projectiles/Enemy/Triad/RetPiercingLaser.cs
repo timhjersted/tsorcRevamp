@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -40,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             LaserTextureTail = new Rectangle(0, 58, 30, 24);
             LaserSound = SoundID.Item12 with { Volume = 0.5f };
 
-            LaserDebuffs = new List<int>(); 
+            LaserDebuffs = new List<int>();
             DebuffTimers = new List<int>();
 
             CastLight = false;
@@ -59,7 +58,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         public override void AI()
         {
             //Hacky way to pass one more bit of data through ai[0], but it works
-            if(Projectile.ai[0] >= 1000)
+            if (Projectile.ai[0] >= 1000)
             {
                 rapid = true;
                 Projectile.ai[0] -= 1000;
@@ -69,7 +68,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             {
                 if (Main.npc[(int)Projectile.ai[1]] != null && Main.npc[(int)Projectile.ai[1]].active && Main.npc[(int)Projectile.ai[1]].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>())
                 {
-                    Projectile.velocity = (Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2).ToRotationVector2() ;
+                    Projectile.velocity = (Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2).ToRotationVector2();
                 }
 
                 LaserName = "Piercing Gaze";

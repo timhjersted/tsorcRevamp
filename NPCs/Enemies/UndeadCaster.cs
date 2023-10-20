@@ -47,12 +47,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.lifeMax = 120;
                 NPC.defense = 15;
                 NPC.value = 900; // was 95
-                NPC.damage = 0;  
+                NPC.damage = 0;
             }
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            
+
             float chance = 0;
             Player p = spawnInfo.Player;
             if (!Main.hardMode && p.ZoneRockLayerHeight && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneJungle && Main.dayTime) return 0.0285f;
@@ -93,7 +93,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.SpellTome, 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DeadChicken>(), 25));

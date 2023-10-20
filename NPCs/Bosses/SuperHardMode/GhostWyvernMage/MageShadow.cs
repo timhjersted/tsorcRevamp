@@ -6,8 +6,6 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.DataStructures;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 {
@@ -61,7 +59,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             Player player = Main.player[NPC.target];
             if (NPC.Distance(player.Center) < 300)
             {
-               
+
                 player.AddBuff(BuffID.Darkness, 300, false);
 
             }
@@ -121,7 +119,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 NPC.ai[3] = 0;//(float)(Main.rand.Next(360) * (Math.PI / 180));
                 NPC.ai[2] = 0;
                 NPC.ai[1] = 0;
-                
+
 
                 Player Pt = Main.player[NPC.target];
                 Vector2 NC = NPC.position + new Vector2(NPC.width / 2, NPC.height / 2);
@@ -150,7 +148,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
             }
 
-            
+
             Timer2++;
             if (Timer2 >= 120)
             {
@@ -183,7 +181,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
                             }
                         }
-                        
+
                         if (Timer2 >= 400)
                         {
                             Timer2 = -100;
@@ -219,13 +217,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 }
 
             }
-            
+
 
             NPC.ai[3]++;
 
             if (NPC.ai[3] >= 50) //how often the crystal attack can happen in frames per second
             {
-                
+
 
 
             }

@@ -1,14 +1,11 @@
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
-using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Magic.Tomes;
@@ -94,7 +91,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             {
                 player.AddBuff(BuffID.OnFire, 30, false); //on fire
                 player.AddBuff(ModContent.BuffType<TornWings>(), 30, false);
-                
+
                 if (holdTimer <= 0)
                 {
                     UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.EarthFiendLich.Heat"), 255, 255, 0); //yellow
@@ -387,7 +384,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             potionType = ItemID.SuperHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.LichBag>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));

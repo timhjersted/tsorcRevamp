@@ -2,9 +2,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Graphics.Effects;
-using System;
-using System.Collections.Generic;
 
 namespace tsorcRevamp.Items.Debug
 {

@@ -1,27 +1,23 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
+using Terraria.ModLoader.Config;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Buffs.Runeterra.Melee;
+using tsorcRevamp.Buffs.Runeterra.Ranged;
+using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Projectiles.VFX;
-using tsorcRevamp.Buffs.Debuffs;
-using Terraria.ModLoader.Config;
-using tsorcRevamp.Items.VanillaItems;
-using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
-using tsorcRevamp.Buffs.Runeterra.Ranged;
-using tsorcRevamp.NPCs;
-using Terraria.Audio;
-using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Items.Weapons.Melee.Broadswords;
-using tsorcRevamp.Projectiles.Summon.Whips;
 using tsorcRevamp.Utilities;
-using tsorcRevamp.Buffs.Runeterra.Melee;
-using System;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -68,35 +64,65 @@ namespace tsorcRevamp.Projectiles
             base.OnSpawn(projectile, source);
         }*/
         public override bool InstancePerEntity => true;
-        public bool ChargedWhip = false;
         public static float WhipVolume = 0.4f;
         public static float WhipPitch = 0.3f;
         public bool AppliedLethalTempo = false;
         public bool AppliedConqueror = false;
+        public bool IgnoresAccuracyOrSpecialCase = true;
         public bool HitSomething = false;
+        public bool ModdedWhip = false;
+        public bool ChargedWhip = false;
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
-            /*Entitysource experiments
+            /*projectilesource experiments
              * if (projectile.type == ModContent.ProjectileType<Projectiles.Spears.FetidExhaust>())
             {
-                EntitySource_ItemUse_WithAmmo itemSource = source as EntitySource_ItemUse_WithAmmo;
+                projectileSource_ItemUse_WithAmmo itemSource = source as projectileSource_ItemUse_WithAmmo;
 
                 if (itemSource != null && itemSource.Item.type == ModContent.ItemType<Items.Weapons.Melee.Spears.FetidExhaust>())
                 {
                     Main.NewText("a");
                 }
             }*/
-            Player owner = Main.player[projectile.owner];
-            if (projectile.type == ProjectileID.CrystalDart)
+            if (projectile.aiStyle == ProjAIStyleID.SmallFlying)
             {
-                projectile.damage = 1 + owner.GetWeaponDamage(owner.HeldItem);
+                IgnoresAccuracyOrSpecialCase = true;
             }
-            if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady
-                &&  projectile.type != ModContent.ProjectileType<TerraFallProjectile>() && projectile.type != ModContent.ProjectileType<NightsCrackerProjectile>() && projectile.type != ModContent.ProjectileType<SearingLashProjectile>() // charged whips need this in their code directly so the sound plays after they've been charged up, not as you start charging
-                && ProjectileID.Sets.IsAWhip[projectile.type])
+            if (projectile.friendly)
             {
-                owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = true;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = 1f }, owner.Center);
+                Player owner = Main.player[projectile.owner];
+                if (projectile.DamageType == DamageClass.Ranged)
+                {
+                    if (owner.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                    {
+                        switch (projectile.type)
+                        {
+                            case ProjectileID.ChlorophyteBullet or ProjectileID.ChlorophyteArrow:
+                                {
+                                    break;
+                                }
+                            case int ModProjectile when (ModProjectile == ModContent.ProjectileType<ElfinArrow>() || ModProjectile == ModContent.ProjectileType<ToxicCatExplosion>() || ModProjectile == ModContent.ProjectileType<VirulentCatExplosion>() || ModProjectile == ModContent.ProjectileType<BiohazardExplosion>()):
+                                {
+                                    break;
+                                }
+                            default:
+                                {
+                                    IgnoresAccuracyOrSpecialCase = false;
+                                    break;
+                                }
+                        }
+                    }
+                }
+                if (projectile.type == ProjectileID.CrystalDart)
+                {
+                    projectile.damage = 1 + owner.GetWeaponDamage(owner.HeldItem);
+                }
+                if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady
+                    && ProjectileID.Sets.IsAWhip[projectile.type] && !ModdedWhip) //Modded whips have this in their code itself because some of them can be charged
+                {
+                    owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = true;
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = 1f }, owner.Center);
+                }
             }
         }
         public override bool PreAI(Projectile projectile)
@@ -110,7 +136,8 @@ namespace tsorcRevamp.Projectiles
                 if (projectile.type == ProjectileID.Terrarian && player.statMana >= (int)(player.manaCost * 2f))
                 {
                     player.statMana -= (int)(player.manaCost * 2f);
-                } else
+                }
+                else
                 {
                     if (projectile.type == ProjectileID.Terrarian)
                     {
@@ -125,7 +152,7 @@ namespace tsorcRevamp.Projectiles
                     projectile.usesLocalNPCImmunity = true;
                     projectile.localNPCHitCooldown = 20;
                     projectile.extraUpdates = 5;
-                } 
+                }
 
                 else if (!modPlayer.WaspPower & projectile.type == ProjectileID.HornetStinger)
                 {
@@ -306,7 +333,7 @@ namespace tsorcRevamp.Projectiles
             }
 
 
-                return true;
+            return true;
 
 
         }
@@ -409,7 +436,7 @@ namespace tsorcRevamp.Projectiles
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 2f }, player.Center);
                 }
-                player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60); 
+                player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
                 if (hit.Crit)
                 {
                     player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
@@ -429,7 +456,7 @@ namespace tsorcRevamp.Projectiles
                 player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
                 AppliedConqueror = true;
             }
-            if (projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse && projectile.friendly)
+            if (!IgnoresAccuracyOrSpecialCase)
             {
                 HitSomething = true;
             }
@@ -560,38 +587,39 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
-     
+
         public override void OnKill(Projectile projectile, int timeLeft)
         {
-            Player owner = Main.player[projectile.owner];
-            var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
-            if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[projectile.type] && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung)
+            if (projectile.friendly)
             {
-                owner.AddBuff(ModContent.BuffType<GoredrinkerCooldown>(), Items.Accessories.Summon.Goredrinker.Cooldown * 60);
-                owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady = false;
-                owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = false;
-            }
-            if (projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse && projectile.friendly
-                && projectile.type != ProjectileID.ChlorophyteBullet && projectile.type != ProjectileID.ChlorophyteArrow && projectile.type != ModContent.ProjectileType<ElfinArrow>() //add any ranged homing projectiles
-                && projectile.aiStyle != ProjAIStyleID.SmallFlying)
-            {
-                if (HitSomething)
+                Player owner = Main.player[projectile.owner];
+                var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
+                if (modPlayer.Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[projectile.type] && modPlayer.GoredrinkerSwung)
                 {
-                    modPlayer.BotCCurrentAccuracyPercent += modPlayer.BotCAccuracyGain;
-                    CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCHit", (int)(MathF.Min(modPlayer.BotCCurrentAccuracyPercent, 1f) * 100f)));
+                    owner.AddBuff(ModContent.BuffType<GoredrinkerCooldown>(), Items.Accessories.Summon.Goredrinker.Cooldown * 60);
+                    modPlayer.GoredrinkerReady = false;
+                    modPlayer.GoredrinkerSwung = false;
                 }
-                else if (!HitSomething)
+                if (!IgnoresAccuracyOrSpecialCase)
                 {
-                    modPlayer.BotCCurrentAccuracyPercent -= modPlayer.BotCAccuracyLoss;
-                    CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCMiss", (int)(MathF.Max(modPlayer.BotCCurrentAccuracyPercent, 0) * 100f)));
-                }
-                if (modPlayer.BotCCurrentAccuracyPercent > modPlayer.BotcAccuracyPercentMax)
-                {
-                    modPlayer.BotCCurrentAccuracyPercent = modPlayer.BotcAccuracyPercentMax;
-                }
-                if (modPlayer.BotCCurrentAccuracyPercent < 0)
-                {
-                    modPlayer.BotCCurrentAccuracyPercent = 0;
+                    if (HitSomething)
+                    {
+                        modPlayer.BotCCurrentAccuracyPercent += modPlayer.BotCAccuracyGain;
+                        CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCHit", (int)(MathF.Min(modPlayer.BotCCurrentAccuracyPercent, 1f) * 100f)));
+                    }
+                    else if (!HitSomething)
+                    {
+                        modPlayer.BotCCurrentAccuracyPercent -= modPlayer.BotCAccuracyLoss;
+                        CombatText.NewText(owner.Hitbox, Color.BurlyWood, LangUtils.GetTextValue("UI.BotCMiss", (int)(MathF.Max(modPlayer.BotCCurrentAccuracyPercent, 0) * 100f)));
+                    }
+                    if (modPlayer.BotCCurrentAccuracyPercent > modPlayer.BotcAccuracyPercentMax)
+                    {
+                        modPlayer.BotCCurrentAccuracyPercent = modPlayer.BotcAccuracyPercentMax;
+                    }
+                    if (modPlayer.BotCCurrentAccuracyPercent < 0)
+                    {
+                        modPlayer.BotCCurrentAccuracyPercent = 0;
+                    }
                 }
             }
 

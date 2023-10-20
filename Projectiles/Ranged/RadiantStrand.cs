@@ -1,8 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Ranged
@@ -18,6 +16,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             Projectile.friendly = true;
             Projectile.tileCollide = true;
             Projectile.DamageType = DamageClass.Ranged;
+            Projectile.timeLeft = 120;
             Projectile.knockBack = 0f;
             Projectile.tileCollide = false;
             Projectile.usesIDStaticNPCImmunity = true;
@@ -44,10 +43,10 @@ namespace tsorcRevamp.Projectiles.Ranged
 
             Lighting.AddLight(Projectile.Center, Main.hslToRgb((float)(Main.timeForVisualEffects / 100f) % 1, 1, 0.5f).ToVector3());
 
-            if(!reachedMouse && Main.myPlayer == Projectile.owner)
+            if (!reachedMouse && Main.myPlayer == Projectile.owner)
             {
                 UsefulFunctions.SmoothHoming(Projectile, Main.MouseWorld, 1f, 50, bufferZone: false);
-                if(Projectile.Distance(Main.MouseWorld) < 100)
+                if (Projectile.Distance(Main.MouseWorld) < 100)
                 {
                     reachedMouse = true;
                 }

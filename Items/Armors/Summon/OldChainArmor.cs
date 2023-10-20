@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            return head.type == ModContent.ItemType<OldChainCoif>() && legs.type == ModContent.ItemType<OldChainGreaves>(); 
+            return head.type == ModContent.ItemType<OldChainCoif>() && legs.type == ModContent.ItemType<OldChainGreaves>();
         }
 
         public override void UpdateArmorSet(Player player)

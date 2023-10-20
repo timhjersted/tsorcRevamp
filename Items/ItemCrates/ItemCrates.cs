@@ -177,7 +177,7 @@ namespace tsorcRevamp.Items.ItemCrates
         }
     }
 
-    
+
     public class MeteorShotCrate : ItemCrates
     {
         public override void SetStaticDefaults()

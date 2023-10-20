@@ -1,8 +1,5 @@
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using System.Threading.Channels;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -99,7 +96,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenIceRod>(), 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenThunderRod>(), 20));

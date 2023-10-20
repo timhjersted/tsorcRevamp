@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.BossItems
             Item.consumable = false;
             Item.rare = ItemRarityID.LightRed;
             Item.consumable = false;
-            
+
         }
 
 
@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.BossItems
                 recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
                 recipe.AddTile(TileID.DemonAltar);
                 recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
-                
+
                 recipe.Register();
             }
         }

@@ -1,6 +1,6 @@
-﻿using Terraria.ID;
+﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria;
 
 namespace tsorcRevamp.Items.Weapons.Melee
 {

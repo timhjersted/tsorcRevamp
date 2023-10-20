@@ -55,7 +55,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         #region PreKill
         public override bool PreKill(int timeLeft)
         {
-            Projectile.type = 0; 
+            Projectile.type = 0;
             Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Dig with { Volume = 0.5f }, Projectile.Center);
             for (int i = 0; i < 10; i++)
             {

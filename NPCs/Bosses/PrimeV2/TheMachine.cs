@@ -5,13 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
-using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Placeable.Relics;
@@ -376,11 +372,11 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                         type == ModContent.NPCType<PrimeSiege>() ||
                         type == ModContent.NPCType<PrimeWelder>()))
                     {
-                        if(damage > Main.npc[i].life)
+                        if (damage > Main.npc[i].life)
                         {
                             damage = Main.npc[i].life - 1;
                         }
-                        if(damage == 0)
+                        if (damage == 0)
                         {
                             continue;
                         }
@@ -419,7 +415,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 for (int y = 1086; y < 1116; y++)
                 {
-                    if (Main.tile[x,y].TileType == TileID.HangingLanterns || Main.tile[x, y].TileType == TileID.Crystals)
+                    if (Main.tile[x, y].TileType == TileID.HangingLanterns || Main.tile[x, y].TileType == TileID.Crystals)
                     {
                         Main.tile[x, y].ClearTile();
                     }
@@ -485,7 +481,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             {
                 for (int y = 1000; y < 1156; y++)
                 {
-                    if(Main.tile[x, y].TileType == TileID.Torches)
+                    if (Main.tile[x, y].TileType == TileID.Torches)
                     {
                         Main.tile[x, y].ClearTile();
                     }
@@ -535,7 +531,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                     Wiring.ActuateForced(x, 1106);
                 }
 
-                for(int y = 1106; y < 1180; y++)
+                for (int y = 1106; y < 1180; y++)
                 {
                     Main.tile[x, y].LiquidAmount = 0;
                 }
@@ -550,7 +546,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         {
             UsefulFunctions.SetAllCameras(NPC.Center, ref progress);
 
-            if(deathAnimationProgress == 0)
+            if (deathAnimationProgress == 0)
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/SoulCrashPre") with { PlayOnlyIfFocused = false, MaxInstances = 0 }, NPC.Center);
             }
@@ -657,7 +653,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 }
             }
 
-            
+
 
             //The base class handles actually killing the NPC when the timer runs out
             base.HandleDeath();
@@ -675,7 +671,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            if(projectile.DamageType == DamageClass.Melee)
+            if (projectile.DamageType == DamageClass.Melee)
             {
                 modifiers.FinalDamage *= 1.5f;
             }
@@ -716,7 +712,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             UsefulFunctions.SetAllCameras(NPC.Center, ref progress);
 
-            if (phaseTransitionTimeRemaining  == 1)
+            if (phaseTransitionTimeRemaining == 1)
             {
                 if (!Main.tile[5152, 1106].IsActuated)
                 {
@@ -743,12 +739,12 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
 
             int phaseFrame = 0;
-            if(phaseTransitionDuration - phaseTransitionTimeRemaining < 30)
+            if (phaseTransitionDuration - phaseTransitionTimeRemaining < 30)
             {
                 phaseFrame = (int)(5 * ((phaseTransitionDuration - phaseTransitionTimeRemaining) / 30f));
             }
 
-            if(Phase != 0)
+            if (Phase != 0)
             {
                 phaseFrame = 6;
             }
@@ -760,7 +756,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             if (Phase != 0)
             {
                 phase2Warmup += 1 / 60f;
-                if(phase2Warmup > 1)
+                if (phase2Warmup > 1)
                 {
                     phase2Warmup = 1;
                 }
@@ -789,29 +785,30 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             float effectIntensity = 0;
             int? machineIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<TheMachine>());
-            if(machineIndex != null && active)
+            if (machineIndex != null && active)
             {
                 effectIntensity = 1;
                 int effectTimer = ((TheMachine)(Main.npc[machineIndex.Value].ModNPC)).MoveTimer;
-                if(effectTimer > 540)
+                if (effectTimer > 540)
                 {
                     effectIntensity = 1f - ((effectTimer - 540f) / 60f);
                 }
 
                 if (effectTimer < 20)
                 {
-                    effectIntensity = effectTimer  / 20f;
+                    effectIntensity = effectTimer / 20f;
                 }
             }
 
             float timeFactor = -1;
             float scaleFactor = 4;
-            if(npc.type == ModContent.NPCType<TheMachine>())
+            if (npc.type == ModContent.NPCType<TheMachine>())
             {
                 timeFactor = 1;
                 scaleFactor = 3;
                 effectIntensity = 1.0f;
-                if (npc.life <= 35006){
+                if (npc.life <= 35006)
+                {
                     rgbColor = Color.OrangeRed;
                 }
                 auraBonus = -.2f;
@@ -865,7 +862,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             shieldRotation += 0.01f;
             int partCount = 0;
-            if(BeamNPC != null && BeamNPC.life > 1)
+            if (BeamNPC != null && BeamNPC.life > 1)
             {
                 partCount++;
             }
@@ -891,7 +888,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
 
             Color effectColor = Color.White;
-            if(Phase != 0)
+            if (Phase != 0)
             {
                 effectColor = Color.OrangeRed;
             }
@@ -936,7 +933,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofFright, 1, 20, 40));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<TheMachineMask>(), 7));
             npcLoot.Add(notExpertCondition);
-            npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<TheMachineRelic>())); 
+            npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<TheMachineRelic>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheMachineTrophy>(), 10));
         }
 

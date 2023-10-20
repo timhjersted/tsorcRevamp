@@ -38,8 +38,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CobaltSword, 1); 
-            recipe.AddIngredient(ItemID.MythrilSword, 1); 
+            recipe.AddIngredient(ItemID.CobaltSword, 1);
+            recipe.AddIngredient(ItemID.MythrilSword, 1);
             recipe.AddIngredient(ItemID.AdamantiteSword, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
             recipe.AddTile(TileID.DemonAltar);
