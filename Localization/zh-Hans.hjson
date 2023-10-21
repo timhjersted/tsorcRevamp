@@ -8350,7 +8350,7 @@ Mods: {
 			CrescentTrue.DisplayName: 真实月牙
 			Crissaegrim.DisplayName: 真空刃
 			CruelArrow.DisplayName: 残酷之箭
-			CursedTormentor.DisplayName: Cursed Tormentor...
+			CursedTormentor.DisplayName: 咒火刑罚
 			CursedFlames.DisplayName: 咒火
 			DeathStrike.DisplayName: 死亡冲击
 			DevilSickle.DisplayName: 邪恶冲击
@@ -8874,7 +8874,7 @@ Mods: {
 			AshenLord.DisplayName: 灰烬领主
 			ASOL13.DisplayName: 霸天龙神
 			StarForger.DisplayName: 铸星龙王
-			// CursedTormentorProjectile.DisplayName: Cursed Tormentor Projectile
+			CursedTormentorProjectile.DisplayName: 咒火刑罚
 			// GaleforceProjectile.DisplayName: Galeforce Projectile
 		}
 

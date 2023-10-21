@@ -2226,10 +2226,12 @@ namespace tsorcRevamp.NPCs
                 #region Golem
                 case (NPCID.Golem): //35k souls total
                     {
-                        npc.lifeMax = 150000; //base 15k
+                        npc.lifeMax = 200000; //base 15k
                         npc.defense = 50; //base 26
                         npc.damage = 100; //base 72
                         npc.value = 293650;
+                        npc.buffImmune[BuffID.CursedInferno] = true;
+                        npc.buffImmune[BuffID.Venom] = true;
                         break;
                     }
 
@@ -2237,17 +2239,20 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Golem.DespawnHandler"), Color.OrangeRed, DustID.OrangeTorch);
 
-                        npc.lifeMax = 750000; //base 25k
+                        npc.lifeMax = 150000; //base 25k
                         npc.defense = 25; //base 20
                         //npc.damage = 64; //base 64, 80 when freed
                         npc.value = 24500;
+                        npc.buffImmune[BuffID.CursedInferno] = true;
+                        npc.buffImmune[BuffID.Venom] = true;
                         break;
                     }
 
                 case int golemfists when (golemfists == NPCID.GolemFistLeft || golemfists == NPCID.GolemFistRight):
                     {
-                        npc.lifeMax = 45000; //base 10k
-                        npc.defense = 100; //base 28
+                        npc.dontTakeDamage = true;
+                        //npc.lifeMax = 45000; //base 10k
+                        //npc.defense = 100; //base 28
                         npc.damage = 75; //base 59
                         npc.value = 16980;
                         break;
