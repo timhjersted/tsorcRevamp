@@ -206,7 +206,6 @@ namespace tsorcRevamp.Tiles
                             HandleDust(ref dust, Main.rand.Next(50, 100) * 0.035f, 20f, player.Center);
                         }
                     }
-                    Main.NewText(healquantity);
 
                     // Full effect
                     if (bonfireEffectTimer > 28)
