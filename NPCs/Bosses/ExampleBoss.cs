@@ -42,6 +42,8 @@ namespace tsorcRevamp.NPCs.Bosses
             attackTransitionDuration = 60;
             phaseTransitionDuration = 120;
             deathAnimationDuration = 180;
+
+            randomAttacks = true;
         }
 
 

@@ -74,6 +74,18 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         /// <summary>
+        /// If true it picks a random attack each time instead of going in a deterministic order
+        /// </summary>
+        public bool randomAttacks = false;
+
+        /// <summary>
+        /// If true it randomly picks every attack in its list once, then refills the list
+        /// If false it always picks a truly random attack, allowing repeats
+        /// Does nothing unless randomAttacks is true
+        /// </summary>
+        public bool attackKnockoutList = true;
+
+        /// <summary>
         /// Set this to ModContent.ItemType<Items.Bossbags.YourBossBagType>(); to make it drop its bag
         /// </summary>
         public int bossBagType = -1;
@@ -113,12 +125,29 @@ namespace tsorcRevamp.NPCs.Bosses
         public BossMove CurrentMove
         {
             get => MoveList[MoveIndex];
+
+            set
+            {
+                for(int i = 0; i < MoveList.Count; i++)
+                {
+                    if (MoveList[i] == value)
+                    {
+                        MoveIndex = i;
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// The list containing every move in the bosses arsenal
         /// </summary>
         public List<BossMove> MoveList;
+
+
+        /// <summary>
+        /// The list containing every move in the bosses arsenal
+        /// </summary>
+        public List<BossMove> UsableMoveList;
 
         /// <summary>
         /// Controls what move is currently being performed
@@ -318,6 +347,21 @@ namespace tsorcRevamp.NPCs.Bosses
             if (MoveList == null)
             {
                 InitializeMovesAndDamage();
+                do
+                {
+                    NextMoveIndex = Main.rand.Next(MoveList.Count);
+                } while (NextMoveIndex != 0);
+
+                //Create the 'used move list'
+                UsableMoveList = new List<BossMove>();
+                for (int i = 0; i < MoveList.Count; i++)
+                {
+                    UsableMoveList.Add(MoveList[i]);
+                }
+
+                //Remove the two moves already picked (0 is always the first move)
+                UsableMoveList.RemoveAt(0);
+                UsableMoveList.RemoveAt(NextMoveIndex);
             }
 
             //If it's doing an attack or phase transition, then do nothing else until it's done
@@ -393,16 +437,84 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
+        //Roll 30 sequences of attacks and spit the attacks chosen for each out in chat
+        //Used for ensuring it's all working right
+        void TestNextMove()
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                String s = "";
+                for (int j = 0; j < MoveList.Count; j++)
+                {
+                    s += MoveIndex + " ";
+                    NextMove();
+                    s += MoveIndex + " ";
+                    NextMove();
+                    s += MoveIndex + " ";
+                    NextMove();
+                }
+                Main.NewText(s);
+            }
+        }
+
         /// <summary>
         /// Changes the attack to the next one
         /// If it hits the end of the list, it loops
         /// </summary>
         public void NextMove()
         {
-            MoveIndex++;
-            if (MoveIndex >= MoveList.Count)
+
+            if (!randomAttacks)
             {
-                MoveIndex = 0;
+                //Increment the move list
+                MoveIndex++;
+
+                //If we're at the end of the move list then go back to the start
+                if (MoveIndex >= MoveList.Count)
+                {
+                    MoveIndex = 0;
+                }
+            }
+            else
+            {
+                //The default random mode is 'knockout list', where it uses each attack once in a random order, shuffles them, then repeats
+                //This ensures it will never use the same one twice in a row, and that all attacks are used with the same frequency
+                if (attackKnockoutList)
+                {
+                    MoveIndex = NextMoveIndex;
+
+                    //If all the moves are used, reset the list
+                    if (UsableMoveList.Count == 0)
+                    {
+                        for (int i = 0; i < MoveList.Count; i++)
+                        {
+                            UsableMoveList.Add(MoveList[i]);
+                        }
+                    }
+
+
+                    //Pick a random entry from UsableMoveList, and make sure it's not the current move
+                    //This is necessary as UsableMoveList could have been reset just now.
+                    //This ensures the last move of one set can't be the same as the first move of the next set
+                    do
+                    {
+                        NextMoveIndex = Main.rand.Next(MoveList.Count);
+                    } while (MoveList[NextMoveIndex] == CurrentMove || !UsableMoveList.Contains(MoveList[NextMoveIndex]));
+
+                    UsableMoveList.Remove(MoveList[NextMoveIndex]);
+                }
+                else
+                {
+                    //If it's not using a 'knockout list' and is truly random, then just pick the next one randomly
+                    //Set the 'next move' to be the current move
+                    MoveIndex = NextMoveIndex;
+
+                    //Pick the next move randomly
+                    NextMoveIndex = Main.rand.Next(MoveList.Count);
+                }
+
+                //Sync it
+                NPC.netUpdate = true;
             }
 
             attackTransitionTimeRemaining = attackTransitionDuration;
