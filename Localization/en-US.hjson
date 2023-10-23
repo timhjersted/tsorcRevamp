@@ -7657,7 +7657,11 @@ Mods: {
 
 			FasterThanSight: {
 				DisplayName: Faster Than Sight
-				Description: Latent illuminant energy lets you defy gravity!
+				Description: 
+					'''
+					Latent illuminant energy lets you defy gravity
+					Infinite flight  and a movement speed boost granted!
+					'''
 			}
 
 			GravityAlignment: {
