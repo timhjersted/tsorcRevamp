@@ -55,9 +55,9 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             //Create a new function for every move of your boss, and then add them to this list alongside the duration of th attack
             MoveList = new List<BossMove> {
-                new BossMove(ExampleAttack1, 700),
-                new BossMove(ExampleAttack2, 600),
-                new BossMove(ExampleAttack3, 900),
+                new BossMove(ExampleDashAttack, 700, id: ExampleBossAttackID.Dashes),
+                new BossMove(ExampleLaserAttack, 600, id: ExampleBossAttackID.Lasers),
+                new BossMove(ExampleSpamAttack, 900, id: ExampleBossAttackID.BeholdTheOrbs),
                 };
 
 
@@ -77,7 +77,7 @@ namespace tsorcRevamp.NPCs.Bosses
         //If you're re-using a number a lot, it's good practice to declare it on top like this
         //That means if you ever want to change it or test another, you only have to change it in one place
         int chargeDelay = 90;
-        public void ExampleAttack1()
+        public void ExampleDashAttack()
         {
             //When the attack starts, increase its contact damage to the "Charging" value
             NPC.damage = DamageNumbers["Charging"];
@@ -117,7 +117,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         //A second example attack, for demonstration purposes
-        public void ExampleAttack2()
+        public void ExampleLaserAttack()
         {
             //Smoothly accelerate toward the player
             UsefulFunctions.SmoothHoming(NPC, Target.Center, 0.05f, 20);
@@ -148,7 +148,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         //A majestic kangaroo. Just kidding: It's yet another example attack, for demonstration purposes
-        public void ExampleAttack3()
+        public void ExampleSpamAttack()
         {
             NPC.velocity *= 0.95f;
             if (MoveTimer % 2 == 0)
@@ -275,6 +275,13 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.GreaterHealingPotion;
+        }
+
+        public class ExampleBossAttackID
+        {
+            public const short Dashes = 0;
+            public const short Lasers = 1;
+            public const short BeholdTheOrbs = 2;
         }
     }
 }

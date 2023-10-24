@@ -577,8 +577,9 @@ namespace tsorcRevamp.NPCs.Bosses
         public Action Move;
         public int timeLimit;
         public Color MoveColor;
+        public int id;
 
-        public BossMove(Action MoveAction, int attackDuration, Color? color = null)
+        public BossMove(Action MoveAction, int attackDuration, Color? color = null, int id = 0)
         {
             Move = MoveAction;
             timeLimit = attackDuration;
@@ -590,6 +591,8 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 MoveColor = new Color(0, 0, 0, 0);
             }
+
+            this.id = id;
         }
     }
 }
