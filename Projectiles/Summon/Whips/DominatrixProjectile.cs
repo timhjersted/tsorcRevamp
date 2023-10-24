@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override float MaxChargeDmgDivisor => 1f;
         public override int WhipDebuffId => ModContent.BuffType<DominatrixDebuff>();
         public override int WhipDebuffDuration => 4;
-        public override float WhipMultihitPenalty => 0.65f;
+        public override float WhipMultihitPenalty => 0.6f;
         public override Color WhipLineColor => Color.MediumVioletRed;
         public override void CustomDust(List<Vector2> points)
         {

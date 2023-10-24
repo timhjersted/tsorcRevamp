@@ -1177,7 +1177,7 @@ namespace tsorcRevamp
                     player.AddBuff(ModContent.BuffType<ScoutsBoost2Omega>(), ToxicShot.ScoutsBoost2Duration * 60);
                     player.AddBuff(ModContent.BuffType<ScoutsBoost2CooldownOmega>(), ToxicShot.ScoutsBoost2Cooldown * 60);
                 }
-                if ((Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && !Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
+                if ((Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && !Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>() && player.statMana >= (int)(OmegaSquadRifle.BaseShroomManaCost * player.manaCost))
                 {
                     Projectile Shroom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Ranged.Runeterra.NuclearMushroom>(), player.GetWeaponDamage(player.HeldItem), player.GetWeaponKnockback(player.HeldItem), Main.myPlayer);
                     Shroom.OriginalCritChance = 100;
@@ -1220,25 +1220,26 @@ namespace tsorcRevamp
                 #endregion
 
                 #region Interstellar Boost
-                bool holdingControls = Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() || Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>();
+                bool holdingControlsAndOrSummonWeapon = (Player.HasItem(ModContent.ItemType<InterstellarVesselGauntlet>()) || Player.HasItem(ModContent.ItemType<CenterOfTheUniverse>())) && (player.HeldItem.DamageType == DamageClass.SummonMeleeSpeed || player.HeldItem.DamageType == DamageClass.Summon);
                 bool hasBuff = Player.HasBuff(ModContent.BuffType<InterstellarCommander>()) || Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
-                if (holdingControls && hasBuff)
+                if (holdingControlsAndOrSummonWeapon && hasBuff && !(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && InterstellarBoostCooldown < 0)
                 {
                     player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost;
-                    if (player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() && player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+                    bool HasCenterOfTheUniverse = player.HasItem(ModContent.ItemType<CenterOfTheUniverse>());
+                    if (!HasCenterOfTheUniverse && player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostActivation") with { Volume = InterstellarVesselGauntlet.SoundVolume });
                     }
-                    else if (player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() && !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+                    else if (!HasCenterOfTheUniverse && !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostDeactivation") with { Volume = InterstellarVesselGauntlet.SoundVolume });
                     }
 
-                    if (player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>() && player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+                    if (HasCenterOfTheUniverse && player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostActivation") with { Volume = CenterOfTheUniverse.SoundVolume });
                     }
-                    else if (player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>() && !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+                    else if (HasCenterOfTheUniverse && !player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
                     {
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostDeactivation") with { Volume = CenterOfTheUniverse.SoundVolume });
                     }
@@ -1279,6 +1280,7 @@ namespace tsorcRevamp
                     }
                 }
                 Dust.NewDustDirect(Player.Center, 10, 10, DustID.FlameBurst, 0.5f, 0.5f, 0, Color.Firebrick, 0.5f);
+                InterstellarBoostCooldown = 61; //so you don't accidentally activate Interstellar Boost when you jsut wanted to adjust the circle radius
             }
         }
 

@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
     {
         public static List<InterstellarVesselShip> projectiles = null;
         public static int processedProjectilesCount = 0;
-        public const float SoundVolume = 1f;
+        public const float SoundVolume = 0.5f;
 
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ScorchingPoint.BallSummonTagDmgMult, ScorchingPoint.DragonSummonTagDmgMult);
         public override void SetStaticDefaults()

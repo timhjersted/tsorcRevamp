@@ -19,6 +19,13 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.mana = 25;
             }
+            if (item.type == ItemID.AmberStaff)
+            {
+                item.damage = 30;
+                item.useTime = 30;
+                item.useAnimation = 30;
+                item.mana = 10;
+            }
             if (item.type == ItemID.CrimsonRod)
             {
                 item.DamageType = DamageClass.MagicSummonHybrid;
@@ -31,7 +38,7 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.DamageType = DamageClass.MagicSummonHybrid;
             }
-            if (item.type == ItemID.NimbusRod)
+            if (item.type == ItemID.MagnetSphere)
             {
                 item.DamageType = DamageClass.MagicSummonHybrid;
             }
@@ -85,34 +92,7 @@ namespace tsorcRevamp.Items.VanillaItems
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
             Player player = Main.player[Main.myPlayer];
-            if (item.type == ItemID.CrimsonRod)
-            {
-                int ttindex = tooltips.FindIndex(t => t.Name == "Damage");
-                if (ttindex != -1)
-                {
-                    tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "DamageType", $"{(int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(item.damage)} " + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicSummonHybridDamageClass")));
-                }
-            }
-            if (item.type == ItemID.NimbusRod)
-            {
-                int ttindex = tooltips.FindIndex(t => t.Name == "Damage");
-                if (ttindex != -1)
-                {
-                    tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "DamageType", $"{(int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(item.damage)} " + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicSummonHybridDamageClass")));
-                }
-            }
-            if (item.type == ItemID.ClingerStaff)
-            {
-                int ttindex = tooltips.FindIndex(t => t.Name == "Damage");
-                if (ttindex != -1)
-                {
-                    tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "DamageType", $"{(int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(item.damage)} " + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicSummonHybridDamageClass")));
-                }
-            }
-            if (item.type == ItemID.MagnetSphere)
+            if (item.DamageType == DamageClass.MagicSummonHybrid && item.damage > 0)
             {
                 int ttindex = tooltips.FindIndex(t => t.Name == "Damage");
                 if (ttindex != -1)

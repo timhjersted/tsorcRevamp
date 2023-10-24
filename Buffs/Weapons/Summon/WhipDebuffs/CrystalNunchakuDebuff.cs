@@ -20,17 +20,17 @@ namespace tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs
             var globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
             globalNPC.markedByCrystalNunchaku = true;
-            globalNPC.CrystalNunchakuUpdateTick += 0.0167f;
+            globalNPC.CrystalNunchakuUpdateTick++;
             Dust.NewDust(npc.Center, 10, 10, DustID.CrystalPulse, Scale: 0.5f);
 
-            if (globalNPC.CrystalNunchakuUpdateTick > 15.02f)
+            if (npc.buffTime[buffIndex] == 1)
             {
-                globalNPC.CrystalNunchakuUpdateTick = 0f;
+                globalNPC.CrystalNunchakuUpdateTick = 0;
                 globalNPC.CrystalNunchakuStacks = 10;
                 globalNPC.CrystalNunchakuProc = false;
             }
 
-            if (globalNPC.CrystalNunchakuUpdateTick >= 5f && globalNPC.CrystalNunchakuUpdateTick <= 5.2f)
+            if (globalNPC.CrystalNunchakuUpdateTick >= 5 * 60 && globalNPC.CrystalNunchakuUpdateTick <= 5 * 60 + 5)
             {
                 Dust.NewDust(npc.Center, 50, 50, DustID.CrystalPulse, Scale: 2f);
                 SoundEngine.PlaySound(SoundID.Item78 with { Volume = 4f }, npc.Center);

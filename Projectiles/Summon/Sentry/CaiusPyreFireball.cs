@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,21 +7,25 @@ using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles
 {
-    class CursedTormentorProjectile : DynamicTrail
+    class CaiusPyreFireball : DynamicTrail
     {
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.SentryShot[Type] = true;
+        }
         public override void SetDefaults()
         {
             Projectile.width = 16;
             Projectile.height = 16;
-            Projectile.DamageType = DamageClass.Magic;
-            Projectile.penetrate = -1;
-            Projectile.scale = 1.1f;
+            Projectile.timeLeft = 120;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 420;
-            Projectile.netImportant = true;
+            Projectile.DamageType = DamageClass.MagicSummonHybrid;
+            Projectile.penetrate = -1;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = Projectile.timeLeft;
 
-            trailWidth = 70;
+            trailWidth = 50;
             trailPointLimit = 1000;
             trailCollision = true;
             collisionFrequency = 2;
@@ -31,15 +34,22 @@ namespace tsorcRevamp.Projectiles
             trailYOffset = 50;
             trailMaxLength = 350;
             NPCSource = false;
+            noFadeOut = true;
             noDiscontinuityCheck = true;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedTormentor", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
-
         public override void AI()
         {
             base.AI();
 
-
+            if (Projectile.owner == Main.myPlayer)
+            {
+                UsefulFunctions.SmoothHoming(Projectile, Main.MouseWorld, 1f, 20, null, true, 0.1f);
+            }
+            if (Projectile.wet)
+            {
+                Projectile.Kill();
+            }
             if (Main.GameUpdateCount % 5 == 0)
             {
                 Projectile.netUpdate = true;
@@ -48,16 +58,6 @@ namespace tsorcRevamp.Projectiles
             if (UsefulFunctions.IsTileReallySolid(Projectile.Center / 16f))
             {
                 dying = true;
-            }
-            if (!dying)
-            {
-                Lighting.AddLight(Projectile.Center, TorchID.Cursed);
-                Main.player[Projectile.owner].channel = true;
-                Main.player[Projectile.owner].manaRegenDelay = 10;
-            }
-            if (Projectile.owner == Main.myPlayer)
-            {
-                UsefulFunctions.SmoothHoming(Projectile, Main.MouseWorld, 1f, 20, null, true, 0.2f);
             }
         }
         public override float CollisionWidthFunction(float progress)
@@ -69,19 +69,19 @@ namespace tsorcRevamp.Projectiles
 
             return trailWidth * progress;
         }
-
-
-        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-            modifiers.SourceDamage *= MathF.Max(MathF.Min(Projectile.velocity.Length() / 3f, 2f), 1f); //holy shit this was overtuned to hell, don't use GetDamage it's wack
-        }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(BuffID.CursedInferno, 5 * 60);
+            if (Main.rand.NextBool(4))
+            {
+                target.AddBuff(BuffID.OnFire, 300);
+            }
         }
-        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            target.AddBuff(BuffID.CursedInferno, 5 * 60);
+        }
+        public override void OnKill(int timeLeft)
+        {
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.45f }, Projectile.position);
         }
         Vector2 samplePointOffset1;
         Vector2 samplePointOffset2;
@@ -118,7 +118,7 @@ namespace tsorcRevamp.Projectiles
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["speed"].SetValue(hostVel);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-            effect.Parameters["shaderColor"].SetValue(new Color(0.8f, 1f, 0.3f, 1.0f).ToVector4());
+            effect.Parameters["shaderColor"].SetValue(new Color(0.886f, 0.17f, 0.15f, 1f).ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
     }

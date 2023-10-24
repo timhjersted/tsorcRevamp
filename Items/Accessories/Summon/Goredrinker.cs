@@ -11,11 +11,11 @@ namespace tsorcRevamp.Items.Accessories.Summon
 {
     public class Goredrinker : ModItem
     {
-        public static float SummonDamage = 10;
-        public static int MaxLife = 40;
-        public static float HealBaseValue = 5.5f;
-        public static float WhipDmgRange = 33f; //dmg gets applied in playermain
-        public static int Cooldown = 12;
+        public const float SummonDamage = 10f;
+        public const int MaxLife = 40;
+        public const float HealBaseValue = 8f;
+        public const float WhipDmgRange = 33f; //dmg gets applied in playermain
+        public const int Cooldown = 12;
 
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonDamage, MaxLife, Cooldown);
         public override void SetStaticDefaults()

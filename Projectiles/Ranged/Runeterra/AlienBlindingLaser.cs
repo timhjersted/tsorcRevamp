@@ -6,6 +6,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
+using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.NPCs;
 
@@ -42,6 +43,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
             Projectile.CritChance += AlienGun.BlindingLaserBonusCritChance;
             player.statMana -= (int)(AlienGun.BaseLaserManaCost * player.manaCost);
             player.ManaEffect(-(int)(AlienGun.BaseLaserManaCost * player.manaCost));
+            player.manaRegenDelay = MeleeEdits.ManaDelay / 2;
         }
 
         public override void AI()

@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         public override int BuffType => ModContent.BuffType<CenterOfTheUniverseBuff>();
         public override int DebuffType => ModContent.BuffType<SunburnDebuff>();
         public override int PairedProjectileType => ModContent.ProjectileType<CenterOfTheUniverseStar>();
-        public override int DragonType => 3;
+        public override int DragonTier => 3;
         public override float maxSize => 2700;
         public override float size => 3800;
         override public void SetupBody()

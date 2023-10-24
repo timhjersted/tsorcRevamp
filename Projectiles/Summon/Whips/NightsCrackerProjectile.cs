@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override int DustHeight => 10;
         public override Color DustColor => default;
         public override float DustScale => 1f;
-        public override float MaxChargeTime => 300;
+        public override float MaxChargeTime => 210;
         public override Vector2 WhipTipBase => new Vector2(11, 17);
         public override float MaxChargeDmgDivisor => 3.85f;
         public override int WhipDebuffId => ModContent.BuffType<NightsCrackerDebuff>();
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             player.AddBuff(ModContent.BuffType<NightsCrackerBuff>(), (int)(modPlayer.NightsCrackerStacks * 120 * modPlayer.SummonTagDuration));
             target.AddBuff(ModContent.BuffType<NightsCrackerDebuff>(), (int)(modPlayer.NightsCrackerStacks * 120 * modPlayer.SummonTagDuration));
             target.AddBuff(BuffID.ShadowFlame, (int)(modPlayer.NightsCrackerStacks * 120 * modPlayer.SummonTagDuration));
-            Projectile.damage = (int)(Projectile.damage * (modPlayer.NightsCrackerStacks / 27f + 0.75f));
+            Projectile.damage = (int)(Projectile.damage * (modPlayer.NightsCrackerStacks / 27f + 0.7f));
         }
         public override bool PreDraw(ref Color lightColor)
         {

@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         public override int BuffType => ModContent.BuffType<CenterOfTheHeat>();
         public override int DebuffType => ModContent.BuffType<ScorchingDebuff>();
         public override int PairedProjectileType => ModContent.ProjectileType<ScorchingPointFireball>();
-        public override int DragonType => 1;
+        public override int DragonTier => 1;
         public override float maxSize => 2700;
         public override float size => 2850;
         override public void SetupBody()

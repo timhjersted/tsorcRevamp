@@ -15,12 +15,14 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
 
         public override void Update(Player player, ref int buffIndex)
         {
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             if (player.HeldItem.type == ModContent.ItemType<ScorchingPoint>())
             {
                 player.maxMinions += 1;
             }
 
-            player.GetModPlayer<tsorcRevampPlayer>().FireballHitSoundCooldown--;
+            modPlayer.RuneterraMinionHitSoundCooldown--;
+            modPlayer.InterstellarBoostCooldown--;
 
             // If the minions exist reset the buff time, otherwise remove the buff from the player
             if (player.ownedProjectileCounts[ModContent.ProjectileType<ScorchingPointFireball>()] > 0)

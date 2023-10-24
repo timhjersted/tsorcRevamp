@@ -6360,11 +6360,6 @@ Mods: {
 					'''
 			}
 
-			GaleForce: {
-				DisplayName: 狂风
-				Tooltip: 召唤一个风之精灵，它会向光标发射一阵风。
-			}
-
 			ShatteredReflection: {
 				DisplayName: 碎镜反射
 				Tooltip:
@@ -6492,10 +6487,19 @@ Mods: {
 				DisplayName: 热硫酸
 				Tooltip:
 					'''
-					{$CommonItemTooltip.SummonTagDamage}
-					{$CommonItemTooltip.PercentSummonTagCritChance@1}
+					{$CommonItemTooltip.PercentSummonTagCritChance}
 					{$CommonItemTooltip.Whips}
 					施加诅咒之火
+					'''
+			}
+
+			Pyromethane: {
+				DisplayName: 热硫酸
+				Tooltip:
+					'''
+					{$CommonItemTooltip.SummonTagDamage}
+					{$CommonItemTooltip.Whips}
+					Inflicts Ichor
 					'''
 			}
 
@@ -6535,6 +6539,24 @@ Mods: {
 					鞭子本身带有 {2} 护甲穿透
 					{$CommonItemTooltip.Whips}
 					'''
+			}
+
+			Galeforce: {
+				// DisplayName: Galeforce
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a magical bow which shoots a gust of wind towards your cursor
+					''' */
+			}
+
+			CaiusPyre: {
+				// DisplayName: Caius' Pyre
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a fiery rift which shoots fireballs towards your cursor
+					''' */
 			}
 
 			BlackFirebomb: {
@@ -7455,11 +7477,6 @@ Mods: {
 				DisplayName: 种子袋
 				Tooltip: ""
 			}
-
-			Galeforce: {
-				// DisplayName: Galeforce
-				// Tooltip: ""
-			}
 		}
 
 		Buffs: {
@@ -8306,6 +8323,11 @@ Mods: {
 				DisplayName: 呆板
 				Description: 你无法翻滚！
 			}
+
+			PyromethaneDebuff: {
+				// DisplayName: Pyromethane Debuff
+				// Description: Mods.tsorcRevamp.Buffs.PyromethaneDebuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -8876,6 +8898,9 @@ Mods: {
 			StarForger.DisplayName: 铸星龙王
 			CursedTormentorProjectile.DisplayName: 咒火刑罚
 			// GaleforceProjectile.DisplayName: Galeforce Projectile
+			// PyromethaneProjectile.DisplayName: Pyromethane Projectile
+			// CaiusPyreFireball.DisplayName: Caius Pyre Fireball
+			// CaiusPyreRift.DisplayName: Caius Pyre Rift
 		}
 
 		NPCs: {

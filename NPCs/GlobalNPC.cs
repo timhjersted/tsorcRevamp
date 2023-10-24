@@ -61,6 +61,7 @@ namespace tsorcRevamp.NPCs
         public bool markedByNightsCracker;
         public bool markedByPolarisLeash;
         public bool markedByPyrosulfate;
+        public bool markedByPyromethane;
         public bool markedBySearingLash;
         public bool markedByTerraFall;
         public bool markedByUrumi;
@@ -76,7 +77,7 @@ namespace tsorcRevamp.NPCs
 
         public float CrystalNunchakuStacks = 10;
         public bool CrystalNunchakuProc = false;
-        public float CrystalNunchakuUpdateTick = 0f;
+        public int CrystalNunchakuUpdateTick = 0;
         public float CrystalNunchakuScalingDamage = 0f;
 
         public bool Scorched;
@@ -262,6 +263,7 @@ namespace tsorcRevamp.NPCs
             markedByNightsCracker = false;
             markedByPolarisLeash = false;
             markedByPyrosulfate = false;
+            markedByPyromethane = false;
             markedBySearingLash = false;
             markedByTerraFall = false;
             markedByUrumi = false;
@@ -968,8 +970,11 @@ namespace tsorcRevamp.NPCs
             }
             if (markedByPyrosulfate)
             {
-                SummonTagFlatDamage += Pyrosulfate.SummonTagDamage;
                 BaseSummonTagCriticalStrikeChance += Pyrosulfate.SummonTagCrit;
+            }
+            if (markedByPyromethane)
+            {
+                SummonTagFlatDamage += Pyromethane.SummonTagDamage;
             }
             //if (markedBySearingLash) Searing Lash Crit Multiplier needs to be calculated after all the flat tag critical strike chance has been added
             if (markedByTerraFall)
@@ -1637,6 +1642,10 @@ namespace tsorcRevamp.NPCs
                 {
                     DoTPerS *= 3;
                 }
+                if (npc.HasBuff(BuffID.Oiled))
+                {
+                    DoTPerS += 25 * DragonStone.Potency;
+                }
                 npc.lifeRegen -= DoTPerS * 2;
                 damage += DoTPerS;
             }
@@ -1658,6 +1667,10 @@ namespace tsorcRevamp.NPCs
                 if (SuperSunburnDuration > 0)
                 {
                     DoTPerS *= 3;
+                }
+                if (npc.HasBuff(BuffID.Oiled))
+                {
+                    DoTPerS += 25 * DragonStone.Potency;
                 }
                 npc.lifeRegen -= DoTPerS * 2;
                 damage += DoTPerS;

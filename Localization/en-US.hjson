@@ -1944,7 +1944,7 @@ Mods: {
 					Fueled by a magical gem in the chest
 					{$CommonItemTooltip.AtkSpeed}{$CommonItemTooltip.Melee.Bonus@1}
 					{$CommonItemTooltip.SetBonus}Chance to gain stacks upon damaging anything
-					Collect stacks to gain up to 28% damage reduction against the next hit
+					Collect stacks to gain up to 28 resistance against the next hit
 					'''
 			}
 
@@ -2367,7 +2367,7 @@ Mods: {
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					{$CommonItemTooltip.LifeRegen@3}
 					{$CommonItemTooltip.DefenseCap@2}
-					Damage reduction is converted into movement speed(1 : {4})
+					Resistance is converted into movement speed(1 : {4})
 					'''
 			}
 
@@ -2397,7 +2397,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@3}
 					{$CommonItemTooltip.DRStat@1}
-					{$CommonItemTooltip.LifeThreshold@2}Damage Reduction provided by the set is doubled
+					{$CommonItemTooltip.LifeThreshold@2}Resistance provided by the set is doubled
 					'''
 			}
 
@@ -2540,7 +2540,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.DefenseCap@2}
-					Damage reduction is converted into movement speed(1 : {4})
+					Resistance is converted into movement speed(1 : {4})
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					{$CommonItemTooltip.LifeRegen@3}
 					'''
@@ -2553,7 +2553,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage@1}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.DefenseCap@3}
-					Damage reduction is converted into movement speed(1 : {5})
+					Resistance is converted into movement speed(1 : {5})
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
 					{$CommonItemTooltip.LifeRegen@4}
 					'''
@@ -6359,11 +6359,6 @@ Mods: {
 					'''
 			}
 
-			GaleForce: {
-				DisplayName: Galeforce
-				Tooltip: Summons a wind spirit which shoots a gust of wind towards your cursor
-			}
-
 			ShatteredReflection: {
 				DisplayName: Shattered Reflection
 				Tooltip:
@@ -6405,7 +6400,7 @@ Mods: {
 				DisplayName: Crystal Nunchaku
 				Tooltip:
 					'''
-					Tags hit enemies with a parasytic crystal for 15 seconds
+					Tags hit enemies with a parasytic crystal for {4} seconds
 					After 5 seconds this will either increase your own defense or increase the enemies damage taken from all sources
 					Hitting the enemy during infection will decrease the damage bonus and increase your defensive bonus(except for the whip itself)
 					Damage bonus ranges from {0}% to {1}%, Defense bonus ranges from {2} to {3}
@@ -6491,10 +6486,19 @@ Mods: {
 				DisplayName: Pyrosulfate
 				Tooltip:
 					'''
-					{$CommonItemTooltip.SummonTagDamage}
-					{$CommonItemTooltip.PercentSummonTagCritChance@1}
+					{$CommonItemTooltip.PercentSummonTagCritChance}
 					{$CommonItemTooltip.Whips}
 					Inflicts Cursed Inferno
+					'''
+			}
+
+			Pyromethane: {
+				DisplayName: Pyromethane
+				Tooltip:
+					'''
+					{$CommonItemTooltip.SummonTagDamage}
+					{$CommonItemTooltip.Whips}
+					Inflicts Ichor
 					'''
 			}
 
@@ -6533,6 +6537,24 @@ Mods: {
 					{$CommonItemTooltip.PercentSummonTagCritChance@1}
 					The whip itself ignores {2} defense
 					{$CommonItemTooltip.Whips}
+					'''
+			}
+
+			Galeforce: {
+				DisplayName: Galeforce
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a magical bow which shoots a gust of wind towards your cursor
+					'''
+			}
+
+			CaiusPyre: {
+				DisplayName: Caius' Pyre
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a fiery rift which shoots fireballs towards your cursor
 					'''
 			}
 
@@ -6987,16 +7009,16 @@ Mods: {
 					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
 					The [c/b22222:stars] scale with {0}% Tag Damage, but the [c/b22222:Star Forger] only with {1}% Tag Damage
 					{$Items.CenterOfTheUniverse.Keybind1}Special Ability{$Items.CenterOfTheUniverse.Keybind2}
-					Gain [c/191970:Stardust] every time you detonate a [c/b22222:mark]
-					<right> to summon a [c/191970:Grand Comet] at your cursor's location for [c/191970:10 Stardust]
-					[c/191970:'Leave them in awe at the sight of the Star Forger']
+					Gain [c/00008b:Stardust] every time you detonate a [c/b22222:mark]
+					<right> to summon a [c/00008b:Grand Comet] at your cursor's location for [c/00008b:10 Stardust]
+					[c/00008b:'Leave them in awe at the sight of the Star Forger']
 					'''
 				Keybind1: "Press "
 				Keybind2: " to activate [c/7fffd4:Turboboost], accelerating the [c/b22222:Star Forger] and it's [c/b22222:stars]"
 				Details:
 					'''
-					[c/191970:Grand Comet deals massive damage in a huge area and leaves behind a shockwave](WIP unimplemented)
-					[c/191970:Grand Comet applies the Awestruck debuff, further increasing star damage and dealing massive damage over time]
+					[c/00008b:Grand Comet deals massive damage in a huge area and leaves behind a shockwave](WIP unimplemented)
+					[c/00008b:Grand Comet applies the Awestruck debuff, further increasing star damage and dealing massive damage over time]
 					[c/7fffd4:Turboboost] increases star damage, movement speed and increases the Star Forger's attack speed]
 					[c/7fffd4:Turboboost will actively drain your mana]
 					The [c/b22222:Star Forger] itself uses half a minion slot and scales with the amount of [c/b22222:stars] summoned
@@ -7455,11 +7477,6 @@ Mods: {
 				DisplayName: Seed Bag
 				Tooltip: ""
 			}
-
-			Galeforce: {
-				DisplayName: Galeforce
-				Tooltip: ""
-			}
 		}
 
 		Buffs: {
@@ -7657,7 +7674,7 @@ Mods: {
 
 			FasterThanSight: {
 				DisplayName: Faster Than Sight
-				Description: 
+				Description:
 					'''
 					Latent illuminant energy lets you defy gravity
 					Infinite flight  and a movement speed boost granted!
@@ -8310,6 +8327,11 @@ Mods: {
 				DisplayName: Stiff
 				Description: You can't roll!
 			}
+
+			PyromethaneDebuff: {
+				DisplayName: Pyromethane Debuff
+				Description: Mods.tsorcRevamp.Buffs.PyromethaneDebuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -8880,6 +8902,9 @@ Mods: {
 			StarForger.DisplayName: Star Forger
 			CursedTormentorProjectile.DisplayName: Cursed Tormentor Projectile
 			GaleforceProjectile.DisplayName: Galeforce Projectile
+			PyromethaneProjectile.DisplayName: Pyromethane Projectile
+			CaiusPyreFireball.DisplayName: Caius Pyre Fireball
+			CaiusPyreRift.DisplayName: Caius Pyre Rift
 		}
 
 		NPCs: {

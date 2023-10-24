@@ -13,14 +13,19 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
             Main.buffNoSave[Type] = true;
             Main.buffNoTimeDisplay[Type] = true;
         }
-
+        public const int BoostManaCostPerTick = 3;
         public override void Update(Player player, ref int buffIndex)
         {
-            if (player.HeldItem.type == ModContent.ItemType<ScorchingPoint>())
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>())
             {
                 player.maxMinions += 1;
             }
 
+            modPlayer.RuneterraMinionHitSoundCooldown--;
+            modPlayer.InterstellarBoostCooldown--;
+
+            // If the minions exist reset the buff time, otherwise remove the buff from the player
             if (player.ownedProjectileCounts[ModContent.ProjectileType<InterstellarVesselShip>()] > 0)
             {
                 InterstellarVesselGauntlet.ReposeProjectiles(player);
@@ -32,12 +37,12 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
                 buffIndex--;
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost && player.statMana > 0)
+            if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost && player.statMana >= BoostManaCostPerTick)
             {
-                player.statMana -= 1;
+                player.statMana -= BoostManaCostPerTick;
                 player.manaRegenDelay = 10;
             }
-            else if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost && player.statMana == 0)
+            else if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost && player.statMana < BoostManaCostPerTick)
             {
                 player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost = false;
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostDeactivation") with { Volume = InterstellarVesselGauntlet.SoundVolume });

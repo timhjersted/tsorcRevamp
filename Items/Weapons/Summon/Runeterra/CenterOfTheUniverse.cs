@@ -90,10 +90,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         }
         public override bool? UseItem(Player player)
         {
-            if (Main.mouseRight && player.GetModPlayer<tsorcRevampPlayer>().CotUStardustCount == 10)
+            if (Main.mouseRight && player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount == 10)
             {
                 (Dragon.ModProjectile as RuneterraDragon).StartAltSequence();
-                player.GetModPlayer<tsorcRevampPlayer>().CotUStardustCount = 0;
+                player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount = 0;
             }
             return base.UseItem(player);
         }

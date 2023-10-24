@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         public override int BuffType => ModContent.BuffType<InterstellarCommander>();
         public override int DebuffType => ModContent.BuffType<ShockedDebuff>();
         public override int PairedProjectileType => ModContent.ProjectileType<InterstellarVesselShip>();
-        public override int DragonType => 2;
+        public override int DragonTier => 2;
         public override float maxSize => 2700;
         public override float size => 3350;
         override public void SetupBody()

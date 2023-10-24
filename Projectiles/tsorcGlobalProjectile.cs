@@ -84,10 +84,6 @@ namespace tsorcRevamp.Projectiles
                     Main.NewText("a");
                 }
             }*/
-            if (projectile.aiStyle == ProjAIStyleID.SmallFlying)
-            {
-                IgnoresAccuracyOrSpecialCase = true;
-            }
             if (projectile.friendly)
             {
                 Player owner = Main.player[projectile.owner];
@@ -132,6 +128,10 @@ namespace tsorcRevamp.Projectiles
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
+                if (projectile.aiStyle == ProjAIStyleID.SmallFlying && !IgnoresAccuracyOrSpecialCase)
+                {
+                    IgnoresAccuracyOrSpecialCase = true;
+                }
 
                 if (projectile.type == ProjectileID.Terrarian && player.statMana >= (int)(player.manaCost * 2f))
                 {

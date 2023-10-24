@@ -225,7 +225,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         public abstract int PairedProjectileType { get; }
         public abstract int BuffType { get; }
         public abstract int DebuffType { get; }
-        public abstract int DragonType { get; }
+        public abstract int DragonTier { get; }
 
         public float BaseOriginalDamage;
         public int BaseAttackSpeed = 15;
@@ -266,7 +266,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             BodySegment.BaseScale = Scale;
 
-            switch (DragonType)
+            switch (DragonTier)
             {
                 case 1:
                     {
@@ -312,7 +312,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             target.AddBuff(DebuffType, ScorchingPoint.DragonDebuffDuration * 60);
             if (Main.rand.NextBool((int)(100f / ScorchingPoint.MarkChance)))
             {
-                switch (DragonType)
+                switch (DragonTier)
                 {
                     case 1:
                         {
@@ -355,7 +355,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             {
                 Projectile.timeLeft = 2;
             }
-            Projectile.originalDamage = (int)(BaseOriginalDamage / 19f * (float)player.ownedProjectileCounts[PairedProjectileType]);
+            Projectile.originalDamage = (int)(BaseOriginalDamage / ((float)DragonTier * 6f) * (float)player.ownedProjectileCounts[PairedProjectileType]);
             if (Projectile.damage < 1)
             {
                 Projectile.damage = 1;
@@ -415,7 +415,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 dir = FrontBody.dir;
             }
 
-            int baseHeadFrames = (DragonType == 3 ? 0 : 4);
+            int baseHeadFrames = (DragonTier == 3 ? 0 : 4);
 
             float totalRotationTarget = 0f;
             if (targetMob != null)
@@ -539,7 +539,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             float targetRRange = (0.5f - (degree / 360)) * 2f;
             float MaxDist = (320f * size / maxSize) * 1.4f;
-            float MinDist = 150f * Scale;
+            float MinDist = 80f * Scale;
 
             // This code is required if your minion weapon has the targeting feature
             if (owner.HasMinionAttackTargetNPC)
@@ -617,7 +617,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             int HeadFrameForBreathing = 4;
-            switch (DragonType)
+            switch (DragonTier)
             {
                 default: break;
                 case 1:

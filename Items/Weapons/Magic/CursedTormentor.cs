@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Magic;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -30,11 +31,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.noMelee = true;
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Magic;
-            Item.shoot = ModContent.ProjectileType<Projectiles.CursedTormentorProjectile>();
+            Item.shoot = ModContent.ProjectileType<CursedTormentorProjectile>();
         }
         public override bool CanUseItem(Player player)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.CursedTormentorProjectile>()] > 0 && player.channel)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<CursedTormentorProjectile>()] > 0 && player.channel)
             {
                 return false;
             }

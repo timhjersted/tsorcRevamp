@@ -6,6 +6,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
+using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
@@ -24,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override Vector2 WhipTipBase => new Vector2(10, 32);
         public override float MaxChargeDmgDivisor => 1f;
         public override int WhipDebuffId => ModContent.BuffType<CrystalNunchakuDebuff>();
-        public override int WhipDebuffDuration => 15;
+        public override int WhipDebuffDuration => CrystalNunchaku.BuffDuration;
         public override float WhipMultihitPenalty => 0.7f;
         public override Color WhipLineColor => Color.BlueViolet;
         public override void CustomDust(List<Vector2> points)

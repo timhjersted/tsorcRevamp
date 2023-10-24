@@ -1981,14 +1981,14 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.TheHungry):
                     {
-                        npc.value = 480;
+                        npc.value = 240;
                         npc.knockBackResist = 0.3f;
                         break;
                     }
 
                 case (NPCID.TheHungryII):
                     {
-                        npc.value = 300;
+                        npc.value = 150;
                         npc.knockBackResist = 0.5f;
                         break;
                     }
@@ -1999,7 +1999,7 @@ namespace tsorcRevamp.NPCs
                     {
                         {
                             npc.lifeMax = 333;
-                            npc.value = 1230;
+                            npc.value = 610;
                         }
                         if (npc.type == NPCID.LeechHead)
                         {

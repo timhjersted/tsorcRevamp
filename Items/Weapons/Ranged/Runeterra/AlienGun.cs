@@ -93,24 +93,28 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         {
             if (player.altFunctionUse != 2)
             {
-                if (ShootSoundStyle == 0)
+                switch (ShootSoundStyle)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot1") with { Volume = ShootSoundVolume });
-                    ShootSoundStyle += 1;
+                    case 0:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot1") with { Volume = ShootSoundVolume });
+                            ShootSoundStyle += 1;
+                            break;
+                        }
+                    case 1:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot2") with { Volume = ShootSoundVolume });
+                            ShootSoundStyle += 1;
+                            break;
+                        }
+                    case 2:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot3") with { Volume = ShootSoundVolume });
+                            ShootSoundStyle = 0;
+                            break;
+                        }
                 }
-                else
-                if (ShootSoundStyle == 1)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot2") with { Volume = ShootSoundVolume });
-                    ShootSoundStyle += 1;
-                }
-                else
-                if (ShootSoundStyle == 2)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/Shot3") with { Volume = ShootSoundVolume });
-                    ShootSoundStyle = 0;
-                }
-                ShootTimer = ShootCooldown;
+                ShootTimer = (int)((float)ShootCooldown / ((float)player.GetTotalAttackSpeed(DamageClass.Ranged)));
             }
             else
             {
@@ -167,11 +171,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override bool CanUseItem(Player player)
         {
-            if (player.altFunctionUse != 2 || !player.HasBuff(ModContent.BuffType<AlienBlindingLaserCooldown>()))
-            {
-                return true;
-            }
-            if (ShootTimer <= 0)
+            if ((ShootTimer <= 0 && !Main.mouseRight) || (Main.mouseRight && !Main.mouseLeft && !player.HasBuff(ModContent.BuffType<AlienBlindingLaserCooldown>()) && (player.statMana >= (int)(player.manaCost * BaseLaserManaCost))))
             {
                 return true;
             }

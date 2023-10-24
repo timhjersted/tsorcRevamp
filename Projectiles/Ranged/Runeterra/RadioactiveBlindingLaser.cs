@@ -6,6 +6,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
+using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.NPCs;
 
@@ -43,6 +44,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
             Projectile.CritChance += 100;
             player.statMana -= (int)(OmegaSquadRifle.BaseLaserManaCost * player.manaCost);
             player.ManaEffect(-(int)(OmegaSquadRifle.BaseLaserManaCost * player.manaCost));
+            player.manaRegenDelay = MeleeEdits.ManaDelay / 2;
         }
 
         public override void AI()

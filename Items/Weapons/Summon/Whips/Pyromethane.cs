@@ -7,10 +7,11 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-    public class Pyrosulfate : ModItem
+    [Autoload(false)]
+    public class Pyromethane : ModItem
     {
-        public static float SummonTagCrit = 8;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagCrit);
+        public static float SummonTagDamage = 10;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagDamage);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
@@ -43,8 +44,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.DemoniteBar, 3);
-            recipe.AddIngredient(ItemID.CursedFlame, 14);
+            recipe.AddIngredient(ItemID.CrimtaneBar, 3);
+            recipe.AddIngredient(ItemID.Ichor, 14);
             recipe.AddIngredient(ItemID.SoulofNight, 9);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 16000);
 

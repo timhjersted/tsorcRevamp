@@ -42,8 +42,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
             Item.height = 24;
             Item.rare = ItemRarityID.Green;
             Item.value = Item.buyPrice(0, 10, 0, 0);
-            Item.useTime = 30;
-            Item.useAnimation = 30;
+            Item.useTime = 22;
+            Item.useAnimation = 22;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item63;
@@ -61,24 +61,28 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            ShootTimer = ShootCooldown;
-            if (ShootSoundStyle == 0)
+            switch (ShootSoundStyle)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot1") with { Volume = ShootSoundVolume });
-                ShootSoundStyle += 1;
+                case 0:
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot1") with { Volume = ShootSoundVolume });
+                        ShootSoundStyle += 1;
+                        break;
+                    }
+                case 1:
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot2") with { Volume = ShootSoundVolume });
+                        ShootSoundStyle += 1;
+                        break;
+                    }
+                case 2:
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot3") with { Volume = ShootSoundVolume });
+                        ShootSoundStyle = 0;
+                        break;
+                    }
             }
-            else
-            if (ShootSoundStyle == 1)
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot2") with { Volume = ShootSoundVolume });
-                ShootSoundStyle += 1;
-            }
-            else
-            if (ShootSoundStyle == 2)
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/Shot3") with { Volume = ShootSoundVolume });
-                ShootSoundStyle = 0;
-            }
+            ShootTimer = (int)((float)ShootCooldown / ((float)player.GetTotalAttackSpeed(DamageClass.Ranged)));
             return true;
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)

@@ -78,28 +78,42 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = player;
-            if (Main.rand.NextBool(3))
+            int HitSound = Main.rand.Next(3);
+            if (modPlayer.RuneterraMinionHitSoundCooldown > 0)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit1") with { Volume = CenterOfTheUniverse.SoundVolume });
-            }
-            else if (Main.rand.NextBool(3))
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit2") with { Volume = CenterOfTheUniverse.SoundVolume });
-            }
-            else
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit3") with { Volume = CenterOfTheUniverse.SoundVolume });
+                switch (HitSound)
+                {
+                    case 0:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit1") with { Volume = CenterOfTheUniverse.SoundVolume });
+                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
+                            break;
+                        }
+                    case 1:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit2") with { Volume = CenterOfTheUniverse.SoundVolume });
+                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
+                            break;
+                        }
+                    case 2:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit3") with { Volume = CenterOfTheUniverse.SoundVolume });
+                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
+                            break;
+                        }
+                }
             }
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks >= 6)
             {
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks = 0;
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().SuperSunburnDuration = ScorchingPoint.SuperBurnDuration;
-                if (player.GetModPlayer<tsorcRevampPlayer>().CotUStardustCount < 10)
+                if (player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount < 10)
                 {
-                    player.GetModPlayer<tsorcRevampPlayer>().CotUStardustCount++;
+                    player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount++;
                     // add stardust pickup visual
-                    if (player.GetModPlayer<tsorcRevampPlayer>().CotUStardustCount == 10)
+                    if (player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount == 10)
                     {
                         //Can cast comet visual
                     }

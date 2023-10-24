@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override int DustHeight => 10;
         public override Color DustColor => default;
         public override float DustScale => 1f;
-        public override float MaxChargeTime => 300;
+        public override float MaxChargeTime => 210;
         public override Vector2 WhipTipBase => new Vector2(11, 14);
         public override float MaxChargeDmgDivisor => 4f;
         public override int WhipDebuffId => ModContent.BuffType<TerraFallDebuff>();
@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             modPlayer.TerraFallStacks = ChargeTime / (MaxChargeTime / 4) + 1;
             player.AddBuff(ModContent.BuffType<TerraFallBuff>(), (int)(modPlayer.TerraFallStacks * 120 * modPlayer.SummonTagDuration));
             target.AddBuff(ModContent.BuffType<TerraFallDebuff>(), (int)(modPlayer.TerraFallStacks * 120 * modPlayer.SummonTagDuration));
-            Projectile.damage = (int)(Projectile.damage * (modPlayer.TerraFallStacks / 25f + 0.8f));
+            Projectile.damage = (int)(Projectile.damage * (modPlayer.TerraFallStacks / 20.5f + 0.75f));
         }
 
         public override bool PreDraw(ref Color lightColor)

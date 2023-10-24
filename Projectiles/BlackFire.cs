@@ -94,9 +94,12 @@ namespace tsorcRevamp.Projectiles
             dir = new Vector2((float)Math.Cos(preOffset) * dir.X - (float)Math.Sin(preOffset) * dir.Y, (float)Math.Sin(preOffset) * dir.X + (float)Math.Cos(preOffset) * dir.Y);
 
             Vector2 averageCenter = Vector2.Zero;
-            for (int i = 0; i < trailPositions.Count; i++)
+            if (trailPositions != null && trailPositions.Count > 0)
             {
-                averageCenter += trailPositions[i] / trailPositions.Count;
+                for (int i = 0; i < trailPositions.Count; i++)
+                {
+                    averageCenter += trailPositions[i] / trailPositions.Count;
+                }
             }
             if (Projectile.ai[0] == 0)
             {

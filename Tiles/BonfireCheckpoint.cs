@@ -136,6 +136,25 @@ namespace tsorcRevamp.Tiles
                     healquantity = 0;
                 }
 
+                if (bonfireEffectTimer > 28)
+                {
+                    if (player.HasBuff(ModContent.BuffType<InCombat>()))
+                    {
+                        player.ClearBuff(ModContent.BuffType<InCombat>());
+                    }
+
+                    if (!bossActive && player.velocity == Vector2.Zero)
+                    {
+                        foreach (int buffType in player.buffType)
+                        {
+                            if (Main.debuff[buffType] && !BuffID.Sets.NurseCannotRemoveDebuff[buffType])
+                            {
+                                player.ClearBuff(buffType);
+                            }
+                        }
+                    }
+                }
+
 
                 // Only heal when no bosses are alive, hp isn't full and the player is standing still
                 if (!bossActive && player.statLife < player.statLifeMax2 && player.velocity == Vector2.Zero)
@@ -220,21 +239,6 @@ namespace tsorcRevamp.Tiles
                             }
                         }
 
-                        if (player.HasBuff(ModContent.BuffType<InCombat>()))
-                        {
-                            player.ClearBuff(ModContent.BuffType<InCombat>());
-                        }
-
-                        if (!bossActive && player.velocity == Vector2.Zero)
-                        {
-                            foreach (int buffType in player.buffType)
-                            {
-                                if (Main.debuff[buffType] && !BuffID.Sets.NurseCannotRemoveDebuff[buffType])
-                                {
-                                    player.ClearBuff(buffType);
-                                }
-                            }
-                        }
 
                         var dust = Dust.NewDustDirect(player.position, player.width, player.height, DustID.FlameBurst, Alpha: 120);
                         HandleDust(ref dust, Main.rand.Next(80, 95) * 0.043f, 25f, player.Center);

@@ -41,6 +41,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             Projectile.extraUpdates = 1;
             Projectile.ContinuouslyUpdateDamageStats = true;
 
+            Projectile.ignoreWater = true;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 30;
 
@@ -77,18 +78,32 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = player;
-            if (Main.rand.NextBool(3))
+            int HitSound = Main.rand.Next(3);
+            if (modPlayer.RuneterraMinionHitSoundCooldown > 0)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/ShipHit1") with { Volume = InterstellarVesselGauntlet.SoundVolume });
-            }
-            else if (Main.rand.NextBool(3))
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/ShipHit2") with { Volume = InterstellarVesselGauntlet.SoundVolume });
-            }
-            else
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/ShipHit3") with { Volume = InterstellarVesselGauntlet.SoundVolume });
+                switch (HitSound)
+                {
+                    case 0:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/ShipHit1") with { Volume = InterstellarVesselGauntlet.SoundVolume });
+                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
+                            break;
+                        }
+                    case 1:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/ShipHit2") with { Volume = InterstellarVesselGauntlet.SoundVolume });
+                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
+                            break;
+                        }
+                    case 2:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/ShipHit3") with { Volume = InterstellarVesselGauntlet.SoundVolume });
+                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
+                            break;
+                        }
+                }
             }
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks >= 6)
             {

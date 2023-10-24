@@ -24,7 +24,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public const int BaseDamage = 350;
         public const int ShroomCooldown = 5;
         public const int ShroomBonusCritChance = 100;
-        public static int ShroomSetupTime = 3;
+        public const int ShroomSetupTime = 3;
+        public const int ShroomIrradiationDuration = 10;
         public const int BaseLaserManaCost = 30;
         public const int BaseShroomManaCost = 100;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ToxicShot.PoisonDartDmgMult);
@@ -78,26 +79,31 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            ShootTimer = ShootCooldown;
             if (player.altFunctionUse != 2)
             {
-                if (ShootSoundStyle == 0)
+                switch (ShootSoundStyle)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/Shot1") with { Volume = ShootSoundVolume });
-                    ShootSoundStyle += 1;
+                    case 0:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/Shot1") with { Volume = ShootSoundVolume });
+                            ShootSoundStyle += 1;
+                            break;
+                        }
+                    case 1:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/Shot2") with { Volume = ShootSoundVolume });
+                            ShootSoundStyle += 1;
+                            break;
+                        }
+                    case 2:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/Shot3") with { Volume = ShootSoundVolume });
+                            ShootSoundStyle = 0;
+                            break;
+                        }
                 }
-                else
-                if (ShootSoundStyle == 1)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/Shot2") with { Volume = ShootSoundVolume });
-                    ShootSoundStyle += 1;
-                }
-                else
-                if (ShootSoundStyle == 2)
-                {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/Shot3") with { Volume = ShootSoundVolume });
-                    ShootSoundStyle = 0;
-                }
+                ShootTimer = (int)((float)ShootCooldown / ((float)player.GetTotalAttackSpeed(DamageClass.Ranged)));
+                Main.NewText(ShootTimer);
             }
             else
             {
@@ -171,15 +177,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         }
         public override bool CanUseItem(Player player)
         {
-            if (player.altFunctionUse != 2 || !player.HasBuff(ModContent.BuffType<RadioactiveBlindingLaserCooldown>()))
-            {
-                return true;
-            }
-            if (ShootTimer <= 0)
-            {
-                return true;
-            }
-            if (Main.mouseRight & !Main.mouseLeft & !player.HasBuff(ModContent.BuffType<RadioactiveBlindingLaserCooldown>()))
+            if ((ShootTimer <= 0 && !Main.mouseRight) || (Main.mouseRight && !Main.mouseLeft && !player.HasBuff(ModContent.BuffType<RadioactiveBlindingLaserCooldown>()) && (player.statMana >= (int)(player.manaCost * BaseLaserManaCost))))
             {
                 return true;
             }

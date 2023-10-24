@@ -39,6 +39,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             Projectile.penetrate = -1;
             Projectile.extraUpdates = 1;
             Projectile.ContinuouslyUpdateDamageStats = true;
+            Projectile.ignoreWater = true;
 
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 30;
@@ -92,26 +93,26 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = player;
             int HitSound = Main.rand.Next(3);
-            if (modPlayer.FireballHitSoundCooldown > 0)
+            if (modPlayer.RuneterraMinionHitSoundCooldown > 0)
             {
                 switch (HitSound)
                 {
                     case 0:
                         {
                             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit1") with { Volume = ScorchingPoint.SoundVolume });
-                            modPlayer.FireballHitSoundCooldown = 20;
+                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
                             break;
                         }
                     case 1:
                         {
                             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit2") with { Volume = ScorchingPoint.SoundVolume });
-                            modPlayer.FireballHitSoundCooldown = 20;
+                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
                             break;
                         }
                     case 2:
                         {
                             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit3") with { Volume = ScorchingPoint.SoundVolume });
-                            modPlayer.FireballHitSoundCooldown = 20;
+                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
                             break;
                         }
                 }

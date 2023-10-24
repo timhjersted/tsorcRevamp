@@ -162,7 +162,7 @@ namespace tsorcRevamp.Items.Potions
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.SuperHealingPotion, 24);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>());
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>());
             recipe2.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe2.AddTile(TileID.Bottles);
 
@@ -170,15 +170,15 @@ namespace tsorcRevamp.Items.Potions
 
             Recipe recipe3 = CreateRecipe();
             recipe3.AddIngredient(ItemID.RestorationPotion, 40);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>());
+            recipe3.AddIngredient(ModContent.ItemType<DarkSoul>());
             recipe3.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe3.AddTile(TileID.Bottles);
 
             recipe3.Register();
 
             Recipe recipe4 = CreateRecipe();
-            recipe4.AddIngredient(ItemID.LifeCrystal, 8);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>());
+            recipe4.AddIngredient(ItemID.LifeCrystal, 5);
+            recipe4.AddIngredient(ModContent.ItemType<DarkSoul>());
             recipe4.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe4.AddTile(TileID.Bottles);
 

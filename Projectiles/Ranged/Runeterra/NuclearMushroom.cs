@@ -4,6 +4,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
@@ -35,24 +36,31 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         public int BuiltSoundStyle;
         public override void OnSpawn(IEntitySource source)
         {
-            Player owner = Main.player[Projectile.owner];
+            Player player = Main.player[Projectile.owner];
             Projectile.damage = 0;
             Activated = false;
             BuiltSoundStyle = Main.rand.Next(1, 4);
-            if (BuiltSoundStyle == 1)
+            switch (BuiltSoundStyle)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBuilt1") with { Volume = 1f });
+                case 1:
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBuilt1") with { Volume = 1f });
+                        break;
+                    }
+                case 2:
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBuilt2") with { Volume = 1f });
+                        break;
+                    }
+                case 3:
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBuilt3") with { Volume = 1f });
+                        break;
+                    }
             }
-            else if (BuiltSoundStyle == 2)
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBuilt2") with { Volume = 1f });
-            }
-            else
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBuilt3") with { Volume = 1f });
-            }
-            owner.statMana -= (int)(OmegaSquadRifle.BaseShroomManaCost * owner.manaCost);
-            owner.ManaEffect(-(int)(OmegaSquadRifle.BaseShroomManaCost * owner.manaCost));
+            player.statMana -= (int)(OmegaSquadRifle.BaseShroomManaCost * player.manaCost);
+            player.ManaEffect(-(int)(OmegaSquadRifle.BaseShroomManaCost * player.manaCost));
+            player.manaRegenDelay = MeleeEdits.ManaDelay;
         }
         public override void AI()
         {
@@ -101,19 +109,25 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
         {
             Player owner = Main.player[Projectile.owner];
             BoomSoundStyle = Main.rand.Next(1, 4);
-            if (BoomSoundStyle == 1)
+            switch (BoomSoundStyle)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBoom1") with { Volume = 1f });
+                case 1:
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBoom1") with { Volume = 1f });
+                        break;
+                    }
+                case 2:
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBoom2") with { Volume = 1f });
+                        break;
+                    }
+                case 3:
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBoom3") with { Volume = 1f });
+                        break;
+                    }
             }
-            else if (BoomSoundStyle == 2)
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBoom2") with { Volume = 1f });
-            }
-            else
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShroomBoom3") with { Volume = 1f });
-            }
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearMushroomExplosion>(), Projectile.damage / 4, Projectile.knockBack * 10, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearMushroomExplosion>(), Projectile.damage / 2, Projectile.knockBack * 10, Projectile.owner);
         }
     }
 }

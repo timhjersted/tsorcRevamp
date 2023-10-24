@@ -151,12 +151,13 @@ namespace tsorcRevamp
         public float SpiritRushCooldown = 0f;
         public Vector2 SpiritRushVelocity;
 
-        public int FireballHitSoundCooldown = 0;
+        public int RuneterraMinionHitSoundCooldown = 0;
         public bool InterstellarBoost = false;
+        public int InterstellarBoostCooldown = 0;
         public int MinimumMinionCircleRadius = 150;
         public int MaximumMinionCircleRadius = 500;
         public float MinionCircleRadius = 150;
-        public int CotUStardustCount = 0;
+        public int CenterOfTheUniverseStardustCount = 0;
 
         public float CrystalNunchakuDefenseDamage;
 
