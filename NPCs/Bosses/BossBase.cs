@@ -111,6 +111,12 @@ namespace tsorcRevamp.NPCs.Bosses
         /// It will die for real when the animation counter reaches this number.
         /// </summary>
         public int deathAnimationDuration = 0;
+
+        /// <summary>
+        /// Set this to true when skipping a move to mostly skip attackTransitionDuration (sets it to 30).
+        /// To skip a move, check your condition for skipping at the start of the move, then set this bool to true and call NextMove();
+        /// </summary>
+        public bool justSkippedMove = false;
         #endregion
 
 
@@ -517,7 +523,12 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.netUpdate = true;
             }
 
-            attackTransitionTimeRemaining = attackTransitionDuration;
+            if (justSkippedMove) //If you skipped the previous move
+            { 
+                attackTransitionTimeRemaining = 30; //I set the time to half a second to allow tyme to sync... Should be enough - Chroma 
+                justSkippedMove = false; //Reset justSkippedMove
+            }
+            else { attackTransitionTimeRemaining = attackTransitionDuration; }
             MoveTimer = 0;
         }
 
@@ -576,10 +587,12 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public Action Move;
         public int timeLimit;
+        public int ID;
         public Color MoveColor;
         public int id;
 
         public BossMove(Action MoveAction, int attackDuration, Color? color = null, int id = 0)
+
         {
             Move = MoveAction;
             timeLimit = attackDuration;

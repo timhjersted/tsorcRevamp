@@ -13,6 +13,8 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
+    [AutoloadBossHead]
+
     class AncientOolacileDemon : ModNPC
     {
         int meteorDamage = 11;

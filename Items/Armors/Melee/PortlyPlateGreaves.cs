@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Legs)]
     public class PortlyPlateGreaves : ModItem
     {
-        public static float MeleeSpeed = 27f;
+        public static float MeleeSpeed = 14f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeSpeed);
         public override void SetStaticDefaults()
         {

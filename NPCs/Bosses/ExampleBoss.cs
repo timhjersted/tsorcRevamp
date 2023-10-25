@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -58,6 +59,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 new BossMove(ExampleDashAttack, 700, id: ExampleBossAttackID.Dashes),
                 new BossMove(ExampleLaserAttack, 600, id: ExampleBossAttackID.Lasers),
                 new BossMove(ExampleSpamAttack, 900, id: ExampleBossAttackID.BeholdTheOrbs),
+                new BossMove(ExampleSkippedMove, 300, id: ExampleBossAttackID.SkippedAttack),
                 };
 
 
@@ -71,6 +73,14 @@ namespace tsorcRevamp.NPCs.Bosses
                 ["BaseContact"] = 140,
                 ["Charging"] = 200,
             };
+        }
+
+        public class ExampleBossAttackID
+        {
+            public const short Dashes = 0;
+            public const short Lasers = 1;
+            public const short BeholdTheOrbs = 2;
+            public const short SkippedAttack = 3;
         }
 
         //An example attack, for demonstration purposes
@@ -167,6 +177,26 @@ namespace tsorcRevamp.NPCs.Bosses
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, TargetVector * 15, ModContent.ProjectileType<Projectiles.Enemy.Triad.RetDeathLaser>(), DamageNumbers["DeathLaser"], 0, Main.myPlayer, -1);
                 }
             }
+        }
+
+        //Example of a move which we want to skip unless our condition is met
+        public void ExampleSkippedMove()
+        {
+            if (Phase == 0)
+            {
+                justSkippedMove = true;
+                NextMove();
+            }
+
+            NPC.velocity *= 0.95f;
+            if (MoveTimer % 5 == 0)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(10, 10), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>(), DamageNumbers["PlasmaOrb"], 0, Main.myPlayer, -1);
+                }
+            }
+
         }
 
         /// <summary>
@@ -271,17 +301,30 @@ namespace tsorcRevamp.NPCs.Bosses
             return base.PreDraw(spriteBatch, screenPos, drawColor);
         }
 
+        public override void FindFrame(int currentFrame)
+        {
+            //You can get frameheight manually if you look at the height of the boss's textue then divide by the number of frames
+            Texture2D bossTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Bosses/ExampleBoss"); 
+            int frameheight = bossTexture.Height / Main.npcFrameCount[NPC.type];
+
+            if (MoveIndex == ExampleBossAttackID.Dashes)
+            {
+                NPC.frame.Y = 0 * frameheight;
+            }
+            else if (MoveIndex == ExampleBossAttackID.Lasers)
+            {
+                NPC.frame.Y = 2 * frameheight;
+            }
+            else if (MoveIndex == ExampleBossAttackID.BeholdTheOrbs)
+            {
+                NPC.frame.Y = 4 * frameheight;
+            }
+        }
 
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.GreaterHealingPotion;
         }
-
-        public class ExampleBossAttackID
-        {
-            public const short Dashes = 0;
-            public const short Lasers = 1;
-            public const short BeholdTheOrbs = 2;
-        }
     }
+
 }

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,6 +10,8 @@ using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Special
 {
+    [AutoloadBossHead]
+
     public class LeonhardPhase1 : ModNPC
     {
 
@@ -37,16 +40,20 @@ namespace tsorcRevamp.NPCs.Special
             else { NPC.lifeMax = 2500; }
             NPC.defense = 8;
             NPC.value = 15000;
-            NPC.HitSound = SoundID.NPCHit48;
+            NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath58;
             NPC.dontTakeDamageFromHostiles = true;
             NPC.lavaImmune = true;
             despawnHandler = new NPCDespawnHandler(null, Color.Teal, 54);
         }
 
-
         public override void HitEffect(NPC.HitInfo hit)
         {
+            if (hit.Crit)
+            {
+                SoundEngine.PlaySound(SoundID.NPCHit48 with { PitchVariance = 0.3f });
+            }
+
             for (int i = 0; i < 5; i++) //Blood splatter from being hit
             {
                 int DustType = 5;

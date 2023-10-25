@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.defense = 40;
                 NPC.damage = 55;
                 NPC.value = 0;
-                boltDamage = 20;
+                boltDamage = 25;
             }
             if (tsorcRevampWorld.SuperHardMode)
             {
