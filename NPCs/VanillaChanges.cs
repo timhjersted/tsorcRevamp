@@ -1160,10 +1160,10 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.PinkJellyfish):
                     {
-                        npc.value = 10;
+                        npc.value = 1000;
                         npc.life = 200;
                         npc.defense = 15;
-                        npc.damage = 1310;
+                        npc.damage = 60;
                         break;
                     }
 
