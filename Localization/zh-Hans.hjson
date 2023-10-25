@@ -1944,7 +1944,7 @@ Mods: {
 					由一个宝箱里的魔法石提供燃料
 					{$CommonItemTooltip.AtkSpeed}{$CommonItemTooltip.Melee.Bonus@1}
 					{$CommonItemTooltip.SetBonus}对任何东西造成伤害时获得堆叠层数
-					每层堆叠减少 1% 下次受到的伤害，最高到28%
+					每层堆叠增加 1% 抵抗力，最高到28%
 					'''
 			}
 
@@ -2367,7 +2367,7 @@ Mods: {
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					{$CommonItemTooltip.LifeRegen@3}
 					{$CommonItemTooltip.DefenseCap@2}
-					伤害减免以(1 : {4})的比例转化为移动速度
+					抵抗力以(1 : {4})的比例转化为移动速度
 					'''
 			}
 
@@ -2397,7 +2397,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@3}
 					{$CommonItemTooltip.DRStat@1}
-					{$CommonItemTooltip.LifeThreshold@2}由该套装提供的减伤效果翻倍
+					{$CommonItemTooltip.LifeThreshold@2}由该套装提供的抵抗力翻倍
 					'''
 			}
 
@@ -2540,7 +2540,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.DefenseCap@2}
-					伤害减免转换为移动速度(1 : {4})
+					抵抗力以(1 : {4})的比例转化为移动速度
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					{$CommonItemTooltip.LifeRegen@3}
 					'''
@@ -2553,7 +2553,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage@1}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.DefenseCap@3}
-					伤害减免转换为移动速度(1 : {5})
+					抵抗力以(1 : {5})的比例转化为移动速度
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
 					{$CommonItemTooltip.LifeRegen@4}
 					'''
@@ -6401,10 +6401,10 @@ Mods: {
 				DisplayName: 水晶双截棍
 				Tooltip:
 					'''
-					攻击敌人会施加15秒水晶标记。
-					5秒后提高自身防御或敌人受到的伤害。
-					标记期间对敌人造成（本鞭子以外）伤害会减少敌人的易伤状态并提高自己的防御。
-					对敌人增伤从25%降到0%，自己的防御从0增加到15。
+					攻击敌人会施加 {4} 秒水晶标记
+					5 秒后提高自身防御或敌人受到的伤害
+					标记期间对敌人造成（本鞭子以外）伤害会减少敌人的易伤状态并提高自己的防御
+					对敌人增伤从 {0}% 降到 {1}%，自己的防御从 {3} 增加到 {2}
 					“进攻才是最好的防御，又或恰恰相反？”
 					'''
 				BotCTooltip: 可能使[c/6d8827:被诅咒者]更加脆弱
@@ -6489,17 +6489,17 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentSummonTagCritChance}
 					{$CommonItemTooltip.Whips}
-					施加诅咒之火
+					施加诅咒焰
 					'''
 			}
 
 			Pyromethane: {
-				DisplayName: 热硫酸
+				DisplayName: 燠沼气
 				Tooltip:
 					'''
 					{$CommonItemTooltip.SummonTagDamage}
 					{$CommonItemTooltip.Whips}
-					Inflicts Ichor
+					施加灵液
 					'''
 			}
 
@@ -6542,21 +6542,21 @@ Mods: {
 			}
 
 			Galeforce: {
-				// DisplayName: Galeforce
-				/* Tooltip:
+				DisplayName: 风暴之弦
+				Tooltip:
 					'''
 					{$CommonItemTooltip.Sentry}
-					Summons a magical bow which shoots a gust of wind towards your cursor
-					''' */
+					召唤一个魔法之弓，向你的光标射出一阵旋风
+					'''
 			}
 
 			CaiusPyre: {
-				// DisplayName: Caius' Pyre
-				/* Tooltip:
+				DisplayName: 凯厄斯之葬
+				Tooltip:
 					'''
 					{$CommonItemTooltip.Sentry}
-					Summons a fiery rift which shoots fireballs towards your cursor
-					''' */
+					召唤一道炽热的裂隙，向你的光标射出火球
+					'''
 			}
 
 			BlackFirebomb: {
@@ -7010,16 +7010,16 @@ Mods: {
 					{$Items.ScorchingPoint.Keybind1}Special Ability{$Items.ScorchingPoint.Keybind2}
 					[c/b22222:星芒]受到 {0}% 标记伤害加成，[c/b22222:铸星龙王]只受到 {1}% 加成
 					{$Items.CenterOfTheUniverse.Keybind1}Special Ability{$Items.CenterOfTheUniverse.Keybind2}
-					每次[c/b22222:引爆标记]会获得[c/191970:星尘]
-					<right>消耗 10 [c/191970:星尘]在光标位置召唤一颗[c/191970:彗星]
-					[c/191970:“瑟缩，崇拜，惊叹。人之常态，概莫能外。”]
+					每次[c/b22222:引爆标记]会获得[c/00008b:星尘]
+					<right>消耗 10 [c/00008b:星尘]在光标位置召唤一颗[c/00008b:彗星]
+					[c/00008b:“瑟缩，崇拜，惊叹。人之常态，概莫能外。”]
 					'''
 				Keybind1: "按 "
 				Keybind2: " 启用[c/7fffd4:涡轮增压]，超载[c/b22222:铸星龙王]和[c/b22222:星芒]"
 				Details:
 					'''
-					[c/191970:彗星在大范围内造成巨大破坏并释放冲击波]
-					[c/191970:彗星施加 Awestruck 减益，随时间增加星芒的伤害，其本身也会造成高额伤害]
+					[c/00008b:彗星在大范围内造成巨大破坏并释放冲击波]
+					[c/00008b:彗星施加 Awestruck 减益，随时间增加星芒的伤害，其本身也会造成高额伤害]
 					[c/7fffd4:涡轮增压增加星芒的伤害、移动速度和铸星龙王的攻击速度]
 					[c/7fffd4:涡轮增压会快速消耗你的魔力]
 					[c/b22222:铸星龙王]本身消耗半个仆从栏，并根据召唤的[c/b22222:星芒]数量进行缩放
@@ -7674,7 +7674,11 @@ Mods: {
 
 			FasterThanSight: {
 				DisplayName: 超越视界
-				Description: 莹莹的发光能量让你有能力抵抗地心引力！
+				Description:
+					'''
+					莹莹的发光能量让你有能力抵抗地心引力
+					获得无限飞行和移动速度增加效果！
+					'''
 			}
 
 			GravityAlignment: {
@@ -8325,8 +8329,8 @@ Mods: {
 			}
 
 			PyromethaneDebuff: {
-				// DisplayName: Pyromethane Debuff
-				// Description: Mods.tsorcRevamp.Buffs.PyromethaneDebuff.Description
+				DisplayName: 燠沼气
+				Description: Mods.tsorcRevamp.Buffs.PyromethaneDebuff.Description
 			}
 		}
 
@@ -8771,7 +8775,7 @@ Mods: {
 			InterstellarVesselShip.DisplayName: 星际飞船
 			ScorchingPointFireball.DisplayName: 灼热火球
 			SamuraiBeetle.DisplayName: 武士圣甲虫
-			GaleForceProjectile.DisplayName: 狂风精灵
+			GaleForceProjectile.DisplayName: 风暴之弦
 			ShatteredReflectionProjectile.DisplayName: 碎镜反射
 			BarrowWightMinion.DisplayName: 巴罗怀特仆从
 			NullSpriteBeam.DisplayName: 虚线
@@ -8779,7 +8783,7 @@ Mods: {
 			PhoenixBoomCrit.DisplayName: 凤凰冲击波暴击
 			SunsetQuasarMinion.DisplayName: 落日类星体
 			SunsetQuasarToken.DisplayName: 落日类星体
-			TetsujinProjectile.DisplayName: Tetsujin
+			TetsujinProjectile.DisplayName: 钢铁锻造者
 			CrystalNunchakuProjectile.DisplayName: 水晶双截棍
 			DetonationSignalProjectile.DisplayName: 引爆信号
 			DominatrixProjectile.DisplayName: 主宰
@@ -8795,8 +8799,8 @@ Mods: {
 			TerraFallProjectile.DisplayName: 泰拉之殇
 			TerraFallTerraprisma.DisplayName: 觉醒·泰拉棱镜
 			SuperBlasterShot.DisplayName: 超级冲击波
-			DrakarthusDagger.DisplayName: Drakarthus匕首
-			DrakarthusDagger2.DisplayName: Drakarthus匕首2
+			DrakarthusDagger.DisplayName: 德雷克萨斯匕首
+			DrakarthusDagger2.DisplayName: 德雷克萨斯匕首2
 			NightbringerThrust.DisplayName: 夜之使
 			NightbringerTornado.DisplayName: 夜之使
 			NightbringerWindWall.DisplayName: 夜之使
@@ -8887,7 +8891,7 @@ Mods: {
 			LionheartGunshot.DisplayName: 狮心枪射
 			LeonhardCMSCrescent.DisplayName: 李奥纳德残月之光
 			CotUDragon.DisplayName: 铸星龙王
-			BossDeath.DisplayName: Boss Death
+			BossDeath.DisplayName: Boss死亡特效
 			EnergyGathering.DisplayName: 能量聚合
 			GlowingEnergy.DisplayName: 光辉能量
 			RageFireBreath.DisplayName: 愤怒火之吐息
@@ -8897,10 +8901,10 @@ Mods: {
 			ASOL13.DisplayName: 霸天龙神
 			StarForger.DisplayName: 铸星龙王
 			CursedTormentorProjectile.DisplayName: 咒火刑罚
-			// GaleforceProjectile.DisplayName: Galeforce Projectile
-			// PyromethaneProjectile.DisplayName: Pyromethane Projectile
-			// CaiusPyreFireball.DisplayName: Caius Pyre Fireball
-			// CaiusPyreRift.DisplayName: Caius Pyre Rift
+			GaleforceProjectile.DisplayName: 风暴之弦
+			PyromethaneProjectile.DisplayName: 燠沼气
+			CaiusPyreFireball.DisplayName: 凯厄斯之葬火球
+			CaiusPyreRift.DisplayName: 凯厄斯之葬裂隙
 		}
 
 		NPCs: {
