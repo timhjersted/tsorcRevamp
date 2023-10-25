@@ -1,5 +1,7 @@
+using Terraria;
+using Terraria.Audio;
+using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Projectiles.Summon.Sentry
 {
@@ -8,13 +10,25 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
         public override int ShotCooldown => (int)(1.5f * 60f);
         public override int SentryShotCooldownReductionOnSpawn => 10;
         public override int ProjectileFrameCount => 6;
-        public override int ProjectileWidth => 20;
-        public override int ProjectileHeight => 20;
+        public override int ProjectileWidth => 54;
+        public override int ProjectileHeight => 58;
         public override DamageClass ProjectileDamageType => DamageClass.Summon;
         public override bool ContactDamage => false;
-        public override int ShotProjectileType => ModContent.ProjectileType<BoltProjectile>();
+        public override int ShotProjectileType => ModContent.ProjectileType<GaleforceArrow>();
         public override float ProjectileInitialVelocity => 20f;
-        public override int AI1 => 1;
+        public override int AI1 => 0;
         public override int AI2 => 0;
+        public override bool PlaysSoundOnShot => true;
+        public override SoundStyle ShootSoundStyle => new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GaleforceShot");
+        public override float ShootSoundVolume => 0.6f;
+        public override bool SpawnsDust => true;
+        public override int ProjectileDustID => DustID.Smoke;
+        public override void CustomAI()
+        {
+            if (Main.myPlayer == Projectile.owner)
+            {
+                Projectile.rotation = Projectile.DirectionTo(Main.MouseWorld).ToRotation();
+            }
+        }
     }
 }

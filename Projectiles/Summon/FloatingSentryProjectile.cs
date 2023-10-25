@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -11,12 +12,17 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
         public abstract int ProjectileFrameCount { get; } //may have up to 6 frames, you can extend this by extending the switch case below
         public abstract int ProjectileWidth { get; }
         public abstract int ProjectileHeight { get; }
-        public abstract DamageClass ProjectileDamageType { get; }
-        public abstract bool ContactDamage {  get; }
+        public abstract DamageClass ProjectileDamageType { get; } //should be SUmmon usually but I made an exception for one
+        public abstract bool ContactDamage {  get; } //if it can deal damage on contact
         public abstract int ShotProjectileType { get; }
-        public abstract float ProjectileInitialVelocity { get; }
-        public abstract int AI1 { get; }
-        public abstract int AI2 { get; }
+        public abstract float ProjectileInitialVelocity { get; } 
+        public abstract int AI1 { get; } //passes this value into projectile.ai[1] of the shot projectile
+        public abstract int AI2 { get; } //same as above except it's projectile.ai[2]
+        public abstract bool PlaysSoundOnShot { get; } //if it plays a sound each time ti shoots a projectile
+        public abstract SoundStyle ShootSoundStyle { get; }
+        public abstract float ShootSoundVolume { get; }
+        public abstract bool SpawnsDust { get; } //if the sentry should spawn dust around itself
+        public abstract int ProjectileDustID { get; }
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = ProjectileFrameCount;
@@ -116,6 +122,20 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
                         break;
                     }
             }
+
+            if (Projectile.ai[0] == 0 && PlaysSoundOnShot)
+            {
+                SoundEngine.PlaySound(ShootSoundStyle with { Volume = ShootSoundVolume }, Projectile.Center);
+            }
+
+            if (SpawnsDust)
+            {
+                Dust.NewDust(Projectile.VisualPosition, Projectile.width, Projectile.height, ProjectileDustID);
+            }
+
+            CustomAI();
         }
+
+        public virtual void CustomAI() { }
     }
 }

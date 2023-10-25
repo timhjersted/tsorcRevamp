@@ -1,5 +1,4 @@
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -18,20 +17,13 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
             Projectile.width = 5;
             AIType = ProjectileID.WoodenArrowFriendly;
             Projectile.aiStyle = 1;
+            Projectile.DamageType = DamageClass.Ranged;
         }
 
         public override void OnKill(int timeLeft)
         {
             Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
-        }
-
-        public override void OnSpawn(IEntitySource source)
-        {
-            if (Projectile.ai[0] == 0)
-            {
-                Projectile.DamageType = DamageClass.Ranged;
-            }
         }
     }
 

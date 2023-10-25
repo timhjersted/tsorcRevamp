@@ -8905,6 +8905,7 @@ Mods: {
 			PyromethaneProjectile.DisplayName: 燠沼气
 			CaiusPyreFireball.DisplayName: 凯厄斯之葬火球
 			CaiusPyreRift.DisplayName: 凯厄斯之葬裂隙
+			// GaleforceArrow.DisplayName: Galeforce Arrow
 		}
 
 		NPCs: {

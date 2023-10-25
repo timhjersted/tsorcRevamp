@@ -6545,7 +6545,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Sentry}
-					Summons a magical bow which shoots a gust of wind towards your cursor
+					Summons a magical bow which shoots magic arrows towards your cursor
 					'''
 			}
 
@@ -8905,6 +8905,7 @@ Mods: {
 			PyromethaneProjectile.DisplayName: Pyromethane Projectile
 			CaiusPyreFireball.DisplayName: Caius Pyre Fireball
 			CaiusPyreRift.DisplayName: Caius Pyre Rift
+			GaleforceArrow.DisplayName: Galeforce Arrow
 		}
 
 		NPCs: {

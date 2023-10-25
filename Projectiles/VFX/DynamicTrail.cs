@@ -489,7 +489,6 @@ namespace tsorcRevamp.Projectiles.VFX
             Matrix projection = Matrix.CreateOrthographic(Main.graphics.GraphicsDevice.Viewport.Width, Main.graphics.GraphicsDevice.Viewport.Height, 0, 1000);
             return view * projection;
         }
-
         public virtual void SetEffectParameters(Effect effect) { }
 
         BasicEffect basicEffect;

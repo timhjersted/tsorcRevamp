@@ -1,3 +1,5 @@
+using Terraria.Audio;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Summon.Sentry
@@ -15,5 +17,10 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
         public override float ProjectileInitialVelocity => 0;
         public override int AI1 => 0;
         public override int AI2 => 0;
+        public override bool PlaysSoundOnShot => true;
+        public override SoundStyle ShootSoundStyle => SoundID.Item20;
+        public override float ShootSoundVolume => 1.5f;
+        public override bool SpawnsDust => true;
+        public override int ProjectileDustID => DustID.RedTorch;
     }
 }
