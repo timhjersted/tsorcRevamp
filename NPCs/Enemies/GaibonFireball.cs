@@ -21,7 +21,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.width = 10;
             NPC.height = 10;
             NPC.aiStyle = -1;
-            NPC.damage = 30;
             NPC.defense = 0;
             NPC.lifeMax = 1;
             NPC.HitSound = null;
@@ -29,9 +28,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noTileCollide = true;
             NPC.DeathSound = SoundID.NPCDeath3;
             NPC.timeLeft = 600;
+            NPC.damage = 30;
         }
+
         public override void AI()
         {
+            //Main.NewText(NPC.damage);
             NPC.velocity.X = NPC.ai[1];
             NPC.velocity.Y = NPC.ai[2];
 
@@ -52,7 +54,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             for (int j = 0; j < 2; j++)
             {
-                int trailDust = Dust.NewDust(new Vector2(NPC.position.X - 6, NPC.position.Y - 6), NPC.width + 6, NPC.height + 6, DustID.Torch, NPC.velocity.X * 0.1f, NPC.velocity.Y * 0.1f, default, default, 1.3f);
+                int trailDust = Dust.NewDust(new Vector2(NPC.position.X - 6, NPC.position.Y - 4), NPC.width + 6, NPC.height + 6, DustID.Torch, NPC.velocity.X * 0.1f, NPC.velocity.Y * 0.1f, default, default, 1.3f);
                 Main.dust[trailDust].velocity *= 0.3f;
                 Main.dust[trailDust].noGravity = true;
             }
