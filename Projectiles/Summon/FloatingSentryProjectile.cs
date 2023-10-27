@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
     public abstract class FloatingSentryProjectile : ModProjectile
     {
         public abstract int ShotCooldown { get; } //the cooldown between each shot, 60 is equal to 1 second unless you give the projectile extra updates
-        public abstract int SentryShotCooldownReductionOnSpawn { get; } //all sentries of this type get to shoot upon being spawned immediately, set this to shotcooldown in the sentry if you don't like it
+        public abstract int SentryShotCooldownReductionOnSpawn { get; } //all sentries of this type get to shoot upon being spawned immediately, set this to shotcooldown in the sentry if you don't want the sentry to be able to shoot almost instantly after being spawned
         public abstract int ProjectileFrameCount { get; } //may have up to 6 frames, you can extend this by extending the switch case below
         public abstract int ProjectileWidth { get; }
         public abstract int ProjectileHeight { get; }

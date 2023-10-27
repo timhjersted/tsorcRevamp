@@ -49,7 +49,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Player player = Main.player[Projectile.owner];
             player.itemAnimation = 0;
             player.itemTime = 0;
-            if (Hit && player.ownedProjectileCounts[ModContent.ProjectileType<NightbringerTornado>()] < 1)
+            if (Hit && player.ownedProjectileCounts[ModContent.ProjectileType<RuneterraKatanaTornado>()] < 1)
             {
                 player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks = 2;
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/TornadoReady") with { Volume = 0.75f });

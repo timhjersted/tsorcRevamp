@@ -377,14 +377,19 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                         Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.01f;
                         break;
                     }
-                case float gear2 when (gear2 < 100f && gear2 >= 25f):
+                case float gear2 when (gear2 >= 25f && gear2 < 100f):
                     {
                         Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.08f;
                         break;
                     }
-                case float gear3 when (gear3 >= 100f):
+                case float gear3 when (gear3 >= 100f && gear3 < 300f ):
                     {
                         Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.15f;
+                        break;
+                    }
+                case float gear4 when gear4 >= 300f:
+                    {
+                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.45f;
                         break;
                     }
             }

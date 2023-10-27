@@ -87,28 +87,6 @@ namespace tsorcRevamp.Projectiles
             if (projectile.friendly)
             {
                 Player owner = Main.player[projectile.owner];
-                if (projectile.DamageType == DamageClass.Ranged)
-                {
-                    if (owner.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-                    {
-                        switch (projectile.type)
-                        {
-                            case ProjectileID.ChlorophyteBullet or ProjectileID.ChlorophyteArrow:
-                                {
-                                    break;
-                                }
-                            case int ModProjectile when (ModProjectile == ModContent.ProjectileType<ElfinArrow>() || ModProjectile == ModContent.ProjectileType<ToxicCatExplosion>() || ModProjectile == ModContent.ProjectileType<VirulentCatExplosion>() || ModProjectile == ModContent.ProjectileType<BiohazardExplosion>()):
-                                {
-                                    break;
-                                }
-                            default:
-                                {
-                                    IgnoresAccuracyOrSpecialCase = false;
-                                    break;
-                                }
-                        }
-                    }
-                }
                 if (projectile.type == ProjectileID.CrystalDart)
                 {
                     projectile.damage = 1 + owner.GetWeaponDamage(owner.HeldItem);
@@ -183,8 +161,8 @@ namespace tsorcRevamp.Projectiles
                 {
                     if (Main.rand.NextBool(2))
                     {
-                        int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 164, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
-                        Main.dust[dust].noGravity = false;
+                        Dust dust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 164, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
+                        dust.noGravity = false;
                     }
                 }
 
@@ -192,8 +170,8 @@ namespace tsorcRevamp.Projectiles
                 {
                     if (Main.rand.NextBool(2))
                     {
-                        int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 57, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 130, default(Color), 1f);
-                        Main.dust[dust].noGravity = true;
+                        Dust dust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 57, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 130, default(Color), 1f);
+                        dust.noGravity = true;
                     }
                 }
                 if (projectile.owner == Main.myPlayer && !projectile.hostile && projectile.DamageType == DamageClass.Melee)
@@ -203,12 +181,12 @@ namespace tsorcRevamp.Projectiles
                         Lighting.AddLight(projectile.position, 0.3f, 0.3f, 0.45f);
                         for (int i = 0; i < 4; i++)
                         {
-                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
-                            Main.dust[dust].noGravity = true;
+                            Dust dust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
+                            dust.noGravity = true;
                         }
                         {
-                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 15, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
-                            Main.dust[dust].noGravity = true;
+                            Dust dust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 15, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
+                            dust.noGravity = true;
                         }
                     }
 
@@ -217,16 +195,16 @@ namespace tsorcRevamp.Projectiles
                         Lighting.AddLight(projectile.position, 0.3f, 0.3f, 0.55f);
                         for (int i = 0; i < 4; i++)
                         {
-                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 172, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
-                            Main.dust[dust].noGravity = true;
+                            Dust dust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 172, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
+                            dust.noGravity = true;
                         }
                         {
-                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
-                            Main.dust[dust].noGravity = true;
+                            Dust dust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
+                            dust.noGravity = true;
                         }
                         {
-                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 172, player.velocity.X * .2f, player.velocity.Y * 0.2f, 30, default(Color), 1.3f);
-                            Main.dust[dust].noGravity = true;
+                            Dust dust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 172, player.velocity.X * .2f, player.velocity.Y * 0.2f, 30, default(Color), 1.3f);
+                            dust.noGravity = true;
                         }
                     }
 
@@ -235,16 +213,16 @@ namespace tsorcRevamp.Projectiles
                         Lighting.AddLight(projectile.position, 0.3f, 0.3f, 0.55f);
                         for (int i = 0; i < 2; i++)
                         {
-                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 221, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
-                            Main.dust[dust].noGravity = true;
+                            Dust dust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 221, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
+                            dust.noGravity = true;
                         }
                         {
-                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
-                            Main.dust[dust].noGravity = true;
+                            Dust dust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
+                            dust.noGravity = true;
                         }
                         {
-                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 172, player.velocity.X * .2f, player.velocity.Y * 0.2f, 30, default(Color), 1.3f);
-                            Main.dust[dust].noGravity = true;
+                            Dust dust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 172, player.velocity.X * .2f, player.velocity.Y * 0.2f, 30, default(Color), 1.3f);
+                            dust.noGravity = true;
                         }
                     }
                 }
@@ -265,6 +243,8 @@ namespace tsorcRevamp.Projectiles
                     }
                     else projectile.Kill();
                 }
+
+                #region Attempt at allowing you to stack Lethal Tempo by grazing enemy projectiles with a melee weapon, rarely works
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
                     Projectile other = Main.projectile[i];
@@ -285,6 +265,8 @@ namespace tsorcRevamp.Projectiles
                         other.GetGlobalProjectile<tsorcGlobalProjectile>().AppliedLethalTempo = true;
                     }
                 }
+                #endregion
+
             }
             if (projectile.type == ProjectileID.PhantasmalDeathray) //die
             {
@@ -327,8 +309,8 @@ namespace tsorcRevamp.Projectiles
                 projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
                 for (int i = 0; i < 5; i++)
                 {
-                    int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 156, 0, 0, 0, default(Color), 1f);
-                    Main.dust[dust].noGravity = true;
+                    Dust dust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 156, 0, 0, 0, default(Color), 1f);
+                    dust.noGravity = true;
                 }
             }
 
@@ -366,6 +348,7 @@ namespace tsorcRevamp.Projectiles
                 target.AddBuff(BuffID.BetsysCurse, 10 * 60);
             }
 
+            #region Runeterra Poison Darts
             if (projectile.type == ProjectileID.PoisonDartBlowgun && player.HeldItem.type == ModContent.ItemType<ToxicShot>())
             {
                 if (hit.Crit)
@@ -405,6 +388,9 @@ namespace tsorcRevamp.Projectiles
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[projectile.owner];
                 target.AddBuff(ModContent.BuffType<IrradiatedDebuff>(), 2 * 60);
             }
+            #endregion
+
+            #region Lethal Tempo
             if ((projectile.DamageType == DamageClass.Melee || projectile.DamageType == DamageClass.MeleeNoSpeed) && modPlayer.BearerOfTheCurse && !AppliedLethalTempo)
             {
                 if (modPlayer.BotCLethalTempoStacks < modPlayer.BotCLethalTempoMaxStacks - 1)
@@ -418,6 +404,9 @@ namespace tsorcRevamp.Projectiles
                 player.AddBuff(ModContent.BuffType<LethalTempo>(), player.GetModPlayer<tsorcRevampPlayer>().BotCLethalTempoDuration * 60);
                 AppliedLethalTempo = true;
             }
+            #endregion
+
+            #region Conqueror
             if (projectile.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[projectile.type] && modPlayer.BearerOfTheCurse && !AppliedConqueror)
             {
                 if (modPlayer.BotCConquerorStacks < modPlayer.BotCConquerorMaxStacks - 1 && !hit.Crit)
@@ -456,10 +445,36 @@ namespace tsorcRevamp.Projectiles
                 player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
                 AppliedConqueror = true;
             }
+            #endregion
+
+            #region Accuracy
+            if (projectile.DamageType == DamageClass.Ranged)
+            {
+                if (modPlayer.BearerOfTheCurse)
+                {
+                    switch (projectile.type)
+                    {
+                        case ProjectileID.ChlorophyteBullet or ProjectileID.ChlorophyteArrow:
+                            {
+                                break;
+                            }
+                        case int ModProjectile when (ModProjectile == ModContent.ProjectileType<ElfinArrow>() || ModProjectile == ModContent.ProjectileType<ToxicCatExplosion>() || ModProjectile == ModContent.ProjectileType<VirulentCatExplosion>() || ModProjectile == ModContent.ProjectileType<BiohazardExplosion>()):
+                            {
+                                break;
+                            }
+                        default:
+                            {
+                                IgnoresAccuracyOrSpecialCase = false;
+                                break;
+                            }
+                    }
+                }
+            }
             if (!IgnoresAccuracyOrSpecialCase)
             {
                 HitSomething = true;
             }
+            #endregion
         }
 
         public override void OnHitPlayer(Projectile projectile, Player target, Player.HurtInfo info)
@@ -495,7 +510,8 @@ namespace tsorcRevamp.Projectiles
                     modifiers.FinalDamage *= 0.89f;
                 }
             }
-            #region Vanilla Whip crits
+
+            #region Vanilla whip tip crits
 
             Vector2 LeatherTip = new Vector2(10, 18) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
             Vector2 SnapTip = new Vector2(22, 26) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
@@ -628,10 +644,10 @@ namespace tsorcRevamp.Projectiles
                 projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
                 for (int i = 0; i < 30; i++)
                 {
-                    int dust = Dust.NewDust(new Vector2(projectile.position.X - 50, projectile.position.Y - 50), 100, 100, 156, 0, 0, 0, default(Color), 1f);
-                    Main.dust[dust].noGravity = true;
-                    Main.dust[dust].velocity.Y *= Main.rand.NextFloat(-3f, 3f);
-                    Main.dust[dust].velocity.X *= Main.rand.NextFloat(-3f, 3f);
+                    Dust dust = Dust.NewDustDirect(new Vector2(projectile.position.X - 50, projectile.position.Y - 50), 100, 100, 156, 0, 0, 0, default(Color), 1f);
+                    dust.noGravity = true;
+                    dust.velocity.Y *= Main.rand.NextFloat(-3f, 3f);
+                    dust.velocity.X *= Main.rand.NextFloat(-3f, 3f);
                 }
             }
 

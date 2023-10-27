@@ -1144,8 +1144,8 @@ namespace tsorcRevamp
                         SweepingBladeVelocity = player.DirectionTo(other.Center) * 17;
                         player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Dash") with { Volume = 1f });
-                        Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaWhirlwindDashHitbox>(), PlasmaWhirlwind.BaseDamage, 0, player.whoAmI);
-                        DashHitbox.OriginalCritChance = SteelTempest.CritChance;
+                        Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaWhirlwindDashHitbox>(), player.HeldItem.damage, 0, player.whoAmI);
+                        DashHitbox.OriginalCritChance = SteelTempest.BaseCritChanceBonus;
                     } //cooldown is added by On-Hit in the dash projectile hitbox
                     if (!(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<NightbringerDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<Nightbringer>())
                     {
@@ -1154,14 +1154,14 @@ namespace tsorcRevamp
                         player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 5));
                         player.AddBuff(ModContent.BuffType<NightbringerDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/Dash") with { Volume = 1f });
-                        Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<NightbringerDashHitbox>(), Nightbringer.BaseDamage, 0, player.whoAmI);
-                        DashHitbox.OriginalCritChance = SteelTempest.CritChance;
+                        Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<NightbringerDashHitbox>(), player.HeldItem.damage, 0, player.whoAmI);
+                        DashHitbox.OriginalCritChance = SteelTempest.BaseCritChanceBonus;
                     } //cooldown is added by On-Hit in the dash projectile hitbox
                 }
                 if ((Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && Player.HeldItem.type == ModContent.ItemType<Nightbringer>() && !Player.HasBuff(ModContent.BuffType<NightbringerFirewallCooldown>()))
                 {
                     Projectile Firewall = Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), player.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<NightbringerFirewall>(), player.HeldItem.damage / 3, 0, Main.myPlayer);
-                    Firewall.OriginalCritChance = SteelTempest.CritChance;
+                    Firewall.OriginalCritChance = SteelTempest.BaseCritChanceBonus;
                     Player.AddBuff(ModContent.BuffType<NightbringerFirewallCooldown>(), 30 * 60);
                 }
                 #endregion

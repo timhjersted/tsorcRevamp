@@ -18,19 +18,19 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void SetDefaults()
         {
-            Item.rare = ItemRarityID.LightPurple;
             Item.damage = 650;
-            Item.height = 64;
+            Item.useAnimation = 24;
+            Item.useTime = 24;
             Item.width = 64;
+            Item.height = 64;
             Item.knockBack = 14f;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
-            Item.useAnimation = 24;
             Item.scale = 2.1f;
-            Item.useTime = 24;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.value = PriceByRarity.Yellow_8;
+            Item.rare = ItemRarityID.Cyan;
+            Item.value = PriceByRarity.Cyan_9;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Cyan;

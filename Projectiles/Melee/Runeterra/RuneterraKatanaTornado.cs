@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,10 +11,15 @@ using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra
 {
-    public class PlasmaWhirlwindTornado : ModProjectile
+    public class RuneterraKatanaTornado : ModProjectile
     {
         public bool Hit = false;
         public const int baseTimeLeft = 180;
+        public string SoundPath;
+        public int dustID;
+        public float yScale;
+        public Color Color;
+        public int numrings;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 8;
@@ -22,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public override void SetDefaults()
         {
             Projectile.width = 80;
-            Projectile.height = 180;
+            Projectile.height = 150;
             Projectile.aiStyle = -1;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
@@ -32,7 +38,6 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 5;
         }
-        private static int numrings = 30;
         private static Vector2 ringScale = new Vector2(0.2f);
         private int frameTimer;
         private int currentFrame;
@@ -40,12 +45,33 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         {
             modifiers.SourceDamage *= 2;
         }
+        public override void OnSpawn(IEntitySource source)
+        {
+            switch (Projectile.ai[0])
+            {
+                case 1:
+                    {
+                        dustID = DustID.Smoke;
+                        break;
+                    }
+                case 2:
+                    {
+                        dustID = DustID.CoralTorch;
+                        break;
+                    }
+                case 3:
+                    {
+                        dustID = DustID.Torch;
+                        break;
+                    }
+            }
+        }
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
             Vector2 mountedCenter = player.MountedCenter + new Vector2(-player.width / 2, 0);
-            int dustID = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.CoralTorch, Scale: 2);
-            Main.dust[dustID].noGravity = true;
+            Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, dustID, Scale: 2);
+            dust.noGravity = true;
             if (Projectile.timeLeft == baseTimeLeft - 40)
             {
                 player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks = 0;
@@ -61,11 +87,60 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             if (!Hit)
             {
                 Hit = true;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/TornadoHit") with { Volume = 0.75f });
+                switch (Projectile.ai[0])
+                {
+                    case 1:
+                        {
+                            SoundPath = "tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/";
+                            break;
+                        }
+                    case 2:
+                        {
+                            SoundPath = "tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/";
+                            break;
+                        }
+                    case 3:
+                        {
+                            SoundPath = "tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/";
+                            break;
+                        }
+                }
+                SoundEngine.PlaySound(new SoundStyle(SoundPath + "TornadoHit") with { Volume = 0.7f });
             }
         }
         public override bool PreDraw(ref Color lightColor)
         {
+            float _xscalebonus = 0;
+            switch (Projectile.ai[0])
+            {
+                case 1:
+                    {
+                        yScale = 0.4f;
+                        numrings = 24;
+                        Color = new Color(1, 1, 1, 0.3f);
+                        break;
+                    }
+                case 2:
+                    {
+                        yScale = 0.5f;
+                        numrings = 30;
+                        _xscalebonus = 0.1f;
+                        Color = new Color(0.498f, 1f, 0.831f, 0.3f);
+                        break;
+                    }
+                case 3:
+                    {
+                        yScale = 0.4f;
+                        numrings = 30;
+                        _xscalebonus = 0.15f;
+                        Color = new Color(0.886f, 0.345f, 0.133f, 0.3f);
+                        break;
+                    }
+            }
+            if (Projectile.velocity != Vector2.Zero)
+            {
+                _xscalebonus = 0;
+            }
             if (frameTimer == 0)
             {
                 frameTimer = 3;
@@ -86,26 +161,19 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             {
                 for (var i = 0; i < numrings * 2; i++) //some weird stuff going on with ring offset i think. multiplying numrings by 2 to make it taller for now
                 {
-                    float _xscale = ((ringScale.X * i / 2) * 0.1f) + 0.005f * i; //controls how wide each individual ring will be
-                    if (Projectile.velocity == Vector2.Zero)
-                    {
-                        _xscale += 0.1f;
-                        Projectile.width = 120;
-                    }
-                    float _yscale = 0.5f; //controls how tall each individual ring will be
-                    var _offset = (Math.Sin(Projectile.timeLeft / 6 + i / 4) * 24) * _xscale; //this is how the rings gain a wave effect
-                    var _dist = 2f + (float)i * 2.5f; //distance between each ring
-                    float _rot = (-numrings) + i; //the rotation of a given ring to make it look just a little more dynamic
+                    float _xscale = ringScale.X * i / 2 * 0.1f + 0.01f * i; //controls how wide each individual ring will be
+                    var _offset = Math.Sin(Projectile.timeLeft / 6 + i / 4) * 24 * _xscale; //this is how the rings gain a wave effect
+                    var _dist = 2f + i * 2.5f; //distance between each ring
+                    float _rot = -numrings + i; //the rotation of a given ring to make it look just a little more dynamic
                     _rot *= -((float)Math.PI / 180); //convert to radians cus terraria is like that
                     var vec = new Vector2(Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-3f, 3f)).RotatedBy(_rot); //ring position relative to projectile position. random offset to make it look chaotic
-                    vec += new Vector2(0, 70);
+                    vec += new Vector2(0, 60);
                     vec.X += (float)_offset; //apply wave
                     vec.Y -= _dist; //apply ring separation
                     var frameIndex = (currentFrame + i / 2) % Main.projFrames[Projectile.type]; //get frame index to draw
                     var sourceRect = new Rectangle(frameIndex * 128, 0, 127, 128); //the frame itself
-                    var col = new Color(0.498f, 1f, 0.831f, 0.3f); //color
                     //draw the ring
-                    Main.spriteBatch.Draw(tex, Projectile.Center + vec - Main.screenPosition, sourceRect, col, _rot * Math.Sign(Projectile.velocity.X), new Vector2(64, 64), ringScale + new Vector2(_xscale, _yscale), SpriteEffects.None, 0);
+                    Main.spriteBatch.Draw(tex, Projectile.Center + vec - Main.screenPosition, sourceRect, Color, _rot * Math.Sign(Projectile.velocity.X), new Vector2(64, 64), ringScale + new Vector2(_xscale + _xscalebonus, yScale), SpriteEffects.None, 0);
                 }
             }
 

@@ -7477,6 +7477,11 @@ Mods: {
 				DisplayName: 种子袋
 				Tooltip: ""
 			}
+
+			WorldEnder: {
+				// DisplayName: World Ender
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -8332,6 +8337,11 @@ Mods: {
 				DisplayName: 燠沼气
 				Description: Mods.tsorcRevamp.Buffs.PyromethaneDebuff.Description
 			}
+
+			WorldEnderCooldown: {
+				// DisplayName: World Ender Cooldown
+				// Description: Mods.tsorcRevamp.Buffs.WorldEnderCooldown.Description
+			}
 		}
 
 		Projectiles: {
@@ -8906,6 +8916,8 @@ Mods: {
 			CaiusPyreFireball.DisplayName: 凯厄斯之葬火球
 			CaiusPyreRift.DisplayName: 凯厄斯之葬裂隙
 			// GaleforceArrow.DisplayName: Galeforce Arrow
+			// WorldEnderSword.DisplayName: World Ender Sword
+			// RuneterraKatanaTornado.DisplayName: Runeterra Katana Tornado
 		}
 
 		NPCs: {
@@ -9947,6 +9959,7 @@ Mods: {
 			MountedSandsprogMage.DisplayName: 沙盗骑手
 			Sandsprog.DisplayName: 沙盗士兵
 			SandsprogMage.DisplayName: 沙盗法师
+			// Pinwheel.DisplayName: Pinwheel
 		}
 
 		Prefixes: {

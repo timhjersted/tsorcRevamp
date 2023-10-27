@@ -7477,6 +7477,11 @@ Mods: {
 				DisplayName: Seed Bag
 				Tooltip: ""
 			}
+
+			WorldEnder: {
+				DisplayName: World Ender
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -8332,6 +8337,11 @@ Mods: {
 				DisplayName: Pyromethane Debuff
 				Description: Mods.tsorcRevamp.Buffs.PyromethaneDebuff.Description
 			}
+
+			WorldEnderCooldown: {
+				DisplayName: World Ender Cooldown
+				Description: Mods.tsorcRevamp.Buffs.WorldEnderCooldown.Description
+			}
 		}
 
 		Projectiles: {
@@ -8906,6 +8916,8 @@ Mods: {
 			CaiusPyreFireball.DisplayName: Caius Pyre Fireball
 			CaiusPyreRift.DisplayName: Caius Pyre Rift
 			GaleforceArrow.DisplayName: Galeforce Arrow
+			WorldEnderSword.DisplayName: World Ender Sword
+			RuneterraKatanaTornado.DisplayName: Runeterra Katana Tornado
 		}
 
 		NPCs: {
@@ -9948,6 +9960,7 @@ Mods: {
 			MountedSandsprogMage.DisplayName: Mounted Sandsprog Mage
 			Sandsprog.DisplayName: Sandsprog
 			SandsprogMage.DisplayName: Sandsprog Mage
+			Pinwheel.DisplayName: Pinwheel
 		}
 
 		Prefixes: {

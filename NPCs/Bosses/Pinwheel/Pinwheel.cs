@@ -3,14 +3,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Utilities;
-using Terraria.UI;
 using tsorcRevamp.NPCs.Enemies;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 {
@@ -269,28 +265,28 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
 
                 int type = ProjectileID.Fireball;
-                int shot1 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, DamageNumbers["BouncingFireballDamage"], 0f, Main.myPlayer, 0, 0);
+                Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, DamageNumbers["BouncingFireballDamage"], 0f, Main.myPlayer, 0, 0);
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                Main.projectile[shot1].friendly = false;
-                Main.projectile[shot1].hostile = true;
+                shot1.friendly = false;
+                shot1.hostile = true;
             }
 
             if (MoveTimer == 120 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot bouncing fireball
             {
                 int type = ProjectileID.Fireball;
-                int shot1 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, DamageNumbers["BouncingFireballDamage"], 0f, Main.myPlayer, 0, 0);
+                Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, DamageNumbers["BouncingFireballDamage"], 0f, Main.myPlayer, 0, 0);
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                Main.projectile[shot1].friendly = false;
-                Main.projectile[shot1].hostile = true;
+                shot1.friendly = false;
+                shot1.hostile = true;
             }
 
             if (MoveTimer == 150 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot bouncing fireball
             {
                 int type = ProjectileID.Fireball;
-                int shot1 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, DamageNumbers["BouncingFireballDamage"], 0f, Main.myPlayer, 0, 0);
+                Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y),  new Vector2(speedX, speedY), type, DamageNumbers["BouncingFireballDamage"], 0f, Main.myPlayer, 0, 0);
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                Main.projectile[shot1].friendly = false;
-                Main.projectile[shot1].hostile = true;
+                shot1.friendly = false;
+                shot1.hostile = true;
             }
         }
 
@@ -310,35 +306,35 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             if (MoveTimer == 90 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot killable Gaibon fireballs
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                int shot1 = NPC.NewNPC(NPC.GetSource_FromThis(), (int)lanternTopLeft.X, (int)lanternTopLeft.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
-                Main.npc[shot1].damage = DamageNumbers["KillableFireballDamage"];
-                int shot2 = NPC.NewNPC(NPC.GetSource_FromThis(), (int)lanternMiddleRight.X, (int)lanternMiddleRight.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
-                Main.npc[shot2].damage = DamageNumbers["KillableFireballDamage"];
-                int shot3 = NPC.NewNPC(NPC.GetSource_FromThis(), (int)lanternBottomLeft.X, (int)lanternBottomLeft.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
-                Main.npc[shot3].damage = DamageNumbers["KillableFireballDamage"];
-                int shot4 = NPC.NewNPC(NPC.GetSource_FromThis(), (int)lanternTopRight.X, (int)lanternTopRight.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
-                Main.npc[shot4].damage = DamageNumbers["KillableFireballDamage"];
-                int shot5 = NPC.NewNPC(NPC.GetSource_FromThis(), (int)lanternMiddleLeft.X, (int)lanternMiddleLeft.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
-                Main.npc[shot5].damage = DamageNumbers["KillableFireballDamage"];
-                int shot6 = NPC.NewNPC(NPC.GetSource_FromThis(), (int)lanternBottomRight.X, (int)lanternBottomRight.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
-                Main.npc[shot6].damage = DamageNumbers["KillableFireballDamage"];
+                NPC shot1 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopLeft.X, (int)lanternTopLeft.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
+                shot1.damage = DamageNumbers["KillableFireballDamage"];
+                NPC shot2 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleRight.X, (int)lanternMiddleRight.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
+                shot2.damage = DamageNumbers["KillableFireballDamage"];
+                NPC shot3 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomLeft.X, (int)lanternBottomLeft.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
+                shot3.damage = DamageNumbers["KillableFireballDamage"];
+                NPC shot4 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopRight.X, (int)lanternTopRight.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
+                shot4.damage = DamageNumbers["KillableFireballDamage"];
+                NPC shot5 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleLeft.X, (int)lanternMiddleLeft.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
+                shot5.damage = DamageNumbers["KillableFireballDamage"];
+                NPC shot6 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomRight.X, (int)lanternBottomRight.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
+                shot6.damage = DamageNumbers["KillableFireballDamage"];
             }
 
             if (MoveTimer == 120 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot killable Gaibon fireballs
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                int shot1 = NPC.NewNPC(NPC.GetSource_FromThis(), (int)lanternTopLeft.X, (int)lanternTopLeft.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
-                Main.npc[shot1].damage = DamageNumbers["KillableFireballDamage"];
-                int shot2 = NPC.NewNPC(NPC.GetSource_FromThis(), (int)lanternMiddleRight.X, (int)lanternMiddleRight.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
-                Main.npc[shot2].damage = DamageNumbers["KillableFireballDamage"];
-                int shot3 = NPC.NewNPC(NPC.GetSource_FromThis(), (int)lanternBottomLeft.X, (int)lanternBottomLeft.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
-                Main.npc[shot3].damage = DamageNumbers["KillableFireballDamage"];
-                int shot4 = NPC.NewNPC(NPC.GetSource_FromThis(), (int)lanternTopRight.X, (int)lanternTopRight.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
-                Main.npc[shot4].damage = DamageNumbers["KillableFireballDamage"];
-                int shot5 = NPC.NewNPC(NPC.GetSource_FromThis(), (int)lanternMiddleLeft.X, (int)lanternMiddleLeft.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
-                Main.npc[shot5].damage = DamageNumbers["KillableFireballDamage"];
-                int shot6 = NPC.NewNPC(NPC.GetSource_FromThis(), (int)lanternBottomRight.X, (int)lanternBottomRight.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
-                Main.npc[shot6].damage = DamageNumbers["KillableFireballDamage"];
+                NPC shot1 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopLeft.X, (int)lanternTopLeft.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
+                shot1.damage = DamageNumbers["KillableFireballDamage"];
+                NPC shot2 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleRight.X, (int)lanternMiddleRight.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
+                shot2.damage = DamageNumbers["KillableFireballDamage"];
+                NPC shot3 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomLeft.X, (int)lanternBottomLeft.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
+                shot3.damage = DamageNumbers["KillableFireballDamage"];
+                NPC shot4 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopRight.X, (int)lanternTopRight.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
+                shot4.damage = DamageNumbers["KillableFireballDamage"];
+                NPC shot5 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleLeft.X, (int)lanternMiddleLeft.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
+                shot5.damage = DamageNumbers["KillableFireballDamage"];
+                NPC shot6 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomRight.X, (int)lanternBottomRight.Y, ModContent.NPCType<GaibonFireball>(), 0, 0, shootSpeed.X, shootSpeed.Y);
+                shot6.damage = DamageNumbers["KillableFireballDamage"];
             }
 
         }
@@ -351,9 +347,9 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             int dustQuantity = (int)MoveTimer / 6;
             for (int i = 0; i < dustQuantity; i++)
             {
-                if (Main.rand.Next(20) == 0 && MoveTimer > 40 && MoveTimer < 120)
+                if (Main.rand.NextBool(20) && MoveTimer > 40 && MoveTimer < 120)
                 {
-                    int dust = Dust.NewDust(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 42), 10, 10, 6, 0, 0, 0, default(Color), 1.5f);
+                    int dust = Dust.NewDust(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 42), 10, 10, 6, 0, 0, 0, default(Color), 1.5f); //would usually use this when I don't plan on adjusting it after yep
                 }
             }
 
@@ -363,8 +359,8 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 Vector2 shootSpeed = UsefulFunctions.Aim(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 30), Target.Center, 1f);
                 for (int i = 0; i < 3; i++)
                 {
-                    int shot1 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, shootSpeed.X * Main.rand.NextFloat(7, 10), shootSpeed.Y * Main.rand.NextFloat(5, 10), ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>(), DamageNumbers["FlamethrowerDamage"], 0f, Main.myPlayer);
-                    Main.projectile[shot1].timeLeft = 50;
+                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(shootSpeed.X * Main.rand.NextFloat(7, 10), shootSpeed.Y * Main.rand.NextFloat(5, 10)), ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>(), DamageNumbers["FlamethrowerDamage"], 0f, Main.myPlayer);
+                    shot1.timeLeft = 50;
                 }
                 //play breath sound
                 if (Main.rand.NextBool(3))
@@ -502,12 +498,12 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
                 if (Main.rand.NextBool(10)) //Fire
                 {
-                    Dust dust1 = Main.dust[Dust.NewDust(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust2 = Main.dust[Dust.NewDust(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust3 = Main.dust[Dust.NewDust(lanternTopLeft + new Vector2(6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust4 = Main.dust[Dust.NewDust(lanternTopRight + new Vector2(-6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust5 = Main.dust[Dust.NewDust(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust6 = Main.dust[Dust.NewDust(lanternBottomRight + new Vector2(4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
+                    Dust dust1 = Dust.NewDustDirect(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust2 = Dust.NewDustDirect(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust3 = Dust.NewDustDirect(lanternTopLeft + new Vector2(6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust4 = Dust.NewDustDirect(lanternTopRight + new Vector2(-6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust5 = Dust.NewDustDirect(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust6 = Dust.NewDustDirect(lanternBottomRight + new Vector2(4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f);
                 }
             }
 
@@ -521,12 +517,12 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
                 if (Main.rand.NextBool(4)) //Fire
                 {
-                    Dust dust1 = Main.dust[Dust.NewDust(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust2 = Main.dust[Dust.NewDust(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust3 = Main.dust[Dust.NewDust(lanternTopLeft + new Vector2(6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust4 = Main.dust[Dust.NewDust(lanternTopRight + new Vector2(-6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust5 = Main.dust[Dust.NewDust(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust6 = Main.dust[Dust.NewDust(lanternBottomRight + new Vector2(4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
+                    Dust dust1 = Dust.NewDustDirect(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust2 = Dust.NewDustDirect(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust3 = Dust.NewDustDirect(lanternTopLeft + new Vector2(6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust4 = Dust.NewDustDirect(lanternTopRight + new Vector2(-6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust5 = Dust.NewDustDirect(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust6 = Dust.NewDustDirect(lanternBottomRight + new Vector2(4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f);
                 }
             }
 
@@ -540,12 +536,12 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
                 if (Main.rand.NextBool(6)) //Fire
                 {
-                    Dust dust1 = Main.dust[Dust.NewDust(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust2 = Main.dust[Dust.NewDust(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust3 = Main.dust[Dust.NewDust(lanternTopLeft + new Vector2(6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust4 = Main.dust[Dust.NewDust(lanternTopRight + new Vector2(-6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust5 = Main.dust[Dust.NewDust(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust6 = Main.dust[Dust.NewDust(lanternBottomRight + new Vector2(4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
+                    Dust dust1 = Dust.NewDustDirect(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust2 = Dust.NewDustDirect(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust3 = Dust.NewDustDirect(lanternTopLeft + new Vector2(6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust4 = Dust.NewDustDirect(lanternTopRight + new Vector2(-6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust5 = Dust.NewDustDirect(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust6 = Dust.NewDustDirect(lanternBottomRight + new Vector2(4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f);
                 }
 
                 if (dustQuantityTimer < 120 && MoveTimer < 300)
@@ -564,32 +560,32 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
                 if (dustQuantity < 1 && Main.rand.NextBool(2)) //Flare
                 {
-                    Dust dust1 = Main.dust[Dust.NewDust(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 127, 40f, -20f, 50, default(Color), 2f)];
+                    Dust dust1 = Dust.NewDustDirect(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 127, 40f, -20f, 50, default(Color), 2f);
                     dust1.noGravity = true;
                     dust1.velocity /= 8;
                     dust1.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                    Dust dust2 = Main.dust[Dust.NewDust(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 127, 47f, 13f, 50, default(Color), 2f)];
+                    Dust dust2 = Dust.NewDustDirect(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 127, 47f, 13f, 50, default(Color), 2f);
                     dust2.noGravity = true;
                     dust2.velocity /= 8;
                     dust2.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                    Dust dust3 = Main.dust[Dust.NewDust(lanternTopLeft + new Vector2(6, -10), 8, 10, 127, 20f, 40f, 50, default(Color), 2f)];
+                    Dust dust3 = Dust.NewDustDirect(lanternTopLeft + new Vector2(6, -10), 8, 10, 127, 20f, 40f, 50, default(Color), 2f);
                     dust3.noGravity = true;
                     dust3.velocity /= 8;
                     dust3.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                    Dust dust4 = Main.dust[Dust.NewDust(lanternTopRight + new Vector2(-6, -10), 8, 10, 127, -20f, 40f, 50, default(Color), 2f)];
+                    Dust dust4 = Dust.NewDustDirect(lanternTopRight + new Vector2(-6, -10), 8, 10, 127, -20f, 40f, 50, default(Color), 2f);
                     dust4.noGravity = true;
                     dust4.velocity /= 8;
                     dust4.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                    Dust dust5 = Main.dust[Dust.NewDust(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 127, -47f, 13f, 50, default(Color), 2f)];
+                    Dust dust5 = Dust.NewDustDirect(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 127, -47f, 13f, 50, default(Color), 2f);
                     dust5.noGravity = true;
                     dust5.velocity /= 8;
                     dust5.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                    Dust dust6 = Main.dust[Dust.NewDust(lanternBottomRight + new Vector2(4, -24), 8, 10, 127, -40, -20, 50, default(Color), 2f)];
+                    Dust dust6 = Dust.NewDustDirect(lanternBottomRight + new Vector2(4, -24), 8, 10, 127, -40, -20, 50, default(Color), 2f);
                     dust6.noGravity = true;
                     dust6.velocity /= 8;
                     dust6.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
@@ -599,32 +595,32 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 {
                     for (int i = 0; i < dustQuantity; i++) //Flare
                     {
-                        Dust dust1 = Main.dust[Dust.NewDust(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 127, 40f, -20f, 50, default(Color), 2f)];
+                        Dust dust1 = Dust.NewDustDirect(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 127, 40f, -20f, 50, default(Color), 2f);
                         dust1.noGravity = true;
                         dust1.velocity /= 8;
                         dust1.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                        Dust dust2 = Main.dust[Dust.NewDust(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 127, 47f, 13f, 50, default(Color), 2f)];
+                        Dust dust2 = Dust.NewDustDirect(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 127, 47f, 13f, 50, default(Color), 2f);
                         dust2.noGravity = true;
                         dust2.velocity /= 8;
                         dust2.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                        Dust dust3 = Main.dust[Dust.NewDust(lanternTopLeft + new Vector2(6, -10), 8, 10, 127, 20f, 40f, 50, default(Color), 2f)];
+                        Dust dust3 = Dust.NewDustDirect(lanternTopLeft + new Vector2(6, -10), 8, 10, 127, 20f, 40f, 50, default(Color), 2f);
                         dust3.noGravity = true;
                         dust3.velocity /= 8;
                         dust3.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                        Dust dust4 = Main.dust[Dust.NewDust(lanternTopRight + new Vector2(-6, -10), 8, 10, 127, -20f, 40f, 50, default(Color), 2f)];
+                        Dust dust4 = Dust.NewDustDirect(lanternTopRight + new Vector2(-6, -10), 8, 10, 127, -20f, 40f, 50, default(Color), 2f);
                         dust4.noGravity = true;
                         dust4.velocity /= 8;
                         dust4.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                        Dust dust5 = Main.dust[Dust.NewDust(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 127, -47f, 13f, 50, default(Color), 2f)];
+                        Dust dust5 = Dust.NewDustDirect(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 127, -47f, 13f, 50, default(Color), 2f);
                         dust5.noGravity = true;
                         dust5.velocity /= 8;
                         dust5.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                        Dust dust6 = Main.dust[Dust.NewDust(lanternBottomRight + new Vector2(4, -24), 8, 10, 127, -40, -20, 50, default(Color), 2f)];
+                        Dust dust6 = Dust.NewDustDirect(lanternBottomRight + new Vector2(4, -24), 8, 10, 127, -40, -20, 50, default(Color), 2f);
                         dust6.noGravity = true;
                         dust6.velocity /= 8;
                         dust6.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
@@ -642,12 +638,12 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
                 if (Main.rand.NextBool(10)) //Fire
                 {
-                    Dust dust1 = Main.dust[Dust.NewDust(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust2 = Main.dust[Dust.NewDust(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust3 = Main.dust[Dust.NewDust(lanternTopLeft + new Vector2(6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust4 = Main.dust[Dust.NewDust(lanternTopRight + new Vector2(-6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust5 = Main.dust[Dust.NewDust(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
-                    Dust dust6 = Main.dust[Dust.NewDust(lanternBottomRight + new Vector2(4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
+                    Dust dust1 = Dust.NewDustDirect(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust2 = Dust.NewDustDirect(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust3 = Dust.NewDustDirect(lanternTopLeft + new Vector2(6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust4 = Dust.NewDustDirect(lanternTopRight + new Vector2(-6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust5 = Dust.NewDustDirect(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
+                    Dust dust6 = Dust.NewDustDirect(lanternBottomRight + new Vector2(4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f);
                 }
 
                 if (dustQuantityTimer < 120 && MoveTimer < 270)
@@ -668,32 +664,32 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
                 if (dustQuantity < 1 && Main.rand.NextBool(2)) //Flare
                 {
-                    Dust dust1 = Main.dust[Dust.NewDust(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 127, 4f, -45f, 50, default(Color), 2f)];
+                    Dust dust1 = Dust.NewDustDirect(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 127, 4f, -45f, 50, default(Color), 2f);
                     dust1.noGravity = true;
                     dust1.velocity /= 10;
                     dust1.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                    Dust dust2 = Main.dust[Dust.NewDust(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 127, 27f, -45f, 50, default(Color), 2f)];
+                    Dust dust2 = Dust.NewDustDirect(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 127, 27f, -45f, 50, default(Color), 2f);
                     dust2.noGravity = true;
                     dust2.velocity /= 10;
                     dust2.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                    Dust dust3 = Main.dust[Dust.NewDust(lanternTopLeft + new Vector2(6, -10), 8, 10, 127, 20f, -20f, 50, default(Color), 2f)];
+                    Dust dust3 = Dust.NewDustDirect(lanternTopLeft + new Vector2(6, -10), 8, 10, 127, 20f, -20f, 50, default(Color), 2f);
                     dust3.noGravity = true;
                     dust3.velocity /= 10;
                     dust3.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                    Dust dust4 = Main.dust[Dust.NewDust(lanternTopRight + new Vector2(-6, -10), 8, 10, 127, -20f, -20f, 50, default(Color), 2f)];
+                    Dust dust4 = Dust.NewDustDirect(lanternTopRight + new Vector2(-6, -10), 8, 10, 127, -20f, -20f, 50, default(Color), 2f);
                     dust4.noGravity = true;
                     dust4.velocity /= 10;
                     dust4.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                    Dust dust5 = Main.dust[Dust.NewDust(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 127, -27f, -45f, 50, default(Color), 2f)];
+                    Dust dust5 = Dust.NewDustDirect(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 127, -27f, -45f, 50, default(Color), 2f);
                     dust5.noGravity = true;
                     dust5.velocity /= 10;
                     dust5.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                    Dust dust6 = Main.dust[Dust.NewDust(lanternBottomRight + new Vector2(4, -24), 8, 10, 127, -4, -45, 50, default(Color), 2f)];
+                    Dust dust6 = Dust.NewDustDirect(lanternBottomRight + new Vector2(4, -24), 8, 10, 127, -4, -45, 50, default(Color), 2f);
                     dust6.noGravity = true;
                     dust6.velocity /= 10;
                     dust6.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
@@ -703,32 +699,32 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 {
                     for (int i = 0; i < dustQuantity; i++) //Flare
                     {
-                        Dust dust1 = Main.dust[Dust.NewDust(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 127, 4f, -45f, 50, default(Color), 2f)];
+                        Dust dust1 = Dust.NewDustDirect(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 127, 4f, -45f, 50, default(Color), 2f);
                         dust1.noGravity = true;
                         dust1.velocity /= 10;
                         dust1.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                        Dust dust2 = Main.dust[Dust.NewDust(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 127, 27f, -45f, 50, default(Color), 2f)];
+                        Dust dust2 = Dust.NewDustDirect(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 127, 27f, -45f, 50, default(Color), 2f);
                         dust2.noGravity = true;
                         dust2.velocity /= 10;
                         dust2.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                        Dust dust3 = Main.dust[Dust.NewDust(lanternTopLeft + new Vector2(6, -10), 8, 10, 127, 20f, -20f, 50, default(Color), 2f)];
+                        Dust dust3 = Dust.NewDustDirect(lanternTopLeft + new Vector2(6, -10), 8, 10, 127, 20f, -20f, 50, default(Color), 2f);
                         dust3.noGravity = true;
                         dust3.velocity /= 10;
                         dust3.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                        Dust dust4 = Main.dust[Dust.NewDust(lanternTopRight + new Vector2(-6, -10), 8, 10, 127, -20f, -20f, 50, default(Color), 2f)];
+                        Dust dust4 = Dust.NewDustDirect(lanternTopRight + new Vector2(-6, -10), 8, 10, 127, -20f, -20f, 50, default(Color), 2f);
                         dust4.noGravity = true;
                         dust4.velocity /= 10;
                         dust4.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                        Dust dust5 = Main.dust[Dust.NewDust(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 127, -27f, -45f, 50, default(Color), 2f)];
+                        Dust dust5 = Dust.NewDustDirect(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 127, -27f, -45f, 50, default(Color), 2f);
                         dust5.noGravity = true;
                         dust5.velocity /= 10;
                         dust5.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
 
-                        Dust dust6 = Main.dust[Dust.NewDust(lanternBottomRight + new Vector2(4, -24), 8, 10, 127, -4, -45, 50, default(Color), 2f)];
+                        Dust dust6 = Dust.NewDustDirect(lanternBottomRight + new Vector2(4, -24), 8, 10, 127, -4, -45, 50, default(Color), 2f);
                         dust6.noGravity = true;
                         dust6.velocity /= 10;
                         dust6.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
@@ -736,7 +732,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 }
                 if (dustQuantity == 2 && Main.rand.NextBool(2))
                 {
-                    Dust dust = Main.dust[Dust.NewDust(new Vector2(NPC.Center.X - 20, NPC.Center.Y - 140), 40, 10, 127, 0, -25, 50, default(Color), 2f)];
+                    Dust dust = Dust.NewDustDirect(new Vector2(NPC.Center.X - 20, NPC.Center.Y - 140), 40, 10, 127, 0, -25, 50, default(Color), 2f);
                     dust.noGravity = true;
                     dust.velocity /= 10;
                     dust.velocity *= Main.rand.NextFloat(5, 10);
@@ -751,27 +747,27 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
                 if (Main.rand.NextBool(60)) //Fire
                 {
-                    Dust dust1 = Main.dust[Dust.NewDust(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
+                    Dust dust1 = Dust.NewDustDirect(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f);
                 }
                 if (Main.rand.NextBool(60)) //Fire
                 {
-                    Dust dust2 = Main.dust[Dust.NewDust(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
+                    Dust dust2 = Dust.NewDustDirect(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
                 }
                 if (Main.rand.NextBool(60)) //Fire
                 {
-                    Dust dust3 = Main.dust[Dust.NewDust(lanternTopLeft + new Vector2(6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
+                    Dust dust3 = Dust.NewDustDirect(lanternTopLeft + new Vector2(6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
                 }
                 if (Main.rand.NextBool(60)) //Fire
                 {
-                    Dust dust4 = Main.dust[Dust.NewDust(lanternTopRight + new Vector2(-6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
+                    Dust dust4 = Dust.NewDustDirect(lanternTopRight + new Vector2(-6, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
                 }
                 if (Main.rand.NextBool(60)) //Fire
                 {
-                    Dust dust5 = Main.dust[Dust.NewDust(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
+                    Dust dust5 = Dust.NewDustDirect(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 6, 0, 0, 50, default(Color), 1f);
                 }
                 if (Main.rand.NextBool(60)) //Fire
                 {
-                    Dust dust6 = Main.dust[Dust.NewDust(lanternBottomRight + new Vector2(4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f)];
+                    Dust dust6 = Dust.NewDustDirect(lanternBottomRight + new Vector2(4, -24), 8, 10, 6, 0, 0, 50, default(Color), 1f);
                 }
             }
 
@@ -835,6 +831,51 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
                 NPC.frameCounter++;
 
+                if (NPC.frameCounter < 64) //in this case this should do
+                {
+                    NPC.frame.Y = (int)(NPC.frameCounter / 4) * frameHeight; //under 64 will at most come up with 15 * frameheight, same as with the else if chain
+                } 
+                else 
+                {
+                    NPC.frameCounter = 0; //above 63 it resets the counter to 0 but it didn't do anything else in that tick, so frameY stays at 15 * frameheight I guess
+                }
+                /*
+                switch (NPC.frameCounter) this is one alternative to the infintie else if chain: switch statement, better performance like this because it just has to choose one case and not loop through every if statement until it gets to the right one
+                {
+                    case double one when one < 4:
+                        {
+                            NPC.frame.Y = 0 * frameHeight;
+                            break;
+                        }
+                    case double two when two >= 4 && two < 8:
+                        {
+                            NPC.frame.Y = 1 * frameHeight;
+                            break;
+                        }
+                    case double three when three >= 8 && three < 12:
+                        {
+                            NPC.frame.Y = 2 * frameHeight;
+                            break;
+                        }
+                    case double four when four >= 12 && four < 16:
+                        {
+                            NPC.frame.Y = 3 * frameHeight;
+                            break;
+                        }
+                    case double five when five >= 16 && five < 20:
+                        {
+                            NPC.frame.Y = 4 * frameHeight;
+                            break;
+                        }
+                    //and so on
+                    default:
+                        {
+                            NPC.frameCounter = 0;
+                            break;
+                        }
+                }*/
+
+                /* don't do this
                 if (NPC.frameCounter < 4)
                 {
                     NPC.frame.Y = 0 * frameHeight;
@@ -902,7 +943,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 else
                 {
                     NPC.frameCounter = 0;
-                }
+                }*/
             }
 
             #endregion
@@ -912,6 +953,15 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
                 NPC.frameCounter++;
 
+                if (NPC.frameCounter < 352)
+                {
+                    NPC.frame.Y = (int)(NPC.frameCounter / 22) * frameHeight;
+                } 
+                else
+                {
+                    NPC.frameCounter = 0;
+                }
+                /*
                 if (NPC.frameCounter < 22)
                 {
                     NPC.frame.Y = 0 * frameHeight;
@@ -979,7 +1029,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 else
                 {
                     NPC.frameCounter = 0;
-                }
+                }*/
             }
 
 

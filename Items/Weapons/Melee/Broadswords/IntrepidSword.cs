@@ -10,8 +10,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Only those who walk lightly can master this sword's true power" +
-                                "\n[c/ffbf00:Damage is reduced from its full power with higher defense.]"); */
         }
 
         public override void SetDefaults()
