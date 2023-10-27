@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = true;
-            Projectile.timeLeft = 600;
+            Projectile.timeLeft = 240; // 4 seconds, can only stack twice before despawn
         }
 
         public override bool PreDraw(ref Color lightColor)

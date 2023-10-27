@@ -1870,6 +1870,10 @@ namespace tsorcRevamp.NPCs
 
                         //npc.lifeMax = ;
                         npc.value = 42250;
+                        npc.defense = 20; // vanilla 12
+                        npc.knockBackResist = 0f;
+                        npc.buffImmune[BuffID.Frostburn] = true;
+                        npc.buffImmune[BuffID.CursedInferno] = true;
                         break;
                     }
 

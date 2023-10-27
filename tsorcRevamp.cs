@@ -46,6 +46,7 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
+using tsorcRevamp.NPCs.Bosses.PrimeV2;
 using tsorcRevamp.NPCs.Special;
 using tsorcRevamp.Projectiles.Summon;
 using tsorcRevamp.Projectiles.Summon.Archer;
@@ -698,6 +699,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<TheRageBag>()               , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<TheSorrowBag>()             , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<TheHunterBag>()             , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<TheMachineBag>()            , BossExtras.SublimeBoneDust    },
                 {   ModContent.ItemType<TriadBag>()                 , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<WyvernMageBag>()            , BossExtras.SoulVessel         },
                 {   ModContent.ItemType<SerrisBag>()                , BossExtras.StaminaVessel      },
@@ -770,6 +772,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<TheRageBag>()               , ModContent.NPCType<TheRage>()                                                     },
                 {   ModContent.ItemType<TheSorrowBag>()             , ModContent.NPCType<TheSorrow>()                                                   },
                 {   ModContent.ItemType<TheHunterBag>()             , ModContent.NPCType<TheHunter>()                                                   },
+                {   ModContent.ItemType<TheMachineBag>()            , ModContent.NPCType<TheMachine>()                                                  },
                 {   ModContent.ItemType<TriadBag>()                 , ModContent.NPCType<Cataluminance>()                                               },
                 {   ModContent.ItemType<WyvernMageBag>()            , ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()                           },
                 {   ModContent.ItemType<SerrisBag>()                , ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()                                  },
