@@ -97,8 +97,8 @@ Mods: {
 			}
 
 			Ranged: {
-				// DmgMult: Increases ranged damage by {0}% multiplicatively
-				// CritMult: Increases ranged critical strike chance by {0}% multiplicatively
+				DmgMult: 乘算增加 {0}% 远程伤害
+				CritMult: 乘算增加 {0}% 远程暴击率
 				CritDmg: 增加 {0}% 远程暴击伤害
 				NonCritDmg: 减少 {0}% 远程非暴击伤害
 				FlatDmg: 增加 {0} 点远程伤害
@@ -111,7 +111,7 @@ Mods: {
 				ManaRegenDelay: 减少 {0}% 魔力再生延迟
 				AtkSpeed: 增加魔法武器 {0}% 攻击速度
 				DmgMult: 乘算增加 {0}% 魔法伤害
-				// CritMult: Increases magic critical strike chance by {0}% multiplicatively
+				CritMult: 乘算增加 {0}% 魔法暴击率
 				BadDmgMult: 乘算减少 {0}% 魔法伤害
 				ArmorPen: 增加 {0} 魔法护甲穿透
 				FlatDmg: 增加 {0} 点魔法伤害
@@ -122,7 +122,7 @@ Mods: {
 				AtkSpeed: 增加 {0}% 召唤攻击速度
 				WhipDmg: 增加 {0}% 鞭子伤害
 				WhipCritDmg: 增加 {0}% 鞭子暴击伤害
-				WhipCritHitbox: 增加 {0}x 鞭子尖端暴击判定大小
+				WhipCritHitbox: 增加 {0}x 倍鞭子尖端暴击判定大小
 				TagStrength: 增加 {0}% 召唤标记伤害和护甲穿透
 				BadTagStrengthMult: 乘算减少 {0}% 召唤标记伤害和护甲穿透
 				TagDuration: 增加 {0}% 召唤标记持续时间
@@ -1424,7 +1424,7 @@ Mods: {
 
 			DragonStone: {
 				DisplayName: 龙之石
-				Tooltip: 增加 {0}x 对敌人造成的减益伤害
+				Tooltip: 增加 {0}x 倍对敌人造成的减益伤害
 			}
 
 			DragoonBoots: {
@@ -1540,7 +1540,7 @@ Mods: {
 					冰龙希斯的羽翼
 					能够在空中更好的移动
 					在空中可以悬停行走
-					{$Items.WingsOfSeath.Keybind1}{$Items.WingsOfSeath.Keybind2}
+					{$Items.WingsOfSeath.Keybind1}{$Keybinds.Wings of Seath speed toggle.DisplayName}{$Items.WingsOfSeath.Keybind2}
 					免疫所有火焰、熔岩伤害，并给予夜视药水、狩猎药水增益
 					{$CommonItemTooltip.NoKnockback}
 					'''
@@ -1571,7 +1571,7 @@ Mods: {
 				Tooltip:
 					'''
 					伤害、暴击、生命与防御 
-					都乘算增加 {0}% ，{$CommonItemTooltip.Luck@1}
+					均乘算增加 {0}% ，{$CommonItemTooltip.Luck@1}
 					"英雄功业的证明"
 					'''
 			}
@@ -1966,7 +1966,8 @@ Mods: {
 					'''
 					亚尔特留斯的附魔盔甲
 					{$CommonItemTooltip.Melee.DmgMult}
-					{$CommonItemTooltip.SetBonus}WIP
+					{$CommonItemTooltip.SetBonus}允许你在翻滚时使用武器
+					翻滚时造成 {1}x 倍近战伤害
 					上面有巴罗之刃留下的细长切口
 					'''
 			}
@@ -1991,31 +1992,31 @@ Mods: {
 			}
 
 			NecromancersPants: {
-				// DisplayName: Necromancers Pants
-				/* Tooltip:
+				DisplayName: 巫妖王之靴
+				Tooltip:
 					'''
 					{$CommonItemTooltip.Magic.DmgMult}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
-					''' */
+					'''
 			}
 
 			NecromancersShirt: {
-				// DisplayName: Necromancers Shirt
-				/* Tooltip:
+				DisplayName: 巫妖王长袍
+				Tooltip:
 					'''
 					{$CommonItemTooltip.IncreasesMaxManaBy}
 					{$CommonItemTooltip.PercentReducedManaCost@1}
-					{$CommonItemTooltip.SetBonus}Gather a stack each time you kill an enemy
-					{$Items.NecromancersShirt.Keybind1}NecromancersSpell{$Items.NecromancersShirt.Keybind2}
-					Undead skulls scale with magic and summon damage
-					''' */
-				// Keybind1: "Press "
-				// Keybind2: " to cast an undead skull for each stack"
+					{$CommonItemTooltip.SetBonus}每当你杀死一名敌人获得一层堆叠
+					{$Items.NecromancersShirt.Keybind1}{$Items.NecromancersShirt.Keybind2}
+					不死之骨受到魔法和召唤伤害加成
+					'''
+				Keybind1: "按 "
+				Keybind2: " 消耗堆叠层数以发射不死之骨"
 			}
 
 			NecromancersSkullmask: {
-				// DisplayName: Necromancers Skullmask
-				// Tooltip: "{$CommonItemTooltip.Magic.CritMult}"
+				DisplayName: 巫妖王头盔
+				Tooltip: "{$CommonItemTooltip.Magic.CritMult}"
 			}
 
 			BlueHerosHat: {
@@ -2157,8 +2158,8 @@ Mods: {
 				DisplayName: 空洞士兵胸甲
 				Tooltip:
 					'''
-					乘算增加10%伤害
-					{$CommonItemTooltip.SetBonus}禁用生命再生，再乘算增加15%的伤害
+					乘算增加 10% 伤害
+					{$CommonItemTooltip.SetBonus}禁用生命再生，再乘算增加 15% 的伤害
 					增加10%最大耐力与耐力恢复速度
 					'''
 			}
@@ -5943,7 +5944,7 @@ Mods: {
 			}
 
 			HiRyuuSpear: {
-				DisplayName: HiRyuu之矛
+				DisplayName: 空域之矛
 				Tooltip: ""
 			}
 
@@ -6577,7 +6578,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Sentry}
-					召唤一个魔法之弓，向你的光标射出一阵旋风
+					召唤一张魔法之弓，向你的光标射出一阵箭雨
 					'''
 			}
 
@@ -6894,7 +6895,7 @@ Mods: {
 					[c/adff2f:蘑菇弹] 在发射后需要 {0} 秒来引爆，({$CommonItemTooltip.Cooldown@9})
 					[c/adff2f:蘑菇弹] 的爆炸造成巨量的伤害并施加更强的 [c/adff2f:辐射] 减益
 					[c/adff2f:蘑菇弹] 爆炸和 [c/ba55d3:放射性飞镖] 造成的 [c/adff2f:辐射] 减益相互叠加
-					[c/00ffff:致盲激光] 造成 {1}x 伤害, 使用种子作为弹药时伤害再次乘 {9} ({$CommonItemTooltip.Cooldown@10})
+					[c/00ffff:致盲激光] 造成 {1}x 倍伤害, 使用种子作为弹药时伤害再次乘 {9} ({$CommonItemTooltip.Cooldown@10})
 					[c/00ffff:致盲激光] 获得 {2}% 暴击几率加成和 {3}% 每击最大生命值伤害，最大到 {4}
 					[c/ba55d3:放射性飞镖] 造成的 [c/ba55d3:辐射] 减益受到远程伤害和暴击率加成
 					手持该武器时获得 [c/ba55d3:侦察兵激励] 增益：
@@ -6941,7 +6942,7 @@ Mods: {
 					'''
 				Details:
 					'''
-					[c/ff7f50:魔法火球] 每次攻击造成 {4}x 伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}）
+					[c/ff7f50:魔法火球] 每次攻击造成 {4}x 倍伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}）
 					[c/ff7f50:割裂]的敌人受到的魔法伤害增加 {8}%
 					[c/87cefa:追踪火焰]优先攻击 [c/ff7f50:割裂] 的敌人
 					[c/87cefa:魔法珠]额外造成 {0}% 的伤害，返回玩家时额外造成 {1}% 
@@ -6973,7 +6974,7 @@ Mods: {
 					按 [c/ff00ff:特殊能力键] 获得增益，允许你[c/ff00ff:冲刺三次]
 					增益{$CommonItemTooltip.SecondDuration@9}，{$CommonItemTooltip.Cooldown@10}
 					[c/ff00ff:冲刺产生的][c/87cefa:追踪火焰][c/ff00ff:命中敌人时不恢复魔力，激活[c/ff00ff:特殊能力] 消耗 {11} 魔力]
-					[c/ff7f50:爱心]每次攻击造成 {4}x 伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}
+					[c/ff7f50:爱心]每次攻击造成 {4}x 倍伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}
 					[c/ff7f50:割裂]的敌人受到的魔法伤害增加 {8}%
 					[c/87cefa:追踪火焰]优先攻击 [c/ff7f50:割裂] 的敌人
 					[c/87cefa:魔法珠]额外造成 {0}% 的伤害，返回玩家时额外造成 {1}% 
@@ -7510,13 +7511,13 @@ Mods: {
 			}
 
 			WorldEnder: {
-				// DisplayName: World Ender
-				// Tooltip: ""
+				DisplayName: 末世之剑
+				Tooltip: ""
 			}
 
 			LichBone: {
-				// DisplayName: Lich Bone
-				// Tooltip: ""
+				DisplayName: 巫妖王之骨
+				Tooltip: ""
 			}
 		}
 
@@ -7946,7 +7947,7 @@ Mods: {
 			}
 
 			AlienBlindingLaserCooldown: {
-				DisplayName: 异界步枪致盲激光冷却
+				DisplayName: 外星枪致盲激光冷却
 				Description: 在当前激光的冷却结束前你不能再次发射
 			}
 
@@ -7971,8 +7972,8 @@ Mods: {
 			}
 
 			RadioactiveBlindingLaserCooldown: {
-				DisplayName: 放射性致盲激光冷却
-				Description: 在当前放射性致盲激光的冷却结束前你不能再次部署
+				DisplayName: 致盲激光冷却
+				Description: 在当前致盲激光的冷却结束前你不能再次部署
 			}
 
 			ScoutsBoost: {
@@ -8375,8 +8376,8 @@ Mods: {
 			}
 
 			WorldEnderCooldown: {
-				// DisplayName: World Ender Cooldown
-				// Description: Mods.tsorcRevamp.Buffs.WorldEnderCooldown.Description
+				DisplayName: 末世之剑冷却
+				Description: Mods.tsorcRevamp.Buffs.WorldEnderCooldown.Description
 			}
 		}
 
@@ -8757,7 +8758,7 @@ Mods: {
 			AlienLaser.DisplayName: 外星激光
 			NuclearMushroom.DisplayName: 蘑菇弹
 			NuclearMushroomExplosion.DisplayName: 蘑菇弹爆炸
-			RadioactiveBlindingLaser.DisplayName: 放射性致盲激光
+			RadioactiveBlindingLaser.DisplayName: 致盲激光
 			RadioactiveDart.DisplayName: 辐射飞镖
 			ToxicShotDart.DisplayName: 恶毒吹针
 			RedLaserBeam.DisplayName: 红色激光束
@@ -8798,7 +8799,7 @@ Mods: {
 			ForgottenPolearmProj.DisplayName: 被遗忘的长枪
 			ForgottenRadiantLanceProj.DisplayName: 被遗忘的光辉之枪
 			GaeBolgProj.DisplayName: 盖博尔格
-			HiRyuuSpearProj.DisplayName: HiRyuu之矛
+			HiRyuuSpearProj.DisplayName: 空域之矛
 			LonginusProj.DisplayName: 朗基努斯
 			OldHalberdProj.DisplayName: 旧戟
 			SporePowder.DisplayName: 孢子粉
@@ -8951,9 +8952,9 @@ Mods: {
 			PyromethaneProjectile.DisplayName: 燠沼气
 			CaiusPyreFireball.DisplayName: 凯厄斯之葬火球
 			CaiusPyreRift.DisplayName: 凯厄斯之葬裂隙
-			// GaleforceArrow.DisplayName: Galeforce Arrow
-			// WorldEnderSword.DisplayName: World Ender Sword
-			// RuneterraKatanaTornado.DisplayName: Runeterra Katana Tornado
+			GaleforceArrow.DisplayName: 风暴之弦箭雨
+			WorldEnderSword.DisplayName: 末世之剑
+			RuneterraKatanaTornado.DisplayName: 符文之地系列武器旋风
 		}
 
 		NPCs: {
@@ -9995,7 +9996,7 @@ Mods: {
 			MountedSandsprogMage.DisplayName: 沙盗骑手
 			Sandsprog.DisplayName: 沙盗士兵
 			SandsprogMage.DisplayName: 沙盗法师
-			// Pinwheel.DisplayName: Pinwheel
+			Pinwheel.DisplayName: 轮转焰火风车
 		}
 
 		Prefixes: {
@@ -10039,7 +10040,7 @@ Mods: {
 			"Wolf Ring.DisplayName": 苍狼之戒
 			"Wings of Seath speed toggle.DisplayName": 希斯之翼加速度切换
 			Shunpo.DisplayName: 瞬步
-			// "Necromancers Spell.DisplayName": Necromancers Spell
+			"Necromancers Spell.DisplayName": 巫妖王之咒
 		}
 
 		Configs: {
