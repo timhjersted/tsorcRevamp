@@ -11,8 +11,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 {
     public class PyromethaneProjectile : ModdedWhipProjectile
     {
-        public override int WhipWidth => 16;
-        public override int WhipHeight => 34;
+        public override int WhipWidth => 26;
+        public override int WhipHeight => 36;
         public override int WhipSegments => 20;
         public override float WhipRangeMult => 1.65f;
         public override int DustId => DustID.SilverFlame;
@@ -23,6 +23,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override float MaxChargeTime => 0;
         public override Vector2 WhipTipBase => new Vector2(10, 12);
         public override float MaxChargeDmgDivisor => 1f;
+        public override float ChargeRangeBonus => 0;
         public override int WhipDebuffId => ModContent.BuffType<PyromethaneDebuff>();
         public override int WhipDebuffDuration => 4;
         public override float WhipMultihitPenalty => 0.65f;
@@ -53,15 +54,15 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             {
                 // These two values are set to suit this projectile's sprite, but won't necessarily work for your own.
                 // You can change them if they don't!
-                Rectangle frame = new Rectangle(0, 0, 16, 36);
-                Vector2 origin = new Vector2(8, 11);
+                Rectangle frame = new Rectangle(0, 0, WhipWidth, WhipHeight);
+                Vector2 origin = new Vector2(12, 10);
                 float scale = 1;
 
                 // These statements determine what part of the spritesheet to draw for the current segment.
                 // They can also be changed to suit your sprite.
                 if (i == list.Count - 2)
                 {
-                    frame.Y = 56;
+                    frame.Y = 58;
                     frame.Height = 12;
                     // For a more impactful look, this scales the tip of the whip up when fully extended, and down when curled up.
                     Projectile.GetWhipSettings(Projectile, out float timeToFlyOut, out int _, out float _);
@@ -71,7 +72,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
                 else if (i > 0)
                 {
                     frame.Y = 36;
-                    frame.Height = 20;
+                    frame.Height = 22;
                 }
 
                 Vector2 element = list[i];

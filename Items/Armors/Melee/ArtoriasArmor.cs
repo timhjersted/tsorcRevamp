@@ -11,9 +11,10 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Body)]
     public class ArtoriasArmor : ModItem
     {
-        public static int SoulCost = 70000;
+        public const int SoulCost = 70000;
         public static float DmgMult = 24f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMult);
+        public const float DmgMultWhileRolling = 4;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMult, DmgMultWhileRolling);
         public override void SetStaticDefaults()
         {
         }
@@ -35,6 +36,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateArmorSet(Player player)
         {
+            player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging = true;
 
             int dust = Dust.NewDust(new Vector2((float)player.position.X - 5, (float)player.position.Y), player.width + 10, player.height, 77, player.velocity.X, -2, 180, default, 1.25f);
             Main.dust[dust].noGravity = true;

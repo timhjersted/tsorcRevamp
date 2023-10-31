@@ -13,8 +13,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
 {
     public class NightsCrackerProjectile : ModdedWhipProjectile
     {
-        public override int WhipWidth => 11;
-        public override int WhipHeight => 14;
+        public override int WhipWidth => 30;
+        public override int WhipHeight => 28;
         public override int WhipSegments => 20;
         public override float WhipRangeMult => 1.42f;
         public override int DustId => 27;
@@ -25,10 +25,11 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override float MaxChargeTime => 210;
         public override Vector2 WhipTipBase => new Vector2(11, 17);
         public override float MaxChargeDmgDivisor => 3.85f;
+        public override float ChargeRangeBonus => 0.06f;
         public override int WhipDebuffId => ModContent.BuffType<NightsCrackerDebuff>();
         public override int WhipDebuffDuration => 0; //set to 0 so it does nothing and I can make a custom calculation
         public override float WhipMultihitPenalty => 1f; //set to 1 so it does nothing and I can make a custom calculation
-        public override Color WhipLineColor => Color.MediumVioletRed;
+        public override Color WhipLineColor => Color.MediumPurple;
         public override void CustomDust(List<Vector2> points)
         {
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.PurpleTorch, 0f, 0f, 150, default, 1f);
@@ -65,26 +66,26 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
             {
                 // These two values are set to suit this projectile's sprite, but won't necessarily work for your own.
                 // You can change them if they don't!
-                Rectangle frame = new Rectangle(0, 0, 11, 14);
-                Vector2 origin = new Vector2(5, 5);
-                float scale = 1.5f;
+                Rectangle frame = new Rectangle(0, 0, WhipWidth, WhipHeight);
+                Vector2 origin = new Vector2(14, 9);
+                float scale = 0.75f;
 
                 // These statements determine what part of the spritesheet to draw for the current segment.
                 // They can also be changed to suit your sprite.
                 if (i == list.Count - 2)
                 {
-                    frame.Y = 22;
-                    frame.Height = 17;
+                    frame.Y = 44;
+                    frame.Height = 26;
 
                     // For a more impactful look, this scales the tip of the whip up when fully extended, and down when curled up.
                     Projectile.GetWhipSettings(Projectile, out float timeToFlyOut, out int _, out float _);
                     float t = Timer / timeToFlyOut;
-                    scale = MathHelper.Lerp(0.5f, 1.5f, Utils.GetLerpValue(0.1f, 0.7f, t, true) * Utils.GetLerpValue(0.9f, 0.7f, t, true));
+                    scale = MathHelper.Lerp(scale / 2f, scale * 1.5f, Utils.GetLerpValue(0.1f, 0.7f, t, true) * Utils.GetLerpValue(0.9f, 0.7f, t, true));
                 }
                 else if (i > 0)
                 {
-                    frame.Y = 14;
-                    frame.Height = 8;
+                    frame.Y = 28;
+                    frame.Height = 16;
                 }
 
                 Vector2 element = list[i];

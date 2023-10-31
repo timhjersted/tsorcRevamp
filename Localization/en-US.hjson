@@ -97,6 +97,8 @@ Mods: {
 			}
 
 			Ranged: {
+				DmgMult: Increases ranged damage by {0}% multiplicatively
+				CritMult: Increases ranged critical strike chance by {0}% multiplicatively
 				CritDmg: Increases ranged critical strike damage by {0}%
 				NonCritDmg: Decreases ranged non-critical strike damage by {0}%
 				FlatDmg: Increases ranged damage by {0} flat
@@ -109,6 +111,7 @@ Mods: {
 				ManaRegenDelay: Decreases mana regeneration delay by {0}%
 				AtkSpeed: Increases magic attack speed by {0}%
 				DmgMult: Increases magic damage by {0}% multiplicatively
+				CritMult: Increases magic critical strike chance by {0}% multiplicatively
 				BadDmgMult: Decreases magic damage by {0}% multiplicatively
 				ArmorPen: Increases magic armor penetration by {0}
 				FlatDmg: Increase magic damage by {0} flat
@@ -1537,7 +1540,7 @@ Mods: {
 					The wings of Seath the Scaleless
 					Allow for superior control of movement in the air, including walking on air
 					Walking on air follows hovering controls
-					{$Items.WingsOfSeath.Keybind1}Wings Of Seath{$Items.WingsOfSeath.Keybind2}
+					{$Items.WingsOfSeath.Keybind1}{$Keybinds.Wings of Seath speed toggle.DisplayName}{$Items.WingsOfSeath.Keybind2}
 					Provide immunity to all fire and lava damage, as well as perfect sight and hunting abilities.
 					{$CommonItemTooltip.NoKnockback}
 					'''
@@ -1963,8 +1966,8 @@ Mods: {
 					'''
 					Enchanted armor of Artorias of the Abyss.
 					{$CommonItemTooltip.Melee.DmgMult}
-					{$CommonItemTooltip.SetBonus}WIP
-					Something about a spinny slash like Beyblade let it rip
+					{$CommonItemTooltip.SetBonus}Allows you to use items while dodgerolling
+					Multiplies melee damage dealt by {1} while dodgerolling
 					'''
 			}
 
@@ -1985,6 +1988,34 @@ Mods: {
 					Enchanted helmet of Artorias.
 					{$CommonItemTooltip.Melee.CritMult}
 					'''
+			}
+
+			NecromancersPants: {
+				DisplayName: Necromancers Pants
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Magic.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
+					'''
+			}
+
+			NecromancersShirt: {
+				DisplayName: Necromancers Shirt
+				Tooltip:
+					'''
+					{$CommonItemTooltip.IncreasesMaxManaBy}
+					{$CommonItemTooltip.PercentReducedManaCost@1}
+					{$CommonItemTooltip.SetBonus}Gather a stack each time you kill an enemy(stores up to 20)
+					{$Items.NecromancersShirt.Keybind1}NecromancersSpell{$Items.NecromancersShirt.Keybind2}
+					Undead skulls scale with magic and summon damage
+					'''
+				Keybind1: "Press "
+				Keybind2: " to cast an undead skull for each stack"
+			}
+
+			NecromancersSkullmask: {
+				DisplayName: Necromancers Skullmask
+				Tooltip: "{$CommonItemTooltip.Magic.CritMult}"
 			}
 
 			BlueHerosHat: {
@@ -7482,6 +7513,11 @@ Mods: {
 				DisplayName: World Ender
 				Tooltip: ""
 			}
+
+			LichBone: {
+				DisplayName: Lich Bone
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -10004,6 +10040,7 @@ Mods: {
 			"Wolf Ring.DisplayName": Wolf Ring
 			"Wings of Seath speed toggle.DisplayName": Wings of Seath Speed toggle
 			Shunpo.DisplayName: Shunpo
+			"Necromancers Spell.DisplayName": Necromancers Spell
 		}
 
 		Configs: {

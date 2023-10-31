@@ -25,6 +25,8 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories.Expert;
 using tsorcRevamp.Items.Accessories.Summon;
 using tsorcRevamp.Items.Armors;
+using tsorcRevamp.Items.Armors.Magic;
+using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
@@ -36,6 +38,7 @@ using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Magic.Runeterra.LudensTempest;
 using tsorcRevamp.Projectiles.Melee.Runeterra;
 using tsorcRevamp.Projectiles.Pets;
+using tsorcRevamp.Tiles;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 
@@ -771,6 +774,10 @@ namespace tsorcRevamp
                     buffIndex++;
                 }
             }
+            if (Lich && hit.Damage >= target.life)
+            {
+                LichKills++;
+            }
             if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()))
             {
                 Player.HealEffect((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
@@ -862,6 +869,10 @@ namespace tsorcRevamp
         public static float MythrilOcrichalcumCritDmg = 25f;
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
+            if (CanUseItemsWhileDodging && isDodging && (modifiers.DamageType == DamageClass.Melee || modifiers.DamageType == DamageClass.MeleeNoSpeed))
+            {
+                modifiers.FinalDamage *= ArtoriasArmor.DmgMultWhileRolling;
+            }
             if (Player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread)
             {
                 modifiers.DamageVariationScale *= 0;
@@ -1127,6 +1138,19 @@ namespace tsorcRevamp
                 {
                     Player.AddBuff(ModContent.BuffType<Rejuvenation>(), 5 * 60);
                     Player.AddBuff(ModContent.BuffType<RejuvenationCooldown>(), 25 * 60);
+                }
+            }
+            if (tsorcRevamp.NecromancersSpell.JustReleased)
+            {
+                if (Lich && LichKills > 0)
+                {
+                    for (int i = 0; i < LichKills; i++)
+                    {
+                        Projectile Skull = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center + Main.rand.NextVector2CircularEdge(30, 30), Vector2.Zero, ProjectileID.BookOfSkullsSkull, (int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(NecromancersShirt.SkullBaseDmg), player.GetTotalKnockback(DamageClass.MagicSummonHybrid).ApplyTo(NecromancersShirt.SkullBaseKnockback), player.whoAmI);
+                        Skull.velocity = (Skull.position - player.Center) / 5;
+                        Skull.DamageType = DamageClass.MagicSummonHybrid;
+                    }
+                    LichKills = 0;
                 }
             }
 

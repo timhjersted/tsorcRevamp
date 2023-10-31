@@ -7,7 +7,6 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-    [Autoload(false)]
     public class Pyromethane : ModItem
     {
         public static float SummonTagDamage = 10;
@@ -23,12 +22,12 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
             Item.width = 74;
 
             Item.DamageType = DamageClass.SummonMeleeSpeed;
-            Item.damage = 45;
+            Item.damage = 48;
             Item.knockBack = 2.5f;
             Item.rare = ItemRarityID.LightRed;
             Item.value = Item.buyPrice(0, 14, 50, 0);
 
-            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.PyrosulfateProjectile>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.PyromethaneProjectile>();
             Item.shootSpeed = 4;
 
             Item.useStyle = ItemUseStyleID.Swing;

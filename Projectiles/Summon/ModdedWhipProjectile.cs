@@ -13,26 +13,27 @@ namespace tsorcRevamp.Projectiles.Summon
 {
     public abstract class ModdedWhipProjectile : ModProjectile
     {
-        public abstract int WhipWidth { get; }
-        public abstract int WhipHeight { get; }
-        public abstract int WhipSegments { get; }
-        public abstract float WhipRangeMult { get; }
-        public abstract int DustId { get; }
-        public abstract int DustWidth { get; }
-        public abstract int DustHeight { get; }
-        public abstract Color DustColor { get; }
-        public abstract float DustScale { get; }
+        public abstract int WhipWidth { get; } //the width of the whip's grip
+        public abstract int WhipHeight { get; } //the height of the whip's grip
+        public abstract int WhipSegments { get; } //how many segments the whip is supposed to generate on it's line, purely visual
+        public abstract float WhipRangeMult { get; } //the length the whip will have, the item's usetime and animation will impact this too
+        public abstract int DustId { get; } //id of the whips dust, keep in mind that some dusts do not have a name assigned to them
+        public abstract int DustWidth { get; } //width of the whips dust
+        public abstract int DustHeight { get; } //height of the whips dust
+        public abstract Color DustColor { get; } //color of the whips dust
+        public abstract float DustScale { get; } //multiplier determining the size of the whips dust
         public abstract float MaxChargeTime { get; } //Updates twice a tick so /2 this for the actual amount of ticks this needs
-        public abstract Vector2 WhipTipBase { get; }
-        public abstract float MaxChargeDmgDivisor { get; }
+        public abstract Vector2 WhipTipBase { get; } //the size of the whip tips sprite
+        public abstract float MaxChargeDmgDivisor { get; } //how much bonus dmg it will deal by charging up, higher is better
+        public abstract float ChargeRangeBonus { get; } //how much range it will gain from charging up, higher is better
 
-        public abstract int WhipDebuffId { get; }
-        public abstract int WhipDebuffDuration { get; }
-        public abstract float WhipMultihitPenalty { get; }
-        public abstract Color WhipLineColor { get; }
+        public abstract int WhipDebuffId { get; } //the ID of the whip's debuff
+        public abstract int WhipDebuffDuration { get; } //how long it will inflict it's debuff for, usually should be 4 seconds
+        public abstract float WhipMultihitPenalty { get; } //how much dmg it loses on-hit, to recude it's crowd control: 1 is no dmg loss, 0.5 would mean it loses half it's dmg on each enemy hit
+        public abstract Color WhipLineColor { get; } //color of the line that gets generated between each whip segment, depending on the whip it might not even be visible most of the time but you should set this to something fitting your whip anyways
         public virtual void CustomDust(List<Vector2> points) { } //for whips that release more dust
-        public virtual void CustomModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) { } //for special whips
-        public virtual void CustomOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) { } //for special whips
+        public virtual void CustomModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) { } //for special whips, simply set the values used in the modifyhit function to 0 to nullify them
+        public virtual void CustomOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) { } //for special whips, simply set the values used in the onhit function to 0 to nullify them
         public override void SetStaticDefaults()
         {
             // This makes the projectile use whip collision detection and allows flasks to be applied to it.
@@ -133,7 +134,7 @@ namespace tsorcRevamp.Projectiles.Summon
             if (ChargeTimer2 >= (MaxChargeTime / 15))
             {
                 Projectile.WhipSettings.Segments++;
-                Projectile.WhipSettings.RangeMultiplier += 0.1f;
+                Projectile.WhipSettings.RangeMultiplier += ChargeRangeBonus;
                 ChargeTimer2 = 0;
             }
 

@@ -99,7 +99,7 @@ namespace tsorcRevamp
         //const float BoomerangDrainPerFrame = 0.6f;
         const float HeldProjectileDrainPerFrame = 1f;
         const float SpecialHeldProjectileDrainPerFrame = 0.6f;
-        const float FlailDrainPerFrame = 0.1f;
+        const float FlailDrainPerFrame = 0.2f;
         const float YoyoDrainPerFrame = 0.3f;
         const float ChargedWhipDrainPerFrame = 0.2f;
 
@@ -169,7 +169,7 @@ namespace tsorcRevamp
                     }
 
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].aiStyle == ProjAIStyleID.Flail
-                        || Main.projectile[p].type == ProjectileID.Anchor))
+                        || Main.projectile[p].type == ProjectileID.Anchor || Main.projectile[p].GetGlobalProjectile<tsorcGlobalProjectile>().ModdedFlail))
 
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= FlailDrainPerFrame;
@@ -205,6 +205,7 @@ namespace tsorcRevamp
             }
 
             //Stamina capping for summoners - First minion costs 18, second one 16, third one 14, etc. Once the cost hits 2, at 9 minions, it keeps costing 2 for subsequent minions
+            //this doesn't exist anymore
             if (Player.numMinions > 0)
             {
                 minionStaminaCap = (int)(staminaResourceMax2 * 1f);
@@ -323,6 +324,19 @@ namespace tsorcRevamp
                         }
                     default: break;
 
+                }
+                if (item.shoot != 0)
+                {
+                    if (shot.GetGlobalProjectile<tsorcGlobalProjectile>().ModdedFlail)
+                    {
+                        drainPerFrame = FlailDrainPerFrame;
+                        preventsRegen = true;
+                    }
+                    if (shot.GetGlobalProjectile<tsorcGlobalProjectile>().ChargedWhip)
+                    {
+                        drainPerFrame = ChargedWhipDrainPerFrame;
+                        preventsRegen = true;
+                    }
                 }
                 #endregion
 

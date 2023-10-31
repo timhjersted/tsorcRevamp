@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Melee.Flails;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Flails
 {
@@ -31,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Item.noMelee = true;
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Melee;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Flails.MoonfuryBall>();
+            Item.shoot = ModContent.ProjectileType<MoonfuryBall>();
         }
 
         public override void AddRecipes()

@@ -4,15 +4,15 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.Items.Armors.Melee
+namespace tsorcRevamp.Items.Armors.Magic
 {
-    [LegacyName("HelmetOfArtorias")]
-    [AutoloadEquip(EquipType.Head)]
-    public class ArtoriasHelmet : ModItem
+    [AutoloadEquip(EquipType.Legs)]
+    public class NecromancersPants : ModItem
     {
         public const int SoulCost = 70000;
-        public static float CritChanceMult = 24f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChanceMult);
+        public const float DmgMult = 20f;
+        public const float MoveSpeed = 29f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMult, MoveSpeed);
         public override void SetStaticDefaults()
         {
         }
@@ -20,20 +20,20 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 37;
-            Item.rare = ItemRarityID.Purple;
+            Item.defense = 7;
+            Item.rare = ItemRarityID.Pink;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += CritChanceMult;
-            player.GetCritChance(DamageClass.Melee) *= 1f + CritChanceMult / 100f;
+            player.GetDamage(DamageClass.Magic) *= 1f + DmgMult / 100f;
+            player.moveSpeed += MoveSpeed / 100f;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.BeetleHelmet);
-            recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>());
+            recipe.AddIngredient(ItemID.SpectrePants);
+            recipe.AddIngredient(ModContent.ItemType<LichBone>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -41,3 +41,4 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
     }
 }
+

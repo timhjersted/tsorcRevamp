@@ -72,6 +72,7 @@ namespace tsorcRevamp.Projectiles
         public bool HitSomething = false;
         public bool ModdedWhip = false;
         public bool ChargedWhip = false;
+        public bool ModdedFlail = false;
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
             /*projectilesource experiments
@@ -227,8 +228,7 @@ namespace tsorcRevamp.Projectiles
                     }
                 }
 
-                if (projectile.owner == Main.myPlayer && (projectile.aiStyle == ProjAIStyleID.Flail || projectile.aiStyle == ProjAIStyleID.Yoyo || projectile.type == ModContent.ProjectileType<Projectiles.Flails.BerserkerNightmareBall>()
-                    || projectile.type == ModContent.ProjectileType<Projectiles.Flails.HeavensTearBall>() || projectile.type == ModContent.ProjectileType<Flails.SunderingLightBall>() || projectile.type == ModContent.ProjectileType<Projectiles.Flails.MoonfuryBall>()
+                if (projectile.owner == Main.myPlayer && (projectile.aiStyle == ProjAIStyleID.Flail || projectile.aiStyle == ProjAIStyleID.Yoyo || projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ModdedFlail
                     ) && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
                 {
                     //projectile.Kill();
@@ -237,7 +237,7 @@ namespace tsorcRevamp.Projectiles
                     {
                         projectile.ai[0] = -1; //return yoyo smoothly, dont just kill it. This took me ages to find :( (doesn't work)
                     }
-                    else if (projectile.aiStyle == ProjAIStyleID.Flail)
+                    else if (projectile.aiStyle == ProjAIStyleID.Flail || projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ModdedFlail)
                     {
                         projectile.ai[1] = 1; //return flail smoothly, dont just kill it (doesn't work)
                     }

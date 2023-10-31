@@ -97,6 +97,8 @@ Mods: {
 			}
 
 			Ranged: {
+				// DmgMult: Increases ranged damage by {0}% multiplicatively
+				// CritMult: Increases ranged critical strike chance by {0}% multiplicatively
 				CritDmg: 增加 {0}% 远程暴击伤害
 				NonCritDmg: 减少 {0}% 远程非暴击伤害
 				FlatDmg: 增加 {0} 点远程伤害
@@ -109,6 +111,7 @@ Mods: {
 				ManaRegenDelay: 减少 {0}% 魔力再生延迟
 				AtkSpeed: 增加魔法武器 {0}% 攻击速度
 				DmgMult: 乘算增加 {0}% 魔法伤害
+				// CritMult: Increases magic critical strike chance by {0}% multiplicatively
 				BadDmgMult: 乘算减少 {0}% 魔法伤害
 				ArmorPen: 增加 {0} 魔法护甲穿透
 				FlatDmg: 增加 {0} 点魔法伤害
@@ -1985,6 +1988,34 @@ Mods: {
 					亚尔特留斯的附魔头盔
 					{$CommonItemTooltip.Melee.CritMult}
 					'''
+			}
+
+			NecromancersPants: {
+				// DisplayName: Necromancers Pants
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Magic.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
+					''' */
+			}
+
+			NecromancersShirt: {
+				// DisplayName: Necromancers Shirt
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.IncreasesMaxManaBy}
+					{$CommonItemTooltip.PercentReducedManaCost@1}
+					{$CommonItemTooltip.SetBonus}Gather a stack each time you kill an enemy
+					{$Items.NecromancersShirt.Keybind1}NecromancersSpell{$Items.NecromancersShirt.Keybind2}
+					Undead skulls scale with magic and summon damage
+					''' */
+				// Keybind1: "Press "
+				// Keybind2: " to cast an undead skull for each stack"
+			}
+
+			NecromancersSkullmask: {
+				// DisplayName: Necromancers Skullmask
+				// Tooltip: "{$CommonItemTooltip.Magic.CritMult}"
 			}
 
 			BlueHerosHat: {
@@ -7482,6 +7513,11 @@ Mods: {
 				// DisplayName: World Ender
 				// Tooltip: ""
 			}
+
+			LichBone: {
+				// DisplayName: Lich Bone
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -10003,6 +10039,7 @@ Mods: {
 			"Wolf Ring.DisplayName": 苍狼之戒
 			"Wings of Seath speed toggle.DisplayName": 希斯之翼加速度切换
 			Shunpo.DisplayName: 瞬步
+			// "Necromancers Spell.DisplayName": Necromancers Spell
 		}
 
 		Configs: {

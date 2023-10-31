@@ -391,7 +391,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Bolt3Tome>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<LichBone>(), 1, 2, 4));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ForgottenGaiaSword>()));
             npcLoot.Add(notExpertCondition);
         }
@@ -402,7 +402,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Earth Fiend Lich Gore 1").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Earth Fiend Lich Gore 2").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Earth Fiend Lich Gore 2").Type, 1f);
-
             }
         }
     }

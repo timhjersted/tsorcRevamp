@@ -8,14 +8,14 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Flails
+namespace tsorcRevamp.Projectiles.Melee.Flails
 {
 
-    public class HeavensTearBall : ModProjectile
+    public class BerserkerNightmareBall : ModProjectile
     {
 
-        private const string ChainTexturePath = "tsorcRevamp/Projectiles/Flails/HeavensTearChain"; // The folder path to the flail chain sprite
-        private const string ChainTextureExtraPath = "tsorcRevamp/Projectiles/Flails/HeavensTearChain2";  // This texture and related code is optional and used for a unique effect
+        private const string ChainTexturePath = "tsorcRevamp/Projectiles/Melee/Flails/BerserkerNightmareChain"; // The folder path to the flail chain sprite
+        private const string ChainTextureExtraPath = "tsorcRevamp/Projectiles/Melee/Flails/BerserkerNightmareChain2";  // This texture and related code is optional and used for a unique effect
 
         private enum AIState
         {
@@ -58,6 +58,7 @@ namespace tsorcRevamp.Projectiles.Flails
             Projectile.localNPCHitCooldown = 10; // This facilitates custom hit cooldown logic
 
             // Vanilla flails all use aiStyle 15, but the code isn't customizable so an adaption of that aiStyle is used in the AI method
+            Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ModdedFlail = true;
         }
 
         // This AI code was adapted from vanilla code: Terraria.Projectile.AI_015_Flails() 
@@ -80,12 +81,12 @@ namespace tsorcRevamp.Projectiles.Flails
             bool doFastThrowDust = false;
             bool shouldOwnerHitCheck = false;
             int launchTimeLimit = 14;  // How much time the projectile can go before retracting (speed and shootTimer will set the flail's range)
-            float launchSpeed = 26f; // How fast the projectile can move
+            float launchSpeed = 23f; // How fast the projectile can move
             float maxLaunchLength = 1000f; // How far the projectile's chain can stretch before being forced to retract when in launched state
-            float retractAcceleration = 11f; // How quickly the projectile will accelerate back towards the player while retracting
-            float maxRetractSpeed = 33f; // The max speed the projectile will have while retracting
-            float forcedRetractAcceleration = 22f; // How quickly the projectile will accelerate back towards the player while being forced to retract
-            float maxForcedRetractSpeed = 66f; // The max speed the projectile will have while being forced to retract
+            float retractAcceleration = 10f; // How quickly the projectile will accelerate back towards the player while retracting
+            float maxRetractSpeed = 30f; // The max speed the projectile will have while retracting
+            float forcedRetractAcceleration = 20f; // How quickly the projectile will accelerate back towards the player while being forced to retract
+            float maxForcedRetractSpeed = 60f; // The max speed the projectile will have while being forced to retract
             float unusedRetractAcceleration = 1f;
             float unusedMaxRetractSpeed = 14f;
             int unusedChainLength = 60;
@@ -163,11 +164,10 @@ namespace tsorcRevamp.Projectiles.Flails
                             StateTimer = 0f;
                             Projectile.netUpdate = true;
                             Projectile.velocity *= 0.3f;
-                            // This is also where Drippler Crippler spawns its projectile, see above code.
-                            Vector2 dropletvector = new Vector2(0, 5);
+                            // This is also where Drippler Crippler spawns its projectile, see above code. a
                             if (Main.myPlayer == Projectile.owner)
                             {
-                                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, dropletvector, ProjectileID.RainFriendly, Projectile.damage, Projectile.knockBack, Main.myPlayer);
+                                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ProjectileID.DeathSickle, Projectile.damage, Projectile.knockBack, Main.myPlayer);
                             }
                         }
                         player.ChangeDir((player.Center.X < Projectile.Center.X) ? 1 : (-1));
@@ -338,7 +338,7 @@ namespace tsorcRevamp.Projectiles.Flails
                 dustRate = 1;
 
             if (Main.rand.NextBool(dustRate))
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldFlame, 0f, 0f, 150, default(Color), 1.3f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.RedTorch, 0f, 0f, 150, default(Color), 1.3f);
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
@@ -448,33 +448,6 @@ namespace tsorcRevamp.Projectiles.Flails
             if (CurrentAIState == AIState.Dropping)
             {
                 modifiers.Knockback *= 0.5f;
-            }
-            if (target.type == NPCID.Tim
-               || target.type == NPCID.DarkCaster
-               || target.type == NPCID.GoblinSorcerer
-               || target.type == ModContent.NPCType<NPCs.Enemies.UndeadCaster>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerServant>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.DungeonMage>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.DemonSpirit>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.CrazedDemonSpirit>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.ShadowMage>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.AttraidiesManifestation>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerKingServant>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.BarrowWight>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.GhostoftheForgottenKnight>()
-               || target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.DarkDragonMask>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.Okiku>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()
-               || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>()
-               )
-            {
-                modifiers.FinalDamage *= 2;
             }
         }
 

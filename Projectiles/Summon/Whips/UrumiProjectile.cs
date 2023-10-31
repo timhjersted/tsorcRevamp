@@ -24,6 +24,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override float MaxChargeTime => 0;
         public override Vector2 WhipTipBase => new Vector2(22, 46);
         public override float MaxChargeDmgDivisor => 1f;
+        public override float ChargeRangeBonus => 0;
         public override int WhipDebuffId => ModContent.BuffType<UrumiDebuff>();
         public override int WhipDebuffDuration => 4;
         public override float WhipMultihitPenalty => 0.6f;

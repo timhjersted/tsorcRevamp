@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Melee.Flails;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Flails
 {
@@ -35,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Item.noMelee = true;
             Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Melee;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Flails.SunderingLightBall>();
+            Item.shoot = ModContent.ProjectileType<SunderingLightBall>();
         }
 
         public override void AddRecipes()

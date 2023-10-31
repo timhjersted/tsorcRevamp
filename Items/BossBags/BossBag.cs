@@ -414,6 +414,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.DragoonBoots>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.ForgottenGaiaSword>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<LichBone>(), 1, 3, 6));
         }
     }
     public class BlightBag : BossBag

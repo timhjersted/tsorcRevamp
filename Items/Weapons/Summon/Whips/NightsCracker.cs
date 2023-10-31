@@ -26,8 +26,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 
         public override void SetDefaults()
         {
-            Item.height = 39;
-            Item.width = 46;
+            Item.height = 52;
+            Item.width = 62;
 
             Item.DamageType = DamageClass.SummonMeleeSpeed;
             Item.damage = BaseDamage;

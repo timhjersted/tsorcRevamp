@@ -10,6 +10,7 @@ namespace tsorcRevamp.Items.Armors.Melee
     [AutoloadEquip(EquipType.Legs)]
     public class ArtoriasGreaves : ModItem
     {
+        public const int SoulCost = 70000;
         public static float AtkSpeedMult = 24f;
         public static float MoveSpeed = 40f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeedMult, MoveSpeed);
@@ -34,7 +35,7 @@ namespace tsorcRevamp.Items.Armors.Melee
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BeetleLeggings);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

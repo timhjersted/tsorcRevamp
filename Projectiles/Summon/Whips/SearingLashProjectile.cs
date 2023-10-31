@@ -23,6 +23,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override float MaxChargeTime => 210;
         public override Vector2 WhipTipBase => new Vector2(10, 12);
         public override float MaxChargeDmgDivisor => 4.3f;
+        public override float ChargeRangeBonus => 0.1f;
         public override int WhipDebuffId => ModContent.BuffType<SearingLashDebuff>();
         public override int WhipDebuffDuration => 0; //set to 0 so it does nothing and I can make a custom calculation
         public override float WhipMultihitPenalty => 0.65f;

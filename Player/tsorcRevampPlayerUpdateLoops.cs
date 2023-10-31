@@ -14,6 +14,7 @@ using tsorcRevamp.Buffs.Accessories;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.VanillaItems;
@@ -103,6 +104,11 @@ namespace tsorcRevamp
 
         public bool BoneRing;
         public bool CelestialCloak;
+
+        public bool CanUseItemsWhileDodging;
+
+        public bool Lich;
+        public int LichKills = 0;
 
         public int SoulVessel = 0;
         public float MaxManaAmplifier;
@@ -379,6 +385,10 @@ namespace tsorcRevamp
             Celestriad = false;
             MaxManaAmplifier = 0f;
             CelestialCloak = false;
+
+            CanUseItemsWhileDodging = false;
+
+            Lich = false;
 
             DragoonBoots = false;
             OldWeapon = false;
@@ -1008,8 +1018,10 @@ namespace tsorcRevamp
                     Player.manaRegenDelay = 100;
                 }
 
-                Player.GetAttackSpeed(DamageClass.SummonMeleeSpeed) *= 1.177f; //this is to neutralize the base melee attack speed nerf: 0.85 * 1.177 = 1.00045
+                Player.GetAttackSpeed(DamageClass.SummonMeleeSpeed) /= BotCMeleeBaseAttackSpeedMult + (BotCLethalTempoStacks * BotCLethalTempoBonus); //neutralizing Lethal Tempo attack speed changes
                 Player.GetDamage(DamageClass.Summon) *= BotCSummonBaseDamageMult + (BotCConquerorStacks * BotCConquerorBonus);
+                Player.GetDamage(DamageClass.MagicSummonHybrid) /= BotCSummonBaseDamageMult + (BotCConquerorStacks * BotCConquerorBonus); //neutralizing Conqueror damage changes
+                Player.GetDamage(DamageClass.MagicSummonHybrid) *= 1f + BotCConquerorStacks * BotCConquerorBonus / 4.5f; //adding small benefit for usage of Conqueror
                 Player.whipRangeMultiplier *= BotCWhipRangeMult;
 
                 if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().minionStaminaCap)
@@ -1866,7 +1878,7 @@ namespace tsorcRevamp
             }
 
             rotation = 0f;
-            if (forcedItemRotation.HasValue)
+            if (forcedItemRotation.HasValue && !CanUseItemsWhileDodging)
             {
                 Player.itemRotation = forcedItemRotation.Value;
 

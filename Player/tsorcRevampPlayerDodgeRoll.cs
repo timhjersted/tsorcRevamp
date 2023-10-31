@@ -7,6 +7,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp
 {
@@ -87,7 +88,7 @@ namespace tsorcRevamp
 
         public override void HideDrawLayers(PlayerDrawSet drawInfo)
         {
-            if (isDodging || dodgeCooldown.Value != 0 || blockVisuals > 0)
+            if ((isDodging || dodgeCooldown.Value != 0 || blockVisuals > 0) && !Player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging)
             {
                 PlayerDrawLayers.HeldItem.Hide();
                 return;
@@ -110,7 +111,7 @@ namespace tsorcRevamp
             }
 
             //Stop players from using items while rolling, and fix their offset
-            if (isDodging || dodgeCooldown.Value != 0)
+            if ((isDodging || dodgeCooldown.Value != 0) && !Player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging)
             {
                 Player.itemLocation = Player.Center + new Vector2(-32, -16); //Stops it from being as disjointed when the player comes out of a roll
                 wasJustRolling = true;
@@ -270,7 +271,7 @@ namespace tsorcRevamp
             Player.grapCount = 0;
             for (int p = 0; p < 1000; p++)
             {
-                if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == 7)
+                if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].aiStyle == ProjAIStyleID.Hook || Main.projectile[p].aiStyle == ProjAIStyleID.Flail || Main.projectile[p].GetGlobalProjectile<tsorcGlobalProjectile>().ModdedFlail))
                 {
                     Main.projectile[p].Kill();
                 }
@@ -311,9 +312,12 @@ namespace tsorcRevamp
             dodgeDirectionVisual = (sbyte)Player.direction;
             dodgeDirection = wantedDodgerollDir != 0 ? wantedDodgerollDir : (sbyte)Player.direction;
             dodgeCooldown = DodgeDefaultCooldown;
-            Player.channel = false;
 
-            Player.TryInterruptingItemUsage();
+            if (!Player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging)
+            {
+                Player.channel = false;
+                Player.TryInterruptingItemUsage();
+            }
 
             if (!isLocal)
             {
