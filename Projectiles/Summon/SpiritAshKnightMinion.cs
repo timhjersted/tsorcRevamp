@@ -70,9 +70,9 @@ namespace tsorcRevamp.Projectiles.Summon
 
             TileCollisionCooldown--;
             Idle(player, out Vector2 vectorToIdlePosition, out float distanceToIdlePosition);
-            SearchForTargets(player, out bool foundTarget, out float distanceFromTarget, out Vector2 targetCenter);
+            SearchForTargets(player, out bool foundTarget, out float distanceFromTarget, out Vector2 targetCenter, out float targetSize);
             Movement(foundTarget, distanceFromTarget, targetCenter, distanceToIdlePosition, vectorToIdlePosition);
-            Visuals(distanceFromTarget, targetCenter);
+            Visuals(distanceFromTarget, targetSize);
         }
         // This is the "active check", makes sure the minion is alive while the player is alive, and despawns if not
         private bool CheckActive(Player owner)
@@ -148,12 +148,13 @@ namespace tsorcRevamp.Projectiles.Summon
             }
         }
 
-        private void SearchForTargets(Player owner, out bool foundTarget, out float distanceFromTarget, out Vector2 targetCenter)
+        private void SearchForTargets(Player owner, out bool foundTarget, out float distanceFromTarget, out Vector2 targetCenter, out float targetSize)
         {
             // Starting search distance
             distanceFromTarget = 1000f;
             targetCenter = Projectile.position;
             foundTarget = false;
+            targetSize = 0;
 
             // This code is required if your minion weapon has the targeting feature
             if (owner.HasMinionAttackTargetNPC)
@@ -167,6 +168,7 @@ namespace tsorcRevamp.Projectiles.Summon
                     distanceFromTarget = between;
                     targetCenter = npc.Center;
                     foundTarget = true;
+                    targetSize = npc.Hitbox.Size().LengthSquared();
                 }
             }
 
@@ -185,7 +187,7 @@ namespace tsorcRevamp.Projectiles.Summon
                         bool lineOfSight = Collision.CanHitLine(Projectile.position, Projectile.width, Projectile.height, npc.position, npc.width, npc.height);
                         // Additional check for this specific minion behavior, otherwise it will stop attacking once it dashed through an enemy while flying though tiles afterwards
                         // The number depends on various parameters seen in the movement code below. Test different ones out until it works alright
-                        bool closeThroughWall = between < distanceFromTarget;
+                        bool closeThroughWall = between < distanceFromTarget / 4;
 
                         if (((closest && inRange) || (!foundTarget && inRange)) && (lineOfSight || closeThroughWall))
 
@@ -193,6 +195,7 @@ namespace tsorcRevamp.Projectiles.Summon
                             distanceFromTarget = between;
                             targetCenter = npc.Center;
                             foundTarget = true;
+                            targetSize = npc.Hitbox.Size().LengthSquared();
                         }
                     }
                 }
@@ -207,17 +210,31 @@ namespace tsorcRevamp.Projectiles.Summon
         public Vector2 DashVelocity;
         public float DashSpeed = 9.5f;
         public int TileCollisionCooldown = 0;
+        public int TileCollisionTimer = 0;
+        public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
+        {
+            width = (int)(width * 0.25f); 
+            height = (int)(height * 0.25f);
+            fallThrough = false;
+            return true;
+        }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             Player player = Main.player[Projectile.owner];
             if (Projectile.ai[2] >= 1) //if it started attacking and hasn't bounced off a tile in the last few ticks
             {
-                SearchForTargets(player, out bool foundTarget, out float distanceFromTarget, out Vector2 targetCenter); //get target
+                SearchForTargets(player, out bool foundTarget, out float distanceFromTarget, out Vector2 targetCenter, out float targetSize); //get target
                 DashVelocity = UsefulFunctions.Aim(Projectile.Center, targetCenter, DashSpeed); //set velocity to dash towards the target
                 Projectile.ai[2] = 2; //signal the ai that it has bounced off the first block
                 MissedAttackDelay = 0; //resetting this timer because it didn't miss
                 TileCollisionCooldown = 15; //setting a cooldown on how often it can reset it's velocity on tile collision 
                 Projectile.tileCollide = false; //so it can't bounce off a tile in the next few ticks and reach enemies consistently
+                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Ghost, Projectile.velocity.X / (Main.rand.NextFloat() * 50f), Projectile.velocity.Y / (Main.rand.NextFloat() * 50f), 0, default, (float)(Main.rand.Next(10) + 1) / 5f);
+                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Ghost, Projectile.velocity.X / (Main.rand.NextFloat() * 50f), Projectile.velocity.Y / (Main.rand.NextFloat() * 50f), 0, default, (float)(Main.rand.Next(10) + 1) / 5f);
+                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Ghost, Projectile.velocity.X / (Main.rand.NextFloat() * 50f), Projectile.velocity.Y / (Main.rand.NextFloat() * 50f), 0, default, (float)(Main.rand.Next(10) + 1) / 5f);
+                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Ghost, Projectile.velocity.X / (Main.rand.NextFloat() * 50f), Projectile.velocity.Y / (Main.rand.NextFloat() * 50f), 0, default, (float)(Main.rand.Next(10) + 1) / 5f);
+                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Ghost, Projectile.velocity.X / (Main.rand.NextFloat() * 50f), Projectile.velocity.Y / (Main.rand.NextFloat() * 50f), 0, default, (float)(Main.rand.Next(10) + 1) / 5f);
+                SoundEngine.PlaySound(SoundID.NPCHit52 with { Volume = 0.3f }, Projectile.position); //shadowflame apparition hit sound
             }
             return false;
         }
@@ -313,7 +330,7 @@ namespace tsorcRevamp.Projectiles.Summon
         public int FrameSpeed = 5;
         public int AttackFrameSpeed = 6;
         public int FirstAttackFrame = 5;
-        private void Visuals(float distanceFromTarget, Vector2 targetCenter)
+        private void Visuals(float distanceFromTarget, float targetSize)
         {
             if (Projectile.velocity.X > 0.05)
             {
@@ -338,7 +355,7 @@ namespace tsorcRevamp.Projectiles.Summon
             }
 
             //attack animation
-            if (distanceFromTarget < 150f) //starts attack animation once relatively close to the target
+            if (distanceFromTarget < 130f + (targetSize / 200f)) //starts attack animation once relatively close to the target, starts from a longer distance if the target is big
             {
                 AttackTimer++;
             } 

@@ -8,6 +8,7 @@ using tsorcRevamp.Projectiles.Summon.Whips.TerraFall;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
+    [LegacyName("TerraFall")]
     public class TerraFallItem : ModItem
     {
         public const int BaseDamage = 115;
