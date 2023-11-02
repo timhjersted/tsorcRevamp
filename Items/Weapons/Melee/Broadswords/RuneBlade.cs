@@ -42,11 +42,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
             if (HitStacks >= 3)
             {
-                Projectile Slash = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Main.MouseWorld - player.Center, ProjectileID.DD2SquireSonicBoom, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), hit.Knockback, Main.myPlayer, 0, 0, 1);
+                Projectile Slash = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Main.MouseWorld - player.Center, ProjectileID.DD2SquireSonicBoom, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer, 0, 0, 1);
                 Slash.damage += Slash.damage / 2; //basically 1.5x
                 Slash.timeLeft = 15;
                 Slash.scale = 0.8f;
                 Slash.penetrate = 3;
+                Slash.netUpdate = true;
+
                 HitStacks = 0;
             }
         }

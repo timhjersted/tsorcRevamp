@@ -9,6 +9,7 @@ namespace tsorcRevamp.Projectiles
 {
     class CaiusPyreFireball : DynamicTrail
     {
+        public override string Texture => base.Texture;
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.SentryShot[Type] = true;

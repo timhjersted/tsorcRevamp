@@ -33,6 +33,8 @@ using tsorcRevamp.Items.Weapons.Throwing;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.Projectiles.Magic.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Whips;
+using tsorcRevamp.Projectiles.Summon.Whips.EnchantedWhip;
+using tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs
@@ -966,7 +968,7 @@ namespace tsorcRevamp.NPCs
             }
             if (markedByPolarisLeash)
             {
-                SummonTagFlatDamage += PolarisLeash.SummonTagDamage;
+                SummonTagFlatDamage += PolarisLeashItem.SummonTagDamage;
             }
             if (markedByPyrosulfate)
             {
@@ -979,8 +981,8 @@ namespace tsorcRevamp.NPCs
             //if (markedBySearingLash) Searing Lash Crit Multiplier needs to be calculated after all the flat tag critical strike chance has been added
             if (markedByTerraFall)
             {
-                SummonTagFlatDamage += modPlayerProjectileOwner.TerraFallStacks * TerraFall.MinSummonTagDamage;
-                BaseSummonTagCriticalStrikeChance += modPlayerProjectileOwner.TerraFallStacks * TerraFall.MinSummonTagCrit;
+                SummonTagFlatDamage += modPlayerProjectileOwner.TerraFallStacks * TerraFallItem.MinSummonTagDamage;
+                BaseSummonTagCriticalStrikeChance += modPlayerProjectileOwner.TerraFallStacks * TerraFallItem.MinSummonTagCrit;
             }
             if (markedByUrumi)
             {
@@ -1081,7 +1083,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (markedByPolarisLeash)
                 {
-                    int StarDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(PolarisLeash.BaseDamage * PolarisLeash.StarDamageScaling / 100f);
+                    int StarDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(PolarisLeashItem.BaseDamage * PolarisLeashItem.StarDamageScaling / 100f);
                     Vector2 StarVector1 = new Vector2(-640, -800) + npc.Center;
                     Vector2 StarVector2 = new Vector2(640, -800) + npc.Center;
                     Vector2 StarVector3 = new Vector2(0, -800) + npc.Center;

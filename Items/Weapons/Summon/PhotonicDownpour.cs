@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Summon.PhotonicDownpour;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
@@ -35,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
             Item.buffType = ModContent.BuffType<PhotonicDownpourBuff>();
-            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.PhotonicDownpourLaserDrone>();
+            Item.shoot = ModContent.ProjectileType<PhotonicDownpourLaserDrone>();
         }
 
         int triadType;
@@ -46,11 +47,11 @@ namespace tsorcRevamp.Items.Weapons.Summon
 
             if (Main.MouseWorld.Distance(player.Center) > 300)
             {
-                type = ModContent.ProjectileType<Projectiles.Summon.PhotonicDownpourLaserDrone>();
+                type = ModContent.ProjectileType<PhotonicDownpourLaserDrone>();
             }
             else
             {
-                type = ModContent.ProjectileType<Projectiles.Summon.PhotonicDownpourDefenseDrone>();
+                type = ModContent.ProjectileType<PhotonicDownpourDefenseDrone>();
             }
         }
 

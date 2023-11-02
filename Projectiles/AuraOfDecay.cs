@@ -10,6 +10,7 @@ namespace tsorcRevamp.Projectiles
 {
     class AuraOfDecay : DynamicTrail
     {
+        public override string Texture => base.Texture;
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();

@@ -9,6 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
 {
     class RageFirebomb : DynamicTrail
     {
+        public override string Texture => base.Texture;
         public override void SetDefaults()
         {
             Projectile.width = 15;

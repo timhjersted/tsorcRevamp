@@ -144,6 +144,7 @@ Mods: {
 				CritChance: Increases summon crit chance by {0}%
 				TagCritMult: Multiplies summon tag critical strike chance by {0}x
 				TagDmgMult: This weapon scales with only {0}% Tag Damage
+				BaseCritChance: "{0}% increased base critical strike chance"
 			}
 
 			PermanentPotion: {
@@ -6401,7 +6402,13 @@ Mods: {
 
 			SpiritBell: {
 				DisplayName: Spirit Bell
-				Tooltip: Summons a Barrow Wight to fight for you
+				Tooltip:
+					'''
+					Summons a Spirit Ash Knight to fight for you
+					The Knight will bounce from walls towards enemies
+					{$CommonItemTooltip.Summon.BaseCritChance}
+					{$CommonItemTooltip.CritDmg@1}
+					'''
 			}
 
 			SunsetQuasar: {
@@ -6500,7 +6507,7 @@ Mods: {
 					'''
 			}
 
-			PolarisLeash: {
+			PolarisLeashItem: {
 				DisplayName: Polaris Leash
 				Tooltip:
 					'''
@@ -6544,7 +6551,7 @@ Mods: {
 					'''
 			}
 
-			TerraFall: {
+			TerraFallItem: {
 				DisplayName: Terra Fall
 				Tooltip:
 					'''
@@ -7482,6 +7489,10 @@ Mods: {
 					Minion Slots: {5}
 					Turret Slots: {6}
 					Whip Range: {7}%
+					Tips: Hitting enemies with the tip of a whip always results in a crit (+50% damage)
+					Each minion has a 4% base critical strike chance
+					Summon Tag Critical Strike Chance increases this base value
+					Final Minion Crit Chance: Base Summon Tag Crit Chance * Player Summon Crit Chance
 					'''
 				Throwing:
 					'''
@@ -8378,6 +8389,11 @@ Mods: {
 				DisplayName: World Ender Cooldown
 				Description: Mods.tsorcRevamp.Buffs.WorldEnderCooldown.Description
 			}
+
+			SpiritAshKnightBuff: {
+				DisplayName: Spirit Ash Knight
+				Description: The Spirit Ash Knight will fight for you!
+			}
 		}
 
 		Projectiles: {
@@ -8954,6 +8970,7 @@ Mods: {
 			GaleforceArrow.DisplayName: Galeforce Arrow
 			WorldEnderSword.DisplayName: World Ender Sword
 			RuneterraKatanaTornado.DisplayName: Runeterra Katana Tornado
+			SpiritAshKnightMinion.DisplayName: Spirit Ash Knight
 		}
 
 		NPCs: {

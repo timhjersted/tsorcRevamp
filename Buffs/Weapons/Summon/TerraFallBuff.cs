@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Projectiles.Summon.Whips.TerraFall;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon
@@ -22,15 +23,15 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
 
         public override void Update(Player player, ref int buffIndex)
         {
-            AttackSpeed = player.GetModPlayer<tsorcRevampPlayer>().TerraFallStacks * TerraFall.MinSummonTagAttackSpeed;
+            AttackSpeed = player.GetModPlayer<tsorcRevampPlayer>().TerraFallStacks * TerraFallItem.MinSummonTagAttackSpeed;
             player.GetAttackSpeed(DamageClass.Summon) += AttackSpeed / 100f;
 
             if (player.whoAmI == Main.myPlayer)
             {
-                if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Whips.TerraFallTerraprisma>()] == 0)
+                if (player.ownedProjectileCounts[ModContent.ProjectileType<TerraFallTerraprisma>()] == 0)
                 {
-                    int whipDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(TerraFall.BaseDamage);
-                    Projectile.NewProjectileDirect(player.GetSource_Buff(buffIndex), player.Center, Vector2.One, ModContent.ProjectileType<Projectiles.Summon.Whips.TerraFallTerraprisma>(), whipDamage, 1f, Main.myPlayer);
+                    int whipDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(TerraFallItem.BaseDamage);
+                    Projectile.NewProjectileDirect(player.GetSource_Buff(buffIndex), player.Center, Vector2.One, ModContent.ProjectileType<TerraFallTerraprisma>(), whipDamage, 1f, Main.myPlayer);
                 }
             }
         }

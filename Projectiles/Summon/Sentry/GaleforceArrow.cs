@@ -10,6 +10,7 @@ namespace tsorcRevamp.Projectiles
 {
     class GaleforceArrow : DynamicTrail
     {
+        public override string Texture => base.Texture;
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.SentryShot[Type] = true;

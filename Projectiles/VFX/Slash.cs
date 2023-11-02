@@ -11,6 +11,7 @@ namespace tsorcRevamp.Projectiles.VFX
 {
     public class Slash : DynamicTrail
     {
+        public override string Texture => base.Texture;
         public sealed override void SetDefaults()
         {
             Projectile.width = 1;

@@ -13,10 +13,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.NPCs;
-using Terraria.Audio;
-using ReLogic.Utilities;
-using Terraria.GameContent.Biomes;
-using Terraria.IO;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {
@@ -252,6 +248,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             // Projectile.width = 40; Projectile.height = 40;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 2;
+            Projectile.hide = true;
 
             Projectile.minion = true;
             Projectile.minionSlots = 0.5f;
@@ -372,24 +369,29 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             switch (length)
             {
-                case float gear1 when (gear1 < 25f):
+                case float gear1 when (gear1 < 30f):
                     {
-                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.01f;
+                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.02f;
                         break;
                     }
-                case float gear2 when (gear2 >= 25f && gear2 < 100f):
+                case float gear2 when (gear2 >= 30f && gear2 < 150f):
                     {
-                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.08f;
+                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.06f;
                         break;
                     }
-                case float gear3 when (gear3 >= 100f && gear3 < 300f ):
+                case float gear3 when (gear3 >= 150f && gear3 < 500f ):
                     {
-                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.15f;
+                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.12f;
                         break;
                     }
-                case float gear4 when gear4 >= 300f:
+                case float gear4 when gear4 >= 500f && gear4 < 2000f:
                     {
-                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.45f;
+                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.24f;
+                        break;
+                    }
+                case float gear5 when gear5 >= 2000f:
+                    {
+                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.5f;
                         break;
                     }
             }
@@ -675,6 +677,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         {
             if (reader.ReadBoolean())
                 AltSequence = true;
+        }
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        {
+            behindProjectiles.Add(index);
         }
     }
 }

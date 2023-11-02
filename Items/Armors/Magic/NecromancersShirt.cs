@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 14;
+            Item.defense = 25;
             Item.rare = ItemRarityID.Yellow;
             Item.value = PriceByRarity.fromItem(Item);
         }

@@ -4,6 +4,7 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Projectiles.Summon.NullSprite;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
@@ -37,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
             Item.buffType = ModContent.BuffType<NullSpriteBuff>();
-            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.NullSprite>();
+            Item.shoot = ModContent.ProjectileType<NullSprite>();
         }
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {

@@ -1149,6 +1149,7 @@ namespace tsorcRevamp
                         Projectile Skull = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center + Main.rand.NextVector2CircularEdge(30, 30), Vector2.Zero, ProjectileID.BookOfSkullsSkull, (int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(NecromancersShirt.SkullBaseDmg), player.GetTotalKnockback(DamageClass.MagicSummonHybrid).ApplyTo(NecromancersShirt.SkullBaseKnockback), player.whoAmI);
                         Skull.velocity = (Skull.position - player.Center) / 5;
                         Skull.DamageType = DamageClass.MagicSummonHybrid;
+                        Skull.netUpdate = true;
                     }
                     LichKills = 0;
                 }

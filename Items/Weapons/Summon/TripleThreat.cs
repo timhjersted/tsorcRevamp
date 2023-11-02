@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Summon.TripleThreat;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
@@ -35,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
             Item.buffType = ModContent.BuffType<TripleThreatBuff>();
-            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.FriendlyRetinazer>();
+            Item.shoot = ModContent.ProjectileType<FriendlyRetinazer>();
         }
 
         int triadType;
@@ -46,15 +47,15 @@ namespace tsorcRevamp.Items.Weapons.Summon
 
             if (triadType == 0)
             {
-                type = ModContent.ProjectileType<Projectiles.Summon.FriendlyRetinazer>();
+                type = ModContent.ProjectileType<FriendlyRetinazer>();
             }
             if (triadType == 1)
             {
-                type = ModContent.ProjectileType<Projectiles.Summon.FriendlySpazmatism>();
+                type = ModContent.ProjectileType<FriendlySpazmatism>();
             }
             if (triadType == 2)
             {
-                type = ModContent.ProjectileType<Projectiles.Summon.FriendlyCataluminance>();
+                type = ModContent.ProjectileType<FriendlyCataluminance>();
             }
 
             triadType++;

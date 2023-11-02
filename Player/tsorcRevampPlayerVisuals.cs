@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.Summon.ShatteredReflection;
 
 namespace tsorcRevamp
 {
@@ -94,7 +95,7 @@ namespace tsorcRevamp
             List<Vector2> shatterPositions = new List<Vector2>();
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Summon.ShatteredReflectionProjectile>() && Main.projectile[i].owner == drawInfo.drawPlayer.whoAmI && Main.projectile[i].active)
+                if (Main.projectile[i].type == ModContent.ProjectileType<ShatteredReflectionProjectile>() && Main.projectile[i].owner == drawInfo.drawPlayer.whoAmI && Main.projectile[i].active)
                 {
                     shatterPositions.Add(Main.projectile[i].Center - Main.player[Main.projectile[i].owner].Center);
                 }

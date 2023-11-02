@@ -144,6 +144,7 @@ Mods: {
 				CritChance: 增加 {0}% 召唤暴击率
 				TagCritMult: 增加 {0} 倍召唤标记暴击率
 				TagDmgMult: 此武器仅受到 {0}% 的召唤标记伤害加成
+				// BaseCritChance: "{0}% increased base critical strike chance"
 			}
 
 			PermanentPotion: {
@@ -6502,7 +6503,7 @@ Mods: {
 					'''
 			}
 
-			PolarisLeash: {
+			PolarisLeashItem: {
 				DisplayName: 北极星之鞭
 				Tooltip:
 					'''
@@ -6546,7 +6547,7 @@ Mods: {
 					'''
 			}
 
-			TerraFall: {
+			TerraFallItem: {
 				DisplayName: 泰拉之殇
 				Tooltip:
 					'''
@@ -8379,6 +8380,11 @@ Mods: {
 				DisplayName: 末世之剑冷却
 				Description: Mods.tsorcRevamp.Buffs.WorldEnderCooldown.Description
 			}
+
+			SpiritAshKnightBuff: {
+				// DisplayName: Spirit Ash Knight
+				// Description: The Spirit Ash Knight will fight for you!
+			}
 		}
 
 		Projectiles: {
@@ -8955,6 +8961,7 @@ Mods: {
 			GaleforceArrow.DisplayName: 风暴之弦箭雨
 			WorldEnderSword.DisplayName: 末世之剑
 			RuneterraKatanaTornado.DisplayName: 符文之地系列武器旋风
+			// SpiritAshKnightMinion.DisplayName: Spirit Ash Knight
 		}
 
 		NPCs: {

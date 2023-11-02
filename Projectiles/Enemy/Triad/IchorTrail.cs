@@ -7,6 +7,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
 {
     class IchorTrail : Projectiles.VFX.DynamicTrail
     {
+        public override string Texture => base.Texture;
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();

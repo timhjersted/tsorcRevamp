@@ -71,11 +71,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             if (player.altFunctionUse == 2)
             {
-                Projectile Blaze2 = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, velocity, ProjectileID.NebulaBlaze2, damage * ProjectileDmgMult, knockback * ProjectileDmgMult, Main.myPlayer);
+                Projectile Blaze2 = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, velocity, ProjectileID.NebulaBlaze2, damage * ProjectileDmgMult, knockback * ProjectileDmgMult, Main.myPlayer);
                 Blaze2.DamageType = DamageClass.Melee;
                 Blaze2.CritChance = 100;
                 Blaze2.damage = (int)(Blaze2.damage * (1f + player.GetTotalCritChance(DamageClass.Melee) / 100f));
                 Blaze2.damage /= 2;
+                Blaze2.netUpdate = true;
+
                 player.statMana -= (int)(player.manaCost * BaseManaCost);
                 player.manaRegenDelay = MeleeEdits.ManaDelay;
                 player.altFunctionUse = 1;

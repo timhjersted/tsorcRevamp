@@ -3,19 +3,21 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Summon;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-    [Autoload(false)]
     public class SpiritBell : ModItem
     {
+        public const int BaseCritChance = 15;
+        public const float CritDmg = 100f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BaseCritChance, CritDmg);
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Summons a Barrow Wight to fight for you");
-
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
@@ -23,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         }
         public override void SetDefaults()
         {
-            Item.damage = 24;
+            Item.damage = 17;
             Item.knockBack = 3f;
             Item.mana = 10;
             Item.width = 50;
@@ -35,11 +37,10 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.rare = ItemRarityID.Blue;
             Item.UseSound = SoundID.Item44;
 
-
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
-            Item.buffType = ModContent.BuffType<BarrowWightBuff>();
-            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.SpiritBell.BarrowWightMinion>();
+            Item.buffType = ModContent.BuffType<SpiritAshKnightBuff>();
+            Item.shoot = ModContent.ProjectileType<SpiritAshKnightMinion>();
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
@@ -57,9 +58,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.AbigailsFlower);
-            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
+            recipe.AddIngredient(ItemID.Bell);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

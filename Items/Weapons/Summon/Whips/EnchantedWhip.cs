@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Summon.Whips.EnchantedWhip;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
@@ -29,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
             Item.rare = ItemRarityID.Blue;
             Item.value = Item.buyPrice(0, 3, 50, 0);
 
-            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.EnchantedWhipProjectile>();
+            Item.shoot = ModContent.ProjectileType<EnchantedWhipProjectile>();
             Item.shootSpeed = 4;
 
             Item.useStyle = ItemUseStyleID.Swing;

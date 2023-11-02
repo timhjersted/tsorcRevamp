@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Summon.TripleThreat;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon
 {
@@ -14,9 +15,9 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
         public override void Update(Player player, ref int buffIndex)
         {
             // If the minions exist reset the buff time, otherwise remove the buff from the player
-            bool anyRetinazer = player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.FriendlyRetinazer>()] > 0;
-            bool anySpazmatism = player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.FriendlySpazmatism>()] > 0;
-            bool anyCataluminance = player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.FriendlyCataluminance>()] > 0;
+            bool anyRetinazer = player.ownedProjectileCounts[ModContent.ProjectileType<FriendlyRetinazer>()] > 0;
+            bool anySpazmatism = player.ownedProjectileCounts[ModContent.ProjectileType<FriendlySpazmatism>()] > 0;
+            bool anyCataluminance = player.ownedProjectileCounts[ModContent.ProjectileType<FriendlyCataluminance>()] > 0;
             if (anyRetinazer || anySpazmatism || anyCataluminance)
             {
                 player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.TripleThreat);

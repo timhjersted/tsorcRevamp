@@ -35,7 +35,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, Vector2.Zero, ProjectileID.Volcano, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), hit.Knockback, Main.myPlayer);
+            Projectile Volcano = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), target.Center, Vector2.Zero, ProjectileID.Volcano, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
+
             target.AddBuff(BuffID.OnFire3, 300, false);
         }
         public override void MeleeEffects(Player player, Rectangle hitbox)
@@ -48,7 +49,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.FieryGreatsword, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

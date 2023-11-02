@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.OnFire, 6 * 60, false);
-            Projectile Flamethrower = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 2f), ProjectileID.Flames, (int)(player.GetTotalDamage(DamageClass.Melee).ApplyTo((float)Item.damage / 4f)), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
+            Projectile Flamethrower = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 2f), ProjectileID.Flames, (int)(player.GetTotalDamage(DamageClass.Melee).ApplyTo((float)Item.damage / 4f)), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
             Flamethrower.DamageType = DamageClass.Melee;
             Flamethrower.ai[0] = 2f; //inflicts OnFire instead of Hellfire and for less time
             Flamethrower.usesLocalNPCImmunity = false;
@@ -54,6 +54,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Flamethrower.usesIDStaticNPCImmunity = true;
             Flamethrower.idStaticNPCHitCooldown = 20;
             Flamethrower.ArmorPenetration = 0;
+            Flamethrower.netUpdate = true;
         }
 
         public override void MeleeEffects(Player player, Rectangle rectangle)

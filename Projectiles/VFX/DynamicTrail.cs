@@ -13,6 +13,7 @@ namespace tsorcRevamp.Projectiles.VFX
 {
     public class DynamicTrail : ModProjectile
     {
+        public override string Texture => "tsorcRevamp/Projectiles/VFX/DynamicTrail";
         public override void SetStaticDefaults()
         {
             //Always draw this projectile even if its "center" is far offscreen
@@ -31,7 +32,6 @@ namespace tsorcRevamp.Projectiles.VFX
             Projectile.penetrate = -1;
         }
 
-        public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
 
         /// <summary>
         /// The max number of points in the trail

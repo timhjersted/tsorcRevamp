@@ -51,7 +51,6 @@ using tsorcRevamp.NPCs.Special;
 using tsorcRevamp.Projectiles.Summon;
 using tsorcRevamp.Projectiles.Summon.Archer;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
-using tsorcRevamp.Projectiles.Summon.SpiritBell;
 using tsorcRevamp.Projectiles.Summon.SunsetQuasar;
 using tsorcRevamp.Tiles;
 using tsorcRevamp.Tiles.BuffStations;
@@ -61,6 +60,9 @@ using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 using static tsorcRevamp.ILEdits;
 using static tsorcRevamp.MethodSwaps;
+using tsorcRevamp.Projectiles.Summon.NullSprite;
+using tsorcRevamp.Projectiles.Summon.Tetsujin;
+using tsorcRevamp.Projectiles.Summon.Phoenix;
 
 namespace tsorcRevamp
 {
@@ -1441,8 +1443,8 @@ namespace tsorcRevamp
                 summonersAssociation.Call(
                     "AddMinionInfo",
                     ModContent.ItemType<SpiritBell>(),
-                    ModContent.BuffType<BarrowWightBuff>(),
-                    ModContent.ProjectileType<BarrowWightMinion>()
+                    ModContent.BuffType<SpiritAshKnightBuff>(),
+                    ModContent.ProjectileType<SpiritAshKnightMinion>()
                     );
             }
 

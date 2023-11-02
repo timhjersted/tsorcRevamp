@@ -68,8 +68,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile SunInferno = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center, Vector2.Zero, ProjectileID.InfernoFriendlyBlast, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
+            Projectile SunInferno = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), target.Center, Vector2.Zero, ProjectileID.InfernoFriendlyBlast, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
             SunInferno.DamageType = DamageClass.Melee;
+            SunInferno.netUpdate = true;
         }
     }
 }

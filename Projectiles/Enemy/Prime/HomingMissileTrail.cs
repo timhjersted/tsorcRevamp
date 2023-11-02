@@ -8,6 +8,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
 {
     class HomingMissileTrail : Projectiles.VFX.DynamicTrail
     {
+        public override string Texture => base.Texture;
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();

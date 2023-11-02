@@ -13,7 +13,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             /* Tooltip.SetDefault("'A blade of sharpened bone'" +
                 "\nShoots out a bone upon hitting enemies with the blade"); */
         }
-        public bool canitshoot = false;
 
         public override void SetDefaults()
         {
@@ -38,6 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Projectile Bone = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 10), ProjectileID.Bone, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
             Bone.DamageType = DamageClass.Melee;
             Bone.damage -= Bone.damage / 4;
+            Bone.netUpdate = true;
         }
 
         //TODO: Remove this

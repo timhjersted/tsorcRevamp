@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Summon.PhotonicDownpour;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon
 {
@@ -14,7 +15,7 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
         public override void Update(Player player, ref int buffIndex)
         {
             // If the minions exist reset the buff time, otherwise remove the buff from the player
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.PhotonicDownpourDefenseDrone>()] > 0 || player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.PhotonicDownpourLaserDrone>()] > 0)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<PhotonicDownpourDefenseDrone>()] > 0 || player.ownedProjectileCounts[ModContent.ProjectileType<PhotonicDownpourLaserDrone>()] > 0)
             {
                 player.buffTime[buffIndex] = 18000;
             }

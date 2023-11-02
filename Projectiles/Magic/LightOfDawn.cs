@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Magic
 {
     class LightOfDawn : DynamicTrail
     {
-
+        public override string Texture => base.Texture;
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Light of Dawn");

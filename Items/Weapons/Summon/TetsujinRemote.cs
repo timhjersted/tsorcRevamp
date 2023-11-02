@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Summon.Tetsujin;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
@@ -13,11 +14,6 @@ namespace tsorcRevamp.Items.Weapons.Summon
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Tetsujin Remote");
-            /* Tooltip.SetDefault("Summons a glowing Tetsujin to fight for you" +
-                "\nOrbits an enemy, bombarding them with light and fire" +
-                "\nUses 2 minion slots"); */
-
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
@@ -41,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
             Item.buffType = ModContent.BuffType<TetsujinBuff>();
-            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.TetsujinProjectile>();
+            Item.shoot = ModContent.ProjectileType<TetsujinProjectile>();
         }
 
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)

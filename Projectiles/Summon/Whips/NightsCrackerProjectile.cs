@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override int WhipDebuffId => ModContent.BuffType<NightsCrackerDebuff>();
         public override int WhipDebuffDuration => 0; //set to 0 so it does nothing and I can make a custom calculation
         public override float WhipMultihitPenalty => 1f; //set to 1 so it does nothing and I can make a custom calculation
-        public override Color WhipLineColor => Color.MediumPurple;
+        public override Color WhipLineColor => Color.Indigo;
         public override void CustomDust(List<Vector2> points)
         {
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.PurpleTorch, 0f, 0f, 150, default, 1f);
