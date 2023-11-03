@@ -213,10 +213,10 @@ namespace tsorcRevamp
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
 
             //PINWHEEL
-            ScriptedEvent Pinwheel = new ScriptedEvent(new Vector2(4140, 924), 24, ModContent.NPCType<NPCs.Bosses.Pinwheel.Pinwheel>(), DustID.BoneTorch, false, true, true, LangUtils.GetTextValue("Events.Pinwheel"), Color.Black, false);
+            ScriptedEvent Pinwheel = new ScriptedEvent(new Vector2(4140, 924), 15, ModContent.NPCType<NPCs.Bosses.Pinwheel.Pinwheel>(), DustID.BoneTorch, false, true, true, LangUtils.GetTextValue("Events.Pinwheel"), Color.Black, false);
 
             //LOTHRIC BLACK KNIGHT IN CATACOMBS OF THE DROWNED
-            ScriptedEvent LothricKnightCatacombs = new ScriptedEvent(new Vector2(4137, 895), 15, ModContent.NPCType<NPCs.Enemies.LothricBlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
+            ScriptedEvent LothricKnightCatacombs = new ScriptedEvent(new Vector2(4137, 895), 10, ModContent.NPCType<NPCs.Enemies.LothricBlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
             LothricKnightCatacombs.SetCustomStats(1100, 8, 40, 1500);
 
             //FIRELURKER AMBUSH 1 - Path of Ambition main room
