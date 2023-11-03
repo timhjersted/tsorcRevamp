@@ -10004,6 +10004,7 @@ Mods: {
 			Sandsprog.DisplayName: 沙盗士兵
 			SandsprogMage.DisplayName: 沙盗法师
 			Pinwheel.DisplayName: 轮转焰火风车
+			// GhostOfAHollowWarrior.DisplayName: Ghost Of A Hollow Warrior
 		}
 
 		Prefixes: {

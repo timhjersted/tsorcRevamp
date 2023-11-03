@@ -211,6 +211,7 @@ Mods: {
 		}
 
 		Events: {
+			Pinwheel: Pinwheel turns its glance to you.
 			Death: The fated day of your death has arrived.
 			QueenSlime: Queen Slime emerges from her Hallowed cave!
 			GreatRedKnightInvasion: A Great Red Knight has invaded your world!
@@ -10014,6 +10015,7 @@ Mods: {
 			Sandsprog.DisplayName: Sandsprog
 			SandsprogMage.DisplayName: Sandsprog Mage
 			Pinwheel.DisplayName: Pinwheel
+			GhostOfAHollowWarrior.DisplayName: Ghost Of A Hollow Warrior
 		}
 
 		Prefixes: {

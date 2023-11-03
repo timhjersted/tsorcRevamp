@@ -12,6 +12,7 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.NPCs.Bosses.Pinwheel;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.Utilities;
 
@@ -123,6 +124,8 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            Pinwheel,
+            LothricKnightCatacombs,
             FireLurkerAmbush1,
             Death,
             BlackKnightSHMDungeon,
@@ -208,6 +211,13 @@ namespace tsorcRevamp
 
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
+
+            //PINWHEEL
+            ScriptedEvent Pinwheel = new ScriptedEvent(new Vector2(4140, 924), 30, ModContent.NPCType<NPCs.Bosses.Pinwheel.Pinwheel>(), DustID.BoneTorch, true, true, true, LangUtils.GetTextValue("Events.Pinwheel"), Color.Black, false);
+
+            //LOTHRIC BLACK KNIGHT IN CATACOMBS OF THE DROWNED
+            ScriptedEvent LothricKnightCatacombs = new ScriptedEvent(new Vector2(4137, 895), 15, ModContent.NPCType<NPCs.Enemies.LothricBlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
+            LothricKnightCatacombs.SetCustomStats(1100, 8, 40, 1500);
 
             //FIRELURKER AMBUSH 1 - Path of Ambition main room
             List<int> FireLurkerAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.FireLurker>(), ModContent.NPCType<NPCs.Enemies.FireLurker>() };
@@ -507,6 +517,8 @@ namespace tsorcRevamp
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
+                {ScriptedEventType.Pinwheel,Pinwheel},
+                {ScriptedEventType.LothricKnightCatacombs,LothricKnightCatacombs},
                 {ScriptedEventType.FireLurkerAmbush1, FireLurkerAmbush1},
                 {ScriptedEventType.Death, Death},
                 {ScriptedEventType.BlackKnightSHMDungeon, BlackKnightSHMDungeon},

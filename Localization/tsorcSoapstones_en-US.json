@@ -1,4 +1,18 @@
 {
+  "text": "Here lies Melania of Farron.--NEWLINE  --NEWLINE Not a mage, but well known for using magic as a tool rather than a weapon.--NEWLINE  --NEWLINE Long may she rest. --NEWLINE  --NEWLINE",
+  "tileX": 4237,
+  "tileY": 789,
+  "textWidth": 320,
+  "style": 1,
+
+
+  "text": "- You have discovered the Catacombs of the Drowned -  --NEWLINE  --NEWLINE ",
+  "tileX": 4360,
+  "tileY": 765,
+  "textWidth": 320,
+  "style": 1,
+
+
   "text": "- You have discovered the lair of the Lich King, the Earth Fiend Spirit - --NEWLINE  --NEWLINE ",
   "tileX": 58,
   "tileY": 1911,

@@ -130,11 +130,15 @@ namespace tsorcRevamp.Tiles
 
 
             //HANGING SOUL SKELLYS - They are 3x3, so use 3, 3 in the rectangle. In TEdit, these are a ConfettiBlock (hanging from wrists) and BlackConfettiBlock, also called MidnightConfettiBlock (hanging from ankles)
+            
+            // Catacombs of the Drowned (below Ashenpeak)
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4233, 785, 3, 3), ModContent.ItemType<Items.Weapons.Magic.FarronDart>(), 1));
+
             //Near end of Path of Ambition at the top of the parkour section
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3467, 944, 3, 3), ModContent.ItemType<Items.NamelessSoldierSoul>(), 2));
 
             //Above FireLurker arena, in hanging prison cell with chest in Path of Ambition
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3585, 1209, 3, 3), ModContent.ItemType<Items.NamelessSoldierSoul>(), 2));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3585, 1209, 3, 3), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1));
 
             //In FireLurker arena (in left cave beside main big room), on Path of Ambition
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3541, 1242, 3, 3), ModContent.ItemType<Items.StaminaVessel>(), 1));
@@ -142,7 +146,7 @@ namespace tsorcRevamp.Tiles
             //By bonfire leading up to Earth Temple EoC arena, by shortcut
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4170, 1133, 3, 3), ModContent.ItemType<Items.Weapons.Throwing.Firebomb>(), 7));
 
-            //Ceiling of Red Knight event arena on PoP
+            //Ceiling of Red Knight event arena in Path of Ambition/Pain
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3897, 1195, 3, 3), ModContent.ItemType<Items.PurgingStone>(), 1));
 
             //Entrance of Artorias room, where 2 lothric event spawns
