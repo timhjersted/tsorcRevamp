@@ -40,6 +40,7 @@ namespace tsorcRevamp
         public int townWarpWorld;
         public bool townWarpSet;
 
+        public bool BeastMode1 = false;
         public bool SilverSerpentRing = false;
         public bool SoulSerpentRing = false;
         public bool DragonStoneImmunity = false;
@@ -337,6 +338,7 @@ namespace tsorcRevamp
 
         public override void ResetEffects()
         {
+            BeastMode1 = false;
             SilverSerpentRing = false;
             SoulSerpentRing = false;
             DragonStoneImmunity = false;
@@ -1919,6 +1921,8 @@ namespace tsorcRevamp
             //except the first slot
             oldPos[0] = Player.position;
             //Main.NewText("" + Player.lifeRegen);
+
+            if (Player.ZoneGraveyard) { Player.AddBuff(BuffID.WaterCandle, 2); }
         }
 
         void TryForceFrame(ref Rectangle frame, ref PlayerFrames? newFrame)

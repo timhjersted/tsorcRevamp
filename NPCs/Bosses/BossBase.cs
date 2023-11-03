@@ -525,7 +525,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (justSkippedMove) //If you skipped the previous move
             { 
-                attackTransitionTimeRemaining = 30; //I set the time to half a second to allow tyme to sync... Should be enough - Chroma 
+                attackTransitionTimeRemaining = 30; //I set the time to half a second to allow time to sync... Should be enough - Chroma 
                 justSkippedMove = false; //Reset justSkippedMove
             }
             else { attackTransitionTimeRemaining = attackTransitionDuration; }

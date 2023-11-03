@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System;
@@ -24,6 +25,7 @@ using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.NPCs;
+using tsorcRevamp.NPCs.Bosses.Pinwheel;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
@@ -139,6 +141,30 @@ namespace tsorcRevamp
             On_Player.ApplyVanillaHurtEffectModifiers += On_Player_ApplyVanillaHurtEffectModifiers;
 
             On_NPC.AI_069_DukeFishron += DukeFishronAdjustment;
+
+            On_Main.HoverOverNPCs += HidePinwheelLifeOnMouseover;
+        }
+
+        private static void HidePinwheelLifeOnMouseover(On_Main.orig_HoverOverNPCs orig, Main self, Rectangle mouseRectangle)
+        {   //But why does this run every tick and not only when hovering over an enemy
+
+            List<NPC> pinwheelList = new List<NPC>();
+
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<Pinwheel>())
+                {
+                    pinwheelList.Add(Main.npc[i]);
+                    Main.npc[i].dontTakeDamage = true;
+                }
+            }
+
+            orig(self, mouseRectangle);
+
+            for (int i = 0; i < pinwheelList.Count; i++)
+            {
+                pinwheelList[i].dontTakeDamage = false;
+            }
         }
 
         private static void DukeFishronAdjustment(On_NPC.orig_AI_069_DukeFishron orig, NPC self)

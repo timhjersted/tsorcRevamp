@@ -2961,7 +2961,9 @@ namespace tsorcRevamp
             HeavenPiercerGlowmask,
             SoapstoneMessage,
             CrystalRay,
-            SeveringDuskGlowmask
+            SeveringDuskGlowmask,
+            Pinwheel,
+            PinwheelFireglow,
         }
 
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -3017,6 +3019,8 @@ namespace tsorcRevamp
                 {TransparentTextureType.SoapstoneMessage, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Tiles/SoapstoneMessage_1", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.CrystalRay, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ranged/CrystalRayTrail", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.SeveringDuskGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/SeveringDuskGlowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.Pinwheel, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Pinwheel/Pinwheel", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.PinwheelFireglow, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Pinwheel/Pinwheel_Fireglow", AssetRequestMode.ImmediateLoad)},
 
             };
 

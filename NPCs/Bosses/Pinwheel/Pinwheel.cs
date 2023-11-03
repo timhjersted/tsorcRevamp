@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 17;
+            Main.npcFrameCount[NPC.type] = 23;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire3] = true;
@@ -36,45 +36,58 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             NPC.height = 135;
             NPC.width = 60;
             NPC.damage = 0;
-            NPC.defense = 6;
+            NPC.defense = 8;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 1000;
+            NPC.lifeMax = 3000;
             NPC.timeLeft = 180;
             NPC.value = 500;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.ExampleBoss.DespawnHandler"), Color.Cyan, 180);
 
             //Terraria.GameContent.UI.BigProgressBar.IBigProgressBar bossBar;
-            //Main.BigBossProgressBar.TryGetSpecialVanillaBossBar(NPC.netID, out bossBar);
-
+            //Main.BigBossProgressBar.TryGetSpecialVanillaBossBar(NPCID.EyeofCthulhu, out bossBar);
+            //NPC.BossBar = bossBar;
 
             //You can also specify BossBase specific values here
-            introDuration = 120;
+            introDuration = 40;
             attackTransitionDuration = 120;
             //phaseTransitionDuration = 120;
-            deathAnimationDuration = 60;
+            deathAnimationDuration = 180;
             randomAttacks = true;
         }
 
         public bool isClone = false;
         bool cloneSpawned = false;
+        bool introFinished = false;
 
         public int mainBossIndex;
         bool gotMainBossIndex = false;
 
+        Vector2? cloneSpawnLocation1;
+        Vector2? cloneSpawnLocation2;
+        float transparency = 0.5f;
+        bool justTeleported = false;
+        int opacityTimer = 30;
+        int movesBeforeTeleport = 0;
+        int moveCount = 0;
+        double opacity;
+
         public override void AI()
         {
-            //Main.NewText(attackTransitionTimeRemaining);
+            NPC.dontTakeDamage = false;
+
             if (NPC.ai[3] == 1)
             {
-                introDuration = 60;
+                introDuration = 30;
+
+                NPC.BossBar = Main.BigBossProgressBar.NeverValid; //Prevents clones from having boss health bars
                 isClone = true;
                 NPC.DeathSound = SoundID.NPCDeath6;
                 NPC.lifeMax = 200;
                 NPC.timeLeft = 180;
                 NPC.value = 0;
                 NPC.boss = false;
-                //despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.ExampleBoss.DespawnHandler"), Color.Cyan, 180);
+                despawnHandler = new NPCDespawnHandler(null, Color.Black, 6);
 
                 if (!cloneSpawned) //This allows us to bring current hp down to 200 as soon as it spawns
                 {
@@ -83,7 +96,17 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 }
             }
 
-            if (!gotMainBossIndex) //Get the index of the main boss, to be able to make clones behave based on what main boss does
+            if (!introFinished && introTimer > introDuration)
+            {
+                introFinished = true;
+                movesBeforeTeleport = DecideMovesBeforeTeleport(Main.npc[NPC.whoAmI]);
+                if (!isClone)
+                {
+                    justSkippedMove = true;
+                }
+            }
+
+            if (!gotMainBossIndex && isClone) //Get the index of the main boss, to be able to make clones behave based on what main boss does
             {
                 for (int i = 0; i < Main.maxNPCs; i++) //Loop through all NPCs
                 {
@@ -102,98 +125,33 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
             if (!isClone)
             {
-                //Main.NewText(NPC.ai[0]); //AI 0 is NextMove
-
                 if (NPC.CountNPCS(ModContent.NPCType<Pinwheel>()) < 3 && NPC.ai[0] != 0 && attackTransitionTimeRemaining == 30) //If there are less than 3 Pinwheels and it wasn-t about to spawn clones anyway. Check transition time so as not to interrupt current attack
                 {
                     MoveIndex = PinwheelAttackID.CreateClonesID; //Then spawn clones, while not skipping what attack was coming next anyway
-                    //MoveTimer = 0;
                 }
+                //Main.NewText("attackTransitionTimeRemaining" + attackTransitionTimeRemaining + " " + "opacityTimer" + opacityTimer);
             }
 
-
-            despawning = despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            HandleLife();
-            Rotate();
-
-            //If the move list has not been initialized then do so
-            if (MoveList == null)
+            if (attackTransitionTimeRemaining == attackTransitionDuration)
             {
-                InitializeMovesAndDamage();
-                do
-                {
-                    NextMoveIndex = Main.rand.Next(MoveList.Count);
-                } while (NextMoveIndex != 0);
-
-                //Create the 'used move list'
-                UsableMoveList = new List<BossMove>();
-                for (int i = 0; i < MoveList.Count; i++)
-                {
-                    UsableMoveList.Add(MoveList[i]);
-                }
-
-                //Remove the two moves already picked (0 is always the first move)
-                UsableMoveList.RemoveAt(0);
-                UsableMoveList.RemoveAt(NextMoveIndex);
+                moveCount++;
+            }
+            if (opacity < 1)
+            {
+                NPC.dontTakeDamage = true;
+                NPC.velocity = Vector2.Zero;
             }
 
-            //If it's doing an attack or phase transition, then do nothing else until it's done
-            if (attackTransitionTimeRemaining > 0)
+            if (justTeleported)
             {
-                AttackTransition();
-                attackTransitionTimeRemaining--;
-                return;
+                NPC.velocity = Vector2.Zero;
+            }
+            if (opacityTimer == 30 && attackTransitionTimeRemaining == 0)
+            {
+                justTeleported = false;
             }
 
-            //If it's doing an attack or phase transition, then do nothing else until it's done
-            if (phaseTransitionTimeRemaining > 0)
-            {
-                PhaseTransition();
-                phaseTransitionTimeRemaining--;
-                return;
-            }
-
-            //If it hasn't finished its intro, then do nothing else until it's done
-            if (introTimer <= introDuration)
-            {
-                HandleIntro();
-                introTimer++;
-                return;
-            }
-
-            //If the NPC is dying, then do nothing else until it's done
-            if (NPC.life == 1)
-            {
-                if (deathAnimationProgress <= deathAnimationDuration)
-                {
-                    HandleDeath();
-                    deathAnimationProgress++;
-                    return;
-                }
-            }
-
-            //Otherwise, perform its current move normally
-            PerformMove();
-        }
-
-        //Useful code from old AI to check if it's on the ground.
-        bool OnGround()
-        {
-            bool standing_on_solid_tile = false;
-
-            int y_below_feet = (int)(NPC.position.Y + (float)NPC.height + 8f) / 16;
-            int x_left_edge = (int)NPC.position.X / 16;
-            int x_right_edge = (int)(NPC.position.X + (float)NPC.width) / 16;
-            for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
-            {
-                Tile t = Main.tile[l, y_below_feet];
-                if (t.HasTile && !t.IsActuated && Main.tileSolid[(int)t.TileType]) // tile exists and is solid
-                {
-                    standing_on_solid_tile = true;
-                    break; // one is enough so stop checking
-                }
-            } // END traverse blocks under feet
-            return standing_on_solid_tile;
+            base.AI();
         }
 
         /// <summary>
@@ -205,7 +163,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             //Create a new function for every move of your boss, and then add them to this list alongside the duration of the attack
             MoveList = new List<BossMove> 
             {
-                new BossMove(CreateClones, 300, id : PinwheelAttackID.CreateClonesID), //Always plays twice at the start, not what I want
+                new BossMove(CreateClones, 220, id : PinwheelAttackID.CreateClonesID), //Always plays twice at the start, not what I want
                 new BossMove(VolcanicEruption, 370, id : PinwheelAttackID.VolcanicEruptionID), //Move in index 1 of this list doesn't run till in second movepool loop
                 new BossMove(Flamethrower, 420, id : PinwheelAttackID.FlamethrowerID),
                 new BossMove(BouncingFireball, 180, id: PinwheelAttackID.BouncingFireballID),
@@ -242,7 +200,6 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
         public void BouncingFireball()
         {
             NPC.velocity.X *= 0f;
-            if (NPC.wet) { NPC.velocity.Y = -3.5f; }
 
             float num48 = 5f;
             Vector2 vector8 = new Vector2(NPC.Center.X, NPC.Center.Y - 30);
@@ -256,19 +213,23 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             speedX *= num51;
             speedY *= num51;
 
-            if (MoveTimer > 20)
+            int dustQuantity = (int)MoveTimer / 10;
+            for (int i = 0; i < dustQuantity; i++)
             {
-                UsefulFunctions.DustRing(vector8, 5, 6);
+                if (MoveTimer > 20)
+                {
+                    UsefulFunctions.DustRing(vector8, 10, 6, 3, 4);
+                }
             }
 
             if (MoveTimer == 90 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot bouncing fireball
             {
-
                 int type = ProjectileID.Fireball;
                 Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, DamageNumbers["BouncingFireballDamage"], 0f, Main.myPlayer, 0, 0);
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 shot1.friendly = false;
                 shot1.hostile = true;
+                shot1.timeLeft = 600;
             }
 
             if (MoveTimer == 120 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot bouncing fireball
@@ -278,6 +239,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 shot1.friendly = false;
                 shot1.hostile = true;
+                shot1.timeLeft = 600;
             }
 
             if (MoveTimer == 150 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot bouncing fireball
@@ -287,13 +249,13 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 shot1.friendly = false;
                 shot1.hostile = true;
+                shot1.timeLeft = 600;
             }
         }
 
         public void KillableFireball()
         {
             NPC.velocity.X *= 0f;
-            if (NPC.wet) { NPC.velocity.Y = -3.5f; }
 
             Vector2 lanternBottomLeft = new Vector2(NPC.position.X - 55, NPC.position.Y + 88);
             Vector2 lanternMiddleLeft = new Vector2(NPC.position.X - 58, NPC.position.Y + 16);
@@ -342,17 +304,16 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
         public void Flamethrower()
         {
             NPC.velocity.X *= 0f;
-            if (NPC.wet) { NPC.velocity.Y = -3.5f; }
 
-            int dustQuantity = (int)MoveTimer / 6;
+            int dustQuantity = (int)MoveTimer / 15;
             for (int i = 0; i < dustQuantity; i++)
             {
-                if (Main.rand.NextBool(20) && MoveTimer > 40 && MoveTimer < 120)
+                if (MoveTimer > 40 && MoveTimer < 300)
                 {
-                    int dust = Dust.NewDust(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 42), 10, 10, 6, 0, 0, 0, default(Color), 1.5f); //would usually use this when I don't plan on adjusting it after yep
+                    UsefulFunctions.DustRing(new Vector2(NPC.Center.X, NPC.Center.Y - 30), 6, 6, 1, 3);
                 }
             }
-
+            
             if (MoveTimer >= 120 && MoveTimer < 300 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 vector8 = new Vector2(NPC.Center.X - 5, NPC.Center.Y - 30);
@@ -378,20 +339,34 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 justSkippedMove = true;
                 NextMove();
             }
+            NPC.noGravity = true;
+            NPC.velocity = Vector2.Zero;
 
-            NPC.velocity *= 0f;
-
-            if (MoveTimer == 200)
+            if (MoveTimer == 0) //Get spawn and teleport locations ready at the start of the attack to allow time to sync
             {
-                Vector2 leftSide = new Vector2(NPC.Center.X - 250, NPC.Center.Y);
-                Vector2 rightSide = new Vector2(NPC.Center.X + 250, NPC.Center.Y);
-
-                //set ai[3] to 1, so it has isClone set to true
-                int cloneLeft = NPC.NewNPC(NPC.GetSource_FromThis(), (int)leftSide.X, (int)leftSide.Y, ModContent.NPCType<Pinwheel>(), 0, 1, 0, 0, 1);
-                Main.npc[cloneLeft].boss = false;
-                int cloneRight = NPC.NewNPC(NPC.GetSource_FromThis(), (int)rightSide.X, (int)rightSide.Y, ModContent.NPCType<Pinwheel>(), 0, 4, 0, 0, 1);
-                Main.npc[cloneRight].boss = false;
-
+                cloneSpawnLocation1 = GenerateTeleportPosition(NPC, 50, true); //Choose a random location for 1 of the clones to spawn at
+                cloneSpawnLocation2 = GenerateTeleportPosition(NPC, 50, true); //Choose a random location for the other clone to spawn at
+                QueueTeleport(NPC, 50, true, 200); //Choose a location for main boss to teleport to
+            }
+            if (MoveTimer >= 120)
+            {
+                NPC.dontTakeDamage = true;
+            }
+            if (MoveTimer == 220) //Spawn clones at the chosen random location and teleport main boss away
+            {
+                if (cloneSpawnLocation1.HasValue)
+                {
+                    int cloneLeft = NPC.NewNPC(NPC.GetSource_FromThis(), (int)cloneSpawnLocation1.Value.X, (int)cloneSpawnLocation1.Value.Y + 70, ModContent.NPCType<Pinwheel>(), 0, 1, 0, 0, 1);
+                    Main.npc[cloneLeft].boss = false;
+                }
+                if (cloneSpawnLocation2.HasValue)
+                {
+                    int cloneRight = NPC.NewNPC(NPC.GetSource_FromThis(), (int)cloneSpawnLocation2.Value.X, (int)cloneSpawnLocation2.Value.Y + 70, ModContent.NPCType<Pinwheel>(), 0, 4, 0, 0, 1);
+                    Main.npc[cloneRight].boss = false;
+                }
+                ExecuteQueuedTeleport(NPC);
+                justTeleported = true;
+                moveCount = 0;
             }
         }
 
@@ -434,13 +409,30 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
         public override void HandleIntro()
         {
-            if (introTimer == 30)
+            NPC.noGravity = true;
+            NPC.velocity = Vector2.Zero;
+            if (isClone)
             {
-                NextMove(); //Skip first move, which would have been a duplicate CreateClones()
+                UsefulFunctions.SmoothHoming(NPC, Target.Center, 0.01f, 0.15f);
+                NPC.noGravity = false;
+            }
+
+            if (introTimer == 40)
+            {
+                NextMove(); //Skip first move of main boss, which would have been a duplicate CreateClones()
+            }
+
+            if (introTimer == 30 && isClone)
+            {
+                NextMove();
                 NextMove();
                 NextMove();
             }
 
+            if (introTimer >= introDuration)
+            {
+                attackTransitionTimeRemaining = 0;
+            }
         }
 
         public override void HandleLife()
@@ -450,13 +442,44 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
         public override void HandleDeath()
         {
-            base.HandleDeath();
+            NPC.velocity = Vector2.Zero;
+            MoveTimer = 0;
+
+            NPC.dontTakeDamage = true;
+            if (deathAnimationProgress == deathAnimationDuration && isClone)
+            {
+                NPC.life = 0;
+            }
+            else
+            {
+                base.HandleDeath();
+            }
         }
 
-        public override void AttackTransition() 
+        public override void AttackTransition()
         {
-            if (NPC.wet) { NPC.velocity.Y = -3.5f; } //Float if in water
-            UsefulFunctions.SmoothHoming(NPC, Target.Center, 0.01f, 0.15f);
+            if (introTimer > introDuration)
+            {
+                UsefulFunctions.SmoothHoming(NPC, Target.Center, 0.01f, 0.15f);
+            }
+            else
+            {
+                NPC.noGravity = true;
+                NPC.velocity = Vector2.Zero;
+            }
+            NPC.noGravity = false;
+
+            if (attackTransitionTimeRemaining == attackTransitionDuration)
+            {
+                QueueTeleport(NPC, 50, true, 200);
+            }
+
+            if (attackTransitionTimeRemaining <= 1 && introFinished && moveCount >= movesBeforeTeleport)
+            {
+                ExecuteQueuedTeleport(NPC);
+                moveCount = 0;
+                justTeleported = true;
+            }
         }
 
 
@@ -742,6 +765,95 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             #endregion
 
 
+            #region Create Clones Move Dusts
+
+
+            if (MoveIndex == PinwheelAttackID.CreateClonesID && MoveTimer >= 20 && MoveTimer < 120)
+            {
+                if (Main.rand.NextBool(10)) //Gold
+                {
+                    Dust dust2 = Main.dust[Dust.NewDust(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    dust2.velocity *= 0.2f;
+                    dust2.noGravity = false;
+                }
+
+                if (Main.rand.NextBool(10)) //Gold
+                {
+                    Dust dust2 = Main.dust[Dust.NewDust(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    dust2.velocity *= 0.2f;
+                    dust2.noGravity = false;
+                }
+
+                if (Main.rand.NextBool(10)) //Gold
+                {
+                    Dust dust2 = Main.dust[Dust.NewDust(lanternTopLeft + new Vector2(6, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    dust2.velocity *= 0.2f;
+                    dust2.noGravity = false;
+                }
+
+                if (Main.rand.NextBool(10)) //Gold
+                {
+                    Dust dust2 = Main.dust[Dust.NewDust(lanternTopRight + new Vector2(-6, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    dust2.velocity *= 0.2f;
+                    dust2.noGravity = false;
+                }
+
+                if (Main.rand.NextBool(10)) //Gold
+                {
+                    Dust dust2 = Main.dust[Dust.NewDust(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    dust2.velocity *= 0.2f;
+                    dust2.noGravity = false;
+                }
+
+                if (Main.rand.NextBool(10)) //Gold
+                {
+                    Dust dust2 = Main.dust[Dust.NewDust(lanternBottomRight + new Vector2(4, -24), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    dust2.velocity *= 0.2f;
+                    dust2.noGravity = false;
+                }
+            }
+
+            if (MoveIndex == PinwheelAttackID.CreateClonesID && MoveTimer == 120)
+            {
+                for (int i = 0; i < 20; i++)
+                {
+                    Dust dust1 = Main.dust[Dust.NewDust(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    dust1.velocity *= Main.rand.NextFloat(0.2f, 0.5f);
+                    dust1.noGravity = false;
+
+                    Dust dust2 = Main.dust[Dust.NewDust(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    dust2.velocity *= Main.rand.NextFloat(0.2f, 0.5f);
+                    dust2.noGravity = false;
+
+                    Dust dust3 = Main.dust[Dust.NewDust(lanternTopLeft + new Vector2(6, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    dust3.velocity *= Main.rand.NextFloat(0.2f, 0.5f);
+                    dust3.noGravity = false;
+
+                    Dust dust4 = Main.dust[Dust.NewDust(lanternTopRight + new Vector2(-6, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    dust4.velocity *= Main.rand.NextFloat(0.2f, 0.5f);
+                    dust4.noGravity = false;
+
+                    Dust dust5 = Main.dust[Dust.NewDust(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    dust5.velocity *= Main.rand.NextFloat(0.2f, 0.5f);
+                    dust5.noGravity = false;
+
+                    Dust dust6 = Main.dust[Dust.NewDust(lanternBottomRight + new Vector2(4, -24), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    dust6.velocity *= Main.rand.NextFloat(0.2f, 0.5f);
+                    dust6.noGravity = false;
+                }
+
+                for (int i = 0; i < 30; i++)
+                {
+                    Dust dust1 = Main.dust[Dust.NewDust(new Vector2(NPC.Center.X - 2, NPC.position.Y), 4, NPC.height, 57, Main.rand.NextFloat(-4f, -3f), 0, 50, default(Color), 1f)];
+                    dust1.noGravity = false;
+
+                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(NPC.Center.X + 2, NPC.position.Y), 4, NPC.height, 57, Main.rand.NextFloat(3f, 4f), 0, 50, default(Color), 1f)];
+                    dust2.noGravity = false;
+                }
+            }
+
+            #endregion
+
 
             else //Dusts while not attacking. Separate randomizations so the sparse dusts look natural
             {
@@ -775,40 +887,64 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             #endregion
 
 
-            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Npc[NPC.type];
+            Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.Pinwheel];
+            Texture2D textureCloneSplit = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.PinwheelCloneSplit];
+
 
             //Draw "clones"
             if (MoveIndex == PinwheelAttackID.CreateClonesID)
             {
-                Main.NewText(cloneTimer);
-
                 if (MoveTimer > 28 && MoveTimer <= 120)
                 {
                     cloneTimer++;
                     cloneOffset = cloneTimer / 15;
-                    Main.EntitySpriteDraw(texture, NPC.position - Main.screenPosition - new Vector2(cloneOffset, 0), new Rectangle(0, NPC.frame.Y, 198, 234), Color.Gold, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
-                    Main.EntitySpriteDraw(texture, NPC.position - Main.screenPosition + new Vector2(cloneOffset, 0), new Rectangle(0, NPC.frame.Y, 198, 234), Color.Gold, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
+                    Main.EntitySpriteDraw(texture, NPC.position - Main.screenPosition - new Vector2(cloneOffset, 0), new Rectangle(0, NPC.frame.Y, 198, 234), Color.LightYellow * 0.5f, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
+                    Main.EntitySpriteDraw(texture, NPC.position - Main.screenPosition + new Vector2(cloneOffset, 0), new Rectangle(0, NPC.frame.Y, 198, 234), Color.LightYellow * 0.5f, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
                 }
-                if (MoveTimer > 120 && MoveTimer <= 200)
+                if (MoveTimer > 120 && MoveTimer <= 190)
                 {
                     cloneTimer += 2;
                     cloneOffset = cloneTimer - 108;
-                    Main.EntitySpriteDraw(texture, NPC.position - Main.screenPosition - new Vector2(cloneOffset, 0), new Rectangle(0, NPC.frame.Y, 198, 234), Color.Gold, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
-                    Main.EntitySpriteDraw(texture, NPC.position - Main.screenPosition + new Vector2(cloneOffset, 0), new Rectangle(0, NPC.frame.Y, 198, 234), Color.Gold, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
+                    Main.EntitySpriteDraw(texture, NPC.position - Main.screenPosition - new Vector2(cloneOffset, 0), new Rectangle(0, NPC.frame.Y, 198, 234), Color.LightYellow * 0.5f, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
+                    Main.EntitySpriteDraw(texture, NPC.position - Main.screenPosition + new Vector2(cloneOffset, 0), new Rectangle(0, NPC.frame.Y, 198, 234), Color.LightYellow * 0.5f, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
                 }
-                if (MoveTimer > 200 && MoveTimer <= 260)
+                if (MoveTimer > 190 && MoveTimer <= 220)
                 {
-                    Main.EntitySpriteDraw(texture, NPC.position - Main.screenPosition - new Vector2(cloneOffset, 0), new Rectangle(0, NPC.frame.Y, 198, 234), Color.Gold, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
-                    Main.EntitySpriteDraw(texture, NPC.position - Main.screenPosition + new Vector2(cloneOffset, 0), new Rectangle(0, NPC.frame.Y, 198, 234), Color.Gold, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
-                }
-                if (MoveTimer > 260)
-                {
-                    cloneTimer = 0;
+                    transparency -= 0.016f;
+                    cloneOffset = cloneTimer - 108;
+                    Main.EntitySpriteDraw(texture, NPC.position - Main.screenPosition - new Vector2(cloneOffset, 0), new Rectangle(0, NPC.frame.Y, 198, 234), Color.LightYellow * transparency, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
+                    Main.EntitySpriteDraw(texture, NPC.position - Main.screenPosition + new Vector2(cloneOffset, 0), new Rectangle(0, NPC.frame.Y, 198, 234), Color.LightYellow * transparency, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
                 }
             }
 
+            if (MoveIndex != PinwheelAttackID.CreateClonesID)
+            {
+                cloneTimer = 0;
+            }
+
+            if (introFinished && !justTeleported && ((attackTransitionTimeRemaining >= 0 && attackTransitionTimeRemaining < 30) && moveCount >= movesBeforeTeleport) || (MoveIndex == PinwheelAttackID.CreateClonesID && MoveTimer > 190 && MoveTimer <= 220))
+            {
+                opacityTimer--;
+            }
+            if (opacityTimer < 30 && justTeleported)
+            {
+                opacityTimer++;
+            }
+            /*if (opacityTimer == 30)
+            {
+                justTeleported = false;
+            }*/
+
+            opacity = (double)opacityTimer / (double)30;
+            if (introTimer < introDuration && !isClone) { opacity = (double)introTimer / (double)40; }
+            if (introTimer < introDuration && isClone) { opacity = (double)introTimer / (double)30; }
+
+            //Death opacity
+            if (deathAnimationProgress > deathAnimationDuration / 2) { opacity = ((double)deathAnimationProgress / (double)90) * -1 + 2; }
+
+
             //Draw main boss texture
-            Main.EntitySpriteDraw(texture, NPC.position - Main.screenPosition, new Rectangle(0, NPC.frame.Y, 198, 234), lightColor, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture, NPC.position - Main.screenPosition, new Rectangle(0, NPC.frame.Y, 198, 234), lightColor * (float)opacity, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
 
             return false;
         }
@@ -817,219 +953,105 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
             //Glow mask for fire in lanterns
-            Texture2D fireTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Bosses/Pinwheel/Pinwheel_Fireglow");
-            spriteBatch.Draw(fireTexture, NPC.position - Main.screenPosition + new Vector2(0f, NPC.gfxOffY), new Rectangle(0, NPC.frame.Y, 198, 234), Color.White, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
+            double fireTextureOpacity = (double)opacityTimer / (double)30;
+            if (introTimer < introDuration && !isClone) { fireTextureOpacity = (double)introTimer / (double)40; }
+            if (introTimer < introDuration && isClone) { fireTextureOpacity = (double)introTimer / (double)30; }
+
+            //Death opacity
+            if (deathAnimationProgress > deathAnimationDuration / 2) { fireTextureOpacity = ((double)deathAnimationProgress / (double)90) * -1 + 2; }
+
+            Texture2D fireTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.PinwheelFireglow];
+            spriteBatch.Draw(fireTexture, NPC.position - Main.screenPosition + new Vector2(0f, NPC.gfxOffY), new Rectangle(0, NPC.frame.Y, 198, 234), Color.White * (float)fireTextureOpacity, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
         }
 
 
         public override void FindFrame(int frameHeight)
         {
-            // To be changed
-            #region Intro animation
+
+            /*if (opacity < 1)
+            {
+                NPC.frame.Y = 0 * frameHeight;
+            }*/
 
             if (introTimer < introDuration)
             {
-                NPC.frameCounter++;
-
-                if (NPC.frameCounter < 64) //in this case this should do
+                NPC.frame.Y = 0 * frameHeight;
+                /*if (Math.Abs(NPC.velocity.X) > 0 || Math.Abs(NPC.velocity.Y) > 0)
                 {
-                    NPC.frame.Y = (int)(NPC.frameCounter / 4) * frameHeight; //under 64 will at most come up with 15 * frameheight, same as with the else if chain
-                } 
-                else 
-                {
-                    NPC.frameCounter = 0; //above 63 it resets the counter to 0 but it didn't do anything else in that tick, so frameY stays at 15 * frameheight I guess
-                }
-                /*
-                switch (NPC.frameCounter) this is one alternative to the infintie else if chain: switch statement, better performance like this because it just has to choose one case and not loop through every if statement until it gets to the right one
-                {
-                    case double one when one < 4:
-                        {
-                            NPC.frame.Y = 0 * frameHeight;
-                            break;
-                        }
-                    case double two when two >= 4 && two < 8:
-                        {
-                            NPC.frame.Y = 1 * frameHeight;
-                            break;
-                        }
-                    case double three when three >= 8 && three < 12:
-                        {
-                            NPC.frame.Y = 2 * frameHeight;
-                            break;
-                        }
-                    case double four when four >= 12 && four < 16:
-                        {
-                            NPC.frame.Y = 3 * frameHeight;
-                            break;
-                        }
-                    case double five when five >= 16 && five < 20:
-                        {
-                            NPC.frame.Y = 4 * frameHeight;
-                            break;
-                        }
-                    //and so on
-                    default:
-                        {
-                            NPC.frameCounter = 0;
-                            break;
-                        }
+                    if (NPC.frameCounter < 352)
+                    {
+                        NPC.frame.Y = (int)(NPC.frameCounter / 22) * frameHeight;
+                    }
+                    else
+                    {
+                        NPC.frameCounter = 0;
+                    }
                 }*/
 
-                /* don't do this
-                if (NPC.frameCounter < 4)
-                {
-                    NPC.frame.Y = 0 * frameHeight;
-                }
-                else if (NPC.frameCounter < 8)
-                {
-                    NPC.frame.Y = 1 * frameHeight;
-                }
-                else if (NPC.frameCounter < 12)
-                {
-                    NPC.frame.Y = 2 * frameHeight;
-                }
-                else if (NPC.frameCounter < 16)
-                {
-                    NPC.frame.Y = 3 * frameHeight;
-                }
-                else if (NPC.frameCounter < 20)
-                {
-                    NPC.frame.Y = 4 * frameHeight;
-                }
-                else if (NPC.frameCounter < 24)
-                {
-                    NPC.frame.Y = 5 * frameHeight;
-                }
-                else if (NPC.frameCounter < 28)
-                {
-                    NPC.frame.Y = 6 * frameHeight;
-                }
-                else if (NPC.frameCounter < 32)
-                {
-                    NPC.frame.Y = 7 * frameHeight;
-                }
-                else if (NPC.frameCounter < 36)
-                {
-                    NPC.frame.Y = 8 * frameHeight;
-                }
-                else if (NPC.frameCounter < 40)
-                {
-                    NPC.frame.Y = 9 * frameHeight;
-                }
-                else if (NPC.frameCounter < 44)
-                {
-                    NPC.frame.Y = 10 * frameHeight;
-                }
-                else if (NPC.frameCounter < 48)
-                {
-                    NPC.frame.Y = 11 * frameHeight;
-                }
-                else if (NPC.frameCounter < 52)
-                {
-                    NPC.frame.Y = 12 * frameHeight;
-                }
-                else if (NPC.frameCounter < 56)
-                {
-                    NPC.frame.Y = 13 * frameHeight;
-                }
-                else if (NPC.frameCounter < 60)
-                {
-                    NPC.frame.Y = 14 * frameHeight;
-                }
-                else if (NPC.frameCounter < 64)
-                {
-                    NPC.frame.Y = 15 * frameHeight;
-                }
-                else
-                {
-                    NPC.frameCounter = 0;
-                }*/
+
+                //int frameTimer;
+                    /*NPC.frameCounter++;
+
+                    if (NPC.frameCounter < 40) //9, 16,  
+                    {
+                        NPC.frame.Y = (int)((NPC.frameCounter / 8) + 17) * frameHeight; //under 64 will at most come up with 15 * frameheight, same as with the else if chain
+                    } 
+                    else 
+                    {
+                        NPC.frameCounter = 0; //above 63 it resets the counter to 0 but it didn't do anything else in that tick, so frameY stays at 15 * frameheight I guess
+                    }
+                    /*
+                    switch (NPC.frameCounter) this is one alternative to the infintie else if chain: switch statement, better performance like this because it just has to choose one case and not loop through every if statement until it gets to the right one
+                    {
+                        case double one when one < 4:
+                            {
+                                NPC.frame.Y = 0 * frameHeight;
+                                break;
+                            }
+                        case double two when two >= 4 && two < 8:
+                            {
+                                NPC.frame.Y = 1 * frameHeight;
+                                break;
+                            }
+                        case double three when three >= 8 && three < 12:
+                            {
+                                NPC.frame.Y = 2 * frameHeight;
+                                break;
+                            }
+                        case double four when four >= 12 && four < 16:
+                            {
+                                NPC.frame.Y = 3 * frameHeight;
+                                break;
+                            }
+                        case double five when five >= 16 && five < 20:
+                            {
+                                NPC.frame.Y = 4 * frameHeight;
+                                break;
+                            }
+                        //and so on
+                        default:
+                            {
+                                NPC.frameCounter = 0;
+                                break;
+                            }
+                    }*/
             }
 
             #endregion
 
 
-            if (attackTransitionTimeRemaining < attackTransitionDuration && MoveTimer == 0 && introTimer >= introDuration)
+            if (attackTransitionTimeRemaining < attackTransitionDuration && MoveTimer == 0 && introTimer >= introDuration && Math.Abs(NPC.velocity.X) > 0)
             {
                 NPC.frameCounter++;
 
                 if (NPC.frameCounter < 352)
                 {
                     NPC.frame.Y = (int)(NPC.frameCounter / 22) * frameHeight;
-                } 
-                else
-                {
-                    NPC.frameCounter = 0;
-                }
-                /*
-                if (NPC.frameCounter < 22)
-                {
-                    NPC.frame.Y = 0 * frameHeight;
-                }
-                else if (NPC.frameCounter < 44)
-                {
-                    NPC.frame.Y = 1 * frameHeight;
-                }
-                else if (NPC.frameCounter < 66)
-                {
-                    NPC.frame.Y = 2 * frameHeight;
-                }
-                else if (NPC.frameCounter < 88)
-                {
-                    NPC.frame.Y = 3 * frameHeight;
-                }
-                else if (NPC.frameCounter < 110)
-                {
-                    NPC.frame.Y = 4 * frameHeight;
-                }
-                else if (NPC.frameCounter < 132)
-                {
-                    NPC.frame.Y = 5 * frameHeight;
-                }
-                else if (NPC.frameCounter < 154)
-                {
-                    NPC.frame.Y = 6 * frameHeight;
-                }
-                else if (NPC.frameCounter < 176)
-                {
-                    NPC.frame.Y = 7 * frameHeight;
-                }
-                else if (NPC.frameCounter < 198)
-                {
-                    NPC.frame.Y = 8 * frameHeight;
-                }
-                else if (NPC.frameCounter < 220)
-                {
-                    NPC.frame.Y = 9 * frameHeight;
-                }
-                else if (NPC.frameCounter < 242)
-                {
-                    NPC.frame.Y = 10 * frameHeight;
-                }
-                else if (NPC.frameCounter < 264)
-                {
-                    NPC.frame.Y = 11 * frameHeight;
-                }
-                else if (NPC.frameCounter < 286)
-                {
-                    NPC.frame.Y = 12 * frameHeight;
-                }
-                else if (NPC.frameCounter < 308)
-                {
-                    NPC.frame.Y = 13 * frameHeight;
-                }
-                else if (NPC.frameCounter < 330)
-                {
-                    NPC.frame.Y = 14 * frameHeight;
-                }
-                else if (NPC.frameCounter < 352)
-                {
-                    NPC.frame.Y = 15 * frameHeight;
                 }
                 else
                 {
                     NPC.frameCounter = 0;
-                }*/
+                }
             }
 
 
@@ -1049,7 +1071,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
             if (MoveIndex == PinwheelAttackID.FlamethrowerID && MoveTimer != 0 && MoveTimer <= 300)
             {
-                NPC.frameCounter++;
+                //NPC.frameCounter++;
 
                 if (MoveTimer < 20)
                 {
@@ -1057,13 +1079,13 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 }
                 else if (MoveTimer < 300)
                 {
-                    NPC.frame.Y = 16 * frameHeight;
+                    NPC.frame.Y = 17 * frameHeight;
                 }
             }
 
             if (MoveIndex == PinwheelAttackID.VolcanicEruptionID && MoveTimer != 0 && MoveTimer <= 280)
             {
-                NPC.frameCounter++;
+                //NPC.frameCounter++;
 
                 if (MoveTimer < 20)
                 {
@@ -1071,13 +1093,222 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 }
                 else if (MoveTimer < 280)
                 {
+                    NPC.frame.Y = 17 * frameHeight;
+                }
+            }
+
+            if (MoveIndex == PinwheelAttackID.CreateClonesID && MoveTimer != 0 && MoveTimer < 220)
+            {
+                if (MoveTimer < 120)
+                {
                     NPC.frame.Y = 16 * frameHeight;
+                }
+                else if (MoveTimer < 220)
+                {
+                    NPC.frame.Y = 17 * frameHeight;
+                }
+            }
+
+            if (opacityTimer != 30 && attackTransitionTimeRemaining != 0)
+            {
+                NPC.frameCounter = 0;
+                NPC.frame.Y = 0 * frameHeight;
+            }
+
+            if (deathAnimationProgress > 0) //If dying
+            {
+                if (deathAnimationProgress < 30)
+                {
+                    NPC.frame.Y = 17 * frameHeight;
+                }
+                else if (deathAnimationProgress < 40)
+                {
+                    NPC.frame.Y = 0 * frameHeight;
+                }
+                else if (deathAnimationProgress < 50)
+                {
+                    NPC.frame.Y = 21 * frameHeight;
+                }
+                else if (deathAnimationProgress <= 180)
+                {
+                    NPC.frame.Y = 22 * frameHeight;
                 }
             }
         }
 
-        #endregion
 
+        #region Modified Teleportation Functions
+
+
+        public int DecideMovesBeforeTeleport(NPC npc)
+        {
+            int Moves = Main.rand.Next(2, 4); //Between 2 and 3
+
+            if (isClone)
+            {
+                Moves = Main.rand.Next(1, 4); //Between 1 and 3
+                if (npc.life < npc.lifeMax * 0.8f) { Moves = Main.rand.Next(1, 3); } //Between 1 and 2
+            }
+            else
+            {
+
+                if (npc.life < npc.lifeMax * 0.8f && npc.life >= npc.lifeMax / 2) { Moves = Main.rand.Next(1, 4); } //Between 1 and 3
+                if (npc.life < npc.lifeMax / 2) { Moves = Main.rand.Next(1, 3); } //Between 1 and 2
+            }
+
+            /*int Moves = Main.rand.Next(2, 4); //Between 2 and 3
+            if (npc.life < npc.lifeMax * 0.8f && npc.life >= npc.lifeMax / 2) { Moves = Main.rand.Next(1, 4); } //Between 1 and 3
+            if (npc.life < npc.lifeMax / 2) { Moves = Main.rand.Next(1, 3); } //Between 1 and 2*/
+            return Moves;
+
+        }
+        public static Vector2? GenerateTeleportPosition(NPC npc, int range, bool requireLineofSight = true)
+        {
+            //Do not teleport if the player is way way too far away (stops enemies following you home if you mirror away)
+            if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 2000f)
+            { // far away from target; 2000 pixels = 125 blocks
+                return null;
+            }
+
+            //Try 100 times at most
+            for (int i = 0; i < 100; i++)
+            {
+                Vector2 teleportTarget = Vector2.Zero;
+                
+                //Pinwheel doesn't need as low of a minimum range as he doesn't deal contact damage and has 2 seconds wind up before any attack.
+
+                teleportTarget.X = Main.rand.Next(2, range);
+                if (Main.rand.NextBool())
+                {
+                    teleportTarget.X *= -1;
+                }
+
+                //Add the player's position to it to convert it to an actual tile coordinate
+                teleportTarget += Main.player[npc.target].position / 16;
+
+                //Starting from the point we picked, go down one block at a time until we find hit a solid block
+                bool odd = false;
+                for (int y = 0; Math.Abs(y) < range / 2;)
+                {
+                    if (odd)
+                    {
+                        y *= -1;
+                        y++;
+                        odd = !odd;
+                    }
+                    else
+                    {
+                        y *= -1;
+                        odd = !odd;
+                    }
+                    if (UsefulFunctions.IsTileReallySolid((int)teleportTarget.X, (int)teleportTarget.Y + y))
+                    {
+                        //Skip to the next tile if any of the following is true:
+
+                        // If there are solid blocks in the way, leaving no room to teleport to
+                        if (Collision.SolidTiles((int)teleportTarget.X - 1, (int)teleportTarget.X + 1, (int)teleportTarget.Y + y - 4, (int)teleportTarget.Y + y - 1))
+                        {
+                            //Main.NewText("Fail 1");
+                            continue;
+                        }
+
+                        //If it requires line of sight, and there is not a clear path, and it has not tried at least 50 times, then skip to the next try
+                        else if (requireLineofSight && !(Collision.CanHit(new Vector2(teleportTarget.X, (int)teleportTarget.Y + y), 2, 2, Main.player[npc.target].Center / 16, 2, 2) && Collision.CanHitLine(new Vector2(teleportTarget.X, (int)teleportTarget.Y + y), 2, 2, Main.player[npc.target].Center / 16, 2, 2)))
+                        {
+                            //Main.NewText("Fail 3");
+                            continue;
+                        }
+
+                        //If the selected tile has lava above it, and the npc isn't immune
+                        else if (Main.tile[(int)teleportTarget.X, (int)teleportTarget.Y + y - 1].LiquidType == LiquidID.Lava && !npc.lavaImmune)
+                        {
+                            //Main.NewText("Fail 4");
+                            continue;
+                        }
+
+                        //Then teleport and return
+                        Vector2 newPosition = Vector2.Zero;
+                        newPosition.X = ((int)teleportTarget.X * 16 - npc.width / 2); //Center npc at target
+                        newPosition.Y = (((int)teleportTarget.Y + y) * 16 - 70); //Subtract 75, not npc.height from y so block is under feet (because of the way its drawn)
+                        npc.TargetClosest(true);
+                        npc.netUpdate = true;
+                        //Main.NewText(newPosition.X + " " + newPosition.Y);
+                        return newPosition;
+                    }
+                }
+            }
+
+            return null;
+        }
+        public static void QueueTeleport(NPC npc, int range, bool requireLineofSight = true, int TeleportTelegraphTime = 140)
+        {
+            Vector2? potentialNewPos;
+
+            //SoundEngine.PlaySound(SoundID.Item8, npc.Center);
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    potentialNewPos = GenerateTeleportPosition(npc, range, requireLineofSight);
+                    if (potentialNewPos.HasValue && (!requireLineofSight || (Collision.CanHit(potentialNewPos.Value, 1, 1, Main.player[npc.target].Center, 1, 1) && Collision.CanHitLine(potentialNewPos.Value, 1, 1, Main.player[npc.target].Center, 1, 1))))
+                    {
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportCountdown = TeleportTelegraphTime;
+                        npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportTelegraph = potentialNewPos.Value;
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            //Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer, npc.whoAmI, TeleportTelegraphTime);
+                            //Projectile.NewProjectileDirect(npc.GetSource_FromThis(), potentialNewPos.Value, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.TeleportTelegraph>(), 0, 0, Main.myPlayer, ai1: TeleportTelegraphTime);
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        public void ExecuteQueuedTeleport(NPC npc)
+        {
+            tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            //SoundEngine.PlaySound(SoundID.Item8, npc.Center);
+
+
+            Vector2 diff = globalNPC.TeleportTelegraph - npc.Center;
+            float length = diff.Length();
+            diff.Normalize();
+            Vector2 offset = Vector2.Zero;
+
+            for (int i = 0; i < length; i++)
+            {
+                offset += diff;
+                if (Main.rand.NextBool(2))
+                {
+                    Vector2 dustPoint = offset;
+                    dustPoint.X += Main.rand.NextFloat(-npc.width / 2, npc.width / 2);
+                    dustPoint.Y += Main.rand.NextFloat(-npc.height / 2, npc.height / 2);
+                    if (Main.rand.NextBool() && isClone)
+                    {
+                        //Dust.NewDustPerfect(npc.Center + dustPoint, 71, diff * 5, 200, default, 0.8f).noGravity = true;
+                    }
+                    else
+                    {
+                        //Dust.NewDustPerfect(npc.Center + dustPoint, DustID.FireworkFountain_Pink, diff * 5, 200, default, 0.8f).noGravity = true;
+                    }
+                }
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                //Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+                //Projectile.NewProjectileDirect(npc.GetSource_FromThis(), globalNPC.TeleportTelegraph, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 350, 20);
+            }
+
+            movesBeforeTeleport = DecideMovesBeforeTeleport(Main.npc[npc.whoAmI]);
+            npc.Center = globalNPC.TeleportTelegraph;
+        }
+
+        #endregion
 
     }
 }

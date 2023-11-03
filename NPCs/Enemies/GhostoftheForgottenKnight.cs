@@ -139,17 +139,20 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
+            if (NPC.downedBoss3)
+            {
+                npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Weapons.Ranged.Thrown.EphemeralThrowingSpear>(), 5, 25, 30, 2));
+                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<EphemeralDust>(), 1, 3, 9));
+                npcLoot.Add(ItemDropRule.Common(ItemID.GoldenKey, 20));
+            }
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Ranged.Thrown.RoyalThrowingSpear>(), 4, 25, 35));
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Weapons.Ranged.Thrown.EphemeralThrowingSpear>(), 5, 25, 30, 2));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.HealingElixir>(), 5, 1, 1, 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<EphemeralDust>(), 1, 3, 9));
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 35));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 35));
             npcLoot.Add(new CommonDrop(ItemID.HunterPotion, 100, 1, 1, 8));
             npcLoot.Add(new CommonDrop(ItemID.RegenerationPotion, 100, 1, 1, 6));
             npcLoot.Add(new CommonDrop(ItemID.ShinePotion, 100, 1, 1, 30));
             npcLoot.Add(ItemDropRule.Common(ItemID.BattlePotion, 30));
-            npcLoot.Add(ItemDropRule.Common(ItemID.GoldenKey, 20));
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofNight));
             npcLoot.Add(hmCondition);

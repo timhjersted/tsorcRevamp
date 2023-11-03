@@ -440,6 +440,12 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.MeteorHead, 0.01f);
             }
 
+            if (spawnInfo.Player.ZoneGraveyard && !Main.hardMode)
+            {
+                pool.Add(NPCID.BigMisassembledSkeleton, 0.2f);
+                pool.Add(NPCID.BoneThrowingSkeleton2, 0.2f);
+            }
+
             //HARD MODE SECTION
 
             //golem temple
