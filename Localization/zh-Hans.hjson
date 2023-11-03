@@ -267,6 +267,7 @@ Mods: {
 			DualSandsprogAmbush1: 遭遇偷袭！
 			HellkiteDragon: 村庄受到袭击！一条炼狱鸢龙前来捕食...
 			Bossduration: "耗时: "
+			// Pinwheel: Pinwheel turns its glance to you.
 		}
 
 		UI: {
