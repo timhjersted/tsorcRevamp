@@ -13,6 +13,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Items.Armors.Magic;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles.Pets;
@@ -73,6 +74,7 @@ namespace tsorcRevamp.Projectiles
         public bool ModdedWhip = false;
         public bool ChargedWhip = false;
         public bool ModdedFlail = false;
+        public bool KrakenEmpowered = false;
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
             /*projectilesource experiments
@@ -509,6 +511,10 @@ namespace tsorcRevamp.Projectiles
                 {
                     modifiers.FinalDamage *= 0.89f;
                 }
+            }
+            if (KrakenEmpowered)
+            {
+                modifiers.SourceDamage += KrakenCarcass.TsunamiDmgBoost / 100f;
             }
 
             #region Vanilla whip tip crits

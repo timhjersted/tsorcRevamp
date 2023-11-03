@@ -108,6 +108,8 @@ namespace tsorcRevamp
 
         public bool CanUseItemsWhileDodging;
 
+        public bool Kraken;
+
         public bool Lich;
         public int LichKills = 0;
 

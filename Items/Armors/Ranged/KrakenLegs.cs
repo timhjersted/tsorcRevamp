@@ -6,12 +6,13 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Armors.Magic
 {
+    [Autoload(false)]
     [AutoloadEquip(EquipType.Legs)]
-    public class NecromancersPants : ModItem
+    public class KrakenLegs : ModItem
     {
         public const int SoulCost = 70000;
         public const float DmgMult = 20f;
-        public const float MoveSpeed = 29f;
+        public const float MoveSpeed = 34f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMult, MoveSpeed);
         public override void SetStaticDefaults()
         {
@@ -20,19 +21,19 @@ namespace tsorcRevamp.Items.Armors.Magic
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 21;
+            Item.defense = 23;
             Item.rare = ItemRarityID.Purple;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Magic) *= 1f + DmgMult / 100f;
+            player.GetDamage(DamageClass.Ranged) *= 1f + DmgMult / 100f;
             player.moveSpeed += MoveSpeed / 100f;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SpectrePants);
+            recipe.AddIngredient(ItemID.ShroomiteLeggings);
             recipe.AddIngredient(ModContent.ItemType<LichBone>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);

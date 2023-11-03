@@ -4,40 +4,37 @@ using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Items.Ammo;
 using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.Items.Weapons.Summon
+namespace tsorcRevamp.Items.Weapons.Summon.Sentry
 {
     [Autoload(false)]
-    public class BeetleIdol : ModItem
+    public class Typhoon : ModItem
     {
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 3;
         }
         public override void SetDefaults()
         {
-            Item.damage = 20;
-            Item.knockBack = 3f;
+            Item.damage = 40;
+            Item.knockBack = 9f;
             Item.mana = 10;
-            Item.width = 32;
-            Item.height = 32;
-            Item.useTime = 30;
-            Item.useAnimation = 30;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.value = Item.buyPrice(0, 40, 0, 0);
-            Item.UseSound = SoundID.Item44;
-            Item.rare = ItemRarityID.Purple;
-
-
+            Item.width = 36;
+            Item.height = 58;
+            Item.useTime = 20;
+            Item.useAnimation = 20;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.value = Item.buyPrice(0, 30, 0, 0);
+            Item.rare = ItemRarityID.Orange;
+            Item.UseSound = SoundID.DD2_DefenseTowerSpawn;
+            Item.sentry = true;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
-            Item.buffType = ModContent.BuffType<SamuraiBeetleBuff>();
-            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.SamuraiBeetle>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Sentry.TyphoonProjectile>();
         }
 
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
@@ -48,23 +45,18 @@ namespace tsorcRevamp.Items.Weapons.Summon
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            // This is needed so the buff that keeps your minion alive and allows you to despawn it properly applies
-            player.AddBuff(Item.buffType, 2);
-
-            // Minions have to be spawned manually, then have originalDamage assigned to the damage of the summon item
             var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
             projectile.originalDamage = Item.damage;
+            player.UpdateMaxTurrets();
 
-            // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
             return false;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.LunarBar, 5);
-            recipe.AddIngredient(ItemID.BeetleWings);
-            recipe.AddIngredient(ItemID.BeetleHusk, 4);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 88000);
+            recipe.AddIngredient(ModContent.ItemType<Galeforce>());
+            recipe.AddIngredient(ItemID.HellstoneBar, 10);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

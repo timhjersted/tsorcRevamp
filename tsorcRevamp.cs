@@ -93,6 +93,7 @@ namespace tsorcRevamp
         public static ModKeybind reflectionShiftKey;
         public static ModKeybind specialAbility;
         public static ModKeybind NecromancersSpell;
+        public static ModKeybind KrakensCast;
         public static ModKeybind WolfRing;
         public static ModKeybind WingsOfSeath;
         public static ModKeybind Shunpo;
@@ -186,9 +187,11 @@ namespace tsorcRevamp
             reflectionShiftKey = KeybindLoader.RegisterKeybind(this, "Reflection Shift", Microsoft.Xna.Framework.Input.Keys.O);
             DodgerollKey = KeybindLoader.RegisterKeybind(this, "Dodge Roll", Microsoft.Xna.Framework.Input.Keys.LeftAlt);
             specialAbility = KeybindLoader.RegisterKeybind(this, "Special Ability", Microsoft.Xna.Framework.Input.Keys.Q);
-            NecromancersSpell = KeybindLoader.RegisterKeybind(this, "Necromancers Spell", Microsoft.Xna.Framework.Input.Keys.X);
             WolfRing = KeybindLoader.RegisterKeybind(this, "Wolf Ring", Microsoft.Xna.Framework.Input.Keys.Y);
             WingsOfSeath = KeybindLoader.RegisterKeybind(this, "Wings of Seath speed toggle", Microsoft.Xna.Framework.Input.Keys.U);
+            //armor set bonus keybinds
+            NecromancersSpell = KeybindLoader.RegisterKeybind(this, "Necromancers Spell", Microsoft.Xna.Framework.Input.Keys.V);
+            KrakensCast = KeybindLoader.RegisterKeybind(this, "Necromancers Spell", Microsoft.Xna.Framework.Input.Keys.V);
             Shunpo = KeybindLoader.RegisterKeybind(this, "Shunpo", Microsoft.Xna.Framework.Input.Keys.V);
             //SwordflipKey = KeybindLoader.RegisterKeybind(this, "Sword Flip", Microsoft.Xna.Framework.Input.Keys.P);
 
@@ -1014,6 +1017,7 @@ namespace tsorcRevamp
             reflectionShiftKey = null;
             specialAbility = null;
             NecromancersSpell = null;
+            KrakensCast = null;
             WolfRing = null;
             WingsOfSeath = null;
             Shunpo = null;

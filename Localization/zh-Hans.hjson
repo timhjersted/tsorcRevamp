@@ -8973,6 +8973,9 @@ Mods: {
 			WorldEnderSword.DisplayName: 末世之剑
 			RuneterraKatanaTornado.DisplayName: 符文之地系列武器旋风
 			SpiritAshKnightMinion.DisplayName: 灵灰骑士
+			// KrakenTsunami.DisplayName: Kraken Tsunami
+			// TyphoonProjectile.DisplayName: Typhoon Projectile
+			// TyphoonArrow.DisplayName: Typhoon Arrow
 		}
 
 		NPCs: {
