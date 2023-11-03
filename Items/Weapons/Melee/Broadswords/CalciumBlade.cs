@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ItemID.Bone, 9);
+            recipe.AddIngredient(ItemID.Bone, 22);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
 
             recipe.AddTile(TileID.DemonAltar);

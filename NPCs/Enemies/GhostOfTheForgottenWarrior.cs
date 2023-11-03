@@ -55,11 +55,6 @@ namespace tsorcRevamp.NPCs.Enemies
 
             UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), warriorDamage, 8, SoundID.Item17);
         }
-        public override void OnKill()
-        {
-            if (Main.rand.NextBool(10) && NPC.downedBoss3) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.Thrown.EphemeralThrowingSpear>(), Main.rand.Next(15, 26));
-            if (Main.rand.NextBool(30) && NPC.downedBoss3) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<GreatMagicShieldScroll>());
-        }
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -150,8 +145,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ItemID.GoldenKey, 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<EphemeralDust>(), 1, 2, 4));
+            if (NPC.downedBoss3)
+            {
+                npcLoot.Add(ItemDropRule.Common(ItemID.GoldenKey, 10));
+                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<EphemeralDust>(), 1, 2, 4));
+                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Ranged.Thrown.EphemeralThrowingSpear>(), 10, 15, 26));
+                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<GreatMagicShieldScroll>(), 30));
+            }
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofNight));
             npcLoot.Add(hmCondition);

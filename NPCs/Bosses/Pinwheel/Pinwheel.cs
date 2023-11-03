@@ -36,10 +36,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             NPC.height = 135;
             NPC.width = 60;
             NPC.damage = 0;
-            NPC.defense = 8;
+            NPC.defense = 6;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 3000;
+            NPC.lifeMax = 2500;
             NPC.timeLeft = 180;
             NPC.value = 500;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.ExampleBoss.DespawnHandler"), Color.Cyan, 180);
@@ -120,6 +120,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
             if (isClone && Main.npc[mainBossIndex].life <= 1) //Kill clones if main boss dies
             {
+                MoveTimer = 0;
                 NPC.life = 1;
             }
 
@@ -175,10 +176,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             //Remember: Contact damage is doubled, and projectile damage is multiplied by 4!
             DamageNumbers = new Dictionary<string, int>
             {
-                ["BouncingFireballDamage"] = 14,
-                ["KillableFireballDamage"] = 40,
-                ["FlamethrowerDamage"] = 10,
-                ["VolcanicEruptionDamage"] = 16,
+                ["BouncingFireballDamage"] = 8, //was 14
+                ["KillableFireballDamage"] = 26, //was 40
+                ["FlamethrowerDamage"] = 6, //was 10
+                ["VolcanicEruptionDamage"] = 9, //was 16
                 ["BaseContactDamage"] = 0,
             };
         }
@@ -320,7 +321,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 Vector2 shootSpeed = UsefulFunctions.Aim(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 30), Target.Center, 1f);
                 for (int i = 0; i < 3; i++)
                 {
-                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(shootSpeed.X * Main.rand.NextFloat(7, 10), shootSpeed.Y * Main.rand.NextFloat(5, 10)), ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>(), DamageNumbers["FlamethrowerDamage"], 0f, Main.myPlayer);
+                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(shootSpeed.X * Main.rand.NextFloat(4, 6), shootSpeed.Y * Main.rand.NextFloat(4, 6)), ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>(), DamageNumbers["FlamethrowerDamage"], 0f, Main.myPlayer);
                     shot1.timeLeft = 50;
                 }
                 //play breath sound
