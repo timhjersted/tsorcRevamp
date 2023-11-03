@@ -888,8 +888,6 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
 
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.Pinwheel];
-            Texture2D textureCloneSplit = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.PinwheelCloneSplit];
-
 
             //Draw "clones"
             if (MoveIndex == PinwheelAttackID.CreateClonesID)
