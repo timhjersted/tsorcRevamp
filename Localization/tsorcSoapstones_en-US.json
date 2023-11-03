@@ -1,18 +1,4 @@
 {
-  "text": "Here lies Melania of Farron.--NEWLINE  --NEWLINE Not a mage, but well known for using magic as a tool rather than a weapon.--NEWLINE  --NEWLINE Long may she rest. --NEWLINE  --NEWLINE",
-  "tileX": 4237,
-  "tileY": 789,
-  "textWidth": 320,
-  "style": 1,
-
-
-  "text": "- You have discovered the Catacombs of the Drowned -  --NEWLINE  --NEWLINE ",
-  "tileX": 4360,
-  "tileY": 765,
-  "textWidth": 320,
-  "style": 1,
-
-
   "text": "- You have discovered the lair of the Lich King, the Earth Fiend Spirit - --NEWLINE  --NEWLINE ",
   "tileX": 58,
   "tileY": 1911,
@@ -1175,6 +1161,13 @@
   "style": 1
 }
 {
+  "text": "Here lies Melania of Farron. --NEWLINE  --NEWLINE Not a mage, but well known for using magic as a tool rather than a weapon. --NEWLINE  --NEWLINE Long may she rest.",
+  "tileX": 4237,
+  "tileY": 789,
+  "textWidth": 320,
+  "style": 1,
+}
+{
   "text": "\u0022Elijah and your wife, I don\u0027t know. I rushed home when I saw the smoke in the valley. They were nowhere in sight. I only found you and our parents. Village scouts who saw the attack said the army headed East...\u0022  --NEWLINE  --NEWLINE \u0022Then there\u0027s still a chance they\u0027re alive,\u0022 you say calmly, still numb to what\u0027s happened. --NEWLINE  --NEWLINE ",
   "tileX": 4244,
   "tileY": 709,
@@ -1285,6 +1278,13 @@
   "tileY": 1041,
   "textWidth": 320,
   "style": 1
+}
+{
+  "text": "- You have discovered the Catacombs of the Drowned - ",
+  "tileX": 4360,
+  "tileY": 765,
+  "textWidth": 320,
+  "style": 1,
 }
 {
   "text": "Solaire\u0027s Watch Tower -- After Solaire greets you with a prayer for the sun, he asks if you\u0027ve spoken with Jade yet - the woman who keeps watch outside the village. --NEWLINE  --NEWLINE \u0022Go and speak with her my friend! She has many important things to tell you. And perhaps something to help you on your journey.\u0022 \u0022Go on..\u0022 he mutters, then bellows: \u0022For the sake of jolly cooperation!\u0022 ",

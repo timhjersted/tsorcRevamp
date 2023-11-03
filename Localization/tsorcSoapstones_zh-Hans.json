@@ -1161,6 +1161,13 @@
   "style": 1
 }
 {
+  "text": "法兰的梅拉尼亚长眠于此 --NEWLINE   --NEWLINE 虽不是巫师仍受世人尊敬，因其倡导将魔法作为工具而不是武器 --NEWLINE   --NEWLINE 愿她在此地安息",
+  "tileX": 4237,
+  "tileY": 789,
+  "textWidth": 460,
+  "style": 1,
+}
+{
   "text": "\u0022以利亚和你的妻子，我不知道。当我看到山谷中的烟雾时，我冲回家。 --NEWLINE   --NEWLINE 他们不见了。我只找到了你和我们的父母，\u0022 --NEWLINE   --NEWLINE 看到袭击的村庄侦察员说，\u0022军队正在向东行进…\u0022 --NEWLINE   --NEWLINE \u0022那么他们还有机会活着，\u0022你平静地说，对发生的事情仍然恍惚。",
   "tileX": 4242,
   "tileY": 709,
@@ -1271,6 +1278,13 @@
   "tileY": 1041,
   "textWidth": 420,
   "style": 1
+}
+{
+  "text": "- 你发现了溺亡者的地下墓穴 -",
+  "tileX": 4360,
+  "tileY": 765,
+  "textWidth": 250,
+  "style": 1,
 }
 {
   "text": "耀骑士索拉尔的瞭望塔 --NEWLINE   --NEWLINE 索拉尔在向你用赞美太阳的方式打招呼后， --NEWLINE   --NEWLINE 他问你是否和Jade说话了，Jade是村外瞭望塔的女人。 --NEWLINE   --NEWLINE \u0022去和她谈谈吧，我的朋友！ --NEWLINE   --NEWLINE 她有很多重要的事情要告诉你。也许在一些事情还能帮助你。\u0022 --NEWLINE   --NEWLINE \u0022接下来……\u0022他喃喃自语，然后咆哮道：\u0022为了我们的友谊干杯！\u0022",

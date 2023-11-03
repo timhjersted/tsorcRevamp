@@ -144,7 +144,7 @@ Mods: {
 				CritChance: 增加 {0}% 召唤暴击率
 				TagCritMult: 增加 {0} 倍召唤标记暴击率
 				TagDmgMult: 此武器仅受到 {0}% 的召唤标记伤害加成
-				// BaseCritChance: "{0}% increased base critical strike chance"
+				BaseCritChance: 增加 {0}% 基础暴击率
 			}
 
 			PermanentPotion: {
@@ -211,6 +211,7 @@ Mods: {
 		}
 
 		Events: {
+			// Pinwheel: Pinwheel turns its glance to you.
 			Death: 命定之死已至！
 			QueenSlime: 史莱姆女皇从她的神圣洞穴中现身！
 			GreatRedKnightInvasion: 一位卓越赭骑士入侵了你的世界！
@@ -267,7 +268,6 @@ Mods: {
 			DualSandsprogAmbush1: 遭遇偷袭！
 			HellkiteDragon: 村庄受到袭击！一条炼狱鸢龙前来捕食...
 			Bossduration: "耗时: "
-			// Pinwheel: Pinwheel turns its glance to you.
 		}
 
 		UI: {
@@ -1994,7 +1994,7 @@ Mods: {
 			}
 
 			NecromancersPants: {
-				DisplayName: 巫妖王之靴
+				DisplayName: 巫妖王靴子
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Magic.DmgMult}
@@ -6404,8 +6404,14 @@ Mods: {
 			}
 
 			SpiritBell: {
-				DisplayName: 魂之铃铛
-				Tooltip: 召唤巴罗怀特为你战斗。
+				DisplayName: 招魂铃
+				Tooltip:
+					'''
+					召唤一只灵灰骑士为你而战
+					灵灰骑士可以穿墙攻击敌人
+					{$CommonItemTooltip.Summon.BaseCritChance}
+					{$CommonItemTooltip.CritDmg@1}
+					'''
 			}
 
 			SunsetQuasar: {
@@ -7485,6 +7491,10 @@ Mods: {
 					仆从栏: {5}
 					哨兵栏: {6}
 					鞭子范围: {7}%
+					用鞭子的尖端击中敌人总是会造成暴击（50% 伤害加成）
+					每个召唤物有 4% 的基础暴击率
+					召唤标记暴击率会增加此基础值
+					实际召唤暴击率: 基础召唤标记暴击率 * 玩家召唤暴击率
 					'''
 				Throwing:
 					'''
@@ -8383,8 +8393,8 @@ Mods: {
 			}
 
 			SpiritAshKnightBuff: {
-				// DisplayName: Spirit Ash Knight
-				// Description: The Spirit Ash Knight will fight for you!
+				DisplayName: 灵灰骑士
+				Description: 灵灰骑士将为你而战
 			}
 		}
 
@@ -8962,7 +8972,7 @@ Mods: {
 			GaleforceArrow.DisplayName: 风暴之弦箭雨
 			WorldEnderSword.DisplayName: 末世之剑
 			RuneterraKatanaTornado.DisplayName: 符文之地系列武器旋风
-			// SpiritAshKnightMinion.DisplayName: Spirit Ash Knight
+			SpiritAshKnightMinion.DisplayName: 灵灰骑士
 		}
 
 		NPCs: {
@@ -10004,8 +10014,8 @@ Mods: {
 			MountedSandsprogMage.DisplayName: 沙盗骑手
 			Sandsprog.DisplayName: 沙盗士兵
 			SandsprogMage.DisplayName: 沙盗法师
-			Pinwheel.DisplayName: 轮转焰火风车
-			// GhostOfAHollowWarrior.DisplayName: Ghost Of A Hollow Warrior
+			Pinwheel.DisplayName: 火焱风车
+			GhostOfAHollowWarrior.DisplayName: 空洞战士幽魂
 		}
 
 		Prefixes: {
