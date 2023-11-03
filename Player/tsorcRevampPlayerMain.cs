@@ -24,6 +24,7 @@ using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories.Expert;
 using tsorcRevamp.Items.Accessories.Summon;
+using tsorcRevamp.Items.Ammo;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Armors.Magic;
 using tsorcRevamp.Items.Armors.Melee;
@@ -31,10 +32,14 @@ using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
+using tsorcRevamp.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
+using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Projectiles.Magic.Runeterra.LudensTempest;
 using tsorcRevamp.Projectiles.Melee.Runeterra;
 using tsorcRevamp.Projectiles.Pets;
@@ -616,6 +621,31 @@ namespace tsorcRevamp
             Item MastersScroll = new Item();
             MastersScroll.SetDefaults(ModContent.ItemType<MastersScroll>());
             startingItems.Add(MastersScroll);
+
+            Item ForgottenRuneAxe = new Item();
+            ForgottenRuneAxe.SetDefaults(ModContent.ItemType<ForgottenRuneAxe>());
+            ForgottenRuneAxe.prefix = PrefixID.Dull;
+            startingItems.Add(ForgottenRuneAxe);
+
+            Item Crossbow = new Item();
+            Crossbow.SetDefaults(ModContent.ItemType<Crossbow>());
+            Crossbow.prefix = PrefixID.Awful;
+            startingItems.Add(Crossbow);
+
+            Item WoodenFlute = new Item();
+            WoodenFlute.SetDefaults(ModContent.ItemType<WoodenFlute>());
+            WoodenFlute.prefix = PrefixID.Ignorant;
+            startingItems.Add(WoodenFlute);
+
+            Item RustyChain = new Item();
+            RustyChain.SetDefaults(ModContent.ItemType<RustedChain>());
+            RustyChain.prefix = PrefixID.Terrible;
+            startingItems.Add(RustyChain);
+
+            Item Bolt = new Item();
+            Bolt.SetDefaults(ModContent.ItemType<Bolt>());
+            Bolt.stack = 50;
+            startingItems.Add(Bolt);
 
             if (ModLoader.TryGetMod("MagicStorage", out Mod MagicStorage))
             {

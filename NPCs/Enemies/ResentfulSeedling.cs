@@ -56,11 +56,8 @@ namespace tsorcRevamp.NPCs.Enemies
             if (weakness)
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.Weakness"), false, false);
-                modifiers.FinalDamage *= 2; //I never want to see or hear the word "axe" again in my life
-                if (modifiers.GetDamage(item.damage, false) < 10)
-                {
-                    modifiers.FinalDamage += 10 - modifiers.GetDamage(item.damage, false);
-                }
+                modifiers.FlatBonusDamage += 4;
+                modifiers.SourceDamage *= 2; //I never want to see or hear the word "axe" again in my life
 
             }
             //fire melee
@@ -69,11 +66,8 @@ namespace tsorcRevamp.NPCs.Enemies
                  || item.type == ItemID.FieryGreatsword || item.type == ItemID.MoltenHamaxe || item.type == ItemID.MoltenPickaxe || item.type == ModContent.ItemType<SunBlade>())
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.Weakness"), false, false);
-                modifiers.FinalDamage *= 2;
-                if (modifiers.GetDamage(item.damage, false) < 10)
-                {
-                    modifiers.FinalDamage += 10 - modifiers.GetDamage(item.damage, false);
-                }
+                modifiers.FlatBonusDamage += 4;
+                modifiers.SourceDamage *= 2; //I never want to see or hear the word "axe" again in my life
                 if (Main.rand.NextBool(20) && resindropped < 1)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ModContent.ItemType<CharcoalPineResin>());
@@ -95,12 +89,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 projectile.type == ModContent.ProjectileType<DevilSickle>() || projectile.type == ModContent.ProjectileType<RedLaserBeam>() ||
                 (projectile.DamageType == DamageClass.Melee && player.meleeEnchant == 3))
             {
-                modifiers.FinalDamage *= 2;
-                if (modifiers.GetDamage(projectile.damage, false) < 10)
-                {
-                    modifiers.FinalDamage += 10 - modifiers.GetDamage(projectile.damage, false);
-                }
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.Weakness"), false, false);
+                modifiers.FlatBonusDamage += 4;
+                modifiers.SourceDamage *= 2; //I never want to see or hear the word "axe" again in my life
                 if (Main.rand.NextBool(30) && resindropped < 1)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ModContent.ItemType<CharcoalPineResin>());

@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.tileCollide = true;
             Projectile.width = 10;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 20;
+            Projectile.localNPCHitCooldown = 30;
         }
     }
 }

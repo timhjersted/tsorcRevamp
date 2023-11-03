@@ -67,6 +67,7 @@ namespace tsorcRevamp.NPCs
         public bool markedBySearingLash;
         public bool markedByTerraFall;
         public bool markedByUrumi;
+        public bool markedByRustedChain;
         public bool markedByLeatherWhip;
         public bool markedBySnapthorn;
         public bool markedBySpinalTap;
@@ -994,6 +995,10 @@ namespace tsorcRevamp.NPCs
             {
                 SummonTagArmorPenetration += Urumi.SummonTagArmorPen;
                 BaseSummonTagCriticalStrikeChance += Urumi.SummonTagCrit;
+            }
+            if (markedByRustedChain)
+            {
+                SummonTagArmorPenetration += RustedChain.SummonTagArmorPen;
             }
             #endregion
             #region Vanilla Whips

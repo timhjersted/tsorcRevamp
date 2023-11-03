@@ -84,6 +84,7 @@ Mods: {
 			DefenseCap: 防御被限定不超过 {0}
 			FlatDmg: 增加 {0} 点伤害
 			MaxStamina: 增加 {0}% 耐力上限
+			// CanBeBlessed: To repair this broken item, let it be blessed by the Emerald Herald
 
 			Melee: {
 				ArmorPenPercent: 增加 {0}% 近战护甲穿透
@@ -7531,6 +7532,11 @@ Mods: {
 				DisplayName: 巫妖王之骨
 				Tooltip: ""
 			}
+
+			RustedChain: {
+				// DisplayName: Rusted Chain
+				// Tooltip: "{$CommonItemTooltip.Summon.TagArmorPen}"
+			}
 		}
 
 		Buffs: {
@@ -8396,6 +8402,11 @@ Mods: {
 				DisplayName: 灵灰骑士
 				Description: 灵灰骑士将为你而战
 			}
+
+			RustedChainDebuff: {
+				// DisplayName: Rusted Chain Debuff
+				// Description: Mods.tsorcRevamp.Buffs.RustedChainDebuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -8976,6 +8987,7 @@ Mods: {
 			// KrakenTsunami.DisplayName: Kraken Tsunami
 			// TyphoonProjectile.DisplayName: Typhoon Projectile
 			// TyphoonArrow.DisplayName: Typhoon Arrow
+			// RustedChainProjectile.DisplayName: Rusted Chain Projectile
 		}
 
 		NPCs: {

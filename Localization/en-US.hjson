@@ -84,6 +84,7 @@ Mods: {
 			DefenseCap: Defense is capped at {0}
 			FlatDmg: Increases damage dealt by {0} flat
 			MaxStamina: Increases maximum stamina by {0}%
+			CanBeBlessed: To repair this broken item, let it be blessed by the Emerald Herald
 
 			Melee: {
 				ArmorPenPercent: Increases melee armor penetration by {0}%
@@ -5456,7 +5457,7 @@ Mods: {
 
 			ForgottenRuneAxe: {
 				DisplayName: Forgotten Rune Axe
-				Tooltip: 4 times as effective against magic users.
+				Tooltip: ""
 			}
 
 			GigantAxe: {
@@ -7530,6 +7531,11 @@ Mods: {
 				DisplayName: Lich Bone
 				Tooltip: ""
 			}
+
+			RustedChain: {
+				DisplayName: Rusted Chain
+				Tooltip: "{$CommonItemTooltip.Summon.TagArmorPen}"
+			}
 		}
 
 		Buffs: {
@@ -8395,6 +8401,11 @@ Mods: {
 				DisplayName: Spirit Ash Knight
 				Description: The Spirit Ash Knight will fight for you!
 			}
+
+			RustedChainDebuff: {
+				DisplayName: Rusted Chain Debuff
+				Description: Mods.tsorcRevamp.Buffs.RustedChainDebuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -8975,6 +8986,7 @@ Mods: {
 			KrakenTsunami.DisplayName: Kraken Tsunami
 			TyphoonProjectile.DisplayName: Typhoon Projectile
 			TyphoonArrow.DisplayName: Typhoon Arrow
+			RustedChainProjectile.DisplayName: Rusted Chain Projectile
 		}
 
 		NPCs: {

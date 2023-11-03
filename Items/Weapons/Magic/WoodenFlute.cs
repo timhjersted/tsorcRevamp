@@ -1,36 +1,60 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
     class WoodenFlute : ModItem
     {
+        public const int BaseDmg = 12;
         public override void SetDefaults()
         {
-            Item.damage = 10;
+            Item.damage = BaseDmg;
+            Item.mana = 3;
+            Item.useAnimation = 30;
+            Item.useTime = 30;
+            Item.knockBack = 2.5f;
+            Item.width = 34;
             Item.height = 10;
-            Item.knockBack = 4;
-            Item.maxStack = 1;
-            Item.rare = ItemRarityID.White;
-            Item.scale = 1;
             Item.shootSpeed = 10;
+            Item.rare = ItemRarityID.White;
             Item.DamageType = DamageClass.Magic;
-            Item.mana = 2;
-            Item.useAnimation = 45;
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 45;
             Item.value = PriceByRarity.White_0;
-            Item.width = 34;
             Item.shoot = ModContent.ProjectileType<Projectiles.MusicalNote>();
+            Item.noMelee = true;
+        }
+        public override void UpdateInventory(Player player)
+        {
+            if (Item.prefix == PrefixID.Ignorant)
+            {
+                Item.damage = BaseDmg - 5;
+            }
+            else
+            {
+                Item.damage = BaseDmg;
+            }
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            if (Item.prefix == PrefixID.Ignorant)
+            {
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CanBeBlessed", LangUtils.GetTextValue("CommonItemTooltip.CanBeBlessed")));
+                }
+            }
         }
 
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Wood, 1);
+            recipe.AddIngredient(ItemID.Wood, 20);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100);
             recipe.AddTile(TileID.DemonAltar);
 

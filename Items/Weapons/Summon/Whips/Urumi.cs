@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
     public class Urumi : ModItem
     {
-        public static float SummonTagArmorPen = 5;
+        public static float SummonTagArmorPen = 6;
         public const int WhipArmorPen = 10;
         public static float SummonTagCrit = 4;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagArmorPen, SummonTagCrit, WhipArmorPen);
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 
             Item.DamageType = DamageClass.SummonMeleeSpeed;
             Item.damage = 12;
-            Item.knockBack = 0.5f;
+            Item.knockBack = 1f;
             Item.rare = ItemRarityID.Blue;
             Item.value = Item.buyPrice(0, 2, 0, 0);
 
