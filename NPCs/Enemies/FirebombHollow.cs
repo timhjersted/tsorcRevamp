@@ -54,43 +54,48 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
+            Player p = spawnInfo.Player;
             float chance = 0;
             bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
             bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
-            Player p = spawnInfo.Player;
+                    
+            // No spawning
             if (spawnInfo.Invasion)
             {
                 chance = 0;
                 return chance;
             }
             if (spawnInfo.Player.townNPCs > 1f) return 0f;
-
             if (spawnInfo.Water || Sky(p)) return 0f;
             if (spawnInfo.Player.ZoneGlowshroom) return 0f;
 
-            //Hollow enemies
-            if (!spawnInfo.Water && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonUnsafe) && !Main.hardMode && !tsorcRevampWorld.SuperHardMode) return chance = 0.1f;
+            // Graveyard
+            if (spawnInfo.Player.ZoneGraveyard) return 0.05f;
 
+            // Forgotten City 
+            if (!spawnInfo.Water && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonUnsafe) && !Main.hardMode && !tsorcRevampWorld.SuperHardMode) return chance = 0.1f;
+            
+            // After eoc or eow is downed and it's the forest biome, spawn .01-.02 based on time of day (making forest above ground more peaceful as respite from combat below ground)
+            if ((NPC.downedBoss1 || NPC.downedBoss2) && spawnInfo.Player.ZoneForest && Main.dayTime && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.01f;
+            if ((NPC.downedBoss1 || NPC.downedBoss2) && spawnInfo.Player.ZoneForest && !Main.dayTime && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.02f;
+            
+            // When player is below ground, spawn .04-.06 based on time of day
+            if ((spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.dayTime && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow)) return chance = 0.04f;
+            if ((spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !Main.dayTime && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow)) return chance = 0.06f;
+            
+            // After eoc or eow downed, spawn rate underground slightly higher than before
+            if ((NPC.downedBoss1 || NPC.downedBoss2) && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.dayTime && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow)) return chance = 0.08f;
+            if ((NPC.downedBoss1 || NPC.downedBoss2) && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !Main.dayTime && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow)) return chance = 0.1f;
+
+            // Dungeon
             if (!Main.hardMode && spawnInfo.Player.ZoneDungeon) return 0.1f;
             if (Main.hardMode && spawnInfo.Player.ZoneDungeon) return 0.05f;
             if (Main.hardMode && spawnInfo.Lihzahrd) return 0.2f;
-
+            // SHM
             if (tsorcRevampWorld.SuperHardMode && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneUnderworldHeight)) return 0.02f;
             if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneOverworldHeight && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return 0.13f;
             if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDesert && !Ocean) return 0.15f;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon) return 0.17f; //.08% is 4.28% .16 is 8% .32 is 16% .64 is 32%
-
-            if (Main.expertMode && Main.bloodMoon && spawnInfo.Player.ZoneOverworldHeight && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneUnderworldHeight)) return chance = 0.03f;
-
-            if (Main.expertMode && Main.bloodMoon && !spawnInfo.Player.ZoneUnderworldHeight && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneUnderworldHeight)) return chance = 0.02f;
-
-            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.Player.ZoneOverworldHeight && Main.dayTime && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.05f;
-            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.08f;
-
-            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.dayTime && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow)) return chance = 0.06f;
-            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !Main.dayTime && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow)) return chance = 0.09f;
-            
-            if ((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode && !(Ocean || spawnInfo.Player.ZoneUnderworldHeight || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.04f;
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon) return 0.17f; //.08% is 4.28% .16 is 8% .32 is 16% .64 is 32%           
 
             return chance;
         }
