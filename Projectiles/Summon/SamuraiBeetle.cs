@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -44,7 +43,7 @@ namespace tsorcRevamp.Projectiles.Summon
             Player player = Main.player[Projectile.owner];
             //Projectile.velocity.Y = 1;
             //Projectile.velocity.X = Projectile.Center.DirectionTo(player.Center).X;
-            Projectile.spriteDirection = (int)(Projectile.Center.DirectionTo(player.Center).X > 0 ? 1 : -1 );
+            Projectile.spriteDirection = (int)(Projectile.Center.DirectionTo(player.Center).X > 0 ? 1 : -1);
             Collision.StepUp(ref Projectile.position, ref Projectile.velocity, Projectile.width, Projectile.height, ref Projectile.stepSpeed, ref Projectile.gfxOffY);
 
             if (!CheckActive(player))

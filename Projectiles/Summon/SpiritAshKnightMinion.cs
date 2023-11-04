@@ -1,18 +1,12 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
 using System;
-using System.Security.Cryptography.X509Certificates;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.NPCs;
-using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Summon
 {
@@ -213,7 +207,7 @@ namespace tsorcRevamp.Projectiles.Summon
         public int TileCollisionTimer = 0;
         public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
         {
-            width = (int)(width * 0.25f); 
+            width = (int)(width * 0.25f);
             height = (int)(height * 0.25f);
             fallThrough = false;
             return true;
@@ -358,8 +352,8 @@ namespace tsorcRevamp.Projectiles.Summon
             if (distanceFromTarget < 130f + (targetSize / 200f)) //starts attack animation once relatively close to the target, starts from a longer distance if the target is big
             {
                 AttackTimer++;
-            } 
-            else 
+            }
+            else
             {
                 AttackTimer = 0; //resets attack animation if there is no target
             }

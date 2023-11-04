@@ -5423,9 +5423,9 @@ Mods: {
 					'''
 			}
 
-			WoodenFlute: {
-				DisplayName: 木笛
-				Tooltip: ""
+			ApprenticesWand: {
+				// DisplayName: Apprentice's Wand
+				// Tooltip: Casts a bouncing fireball
 			}
 
 			WoodenWand: {
@@ -8756,7 +8756,7 @@ Mods: {
 			Meteor.DisplayName: 陨星
 			MeteorShower.DisplayName: 流星雨
 			MLGSCrescent.DisplayName: M L G S 月牙
-			MusicalNote.DisplayName: 音符
+			// ApprenticesWandFireball.DisplayName: Apprentices Wand Fireball
 			NetSound.DisplayName: 静音
 			Nothing.DisplayName: 虚无
 			Miakoda.DisplayName: Miakoda

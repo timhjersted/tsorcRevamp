@@ -5422,9 +5422,9 @@ Mods: {
 					'''
 			}
 
-			WoodenFlute: {
-				DisplayName: Wooden Flute
-				Tooltip: ""
+			ApprenticesWand: {
+				DisplayName: Apprentice's Wand
+				Tooltip: Casts a bouncing fireball
 			}
 
 			WoodenWand: {
@@ -7535,7 +7535,11 @@ Mods: {
 
 			RustedChain: {
 				DisplayName: Rusted Chain
-				Tooltip: "{$CommonItemTooltip.Summon.TagArmorPen}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Summon.TagArmorPen}
+					{$CommonItemTooltip.SummonTagDamage@1}
+					'''
 			}
 		}
 
@@ -8755,7 +8759,7 @@ Mods: {
 			Meteor.DisplayName: Meteor
 			MeteorShower.DisplayName: Meteor Shower
 			MLGSCrescent.DisplayName: M L G S Crescent
-			MusicalNote.DisplayName: Musical Note
+			ApprenticesWandFireball.DisplayName: Apprentices Wand Fireball
 			NetSound.DisplayName: Net Sound
 			Nothing.DisplayName: Nothing
 			Miakoda.DisplayName: Miakoda

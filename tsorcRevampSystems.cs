@@ -34,7 +34,7 @@ namespace tsorcRevamp
             new ForceLoadTexture("tsorcRevamp/UI/MinimapBonfire"),
 
         };
- 
+
 
         public static ForceLoadTexture fissureTexture = new ForceLoadTexture("tsorcRevamp/UI/MinimapFissure");
 

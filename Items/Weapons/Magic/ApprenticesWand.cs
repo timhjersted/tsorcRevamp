@@ -3,11 +3,13 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Magic;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
-    class WoodenFlute : ModItem
+    [LegacyName("WoodenFlute")]
+    class ApprenticesWand : ModItem
     {
         public const int BaseDmg = 12;
         public override void SetDefaults()
@@ -22,10 +24,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.shootSpeed = 10;
             Item.rare = ItemRarityID.White;
             Item.DamageType = DamageClass.Magic;
-            Item.UseSound = SoundID.Item21;
+            Item.UseSound = SoundID.Item8;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = PriceByRarity.White_0;
-            Item.shoot = ModContent.ProjectileType<Projectiles.MusicalNote>();
+            Item.shoot = ModContent.ProjectileType<ApprenticesWandFireball>();
             Item.noMelee = true;
         }
         public override void UpdateInventory(Player player)

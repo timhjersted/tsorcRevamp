@@ -527,7 +527,7 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.NebulaSoldier, 0.5f); //.1 is 3%
             }
             //spaceships or flesh background of crimson biome
-            if ((spawnInfo.SpawnTileType == TileID.MartianConduitPlating ||  Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.Flesh || spawnInfo.Player.ZoneCrimson) && tsorcRevampWorld.SuperHardMode)
+            if ((spawnInfo.SpawnTileType == TileID.MartianConduitPlating || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.Flesh || spawnInfo.Player.ZoneCrimson) && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.VortexLarva, 2f); //.1 is 3%
             }
@@ -999,6 +999,7 @@ namespace tsorcRevamp.NPCs
             if (markedByRustedChain)
             {
                 SummonTagArmorPenetration += RustedChain.SummonTagArmorPen;
+                SummonTagFlatDamage += RustedChain.SummonTagDmg;
             }
             #endregion
             #region Vanilla Whips

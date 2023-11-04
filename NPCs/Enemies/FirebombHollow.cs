@@ -58,7 +58,7 @@ namespace tsorcRevamp.NPCs.Enemies
             float chance = 0;
             bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
             bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
-                    
+
             // No spawning
             if (spawnInfo.Invasion)
             {
@@ -74,15 +74,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Forgotten City 
             if (!spawnInfo.Water && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonUnsafe) && !Main.hardMode && !tsorcRevampWorld.SuperHardMode) return chance = 0.1f;
-            
+
             // After eoc or eow is downed and it's the forest biome, spawn .01-.02 based on time of day (making forest above ground more peaceful as respite from combat below ground)
             if ((NPC.downedBoss1 || NPC.downedBoss2) && spawnInfo.Player.ZoneForest && Main.dayTime && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.01f;
             if ((NPC.downedBoss1 || NPC.downedBoss2) && spawnInfo.Player.ZoneForest && !Main.dayTime && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.02f;
-            
+
             // When player is below ground, spawn .04-.06 based on time of day
             if ((spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.dayTime && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow)) return chance = 0.04f;
             if ((spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !Main.dayTime && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow)) return chance = 0.06f;
-            
+
             // After eoc or eow downed, spawn rate underground slightly higher than before
             if ((NPC.downedBoss1 || NPC.downedBoss2) && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.dayTime && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow)) return chance = 0.08f;
             if ((NPC.downedBoss1 || NPC.downedBoss2) && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !Main.dayTime && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow)) return chance = 0.1f;

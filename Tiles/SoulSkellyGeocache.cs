@@ -130,7 +130,7 @@ namespace tsorcRevamp.Tiles
 
 
             //HANGING SOUL SKELLYS - They are 3x3, so use 3, 3 in the rectangle. In TEdit, these are a ConfettiBlock (hanging from wrists) and BlackConfettiBlock, also called MidnightConfettiBlock (hanging from ankles)
-            
+
             // Catacombs of the Drowned (below Ashenpeak)
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4233, 785, 3, 3), ModContent.ItemType<Items.Weapons.Magic.FarronDart>(), 1));
 

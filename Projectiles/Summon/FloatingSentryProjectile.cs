@@ -13,9 +13,9 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
         public abstract int ProjectileWidth { get; }
         public abstract int ProjectileHeight { get; }
         public abstract DamageClass ProjectileDamageType { get; } //should be SUmmon usually but I made an exception for one
-        public abstract bool ContactDamage {  get; } //if it can deal damage on contact
+        public abstract bool ContactDamage { get; } //if it can deal damage on contact
         public abstract int ShotProjectileType { get; }
-        public abstract float ProjectileInitialVelocity { get; } 
+        public abstract float ProjectileInitialVelocity { get; }
         public abstract int AI1 { get; } //passes this value into projectile.ai[1] of the shot projectile
         public abstract int AI2 { get; } //same as above except it's projectile.ai[2]
         public abstract bool PlaysSoundOnShot { get; } //if it plays a sound each time ti shoots a projectile
@@ -98,22 +98,22 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
                     }
                 case float SixthFrame when SixthFrame > ShotCooldown / Main.projFrames[Type] * 5 && SixthFrame <= ShotCooldown / Main.projFrames[Type] * 6:
                     {
-                        Projectile.frame = 5; 
+                        Projectile.frame = 5;
                         break;
                     }
                 case float SeventhFrame when SeventhFrame > ShotCooldown / Main.projFrames[Type] * 6 && SeventhFrame <= ShotCooldown / Main.projFrames[Type] * 7:
                     {
-                        Projectile.frame = 6; 
+                        Projectile.frame = 6;
                         break;
                     }
                 case float EighthFrame when EighthFrame > ShotCooldown / Main.projFrames[Type] * 7 && EighthFrame <= ShotCooldown / Main.projFrames[Type] * 8:
                     {
-                        Projectile.frame = 7; 
+                        Projectile.frame = 7;
                         break;
                     }
                 case float NinthFrame when NinthFrame > ShotCooldown / Main.projFrames[Type] * 8 && NinthFrame <= ShotCooldown / Main.projFrames[Type] * 9:
                     {
-                        Projectile.frame = 8; 
+                        Projectile.frame = 8;
                         break;
                     }
                 case float TenthFrame when TenthFrame > ShotCooldown / Main.projFrames[Type] * 9: //think about how to extend this

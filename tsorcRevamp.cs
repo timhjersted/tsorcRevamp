@@ -39,6 +39,8 @@ using tsorcRevamp.NPCs.Bosses;
 using tsorcRevamp.NPCs.Bosses.JungleWyvern;
 using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
 using tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm;
+using tsorcRevamp.NPCs.Bosses.Pinwheel;
+using tsorcRevamp.NPCs.Bosses.PrimeV2;
 using tsorcRevamp.NPCs.Bosses.Serris;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
@@ -46,12 +48,14 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
-using tsorcRevamp.NPCs.Bosses.PrimeV2;
 using tsorcRevamp.NPCs.Special;
 using tsorcRevamp.Projectiles.Summon;
 using tsorcRevamp.Projectiles.Summon.Archer;
+using tsorcRevamp.Projectiles.Summon.NullSprite;
+using tsorcRevamp.Projectiles.Summon.Phoenix;
 using tsorcRevamp.Projectiles.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.SunsetQuasar;
+using tsorcRevamp.Projectiles.Summon.Tetsujin;
 using tsorcRevamp.Tiles;
 using tsorcRevamp.Tiles.BuffStations;
 using tsorcRevamp.Tiles.Relics;
@@ -60,10 +64,6 @@ using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 using static tsorcRevamp.ILEdits;
 using static tsorcRevamp.MethodSwaps;
-using tsorcRevamp.Projectiles.Summon.NullSprite;
-using tsorcRevamp.Projectiles.Summon.Tetsujin;
-using tsorcRevamp.Projectiles.Summon.Phoenix;
-using tsorcRevamp.NPCs.Bosses.Pinwheel;
 
 namespace tsorcRevamp
 {
@@ -1569,7 +1569,7 @@ namespace tsorcRevamp
                         ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Pinwheel.DisplayName"),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.Pinwheel"),
                     }
-                    );    
+                    );
 
 
                 bossChecklist.Call(

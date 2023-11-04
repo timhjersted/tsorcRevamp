@@ -10,14 +10,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 {
     class Crossbow : ModItem
     {
-        public const int BaseDmg = 10;
+        public const int BaseDmg = 11;
         public override void SetStaticDefaults()
         {
             ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
         }
         public override void SetDefaults()
         {
-            Item.damage = 10;
+            Item.damage = BaseDmg;
             Item.knockBack = 4;
             Item.crit = 16;
             Item.shootSpeed = 10;
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             if (Item.prefix == PrefixID.Awful)
             {
-                Item.damage = BaseDmg - 5;
+                Item.damage = BaseDmg - 7;
             }
             else
             {

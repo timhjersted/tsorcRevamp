@@ -6,10 +6,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra.Melee;
-using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Projectiles.Melee.Runeterra;
 using tsorcRevamp.Utilities;
 
@@ -26,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public const int DashCooldown = 6;
         public static float PercentHealthDamage = 0.1f;
         public static int HealthDamageCap = 450;
-        public abstract int DashCooldownBuffID {  get; }
+        public abstract int DashCooldownBuffID { get; }
         public abstract int DashDustID { get; }
         public abstract int DashBuffID { get; }
         public abstract int SpinProjectileID { get; }
@@ -35,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public const int WindwallDuration = 5;
         public const int WindwallCooldown = 30;
 
-        public abstract int Tier {  get; }
+        public abstract int Tier { get; }
         public abstract float SwingSoundVolume { get; }
         public abstract int RarityID { get; }
         public abstract int Value { get; }
@@ -181,7 +178,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     Tornado.width = 80;
                     Tornado.height = 150;
                 }
-            } 
+            }
             else
             {
                 if (player.GetModPlayer<tsorcRevampPlayer>().SteelTempestStacks < 2 && !player.HasBuff(DashBuffID))
@@ -193,7 +190,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     if (Tier == 2)
                     {
                         SoundEngine.PlaySound(new SoundStyle(SoundPath + "Thrust") with { Volume = 0.8f });
-                    } 
+                    }
                     else
                     {
                         SoundEngine.PlaySound(new SoundStyle(SoundPath + "Thrust") with { Volume = 1f });

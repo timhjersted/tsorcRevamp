@@ -1,10 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Weapons.Melee;
 using tsorcRevamp.Projectiles.Melee.Swords;
 
@@ -12,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     [Autoload(false)]
     public class WorldEnder : ModItem //supposed to be a normal slow sword on left click
-                               //on right click, supposed to create a projectile in front of the player(positioned to the direction of the cursor) that creates 3 slightly different zones/hitboxes with sweet spots that deal extra damage if hit
-                               //right click alternates between each style and gets a cooldown depending on how far through the combo you went
+                                      //on right click, supposed to create a projectile in front of the player(positioned to the direction of the cursor) that creates 3 slightly different zones/hitboxes with sweet spots that deal extra damage if hit
+                                      //right click alternates between each style and gets a cooldown depending on how far through the combo you went
     { //check how League of Legends Aatrox champion works if ur curious, it's Q ability is the idea
         public int AltFunctionMode = 1;
         public override void SetDefaults()

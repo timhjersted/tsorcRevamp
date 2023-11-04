@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
 {
     class ForgottenRuneAxe : ModItem
     {
-        public const int BaseDmg = 15;
+        public const int BaseDmg = 17;
         public override void SetStaticDefaults()
         {
         }
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         {
             if (Item.prefix == PrefixID.Dull)
             {
-                Item.damage = BaseDmg - 5;
+                Item.damage = BaseDmg - 7;
             }
             else
             {

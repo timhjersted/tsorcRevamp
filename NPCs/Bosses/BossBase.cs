@@ -134,7 +134,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             set
             {
-                for(int i = 0; i < MoveList.Count; i++)
+                for (int i = 0; i < MoveList.Count; i++)
                 {
                     if (MoveList[i] == value)
                     {
@@ -524,7 +524,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             if (justSkippedMove) //If you skipped the previous move
-            { 
+            {
                 attackTransitionTimeRemaining = 30; //I set the time to half a second to allow time to sync... Should be enough - Chroma 
                 justSkippedMove = false; //Reset justSkippedMove
             }

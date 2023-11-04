@@ -1,12 +1,12 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Utilities;
 using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 {
@@ -162,7 +162,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
         public override void InitializeMovesAndDamage()
         {
             //Create a new function for every move of your boss, and then add them to this list alongside the duration of the attack
-            MoveList = new List<BossMove> 
+            MoveList = new List<BossMove>
             {
                 new BossMove(CreateClones, 220, id : PinwheelAttackID.CreateClonesID), //Always plays twice at the start, not what I want
                 new BossMove(VolcanicEruption, 370, id : PinwheelAttackID.VolcanicEruptionID), //Move in index 1 of this list doesn't run till in second movepool loop
@@ -246,7 +246,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             if (MoveTimer == 150 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot bouncing fireball
             {
                 int type = ProjectileID.Fireball;
-                Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y),  new Vector2(speedX, speedY), type, DamageNumbers["BouncingFireballDamage"], 0f, Main.myPlayer, 0, 0);
+                Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, DamageNumbers["BouncingFireballDamage"], 0f, Main.myPlayer, 0, 0);
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 shot1.friendly = false;
                 shot1.hostile = true;
@@ -314,7 +314,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                     UsefulFunctions.DustRing(new Vector2(NPC.Center.X, NPC.Center.Y - 30), 6, 6, 1, 3);
                 }
             }
-            
+
             if (MoveTimer >= 120 && MoveTimer < 300 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 vector8 = new Vector2(NPC.Center.X - 5, NPC.Center.Y - 30);
@@ -437,7 +437,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
         }
 
         public override void HandleLife()
-        {          
+        {
             base.HandleLife();
         }
 
@@ -989,51 +989,51 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
 
                 //int frameTimer;
-                    /*NPC.frameCounter++;
+                /*NPC.frameCounter++;
 
-                    if (NPC.frameCounter < 40) //9, 16,  
-                    {
-                        NPC.frame.Y = (int)((NPC.frameCounter / 8) + 17) * frameHeight; //under 64 will at most come up with 15 * frameheight, same as with the else if chain
-                    } 
-                    else 
-                    {
-                        NPC.frameCounter = 0; //above 63 it resets the counter to 0 but it didn't do anything else in that tick, so frameY stays at 15 * frameheight I guess
-                    }
-                    /*
-                    switch (NPC.frameCounter) this is one alternative to the infintie else if chain: switch statement, better performance like this because it just has to choose one case and not loop through every if statement until it gets to the right one
-                    {
-                        case double one when one < 4:
-                            {
-                                NPC.frame.Y = 0 * frameHeight;
-                                break;
-                            }
-                        case double two when two >= 4 && two < 8:
-                            {
-                                NPC.frame.Y = 1 * frameHeight;
-                                break;
-                            }
-                        case double three when three >= 8 && three < 12:
-                            {
-                                NPC.frame.Y = 2 * frameHeight;
-                                break;
-                            }
-                        case double four when four >= 12 && four < 16:
-                            {
-                                NPC.frame.Y = 3 * frameHeight;
-                                break;
-                            }
-                        case double five when five >= 16 && five < 20:
-                            {
-                                NPC.frame.Y = 4 * frameHeight;
-                                break;
-                            }
-                        //and so on
-                        default:
-                            {
-                                NPC.frameCounter = 0;
-                                break;
-                            }
-                    }*/
+                if (NPC.frameCounter < 40) //9, 16,  
+                {
+                    NPC.frame.Y = (int)((NPC.frameCounter / 8) + 17) * frameHeight; //under 64 will at most come up with 15 * frameheight, same as with the else if chain
+                } 
+                else 
+                {
+                    NPC.frameCounter = 0; //above 63 it resets the counter to 0 but it didn't do anything else in that tick, so frameY stays at 15 * frameheight I guess
+                }
+                /*
+                switch (NPC.frameCounter) this is one alternative to the infintie else if chain: switch statement, better performance like this because it just has to choose one case and not loop through every if statement until it gets to the right one
+                {
+                    case double one when one < 4:
+                        {
+                            NPC.frame.Y = 0 * frameHeight;
+                            break;
+                        }
+                    case double two when two >= 4 && two < 8:
+                        {
+                            NPC.frame.Y = 1 * frameHeight;
+                            break;
+                        }
+                    case double three when three >= 8 && three < 12:
+                        {
+                            NPC.frame.Y = 2 * frameHeight;
+                            break;
+                        }
+                    case double four when four >= 12 && four < 16:
+                        {
+                            NPC.frame.Y = 3 * frameHeight;
+                            break;
+                        }
+                    case double five when five >= 16 && five < 20:
+                        {
+                            NPC.frame.Y = 4 * frameHeight;
+                            break;
+                        }
+                    //and so on
+                    default:
+                        {
+                            NPC.frameCounter = 0;
+                            break;
+                        }
+                }*/
             }
 
             #endregion
@@ -1173,7 +1173,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             for (int i = 0; i < 100; i++)
             {
                 Vector2 teleportTarget = Vector2.Zero;
-                
+
                 //Pinwheel doesn't need as low of a minimum range as he doesn't deal contact damage and has 2 seconds wind up before any attack.
 
                 teleportTarget.X = Main.rand.Next(2, range);

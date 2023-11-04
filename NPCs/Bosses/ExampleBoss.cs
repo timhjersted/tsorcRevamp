@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -304,7 +303,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void FindFrame(int currentFrame)
         {
             //You can get frameheight manually if you look at the height of the boss's textue then divide by the number of frames
-            Texture2D bossTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Bosses/ExampleBoss"); 
+            Texture2D bossTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Bosses/ExampleBoss");
             int frameheight = bossTexture.Height / Main.npcFrameCount[NPC.type];
 
             if (MoveIndex == ExampleBossAttackID.Dashes)

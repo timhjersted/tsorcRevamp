@@ -43,7 +43,6 @@ using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Projectiles.Magic.Runeterra.LudensTempest;
 using tsorcRevamp.Projectiles.Melee.Runeterra;
 using tsorcRevamp.Projectiles.Pets;
-using tsorcRevamp.Tiles;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 
@@ -632,10 +631,10 @@ namespace tsorcRevamp
             Crossbow.prefix = PrefixID.Awful;
             startingItems.Add(Crossbow);
 
-            Item WoodenFlute = new Item();
-            WoodenFlute.SetDefaults(ModContent.ItemType<WoodenFlute>());
-            WoodenFlute.prefix = PrefixID.Ignorant;
-            startingItems.Add(WoodenFlute);
+            Item ApprenticesWand = new Item();
+            ApprenticesWand.SetDefaults(ModContent.ItemType<ApprenticesWand>());
+            ApprenticesWand.prefix = PrefixID.Ignorant;
+            startingItems.Add(ApprenticesWand);
 
             Item RustyChain = new Item();
             RustyChain.SetDefaults(ModContent.ItemType<RustedChain>());

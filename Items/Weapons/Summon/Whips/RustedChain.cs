@@ -11,9 +11,10 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
     public class RustedChain : ModItem
     {
-        public static float SummonTagArmorPen = 4;
-        public const int BaseDmg = 13;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagArmorPen);
+        public const int SummonTagArmorPen = 4;
+        public const int SummonTagDmg = 3;
+        public const int BaseDmg = 15;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagArmorPen, SummonTagDmg);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
@@ -42,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         {
             if (Item.prefix == PrefixID.Terrible)
             {
-                Item.damage = BaseDmg - 5;
+                Item.damage = BaseDmg - 8;
             }
             else
             {

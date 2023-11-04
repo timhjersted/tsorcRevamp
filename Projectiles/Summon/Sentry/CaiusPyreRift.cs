@@ -6,7 +6,7 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
 {
     public class CaiusPyreRift : FloatingSentryProjectile
     {
-        public override int ShotCooldown =>  1 * 60;
+        public override int ShotCooldown => 1 * 60;
         public override int SentryShotCooldownReductionOnSpawn => 10;
         public override int ProjectileFrameCount => 6;
         public override int ProjectileWidth => 24;
