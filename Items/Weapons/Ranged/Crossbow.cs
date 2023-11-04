@@ -21,8 +21,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.knockBack = 4;
             Item.crit = 16;
             Item.shootSpeed = 10;
-            Item.useTime = 60;
-            Item.useAnimation = 60;
+            Item.useTime = 50;
+            Item.useAnimation = 50;
             Item.width = 12;
             Item.height = 28;
             Item.noMelee = true;
