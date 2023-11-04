@@ -796,7 +796,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 chance = 0;
                 return chance;
             }
-
             if (spawnInfo.Water) return 0f;
             if (spawnInfo.Player.ZoneGlowshroom) return 0f;
 

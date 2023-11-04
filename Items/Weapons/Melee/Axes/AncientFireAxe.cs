@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Green_2;
-            Item.scale = 1.3f;
+            Item.scale = 1.1f;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.OrangeRed;

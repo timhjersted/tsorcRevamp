@@ -1000,7 +1000,7 @@
   "style": 1
 }
 {
-  "text": "Your friend Aaron: \u0022Red!\u0022 He stammers, surprised, \u0022They said you were dead!\u0022 --NEWLINE  --NEWLINE Red: \u0022I know, I can\u0027t believe it either. I\u0027m just glad you weren\u0027t visiting when they attacked. Almost all of my family...\u0022  --NEWLINE  --NEWLINE Aaron: \u0022I know Red. I can\u0027t believe what they did.. It\u0027s..\u0022",
+  "text": "Your friend Aaron: \u0022Red!\u0022 He stammers, surprised, \u0022They said you were killed!\u0022 --NEWLINE  --NEWLINE Red: \u0022I know, I can\u0027t believe it either. I\u0027m just glad you weren\u0027t visiting when they attacked. Almost all of my family...\u0022  --NEWLINE  --NEWLINE Aaron: \u0022I know Red. I can\u0027t believe what they did.. It\u0027s..\u0022",
   "tileX": 4092,
   "tileY": 709,
   "textWidth": 320,
@@ -1147,7 +1147,7 @@
   "style": 1
 }
 {
-  "text": "Bodhi: \u0022I have food and supplies here. Please take what you need...\u0022 --NEWLINE  --NEWLINE \u0022Thank you brother. You will be in my thoughts.\u0022 --NEWLINE  --NEWLINE ",
+  "text": "Bodhi: \u0022I have food and supplies here. Please take what you need. The mountain caverns to the West may be worth exploring before you set out as well.\u0022 --NEWLINE  --NEWLINE \u0022Thank you brother. You will be in my thoughts.\u0022 --NEWLINE  --NEWLINE ",
   "tileX": 4234,
   "tileY": 695,
   "textWidth": 320,
@@ -1238,7 +1238,7 @@
   "style": 1
 }
 {
-  "text": "An old man at the table tells you there\u0027s treasure to be found in the mountain caverns to the West of the village. --NEWLINE  --NEWLINE \u0022It\u0027s easy pick\u0027n\u0027s boy! If you\u0027re foolish enough to explore the temple below Ashenpeak, at least be smart enough to prepare a little.\u0022 --NEWLINE  --NEWLINE \u0022I\u0027m sure a young lad as spry as you could face down anything! But don\u0027t say I didn\u0027t warn ye!\u0022",
+  "text": "An old man at the table tells you there\u0027s treasure to be found in the mountain caverns to the West of the village. --NEWLINE  --NEWLINE \u0022It\u0027s easy pick\u0027n\u0027s! If you\u0027re foolish enough to explore the Earth Temple below Ashenpeak, at least be smart enough to prepare a little.\u0022 --NEWLINE  --NEWLINE \u0022I\u0027m sure a young lad as spry as you could face down anything! But don\u0027t say I didn\u0027t warn ye!\u0022",
   "tileX": 4316,
   "tileY": 713,
   "textWidth": 320,
