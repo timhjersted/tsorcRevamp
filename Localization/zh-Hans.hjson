@@ -84,12 +84,12 @@ Mods: {
 			DefenseCap: 防御被限定不超过 {0}
 			FlatDmg: 增加 {0} 点伤害
 			MaxStamina: 增加 {0}% 耐力上限
-			// CanBeBlessed: To repair this broken item, let it be blessed by the Emerald Herald
+			CanBeBlessed: 要修复此损坏的物品，请找绿宝石传令官进行祝福
 
 			Melee: {
 				ArmorPenPercent: 增加 {0}% 近战护甲穿透
 				FlatDmg: 增加近战伤害 {0} 点
-				Bonus: （近战武器获得 {0} 倍加成）
+				Bonus: （近战武器获得 {0}x 倍加成）
 				BadDmg: 减少 {0}% 近战伤害
 				Only: 仅供近战战士使用
 				DmgMult: 乘算增加 {0}% 近战伤害
@@ -138,12 +138,12 @@ Mods: {
 					乘算减少 {0}% 召唤伤害
 					鞭子标记伤害不受影响
 					'''
-				SlotsRequired: +{0} 召唤栏
-				PercentOfASlot: 消耗一个召唤物栏位的 {0}%
-				MinionSentrySlot: +{0} 召唤栏和 +{1} 哨兵栏
+				SlotsRequired: 消耗 {0} 召唤栏
+				PercentOfASlot: 消耗一个召唤栏的 {0}%
+				MinionSentrySlot: 增加 {0} 召唤栏和 +{1} 哨兵栏
 				FlatDmg: 增加 {0} 点召唤伤害
 				CritChance: 增加 {0}% 召唤暴击率
-				TagCritMult: 增加 {0} 倍召唤标记暴击率
+				TagCritMult: 增加 {0}x 倍召唤标记暴击率
 				TagDmgMult: 此武器仅受到 {0}% 的召唤标记伤害加成
 				BaseCritChance: 增加 {0}% 基础暴击率
 			}
@@ -212,7 +212,7 @@ Mods: {
 		}
 
 		Events: {
-			// Pinwheel: Pinwheel turns its glance to you.
+			Pinwheel: 火焱风车盯上你了！
 			Death: 命定之死已至！
 			QueenSlime: 史莱姆女皇从她的神圣洞穴中现身！
 			GreatRedKnightInvasion: 一位卓越赭骑士入侵了你的世界！
@@ -367,6 +367,7 @@ Mods: {
 
 		BossChecklist: {
 			LeonhardDesc: 探索双峰之间的吊桥...
+			Pinwheel: 深入村庄附近的溺亡者地下墓穴...
 			AncientOolacileDemonDesc: 有传言提到了失落的乌拉席露森林...
 			SlograAndGaibonName: 斯洛格拉和盖波
 			SlograAndGaibonDesc: 在黑曜石神庙深处找到它们...
@@ -5458,7 +5459,7 @@ Mods: {
 
 			ForgottenRuneAxe: {
 				DisplayName: 被遗忘的符文斧
-				Tooltip: 对魔法使用者造成4倍伤害
+				Tooltip: ""
 			}
 
 			GigantAxe: {
@@ -5703,7 +5704,7 @@ Mods: {
 				Tooltip2:
 					'''
 					右键消耗 {0} 魔力释放追踪的火焰
-					火焰造成 {1} 倍伤害
+					火焰造成 {1}x 倍伤害
 					'''
 			}
 
@@ -5874,7 +5875,7 @@ Mods: {
 				Tooltip:
 					'''
 					用于斩杀各种飞龙的剑
-					对飞行的野兽造成 {0} 倍伤害
+					对飞行的野兽造成 {0}x 倍伤害
 					'''
 			}
 
@@ -7534,8 +7535,8 @@ Mods: {
 			}
 
 			RustedChain: {
-				// DisplayName: Rusted Chain
-				// Tooltip: "{$CommonItemTooltip.Summon.TagArmorPen}"
+				DisplayName: 锈蚀铁链
+				Tooltip: "{$CommonItemTooltip.Summon.TagArmorPen}"
 			}
 		}
 
@@ -8404,8 +8405,8 @@ Mods: {
 			}
 
 			RustedChainDebuff: {
-				// DisplayName: Rusted Chain Debuff
-				// Description: Mods.tsorcRevamp.Buffs.RustedChainDebuff.Description
+				DisplayName: 锈蚀铁链护甲穿透
+				Description: Mods.tsorcRevamp.Buffs.RustedChainDebuff.Description
 			}
 		}
 
@@ -8984,10 +8985,10 @@ Mods: {
 			WorldEnderSword.DisplayName: 末世之剑
 			RuneterraKatanaTornado.DisplayName: 符文之地系列武器旋风
 			SpiritAshKnightMinion.DisplayName: 灵灰骑士
-			// KrakenTsunami.DisplayName: Kraken Tsunami
+			KrakenTsunami.DisplayName: 克拉肯旋风
 			// TyphoonProjectile.DisplayName: Typhoon Projectile
 			// TyphoonArrow.DisplayName: Typhoon Arrow
-			// RustedChainProjectile.DisplayName: Rusted Chain Projectile
+			RustedChainProjectile.DisplayName: 锈蚀铁链
 		}
 
 		NPCs: {

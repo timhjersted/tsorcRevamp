@@ -63,6 +63,7 @@ using static tsorcRevamp.MethodSwaps;
 using tsorcRevamp.Projectiles.Summon.NullSprite;
 using tsorcRevamp.Projectiles.Summon.Tetsujin;
 using tsorcRevamp.Projectiles.Summon.Phoenix;
+using tsorcRevamp.NPCs.Bosses.Pinwheel;
 
 namespace tsorcRevamp
 {
@@ -1550,9 +1551,25 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.LeonhardPhase1.DisplayName"),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.LeonhardDesc"),
+                        ["collectibles"] = ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(),
                         ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/LeonhardPhase1_Head_Boss"
                     }
                     );
+
+
+                bossChecklist.Call(
+                    "LogMiniBoss",
+                    this,
+                    nameof(Pinwheel),
+                    3.1f, // Tier (look above, for determining where it will display)
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Pinwheel>())),
+                    ModContent.NPCType<Pinwheel>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Pinwheel.DisplayName"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.Pinwheel"),
+                    }
+                    );    
 
 
                 bossChecklist.Call(
