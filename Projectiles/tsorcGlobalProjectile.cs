@@ -498,7 +498,7 @@ namespace tsorcRevamp.Projectiles
             Player player = Main.player[projectile.owner];
             if (!Main.hardMode && (projectile.type == ProjectileID.StarCloakStar || projectile.type == ProjectileID.StarVeilStar || projectile.type == ProjectileID.BeeCloakStar || projectile.type == ProjectileID.ManaCloakStar))
             {
-                modifiers.FinalDamage *= 0.25f;
+                modifiers.FinalDamage *= 0.1f;
             }
             if (tsorcRevampWorld.NewSlain != null)
             {
