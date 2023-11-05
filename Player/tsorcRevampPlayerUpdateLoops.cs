@@ -883,8 +883,6 @@ namespace tsorcRevamp
                 }
             }
 
-
-
             if (!NPC.downedGolemBoss && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !NPC.downedEmpressOfLight)
             {
                 Vector2 arena = new Vector2(4468, 365);
@@ -1610,7 +1608,7 @@ namespace tsorcRevamp
                 Player.lifeRegen -= 240;
             }
 
-            if (gilled && !Player.wet/* && Main.tile[(int)Player.Top.X, (int)Player.Top.Y + 10] == TileID.wat*/) //This doesnt really work
+            if (gilled && Main.tile[(int)Player.Top.X / 16, ((int)Player.Top.Y + 10) / 16].LiquidAmount == 0)
             {
                 if (Player.breath >= 0)
                 {
@@ -1939,6 +1937,14 @@ namespace tsorcRevamp
             //Main.NewText("" + Player.lifeRegen);
 
             if (Player.ZoneGraveyard) { Player.AddBuff(BuffID.WaterCandle, 2); }
+
+            if (gilled && Main.tile[(int)Player.Top.X / 16, ((int)Player.Top.Y + 10) / 16].LiquidAmount != 0 && Main.tile[(int)Player.Top.X / 16, ((int)Player.Top.Y + 10) / 16].LiquidType == LiquidID.Water)
+            {
+                if (Player.breath < Player.breathMax)
+                {
+                    Player.breath += 4;
+                }
+            }
         }
 
         void TryForceFrame(ref Rectangle frame, ref PlayerFrames? newFrame)
