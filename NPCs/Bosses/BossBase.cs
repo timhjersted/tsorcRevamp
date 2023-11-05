@@ -29,11 +29,13 @@ namespace tsorcRevamp.NPCs.Bosses
         /// Override this to set your bosses stats and properties.
         /// Remember to call base.SetDefaults(); first so that you don't have to rewrite all the basic stuff
         /// </summary>
+        public float HealthScale;
         public override void SetDefaults()
         {
             //These will always be the same for every boss
             //At the top of your SetDefaults, make sure to call base.SetDefaults()
             //That will take care of all of these for you
+            HealthScale = Main.masterMode ? 1.5f : 1f;
             NPC.aiStyle = -1;
             NPC.friendly = false;
             NPC.noGravity = true;

@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.height = 150;
             NPC.damage = 60;
             NPC.defense = 20;
-            NPC.lifeMax = TheMachine.PrimeArmHealth;
+            NPC.lifeMax = TheMachine.PrimeArmHealth; //somehow scales with MM correctly
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.value = 0;

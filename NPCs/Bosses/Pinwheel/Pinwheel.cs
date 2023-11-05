@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             NPC.defense = 6;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.lifeMax = 2500;
+            NPC.lifeMax = (int)(2500 * HealthScale);
             NPC.timeLeft = 180;
             NPC.value = 500;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.ExampleBoss.DespawnHandler"), Color.Cyan, 180);
@@ -83,7 +83,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 NPC.BossBar = Main.BigBossProgressBar.NeverValid; //Prevents clones from having boss health bars
                 isClone = true;
                 NPC.DeathSound = SoundID.NPCDeath6;
-                NPC.lifeMax = 200;
+                NPC.lifeMax = (int)(200 * HealthScale);
                 NPC.timeLeft = 180;
                 NPC.value = 0;
                 NPC.boss = false;
@@ -91,7 +91,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
                 if (!cloneSpawned) //This allows us to bring current hp down to 200 as soon as it spawns
                 {
-                    NPC.life = 200;
+                    NPC.life = (int)(200 * HealthScale);
                     cloneSpawned = true;
                 }
             }
@@ -383,10 +383,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int shot1 = Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X - 5, NPC.Center.Y - 140), new Vector2(Main.rand.NextFloat(0.5f, 3f), Main.rand.NextFloat(-5.5f, -1.5f)), ProjectileID.BallofFire, DamageNumbers["VolcanicEruptionDamage"], 0, Main.myPlayer, 0, 0);
-                    Main.projectile[shot1].timeLeft = 600;
-                    Main.projectile[shot1].hostile = true;
-                    Main.projectile[shot1].friendly = false;
+                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X - 5, NPC.Center.Y - 140), new Vector2(Main.rand.NextFloat(0.5f, 3f), Main.rand.NextFloat(-5.5f, -1.5f)), ProjectileID.BallofFire, DamageNumbers["VolcanicEruptionDamage"], 0, Main.myPlayer, 0, 0);
+                    shot1.timeLeft = 600;
+                    shot1.hostile = true;
+                    shot1.friendly = false;
 
                 }
             }
@@ -395,10 +395,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int shot1 = Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X - 5, NPC.Center.Y - 140), new Vector2(Main.rand.NextFloat(-3f, -0.5f), Main.rand.NextFloat(-5.5f, -1.5f)), ProjectileID.BallofFire, DamageNumbers["VolcanicEruptionDamage"], 0, Main.myPlayer, 0, 0);
-                    Main.projectile[shot1].timeLeft = 600;
-                    Main.projectile[shot1].hostile = true;
-                    Main.projectile[shot1].friendly = false;
+                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X - 5, NPC.Center.Y - 140), new Vector2(Main.rand.NextFloat(-3f, -0.5f), Main.rand.NextFloat(-5.5f, -1.5f)), ProjectileID.BallofFire, DamageNumbers["VolcanicEruptionDamage"], 0, Main.myPlayer, 0, 0);
+                    shot1.timeLeft = 600;
+                    shot1.hostile = true;
+                    shot1.friendly = false;
                 }
             }
         }
@@ -773,42 +773,42 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
                 if (Main.rand.NextBool(10)) //Gold
                 {
-                    Dust dust2 = Main.dust[Dust.NewDust(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    Dust dust2 = Dust.NewDustDirect(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 57, 0, 0, 50, default(Color), 1f);
                     dust2.velocity *= 0.2f;
                     dust2.noGravity = false;
                 }
 
                 if (Main.rand.NextBool(10)) //Gold
                 {
-                    Dust dust2 = Main.dust[Dust.NewDust(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    Dust dust2 = Dust.NewDustDirect(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f);
                     dust2.velocity *= 0.2f;
                     dust2.noGravity = false;
                 }
 
                 if (Main.rand.NextBool(10)) //Gold
                 {
-                    Dust dust2 = Main.dust[Dust.NewDust(lanternTopLeft + new Vector2(6, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    Dust dust2 = Dust.NewDustDirect(lanternTopLeft + new Vector2(6, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f);
                     dust2.velocity *= 0.2f;
                     dust2.noGravity = false;
                 }
 
                 if (Main.rand.NextBool(10)) //Gold
                 {
-                    Dust dust2 = Main.dust[Dust.NewDust(lanternTopRight + new Vector2(-6, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    Dust dust2 = Dust.NewDustDirect(lanternTopRight + new Vector2(-6, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f);
                     dust2.velocity *= 0.2f;
                     dust2.noGravity = false;
                 }
 
                 if (Main.rand.NextBool(10)) //Gold
                 {
-                    Dust dust2 = Main.dust[Dust.NewDust(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    Dust dust2 = Dust.NewDustDirect(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f);
                     dust2.velocity *= 0.2f;
                     dust2.noGravity = false;
                 }
 
                 if (Main.rand.NextBool(10)) //Gold
                 {
-                    Dust dust2 = Main.dust[Dust.NewDust(lanternBottomRight + new Vector2(4, -24), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    Dust dust2 = Dust.NewDustDirect(lanternBottomRight + new Vector2(4, -24), 8, 10, 57, 0, 0, 50, default(Color), 1f);
                     dust2.velocity *= 0.2f;
                     dust2.noGravity = false;
                 }
@@ -818,37 +818,37 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
                 for (int i = 0; i < 20; i++)
                 {
-                    Dust dust1 = Main.dust[Dust.NewDust(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    Dust dust1 = Dust.NewDustDirect(lanternBottomLeft + new Vector2(-4, -24), 8, 10, 57, 0, 0, 50, default(Color), 1f);
                     dust1.velocity *= Main.rand.NextFloat(0.2f, 0.5f);
                     dust1.noGravity = false;
 
-                    Dust dust2 = Main.dust[Dust.NewDust(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    Dust dust2 = Dust.NewDustDirect(lanternMiddleLeft + new Vector2(4, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f);
                     dust2.velocity *= Main.rand.NextFloat(0.2f, 0.5f);
                     dust2.noGravity = false;
 
-                    Dust dust3 = Main.dust[Dust.NewDust(lanternTopLeft + new Vector2(6, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    Dust dust3 = Dust.NewDustDirect(lanternTopLeft + new Vector2(6, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f);
                     dust3.velocity *= Main.rand.NextFloat(0.2f, 0.5f);
                     dust3.noGravity = false;
 
-                    Dust dust4 = Main.dust[Dust.NewDust(lanternTopRight + new Vector2(-6, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    Dust dust4 = Dust.NewDustDirect(lanternTopRight + new Vector2(-6, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f);
                     dust4.velocity *= Main.rand.NextFloat(0.2f, 0.5f);
                     dust4.noGravity = false;
 
-                    Dust dust5 = Main.dust[Dust.NewDust(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    Dust dust5 = Dust.NewDustDirect(lanternMiddleRight + new Vector2(-2, -10), 8, 10, 57, 0, 0, 50, default(Color), 1f);
                     dust5.velocity *= Main.rand.NextFloat(0.2f, 0.5f);
                     dust5.noGravity = false;
 
-                    Dust dust6 = Main.dust[Dust.NewDust(lanternBottomRight + new Vector2(4, -24), 8, 10, 57, 0, 0, 50, default(Color), 1f)];
+                    Dust dust6 = Dust.NewDustDirect(lanternBottomRight + new Vector2(4, -24), 8, 10, 57, 0, 0, 50, default(Color), 1f);
                     dust6.velocity *= Main.rand.NextFloat(0.2f, 0.5f);
                     dust6.noGravity = false;
                 }
 
                 for (int i = 0; i < 30; i++)
                 {
-                    Dust dust1 = Main.dust[Dust.NewDust(new Vector2(NPC.Center.X - 2, NPC.position.Y), 4, NPC.height, 57, Main.rand.NextFloat(-4f, -3f), 0, 50, default(Color), 1f)];
+                    Dust dust1 = Dust.NewDustDirect(new Vector2(NPC.Center.X - 2, NPC.position.Y), 4, NPC.height, 57, Main.rand.NextFloat(-4f, -3f), 0, 50, default(Color), 1f);
                     dust1.noGravity = false;
 
-                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(NPC.Center.X + 2, NPC.position.Y), 4, NPC.height, 57, Main.rand.NextFloat(3f, 4f), 0, 50, default(Color), 1f)];
+                    Dust dust2 = Dust.NewDustDirect(new Vector2(NPC.Center.X + 2, NPC.position.Y), 4, NPC.height, 57, Main.rand.NextFloat(3f, 4f), 0, 50, default(Color), 1f);
                     dust2.noGravity = false;
                 }
             }

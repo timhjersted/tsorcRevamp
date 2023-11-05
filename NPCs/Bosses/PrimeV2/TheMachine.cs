@@ -322,8 +322,8 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
             if (AllPartsValid() && !finalStand)
             {
-                NPC.life = 35000 + BeamNPC.life + IonNPC.life + BuzzsawNPC.life + GatlingNPC.life + LauncherNPC.life + SeverNPC.life;
-                NPC.lifeMax = 35000 + BeamNPC.lifeMax + IonNPC.lifeMax + BuzzsawNPC.lifeMax + GatlingNPC.lifeMax + LauncherNPC.lifeMax + SeverNPC.lifeMax;
+                NPC.lifeMax = (int)(35000 * HealthScale) + BeamNPC.lifeMax + IonNPC.lifeMax + BuzzsawNPC.lifeMax + GatlingNPC.lifeMax + LauncherNPC.lifeMax + SeverNPC.lifeMax;
+                NPC.life = (int)(35000 * HealthScale) + BeamNPC.life + IonNPC.life + BuzzsawNPC.life + GatlingNPC.life + LauncherNPC.life + SeverNPC.life;
             }
 
             if (Phase == 0 && NPC.life < NPC.lifeMax / 1.8f)
@@ -331,7 +331,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 NextPhase();
             }
 
-            if (NPC.life <= 35006 && !finalStand)
+            if (NPC.life <= (int)(35006 * HealthScale) && !finalStand)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -807,7 +807,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
                 timeFactor = 1;
                 scaleFactor = 3;
                 effectIntensity = 1.0f;
-                if (npc.life <= 35006)
+                if (npc.life <= (int)(35006 * (Main.masterMode ? 1.5f : 1)))
                 {
                     rgbColor = Color.OrangeRed;
                 }
