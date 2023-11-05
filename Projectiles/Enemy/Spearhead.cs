@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
+using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
@@ -49,7 +51,22 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(ModContent.BuffType<Crippled>(), 600);
+            if (Projectile.ai[2] == 0) //Lothric enemies
+            {
+                target.AddBuff(ModContent.BuffType<Crippled>(), 600);
+            }
+            else if (Projectile.ai[2] == 1) //Hollow Spearman
+            {
+                target.AddBuff(ModContent.BuffType<Crippled>(), 360);
+            }
+            else if (Projectile.ai[2] == 2) //Ghost of the Drowned
+            {
+                SoundEngine.PlaySound(SoundID.Drown, target.Center);
+                target.AddBuff(BuffID.Darkness, 10 * 60);
+                target.AddBuff(BuffID.BrokenArmor, 10 * 60);
+                target.AddBuff(BuffID.Chilled, 10 * 60);
+                target.AddBuff(ModContent.BuffType<Gilled>(), 20 * 60);
+            }
         }
     }
 }

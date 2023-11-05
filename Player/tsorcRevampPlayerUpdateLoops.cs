@@ -337,6 +337,8 @@ namespace tsorcRevamp
         public int spawnRate;// For adventure card spwanRate display
         static FieldInfo spawnRateFieldInfo;
 
+        public bool gilled;
+
         public override void ResetEffects()
         {
             BeastMode1 = false;
@@ -476,6 +478,8 @@ namespace tsorcRevamp
             MeleeArmorVamp10 = false;
             AuraOfIlluminance = false;
             CurrentAuraState = tsorcAuraState.None;
+
+            gilled = false;
         }
         public override void PreUpdate()
         {
@@ -1606,6 +1610,17 @@ namespace tsorcRevamp
                 Player.lifeRegen -= 240;
             }
 
+            if (gilled && !Player.wet/* && Main.tile[(int)Player.Top.X, (int)Player.Top.Y + 10] == TileID.wat*/) //This doesnt really work
+            {
+                if (Player.breath >= 0)
+                {
+                    Player.breath -= 4;
+                }
+                if (Player.breath <= 0)
+                {
+                    Player.lifeRegen -= 15;
+                }
+            }
         }
 
 
