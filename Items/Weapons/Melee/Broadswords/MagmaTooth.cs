@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.scale = 1.2f;
             Item.useTime = 32;
             Item.maxStack = 1;
-            Item.damage = 44;
+            Item.damage = 42;
             Item.knockBack = 8;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Orange;
@@ -36,7 +36,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             Projectile Volcano = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), target.Center, Vector2.Zero, ProjectileID.Volcano, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
-
+            Volcano.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit;
+            Volcano.netUpdate = true;
             target.AddBuff(BuffID.OnFire3, 300, false);
         }
         public override void MeleeEffects(Player player, Rectangle hitbox)

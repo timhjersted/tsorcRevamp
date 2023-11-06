@@ -8,7 +8,6 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Sentry
 {
-    [Autoload(false)]
     public class Typhoon : ModItem
     {
         public override void SetStaticDefaults()

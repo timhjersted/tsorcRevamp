@@ -3252,6 +3252,7 @@ Mods: {
 					[c/00ffd4:它的真正用途可能会在某个时间或某个特定位置显露出来...]
 					'''
 				Summon: "大门已打开。血肉之墙进入了这个维度！... "
+				// BotCOnly: "[c/ffbf00:Offers a {0}% damage boost]{$CommonItemTooltip.ForBotCOnly} when equipped."
 			}
 
 			AbysmalStone: {
@@ -6592,6 +6593,16 @@ Mods: {
 					'''
 			}
 
+			Typhoon: {
+				// DisplayName: Typhoon
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a hellish bow which shoots flaming arrows towards your cursor
+					Applies hellfire
+					''' */
+			}
+
 			CaiusPyre: {
 				DisplayName: 凯厄斯之葬
 				Tooltip:
@@ -7538,6 +7549,11 @@ Mods: {
 				DisplayName: 锈蚀铁链
 				Tooltip: "{$CommonItemTooltip.Summon.TagArmorPen}"
 			}
+
+			PinwheelBag: {
+				// DisplayName: Pinwheel Bag
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -8407,6 +8423,11 @@ Mods: {
 			RustedChainDebuff: {
 				DisplayName: 锈蚀铁链护甲穿透
 				Description: Mods.tsorcRevamp.Buffs.RustedChainDebuff.Description
+			}
+
+			Gilled: {
+				// DisplayName: Gilled
+				// Description: Mods.tsorcRevamp.Buffs.Gilled.Description
 			}
 		}
 
@@ -10032,6 +10053,8 @@ Mods: {
 			SandsprogMage.DisplayName: 沙盗法师
 			Pinwheel.DisplayName: 火焱风车
 			GhostOfAHollowWarrior.DisplayName: 空洞战士幽魂
+			// GhostOfTheDrowned.DisplayName: Ghost Of The Drowned
+			// HollowSpearman.DisplayName: Hollow Spearman
 		}
 
 		Prefixes: {

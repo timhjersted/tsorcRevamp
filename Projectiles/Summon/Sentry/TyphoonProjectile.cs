@@ -10,8 +10,8 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
         public override int ShotCooldown => (int)(1.4f * 60f);
         public override int SentryShotCooldownReductionOnSpawn => 10;
         public override int ProjectileFrameCount => 6;
-        public override int ProjectileWidth => 54;
-        public override int ProjectileHeight => 58;
+        public override int ProjectileWidth => 60;
+        public override int ProjectileHeight => 62;
         public override DamageClass ProjectileDamageType => DamageClass.Summon;
         public override bool ContactDamage => false;
         public override int ShotProjectileType => ModContent.ProjectileType<TyphoonArrow>();

@@ -24,7 +24,9 @@ namespace tsorcRevamp.Buffs.Weapons.Melee
                     {
                         player.statMana -= (int)(player.manaCost * 10f);
                         player.manaRegenDelay = 200;
-                        Projectile.NewProjectile(npc.GetSource_Buff(buffIndex), npc.Center, Vector2.Zero, ProjectileID.Muramasa, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(ShadowSickle.BaseDamage / 2), 0, Main.myPlayer);
+                        Projectile Slash = Projectile.NewProjectileDirect(npc.GetSource_Buff(buffIndex), npc.Center, Vector2.Zero, ProjectileID.Muramasa, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(ShadowSickle.BaseDamage / 2), 0, Main.myPlayer);
+                        Slash.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + player.HeldItem.crit;
+                        Slash.netUpdate = true;
                     }
                 }
             }

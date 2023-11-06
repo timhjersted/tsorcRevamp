@@ -16,9 +16,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Green;
-            Item.damage = 22;
-            Item.width = 42;
-            Item.height = 34;
+            Item.damage = 23;
+            Item.width = 50;
+            Item.height = 42;
             Item.knockBack = 10f;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 35;
@@ -26,7 +26,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Green_2;
-            Item.scale = 1.1f;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.OrangeRed;
@@ -49,6 +48,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             target.AddBuff(BuffID.OnFire, 12 * 60, false);
             Projectile Fireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 5f), ProjectileID.BallofFire, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
             Fireball.DamageType = DamageClass.Melee;
+            Fireball.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit;
+            Fireball.netUpdate = true;
         }
 
         public override void MeleeEffects(Terraria.Player player, Rectangle rectangle)

@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items.Accessories.Magic;
 using tsorcRevamp.Items.Armors;
+using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Utilities;
 
@@ -114,6 +115,11 @@ namespace tsorcRevamp.Items.VanillaItems
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.DamageType == DamageClass.Ranged)
             {
                 SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("CommonItemTooltip.Ranged.CurrentAccuracy", (int)(player.GetModPlayer<tsorcRevampPlayer>().BotCCurrentAccuracyPercent * 100f)));
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.type == ModContent.ItemType<AaronsProtectionStone>())
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("Items.AaronsProtectionStone.BotCOnly", (int)AaronsProtectionStone.DamageIncrease));
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && (item.type == ItemID.PhilosophersStone || item.type == ItemID.CharmofMyths || item.type == ModContent.ItemType<DragoonHelmet2>()))

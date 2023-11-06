@@ -3,8 +3,11 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items;
+using tsorcRevamp.Items.Potions;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Utilities;
 
@@ -41,7 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.lifeMax = (int)(2500 * HealthScale);
             NPC.timeLeft = 180;
-            NPC.value = 500;
+            NPC.value = 15000; 
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.ExampleBoss.DespawnHandler"), Color.Cyan, 180);
 
             //Terraria.GameContent.UI.BigProgressBar.IBigProgressBar bossBar;
@@ -1133,6 +1136,21 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                     NPC.frame.Y = 22 * frameHeight;
                 }
             }
+        }
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                potionType = ModContent.ItemType<Lifegem>();
+            } else { potionType = ItemID.HealingPotion; }
+        }
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.PinwheelBag>()));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            //notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.Amethyst, 1, 1, 10)); replace amethysts with whatever it drops on normal mode and the numbers with fitting amounts
+            npcLoot.Add(notExpertCondition);
+            //npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>())); if you want to give it an extra one time drop outside of expert mode
         }
 
 

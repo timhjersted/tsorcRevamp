@@ -3247,11 +3247,11 @@ Mods: {
 				Tooltip:
 					'''
 					A volcanic stone etched in Aaron's image
-					[c/ffbf00:Offers a 20% damage boost for Bearers Of The Curse when equipped.]
 					Said to protect the one who carries it in times of despair.
 					[c/00ffd4:It's true use may reveal itself in time...or at a particular location deep underground...]
 					'''
 				Summon: "A Gate has been opened. The Great Wall has passed into this dimension!... "
+				BotCOnly: "[c/ffbf00:Offers a {0}% damage boost]{$CommonItemTooltip.ForBotCOnly} when equipped."
 			}
 
 			AbysmalStone: {
@@ -6591,6 +6591,16 @@ Mods: {
 					'''
 			}
 
+			Typhoon: {
+				DisplayName: Typhoon
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a hellish bow which shoots flaming arrows towards your cursor
+					Applies hellfire
+					'''
+			}
+
 			CaiusPyre: {
 				DisplayName: Caius' Pyre
 				Tooltip:
@@ -7542,6 +7552,11 @@ Mods: {
 					{$CommonItemTooltip.SummonTagDamage@1}
 					'''
 			}
+
+			PinwheelBag: {
+				DisplayName: Pinwheel Bag
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -8411,6 +8426,11 @@ Mods: {
 			RustedChainDebuff: {
 				DisplayName: Rusted Chain Debuff
 				Description: Mods.tsorcRevamp.Buffs.RustedChainDebuff.Description
+			}
+
+			Gilled: {
+				DisplayName: Gilled
+				Description: Mods.tsorcRevamp.Buffs.Gilled.Description
 			}
 		}
 
@@ -10037,6 +10057,8 @@ Mods: {
 			SandsprogMage.DisplayName: Sandsprog Mage
 			Pinwheel.DisplayName: Pinwheel
 			GhostOfAHollowWarrior.DisplayName: Ghost Of A Hollow Warrior
+			GhostOfTheDrowned.DisplayName: Ghost Of The Drowned
+			HollowSpearman.DisplayName: Hollow Spearman
 		}
 
 		Prefixes: {

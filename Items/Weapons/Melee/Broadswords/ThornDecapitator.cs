@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.autoReuse = true;
             Item.useTime = 25;
             Item.maxStack = 1;
-            Item.damage = 33;
+            Item.damage = 29;
             Item.knockBack = 5;
             Item.useTurn = false;
             Item.UseSound = SoundID.Item1;
@@ -43,6 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             target.AddBuff(BuffID.Poisoned, 3 * 60);
             Projectile Spore = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), target.Center, Vector2.Zero, ProjectileID.SporeTrap, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
             Spore.DamageType = DamageClass.Melee;
+            Spore.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit;
             Spore.damage /= 3;
             Spore.netUpdate = true;
         }

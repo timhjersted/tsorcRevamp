@@ -21,7 +21,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.rare = ItemRarityID.Green;
             Item.damage = 20;
             Item.knockBack = 5;
-            Item.maxStack = 1;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
             Item.useAnimation = 20;
@@ -44,6 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             {
                 Projectile Slash = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Main.MouseWorld - player.Center, ProjectileID.DD2SquireSonicBoom, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer, 0, 0, 1);
                 Slash.damage += Slash.damage / 2; //basically 1.5x
+                Slash.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit;
                 Slash.timeLeft = 15;
                 Slash.scale = 0.8f;
                 Slash.penetrate = 3;

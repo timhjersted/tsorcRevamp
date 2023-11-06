@@ -75,6 +75,16 @@ namespace tsorcRevamp.Items.BossBags
 
     #region PreHardMode
 
+    public class PinwheelBag : BossBag
+    {
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            //ideally an expert-only item and a weapon for each class I guess
+        }
+    }
     public class OolacileDemonBag : BossBag
     {
         public override void SetStaticDefaults()

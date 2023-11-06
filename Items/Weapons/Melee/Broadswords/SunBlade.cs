@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.LightRed;
-            Item.damage = 44;
+            Item.damage = 40;
             Item.width = 36;
             Item.height = 36;
             Item.knockBack = 9;
@@ -70,6 +70,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             Projectile SunInferno = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), target.Center, Vector2.Zero, ProjectileID.InfernoFriendlyBlast, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
             SunInferno.DamageType = DamageClass.Melee;
+            SunInferno.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit;
             SunInferno.netUpdate = true;
         }
     }

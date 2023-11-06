@@ -11,6 +11,7 @@ namespace tsorcRevamp.Projectiles
     class TyphoonArrow : DynamicTrail
     {
         public override string Texture => base.Texture;
+        public const int DebuffDuration = 4;
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.SentryShot[Type] = true;
@@ -18,7 +19,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override void SetDefaults()
         {
-            Projectile.width = 52;
+            Projectile.width = 58;
             Projectile.height = 2;
             Projectile.timeLeft = 120;
             Projectile.friendly = true;
@@ -79,6 +80,7 @@ namespace tsorcRevamp.Projectiles
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GaleforceHit") with { Volume = 0.5f }, target.Center);
+            target.AddBuff(BuffID.OnFire3, DebuffDuration * 60);
         }
         Vector2 samplePointOffset1;
         Vector2 samplePointOffset2;
