@@ -195,7 +195,9 @@ namespace tsorcRevamp
             EoL,
             DungeonGuardian,
             OldManEvent,
-            DualSandsprogAmbush1
+            DualSandsprogAmbush1,
+            DrownedAmbush1,
+            DrownedAmbush2,
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -215,7 +217,7 @@ namespace tsorcRevamp
             ScriptedEvent Pinwheel = new ScriptedEvent(new Vector2(4139f, 923), 15, ModContent.NPCType<NPCs.Bosses.Pinwheel.Pinwheel>(), DustID.SpectreStaff, false, true, true, LangUtils.GetTextValue("Events.Pinwheel"), Color.Black, false);
 
             //LOTHRIC BLACK KNIGHT IN CATACOMBS OF THE DROWNED
-            ScriptedEvent LothricKnightCatacombs = new ScriptedEvent(new Vector2(4137, 895), 10, ModContent.NPCType<NPCs.Enemies.LothricBlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
+            ScriptedEvent LothricKnightCatacombs = new ScriptedEvent(new Vector2(4137, 895), 10, ModContent.NPCType<NPCs.Enemies.LothricBlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, LothricBlackKnightCustomAction);
             LothricKnightCatacombs.SetCustomStats(1100, 8, 40, 1500);
 
             //FIRELURKER AMBUSH 1 - Path of Ambition main room
@@ -456,7 +458,7 @@ namespace tsorcRevamp
             ScriptedEvent BoulderfallEvent3 = new ScriptedEvent(new Vector2(3665, 360), 6, default, default, true, false, false, "", default, false, default, BoulderfallEvent3Action);
 
             //FIREBOMB HOLLOW AMBUSH - ON BRIDGE AT TWIN PEAKS - ONLY ONCE
-            List<int> FirebombHollowAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.FirebombHollow>(), ModContent.NPCType<NPCs.Enemies.FirebombHollow>() };
+            List<int> FirebombHollowAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowSpearman>(), ModContent.NPCType<NPCs.Enemies.FirebombHollow>() };
             List<Vector2> FirebombHollowAmbushEnemyLocations = new List<Vector2>() { new Vector2(3386, 367), new Vector2(3451, 367) };
             ScriptedEvent FirebombHollowAmbush = new ScriptedEvent(new Vector2(3418, 364), 10, FirebombHollowAmbushEnemyTypeList, FirebombHollowAmbushEnemyLocations, default, true, false, false, LangUtils.GetTextValue("Events.FirebombHollowAmbush"), Color.Red, false, default, FirebombHollowAmbushAction);
 
@@ -489,7 +491,7 @@ namespace tsorcRevamp
             ShadowMageAmbush1.SetCustomStats(700, 18, null); // Lowers the mage's HP, and raises the soldiers
 
             //BRIDGE AMBUSH 1 - ON BRIDGE POST EOW
-            List<int> BridgeAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowWarrior>(), ModContent.NPCType<NPCs.Enemies.HollowSoldier>(), ModContent.NPCType<NPCs.Enemies.ManHunter>(), ModContent.NPCType<NPCs.Enemies.TibianAmazon>() };
+            List<int> BridgeAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowWarrior>(), ModContent.NPCType<NPCs.Enemies.HollowSoldier>(), ModContent.NPCType<NPCs.Enemies.ManHunter>(), ModContent.NPCType<NPCs.Enemies.HollowSpearman>() };
             List<Vector2> BridgeAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4593, 858), new Vector2(4640, 858), new Vector2(4643f, 841), new Vector2(4588f, 858) };
             ScriptedEvent BridgeAmbush1 = new ScriptedEvent(new Vector2(4615, 852), 6, BridgeAmbush1EnemyTypeList, BridgeAmbush1EnemyLocations, DustID.Cloud, true, false, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red, false, PostEoWCustomCondition, null);
 
@@ -506,6 +508,20 @@ namespace tsorcRevamp
             ScriptedEvent LothricAmbush2 = new ScriptedEvent(new Vector2(4574, 945), 12, LothricAmbush2EnemyTypeList, LothricAmbush2EnemyLocations, DustID.DungeonWater, true, false, false, LangUtils.GetTextValue("Events.LothricAmbush2"), Color.Red, false, PreMechCustomCondition, null);
             LothricAmbush2.SetCustomStats(null, null, 70, 600); // Lower damage than normal, slightly more souls than normal
             LothricAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.RadiantLifegem>() }, new List<int>() { 5 });
+
+            //GHOST OF THE DROWNED AMBUSH 1 - NEAR ENTRANCE OF CATACOMBS OF THE DROWNED
+            List<int> DrownedAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.GhostOfTheDrowned>() };
+            List<Vector2> DrownedAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4294, 778) };
+            ScriptedEvent DrownedAmbush1 = new ScriptedEvent(new Vector2(4318, 768), 11, DrownedAmbush1EnemyTypeList, DrownedAmbush1EnemyLocations, DustID.WaterCandle, false, true, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
+            //LothricAmbush2.SetCustomStats(null, null, 70, 600); // Lower damage than normal, slightly more souls than normal
+            DrownedAmbush1.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.HealingElixir>() }, new List<int>() { 1 });
+
+            //GHOST OF THE DROWNED AMBUSH 1 - NEAR ENTRANCE OF CATACOMBS OF THE DROWNED
+            List<int> DrownedAmbush2EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.GhostOfTheDrowned>() };
+            List<Vector2> DrownedAmbush2EnemyLocations = new List<Vector2>() { new Vector2(4117, 823) };
+            ScriptedEvent DrownedAmbush2 = new ScriptedEvent(new Vector2(4090, 828), 11, DrownedAmbush2EnemyTypeList, DrownedAmbush2EnemyLocations, DustID.WaterCandle, false, true, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
+            //LothricAmbush2.SetCustomStats(null, null, 70, 600); // Lower damage than normal, slightly more souls than normal
+            DrownedAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.BoostPotion>() }, new List<int>() { 2 });
 
             ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, SuperHardModeCustomCondition, SetNightCustomAction);
 
@@ -590,6 +606,8 @@ namespace tsorcRevamp
                 {ScriptedEventType.EoL, EoL},
                 {ScriptedEventType.DungeonGuardian, DungeonGuardianEvent },
                 {ScriptedEventType.DualSandsprogAmbush1, DualSandsprogAmbush1 },
+                {ScriptedEventType.DrownedAmbush1, DrownedAmbush1 },
+                {ScriptedEventType.DrownedAmbush2, DrownedAmbush2 },
 
 
             };
@@ -929,6 +947,17 @@ namespace tsorcRevamp
                 //It's an easy fix though: Go to the file for the NPC you want to change and find the damage variables for the projectiles you want to modify (in this case spearDamage) and put 'public' in front of them.
                 //Then you'll be able to access them from here and set them to anything!
                 //ourKnight.redKnightsSpearDamage = 20;
+            }
+            return EventActionStatus.EndAction;
+        }
+
+        //LOTHRIC BLACK KNIGHT CUSTOM ACTION
+        public static EventActionStatus LothricBlackKnightCustomAction(ScriptedEvent thisEvent)
+        {
+            if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Enemies.LothricBlackKnight>())
+            {
+                NPCs.Enemies.LothricBlackKnight ourKnight = (NPCs.Enemies.LothricBlackKnight)thisEvent.eventNPCs[0].npc.ModNPC;
+                ourKnight.lothricDamage = 14;
             }
             return EventActionStatus.EndAction;
         }

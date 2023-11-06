@@ -50,7 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
             //You can also specify BossBase specific values here
             introDuration = 40;
-            attackTransitionDuration = 120;
+            attackTransitionDuration = 180;
             //phaseTransitionDuration = 120;
             deathAnimationDuration = 180;
             randomAttacks = true;

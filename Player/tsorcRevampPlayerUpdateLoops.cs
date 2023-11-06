@@ -337,6 +337,8 @@ namespace tsorcRevamp
         public int spawnRate;// For adventure card spwanRate display
         static FieldInfo spawnRateFieldInfo;
 
+        public bool gilled;
+
         public override void ResetEffects()
         {
             BeastMode1 = false;
@@ -476,6 +478,8 @@ namespace tsorcRevamp
             MeleeArmorVamp10 = false;
             AuraOfIlluminance = false;
             CurrentAuraState = tsorcAuraState.None;
+
+            gilled = false;
         }
         public override void PreUpdate()
         {
@@ -878,8 +882,6 @@ namespace tsorcRevamp
                     Player.statManaMax2 += Player.GetModPlayer<tsorcRevampPlayer>().SoulVessel * Items.SoulVessel.MaxManaIncrease;
                 }
             }
-
-
 
             if (!NPC.downedGolemBoss && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !NPC.downedEmpressOfLight)
             {
@@ -1606,6 +1608,17 @@ namespace tsorcRevamp
                 Player.lifeRegen -= 240;
             }
 
+            if (gilled && Main.tile[(int)Player.Top.X / 16, ((int)Player.Top.Y + 10) / 16].LiquidAmount == 0)
+            {
+                if (Player.breath >= 0)
+                {
+                    Player.breath -= 4;
+                }
+                if (Player.breath <= 0)
+                {
+                    Player.lifeRegen -= 15;
+                }
+            }
         }
 
 
@@ -1924,6 +1937,14 @@ namespace tsorcRevamp
             //Main.NewText("" + Player.lifeRegen);
 
             if (Player.ZoneGraveyard) { Player.AddBuff(BuffID.WaterCandle, 2); }
+
+            if (gilled && Main.tile[(int)Player.Top.X / 16, ((int)Player.Top.Y + 10) / 16].LiquidAmount != 0 && Main.tile[(int)Player.Top.X / 16, ((int)Player.Top.Y + 10) / 16].LiquidType == LiquidID.Water)
+            {
+                if (Player.breath < Player.breathMax)
+                {
+                    Player.breath += 4;
+                }
+            }
         }
 
         void TryForceFrame(ref Rectangle frame, ref PlayerFrames? newFrame)

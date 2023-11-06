@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -29,7 +30,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void SetDefaults()
         {
-            NPC.knockBackResist = 0.45f;
+            NPC.knockBackResist = 0f; //Is ghost
             NPC.aiStyle = -1;
             NPC.damage = 18;
             NPC.defense = 10;
@@ -579,7 +580,21 @@ namespace tsorcRevamp.NPCs.Enemies
             #endregion
         }
 
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
+        {
+            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally; //Flip texture depending on spriteDirection
 
+            Texture2D texture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/HollowWarrior");
+            if (NPC.spriteDirection == 1)
+            {
+                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 64, 54), Color.White * 0.75f, NPC.rotation, new Vector2(32, 30), NPC.scale, effects, 0f);
+            }
+            else
+            {
+                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 64, 54), Color.White * 0.75f, NPC.rotation, new Vector2(32, 30), NPC.scale, effects, 0f);
+            }
+            return false; //Don't draw base sprite
+        }
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
@@ -590,11 +605,11 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (NPC.spriteDirection == 1)
                 {
-                    spriteBatch.Draw(shieldTexture, NPC.Center - Main.screenPosition, myrectangle, lightColor, NPC.rotation, new Vector2(32, 29), NPC.scale, effects, 0f);
+                    spriteBatch.Draw(shieldTexture, NPC.Center - Main.screenPosition, myrectangle, Color.White * 0.2f, NPC.rotation, new Vector2(32, 29), NPC.scale, effects, 0f);
                 }
                 else
                 {
-                    spriteBatch.Draw(shieldTexture, NPC.Center - Main.screenPosition, myrectangle, lightColor, NPC.rotation, new Vector2(32, 29), NPC.scale, effects, 0f);
+                    spriteBatch.Draw(shieldTexture, NPC.Center - Main.screenPosition, myrectangle, Color.White * 0.2f, NPC.rotation, new Vector2(32, 29), NPC.scale, effects, 0f);
                 }
             }
         }
