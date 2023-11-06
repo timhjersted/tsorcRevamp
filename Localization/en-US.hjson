@@ -9142,7 +9142,7 @@ Mods: {
 				DespawnHandler: The hero of Lumelia stands victorious...
 				Spawn: "'You killed my brother!' A hero from Lumelia has come to kill you for slaying his kin... "
 				Archers1: Archers nearby!
-				Archers2: Archers in the trees!
+				Archers2: Archers in the distance!
 			}
 
 			JungleWyvernBody.DisplayName: Ancient Jungle Wyvern
