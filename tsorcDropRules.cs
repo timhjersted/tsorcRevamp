@@ -93,6 +93,7 @@ namespace tsorcRevamp
         public bool CanShowItemDropInUI() => true;
 
         public virtual string GetConditionDescription() => LangUtils.GetTextValue("DropRules.BotCOnly");
+        
     }
 
     public class FirstBagCursedRule : FirstBagRule

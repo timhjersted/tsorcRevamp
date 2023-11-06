@@ -3243,12 +3243,13 @@ Mods: {
 			}
 
 			AaronsProtectionStone: {
-				DisplayName: Aarons Protection Stone
+				DisplayName: Aaron's Protection Stone
 				Tooltip:
 					'''
-					The volcanic stoned etched in Aaron's image
-					Said to protect the one who carries it in times of despair
-					[c/00ffd4:It's true use may reveal itself in time...or at a particular location...]
+					A volcanic stone etched in Aaron's image
+					[c/ffbf00:Offers a 20% damage boost for Bearers Of The Curse when equipped.]
+					Said to protect the one who carries it in times of despair.
+					[c/00ffd4:It's true use may reveal itself in time...or at a particular location deep underground...]
 					'''
 				Summon: "A Gate has been opened. The Great Wall has passed into this dimension!... "
 			}

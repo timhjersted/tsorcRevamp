@@ -713,7 +713,7 @@
   "style": 1
 }
 {
-  "text": "You drop a glow stick down the shaft and it disappears into the darkness. Maybe I\u0027ll use the Greater Magic Mirror here... --NEWLINE  --NEWLINE Greater Magic Mirror: --NEWLINE Lets you set a warp point at any location --NEWLINE Recipe: 1 Magic Mirror, 1000 Dark Soul",
+  "text": "You drop a glow stick down the shaft and it disappears into the darkness. Maybe I should try the Greater Magic Mirror here... --NEWLINE  --NEWLINE Greater Magic Mirror: --NEWLINE  --NEWLINE Obtain it by right-clicking on the Green Glowing Skull nearby.--NEWLINE   --NEWLINE Lets you set a warp point at your location.",
   "tileX": 3487,
   "tileY": 413,
   "textWidth": 320,
@@ -986,7 +986,7 @@
   "style": 1
 }
 {
-  "text": "Red: \u0022It was the Mindflayer King. He finally got his revenge...and he thought he killed me too...\u0022 You pause... silent in thought as you realize the choice you\u0027ve just made. \u0022I\u0027ve already gathered my armor, weapons and food and will soon depart.\u0022 ---- Aaron: \u0022Well.. I see. I\u0027ll wish you luck Red. It seems impossible, but...\u0022 Aaron turns to the chest above his bed. \u0022Take this! It\u0027s a volcanic stone etched into my image. It\u0027s always protected me. Perhaps it can protect you too.\u0022",
+  "text": "Red: \u0022It was the Mindflayer King. He finally got his revenge...and he thought he killed me too...\u0022 You pause: silent in thought as you realize the choice you\u0027ve just made. \u0022I\u0027ve already gathered my armor, weapons and food and will soon depart.\u0022 ---- Aaron: \u0022Well.. I see. I\u0027ll wish you luck Red. It seems impossible, but...\u0022 Aaron turns to the Green Glowing Skull above his bed. \u0022Take this! It\u0027s a volcanic stone that\u0027s always protected me. Perhaps it can protect you too.\u0022",
   "tileX": 4089,
   "tileY": 713,
   "textWidth": 320,
@@ -1000,7 +1000,7 @@
   "style": 1
 }
 {
-  "text": "Your friend Aaron: \u0022Red!\u0022 He stammers, surprised, \u0022They said you were killed!\u0022 --NEWLINE  --NEWLINE Red: \u0022I know, I can\u0027t believe it either. I\u0027m just glad you weren\u0027t visiting when they attacked. Almost all of my family...\u0022  --NEWLINE  --NEWLINE Aaron: \u0022I know Red. I can\u0027t believe what they did.. It\u0027s..\u0022",
+  "text": "Your friend Aaron: \u0022Red! They said you were killed!\u0022 --NEWLINE  --NEWLINE Red: \u0022I know, I can\u0027t believe it either. I\u0027m just glad you weren\u0027t visiting when they attacked. Almost all of my family...\u0022  --NEWLINE  --NEWLINE Aaron: \u0022I know Red. I can\u0027t believe what they did...\u0022",
   "tileX": 4092,
   "tileY": 709,
   "textWidth": 320,
@@ -1175,7 +1175,7 @@
   "style": 1
 }
 {
-  "text": "Bodhi freezes as he sees you through the open door. then exclaims with joy, \u0022Brother! You\u0027re alive! I thought you were dead!\u0022  --NEWLINE  --NEWLINE Still in shock, you ask,\u0022But what about Elijah, and our parents... and Asha!? Are they alive!?\u0022 --NEWLINE  -- \u0022Oh god, Red, no. It was terrible. They killed father and mother. I had to bury them alone with you. You weren\u0027t breathing. I thought...\u0022 ",
+  "text": "Bodhi freezes as he sees you through the open door. then exclaims with joy, \u0022Brother! You\u0027re alive! I thought you were dead!\u0022  --NEWLINE  --NEWLINE Still in shock, you ask,\u0022But what about Elijah, and our parents... and Asha!? Are they alive!?\u0022 --NEWLINE  -- \u0022Oh god, Red, no. It was terrible. They killed father and mother. I had to bury them alone with you. You weren\u0027t breathing...\u0022 ",
   "tileX": 4247,
   "tileY": 709,
   "textWidth": 320,
@@ -1392,7 +1392,7 @@
   "style": 1
 }
 {
-  "text": "Right click on bonfires to light them.  --NEWLINE  --NEWLINE After they are lit, you can set them as a respawn point or use the phantom piggy bank or safe they offer. --NEWLINE  --NEWLINE Lit bonfires can be teleported to at any time.",
+  "text": "Right click on bonfires to light them.  --NEWLINE  --NEWLINE After they are lit, you can set them as a respawn point or use the phantom piggy bank or safe they offer. --NEWLINE  --NEWLINE Lit bonfires can be teleported to at any time by clicking on their map icon via the map.",
   "tileX": 4480,
   "tileY": 732,
   "textWidth": 320,
@@ -1406,7 +1406,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve discovered the entrance to the Earth Temple - --NEWLINE  --NEWLINE The cave has collapsed.  --NEWLINE  --NEWLINE \u0022The rubble doesn\u0027t look too deep. With a pickaxe or a bomb I bet I can break through it.\u0022 --NEWLINE  --NEWLINE ",
+  "text": "- You\u0027ve discovered the entrance to the Earth Temple - --NEWLINE  --NEWLINE It's locked by a Large Amber Gem Gate.  --NEWLINE  --NEWLINE \u0022The Wizard who lives in the snow-topped mountains to the North West of Ashenpeak village is said to be safeguarding the key.\u0022 --NEWLINE  --NEWLINE ",
   "tileX": 4521,
   "tileY": 857,
   "textWidth": 320,
@@ -1588,7 +1588,7 @@
   "style": 1
 }
 {
-  "text": "Your stomach sinks -- the graves next to yours are unmarked, but must have been dug at the time of yours.  --NEWLINE  --NEWLINE You don\u0027t want to think who...",
+  "text": "Your stomach sinks -- the graves next to yours are unmarked, but must have been dug at the time of yours.",
   "tileX": 4915,
   "tileY": 867,
   "textWidth": 320,

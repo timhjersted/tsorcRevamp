@@ -61,8 +61,9 @@ namespace tsorcRevamp.Items.Tools
 
         public override bool CanUseItem(Player player)
         {
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            // Removing this restriction for BOTC players and making it a master-mode only restriction was part of our big vision overhaul for allowing more players to enjoy all the fun BOTC mechanics like flasks and stamina while moving the more hard core elements to master mode 
+            // Just don't know how to switch the restriction to master...
+            /*if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 if (player.whoAmI == Main.myPlayer)
                 {
@@ -70,6 +71,7 @@ namespace tsorcRevamp.Items.Tools
                 }
                 return false;
             }
+            */
             if (tsorcRevampWorld.BossAlive)
             {
                 if (player.whoAmI == Main.myPlayer)

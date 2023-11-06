@@ -399,12 +399,10 @@ namespace tsorcRevamp.NPCs
 
             //PRE-HARD MODE
 
-            // Path of Ambition Temple (not in water)
-            if (!spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.SandstoneBrick && !Main.hardMode && !tsorcRevampWorld.SuperHardMode)
+            // Arazium's Mountain Caverns (not in water)
+            if (!spawnInfo.Water && (spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneOverworldHeight) && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.DirtUnsafe1 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.DirtUnsafe2) && !Main.hardMode )
             {
-                //pool.Add(ModContent.NPCType<Enemies.HollowSoldier>(), 0.2f);
-                //pool.Add(ModContent.NPCType<Enemies.HollowWarrior>(), 0.2f);
-                //pool.Add(ModContent.NPCType<Enemies.FirebombHollow>(), 0.2f);
+                pool.Add(NPCID.Skeleton, 0.02f);       
             }
 
             //jungle
@@ -440,7 +438,7 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.Salamander4, 0.4f);
                 pool.Add(NPCID.MeteorHead, 0.01f);
             }
-
+            //graveyard
             if (spawnInfo.Player.ZoneGraveyard && !Main.hardMode)
             {
                 pool.Add(NPCID.BigMisassembledSkeleton, 0.2f);
