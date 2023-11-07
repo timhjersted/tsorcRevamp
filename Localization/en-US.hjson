@@ -8430,7 +8430,7 @@ Mods: {
 
 			Gilled: {
 				DisplayName: Gilled
-				Description: Mods.tsorcRevamp.Buffs.Gilled.Description
+				Description: You need water!
 			}
 		}
 

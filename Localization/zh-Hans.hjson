@@ -3252,7 +3252,7 @@ Mods: {
 					[c/00ffd4:它的真正用途可能会在某个时间或某个特定位置显露出来...]
 					'''
 				Summon: "大门已打开。血肉之墙进入了这个维度！... "
-				// BotCOnly: "[c/ffbf00:Offers a {0}% damage boost]{$CommonItemTooltip.ForBotCOnly} when equipped."
+				BotCOnly: "{$CommonItemTooltip.ForBotCOnly}[c/ffbf00:装备时提供 {0}% 伤害加成]"
 			}
 
 			AbysmalStone: {
@@ -3937,8 +3937,8 @@ Mods: {
 				Tooltip:
 					'''
 					便携的全图传送器——制作组の仁慈，把它放在饰品栏会记录你所在位置并创建传送点
-					再次使用就会传送到该点，传送时间需要 {0} 秒，期间不能移动
-					记录传送点时防御降低到0并减慢移动速度
+					再次使用就会传送到该点，传送需要 {0} 秒时间，期间不能移动
+					记录传送点时防御降低到 0 并减慢移动速度
 					你只需要把它在饰品栏里放一下就好了，不要一直放着
 					'''
 				NoLocation: 你还没有记录传送点！
@@ -5022,17 +5022,17 @@ Mods: {
 
 			ExplosionRune: {
 				DisplayName: 爆裂魔咒
-				Tooltip: 在碰撞时射出5个能爆炸的小火球
+				Tooltip: 在碰撞时射出 5 个能爆炸的小火球
 			}
 
 			FarronDart: {
 				DisplayName: 法兰短箭
-				Tooltip: 快速射出可控的法兰短箭
+				Tooltip: 射出可操控的光箭
 			}
 
 			FireBombRune: {
 				DisplayName: 爆火符文
-				Tooltip: 在碰撞时射出9个火球
+				Tooltip: 在碰撞时射出 9 个火球
 			}
 
 			FireFieldRune: {
@@ -5425,8 +5425,8 @@ Mods: {
 			}
 
 			ApprenticesWand: {
-				// DisplayName: Apprentice's Wand
-				// Tooltip: Casts a bouncing fireball
+				DisplayName: 学徒魔杖
+				Tooltip: 发射一颗跳跃的火球
 			}
 
 			WoodenWand: {
@@ -6532,7 +6532,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentSummonTagCritChance}
 					{$CommonItemTooltip.Whips}
-					施加诅咒焰
+					施加诅咒焰减益
 					'''
 			}
 
@@ -6542,7 +6542,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.SummonTagDamage}
 					{$CommonItemTooltip.Whips}
-					施加灵液
+					施加灵液减益
 					'''
 			}
 
@@ -6585,7 +6585,7 @@ Mods: {
 			}
 
 			Galeforce: {
-				DisplayName: 风暴之弦
+				DisplayName: 极风之弦
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Sentry}
@@ -6594,13 +6594,13 @@ Mods: {
 			}
 
 			Typhoon: {
-				// DisplayName: Typhoon
-				/* Tooltip:
+				DisplayName: 炽风之弦
+				Tooltip:
 					'''
 					{$CommonItemTooltip.Sentry}
-					Summons a hellish bow which shoots flaming arrows towards your cursor
-					Applies hellfire
-					''' */
+					召唤一张地狱之弓，向你的光标射出一阵燃烧的箭雨
+					施加狱火减益
+					'''
 			}
 
 			CaiusPyre: {
@@ -7547,12 +7547,16 @@ Mods: {
 
 			RustedChain: {
 				DisplayName: 锈蚀铁链
-				Tooltip: "{$CommonItemTooltip.Summon.TagArmorPen}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Summon.TagArmorPen}
+					{$CommonItemTooltip.SummonTagDamage@1}
+					'''
 			}
 
 			PinwheelBag: {
-				// DisplayName: Pinwheel Bag
-				// Tooltip: ""
+				DisplayName: 宝藏袋（火焱风车）
+				Tooltip: ""
 			}
 		}
 
@@ -8426,8 +8430,8 @@ Mods: {
 			}
 
 			Gilled: {
-				// DisplayName: Gilled
-				// Description: Mods.tsorcRevamp.Buffs.Gilled.Description
+				DisplayName: 溺气
+				Description: 水！没了水你要憋死了！
 			}
 		}
 
@@ -8777,7 +8781,7 @@ Mods: {
 			Meteor.DisplayName: 陨星
 			MeteorShower.DisplayName: 流星雨
 			MLGSCrescent.DisplayName: M L G S 月牙
-			// ApprenticesWandFireball.DisplayName: Apprentices Wand Fireball
+			ApprenticesWandFireball.DisplayName: 学徒魔杖火球
 			NetSound.DisplayName: 静音
 			Nothing.DisplayName: 虚无
 			Miakoda.DisplayName: Miakoda
@@ -8872,7 +8876,7 @@ Mods: {
 			InterstellarVesselShip.DisplayName: 星际飞船
 			ScorchingPointFireball.DisplayName: 灼热火球
 			SamuraiBeetle.DisplayName: 武士圣甲虫
-			GaleForceProjectile.DisplayName: 风暴之弦
+			GaleForceProjectile.DisplayName: 极风之弦
 			ShatteredReflectionProjectile.DisplayName: 碎镜反射
 			BarrowWightMinion.DisplayName: 巴罗怀特仆从
 			NullSpriteBeam.DisplayName: 虚线
@@ -8998,17 +9002,17 @@ Mods: {
 			ASOL13.DisplayName: 霸天龙神
 			StarForger.DisplayName: 铸星龙王
 			CursedTormentorProjectile.DisplayName: 咒火刑罚
-			GaleforceProjectile.DisplayName: 风暴之弦
+			GaleforceProjectile.DisplayName: 极风之弦
 			PyromethaneProjectile.DisplayName: 燠沼气
 			CaiusPyreFireball.DisplayName: 凯厄斯之葬火球
 			CaiusPyreRift.DisplayName: 凯厄斯之葬裂隙
-			GaleforceArrow.DisplayName: 风暴之弦箭雨
+			GaleforceArrow.DisplayName: 极风之弦箭雨
 			WorldEnderSword.DisplayName: 末世之剑
 			RuneterraKatanaTornado.DisplayName: 符文之地系列武器旋风
 			SpiritAshKnightMinion.DisplayName: 灵灰骑士
 			KrakenTsunami.DisplayName: 克拉肯旋风
-			// TyphoonProjectile.DisplayName: Typhoon Projectile
-			// TyphoonArrow.DisplayName: Typhoon Arrow
+			TyphoonProjectile.DisplayName: 炽风之弦
+			TyphoonArrow.DisplayName: 炽风之弦箭雨
 			RustedChainProjectile.DisplayName: 锈蚀铁链
 		}
 
@@ -10053,8 +10057,8 @@ Mods: {
 			SandsprogMage.DisplayName: 沙盗法师
 			Pinwheel.DisplayName: 火焱风车
 			GhostOfAHollowWarrior.DisplayName: 空洞战士幽魂
-			// GhostOfTheDrowned.DisplayName: Ghost Of The Drowned
-			// HollowSpearman.DisplayName: Hollow Spearman
+			GhostOfTheDrowned.DisplayName: 溺尸
+			HollowSpearman.DisplayName: 空洞矛手
 		}
 
 		Prefixes: {

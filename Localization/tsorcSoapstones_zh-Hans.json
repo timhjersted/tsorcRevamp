@@ -713,7 +713,7 @@
   "style": 1
 }
 {
-  "text": "你把一根荧光棒扔到竖井里，它消失在黑暗中。 --NEWLINE   --NEWLINE 也许我会在这里使用大魔镜… --NEWLINE   --NEWLINE 大魔镜：用于在任何位置设置折跃点 --NEWLINE   --NEWLINE 配方：1个魔镜，1000个黑暗之魂",
+  "text": "你把一根荧光棒扔到竖井里，它消失在黑暗中 --NEWLINE   --NEWLINE 也许我该在这里使用大魔镜… --NEWLINE   --NEWLINE 右键点击附近的绿色发光头骨以获得其中隐藏的物品 --NEWLINE   --NEWLINE 大魔镜：用于在任何位置设置折跃点",
   "tileX": 3487,
   "tileY": 413,
   "textWidth": 350,
@@ -986,7 +986,7 @@
   "style": 1
 }
 {
-  "text": "瑞德：\u0022那是夺心魔王阿卓迪斯。他终于复仇了…他认为我已经死了…\u0022 --NEWLINE   --NEWLINE 你停顿了一下……当你意识到你刚刚做出的选择时，你沉默了。 --NEWLINE   --NEWLINE \u0022我已经收集了我的盔甲、武器和食物，很快就要离开了。\u0022 --NEWLINE   --NEWLINE 亚伦：\u0022好吧……我明白了。我祝你好运。这似乎不可能，但……\u0022 --NEWLINE   --NEWLINE 亚伦急忙在床上的箱子里找东西。 --NEWLINE   --NEWLINE \u0022拿着这个！这是一块刻有我图像的火山石。 --NEWLINE   --NEWLINE 它一直保护着我，散发出强大的魔力，当你遇到困难时，它会给你带来好运。\u0022",
+  "text": "瑞德：\u0022那是夺心魔王阿卓迪斯。他终于复仇了…他认为我已经死了…\u0022 --NEWLINE   --NEWLINE 你停顿了一下…当你意识到你刚刚做出的选择时，你沉默了。 --NEWLINE   --NEWLINE \u0022我已经收集了我的盔甲、武器和食物，很快就要离开了。\u0022 --NEWLINE   --NEWLINE 亚伦：\u0022好吧……我明白了。我祝你好运。这似乎不可能，但……\u0022 --NEWLINE   --NEWLINE 亚伦指着床上的绿色发光头骨。 --NEWLINE   --NEWLINE \u0022拿着这个！这是一块曾庇护我的火山石。 --NEWLINE   --NEWLINE 它有着强大的魔力，当你遇到困难时，希望它会给你带来好运。\u0022",
   "tileX": 4089,
   "tileY": 713,
   "textWidth": 560,
@@ -1000,7 +1000,7 @@
   "style": 1
 }
 {
-  "text": "你的朋友亚伦：\u0022瑞德！\u0022他惊讶地结结巴巴地说：\u0022他们说你死了！\u0022 --NEWLINE   --NEWLINE 瑞德：\u0022我知道，我也不敢相信。我只是很高兴他们袭击时你没有来。我几乎所有的家人……\u0022 --NEWLINE   --NEWLINE 亚伦：\u0022我知道，瑞德。我不敢相信他们所做的……这是……\u0022",
+  "text": "你的朋友亚伦：\u0022瑞德！他们说你死了！\u0022 --NEWLINE   --NEWLINE 瑞德：\u0022我知道，我也不敢相信。我只是很高兴他们袭击时你没有来。我几乎所有的家人……\u0022 --NEWLINE   --NEWLINE 亚伦：\u0022我知道，瑞德。我不敢相信他们所做的……真是……\u0022",
   "tileX": 4092,
   "tileY": 709,
   "textWidth": 650,
@@ -1042,7 +1042,7 @@
   "style": 1
 }
 {
-  "text": "- 合作工具店 - --NEWLINE   --NEWLINE 由村庄居民拥有和管理 --NEWLINE   --NEWLINE 欢迎您根据需要使用此处的所有工具",
+  "text": "- 合众工具店 - --NEWLINE   --NEWLINE 由村庄居民拥有和管理 --NEWLINE   --NEWLINE 欢迎您根据需要使用此处的所有工具",
   "tileX": 4151,
   "tileY": 709,
   "textWidth": 280,
@@ -1161,24 +1161,24 @@
   "style": 1
 }
 {
-  "text": "法兰的梅拉尼亚长眠于此 --NEWLINE   --NEWLINE 虽不是巫师仍受世人尊敬，因其倡导将魔法作为工具而不是武器 --NEWLINE   --NEWLINE 愿她在此地安息",
+  "text": "法兰的梅拉尼亚长眠于此 --NEWLINE   --NEWLINE 她生前倡导将魔法作为工具而非武器，因此备受世人尊敬 --NEWLINE   --NEWLINE 愿法兰短箭守护她的安息之所",
   "tileX": 4237,
   "tileY": 789,
-  "textWidth": 460,
+  "textWidth": 420,
   "style": 1,
 }
 {
   "text": "\u0022以利亚和你的妻子，我不知道。当我看到山谷中的烟雾时，我冲回家。 --NEWLINE   --NEWLINE 他们不见了。我只找到了你和我们的父母，\u0022 --NEWLINE   --NEWLINE 看到袭击的村庄侦察员说，\u0022军队正在向东行进…\u0022 --NEWLINE   --NEWLINE \u0022那么他们还有机会活着，\u0022你平静地说，对发生的事情仍然恍惚。",
   "tileX": 4242,
   "tileY": 709,
-  "textWidth": 540,
+  "textWidth": 520,
   "style": 1
 }
 {
-  "text": "当博迪看到你穿过敞开的门时，他愣住了。 --NEWLINE   --NEWLINE 然后高兴地喊道：\u0022我超，你还活着！我以为你死了！\u0022 --NEWLINE   --NEWLINE 你震惊地问：\u0022但以利亚和我们的父母…还有亚莎呢？他们还活着吗？\u0022 --NEWLINE   --NEWLINE \u0022噢，天哪，瑞德，不。太可怕了。他们杀了我们的父母。 --NEWLINE   --NEWLINE 我不得不把你和他们一起埋葬。你没有呼吸。我以为你也……\u0022",
+  "text": "当博迪看到你穿过敞开的门时，他愣住了。 --NEWLINE   --NEWLINE 然后高兴地喊道：\u0022我超，你还活着！我以为你死了！\u0022 --NEWLINE   --NEWLINE 你震惊地问：\u0022但以利亚和我们的父母…还有亚莎呢？他们还活着吗？\u0022 --NEWLINE   --NEWLINE \u0022噢，天哪，瑞德，不。太可怕了。他们杀了我们的父母。 --NEWLINE   --NEWLINE 我不得不把你和他们一起埋葬，你当时已经停止呼吸…\u0022",
   "tileX": 4249,
   "tileY": 709,
-  "textWidth": 550,
+  "textWidth": 520,
   "style": 1
 }
 {
@@ -1238,10 +1238,10 @@
   "style": 1
 }
 {
-  "text": "桌旁的一位老人告诉你，在村子西边的山洞里可以找到宝藏。 --NEWLINE   --NEWLINE \u0022这是一桩手到擒来的买卖，孩子！ --NEWLINE   --NEWLINE 如果你够蠢到去探索阿斯匹克下面的神庙，至少也要足够聪明地多准备一点。\u0022 --NEWLINE   --NEWLINE \u0022我敢肯定，一个像你一样活泼的年轻人可以面对任何事情！但不要说我没有警告你！\u0022",
+  "text": "桌旁的一位老人告诉你，在村子西边的山洞里可以找到宝藏。 --NEWLINE   --NEWLINE \u0022那是一桩手到擒来的买卖，孩子！ --NEWLINE   --NEWLINE 如果你蠢到现在就要去探索村庄下面的大地神庙，可得多带点补给。\u0022 --NEWLINE   --NEWLINE \u0022我敢肯定，一个像你这样躁动的年轻人可以面对任何困难！ --NEWLINE   --NEWLINE 但如果你死了，可别说我没有警告你！\u0022",
   "tileX": 4316,
   "tileY": 713,
-  "textWidth": 620,
+  "textWidth": 500,
   "style": 1
 }
 {
@@ -1406,10 +1406,10 @@
   "style": 1
 }
 {
-  "text": "- 你发现了进入大地神庙的入口 - --NEWLINE   --NEWLINE 洞口坍塌了。 --NEWLINE   --NEWLINE \u0022这个地方的石头看起来不太多。用炸弹或镐子，我想我可以把它挖出来。\u0022",
+  "text": "- 你发现了进入大地神庙的入口 - --NEWLINE   --NEWLINE 它被琥珀宝石门封住了 --NEWLINE   --NEWLINE \u0022据说住在埃什峰村西北雪山顶的巫师保管着钥匙\u0022",
   "tileX": 4521,
   "tileY": 857,
-  "textWidth": 560,
+  "textWidth": 360,
   "style": 1
 }
 {
@@ -1588,10 +1588,10 @@
   "style": 1
 }
 {
-  "text": "你精神沮丧绝望——你旁边的坟墓没有标记， --NEWLINE   --NEWLINE 但一定是在埋葬你的时候挖的。你不想知道谁挖了这些…",
+  "text": "你的心沉了下去——你旁边的墓碑没有写字 --NEWLINE   --NEWLINE 这些一定是在埋葬你的时候挖的…",
   "tileX": 4911,
   "tileY": 867,
-  "textWidth": 400,
+  "textWidth": 340,
   "style": 1
 }
 {
