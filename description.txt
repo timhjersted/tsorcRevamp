@@ -23,9 +23,10 @@ In development over 6 years, your 1-4 player journey will span 18 dungeons sprea
 
 ✅ DISCORD
 ------------------------------------------
-Join our discord to discuss the mod and give feedback:
+Join our discord to discuss the mod, give feedback or join the dev team:
 https://discord.gg/UGE6Mstrgz
 
+-Know how to code or sprite? We'd love more devs to join the team!
 -Please share suggestions for improvement under #any-suggestions or #bug-reports.
 -The changelogs can be found under #mod-changelog and #map-changelog.
 -TSORC holds many secrets. If you have questions, post them to #map-questions or #mod-questions.
