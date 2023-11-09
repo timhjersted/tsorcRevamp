@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,7 +10,7 @@ namespace tsorcRevamp.Tiles
     {
         public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !tsorcRevamp.DroppableTiles.Contains(type) && !tsorcRevamp.PlaceAllowedModTiles.Contains(type) && !tsorcRevamp.PlaceAllowed.Contains(type))
             {
                 noItem = true;
             }

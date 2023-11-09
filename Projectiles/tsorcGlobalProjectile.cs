@@ -246,7 +246,7 @@ namespace tsorcRevamp.Projectiles
                 }
 
                 #region Attempt at allowing you to stack Lethal Tempo by grazing enemy projectiles with a melee weapon, rarely works
-                for (int i = 0; i < Main.maxProjectiles; i++)
+                /*for (int i = 0; i < Main.maxProjectiles; i++)
                 {
                     Projectile other = Main.projectile[i];
 
@@ -265,7 +265,7 @@ namespace tsorcRevamp.Projectiles
                         AppliedLethalTempo = true;
                         other.GetGlobalProjectile<tsorcGlobalProjectile>().AppliedLethalTempo = true;
                     }
-                }
+                }*/
                 #endregion
 
             }

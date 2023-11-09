@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors.Melee
     public class ArtoriasArmor : ModItem
     {
         public const int SoulCost = 70000;
-        public static float DmgMult = 24f;
+        public static float DmgMult = 20f;
         public const float DmgMultWhileRolling = 4;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMult, DmgMultWhileRolling);
         public override void SetStaticDefaults()
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 51;
+            Item.defense = 38;
             Item.rare = ItemRarityID.Purple;
             Item.value = PriceByRarity.fromItem(Item);
         }

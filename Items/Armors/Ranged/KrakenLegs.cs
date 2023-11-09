@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public const int SoulCost = 70000;
         public const float DmgMult = 20f;
-        public const float MoveSpeed = 34f;
+        public const float MoveSpeed = 36f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMult, MoveSpeed);
         public override void SetStaticDefaults()
         {
@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 23;
+            Item.defense = 25;
             Item.rare = ItemRarityID.Purple;
             Item.value = PriceByRarity.fromItem(Item);
         }

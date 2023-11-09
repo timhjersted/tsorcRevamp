@@ -360,7 +360,7 @@ namespace tsorcRevamp.Items
                     Main.dust[dust].noGravity = true;
                 }
             }
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            /*for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile other = Main.projectile[i];
 
@@ -379,7 +379,7 @@ namespace tsorcRevamp.Items
                     player.AddBuff(ModContent.BuffType<LethalTempo>(), modPlayer.BotCLethalTempoDuration * 60);
                     other.GetGlobalProjectile<tsorcGlobalProjectile>().AppliedLethalTempo = true;
                 }
-            }
+            }*/
         }
 
         public override void OnHitNPC(Item item, Player player, NPC target, NPC.HitInfo hit, int damageDone)

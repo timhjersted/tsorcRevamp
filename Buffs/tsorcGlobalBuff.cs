@@ -8,9 +8,11 @@ namespace tsorcRevamp.Buffs
 {
     public class tsorcGlobalBuff : GlobalBuff
     {
-        public const float SolarDR = 8f;
-        public const float BeetleDR = 15f;
-        public const float NebulaDMG = 8f;
+        public const float EnduranceResistBonus = 1f;
+        public const float IceBarrierResistBonus = 8f;
+        public const float SolarDR = 25f;
+        public const float BeetleDR = 17f;
+        public const float NebulaDMG = 12f;
         public override void Update(int type, Player player, ref int buffIndex)
         {
             if (type == BuffID.ManaSickness)
@@ -19,6 +21,16 @@ namespace tsorcRevamp.Buffs
                 player.GetDamage(DamageClass.Ranged) *= 1f - player.manaSickReduction;
                 player.GetDamage(DamageClass.Summon) *= 1f - player.manaSickReduction;
                 player.GetDamage(DamageClass.Throwing) *= 1f - player.manaSickReduction;
+            }
+
+            if (type == BuffID.Endurance)
+            {
+                player.endurance += EnduranceResistBonus / 100f;
+            }
+
+            if (type == BuffID.IceBarrier)
+            {
+                player.endurance += IceBarrierResistBonus / 100f;
             }
 
             if (type == BuffID.AmmoReservation)
@@ -42,19 +54,9 @@ namespace tsorcRevamp.Buffs
                 player.GetModPlayer<tsorcRevampPlayer>().AmmoBox = true;
             }
 
-            if (type == BuffID.SolarShield1)
+            if (type == BuffID.SolarShield1 || type == BuffID.SolarShield2 || type == BuffID.SolarShield3)
             {
                 player.endurance += SolarDR / 100f;
-            }
-
-            if (type == BuffID.SolarShield2)
-            {
-                player.endurance += SolarDR * 2f / 100f;
-            }
-
-            if (type == BuffID.SolarShield3)
-            {
-                player.endurance += SolarDR * 3f / 100f;
             }
 
             if (type == BuffID.BeetleEndurance1)
@@ -92,12 +94,12 @@ namespace tsorcRevamp.Buffs
         {
             if (type == BuffID.Endurance)
             {
-                tip = LangUtils.GetTextValue("CommonItemTooltip.DRStat", 10);
+                tip = LangUtils.GetTextValue("CommonItemTooltip.DRStat", 10 + EnduranceResistBonus);
             }
 
             if (type == BuffID.IceBarrier)
             {
-                tip = LangUtils.GetTextValue("CommonItemTooltip.DRStat", 25);
+                tip = LangUtils.GetTextValue("CommonItemTooltip.DRStat", 25 + IceBarrierResistBonus);
             }
 
             if (type == BuffID.Warmth)
@@ -130,19 +132,9 @@ namespace tsorcRevamp.Buffs
                 tip += "\n" + LangUtils.GetTextValue("Items.VanillaItems.AmmoBox");
             }
 
-            if (type == BuffID.SolarShield1)
+            if (type == BuffID.SolarShield1 || type == BuffID.SolarShield2 || type == BuffID.SolarShield3)
             {
                 tip = LangUtils.GetTextValue("Buffs.VanillaBuffs.SolarShield", SolarDR);
-            }
-
-            if (type == BuffID.SolarShield2)
-            {
-                tip = LangUtils.GetTextValue("Buffs.VanillaBuffs.SolarShield", SolarDR * 2);
-            }
-
-            if (type == BuffID.SolarShield3)
-            {
-                tip = LangUtils.GetTextValue("Buffs.VanillaBuffs.SolarShield", SolarDR * 3);
             }
 
             if (type == BuffID.BeetleEndurance1)

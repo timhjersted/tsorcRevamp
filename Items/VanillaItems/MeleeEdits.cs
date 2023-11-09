@@ -520,6 +520,10 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 return "TurtleSet";
             }
+            if (head.type == ItemID.SolarFlareHelmet && body.type == ItemID.SolarFlareBreastplate && legs.type == ItemID.SolarFlareLeggings)
+            {
+                return "SolarSet";
+            }
             else return base.IsArmorSet(head, body, legs);
         }
         public static int GoldenGiFlatDamage = 3;
@@ -537,7 +541,11 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (set == "TurtleSet")
             {
-                player.setBonus = LangUtils.GetTextValue("Items.VanillaItems.TurtleSet", 15);
+                player.setBonus = LangUtils.GetTextValue("Items.VanillaItems.TurtleSet", 15 + MinorEdits.TurtleSetResistBonus);
+            }
+            if (set == "SolarSet")
+            {
+                player.setBonus += "\n" + LangUtils.GetTextValue("CommonItemTooltip.DRStat", 12);
             }
         }
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)

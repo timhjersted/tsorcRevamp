@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Melee
     public class ArtoriasHelmet : ModItem
     {
         public const int SoulCost = 70000;
-        public static float CritChanceMult = 24f;
+        public static float CritChanceMult = 20f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChanceMult);
         public override void SetStaticDefaults()
         {
@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 37;
+            Item.defense = 28;
             Item.rare = ItemRarityID.Purple;
             Item.value = PriceByRarity.fromItem(Item);
         }

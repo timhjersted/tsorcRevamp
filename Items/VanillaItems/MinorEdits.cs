@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs;
+using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.VanillaItems
@@ -12,6 +15,8 @@ namespace tsorcRevamp.Items.VanillaItems
         public static float BotCWellFedStaminaRegen = 5f;
         public static float BotCPlentySatisfiedStaminaRegen = 10f;
         public static float BotCExquisitelyStuffedStaminaRegen = 15f;
+        public const float WormScarfResistBonus = 3f;
+        public const float TurtleSetResistBonus = 2f;
         public override void SetDefaults(Item item)
         {
             if (item.type == ItemID.StaffofRegrowth && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
@@ -51,6 +56,10 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             return true;
         }
+        public override void UpdateEquip(Item item, Player player)
+        {
+            base.UpdateEquip(item, player);
+        }
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
@@ -69,7 +78,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistanceScarf", LangUtils.GetTextValue("CommonItemTooltip.DRStat", 17)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistanceScarf", LangUtils.GetTextValue("CommonItemTooltip.DRStat", 17 + WormScarfResistBonus)));
                 }
             }
             if (item.type == ItemID.WarmthPotion)
@@ -87,7 +96,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistancePot", LangUtils.GetTextValue("CommonItemTooltip.DRStat", 10)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistancePot", LangUtils.GetTextValue("CommonItemTooltip.DRStat", 10 + tsorcGlobalBuff.EnduranceResistBonus)));
                 }
             }
             if (item.type == ItemID.FrozenTurtleShell)
@@ -96,7 +105,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistanceIceBarrier", LangUtils.GetTextValue("Items.VanillaItems.FrozenTurtleShell", 50, 25)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistanceIceBarrier", LangUtils.GetTextValue("Items.VanillaItems.FrozenTurtleShell", 50, 25 + tsorcGlobalBuff.IceBarrierResistBonus)));
                 }
             }
             if (item.type == ItemID.FrozenShield)
@@ -105,7 +114,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistanceIceBarrier", LangUtils.GetTextValue("Items.VanillaItems.FrozenTurtleShell", 50, 25)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistanceIceBarrier", LangUtils.GetTextValue("Items.VanillaItems.FrozenTurtleShell", 50, 25 + tsorcGlobalBuff.IceBarrierResistBonus)));
                 }
             }
         }

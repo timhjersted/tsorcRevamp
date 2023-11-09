@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.IO;
 using System.Reflection;
 using Terraria;
@@ -1174,16 +1175,16 @@ namespace tsorcRevamp
         private static void On_Player_ApplyVanillaHurtEffectModifiers(On_Player.orig_ApplyVanillaHurtEffectModifiers orig, Player self, ref Player.HurtModifiers modifiers)
         {
             modifiers.FinalDamage *= Math.Max(100f / (100f + (self.endurance * 100f)), 0f);
-            bool flag4 = false;
+            bool Above25PercentLife = false;
             for (int i = 0; i < 255; i++)
             {
                 if (i != Main.myPlayer && Main.player[i].active && !Main.player[i].dead && !Main.player[i].immune && Main.player[i].hasPaladinShield && Main.player[i].team == self.team && (float)Main.player[i].statLife > (float)Main.player[i].statLifeMax2 * 0.25f)
                 {
-                    flag4 = true;
+                    Above25PercentLife = true;
                     break;
                 }
             }
-            if (self.defendedByPaladin && self.whoAmI == Main.myPlayer && flag4)
+            if (self.defendedByPaladin && self.whoAmI == Main.myPlayer && Above25PercentLife)
             {
                 modifiers.FinalDamage *= 0.75f;
             }
@@ -1239,6 +1240,10 @@ namespace tsorcRevamp
             {
                 self.GetDamage(DamageClass.Magic) += 0.4f;
                 self.GetDamage(DamageClass.Magic) *= 0.6f;
+            }
+            if (self.head == 99 && self.body == 65 && self.legs == 54)
+            {
+                self.endurance += MinorEdits.TurtleSetResistBonus / 100f;
             }
             orig(self, i);
         }
@@ -1440,6 +1445,10 @@ namespace tsorcRevamp
         private static void On_Player_ApplyEquipFunctional(On_Player.orig_ApplyEquipFunctional orig, Player self, Item currentItem, bool hideVisual)
         {
             var modPlayer = self.GetModPlayer<tsorcRevampPlayer>();
+            if (currentItem.type == ItemID.WormScarf)
+            {
+                self.endurance += MinorEdits.WormScarfResistBonus / 100f;
+            }
             if (currentItem.type == ItemID.NecromanticScroll)
             {
                 self.GetDamage(DamageClass.Summon) -= 0.1f;

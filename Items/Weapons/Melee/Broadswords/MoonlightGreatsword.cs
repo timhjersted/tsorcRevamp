@@ -32,6 +32,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.value = 1000000;
             Item.shoot = ModContent.ProjectileType<MLGSCrescent>();
             Item.shootSpeed = 2f; //Yes it looks slow but it gets *1.2f each tick in it's AI. My attempt at making the sword look like it's not spawning in the player.
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Teal;
         }
 
 
@@ -46,8 +48,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 Item.DamageType = DamageClass.Magic;
             }
 
-            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
-            instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Teal;
         }
 
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)

@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Armors
         public static int MaxMana = 200;
         public static float ManaCost = 17f;
         public static int ManaRegen = 11;
-        public static float CritChance = 32f;
+        public static float CritChance = 38f;
         public static int LifeRegen = 4;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost, ManaRegen, CritChance, LifeRegen);
         public override string Texture => "tsorcRevamp/Items/Armors/DragoonHelmet";

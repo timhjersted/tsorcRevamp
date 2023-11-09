@@ -106,6 +106,7 @@ namespace tsorcRevamp
         internal static int musicModDownloadFailures = 0;
         public static List<int> KillAllowed;
         public static List<int> PlaceAllowed;
+        public static List<int> DroppableTiles = new List<int>();
         public static List<int> Unbreakable;
         public static List<int> IgnoredTiles;
         public static List<int> CrossModTiles;
@@ -415,6 +416,26 @@ namespace tsorcRevamp
                 ModContent.TileType<TheHunterTrophyTile>(), ModContent.TileType<TheHunterRelicTile>(),
                 ModContent.TileType<TheMachineTrophyTile>(), ModContent.TileType<TheMachineRelicTile>(),
                 ModContent.TileType<RetinazerTrophyTile>(), ModContent.TileType<SpazmatismTrophyTile>(), ModContent.TileType<CataluminanceTrophyTile>(), ModContent.TileType<TheTriadRelicTile>()
+            };
+            #endregion
+            #region DroppableTiles list
+            DroppableTiles = new List<int>()
+            {
+                TileID.AbigailsFlower,
+                TileID.Crystals,
+                TileID.Heart,
+                TileID.LifeFruit,
+                TileID.ManaCrystal,
+                TileID.ShadowOrbs,
+                TileID.JungleGrass,
+                TileID.JunglePlants,
+                TileID.JunglePlants2,
+                TileID.BloomingHerbs,
+                TileID.ImmatureHerbs,
+                TileID.MatureHerbs,
+                TileID.MushroomPlants,
+                TileID.MushroomTrees,
+                TileID.MushroomVines
             };
             #endregion
             //--------

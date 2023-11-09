@@ -8,6 +8,8 @@ using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
+using tsorcRevamp.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Projectiles.Summon.Whips;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -21,18 +23,16 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
         public override void SetDefaults()
         {
-            Item.expert = true;
             Item.damage = 337;
             Item.width = 100;
             Item.height = 100;
-            Item.autoReuse = true;
             Item.knockBack = 8;
-            Item.maxStack = 1;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 15;
+            Item.useTime = 15;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 15;
+            Item.rare = ItemRarityID.Red;
             Item.value = PriceByRarity.Red_10;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
@@ -64,12 +64,55 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
+            int buffSelection = Main.rand.Next(6 + 1);
+            for (int i = 0; i < 2; i++)
+            {
+                switch (buffSelection)
+                {
+                    case 0:
+                        {
+                            target.AddBuff(BuffID.OnFire3, DebuffDuration * 60, false);
+                            break;
+                        }
+                    case 1:
+                        {
+                            target.AddBuff(BuffID.ShadowFlame, DebuffDuration * 60, false);
+                            break;
+                        }
+                    case 2:
+                        {
+                            target.AddBuff(BuffID.CursedInferno, DebuffDuration * 60, false);
+                            break;
+                        }
+                    case 3:
+                        {
+                            target.AddBuff(BuffID.BetsysCurse, DebuffDuration * 60, false);
+                            break;
+                        }
+                    case 4:
+                        {
+                            target.AddBuff(BuffID.Ichor, DebuffDuration * 60, false);
+                            break;
+                        }
+                    case 5:
+                        {
+                            target.AddBuff(ModContent.BuffType<CrimsonBurn>(), DebuffDuration * 60, false);
+                            break;
+                        }
+                    case 6:
+                        {
+                            target.AddBuff(ModContent.BuffType<DarkInferno>(), DebuffDuration * 60, false);
+                            break;
+                        }
+                }
+                buffSelection = Main.rand.Next(6 + 1);
+            }
             if (player.GetModPlayer<tsorcRevampPlayer>().WitchPower)
             {
-                int buffSelection = Main.rand.Next(19 + 1);
+                int whipBuffSelection = Main.rand.Next(21 + 1);
                 for (int i = 0; i < 2; i++)
                 {
-                    switch (buffSelection)
+                    switch (whipBuffSelection)
                     {
                         case 0:
                             {
@@ -143,7 +186,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                             }
                         case 13:
                             {
-                                target.AddBuff(ModContent.BuffType<CrystalNunchakuDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * 15 * 60));
+                                target.AddBuff(ModContent.BuffType<CrystalNunchakuDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * CrystalNunchaku.BuffDuration * 60));
                                 break;
                             }
                         case 14:
@@ -182,42 +225,27 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                                 target.AddBuff(ModContent.BuffType<DetonationSignalDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
                                 break;
                             }
+                        case 20:
+                            {
+                                target.AddBuff(ModContent.BuffType<RustedChainDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
+                        case 21:
+                            {
+                                target.AddBuff(ModContent.BuffType<PyromethaneDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                break;
+                            }
                     }
+                    whipBuffSelection = Main.rand.Next(21 + 1);
                 }
-            }
-            if (Main.rand.NextBool(3))
-            {
-                target.AddBuff(BuffID.OnFire3, DebuffDuration * 60, false);
-            }
-            if (Main.rand.NextBool(3))
-            {
-                target.AddBuff(BuffID.ShadowFlame, DebuffDuration * 60, false);
-            }
-            if (Main.rand.NextBool(3))
-            {
-                target.AddBuff(BuffID.CursedInferno, DebuffDuration * 60, false);
-            }
-            if (Main.rand.NextBool(3))
-            {
-                target.AddBuff(BuffID.BetsysCurse, DebuffDuration * 60, false);
-            }
-            if (Main.rand.NextBool(3))
-            {
-                target.AddBuff(BuffID.Ichor, DebuffDuration * 60, false);
-            }
-            if (Main.rand.NextBool(3))
-            {
-                target.AddBuff(ModContent.BuffType<CrimsonBurn>(), DebuffDuration * 60, false);
-            }
-            if (Main.rand.NextBool(3))
-            {
-                target.AddBuff(ModContent.BuffType<DarkInferno>(), DebuffDuration * 60, false);
             }
         }
         public override void MeleeEffects(Player player, Rectangle rectangle)
         {
-            int dust = Dust.NewDust(new Vector2((float)rectangle.X, (float)rectangle.Y), rectangle.Width, rectangle.Height, 6, (player.velocity.X * 0.2f) + (player.direction * 3), player.velocity.Y * 0.2f, 100, default, 1.9f);
-            Main.dust[dust].noGravity = true;
+            tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
+            instancedGlobal.slashColor = Main.DiscoColor;
+            Dust dust = Dust.NewDustDirect(new Vector2((float)rectangle.X, (float)rectangle.Y), rectangle.Width, rectangle.Height, DustID.WhiteTorch, (player.velocity.X * 0.2f) + (player.direction * 3), player.velocity.Y * 0.2f, 100, Main.DiscoColor, 1.9f);
+            dust.noGravity = true;
         }
     }
 }

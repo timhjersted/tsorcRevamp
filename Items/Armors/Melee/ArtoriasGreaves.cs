@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Melee
     public class ArtoriasGreaves : ModItem
     {
         public const int SoulCost = 70000;
-        public static float AtkSpeedMult = 24f;
+        public static float AtkSpeedMult = 20f;
         public static float MoveSpeed = 40f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeedMult, MoveSpeed);
         public override void SetStaticDefaults()
@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 43;
+            Item.defense = 31;
             Item.rare = ItemRarityID.Purple;
             Item.value = PriceByRarity.fromItem(Item);
         }

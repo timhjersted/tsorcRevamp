@@ -14,8 +14,8 @@ namespace tsorcRevamp.Items.Armors
     public class DragoonArmor2 : ModItem
     {
         public static float DragoonCloakEfficiency = 60f;
-        public static float Dmg = 32f;
-        public static float MeleeSpeed = 32f;
+        public static float Dmg = 38f;
+        public static float MeleeSpeed = 38f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DragoonCloakEfficiency, DragoonCloak.LifeThreshold, Dmg, MeleeSpeed);
         public override string Texture => "tsorcRevamp/Items/Armors/DragoonArmor";
         public override void SetStaticDefaults()

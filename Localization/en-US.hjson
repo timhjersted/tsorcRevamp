@@ -146,6 +146,7 @@ Mods: {
 				TagCritMult: Multiplies summon tag critical strike chance by {0}x
 				TagDmgMult: This weapon scales with only {0}% Tag Damage
 				BaseCritChance: "{0}% increased base critical strike chance"
+				DmgMult: Increases summon damage by {0}% multiplicatively
 			}
 
 			PermanentPotion: {
@@ -1971,7 +1972,7 @@ Mods: {
 					Enchanted armor of Artorias of the Abyss.
 					{$CommonItemTooltip.Melee.DmgMult}
 					{$CommonItemTooltip.SetBonus}Allows you to use items while dodgerolling
-					Multiplies melee damage dealt by {1} while dodgerolling
+					Multiplies melee damage dealt by {1}x while dodgerolling
 					'''
 			}
 
@@ -3022,7 +3023,7 @@ Mods: {
 				DisplayName: Witchking Pants
 				Tooltip:
 					'''
-					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.DmgMult}
 					{$CommonItemTooltip.Summon.MinionSentrySlot@1}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@3}
 					{$CommonItemTooltip.Summon.TagDuration@4}
@@ -3033,7 +3034,7 @@ Mods: {
 				DisplayName: Witchking Helmet
 				Tooltip:
 					'''
-					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.DmgMult}
 					{$CommonItemTooltip.Summon.MinionSentrySlot@1}
 					{$CommonItemTooltip.Summon.CritChance@3}
 					{$CommonItemTooltip.Summon.TagStrength@4}
@@ -3044,7 +3045,7 @@ Mods: {
 				DisplayName: Witchking Robe
 				Tooltip:
 					'''
-					{$CommonItemTooltip.PercentIncreasedSummonDamage@2}
+					{$CommonItemTooltip.Summon.DmgMult@2}
 					{$CommonItemTooltip.Summon.MinionSentrySlot@3}
 					{$CommonItemTooltip.Summon.AtkSpeed}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
@@ -3681,7 +3682,7 @@ Mods: {
 				Melee:
 					'''
 					[c/ff8400:Melee base attack speed is reduced to {0}%.]
-					[c/ff8400:Grazing enemy projectiles and hitting enemies with melee attacks will grant stacks of Lethal Tempo,]
+					[c/ff8400:Hitting enemies with melee attacks will grant stacks of Lethal Tempo,]
 					[c/ff8400:these increase your attack speed temporarily and fall off after a few seconds, if not refreshed.]
 					[c/ff8400:Each stack grants {1}% attack speed, up to {2}% at the maximum of {3} stacks.]
 					'''
@@ -5690,10 +5691,10 @@ Mods: {
 
 			WitchkingsSword: {
 				DisplayName: Witchking's Sword
-				Tooltip: May inflict multiple debuffs
+				Tooltip: Inflicts 1-2 random debuffs on-hit
 				Empowered:
 					'''
-					Inflicts 2 random whip debuffs each hit
+					Also inflicts 1-2 random whip debuffs each hit
 					Scales with whip damage, range and summon crit instead of melee stats
 					'''
 			}

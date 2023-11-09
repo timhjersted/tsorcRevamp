@@ -146,6 +146,7 @@ Mods: {
 				TagCritMult: 增加 {0}x 倍召唤标记暴击率
 				TagDmgMult: 此武器仅受到 {0}% 的召唤标记伤害加成
 				BaseCritChance: 增加 {0}% 基础暴击率
+				// DmgMult: Increases summon damage by {0}% multiplicatively
 			}
 
 			PermanentPotion: {

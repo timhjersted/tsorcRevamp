@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Magic
     {
         public const int SoulCost = 70000;
         public const float DmgMult = 20f;
-        public const float MoveSpeed = 29f;
+        public const float MoveSpeed = 31f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMult, MoveSpeed);
         public override void SetStaticDefaults()
         {
