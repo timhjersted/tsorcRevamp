@@ -512,15 +512,13 @@ namespace tsorcRevamp
             //GHOST OF THE DROWNED AMBUSH 1 - NEAR ENTRANCE OF CATACOMBS OF THE DROWNED
             List<int> DrownedAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.GhostOfTheDrowned>() };
             List<Vector2> DrownedAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4294, 778) };
-            ScriptedEvent DrownedAmbush1 = new ScriptedEvent(new Vector2(4318, 768), 11, DrownedAmbush1EnemyTypeList, DrownedAmbush1EnemyLocations, DustID.WaterCandle, false, true, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
-            //LothricAmbush2.SetCustomStats(null, null, 70, 600); // Lower damage than normal, slightly more souls than normal
+            ScriptedEvent DrownedAmbush1 = new ScriptedEvent(new Vector2(4318, 768), 11, DrownedAmbush1EnemyTypeList, DrownedAmbush1EnemyLocations, DustID.Water, true, false, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
             DrownedAmbush1.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.HealingElixir>() }, new List<int>() { 1 });
 
             //GHOST OF THE DROWNED AMBUSH 1 - NEAR ENTRANCE OF CATACOMBS OF THE DROWNED
             List<int> DrownedAmbush2EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.GhostOfTheDrowned>() };
             List<Vector2> DrownedAmbush2EnemyLocations = new List<Vector2>() { new Vector2(4117, 823) };
-            ScriptedEvent DrownedAmbush2 = new ScriptedEvent(new Vector2(4090, 828), 11, DrownedAmbush2EnemyTypeList, DrownedAmbush2EnemyLocations, DustID.WaterCandle, false, true, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
-            //LothricAmbush2.SetCustomStats(null, null, 70, 600); // Lower damage than normal, slightly more souls than normal
+            ScriptedEvent DrownedAmbush2 = new ScriptedEvent(new Vector2(4090, 828), 11, DrownedAmbush2EnemyTypeList, DrownedAmbush2EnemyLocations, DustID.Water, true, false, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
             DrownedAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.BoostPotion>() }, new List<int>() { 2 });
 
             ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, SuperHardModeCustomCondition, SetNightCustomAction);

@@ -342,7 +342,7 @@ namespace tsorcRevamp
                 165, 178, 185, 186, 187, 233, 530, 2311, 238, //all ambient objects (background breakables), QB Larva, Plantera Bulb
                 3, 24, 61, 73, 74, 110, 113, 184, 201, 518, 519, 529, 549, //cuttable plants - all biomes
                 27, 215, 42, 621, 506, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle), Slice of Cake, Bast Statue
-                TileID.LivingFire, TileID.LivingCursedFire, TileID.LivingDemonFire, TileID.LivingFrostFire, TileID.LivingIchor
+                TileID.LivingFire, TileID.LivingCursedFire, TileID.LivingDemonFire, TileID.LivingFrostFire, TileID.LivingIchor, TileID.ManaCrystal,
             };
             #endregion
             //--------
