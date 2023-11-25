@@ -1,5 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Utilities;
+using Steamworks;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -12,29 +14,46 @@ namespace tsorcRevamp.Projectiles.Ranged
 {
     public class KrakenTsunami : ModProjectile
     {
+        SoundStyle WaterSoundStyle;
+        SlotId WaterSoundID;
+        public bool SoundTimerIsRunning = false;
+        public int SoundTimer = 0;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 8;
         }
         public override void SetDefaults()
         {
-            Projectile.width = 100;
-            Projectile.height = 200;
+            Projectile.width = 160;
+            Projectile.height = 240;
             Projectile.aiStyle = -1;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Projectile.SentryLifeTime;
             Projectile.DamageType = DamageClass.Ranged;
+            Projectile.ContinuouslyUpdateDamageStats = true;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 20;
+            Projectile.ignoreWater = true;
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
         }
         public override void OnSpawn(IEntitySource source)
         {
-            SoundEngine.PlaySound(SoundID.Waterfall with { Volume = 1.5f });
+            SoundEngine.PlaySound(SoundID.Item21 with { Volume = 1.5f });
+            WaterSoundStyle = SoundID.Waterfall with { Volume = 1f, IsLooped = false, MaxInstances = 1 };
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile other = Main.projectile[i];
+
+                if (i != Projectile.whoAmI && other.type == ModContent.ProjectileType<KrakenTsunami>() && other.owner == Projectile.owner)
+                {
+                    other.Kill();
+                    break;
+                }
+            }
         }
         public override void AI()
         {
@@ -44,13 +63,28 @@ namespace tsorcRevamp.Projectiles.Ranged
             {
                 Projectile other = Main.projectile[i];
 
-                if (i != Projectile.whoAmI && other.active && other.friendly && Projectile.Hitbox.Intersects(other.Hitbox) && Projectile.DamageType == DamageClass.Ranged && !Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().KrakenEmpowered)
+                if (i != Projectile.whoAmI && other.active && other.friendly && Projectile.Hitbox.Intersects(other.Hitbox) && other.DamageType == DamageClass.Ranged && !other.GetGlobalProjectile<tsorcGlobalProjectile>().KrakenEmpowered && other.type != ModContent.ProjectileType<KrakenTsunamiShark>())
                 {
                     other.GetGlobalProjectile<tsorcGlobalProjectile>().KrakenEmpowered = true;
-                    Dust.NewDust(other.position, other.width * 2, other.height * 2, DustID.Water);
-                    SoundEngine.PlaySound(SoundID.Item21 with { Volume = 1f });
+                    Projectile Shark = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<KrakenTsunamiShark>(), Projectile.originalDamage, Projectile.knockBack, Projectile.owner);
+                    Shark.CritChance = Projectile.CritChance;
+                    if (!SoundEngine.TryGetActiveSound(WaterSoundID, out var ActiveSound))
+                    {
+                        WaterSoundID = SoundEngine.PlaySound(WaterSoundStyle with { Volume = 0.5f });
+                        SoundTimerIsRunning = true;
+                    }
                     break;
                 }
+            }
+            if (SoundTimerIsRunning)
+            {
+                SoundTimer++;
+            }
+            if (SoundTimer > 10 && SoundEngine.TryGetActiveSound(WaterSoundID, out var activeSound))
+            {
+                activeSound.Stop();
+                SoundTimerIsRunning = false;
+                SoundTimer = 0;
             }
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

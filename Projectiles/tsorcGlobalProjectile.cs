@@ -13,9 +13,11 @@ using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Armors.Magic;
+using tsorcRevamp.Items.Armors.Ranged;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles.Pets;
+using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
@@ -68,7 +70,7 @@ namespace tsorcRevamp.Projectiles
         public static float WhipPitch = 0.3f;
         public bool AppliedLethalTempo = false;
         public bool AppliedConqueror = false;
-        public bool IgnoresAccuracyOrSpecialCase = true;
+        public bool IgnoresAccuracyOrSpecialCase = false;
         public bool HitSomething = false;
         public bool ModdedWhip = false;
         public bool ChargedWhip = false;
@@ -107,11 +109,6 @@ namespace tsorcRevamp.Projectiles
             {
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-
-                if (projectile.aiStyle == ProjAIStyleID.SmallFlying && !IgnoresAccuracyOrSpecialCase)
-                {
-                    IgnoresAccuracyOrSpecialCase = true;
-                }
 
                 if (projectile.type == ProjectileID.Terrarian && player.statMana >= (int)(player.manaCost * 2f))
                 {
@@ -457,10 +454,12 @@ namespace tsorcRevamp.Projectiles
                     {
                         case ProjectileID.ChlorophyteBullet or ProjectileID.ChlorophyteArrow:
                             {
+                                IgnoresAccuracyOrSpecialCase = true;
                                 break;
                             }
-                        case int ModProjectile when (ModProjectile == ModContent.ProjectileType<ElfinArrow>() || ModProjectile == ModContent.ProjectileType<ToxicCatExplosion>() || ModProjectile == ModContent.ProjectileType<VirulentCatExplosion>() || ModProjectile == ModContent.ProjectileType<BiohazardExplosion>()):
+                        case int ModProjectile when (ModProjectile == ModContent.ProjectileType<ElfinArrow>() || ModProjectile == ModContent.ProjectileType<ToxicCatExplosion>() || ModProjectile == ModContent.ProjectileType<VirulentCatExplosion>() || ModProjectile == ModContent.ProjectileType<BiohazardExplosion>() || ModProjectile == ModContent.ProjectileType<KrakenTsunamiShark>()):
                             {
+                                IgnoresAccuracyOrSpecialCase = true;
                                 break;
                             }
                         default:
@@ -470,6 +469,10 @@ namespace tsorcRevamp.Projectiles
                             }
                     }
                 }
+            }
+            if (projectile.aiStyle == ProjAIStyleID.SmallFlying && !IgnoresAccuracyOrSpecialCase)
+            {
+                IgnoresAccuracyOrSpecialCase = true;
             }
             if (!IgnoresAccuracyOrSpecialCase)
             {
@@ -616,7 +619,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnKill(Projectile projectile, int timeLeft)
         {
-            if (projectile.friendly)
+            if (projectile.friendly && !projectile.hostile)
             {
                 Player owner = Main.player[projectile.owner];
                 var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
@@ -626,7 +629,7 @@ namespace tsorcRevamp.Projectiles
                     modPlayer.GoredrinkerReady = false;
                     modPlayer.GoredrinkerSwung = false;
                 }
-                if (!IgnoresAccuracyOrSpecialCase)
+                if (!IgnoresAccuracyOrSpecialCase && projectile.DamageType == DamageClass.Ranged)
                 {
                     if (HitSomething)
                     {

@@ -193,7 +193,7 @@ namespace tsorcRevamp
             WingsOfSeath = KeybindLoader.RegisterKeybind(this, "Wings of Seath speed toggle", Microsoft.Xna.Framework.Input.Keys.U);
             //armor set bonus keybinds
             NecromancersSpell = KeybindLoader.RegisterKeybind(this, "Necromancers Spell", Microsoft.Xna.Framework.Input.Keys.V);
-            KrakensCast = KeybindLoader.RegisterKeybind(this, "Necromancers Spell", Microsoft.Xna.Framework.Input.Keys.V);
+            KrakensCast = KeybindLoader.RegisterKeybind(this, "Krakens Cast", Microsoft.Xna.Framework.Input.Keys.V);
             Shunpo = KeybindLoader.RegisterKeybind(this, "Shunpo", Microsoft.Xna.Framework.Input.Keys.V);
             //SwordflipKey = KeybindLoader.RegisterKeybind(this, "Sword Flip", Microsoft.Xna.Framework.Input.Keys.P);
 
@@ -418,6 +418,7 @@ namespace tsorcRevamp
                 ModContent.TileType<RetinazerTrophyTile>(), ModContent.TileType<SpazmatismTrophyTile>(), ModContent.TileType<CataluminanceTrophyTile>(), ModContent.TileType<TheTriadRelicTile>()
             };
             #endregion
+            //--------
             #region DroppableTiles list
             DroppableTiles = new List<int>()
             {
@@ -435,7 +436,8 @@ namespace tsorcRevamp
                 TileID.MatureHerbs,
                 TileID.MushroomPlants,
                 TileID.MushroomTrees,
-                TileID.MushroomVines
+                TileID.MushroomVines,
+                TileID.Books
             };
             #endregion
             //--------

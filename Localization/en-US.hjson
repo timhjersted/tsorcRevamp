@@ -1995,6 +1995,33 @@ Mods: {
 					'''
 			}
 
+			KrakenCarcass: {
+				DisplayName: Kraken Carcass
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentChanceToSaveAmmo}
+					{$CommonItemTooltip.SetBonus}{$Items.KrakenCarcass.Keybind1}KrakensCast{$Items.KrakenCarcass.Keybind2}
+					The Tsunami will increase the damage of ranged projectiles that pass through it by {1}%
+					'''
+				Keybind1: "{$CommonItemTooltip.SetBonus}Press "
+				Keybind2: " to cast a floating Tsunami at your cursor position"
+				Tooltip1: It will also spawn a friendly shark which homes in on the closest enemy, dealing {0} ranged damage
+			}
+
+			KrakenHead: {
+				DisplayName: Kraken Head
+				Tooltip: "{$CommonItemTooltip.Ranged.CritMult}"
+			}
+
+			KrakenLegs: {
+				DisplayName: Kraken Legs
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Ranged.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
+					'''
+			}
+
 			NecromancersPants: {
 				DisplayName: Necromancers Pants
 				Tooltip:
@@ -3692,6 +3719,7 @@ Mods: {
 					[c/22dd96:missing shots will decrease it, while hitting shots will increase it.]
 					[c/22dd96:A ranged projectile only needs to hit once to count as hit, ]
 					[c/22dd96:can't increase your accuracy multiple times and can also only miss once.]
+					[c/22dd96:Homing projectiles can't increase your accuracy.]
 					[c/22dd96:A hit will increase your accuracy by {0}%, while missing will decrease your accuracy by {1}%.]
 					[c/22dd96:You can gain up to {2}% crit chance flat and a {3}x multiplier at 100% accuracy,]
 					[c/22dd96: or have a {4}x multiplier to your total crit at 0% accuracy.]
@@ -7558,6 +7586,11 @@ Mods: {
 				DisplayName: Pinwheel Bag
 				Tooltip: ""
 			}
+
+			KrakenFlesh: {
+				DisplayName: Kraken Flesh
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -9014,6 +9047,7 @@ Mods: {
 			TyphoonProjectile.DisplayName: Typhoon Projectile
 			TyphoonArrow.DisplayName: Typhoon Arrow
 			RustedChainProjectile.DisplayName: Rusted Chain Projectile
+			KrakenTsunamiShark.DisplayName: Kraken Tsunami Shark
 		}
 
 		NPCs: {
@@ -10104,6 +10138,7 @@ Mods: {
 			"Wings of Seath speed toggle.DisplayName": Wings of Seath Speed toggle
 			Shunpo.DisplayName: Shunpo
 			"Necromancers Spell.DisplayName": Necromancers Spell
+			"Krakens Cast.DisplayName": Krakens  Cast
 		}
 
 		Configs: {

@@ -1996,6 +1996,33 @@ Mods: {
 					'''
 			}
 
+			KrakenCarcass: {
+				// DisplayName: Kraken Carcass
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentChanceToSaveAmmo}
+					{$CommonItemTooltip.SetBonus}{$Items.KrakenCarcass.Keybind1}KrakensCast{$Items.KrakenCarcass.Keybind2}
+					The Tsunami will increase the damage of ranged projectiles that pass through it by {1}%
+					''' */
+				// Keybind1: "{$CommonItemTooltip.SetBonus}Press "
+				// Keybind2: " to cast a floating Tsunami at your cursor position"
+				// Tooltip1: It will also spawn a friendly shark which homes in on the closest enemy, dealing {0} ranged damage
+			}
+
+			KrakenHead: {
+				// DisplayName: Kraken Head
+				// Tooltip: "{$CommonItemTooltip.Ranged.CritMult}"
+			}
+
+			KrakenLegs: {
+				// DisplayName: Kraken Legs
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Ranged.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
+					''' */
+			}
+
 			NecromancersPants: {
 				DisplayName: 巫妖王靴子
 				Tooltip:
@@ -7559,6 +7586,11 @@ Mods: {
 				DisplayName: 宝藏袋（火焱风车）
 				Tooltip: ""
 			}
+
+			KrakenFlesh: {
+				// DisplayName: Kraken Flesh
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -9015,6 +9047,7 @@ Mods: {
 			TyphoonProjectile.DisplayName: 炽风之弦
 			TyphoonArrow.DisplayName: 炽风之弦箭雨
 			RustedChainProjectile.DisplayName: 锈蚀铁链
+			// KrakenTsunamiShark.DisplayName: Kraken Tsunami Shark
 		}
 
 		NPCs: {
@@ -10104,6 +10137,7 @@ Mods: {
 			"Wings of Seath speed toggle.DisplayName": 希斯之翼加速度切换
 			Shunpo.DisplayName: 瞬步
 			"Necromancers Spell.DisplayName": 巫妖王之咒
+			// "Krakens Cast.DisplayName": Krakens  Cast
 		}
 
 		Configs: {

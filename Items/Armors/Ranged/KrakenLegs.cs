@@ -4,9 +4,8 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.Items.Armors.Magic
+namespace tsorcRevamp.Items.Armors.Ranged
 {
-    [Autoload(false)]
     [AutoloadEquip(EquipType.Legs)]
     public class KrakenLegs : ModItem
     {
@@ -34,7 +33,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ShroomiteLeggings);
-            recipe.AddIngredient(ModContent.ItemType<LichBone>());
+            recipe.AddIngredient(ModContent.ItemType<KrakenFlesh>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 

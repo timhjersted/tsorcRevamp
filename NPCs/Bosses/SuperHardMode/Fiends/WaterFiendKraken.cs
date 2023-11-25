@@ -658,6 +658,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BarrowBlade>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<KrakenFlesh>(), 1, 3, 3));
             npcLoot.Add(notExpertCondition);
         }
         public override void OnKill()

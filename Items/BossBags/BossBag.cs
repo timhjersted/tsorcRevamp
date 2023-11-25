@@ -395,6 +395,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.DragoonHorn>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Shortswords.BarrowBlade>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<KrakenFlesh>(), 1, 4, 8));
         }
     }
     public class MarilithBag : BossBag

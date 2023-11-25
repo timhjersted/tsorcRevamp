@@ -4,9 +4,8 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.Items.Armors.Magic
+namespace tsorcRevamp.Items.Armors.Ranged
 {
-    [Autoload(false)]
     [AutoloadEquip(EquipType.Head)]
     public class KrakenHead : ModItem
     {
@@ -33,7 +32,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ShroomiteHelmet);
-            recipe.AddIngredient(ModContent.ItemType<LichBone>());
+            recipe.AddIngredient(ModContent.ItemType<KrakenFlesh>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
@@ -41,7 +40,7 @@ namespace tsorcRevamp.Items.Armors.Magic
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.ShroomiteHeadgear);
-            recipe2.AddIngredient(ModContent.ItemType<LichBone>());
+            recipe2.AddIngredient(ModContent.ItemType<KrakenFlesh>());
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe2.AddTile(TileID.DemonAltar);
 
@@ -49,7 +48,7 @@ namespace tsorcRevamp.Items.Armors.Magic
 
             Recipe recipe3 = CreateRecipe();
             recipe3.AddIngredient(ItemID.ShroomiteMask);
-            recipe3.AddIngredient(ModContent.ItemType<LichBone>());
+            recipe3.AddIngredient(ModContent.ItemType<KrakenFlesh>());
             recipe3.AddIngredient(ModContent.ItemType<DarkSoul>(), SoulCost);
             recipe3.AddTile(TileID.DemonAltar);
 

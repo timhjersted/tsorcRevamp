@@ -28,6 +28,7 @@ using tsorcRevamp.Items.Ammo;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Armors.Magic;
 using tsorcRevamp.Items.Armors.Melee;
+using tsorcRevamp.Items.Armors.Ranged;
 using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
@@ -43,6 +44,7 @@ using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Projectiles.Magic.Runeterra.LudensTempest;
 using tsorcRevamp.Projectiles.Melee.Runeterra;
 using tsorcRevamp.Projectiles.Pets;
+using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 
@@ -1181,6 +1183,14 @@ namespace tsorcRevamp
                         Skull.netUpdate = true;
                     }
                     LichKills = 0;
+                }
+            }
+            if (tsorcRevamp.KrakensCast.JustReleased)
+            {
+                if (Kraken)
+                {
+                    Projectile Tsunami = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<KrakenTsunami>(), (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseDmg), player.GetTotalKnockback(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseKnockback), player.whoAmI);
+                    Tsunami.originalDamage = KrakenCarcass.TsunamiBaseDmg;
                 }
             }
 
