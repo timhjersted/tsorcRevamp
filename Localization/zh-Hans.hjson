@@ -140,13 +140,13 @@ Mods: {
 					'''
 				SlotsRequired: 消耗 {0} 召唤栏
 				PercentOfASlot: 消耗一个召唤栏的 {0}%
-				MinionSentrySlot: 增加 {0} 召唤栏和 +{1} 哨兵栏
+				MinionSentrySlot: 增加 {0} 召唤栏和 {1} 哨兵栏
 				FlatDmg: 增加 {0} 点召唤伤害
 				CritChance: 增加 {0}% 召唤暴击率
 				TagCritMult: 增加 {0}x 倍召唤标记暴击率
 				TagDmgMult: 此武器仅受到 {0}% 的召唤标记伤害加成
 				BaseCritChance: 增加 {0}% 基础暴击率
-				// DmgMult: Increases summon damage by {0}% multiplicatively
+				DmgMult: 乘算增加 {0}% 召唤伤害
 			}
 
 			PermanentPotion: {
@@ -213,7 +213,7 @@ Mods: {
 		}
 
 		Events: {
-			Pinwheel: 火焱风车盯上你了！
+			Pinwheel: 三焱家族盯上你了！
 			Death: 命定之死已至！
 			QueenSlime: 史莱姆女皇从她的神圣洞穴中现身！
 			GreatRedKnightInvasion: 一位卓越赭骑士入侵了你的世界！
@@ -1997,30 +1997,30 @@ Mods: {
 			}
 
 			KrakenCarcass: {
-				// DisplayName: Kraken Carcass
-				/* Tooltip:
+				DisplayName: 海妖板甲
+				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentChanceToSaveAmmo}
 					{$CommonItemTooltip.SetBonus}{$Items.KrakenCarcass.Keybind1}KrakensCast{$Items.KrakenCarcass.Keybind2}
-					The Tsunami will increase the damage of ranged projectiles that pass through it by {1}%
-					''' */
-				// Keybind1: "{$CommonItemTooltip.SetBonus}Press "
-				// Keybind2: " to cast a floating Tsunami at your cursor position"
-				// Tooltip1: It will also spawn a friendly shark which homes in on the closest enemy, dealing {0} ranged damage
+					提高 {1}% 穿过海妖旋风的远程射弹的伤害
+					'''
+				Keybind1: "{$CommonItemTooltip.SetBonus}按 "
+				Keybind2: " 在光标位置生成一个浮空的海妖旋风"
+				Tooltip1: 同时生成一个鲨鱼追踪攻击最近的敌人，造成 {0} 远程伤害
 			}
 
 			KrakenHead: {
-				// DisplayName: Kraken Head
-				// Tooltip: "{$CommonItemTooltip.Ranged.CritMult}"
+				DisplayName: 海妖头盔
+				Tooltip: "{$CommonItemTooltip.Ranged.CritMult}"
 			}
 
 			KrakenLegs: {
-				// DisplayName: Kraken Legs
-				/* Tooltip:
+				DisplayName: 海妖腿
+				Tooltip:
 					'''
 					{$CommonItemTooltip.Ranged.DmgMult}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
-					''' */
+					'''
 			}
 
 			NecromancersPants: {
@@ -2327,8 +2327,8 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedMagicDamage}
 					{$CommonItemTooltip.Magic.ManaRegen@1}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@2}法力燃烧能力激活:
-					触发双倍的由这套盔甲提供的魔力再生加成和魔法消耗减少效果
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@2}法力燃烧能力激活
+					提供双倍的魔力再生和魔力值消耗减少效果
 					'''
 			}
 
@@ -3051,7 +3051,7 @@ Mods: {
 				DisplayName: 巫师王裤子
 				Tooltip:
 					'''
-					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.DmgMult}
 					{$CommonItemTooltip.Summon.MinionSentrySlot@1}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@3}
 					{$CommonItemTooltip.Summon.TagDuration@4}
@@ -3062,7 +3062,7 @@ Mods: {
 				DisplayName: 巫师王帽子
 				Tooltip:
 					'''
-					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.DmgMult}
 					{$CommonItemTooltip.Summon.MinionSentrySlot@1}
 					{$CommonItemTooltip.Summon.CritChance@3}
 					{$CommonItemTooltip.Summon.TagStrength@4}
@@ -3073,7 +3073,7 @@ Mods: {
 				DisplayName: 巫师王长袍
 				Tooltip:
 					'''
-					{$CommonItemTooltip.PercentIncreasedSummonDamage@2}
+					{$CommonItemTooltip.Summon.DmgMult@2}
 					{$CommonItemTooltip.Summon.MinionSentrySlot@3}
 					{$CommonItemTooltip.Summon.AtkSpeed}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
@@ -3712,7 +3712,7 @@ Mods: {
 				Melee:
 					'''
 					[c/ff8400:近战攻速减少至 {0}%]
-					[c/ff8400:攻击敌人或其射弹会增加致命节拍堆叠层数]
+					[c/ff8400:攻击敌人会增加致命节拍堆叠层数]
 					[c/ff8400:堆叠层数增加你的近战攻速，如果一段时间没有刷新则层数会减少]
 					[c/ff8400:每层增加 {1}% 近战攻速，最高到 {3} 层获得 {2}% 加成]
 					'''
@@ -3721,6 +3721,7 @@ Mods: {
 					[c/22dd96:远程暴击率将取决于你的射击准确度]
 					[c/22dd96:命中时增加 {0}% 准确度，未命中则减少 {1}% 准确度，每次只需命中一个敌人]
 					[c/22dd96:穿透敌人的射弹，多次命中只计算一次，未命中的容错也只有一次]
+					[c/22dd96:自动追踪的射弹，命中时不会增加准确度]
 					[c/22dd96:实际暴击率= (原有暴击率 +准确度x{2}%) x ({4} +准确度x0.75)]
 					[c/22dd96:满准确度时增加 {2}% 暴击率，同时再将总暴击率额外乘算 {3}]
 					[c/22dd96:准确度为 0% 时将总暴击率额外乘算 {4}]
@@ -3804,15 +3805,15 @@ Mods: {
 				DisplayName: 躲闪备忘录
 				Tooltip:
 					'''
-					它看起来像一个日记条目。 内容如下：
+					这看起来像一个日记片段：
 					"最近流传着森林里有土匪的说法，
-					所以父亲一直担心让我一个人去森林里采蘑菇……
+					所以父亲总是担心让我一个人去森林里采蘑菇……
 					笑死，他知道什么？
 					我可能个头小，但我身手敏捷，掌握了[c/00ffd4:躲闪术]！
-					只要不耗尽体力就可以了..."
-					想到土匪们是怎么拥有这个的，我想这对他们来说不太顺利
-					也许我可以很好地利用这种技术？
-					[c/ffbf00:按左Alt翻滚。尝试将其重新绑定到左shift、R或其他新的键位]
+					只要不耗尽体力就可以了……"
+					从这些土匪的表现来看，我想他们掌握的还不够熟练
+					或许我应该在战斗中多加练习，避免重蹈覆辙？
+					[c/ffbf00:按 左Alt 翻滚，或在控件中将其绑定到你用着顺手的键位]
 					'''
 			}
 
@@ -4167,7 +4168,7 @@ Mods: {
 					Miakoda 是一个当地方言的名字，意思是“月亮的力量”
 					【满月形态】，{$CommonItemTooltip.DRStat}
 					当你暴击时用月之魔法治疗自己
-					治疗量为 {1}+最大生命值的{2}% 
+					治疗量为 {1}+最大生命值的{2}%
 					{$CommonItemTooltip.Cooldown@3}
 					可以在恶魔祭坛上切换形态
 					'''
@@ -5093,7 +5094,7 @@ Mods: {
 					'''
 					只留下灰烬。
 					左键单击以装填起爆核心
-					右键按住可快速发射一串耀斑
+					按住右键可快速发射一串耀斑
 					'''
 			}
 
@@ -5310,7 +5311,7 @@ Mods: {
 				Tooltip:
 					'''
 					一把为魔法使用者制作的剑
-					使用者的魔力值每超过200有20点，就会+1伤害
+					使用者的魔力值超过 200 后，每20点魔力增加 1 点伤害
 					'''
 			}
 
@@ -5319,7 +5320,7 @@ Mods: {
 				Tooltip:
 					'''
 					一把为魔法使用者制作的剑
-					使用者的魔力值每超过200有20点，就会+1伤害
+					使用者的魔力值超过 200 后，每10点魔力增加 1 点伤害
 					'''
 			}
 
@@ -5447,7 +5448,7 @@ Mods: {
 				DisplayName: 白莲
 				Tooltip:
 					'''
-					射出花朵。每片花瓣分离攻击
+					射出花朵，每片花瓣分离攻击
 					“闭上眼睛, 听闻天使之泣”
 					'''
 			}
@@ -5719,10 +5720,10 @@ Mods: {
 
 			WitchkingsSword: {
 				DisplayName: 巫师王之剑
-				Tooltip: 攻击敌人时可施加多个增益/减益
+				Tooltip: 攻击敌人对其施加 1-2 种随机的减益
 				Empowered:
 					'''
-					每次命中造成 2 种随机的鞭子状态效果
+					每次命中获得 1-2 种随机的鞭子增益效果
 					受到鞭子伤害、范围和召唤暴击率加成，而不是近战
 					'''
 			}
@@ -7583,13 +7584,13 @@ Mods: {
 			}
 
 			PinwheelBag: {
-				DisplayName: 宝藏袋（火焱风车）
+				DisplayName: 宝藏袋（三焱家族）
 				Tooltip: ""
 			}
 
 			KrakenFlesh: {
-				// DisplayName: Kraken Flesh
-				// Tooltip: ""
+				DisplayName: 克拉肯遗骸
+				Tooltip: ""
 			}
 		}
 
@@ -9043,11 +9044,11 @@ Mods: {
 			WorldEnderSword.DisplayName: 末世之剑
 			RuneterraKatanaTornado.DisplayName: 符文之地系列武器旋风
 			SpiritAshKnightMinion.DisplayName: 灵灰骑士
-			KrakenTsunami.DisplayName: 克拉肯旋风
+			KrakenTsunami.DisplayName: 海妖旋风
 			TyphoonProjectile.DisplayName: 炽风之弦
 			TyphoonArrow.DisplayName: 炽风之弦箭雨
 			RustedChainProjectile.DisplayName: 锈蚀铁链
-			// KrakenTsunamiShark.DisplayName: Kraken Tsunami Shark
+			KrakenTsunamiShark.DisplayName: 海妖旋风鲨鱼
 		}
 
 		NPCs: {
@@ -9579,7 +9580,7 @@ Mods: {
 
 			AncientDemonOfTheAbyss: {
 				DisplayName: 渊古恶魔
-				Despawnhandler: 渊古恶魔把你吸收进了它的血肉...
+				Despawnhandler: 渊古恶魔将你融进了血肉...
 			}
 
 			BarrowWightNemesis.DisplayName: 巴罗·怀特·复仇女神
@@ -10089,7 +10090,7 @@ Mods: {
 			MountedSandsprogMage.DisplayName: 沙盗骑手
 			Sandsprog.DisplayName: 沙盗士兵
 			SandsprogMage.DisplayName: 沙盗法师
-			Pinwheel.DisplayName: 火焱风车
+			Pinwheel.DisplayName: 三焱家族
 			GhostOfAHollowWarrior.DisplayName: 空洞战士幽魂
 			GhostOfTheDrowned.DisplayName: 溺尸
 			HollowSpearman.DisplayName: 空洞矛手
@@ -10137,7 +10138,7 @@ Mods: {
 			"Wings of Seath speed toggle.DisplayName": 希斯之翼加速度切换
 			Shunpo.DisplayName: 瞬步
 			"Necromancers Spell.DisplayName": 巫妖王之咒
-			// "Krakens Cast.DisplayName": Krakens  Cast
+			"Krakens Cast.DisplayName": 海妖之怒
 		}
 
 		Configs: {
