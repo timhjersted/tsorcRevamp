@@ -209,8 +209,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         float trailIntensity = 1;
         public override void SetEffectParameters(Effect effect)
         {
-            trailWidth = 45;
-            trailMaxLength = 500;
+            trailWidth = 35;
+            trailMaxLength = 250;
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseWavy);
             effect.Parameters["length"].SetValue(trailCurrentLength);
@@ -239,8 +239,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             effect.Parameters["fadeOut"].SetValue(trailIntensity);
             effect.Parameters["speed"].SetValue(hostVel);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-            effect.Parameters["shaderColor"].SetValue(new Color(0.8f, 0.6f, 0.2f).ToVector4());
-            effect.Parameters["secondaryColor"].SetValue(new Color(0.005f, 0.05f, 1f).ToVector4());
+            effect.Parameters["shaderColor"].SetValue(new Color(2.52f, 1.87f, 0.7f, 1f).ToVector4());
+            effect.Parameters["secondaryColor"].SetValue(new Color(0f, 0f, 2.52f, 0.7f).ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
         public override float CollisionWidthFunction(float progress)
