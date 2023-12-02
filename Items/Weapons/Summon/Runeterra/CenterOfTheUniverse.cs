@@ -16,93 +16,43 @@ using tsorcRevamp.Projectiles.Summon.Runeterra.Dragons;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 {
-    public class CenterOfTheUniverse : ModItem
+    public class CenterOfTheUniverse : RuneterraGauntlets
     {
         public static List<CenterOfTheUniverseStar> projectiles = null;
         public static int processedProjectilesCount = 0;
-        public const float SoundVolume = 1f;
-
+        public override float SoundVolumeAbstract => 1f;
+        public static float SoundVolume;
+        public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/";
+        public override int Damage => 160;
+        public override float Knockback => 6f;
+        public override int Width => 48;
+        public override int Height => 56;
+        public override int Value => Item.buyPrice(1, 0, 0, 0);
+        public override int Rarity => ItemRarityID.Red;
+        public override int BuffType => ModContent.BuffType<CenterOfTheUniverseBuff>();
+        public override int ProjectileType => ModContent.ProjectileType<CenterOfTheUniverseStar>();
+        public override int DragonType => ModContent.ProjectileType<StarForger>();
+        public override Vector3 HoldItemLight => new Vector3(0.1f, 0.08f, 0.05f);
+        public override string LocalizationPath => "Items.CenterOfTheUniverse.";
+        public override int Tier => 3;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ScorchingPoint.BallSummonTagDmgMult, ScorchingPoint.DragonSummonTagDmgMult);
-        public override void SetStaticDefaults()
-        {
-            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-            ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
-            ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 0.5f;
-        }
-        public override void SetDefaults()
+        public override void CustomSetDefaults()
         {
             projectiles = new List<CenterOfTheUniverseStar>() { };
-
-            Item.damage = 220;
-            Item.knockBack = 3f;
-            Item.mana = 10;
-            Item.width = 32;
-            Item.height = 34;
-            Item.useTime = 20;
-            Item.useAnimation = 20;
-            Item.useStyle = ItemUseStyleID.Shoot;
-            Item.holdStyle = ItemHoldStyleID.HoldFront;
-            Item.noUseGraphic = true;
-            Item.useTurn = false;
-            Item.value = Item.buyPrice(0, 30, 0, 0);
-            Item.rare = ItemRarityID.Red;
-
-            Item.noMelee = true;
-            Item.DamageType = DamageClass.Summon;
-            Item.buffType = ModContent.BuffType<CenterOfTheUniverseBuff>();
-            Item.shoot = ModContent.ProjectileType<CenterOfTheUniverseStar>();
-        }
-
-        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
-        {
-            // Here you can change where the minion is spawned. Most vanilla minions spawn at the cursor position
-            position = player.Bottom;
-        }
-        Projectile Dragon;
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-        {
-            // This is needed so the buff that keeps your minion alive and allows you to despawn it properly applies
-            player.AddBuff(Item.buffType, 2);
-
-            // Minions have to be spawned manually, then have originalDamage assigned to the damage of the summon item
-            Projectile Star = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
-            projectiles.Add((CenterOfTheUniverseStar)Star.ModProjectile);
-            Star.originalDamage = Item.damage;
-
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<StarForger>()] == 0)
-            {
-                Dragon = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<StarForger>(), damage, 0, Main.myPlayer);
-                Dragon.originalDamage = Item.damage;
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/DragonCast") with { Volume = SoundVolume });
-            }
-            else if (Main.rand.NextBool(2))
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarCast1") with { Volume = SoundVolume });
-            }
-            else
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarCast2") with { Volume = SoundVolume });
-            }
-
-            // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
-            return false;
+            SoundVolume = SoundVolumeAbstract;
         }
         public override bool? UseItem(Player player)
         {
-            if (Main.mouseRight && player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount == 10)
+            if (Dragon != null)
             {
-                (Dragon.ModProjectile as RuneterraDragon).StartAltSequence();
-                player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount = 0;
+                if (Main.mouseRight && player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount >= 0 && Dragon.type == ModContent.ProjectileType<StarForger>())
+                {
+                    (Dragon.ModProjectile as RuneterraDragon).StartAltSequence();
+                    player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount = 0;
+                }
             }
             return base.UseItem(player);
         }
-
-        public override void HoldItem(Player player)
-        {
-            Lighting.AddLight(player.Center, new Vector3(0.1f, 0.08f, 0.05f));
-        }
-
         public static void ReposeProjectiles(Player player)
         {
             // repose projectiles relatively to the first one so they are evenly spread on the radial circumference
@@ -118,40 +68,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 
             for (int i = 1; i < processedProjectilesCount; ++i)
             {
-                projectileList[i].currentAngle3 = projectileList[i - 1].currentAngle3 + 2f * (float)Math.PI / processedProjectilesCount;
-            }
-        }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            var SpecialAbilityKey = tsorcRevamp.specialAbility.GetAssignedKeys();
-            string SpecialAbilityString = SpecialAbilityKey.Count > 0 ? SpecialAbilityKey[0] : Language.GetTextValue("Mods.tsorcRevamp.Keybinds.Special Ability.DisplayName") + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.NotBound");
-            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip2");
-            if (ttindex1 != -1)
-            {
-                tooltips.RemoveAt(ttindex1);
-                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.ScorchingPoint.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.ScorchingPoint.Keybind2")));
-            }
-            int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip4");
-            if (ttindex2 != -1)
-            {
-                tooltips.RemoveAt(ttindex2);
-                tooltips.Insert(ttindex2, new TooltipLine(Mod, "Keybind", Language.GetTextValue("Mods.tsorcRevamp.Items.CenterOfTheUniverse.Keybind1") + SpecialAbilityString + Language.GetTextValue("Mods.tsorcRevamp.Items.CenterOfTheUniverse.Keybind2")));
-            }
-            if (Main.keyState.IsKeyDown(Keys.LeftShift))
-            {
-                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
-                if (ttindex != -1)
-                {
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", Language.GetTextValue("Mods.tsorcRevamp.Items.CenterOfTheUniverse.Details", ScorchingPoint.MarkChance, ScorchingPoint.SuperBurnDuration, ScorchingPoint.SummonTagCrit)));
-                }
-            }
-            else
-            {
-                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
-                if (ttindex != -1)
-                {
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Shift", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Details")));
-                }
+                projectileList[i].currentAngle = projectileList[i - 1].currentAngle + 2f * (float)Math.PI / processedProjectilesCount;
             }
         }
         public override void AddRecipes()

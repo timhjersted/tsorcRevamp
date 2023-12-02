@@ -9,8 +9,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A sword crafted for magic users" +
-                               "\nDeals +1 damage for every 10 mana the user has over 200"); */
         }
 
         public override void SetDefaults()
@@ -28,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Magic;
-            Item.mana = 30;
+            Item.mana = 20;
             Item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();
             Item.shootSpeed = 12f;
         }
@@ -50,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             if (player.statManaMax2 >= 200)
             {
-                damage.Flat += (player.statManaMax2 - 200) / 10;
+                damage.Flat += (player.statManaMax2 - 200) / 8;
             }
         }
     }

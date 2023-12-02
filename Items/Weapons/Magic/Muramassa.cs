@@ -9,9 +9,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("A sword crafted for magic users" +
-                               "\nDeals +1 damage for every 20 mana the user has over 200" +
-                               "\nCan be upgraded"); */// with 25,000 Dark Souls & 3 Souls of Light
         }
 
         public override void SetDefaults()
@@ -29,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Orange_3;
             Item.DamageType = DamageClass.Magic;
-            Item.mana = 20;
+            Item.mana = 10;
             Item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();
             Item.shootSpeed = 11f;
         }
@@ -47,7 +44,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             if (player.statManaMax2 >= 200)
             {
-                damage.Flat += (player.statManaMax2 - 200) / 20;
+                damage.Flat += (player.statManaMax2 - 200) / 15;
             }
         }
     }

@@ -14,48 +14,26 @@ using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
-    public class InterstellarVesselShip : DynamicTrail
+    public class InterstellarVesselShip : RuneterraCirclingProjectiles
     {
-        public float angularSpeed2 = 0.03f;
-        public float currentAngle2 = 0;
+        public override int ProjFrames => 1;
+        public override int Width => 98;
+        public override int Height => 50;
+        public override int TrailWidth => 45;
+        public override int TrailPointLimit => 900;
+        public override int TrailMaxLength => 500; //333
+        public override string EffectType => "tsorcRevamp/Effects/InterstellarVessel";
+        public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/";
+        public override int BuffType => ModContent.BuffType<InterstellarCommander>();
+        public override int dustID => DustID.MartianSaucerSpark;
         public override string Texture => "tsorcRevamp/Projectiles/Summon/Runeterra/InterstellarVesselShip";
-        public override void SetStaticDefaults()
+        public override void OnSpawn(IEntitySource source)
         {
-            //Main.projFrames[Projectile.type] = 2;
-            Main.projPet[Projectile.type] = true;
-            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
-            ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
-            ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = ScorchingPoint.BallSummonTagDmgMult / 100f;
+            InterstellarVesselGauntlet.projectiles.Add(this);
         }
-        public sealed override void SetDefaults()
+        public override void OnKill(int timeLeft)
         {
-            Projectile.width = 98;
-            Projectile.height = 50;
-            Projectile.tileCollide = false;
-
-            Projectile.friendly = true;
-            Projectile.minion = true;
-            Projectile.DamageType = DamageClass.Summon;
-            Projectile.minionSlots = 0.5f;
-            Projectile.penetrate = -1;
-            Projectile.extraUpdates = 1;
-            Projectile.ContinuouslyUpdateDamageStats = true;
-
-            Projectile.ignoreWater = true;
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 30;
-
-            ScreenSpace = true;
-            trailWidth = 45;
-            trailPointLimit = 900;
-            trailMaxLength = 333;
-            Projectile.hide = true;
-            collisionPadding = 50;
-            NPCSource = false;
-            trailCollision = true;
-            collisionFrequency = 5;
-            noFadeOut = true;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/InterstellarVessel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            InterstellarVesselGauntlet.projectiles.Remove(this);
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
@@ -66,138 +44,25 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             }
             if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
-                modifiers.SourceDamage *= 1.25f;
+                modifiers.SourceDamage += InterstellarVesselGauntlet.BoostDmgAmp / 100f;
                 modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 3000, 150);
             }
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks >= 6)
             {
                 modifiers.SetCrit();
-                modifiers.CritDamage += 0.5f;
+                modifiers.CritDamage *= ScorchingPoint.MarkDetonationCritDmgAmp;
             }
         }
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        public override void CustomOnHitNPC(NPC target)
         {
-            Player player = Main.player[Projectile.owner];
-            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = player;
-            int HitSound = Main.rand.Next(3);
-            if (modPlayer.RuneterraMinionHitSoundCooldown > 0)
-            {
-                switch (HitSound)
-                {
-                    case 0:
-                        {
-                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/ShipHit1") with { Volume = InterstellarVesselGauntlet.SoundVolume });
-                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
-                            break;
-                        }
-                    case 1:
-                        {
-                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/ShipHit2") with { Volume = InterstellarVesselGauntlet.SoundVolume });
-                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
-                            break;
-                        }
-                    case 2:
-                        {
-                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/ShipHit3") with { Volume = InterstellarVesselGauntlet.SoundVolume });
-                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
-                            break;
-                        }
-                }
-            }
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks >= 6)
             {
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks = 0;
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().SuperShockDuration = ScorchingPoint.SuperBurnDuration;
-                Dust.NewDust(Projectile.position, 20, 20, DustID.MartianSaucerSpark, 1, 1, 0, default, 1.5f);
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/MarkDetonation") with { Volume = InterstellarVesselGauntlet.SoundVolume * 1.2f });
+                Dust.NewDust(Projectile.position, 20, 20, dustID, 1, 1, 0, default, 1.5f);
+                SoundEngine.PlaySound(new SoundStyle(SoundPath + "MarkDetonation") with { Volume = InterstellarVesselGauntlet.SoundVolume * 1.2f });
             }
         }
-        public override void OnSpawn(IEntitySource source)
-        {
-            InterstellarVesselGauntlet.projectiles.Add(this);
-        }
-        public override bool? CanCutTiles()
-        {
-            return false;
-        }
-        public override bool MinionContactDamage()
-        {
-            return true;
-        }
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
-        {
-            behindNPCs.Add(index);
-        }
-        public override void OnKill(int timeLeft)
-        {
-            InterstellarVesselGauntlet.projectiles.Remove(this);
-        }
-
-        public override void AI()
-        {
-            base.AI();
-
-            Player player = Main.player[Projectile.owner];
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-
-            if (angularSpeed2 > 0.03f)
-            {
-                trailIntensity = 2;
-            }
-
-
-            if (trailIntensity > 1)
-            {
-                trailIntensity -= 0.05f;
-            }
-
-
-            if (!CheckActive(player))
-            {
-                return;
-            }
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
-            {
-                angularSpeed2 = 0.075f;
-            }
-            if (!player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
-            {
-                angularSpeed2 = 0.03f;
-                if (Main.netMode == NetmodeID.MultiplayerClient)
-                {
-                    ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                    minionPacket.Write(tsorcPacketID.SyncMinionRadius);
-                    minionPacket.Write((byte)player.whoAmI);
-                    minionPacket.Write(player.GetModPlayer<tsorcRevampPlayer>().MinionCircleRadius);
-                    minionPacket.Write(player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost);
-                    minionPacket.Send();
-                }
-            }
-
-            currentAngle2 += (angularSpeed2 / (modPlayer.MinionCircleRadius * 0.001f + 1f));
-
-            Vector2 offset = new Vector2(0, modPlayer.MinionCircleRadius).RotatedBy(-currentAngle2);
-
-            Projectile.Center = player.Center + offset;
-            Projectile.velocity = Projectile.rotation.ToRotationVector2();
-
-            Visuals();
-        }
-
-
-        /*public override void SendExtraAI(BinaryWriter writer)
-        {
-			writer.Write(angularSpeed2);
-		}
-        public override void ReceiveExtraAI(BinaryReader reader)
-        {
-			angularSpeed2 = reader.ReadSingle();
-		}*/
-        Vector2 samplePointOffset1;
-        Vector2 samplePointOffset2;
-        float trailIntensity = 1;
         public override void SetEffectParameters(Effect effect)
         {
             trailWidth = 45;
@@ -238,61 +103,9 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
         {
             return WidthFunction(progress) - 35;
         }
-
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        public override void CustomCheckActive()
         {
-            float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
-            if (distance < Projectile.height * 1.2f && distance > Projectile.height * 1.2f - 32)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        private bool CheckActive(Player owner)
-        {
-            if (owner.dead || !owner.active)
-            {
-                owner.ClearBuff(ModContent.BuffType<InterstellarCommander>());
-
-                return false;
-            }
-
-            if (!owner.HasBuff(ModContent.BuffType<InterstellarCommander>()))
-            {
-                currentAngle2 = 0;
-                InterstellarVesselGauntlet.projectiles.Clear();
-            }
-
-            if (owner.HasBuff(ModContent.BuffType<InterstellarCommander>()))
-            {
-                Projectile.timeLeft = 2;
-            }
-
-            return true;
-        }
-        private void Visuals()
-        {
-            Projectile.rotation = currentAngle2 * -1f;
-
-            /*float frameSpeed = 5f;
-
-            Projectile.frameCounter++;
-
-            if (Projectile.frameCounter >= frameSpeed)
-            {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
-
-                if (Projectile.frame >= Main.projFrames[Projectile.type])
-                {
-                    Projectile.frame = 0;
-                }
-            }*/
-
-            Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
+            InterstellarVesselGauntlet.projectiles.Clear();
         }
 
         public static Texture2D texture;

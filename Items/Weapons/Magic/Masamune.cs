@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
@@ -7,10 +8,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
 {
     class Masamune : ModItem
     {
+        public const int MaxManaSubtract = 200;
+        public const int MaxManaDivisor = 6;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxManaSubtract, MaxManaDivisor);
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("The blade almost cannot be seen it cuts so fast, ripping enemies to shreds in seconds." +
-                                "\nHas the power to shoot a magical water flame from its blade yet it uses no mana."); */
         }
 
         public override void SetDefaults()
@@ -19,7 +21,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.height = 72;
             Item.useAnimation = 12;
             Item.useTime = 12;
-            Item.damage = 160;
+            Item.damage = 200;
+            Item.mana = 30;
             Item.knockBack = 9;
             Item.autoReuse = true;
             Item.useTurn = true;
@@ -35,7 +38,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            //recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddIngredient(ModContent.ItemType<Murassame>(), 1);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 10);
@@ -48,9 +50,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
-            if (player.statManaMax2 >= 200)
+            if (player.statManaMax2 >= MaxManaSubtract)
             {
-                damage.Flat += (player.statManaMax2 - 200) / 8;
+                damage.Flat += (player.statManaMax2 - MaxManaSubtract) / 6;
             }
         }
     }

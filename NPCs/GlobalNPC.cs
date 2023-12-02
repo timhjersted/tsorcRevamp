@@ -90,6 +90,7 @@ namespace tsorcRevamp.NPCs
         public int ShockMarks = 0;
         public float SuperShockDuration = 0f;
         public bool Sunburnt;
+        public bool Awestruck;
         public int SunburnMarks = 0;
         public float SuperSunburnDuration = 0f;
 
@@ -1045,7 +1046,7 @@ namespace tsorcRevamp.NPCs
             if (projectile.IsMinionOrSentryRelated)
             {
                 #region Runeterra effects
-                if ((Scorched || Shocked || Sunburnt) && (SuperScorchDuration > 0 || SuperShockDuration > 0 || SuperSunburnDuration > 0))
+                if (((Scorched || Shocked || Sunburnt) && (SuperScorchDuration > 0 || SuperShockDuration > 0 || SuperSunburnDuration > 0)) || Awestruck)
                 {
                     BaseSummonTagCriticalStrikeChance += ScorchingPoint.SummonTagCrit;
                 }
@@ -1680,6 +1681,17 @@ namespace tsorcRevamp.NPCs
                 {
                     DoTPerS *= 3;
                 }
+                if (npc.HasBuff(BuffID.Oiled))
+                {
+                    DoTPerS += 25 * DragonStone.Potency;
+                }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
+
+            if (Awestruck)
+            {
+                int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(440);
                 if (npc.HasBuff(BuffID.Oiled))
                 {
                     DoTPerS += 25 * DragonStone.Potency;

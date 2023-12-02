@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BandOfCosmicPower>());
             recipe.AddIngredient(ItemID.ShadowScale, 4);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ModContent.ItemType<BandOfCosmicPower>());
             recipe2.AddIngredient(ItemID.TissueSample, 4);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();

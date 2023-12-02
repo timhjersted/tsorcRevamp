@@ -13,62 +13,21 @@ using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
-    public class ScorchingPointFireball : DynamicTrail
+    public class ScorchingPointFireball : RuneterraCirclingProjectiles
     {
-        public float angularSpeed = 0.03f;
-        public float currentAngle = 0;
-
-        public override void SetStaticDefaults()
-        {
-            Main.projFrames[Projectile.type] = 8;
-            Main.projPet[Projectile.type] = true;
-            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
-            ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
-            ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = ScorchingPoint.BallSummonTagDmgMult / 100f;
-        }
-        public sealed override void SetDefaults()
-        {
-            Projectile.width = 66;
-            Projectile.height = 28;
-            Projectile.tileCollide = false;
-
-            Projectile.friendly = true;
-            Projectile.minion = true;
-            Projectile.DamageType = DamageClass.Summon;
-            Projectile.minionSlots = 0.5f;
-            Projectile.penetrate = -1;
-            Projectile.extraUpdates = 1;
-            Projectile.ContinuouslyUpdateDamageStats = true;
-            Projectile.ignoreWater = true;
-
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 30;
-            ScreenSpace = true;
-            trailWidth = 45;
-            trailPointLimit = 900;
-            trailMaxLength = 111;
-            collisionPadding = 50;
-            NPCSource = false;
-            trailCollision = true;
-            collisionFrequency = 5;
-            noFadeOut = true;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedTormentor", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-        }
+        public override int ProjFrames => 8;
+        public override int Width => 66;
+        public override int Height => 28;
+        public override int TrailWidth => 45;
+        public override int TrailPointLimit => 900;
+        public override int TrailMaxLength => 400; //111
+        public override string EffectType => "tsorcRevamp/Effects/CursedTormentor";
+        public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/";
+        public override int BuffType => ModContent.BuffType<CenterOfTheHeat>();
+        public override int dustID => DustID.FlameBurst;
         public override void OnSpawn(IEntitySource source)
         {
             ScorchingPoint.projectiles.Add(this);
-        }
-        public override bool? CanCutTiles()
-        {
-            return false;
-        }
-        public override bool MinionContactDamage()
-        {
-            return true;
-        }
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
-        {
-            behindNPCs.Add(index);
         }
         public override void OnKill(int timeLeft)
         {
@@ -84,111 +43,23 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks >= 6)
             {
                 modifiers.SetCrit();
-                modifiers.CritDamage += 1f;
+                modifiers.CritDamage *= ScorchingPoint.MarkDetonationCritDmgAmp;
             }
         }
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        public override void CustomOnHitNPC(NPC target)
         {
-            Player player = Main.player[Projectile.owner];
-            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = player;
-            int HitSound = Main.rand.Next(3);
-            if (modPlayer.RuneterraMinionHitSoundCooldown > 0)
-            {
-                switch (HitSound)
-                {
-                    case 0:
-                        {
-                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit1") with { Volume = ScorchingPoint.SoundVolume });
-                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
-                            break;
-                        }
-                    case 1:
-                        {
-                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit2") with { Volume = ScorchingPoint.SoundVolume });
-                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
-                            break;
-                        }
-                    case 2:
-                        {
-                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ScorchingPoint/FireballHit3") with { Volume = ScorchingPoint.SoundVolume });
-                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
-                            break;
-                        }
-                }
-            }
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks >= 6)
             {
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks = 0;
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().SuperScorchDuration = ScorchingPoint.SuperBurnDuration;
-                Dust.NewDust(Projectile.position, 20, 20, DustID.FlameBurst, 1, 1, 0, default, 1.5f);
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/MarkDetonation") with { Volume = ScorchingPoint.SoundVolume * 1.2f });
+                Dust.NewDust(Projectile.position, 20, 20, dustID, 1, 1, 0, default, 1.5f);
+                SoundEngine.PlaySound(new SoundStyle(SoundPath + "MarkDetonation") with { Volume = ScorchingPoint.SoundVolume * 1.2f });
             }
         }
-
-        public override void AI()
+        public override void CustomCheckActive()
         {
-            base.AI();
-            Player owner = Main.player[Projectile.owner];
-            tsorcRevampPlayer modPlayer = owner.GetModPlayer<tsorcRevampPlayer>();
-
-            if (!CheckActive(owner))
-            {
-                return;
-            }
-
-            currentAngle += (angularSpeed / (modPlayer.MinionCircleRadius * 0.001f + 1f));
-
-            Vector2 offset = new Vector2(0, modPlayer.MinionCircleRadius).RotatedBy(-currentAngle);
-
-            Projectile.Center = owner.Center + offset;
-            Projectile.velocity = Projectile.rotation.ToRotationVector2();
-
-            Projectile.rotation = currentAngle * -1f;
-            Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
+            ScorchingPoint.projectiles.Clear();
         }
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
-            if (distance < Projectile.height * 1.2f && distance > Projectile.height * 1.2f - 32)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        public override float CollisionWidthFunction(float progress)
-        {
-            return WidthFunction(progress) - 35;
-        }
-
-
-        private bool CheckActive(Player owner)
-        {
-            if (owner.dead || !owner.active)
-            {
-                owner.ClearBuff(ModContent.BuffType<CenterOfTheHeat>());
-
-                return false;
-            }
-
-            if (!owner.HasBuff(ModContent.BuffType<CenterOfTheHeat>()))
-            {
-                currentAngle = 0;
-                ScorchingPoint.projectiles.Clear();
-            }
-
-            if (owner.HasBuff(ModContent.BuffType<CenterOfTheHeat>()))
-            {
-                Projectile.timeLeft = 2;
-            }
-
-            return true;
-        }
-        Vector2 samplePointOffset1;
-        Vector2 samplePointOffset2;
         public override void SetEffectParameters(Effect effect)
         {
             trailWidth = 45;

@@ -14,48 +14,26 @@ using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
-    public class CenterOfTheUniverseStar : DynamicTrail
+    public class CenterOfTheUniverseStar : RuneterraCirclingProjectiles
     {
-        public float angularSpeed3 = 0.03f;
-        public float currentAngle3 = 0;
-
-        public override void SetStaticDefaults()
+        public override int ProjFrames => 1;
+        public override int Width => 98;
+        public override int Height => 50;
+        public override int TrailWidth => 45; //35
+        public override int TrailPointLimit => 900;
+        public override int TrailMaxLength => 500; //250
+        public override string EffectType => "tsorcRevamp/Effects/InterstellarVessel";
+        public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/";
+        public override int BuffType => ModContent.BuffType<CenterOfTheUniverseBuff>();
+        public override int dustID => DustID.AncientLight;
+        public override string Texture => "tsorcRevamp/Projectiles/Summon/Runeterra/CenterOfTheUniverseStar";
+        public override void OnSpawn(IEntitySource source)
         {
-            //Main.projFrames[Projectile.type] = 2;
-            Main.projPet[Projectile.type] = true;
-            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
-            ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
-            ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = ScorchingPoint.BallSummonTagDmgMult / 100f;
+            CenterOfTheUniverse.projectiles.Add(this);
         }
-        public sealed override void SetDefaults()
+        public override void OnKill(int timeLeft)
         {
-            Projectile.width = 98;
-            Projectile.height = 50;
-            Projectile.tileCollide = false;
-
-            Projectile.friendly = true;
-            Projectile.minion = true;
-            Projectile.DamageType = DamageClass.Summon;
-            Projectile.minionSlots = 0.5f;
-            Projectile.penetrate = -1;
-            Projectile.extraUpdates = 1;
-            Projectile.ContinuouslyUpdateDamageStats = true;
-
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 30;
-
-
-            trailWidth = 45;
-            trailPointLimit = 900;
-            trailMaxLength = 333;
-            Projectile.hide = true;
-            collisionPadding = 5;
-            NPCSource = false;
-            trailCollision = true;
-            collisionFrequency = 10;
-            noFadeOut = true;
-            ScreenSpace = true;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/InterstellarVessel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            CenterOfTheUniverse.projectiles.Remove(this);
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
@@ -66,45 +44,22 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             }
             if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
-                modifiers.SourceDamage *= 1.25f;
+                modifiers.SourceDamage += 0.25f;
                 modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 3000, 150);
             }
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks >= 6)
             {
                 modifiers.SetCrit();
-                modifiers.CritDamage += 0.5f;
+                modifiers.CritDamage *= ScorchingPoint.MarkDetonationCritDmgAmp;
+            }
+            if (target.HasBuff(ModContent.BuffType<AwestruckDebuff>()))
+            {
+                modifiers.FinalDamage *= 1f + CenterOfTheUniverse.AwestruckStarDamageAmp / 100f;
             }
         }
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        public override void CustomOnHitNPC(NPC target)
         {
             Player player = Main.player[Projectile.owner];
-            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = player;
-            int HitSound = Main.rand.Next(3);
-            if (modPlayer.RuneterraMinionHitSoundCooldown > 0)
-            {
-                switch (HitSound)
-                {
-                    case 0:
-                        {
-                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit1") with { Volume = CenterOfTheUniverse.SoundVolume });
-                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
-                            break;
-                        }
-                    case 1:
-                        {
-                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit2") with { Volume = CenterOfTheUniverse.SoundVolume });
-                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
-                            break;
-                        }
-                    case 2:
-                        {
-                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/StarHit3") with { Volume = CenterOfTheUniverse.SoundVolume });
-                            modPlayer.RuneterraMinionHitSoundCooldown = 20;
-                            break;
-                        }
-                }
-            }
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks >= 6)
             {
                 target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks = 0;
@@ -118,95 +73,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
                         //Can cast comet visual
                     }
                 }
-                Dust.NewDust(Projectile.position, 20, 20, DustID.AncientLight, 1, 1, 0, default, 1.5f);
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/MarkDetonation") with { Volume = CenterOfTheUniverse.SoundVolume * 1.2f });
+                Dust.NewDust(Projectile.position, 20, 20, dustID, 1, 1, 0, default, 1.5f);
+                SoundEngine.PlaySound(new SoundStyle(SoundPath + "MarkDetonation") with { Volume = CenterOfTheUniverse.SoundVolume * 1.2f });
             }
         }
-        public override void OnSpawn(IEntitySource source)
-        {
-            CenterOfTheUniverse.projectiles.Add(this);
-        }
-        public override bool? CanCutTiles()
-        {
-            return false;
-        }
-        public override bool MinionContactDamage()
-        {
-            return true;
-        }
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
-        {
-            behindNPCs.Add(index);
-        }
-        public override void OnKill(int timeLeft)
-        {
-            CenterOfTheUniverse.projectiles.Remove(this);
-        }
-
-        public override void AI()
-        {
-            base.AI();
-
-            Player player = Main.player[Projectile.owner];
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-
-            if (angularSpeed3 > 0.03f)
-            {
-                trailIntensity = 2;
-            }
-
-
-            if (trailIntensity > 1)
-            {
-                trailIntensity -= 0.05f;
-            }
-
-
-            if (!CheckActive(player))
-            {
-                return;
-            }
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
-            {
-                angularSpeed3 = 0.075f;
-            }
-            if (!player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
-            {
-                angularSpeed3 = 0.03f;
-                if (Main.netMode == NetmodeID.MultiplayerClient)
-                {
-                    ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                    minionPacket.Write(tsorcPacketID.SyncMinionRadius);
-                    minionPacket.Write((byte)player.whoAmI);
-                    minionPacket.Write(player.GetModPlayer<tsorcRevampPlayer>().MinionCircleRadius);
-                    minionPacket.Write(player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost);
-                    minionPacket.Send();
-                }
-            }
-
-            currentAngle3 += (angularSpeed3 / (modPlayer.MinionCircleRadius * 0.001f + 1f));
-
-            Vector2 offset = new Vector2(0, modPlayer.MinionCircleRadius).RotatedBy(-currentAngle3);
-
-            Projectile.Center = player.Center + offset;
-            Projectile.velocity = Projectile.rotation.ToRotationVector2();
-
-            Visuals();
-        }
-
-
-        /*public override void SendExtraAI(BinaryWriter writer)
-        {
-			writer.Write(angularSpeed2);
-		}
-        public override void ReceiveExtraAI(BinaryReader reader)
-        {
-			angularSpeed2 = reader.ReadSingle();
-		}*/
-        Vector2 samplePointOffset1;
-        Vector2 samplePointOffset2;
-        float trailIntensity = 1;
         public override void SetEffectParameters(Effect effect)
         {
             trailWidth = 35;
@@ -243,69 +113,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             effect.Parameters["secondaryColor"].SetValue(new Color(0f, 0f, 2.52f, 0.7f).ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
-        public override float CollisionWidthFunction(float progress)
+        public override void CustomCheckActive()
         {
-            return WidthFunction(progress) - 35;
+            CenterOfTheUniverse.projectiles.Clear();
         }
-
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
-            if (distance < Projectile.height * 1.2f && distance > Projectile.height * 1.2f - 32)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        private bool CheckActive(Player owner)
-        {
-            if (owner.dead || !owner.active)
-            {
-                owner.ClearBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
-
-                return false;
-            }
-
-            if (!owner.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>()))
-            {
-                currentAngle3 = 0;
-                CenterOfTheUniverse.projectiles.Clear();
-            }
-
-            if (owner.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>()))
-            {
-                Projectile.timeLeft = 2;
-            }
-
-            return true;
-        }
-        private void Visuals()
-        {
-            Projectile.rotation = currentAngle3 * -1f;
-
-            /*float frameSpeed = 5f;
-
-            Projectile.frameCounter++;
-
-            if (Projectile.frameCounter >= frameSpeed)
-            {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
-
-                if (Projectile.frame >= Main.projFrames[Projectile.type])
-                {
-                    Projectile.frame = 0;
-                }
-            }*/
-
-            Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.48f);
-        }
-
-        public static Texture2D texture;
-        public static Texture2D glowTexture;
         public override bool PreDraw(ref Color lightColor)
         {
             visualizeTrail = false;

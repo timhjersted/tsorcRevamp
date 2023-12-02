@@ -5287,6 +5287,24 @@ Mods: {
 				Tooltip: 在你的位置创建一个魔法漩涡，随着时间的推移造成高伤害
 			}
 
+			Muramassa: {
+				DisplayName: 村大
+				Tooltip:
+					'''
+					一把为魔法使用者制作的剑
+					使用者的魔力值超过 200 后，每 20 点魔力增加 1 点伤害
+					'''
+			}
+
+			Murassame: {
+				DisplayName: 村太
+				Tooltip:
+					'''
+					一把为魔法使用者制作的剑
+					使用者的魔力值超过 200 后，每 10 点魔力增加 1 点伤害
+					'''
+			}
+
 			Masamune: {
 				DisplayName: 政宗
 				Tooltip:
@@ -5305,24 +5323,6 @@ Mods: {
 			MeteorTome: {
 				DisplayName: 流星宝典
 				Tooltip: 传说中的法术巨著，可以召唤出流星风暴
-			}
-
-			Muramassa: {
-				DisplayName: 村大
-				Tooltip:
-					'''
-					一把为魔法使用者制作的剑
-					使用者的魔力值超过 200 后，每 20 点魔力增加 1 点伤害
-					'''
-			}
-
-			Murassame: {
-				DisplayName: 村太
-				Tooltip:
-					'''
-					一把为魔法使用者制作的剑
-					使用者的魔力值超过 200 后，每 10 点魔力增加 1 点伤害
-					'''
 			}
 
 			PoisonBombRune: {
@@ -8468,6 +8468,11 @@ Mods: {
 				DisplayName: 溺气
 				Description: 水！没了水你要憋死了！
 			}
+
+			AwestruckDebuff: {
+				// DisplayName: Awestruck Debuff
+				// Description: Mods.tsorcRevamp.Buffs.AwestruckDebuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -9050,6 +9055,9 @@ Mods: {
 			TyphoonArrow.DisplayName: 炽风之弦箭雨
 			RustedChainProjectile.DisplayName: 锈蚀铁链
 			KrakenTsunamiShark.DisplayName: 海妖旋风鲨鱼
+			// CenterOfTheUniverseCometZone.DisplayName: Center Of The Universe Comet Zone
+			// CenterOfTheUniverseFallingComet.DisplayName: Center Of The Universe Falling Comet
+			// CenterOfTheUniverseShockwave.DisplayName: Center Of The Universe Shockwave
 		}
 
 		NPCs: {

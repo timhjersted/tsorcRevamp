@@ -5286,13 +5286,31 @@ Mods: {
 				Tooltip: Creates a magic vortex at your location that deals high damage over time
 			}
 
+			Muramassa: {
+				DisplayName: Muramassa
+				Tooltip:
+					'''
+					A sword crafted for magic users
+					Deals +1 damage for every {1} max mana the user has over {0}
+					'''
+			}
+
+			Murassame: {
+				DisplayName: Murassame
+				Tooltip:
+					'''
+					A sword crafted for magic users
+					Deals +1 damage for every {1} max mana the user has over {0}
+					'''
+			}
+
 			Masamune: {
 				DisplayName: Masamune
 				Tooltip:
 					'''
-					The blade almost cannot be seen it cuts so fast, ripping enemies to shreds in seconds.
-					Has the power to shoot a magical water flame from its blade yet it uses no mana.
-					Deals +1 damage for every 8 mana the user has over 200
+					The blade almost cannot be seen it cuts so fast, ripping enemies to shreds in seconds
+					Has the power to shoot a magical water flame from its blade
+					Deals +1 damage for every {1} max mana the user has over {0}
 					'''
 			}
 
@@ -5304,24 +5322,6 @@ Mods: {
 			MeteorTome: {
 				DisplayName: Meteor Tome
 				Tooltip: A legendary spell tome that calls down a meteor storm
-			}
-
-			Muramassa: {
-				DisplayName: Muramassa
-				Tooltip:
-					'''
-					A sword crafted for magic users
-					Deals +1 damage for every 20 mana the user has over 200
-					'''
-			}
-
-			Murassame: {
-				DisplayName: Murassame
-				Tooltip:
-					'''
-					A sword crafted for magic users
-					Deals +1 damage for every 10 mana the user has over 200
-					'''
 			}
 
 			PoisonBombRune: {
@@ -7099,8 +7099,10 @@ Mods: {
 				Keybind2: " to activate [c/7fffd4:Turboboost], accelerating the [c/b22222:Star Forger] and it's [c/b22222:stars]"
 				Details:
 					'''
-					[c/00008b:Grand Comet deals massive damage in a huge area and leaves behind a shockwave](WIP unimplemented)
-					[c/00008b:Grand Comet applies the Awestruck debuff, further increasing star damage and dealing massive damage over time]
+					[c/00008b:Grand Comet deals massive damage in a huge area and leaves behind a shockwave](WIP)
+					[c/00008b:Grand Comet applies the Awestruck debuff]({$CommonItemTooltip.SecondDuration@3})
+					This further increases star damage and deals massive damage over time
+					Star damage increase is {4}% multiplicatively
 					[c/7fffd4:Turboboost] increases star damage, movement speed and increases the Star Forger's attack speed]
 					[c/7fffd4:Turboboost will actively drain your mana]
 					The [c/b22222:Star Forger] itself uses half a minion slot and scales with the amount of [c/b22222:stars] summoned
@@ -8467,6 +8469,11 @@ Mods: {
 				DisplayName: Gilled
 				Description: You need water!
 			}
+
+			AwestruckDebuff: {
+				DisplayName: Awestruck Debuff
+				Description: Mods.tsorcRevamp.Buffs.AwestruckDebuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -9049,6 +9056,9 @@ Mods: {
 			TyphoonArrow.DisplayName: Typhoon Arrow
 			RustedChainProjectile.DisplayName: Rusted Chain Projectile
 			KrakenTsunamiShark.DisplayName: Kraken Tsunami Shark
+			CenterOfTheUniverseCometZone.DisplayName: Center Of The Universe Comet Zone
+			CenterOfTheUniverseFallingComet.DisplayName: Center Of The Universe Falling Comet
+			CenterOfTheUniverseShockwave.DisplayName: Center Of The Universe Shockwave
 		}
 
 		NPCs: {
