@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.tileCollide = true;
             Projectile.height = 18;
             Projectile.width = 18;
-            Projectile.timeLeft = 30;
+            Projectile.timeLeft = 40;
             Projectile.alpha = 255;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;

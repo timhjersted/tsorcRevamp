@@ -5293,6 +5293,7 @@ Mods: {
 					'''
 					它切割得如此之快，刀刃几乎看不见，在几秒钟内将敌人撕成碎片
 					拥有从刀刃上射出魔法水焰的力量，但它不消耗魔力
+					使用者的魔力值超过 200 后，每 8 点魔力增加 1 点伤害
 					'''
 			}
 
@@ -5311,7 +5312,7 @@ Mods: {
 				Tooltip:
 					'''
 					一把为魔法使用者制作的剑
-					使用者的魔力值超过 200 后，每20点魔力增加 1 点伤害
+					使用者的魔力值超过 200 后，每 20 点魔力增加 1 点伤害
 					'''
 			}
 
@@ -5320,7 +5321,7 @@ Mods: {
 				Tooltip:
 					'''
 					一把为魔法使用者制作的剑
-					使用者的魔力值超过 200 后，每10点魔力增加 1 点伤害
+					使用者的魔力值超过 200 后，每 10 点魔力增加 1 点伤害
 					'''
 			}
 
@@ -8905,8 +8906,8 @@ Mods: {
 			FriendlyTetsujinLaser.DisplayName: 哲♂人激光
 			NullSprite.DisplayName: 空精灵
 			PhoenixProjectile.DisplayName: 小凤凰
-			CenterOfTheUniverseStar.DisplayName: 宇宙中心之星
-			CenterOfTheUniverseStellarNova.DisplayName: 宇宙中心恒星新星
+			CenterOfTheUniverseStar.DisplayName: 宇宙重心之星
+			CenterOfTheUniverseStellarNova.DisplayName: 宇宙重心恒星新星
 			InterstellarVesselShip.DisplayName: 星际飞船
 			ScorchingPointFireball.DisplayName: 灼热火球
 			SamuraiBeetle.DisplayName: 武士圣甲虫
@@ -8965,7 +8966,7 @@ Mods: {
 			FriendlyRetLaser.DisplayName: 激光
 			UrumiProjectile.DisplayName: 软剑鞭
 			ScorchingPointAura.DisplayName: 焦点灵气
-			CenterOfTheUniverseAura.DisplayName: 宇宙中心光环
+			CenterOfTheUniverseAura.DisplayName: 宇宙重心光环
 			InterstellarVesselAura.DisplayName: 星际飞船光环
 			OrbOfDeceptionOrbIdle.DisplayName: 诡谲之珠
 			OrbOfFlameOrbIdle.DisplayName: 烈焰之珠

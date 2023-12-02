@@ -28,6 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Venom] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][ModContent.BuffType<DarkInferno>()] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][ModContent.BuffType<CrimsonBurn>()] = true;
+            NPCID.Sets.GoldCrittersCollection.Add(Type);
         }
 
         public override void SetDefaults()

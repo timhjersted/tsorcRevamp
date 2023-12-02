@@ -17,9 +17,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Item.width = 48;
             Item.height = 72;
-            Item.useAnimation = 15;
-            Item.useTime = 15;
-            Item.damage = 140;
+            Item.useAnimation = 12;
+            Item.useTime = 12;
+            Item.damage = 160;
             Item.knockBack = 9;
             Item.autoReuse = true;
             Item.useTurn = true;
@@ -44,6 +44,14 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
+        }
+
+        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
+        {
+            if (player.statManaMax2 >= 200)
+            {
+                damage.Flat += (player.statManaMax2 - 200) / 8;
+            }
         }
     }
 }

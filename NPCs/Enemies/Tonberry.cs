@@ -14,6 +14,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 16;
+            NPCID.Sets.GoldCrittersCollection.Add(Type);
         }
         public override void SetDefaults()
         {

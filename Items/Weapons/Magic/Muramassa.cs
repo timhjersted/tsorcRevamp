@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.height = 48;
             Item.useAnimation = 18;
             Item.useTime = 18;
-            Item.damage = 12;
+            Item.damage = 15;
             Item.knockBack = 3;
             Item.autoReuse = true;
             Item.useTurn = true;
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Orange_3;
             Item.DamageType = DamageClass.Magic;
-            Item.mana = 5;
+            Item.mana = 20;
             Item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();
             Item.shootSpeed = 11f;
         }

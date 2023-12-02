@@ -5292,6 +5292,7 @@ Mods: {
 					'''
 					The blade almost cannot be seen it cuts so fast, ripping enemies to shreds in seconds.
 					Has the power to shoot a magical water flame from its blade yet it uses no mana.
+					Deals +1 damage for every 8 mana the user has over 200
 					'''
 			}
 
