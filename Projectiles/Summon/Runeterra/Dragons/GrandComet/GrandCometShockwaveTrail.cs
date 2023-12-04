@@ -6,9 +6,9 @@ using Terraria;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.VFX;
 
-namespace tsorcRevamp.Projectiles.Enemy.Okiku
+namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
 {
-    class CenterOfTheUniverseShockwave : DynamicTrail
+    class GrandCometShockwaveTrail : DynamicTrail
     {
         public override void SetStaticDefaults()
         {

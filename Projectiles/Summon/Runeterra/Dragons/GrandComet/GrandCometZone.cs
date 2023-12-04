@@ -7,9 +7,9 @@ using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 using static Humanizer.In;
 
-namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
+namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
 {
-    public class CenterOfTheUniverseCometZone : ModProjectile
+    public class GrandCometZone : ModProjectile
     {
         public float Timer = 0;
         public float DustRingTimer = 0;
@@ -43,9 +43,9 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             {
                 Timer -= 4;
                 DustRingTimer += 6 + DustRingTimerBonus;
-                if (player.ownedProjectileCounts[ModContent.ProjectileType<CenterOfTheUniverseShockwave>()] < 1)
+                if (player.ownedProjectileCounts[ModContent.ProjectileType<GrandCometShockwaveTrail>()] < 1)
                 {
-                    Projectile Shockwave = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CenterOfTheUniverseShockwave>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                    Projectile Shockwave = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<GrandCometShockwaveTrail>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                 }
                 int DustSpeed = 3;
                 int DustCount = 30;

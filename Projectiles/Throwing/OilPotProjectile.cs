@@ -81,10 +81,10 @@ namespace tsorcRevamp.Projectiles.Throwing
                 // Smoke and fuse dust spawn.
                 if (Main.rand.NextBool(4))
                 {
-                    int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.Asphalt, 0f, 0f, 100, default, 1f);
-                    Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;
-                    Main.dust[dustIndex].fadeIn = .5f + (float)Main.rand.Next(5) * 0.1f;
-                    Main.dust[dustIndex].noGravity = true;
+                    Dust dust = Dust.NewDustDirect(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.Asphalt, 0f, 0f, 100, default, 1f);
+                    dust.scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;
+                    dust.fadeIn = .5f + (float)Main.rand.Next(5) * 0.1f;
+                    dust.noGravity = true;
                 }
             }
             Projectile.ai[0] += 1f;
@@ -120,8 +120,8 @@ namespace tsorcRevamp.Projectiles.Throwing
             // Fire Dust spawn
             for (int i = 0; i < 200; i++)
             {
-                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 100, Projectile.height - 100, DustID.Asphalt, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default, 1f);
-                Main.dust[dustIndex].noGravity = true;
+                Dust dust = Dust.NewDustDirect(new Vector2(Projectile.position.X + 36, Projectile.position.Y + 36), Projectile.width - 100, Projectile.height - 100, DustID.Asphalt, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default, 1f);
+                dust.noGravity = true;
             }
             // reset size to normal width and height.
             Projectile.position.X = Projectile.position.X + (float)(Projectile.width / 2);
