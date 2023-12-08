@@ -9,7 +9,7 @@ using tsorcRevamp.Projectiles.Throwing;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
 {
-    public class GrandComet : ModProjectile
+    public class GrandCometProjectile : ModProjectile
     {
         public override void SetStaticDefaults()
         {

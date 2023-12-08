@@ -9058,6 +9058,20 @@ Mods: {
 			// CenterOfTheUniverseCometZone.DisplayName: Center Of The Universe Comet Zone
 			// CenterOfTheUniverseFallingComet.DisplayName: Center Of The Universe Falling Comet
 			// CenterOfTheUniverseShockwave.DisplayName: Center Of The Universe Shockwave
+			// GrandCometChunk01.DisplayName: Grand Comet Chunk01
+			// GrandCometChunk02.DisplayName: Grand Comet Chunk02
+			// GrandCometChunk03.DisplayName: Grand Comet Chunk03
+			// GrandCometChunk04.DisplayName: Grand Comet Chunk04
+			// GrandCometChunk05.DisplayName: Grand Comet Chunk05
+			// GrandCometChunk06.DisplayName: Grand Comet Chunk06
+			// GrandCometChunk07.DisplayName: Grand Comet Chunk07
+			// GrandCometChunk08.DisplayName: Grand Comet Chunk08
+			// GrandCometChunk09.DisplayName: Grand Comet Chunk09
+			// GrandCometChunk10.DisplayName: Grand Comet Chunk10
+			// GrandCometChunk11.DisplayName: Grand Comet Chunk11
+			// GrandCometProjectile.DisplayName: Grand Comet Projectile
+			// GrandCometShockwaveTrail.DisplayName: Grand Comet Shockwave Trail
+			// GrandCometZone.DisplayName: Grand Comet Zone
 		}
 
 		NPCs: {

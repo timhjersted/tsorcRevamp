@@ -13,6 +13,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.NPCs;
+using tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {
@@ -540,7 +541,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 // end alt seq
                 AltSequence = false;
                 AltSequenceEnd(); 
-                Projectile GrandComet = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.rand.NextVector2FromRectangle(new Rectangle((int)CometZone.Center.X - 2500, (int)CometZone.Center.Y - 2000, 5000, 1)), Vector2.Zero, ModContent.ProjectileType<GrandComet>(), (int)BaseOriginalDamage * 3, player.GetTotalKnockback(DamageClass.Summon).ApplyTo(player.HeldItem.knockBack * 10), player.whoAmI, CometZone.Center.X, CometZone.Center.Y, CometZone.whoAmI); //this damage only applies for the meteor's hitbox itself
+                Projectile GrandComet = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.rand.NextVector2FromRectangle(new Rectangle((int)CometZone.Center.X - 2500, (int)CometZone.Center.Y - 2000, 5000, 1)), Vector2.Zero, ModContent.ProjectileType<GrandCometProjectile>(), (int)BaseOriginalDamage * 3, player.GetTotalKnockback(DamageClass.Summon).ApplyTo(player.HeldItem.knockBack * 10), player.whoAmI, CometZone.Center.X, CometZone.Center.Y, CometZone.whoAmI); //this damage only applies for the meteor's hitbox itself
             }
         }
 
