@@ -342,6 +342,7 @@ namespace tsorcRevamp
                 165, 178, 185, 186, 187, 233, 530, 2311, 238, //all ambient objects (background breakables), QB Larva, Plantera Bulb
                 3, 24, 61, 73, 74, 110, 113, 184, 201, 518, 519, 529, 549, //cuttable plants - all biomes
                 27, 215, 42, 621, 506, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle), Slice of Cake, Bast Statue
+                356, 663, //Sundial, Moondial
                 TileID.LivingFire, TileID.LivingCursedFire, TileID.LivingDemonFire, TileID.LivingFrostFire, TileID.LivingIchor, TileID.ManaCrystal,
             };
             #endregion
@@ -358,7 +359,8 @@ namespace tsorcRevamp
                 71, 80, 81, 82, 83, 84, 227, 254, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
                 128, 269, 470, 378, 240, 560, 617, //all mannequins, target dummy, trophies and relics
                 320, //thin ice (breakable kind), seaweed/herb planters, all sands
-                27, 215, 42, 621, 506 //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle), Slice of Cake, Bast Statue
+                27, 215, 42, 621, 506, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle), Slice of Cake, Bast Statue
+                356, 663 //Sundial, Moondial
             };
             #endregion
             //--------

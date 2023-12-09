@@ -175,7 +175,7 @@ namespace tsorcRevamp.Items
 
                 if (item.type == ItemID.Picksaw && !tsorcRevampWorld.SuperHardMode)
                 {
-                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.AttradiesCursed")));
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.AttraidiesCursed")));
                 }
 
                 if (tsorcRevamp.RestrictedHooks.Contains(item.type) && !NPC.downedBoss3)

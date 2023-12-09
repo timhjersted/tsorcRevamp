@@ -7103,7 +7103,7 @@ Mods: {
 					[c/00008b:Grand Comet applies the Awestruck debuff]({$CommonItemTooltip.SecondDuration@3})
 					This further increases star damage and deals massive damage over time
 					Star damage increase is {4}% multiplicatively
-					[c/7fffd4:Turboboost] increases star damage, movement speed and increases the Star Forger's attack speed]
+					[c/7fffd4:Turboboost increases star damage, movement speed and increases the Star Forger's attack speed]
 					[c/7fffd4:Turboboost will actively drain your mana]
 					The [c/b22222:Star Forger] itself uses half a minion slot and scales with the amount of [c/b22222:stars] summoned
 					[c/b22222:Star Forger's hits apply the Sunburnt debuff and can mark enemies]
@@ -7557,8 +7557,8 @@ Mods: {
 			}
 
 			AncestralSpiritBag: {
-				DisplayName: Ancestral Spirit Bag
-				Tooltip: ""
+				DisplayName: Treasure Bag (Ancestral Spirit)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
 			SeedBag: {
@@ -7586,8 +7586,8 @@ Mods: {
 			}
 
 			PinwheelBag: {
-				DisplayName: Pinwheel Bag
-				Tooltip: ""
+				DisplayName: Treasure Bag (Pinwheel Bag)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
 			KrakenFlesh: {

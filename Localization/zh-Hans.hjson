@@ -4855,8 +4855,8 @@ Mods: {
 				DisplayName: 耐力容器
 				Tooltip:
 					'''
-					永久增加最大耐力 5%
-					消耗 10次后耐力最大
+					永久增加 5 点耐力上限
+					消耗 10 次后耐力达到最大值
 					'''
 				UsedCounter: "当前已使用次数: "
 			}
@@ -5292,16 +5292,16 @@ Mods: {
 				Tooltip:
 					'''
 					一把为魔法使用者制作的剑
-					使用者的魔力值超过 200 后，每 20 点魔力增加 1 点伤害
+					使用者的魔力值超过 {0} 后，每 {1} 点魔力增加 1 点伤害
 					'''
 			}
 
 			Murassame: {
-				DisplayName: 村太
+				DisplayName: 村雨
 				Tooltip:
 					'''
 					一把为魔法使用者制作的剑
-					使用者的魔力值超过 200 后，每 10 点魔力增加 1 点伤害
+					使用者的魔力值超过 {0} 后，每 {1} 点魔力增加 1 点伤害
 					'''
 			}
 
@@ -5310,8 +5310,8 @@ Mods: {
 				Tooltip:
 					'''
 					它切割得如此之快，刀刃几乎看不见，在几秒钟内将敌人撕成碎片
-					拥有从刀刃上射出魔法水焰的力量，但它不消耗魔力
-					使用者的魔力值超过 200 后，每 8 点魔力增加 1 点伤害
+					拥有从刀刃上射出魔法水焰的力量
+					使用者的魔力值超过 {0} 后，每 {1} 点魔力增加 1 点伤害
 					'''
 			}
 
@@ -7055,7 +7055,7 @@ Mods: {
 					[c/b22222:灰烬领主对敌人施加炽热减益，并且可以标记敌人]
 					每次攻击有 {0}% [c/b22222:几率施加标记]，标记 6 次后的敌人[c/b22222:被火球攻击可引发爆炸]
 					[c/b22222:引爆后的标记]会增强炽热减益的效果，持续 {1} 秒
-					炽热减益随时间[c/b22222:增加火球伤害]，并[c/b22222:施加 {2}% 的召唤标记暴击率]
+					炽热减益[c/b22222:增加火球的伤害]，[c/b22222:施加 {2}% 的召唤标记暴击率]，并对敌人造成持续伤害
 					'''
 			}
 
@@ -7080,7 +7080,7 @@ Mods: {
 					[c/b22222:霸天龙神对敌人施加出其不意减益，并且可以标记敌人]
 					每次攻击有 {0}% [c/b22222:几率施加标记]，标记 6 次后的敌人[c/b22222:被飞船攻击可引发爆炸]
 					[c/b22222:引爆后的标记]会增强出其不意减益的效果，持续 {1} 秒
-					出其不意减益随时间[c/b22222:增加飞船的伤害]，并[c/b22222:施加 {2}% 的召唤标记暴击率]
+					出其不意减益[c/b22222:增加飞船的伤害]，[c/b22222:施加 {2}% 的召唤标记暴击率]，并对敌人造成持续伤害
 					'''
 			}
 
@@ -7102,14 +7102,16 @@ Mods: {
 				Details:
 					'''
 					[c/00008b:彗星在大范围内造成巨大破坏并释放冲击波]
-					[c/00008b:彗星施加 Awestruck 减益，随时间增加星芒的伤害，其本身也会造成高额伤害]
-					[c/7fffd4:涡轮增压增加星芒的伤害、移动速度和铸星龙王的攻击速度]
+					[c/00008b:彗星施加惶恐减益]({$CommonItemTooltip.SecondDuration@3})
+					惶恐减益会增加星芒伤害，并造成高额持续伤害
+					乘算增加 {4}% 星芒伤害
+					[c/7fffd4:涡轮增压增加星芒伤害、移动速度和铸星龙王的攻击速度]
 					[c/7fffd4:涡轮增压会快速消耗你的魔力]
 					[c/b22222:铸星龙王]本身消耗半个仆从栏，并根据召唤的[c/b22222:星芒]数量进行缩放
 					[c/b22222:铸星龙王对敌人施加日照减益，并且可以标记敌人]
 					每次攻击有 {0}% [c/b22222:几率施加标记]，标记 6 次后的敌人[c/b22222:被星芒攻击可引发爆炸]
 					[c/b22222:引爆后的标记]会增强日照减益的效果，持续 {1} 秒
-					日照减益随时间[c/b22222:增加星芒的伤害]，并[c/b22222:施加 {2}% 的召唤标记暴击率]
+					日照减益[c/b22222:增加星芒的伤害]，[c/b22222:施加 {2}% 的召唤标记暴击率]，并对敌人造成持续伤害
 					'''
 			}
 
@@ -7557,7 +7559,7 @@ Mods: {
 
 			AncestralSpiritBag: {
 				DisplayName: 宝藏袋（先祖之灵）
-				Tooltip: ""
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
 			SeedBag: {
@@ -7586,7 +7588,7 @@ Mods: {
 
 			PinwheelBag: {
 				DisplayName: 宝藏袋（三焱家族）
-				Tooltip: ""
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
 			KrakenFlesh: {
@@ -7595,18 +7597,18 @@ Mods: {
 			}
 
 			EstusRing: {
-				// DisplayName: Estus Ring
-				// Tooltip: Increases the healing potency of the Estus Flask by 20HP while worn
+				DisplayName: 元素之戒
+				Tooltip: 装备时提高元素瓶 20 点生命值的治疗效果
 			}
 
 			RingOfFavorAndProtection: {
-				// DisplayName: Ring Of Favor And Protection
-				/* Tooltip:
+				DisplayName: 恩惠与保护之戒
+				Tooltip:
 					'''
-					Increases HP by 20 and stamina by 10 while worn
-					It seems as though Pinwheel held this to prevent
-					the necklace it wore from releasing its full power
-					''' */
+					装备时增加 20 点生命值和 10 点耐力
+					看起来三焱家族戴着这个项链
+					是为了防止它释放出全部的力量
+					'''
 			}
 		}
 
@@ -8485,8 +8487,8 @@ Mods: {
 			}
 
 			AwestruckDebuff: {
-				// DisplayName: Awestruck Debuff
-				// Description: Mods.tsorcRevamp.Buffs.AwestruckDebuff.Description
+				DisplayName: 惶恐减益
+				Description: Mods.tsorcRevamp.Buffs.AwestruckDebuff.Description
 			}
 		}
 
@@ -8791,7 +8793,7 @@ Mods: {
 			GreatMagicShield.DisplayName: 大魔法盾
 			GreatSoulArrow.DisplayName: 伟大的灵魂之箭
 			GWPulsarShot.DisplayName: G W 脉冲波
-			HealingWater.DisplayName: 治疗水
+			HealingWater.DisplayName: 魔法水焰
 			HeavenPiercer.DisplayName: 天堂穿刺者
 			HeavenSword.DisplayName: 天剑
 			HomingFireball.DisplayName: 法术大火球球
@@ -8926,7 +8928,7 @@ Mods: {
 			FriendlyTetsujinLaser.DisplayName: 哲♂人激光
 			NullSprite.DisplayName: 空精灵
 			PhoenixProjectile.DisplayName: 小凤凰
-			CenterOfTheUniverseStar.DisplayName: 宇宙重心之星
+			CenterOfTheUniverseStar.DisplayName: 宇宙重心星芒
 			CenterOfTheUniverseStellarNova.DisplayName: 宇宙重心恒星新星
 			InterstellarVesselShip.DisplayName: 星际飞船
 			ScorchingPointFireball.DisplayName: 灼热火球
@@ -9069,26 +9071,25 @@ Mods: {
 			TyphoonProjectile.DisplayName: 炽风之弦
 			TyphoonArrow.DisplayName: 炽风之弦箭雨
 			RustedChainProjectile.DisplayName: 锈蚀铁链
-			// KrakenTsunamiShark.DisplayName: Kraken Tsunami Shark
-			// BlindingPulse.DisplayName: Blinding Pulse
 			KrakenTsunamiShark.DisplayName: 海妖旋风鲨鱼
-			// CenterOfTheUniverseCometZone.DisplayName: Center Of The Universe Comet Zone
-			// CenterOfTheUniverseFallingComet.DisplayName: Center Of The Universe Falling Comet
-			// CenterOfTheUniverseShockwave.DisplayName: Center Of The Universe Shockwave
-			// GrandCometChunk01.DisplayName: Grand Comet Chunk01
-			// GrandCometChunk02.DisplayName: Grand Comet Chunk02
-			// GrandCometChunk03.DisplayName: Grand Comet Chunk03
-			// GrandCometChunk04.DisplayName: Grand Comet Chunk04
-			// GrandCometChunk05.DisplayName: Grand Comet Chunk05
-			// GrandCometChunk06.DisplayName: Grand Comet Chunk06
-			// GrandCometChunk07.DisplayName: Grand Comet Chunk07
-			// GrandCometChunk08.DisplayName: Grand Comet Chunk08
-			// GrandCometChunk09.DisplayName: Grand Comet Chunk09
-			// GrandCometChunk10.DisplayName: Grand Comet Chunk10
-			// GrandCometChunk11.DisplayName: Grand Comet Chunk11
-			// GrandCometProjectile.DisplayName: Grand Comet Projectile
-			// GrandCometShockwaveTrail.DisplayName: Grand Comet Shockwave Trail
-			// GrandCometZone.DisplayName: Grand Comet Zone
+			CenterOfTheUniverseCometZone.DisplayName: 宇宙重心彗星冲击波
+			CenterOfTheUniverseFallingComet.DisplayName: 宇宙重心坠落彗星
+			CenterOfTheUniverseShockwave.DisplayName: 宇宙重心彗星冲击波
+			GrandCometChunk01.DisplayName: 宇宙重心彗星碎片1
+			GrandCometChunk02.DisplayName: 宇宙重心彗星碎片2
+			GrandCometChunk03.DisplayName: 宇宙重心彗星碎片3
+			GrandCometChunk04.DisplayName: 宇宙重心彗星碎片4
+			GrandCometChunk05.DisplayName: 宇宙重心彗星碎片5
+			GrandCometChunk06.DisplayName: 宇宙重心彗星碎片6
+			GrandCometChunk07.DisplayName: 宇宙重心彗星碎片7
+			GrandCometChunk08.DisplayName: 宇宙重心彗星碎片8
+			GrandCometChunk09.DisplayName: 宇宙重心彗星碎片9
+			GrandCometChunk10.DisplayName: 宇宙重心彗星碎片10
+			GrandCometChunk11.DisplayName: 宇宙重心彗星碎片11
+			GrandCometProjectile.DisplayName: 宇宙重心彗星
+			GrandCometShockwaveTrail.DisplayName: 宇宙重心彗星冲击波
+			GrandCometZone.DisplayName: 宇宙重心彗星冲击波
+			BlindingPulse.DisplayName: 三焱家族Blinding Pulse
 		}
 
 		NPCs: {
@@ -9831,7 +9832,7 @@ Mods: {
 			FreedFairy: {
 				DisplayName: 自由仙女
 				Name1: 自由仙女
-				Quote1: 感谢你救了我！我得以重见天日了！ 收下这个 [c/aa9911:发光的东西] ，这是我治愈生命之泉后找到的
+				Quote1: 感谢你救了我！我得以重见天日了！请收下这个[c/aa9911:闪闪发光的玩意]，这是我治愈生命之泉后找到的。
 				Button: 收下礼物
 
 				TownNPCMood: {
@@ -9906,7 +9907,7 @@ Mods: {
 					'''
 				AdvModeSHMQuote2:
 					'''
-					我的心为你而绝望，瑞德。这不容易，但是如果你成功了，你将有力量面对最后的领主。
+					我的心为你而绝望，瑞德。这不容易，但是如果你成功了，你将有力量面对最后的敌人。
 					自世界诞生以来，他一直在照料深渊的火焰。
 					在祖先的记载中，他被称为[c/ff6618:葛温，灰烬帝王]。
 					葛温的坟墓埋在西海的某个地方，
@@ -10132,15 +10133,15 @@ Mods: {
 			SandsprogMage.DisplayName: 沙盗法师
 
 			Pinwheel: {
-				DisplayName: 火焱风车
-				// DespawnHandler1: Pinwheel goes back to its studies...
-				// DespawnHandler2: Pinwheels rage subsides...
+				DisplayName: 三焱家族
+				DespawnHandler1: 三焱家族回到了它的书库之中...
+				DespawnHandler2: 三焱家族的怒火消退...
 			}
 
 			GhostOfAHollowWarrior.DisplayName: 空洞战士幽魂
 			GhostOfTheDrowned.DisplayName: 溺尸
 			HollowSpearman.DisplayName: 空洞矛手
-			// PinwheelFireball.DisplayName: PinwheelFireball
+			PinwheelFireball.DisplayName: 三焱家族火球
 		}
 
 		Prefixes: {
