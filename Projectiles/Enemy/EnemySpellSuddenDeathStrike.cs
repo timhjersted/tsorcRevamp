@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.hostile = true;
             Projectile.penetrate = 50;
             Projectile.DamageType = DamageClass.Magic;
-            Projectile.light = 1;
+            Projectile.light = 0.5f;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
         }

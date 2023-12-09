@@ -30,6 +30,7 @@ namespace tsorcRevamp
 
         public bool isDrinking; //Whether or not the player is currently drinking estus
         public bool isEstusHealing; //Whether or not the player is currently healing after drinking estus
+        public bool estusRing; //Whether or not the player is currently wearing an estus ring, increasing healing by 20
 
         public const float estusDrinkTimerMaxBase = 2f;
         public float estusDrinkTimerReductionPStone = 0.5f;
@@ -63,6 +64,11 @@ namespace tsorcRevamp
         public override void OnRespawn() //When a player respawns, restore charges
         {
             estusChargesCurrent = estusChargesMax;
+        }
+
+        public override void ResetEffects()
+        {
+            estusRing = false;
         }
 
         public override void PostUpdateBuffs()
@@ -185,7 +191,8 @@ namespace tsorcRevamp
                 isDrinking = false; //No longer drinking
                 estusChargesCurrent--; //Remove a charge
                 estusDrinkTimer = 0; //Set the timer back to 0
-                Player.HealEffect(estusHealthGain); //Show green heal text equal to health gain
+                if (estusRing) Player.HealEffect(estusHealthGain + 20); //Show green heal text equal to health gain
+                else Player.HealEffect(estusHealthGain);
                 isEstusHealing = true; //Commence healing process
                                        //kplayer.eocDash = 0;
             }
@@ -201,8 +208,8 @@ namespace tsorcRevamp
 
                 if (estusHealingTimer <= estusHealingTimerMax && Player.statLife < Player.statLifeMax2) //If the timer is less or equal to timer max and player hp is not at max
                 {
-
-                    estusHealthPerTick += estusHealthGain / estusHealingTimerMax; //Heal this much each tick
+                    if (estusRing) estusHealthPerTick += (estusHealthGain + 20) / estusHealingTimerMax; //Heal this much each tick
+                    else estusHealthPerTick += estusHealthGain / estusHealingTimerMax;
 
                     if (estusHealthPerTick > (int)estusHealthPerTick)
                     {

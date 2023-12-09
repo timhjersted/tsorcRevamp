@@ -4854,7 +4854,7 @@ Mods: {
 				DisplayName: Stamina Vessel
 				Tooltip:
 					'''
-					Permanently increases max stamina by 5%
+					Permanently increases max stamina by 5
 					Stamina maxes out after consuming 10
 					'''
 				UsedCounter: "Consumed so far: "
@@ -7594,6 +7594,21 @@ Mods: {
 				DisplayName: Kraken Flesh
 				Tooltip: ""
 			}
+
+			EstusRing: {
+				DisplayName: Estus Ring
+				Tooltip: Increases the healing potency of the Estus Flask by 20HP while worn
+			}
+
+			RingOfFavorAndProtection: {
+				DisplayName: Ring Of Favor And Protection
+				Tooltip:
+					'''
+					Increases HP by 20 and stamina by 10 while worn
+					It seems as though Pinwheel held this to prevent
+					the necklace it wore from releasing its full power
+					'''
+			}
 		}
 
 		Buffs: {
@@ -9073,6 +9088,7 @@ Mods: {
 			GrandCometProjectile.DisplayName: Grand Comet Projectile
 			GrandCometShockwaveTrail.DisplayName: Grand Comet Shockwave Trail
 			GrandCometZone.DisplayName: Grand Comet Zone
+			BlindingPulse.DisplayName: Blinding Pulse
 		}
 
 		NPCs: {
@@ -10115,10 +10131,17 @@ Mods: {
 			MountedSandsprogMage.DisplayName: Mounted Sandsprog Mage
 			Sandsprog.DisplayName: Sandsprog
 			SandsprogMage.DisplayName: Sandsprog Mage
-			Pinwheel.DisplayName: Pinwheel
+
+			Pinwheel: {
+				DisplayName: Pinwheel
+				DespawnHandler1: Pinwheel goes back to its studies...
+				DespawnHandler2: Pinwheels rage subsides...
+			}
+
 			GhostOfAHollowWarrior.DisplayName: Ghost Of A Hollow Warrior
 			GhostOfTheDrowned.DisplayName: Ghost Of The Drowned
 			HollowSpearman.DisplayName: Hollow Spearman
+			PinwheelFireball.DisplayName: PinwheelFireball
 		}
 
 		Prefixes: {

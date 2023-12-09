@@ -82,7 +82,17 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            //ideally an expert-only item and a weapon for each class I guess
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.EstusRing>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.MaskOfTheChild>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.MaskOfTheMother>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.MaskOfTheFather>()));
+
+            //Other potential drops:
+            // - Expert drop: Ring of Sacrifice from DS. Prevents drop of souls and deletion of souls in world once. Rather than breaking like in DS, it would have a 2 or 3 hour cooldown.
+            // - Summoner body and legs armour to be paired with any mask, with each mask having a bonus. Child = whip speed/range, Mother = additional summon slot,
+            //      Father = extra damage, etc. Armour set to look like pinwheel body.
+            // - Pinwheel Clone summon. Summons mini pinwheel clones that shoot Pinwheel attacks.
+
         }
     }
     public class OolacileDemonBag : BossBag

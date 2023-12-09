@@ -787,6 +787,13 @@ namespace tsorcRevamp
                 int p = Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarMinion>(), damage, 0, Player.whoAmI);
                 Main.projectile[p].originalDamage = damage;
             }
+
+            if (Player.HasBuff(BuffID.ShadowFlame))
+            {
+                int dust = Dust.NewDust(Player.position, Player.width, Player.height, DustID.ShadowbeamStaff, 0f, 0f, 30, default, Main.rand.NextFloat(1f, 2f));
+                Main.dust[dust].noGravity = true;
+            }
+
             //--------------------
 
             //TODO REMOVE WHEN FINALIZED
@@ -1616,8 +1623,13 @@ namespace tsorcRevamp
                 }
                 if (Player.breath <= 0)
                 {
-                    Player.lifeRegen -= 15;
+                    Player.lifeRegen -= 20;
                 }
+            }
+
+            if (Player.HasBuff(BuffID.ShadowFlame))
+            {
+                Player.lifeRegen -= 12;
             }
         }
 

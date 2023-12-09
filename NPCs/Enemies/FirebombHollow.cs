@@ -523,7 +523,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         if (!Main.hardMode)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 18, 0f, Main.myPlayer);
                         }
                         else if (Main.hardMode && !tsorcRevampWorld.SuperHardMode)
                         {

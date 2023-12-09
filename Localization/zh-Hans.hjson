@@ -7593,6 +7593,21 @@ Mods: {
 				DisplayName: 克拉肯遗骸
 				Tooltip: ""
 			}
+
+			EstusRing: {
+				// DisplayName: Estus Ring
+				// Tooltip: Increases the healing potency of the Estus Flask by 20HP while worn
+			}
+
+			RingOfFavorAndProtection: {
+				// DisplayName: Ring Of Favor And Protection
+				/* Tooltip:
+					'''
+					Increases HP by 20 and stamina by 10 while worn
+					It seems as though Pinwheel held this to prevent
+					the necklace it wore from releasing its full power
+					''' */
+			}
 		}
 
 		Buffs: {
@@ -9054,6 +9069,8 @@ Mods: {
 			TyphoonProjectile.DisplayName: 炽风之弦
 			TyphoonArrow.DisplayName: 炽风之弦箭雨
 			RustedChainProjectile.DisplayName: 锈蚀铁链
+			// KrakenTsunamiShark.DisplayName: Kraken Tsunami Shark
+			// BlindingPulse.DisplayName: Blinding Pulse
 			KrakenTsunamiShark.DisplayName: 海妖旋风鲨鱼
 			// CenterOfTheUniverseCometZone.DisplayName: Center Of The Universe Comet Zone
 			// CenterOfTheUniverseFallingComet.DisplayName: Center Of The Universe Falling Comet
@@ -10113,10 +10130,17 @@ Mods: {
 			MountedSandsprogMage.DisplayName: 沙盗骑手
 			Sandsprog.DisplayName: 沙盗士兵
 			SandsprogMage.DisplayName: 沙盗法师
-			Pinwheel.DisplayName: 三焱家族
+
+			Pinwheel: {
+				DisplayName: 火焱风车
+				// DespawnHandler1: Pinwheel goes back to its studies...
+				// DespawnHandler2: Pinwheels rage subsides...
+			}
+
 			GhostOfAHollowWarrior.DisplayName: 空洞战士幽魂
 			GhostOfTheDrowned.DisplayName: 溺尸
 			HollowSpearman.DisplayName: 空洞矛手
+			// PinwheelFireball.DisplayName: PinwheelFireball
 		}
 
 		Prefixes: {

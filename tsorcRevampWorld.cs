@@ -1543,6 +1543,7 @@ namespace tsorcRevamp
         {
             { ModContent.NPCType<NPCs.Special.LeonhardPhase1>(), new Vector2(3366, 356) },
             { ModContent.NPCType<NPCs.Enemies.RedKnight>(), new Vector2(3304, 500) },
+            { ModContent.NPCType<NPCs.Bosses.Pinwheel.Pinwheel>(), new Vector2(4139f, 933) },
             { NPCID.EyeofCthulhu, new Vector2(3900, 1140) },
             { NPCID.BrainofCthulhu, new Vector2(3044, 904) },
             { NPCID.EaterofWorldsHead, new Vector2(3633, 1010) },

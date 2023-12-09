@@ -214,7 +214,7 @@ namespace tsorcRevamp
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
 
             //PINWHEEL
-            ScriptedEvent Pinwheel = new ScriptedEvent(new Vector2(4139f, 923), 15, ModContent.NPCType<NPCs.Bosses.Pinwheel.Pinwheel>(), DustID.SpectreStaff, false, true, true, LangUtils.GetTextValue("Events.Pinwheel"), Color.Black, false);
+            ScriptedEvent Pinwheel = new ScriptedEvent(new Vector2(4139f, 923), 15, ModContent.NPCType<NPCs.Bosses.Pinwheel.Pinwheel>(), DustID.Asphalt, true, true, true, LangUtils.GetTextValue("Events.Pinwheel"), Color.Firebrick, false);
 
             //LOTHRIC BLACK KNIGHT IN CATACOMBS OF THE DROWNED
             ScriptedEvent LothricKnightCatacombs = new ScriptedEvent(new Vector2(4137, 895), 10, ModContent.NPCType<NPCs.Enemies.LothricBlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, LothricBlackKnightCustomAction);
@@ -1180,8 +1180,9 @@ namespace tsorcRevamp
                             Item.NewItem(new EntitySource_Misc("Scripted Event"), Main.player[i].Center, ModContent.ItemType<Items.EstusFlaskShard>());
                         }
                     }
+                    return EventActionStatus.CompletedEvent;
                 }
-                return EventActionStatus.Continue;
+                else return EventActionStatus.Continue;
             }
         }
 

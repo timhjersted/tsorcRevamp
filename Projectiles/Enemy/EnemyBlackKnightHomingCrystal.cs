@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -100,15 +101,17 @@ namespace tsorcRevamp.Projectiles.Enemy
         #region Kill   
         public override void OnKill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie82 with { Volume = 0.6f, Pitch = -3f, PitchVariance = 2f }, Projectile.Center); //wraith
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie82 with { Volume = 0.6f, Pitch = -3f, PitchVariance = 2f, MaxInstances = 5 }, Projectile.Center); //wraith
 
 
             // setup projectile for explosion
             Projectile.damage = Projectile.damage * 2;
             Projectile.penetrate = 20;
-            Projectile.width = Projectile.width * 2;
-            Projectile.height = Projectile.height * 2;
-
+            Projectile.width = Projectile.width * 3;
+            Projectile.height = Projectile.height * 3;
+            Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
+            Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
+            Projectile.timeLeft = 1;
             Projectile.Damage();
 
             //if (Projectile.owner == Main.myPlayer)
@@ -117,9 +120,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             //}
 
             // Fire Dust spawn
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; i < 30; i++)
             {
-                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width * 2, Projectile.height * 2, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 3f);
+                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 3f);
                 Main.dust[dustIndex].noGravity = true;
                 Main.dust[dustIndex].velocity *= 2.5f;
             }
@@ -147,10 +150,10 @@ namespace tsorcRevamp.Projectiles.Enemy
                 float velY = 1f - ((float)Main.rand.Next(20)) / 5f;
                 velX *= 2f;
                 velY *= 2f;
-                Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
-                Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
-                Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.Firefly, velX, velY, 160, default, 1f);
-                Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width, Projectile.height, DustID.Firefly, velX, velY, 160, default, 1f);
+                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
+                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
+                //Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width / 2, Projectile.height / 2, DustID.Firefly, velX, velY, 160, default, 1f);
+                //Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width / 2, Projectile.height / 2, DustID.Firefly, velX, velY, 160, default, 1f);
 
             }
 
@@ -181,6 +184,62 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000);
             target.AddBuff(BuffID.Weak, 180);
+
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie82 with { Volume = 0.6f, Pitch = -3f, PitchVariance = 2f, MaxInstances = 5 }, Projectile.Center); //wraith
+
+
+            // setup projectile for explosion
+            Projectile.damage = Projectile.damage * 2;
+            Projectile.penetrate = 20;
+            Projectile.width = Projectile.width * 3;
+            Projectile.height = Projectile.height * 3;
+            Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
+            Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
+            Projectile.timeLeft = 1;
+            //Projectile.Damage();
+
+            //if (Projectile.owner == Main.myPlayer)
+            //{
+            //    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.position, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 10, 10, Main.myPlayer, 400, 30);
+            //}
+
+            // Fire Dust spawn
+            for (int i = 0; i < 30; i++)
+            {
+                int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 3f);
+                Main.dust[dustIndex].noGravity = true;
+                Main.dust[dustIndex].velocity *= 2.5f;
+            }
+            // Large Smoke Gore spawn
+            for (int g = 0; g < 2; g++) //6 was 2
+            {
+                if (!Main.dedServ)
+                {
+                    int goreIndex = Gore.NewGore(Projectile.GetSource_Death(), new Vector2(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2)), default(Vector2), Main.rand.Next(61, 64), .8f);
+                    Main.gore[goreIndex].scale = 2f;
+                    Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X + 1f;
+                    Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y + 1f;
+                    goreIndex = Gore.NewGore(Projectile.GetSource_Death(), new Vector2(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2)), default(Vector2), Main.rand.Next(61, 64), .8f);
+                    Main.gore[goreIndex].scale = 2f;
+                    Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X - 1f;
+                    Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y + 1f;
+                }
+            }
+
+
+            // create unknown embers that fill the explosion's radius
+            for (int i = 0; i < 30; i++)
+            {
+                float velX = 1f - ((float)Main.rand.Next(20)) / 5f;
+                float velY = 1f - ((float)Main.rand.Next(20)) / 5f;
+                velX *= 2f;
+                velY *= 2f;
+                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
+                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.ShadowbeamStaff, velX, velY, 160, default, 1.5f);
+                //Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width / 2, Projectile.height / 2, DustID.Firefly, velX, velY, 160, default, 1f);
+                //Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width / 2), Projectile.position.Y - (float)(Projectile.height / 2)), Projectile.width / 2, Projectile.height / 2, DustID.Firefly, velX, velY, 160, default, 1f);
+
+            }
         }
 
         //public override bool PreDraw(ref Color lightColor)
