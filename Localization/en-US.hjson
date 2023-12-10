@@ -7101,7 +7101,7 @@ Mods: {
 				Keybind2: " to activate [c/7fffd4:Turboboost], accelerating the [c/b22222:Star Forger] and it's [c/b22222:stars]"
 				Details:
 					'''
-					[c/00008b:Grand Comet deals massive damage in a huge area and leaves behind a shockwave](WIP)
+					[c/00008b:Grand Comet deals massive damage in a huge area and leaves behind a shockwave]
 					[c/00008b:Grand Comet applies the Awestruck debuff]({$CommonItemTooltip.SecondDuration@3})
 					This further increases star damage and deals massive damage over time
 					Star damage increase is {4}% multiplicatively
