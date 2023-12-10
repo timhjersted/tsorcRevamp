@@ -59,7 +59,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.lifeMax = (int)(2000 * HealthScale);
             NPC.timeLeft = 180;
-            NPC.value = 15000; 
+            NPC.value = 187500;  //7500 DS
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Pinwheel.DespawnHandler1"), Color.Firebrick, 6);
 
 
@@ -982,6 +982,11 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + explosionLocation, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 100, 30);
                         }
                     }
+                    if (deathAnimationProgress == deathAnimationDuration && Main.netMode != NetmodeID.Server)
+                    {
+                        Item.NewItem(NPC.GetSource_FromThis(), NPC.Center, ModContent.ItemType<Items.BossBags.PinwheelBag>(), 1);
+                    }
+
                     base.HandleDeath();
                 }
             }
@@ -2495,10 +2500,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            if (NPC.lifeMax == (int)(5000 * HealthScale)) //Only drop boss bag if real boss - oddly checking ai[3] or isClone doesn't work
+            /*if (NPC.lifeMax == (int)(5000 * HealthScale)) 
             {
-                npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.PinwheelBag>()));
-            }
+                npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.PinwheelBag>())); //Bag is dropped as an item at the end of death anim instead, because checking for anything else seems to fail
+            }*/
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MaskOfTheChild>(), 1, 1, 1));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MaskOfTheFather>(), 1, 1, 1));

@@ -724,6 +724,7 @@ namespace tsorcRevamp
                 #endregion
                 //--------
                 #region tsorc
+                {   ModContent.ItemType<PinwheelBag>()              , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<OolacileDemonBag>()         , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<SlograBag>()                , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<GaibonBag>()                , BossExtras.StaminaVessel      },
@@ -798,6 +799,7 @@ namespace tsorcRevamp
                 #endregion
                 //--------
                 #region tsorc
+                {   ModContent.ItemType<PinwheelBag>()              , ModContent.NPCType<Pinwheel>()                                                    },
                 {   ModContent.ItemType<OolacileDemonBag>()         , ModContent.NPCType<AncientOolacileDemon>()                                        },
                 {   ModContent.ItemType<SlograBag>()                , ModContent.NPCType<Slogra>()                                                      },
                 {   ModContent.ItemType<GaibonBag>()                , ModContent.NPCType<Gaibon>()                                                      },

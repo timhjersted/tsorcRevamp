@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Armors
@@ -34,8 +35,11 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.lifeRegenCount = 0;
-            player.lifeRegenTime = 0;
+            if (!player.HasBuff(BuffID.RapidHealing) && player.lifeRegenCount > 0) //Only block life regen if not healing from RapidHealing and if it positive regen. This allows negative regen from debuffs to still deal damage.
+            {
+                player.lifeRegenCount = 0;
+                player.lifeRegenTime = 0;
+            }
             player.GetDamage(DamageClass.Generic) *= 1f + DmgMult / 100f;
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + MaxStamina / 100f;
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1f + StaminaRegen / 100f;
