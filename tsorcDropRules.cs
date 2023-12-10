@@ -3,6 +3,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Utilities;
+using Terraria;
 
 namespace tsorcRevamp
 {
@@ -130,5 +131,16 @@ namespace tsorcRevamp
         public bool CanShowItemDropInUI() => true;
 
         public virtual string GetConditionDescription() => LangUtils.GetTextValue("DropRules.NonExpertFirstKill");
+    }
+    public class DownedSkeletronRule : IItemDropRuleCondition, IProvideItemConditionDescription
+    {
+        public virtual bool CanDrop(DropAttemptInfo info)
+        {
+            return NPC.downedBoss3;
+        }
+
+        public bool CanShowItemDropInUI() => true;
+
+        public virtual string GetConditionDescription() => LangUtils.GetTextValue("DropRules.DownedSkeletron");
     }
 }

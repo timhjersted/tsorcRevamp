@@ -78,6 +78,7 @@ namespace tsorcRevamp
             public static IItemDropRuleCondition AdventureModeRule;
             public static IItemDropRuleCondition NonAdventureModeRule;
             public static IItemDropRuleCondition NonExpertFirstKillRule;
+            public static IItemDropRuleCondition DownedSkeletronRule;
         }
 
         public enum BossExtras
@@ -307,6 +308,7 @@ namespace tsorcRevamp
             tsorcItemDropRuleConditions.AdventureModeRule = new AdventureModeRule();
             tsorcItemDropRuleConditions.NonAdventureModeRule = new NonAdventureModeRule();
             tsorcItemDropRuleConditions.NonExpertFirstKillRule = new NonExpertFirstKillRule();
+            tsorcItemDropRuleConditions.DownedSkeletronRule = new DownedSkeletronRule();
             #endregion
             //--------
             #region Unbreakable list
@@ -1039,6 +1041,7 @@ namespace tsorcRevamp
             tsorcItemDropRuleConditions.AdventureModeRule = null;
             tsorcItemDropRuleConditions.NonAdventureModeRule = null;
             tsorcItemDropRuleConditions.NonExpertFirstKillRule = null;
+            tsorcItemDropRuleConditions.DownedSkeletronRule = null;
             toggleDragoonBoots = null;
             reflectionShiftKey = null;
             specialAbility = null;

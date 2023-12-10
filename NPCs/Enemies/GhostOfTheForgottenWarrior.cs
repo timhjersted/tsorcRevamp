@@ -145,13 +145,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            if (NPC.downedBoss3)
-            {
-                npcLoot.Add(ItemDropRule.Common(ItemID.GoldenKey, 10));
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<EphemeralDust>(), 1, 2, 4));
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Ranged.Thrown.EphemeralThrowingSpear>(), 10, 15, 26));
-                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<GreatMagicShieldScroll>(), 30));
-            }
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.DownedSkeletronRule, ItemID.GoldenKey, 10));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.DownedSkeletronRule, ModContent.ItemType<EphemeralDust>(), 1, 2, 4));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.DownedSkeletronRule, ModContent.ItemType<Items.Weapons.Ranged.Thrown.EphemeralThrowingSpear>(), 10, 15, 26));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.DownedSkeletronRule, ModContent.ItemType<GreatMagicShieldScroll>(), 30));
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofNight));
             npcLoot.Add(hmCondition);

@@ -351,6 +351,7 @@ Mods: {
 			AdvModeOnly: "[c/ff9999:只在冒险模式内掉落]"
 			SandboxModeOnly: "[c/ff9999:只在冒险模式之外]"
 			NonExpertFirstKill: "[c/ff9999: 只在专家模式之外的第一次击杀时掉落]"
+			DownedSkeletron: "[c/ff9999: 击败骷髅王之后掉落]"
 		}
 
 		Quest: {
