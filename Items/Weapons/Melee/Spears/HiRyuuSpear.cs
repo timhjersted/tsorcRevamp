@@ -13,9 +13,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 
         public override void SetDefaults()
         {
-            Item.damage = 128; //was 78
+            Item.damage = 200; //was 78
             Item.knockBack = 7f;
-
+            Item.crit = 11;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 15;
             Item.useTime = 5;

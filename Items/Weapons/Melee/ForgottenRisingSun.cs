@@ -16,7 +16,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useTime = 14;
             Item.autoReuse = true;
             Item.maxStack = 1;
-            Item.damage = 199;
+            Item.damage = 300;
+            Item.crit = 26;
             Item.knockBack = 5;
             Item.UseSound = SoundID.Item1;
             Item.shootSpeed = 21;
