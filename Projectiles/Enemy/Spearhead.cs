@@ -62,10 +62,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             else if (Projectile.ai[2] == 2) //Ghost of the Drowned
             {
                 SoundEngine.PlaySound(SoundID.Drown, target.Center);
-                target.AddBuff(BuffID.Darkness, 10 * 60);
-                target.AddBuff(BuffID.BrokenArmor, 10 * 60);
-                target.AddBuff(BuffID.Chilled, 10 * 60);
-                target.AddBuff(ModContent.BuffType<Gilled>(), 20 * 60);
+                target.AddBuff(BuffID.Darkness, 8 * 60);
+                target.AddBuff(BuffID.BrokenArmor, 8 * 60);
+                target.AddBuff(BuffID.Chilled, 8 * 60);
+                target.AddBuff(ModContent.BuffType<Gilled>(), 16 * 60);
             }
         }
     }

@@ -115,7 +115,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Axes.DunlendingAxe>(), 10));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoostPotion>(), 10));
             npcLoot.Add(new CommonDrop(ItemID.ShinePotion, 25, 1, 1, 3));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 5, 1, 3));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 5, 1, 1));
             npcLoot.Add(ItemDropRule.Common(ItemID.Torch, 50, 20, 35));
             npcLoot.Add(ItemDropRule.Common(ItemID.HealingPotion, 55));
         }

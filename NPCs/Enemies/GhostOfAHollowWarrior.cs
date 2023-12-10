@@ -196,11 +196,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.knockBackResist = 0;
             }
 
-            else
-            {
-                NPC.knockBackResist = 0.45f; //If not moving at high speed, default back to taking some knockback
-            }
-
             NPC.noTileCollide = false;
 
             int y_below_feet = (int)(NPC.position.Y + (float)NPC.height + 8f) / 16;
@@ -565,11 +560,6 @@ namespace tsorcRevamp.NPCs.Enemies
                         shielding = true;
                     }
 
-                    if (shielding)
-                    {
-                        NPC.knockBackResist = 0.3f;
-                    }
-
                     if (NPC.ai[2] > 500)
                     {
                         shielding = false;
@@ -817,7 +807,9 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spawnInfo.Water || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) return 0f;
             if (spawnInfo.Player.ZoneGlowshroom) return 0f;
 
-            if (spawnInfo.Player.ZoneGraveyard) return 3f;
+            if (spawnInfo.Player.ZoneGraveyard && !Main.hardMode && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 185 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 215
+                 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 301 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 214 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 302)) chance = 3f;
+
             return chance;
         }
 

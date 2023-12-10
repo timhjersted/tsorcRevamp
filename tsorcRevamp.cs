@@ -945,6 +945,7 @@ namespace tsorcRevamp
                                             (ItemID.SoulofSight, 1)
                                         }                                       },
                 #endregion
+
                 #region Hooks
                 { ItemID.IvyWhip,       new List<(int ItemID, int Count)>()
                                         {
@@ -981,9 +982,9 @@ namespace tsorcRevamp
                 { ItemID.AmberHook,   new List<(int ItemID, int Count)>()
                                         {
                                             (ItemID.BeeWax, 1)
-                                        }                                       }
+                                        }                                       },
                 #endregion
-                ,
+
                 #region Robes
                 { ItemID.AmethystRobe,  new List<(int ItemID, int Count)>()
                                         {
@@ -1008,7 +1009,38 @@ namespace tsorcRevamp
                 { ItemID.DiamondRobe,   new List<(int ItemID, int Count)>()
                                         {
                                             (ModContent.ItemType<DarkSoul>(), 800)
-                                        }                                                   }
+                                        }                                                   },
+                #endregion
+
+                #region Phasesabers
+                { ItemID.BluePhasesaber,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.SoulofLight, 5)
+                                        }                                                   },
+                { ItemID.GreenPhasesaber,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.SoulofLight, 5)
+                                        }                                                   },
+                { ItemID.YellowPhasesaber,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.SoulofLight, 5)
+                                        }                                                   },
+                { ItemID.OrangePhasesaber,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.SoulofLight, 5)
+                                        }                                                   },
+                { ItemID.PurplePhasesaber,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.SoulofLight, 5)
+                                        }                                                   },
+                { ItemID.RedPhasesaber,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.SoulofLight, 5)
+                                        }                                                   },
+                { ItemID.WhitePhasesaber,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.SoulofLight, 5)
+                                        }                                                   },
                 #endregion
             };
             #endregion

@@ -85,7 +85,10 @@ namespace tsorcRevamp.Tiles
             //SOUL SKULLS - They are 2x2, so use 2, 2 in the rectangle. In TEdit, these are SlimeBlock-PinkSlimeBlock(facing left) and PinkSlimeBlock-SlimeBlock(facing right)
 
             //In Aaron's home in Ashenpeak Village
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 4));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<Items.BossItems.AaronsProtectionStone>(), 1));
 
             //In Village Mountain in cave accessible from rope vine jumping puzzle
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3689, 414, 2, 2), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1));

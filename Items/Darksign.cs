@@ -113,7 +113,7 @@ namespace tsorcRevamp.Items
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
                     //player.QuickSpawnItem(mod.ItemType("DarkSoul"), 2000); // Gives player souls.
-                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, ProjectileID.DD2ExplosiveTrapT2Explosion, 250, 15, 0);
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top + new Vector2(0, -32), player.velocity, ProjectileID.DD2ExplosiveTrapT2Explosion, 200, 15, 0);
                 }
 
                 for (int d = 0; d < 90; d++) // Upwards

@@ -69,10 +69,10 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             SoundEngine.PlaySound(SoundID.Drown, target.Center);
-            target.AddBuff(BuffID.Darkness, 10 * 60);
-            target.AddBuff(BuffID.BrokenArmor, 10 * 60);
-            target.AddBuff(BuffID.Chilled, 10 * 60);
-            target.AddBuff(ModContent.BuffType<Gilled>(), 20 * 60);
+            target.AddBuff(BuffID.Darkness, 8 * 60);
+            target.AddBuff(BuffID.BrokenArmor, 8 * 60);
+            target.AddBuff(BuffID.Chilled, 8 * 60);
+            target.AddBuff(ModContent.BuffType<Gilled>(), 16 * 60);
         }
         #endregion
 
@@ -291,10 +291,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     NPC.knockBackResist = 0;
                 }
-                else
-                {
-                    NPC.knockBackResist = 0.1f; //aparently it doesn't default back? 
-                }
+
 
 
                 if (Main.tile[(int)NPC.position.X / 16, y_below_feet].TileType == TileID.Platforms && Main.tile[(int)(NPC.position.X + (float)NPC.width) / 16, y_below_feet].TileType == TileID.Platforms && NPC.position.Y < (player.position.Y - 4 * 16))
@@ -805,7 +802,11 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             float chance = 0;
 
-            if (spawnInfo.Player.ZoneGraveyard && !Main.hardMode) chance = 3f;
+            //Wall IDs are the ID's given from TEdit in Catacombs of the drowned, as the name used by tedit and TML don't match.
+            if (spawnInfo.Player.ZoneGraveyard && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 185 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 215
+                 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 301 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 214 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 302)) chance = 2.5f;
+
+            if (spawnInfo.Water && Main.hardMode) chance = 1.5f;
 
             //Rest for Tim to decide
 

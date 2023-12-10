@@ -497,8 +497,8 @@ namespace tsorcRevamp.Projectiles
             if (projectile.type == ProjectileID.Bubble)
             {
                 SoundEngine.PlaySound(SoundID.Drown, target.Center);
-                target.AddBuff(BuffID.Chilled, 10 * 60);
-                target.AddBuff(ModContent.BuffType<Gilled>(), 20 * 60);
+                target.AddBuff(BuffID.Chilled, 8 * 60);
+                target.AddBuff(ModContent.BuffType<Gilled>(), 16 * 60);
             }
         }
         public override void ModifyHitNPC(Projectile projectile, NPC target, ref NPC.HitModifiers modifiers)

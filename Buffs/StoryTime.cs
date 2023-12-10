@@ -46,7 +46,7 @@ namespace tsorcRevamp.Buffs
                 }
 
                 // Only heal when no bosses are alive, hp isn't full and the player is standing still
-                if (!bossActive && player.statLife < player.statLifeMax2 && player.velocity == Vector2.Zero)
+                /*if (!bossActive && player.statLife < player.statLifeMax2 && player.velocity == Vector2.Zero)
                 {
                     // Wind up 1
                     if (storyEffectTimer > 0 && storyEffectTimer <= 60)
@@ -87,7 +87,7 @@ namespace tsorcRevamp.Buffs
                         player.lifeRegen = player.statLifeMax2 / 15;
                         GenerateDusts(player, Main.rand.Next(80, 95) * 0.043f, 25f);
                     }
-                }
+                }*/
             }
         }
 

@@ -154,7 +154,7 @@ namespace tsorcRevamp.Items.Tools
                 {// if we find one
                  //insert the extra tooltip line
 
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "BotCNoGreaterMM", LangUtils.GetTextValue("Items.GreatMagicMirror.BotCDisabled")));
+                    //tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "BotCNoGreaterMM", LangUtils.GetTextValue("Items.GreatMagicMirror.BotCDisabled"))); //Removed this because no longer true
 
                 }
             }
