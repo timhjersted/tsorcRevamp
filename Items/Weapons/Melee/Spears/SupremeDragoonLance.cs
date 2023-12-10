@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         {
             Item.damage = 300;
             Item.knockBack = 15f;
-
+            Item.crit = 26;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 11;
             Item.useTime = 1;

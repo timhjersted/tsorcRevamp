@@ -351,6 +351,7 @@ Mods: {
 			AdvModeOnly: "[c/ff9999:只在冒险模式内掉落]"
 			SandboxModeOnly: "[c/ff9999:只在冒险模式之外]"
 			NonExpertFirstKill: "[c/ff9999: 只在专家模式之外的第一次击杀时掉落]"
+			DownedSkeletron: "[c/ff9999: 击败骷髅王之后掉落]"
 		}
 
 		Quest: {
@@ -2431,7 +2432,7 @@ Mods: {
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					{$CommonItemTooltip.LifeRegen@3}
 					{$CommonItemTooltip.DefenseCap@2}
-					抵抗力以(1 : {4})的比例转化为移动速度
+					抵抗力以（1 : {4}）的比例转化为移动速度
 					'''
 			}
 
@@ -2604,7 +2605,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.DefenseCap@2}
-					抵抗力以(1 : {4})的比例转化为移动速度
+					抵抗力以（1 : {4}）的比例转化为移动速度
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					{$CommonItemTooltip.LifeRegen@3}
 					'''
@@ -2617,7 +2618,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage@1}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.DefenseCap@3}
-					抵抗力以(1 : {5})的比例转化为移动速度
+					抵抗力以（1 : {5}）的比例转化为移动速度
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
 					{$CommonItemTooltip.LifeRegen@4}
 					'''
@@ -5934,8 +5935,8 @@ Mods: {
 				DisplayName: 天界之矛
 				Tooltip:
 					'''
-					传说中的天界之矛掌管着世界。
-					坠落时增加两倍的攻击伤害，每次攻击有机会回复6生命值。
+					传说中的天界之矛掌管着世界
+					坠落时增加 100% 攻击伤害，每次攻击有机会回复 6 生命值
 					'''
 			}
 
@@ -5988,7 +5989,7 @@ Mods: {
 				Tooltip:
 					'''
 					称霸世界的传说长矛
-					坠落时增加30%的攻击伤害，每次攻击有机会回复3点生命值。
+					坠落时增加 30% 攻击伤害，每次攻击有机会回复 3 点生命值
 					'''
 			}
 
@@ -7606,7 +7607,7 @@ Mods: {
 				Tooltip:
 					'''
 					装备时增加 20 点生命值和 10 点耐力
-					看起来三焱家族戴着这个项链
+					看起来三焱家族戴着这个
 					是为了防止它释放出全部的力量
 					'''
 			}

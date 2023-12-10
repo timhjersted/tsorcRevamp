@@ -16,7 +16,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.rare = ItemRarityID.Cyan;
             Item.useTurn = false;
             Item.autoReuse = true;
-            Item.damage = 170;
+            Item.damage = 200;
+            Item.crit = 11;
             Item.width = 62;
             Item.height = 62;
             Item.knockBack = 10;

@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             //The rest are unique to this specific boss, and we have to set here:
             NPC.width = 100;
             NPC.height = 100;
-            NPC.damage = 50;
+            NPC.damage = 80;
             NPC.defense = 999999;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;

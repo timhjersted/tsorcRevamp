@@ -351,6 +351,7 @@ Mods: {
 			AdvModeOnly: "[c/ff9999:Only drops in Adventure Mode]"
 			SandboxModeOnly: "[c/ff9999:Only drops outside of Adventure Mode]"
 			NonExpertFirstKill: "[c/ff9999: Only drops on the first kill outside of Expert Mode]"
+			DownedSkeletron: "[c/ff9999: Drops after defeating Skeletron]"
 		}
 
 		Quest: {
