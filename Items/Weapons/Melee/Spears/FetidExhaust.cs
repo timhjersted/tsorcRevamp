@@ -4,12 +4,13 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
     public class FetidExhaust : ModItem
     {
-
+        public const float BaseHitCooldown = 25f;
         public override void SetStaticDefaults()
         {
             // Tooltip.SetDefault("Expel a close-range blast of searing noxious gas");
@@ -38,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             Item.rare = ItemRarityID.Yellow;
             Item.maxStack = 1;
             Item.UseSound = SoundID.Item1;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Spears.FetidExhaust>();
+            Item.shoot = ModContent.ProjectileType<FetidExhaustProjectile>();
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)

@@ -6,7 +6,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.Ranged;
 using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -165,7 +165,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 int dustQuantity = channelingTimer / 6;
                 for (int i = 0; i < dustQuantity; i++)
                 {
-                    if (Main.rand.Next(10) == 0 && channelingTimer < 121)
+                    if (Main.rand.NextBool(10) && channelingTimer < 121)
                     {
                         int dust = Dust.NewDust(new Vector2(NPC.Center.X - 10, NPC.Center.Y - 30), 10, 10, 226, 0, 0, 100, default(Color), .4f);
                         Main.dust[dust].noGravity = true;

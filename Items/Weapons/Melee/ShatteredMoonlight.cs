@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Melee.Boomerangs;
 
 namespace tsorcRevamp.Items.Weapons.Melee
 {
@@ -30,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.shootSpeed = 18;
-            Item.shoot = ModContent.ProjectileType<Projectiles.ShatteredMoonlight>();
+            Item.shoot = ModContent.ProjectileType<ShatteredMoonlightProjectile>();
 
             Item.mana = 4;
         }

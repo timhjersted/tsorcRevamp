@@ -1,17 +1,13 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Audio;
-using Terraria.DataStructures;
-using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Projectiles.Summon.Runeterra;
+using tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles;
 using tsorcRevamp.Projectiles.Summon.Runeterra.Dragons;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
@@ -45,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         {
             if (Dragon != null)
             {
-                if (Main.mouseRight && player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount >= 0 && Dragon.type == ModContent.ProjectileType<StarForger>())
+                if (Main.mouseRight && player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount == 10 && Dragon.type == ModContent.ProjectileType<StarForger>())
                 {
                     (Dragon.ModProjectile as RuneterraDragon).StartAltSequence();
                     player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount = 0;

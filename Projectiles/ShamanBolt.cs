@@ -14,7 +14,6 @@ namespace tsorcRevamp.Projectiles
             Projectile.height = 12;
             Projectile.friendly = true;
             Projectile.aiStyle = 0;
-            Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = true;
             Projectile.timeLeft = 335;
             Projectile.scale = 0.85f;

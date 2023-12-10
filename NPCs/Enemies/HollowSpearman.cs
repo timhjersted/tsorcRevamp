@@ -2,12 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Utilities;
 using static tsorcRevamp.SpawnHelper;
 

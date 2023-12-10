@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
@@ -56,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
                 Item.noMelee = true;
                 Item.noUseGraphic = true;
                 Item.useStyle = ItemUseStyleID.Shoot;
-                Item.shoot = ModContent.ProjectileType<Projectiles.Spears.CobaltHalberdProj>();
+                Item.shoot = ModContent.ProjectileType<CobaltHalberdProj>();
             }
             return base.CanUseItem(player);
         }

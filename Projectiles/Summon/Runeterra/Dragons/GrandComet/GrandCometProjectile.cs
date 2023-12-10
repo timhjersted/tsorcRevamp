@@ -4,8 +4,8 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
-using tsorcRevamp.Projectiles.Throwing;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
 {
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
 
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver4;
 
-            int frameSpeed = 3;
+            int frameSpeed = 4;
 
             Projectile.frameCounter++;
 
@@ -103,6 +103,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
             Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk10>(), ChunkDmg, ChunkKnockback, Projectile.owner);
             RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
             Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk11>(), ChunkDmg, ChunkKnockback, Projectile.owner);
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(ModContent.BuffType<AwestruckDebuff>(), CenterOfTheUniverse.AwestruckDebuffDuration * 60);
         }
     }
 }

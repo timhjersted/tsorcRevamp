@@ -137,7 +137,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     boltTimer = 180;
                 }
 
-                if (boltTimer > 160 && Main.rand.Next(8) == 0 && Main.player[NPC.target].Distance(NPC.Center) < 700f)
+                if (boltTimer > 160 && Main.rand.NextBool(8) && Main.player[NPC.target].Distance(NPC.Center) < 700f)
                 {
 
                     int dust = Dust.NewDust(new Vector2(NPC.Center.X + 12, NPC.Center.Y - 20), 6, 3, 226, NPC.velocity.X * 0f, NPC.velocity.Y * 0f, 100, default(Color), .4f);
@@ -145,7 +145,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 }
 
-                if (boltTimer > 190 && Main.rand.Next(5) == 0 && Main.player[NPC.target].Distance(NPC.Center) < 700f)
+                if (boltTimer > 190 && Main.rand.NextBool(5) && Main.player[NPC.target].Distance(NPC.Center) < 700f)
                 {
 
                     int dust = Dust.NewDust(new Vector2(NPC.Center.X + 12, NPC.Center.Y - 20), 6, 3, 226, NPC.velocity.X * 0f, NPC.velocity.Y * 0f, 100, default(Color), .4f);
@@ -189,13 +189,13 @@ namespace tsorcRevamp.NPCs.Enemies
                     boltTimer = 180;
                 }
 
-                if (boltTimer > 160 && Main.rand.Next(8) == 0)
+                if (boltTimer > 160 && Main.rand.NextBool(8))
                 {
                     int dust = Dust.NewDust(new Vector2(NPC.Center.X - 22, NPC.Center.Y - 20), 6, 3, 226, NPC.velocity.X * 0f, NPC.velocity.Y * 0f, 100, default(Color), .4f);
                     Main.dust[dust].noGravity = true;
                 }
 
-                if (boltTimer > 190 && Main.rand.Next(5) == 0)
+                if (boltTimer > 190 && Main.rand.NextBool(5))
                 {
                     int dust = Dust.NewDust(new Vector2(NPC.Center.X - 22, NPC.Center.Y - 20), 6, 3, 226, NPC.velocity.X * 0f, NPC.velocity.Y * 0f, 100, default(Color), .4f);
                     Main.dust[dust].noGravity = true;

@@ -4,6 +4,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Magic;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -37,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
-            Projectile.NewProjectile(source, player.Center, speed, ModContent.ProjectileType<Projectiles.WhiteLotusCore>(), damage, knockBack, Main.myPlayer, 0, Main.rand.Next(2));
+            Projectile.NewProjectile(source, player.Center, speed, ModContent.ProjectileType<WhiteLotusCore>(), damage, knockBack, Main.myPlayer, 0, Main.rand.Next(2));
             return false;
         }
 

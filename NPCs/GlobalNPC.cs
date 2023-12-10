@@ -32,6 +32,7 @@ using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Items.Weapons.Throwing;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.Projectiles.Magic.Runeterra;
+using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.Projectiles.Summon.Whips;
 using tsorcRevamp.Projectiles.Summon.Whips.EnchantedWhip;
 using tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash;
@@ -401,9 +402,9 @@ namespace tsorcRevamp.NPCs
             //PRE-HARD MODE
 
             // Arazium's Mountain Caverns (not in water)
-            if (!spawnInfo.Water && (spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneOverworldHeight) && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.DirtUnsafe1 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.DirtUnsafe2) && !Main.hardMode )
+            if (!spawnInfo.Water && (spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneOverworldHeight) && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.DirtUnsafe1 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.DirtUnsafe2) && !Main.hardMode)
             {
-                pool.Add(NPCID.Skeleton, 0.02f);       
+                pool.Add(NPCID.Skeleton, 0.02f);
             }
 
             //jungle
@@ -1179,7 +1180,8 @@ namespace tsorcRevamp.NPCs
                 int WhipDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(DragoonLash.BaseDamage);
                 if (projectileOwner.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer >= 1)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_None(), projectileOwner.Center, (npc.Center - projectileOwner.Center) * 0.1f, ProjectileID.Flamelash, WhipDamage, 1f, Main.myPlayer);
+                    Projectile Fireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), projectileOwner.Center, (npc.Center - projectileOwner.Center) * 0.1f, ProjectileID.Flamelash, WhipDamage, 1f, Main.myPlayer);
+                    Fireball.DamageType = DamageClass.SummonMeleeSpeed;
                     projectileOwner.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer = 0;
                 }
             }
@@ -1797,7 +1799,7 @@ namespace tsorcRevamp.NPCs
                 for (int i = 0; i < 1000; i++)
                 {
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI)
+                    if (p.active && p.type == ModContent.ProjectileType<ToxicCatShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI)
                     {
                         ToxicCatShotCount++;
                     }
@@ -1832,7 +1834,7 @@ namespace tsorcRevamp.NPCs
                 for (int i = 0; i < 1000; i++)
                 {
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.VirulentCatShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI)
+                    if (p.active && p.type == ModContent.ProjectileType<VirulentCatShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI)
                     {
                         ViruCatShotCount++;
                     }
@@ -1867,7 +1869,7 @@ namespace tsorcRevamp.NPCs
                 for (int i = 0; i < 1000; i++)
                 {
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI)
+                    if (p.active && p.type == ModContent.ProjectileType<BiohazardShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI)
                     {
                         BiohazardShotCount++;
                     }
@@ -2280,7 +2282,7 @@ namespace tsorcRevamp.NPCs
                 Projectile.NewProjectile(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner);
                 Projectile.NewProjectile(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner);
             }
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>()))
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<ToxicCatExplosion>()))
             {
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetToxicCatBlobs = true;
                 int tags;
@@ -2290,12 +2292,12 @@ namespace tsorcRevamp.NPCs
                 {
                     tags = 0;
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
+                    if (p.active && p.type == ModContent.ProjectileType<ToxicCatShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
                     {
                         for (int q = 0; q < 1000; q++)
                         {
                             Projectile ñ = Main.projectile[q];
-                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
+                            if (ñ.active && ñ.type == ModContent.ProjectileType<ToxicCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
                             {
                                 tags++;
                             }
@@ -2307,7 +2309,7 @@ namespace tsorcRevamp.NPCs
                         p.timeLeft = 2;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.ToxicCatExplosion>(), (int)(projectile.damage * 1.8f), tags + 3, projectile.owner, tags, 0);
+                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<ToxicCatExplosion>(), (int)(projectile.damage * 1.8f), tags + 3, projectile.owner, tags, 0);
                         }
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ToxicCatDrain>());
 
@@ -2320,7 +2322,7 @@ namespace tsorcRevamp.NPCs
                     if (tags > 0 && !shockwaveCreated)
                     {
                         shockwaveCreated = true;
-                        if (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>())
+                        if (projectile.type == ModContent.ProjectileType<ToxicCatDetonator>())
                         {
                             Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 300 * (tags / 12f), 45 * (tags / 12f));
                         }
@@ -2329,7 +2331,7 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ViruCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.VirulentCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.VirulentCatExplosion>()))
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ViruCatDrain && (projectile.type == ModContent.ProjectileType<VirulentCatDetonator>() || projectile.type == ModContent.ProjectileType<VirulentCatExplosion>()))
             {
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetViruCatBlobs = true;
                 int tags;
@@ -2339,12 +2341,12 @@ namespace tsorcRevamp.NPCs
                 {
                     tags = 0;
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.VirulentCatShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
+                    if (p.active && p.type == ModContent.ProjectileType<VirulentCatShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
                     {
                         for (int q = 0; q < 1000; q++)
                         {
                             Projectile ñ = Main.projectile[q];
-                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.VirulentCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
+                            if (ñ.active && ñ.type == ModContent.ProjectileType<VirulentCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
                             {
                                 tags++;
                             }
@@ -2357,7 +2359,7 @@ namespace tsorcRevamp.NPCs
                         p.timeLeft = 2;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.VirulentCatExplosion>(), (projectile.damage * 2), tags + 3, projectile.owner, tags, 0);
+                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<VirulentCatExplosion>(), (projectile.damage * 2), tags + 3, projectile.owner, tags, 0);
                         }
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ViruCatDrain>());
 
@@ -2369,7 +2371,7 @@ namespace tsorcRevamp.NPCs
                     if (tags > 0 && !shockwaveCreated)
                     {
                         shockwaveCreated = true;
-                        if (projectile.type == ModContent.ProjectileType<Projectiles.VirulentCatDetonator>())
+                        if (projectile.type == ModContent.ProjectileType<VirulentCatDetonator>())
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
@@ -2380,7 +2382,7 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().BiohazardDrain && (projectile.type == ModContent.ProjectileType<Projectiles.BiohazardDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.BiohazardExplosion>()))
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().BiohazardDrain && (projectile.type == ModContent.ProjectileType<BiohazardDetonator>() || projectile.type == ModContent.ProjectileType<BiohazardExplosion>()))
             {
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetBiohazardBlobs = true;
                 int tags;
@@ -2391,12 +2393,12 @@ namespace tsorcRevamp.NPCs
                 {
                     tags = 0;
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
+                    if (p.active && p.type == ModContent.ProjectileType<BiohazardShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
                     {
                         for (int q = 0; q < 1000; q++)
                         {
                             Projectile ñ = Main.projectile[q];
-                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
+                            if (ñ.active && ñ.type == ModContent.ProjectileType<BiohazardShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
                             {
                                 tags++;
                             }
@@ -2409,7 +2411,7 @@ namespace tsorcRevamp.NPCs
                         p.timeLeft = 2;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.BiohazardExplosion>(), (projectile.damage * 2), tags + 3, projectile.owner, tags, 0);
+                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<BiohazardExplosion>(), (projectile.damage * 2), tags + 3, projectile.owner, tags, 0);
                         }
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.BiohazardDrain>());
 
@@ -2421,7 +2423,7 @@ namespace tsorcRevamp.NPCs
                     if (tags > 0 && !shockwaveCreated)
                     {
                         shockwaveCreated = true;
-                        if (projectile.type == ModContent.ProjectileType<Projectiles.BiohazardDetonator>())
+                        if (projectile.type == ModContent.ProjectileType<BiohazardDetonator>())
                         {
                             Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 500 * (tags / 12f), 60 * (tags / 12f));
                         }

@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
@@ -26,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             Item.value = PriceByRarity.Pink_5;
             Item.height = 50;
             Item.width = 50;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Spears.ForgottenImpHalberdProj>();
+            Item.shoot = ModContent.ProjectileType<ForgottenImpHalberdProj>();
         }
     }
 }

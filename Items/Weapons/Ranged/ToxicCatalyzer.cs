@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.Ranged;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {

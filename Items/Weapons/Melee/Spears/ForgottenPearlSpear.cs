@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
@@ -33,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             Item.rare = ItemRarityID.Pink;
             Item.maxStack = 1;
             Item.UseSound = SoundID.Item1;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Spears.ForgottenPearlSpearProj>();
+            Item.shoot = ModContent.ProjectileType<ForgottenPearlSpearProj>();
 
         }
 

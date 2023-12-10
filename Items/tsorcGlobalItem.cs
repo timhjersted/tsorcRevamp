@@ -13,8 +13,6 @@ using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Debug;
 using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.UI;
 
 namespace tsorcRevamp.Items

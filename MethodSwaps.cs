@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.IO;
 using System.Reflection;
 using Terraria;
@@ -1678,9 +1677,9 @@ namespace tsorcRevamp
                             Main.spriteBatch.End();
                             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                         }
-                        if (Main.projectile[i].ModProjectile is Projectiles.Spears.FetidExhaust)
+                        if (Main.projectile[i].ModProjectile is Projectiles.Melee.Spears.FetidExhaustProjectile)
                         {
-                            Projectiles.Spears.FetidExhaust jet = (Projectiles.Spears.FetidExhaust)Main.projectile[i].ModProjectile;
+                            Projectiles.Melee.Spears.FetidExhaustProjectile jet = (Projectiles.Melee.Spears.FetidExhaustProjectile)Main.projectile[i].ModProjectile;
                             jet.additiveContext = true;
                             Color color = Color.White;
                             jet.PreDraw(ref color);

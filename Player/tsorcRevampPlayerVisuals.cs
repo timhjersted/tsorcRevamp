@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.Melee.Spears;
 using tsorcRevamp.Projectiles.Summon.ShatteredReflection;
 
 namespace tsorcRevamp
@@ -1204,7 +1205,7 @@ namespace tsorcRevamp
             modPlayer.effectRadius = 200;
             Lighting.AddLight((int)drawPlayer.Center.X / 16, (int)drawPlayer.Center.Y / 16, 0f, 0.4f, 0.8f);
 
-            if (drawPlayer.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Spears.FetidExhaust>()] != 0)
+            if (drawPlayer.ownedProjectileCounts[ModContent.ProjectileType<FetidExhaustProjectile>()] != 0)
             {
                 if (modPlayer.fadeValue > -5)
                 {

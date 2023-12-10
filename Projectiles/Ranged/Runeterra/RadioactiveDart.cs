@@ -1,55 +1,17 @@
-using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.Audio;
-using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
-using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
-using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Ranged.Runeterra
 {
-    public class RadioactiveDart : ModProjectile
+    public class RadioactiveDart : RuneterraDartsProjectile
     {
-        public override void SetStaticDefaults()
+        public override int ExtraUpdates => 3;
+        public override int DebuffType => ModContent.BuffType<IrradiatedDebuff>();
+        public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/";
+        public override void CustomSetDefaults()
         {
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5; // The length of old position to be recorded
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // The recording mode
-        }
-
-        public override void SetDefaults()
-        {
-            Projectile.width = 2;
-            Projectile.height = 2;
-            Projectile.aiStyle = ProjAIStyleID.SmallFlying;
-            Projectile.friendly = true;
-            Projectile.DamageType = DamageClass.Ranged;
-            Projectile.penetrate = 1;
-            Projectile.timeLeft = 300;
             Projectile.light = 0.5f;
-            Projectile.ignoreWater = true;
-            Projectile.tileCollide = true;
-            Projectile.extraUpdates = 3;
-
-            AIType = ProjectileID.Bat;
-        }
-
-        public override void AI()
-        {
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-        }
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            if (hit.Crit)
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShotCrit") with { Volume = 0.5f });
-            }
-            else
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/ShotHit") with { Volume = 0.5f });
-            }
-            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerRanger = Main.player[Projectile.owner];
-            target.AddBuff(ModContent.BuffType<IrradiatedDebuff>(), ToxicShot.DebuffDuration * 60);
         }
     }
 }

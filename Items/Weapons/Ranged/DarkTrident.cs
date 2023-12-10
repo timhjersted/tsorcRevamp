@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using tsorcRevamp.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void SetDefaults()
         {
             Item.DamageType = DamageClass.Ranged;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Spears.DarkTridentHeld>();
+            Item.shoot = ModContent.ProjectileType<DarkTridentHeld>();
             Item.channel = true;
 
             Item.damage = 90;
@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
                 Item.useStyle = ItemUseStyleID.HoldUp;
             }
 
-            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<Projectiles.Spears.DarkTridentHeld>(), damage, knockback, player.whoAmI, type);
+            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<DarkTridentHeld>(), damage, knockback, player.whoAmI, type);
             return false;
         }
 

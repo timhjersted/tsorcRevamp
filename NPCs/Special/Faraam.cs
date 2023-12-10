@@ -6,6 +6,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Projectiles.Melee.Boomerangs;
 
 namespace tsorcRevamp.NPCs.Special
 {
@@ -74,7 +75,7 @@ namespace tsorcRevamp.NPCs.Special
                         dust2.noGravity = true;
                     }
 
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.TopRight + new Vector2(-6, 8), new Vector2(leftOrRightVel, Main.rand.Next(-3, -2)), ModContent.ProjectileType<Projectiles.ShatteredMoonlight>(), 8, 0, 0, 2);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.TopRight + new Vector2(-6, 8), new Vector2(leftOrRightVel, Main.rand.Next(-3, -2)), ModContent.ProjectileType<ShatteredMoonlightProjectile>(), 8, 0, 0, 2);
                 }
                 else
                 {
@@ -84,7 +85,7 @@ namespace tsorcRevamp.NPCs.Special
                         dust2.noGravity = true;
                     }
 
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position + new Vector2(6, 8), new Vector2(leftOrRightVel, Main.rand.Next(-3, -2)), ModContent.ProjectileType<Projectiles.ShatteredMoonlight>(), 8, 0, 0, 2);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position + new Vector2(6, 8), new Vector2(leftOrRightVel, Main.rand.Next(-3, -2)), ModContent.ProjectileType<ShatteredMoonlightProjectile>(), 8, 0, 0, 2);
                 }
             }
         }

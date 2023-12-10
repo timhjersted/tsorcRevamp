@@ -1,18 +1,12 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Projectiles.Summon.Runeterra;
-using tsorcRevamp.Projectiles.Summon.Runeterra.Dragons;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
@@ -21,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
     {
         public abstract float SoundVolumeAbstract { get; }
         public abstract string SoundPath { get; }
-        public abstract int Damage {  get; }
+        public abstract int Damage { get; }
         public abstract float Knockback { get; }
         public abstract int Width { get; }
         public abstract int Height { get; }

@@ -6911,15 +6911,15 @@ Mods: {
 					'''
 				Details:
 					'''
-					[c/00ffff:Blinding Laser] deals {0}x damage, multiplied by {8} again while using Seeds as ammunition({$CommonItemTooltip.Cooldown@9})
-					[c/00ffff:Blinding Laser] gains {1}% bonus critical strike chance and {2}% max health damage on-hit, up to {3}
+					[c/00ffff:Blinding Laser] deals {4}x damage, multiplied by {5} again while using Seeds as ammunition({$CommonItemTooltip.Cooldown@6})
+					[c/00ffff:Blinding Laser] gains {7}% bonus critical strike chance and {8}% max health damage on-hit, up to {9}
 					[c/ba55d3:Electrification] applied by [c/ba55d3:Alien Lasers] scales with ranged damage and critical strike chance
-					Grants [c/ba55d3:Scouts Boost] passively while being held:{$CommonItemTooltip.MoveSpeedMult@4} and,
-					multiplicatively increases stamina regeneration by {5}%
-					[c/ba55d3:Scouts Boost] is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@6}
+					Grants [c/ba55d3:Scouts Boost] passively while being held:{$CommonItemTooltip.MoveSpeedMult} and,
+					multiplicatively increases stamina regeneration by {1}%
+					[c/ba55d3:Scouts Boost] is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@2}
 					Using the weapon with [c/ba55d3:Scouts Boost] active passively will slow you down
 					Using it when [c/ba55d3:Scouts Boost] is on cooldown will root you briefly
-					[c/ba55d3:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.SecondDuration@7}
+					[c/ba55d3:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.SecondDuration@3}
 					[c/ba55d3:Activated Ability] doubles the movement speed and stamina regeneration boosts
 					'''
 			}
@@ -6942,18 +6942,18 @@ Mods: {
 				Keybind2: " to drop a [c/adff2f:Nuclear Mushroom] using Mana"
 				Details:
 					'''
-					[c/adff2f:Nuclear Mushroom] needs {0} seconds to arm itself after being dropped({$CommonItemTooltip.Cooldown@9})
+					[c/adff2f:Nuclear Mushroom] needs {10} seconds to arm itself after being dropped({$CommonItemTooltip.Cooldown@11})
 					The explosion resulting from the [c/adff2f:Nuclear Mushroom] deals massive damage and applies an even stronger [c/adff2f:Radiation]
 					[c/adff2f:Radiation] applied from the [c/adff2f:Nuclear Mushroom's] explosion stacks with that of [c/ba55d3:Radioactive Darts]
-					[c/00ffff:Blinding Laser] deals {1}x damage, multiplied by {9} again while using Seeds as ammunition({$CommonItemTooltip.Cooldown@10})
-					[c/00ffff:Blinding Laser] gains {2}% bonus critical strike chance and {3}% max health damage on-hit, up to {4}
+					[c/00ffff:Blinding Laser] deals {4}x damage, multiplied by {5} again while using Seeds as ammunition({$CommonItemTooltip.Cooldown@6})
+					[c/00ffff:Blinding Laser] gains {7}% bonus critical strike chance and {8}% max health damage on-hit, up to {9}
 					[c/ba55d3:Radiation] applied by [c/ba55d3:Radioactive Darts] scales with ranged damage and critical strike chance
-					Grants [c/ba55d3:Scouts Boost] passively while being held:{$CommonItemTooltip.MoveSpeedMult@5} and,
-					multiplicatively increases stamina regeneration by {6}%
-					[c/ba55d3:Scouts Boost] is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@7}
+					Grants [c/ba55d3:Scouts Boost] passively while being held:{$CommonItemTooltip.MoveSpeedMult} and,
+					multiplicatively increases stamina regeneration by {1}%
+					[c/ba55d3:Scouts Boost] is removed upon taking damage and put on a {$CommonItemTooltip.Cooldown@2}
 					Using the weapon with [c/ba55d3:Scouts Boost] active passively will slow you down
 					Using it when [c/ba55d3:Scouts Boost] is on cooldown will root you briefly
-					[c/ba55d3:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.SecondDuration@8}
+					[c/ba55d3:Activated Ability] removes movement penalties unconditionally for {$CommonItemTooltip.SecondDuration@3}
 					[c/ba55d3:Activated Ability] doubles the movement speed and stamina regeneration boosts
 					'''
 			}
@@ -6977,6 +6977,7 @@ Mods: {
 					Also has a {2}% chance to gain an [c/87cefa:Essence Thief] stack on enemy kills
 					A full [c/87cefa:Orb] will deal {3}% bonus damage and its heal scales with maximum mana and magic damage
 					'''
+				OrbFilled: Orb filled!
 			}
 
 			OrbOfFlame: {
@@ -7112,6 +7113,7 @@ Mods: {
 					[c/b22222:Detonating marks] will increase the debuff's strength for {1} seconds
 					The empowered debuff [c/b22222:increases star damage], damage over time and [c/b22222:applies {2}% summon tag critical strike chance]
 					'''
+				MeteorReady: Meteor ready!
 			}
 
 			SteraksGage: {
@@ -9090,6 +9092,10 @@ Mods: {
 			GrandCometShockwaveTrail.DisplayName: Grand Comet Shockwave Trail
 			GrandCometZone.DisplayName: Grand Comet Zone
 			BlindingPulse.DisplayName: Blinding Pulse
+			GrandCometExplosion.DisplayName: Grand Comet Explosion
+			StardustDelivery.DisplayName: Stardust Delivery
+			FetidExhaustProjectile.DisplayName: Fetid Exhaust Projectile
+			ShatteredMoonlightProjectile.DisplayName: Shattered Moonlight Projectile
 		}
 
 		NPCs: {

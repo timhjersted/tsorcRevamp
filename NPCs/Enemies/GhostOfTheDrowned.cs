@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -9,7 +8,6 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -553,7 +551,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             int dust = Dust.NewDust(new Vector2(NPC.Center.X + 40, NPC.Center.Y - 10), 10, 10, DustID.UltraBrightTorch, 0, 0, 100, default(Color), 0.8f);
                             Main.dust[dust].noGravity = true;
                         }
-                        else 
+                        else
                         {
                             int dust = Dust.NewDust(new Vector2(NPC.Center.X - 54, NPC.Center.Y - 10), 10, 10, DustID.UltraBrightTorch, 0, 0, 100, default(Color), 0.8f);
                             Main.dust[dust].noGravity = true;

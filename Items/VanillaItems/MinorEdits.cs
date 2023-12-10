@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using Terraria;
-using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
-using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.VanillaItems

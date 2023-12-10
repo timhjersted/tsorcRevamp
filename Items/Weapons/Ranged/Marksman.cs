@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Ranged;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -29,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.rare = ItemRarityID.Pink;
             Item.crit = 5;
             Item.UseSound = SoundID.Item40;
-            Item.shoot = ModContent.ProjectileType<Projectiles.MarksmanShot>();
+            Item.shoot = ModContent.ProjectileType<MarksmanShot>();
             Item.shootSpeed = 26f;
         }
 
@@ -54,7 +55,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             if (player.altFunctionUse == 2)
             {
-                if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Coin>()] < 4)
+                if (player.ownedProjectileCounts[ModContent.ProjectileType<Coin>()] < 4)
                 {
                     speed.Normalize();
                     speed *= 8;
@@ -69,7 +70,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
                     speed += player.velocity;
 
-                    Projectile.NewProjectile(source, position, speed, ModContent.ProjectileType<Projectiles.Coin>(), 0, 0, player.whoAmI);
+                    Projectile.NewProjectile(source, position, speed, ModContent.ProjectileType<Coin>(), 0, 0, player.whoAmI);
                 }
                 return false;
             }

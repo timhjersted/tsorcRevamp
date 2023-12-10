@@ -1,27 +1,8 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Items.Weapons.Summon.Runeterra;
-using tsorcRevamp.Items.Weapons.Throwing;
-
-namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
+﻿namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
 {
-    class GrandCometChunk08 : ModProjectile
+    class GrandCometChunk08 : GrandCometChunkBase
     {
-
-        public override void SetDefaults()
-        {
-            Projectile.width = 30;
-            Projectile.height = 38;
-            Projectile.friendly = true;
-            Projectile.timeLeft = 240;
-            Projectile.aiStyle = ProjAIStyleID.ThrownProjectile;
-            Projectile.DamageType = DamageClass.Summon;
-        }
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            target.AddBuff(ModContent.BuffType<AwestruckDebuff>(), CenterOfTheUniverse.AwestruckDebuffDuration * 60);
-        }
+        public override int Width => 30;
+        public override int Height => 38;
     }
 }

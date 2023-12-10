@@ -53,7 +53,7 @@ using tsorcRevamp.Projectiles.Summon;
 using tsorcRevamp.Projectiles.Summon.Archer;
 using tsorcRevamp.Projectiles.Summon.NullSprite;
 using tsorcRevamp.Projectiles.Summon.Phoenix;
-using tsorcRevamp.Projectiles.Summon.Runeterra;
+using tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles;
 using tsorcRevamp.Projectiles.Summon.SunsetQuasar;
 using tsorcRevamp.Projectiles.Summon.Tetsujin;
 using tsorcRevamp.Tiles;
@@ -3061,7 +3061,7 @@ namespace tsorcRevamp
                 {TransparentTextureType.ManaShield, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ManaShield", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.CrazedOrb, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/CrazedOrb", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.MasterBuster, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/MasterBuster", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.AntiMaterialRound, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/AntiMaterialRound", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.AntiMaterialRound, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ranged/AntiMaterialRound", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.GlaiveBeam, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/GlaiveBeamLaser", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.GlaiveBeamItemGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeam_Glowmask", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.GlaiveBeamHeldGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeamHeld_Glowmask", AssetRequestMode.ImmediateLoad)},
@@ -3077,20 +3077,20 @@ namespace tsorcRevamp
                 {TransparentTextureType.BiohazardGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/Biohazard_Glowmask", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.HealingElixirGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Potions/HealingElixir_Glowmask", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.DarkDivineSpark, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkDivineSpark", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.ShatteredMoonlightGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ShatteredMoonlight_Glowmask", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ShatteredMoonlightGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Melee/Boomerangs/ShatteredMoonlightProjectile_Glowmask", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.GreySlashGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/GreySlash_Glowmask", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.UltimaWeapon, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/UltimaWeaponTransparent", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.UltimaWeaponGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/UltimaWeaponGlowmask", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.DarkUltimaWeapon, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeapon", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.DarkUltimaWeaponGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeaponGlowmask", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.ReflectionShift, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Accessories/Expert/ReflectionShift", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.PhazonRound, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/PhazonRound", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.PhazonRound, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ranged/PhazonRound", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.MoonlightGreatsword, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/MoonlightGreatsword", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.MoonlightGreatswordGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Broadswords/MoonlightGreatsword_Glowmask", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.EstusFlask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/EstusFlask_drinking", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.CeruleanFlask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/CeruleanFlask_drinking", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.ElfinArrow, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ElfinArrow", AssetRequestMode.ImmediateLoad)},
-                {TransparentTextureType.ElfinTargeting, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ElfinTargeting", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ElfinArrow, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ranged/ElfinArrow", AssetRequestMode.ImmediateLoad)},
+                {TransparentTextureType.ElfinTargeting, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ranged/ElfinTargeting", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.HumanityPhantom, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/HumanityPhantom", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.BarbarousThornBladeGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/Shortswords/BarbarousThornBlade_Glow", AssetRequestMode.ImmediateLoad)},
                 {TransparentTextureType.RedLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ranged/Ammo/RedLaserBeam", AssetRequestMode.ImmediateLoad)},

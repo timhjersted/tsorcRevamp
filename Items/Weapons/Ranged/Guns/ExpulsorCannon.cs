@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Ranged;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 {
@@ -56,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             int ShotAmt = 4;
             int spread = 24;
             float spreadMult = 0.05f;
-            type = ModContent.ProjectileType<Projectiles.PhazonRound>();
+            type = ModContent.ProjectileType<PhazonRound>();
             for (int i = 0; i < ShotAmt; i++)
             {
                 float vX = speed.X + Main.rand.Next(-spread, spread + 1) * spreadMult;

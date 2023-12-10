@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Ranged;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Bows
 {
@@ -39,9 +40,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
                 int? closest = UsefulFunctions.GetClosestEnemyNPC(Main.MouseWorld);
                 if (closest != null)
                 {
-                    if (thisProjectile == null || thisProjectile.active == false || thisProjectile.type != ModContent.ProjectileType<Projectiles.ElfinTargeting>())
+                    if (thisProjectile == null || thisProjectile.active == false || thisProjectile.type != ModContent.ProjectileType<ElfinTargeting>())
                     {
-                        thisProjectile = Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), Main.npc[closest.Value].position, Vector2.Zero, ModContent.ProjectileType<Projectiles.ElfinTargeting>(), 0, 0, player.whoAmI, closest.Value);
+                        thisProjectile = Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), Main.npc[closest.Value].position, Vector2.Zero, ModContent.ProjectileType<ElfinTargeting>(), 0, 0, player.whoAmI, closest.Value);
                     }
                     else
                     {
@@ -56,13 +57,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
         {
             int randomness = 1;
             int target = -1;
-            if (thisProjectile != null && thisProjectile.type == ModContent.ProjectileType<Projectiles.ElfinTargeting>())
+            if (thisProjectile != null && thisProjectile.type == ModContent.ProjectileType<ElfinTargeting>())
             {
                 target = thisProjectile.whoAmI;
             }
 
             Vector2 projVel = speed + Main.rand.NextVector2CircularEdge(randomness, randomness);
-            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, projVel, ModContent.ProjectileType<Projectiles.ElfinArrow>(), damage, knockBack, player.whoAmI, target);
+            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, projVel, ModContent.ProjectileType<ElfinArrow>(), damage, knockBack, player.whoAmI, target);
             return false;
         }
     }

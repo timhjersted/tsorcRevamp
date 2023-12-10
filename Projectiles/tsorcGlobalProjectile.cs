@@ -12,13 +12,11 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
-using tsorcRevamp.Items.Armors.Magic;
 using tsorcRevamp.Items.Armors.Ranged;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Projectiles.Ranged;
-using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Projectiles

@@ -1,20 +1,16 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Utilities;
-using static Humanizer.On;
 
 namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 {
@@ -162,13 +158,14 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 {
                     if (isClone) //Clones losing lanterns
                     {
-                        if (Main.npc[mainBossIndex].life < (int)(4100 * HealthScale) && Phase == 1) {
+                        if (Main.npc[mainBossIndex].life < (int)(4100 * HealthScale) && Phase == 1)
+                        {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient && NPC.life > 1)
                             {
                                 for (int i = 0; i < 30; i++)
-                                { 
+                                {
                                     Dust.NewDustDirect(lanternMiddleLeft, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
                                 }
                                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire1, 20, 0, Main.myPlayer, 0, 0);
@@ -179,7 +176,8 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++; //Use this rather than NextPhase() because I don-t want to set MoveTimer back to 0
                         }
-                        if (Main.npc[mainBossIndex].life < (int)(3700 * HealthScale) && Phase == 2) {
+                        if (Main.npc[mainBossIndex].life < (int)(3700 * HealthScale) && Phase == 2)
+                        {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient && NPC.life > 1)
@@ -196,7 +194,8 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
                         }
-                        if (Main.npc[mainBossIndex].life < (int)(3300 * HealthScale) && Phase == 3) {
+                        if (Main.npc[mainBossIndex].life < (int)(3300 * HealthScale) && Phase == 3)
+                        {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient && NPC.life > 1)
@@ -213,7 +212,8 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
                         }
-                        if (Main.npc[mainBossIndex].life < (int)(2900 * HealthScale) && Phase == 4) {
+                        if (Main.npc[mainBossIndex].life < (int)(2900 * HealthScale) && Phase == 4)
+                        {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient && NPC.life > 1)
@@ -231,7 +231,8 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
                         }
-                        if (Main.npc[mainBossIndex].life < (int)(2500 * HealthScale) && Phase == 5 && NPC.life > 1) {
+                        if (Main.npc[mainBossIndex].life < (int)(2500 * HealthScale) && Phase == 5 && NPC.life > 1)
+                        {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient && NPC.life > 1)
@@ -276,7 +277,8 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
                         }
-                        if (NPC.life < (int)(3700 * HealthScale) && Phase == 2) {
+                        if (NPC.life < (int)(3700 * HealthScale) && Phase == 2)
+                        {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -293,10 +295,12 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
                         }
-                        if (NPC.life < (int)(3300 * HealthScale) && Phase == 3) {
+                        if (NPC.life < (int)(3300 * HealthScale) && Phase == 3)
+                        {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            if (Main.netMode != NetmodeID.MultiplayerClient) {
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
                                 for (int i = 0; i < 30; i++)
                                 {
                                     Dust.NewDustDirect(lanternBottomLeft, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
@@ -309,7 +313,8 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
                         }
-                        if (NPC.life < (int)(2900 * HealthScale) && Phase == 4) {
+                        if (NPC.life < (int)(2900 * HealthScale) && Phase == 4)
+                        {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -327,7 +332,8 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
                         }
-                        if (NPC.life < (int)(2500 * HealthScale) && Phase == 5) {
+                        if (NPC.life < (int)(2500 * HealthScale) && Phase == 5)
+                        {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -359,7 +365,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             }
 
             if (Phase == 6)
-            { 
+            {
                 damageModifier = 3f;
                 if (!isClone && phaseTransitionTimeRemaining == 100) despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Pinwheel.DespawnHandler2"), Color.DarkViolet, DustID.ShadowbeamStaff);
             }
@@ -478,9 +484,9 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             //Remember: Contact damage is doubled, and projectile damage is multiplied by 4!
             DamageNumbers = new Dictionary<string, int>
             {
-                ["BouncingFireballDamage"] = 8, 
+                ["BouncingFireballDamage"] = 8,
                 ["KillableFireballDamage"] = 26,
-                ["FlamethrowerDamage"] = 6, 
+                ["FlamethrowerDamage"] = 6,
                 ["VolcanicEruptionDamage"] = 9,
                 ["BlindingPulseDamage"] = 8,
             };
@@ -709,7 +715,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                     int speed = 3;
                     if (Phase == 6)
                     {
-                        type = DustID.ShadowbeamStaff; 
+                        type = DustID.ShadowbeamStaff;
                         speed = 6;
                     }
                     UsefulFunctions.DustRing(new Vector2(NPC.Center.X, NPC.Center.Y - 30), 6, type, 1, speed);
@@ -726,11 +732,13 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 if (Phase == 6) shootSpeed = UsefulFunctions.Aim(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 30), Target.Center, 1.4f);
                 int projectileType = ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>();
 
-                if (Phase < 6) {
+                if (Phase < 6)
+                {
                     Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(shootSpeed.X * Main.rand.NextFloat(2.5f, 4.5f), shootSpeed.Y * Main.rand.NextFloat(2.5f, 4.5f)), projectileType, (int)(DamageNumbers["FlamethrowerDamage"] * damageModifier), 0f, Main.myPlayer, 0);
                     shot1.timeLeft = 70;
                 }
-                if (Phase == 6) {
+                if (Phase == 6)
+                {
                     Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(shootSpeed.X * Main.rand.NextFloat(2.5f, 4.5f), shootSpeed.Y * Main.rand.NextFloat(2.5f, 4.5f)), projectileType, (int)(DamageNumbers["FlamethrowerDamage"] * damageModifier), 0f, Main.myPlayer, 1);
                     shot1.timeLeft = 70;
                 }
@@ -768,7 +776,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             }
             if (MoveTimer <= 120 && opacityTimer < 30)
             {
-                 opacityTimer++;
+                opacityTimer++;
             }
 
             if (MoveTimer >= 120)
@@ -1126,7 +1134,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                         shot1.timeLeft = 80;
                     }
                 }
-            }   
+            }
 
             if (Phase == 6)
             {
@@ -1960,37 +1968,43 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
                     if (/*dustQuantity < 1 && */Main.rand.NextBool(2)) //Shadowflame
                     {
-                        if (Main.rand.NextBool(2)) {
+                        if (Main.rand.NextBool(2))
+                        {
                             Dust dust1 = Dust.NewDustDirect(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 2), 8, 10, DustID.Shadowflame, 60f, 0f, 50, default(Color), 1.5f);
                             dust1.noGravity = true;
                             dust1.velocity /= 25;
                             dust1.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
                         }
-                        if (Main.rand.NextBool(2)) {
+                        if (Main.rand.NextBool(2))
+                        {
                             Dust dust2 = Dust.NewDustDirect(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 2), 8, 10, DustID.Shadowflame, -60f, 0f, 50, default(Color), 1.5f);
                             dust2.noGravity = true;
                             dust2.velocity /= 25;
                             dust2.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
                         }
-                        if (Main.rand.NextBool(2)) {
+                        if (Main.rand.NextBool(2))
+                        {
                             Dust dust3 = Dust.NewDustDirect(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 2), 8, 10, DustID.Shadowflame, 34f, -26f, 50, default(Color), 1.5f);
                             dust3.noGravity = true;
                             dust3.velocity /= 25;
                             dust3.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
                         }
-                        if (Main.rand.NextBool(2)) {
+                        if (Main.rand.NextBool(2))
+                        {
                             Dust dust4 = Dust.NewDustDirect(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 2), 8, 10, DustID.Shadowflame, -34f, -26f, 50, default(Color), 1.5f);
                             dust4.noGravity = true;
                             dust4.velocity /= 25;
                             dust4.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
                         }
-                        if (Main.rand.NextBool(2)) {
+                        if (Main.rand.NextBool(2))
+                        {
                             Dust dust5 = Dust.NewDustDirect(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 2), 8, 10, DustID.Shadowflame, -15f, -45f, 50, default(Color), 1.5f);
                             dust5.noGravity = true;
                             dust5.velocity /= 20;
                             dust5.velocity *= Main.rand.NextFloat(0, flameSpeedPower);
                         }
-                        if (Main.rand.NextBool(2)) {
+                        if (Main.rand.NextBool(2))
+                        {
                             Dust dust6 = Dust.NewDustDirect(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 2), 8, 10, DustID.Shadowflame, 15, -45, 50, default(Color), 1.5f);
                             dust6.noGravity = true;
                             dust6.velocity /= 20;
@@ -2496,7 +2510,8 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 potionType = ModContent.ItemType<Lifegem>();
-            } else { potionType = ItemID.HealingPotion; }
+            }
+            else { potionType = ItemID.HealingPotion; }
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {

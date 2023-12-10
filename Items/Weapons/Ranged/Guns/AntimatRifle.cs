@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Ranged;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 {
@@ -75,7 +76,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            type = ModContent.ProjectileType<Projectiles.AntiMaterialRound>();
+            type = ModContent.ProjectileType<AntiMaterialRound>();
         }
     }
 }

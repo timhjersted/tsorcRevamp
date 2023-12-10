@@ -4,6 +4,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Ranged;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Bows
 {
@@ -17,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
         public override void SetDefaults()
         {
             Item.DamageType = DamageClass.Ranged;
-            Item.shoot = ModContent.ProjectileType<Projectiles.ArtemisBowHeld>();
+            Item.shoot = ModContent.ProjectileType<ArtemisBowHeld>();
             Item.channel = true;
             Item.damage = 220; //was 370
             Item.width = 14;
@@ -37,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<Projectiles.ArtemisBowHeld>(), damage, knockback, player.whoAmI, type);
+            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<ArtemisBowHeld>(), damage, knockback, player.whoAmI, type);
             return false;
         }
 

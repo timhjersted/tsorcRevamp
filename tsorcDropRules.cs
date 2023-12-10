@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Utilities;
-using Terraria;
 
 namespace tsorcRevamp
 {
@@ -94,7 +94,7 @@ namespace tsorcRevamp
         public bool CanShowItemDropInUI() => true;
 
         public virtual string GetConditionDescription() => LangUtils.GetTextValue("DropRules.BotCOnly");
-        
+
     }
 
     public class FirstBagCursedRule : FirstBagRule

@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Projectiles.Magic.Runeterra
 {
@@ -15,7 +16,6 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         {
             Projectile.width = 20;
             Projectile.height = 32;
-            Projectile.scale = 0f;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.timeLeft = 900;
             Projectile.extraUpdates = 10;
@@ -51,20 +51,6 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
 
             Projectile.velocity = (player.Center - Projectile.Center).SafeNormalize(Vector2.Zero) * projSpeed;
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
-            int frameSpeed = 5;
-
-            Projectile.frameCounter++;
-
-            if (Projectile.frameCounter >= frameSpeed)
-            {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
-
-                if (Projectile.frame >= Main.projFrames[Projectile.type] || Projectile.frame <= Main.projFrames[Projectile.type] / 2)
-                {
-                    Projectile.frame = 4;
-                }
-            }
             if (Projectile.Hitbox.Intersects(player.Hitbox))
             {
                 Projectile.Kill();
@@ -73,8 +59,20 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         public override void OnKill(int timeLeft)
         {
             Player player = Main.player[Projectile.owner];
+            Rectangle PlayerRect = Utils.CenteredRectangle(player.Center, player.Size);
             player.GetModPlayer<tsorcRevampPlayer>().EssenceThief += 1;
-            CombatText.NewText(player.Hitbox, Color.Lime, 1, true);
+            if (player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount == 10)
+            {
+                CombatText.NewText(PlayerRect, Color.Lime, LangUtils.GetTextValue("Items.OrbOfDeception.OrbFilled"));
+            }
+            else
+            {
+                CombatText.NewText(player.Hitbox, Color.Lime, 1, true);
+            }
+        }
+        public override bool PreDraw(ref Color lightColor)
+        {
+            return false;
         }
     }
 }

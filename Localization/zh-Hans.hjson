@@ -6979,6 +6979,7 @@ Mods: {
 					击杀敌人时有 {2}% 的几率获得一层 [c/87cefa:精华窃取] 堆叠
 					满堆叠层数的 [c/87cefa:魔法珠] 对敌人额外造成 {3}% 的伤害，同时其治疗量由玩家最大魔力值和魔法伤害决定
 					'''
+				// OrbFilled: Orb filled!
 			}
 
 			OrbOfFlame: {
@@ -7114,6 +7115,7 @@ Mods: {
 					[c/b22222:引爆后的标记]会增强日照减益的效果，持续 {1} 秒
 					日照减益[c/b22222:增加星芒的伤害]，[c/b22222:施加 {2}% 的召唤标记暴击率]，并对敌人造成持续伤害
 					'''
+				// MeteorReady: Meteor ready!
 			}
 
 			SteraksGage: {
@@ -9091,6 +9093,10 @@ Mods: {
 			GrandCometShockwaveTrail.DisplayName: 宇宙重心彗星冲击波
 			GrandCometZone.DisplayName: 宇宙重心彗星冲击波
 			BlindingPulse.DisplayName: 三焱家族Blinding Pulse
+			// GrandCometExplosion.DisplayName: Grand Comet Explosion
+			// StardustDelivery.DisplayName: Stardust Delivery
+			// FetidExhaustProjectile.DisplayName: Fetid Exhaust Projectile
+			// ShatteredMoonlightProjectile.DisplayName: Shattered Moonlight Projectile
 		}
 
 		NPCs: {
