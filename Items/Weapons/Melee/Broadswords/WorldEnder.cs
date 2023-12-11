@@ -19,8 +19,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.width = 132;
             Item.height = 132;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 50;
-            Item.useTime = 50;
+            Item.useAnimation = 60;
+            Item.useTime = 60;
             Item.damage = 500;
             Item.knockBack = 20f;
             Item.UseSound = SoundID.Item1;
@@ -28,6 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.value = PriceByRarity.Red_10;
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            Item.shootSpeed = 135f;
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.DarkRed;
         }
@@ -48,13 +49,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             if (player.altFunctionUse != 2) //shoot Nothing
             {
                 Item.useStyle = ItemUseStyleID.Swing;
-                Item.noUseGraphic = false;
-                Item.noMelee = false;
                 return true;
             }
             int SwordProjectile = ModContent.ProjectileType<WorldEnderSword>();
-            Item.noUseGraphic = true;
-            Item.noMelee = true;
             switch (AltFunctionMode)
             {
                 case 1:
