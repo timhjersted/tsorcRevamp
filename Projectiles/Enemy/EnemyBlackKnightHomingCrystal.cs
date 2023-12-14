@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             //Projectile.tileCollide = false;
             Projectile.damage = 35;
             Projectile.knockBack = 12;
-            Projectile.light = 1;
+            Projectile.light = 0.7f;
         }
 
 
@@ -104,14 +104,14 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 
             // setup projectile for explosion
-            Projectile.damage = Projectile.damage * 2;
+            Projectile.damage = (int)(Projectile.damage * 1.5f);
             Projectile.penetrate = 20;
             Projectile.width = Projectile.width * 3;
             Projectile.height = Projectile.height * 3;
             Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
             Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
             Projectile.timeLeft = 1;
-            Projectile.Damage();
+            //Projectile.Damage();
 
             //if (Projectile.owner == Main.myPlayer)
             //{
@@ -188,7 +188,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 
             // setup projectile for explosion
-            Projectile.damage = Projectile.damage * 2;
+            Projectile.damage = (int)(Projectile.damage * 1.5f);
             Projectile.penetrate = 20;
             Projectile.width = Projectile.width * 3;
             Projectile.height = Projectile.height * 3;

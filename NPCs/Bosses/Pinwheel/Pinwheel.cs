@@ -133,7 +133,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
                 attackTransitionDuration = 120;
                 NPC.defense = 10;
-                damageModifier = 2.5f;
+                damageModifier = 2f;
 
                 #region Losing Lanterns
 
@@ -168,10 +168,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                                 {
                                     Dust.NewDustDirect(lanternMiddleLeft, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
                                 }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire1, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire2, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
                             }
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++; //Use this rather than NextPhase() because I don-t want to set MoveTimer back to 0
@@ -186,10 +186,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                                 {
                                     Dust.NewDustDirect(lanternBottomRight, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
                                 }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
                             }
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
@@ -204,10 +204,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                                 {
                                     Dust.NewDustDirect(lanternBottomLeft, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
                                 }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
                             }
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
@@ -222,10 +222,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                                 {
                                     Dust.NewDustDirect(lanternMiddleRight, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
                                 }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
                             }
                             attackTransitionDuration = 140;
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
@@ -242,14 +242,14 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                                     Dust.NewDustDirect(lanternTopLeft, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
                                     Dust.NewDustDirect(lanternTopRight, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
                                 }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
                             }
                             attackTransitionDuration = 180;
                             phaseTransitionDuration = 400;
@@ -269,10 +269,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                                 {
                                     Dust.NewDustDirect(lanternMiddleLeft, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
                                 }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire1, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire2, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
                             }
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
@@ -287,10 +287,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                                 {
                                     Dust.NewDustDirect(lanternBottomRight, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
                                 }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
                             }
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
@@ -305,10 +305,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                                 {
                                     Dust.NewDustDirect(lanternBottomLeft, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
                                 }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
                             }
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
                             Phase++;
@@ -323,10 +323,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                                 {
                                     Dust.NewDustDirect(lanternMiddleRight, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
                                 }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
                             }
                             attackTransitionDuration = 140;
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
@@ -343,14 +343,14 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                                     Dust.NewDustDirect(lanternTopLeft, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
                                     Dust.NewDustDirect(lanternTopRight, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
                                 }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 20, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
                             }
                             attackTransitionDuration = 180;
                             phaseTransitionDuration = 400;
@@ -366,7 +366,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
             if (Phase == 6)
             {
-                damageModifier = 3f;
+                //damageModifier = 3f;
                 if (!isClone && phaseTransitionTimeRemaining == 100) despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Pinwheel.DespawnHandler2"), Color.DarkViolet, DustID.ShadowbeamStaff);
             }
 
@@ -580,6 +580,15 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 num51 = num48 / num51;
                 speedX *= num51;
                 speedY *= num51;
+
+                int dustQuantity = (int)MoveTimer / 10;
+                for (int i = 0; i < dustQuantity; i++)
+                {
+                    if (MoveTimer > 20)
+                    {
+                        UsefulFunctions.DustRing(vector8, 10, DustID.Shadowflame, 1, 5);
+                    }
+                }
 
                 if (MoveTimer == 90 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot bouncing fireball
                 {
