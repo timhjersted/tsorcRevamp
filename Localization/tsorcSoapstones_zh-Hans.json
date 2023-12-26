@@ -580,7 +580,7 @@
   "style": 1
 }
 {
-  "text": "手里拿着一个暗影鳞片，你感觉到暗影盔甲的隐藏形态具有强大的能力，在前方的丛林中会很有用。 --NEWLINE   --NEWLINE \u0022啊，这房子里有我制作暗影盔甲的工具。\u0022",
+  "text": "手里拿着一个暗影鳞片，你感觉到暗影盔甲的升级形态具有强大的能力，在前方的丛林中会很有用。 --NEWLINE   --NEWLINE \u0022啊，这房子里有我制作暗影盔甲的工具。\u0022",
   "tileX": 3188,
   "tileY": 1096,
   "textWidth": 720,
@@ -1392,10 +1392,10 @@
   "style": 1
 }
 {
-  "text": "右键单击篝火以点燃它们。 --NEWLINE   --NEWLINE 点燃篝火后，你可以将其设置为重生点， --NEWLINE   --NEWLINE 右击使用提供的猪猪存钱罐和保险箱。 --NEWLINE   --NEWLINE 可以随时传送到已经点燃的篝火。",
+  "text": "右键单击篝火以点燃它们。 --NEWLINE   --NEWLINE 点燃篝火后，你可以将其设置为重生点， --NEWLINE   --NEWLINE 右击使用提供的猪猪存钱罐和保险箱。 --NEWLINE   --NEWLINE 点击地图上已经点燃的篝火可以随时传送。",
   "tileX": 4480,
   "tileY": 732,
-  "textWidth": 300,
+  "textWidth": 360,
   "style": 1
 }
 {
@@ -1581,14 +1581,14 @@
   "style": 1
 }
 {
-  "text": "你在失去知觉之前的最后记忆： --NEWLINE   --NEWLINE 你家的房屋被一支戴着阿卓迪斯标志的军队袭击并纵火。 --NEWLINE   --NEWLINE 你冲到你家人的家里寻找幸存者。",
+  "text": "你在失去知觉之前的最后记忆： --NEWLINE   --NEWLINE 一支举着阿卓迪斯旗帜的军队袭击并纵火烧毁了你的家。 --NEWLINE   --NEWLINE 你冲到你家人的房子里寻找幸存者。",
   "tileX": 4902,
   "tileY": 867,
   "textWidth": 400,
   "style": 1
 }
 {
-  "text": "你的心沉了下去——你旁边的墓碑没有写字 --NEWLINE   --NEWLINE 这些一定是在埋葬你的时候挖的…",
+  "text": "你的心沉了下去——你旁边的墓碑上没有碑文 --NEWLINE   --NEWLINE 这些一定是在埋葬你的时候挖的…",
   "tileX": 4911,
   "tileY": 867,
   "textWidth": 340,

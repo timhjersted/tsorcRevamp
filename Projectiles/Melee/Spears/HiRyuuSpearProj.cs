@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Melee.Spears;
 
 //using tsorcRevamp.Dusts;
 
@@ -26,8 +26,17 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
             //projectile.usesLocalNPCImmunity = true;
             //projectile.localNPCHitCooldown = 5;
             Projectile.scale = 1f;
-
         }
+
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            //if(target.noGravity || !Collision.SolidCollision(target.position, target.width, target.height))
+            if (target.velocity.Y != 0)
+            {
+                modifiers.FinalDamage *= 1.2f;
+            }
+        }
+
         public float moveFactor
         { //controls spear speed
             get => Projectile.ai[0];

@@ -152,9 +152,9 @@ Mods: {
 			PermanentPotion: {
 				CanScale:
 					'''
-					[c/77ff77:提供较弱的 {0} 增益效果]
-					[c/77ff77:在永久药水未激活时，使用对应的 {0} 以增加永久药水的效率]
-					[c/77ff77:当前总使用次数：] {1}
+					[c/77ff77:提供较弱的 {0}药水 增益效果]
+					[c/77ff77:在永久药水未激活时，使用对应的普通药水以增加其效率]
+					[c/77ff77:当前总使用次数：]{1}
 					[c/77ff77:当前药水效率：]{2}%
 					'''
 				NoScaling: 永久获得 {0} 增益
@@ -182,7 +182,7 @@ Mods: {
 			10: 留意你物品的描述，看看是否有能用黑暗之魂升级的物品
 			11: 可以在BOSS掉落的独特物品上找到进展线索
 			12: 如果你感到迷茫，就探索在地图上未显示出来的地方，几乎每个方向都有秘密和路径
-			13: 蜡石文字泡消息提供了许多重要提示
+			13: 箴言文字泡提供了许多重要提示
 			14: 如果你的暴击几率超过100%，你就有机会造成多重暴击，从而造成4倍或更多的伤害
 			15: 用鞭子尖端攻击敌人必定造成暴击
 			16: 青色压力板只能用小型实体射弹激活
@@ -3025,7 +3025,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
-					{$CommonItemTooltip.SetBonus}增加5点大黄蜂仆从护甲穿透，增加毒刺的飞行速度
+					{$CommonItemTooltip.SetBonus}增加 5 点大黄蜂仆从护甲穿透，增加毒刺的飞行速度
 					'''
 			}
 
@@ -5529,7 +5529,7 @@ Mods: {
 
 			CoralSword: {
 				DisplayName: 珊瑚剑
-				Tooltip: 用于斩杀来自大海的生物，对与水有关的敌人造成4倍伤害
+				Tooltip: 用于斩杀来自大海的生物，对与水有关的敌人造成 4 倍伤害
 			}
 
 			CorruptedTooth: {
@@ -5640,7 +5640,7 @@ Mods: {
 
 			Ragnarok: {
 				DisplayName: 诸神黄昏
-				Tooltip: ""
+				Tooltip: 在地狱时，增加 {0} 点近战护甲穿透
 			}
 
 			RTQ2Sword: {
@@ -5981,7 +5981,11 @@ Mods: {
 
 			HiRyuuSpear: {
 				DisplayName: 空域之矛
-				Tooltip: ""
+				Tooltip:
+					'''
+					空域统治者
+					对空中的敌人造成 50% 额外伤害
+					'''
 			}
 
 			Longinus: {
@@ -6913,15 +6917,15 @@ Mods: {
 					'''
 				Details:
 					'''
-					[c/00ffff:致盲激光] 造成 {0}x 伤害, 使用种子作为弹药时伤害再次乘 {8} ({$CommonItemTooltip.Cooldown@9})
-					[c/00ffff:致盲激光] 获得 {1}% 暴击几率加成和 {2}% 每击最大生命值伤害，最大到 {3}
+					[c/00ffff:致盲激光] 造成 {4}x 伤害, 使用种子作为弹药时伤害再次乘 {5} ({$CommonItemTooltip.Cooldown@6})
+					[c/00ffff:致盲激光] 获得 {7}% 暴击几率加成和 {8}% 每击最大生命值伤害，最大到 {9}
 					[c/ba55d3:外星激光]造成的 [c/ba55d3:触电] 减益受到远程伤害和暴击率加成
 					手持该武器时获得 [c/ba55d3:侦察兵激励] 增益：
-					{$CommonItemTooltip.MoveSpeedMult@4}，同时乘算增加 {5}% 耐力再生
-					当受到伤害时[c/ba55d3:侦察兵激励]被移除，同时获得 {$CommonItemTooltip.Cooldown@6}
+					{$CommonItemTooltip.MoveSpeedMult}，同时乘算增加 {1}% 耐力再生
+					当受到伤害时[c/ba55d3:侦察兵激励]被移除，同时获得 {$CommonItemTooltip.Cooldown@2}
 					当 [c/ba55d3:侦察兵激励] 激活时使用武器会减缓你的速度
 					当 [c/ba55d3:侦察兵激励] 冷却时使用该物品，会让你短暂的不能移动
-					[c/ba55d3:侦察兵激励II] 移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@7}
+					[c/ba55d3:侦察兵激励II] 移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@3}
 					[c/ba55d3:侦察兵激励II] 加倍移动速度和耐力再生增益
 					'''
 			}
@@ -6944,18 +6948,18 @@ Mods: {
 				Keybind2: 键 消耗魔力在光标所指位置生成一个 [c/adff2f:蘑菇弹]
 				Details:
 					'''
-					[c/adff2f:蘑菇弹] 在发射后需要 {0} 秒来引爆，({$CommonItemTooltip.Cooldown@9})
+					[c/adff2f:蘑菇弹] 在发射后需要 {10} 秒来引爆，({$CommonItemTooltip.Cooldown@11})
 					[c/adff2f:蘑菇弹] 的爆炸造成巨量的伤害并施加更强的 [c/adff2f:辐射] 减益
 					[c/adff2f:蘑菇弹] 爆炸和 [c/ba55d3:放射性飞镖] 造成的 [c/adff2f:辐射] 减益相互叠加
-					[c/00ffff:致盲激光] 造成 {1}x 倍伤害, 使用种子作为弹药时伤害再次乘 {9} ({$CommonItemTooltip.Cooldown@10})
-					[c/00ffff:致盲激光] 获得 {2}% 暴击几率加成和 {3}% 每击最大生命值伤害，最大到 {4}
+					[c/00ffff:致盲激光] 造成 {4}x 倍伤害, 使用种子作为弹药时伤害再次乘 {5} ({$CommonItemTooltip.Cooldown@6})
+					[c/00ffff:致盲激光] 获得 {7}% 暴击几率加成和 {8}% 每击最大生命值伤害，最大到 {9}
 					[c/ba55d3:放射性飞镖] 造成的 [c/ba55d3:辐射] 减益受到远程伤害和暴击率加成
 					手持该武器时获得 [c/ba55d3:侦察兵激励] 增益：
-					{$CommonItemTooltip.MoveSpeedMult@5}，同时乘算增加 {6}% 耐力再生
-					当受到伤害时[c/ba55d3:侦察兵激励]被移除，同时获得 {$CommonItemTooltip.Cooldown@7}
+					{$CommonItemTooltip.MoveSpeedMult}，同时乘算增加 {1}% 耐力再生
+					当受到伤害时[c/ba55d3:侦察兵激励]被移除，同时获得 {$CommonItemTooltip.Cooldown@2}
 					当 [c/ba55d3:侦察兵激励] 激活时使用武器会减缓你的速度
 					当 [c/ba55d3:侦察兵激励] 冷却时使用该物品，会让你短暂的不能移动
-					[c/ba55d3:侦察兵激励II] 移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@8}
+					[c/ba55d3:侦察兵激励II] 移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@3}
 					[c/ba55d3:侦察兵激励II] 加倍移动速度和耐力再生增益
 					'''
 			}
@@ -6979,7 +6983,7 @@ Mods: {
 					击杀敌人时有 {2}% 的几率获得一层 [c/87cefa:精华窃取] 堆叠
 					满堆叠层数的 [c/87cefa:魔法珠] 对敌人额外造成 {3}% 的伤害，同时其治疗量由玩家最大魔力值和魔法伤害决定
 					'''
-				// OrbFilled: Orb filled!
+				OrbFilled: 堆叠已满！
 			}
 
 			OrbOfFlame: {
@@ -7087,7 +7091,7 @@ Mods: {
 			}
 
 			CenterOfTheUniverse: {
-				DisplayName: 宇宙重心（测试中）
+				DisplayName: 宇宙重心
 				Tooltip:
 					'''
 					召唤一条[c/b22222:铸星龙王]，它会向你的光标移动并向附近的敌人[c/b22222:喷火]
@@ -7115,7 +7119,7 @@ Mods: {
 					[c/b22222:引爆后的标记]会增强日照减益的效果，持续 {1} 秒
 					日照减益[c/b22222:增加星芒的伤害]，[c/b22222:施加 {2}% 的召唤标记暴击率]，并对敌人造成持续伤害
 					'''
-				// MeteorReady: Meteor ready!
+				MeteorReady: 彗星就绪！
 			}
 
 			SteraksGage: {
@@ -8907,7 +8911,7 @@ Mods: {
 			DarkTridentPoke.DisplayName: 暗黑三叉戟之刺
 			DarkTridentThrown.DisplayName: 暗黑三叉戟之掷
 			DragoonLanceProj.DisplayName: 龙骑枪
-			FetidExhaust.DisplayName: 有毒喷气
+			FetidExhaust.DisplayName: 腐败吐息
 			ForgottenImpHalberdProj.DisplayName: 被遗忘的小鬼之戟
 			ForgottenPearlSpearProj.DisplayName: 被遗忘的珍珠矛
 			ForgottenPolearmProj.DisplayName: 被遗忘的长枪
@@ -9092,11 +9096,11 @@ Mods: {
 			GrandCometProjectile.DisplayName: 宇宙重心彗星
 			GrandCometShockwaveTrail.DisplayName: 宇宙重心彗星冲击波
 			GrandCometZone.DisplayName: 宇宙重心彗星冲击波
-			BlindingPulse.DisplayName: 三焱家族Blinding Pulse
-			// GrandCometExplosion.DisplayName: Grand Comet Explosion
-			// StardustDelivery.DisplayName: Stardust Delivery
-			// FetidExhaustProjectile.DisplayName: Fetid Exhaust Projectile
-			// ShatteredMoonlightProjectile.DisplayName: Shattered Moonlight Projectile
+			BlindingPulse.DisplayName: 致盲激光
+			GrandCometExplosion.DisplayName: 宇宙重心彗星爆炸
+			StardustDelivery.DisplayName: 宇宙重心星尘
+			FetidExhaustProjectile.DisplayName: 腐败吐息
+			ShatteredMoonlightProjectile.DisplayName: 破碎月光
 		}
 
 		NPCs: {
@@ -10175,7 +10179,7 @@ Mods: {
 		Tiles: {
 			BonfireCheckpoint.MapEntry: 篝火检查点
 			FlameJet.MapEntry: 喷火陷阱
-			SoapstoneTile.MapEntry: 蜡石文字泡消息
+			SoapstoneTile.MapEntry: 箴言文字泡
 			SoulSkellyL.MapEntry: 灵魂骷髅
 			SoulSkellyR.MapEntry: 灵魂骷髅
 			SoulSkellyWall1.MapEntry: 灵魂骷髅
@@ -10332,17 +10336,17 @@ Mods: {
 				}
 
 				HideSoapstones: {
-					Label: 隐藏阅读过的蜡石文字泡消息
+					Label: 隐藏阅读过的箴言文字泡
 					Tooltip:
 						'''
 						如果开启, 除非点击显示按钮，
-						否则阅读过的蜡石文字泡消息将不会再显示。
+						否则阅读过的箴言文字泡将不会再显示。
 						默认为开启
 						'''
 				}
 
 				SoapstoneScale: {
-					Label: 蜡石文字泡消息缩放比率
+					Label: 箴言文字泡缩放比率
 					Tooltip:
 						'''
 						增加所有蜡石文字泡对话框的大小比率。

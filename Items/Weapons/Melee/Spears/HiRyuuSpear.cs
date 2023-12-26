@@ -1,20 +1,18 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Melee.Spears;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
     public class HiRyuuSpear : ModItem
     {
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("HiRyuu Spear");
-        }
+        public static float HiRyuuSpearDamageBoost = 20f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(HiRyuuSpearDamageBoost);
 
         public override void SetDefaults()
         {
-            Item.damage = 200; //was 78
+            Item.damage = 170; //was 78
             Item.knockBack = 7f;
             Item.crit = 11;
             Item.useStyle = ItemUseStyleID.Shoot;

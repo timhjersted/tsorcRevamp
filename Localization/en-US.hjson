@@ -5640,7 +5640,7 @@ Mods: {
 
 			Ragnarok: {
 				DisplayName: Ragnarok
-				Tooltip: ""
+				Tooltip: Increases melee armor penetration by {0}, when you are in Underground
 			}
 
 			RTQ2Sword: {
@@ -5979,7 +5979,11 @@ Mods: {
 
 			HiRyuuSpear: {
 				DisplayName: HiRyuu Spear
-				Tooltip: ""
+				Tooltip:
+					'''
+					Ruler of sky
+					Deal {0}% extra damage to airborne enemies
+					'''
 			}
 
 			Longinus: {

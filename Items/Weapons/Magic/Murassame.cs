@@ -2,14 +2,15 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
     class Murassame : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-        }
+        public const int MaxManaSubtract = 200;
+        public const int MaxManaDivisor = 8;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxManaSubtract, MaxManaDivisor);
 
         public override void SetDefaults()
         {
@@ -46,9 +47,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
-            if (player.statManaMax2 >= 200)
+            if (player.statManaMax2 >= MaxManaSubtract)
             {
-                damage.Flat += (player.statManaMax2 - 200) / 8;
+                damage.Flat += (player.statManaMax2 - MaxManaSubtract) / MaxManaDivisor;
             }
         }
     }
