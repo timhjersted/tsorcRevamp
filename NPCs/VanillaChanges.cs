@@ -2230,7 +2230,7 @@ namespace tsorcRevamp.NPCs
                 #region Golem
                 case (NPCID.Golem): //35k souls total
                     {
-                        npc.lifeMax = 200000; //base 15k
+                        npc.lifeMax = 100000; //base 15k
                         npc.defense = 50; //base 26
                         npc.damage = 100; //base 72
                         npc.value = 293650;
@@ -2243,7 +2243,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Golem.DespawnHandler"), Color.OrangeRed, DustID.OrangeTorch);
 
-                        npc.lifeMax = 150000; //base 25k
+                        npc.lifeMax = 50000; //base 25k
                         npc.defense = 25; //base 20
                         //npc.damage = 64; //base 64, 80 when freed
                         npc.value = 24500;

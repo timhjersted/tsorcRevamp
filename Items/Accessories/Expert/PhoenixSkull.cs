@@ -11,7 +11,8 @@ namespace tsorcRevamp.Items.Accessories.Expert
         public static float HealthPercent = 10f;
         public static float LifeSteal = 5f;
         public static int Duration = 5;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Cooldown, HealthPercent, LifeSteal, Duration);
+        public static float LifeThreshold = 95f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Cooldown, HealthPercent, LifeSteal, Duration, LifeThreshold);
         public override void SetStaticDefaults()
         {
         }

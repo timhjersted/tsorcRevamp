@@ -747,7 +747,7 @@ namespace tsorcRevamp
                     }
                 }
             }
-            if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()))
+            if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && (int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f) > 0)
             {
                 Player.HealEffect((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
                 Player.statLife += ((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
@@ -809,7 +809,7 @@ namespace tsorcRevamp
             {
                 LichKills++;
             }
-            if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()))
+            if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && (int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f) > 0)
             {
                 Player.HealEffect((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
                 Player.statLife += ((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));

@@ -18,11 +18,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public static int TagDuration = 2;
         public override void SetStaticDefaults()
         {
-            ItemID.Sets.BonusAttackSpeedMultiplier[Item.type] = 0.5f;
+            ItemID.Sets.BonusAttackSpeedMultiplier[Type] = 0.5f;
         }
         public override void SetDefaults()
         {
-            Item.damage = 337;
+            Item.damage = 366;
             Item.width = 100;
             Item.height = 100;
             Item.knockBack = 8;
@@ -41,6 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             if (player.GetModPlayer<tsorcRevampPlayer>().WitchPower)
             {
+                damage /= 3;
                 Item.DamageType = DamageClass.SummonMeleeSpeed;
                 Item.scale = player.whipRangeMultiplier;
             }

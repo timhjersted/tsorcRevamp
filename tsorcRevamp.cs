@@ -338,7 +338,7 @@ namespace tsorcRevamp
                 TileID.Containers, TileID.Containers2, TileID.PiggyBank, TileID.Safes, TileID.DefendersForge, TileID.Banners, TileID.WarTableBanner, TileID.SharpeningStation, TileID.AmmoBox, TileID.CrystalBall, TileID.BewitchingTable, TileID.WarTable, TileID.CatBast, TileID.SliceOfCake, //chests, piggy bank, safe, defenders forge, banners, buff stations
                 TileID.Candles, TileID.WaterCandle, TileID.PlatinumCandle, TileID.PeaceCandle, TileID.ClayPot, TileID.Cannon, TileID.BeachPiles, TileID.Crystals, //all candles, clay pot, cannons, seashells, crystal/gelatin shards 
                 TileID.MushroomPlants, TileID.Cactus, TileID.Coral, TileID.ImmatureHerbs, TileID.MatureHerbs, TileID.BloomingHerbs, TileID.DyePlants, TileID.Pumpkins, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
-                TileID.Mannequin, TileID.Womannequin, TileID.DisplayDoll, TileID.TargetDummy, TileID.Painting3X3, TileID.GolfTrophies, TileID.MasterTrophyBase, //all mannequins, target dummy, trophies and relics
+                TileID.Mannequin, TileID.Womannequin, TileID.DisplayDoll, TileID.Painting3X3, TileID.GolfTrophies, TileID.MasterTrophyBase, //all mannequins, trophies and relics
                 TileID.BreakableIce, TileID.MagicalIceBlock, TileID.SeaweedPlanter, TileID.AbigailsFlower, //thin ice (breakable kind), Ice Rod's ice, seaweed/herb planters, abigail's flower
                 TileID.Sunflower, TileID.Pots, TileID.Cobweb, TileID.Vines, TileID.JungleVines, TileID.HallowedVines, TileID.CrimsonVines, TileID.VineFlowers, TileID.MushroomVines, //sunflower, pots, cobwebs, all cuttable vine
                 TileID.ShadowOrbs, TileID.CorruptThorns, TileID.JungleThorns, TileID.CrimsonThorns, TileID.LandMine, TileID.RollingCactus, //orbs/hearts, all thorns, land mines, rolling cactus
@@ -359,7 +359,7 @@ namespace tsorcRevamp
                 TileID.Containers, TileID.Containers2, TileID.PiggyBank, TileID.Safes, TileID.DefendersForge, TileID.Banners, TileID.WarTableBanner, TileID.SharpeningStation, TileID.AmmoBox, TileID.CrystalBall, TileID.BewitchingTable, TileID.WarTable, TileID.CatBast, TileID.SliceOfCake, //chests, piggy bank, safe, defenders forge, banners, buff stations
                 TileID.Candles, TileID.WaterCandle, TileID.PlatinumCandle, TileID.PeaceCandle, TileID.ClayPot, TileID.Cannon, TileID.BeachPiles, //all candles, clay pot, cannons, seashells
                 TileID.MushroomPlants, TileID.Cactus, TileID.Coral, TileID.ImmatureHerbs, TileID.MatureHerbs, TileID.BloomingHerbs, TileID.DyePlants, TileID.Pumpkins, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
-                TileID.Mannequin, TileID.Womannequin, TileID.DisplayDoll, TileID.TargetDummy, TileID.Painting3X3, TileID.GolfTrophies, TileID.MasterTrophyBase, //all mannequins, target dummy, trophies and relics
+                TileID.Mannequin, TileID.Womannequin, TileID.DisplayDoll, TileID.Painting3X3, TileID.GolfTrophies, TileID.MasterTrophyBase, //all mannequins, trophies and relics
                 TileID.SeaweedPlanter, //seaweed/herb planters
                 TileID.Sunflower, TileID.Campfire, TileID.HangingLanterns, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle)
                 TileID.Sundial, TileID.Moondial //Sundial, Moondial

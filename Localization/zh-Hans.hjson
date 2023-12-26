@@ -406,6 +406,7 @@ Mods: {
 
 		Items: {
 			VanillaItems: {
+				// LunarPortal: Uses static immunity frames(stacking is ineffective)
 				LockedCrates: 此物品被凶残的[c/009400:茂林飞鸟-猎手][c/383838:诅咒]
 				ObsidianSkinPotion: "{$CommonItemTooltip.Limited}"
 				SuspiciousLookingEye:
@@ -9097,6 +9098,7 @@ Mods: {
 			// StardustDelivery.DisplayName: Stardust Delivery
 			// FetidExhaustProjectile.DisplayName: Fetid Exhaust Projectile
 			// ShatteredMoonlightProjectile.DisplayName: Shattered Moonlight Projectile
+			// SmallGolemFireball.DisplayName: Small Golem Fireball
 		}
 
 		NPCs: {

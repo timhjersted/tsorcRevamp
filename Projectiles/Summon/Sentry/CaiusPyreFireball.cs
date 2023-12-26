@@ -16,6 +16,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override void SetDefaults()
         {
+            Projectile.sentry = true;
             Projectile.width = 16;
             Projectile.height = 16;
             Projectile.timeLeft = 120;
