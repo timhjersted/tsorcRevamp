@@ -829,10 +829,9 @@ namespace tsorcRevamp.Items
                 }
             }
         }
-
         public override bool? UseItem(Item item, Player player)
         {
-            if (item.type == ItemID.TorchGodsFavor)
+            if (item.type == ItemID.TorchGodsFavor )
             {
                 player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<WorldRune>());
                 player.QuickSpawnItem(item.GetSource_Misc("meep"), ItemID.MagicLantern);
@@ -844,9 +843,8 @@ namespace tsorcRevamp.Items
                 {
                     player.QuickSpawnItem(item.GetSource_Misc("meep"), ModContent.ItemType<DarkSoul>(), (int)(1500 * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
                 }
+                return true;
             }
-
-
             return base.UseItem(item, player);
         }
         public override bool CanRightClick(Item item)
