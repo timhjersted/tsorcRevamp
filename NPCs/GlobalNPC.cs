@@ -948,10 +948,6 @@ namespace tsorcRevamp.NPCs
             Player projectileOwner = Main.player[projectile.owner];
             var modPlayerProjectileOwner = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
             float SummonTagDamageMultiplier = ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type];
-            if (projectile.DamageType == DamageClass.Summon) //minion damage, whip damage unaffected
-            {
-                modifiers.SourceDamage *= 0.8f;
-            }
             #region Individual Whip debuff effects
             #region Modded Whips
             //if(markedByCrystalNunchaku) only has a special effect

@@ -14,8 +14,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         public static float WhipRange = 30f;
         public static float DmgAmp = 6f;
         public static int MinionBoost = 2;
-        public static int SentryBoost = 1;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed, WhipRange, DmgAmp, MinionBoost, SentryBoost);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed, WhipRange, DmgAmp, MinionBoost);
         public override void SetStaticDefaults()
         {
         }
@@ -32,7 +31,6 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.GetAttackSpeed(DamageClass.Summon) += AtkSpeed / 100f;
             player.GetDamage(DamageClass.Summon) *= 1f + DmgAmp / 100f;
             player.maxMinions += MinionBoost;
-            player.maxTurrets += SentryBoost;
             player.whipRangeMultiplier += WhipRange / 100f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)

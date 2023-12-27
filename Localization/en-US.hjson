@@ -406,6 +406,7 @@ Mods: {
 
 		Items: {
 			VanillaItems: {
+				LunarPortal: Uses static immunity frames(stacking is ineffective)
 				LockedCrates: "[c/383838:Cursed] by a ferocious [c/009400:Hunter]"
 				ObsidianSkinPotion: "{$CommonItemTooltip.Limited}"
 				SuspiciousLookingEye:
@@ -3074,7 +3075,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Summon.DmgMult@2}
-					{$CommonItemTooltip.Summon.MinionSentrySlot@3}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@3}
 					{$CommonItemTooltip.Summon.AtkSpeed}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
 					{$CommonItemTooltip.SetBonus}Empowers the Witchking's Sword
@@ -7459,6 +7460,7 @@ Mods: {
 					Prevents death({$CommonItemTooltip.Cooldown})
 					Revives you with {1}% of your maximum life
 					Grants {2}% lifesteal for {3} seconds after reviving if worn
+					Lifesteal stops after healing to {4}% life
 					Cooldown only refreshes while wearing this
 					'''
 			}
@@ -9100,6 +9102,7 @@ Mods: {
 			StardustDelivery.DisplayName: Stardust Delivery
 			FetidExhaustProjectile.DisplayName: Fetid Exhaust Projectile
 			ShatteredMoonlightProjectile.DisplayName: Shattered Moonlight Projectile
+			SmallGolemFireball.DisplayName: Small Golem Fireball
 		}
 
 		NPCs: {

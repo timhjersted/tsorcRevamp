@@ -406,6 +406,7 @@ Mods: {
 
 		Items: {
 			VanillaItems: {
+				LunarPortal: 使用静态免伤无敌帧
 				LockedCrates: 此物品被凶残的[c/009400:茂林飞鸟-猎手][c/383838:诅咒]
 				ObsidianSkinPotion: "{$CommonItemTooltip.Limited}"
 				SuspiciousLookingEye:
@@ -3075,7 +3076,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Summon.DmgMult@2}
-					{$CommonItemTooltip.Summon.MinionSentrySlot@3}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@3}
 					{$CommonItemTooltip.Summon.AtkSpeed}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
 					{$CommonItemTooltip.SetBonus}增强了巫师王之剑
@@ -7459,8 +7460,9 @@ Mods: {
 				Tooltip:
 					'''
 					逃脱死亡（{$CommonItemTooltip.Cooldown}）
-					复活时恢复你最大生命值的 {1}% 
-					复活后获得生命窃取增益，造成伤害的 {2}% 转化为自己的生命值，持续 {3} 秒
+					复活时恢复你最大生命值的 {1}%
+					复活后获得凤凰涅槃增益，造成伤害的 {2}% 转化为自己的生命值，持续 {3} 秒
+					凤凰涅槃最多恢复 {4}% 的生命值
 					只有佩戴此物品时才会进入冷却
 					'''
 			}
@@ -9101,6 +9103,7 @@ Mods: {
 			StardustDelivery.DisplayName: 宇宙重心星尘
 			FetidExhaustProjectile.DisplayName: 腐败吐息
 			ShatteredMoonlightProjectile.DisplayName: 破碎月光
+			SmallGolemFireball.DisplayName: 石巨人小火球
 		}
 
 		NPCs: {

@@ -24,6 +24,7 @@ namespace tsorcRevamp.Items.Debug
         public override bool? UseItem(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread = !player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread;
+            Main.NewText("Damage spread " + !player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread);
             return true;
         }
     }

@@ -15,6 +15,7 @@ using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Armors.Ranged;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.NPCs;
+using tsorcRevamp.Projectiles.Enemy.Golem;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.Utilities;
@@ -100,6 +101,13 @@ namespace tsorcRevamp.Projectiles
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = 1f }, owner.Center);
                 }
             }
+            if (projectile.type == ProjectileID.Fireball)
+            {
+                int extraUpdates = 2;
+                projectile.extraUpdates = extraUpdates;
+                projectile.timeLeft = 600 * (1 + extraUpdates);
+                projectile.scale = 2f;
+            }
         }
         public override bool PreAI(Projectile projectile)
         {
@@ -120,6 +128,13 @@ namespace tsorcRevamp.Projectiles
                     }
                 }
 
+                if (projectile.type == ProjectileID.MoonlordTurretLaser)
+                {
+                    projectile.usesLocalNPCImmunity = false;
+                    projectile.localNPCHitCooldown = -2;
+                    projectile.usesIDStaticNPCImmunity = true;
+                    projectile.idStaticNPCHitCooldown = 10;
+                }
 
                 if (modPlayer.WaspPower & projectile.type == ProjectileID.HornetStinger)
                 {
@@ -617,6 +632,23 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnKill(Projectile projectile, int timeLeft)
         {
+            if (projectile.type == ProjectileID.Fireball)
+            {
+                int Difficulty = 1 + (Main.expertMode ? 1 : 0) + (Main.masterMode ? 1 : 0);
+                Vector2 Vel = Main.rand.NextVector2CircularEdge(20, 20);
+                Projectile Fireball1 = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity, ModContent.ProjectileType<SmallGolemFireball>(), projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
+                Projectile Fireball2 = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity, ModContent.ProjectileType<SmallGolemFireball>(), projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
+                Fireball1.velocity += Vel;
+                Fireball2.velocity -= Vel;
+                NPC Corite = NPC.NewNPCDirect(NPC.GetSource_NaturalSpawn(), projectile.Center, NPCID.SolarCorite);
+
+                Corite.lifeMax = 200 * Difficulty;
+                Corite.life = Corite.lifeMax;
+
+                Corite.damage = 60 * Difficulty;
+
+                Corite.value = 100 * Difficulty;
+            }
             if (projectile.friendly && !projectile.hostile)
             {
                 Player owner = Main.player[projectile.owner];

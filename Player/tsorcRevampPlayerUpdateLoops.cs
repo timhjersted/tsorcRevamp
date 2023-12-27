@@ -14,6 +14,7 @@ using tsorcRevamp.Buffs.Accessories;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Items.Accessories.Expert;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.VanillaItems;
@@ -1012,6 +1013,9 @@ namespace tsorcRevamp
         }
         public override void PostUpdateEquips()
         {
+            float MinionDmgReduction = 10 + (Main.hardMode ? 15 : 0) + (tsorcRevampWorld.SuperHardMode ? 20 : 0);
+            Player.GetDamage(DamageClass.Summon) -= MinionDmgReduction / 100f;
+            Player.GetDamage(DamageClass.SummonMeleeSpeed) += MinionDmgReduction / 100f;
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 Player.GetAttackSpeed(DamageClass.Melee) *= BotCMeleeBaseAttackSpeedMult + (BotCLethalTempoStacks * BotCLethalTempoBonus);
@@ -1427,6 +1431,10 @@ namespace tsorcRevamp
                 }
             }
             #endregion
+            if (Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && Player.statLife >= Player.statLifeMax2 * Items.Accessories.Expert.PhoenixSkull.LifeThreshold / 100f)
+            {
+                Player.ClearBuff(ModContent.BuffType<PhoenixRebirthBuff>());
+            }
             if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthCooldown>()))
             {
                 Player.buffTime[Player.FindBuffIndex(ModContent.BuffType<PhoenixRebirthCooldown>())]--;

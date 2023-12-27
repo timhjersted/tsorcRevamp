@@ -19,12 +19,13 @@ namespace tsorcRevamp.Projectiles
         }
         public override void SetDefaults()
         {
+            Projectile.sentry = true;
             Projectile.width = 58;
             Projectile.height = 2;
             Projectile.timeLeft = 120;
             Projectile.friendly = true;
             Projectile.tileCollide = false; //custom tile collision code
-            Projectile.DamageType = DamageClass.MagicSummonHybrid;
+            Projectile.DamageType = DamageClass.Summon;
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = Projectile.timeLeft;

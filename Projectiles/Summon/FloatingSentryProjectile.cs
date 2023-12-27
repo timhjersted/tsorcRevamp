@@ -37,7 +37,6 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
             Projectile.tileCollide = false;
             Projectile.friendly = true;
             Projectile.DamageType = ProjectileDamageType;
-            Projectile.ContinuouslyUpdateDamageStats = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Projectile.SentryLifeTime;
 
@@ -65,6 +64,7 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
             if (Projectile.ai[0] >= ShotCooldown)
             {
                 Projectile SentryShot = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center, Projectile.DirectionTo(Main.MouseWorld) * ProjectileInitialVelocity, ShotProjectileType, Projectile.damage, Projectile.knockBack, owner.whoAmI, ShotCooldown - SentryShotCooldownReductionOnSpawn, AI1, AI2);
+                SentryShot.originalDamage = Projectile.originalDamage;
                 SentryShot.CritChance = Projectile.CritChance;
                 Projectile.ai[0] = 0;
             }
