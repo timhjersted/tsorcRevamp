@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetDefaults()
         {
-            Item.damage = 110;
+            Item.damage = 160;
             Item.height = 58;
             Item.knockBack = 4;
             Item.noMelee = true;

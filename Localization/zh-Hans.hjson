@@ -1732,7 +1732,7 @@ Mods: {
 			}
 
 			ImprovedWhiteBalloon: {
-				DisplayName: 改进的暴风雪气球
+				DisplayName: 改进的暴雪气球
 				Tooltip:
 					'''
 					允许持有者进行二段跳
@@ -1742,7 +1742,7 @@ Mods: {
 			}
 
 			ImprovedYellowBalloon: {
-				DisplayName: 改进的沙尘暴气球
+				DisplayName: 改进的沙暴气球
 				Tooltip:
 					'''
 					允许持有者进行二段跳
@@ -3911,7 +3911,7 @@ Mods: {
 
 			FadingSoul: {
 				DisplayName: 消逝之魂
-				Tooltip: 消耗获得50个灵魂
+				Tooltip: 消耗后获得 50 黑暗之魂
 			}
 
 			FairyInABottle: {
@@ -4002,7 +4002,7 @@ Mods: {
 
 			HeroSoul: {
 				DisplayName: 英雄之魂
-				Tooltip: 消耗获得10000灵魂
+				Tooltip: 消耗后获得 10000 黑暗之魂
 			}
 
 			Humanity: {
@@ -4117,7 +4117,7 @@ Mods: {
 
 			LostUndeadSoul: {
 				DisplayName: 失落亡灵之魂
-				Tooltip: 消耗获得200个灵魂
+				Tooltip: 消耗后获得 200 黑暗之魂
 			}
 
 			MastersScroll: {
@@ -4143,7 +4143,7 @@ Mods: {
 
 			NamelessSoldierSoul: {
 				DisplayName: 无名战士之魂
-				Tooltip: 消耗获得800灵魂
+				Tooltip: 消耗后获得 800 黑暗之魂
 			}
 
 			MiakodaCrescent: {
@@ -4780,7 +4780,7 @@ Mods: {
 
 			ProudKnightSoul: {
 				DisplayName: 骄傲骑士之魂
-				Tooltip: 消耗获得2000黑暗之魂
+				Tooltip: 消耗后获得 2000 黑暗之魂
 			}
 
 			PurgingStone: {
@@ -5426,7 +5426,7 @@ Mods: {
 
 			WandOfFrost: {
 				DisplayName: 霜冻魔杖
-				Tooltip: 一把强大的魔杖，专为与魔法使用者战斗而生，可以穿墙
+				Tooltip: 一把强大的魔杖，专为与法师战斗而生，可以穿墙
 			}
 
 			WandOfFrost2: {
@@ -5641,7 +5641,11 @@ Mods: {
 
 			Ragnarok: {
 				DisplayName: 诸神黄昏
-				Tooltip: 在地狱时，增加 {0} 点近战护甲穿透
+				Tooltip:
+					'''
+					施加双足翼龙诅咒减益
+					在地狱时，增加 {0} 点近战护甲穿透
+					'''
 			}
 
 			RTQ2Sword: {
@@ -5946,7 +5950,7 @@ Mods: {
 				Tooltip:
 					'''
 					左键像长矛一样戳刺，右键挥舞
-					挥舞提高25%的伤害
+					挥舞时提高 25% 的伤害
 					'''
 			}
 
@@ -5985,7 +5989,7 @@ Mods: {
 				Tooltip:
 					'''
 					空域统治者
-					对空中的敌人造成 50% 额外伤害
+					对空中的敌人造成 {0}% 额外伤害
 					'''
 			}
 
@@ -7045,7 +7049,7 @@ Mods: {
 			}
 
 			ScorchingPoint: {
-				DisplayName: 灼热焦点（测试中）
+				DisplayName: 灼热焦点
 				Tooltip:
 					'''
 					召唤一条[c/b22222:灰烬领主]，它会向你的光标移动并向附近的敌人[c/b22222:喷火]
@@ -7067,7 +7071,7 @@ Mods: {
 			}
 
 			InterstellarVesselGauntlet: {
-				DisplayName: 星际飞船遥控器（测试中）
+				DisplayName: 星际飞船遥控器
 				Tooltip:
 					'''
 					召唤一条[c/b22222:霸天龙神]，它会向你的光标移动并向附近的敌人[c/b22222:喷火]
@@ -9460,7 +9464,7 @@ Mods: {
 			TheHunter: {
 				DisplayName: 茂林飞鸟—「猎手」
 				DespawnHandler: 猎手在寻找它的下一个目标...
-				Child: 猎手决定把你喂给它的孩子。它的孩子隐藏在于环境中！
+				Child: 猎手决定把你喂给它的幼崽。它隐藏于环境之中！
 				Enrage: 正所谓鸟急奔树狗急跳墙，猎手因为受到大量伤害而凶相毕露...
 			}
 
@@ -9540,8 +9544,8 @@ Mods: {
 			}
 
 			AttraidiesManifestation: {
-				DisplayName: 显形的阿卓迪斯
-				Death: 显形的阿卓迪斯被击败了...
+				DisplayName: 阿卓迪斯幻象
+				Death: 阿卓迪斯幻象被击败了...
 			}
 
 			BarrowWight.DisplayName: 巴罗·怀特

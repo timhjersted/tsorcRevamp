@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BlueMoon, 1);
             recipe.AddIngredient(ItemID.CobaltBar, 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 11000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

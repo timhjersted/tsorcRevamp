@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Flamethrowers
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Items.Materials.DamagedMechanicalScrap>(), 1);
             recipe.AddIngredient(ItemID.SoulofFright, 15);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

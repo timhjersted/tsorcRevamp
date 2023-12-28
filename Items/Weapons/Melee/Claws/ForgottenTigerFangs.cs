@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<ForgottenKaiserKnuckles>());
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

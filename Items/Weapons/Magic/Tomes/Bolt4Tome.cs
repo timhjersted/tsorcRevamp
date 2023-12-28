@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 
         public override void SetDefaults()
         {
-            Item.damage = 100;
+            Item.damage = 140;
             Item.height = 10;
             Item.width = 34;
             Item.knockBack = 0.1f;
@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Bolt3Tome>());
             recipe.AddIngredient(ItemID.SoulofMight, 3);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 85000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 60000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

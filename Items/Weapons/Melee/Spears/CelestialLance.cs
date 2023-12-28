@@ -58,7 +58,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 20);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
             recipe.AddIngredient(ItemID.FallenStar, 20);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 240000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 170000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

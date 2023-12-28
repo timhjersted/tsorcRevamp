@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 12;
             Item.useTime = 12;
-            Item.damage = 106;
+            Item.damage = 150;
             Item.knockBack = 8;
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item21;
@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             recipe.AddIngredient(ModContent.ItemType<FreezeBolt2>(), 1);
             //recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>(), 1);
             recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 9);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

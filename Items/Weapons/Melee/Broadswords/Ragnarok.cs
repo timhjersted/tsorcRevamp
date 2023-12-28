@@ -41,5 +41,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 modifiers.ArmorPenetration += ArmorPenetration;
             }
         }
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.BetsysCurse, 360);
+        }
     }
 }

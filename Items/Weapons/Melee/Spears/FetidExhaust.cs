@@ -60,7 +60,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<DamagedFlameNozzle>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
             recipe.AddIngredient(ItemID.SoulofSight, 5);
 
             recipe.AddTile(TileID.DemonAltar);

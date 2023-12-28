@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.DaoofPow, 1);
             recipe.AddIngredient(ItemID.MythrilBar, 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

@@ -1854,10 +1854,10 @@
   "style": 1
 }
 {
-  "text": "一个黑暗的冲动迫使你摧毁这些大花朵中的一个…",
+  "text": "一种黑暗的邪念迫使你摧毁这些大花朵中的一个…",
   "tileX": 5833,
   "tileY": 1674,
-  "textWidth": 350,
+  "textWidth": 380,
   "style": 1
 }
 {
@@ -1868,7 +1868,7 @@
   "style": 1
 }
 {
-  "text": "Miakoda告诉你：\u0022这把钥匙可以打开西海底的猩红箱子。 --NEWLINE   --NEWLINE 我听说里面有能抵御熔岩的护符……\u0022",
+  "text": "Miakoda告诉你：\u0022这的钥匙可以打开西海底的猩红箱子。 --NEWLINE   --NEWLINE 我听说里面有能抵御熔岩的护符……\u0022",
   "tileX": 5887,
   "tileY": 1781,
   "textWidth": 420,

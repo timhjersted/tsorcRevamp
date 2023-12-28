@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<MeteorShower>());
             recipe.AddIngredient(ItemID.SoulofMight, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 45000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

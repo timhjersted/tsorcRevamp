@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             recipe.AddIngredient(ItemID.ChlorophytePartisan, 1);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
             recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 160000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

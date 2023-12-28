@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.FallenStar, 11);
             recipe.AddIngredient(ItemID.SoulofSight, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
