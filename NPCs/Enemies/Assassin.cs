@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.ArcheryPotion, 25));
-            npcLoot.Add(ItemDropRule.Common(ItemID.FlaskofFire, 25));
+            npcLoot.Add(ItemDropRule.Common(ItemID.FlaskofCursedFlames, 25));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 30));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 36));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 28));

@@ -78,7 +78,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
                 shadowPacket.Write(target.whoAmI);
                 shadowPacket.Send();
             }
-            target.AddBuff(BuffID.Ichor, 30 * 60);
+            target.AddBuff(BuffID.BetsysCurse, 30 * 60);
 
         }
     }

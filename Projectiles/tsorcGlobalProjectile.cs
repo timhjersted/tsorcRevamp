@@ -634,20 +634,30 @@ namespace tsorcRevamp.Projectiles
         {
             if (projectile.type == ProjectileID.Fireball)
             {
-                int Difficulty = 1 + (Main.expertMode ? 1 : 0) + (Main.masterMode ? 1 : 0);
-                Vector2 Vel = Main.rand.NextVector2CircularEdge(20, 20);
-                Projectile Fireball1 = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity, ModContent.ProjectileType<SmallGolemFireball>(), projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
-                Projectile Fireball2 = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity, ModContent.ProjectileType<SmallGolemFireball>(), projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
-                Fireball1.velocity += Vel;
-                Fireball2.velocity -= Vel;
-                NPC Corite = NPC.NewNPCDirect(NPC.GetSource_NaturalSpawn(), projectile.Center, NPCID.SolarCorite);
+                for (int i = 0; i < Main.npc.Length; i++)
+                {
+                    if (Main.npc[i].active && Main.npc[i].type == NPCID.Golem)
+                    {
+                        int Difficulty = 1 + (Main.expertMode ? 1 : 0) + (Main.masterMode ? 1 : 0);
+                        Vector2 Vel = Main.rand.NextVector2CircularEdge(20, 20);
+                        Projectile Fireball1 = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity, ModContent.ProjectileType<SmallGolemFireball>(), projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
+                        Projectile Fireball2 = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity, ModContent.ProjectileType<SmallGolemFireball>(), projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
+                        Fireball1.velocity += Vel;
+                        Fireball2.velocity -= Vel;
+                        if (NPC.CountNPCS(NPCID.SolarCorite) < 3)
+                        {
+                            NPC Corite = NPC.NewNPCDirect(NPC.GetSource_NaturalSpawn(), projectile.Center, NPCID.SolarCorite);
 
-                Corite.lifeMax = 200 * Difficulty;
-                Corite.life = Corite.lifeMax;
+                            Corite.lifeMax = 125 * Difficulty; //main problem is too many of them spawned at one time
+                            Corite.life = Corite.lifeMax;
+                            Corite.knockBackResist = 0.3f;
 
-                Corite.damage = 60 * Difficulty;
+                            Corite.damage = 60 * Difficulty;
 
-                Corite.value = 100 * Difficulty;
+                            Corite.value = 100 * Difficulty;
+                        }
+                    }
+                }               
             }
             if (projectile.friendly && !projectile.hostile)
             {

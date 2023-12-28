@@ -51,6 +51,12 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 30;
             }
 
+            //Golem items
+            if (item.type == ItemID.Stynger)
+            {
+                item.damage = 55; //vanilla 45
+            }
+
             //Lunar items
             if (item.type == ItemID.Phantasm)
             {

@@ -102,7 +102,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Axes.GigantAxe>(), 10));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.CrimsonPotion>(), 2));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.StrengthPotion>(), 4));
-            npcLoot.Add(ItemDropRule.Common(ItemID.FlaskofFire));
+            npcLoot.Add(ItemDropRule.Common(ItemID.FlaskofVenom));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.ShockwavePotion>(), 2));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 4));
             npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 3));

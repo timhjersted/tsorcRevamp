@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles
             }
             if (Main.rand.NextBool(10))
             {
-                target.AddBuff(BuffID.Ichor, 1200);
+                target.AddBuff(BuffID.BetsysCurse, 1200);
             }
 
         }

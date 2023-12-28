@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 35));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BattlefrontPotion>(), 40));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 26));
-            npcLoot.Add(ItemDropRule.Common(ItemID.FlaskofFire, 5));
+            npcLoot.Add(ItemDropRule.Common(ItemID.FlaskofNanites, 5));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 26));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 24));
             //npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.BandOfCosmicPower>(), 20));

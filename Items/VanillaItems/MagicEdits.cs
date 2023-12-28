@@ -51,6 +51,23 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.damage = 50;
             }
+            if (item.type == ItemID.LeafBlower)
+            {
+                item.damage = 58; //vanilla 48
+            }
+            if (item.type == ItemID.NettleBurst)
+            {
+                item.damage = 40; //vanilla 35
+            }
+            if (item.type == ItemID.WaspGun)
+            {
+                item.damage = 42; //vanilla 31, with HiveBackpack is 36, anyonne relly use HiveBackpack post-Plantera?
+            }
+            if (item.type == ItemID.HeatRay)
+            {
+                item.damage = 110; //vanilla 90
+                item.useTime = 20; //vanilla 24
+            }
 
             //Lunar items
             if (item.type == ItemID.NebulaBlaze)

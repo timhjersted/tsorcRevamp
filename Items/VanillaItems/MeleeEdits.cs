@@ -240,6 +240,10 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.mana = 25;
             }
+            if (item.type == ItemID.GolemFist)
+            {
+                item.damage = 125; //vanilla 90
+            }
         }
 
         public static void SetMeleeSlashColor(Item item)
