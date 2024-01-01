@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Summon;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
@@ -17,11 +18,11 @@ namespace tsorcRevamp.Items.Weapons.Summon
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 3;
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 4;
         }
         public override void SetDefaults()
         {
-            Item.damage = 20;
+            Item.damage = 400;
             Item.knockBack = 3f;
             Item.mana = 10;
             Item.width = 32;
@@ -32,7 +33,6 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.value = Item.buyPrice(0, 40, 0, 0);
             Item.UseSound = SoundID.Item44;
             Item.rare = ItemRarityID.Purple;
-
 
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
@@ -52,8 +52,11 @@ namespace tsorcRevamp.Items.Weapons.Summon
             player.AddBuff(Item.buffType, 2);
 
             // Minions have to be spawned manually, then have originalDamage assigned to the damage of the summon item
-            var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
-            projectile.originalDamage = Item.damage;
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<SamuraiBeetle>()] < 1)
+            {
+                var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
+                projectile.originalDamage = Item.damage;
+            }
 
             // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
             return false;

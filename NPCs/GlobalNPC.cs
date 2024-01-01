@@ -78,6 +78,7 @@ namespace tsorcRevamp.NPCs
         public bool markedByMorningStar;
         public bool markedByDarkHarvest;
         public bool markedByKaleidoscope;
+        public bool Insane;
 
         public float CrystalNunchakuStacks = 10;
         public bool CrystalNunchakuProc = false;
@@ -286,7 +287,7 @@ namespace tsorcRevamp.NPCs
             Scorched = false;
             Shocked = false;
             Sunburnt = false;
-
+            Insane = false;
         }
 
         public override bool PreAI(NPC npc)

@@ -13,6 +13,7 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
             // DisplayName.SetDefault("Sunset Quasar");
             Main.projPet[Projectile.type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
+            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
         }
 
         public override void SetDefaults()

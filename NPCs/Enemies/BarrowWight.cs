@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Items.Weapons.Throwing;
 using static tsorcRevamp.oSpawnHelper;

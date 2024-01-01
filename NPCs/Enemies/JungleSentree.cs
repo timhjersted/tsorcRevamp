@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
@@ -434,10 +436,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.RichMahogany, 1, 3, 5));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 1, 3, 5));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 5));
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Potions.GreenBlossom>()));
+            npcLoot.Add(ItemDropRule.Common(ItemID.RichMahogany, 1, 3, 5));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 1, 3, 5));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 5));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.GreenBlossom>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.GreenBlossom>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<LivingLog>(), 50, 1, 2));
         }
     }
 }

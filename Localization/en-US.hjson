@@ -7579,7 +7579,7 @@ Mods: {
 				Tooltip: ""
 			}
 
-			WorldEnder: {
+			WorldEnderItem: {
 				DisplayName: World Ender
 				Tooltip: ""
 			}
@@ -7621,6 +7621,21 @@ Mods: {
 					It seems as though Pinwheel held this to prevent
 					the necklace it wore from releasing its full power
 					'''
+			}
+
+			LivingLog: {
+				DisplayName: Living Log
+				Tooltip: ""
+			}
+
+			NightmareFuel: {
+				DisplayName: Nightmare Fuel
+				Tooltip: ""
+			}
+
+			DarkSword: {
+				DisplayName: Dark Sword
+				Tooltip: ""
 			}
 		}
 
@@ -8502,6 +8517,21 @@ Mods: {
 				DisplayName: Awestruck Debuff
 				Description: Mods.tsorcRevamp.Buffs.AwestruckDebuff.Description
 			}
+
+			TerrorbeakBuff: {
+				DisplayName: Terrorbeak Buff
+				Description: Mods.tsorcRevamp.Buffs.TerrorbeakBuff.Description
+			}
+
+			WorldEnderTimer: {
+				DisplayName: World Ender Timer
+				Description: Mods.tsorcRevamp.Buffs.WorldEnderTimer.Description
+			}
+
+			Insanity: {
+				DisplayName: Insanity
+				Description: Mods.tsorcRevamp.Buffs.Insanity.Description
+			}
 		}
 
 		Projectiles: {
@@ -9107,6 +9137,10 @@ Mods: {
 			FetidExhaustProjectile.DisplayName: Fetid Exhaust Projectile
 			ShatteredMoonlightProjectile.DisplayName: Shattered Moonlight Projectile
 			SmallGolemFireball.DisplayName: Small Golem Fireball
+			TerrorbeakProjectile.DisplayName: Terrorbeak Projectile
+			WorldEnderSwordSwing1.DisplayName: World Ender Sword Swing1
+			WorldEnderSwordSwing2.DisplayName: World Ender Sword Swing2
+			WorldEnderSwordSwing3.DisplayName: World Ender Sword Swing3
 		}
 
 		NPCs: {

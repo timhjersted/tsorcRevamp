@@ -4,7 +4,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs.Weapons.Melee
+namespace tsorcRevamp.Buffs.Runeterra.Melee
 {
     public class WorldEnderCooldown : ModBuff
     {

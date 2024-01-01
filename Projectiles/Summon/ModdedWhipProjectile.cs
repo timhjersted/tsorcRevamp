@@ -8,6 +8,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash;
 
 namespace tsorcRevamp.Projectiles.Summon
 {
@@ -170,7 +171,10 @@ namespace tsorcRevamp.Projectiles.Summon
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(WhipDebuffId, (int)(WhipDebuffDuration * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
-            Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
+            if (Projectile.type != ModContent.ProjectileType<PolarisLeashProjectile>())
+            {
+                Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
+            }
             Projectile.damage = (int)(Projectile.damage * WhipMultihitPenalty); // Multihit penalty. Decrease the damage the more enemies the whip hits.
             CustomOnHitNPC(target, hit, damageDone);
         }

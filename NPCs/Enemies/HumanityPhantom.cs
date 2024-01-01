@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.NPCs.Enemies
 {

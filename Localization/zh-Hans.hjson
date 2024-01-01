@@ -7580,7 +7580,7 @@ Mods: {
 				Tooltip: ""
 			}
 
-			WorldEnder: {
+			WorldEnderItem: {
 				DisplayName: 末世之剑
 				Tooltip: ""
 			}
@@ -7622,6 +7622,21 @@ Mods: {
 					看起来三焱家族戴着这个
 					是为了防止它释放出全部的力量
 					'''
+			}
+
+			LivingLog: {
+				// DisplayName: Living Log
+				// Tooltip: ""
+			}
+
+			NightmareFuel: {
+				// DisplayName: Nightmare Fuel
+				// Tooltip: ""
+			}
+
+			DarkSword: {
+				// DisplayName: Dark Sword
+				// Tooltip: ""
 			}
 		}
 
@@ -8503,6 +8518,21 @@ Mods: {
 				DisplayName: 惶恐减益
 				Description: Mods.tsorcRevamp.Buffs.AwestruckDebuff.Description
 			}
+
+			TerrorbeakBuff: {
+				// DisplayName: Terrorbeak Buff
+				// Description: Mods.tsorcRevamp.Buffs.TerrorbeakBuff.Description
+			}
+
+			WorldEnderTimer: {
+				// DisplayName: World Ender Timer
+				// Description: Mods.tsorcRevamp.Buffs.WorldEnderTimer.Description
+			}
+
+			Insanity: {
+				// DisplayName: Insanity
+				// Description: Mods.tsorcRevamp.Buffs.Insanity.Description
+			}
 		}
 
 		Projectiles: {
@@ -9108,6 +9138,10 @@ Mods: {
 			FetidExhaustProjectile.DisplayName: 腐败吐息
 			ShatteredMoonlightProjectile.DisplayName: 破碎月光
 			SmallGolemFireball.DisplayName: 石巨人小火球
+			// TerrorbeakProjectile.DisplayName: Terrorbeak Projectile
+			// WorldEnderSwordSwing1.DisplayName: World Ender Sword Swing1
+			// WorldEnderSwordSwing2.DisplayName: World Ender Sword Swing2
+			// WorldEnderSwordSwing3.DisplayName: World Ender Sword Swing3
 		}
 
 		NPCs: {
