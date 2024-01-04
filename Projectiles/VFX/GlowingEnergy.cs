@@ -29,12 +29,14 @@ namespace tsorcRevamp.Projectiles.VFX
         float effectTimer = 0;
         float effectLimit = 200;
         float effectSpeed = 2;
+        float spawnRotation = MathHelper.PiOver2;
         public override void AI()
         {
-            Projectile.Center = Main.npc[(int)Projectile.ai[0]].Center;
+            Projectile.Center = Main.npc[(int)Projectile.ai[0]].Center - new Vector2(20, 0);
             if (Main.GameUpdateCount % 4 == 0 && Main.netMode != NetmodeID.MultiplayerClient && effectTimer < 100)
             {
-                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Main.npc[(int)Projectile.ai[0]].velocity, ModContent.ProjectileType<Projectiles.VFX.EnergyGathering>(), 0, 0, Main.myPlayer, Projectile.ai[0], Projectile.ai[1]);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center + new Vector2(0, 200).RotatedBy(spawnRotation), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.EnergyGathering>(), 0, 0, Main.myPlayer, Projectile.ai[0], Projectile.ai[1]);
+                spawnRotation += MathHelper.PiOver4;
             }
             Projectile.timeLeft++;
             effectTimer++;

@@ -74,19 +74,18 @@ namespace tsorcRevamp.Projectiles.VFX
                     //The rage fight is already chaotic as fuck, these lessen that very slightly
                     radius = 200;
                     trailWidth = 35;
-                    Projectile.timeLeft = 120;
+                    Projectile.timeLeft = 160;
                     speed = 1;
                 }
                 if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.TheSorrow>())
                 {
                     radius = 200;
                     trailWidth = 35;
-                    Projectile.timeLeft = 120;
+                    Projectile.timeLeft = 160;
                     speed = 0.75f;
                 }
                 realWidth = trailWidth;
                 trailWidth = 0;
-                Projectile.Center += Main.rand.NextVector2CircularEdge(radius, radius);
                 Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, targetPoint, Main.rand.NextFloat(20, 40)).RotatedBy(MathHelper.Pi / 3f);
                 initialized = true;
             }

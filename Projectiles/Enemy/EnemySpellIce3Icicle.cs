@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -21,6 +22,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
+            Lighting.AddLight(Projectile.Center, TorchID.Ice);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
         }
     }

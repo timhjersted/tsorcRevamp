@@ -50,6 +50,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
                 Projectile.rotation = Projectile.velocity.ToRotation();
                 Projectile.velocity = Vector2.Zero;
                 Projectile.timeLeft = (int)Projectile.ai[0] + 15;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 400, 30);
+                }
                 initialized = true;
             }
             if (hostIndex != null)
