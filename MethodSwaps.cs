@@ -2222,6 +2222,8 @@ namespace tsorcRevamp
                     CheckUseBuffPotion(PotionBagItems[i], player);
                 }
             }
+
+            CheckUseWellFed(player, PotionBagItems);
         }
 
         private static void CheckUseBuffPotion(Item item, Player player)
@@ -2237,23 +2239,35 @@ namespace tsorcRevamp
                 return;
             }
 
+            //Do well fed at the very end, so only one gets used
+            if(item.buffType == BuffID.WellFed || item.buffType == BuffID.WellFed2 || item.buffType == BuffID.WellFed3)
+            {
+                return;
+            }
+
+            //No healing items via quick buff, those are all the domain of quick heal (both to prevent conflicts and prevent players accidentally locking out their potion sickness with honey)
+            if(item.healLife > 0)
+            {
+                return;
+            }
+
             int buffType = item.buffType;
             bool validItem = ItemLoader.CanUseItem(item, player);
 
             //Block using finite or inconvienent potions on accident
             if (item.type == ItemID.ObsidianSkinPotion && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                validItem = false;
+                return;
             }
 
             if (item.type == ItemID.WaterWalkingPotion && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                validItem = false;
+                return;
             }
 
             if (item.type == ModContent.ItemType<Items.Potions.HolyWarElixir>())
             {
-                validItem = false;
+                return;
             }
 
             //No using potions that are already active
@@ -2261,23 +2275,19 @@ namespace tsorcRevamp
             {
                 if (buffType == BuffID.FairyBlue && (player.buffType[j] == BuffID.FairyBlue || player.buffType[j] == BuffID.FairyRed || player.buffType[j] == BuffID.FairyGreen))
                 {
-                    validItem = false;
-                    break;
+                    return;
                 }
                 if (player.buffType[j] == buffType)
                 {
-                    validItem = false;
-                    break;
+                    return;
                 }
                 if (Main.meleeBuff[buffType] && Main.meleeBuff[player.buffType[j]])
                 {
-                    validItem = false;
-                    break;
+                    return;
                 }
                 if (player.buffImmune[buffType])
                 {
-                    validItem = false;
-                    break;
+                    return;
                 }
             }
 
@@ -2286,28 +2296,15 @@ namespace tsorcRevamp
                 for (int k = 0; k < Player.MaxBuffs; k++)
                 {
                     if (Main.lightPet[player.buffType[k]] && Main.lightPet[item.buffType])
-                        validItem = false;
+                        return;
 
                     if (Main.vanityPet[player.buffType[k]] && Main.vanityPet[item.buffType])
-                        validItem = false;
+                        return;
                 }
             }
 
             if (player.whoAmI == Main.myPlayer && item.type == ItemID.Carrot && !Main.runningCollectorsEdition)
-                validItem = false;
-
-            if (buffType == BuffID.FairyBlue)
-            {
-                buffType = Main.rand.Next(3);
-                if (buffType == 0)
-                    buffType = BuffID.FairyBlue;
-
-                if (buffType == 1)
-                    buffType = BuffID.FairyRed;
-
-                if (buffType == 2)
-                    buffType = BuffID.FairyGreen;
-            }
+                return;
 
             if (validItem)
             {
@@ -2411,6 +2408,139 @@ namespace tsorcRevamp
             }
         }
 
+        public static void CheckUseWellFed(Player player, Item[] PotionBagItems)
+        {
+            bool bestWellFedInPotionBag = false;
+            int bestWellFedIndex = -1;
+            int bestWellFedLevel = 0;
+            int bestWellFedTime = 0;
+
+            //Don't go past max buffs
+            if (player.CountBuffs() == Player.MaxBuffs)
+                return;
+
+
+
+            if (player.HasBuff(BuffID.WellFed) || player.HasBuff(BuffID.WellFed2) || player.HasBuff(BuffID.WellFed3))
+            {
+                return;
+            }
+
+            //Don't run if the player is immune to well fed (ex. due to having a permanent one)
+            if (player.buffImmune[BuffID.WellFed] || player.buffImmune[BuffID.WellFed2] || player.buffImmune[BuffID.WellFed3])
+            {
+                return;
+            }
+
+            //Check inventory first
+            for (int i = 0; i < 58; i++)
+            {
+                //If the player can't use the item (for whatever reason) skip it
+                if(!ItemLoader.CanUseItem(player.inventory[i], player))
+                {
+                    continue;
+                }
+
+                if (player.inventory[i].stack <= 0 || player.inventory[i].type <= 0)
+                    continue;
+
+                //Get its well fed level
+                int itemWellFedLevel = GetWellFedLevel(player.inventory[i]);
+
+                if(itemWellFedLevel == 0)
+                {
+                    continue;
+                }
+
+                //If it's a better level than the previous best item, make it the new best item
+                if (itemWellFedLevel > bestWellFedLevel)
+                {
+                    bestWellFedIndex = i;
+                    bestWellFedLevel = itemWellFedLevel;
+                    bestWellFedTime = player.inventory[i].buffTime;
+                    continue;
+                }
+
+                //If it has a longer timer than the previous best item, make it the new best item
+                if(itemWellFedLevel == bestWellFedLevel && player.inventory[i].buffTime > bestWellFedTime)
+                {
+                    bestWellFedIndex = i;
+                    bestWellFedLevel = itemWellFedLevel;
+                    bestWellFedTime = player.inventory[i].buffTime;
+                }
+            }
+
+            //Then repeat for the potion bag
+            for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
+            {
+                //If the player can't use the item (for whatever reason) skip it
+                if (!ItemLoader.CanUseItem(PotionBagItems[i], player))
+                {
+                    continue;
+                }
+
+                if (PotionBagItems[i].stack <= 0 || PotionBagItems[i].type <= 0)
+                    continue;
+
+                int itemWellFedLevel = GetWellFedLevel(PotionBagItems[i]);
+
+                if (itemWellFedLevel == 0)
+                {
+                    continue;
+                }
+
+                //If it's a better level than the previous best item, make it the new best item
+                if (itemWellFedLevel > bestWellFedLevel)
+                {
+                    bestWellFedInPotionBag = true;
+                    bestWellFedIndex = i;
+                    bestWellFedLevel = itemWellFedLevel;
+                    bestWellFedTime = PotionBagItems[i].buffTime;
+                    continue;
+                }
+
+                //If it has a longer timer than the previous best item, make it the new best item
+                if (itemWellFedLevel == bestWellFedLevel && PotionBagItems[i].buffTime > bestWellFedTime)
+                {
+                    bestWellFedInPotionBag = true;
+                    bestWellFedIndex = i;
+                    bestWellFedLevel = itemWellFedLevel;
+                    bestWellFedTime = PotionBagItems[i].buffTime;
+                }
+            }
+
+            //Use the best selected well fed item
+            if(bestWellFedIndex != -1)
+            {
+                if(!bestWellFedInPotionBag)
+                {
+                    UsePotion(player.inventory[bestWellFedIndex], player);
+                }
+                else
+                {
+                    UsePotion(PotionBagItems[bestWellFedIndex], player);
+                }
+            }
+        }
+
+        public static int GetWellFedLevel(Item item)
+        {
+            if(item.buffType == BuffID.WellFed)
+            {
+                return 1;
+            }
+            if (item.buffType == BuffID.WellFed2)
+            {
+                return 2;
+            }
+            if (item.buffType == BuffID.WellFed3)
+            {
+                return 3;
+            }
+
+            return 0;
+        }
+
         //Generic "use item" code. Since items can be any or all of the 3 categories at once, self handles all of it.
         private static void UsePotion(Item item, Player player)
         {
@@ -2460,18 +2590,32 @@ namespace tsorcRevamp
                     player.ManaEffect(SupremeManaPotion.Mana);
             }
 
-            if (item.buffType > 0)
+            int buffType = item.buffType;
+
+            if (buffType == BuffID.FairyBlue)
+            {
+                buffType = Main.rand.Next(3);
+                if (buffType == 0)
+                    buffType = BuffID.FairyBlue;
+
+                if (buffType == 1)
+                    buffType = BuffID.FairyRed;
+
+                if (buffType == 2)
+                    buffType = BuffID.FairyGreen;
+            }
+
+            if (buffType > 0)
             {
                 int buffTime = item.buffTime;
                 if (buffTime == 0)
                 {
                     buffTime = 3600;
                 }
-                player.AddBuff(item.buffType, buffTime);
-            }
+                player.AddBuff(buffType, buffTime);
+            }            
 
-
-            if (ItemLoader.ConsumeItem(item, player))
+            if (ItemLoader.ConsumeItem(item, player) && item.consumable)
                 item.stack--;
 
             if (item.stack <= 0)
