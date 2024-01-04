@@ -163,6 +163,28 @@ namespace tsorcRevamp.Projectiles.VFX
         }
 
         /// <summary>
+        /// If NPCSource, and this is not -1, then the trail will draw relative to this NPC
+        /// </summary>
+        public int RelativeToNPC = -1;
+
+        public Vector2 RelativeCenter
+        {            
+            get
+            {
+                if (ScreenSpace)
+                {
+                    return HostEntity.Center - Main.screenPosition;
+                }
+                if(RelativeToNPC > -1)
+                {
+                    return HostEntity.Center - Main.npc[RelativeToNPC].Center;
+                }
+
+                return HostEntity.Center;
+            }
+        }
+
+        /// <summary>
         /// A reference to the host entity
         /// </summary>
         public virtual Entity HostEntity
@@ -236,29 +258,16 @@ namespace tsorcRevamp.Projectiles.VFX
                 //Don't add new trail segments if it has not travelled far enough
                 if (Vector2.Distance(lastPosition, HostEntity.Center) > newPointDistance)
                 {
+                    //Should this be RelativeCenter too? Maybe? Hmm.
                     lastPosition = HostEntity.Center;
-                    if (!ScreenSpace)
-                    {
-                        trailPositions.Add(HostEntity.Center);
-                    }
-                    else
-                    {
-                        trailPositions.Add(HostEntity.Center - Main.screenPosition);
-                    }
+                    trailPositions.Add(RelativeCenter);
 
                     trailRotations.Add(HostEntity.velocity.ToRotation());
                 }
 
                 if (trailPositions.Count > 2)
                 {
-                    if (!ScreenSpace)
-                    {
-                        trailPositions[trailPositions.Count - 1] = HostEntity.Center;
-                    }
-                    else
-                    {
-                        trailPositions[trailPositions.Count - 1] = HostEntity.Center - Main.screenPosition;
-                    }
+                    trailPositions[trailPositions.Count - 1] = RelativeCenter;
 
                     trailRotations[trailRotations.Count - 1] = HostEntity.velocity.ToRotation();
 
@@ -365,16 +374,8 @@ namespace tsorcRevamp.Projectiles.VFX
                     trailPositions = new List<Vector2>();
                     trailRotations = new List<float>();
 
-                    if (!ScreenSpace)
-                    {
-                        trailPositions.Add(HostEntity.Center + hostOffset);
-                        trailPositions.Add(HostEntity.Center + hostOffset);
-                    }
-                    else
-                    {
-                        trailPositions.Add(HostEntity.Center + hostOffset - Main.screenPosition);
-                        trailPositions.Add(HostEntity.Center + hostOffset - Main.screenPosition);
-                    }
+                    trailPositions.Add(RelativeCenter + hostOffset);
+                    trailPositions.Add(RelativeCenter + hostOffset);
 
                     trailRotations.Add(HostEntity.velocity.ToRotation());
                     trailRotations.Add(HostEntity.velocity.ToRotation());
@@ -544,7 +545,10 @@ namespace tsorcRevamp.Projectiles.VFX
             {
                 offset = Vector2.Zero;
             }
-
+            if(RelativeToNPC > -1)
+            {
+                offset += Main.npc[RelativeToNPC].Center;
+            }
             /*
             VertexPositionColor[] vertices = new VertexPositionColor[3];
             vertices[0] = new VertexPositionColor(new Vector3(0, 1, 0), Color.Red);
@@ -637,6 +641,10 @@ namespace tsorcRevamp.Projectiles.VFX
             if (ScreenSpace)
             {
                 offset = Vector2.Zero;
+            }
+            if (RelativeToNPC > -1)
+            {
+                offset += Main.npc[RelativeToNPC].Center;
             }
 
             //Add an extra vertex before the very first one, to make the end square
