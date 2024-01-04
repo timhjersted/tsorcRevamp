@@ -12,8 +12,9 @@ namespace tsorcRevamp.Items.Armors.Summon
         public static float WhipDmg = 25f;
         public static float WhipRange = 30f;
         public static float SummonTagDuration = 33f;
+        public static float CritChance = 10f;
         public static float AtkSpeed = 12f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(WhipDmg, WhipRange, AtkSpeed, tsorcRevampPlayer.MythrilOcrichalcumCritDmg, SummonTagDuration);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(WhipDmg, WhipRange, AtkSpeed, tsorcRevampPlayer.MythrilOcrichalcumCritDmg, SummonTagDuration, CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -29,6 +30,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         {
             player.GetDamage(DamageClass.SummonMeleeSpeed) += WhipDmg / 100f;
             player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration += SummonTagDuration / 100f;
+            player.GetCritChance(DamageClass.Summon) += CritChance;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {

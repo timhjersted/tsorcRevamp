@@ -16,6 +16,7 @@ using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Items.Vanity;
 using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Magic.Tomes;
+using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 
 namespace tsorcRevamp.Items.BossBags
@@ -523,6 +524,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.DragonStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HellkiteStone>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<WorldEnderItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Spears.HiRyuuSpear>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 22, 28));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 5, 10));

@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -15,6 +16,10 @@ namespace tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs
         public override void Update(NPC npc, ref int buffIndex)
         {
             npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Insane = true;
+            if (Main.GameUpdateCount % 5 == 0)
+            {
+                Dust.NewDust(npc.Center, 10, 10, DustID.Asphalt, newColor: Color.Black, Scale: 1.25f);
+            }
         }
     }
 }

@@ -10,7 +10,8 @@ namespace tsorcRevamp.Items.Armors.Summon
     public class AncientDemonHelmet : ModItem
     {
         public static float Dmg = 22f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
+        public static float CritChance = 8f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -27,6 +28,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         public override void UpdateEquip(Player player)
         {
             player.GetDamage(DamageClass.Summon) += Dmg / 100f;
+            player.GetCritChance(DamageClass.Summon) += CritChance;
         }
 
 

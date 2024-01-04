@@ -54,6 +54,7 @@ using tsorcRevamp.Projectiles.Summon.Archer;
 using tsorcRevamp.Projectiles.Summon.NullSprite;
 using tsorcRevamp.Projectiles.Summon.Phoenix;
 using tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles;
+using tsorcRevamp.Projectiles.Summon.SamuraiBeetle;
 using tsorcRevamp.Projectiles.Summon.SunsetQuasar;
 using tsorcRevamp.Projectiles.Summon.Tetsujin;
 using tsorcRevamp.Tiles;
@@ -1500,7 +1501,7 @@ namespace tsorcRevamp
                     "AddMinionInfo",
                     ModContent.ItemType<BeetleIdol>(),
                     ModContent.BuffType<SamuraiBeetleBuff>(),
-                    ModContent.ProjectileType<SamuraiBeetle>(),
+                    ModContent.ProjectileType<SamuraiBeetleProjectile>(),
                     4f
                     );
                 summonersAssociation.Call(

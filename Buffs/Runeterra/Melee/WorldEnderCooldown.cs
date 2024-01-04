@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra.Melee
 {
@@ -18,7 +19,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
         {
             if (player.buffTime[buffIndex] == 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/ThrustReady") with { Volume = 0.75f });
+                SoundEngine.PlaySound(new SoundStyle(WorldEnderItem.SoundPath + "Ready") with { Volume = WorldEnderItem.SoundVolume });
             }
         }
     }

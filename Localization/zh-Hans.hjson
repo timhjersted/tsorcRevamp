@@ -7583,6 +7583,13 @@ Mods: {
 			WorldEnderItem: {
 				DisplayName: 末世之剑
 				Tooltip: ""
+				/* Details:
+					'''
+					[c/DC143C:Sweetspot] bonus damage is based on your critical strike chance
+					[c/8B0000:Sword Strike] cooldown scales down with melee speed
+					Each [c/8B0000:Sword Strike] increases in damage and cooldown
+					Normal sword swing speed also scales with melee speed as usual and can crit
+					''' */
 			}
 
 			LichBone: {
@@ -7636,7 +7643,13 @@ Mods: {
 
 			DarkSword: {
 				// DisplayName: Dark Sword
-				// Tooltip: ""
+				/* Tooltip:
+					'''
+					Left Click to swing like a sword and apply Insanity on-hit
+					<right> to summon Terrorbeaks to fight for you
+					Terrorbeaks only target insane enemies
+					Crits are based on summon critical strike chance
+					''' */
 			}
 		}
 
@@ -8526,12 +8539,17 @@ Mods: {
 
 			WorldEnderTimer: {
 				// DisplayName: World Ender Timer
-				// Description: Mods.tsorcRevamp.Buffs.WorldEnderTimer.Description
+				// Description: If this runs out, the World Ender Sword Strikes will go on cooldown
 			}
 
 			Insanity: {
 				// DisplayName: Insanity
 				// Description: Mods.tsorcRevamp.Buffs.Insanity.Description
+			}
+
+			CCShock: {
+				// DisplayName: C C Shock
+				// Description: Mods.tsorcRevamp.Buffs.CCShock.Description
 			}
 		}
 
@@ -9142,6 +9160,9 @@ Mods: {
 			// WorldEnderSwordSwing1.DisplayName: World Ender Sword Swing1
 			// WorldEnderSwordSwing2.DisplayName: World Ender Sword Swing2
 			// WorldEnderSwordSwing3.DisplayName: World Ender Sword Swing3
+			// SamuraiBeetleTrail.DisplayName: Samurai Beetle Trail
+			// SamuraiBeetleLightning.DisplayName: Samurai Beetle Lightning
+			// SamuraiBeetleProjectile.DisplayName: Samurai Beetle Projectile
 		}
 
 		NPCs: {

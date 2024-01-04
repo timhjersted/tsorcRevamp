@@ -1,16 +1,18 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Projectiles.Summon.Archer;
+using tsorcRevamp.Projectiles.Throwing;
 
-namespace tsorcRevamp.Projectiles.Summon
+namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
 {
-    public class SamuraiBeetle : ModProjectile
+    public class SamuraiBeetleProjectile : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -33,7 +35,6 @@ namespace tsorcRevamp.Projectiles.Summon
             Projectile.minion = true;
             Projectile.minionSlots = 1f;
             Projectile.friendly = true;
-            //Projectile.decidesManualFallThrough = true;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 100;
             Projectile.tileCollide = false;
@@ -41,6 +42,7 @@ namespace tsorcRevamp.Projectiles.Summon
             DrawOffsetX = -31;
             DrawOriginOffsetY = -30;
         }
+        NPC ActualTarget;
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
@@ -806,6 +808,7 @@ namespace tsorcRevamp.Projectiles.Summon
                     distanceFromTarget = between;
                     targetCenter = npc.Center;
                     foundTarget = true;
+                    ActualTarget = npc;
                 }
             }
 
@@ -831,6 +834,7 @@ namespace tsorcRevamp.Projectiles.Summon
                             distanceFromTarget = between;
                             targetCenter = npc.Center;
                             foundTarget = true;
+                            ActualTarget = npc;
                         }
                     }
                 }
@@ -873,15 +877,15 @@ namespace tsorcRevamp.Projectiles.Summon
                         {
                             CircleVector = Main.rand.NextVector2CircularEdge(circleSize, circleSize);
 
-                            if (Projectile.Distance(CircleVector + targetCenter) > 250)
+                            if (Projectile.Distance(CircleVector + targetCenter) > 400)
                             {
                                 break;
                             }
                         }
                         RandomMovementSet = true;
                     }
-                    Projectile.velocity = Projectile.DirectionTo(CircleVector + targetCenter) * (CircleVector + targetCenter).Distance(Projectile.Center) / 60;
-                    Dust.NewDust(CircleVector + targetCenter, 10, 10, DustID.Torch);
+                    Projectile.velocity = Projectile.DirectionTo(CircleVector + targetCenter) * (CircleVector + targetCenter).Distance(Projectile.Center) / 20;
+                    //Dust.NewDust(CircleVector + targetCenter, 10, 10, DustID.Torch);
                 } 
                 else if (distanceFromTarget <= attackRange)
                 {
@@ -891,15 +895,15 @@ namespace tsorcRevamp.Projectiles.Summon
                         {
                             CircleVector = Main.rand.NextVector2CircularEdge(circleSize, circleSize);
 
-                            if (Projectile.Distance(CircleVector + targetCenter) > 250)
+                            if (Projectile.Distance(CircleVector + targetCenter) > 400)
                             {
                                 break;
                             }
                         }
                         RandomMovementSet = true;
                     }
-                    Projectile.velocity = Projectile.DirectionTo(CircleVector + targetCenter) * (CircleVector + targetCenter).Distance(Projectile.Center) / 60;
-                    Dust.NewDust(CircleVector + targetCenter, 10, 10, DustID.Torch);
+                    Projectile.velocity = Projectile.DirectionTo(CircleVector + targetCenter) * (CircleVector + targetCenter).Distance(Projectile.Center) / 20;
+                    //Dust.NewDust(CircleVector + targetCenter, 10, 10, DustID.Torch);
                     switch (ThrustStacks)
                     {
                         case 0:
@@ -937,8 +941,11 @@ namespace tsorcRevamp.Projectiles.Summon
                 }
             }
         }
+        public float FallTimer = 0;
+        public bool ShouldRotate = false;
         private void Attacking (Vector2 targetCenter, Vector2 SunsetQuasarVel)
         {
+            Vector2 Falling = new Vector2(DashVelocity.X / 15, FallTimer / 8.5f);
             if (IsThrusting)
             {
                 Projectile.tileCollide = false;
@@ -953,7 +960,10 @@ namespace tsorcRevamp.Projectiles.Summon
                         }
                     case 1:
                         {
-                            Dust.NewDustDirect(Projectile.Center, 20, 20, DustID.Cloud, DashVelocity.X / 10, DashVelocity.Y / 10, 0, Color.Purple, 2f);
+                            //Dust.NewDustDirect(Projectile.Center, 20, 20, DustID.Cloud, DashVelocity.X / 10, DashVelocity.Y / 10, 0, Color.Purple, 2f);
+                            SpawnTrail();
+                            SoundEngine.PlaySound(SoundID.DoubleJump with { Volume = 1f });
+                            ShouldRotate = true;
                             break;
                         }
                     case int Preparing  when (Preparing > 1 && Preparing < 45):
@@ -963,8 +973,9 @@ namespace tsorcRevamp.Projectiles.Summon
                     case 45:
                         {
                             DashVelocity = Projectile.DirectionTo(targetCenter) * targetCenter.Distance(Projectile.Center) / 5;
-                            Dust.NewDustDirect(Projectile.Center, 20, 20, DustID.Cloud, DashVelocity.X / 10, DashVelocity.Y / 10, 0, Color.Purple, 2f);
+                            //Dust.NewDustDirect(Projectile.Center, 20, 20, DustID.Cloud, DashVelocity.X / 10, DashVelocity.Y / 10, 0, Color.Purple, 2f);
                             Projectile.ResetLocalNPCHitImmunity();
+                            SoundEngine.PlaySound(SoundID.DoubleJump with { Volume = 1f });
                             CanHit = true;
                             break;
                         }
@@ -1006,40 +1017,76 @@ namespace tsorcRevamp.Projectiles.Summon
                     case 52:
                         {
                             Projectile.velocity = DashVelocity;
+                            Projectile.tileCollide = true;
                             break;
                         }
                     case 53:
                         {
                             Projectile.velocity = DashVelocity;
+                            Projectile.tileCollide = true;
                             break;
                         }
                     case 54:
                         {
                             Projectile.velocity = DashVelocity;
+                            Projectile.tileCollide = true;
                             break;
                         }
                     case 55:
                         {
-                            Projectile.velocity = SunsetQuasarVel / 2;
+                            Projectile.velocity = Falling;
+                            Projectile.tileCollide = true;
+                            KillTrail();
+                            if (FallTimer < 100)
+                            {
+                                FallTimer++;
+                            }
                             RandomMovementSet = false;
-                            Dust.NewDustDirect(Projectile.Center, 20, 20, DustID.Cloud, DashVelocity.X / 10, DashVelocity.Y / 10, 0, Color.Purple, 2f);
+                            ShouldRotate = false;
+                            //Dust.NewDustDirect(Projectile.Center, 20, 20, DustID.Cloud, DashVelocity.X / 10, DashVelocity.Y / 10, 0, Color.Purple, 2f);
+                            CanHit = false;
                             break;
                         }
                     case int Finishing when (Finishing >= 56 && Finishing < 120):
                         {
-                            Projectile.velocity = SunsetQuasarVel / 2;
+                            Projectile.velocity = Falling;
+                            Projectile.tileCollide = true;
+                            if (Finishing > 80)
+                            {
+                            }
+                            if (FallTimer < 100)
+                            {
+                                FallTimer++;
+                            }
                             break;
                         }
                     case 120:
                         {
-                            Projectile.velocity = SunsetQuasarVel / 2;
+                            Projectile.velocity = Falling;
+                            Projectile.tileCollide = true;
+                            FallTimer = 0;
                             IsThrusting = false;
                             ThrustProgress = 0;
                             if (ThrustStacks == 2)
                             {
                                 ThrustStacks++;
                             }
-                            CanHit = false;
+                            AttackHit = false;
+                            KillTrail();
+                            break;
+                        }
+                    case >120:
+                        {
+                            Projectile.velocity = Falling;
+                            Projectile.tileCollide = true;
+                            FallTimer = 0;
+                            IsThrusting = false;
+                            ThrustProgress = 0;
+                            if (ThrustStacks == 2)
+                            {
+                                ThrustStacks++;
+                            }
+                            AttackHit = false;
                             break;
                         }
                 }
@@ -1058,7 +1105,10 @@ namespace tsorcRevamp.Projectiles.Summon
                         }
                     case 1:
                         {
-                            Dust.NewDustDirect(Projectile.Center, 20, 20, DustID.Cloud, Projectile.velocity.X / 10, Projectile.velocity.Y / 10, 0, Color.Purple, 2f);
+                            ShouldRotate = true;
+                            SpawnTrail();
+                            SoundEngine.PlaySound(SoundID.DoubleJump with { Volume = 1f });
+                            //Dust.NewDustDirect(Projectile.Center, 20, 20, DustID.Cloud, Projectile.velocity.X / 10, Projectile.velocity.Y / 10, 0, Color.Purple, 2f);
                             break;
                         }
                     case int Preparing when (Preparing > 1 && Preparing < 60):
@@ -1069,6 +1119,7 @@ namespace tsorcRevamp.Projectiles.Summon
                         {
                             DashVelocity = Projectile.DirectionTo(targetCenter) * targetCenter.Distance(Projectile.Center) / 5;
                             Projectile.ResetLocalNPCHitImmunity();
+                            SoundEngine.PlaySound(SoundID.DoubleJump with { Volume = 1f });
                             CanHit = true;
                             break;
                         }
@@ -1110,37 +1161,70 @@ namespace tsorcRevamp.Projectiles.Summon
                     case 67:
                         {
                             Projectile.velocity = DashVelocity;
+                            Projectile.tileCollide = true;
                             break;
                         }
                     case 68:
                         {
                             Projectile.velocity = DashVelocity;
+                            Projectile.tileCollide = true;
                             break;
                         }
                     case 69:
                         {
                             Projectile.velocity = DashVelocity;
+                            Projectile.tileCollide = true;
                             break;
                         }
                     case 70:
                         {
-                            Projectile.velocity = SunsetQuasarVel / 2;
+                            Projectile.velocity = Falling;
+                            KillTrail();
+                            Projectile.tileCollide = true;
+                            if (FallTimer < 80)
+                            {
+                                FallTimer++;
+                            }
                             RandomMovementSet = false;
-                            Dust.NewDust(CircleVector + targetCenter, 10, 10, DustID.Cloud);
+                            ShouldRotate = false;
+                            //Dust.NewDust(CircleVector + targetCenter, 10, 10, DustID.Cloud);
+                            CanHit = false;
                             break;
                         }
                     case int Finishing when (Finishing >= 71 && Finishing < 160):
                         {
-                            Projectile.velocity = SunsetQuasarVel / 2;
+                            Projectile.velocity = Falling;
+                            Projectile.tileCollide = true;
+                            if (Finishing > 100)
+                            {
+                            }
+                            if (FallTimer < 100)
+                            {
+                                FallTimer++;
+                            }
                             break;
                         }
                     case 160:
                         {
-                            Projectile.velocity = SunsetQuasarVel / 2;
+                            Projectile.velocity = Falling;
+                            Projectile.tileCollide = true;
+                            FallTimer = 0;
                             IsSlashing = false;
                             SlashProgress = 0;
-                            CanHit = false;
                             ThrustStacks = 0;
+                            AttackHit = false;
+                            KillTrail();
+                            break;
+                        }
+                    case >160:
+                        {
+                            Projectile.velocity = Falling;
+                            Projectile.tileCollide = true;
+                            FallTimer = 0;
+                            IsSlashing = false;
+                            SlashProgress = 0;
+                            ThrustStacks = 0;
+                            AttackHit = false;
                             break;
                         }
                 }
@@ -1149,15 +1233,30 @@ namespace tsorcRevamp.Projectiles.Summon
         public bool AttackHit = false;
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (IsThrusting && ThrustStacks < 3)
+            if (IsThrusting && ThrustStacks < 3 && !AttackHit)
             {
                 ThrustStacks++;
             }
-            if (IsSlashing)
+            if (IsSlashing && !SlashHit && ActualTarget == target)
             {
+                Vector2 LightningPosition = target.Center + new Vector2(0, -1000);
                 SlashHit = true;
+                Projectile LightningStrike = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), LightningPosition, LightningPosition.DirectionTo(target.Center), ModContent.ProjectileType<SamuraiBeetleLightning>(), Projectile.damage, 0, Projectile.owner);
             }
-            AttackHit = true;
+            AttackHit = true; //so it can't gain multiple thrust stacks by hitting multiple enemies at once
+        }
+        private void SpawnTrail()
+        {
+            Vector2 Position = Projectile.Center;
+            Projectile Trail = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Position, Projectile.velocity, ModContent.ProjectileType<SamuraiBeetleTrail>(), 0, 0, Projectile.owner, Projectile.whoAmI);
+            Projectile.ai[2] = Trail.whoAmI;
+        }
+        private void KillTrail()
+        {
+            if (Main.projectile[(int)Projectile.ai[2]].type == ModContent.ProjectileType<SamuraiBeetleTrail>())
+            {
+                Main.projectile[(int)Projectile.ai[2]].Kill();
+            }
         }
         public int FlightTimer = 0;
         private void Visuals(bool foundTarget, float attackRange, Vector2 targetCenter, bool IsFlying)
@@ -1167,8 +1266,9 @@ namespace tsorcRevamp.Projectiles.Summon
                 if (ThrustProgress > 0)
                 {
                     ThrustProgress++;
-                    if (ThrustProgress == 120)
+                    if (ThrustProgress >= 120)
                     {
+                        KillTrail();
                         ThrustProgress = 0;
                         IsThrusting = false;
                     }
@@ -1176,8 +1276,9 @@ namespace tsorcRevamp.Projectiles.Summon
                 if (SlashProgress > 0)
                 {
                     SlashProgress++;
-                    if (SlashProgress == 120)
+                    if (SlashProgress >= 160)
                     {
+                        KillTrail();
                         SlashProgress = 0;
                         IsSlashing = false;
                     }
@@ -1204,17 +1305,22 @@ namespace tsorcRevamp.Projectiles.Summon
             {
                 switch (ThrustProgress)
                 {
-                    case int FirstFrame when (FirstFrame >= 0 && FirstFrame <= 14):
+                    case int JumpFrames when JumpFrames >= 0 && JumpFrames <= 22:
+                        {
+                            Projectile.frame = ANIM_JUMP_BEGIN - 1 + 4 - (JumpFrames / 8); //first frame
+                            break;
+                        }
+                    case int FirstFrame when (FirstFrame >= 22 && FirstFrame <= 30):
                         {
                             Projectile.frame = ANIM_THRUST_BEGIN - 1 + 0; //first frame
                             break;
                         }
-                    case int SecondFrame when (SecondFrame > 14 && SecondFrame <= 29):
+                    case int SecondFrame when (SecondFrame > 30 && SecondFrame <= 38):
                         {
                             Projectile.frame = ANIM_THRUST_BEGIN - 1 + 1; //second frame
                             break;
                         }
-                    case int ThirdFrame when ThirdFrame > 29 && ThirdFrame <= 44:
+                    case int ThirdFrame when ThirdFrame > 38 && ThirdFrame <= 44:
                         {
                             Projectile.frame = ANIM_THRUST_BEGIN - 1 + 2; //and so on
                             break;
@@ -1250,6 +1356,11 @@ namespace tsorcRevamp.Projectiles.Summon
             {
                 switch (SlashProgress)
                 {
+                    case int JumpFrames when JumpFrames >= 0 && JumpFrames <= 22:
+                        {
+                            Projectile.frame = ANIM_JUMP_BEGIN - 1 + 4 - (JumpFrames / 8); //first frame
+                            break;
+                        }
                     case int FirstFrame when (FirstFrame >= 0 && FirstFrame <= 19):
                         {
                             Projectile.frame = ANIM_SLASH_BEGIN - 1 + 0; //first frame
@@ -1296,6 +1407,18 @@ namespace tsorcRevamp.Projectiles.Summon
                 {
                     Projectile.frame++;
                 }
+            }
+            if (ShouldRotate)
+            {
+                Projectile.rotation = Projectile.velocity.ToRotation();
+                if (Projectile.spriteDirection == -1)
+                {
+                    Projectile.rotation -= (float)Math.PI;
+                }
+            }
+            else
+            {
+                Projectile.rotation = 0;
             }
         }
     }

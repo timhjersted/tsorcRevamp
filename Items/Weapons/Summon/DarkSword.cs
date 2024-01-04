@@ -16,7 +16,6 @@ using tsorcRevamp.Projectiles.Summon;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-    [Autoload(false)]
     public class DarkSword : ModItem
     {
         public string SoundPath = "tsorcRevamp/Sounds/DST/DarkSword";
@@ -29,21 +28,25 @@ namespace tsorcRevamp.Items.Weapons.Summon
         }
         public override void SetDefaults()
         {
-            Item.width = 66;
-            Item.height = 66;
+            Item.width = 58;
+            Item.height = 72;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 30;
-            Item.useTime = 30;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
             Item.damage = 68;
+            Item.crit = 6;
             Item.mana = 10;
             Item.knockBack = 2f;
-            Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.Orange_3;
             Item.DamageType = DamageClass.SummonMeleeSpeed;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Color.Black;
+        }
+        public override void ModifyItemScale(Player player, ref float scale)
+        {
+            scale = player.whipRangeMultiplier;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -65,25 +68,25 @@ namespace tsorcRevamp.Items.Weapons.Summon
                 {
                     case 0:
                         {
-                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "Swing1") with { Volume = SoundVolume });
+                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "Swing1") with { Volume = SoundVolume * 18f });
                             SwingSoundStyle++;
                             break;
                         }
                     case 1:
                         {
-                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "Swing2") with { Volume = SoundVolume });
+                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "Swing2") with { Volume = SoundVolume * 18f });
                             SwingSoundStyle++;
                             break;
                         }
                     case 2:
                         {
-                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "Swing3") with { Volume = SoundVolume });
+                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "Swing3") with { Volume = SoundVolume * 18f });
                             SwingSoundStyle = 0;
                             break;
                         }
                     default:
                         {
-                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "Swing3") with { Volume = SoundVolume });
+                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "Swing3") with { Volume = SoundVolume * 18f });
                             SwingSoundStyle = 0;
                             break;
                         }
@@ -122,6 +125,11 @@ namespace tsorcRevamp.Items.Weapons.Summon
         {
             target.AddBuff(ModContent.BuffType<Insanity>(), (int)(DebuffDuration * player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * 60f));
             player.MinionAttackTargetNPC = target.whoAmI;
+        }
+        public override void MeleeEffects(Player player, Rectangle rectangle)
+        {
+            Dust dust = Dust.NewDustDirect(new Vector2((float)rectangle.X, (float)rectangle.Y), rectangle.Width, rectangle.Height, DustID.WhiteTorch, (player.velocity.X * 0.2f) + (player.direction * 3), player.velocity.Y * 0.2f, 100, Color.Black, 1.9f);
+            dust.noGravity = true;
         }
         public override void AddRecipes()
         {

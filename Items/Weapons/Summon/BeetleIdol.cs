@@ -7,10 +7,10 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Projectiles.Summon;
+using tsorcRevamp.Projectiles.Summon.SamuraiBeetle;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-    [Autoload(false)]
     public class BeetleIdol : ModItem
     {
         public override void SetStaticDefaults()
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
             Item.buffType = ModContent.BuffType<SamuraiBeetleBuff>();
-            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.SamuraiBeetle>();
+            Item.shoot = ModContent.ProjectileType<SamuraiBeetleProjectile>();
         }
 
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             player.AddBuff(Item.buffType, 2);
 
             // Minions have to be spawned manually, then have originalDamage assigned to the damage of the summon item
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<SamuraiBeetle>()] < 1)
+            if (player.ownedProjectileCounts[Item.shoot] < 1)
             {
                 var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
                 projectile.originalDamage = Item.damage;

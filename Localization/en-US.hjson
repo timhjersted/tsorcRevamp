@@ -2901,6 +2901,7 @@ Mods: {
 					'''
 					You hear an evil whispering from inside
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.CritChance@1}
 					'''
 			}
 
@@ -2919,6 +2920,8 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.WhipDmg}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@3}
+					{$CommonItemTooltip.Summon.TagDuration@2}
+					{$CommonItemTooltip.Summon.CritChance@5}
 					{$CommonItemTooltip.Summon.AtkSpeed@1}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.HolyDodge}
 					Defense, minion slots and whip range are not affected by this
@@ -2992,6 +2995,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.WhipDmg}
 					{$CommonItemTooltip.Summon.TagDuration@4}
+					{$CommonItemTooltip.Summon.CritChance@5}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
 					{$CommonItemTooltip.Summon.AtkSpeed@2}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@3}
@@ -6399,7 +6403,12 @@ Mods: {
 
 			BeetleIdol: {
 				DisplayName: Beetle Idol
-				Tooltip: Summons a Samurai Beetle to fight for you
+				Tooltip:
+					'''
+					Summons a Samurai Beetle to fight for you
+					Performs a [c/FF00FF:Shocking Slash] every third hit
+					There can only be one
+					'''
 			}
 
 			NullSpriteStaff: {
@@ -7336,6 +7345,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.WhipDmg}
 					{$CommonItemTooltip.Summon.TagDuration@3}
+					{$CommonItemTooltip.Summon.CritChance@4}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
 					{$CommonItemTooltip.Summon.AtkSpeed@2}
 					'''
@@ -7581,7 +7591,19 @@ Mods: {
 
 			WorldEnderItem: {
 				DisplayName: World Ender
-				Tooltip: ""
+				Tooltip:
+					'''
+					[c/8B0000:<right> to strike with the sword]
+					[c/8B0000:Sword Strikes] cannot crit normally, but instead create a zone in front of the player
+					Hitting an enemy within a [c/DC143C:Sweetspot] will deal massive damage and always crit
+					'''
+				Details:
+					'''
+					[c/DC143C:Sweetspot] bonus damage is based on your critical strike chance
+					[c/8B0000:Sword Strike] cooldown scales down with melee speed
+					Each [c/8B0000:Sword Strike] increases in damage and cooldown
+					Normal sword swing speed also scales with melee speed as usual and can crit
+					'''
 			}
 
 			LichBone: {
@@ -7635,7 +7657,13 @@ Mods: {
 
 			DarkSword: {
 				DisplayName: Dark Sword
-				Tooltip: ""
+				Tooltip:
+					'''
+					Left Click to swing like a sword and apply Insanity on-hit
+					<right> to summon Terrorbeaks to fight for you
+					Terrorbeaks only target insane enemies
+					Crits are based on summon critical strike chance + 6%
+					'''
 			}
 		}
 
@@ -8495,7 +8523,7 @@ Mods: {
 
 			WorldEnderCooldown: {
 				DisplayName: World Ender Cooldown
-				Description: Mods.tsorcRevamp.Buffs.WorldEnderCooldown.Description
+				Description: You can't strike with the World Ender for this duration
 			}
 
 			SpiritAshKnightBuff: {
@@ -8525,12 +8553,17 @@ Mods: {
 
 			WorldEnderTimer: {
 				DisplayName: World Ender Timer
-				Description: Mods.tsorcRevamp.Buffs.WorldEnderTimer.Description
+				Description: If this runs out, the World Ender Sword Strikes will go on cooldown
 			}
 
 			Insanity: {
 				DisplayName: Insanity
 				Description: Mods.tsorcRevamp.Buffs.Insanity.Description
+			}
+
+			CCShock: {
+				DisplayName: C C Shock
+				Description: Mods.tsorcRevamp.Buffs.CCShock.Description
 			}
 		}
 
@@ -9141,6 +9174,9 @@ Mods: {
 			WorldEnderSwordSwing1.DisplayName: World Ender Sword Swing1
 			WorldEnderSwordSwing2.DisplayName: World Ender Sword Swing2
 			WorldEnderSwordSwing3.DisplayName: World Ender Sword Swing3
+			SamuraiBeetleTrail.DisplayName: Samurai Beetle Trail
+			SamuraiBeetleLightning.DisplayName: Samurai Beetle Lightning
+			SamuraiBeetleProjectile.DisplayName: Samurai Beetle Projectile
 		}
 
 		NPCs: {

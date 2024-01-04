@@ -12,8 +12,9 @@ namespace tsorcRevamp.Items.Armors.Summon
         public static float WhipDmg = 28f;
         public static float WhipRange = 30f;
         public static float SummonTagDuration = 35f;
+        public static float CritChance = 13f;
         public static float AtkSpeed = 16f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(WhipDmg, WhipRange, AtkSpeed, SummonTagDuration);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(WhipDmg, WhipRange, AtkSpeed, SummonTagDuration, CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -31,6 +32,7 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration += SummonTagDuration / 100f;
             player.whipRangeMultiplier += WhipRange / 100f;
             player.GetAttackSpeed(DamageClass.Summon) += AtkSpeed / 100f;
+            player.GetCritChance(DamageClass.Summon) += CritChance;
         }
         public override void AddRecipes()
         {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
@@ -123,7 +124,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra.WorldEnder
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            modifiers.SourceDamage += (float)Tier / 4.5f;
+            modifiers.SourceDamage += (float)(Tier / 4.5f) + (Tier == 3 ? 1 : 0);
             if (Utils.CenteredRectangle(CritHitbox1, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox2, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox3, CritHitboxSize).Intersects(target.Hitbox) 
                 || Utils.CenteredRectangle(CritHitbox4, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox5, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox6, CritHitboxSize).Intersects(target.Hitbox) 
                 || Utils.CenteredRectangle(CritHitbox7, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox8, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox9, CritHitboxSize).Intersects(target.Hitbox)
@@ -131,6 +132,10 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra.WorldEnder
             {
                 modifiers.SourceDamage += (float)Projectile.CritChance / 100f * Tier;
                 modifiers.SetCrit();
+            }
+            else
+            {
+                modifiers.DisableCrit();
             }
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -157,6 +162,52 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra.WorldEnder
                 return null;
             }
             return false;
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            int HitSoundStyle = Main.rand.Next(1, 4);
+            if (hit.Crit)
+            {
+                switch (HitSoundStyle)
+                {
+                    case 1:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle(WorldEnderItem.SoundPath + "QCrit1") with { Volume = WorldEnderItem.SoundVolume });
+                            break;
+                        }
+                    case 2:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle(WorldEnderItem.SoundPath + "QCrit2") with { Volume = WorldEnderItem.SoundVolume });
+                            break;
+                        }
+                    default:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle(WorldEnderItem.SoundPath + "QCrit3") with { Volume = WorldEnderItem.SoundVolume });
+                            break;
+                        }
+                }
+            }
+            else
+            {
+                switch (HitSoundStyle)
+                {
+                    case 1:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle(WorldEnderItem.SoundPath + "QHit1") with { Volume = WorldEnderItem.SoundVolume });
+                            break;
+                        }
+                    case 2:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle(WorldEnderItem.SoundPath + "QHit2") with { Volume = WorldEnderItem.SoundVolume });
+                            break;
+                        }
+                    default:
+                        {
+                            SoundEngine.PlaySound(new SoundStyle(WorldEnderItem.SoundPath + "QHit3") with { Volume = WorldEnderItem.SoundVolume });
+                            break;
+                        }
+                }
+            }
         }
     }
 }

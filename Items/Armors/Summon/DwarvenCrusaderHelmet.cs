@@ -13,9 +13,10 @@ namespace tsorcRevamp.Items.Armors.Summon
         public static float WhipDmg = 16f;
         public static float AtkSpeed = 8f;
         public static float TagDuration = 18f;
+        public static float CritChance = 5f;
         public static float WhipRange = 30f;
         public static int LifeRegen = 3;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(WhipDmg, AtkSpeed, TagDuration, WhipRange, LifeRegen);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(WhipDmg, AtkSpeed, TagDuration, WhipRange, LifeRegen, CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -39,12 +40,14 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.GetAttackSpeed(DamageClass.Summon) += AtkSpeed / 100f;
             player.whipRangeMultiplier += WhipRange / 100f;
             player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration += TagDuration / 100f;
+            player.GetCritChance(DamageClass.Summon) += CritChance;
 
             if (player.HasBuff(BuffID.ShadowDodge))
             {
                 player.GetDamage(DamageClass.SummonMeleeSpeed) += WhipDmg / 100f;
                 player.GetAttackSpeed(DamageClass.Summon) += AtkSpeed / 100f;
                 player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration += TagDuration / 100f;
+                player.GetCritChance(DamageClass.Summon) += CritChance;
             }
         }
         public override void UpdateArmorSet(Player player)

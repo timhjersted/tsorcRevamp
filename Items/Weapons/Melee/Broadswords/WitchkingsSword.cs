@@ -41,14 +41,23 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             if (player.GetModPlayer<tsorcRevampPlayer>().WitchPower)
             {
-                damage /= 3;
                 Item.DamageType = DamageClass.SummonMeleeSpeed;
-                Item.scale = player.whipRangeMultiplier;
+                damage /= 3;
             }
             else
             {
                 Item.DamageType = DamageClass.Melee;
-                Item.scale = 1;
+            }
+        }
+        public override void ModifyItemScale(Player player, ref float scale)
+        {
+            if (player.GetModPlayer<tsorcRevampPlayer>().WitchPower)
+            {
+                scale = player.whipRangeMultiplier;
+            }
+            else
+            {
+                scale = 1;
             }
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)

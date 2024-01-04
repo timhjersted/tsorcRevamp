@@ -753,6 +753,11 @@ namespace tsorcRevamp
                 Player.HealEffect((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
                 Player.statLife += ((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
             }
+            if (DemonPower && hit.DamageType == (DamageClass.SummonMeleeSpeed) && hit.Crit)
+            {
+                Projectile WhipCritBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center - new Vector2(0, target.height / 2), Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, Player.whoAmI);
+                WhipCritBoom.ArmorPenetration = 10;
+            }
         }
 
         public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */

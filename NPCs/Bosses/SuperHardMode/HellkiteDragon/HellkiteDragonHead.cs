@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Utilities;
@@ -240,7 +241,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HellkiteStone>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HiRyuuSpear>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 10, 20));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BarrowBlade>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<WorldEnderItem>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 3, 6));
             npcLoot.Add(notExpertCondition);
         }

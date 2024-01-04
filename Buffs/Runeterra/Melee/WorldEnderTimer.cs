@@ -20,7 +20,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
         {
             if (player.buffTime[buffIndex] == 1)
             {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/ThrustReady") with { Volume = 0.75f });
+                SoundEngine.PlaySound(new SoundStyle(WorldEnderItem.SoundPath + "TimeOut") with { Volume = WorldEnderItem.SoundVolume });
                 switch (player.GetModPlayer<tsorcRevampPlayer>().WorldEnderSwing)
                 {
                     case 2:

@@ -106,6 +106,7 @@ namespace tsorcRevamp.NPCs
         public static double expertScale = 2;
 
         public bool DarkInferno;
+        public bool CCShocked;
         public bool Ignited;
         public bool CrimsonBurn;
         public bool ToxicCatDrain;
@@ -240,6 +241,7 @@ namespace tsorcRevamp.NPCs
         public override void ResetEffects(NPC npc)
         {
             DarkInferno = false;
+            CCShocked = false;
             Ignited = false;
             CrimsonBurn = false;
             ToxicCatDrain = false;
@@ -881,10 +883,6 @@ namespace tsorcRevamp.NPCs
 
         public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers)
         {
-            if (modifiers.DamageType == DamageClass.SummonMeleeSpeed)
-            {
-                modifiers.CritDamage -= 0.5f;
-            }
             if (npc.HasBuff(BuffID.BetsysCurse) && tsorcRevampPlayer.DragonStonePotency)
             {
                 modifiers.Defense -= 40 * DragonStone.Potency - 40;
@@ -946,6 +944,10 @@ namespace tsorcRevamp.NPCs
         }
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
+            if (modifiers.DamageType == DamageClass.SummonMeleeSpeed)
+            {
+                modifiers.CritDamage -= 0.5f;
+            }
             Player projectileOwner = Main.player[projectile.owner];
             var modPlayerProjectileOwner = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
             float SummonTagDamageMultiplier = ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type];
@@ -1246,6 +1248,29 @@ namespace tsorcRevamp.NPCs
             if (npc.type == NPCID.DukeFishron && player.wet)
             {
                 modifiers.FinalDamage *= 4;
+            }
+            if (item.DamageType == DamageClass.SummonMeleeSpeed)
+            {
+                int critLevel = (int)(Math.Floor(player.GetWeaponCrit(player.HeldItem) / 100f));
+                if (Main.rand.Next(1, 101) <= player.GetWeaponCrit(player.HeldItem) - (100 * critLevel))
+                {
+                    modifiers.SetCrit();
+                }
+                if (critLevel >= 1)
+                {
+                    modifiers.SetCrit();
+                    if (Main.rand.Next(1, 101) <= player.GetWeaponCrit(player.HeldItem) - (100 * critLevel))
+                    {
+                        modifiers.CritDamage *= 2;
+                    }
+                }
+                if (critLevel > 1)
+                {
+                    for (int i = 1; i < critLevel; i++)
+                    {
+                        modifiers.CritDamage *= 2;
+                    }
+                }
             }
         }
 
@@ -1733,6 +1758,31 @@ namespace tsorcRevamp.NPCs
                     int dust2 = Dust.NewDust(N.position, N.width / 2, N.height / 2, 58, (N.velocity.X * 0.2f), N.velocity.Y * 0.2f, 100, default, 1f);
                     Main.dust[dust2].noGravity = true;
                 }
+            }
+
+            if (CCShocked)
+            {
+                int DoTPerS = 20;
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                if (tsorcRevampPlayer.DragonStonePotency)
+                {
+                    DoTPerS *= DragonStone.Potency;
+                }
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+
+                /*var N = npc;
+                for (int j = 0; j < 6; j++)
+                {
+                    int dust = Dust.NewDust(N.position, N.width / 2, N.height / 2, 54, (N.velocity.X * 0.2f), N.velocity.Y * 0.2f, 100, default, 1f);
+                    Main.dust[dust].noGravity = true;
+
+                    int dust2 = Dust.NewDust(N.position, N.width / 2, N.height / 2, 58, (N.velocity.X * 0.2f), N.velocity.Y * 0.2f, 100, default, 1f);
+                    Main.dust[dust2].noGravity = true;
+                }*/
             }
 
             if (PhazonCorruption)
