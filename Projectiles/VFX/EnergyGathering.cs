@@ -68,25 +68,22 @@ namespace tsorcRevamp.Projectiles.VFX
 
             if (!initialized)
             {
-                float radius = 400;
                 if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.TheRage>())
                 {
                     //The rage fight is already chaotic as fuck, these lessen that very slightly
-                    radius = 200;
                     trailWidth = 35;
-                    Projectile.timeLeft = 160;
-                    speed = 1;
+                    Projectile.timeLeft = 130;
+                    speed = 1.2f;
                 }
                 if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.TheSorrow>())
                 {
-                    radius = 200;
                     trailWidth = 35;
-                    Projectile.timeLeft = 160;
-                    speed = 0.75f;
+                    Projectile.timeLeft = 130;
+                    speed = 1f;
                 }
                 realWidth = trailWidth;
                 trailWidth = 0;
-                Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, targetPoint, Main.rand.NextFloat(20, 40)).RotatedBy(MathHelper.Pi / 3f);
+                Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, targetPoint, Main.rand.NextFloat(15, 30)).RotatedBy(MathHelper.Pi / 3f);
                 initialized = true;
             }
 
@@ -110,15 +107,15 @@ namespace tsorcRevamp.Projectiles.VFX
             {
                 UsefulFunctions.SmoothHoming(Projectile, targetPoint, speed, 27, bufferZone: false);
                 Projectile.rotation = Projectile.velocity.ToRotation();
-                if (Vector2.Distance(Projectile.Center, targetPoint) < 100)
+                if (Vector2.Distance(Projectile.Center, targetPoint) < 60)
                 {
-                    Projectile.timeLeft = 60;
+                    Projectile.timeLeft = 40;
                     fading = true;
                 }
             }
             else
             {
-                fadeOut = 1f - Projectile.timeLeft / 60f;
+                fadeOut = 1f - Projectile.timeLeft / 40f;
             }
 
 
@@ -149,7 +146,7 @@ namespace tsorcRevamp.Projectiles.VFX
             effect.Parameters["fadeOut"].SetValue(fadeOut);
             effect.Parameters["time"].SetValue(-Main.GlobalTimeWrappedHourly);
             Color shaderColor = EffectColor;
-            effect.Parameters["slashCenter"].SetValue(Color.White.ToVector4());
+            effect.Parameters["slashCenter"].SetValue(shaderColor.ToVector4());
             effect.Parameters["slashEdge"].SetValue(shaderColor.ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
