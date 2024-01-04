@@ -48,7 +48,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
         public void Teleport(float X, float Y)
         {
             int dustDeath;
-            for (int num36 = 0; num36 < 20; num36++)
+            for (int i = 0; i < 20; i++)
             {
                 dustDeath = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 54, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 200, Color.White, 6f);
                 Main.dust[dustDeath].noGravity = true;
@@ -57,7 +57,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             NPC.position.Y = Y;
             NPC.velocity.X = 0;
             NPC.velocity.Y = 0;
-            for (int num36 = 0; num36 < 20; num36++)
+            for (int i = 0; i < 20; i++)
             {
                 dustDeath = Dust.NewDust(new Vector2(X, Y), NPC.width, NPC.height, 54, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.White, 6f);
                 Main.dust[dustDeath].noGravity = true;
@@ -137,15 +137,15 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                     int randomrot = Main.rand.Next(-20, 20) / 2;
                     if (subPhase == 0)
                     {
-                        for (int num36 = 0; num36 < 9; num36++)
+                        for (int i = 0; i < 9; i++)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)Math.Sin(randomrot + ((360 / 13) * (1 + num36)) * 3), (float)Math.Cos(randomrot + ((360 / 13) * (1 + num36)) * 3), ModContent.ProjectileType<ShadowOrb>(), 50, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)Math.Sin(randomrot + ((360 / 13) * (1 + i)) * 3), (float)Math.Cos(randomrot + ((360 / 13) * (1 + i)) * 3), ModContent.ProjectileType<ShadowOrb>(), 50, 0f, Main.myPlayer);
                         }
                         genericTimer2 = 0;
                     }
                     if (subPhase == 1)
                     {
-                        for (int num36 = 0; num36 < 6; num36++)
+                        for (int i = 0; i < 6; i++)
                         {
 
                         }
@@ -287,7 +287,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             if (NPC.life <= 0)
             {
 
-                for (int num36 = 0; num36 < 50; num36++)
+                for (int i = 0; i < 50; i++)
                 {
                     {
                         Color color = new Color();

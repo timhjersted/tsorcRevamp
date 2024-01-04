@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void OnKill(int timeLeft)
         {
             Projectile.type = 79;
-            for (int num36 = 0; num36 < 20; num36++)
+            for (int i = 0; i < 20; i++)
             {
                 int dust = Dust.NewDust(Projectile.position, (int)(Projectile.width), (int)(Projectile.height), DustID.PurpleTorch, Main.rand.Next(-15, 15), Main.rand.Next(-15, 15), 100, new Color(), 9f);
                 Main.dust[dust].noGravity = true;

@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.rotation += 5f;
 
 
-            for (int num36 = 0; num36 < 2; num36++)
+            for (int i = 0; i < 2; i++)
             {
                 int pink = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Wraith, Projectile.velocity.X, Projectile.velocity.Y, Scale: 1f, Alpha: 200);
                 Main.dust[pink].noGravity = true;

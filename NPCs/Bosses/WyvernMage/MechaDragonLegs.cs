@@ -69,7 +69,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             if (!Main.npc[(int)NPC.ai[1]].active)
             {
                 NPC.life = 0;
-                for (int num36 = 0; num36 < 50; num36++)
+                for (int i = 0; i < 50; i++)
                 {
                     int pdust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y - 30), NPC.width, NPC.height, 6, 0, 0, 100, Color.Red, 6.0f);
                     Main.dust[pdust].noGravity = true;

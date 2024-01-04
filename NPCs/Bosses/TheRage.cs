@@ -293,7 +293,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     int Meteor = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.MeteorHead, 0);
 
-                    for (int num36 = 0; num36 < 20; num36++)
+                    for (int i = 0; i < 20; i++)
                     {
                         int fireDust = Dust.NewDust(new Vector2(NPC.Center.X + 500, NPC.Center.Y - 100), DustID.Shadowflame, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
                         Main.dust[fireDust].noGravity = true;
@@ -353,7 +353,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 600, NPC.Center.Y - 120, (float)((Math.Cos(rotation - 0.2) * speed) * -1), (float)((Math.Sin(rotation - 0.4) * speed) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
                         NPC.ai[1] = -90;
                         // Added some dust so the projectiles aren't just appearing out of thin air
-                        for (int num36 = 0; num36 < 20; num36++)
+                        for (int i = 0; i < 20; i++)
                         {
                             int fireDust = Dust.NewDust(new Vector2(NPC.Center.X + 600, NPC.Center.Y - 120), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
                             Main.dust[fireDust].noGravity = true;

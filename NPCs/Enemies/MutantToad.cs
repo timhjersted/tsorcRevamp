@@ -53,9 +53,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 return 1;
             }
 
-            for (int num36 = 0; num36 < 200; num36++)
+            for (int i = 0; i < 200; i++)
             {
-                if (Main.npc[num36].active && Main.npc[num36].type == NPC.type)
+                if (Main.npc[i].active && Main.npc[i].type == NPC.type)
                 {
                     return 0;
                 }
@@ -82,10 +82,10 @@ namespace tsorcRevamp.NPCs.Enemies
             if (!Main.bloodMoon)
             {
                 Vector2 playerPosition = spawnInfo.Player.position + new Vector2(spawnInfo.Player.width / 2, spawnInfo.Player.height / 2);
-                for (int num36 = 0; num36 < 200; num36++)
+                for (int i = 0; i < 200; i++)
                 {
-                    Vector2 npcPosition = Main.npc[num36].position + new Vector2(Main.npc[num36].width / 2, Main.npc[num36].height / 2);
-                    if (Main.npc[num36].active && Main.npc[num36].townNPC && Vector2.Distance(playerPosition, npcPosition) < 1500)
+                    Vector2 npcPosition = Main.npc[i].position + new Vector2(Main.npc[i].width / 2, Main.npc[i].height / 2);
+                    if (Main.npc[i].active && Main.npc[i].townNPC && Vector2.Distance(playerPosition, npcPosition) < 1500)
                     {
                         closeTownNPCs++;
                     }

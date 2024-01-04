@@ -204,8 +204,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                         Main.npc[i].damage = 0;
                         Main.npc[i].dontTakeDamage = true;
                         Main.npc[i].scale = 3;
-                        Main.npc[i].position.X = (float)((NPC.position.X + (NPC.width / 2) - (Main.npc[i].width / 2)) + Math.Sin(NPC.ai[3] + ((2 * Math.PI) / 6) * (Main.npc[i].ai[0] + 1)/*((360/10)*(1+Main.npc[num36].ai[0]))*/) * 120 * (RotSpeed * 200));
-                        Main.npc[i].position.Y = (float)((NPC.position.Y + (NPC.height / 2) - (Main.npc[i].height / 2)) + Math.Cos(NPC.ai[3] + ((2 * Math.PI) / 6) * (Main.npc[i].ai[0] + 1)/*((360/10)*(1+Main.npc[num36].ai[0]))*/) * 120 * (RotSpeed * 200));
+                        Main.npc[i].position.X = (float)((NPC.position.X + (NPC.width / 2) - (Main.npc[i].width / 2)) + Math.Sin(NPC.ai[3] + ((2 * Math.PI) / 6) * (Main.npc[i].ai[0] + 1)/*((360/10)*(1+Main.npc[i].ai[0]))*/) * 120 * (RotSpeed * 200));
+                        Main.npc[i].position.Y = (float)((NPC.position.Y + (NPC.height / 2) - (Main.npc[i].height / 2)) + Math.Cos(NPC.ai[3] + ((2 * Math.PI) / 6) * (Main.npc[i].ai[0] + 1)/*((360/10)*(1+Main.npc[i].ai[0]))*/) * 120 * (RotSpeed * 200));
                         if (Main.npc[i].ai[0] == 5) break;
                     }
                 }

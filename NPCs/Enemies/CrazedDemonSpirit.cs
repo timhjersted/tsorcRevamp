@@ -476,7 +476,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
             if (NPC.life <= 0)
             {
-                for (int num36 = 0; num36 < 50; num36++)
+                for (int i = 0; i < 50; i++)
                 {
                     {
                         Color color = new Color();

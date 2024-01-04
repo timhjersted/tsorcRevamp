@@ -434,7 +434,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (NPC.life <= 0)
             {
                 //200 dust at once was a bit silly
-                for (int num36 = 0; num36 < 10; num36++)
+                for (int i = 0; i < 10; i++)
                 {
                     {
                         Color color = new Color();

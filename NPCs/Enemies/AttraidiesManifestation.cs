@@ -151,7 +151,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if ((NPC.ai[1] >= 290 && NPC.life > NPC.lifeMax / 4 * 3) || (NPC.ai[1] >= 170 && NPC.life <= NPC.lifeMax / 4 * 3))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
-                for (int num36 = 0; num36 < 10; num36++)
+                for (int i = 0; i < 10; i++)
                 {
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 55, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 2f);
                     Main.dust[dust].noGravity = true;

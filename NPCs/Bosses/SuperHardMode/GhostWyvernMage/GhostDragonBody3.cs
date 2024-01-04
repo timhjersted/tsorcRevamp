@@ -68,7 +68,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             if (!Main.npc[(int)NPC.ai[1]].active)
             {
                 NPC.life = 0;
-                for (int num36 = 0; num36 < 50; num36++)
+                for (int i = 0; i < 50; i++)
 
                     NPC.HitEffect(0, 10.0);
                 NPC.active = false;

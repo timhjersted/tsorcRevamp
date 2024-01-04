@@ -458,7 +458,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (NPC.life <= 0)
             {
-                for (int num36 = 0; num36 < 20; num36++)
+                for (int i = 0; i < 20; i++)
                 {
                     {
                         Color color = new Color();

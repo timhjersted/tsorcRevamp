@@ -111,7 +111,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             if ((NPC.ai[1] >= 300 && NPC.life > NPC.lifeMax / 3) || (NPC.ai[1] >= 200 && NPC.life <= NPC.lifeMax / 3))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
-                for (int num36 = 0; num36 < 10; num36++)
+                for (int i = 0; i < 10; i++)
                 {
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);
                     Main.dust[dust].noGravity = false;
@@ -289,7 +289,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         public override void OnKill()
         {
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-            for (int num36 = 0; num36 < 50; num36++)
+            for (int i = 0; i < 50; i++)
             {
                 {
                     Color color = new Color();

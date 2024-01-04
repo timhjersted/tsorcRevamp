@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool PreKill(int timeLeft)
         {
             //Projectile.type = 645; //killpretendtype
-            for (int num36 = 0; num36 < 10; num36++)
+            for (int i = 0; i < 10; i++)
             {
                 int dust = Dust.NewDust(Projectile.position, (int)(Projectile.width), (int)(Projectile.height), DustID.BlueTorch, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, new Color(), 6f);
                 Main.dust[dust].noGravity = true;

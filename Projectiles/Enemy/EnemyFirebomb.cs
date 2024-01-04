@@ -100,7 +100,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Main.dust[dustIndex].fadeIn = .5f + (float)Main.rand.Next(5) * 0.1f;
                     Main.dust[dustIndex].noGravity = true;
 
-                    for (int num36 = 0; num36 < 2; num36++)
+                    for (int i = 0; i < 2; i++)
                     {
                         int pink = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, DustID.CrystalSerpent, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.3f);
                         Main.dust[pink].noGravity = true;

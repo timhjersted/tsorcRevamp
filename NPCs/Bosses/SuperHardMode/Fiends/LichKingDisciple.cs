@@ -121,7 +121,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             if ((NPC.ai[1] >= 200 && NPC.life > NPC.lifeMax / 50) || (NPC.ai[1] >= 120 && NPC.life <= NPC.lifeMax / 50))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
-                for (int num36 = 0; num36 < 10; num36++)
+                for (int i = 0; i < 10; i++)
                 {
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);
                     Main.dust[dust].noGravity = false;

@@ -3673,21 +3673,21 @@ namespace tsorcRevamp.NPCs
                 npc.position.X = Main.npc[Main.wofNPCIndex].position.X;
                 npc.direction = Main.npc[Main.wofNPCIndex].direction;
                 npc.spriteDirection = npc.direction;
-                float num360 = (Main.wofDrawAreaBottom + Main.wofDrawAreaTop) / 2;
-                num360 = ((!(npc.ai[0] > 0f)) ? ((num360 + (float)Main.wofDrawAreaBottom) / 2f) : ((num360 + (float)Main.wofDrawAreaTop) / 2f));
-                num360 -= (float)(npc.height / 2);
-                if (npc.position.Y > num360 + 1f)
+                float i0 = (Main.wofDrawAreaBottom + Main.wofDrawAreaTop) / 2;
+                i0 = ((!(npc.ai[0] > 0f)) ? ((i0 + (float)Main.wofDrawAreaBottom) / 2f) : ((i0 + (float)Main.wofDrawAreaTop) / 2f));
+                i0 -= (float)(npc.height / 2);
+                if (npc.position.Y > i0 + 1f)
                 {
                     npc.velocity.Y = -1f;
                 }
-                else if (npc.position.Y < num360 - 1f)
+                else if (npc.position.Y < i0 - 1f)
                 {
                     npc.velocity.Y = 1f;
                 }
                 else
                 {
                     npc.velocity.Y = 0f;
-                    npc.position.Y = num360;
+                    npc.position.Y = i0;
                 }
                 if (npc.velocity.Y > 5f)
                 {
@@ -3698,18 +3698,18 @@ namespace tsorcRevamp.NPCs
                     npc.velocity.Y = -5f;
                 }
                 Vector2 vector38 = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
-                float num361 = Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) - vector38.X;
-                float num362 = Main.player[npc.target].position.Y + (float)(Main.player[npc.target].height / 2) - vector38.Y;
-                float num363 = (float)Math.Sqrt(num361 * num361 + num362 * num362);
-                float num364 = num363;
-                num361 *= num363;
-                num362 *= num363;
+                float i1 = Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) - vector38.X;
+                float i2 = Main.player[npc.target].position.Y + (float)(Main.player[npc.target].height / 2) - vector38.Y;
+                float i3 = (float)Math.Sqrt(i1 * i1 + i2 * i2);
+                float i4 = i3;
+                i1 *= i3;
+                i2 *= i3;
                 bool flag28 = true;
                 if (npc.direction > 0)
                 {
                     if (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) > npc.position.X + (float)(npc.width / 2))
                     {
-                        npc.rotation = (float)Math.Atan2(0f - num362, 0f - num361) + 3.14f;
+                        npc.rotation = (float)Math.Atan2(0f - i2, 0f - i1) + 3.14f;
                     }
                     else
                     {
@@ -3719,7 +3719,7 @@ namespace tsorcRevamp.NPCs
                 }
                 else if (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) < npc.position.X + (float)(npc.width / 2))
                 {
-                    npc.rotation = (float)Math.Atan2(num362, num361) + 3.14f;
+                    npc.rotation = (float)Math.Atan2(i2, i1) + 3.14f;
                 }
                 else
                 {
@@ -3730,36 +3730,36 @@ namespace tsorcRevamp.NPCs
                 {
                     return false;
                 }
-                int num365 = 4;
+                int i5 = 4;
                 npc.localAI[1] += 1f;
                 if ((double)Main.npc[Main.wofNPCIndex].life < (double)Main.npc[Main.wofNPCIndex].lifeMax * 0.75)
                 {
                     npc.localAI[1] += 1f;
-                    num365++;
+                    i5++;
                 }
                 if ((double)Main.npc[Main.wofNPCIndex].life < (double)Main.npc[Main.wofNPCIndex].lifeMax * 0.5)
                 {
                     npc.localAI[1] += 1f;
-                    num365++;
+                    i5++;
                 }
                 if ((double)Main.npc[Main.wofNPCIndex].life < (double)Main.npc[Main.wofNPCIndex].lifeMax * 0.25)
                 {
                     npc.localAI[1] += 1f;
-                    num365 += 2;
+                    i5 += 2;
                 }
                 if ((double)Main.npc[Main.wofNPCIndex].life < (double)Main.npc[Main.wofNPCIndex].lifeMax * 0.1)
                 {
                     npc.localAI[1] += 2f;
-                    num365 += 3;
+                    i5 += 3;
                 }
                 if (Main.expertMode)
                 {
                     npc.localAI[1] += 0.5f;
-                    num365++;
+                    i5++;
                     if ((double)Main.npc[Main.wofNPCIndex].life < (double)Main.npc[Main.wofNPCIndex].lifeMax * 0.1)
                     {
                         npc.localAI[1] += 2f;
-                        num365 += 3;
+                        i5 += 3;
                     }
                 }
                 if (npc.localAI[2] == 0f)
@@ -3778,40 +3778,40 @@ namespace tsorcRevamp.NPCs
                     }
                     npc.localAI[1] = 0f;
                     npc.localAI[2] += 1f;
-                    if (npc.localAI[2] >= (float)num365)
+                    if (npc.localAI[2] >= (float)i5)
                     {
                         npc.localAI[2] = 0f;
                     }
                     if (flag28)
                     {
-                        float num366 = 9f;
-                        int num367 = 11;
-                        int num368 = 83;
+                        float i6 = 9f;
+                        int i7 = 11;
+                        int i8 = 83;
                         if ((double)Main.npc[Main.wofNPCIndex].life < (double)Main.npc[Main.wofNPCIndex].lifeMax * 0.5)
                         {
-                            num367++;
-                            num366 += 1f;
+                            i7++;
+                            i6 += 1f;
                         }
                         if ((double)Main.npc[Main.wofNPCIndex].life < (double)Main.npc[Main.wofNPCIndex].lifeMax * 0.25)
                         {
-                            num367++;
-                            num366 += 1f;
+                            i7++;
+                            i6 += 1f;
                         }
                         if ((double)Main.npc[Main.wofNPCIndex].life < (double)Main.npc[Main.wofNPCIndex].lifeMax * 0.1)
                         {
-                            num367 += 2;
-                            num366 += 2f;
+                            i7 += 2;
+                            i6 += 2f;
                         }
                         vector38 = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
-                        num361 = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - vector38.X;
-                        num362 = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - vector38.Y;
-                        num363 = (float)Math.Sqrt(num361 * num361 + num362 * num362);
-                        num363 = num366 / num363;
-                        num361 *= num363;
-                        num362 *= num363;
-                        vector38.X += num361;
-                        vector38.Y += num362;
-                        int num369 = Projectile.NewProjectile(npc.GetSource_FromThis(), vector38.X, vector38.Y, num361, num362, num368, num367, 0f, Main.myPlayer, 1);
+                        i1 = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - vector38.X;
+                        i2 = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - vector38.Y;
+                        i3 = (float)Math.Sqrt(i1 * i1 + i2 * i2);
+                        i3 = i6 / i3;
+                        i1 *= i3;
+                        i2 *= i3;
+                        vector38.X += i1;
+                        vector38.Y += i2;
+                        int i9 = Projectile.NewProjectile(npc.GetSource_FromThis(), vector38.X, vector38.Y, i1, i2, i8, i7, 0f, Main.myPlayer, 1);
                     }
                 }
 

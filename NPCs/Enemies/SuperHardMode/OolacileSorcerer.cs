@@ -172,7 +172,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if ((NPC.ai[1] >= 280 && NPC.life > NPC.lifeMax / 42) || (NPC.ai[1] >= 120 && NPC.life <= NPC.lifeMax / 42)) //300 increases the time between teleports
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
-                for (int num36 = 0; num36 < 10; num36++)
+                for (int i = 0; i < 10; i++)
                 {
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 27, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Purple, 1f);
                     Main.dust[dust].noGravity = true;

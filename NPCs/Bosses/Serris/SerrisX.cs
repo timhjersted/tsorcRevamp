@@ -270,7 +270,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                     Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Serris-X Gore 2").Type, 1f);
                     Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Serris-X Gore 3").Type, 1f);
                 }
-                for (int num36 = 0; num36 < 70; num36++)
+                for (int i = 0; i < 70; i++)
                 {
                     int dust = Dust.NewDust(NPC.position, (int)(NPC.width), (int)(NPC.height), DustID.Firework_Blue, Main.rand.Next(-15, 15), Main.rand.Next(-15, 15), 100, new Color(), 9f);
                     Main.dust[dust].noGravity = true;

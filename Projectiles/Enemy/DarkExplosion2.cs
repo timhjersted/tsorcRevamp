@@ -57,7 +57,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.frame = 5;
                 Projectile.alpha = 50;
                 Projectile.hostile = true;
-                for (int num36 = 0; num36 < 20; num36++)
+                for (int i = 0; i < 20; i++)
                 {
                     int dustDeath = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 55, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 200, Color.White, 2f);
                     Main.dust[dustDeath].noGravity = true;

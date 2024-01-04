@@ -129,11 +129,11 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 
         public override bool PreKill(int timeLeft)
         {
-            for (int num36 = 0; num36 < 10; num36++)
+            for (int i = 0; i < 10; i++)
             {
                 Dust.NewDustPerfect(Projectile.position, 127, Projectile.velocity + new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), 100, new Color(), 1f).noGravity = true;
             }
-            for (int num36 = 0; num36 < 7; num36++)
+            for (int i = 0; i < 7; i++)
             {
                 Dust.NewDustPerfect(Projectile.position, 130, Projectile.velocity + new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), 100, new Color(), 2f).noGravity = true;
             }

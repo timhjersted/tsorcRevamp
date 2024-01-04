@@ -125,9 +125,9 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                 if (!tailSpawned)
                 {
                     Previous = NPC.whoAmI;
-                    for (int num36 = 0; num36 < 15; num36++)
+                    for (int i = 0; i < 15; i++)
                     {
-                        if (num36 >= 0 && num36 < 14)
+                        if (i >= 0 && i < 14)
                         {
                             srs = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Bosses.Serris.SerrisBody>(), NPC.whoAmI);
                         }
@@ -135,7 +135,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                         {
                             srs = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Bosses.Serris.SerrisTail>(), NPC.whoAmI);
                         }
-                        if (num36 == 0)
+                        if (i == 0)
                         {
                             nextSegment = NPC.whoAmI;
                         }

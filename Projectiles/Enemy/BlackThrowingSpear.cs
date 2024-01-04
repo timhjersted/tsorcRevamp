@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            for (int num36 = 0; num36 < 2; num36++)
+            for (int i = 0; i < 2; i++)
             {
                 int wraith = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, DustID.Wraith, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.5f);
                 Main.dust[wraith].noGravity = true;

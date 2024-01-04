@@ -92,7 +92,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
                 NPC.life = 0;
                 NPC.HitEffect(0, 10.0);
                 OnKill();
-                for (int num36 = 0; num36 < 10; num36++)
+                for (int i = 0; i < 10; i++)
                 {
                     Color color = new Color();
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 62, Main.rand.Next(-20, 20), Main.rand.Next(-20, 20), 100, color, 5f);

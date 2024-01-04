@@ -59,7 +59,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             if (!Main.npc[(int)NPC.ai[1]].active)
             {
                 NPC.life = 0;
-                for (int num36 = 0; num36 < 50; num36++)
+                for (int i = 0; i < 50; i++)
                 {
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 62, 0, 0, 100, Color.White, 5.0f);
                     Main.dust[dust].noGravity = true;

@@ -222,7 +222,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (NPC.ai[1] >= 0)
                 {
                     NPC.ai[3] = 0;
-                    for (int num36 = 0; num36 < 40; num36++)
+                    for (int i = 0; i < 40; i++)
                     {
                         Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, 0, 0, 0, default, 0.3f);//was 3f
                     }
@@ -343,11 +343,11 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 NPC.ai[3] = 1;
                 Color color = new Color();
-                for (int num36 = 0; num36 < 50; num36++)
+                for (int i = 0; i < 50; i++)
                 {
                     Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, color, 0.5f);
                 }
-                for (int num36 = 0; num36 < 20; num36++)
+                for (int i = 0; i < 20; i++)
                 {
                     Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, 0, 0, 100, color, 0.5f);
                 }
