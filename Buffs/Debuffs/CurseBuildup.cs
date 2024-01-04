@@ -32,7 +32,7 @@ namespace tsorcRevamp.Buffs.Debuffs
 
                 if (player.statLifeMax >= 120)
                 {
-                    player.statLifeMax -= 20;
+                    modPlayer.cursePoints += 20;
                     player.statLife -= 20;
                     Main.NewText(LangUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", 20));
                 }

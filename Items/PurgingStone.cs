@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items
         public override bool CanUseItem(Player player)
         {
 
-            if ((player.statLifeMax < player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP) || player.HasBuff(ModContent.BuffType<CurseBuildup>()) || player.HasBuff(ModContent.BuffType<PowerfulCurseBuildup>()))
+            if ((player.GetModPlayer<tsorcRevampPlayer>().cursePoints > 0) || player.HasBuff(ModContent.BuffType<CurseBuildup>()) || player.HasBuff(ModContent.BuffType<PowerfulCurseBuildup>()))
             {
                 if (!player.HasBuff(BuffID.PotionSickness))
                 {
@@ -58,9 +58,11 @@ namespace tsorcRevamp.Items
 
         public override bool? UseItem(Player player)
         {
-            if (player.statLifeMax < player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP)
+            int restore = player.GetModPlayer<tsorcRevampPlayer>().cursePoints;
+            player.GetModPlayer<tsorcRevampPlayer>().cursePoints = 0;
+            if (Main.myPlayer == player.whoAmI)
             {
-                player.statLifeMax = player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP;
+                player.HealEffect(restore, true);
             }
 
             player.AddBuff(BuffID.PotionSickness, 10800);
@@ -90,7 +92,8 @@ namespace tsorcRevamp.Items
         {
             Player player = Main.LocalPlayer;
 
-            tooltips.Insert(11, new TooltipLine(Mod, "CurrentMax", Language.GetTextValue("Mods.tsorcRevamp.Items.PurgingStone.Record") + player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP));
+            int totalLife = player.statLifeMax + player.GetModPlayer<tsorcRevampPlayer>().cursePoints;
+            tooltips.Insert(11, new TooltipLine(Mod, "CurrentMax", Language.GetTextValue("Mods.tsorcRevamp.Items.PurgingStone.Record") + totalLife));
 
         }
     }

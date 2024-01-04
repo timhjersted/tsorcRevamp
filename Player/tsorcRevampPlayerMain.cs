@@ -95,7 +95,7 @@ namespace tsorcRevamp
 
             if (oldClone.SoulSlot.Item.IsNotSameTypePrefixAndStack(SoulSlot.Item))
             {
-                SendSingleItemPacket(tsorcPacketID.SyncSoulSlot, SoulSlot.Item, -1, Player.whoAmI);
+                SendSingleItemPacket(tsorcPacketID.SyncSoulSlotAndCurse, SoulSlot.Item, -1, Player.whoAmI);
             }
         }
         public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
@@ -103,9 +103,10 @@ namespace tsorcRevamp
 
             //Sync soul slot
             ModPacket packet = Mod.GetPacket();
-            packet.Write((byte)tsorcPacketID.SyncSoulSlot);
+            packet.Write((byte)tsorcPacketID.SyncSoulSlotAndCurse);
             packet.Write((byte)Player.whoAmI);
             ItemIO.Send(SoulSlot.Item, packet);
+            packet.Write(cursePoints);
             packet.Send(toWho, fromWho);
 
 
@@ -134,7 +135,7 @@ namespace tsorcRevamp
             tag.Add("ReceivedGift", ReceivedGift);
             tag.Add("BearerOfTheCurse", BearerOfTheCurse);
             tag.Add("soulSlot", ItemIO.Save(SoulSlot.Item));
-            tag.Add("MaxAcquiredHP", MaxAcquiredHP);
+            tag.Add("cursePoints", cursePoints);
             tag.Add("SoulVessel", SoulVessel);
 
             if (bagsOpened == null)
@@ -197,7 +198,7 @@ namespace tsorcRevamp
             BearerOfTheCurse = tag.GetBool("BearerOfTheCurse");
             Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
             SoulSlot.Item = soulSlotSouls.Clone();
-            MaxAcquiredHP = tag.GetInt("MaxAcquiredHP");
+            cursePoints = tag.GetInt("cursePoints");
             SoulVessel = tag.GetInt("SoulVessel");
 
             if (bagsOpened == null)

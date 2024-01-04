@@ -1194,14 +1194,15 @@ namespace tsorcRevamp
             int message = reader.ReadByte();
             switch (message)
             {
-                case tsorcPacketID.SyncSoulSlot:
+                case tsorcPacketID.SyncSoulSlotAndCurse:
                     {
                         byte player = reader.ReadByte(); //player.whoAmI
                         tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
                         modPlayer.SoulSlot.Item = ItemIO.Receive(reader);
+                        modPlayer.cursePoints = reader.ReadInt32();
                         if (Main.netMode == NetmodeID.Server)
                         {
-                            modPlayer.SendSingleItemPacket(tsorcPacketID.SyncSoulSlot, modPlayer.SoulSlot.Item, -1, whoAmI);
+                            modPlayer.SendSingleItemPacket(tsorcPacketID.SyncSoulSlotAndCurse, modPlayer.SoulSlot.Item, -1, whoAmI);
                         }
                         break;
                     }
@@ -2663,7 +2664,7 @@ namespace tsorcRevamp
     public class tsorcPacketID
     {
         //Bytes because packets use bytes
-        public const byte SyncSoulSlot = 1;
+        public const byte SyncSoulSlotAndCurse = 1;
         public const byte SyncEventDust = 2;
         public const byte SyncTimeChange = 3;
         public const byte DispelShadow = 4;

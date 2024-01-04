@@ -30,27 +30,21 @@ namespace tsorcRevamp.Items
 
         public override bool CanUseItem(Player player)
         {
-            return (player.statLifeMax < player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP);
+            return (player.GetModPlayer<tsorcRevampPlayer>().cursePoints > 0);
         }
 
         public override bool? UseItem(Player player)
         {
-            int maxAcquired = player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP;
-            int restore = maxAcquired - player.statLifeMax;
-            player.statLifeMax = maxAcquired;
+            int restore = player.GetModPlayer<tsorcRevampPlayer>().cursePoints;
+            player.GetModPlayer<tsorcRevampPlayer>().cursePoints = 0;
             if (Main.myPlayer == player.whoAmI)
             {
                 player.HealEffect(restore, true);
             }
-            //sanity. should never actually trigger
-            if (player.statLifeMax > 500)
-            {
-                player.statLife = player.statLifeMax2;
-                player.statLifeMax = 500;
-            }
             return true;
         }
 
+        
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             Player player = Main.LocalPlayer;
@@ -60,7 +54,8 @@ namespace tsorcRevamp.Items
             if (ttindex != -1)
             {// if we find one
              //insert the extra tooltip line
-                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Record", Language.GetTextValue("Mods.tsorcRevamp.Items.PurgingStone.Record") + player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP));
+                int totalLife = player.statLifeMax + player.GetModPlayer<tsorcRevampPlayer>().cursePoints;
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Record", Language.GetTextValue("Mods.tsorcRevamp.Items.PurgingStone.Record") + totalLife));
             }
         }
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Microsoft.Xna.Framework.Color lightColor, Microsoft.Xna.Framework.Color alphaColor, ref float rotation, ref float scale, int whoAmI)

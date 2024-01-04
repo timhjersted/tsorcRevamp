@@ -4796,7 +4796,7 @@ Mods: {
 					Won't increase max HP over the maximum achieved 
 					via Life Crystals or Life Fruit
 					'''
-				Record: "Current max life record: "
+				Record: "True max life: "
 			}
 
 			RedTitanite: {

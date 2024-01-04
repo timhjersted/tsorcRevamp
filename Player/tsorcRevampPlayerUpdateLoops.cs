@@ -306,8 +306,6 @@ namespace tsorcRevamp
 
         public UIItemSlot SoulSlot;
 
-        public int MaxAcquiredHP; //To prevent purging stones and humanity from raising hp above your max acquired hp from life crystals and life fruit.
-
         public int PiercingGazeCharge;
 
         public bool PowerWithin;
@@ -341,6 +339,9 @@ namespace tsorcRevamp
         static FieldInfo spawnRateFieldInfo;
 
         public bool gilled;
+
+
+        public int cursePoints;
 
         public override void ResetEffects()
         {
@@ -768,11 +769,6 @@ namespace tsorcRevamp
                 Player.AddBuff(BuffID.Darkness, 60);
             }
 
-            if (MaxAcquiredHP < Player.statLifeMax)
-            {
-                MaxAcquiredHP = Player.statLifeMax;
-            }
-
             if (Player.HasBuff(ModContent.BuffType<NondescriptOwlBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Archer.NondescriptOwlProjectile>()] == 0)
             {
                 Item staff = new();
@@ -955,6 +951,13 @@ namespace tsorcRevamp
                     }
                 }
             }
+        }
+
+        public override void ModifyMaxStats(out StatModifier health, out StatModifier mana)
+        {
+            health = StatModifier.Default;
+            mana = StatModifier.Default;
+            health.Base = -cursePoints;
         }
 
         public override void PostUpdateBuffs()
