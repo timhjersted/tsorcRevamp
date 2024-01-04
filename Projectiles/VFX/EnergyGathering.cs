@@ -64,6 +64,7 @@ namespace tsorcRevamp.Projectiles.VFX
         public override void AI()
         {
             targetPoint = Main.npc[(int)Projectile.ai[0]].Center;
+            RelativeToNPC = (int)Projectile.ai[0];
 
             if (!initialized)
             {
