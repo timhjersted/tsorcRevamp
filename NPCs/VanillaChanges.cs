@@ -5277,7 +5277,6 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            destroyerAttackIndex = 3;
             if (npc.type == NPCID.TheDestroyerBody && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 if (!destroyerJustSpawned)
