@@ -536,7 +536,7 @@ namespace tsorcRevamp.NPCs.Bosses
             UsefulFunctions.EnsureLoaded(ref blurTexture, "tsorcRevamp/NPCs/Bosses/TheHunterBlur");
             UsefulFunctions.EnsureLoaded(ref glowmaskTexture, "tsorcRevamp/NPCs/Bosses/TheHunterGlowmask");
 
-            //if (hunterEffect == null || hunterEffect.IsDisposed)
+            if (hunterEffect == null || hunterEffect.IsDisposed)
             {
                 hunterEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/HunterEffect", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }

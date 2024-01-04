@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.GameContent;
@@ -230,6 +231,10 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void FindFrame(int currentFrame)
         {
+            if (Main.dedServ)
+            {
+                return;
+            }
             Player player = Main.player[NPC.target];
 
             int num = 1;
@@ -258,30 +263,67 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             if (NPC.ai[3] == 0)
             {
+                NPC.alpha = 0;
 
-                if (player.HasBuff(BuffID.Hunter) || player.HasItem(ModContent.ItemType<Items.Potions.PermanentPotions.PermanentHunterPotion>()))
-                {
-                    NPC.alpha = 50;
-                }
-                else
-                {
-                    NPC.alpha = 255;
-                }
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1f);
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 0.5f);
             }
             else
             {
                 if (player.HasBuff(BuffID.Hunter) || player.HasItem(ModContent.ItemType<Items.Potions.PermanentPotions.PermanentHunterPotion>()))
                 {
-                    NPC.alpha = 150;
+                    NPC.alpha = 0;
                 }
                 else
                 {
                     NPC.alpha = 255;
                 }
-                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 2f);
+                Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
             }
         }
+
+
+
+        public static Texture2D blurTexture;
+        public static Texture2D glowmaskTexture;
+        public static Effect hunterEffect;
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            UsefulFunctions.StartAdditiveSpritebatch(ref spriteBatch);
+            UsefulFunctions.EnsureLoaded(ref blurTexture, "tsorcRevamp/NPCs/Bosses/TheHunterChildBlur");
+            UsefulFunctions.EnsureLoaded(ref glowmaskTexture, "tsorcRevamp/NPCs/Bosses/TheHunterChildGlowmask");
+
+            if (hunterEffect == null || hunterEffect.IsDisposed)
+            {
+                hunterEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/HunterEffect", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+            hunterEffect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 252);
+            hunterEffect.Parameters["length"].SetValue(.07f * 1000);
+
+            hunterEffect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseWavy);
+            hunterEffect.Parameters["sourceRectY"].SetValue(NPC.frame.Y);
+
+            float opacity = NPC.ai[0] / (NPC.lifeMax / 10f) * 0.8f;
+            if (NPC.ai[3] != 0)
+            {
+                opacity = 1;
+            }            
+
+            hunterEffect.Parameters["opacity"].SetValue(opacity);
+            hunterEffect.CurrentTechnique.Passes[0].Apply();
+
+            //Only draw the bird if it's not enraged
+            if (NPC.ai[3] == 0 || Main.LocalPlayer.HasBuff(BuffID.Hunter) || Main.LocalPlayer.HasItem(ModContent.ItemType<Items.Potions.PermanentPotions.PermanentHunterPotion>()))
+            {
+                Main.spriteBatch.Draw(blurTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+                UsefulFunctions.RestartSpritebatch(ref spriteBatch);
+                Main.spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, NPC.Center - Main.screenPosition, NPC.frame, drawColor, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+                UsefulFunctions.RestartSpritebatch(ref spriteBatch);
+                Main.spriteBatch.Draw(glowmaskTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+            }
+
+            return false;
+        }
+
         public override bool CheckActive()
         {
             return false;
@@ -311,6 +353,11 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 NPC.ai[1] = -200;
                 NPC.ai[0] = 0;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 800, 50);
+                }
             }
         }
 
@@ -321,16 +368,20 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void OnKill()
         {
-            for (int num36 = 0; num36 < 100; num36++)
+            for (int i = 0; i < 100; i++)
             {
                 int dust = Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 89, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, new Color(), 9f);
                 Main.dust[dust].noGravity = true;
             }
-            for (int num36 = 0; num36 < 100; num36++)
+            for (int i = 0; i < 100; i++)
             {
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 131, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, Color.DarkGreen, 3f);
             }
 
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 2, UsefulFunctions.ColorToFloat(Color.Green));
+            }
         }
         public override void HitEffect(NPC.HitInfo hit)
         {

@@ -73,7 +73,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //Apply the shader, caching it as well
-            //if (effect == null)
+            if (CoreEffect == null)
             {
                 CoreEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatFinalStandAttack", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
@@ -156,7 +156,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             //data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer);
 
             //Apply the shader, caching it as well
-            //if (data == null)
+            if (data == null)
             {
                 data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/SolarDetonation", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "SolarDetonationShaderPass");
             }

@@ -342,7 +342,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragon
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             //Draw the breath weapon
-            //if (effect == null)
+            if (effect == null)
             {
                 effect = ModContent.Request<Effect>("tsorcRevamp/Effects/DragonBreath", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
                 //effect = new Effect(Main.graphics.GraphicsDevice, Mod.GetFileBytes("Effects/SyntheticFirestorm"));

@@ -815,7 +815,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             }
 
             //Apply the shader, caching it as well
-            //if (effect == null)
+            if (effect == null)
             {
                 effect = ModContent.Request<Effect>("tsorcRevamp/Effects/CatAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
@@ -855,7 +855,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
         public static Effect shieldEffect;
         void DrawEnergyShield()
         {
-            //if (shieldEffect == null)
+            if (shieldEffect == null)
             {
                 shieldEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/SimpleRing", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
