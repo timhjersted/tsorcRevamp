@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.width = 28;
             Item.height = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTurn = true;
+            Item.useTurn = false;
             Item.useAnimation = 5;
             Item.useTime = 5;
             Item.maxStack = 1;
