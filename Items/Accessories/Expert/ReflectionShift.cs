@@ -31,6 +31,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
+            player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging = true;
             player.GetModPlayer<tsorcRevampPlayer>().ReflectionShiftEnabled = true;
             if (!hideVisual)
             {
