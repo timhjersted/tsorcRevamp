@@ -551,7 +551,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.StrengthPotion>(), 100, 10, 10, 40));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 10, 5, 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Broadswords.Ragnarok>(), 50));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Broadswords.Ragnarok>(), 2));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Humanity>(), 1, 1, 2));
         }
     }

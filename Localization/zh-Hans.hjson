@@ -493,8 +493,8 @@ Mods: {
 				AngelWings: "[c/ffbf00:你会在将来合适的时机找到这些...]"
 				AdamantiteDrill:
 					'''
-					使用此来打开精金大门，位于
-					村庄西边的腐化神庙上方
+					使用此来打开精金大门
+					位于村庄西边的腐化神庙上方
 					'''
 				BandOfRegeneration:
 					'''
@@ -528,7 +528,7 @@ Mods: {
 				WormFood: "{$CommonItemTooltip.NonConsumable}"
 				CopperAxe: 所有斧头对木质敌人造成双倍伤害
 				Diamond: 制作强力药剂的重要成分
-				IronOre: 也许你可以用这些来制作特殊的箭……？
+				IronOre: 也许你可以用这些来制作特殊的箭......？
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:一个类似于大金字塔的符号，月亮在它的右侧，刻在上面]"
 				LargeSapphire: "[c/ffbf00:城堡附近的一座雪山的符号被刻在上面]"
@@ -2902,6 +2902,7 @@ Mods: {
 					'''
 					你可以听到里面的恶魔低语
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.CritChance@1}
 					'''
 			}
 
@@ -2920,6 +2921,8 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.WhipDmg}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@3}
+					{$CommonItemTooltip.Summon.TagDuration@2}
+					{$CommonItemTooltip.Summon.CritChance@5}
 					{$CommonItemTooltip.Summon.AtkSpeed@1}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.HolyDodge}
 					不包括防御、召唤栏位和鞭子范围
@@ -2993,6 +2996,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.WhipDmg}
 					{$CommonItemTooltip.Summon.TagDuration@4}
+					{$CommonItemTooltip.Summon.CritChance@5}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
 					{$CommonItemTooltip.Summon.AtkSpeed@2}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@3}
@@ -3119,7 +3123,7 @@ Mods: {
 					[c/ffbf00:{$CommonItemTooltip.RestoresLife}, 药水疾病仅 {1} 秒]
 					[c/ffbf00:去除流血和中毒减益]
 					在探索某些区域时最好带上它
-					在药水病的影响或在[c/6d8827:被诅咒者模式]下，
+					在药水疾病的影响或在[c/6d8827:被诅咒者模式]下，
 					它仍然可以用来去除中毒和流血，但此时它不会回复任何生命值
 					'''
 			}
@@ -3809,10 +3813,10 @@ Mods: {
 					'''
 					这看起来像一个日记片段：
 					"最近流传着森林里有土匪的说法，
-					所以父亲总是担心让我一个人去森林里采蘑菇……
+					所以父亲总是担心让我一个人去森林里采蘑菇......
 					笑死，他知道什么？
 					我可能个头小，但我身手敏捷，掌握了[c/00ffd4:躲闪术]！
-					只要不耗尽体力就可以了……"
+					只要不耗尽体力就可以了......"
 					从这些土匪的表现来看，我想他们掌握的还不够熟练
 					或许我应该在战斗中多加练习，避免重蹈覆辙？
 					[c/ffbf00:按 左Alt 翻滚，或在控件中将其绑定到你用着顺手的键位]
@@ -4727,7 +4731,7 @@ Mods: {
 				DisplayName: 冲击波药水
 				Tooltip:
 					'''
-					按住 下 键可增加坠落速度
+					按住<下>键可增加坠落速度
 					当你着陆时产生破坏性冲击波
 					其强度会根据坠落的距离而增加
 					'''
@@ -4774,7 +4778,7 @@ Mods: {
 					{$CommonItemTooltip.StaminaRegen@1}
 					过度的力量吞噬施法者的生命力
 					持续 {2} 秒且无法取消
-					{$CommonItemTooltip.ForBotCOnly}物品的效果加倍
+					{$CommonItemTooltip.ForBotCOnly}此物品的效果加倍
 					'''
 			}
 
@@ -4788,14 +4792,14 @@ Mods: {
 				Tooltip:
 					'''
 					包裹头骨的灰色石头
-					卡里姆伯爵阿斯特的秘密宝藏
-					吸收累积的诅咒并打破诅咒，将你的最大生命值恢复到 500
-					不能在药水病激活时使用
-					人类是 对诅咒束手无策，只能重定向其影响
-					净化石不会驱散诅咒，而是将它们作为替代物接收
-					石头本身曾经是一个人或其他生物
-					不会增加通过生命水晶或生命果实达到的
-					最大生命值
+					来自卡里姆伯爵——阿斯特的秘宝
+					移除累积的诅咒，并将你的最大生命值恢复到 500
+					恢复量不会超出生命水晶或生命果实所达到的最大值
+					不能在药水疾病期间使用
+					人类对诅咒束手无策，只能设法转移其影响
+					净化石本身并不会直接驱散诅咒
+					而是作为一个替代品将其接收
+					这意味着它自身可能曾经是一个人或其他生物					
 					'''
 				Record: "当前能恢复的最大生命值： "
 			}
@@ -6401,7 +6405,12 @@ Mods: {
 
 			BeetleIdol: {
 				DisplayName: 甲虫之星
-				Tooltip: 召唤武士甲虫为你战斗
+				Tooltip:
+					'''
+					召唤圣甲虫武士为你战斗
+					每三次攻击使用一次[c/FF00FF:电击猛击]
+					只能存在一个
+					'''
 			}
 
 			NullSpriteStaff: {
@@ -7338,6 +7347,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.WhipDmg}
 					{$CommonItemTooltip.Summon.TagDuration@3}
+					{$CommonItemTooltip.Summon.CritChance@4}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
 					{$CommonItemTooltip.Summon.AtkSpeed@2}
 					'''
@@ -7582,14 +7592,19 @@ Mods: {
 
 			WorldEnderItem: {
 				DisplayName: 末世之剑
-				Tooltip: ""
-				/* Details:
+				Tooltip:
 					'''
-					[c/DC143C:Sweetspot] bonus damage is based on your critical strike chance
-					[c/8B0000:Sword Strike] cooldown scales down with melee speed
-					Each [c/8B0000:Sword Strike] increases in damage and cooldown
-					Normal sword swing speed also scales with melee speed as usual and can crit
-					''' */
+					[c/8B0000:<right>以发动剑击]
+					[c/8B0000:剑击]无法暴击，但会在玩家面前创造一个区域
+					攻击[c/DC143C:处决区]内的敌人将造成额外伤害并始终暴击
+					'''
+				Details:
+					'''
+					[c/DC143C:处决区]的额外伤害受暴击率影响
+					[c/8B0000:剑击]的冷却时间受近战攻击速度影响
+					连续发动[c/8B0000:剑击]会增加其伤害和冷却时间
+					左键攻击会像普通大剑一样挥舞，并受近战速度和暴击率的加成
+					'''
 			}
 
 			LichBone: {
@@ -7632,24 +7647,24 @@ Mods: {
 			}
 
 			LivingLog: {
-				// DisplayName: Living Log
-				// Tooltip: ""
+				DisplayName: 生机桐木
+				Tooltip: ""
 			}
 
 			NightmareFuel: {
-				// DisplayName: Nightmare Fuel
-				// Tooltip: ""
+				DisplayName: 梦魇燃料
+				Tooltip: ""
 			}
 
 			DarkSword: {
-				// DisplayName: Dark Sword
-				/* Tooltip:
+				DisplayName: 暗夜隐秘之剑
+				Tooltip:
 					'''
-					Left Click to swing like a sword and apply Insanity on-hit
-					<right> to summon Terrorbeaks to fight for you
-					Terrorbeaks only target insane enemies
-					Crits are based on summon critical strike chance
-					''' */
+					左键像剑一样挥舞，并对命中的目标施加疯狂状态
+					<right>召唤凤凰之喙为你而战
+					凤凰之喙只攻击疯狂状态的敌人
+					武器本身自带 6% 召唤暴击率
+					'''
 			}
 		}
 
@@ -8253,8 +8268,8 @@ Mods: {
 			}
 
 			SamuraiBeetleBuff: {
-				DisplayName: 武士圣甲虫
-				Description: 甲虫会为你而战
+				DisplayName: 圣甲虫武士
+				Description: 圣甲虫武士会为你而战
 			}
 
 			ShatteredReflectionBuff: {
@@ -8454,17 +8469,17 @@ Mods: {
 
 			LudensTempestCooldown: {
 				DisplayName: 卢登的激荡冷却
-				Description: 当前冷却结束前你不能再次触发黑黯焰火
+				Description: 冷却结束前你不能再次触发黑黯焰火
 			}
 
 			SteraksGageCooldown: {
 				DisplayName: 斯特拉克的挑战护手冷却
-				Description: 当前冷却结束前你不能再次获得生命治疗
+				Description: 冷却结束前你不能再次获得生命治疗
 			}
 
 			GoredrinkerCooldown: {
 				DisplayName: 渴血战斧冷却
-				Description: 当前冷却结束前你不能通过攻击获得生命治疗
+				Description: 冷却结束前你不能通过攻击获得生命治疗
 			}
 
 			BarrierCooldown: {
@@ -8509,7 +8524,7 @@ Mods: {
 
 			WorldEnderCooldown: {
 				DisplayName: 末世之剑冷却
-				Description: Mods.tsorcRevamp.Buffs.WorldEnderCooldown.Description
+				Description: 冷却结束前你无法使用末世之剑
 			}
 
 			SpiritAshKnightBuff: {
@@ -8533,23 +8548,23 @@ Mods: {
 			}
 
 			TerrorbeakBuff: {
-				// DisplayName: Terrorbeak Buff
-				// Description: Mods.tsorcRevamp.Buffs.TerrorbeakBuff.Description
+				DisplayName: 凤凰之喙
+				Description: ""
 			}
 
 			WorldEnderTimer: {
-				// DisplayName: World Ender Timer
-				// Description: If this runs out, the World Ender Sword Strikes will go on cooldown
+				DisplayName: 末世之剑
+				Description: 结束后，末世之剑进入冷却
 			}
 
 			Insanity: {
-				// DisplayName: Insanity
-				// Description: Mods.tsorcRevamp.Buffs.Insanity.Description
+				DisplayName: 疯狂
+				Description: Mods.tsorcRevamp.Buffs.Insanity.Description
 			}
 
 			CCShock: {
-				// DisplayName: C C Shock
-				// Description: Mods.tsorcRevamp.Buffs.CCShock.Description
+				DisplayName: 电击猛击
+				Description: Mods.tsorcRevamp.Buffs.CCShock.Description
 			}
 		}
 
@@ -8993,7 +9008,7 @@ Mods: {
 			CenterOfTheUniverseStellarNova.DisplayName: 宇宙重心恒星新星
 			InterstellarVesselShip.DisplayName: 星际飞船
 			ScorchingPointFireball.DisplayName: 灼热火球
-			SamuraiBeetle.DisplayName: 武士圣甲虫
+			SamuraiBeetle.DisplayName: 圣甲虫武士
 			GaleForceProjectile.DisplayName: 极风之弦
 			ShatteredReflectionProjectile.DisplayName: 碎镜反射
 			BarrowWightMinion.DisplayName: 巴罗怀特仆从
@@ -9156,13 +9171,13 @@ Mods: {
 			FetidExhaustProjectile.DisplayName: 腐败吐息
 			ShatteredMoonlightProjectile.DisplayName: 破碎月光
 			SmallGolemFireball.DisplayName: 石巨人小火球
-			// TerrorbeakProjectile.DisplayName: Terrorbeak Projectile
-			// WorldEnderSwordSwing1.DisplayName: World Ender Sword Swing1
-			// WorldEnderSwordSwing2.DisplayName: World Ender Sword Swing2
-			// WorldEnderSwordSwing3.DisplayName: World Ender Sword Swing3
-			// SamuraiBeetleTrail.DisplayName: Samurai Beetle Trail
-			// SamuraiBeetleLightning.DisplayName: Samurai Beetle Lightning
-			// SamuraiBeetleProjectile.DisplayName: Samurai Beetle Projectile
+			TerrorbeakProjectile.DisplayName: 凤凰之喙
+			WorldEnderSwordSwing1.DisplayName: 末世之剑1
+			WorldEnderSwordSwing2.DisplayName: 末世之剑2
+			WorldEnderSwordSwing3.DisplayName: 末世之剑3
+			SamuraiBeetleTrail.DisplayName: 圣甲虫武士
+			SamuraiBeetleLightning.DisplayName: 圣甲虫武士
+			SamuraiBeetleProjectile.DisplayName: 圣甲虫武士
 		}
 
 		NPCs: {
@@ -9184,7 +9199,7 @@ Mods: {
 
 			EmpressOfLight: {
 				Forcefield: 在天空的某个地方，一个力场坍塌了...
-				DespawnHandler: 光之女皇隐入太阳
+				DespawnHandler: 光之女皇隐入太阳...
 				DespawnHandlerRare: 尝尝彩虹的力量吧，混蛋...
 			}
 
@@ -9196,7 +9211,7 @@ Mods: {
 			VortexPillar: 星旋柱的力量恢复了...
 			NebulaPillar: 星云柱的力量恢复了...
 			KingSlime.DespawnHandler: 史莱姆王保卫了它的皇冠...
-			EyeOfCthulhu.DespawnHandler: 克苏鲁之眼的目光再次掠过你...
+			EyeOfCthulhu.DespawnHandler: 克苏鲁之眼仍在守望...
 			BrainOfCthulhu.DespawnHandler: 克苏鲁之脑玩腻了，你太弱啦...
 			QueenBee.DespawnHandler: 蜂后大胜而归...
 			Skeletron.DespawnHandler: 骷髅王从你的死亡中得到了满足...
@@ -9621,10 +9636,10 @@ Mods: {
 			DiscipleOfAttraidies.DisplayName: 阿卓迪斯的门徒
 			DungeonMage.DisplayName: 幽暗地牢法师
 			Dunlending.DisplayName: 黑蛮地野人
-			DworcFleshhunter.DisplayName: 德沃克的血肉捕手
-			DworcVenomsniper.DisplayName: 德沃克的猛毒狙击者
-			DworcVoodoomaster.DisplayName: 德沃克的炼金术士
-			DworcVoodooShaman.DisplayName: 德沃克的萨满
+			DworcFleshhunter.DisplayName: 德沃克血肉捕手
+			DworcVenomsniper.DisplayName: 德沃克猛毒狙击者
+			DworcVoodoomaster.DisplayName: 德沃克炼金术士
+			DworcVoodooShaman.DisplayName: 德沃克萨满
 			FirebombHollow.DisplayName: 燃烧瓶投掷者
 			FireLurker.DisplayName: 火炎潜伏者
 			FlameBat.DisplayName: 烈焰蝙蝠
@@ -9698,7 +9713,7 @@ Mods: {
 			}
 
 			BarrowWightNemesis.DisplayName: 巴罗·怀特·复仇女神
-			BarrowWightPhantom.DisplayName: 巴罗怀特 · 幻影
+			BarrowWightPhantom.DisplayName: 巴罗·怀特·幻影
 			BasiliskHunter.DisplayName: 蛇影猎手
 			CorruptedElemental.DisplayName: 堕落元素
 			CorruptedHornet.DisplayName: 堕落黄蜂
@@ -9855,7 +9870,7 @@ Mods: {
 				HasShard:
 					'''
 					那是你找到的碎片吗？ 来，让我康康！
-					以便我帮助你。 看到光明，看到希望……无论它多么微弱……
+					以便我帮助你。 看到光明，看到希望......无论它多么微弱......
 					'''
 				RewardTip: 听我说，我可能会给你奖励。
 				AttraidiesTip: 切记要一直迎难而上。 因为苦难会引导你成为更伟大、更坚强的灵魂。 你永远不可能用如此脆弱和苍白的灵魂打败阿卓迪斯。
@@ -9863,19 +9878,19 @@ Mods: {
 				Tip2: 如果你偶然发现一件武器遭受了低劣词缀的可怕诅咒，把它带给我，我会祝福它。
 				Tip3: 我希望你有敏锐的眼光，因为这是一片充满奥秘的土地...
 				Tip4: 在你的旅程中，尤其是在试图找回丢失的黑暗之魂时，持续使用药水是至关重要的。
-				Tip5: 可以使用镐子或粘性炸弹来打破宽度为1格的墙壁。 石制门需要找到开关来开启。如果不确定你面对的是哪种门，先给它来一稿子再说。
+				Tip5: 可以使用镐子或粘性炸弹来打破宽度为 1 格的墙壁。石制门需要找到开关来开启。如果不确定你面对的是哪种门，先给它来一稿子再说。
 				Tip6: 黑暗之魂具有特殊的特性。 你死后将丢失所有的黑暗之魂，但仍有机会找回它们。但如果再次死亡，已经掉落的黑暗之魂就会永久消逝。
 				Tip7: 在你的旅途中，你会遇到未点燃的篝火，点燃它们并享受它们提供的宁静。你可以将它们用作检查点和存储库。
 				Tip8: 你可以将多余的弹药、武器和盔甲存放在保存点和篝火处的保险箱和猪猪存钱罐中。
 				Tip9: 只有更强的镐才能击碎坚固的大门。
 				Tip10: 最后...我不确定它是什么意思，但有人告诉我要告诉你阅读名为“游戏手册”的东西以获取更多信息。注：即有问题就来群里问问群员看看谁能帮上忙。
-				ReceiveGift: 带上这些。 愿它们让你的旅程更轻松。
+				ReceiveGift: 带上这些，愿这份礼物让你的旅程更轻松。
 				Luck: 祝好运。
 				Gift: 如果你需要更多，你可以在篝火的火焰上烤一些。再见。
 				BotCGift: 被诅咒者，这些生命宝石无疑将在你的旅程中显示它们的价值。再见。
 				EasterEgg: 承载...寻求...寻求...免得...
 				button1: 祝福
-				button2v1: 寻求知识引导...
+				button2v1: 教程引导...
 				button2v2: 收下礼物
 				button2v3: 给予碎片
 				BringShards: 如果你碰巧找到了另一个元素瓶碎片，请将其带给我。 这样我就可以减轻你的生存压力。

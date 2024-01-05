@@ -162,7 +162,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             // Mutant Toad Spawn
             // Counts up each tick. used to space out spawns
-            if (FrogSpawnTimer >= 120 && FrogSpawnCounter < 3)
+            if (FrogSpawnTimer >= 120 && FrogSpawnCounter < 3 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.MutantToad>()) < 3)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -182,7 +182,6 @@ namespace tsorcRevamp.NPCs.Bosses
             if (Main.rand.NextBool(600) && NPC.life >= NPC.lifeMax / 2)
             {
                 FrogSpawnCounter = 0;
-
             }
 
             Player Player = Main.player[NPC.target];
@@ -395,11 +394,6 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (NPC.ai[3] == 100)
 
                         NPC.ai[3] = 1;
-
-                    if (NPC.life > (NPC.lifeMax / 2))
-                    {
-                        FrogSpawnCounter = 0;
-                    }
 
                     // Loses life on enrage: removed because it made the birds too easy
                     //if (NPC.life > 35)

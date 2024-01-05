@@ -61,12 +61,22 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.WaspGun)
             {
-                item.damage = 42; //vanilla 31, with HiveBackpack is 36, anyonne relly use HiveBackpack post-Plantera?
+                item.damage = 42; //vanilla 31, with HiveBackpack is 36
             }
             if (item.type == ItemID.HeatRay)
             {
                 item.damage = 110; //vanilla 90
                 item.useTime = 20; //vanilla 24
+            }
+            if (item.type == ItemID.LaserMachinegun)
+            {
+                item.damage = 80; //vanilla 60, buff as SHM weapon
+                item.mana = 12; //vanilla 6
+            }
+            if (item.type == ItemID.ToxicFlask)
+            {
+                item.damage = 140; //vanilla 52, buff as SHM weapon
+                item.mana = 60; //vanilla 30
             }
 
             //Lunar items

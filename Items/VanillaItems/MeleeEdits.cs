@@ -244,6 +244,11 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.damage = 125; //vanilla 90
             }
+            if (item.type == ItemID.PossessedHatchet)
+            {
+                item.damage = 110; //vanilla 80
+                item.mana = 10;
+            }
         }
 
         public static void SetMeleeSlashColor(Item item)

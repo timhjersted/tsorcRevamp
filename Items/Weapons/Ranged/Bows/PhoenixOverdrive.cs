@@ -41,6 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.VenusMagnum);
+            recipe.AddIngredient(ItemID.DD2PhoenixBow);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
             recipe.AddTile(TileID.DemonAltar);

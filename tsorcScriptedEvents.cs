@@ -198,6 +198,9 @@ namespace tsorcRevamp
             DualSandsprogAmbush1,
             DrownedAmbush1,
             DrownedAmbush2,
+            MushroomCavern,
+            AshCavernLeftside,
+            AshCavernRightside,
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -521,10 +524,20 @@ namespace tsorcRevamp
             ScriptedEvent DrownedAmbush2 = new ScriptedEvent(new Vector2(4090, 828), 11, DrownedAmbush2EnemyTypeList, DrownedAmbush2EnemyLocations, DustID.Water, true, false, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
             DrownedAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.BoostPotion>() }, new List<int>() { 2 });
 
+            //Mushroom Cavern AMBUSH
+            List<int> MushroomCavernEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), ModContent.NPCType<NPCs.Enemies.SuperHardMode.Abysswalker>(), };
+            List<Vector2> MushroomCavernEnemyLocations = new List<Vector2>() { new Vector2(3690, 1545), new Vector2(3675, 1545) };
+            ScriptedEvent MushroomCavern = new ScriptedEvent(new Vector2(3690, 1535), 30, MushroomCavernEnemyTypeList, MushroomCavernEnemyLocations, DustID.Water, true, true, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
+
+            //Ashen Cavern Leftside - Ancient Demon Of The Abyss
+            ScriptedEvent AshCavernLeftside = new ScriptedEvent(new Vector2(1578, 1895), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemonOfTheAbyss>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red);
+
+            //Ashen Cavern Rightside - Oolacile Knight
+            ScriptedEvent AshCavernRightside = new ScriptedEvent(new Vector2(2382, 1882), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileKnight>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red);
+
             ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, SuperHardModeCustomCondition, SetNightCustomAction);
 
             ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, () => !NPC.downedBoss3);
-
 
 
             //Every enum and ScriptedEvent has to get paired up here
@@ -606,6 +619,9 @@ namespace tsorcRevamp
                 {ScriptedEventType.DualSandsprogAmbush1, DualSandsprogAmbush1 },
                 {ScriptedEventType.DrownedAmbush1, DrownedAmbush1 },
                 {ScriptedEventType.DrownedAmbush2, DrownedAmbush2 },
+                {ScriptedEventType.MushroomCavern, MushroomCavern },
+                {ScriptedEventType.AshCavernLeftside, AshCavernLeftside },
+                {ScriptedEventType.AshCavernRightside, AshCavernRightside },
 
 
             };

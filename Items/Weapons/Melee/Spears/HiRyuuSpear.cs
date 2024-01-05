@@ -1,7 +1,9 @@
-﻿using Terraria.ID;
+﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Melee.Spears;
 using Terraria.Localization;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
@@ -35,14 +37,21 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 
         }
 
-        /*public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.AdamantiteGlaive);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 32000);
-            
+            recipe.AddIngredient(ItemID.MonkStaffT2);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);           
             recipe.AddTile(TileID.DemonAltar);
+
             recipe.Register();
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ItemID.ObsidianSwordfish);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);           
+            recipe2.AddTile(TileID.DemonAltar);
+
+            recipe2.Register();
         }
-        */
     }
 }

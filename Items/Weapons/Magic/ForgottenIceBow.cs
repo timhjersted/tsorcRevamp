@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(ModContent.ItemType<Ice4Tome>(), 1);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
             recipe.AddIngredient(ModContent.ItemType<Humanity>(), 9);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 160000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
