@@ -158,7 +158,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             Main.spriteBatch.Draw(NoiseSmooth, Mouth.finalPosition - Main.screenPosition, recsize, Color.White, Mouth.finalRotation - MathF.PI * (Mouth.curEffect == SpriteEffects.None ? 0 : 1), origin, trueSizeMultiplier * trueSizeMultiplier * 7.5f, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             return false;
         }

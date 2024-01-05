@@ -11,6 +11,7 @@ using tsorcRevamp.Projectiles.Summon.SamuraiBeetle;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
+    [Autoload(false)]
     public class BeetleIdol : ModItem
     {
         public override void SetStaticDefaults()

@@ -16,6 +16,7 @@ using tsorcRevamp.Projectiles.Summon;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
+    [Autoload(false)]
     public class DarkSword : ModItem
     {
         public string SoundPath = "tsorcRevamp/Sounds/DST/DarkSword";
