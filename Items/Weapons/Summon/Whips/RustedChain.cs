@@ -39,15 +39,11 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
             Item.noMelee = true;
             Item.noUseGraphic = true;
         }
-        public override void UpdateInventory(Player player)
+        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
             if (Item.prefix == PrefixID.Terrible)
             {
-                Item.damage = BaseDmg - 8;
-            }
-            else
-            {
-                Item.damage = BaseDmg;
+                damage -= 8;
             }
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)

@@ -30,15 +30,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Gray;
         }
-        public override void UpdateInventory(Player player)
+        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
             if (Item.prefix == PrefixID.Dull)
             {
-                Item.damage = BaseDmg - 7;
-            }
-            else
-            {
-                Item.damage = BaseDmg;
+                damage -= 5;
             }
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)

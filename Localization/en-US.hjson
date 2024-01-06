@@ -1968,7 +1968,7 @@ Mods: {
 			}
 
 			ArtoriasArmor: {
-				DisplayName: Artorias' Armor
+				DisplayName: Artorias Armor
 				Tooltip:
 					'''
 					Enchanted armor of Artorias of the Abyss.
@@ -1979,7 +1979,7 @@ Mods: {
 			}
 
 			ArtoriasGreaves: {
-				DisplayName: Artorias' Greaves
+				DisplayName: Artorias Greaves
 				Tooltip:
 					'''
 					Enchanted armor of Artorias.
@@ -1989,7 +1989,7 @@ Mods: {
 			}
 
 			ArtoriasHelmet: {
-				DisplayName: Artorias' Helmet
+				DisplayName: Artorias Helmet
 				Tooltip:
 					'''
 					Enchanted helmet of Artorias.

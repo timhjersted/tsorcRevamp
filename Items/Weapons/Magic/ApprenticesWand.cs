@@ -30,15 +30,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.shoot = ModContent.ProjectileType<ApprenticesWandFireball>();
             Item.noMelee = true;
         }
-        public override void UpdateInventory(Player player)
+        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
             if (Item.prefix == PrefixID.Ignorant)
             {
-                Item.damage = BaseDmg - 5;
-            }
-            else
-            {
-                Item.damage = BaseDmg;
+                damage -= 5;
             }
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)

@@ -33,15 +33,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = PriceByRarity.White_0;
         }
-        public override void UpdateInventory(Player player)
+        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
             if (Item.prefix == PrefixID.Awful)
             {
-                Item.damage = BaseDmg - 7;
-            }
-            else
-            {
-                Item.damage = BaseDmg;
+                damage -= 7;
             }
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
