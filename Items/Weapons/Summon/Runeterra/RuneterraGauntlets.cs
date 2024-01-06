@@ -93,7 +93,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 
             CirclingBall.originalDamage = Item.damage;
 
-            if (player.ownedProjectileCounts[DragonType] == 0)
+            if (player.ownedProjectileCounts[DragonType] == 0 && Main.myPlayer == player.whoAmI)
             {
                 Dragon = Projectile.NewProjectileDirect(source, position, Vector2.Zero, DragonType, damage, 0, Main.myPlayer);
                 Dragon.originalDamage = Item.damage;
