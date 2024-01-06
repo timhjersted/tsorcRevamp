@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items
             {
                 return false;
             }
-            if (item.type == ItemID.QueenSlimeMountSaddle && !NPC.downedMechBoss3)
+            if (item.type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
             {
                 return false;
             }
@@ -184,7 +184,7 @@ namespace tsorcRevamp.Items
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.CorruptionCursed")));
                 }
-                if (item.type == ItemID.QueenSlimeMountSaddle && !NPC.downedMechBoss3)
+                if (item.type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.WingsDisabled")));
                 }

@@ -8,6 +8,7 @@ using Terraria.Audio;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using TerraUI.Objects;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Accessories;
@@ -504,7 +505,7 @@ namespace tsorcRevamp
             {
                 Player.ClearBuff(BuffID.SlimeMount);
             }
-            if (!NPC.downedMechBoss3)
+            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
             {
                 Player.ClearBuff(BuffID.QueenSlimeMount);
             }

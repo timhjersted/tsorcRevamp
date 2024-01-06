@@ -13,6 +13,7 @@ using Terraria.Graphics;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.UI;
 using Terraria.Utilities;
 using tsorcRevamp.Buffs.Debuffs;
@@ -1742,7 +1743,7 @@ namespace tsorcRevamp
                 {
                     restrictedHook = true;
                 }
-                if (self.miscEquips[3].type == ItemID.QueenSlimeMountSaddle && !NPC.downedMechBoss3)
+                if (self.miscEquips[3].type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
                 {
                     restrictedHook = true;
                 }
@@ -1765,7 +1766,7 @@ namespace tsorcRevamp
                         {
                             restrictedHook = true;
                         }
-                        if (self.inventory[i].type == ItemID.QueenSlimeMountSaddle && !NPC.downedMechBoss3)
+                        if (self.inventory[i].type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
                         {
                             restrictedHook = true;
                         }
