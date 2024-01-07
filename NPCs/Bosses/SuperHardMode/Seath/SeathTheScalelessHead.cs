@@ -497,7 +497,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SeathBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 20, 35));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 10, 15 ));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BequeathedSoul>(), 1, 1, 2));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BlueTearstoneRing>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));

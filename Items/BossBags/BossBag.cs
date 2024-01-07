@@ -422,6 +422,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.ForgottenRisingSun>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<FairyInABottle>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
+            itemLoot.Add(ItemDropRule.Common(ItemID.SpectreGoggles));
         }
     }
     public class LichBag : BossBag
@@ -526,7 +527,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HellkiteStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<WorldEnderItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Spears.HiRyuuSpear>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 22, 28));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 2, 5));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 5, 10));
         }
     }
@@ -542,7 +543,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Expert.WingsOfSeath>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Defensive.BlueTearstoneRing>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 35, 50));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 5, 10));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BequeathedSoul>(), 1, 3, 6));
         }
     }

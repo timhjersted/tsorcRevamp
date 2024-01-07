@@ -493,8 +493,8 @@ Mods: {
 				AngelWings: "[c/ffbf00:You will discover these in time...]"
 				AdamantiteDrill:
 					'''
-					Use this to open the Adamantite gates in the
-					Corruption Temple to the west of the village
+					[c/ffbf00:Use this to open the Adamantite gates in the]
+					[c/ffbf00:Corruption Temple to the west of the village]
 					'''
 				BandOfRegeneration:
 					'''

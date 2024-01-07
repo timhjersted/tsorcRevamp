@@ -72,8 +72,8 @@ Mods: {
 			LifeThreshold: 当生命值低于 {0}% 时，
 			Slowness: 减少 {0}% 移动速度
 			Thorns: 增加 {0}% 荆棘伤害
-			SoulDrops: 增加 {0}% 从敌人身上掉落的灵魂量
-			ConsumableSoulDrops: 增加 {0}% 一次性灵魂容器的掉落率
+			SoulDrops: 增加 {0}% 从敌人身上掉落的黑暗之魂数量
+			ConsumableSoulDrops: 一次性灵魂容器的掉落率提高 {0}%
 			MeleeWhipDmg: 增加 {0}% 近战和鞭子伤害
 			MoveSpeedMult: 乘算增加 {0}% 移动速度
 			BadMoveSpeedMult: 乘算减少 {0}% 移动速度
@@ -493,8 +493,8 @@ Mods: {
 				AngelWings: "[c/ffbf00:你会在将来合适的时机找到这些...]"
 				AdamantiteDrill:
 					'''
-					使用此来打开精金大门
-					位于村庄西边的腐化神庙上方
+					[c/ffbf00:使用此来打开精金大门]
+					[c/ffbf00:位于村庄西边的腐化神殿上方]
 					'''
 				BandOfRegeneration:
 					'''
@@ -515,7 +515,7 @@ Mods: {
 				MechanicalSkull: "{$CommonItemTooltip.NonConsumable}"
 				MechanicalWorm:
 					'''
-					它比你预期的要重。
+					它比你预期的要重
 					你感觉到一种在空中停留的方式可能是关键...
 					{$CommonItemTooltip.NonConsumable}
 					'''
@@ -531,7 +531,7 @@ Mods: {
 				IronOre: 也许你可以用这些来制作特殊的箭......？
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:一个类似于大金字塔的符号，月亮在它的右侧，刻在上面]"
-				LargeSapphire: "[c/ffbf00:城堡附近的一座雪山的符号被刻在上面]"
+				LargeSapphire: "[c/ffbf00:上面刻着飞龙法师堡垒附近的一座雪山的符号]"
 				VulnerabilityHex: 如果已击败双足翼龙，则施加双足翼龙诅咒减益
 				StarinaBottle: 增加 10 点魔力再生同时减少 50% 魔力再生延迟
 				ManaRegenerationBand: 增加 25 点魔力再生同时减少 100% 魔力再生延迟
@@ -986,12 +986,12 @@ Mods: {
 				Tooltip:
 					'''
 					为了靠近深渊印记，你必须锤死深渊六大领主：
-					亚尔特留斯，“枯萎”，飞龙法师堕魂—渊影，无鳞冰龙_希斯，和“混沌”。
+					亚尔特留斯、“枯萎”、飞龙法师堕魂—渊影、无鳞冰龙_希斯、和“混沌”
 					带上这些恶魔领主的灵魂
-					你就能召唤最后一位领主：葛温—灰烬帝王。
+					你就能召唤最后一位领主：葛温—灰烬帝王
 					为了合成这些领主的召唤物，你得回到这八个常见的地方：
-					并且收集你能在那里找到的敌怪掉落的独一无二物品：西（左）海洋，地下，
-					腐化/血腥之地，丛林，地牢，地狱和东（右）海洋。
+					并且收集你能在那里找到的敌怪掉落的独一无二物品：
+					西（左）海洋、地下、腐化/猩红之地、丛林、地牢、地狱和东（右）海洋
 					'''
 			}
 
@@ -1150,7 +1150,7 @@ Mods: {
 					'''
 					[c/ffbf00:穿戴时允许你进入深渊。 摘下指环，离开深渊！]
 					[c/ffbf00:深渊遍布世界，如我们自身之镜，但其黑暗更加深远...]
-					[c/00ffd4:对一些深渊相关的敌人造成的debuff免疫，例如残废，中毒，着火以及涂油]
+					[c/00ffd4:对一些深渊相关敌人造成的减益免疫，例如残废、中毒、着火以及涂油]
 					免疫击退、熔岩、火块和地狱黯炎，但是会提升敌人生成速度
 					乘算增加 {0}% 伤害、暴击率、移动速度、攻击速度{$CommonItemTooltip.Melee.Bonus@1}
 					'''
@@ -1403,7 +1403,7 @@ Mods: {
 					[c/ffbf00:{$CommonItemTooltip.SoulDrops}]
 					[c/ffbf00:{$CommonItemTooltip.BadDefense@1}]
 					[c/ffbf00:{$CommonItemTooltip.ConsumableSoulDrops@2}]
-					所有的灵魂都会从很远的地方被吸引到佩戴者身边
+					所有的黑暗之魂都会从很远的地方被吸引到佩戴者身边
 					白光闪耀于其上
 					'''
 			}
@@ -1526,7 +1526,7 @@ Mods: {
 					'''
 					亚尔特留斯曾佩戴的戒指
 					曾拥有着这个世界所无法承受的力量
-					[c/ffbf00:现在，它可以使佩戴者免疫诅咒、黑视、遮蔽与冰冻]
+					[c/ffbf00:现在它可以使佩戴者免疫诅咒、黑视、遮蔽与冰冻]
 					'''
 			}
 
@@ -2205,7 +2205,7 @@ Mods: {
 
 			HollowSoldierWaistcloth: {
 				DisplayName: 空洞士兵腰带
-				Tooltip: 增强翻滚的效果，特别是在平地上。
+				Tooltip: 增强翻滚的效果，特别是在平地上
 			}
 
 			AnkorWatChestplate: {
@@ -2824,7 +2824,7 @@ Mods: {
 				DisplayName: 斯莫夫盔甲
 				Tooltip:
 					'''
-					加强龙纹盾的效果。
+					加强龙纹盾的效果
 					{$CommonItemTooltip.SetBonus}增加 {1}% 暴击率
 					乘算降低 {0}% 攻击速度，增加 {0}% 魔力消耗
 					'''
@@ -3302,8 +3302,8 @@ Mods: {
 				DisplayName: 枯萎之石
 				Tooltip:
 					'''
-					召唤「枯萎」，深渊六守卫之一。
-					你必须在地表上战斗。
+					召唤「枯萎」，深渊六守卫之一
+					你必须在地表上战斗
 					在你佩戴饰品「亚尔特留斯之约」时枯萎不会受伤
 					'''
 				Angery: '''"你"'''
@@ -3582,7 +3582,7 @@ Mods: {
 					'''
 					奇怪的魔法戒指碎裂成了两半...
 					Miakoda: "为了恢复它的魔力
-					你需要5个白钛矿和1000黑暗之魂
+					你需要 5 个白钛矿和 1000 黑暗之魂
 					为了找到需要的东西，我们要去探索邪恶群落和地牢"
 					'''
 			}
@@ -3693,7 +3693,7 @@ Mods: {
 					一块结晶的水碎片
 					第二块。这些纹章是谜题的一部分吗？
 					[c/00ffd4:这个碎片包含一个谜语：] 
-					[c/ffbf00:"在炽热的太阳下，在酷热的西风的庇护下, 带有微弱紫光的黑烟照亮了道路"]
+					[c/ffbf00:"在炽热的太阳下，在酷热的西风的庇护下, 带有微弱紫光的黑烟照亮了道路。"]
 					'''
 			}
 
@@ -3785,10 +3785,10 @@ Mods: {
 				DisplayName: 钻石镐
 				Tooltip:
 					'''
-					一个用于探索理想的镐子...
-					钻石的尖端已经注入了来自天人的魔法
-					因此，它不会对生物造成伤害，但它的尖端可以轻松打破物块
-					令人难以置信的轻松...在事实上，它在你手中移动得如此之快
+					一把理想的探险镐...
+					尖端的钻石已经注入了来自天人的魔法
+					因此，它不会对生物造成伤害，但可以轻松打破物块
+					令人难以置信的轻松...事实上，它在你手中挥舞得如此之快
 					你几乎看不到它，但使用它却感觉毫不费力...
 					'''
 			}
@@ -3842,7 +3842,7 @@ Mods: {
 					...
 					希望你享受了本次游戏历程
 					我们期待你对该mod提出改进意见，你可以通过Steam页面与Discord联系我们！
-					- Tim Hjersted,aka Vibrent和开发团队
+					- Tim Hjersted, aka Vibrent 和开发团队
 					'''
 			}
 
@@ -4023,7 +4023,7 @@ Mods: {
 				DisplayName: 弩箭箱
 				Tooltip:
 					'''
-					一个装有100个弩箭的箱子
+					一个装有 100 支弩箭的箱子
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
 			}
@@ -4032,7 +4032,7 @@ Mods: {
 				DisplayName: 霜冻箭箱
 				Tooltip:
 					'''
-					一个装有100支霜冻箭的箱子
+					一个装有 100 支霜冻箭的箱子
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
 			}
@@ -4041,7 +4041,7 @@ Mods: {
 				DisplayName: 凝胶箱
 				Tooltip:
 					'''
-					一个装有100个凝胶的箱子
+					一个装有 100 份凝胶的箱子
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
 			}
@@ -4050,7 +4050,7 @@ Mods: {
 				DisplayName: 流星弹药箱
 				Tooltip:
 					'''
-					一个装有100颗流星弹的箱子
+					一个装有 100 颗流星弹的箱子
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
 			}
@@ -4059,7 +4059,7 @@ Mods: {
 				DisplayName: 皇家投矛箱
 				Tooltip:
 					'''
-					一个装有100支皇家投矛的箱子
+					一个装有 100 支皇家投矛的箱子
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
 			}
@@ -4068,7 +4068,7 @@ Mods: {
 				DisplayName: 魂币箱
 				Tooltip:
 					'''
-					一个装有1000个魂币的箱子
+					一个装有 1000 魂币的箱子
 					作为对一个当前版本内不存在物品的补偿
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
@@ -4078,7 +4078,7 @@ Mods: {
 				DisplayName: 飞斧箱
 				Tooltip:
 					'''
-					一个装有100支飞斧的箱子
+					一个装有 100 支飞斧的箱子
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
 			}
@@ -4087,7 +4087,7 @@ Mods: {
 				DisplayName: 飞刀箱
 				Tooltip:
 					'''
-					一个装有100支飞刀的箱子
+					一个装有 100 支飞刀的箱子
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
 			}
@@ -4096,7 +4096,7 @@ Mods: {
 				DisplayName: 投矛箱
 				Tooltip:
 					'''
-					一个装有100支投矛的箱子
+					一个装有 100 支投矛的箱子
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
 			}
@@ -4105,7 +4105,7 @@ Mods: {
 				DisplayName: 邪箭箱
 				Tooltip:
 					'''
-					一个装有装有100支邪箭的箱子
+					一个装有装有 100 支邪箭的箱子
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
 			}
@@ -4114,7 +4114,7 @@ Mods: {
 				DisplayName: 木箭箱
 				Tooltip:
 					'''
-					一个装有100支木箭的箱子
+					一个装有 100 支木箭的箱子
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
 			}
@@ -5098,7 +5098,7 @@ Mods: {
 				DisplayName: 死星
 				Tooltip:
 					'''
-					只留下灰烬。
+					只留下灰烬
 					左键单击以装填起爆核心
 					按住右键可快速发射一串耀斑
 					'''
@@ -5160,8 +5160,8 @@ Mods: {
 				Tooltip:
 					'''
 					一个失传的传奇卷轴
-					[c/ffbf00:对玩家施放高级魔法屏障，提高防御 {0} 点，持续 {1} 秒]
-					{$CommonItemTooltip.Cooldown@2}. {$CommonItemTooltip.UniqueBarrier}
+					[c/ffbf00:对玩家施放高级魔法屏障，提高 {0} 点防御，持续 {1} 秒]
+					{$CommonItemTooltip.Cooldown@2}，{$CommonItemTooltip.UniqueBarrier}
 					'''
 			}
 
@@ -5259,8 +5259,8 @@ Mods: {
 				Tooltip:
 					'''
 					一个工匠遗失的卷轴
-					[c/ffbf00:对玩家施放中级魔法屏障，提高防御 {0} 点，持续 {1} 秒]
-					{$CommonItemTooltip.Cooldown@2}. {$CommonItemTooltip.UniqueBarrier}
+					[c/ffbf00:对玩家施放中级魔法屏障，提高 {0} 点防御，持续 {1} 秒]
+					{$CommonItemTooltip.Cooldown@2}，{$CommonItemTooltip.UniqueBarrier}
 					'''
 			}
 
@@ -5269,9 +5269,7 @@ Mods: {
 				Tooltip:
 					'''
 					一个学徒丢弃的卷轴
-					[c/ffbf00:对玩家施放初级魔法屏障]
-					[c/ffbf00:{$CommonItemTooltip.IncreasesDefenseBy}]
-					[c/ffbf00:{$CommonItemTooltip.SecondDuration@1}]
+					[c/ffbf00:对玩家施放初级魔法屏障，提高 {0} 点防御，持续 {1} 秒]
 					{$CommonItemTooltip.UniqueBarrier}
 					'''
 			}
@@ -5565,7 +5563,7 @@ Mods: {
 					右键投出一把无限飞行的匕首
 					再次右键会传送到匕首旁边
 					传送后匕首被消耗，并向外发射六个追踪刀片
-					投出匕首需要消耗100魔力
+					投出匕首需要消耗 100 魔力
 					'''
 			}
 
@@ -6078,7 +6076,7 @@ Mods: {
 				DisplayName: 阿尔忒弥斯弓
 				Tooltip:
 					'''
-					为杀死魔神而锻造的弓。
+					为杀死魔神而锻造的弓
 					按住 攻击 进行蓄力
 					蓄力时箭更快更准
 					'''
@@ -6703,7 +6701,7 @@ Mods: {
 				DisplayName: "{TROUBLESHOOTING ITEM！！} World ID Reset"
 				Tooltip:
 					'''
-					用于恢复损坏地图的调试项。 如果你不尝试这样做，可能会导致小地图损坏！
+					用于恢复损坏地图的调试项。 如果你尝试这样做，可能会导致小地图损坏！
 					这里是恢复地图的步骤。 它可能不起作用，但有可能会：
 					1) 使用此物品
 					2) 离开世界
@@ -6713,7 +6711,7 @@ Mods: {
 					这仅适用于每个世界的一个角色。 尝试恢复第二个角色的小地图会破坏第一个角色的小地图。
 					这会将你的重生点重置为下次加载地图时的世界重生点。这是意料之中的。
 					这通过临时编辑你的世界 ID 来欺骗泰拉瑞亚识别你的旧小地图是正确的。
-					这是完全未经其他模组测试的。 小心使用。
+					这是完全未经其他模组测试的。小心使用。
 					如果你在更新后在此角色上输入了自定义地图的其他副本，则你的小地图被覆盖的可能性非零
 					如果是这样，它将无法恢复。
 					'''
@@ -7734,7 +7732,7 @@ Mods: {
 
 			CrimsonDrain: {
 				DisplayName: 猩红灼伤
-				Description: 方圆十格范围内的敌人会被猩红燃火灼伤。
+				Description: 方圆十格范围内的敌人会被猩红燃火灼伤
 			}
 
 			CrystalMagicWeapon: {
@@ -7749,7 +7747,7 @@ Mods: {
 
 			CowardsAffliction: {
 				DisplayName: 对懦夫的惩罚
-				Description: 不要逃避灰烬之王。
+				Description: 不要逃避灰烬之王
 			}
 
 			Crippled: {
@@ -7936,7 +7934,7 @@ Mods: {
 
 			MagicBarrier: {
 				DisplayName: 中级魔法屏障
-				Description: 防御力增加20！
+				Description: 防御力增加20点！
 			}
 
 			MagicImbueCooldown: {
@@ -7951,7 +7949,7 @@ Mods: {
 
 			MagicShield: {
 				DisplayName: 初级魔法屏障
-				Description: 防御力增加10！
+				Description: 防御力增加10点！
 			}
 
 			MagicWeapon: {
@@ -8200,7 +8198,7 @@ Mods: {
 
 			Shockwave: {
 				DisplayName: 冲击波
-				Description: 当你按住下键着陆时，释放一个破坏性的冲击波。
+				Description: 当你按住下键着陆时，释放一个破坏性的冲击波
 			}
 
 			SoulSiphon: {
@@ -10279,14 +10277,14 @@ Mods: {
 
 		Configs: {
 			tsorcRevampConfig: {
-				DisplayName: "[c/b52e83:红][c/b9227a:云][c/bb1c74:物][c/b9227a:语][c/b53087:模][c/b14095:组][c/ad52a5:设][c/a75eaf:置]"
+				DisplayName: "[c/bb1c74:红][c/b52e83:云][c/b33c93:物][c/ad4c9f:语] [c/9589d5:模][c/9589d5:组][c/8d97e5:设][c/8d9be7:置]"
 
 				AdventureMode: {
 					Label: 冒险模式：模组游玩基础
 					Tooltip:
 						'''
-						防止破坏和放置大多数物块。
-						它还启用了一些模组配套地图的特性。
+						防止破坏和放置大多数物块
+						它还启用了一些模组配套地图的特性
 						“如果游戏允许你打破它或放置它，那就是允许的，存在即合理！"
 						如果你正在使用模组配套的地图，请启用此功能！
 						'''
@@ -10296,10 +10294,10 @@ Mods: {
 					Label: 黑暗之魂在死亡时掉落
 					Tooltip:
 						'''
-						当你死的时候，掉落你所有的黑暗之魂。
-						如果启用“死亡时删除掉落的黑暗之魂”，
-						在你之前掉落的魂被删除后，开始掉落新的魂。
-						多人模式下无效。
+						当你死的时候，掉落你所有的黑暗之魂
+						如果启用“死亡时删除掉落的黑暗之魂”
+						在你之前掉落的魂被删除后，开始掉落新的魂
+						多人模式下无效
 						默认为开启
 						'''
 				}
@@ -10308,10 +10306,10 @@ Mods: {
 					Label: 死亡时删除掉落的黑暗之魂
 					Tooltip:
 						'''
-						当玩家再次死亡时，之前掉落在世界上的黑暗之魂都会被删除。
+						当玩家再次死亡时，之前掉落在世界上的黑暗之魂都会被删除
 						如果你在掉落的黑暗之还未被捡起的时候退出游戏，
-						即使这个选项被禁用，你的黑暗之魂也会被删除。
-						多人模式下无效。
+						即使这个选项被禁用，你的黑暗之魂也会被删除
+						多人模式下无效
 						默认为开启
 						'''
 				}
@@ -10320,7 +10318,7 @@ Mods: {
 					Label: Boss禅定
 					Tooltip:
 						'''
-						当Boss在场时，会阻止其他敌怪生成。
+						当Boss在场时，会阻止其他敌怪生成
 						默认为开启
 						'''
 				}
@@ -10329,8 +10327,8 @@ Mods: {
 					Label: 禁用近战武器和鞭子自动挥舞
 					Tooltip:
 						'''
-						禁用猛爪手套及合成物为近战武器和鞭子带来的自动挥舞效果，“自动开火”选项优先级高于此项。
-						对于鞭子Buff堆叠来说很有用。默认为关闭。
+						禁用猛爪手套及合成物为近战武器和鞭子带来的自动挥舞效果，“自动开火”选项优先级高于此项
+						对于鞭子Buff堆叠来说很有用。默认为关闭
 						'''
 				}
 
@@ -10338,8 +10336,8 @@ Mods: {
 					Label: 禁止自动使用魔力回复药水
 					Tooltip:
 						'''
-						禁用魔力花及合成物的自动使用魔力回复药水效果，对于防止在被诅咒者模式下不小心使用蓝露滴圣杯瓶很有用。
-						默认为关闭。
+						禁用魔力花及合成物的自动使用魔力回复药水效果，对于防止在被诅咒者模式下不小心使用蓝露滴圣杯瓶很有用
+						默认为关闭
 						'''
 				}
 
@@ -10348,19 +10346,19 @@ Mods: {
 					Tooltip:
 						'''
 						禁用步枪瞄准镜及其升级物提供的屏幕外缩放功能，
-						不会影响像狙击步枪这样的武器。
-						对于具有右键能力的枪很有用。默认为关闭。
+						不会影响像狙击步枪这样的武器
+						对于具有右键能力的枪很有用。默认为关闭
 						'''
 				}
 
 				DisableDragoonGreavesDoubleJump: {
 					Label: 禁用 龙骑士腿甲 的二段跳
-					Tooltip: 禁用 龙骑士腿甲 的额外跳跃效果。默认为关闭。
+					Tooltip: 禁用 龙骑士腿甲 的额外跳跃效果。默认为关闭
 				}
 
 				DisableSupersonicWings2ExtraJumps: {
 					Label: 禁用 超音速之翼II 的额外跳跃
-					Tooltip: 禁用 超音速之翼II 的额外跳跃效果。默认为关闭。
+					Tooltip: 禁用 超音速之翼II 的额外跳跃效果。默认为关闭
 				}
 
 				SoulCounterPosX: {
@@ -10398,7 +10396,7 @@ Mods: {
 					Tooltip:
 						'''
 						如果你不用蓝露滴圣杯瓶，可以用此选项隐藏其在被诅咒模式下的显示
-						默认为关闭。
+						默认为关闭
 						'''
 				}
 
@@ -10406,9 +10404,9 @@ Mods: {
 					Label: 蓄力（充能）武器显示蓄力条
 					Tooltip:
 						'''
-						一些可充能武器在光标周围有一个圆圈，表示当前的充能水平。
-						可以在此处设置该圆的不透明度。
-						设置为0可不显示充能条。
+						一些可充能武器在光标周围有一个圆圈，表示当前的充能水平
+						可以在此处设置该圆的不透明度
+						设置为 0 可不显示充能条
 						'''
 				}
 
@@ -10417,7 +10415,7 @@ Mods: {
 					Tooltip:
 						'''
 						如果开启, 除非点击显示按钮，
-						否则阅读过的箴言文字泡将不会再显示。
+						否则阅读过的箴言文字泡将不会再显示
 						默认为开启
 						'''
 				}
@@ -10426,7 +10424,7 @@ Mods: {
 					Label: 箴言文字泡缩放比率
 					Tooltip:
 						'''
-						增加所有蜡石文字泡对话框的大小比率。
+						增加所有蜡石文字泡对话框的大小比率
 						默认为 0%
 						'''
 				}
@@ -10435,7 +10433,7 @@ Mods: {
 					Label: 耐力消耗提示
 					Tooltip:
 						'''
-						在被诅咒者模式下显示武器的耐力消耗，
+						在被诅咒者模式下显示武器的耐力消耗
 						默认为开启
 						'''
 				}
@@ -10445,7 +10443,7 @@ Mods: {
 					Tooltip:
 						'''
 						仍在测试！ (大部分运行正常，但会有一些小bug)
-						翻转重力只会翻转你的角色，而不是整个屏幕。
+						翻转重力只会翻转你的角色，而不是整个屏幕
 						'''
 				}
 
@@ -10464,8 +10462,8 @@ Mods: {
 					Tooltip:
 						'''
 						让Miakoda带着你深入游戏探索？
-						这个滑块控制Miakoda的音量。
-						设置为0禁用Miakoda的声音。
+						这个滑块控制Miakoda的音量
+						设置为 0 禁用Miakoda的声音
 						'''
 				}
 
@@ -10474,8 +10472,8 @@ Mods: {
 					Tooltip:
 						'''
 						不想让篝火虫再挑逗你去找不到的篝火？
-						这个滑块控制篝火虫的音量。
-						设置为0禁用篝火虫的声音。
+						这个滑块控制篝火虫的音量
+						设置为 0 禁用篝火虫的声音
 						'''
 				}
 
@@ -10484,8 +10482,8 @@ Mods: {
 					Tooltip:
 						'''
 						被诅咒者新机制的音量是不是过于吵闹和烦人了？
-						这个滑块控制篝被诅咒者机制的音量。
-						设置为0禁用被诅咒者机制的声音。
+						这个滑块控制篝被诅咒者机制的音量
+						设置为 0 禁用被诅咒者机制的声音
 						'''
 				}
 
