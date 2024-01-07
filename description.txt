@@ -12,7 +12,7 @@ In development over 7 years, your 1-4 player journey will span 18 dungeons sprea
 
 ✅ TOP FEATURES
 ------------------------------------------
-*Companion Soundtrack with 59 songs! (Dark Souls, Elden Ring and Zelda fans will love it)
+*Companion Soundtrack with 67 songs! (Dark Souls, Elden Ring and Zelda fans will love it)
 *43 bosses (16 vanilla plus 27 mod bosses)
 *100+ new enemies and 8 friendly NPCs
 *800+ new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
@@ -40,7 +40,7 @@ Highly Recommended QoL mods:
 ✅  AutoTrash
 ✅  Lights and Shadow
 ✅  Recipe Browser
-✅  Terraria Ambience(know to cause issues, disable this first if any arise)
+✅  Terraria Ambience (known to cause issues, disable this first if any arise)
 ✅  Magic Storage
 
 Additional Supported Mods:
