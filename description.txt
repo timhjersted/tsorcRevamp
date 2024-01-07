@@ -1,6 +1,6 @@
 The Story of Red Cloud is a massive 20+ hour Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack.
 
-In development over 6 years, your 1-4 player journey will span 18 dungeons spread across an expansive, hand-crafted open world filled with shortcuts, hidden paths, epic boss fights, and countless secrets.
+In development over 7 years, your 1-4 player journey will span 18 dungeons spread across an expansive, hand-crafted open world filled with shortcuts, hidden paths, epic boss fights, and countless secrets.
 
 
 ✅ The Custom World will load automatically when you reach the Select World screen. To create a fresh or updated map, click New on the World screen.
@@ -13,12 +13,12 @@ In development over 6 years, your 1-4 player journey will span 18 dungeons sprea
 ✅ TOP FEATURES
 ------------------------------------------
 *Companion Soundtrack with 59 songs! (Dark Souls, Elden Ring and Zelda fans will love it)
-*42 bosses (17 vanilla plus 25 mod bosses)
+*43 bosses (16 vanilla plus 27 mod bosses)
 *100+ new enemies and 8 friendly NPCs
 *800+ new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
 *Dark Souls game mechanics, including bonfire save points, soul currency and the dodge roll 
 *The mod enforces old school adventure map rules, so if you can do it, it's okay to do it!
-*Bearer Of The Curse Mode offers the ultimate Dark Souls experience, adding an Estus Flask and Cerulean Tear to your UI, prevents the use of healing potions and makes all weapons use different amounts of stamina
+*Bearer of The Curse Mode offers the ultimate Dark Souls experience, adding an Estus Flask and Cerulean Tear to your UI, prevents the use of healing potions and makes all weapons use different amounts of stamina
 
 
 ✅ DISCORD
@@ -40,7 +40,7 @@ Highly Recommended QoL mods:
 ✅  AutoTrash
 ✅  Lights and Shadow
 ✅  Recipe Browser
-✅  Terraria Ambience
+✅  Terraria Ambience(know to cause issues, disable this first if any arise)
 ✅  Magic Storage
 
 Additional Supported Mods:
@@ -82,4 +82,9 @@ Some mods interfere with the Adventure Map, but may be used if you're playing on
 
 ⚠️ PROJECT STATUS:
 ------------------------------------------
-The game is fairly polished up to the end of the main story (defeating Attraidies). Development is currently focused on balancing and revamping the sizeable post-Attraidies content. We recommend waiting to play this third chapter when we're out of beta, unless you'd like to be a part of the journey to 1.0. (Really 2.0 if you're counting the original TSORC from over 10 years ago!)
+The game is fairly polished up to the end of the main story (defeating Attraidies). We recommend waiting to play this third chapter when we're out of beta, unless you'd like to be a part of the journey to 1.0.
+
+The new update has just gotten out of a long beta period, due to a slowdown in the mod's development. We decided to release the update because it should massively improve the experience, even though it might contain issues we haven't been able to spot yet. We'll likely release a few patches after this, to address upcoming issues and introduce a small amount of content that is not quite finished yet.
+
+We're looking for new team members to help us, as we're struggling to find time to keep updating this mod.
+We still have big plans, but looking at it realistically, in the team's current state it's unlikely we'll ever reach 1.0, unless we can collect a few new team members willing to help us reach this. So if you want to see a full release become reality, come help us directly or spread the message to people who might be interested!
