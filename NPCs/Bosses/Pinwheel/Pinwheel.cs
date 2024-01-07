@@ -537,7 +537,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 if (MoveTimer == 90 && Main.netMode != NetmodeID.MultiplayerClient && Phase < 5) //Shoot bouncing fireball
                 {
                     int type = ProjectileID.Fireball;
-                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0);
+                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0, 1);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     shot1.friendly = false;
                     shot1.hostile = true;
@@ -548,7 +548,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 if (MoveTimer == 120 && Main.netMode != NetmodeID.MultiplayerClient && Phase < 3) //Shoot bouncing fireball
                 {
                     int type = ProjectileID.Fireball;
-                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0);
+                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0, 1);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     shot1.friendly = false;
                     shot1.hostile = true;
@@ -559,7 +559,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 if (MoveTimer == 150 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot bouncing fireball
                 {
                     int type = ProjectileID.Fireball;
-                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0);
+                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0, 1);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     shot1.friendly = false;
                     shot1.hostile = true;
