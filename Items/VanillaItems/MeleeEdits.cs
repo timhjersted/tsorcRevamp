@@ -26,11 +26,19 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.width = 36;
                 item.height = 40;
             }
-            if (item.type == ItemID.BluePhaseblade || item.type == ItemID.GreenPhaseblade || item.type == ItemID.YellowPhaseblade || item.type == ItemID.RedPhaseblade
-                || item.type == ItemID.WhitePhaseblade || item.type == ItemID.PurplePhaseblade || item.type == ItemID.OrangePhaseblade || item.type == ItemID.Seedler)
+            if (item.type == ItemID.Seedler)
             {
                 item.width = 48;
                 item.height = 48;
+            }
+            // Phaseblades
+            if (item.type == ItemID.BluePhaseblade || item.type == ItemID.GreenPhaseblade || item.type == ItemID.YellowPhaseblade || item.type == ItemID.RedPhaseblade
+                || item.type == ItemID.WhitePhaseblade || item.type == ItemID.PurplePhaseblade || item.type == ItemID.OrangePhaseblade)
+            {
+                item.width = 48;
+                item.height = 48;
+                item.damage = 36;
+                //until someone can edit the recipe for phaseblades, I'm just nerfing their damage so they don't make everything else obsolete in the same progression tier
             }
             if (item.type == ItemID.BluePhasesaber || item.type == ItemID.GreenPhasesaber || item.type == ItemID.YellowPhasesaber || item.type == ItemID.RedPhasesaber
                 || item.type == ItemID.WhitePhasesaber || item.type == ItemID.PurplePhasesaber || item.type == ItemID.OrangePhasesaber || item.type == ItemID.AdamantiteSword
