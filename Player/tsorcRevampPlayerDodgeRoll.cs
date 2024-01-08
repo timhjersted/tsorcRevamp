@@ -137,8 +137,13 @@ namespace tsorcRevamp
                 bool startedAnimation = (Player.itemAnimation > oldItemAnimation && Player.itemAnimationMax > 0);
                 oldItemAnimation = Player.itemAnimation;
 
-                if (!startedAnimation && item.type != ItemID.Harpoon) return true;
-
+                if (!startedAnimation && item.type != ItemID.Harpoon && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Freezethrower>()
+                     && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Meltdown>()
+                      && item.type != ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()
+                       && item.type != ModContent.ItemType<Items.Weapons.Magic.DivineSpark>())
+                {
+                    return true;
+                }
                 /*if (item.DamageType == DamageClass.Magic)
                 {
                     scaledUseAnimation *= 8;
@@ -149,8 +154,11 @@ namespace tsorcRevamp
                 {
                     modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation);
                 }
-                else if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.damage <= 1 || item.type == ModContent.ItemType<Items.Weapons.Ranged.GlaiveBeam>() || item.type == ModContent.ItemType<Items.Weapons.Magic.ArcaneLightrifle>() || item.DamageType == DamageClass.Summon) return true;
 
+                else if (item.pick != 0 || item.axe != 0 || item.hammer != 0 || item.damage <= 1 || item.type == ModContent.ItemType<Items.Weapons.Ranged.GlaiveBeam>() || item.type == ModContent.ItemType<Items.Weapons.Magic.ArcaneLightrifle>() || item.DamageType == DamageClass.Summon)
+                {
+                    return true;
+                }
 
                 if (item.useAnimation * 0.8f > modPlayer.staminaResourceMax2)
                 {
@@ -161,16 +169,22 @@ namespace tsorcRevamp
                 else if (item.type != ItemID.PiranhaGun && item.type != ItemID.Harpoon)
                 {
                     modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation);
-
                 }
+
                 //i have no clue how they made this item behave the way it does, but it is deeply cursed
                 else if (item.type == ItemID.Harpoon && Player.itemAnimation == 4)
                 {
                     modPlayer.staminaResourceCurrent -= 14;
                 }
+
+                if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Meltdown>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Freezethrower>()))
+                {
+                    modPlayer.staminaResourceCurrent -= 1.0f;
+                }
+
                 if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
                 {
-                    modPlayer.staminaResourceCurrent -= .8f;
+                    modPlayer.staminaResourceCurrent -= 0.8f;
                 }
             }
 

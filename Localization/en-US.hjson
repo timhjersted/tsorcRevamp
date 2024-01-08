@@ -4212,7 +4212,7 @@ Mods: {
 				DisplayName: Potion Bag
 				Tooltip:
 					'''
-					Can store up to 28 potions
+					Can store up to 60 different potion types
 					Supports Quick Buff/Heal/Mana hotkeys as well as permanent potions!
 					"[c/C92CD1:Favorite]" valuable potions in the pouch with Alt+Click
 					[c/C92CD1:Favorited potions] are not consumed by Quick Buff
