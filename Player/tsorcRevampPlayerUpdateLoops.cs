@@ -752,7 +752,7 @@ namespace tsorcRevamp
             #endregion
 
 
-            if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 10 && (Player.HeldItem.channel = true))
+            if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 10 && (Player.HeldItem.channel == true))
             {
                 Player.channel = false;
             }

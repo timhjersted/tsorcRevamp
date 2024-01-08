@@ -168,7 +168,7 @@ namespace tsorcRevamp
                         }
                     }
 
-                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].aiStyle == ProjAIStyleID.Flail
+                    if (Main.projectile[p].active && Main.projectile[p].type > 0 && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].aiStyle == ProjAIStyleID.Flail
                         || Main.projectile[p].type == ProjectileID.Anchor || Main.projectile[p].GetGlobalProjectile<tsorcGlobalProjectile>().ModdedFlail))
 
                     {
@@ -192,7 +192,7 @@ namespace tsorcRevamp
                         }
                     }
 
-                    if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].GetGlobalProjectile<tsorcGlobalProjectile>().ChargedWhip && Player.channel)
+                    if (Main.projectile[p].active && Main.projectile[p].type > 0 && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].GetGlobalProjectile<tsorcGlobalProjectile>().ChargedWhip && Player.channel)
                     {
                         staminaResourceCurrent -= ChargedWhipDrainPerFrame;
                         staminaResourceRegenRate *= 0f;
