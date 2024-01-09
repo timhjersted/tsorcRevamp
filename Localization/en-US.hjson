@@ -3707,7 +3707,7 @@ Mods: {
 					Playing as the [c/6d8827:Bearer of the Curse] has the following effects:
 					You gain an extra accessory slot, receive {0}% more souls and your stamina recovers much faster.
 					However, [c/dd3333:using weapons drains stamina] and life regen is halved while stamina isn't at it's maximum.
-					Greater Magic Mirror use is prohibited, and instant-heal items won't heal you, but grants an Estus Flask to heal you.
+					Instant-heal items won't heal you, but you gain an Estus Flask that can be upgraded.
 					Dying reduces your max HP by {1}% until you return to where you died.
 					'''
 				Enabled: You have become the Bearer of the Curse
