@@ -2325,11 +2325,13 @@ namespace tsorcRevamp.NPCs
             #endregion
             if (hit.DamageType == DamageClass.Ranged && damageDone > npc.life && modPlayer.BoneRing)
             {
-                Projectile Bone1 = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner);
-                Projectile Bone2 = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner);
-                Projectile Bone3 = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner);
-                Projectile Bone4 = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner);
-                Bone1.GetGlobalProjectile<tsorcGlobalProjectile>().IgnoresAccuracyOrSpecialCase = Bone2.GetGlobalProjectile<tsorcGlobalProjectile>().IgnoresAccuracyOrSpecialCase = Bone3.GetGlobalProjectile<tsorcGlobalProjectile>().IgnoresAccuracyOrSpecialCase = Bone4.GetGlobalProjectile<tsorcGlobalProjectile>().IgnoresAccuracyOrSpecialCase = true;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner, ai2: 1);
+                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner, ai2: 1);
+                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner, ai2: 1);
+                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner, ai2: 1);
+                }
             }
             if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<ToxicCatExplosion>()))
             {

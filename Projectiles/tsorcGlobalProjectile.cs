@@ -470,7 +470,8 @@ namespace tsorcRevamp.Projectiles
                                 IgnoresAccuracyOrSpecialCase = true;
                                 break;
                             }
-                        case int ModProjectile when (ModProjectile == ModContent.ProjectileType<ElfinArrow>() || ModProjectile == ModContent.ProjectileType<ToxicCatExplosion>() || ModProjectile == ModContent.ProjectileType<VirulentCatExplosion>() || ModProjectile == ModContent.ProjectileType<BiohazardExplosion>() || ModProjectile == ModContent.ProjectileType<KrakenTsunamiShark>()):
+                        case int ModProjectile when (ModProjectile == ModContent.ProjectileType<ElfinArrow>() || ModProjectile == ModContent.ProjectileType<ToxicCatExplosion>() || ModProjectile == ModContent.ProjectileType<VirulentCatExplosion>() || ModProjectile == ModContent.ProjectileType<BiohazardExplosion>() || ModProjectile == ModContent.ProjectileType<KrakenTsunamiShark>()
+                        || ModProjectile == ProjectileID.CrystalShard || (ModProjectile == ProjectileID.Bone && projectile.ai[2] == 1) || ModProjectile == ModContent.ProjectileType<ShulletBellDark>() || ModProjectile == ModContent.ProjectileType<ShulletBellDark>()):
                             {
                                 IgnoresAccuracyOrSpecialCase = true;
                                 break;
