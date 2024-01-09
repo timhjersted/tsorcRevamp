@@ -412,19 +412,21 @@ namespace tsorcRevamp.Items
             {
                 target.AddBuff(BuffID.BetsysCurse, 600);
             }
-
+            #region Lethal Tempo
             if ((item.DamageType == DamageClass.Melee || item.DamageType == DamageClass.MeleeNoSpeed) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 if (modPlayer.BotCLethalTempoStacks < modPlayer.BotCLethalTempoMaxStacks - 1)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.8f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.135f }, player.Center);
                 }
                 else if (modPlayer.BotCLethalTempoStacks == modPlayer.BotCLethalTempoMaxStacks - 1)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 1f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.18f }, player.Center);
                 }
                 player.AddBuff(ModContent.BuffType<LethalTempo>(), player.GetModPlayer<tsorcRevampPlayer>().BotCLethalTempoDuration * 60);
             }
+            #endregion
+            #region Conqueror
             if (item.DamageType == DamageClass.SummonMeleeSpeed && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 if (modPlayer.BotCConquerorStacks < modPlayer.BotCConquerorMaxStacks - 1 && !hit.Crit)
@@ -461,6 +463,7 @@ namespace tsorcRevamp.Items
                 }
                 player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
             }
+            #endregion
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && (item.pick != 0 || item.axe != 0 || item.hammer != 0))
             {
                 tsorcRevampStaminaPlayer StaminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
