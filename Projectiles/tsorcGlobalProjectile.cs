@@ -459,13 +459,13 @@ namespace tsorcRevamp.Projectiles
             #endregion
 
             #region Accuracy
-            if (projectile.DamageType == DamageClass.Ranged)
+            if (projectile.DamageType == DamageClass.Ranged && !IgnoresAccuracyOrSpecialCase)
             {
                 if (modPlayer.BearerOfTheCurse)
                 {
                     switch (projectile.type)
                     {
-                        case ProjectileID.ChlorophyteBullet or ProjectileID.ChlorophyteArrow:
+                        case ProjectileID.ChlorophyteBullet or ProjectileID.ChlorophyteArrow or ProjectileID.CrystalShard:
                             {
                                 IgnoresAccuracyOrSpecialCase = true;
                                 break;
@@ -667,7 +667,7 @@ namespace tsorcRevamp.Projectiles
                     modPlayer.GoredrinkerReady = false;
                     modPlayer.GoredrinkerSwung = false;
                 }
-                if (!IgnoresAccuracyOrSpecialCase && projectile.DamageType == DamageClass.Ranged)
+                if (!IgnoresAccuracyOrSpecialCase && projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse)
                 {
                     if (HitSomething)
                     {
