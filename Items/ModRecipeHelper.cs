@@ -48,7 +48,6 @@ namespace tsorcRevamp.Items
 
             #region add b tier recipes
             PermaPotionRecipeB(mod, ModContent.ItemType<BoostPotion>(), ModContent.ItemType<PermanentBoostPotion>());
-            PermaPotionRecipeB(mod, ItemID.AmmoReservationPotion, ModContent.ItemType<PermanentAmmoReservationPotion>());
             PermaPotionRecipeB(mod, ItemID.ManaRegenerationPotion, ModContent.ItemType<PermanentManaRegenerationPotion>());
             PermaPotionRecipeB(mod, ItemID.WrathPotion, ModContent.ItemType<PermanentWrathPotion>());
             PermaPotionRecipeB(mod, ItemID.CratePotion, ModContent.ItemType<PermanentCratePotion>());
@@ -69,6 +68,7 @@ namespace tsorcRevamp.Items
             #endregion
 
             #region add c tier recipes
+            PermaPotionRecipeC(mod, ItemID.AmmoReservationPotion, ModContent.ItemType<PermanentAmmoReservationPotion>());
             PermaPotionRecipeC(mod, ItemID.BuilderPotion, ModContent.ItemType<PermanentBuilderPotion>());
             PermaPotionRecipeC(mod, ItemID.ShinePotion, ModContent.ItemType<PermanentShinePotion>());
             PermaPotionRecipeC(mod, ItemID.TrapsightPotion, ModContent.ItemType<PermanentDangersensePotion>());

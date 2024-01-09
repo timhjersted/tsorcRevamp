@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
                 Projectile.NewProjectile(player.GetSource_ItemUse(player.inventory[player.selectedItem]), Projectile.Center, velVector, ModContent.ProjectileType<DarkTridentThrown>(), damage, Projectile.knockBack, Projectile.owner, (charge >= 1) ? 1 : 0);
                 if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                 {
-                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30f;
+                    //player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30f;
                 }
             }
             else

@@ -632,7 +632,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnKill(Projectile projectile, int timeLeft)
         {
-            if (projectile.type == ProjectileID.Fireball && projectile.ai[2] == 0)
+            if (projectile.type == ProjectileID.Fireball && NPC.AnyNPCs(NPCID.Golem))
             {
                 int Difficulty = 1 + (Main.expertMode ? 1 : 0) + (Main.masterMode ? 1 : 0);
                 Vector2 Vel = Main.rand.NextVector2CircularEdge(20, 20);
@@ -642,15 +642,19 @@ namespace tsorcRevamp.Projectiles
                 Fireball2.velocity -= Vel;
                 if (NPC.CountNPCS(NPCID.SolarCorite) < 3)
                 {
-                    NPC Corite = NPC.NewNPCDirect(NPC.GetSource_NaturalSpawn(), projectile.Center, NPCID.SolarCorite);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        NPC Corite = NPC.NewNPCDirect(NPC.GetSource_NaturalSpawn(), projectile.Center, NPCID.SolarCorite);
 
-                    Corite.lifeMax = 125 * Difficulty; //main problem is too many of them spawned at one time
-                    Corite.life = Corite.lifeMax;
-                    Corite.knockBackResist = 0.3f;
+                        Corite.lifeMax = 125 * Difficulty; //main problem is too many of them spawned at one time
+                        Corite.life = Corite.lifeMax;
+                        Corite.knockBackResist = 0.3f;
 
-                    Corite.damage = 60 * Difficulty;
+                        Corite.damage = 60 * Difficulty;
 
-                    Corite.value = 100 * Difficulty;
+                        Corite.value = 100 * Difficulty;
+                        Corite.netUpdate = true;
+                    }
                 }
             }
             if (projectile.friendly && !projectile.hostile)

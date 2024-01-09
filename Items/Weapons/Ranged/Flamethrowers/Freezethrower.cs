@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Flamethrowers
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 30;
             Item.useTime = 5;
-            Item.damage = 30;
+            Item.damage = 22;
             Item.knockBack = 2;
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item34;
@@ -57,7 +57,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Flamethrowers
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.SlimeGun, 1);
-            recipe2.AddIngredient(ItemID.IceBlock, 5);
             recipe2.AddIngredient(ModContent.ItemType<EphemeralDust>(), 20);
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe2.AddTile(TileID.DemonAltar);

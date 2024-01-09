@@ -165,8 +165,8 @@ namespace tsorcRevamp
                     modPlayer.staminaResourceCurrent -= modPlayer.staminaResourceMax2;
                 }
 
-                //piranha gun works differently enough to warrant a special case
-                else if (item.type != ItemID.PiranhaGun && item.type != ItemID.Harpoon)
+                //Note: This is where EVERY other weapon aside from these exceptions applies its stamina usage
+                else if (item.type != ItemID.PiranhaGun && item.type != ItemID.Harpoon && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Meltdown>() && item.type != ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Freezethrower>())
                 {
                     modPlayer.staminaResourceCurrent -= ReduceStamina(scaledUseAnimation);
                 }
@@ -179,12 +179,12 @@ namespace tsorcRevamp
 
                 if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Meltdown>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.Flamethrowers.Freezethrower>()))
                 {
-                    modPlayer.staminaResourceCurrent -= 1.0f;
+                    modPlayer.staminaResourceCurrent -= 0.7f;
                 }
 
                 if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
                 {
-                    modPlayer.staminaResourceCurrent -= 0.8f;
+                    modPlayer.staminaResourceCurrent -= 1.2f;
                 }
             }
 

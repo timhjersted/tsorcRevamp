@@ -12,6 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void SetStaticDefaults()
         {
             ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
         }
 
         public override void SetDefaults()
@@ -33,8 +34,23 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.rare = ItemRarityID.Expert;
             Item.UseSound = SoundID.Item7;
             Item.shootSpeed = 24f;
-            Item.channel = true;
+            Item.channel = true;            
         }
+
+        public override bool CanUseItem(Player player)
+        {
+            //Block using the item unless they have one more than the required stamina
+            //Prevents a bug where, if the player uses this weapon with *exactly* the stamina required, it instantly throws it without letting them charge up
+            //This happens constantly if they hold left mouse, as it gets used the instant stamina refills to that level
+            int staminaUse = (int)(Item.useAnimation / player.GetAttackSpeed(Item.DamageType));
+            staminaUse = (int)tsorcRevampPlayer.ReduceStamina(staminaUse);
+            if(player.altFunctionUse != 2 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < staminaUse * 2)
+            {
+                return false;
+            }
+            return base.CanUseItem(player);
+        }
+
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.GetTotalDamage(DamageClass.Ranged).ApplyTo(100) < player.GetTotalDamage(DamageClass.Melee).ApplyTo(100))

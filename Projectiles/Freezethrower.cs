@@ -6,6 +6,8 @@ using Terraria.Audio;
 using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Bosses.JungleWyvern;
+using tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -217,6 +219,17 @@ namespace tsorcRevamp.Projectiles
             {
                 target.AddBuff(BuffID.Frozen, 60);
             }
+        }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            if(target.type == ModContent.NPCType<JungleWyvernHead>() || target.type == ModContent.NPCType<JungleWyvernBody>() || target.type == ModContent.NPCType<JungleWyvernBody2>() || 
+                target.type == ModContent.NPCType<JungleWyvernBody3>() || target.type == ModContent.NPCType<JungleWyvernLegs>() || target.type == ModContent.NPCType<JungleWyvernTail>() ||
+                target.type == ModContent.NPCType<JungleWyvernJuvenileHead>() || target.type == ModContent.NPCType<JungleWyvernJuvenileBody>() || target.type == ModContent.NPCType<JungleWyvernJuvenileBody2>() ||
+                target.type == ModContent.NPCType<JungleWyvernJuvenileBody3>() || target.type == ModContent.NPCType<JungleWyvernJuvenileLegs>() || target.type == ModContent.NPCType<JungleWyvernJuvenileTail>())
+            {
+                modifiers.FinalDamage *= 0.75f;
+            }
+            base.ModifyHitNPC(target, ref modifiers);
         }
     }
 }
