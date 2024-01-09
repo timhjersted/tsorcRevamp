@@ -713,7 +713,7 @@
   "style": 1
 }
 {
-  "text": "You drop a glow stick down the shaft and it disappears into the darkness. Maybe I should try the Greater Magic Mirror here... --NEWLINE  --NEWLINE Greater Magic Mirror: --NEWLINE  --NEWLINE Obtain it by right-clicking on the Green Glowing Skull nearby.--NEWLINE   --NEWLINE Lets you set a warp point at your location.",
+  "text": "You drop a glow stick down the shaft and it disappears into the darkness. \u0022Maybe I should try the Greater Magic Mirror here...\u0022 --NEWLINE  --NEWLINE Greater Magic Mirror: Lets you set a warp point at your location. Obtain it by right-clicking on the Green Glowing Skull nearby.",
   "tileX": 3487,
   "tileY": 413,
   "textWidth": 320,
