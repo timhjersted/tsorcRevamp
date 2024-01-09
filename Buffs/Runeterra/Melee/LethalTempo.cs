@@ -38,12 +38,12 @@ namespace tsorcRevamp.Buffs.Runeterra.Melee
                 {
                     modPlayer.BotCLethalTempoStacks--;
                     player.buffTime[buffIndex] = (int)(((float)modPlayer.BotCLethalTempoDuration / 6f) * 60f);
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFallOff") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.02f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFallOff") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.5f }, player.Center);
                 }
                 else
                 {
                     modPlayer.BotCLethalTempoStacks = 0;
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFallOff") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.01f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFallOff") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.8f }, player.Center);
                 }
             }
         }
