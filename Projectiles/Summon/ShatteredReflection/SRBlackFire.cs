@@ -36,8 +36,9 @@ namespace tsorcRevamp.Projectiles.Summon.ShatteredReflection
             NPCSource = false;
             collisionPadding = 0;
             collisionEndPadding = 1;
-            collisionFrequency = 2;
+            collisionFrequency = 3;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/BlackFireball", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            trailCollision = true;
         }
 
         Vector2 destination = new Vector2(0f, 0f);
@@ -132,7 +133,6 @@ namespace tsorcRevamp.Projectiles.Summon.ShatteredReflection
         {
             collisionEndPadding = trailPositions.Count / 3;
             collisionPadding = trailPositions.Count / 8;
-            visualizeTrail = false;
             timeFactor++;
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);
             effect.Parameters["fadeOut"].SetValue(fadeOut);

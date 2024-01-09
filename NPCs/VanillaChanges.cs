@@ -2082,7 +2082,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Destroyer.DespawnHandler"), Color.Orange, DustID.Torch);
 
-                        npc.lifeMax = 60000;
+                        npc.lifeMax = 70000;
                         npc.value = 203430;
                         npc.scale = 1.25f;
                         npc.damage = Main.expertMode ? 40 /* x4 in expert */: 60; //legacy: 200, vanilla: 70
