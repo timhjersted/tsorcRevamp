@@ -132,7 +132,7 @@ namespace tsorcRevamp.Projectiles
                 return;
             }
 
-            if (fadeIn < 30)
+            if (fadeIn < 15)
             {
                 fadeIn++;
                 return;
@@ -140,7 +140,7 @@ namespace tsorcRevamp.Projectiles
 
             if (size < maxSize)
             {
-                size += 10f;
+                size += 30f;
             }
         }
 
@@ -149,7 +149,7 @@ namespace tsorcRevamp.Projectiles
         {
             float distance = Vector2.Distance(truePosition, targetHitbox.Center.ToVector2());
             float angleBetween = (float)UsefulFunctions.CompareAngles(Vector2.Normalize(truePosition - targetHitbox.Center.ToVector2()), Projectile.rotation.ToRotationVector2());
-            return distance < trueSize * (600 + (size / 6f)) && Math.Abs(angleBetween - MathHelper.Pi) < angle / 2.85f;
+            return distance < trueSize * (300 + (size / 2f)) && Math.Abs(angleBetween - MathHelper.Pi) < angle / 2.85f;
         }
 
         public static Effect effect;
