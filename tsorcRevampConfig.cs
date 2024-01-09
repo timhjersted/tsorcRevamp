@@ -143,7 +143,7 @@ namespace tsorcRevamp
 
         [BackgroundColor(60, 140, 80, 192)]
         [Range(0, 100)]
-        [DefaultValue(100)]
+        [DefaultValue(50)]
         public float BotCMechanicsVolume { get; set; }
 
         /*

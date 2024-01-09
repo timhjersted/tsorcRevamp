@@ -3709,6 +3709,7 @@ Mods: {
 					However, [c/dd3333:using weapons drains stamina] and life regen is halved while stamina isn't at it's maximum.
 					Instant-heal items won't heal you, but you gain an Estus Flask that can be upgraded.
 					Dying reduces your max HP by {1}% until you return to where you died.
+					Check the mod config to adjust the volume of sound effects added by becoming the [c/6d8827:Bearer of the Curse].
 					'''
 				Enabled: You have become the Bearer of the Curse
 				Disabled: The curse has been lifted
