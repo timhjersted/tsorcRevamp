@@ -401,15 +401,15 @@ namespace tsorcRevamp.NPCs.Bosses
                     Gore.NewGorePerfect(NPC.GetSource_FromThis(), dustPoint + NPC.Center, Main.rand.NextVector2Circular(1, 1) + NPC.velocity, GoreID.Smoke3);
                 }
             }
-            rotationSpeed = 0.2f;
+            rotationSpeed = 0.05f;
             rotationTarget = (NPC.Center - target.Center).ToRotation() + MathHelper.PiOver2;
             if (finalStandTimer % 80 == 0)
             {
                 StartAura(800);
             }
-            if (finalStandTimer % 80 == 59)
+            if (finalStandTimer % 100 == 59)
             {
-                NPC.velocity = UsefulFunctions.Aim(NPC.Center, target.Center, 25);
+                NPC.velocity = UsefulFunctions.Aim(NPC.Center, target.Center, 27);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.Triad.SpazFireJet>(), FireJetDamage, 0.5f, Main.myPlayer, NPC.whoAmI);
