@@ -378,7 +378,7 @@ namespace tsorcRevamp
                 TileID.Stalactite, TileID.ExposedGems, TileID.SmallPiles, TileID.LargePiles, TileID.LargePiles2, TileID.PlantDetritus, TileID.OasisPlants, TileID.Larva, TileID.PlanteraBulb, TileID.AntlionLarva, //all ambient objects (background breakables), QB Larva, Plantera Bulb
                 TileID.Plants, TileID.Plants2, TileID.CorruptPlants, TileID.JunglePlants, TileID.JunglePlants2, TileID.HallowedPlants, TileID.HallowedPlants2, TileID.LongMoss, TileID.CrimsonPlants, TileID.LilyPad, TileID.Cattail, TileID.SeaOats, TileID.OasisPlants, TileID.Seaweed, //cuttable plants - all biomes
                 TileID.Lever, TileID.PressurePlates, TileID.Switches, TileID.InletPump, TileID.OutletPump, TileID.Timers, TileID.LogicGateLamp, TileID.LogicGate, TileID.ConveyorBeltLeft, TileID.ConveyorBeltRight, TileID.LogicSensor, TileID.WirePipe, TileID.AnnouncementBox, TileID.WeightedPressurePlate, TileID.WireBulb, TileID.GemLocks, TileID.ProjectilePressurePad, //wiring, incl pressure plates
-                TileID.WoodenBeam
+                TileID.WoodenBeam, TileID.LivingFire, TileID.LivingFrostFire, TileID.LivingCursedFire, TileID.LivingDemonFire, TileID.LivingUltrabrightFire
             };
             #endregion
             //--------

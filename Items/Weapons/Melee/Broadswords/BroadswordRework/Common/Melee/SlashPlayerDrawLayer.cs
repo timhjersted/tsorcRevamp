@@ -30,11 +30,6 @@ public class SlashPlayerDrawLayer : PlayerDrawLayer
 
     protected override void Draw(ref PlayerDrawSet drawInfo)
     {
-        if (!ModContent.GetInstance<tsorcRevampConfig>().BroadswordRework)
-        {
-            return;
-        }
-
         // Wait for the texture to load
         if (texture?.IsLoaded != true)
         {

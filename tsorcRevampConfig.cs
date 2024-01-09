@@ -123,13 +123,6 @@ namespace tsorcRevamp
         public bool GravityFix { get; set; }
 
 
-        [BackgroundColor(200, 80, 80, 192)]
-        [SliderColor(224, 165, 56, 128)]
-        [ReloadRequired]
-        [DefaultValue(true)]
-        public bool BroadswordRework { get; set; }
-
-
 
         [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.Sound")]
 
@@ -144,7 +137,7 @@ namespace tsorcRevamp
         [BackgroundColor(60, 140, 80, 192)]
         [Range(0, 100)]
         [DefaultValue(50)]
-        public float BotCMechanicsVolume { get; set; }
+        public float AdjustBotCMechanicsVolume { get; set; }
 
         /*
         [Label("Auto-Update Adventure Map")]

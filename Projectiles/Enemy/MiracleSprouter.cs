@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.height = 15;
             Projectile.width = 15;
             Projectile.scale = 1.2f;
-            Projectile.tileCollide = true;
+            Projectile.tileCollide = false;
             Projectile.ignoreWater = false;
             Projectile.hostile = true;
         }

@@ -10506,6 +10506,16 @@ Mods: {
 						}
 					}
 				}
+
+				BotCMechanicsVolumeSlider: {
+					Label: Bot C Mechanics Volume Slider
+					Tooltip: ""
+				}
+
+				AdjustBotCMechanicsVolume: {
+					Label: Adjust Bot C Mechanics Volume
+					Tooltip: ""
+				}
 			}
 		}
 

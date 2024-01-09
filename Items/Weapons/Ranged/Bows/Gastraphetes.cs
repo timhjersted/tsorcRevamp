@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ProjectileID.PurificationPowder;
 
-            Item.damage = 25;
+            Item.damage = 41;
             Item.width = 50;
             Item.height = 18;
             Item.useTime = 8;
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.UseSound = SoundID.Item5;
             Item.autoReuse = true;
 
-            Item.shootSpeed = 13f;
+            Item.shootSpeed = 15f;
             Item.useAmmo = AmmoID.Arrow;
         }
 

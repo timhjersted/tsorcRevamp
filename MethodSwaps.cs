@@ -1216,11 +1216,6 @@ namespace tsorcRevamp
 
         private static void On_Player_GetPointOnSwungItemPath(On_Player.orig_GetPointOnSwungItemPath orig, Player self, float spriteWidth, float spriteHeight, float normalizedPointOnPath, float itemScale, out Vector2 location, out Vector2 outwardDirection)
         {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().BroadswordRework)
-            {
-                orig(self, spriteWidth, spriteHeight, normalizedPointOnPath, itemScale, out location, out outwardDirection);
-                return;
-            }
             float length = (float)Math.Sqrt(spriteWidth * spriteWidth + spriteHeight * spriteHeight);
             float dir = (self.direction == 1).ToInt() * ((float)Math.PI / 2f);
             if (self.gravDir == -1f)

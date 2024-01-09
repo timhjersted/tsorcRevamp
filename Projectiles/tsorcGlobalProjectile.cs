@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -406,11 +407,11 @@ namespace tsorcRevamp.Projectiles
             {
                 if (modPlayer.BotCLethalTempoStacks < modPlayer.BotCLethalTempoMaxStacks - 1)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.135f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().AdjustBotCMechanicsVolume * 0.135f }, player.Center);
                 }
                 else if (modPlayer.BotCLethalTempoStacks == modPlayer.BotCLethalTempoMaxStacks - 1)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.18f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().AdjustBotCMechanicsVolume * 0.18f }, player.Center);
                 }
                 player.AddBuff(ModContent.BuffType<LethalTempo>(), player.GetModPlayer<tsorcRevampPlayer>().BotCLethalTempoDuration * 60);
                 AppliedLethalTempo = true;
@@ -422,19 +423,19 @@ namespace tsorcRevamp.Projectiles
             {
                 if (modPlayer.BotCConquerorStacks < modPlayer.BotCConquerorMaxStacks - 1 && !hit.Crit)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.16f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().AdjustBotCMechanicsVolume * 0.16f }, player.Center);
                 }
                 else if (modPlayer.BotCConquerorStacks < modPlayer.BotCConquerorMaxStacks - 2 && hit.Crit)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.24f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().AdjustBotCMechanicsVolume * 0.24f }, player.Center);
                 }
                 else if (modPlayer.BotCConquerorStacks == modPlayer.BotCConquerorMaxStacks - 1)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.2f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().AdjustBotCMechanicsVolume * 0.2f }, player.Center);
                 }
                 else if (modPlayer.BotCConquerorStacks == modPlayer.BotCConquerorMaxStacks - 2 && hit.Crit)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.2f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().AdjustBotCMechanicsVolume * 0.2f }, player.Center);
                 }
                 player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
                 if (hit.Crit)
@@ -447,55 +448,69 @@ namespace tsorcRevamp.Projectiles
             {
                 if (modPlayer.BotCConquerorStacks < modPlayer.BotCConquerorMaxStacks - 1)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.16f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorStack") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().AdjustBotCMechanicsVolume * 0.16f }, player.Center);
                 }
                 else if (modPlayer.BotCConquerorStacks == modPlayer.BotCConquerorMaxStacks - 1)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.2f }, player.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().AdjustBotCMechanicsVolume * 0.2f }, player.Center);
                 }
                 player.AddBuff(ModContent.BuffType<Conqueror>(), player.GetModPlayer<tsorcRevampPlayer>().BotCConquerorDuration * 60);
                 AppliedConqueror = true;
             }
             #endregion
 
-            #region Accuracy
-            if (projectile.DamageType == DamageClass.Ranged && !IgnoresAccuracyOrSpecialCase)
-            {
-                if (modPlayer.BearerOfTheCurse)
-                {
-                    switch (projectile.type)
-                    {
-                        case ProjectileID.ChlorophyteBullet or ProjectileID.ChlorophyteArrow or ProjectileID.CrystalShard:
-                            {
-                                IgnoresAccuracyOrSpecialCase = true;
-                                break;
-                            }
-                        case int ModProjectile when (ModProjectile == ModContent.ProjectileType<ElfinArrow>() || ModProjectile == ModContent.ProjectileType<ToxicCatExplosion>() || ModProjectile == ModContent.ProjectileType<VirulentCatExplosion>() || ModProjectile == ModContent.ProjectileType<BiohazardExplosion>() || ModProjectile == ModContent.ProjectileType<KrakenTsunamiShark>()
-                        || ModProjectile == ProjectileID.CrystalShard || (ModProjectile == ProjectileID.Bone && projectile.ai[2] == 1) || ModProjectile == ModContent.ProjectileType<ShulletBellDark>() || ModProjectile == ModContent.ProjectileType<ShulletBellDark>()):
-                            {
-                                IgnoresAccuracyOrSpecialCase = true;
-                                break;
-                            }
-                        default:
-                            {
-                                IgnoresAccuracyOrSpecialCase = false;
-                                break;
-                            }
-                    }
-                }
-            }
-            if (projectile.aiStyle == ProjAIStyleID.SmallFlying && !IgnoresAccuracyOrSpecialCase)
-            {
-                IgnoresAccuracyOrSpecialCase = true;
-            }
-            if (!IgnoresAccuracyOrSpecialCase)
+            #region Accuracy            
+            if (!IsAccuracySpecialCase(projectile))
             {
                 HitSomething = true;
             }
             #endregion
         }
 
-        public override void OnHitPlayer(Projectile projectile, Player target, Player.HurtInfo info)
+        /// <summary>
+        /// Simply returns true if the projectile is a special case that isn't supposed to count for or against accuracy (like explosions, projectiles spawned by projectiles, homing ones, purely visual ones, etc
+        /// Projectile *types* that are always special cases should just go in PopulateAccuracySpecialCases(), this is mainly for more complex stuff (like checking the projectile's ai[] fields)
+        /// </summary>
+        /// <param name="projectile"></param>
+        /// <returns></returns>
+        public static bool IsAccuracySpecialCase(Projectile projectile)
+        {
+            return AccuracySpecialCaseList.Contains(projectile.type) || (projectile.type == ProjectileID.Bone && projectile.ai[2] == 1) || projectile.aiStyle == ProjAIStyleID.SmallFlying;
+        }
+        
+
+        //This loads the list automatically the first time someone tries to access it
+        //It works by checking if the list is null, loading it if it is, then returning it        
+        public static List<int> AccuracySpecialCaseList
+        {
+            get
+            {
+                if(AccuracySpecialCases == null)
+                {
+                    PopulateAccuracySpecialCases();
+                }
+
+                return AccuracySpecialCases;
+            }
+        }
+
+        /// <summary>
+        /// This is where the list of all accuracy special case projectiles go
+        /// Works like all the other PopulateX() functions we have
+        /// </summary>
+        private static void PopulateAccuracySpecialCases()
+        {
+            AccuracySpecialCases = new List<int>()
+            {
+               ModContent.ProjectileType<ElfinArrow>(), ModContent.ProjectileType<ToxicCatExplosion>(), ModContent.ProjectileType<VirulentCatExplosion>(), ModContent.ProjectileType<BiohazardExplosion>(),
+               ModContent.ProjectileType<KrakenTsunamiShark>(), ProjectileID.CrystalShard, ModContent.ProjectileType<ShulletBellDark>(),  ModContent.ProjectileType<ShulletBellLight>(), 
+                ProjectileID.ChlorophyteBullet, ProjectileID.ChlorophyteArrow, ProjectileID.HallowStar
+            };
+        }
+
+        public static List<int> AccuracySpecialCases;
+
+    public override void OnHitPlayer(Projectile projectile, Player target, Player.HurtInfo info)
         {
             if (projectile.type == ProjectileID.EyeLaser && projectile.ai[0] == 1)
             {
@@ -637,10 +652,11 @@ namespace tsorcRevamp.Projectiles
             {
                 int Difficulty = 1 + (Main.expertMode ? 1 : 0) + (Main.masterMode ? 1 : 0);
                 Vector2 Vel = Main.rand.NextVector2CircularEdge(20, 20);
-                Projectile Fireball1 = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity, ModContent.ProjectileType<SmallGolemFireball>(), projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
-                Projectile Fireball2 = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity, ModContent.ProjectileType<SmallGolemFireball>(), projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
-                Fireball1.velocity += Vel;
-                Fireball2.velocity -= Vel;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity + Vel, ModContent.ProjectileType<SmallGolemFireball>(), projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
+                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity - Vel, ModContent.ProjectileType<SmallGolemFireball>(), projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
+                }
                 if (NPC.CountNPCS(NPCID.SolarCorite) < 3)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -668,7 +684,8 @@ namespace tsorcRevamp.Projectiles
                     modPlayer.GoredrinkerReady = false;
                     modPlayer.GoredrinkerSwung = false;
                 }
-                if (!IgnoresAccuracyOrSpecialCase && projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse)
+
+                if (!IsAccuracySpecialCase(projectile) && projectile.DamageType == DamageClass.Ranged && modPlayer.BearerOfTheCurse && projectile.damage != 0)
                 {
                     if (HitSomething)
                     {

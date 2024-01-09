@@ -14,7 +14,7 @@ public abstract class MeleeAnimation : ItemComponent
 
     public override void UseItemFrame(Item item, Player player)
     {
-        if (!Enabled || !ModContent.GetInstance<tsorcRevampConfig>().BroadswordRework)
+        if (!Enabled)
         {
             return;
         }

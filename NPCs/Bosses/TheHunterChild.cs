@@ -269,7 +269,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
-                if (player.HasBuff(BuffID.Hunter) || player.HasItem(ModContent.ItemType<Items.Potions.PermanentPotions.PermanentHunterPotion>()))
+                if (Main.LocalPlayer.detectCreature)
                 {
                     NPC.alpha = 0;
                 }
@@ -312,7 +312,7 @@ namespace tsorcRevamp.NPCs.Bosses
             hunterEffect.CurrentTechnique.Passes[0].Apply();
 
             //Only draw the bird if it's not enraged
-            if (NPC.ai[3] == 0 || Main.LocalPlayer.HasBuff(BuffID.Hunter) || Main.LocalPlayer.HasItem(ModContent.ItemType<Items.Potions.PermanentPotions.PermanentHunterPotion>()))
+            if (NPC.ai[3] == 0 || Main.LocalPlayer.detectCreature)
             {
                 Main.spriteBatch.Draw(blurTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
                 UsefulFunctions.RestartSpritebatch(ref spriteBatch);

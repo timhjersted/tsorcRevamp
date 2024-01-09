@@ -565,7 +565,7 @@ namespace tsorcRevamp.NPCs.Bosses
             hunterEffect.CurrentTechnique.Passes[0].Apply();
 
             //Only draw the bird if it's not enraged
-            if (NPC.ai[3] == 0 || Main.LocalPlayer.HasBuff(BuffID.Hunter) || Main.LocalPlayer.HasItem(ModContent.ItemType<Items.Potions.PermanentPotions.PermanentHunterPotion>()))
+            if (NPC.ai[3] == 0 || Main.LocalPlayer.detectCreature)
             {
                 Main.spriteBatch.Draw(blurTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
                 UsefulFunctions.RestartSpritebatch(ref spriteBatch);
@@ -661,6 +661,13 @@ namespace tsorcRevamp.NPCs.Bosses
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.YellowGreen));
             }
 
+            if (!Main.dedServ)
+            {
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheHunter_Gore_1").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheHunter_Gore_2").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheHunter_Gore_3").Type, 1f);                
+            }
+
             for (int i = 0; i < 100; i++)
             {
                 int dust = Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 89, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, new Color(), 9f);
@@ -673,15 +680,6 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void HitEffect(NPC.HitInfo hit)
         {
-            if (!Main.dedServ)
-            {
-                if (NPC.life <= 0)
-                {
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheHunter_Gore_1").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheHunter_Gore_2").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheHunter_Gore_3").Type, 1f);
-                }
-            }
         }
     }
 }

@@ -172,8 +172,7 @@ namespace tsorcRevamp.Projectiles
                 Vector2 pos = (Main.MouseScreen + new Vector2(6, 6)) - (Vector2.UnitY * 24).RotatedBy(MathHelper.ToRadians((360 / maxPoints) * i));
                 Main.EntitySpriteDraw(pointTexture, pos, srect, Color.White * opacity, 0f, origin, 1f, SpriteEffects.None, 0);
             }
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin();
+            UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
 
         }
 
