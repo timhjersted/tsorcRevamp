@@ -85,7 +85,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 player.AddBuff(BuffID.BrokenArmor, 120, false);
                 player.AddBuff(ModContent.BuffType<FracturingArmor>(), 60, false);
-                player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
 
                 if (holdTimer2 <= 0)
                 {

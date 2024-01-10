@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddCondition(tsorcRevampWorld.SHM3Downed);
 
-            //recipe.Register();
+            recipe.Register();
         }
     }
 }

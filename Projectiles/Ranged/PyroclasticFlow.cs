@@ -26,9 +26,9 @@ namespace tsorcRevamp.Projectiles.Ranged
 
             trailCollision = true;
             trailWidth = 25;
-            trailPointLimit = 150;
+            trailPointLimit = 350;
             trailYOffset = 30;
-            trailMaxLength = 150;
+            trailMaxLength = 350;
             NPCSource = false;
             collisionPadding = 0;
             collisionEndPadding = 1;

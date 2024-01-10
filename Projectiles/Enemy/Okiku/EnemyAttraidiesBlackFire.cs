@@ -45,13 +45,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
             if ((int)Projectile.ai[0] < 0)
             {
-                trailMaxLength = 700;
+                trailMaxLength = 250;
                 //Let them move slow for a second to telegraph before accelerating off
                 if (Projectile.timeLeft < 570)
                 {
-                    if (Projectile.velocity.Length() < 40)
+                    if (Projectile.velocity.Length() < 15)
                     {
-                        Projectile.velocity *= 1.05f;
+                        Projectile.velocity *= 1.1f;
                     }
                 }
             }
