@@ -317,6 +317,8 @@ Mods: {
 			AccessSafe: Access Safe
 			BotCHit: Hit! {0}%
 			BotCMiss: Miss! {0}%
+			MinionInfoDisplay: "{0}/{1} Minion Slot"
+			SentryInfoDisplay: "{0}/{1} Sentry Slot"
 		}
 
 		World: {
@@ -10276,6 +10278,11 @@ Mods: {
 			Shunpo.DisplayName: Shunpo
 			"Necromancers Spell.DisplayName": Necromancers Spell
 			"Krakens Cast.DisplayName": Krakens  Cast
+		}
+
+		InfoDisplays: {
+			MinionInfoDisplay.DisplayName: Minions
+			SentryInfoDisplay.DisplayName: Sentries
 		}
 
 		Configs: {

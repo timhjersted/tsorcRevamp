@@ -317,6 +317,8 @@ Mods: {
 			AccessSafe: 打开保险箱
 			BotCHit: 中！{0}%
 			BotCMiss: 马… {0}%
+			MinionInfoDisplay: "{0}/{1} 召唤栏"
+			SentryInfoDisplay: "{0}/{1} 哨兵栏"
 		}
 
 		World: {
@@ -3710,8 +3712,9 @@ Mods: {
 					以[c/6d8827:被诅咒者]身份游玩时具有以下效果：
 					你获得一个额外的饰品栏，额外得到 {0}% 黑暗之魂，同时你的耐力恢复大大提高
 					但是，[c/dd3333:使用武器会消耗耐力] ，当耐力未达到最大值时生命恢复减半
-					禁止使用大魔镜，治疗药水不会生效，作为补偿你获得了元素瓶，按快速治疗快捷键以使用
+					治疗药水不会生效，作为补偿你获得了元素瓶，按快速治疗快捷键以使用
 					每次你死时会损失 {1}% 的最大生命值，但是当你回到死亡地点就会恢复
+					可在模组设置中调整[c/6d8827:被诅咒者]的音效音量
 					'''
 				Enabled: 你成为了被诅咒者
 				Disabled: 诅咒已被移除
@@ -10275,6 +10278,11 @@ Mods: {
 			"Krakens Cast.DisplayName": 海妖之怒
 		}
 
+		InfoDisplays: {
+			MinionInfoDisplay.DisplayName: 仆从
+			SentryInfoDisplay.DisplayName: 哨兵
+		}
+
 		Configs: {
 			tsorcRevampConfig: {
 				DisplayName: "[c/bb1c74:红][c/b52e83:云][c/b33c93:物][c/ad4c9f:语] [c/9589d5:模][c/9589d5:组][c/8d97e5:设][c/8d9be7:置]"
@@ -10481,7 +10489,7 @@ Mods: {
 					Label: 被诅咒者机制音量
 					Tooltip:
 						'''
-						被诅咒者新机制的音量是不是过于吵闹和烦人了？
+						被诅咒者机制的音量是不是过于吵闹和烦人了？
 						这个滑块控制篝被诅咒者机制的音量
 						设置为 0 禁用被诅咒者机制的声音
 						'''
@@ -10505,13 +10513,18 @@ Mods: {
 				}
 
 				BotCMechanicsVolumeSlider: {
-					// Label: Bot C Mechanics Volume Slider
-					// Tooltip: ""
+					Label: 被诅咒者机制音效滑块
+					Tooltip: ""
 				}
 
 				AdjustBotCMechanicsVolume: {
-					// Label: Adjust Bot C Mechanics Volume
-					// Tooltip: ""
+					Label: 被诅咒者机制音量
+					Tooltip:
+						'''
+						被诅咒者机制的音量是不是过于吵闹和烦人了？
+						这个滑块控制篝被诅咒者机制的音量
+						设置为 0 禁用被诅咒者机制的声音
+						'''
 				}
 			}
 		}
