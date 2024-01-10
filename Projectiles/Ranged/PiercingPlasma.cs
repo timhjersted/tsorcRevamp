@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             Projectile.hostile = false;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            Projectile.penetrate = -1;
+            Projectile.penetrate = 4;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10;
 
