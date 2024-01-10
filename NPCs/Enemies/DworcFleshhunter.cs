@@ -62,7 +62,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             else if (!Main.hardMode && spawnInfo.Player.ZoneJungle && spawnInfo.Player.ZoneOverworldHeight)
             {
-                return 0.365f;
+                return 0.265f;
             }
             else if (Main.dayTime && !Main.hardMode && spawnInfo.Player.ZoneJungle && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight))
             {
