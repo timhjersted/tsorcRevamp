@@ -45,7 +45,6 @@ namespace tsorcRevamp.Projectiles
             Timer++;
         }
 
-        float color;
         public override void SetEffectParameters(Effect effect)
         {
             Color shaderColor = Main.hslToRgb((float)(Main.timeForVisualEffects / 100f) % 1, 1, 0.5f);

@@ -35,8 +35,8 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             DrawOffsetY = +70;
-            NPC.width = 140;
-            NPC.height = 60;
+            NPC.width = 50;
+            NPC.height = 30;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.TheHunterChild.DespawnHandler"), Color.Green, 89);
         }
 
@@ -52,23 +52,42 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             target.AddBuff(BuffID.Bleeding, 30 * 60, false);
         }
+        public float EnrageDamageCounter
+        {
+            get => NPC.ai[0];
+            set => NPC.ai[0] = value;
+        }
+        public float SprouterShotTimer
+        {
+            get => NPC.ai[1];
+            set => NPC.ai[1] = value;
+        }
+        public float AttackPhaseTimer
+        {
+            get => NPC.ai[2];
+            set => NPC.ai[2] = value;
+        }
+        public float EnrageTimer
+        {
+            get => NPC.ai[3];
+            set => NPC.ai[3] = value;
+        }
 
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            NPC.netUpdate = true;
-            NPC.ai[2]++;
-            NPC.ai[1]++;
+            AttackPhaseTimer++;
+            SprouterShotTimer++;
             hitTime++;
-            if (NPC.ai[0] > 0) NPC.ai[0] -= hitTime / 10;
-            // Dusts get bigger as damage taken increases
-            Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+            if (EnrageDamageCounter > 0) EnrageDamageCounter -= hitTime / 10;
 
+
+            // Dusts get bigger as damage taken increases
             Player player = Main.player[NPC.target];
-            if (player.HasBuff(BuffID.Hunter) || player.HasItem(ModContent.ItemType<Items.Potions.PermanentPotions.PermanentHunterPotion>()))
+            if (player.detectCreature)
             {
-                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 89, NPC.velocity.X, NPC.velocity.Y, 200, default, 0.01f + (5.5f * (NPC.ai[0] / (NPC.lifeMax / 10)))); //.1 was 0.5f
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 89, NPC.velocity.X, NPC.velocity.Y, 200, default, 0.01f + (5.5f * (EnrageDamageCounter / (NPC.lifeMax / 10)))); //.1 was 0.5f
                 Main.dust[dust].noGravity = true;
             }
 
@@ -99,53 +118,50 @@ namespace tsorcRevamp.NPCs.Bosses
                 { NPC.life = 500; }
             }
 
-            if (NPC.ai[3] == 0)
+            if (EnrageTimer == 0)
             {
                 // Normal Phase
                 NPC.defense = 26;
-                if (NPC.ai[2] < 600)
+                if (AttackPhaseTimer < 600)
                 {
-                    if (Main.player[NPC.target].position.X < vector8.X)
+                    if (Main.player[NPC.target].position.X < NPC.Center.X)
                     {
                         if (NPC.velocity.X > -8) { NPC.velocity.X -= 0.22f; }
                     }
-                    if (Main.player[NPC.target].position.X > vector8.X)
+                    if (Main.player[NPC.target].position.X > NPC.Center.X)
                     {
                         if (NPC.velocity.X < 8) { NPC.velocity.X += 0.22f; }
                     }
 
-                    if (Main.player[NPC.target].position.Y < vector8.Y + 300)
+                    if (Main.player[NPC.target].position.Y < NPC.Center.Y + 300)
                     {
                         if (NPC.velocity.Y > 0f) NPC.velocity.Y -= 0.8f;
                         else NPC.velocity.Y -= 0.07f;
                     }
-                    if (Main.player[NPC.target].position.Y > vector8.Y + 300)
+                    if (Main.player[NPC.target].position.Y > NPC.Center.Y + 300)
                     {
                         if (NPC.velocity.Y < 0f) NPC.velocity.Y += 0.8f;
                         else NPC.velocity.Y += 0.07f;
                     }
 
-                    if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
+                    if (SprouterShotTimer >= 0 && AttackPhaseTimer > 120 && AttackPhaseTimer < 600)
                     {
-                        float num48 = 3f; //was 14f
-
                         int type = ModContent.ProjectileType<MiracleSprouter>();
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass, vector8);
-                        float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass, NPC.Center);
+                        Vector2 aimVector = UsefulFunctions.Aim(NPC.Center, player.Center, 3);
+                        Vector2 fireOriginOffset = new Vector2(0, -70);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int projIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
-                            Main.projectile[projIndex].timeLeft = 250;
-                            projIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
-                            Main.projectile[projIndex].timeLeft = 250;
-                            projIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
-                            Main.projectile[projIndex].timeLeft = 250;
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + fireOriginOffset, aimVector + player.velocity, type, sproutDamage, 0, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + fireOriginOffset, aimVector.RotatedBy(-0.4) + player.velocity, type, sproutDamage, 0, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + fireOriginOffset, aimVector.RotatedBy(0.4) + player.velocity, type, sproutDamage, 0, Main.myPlayer);
                         }
-                        NPC.ai[1] = -90;
+                        SprouterShotTimer = -90;
+                        NPC.netUpdate = true;
                     }
                     NPC.netUpdate = true;
                 }
-                else if (NPC.ai[2] >= 600 && NPC.ai[2] < 950)
+                else if (AttackPhaseTimer >= 600 && AttackPhaseTimer < 950)
                 {
                     // Then chill for a few seconds.
                     // This exists to delay switching to the 'charging' pattern for 150 frames, because otherwise the way the sprouters linger can often make the first charge impossible to dodge
@@ -153,75 +169,75 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.velocity.Y *= 0.95f;
                     Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 131, Main.rand.Next(-1, 1), Main.rand.Next(-10, 1), 200, default, 0.5f);
                 }
-                else if (NPC.ai[2] >= 950 && NPC.ai[2] < 1350)
+                else if (AttackPhaseTimer >= 950 && AttackPhaseTimer < 1350)
                 {
                     NPC.velocity.X *= 0.98f;
                     NPC.velocity.Y *= 0.98f;
                     if ((NPC.velocity.X < 2f) && (NPC.velocity.X > -2f) && (NPC.velocity.Y < 2f) && (NPC.velocity.Y > -2f))
                     {
-                        float rotation = (float)Math.Atan2((vector8.Y) - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), (vector8.X) - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                        float rotation = (float)Math.Atan2((NPC.Center.Y) - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), (NPC.Center.X) - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         NPC.velocity.X = ((float)(Math.Cos(rotation) * 25) * -1) + Main.player[NPC.target].velocity.X;
                         NPC.velocity.Y = ((float)(Math.Sin(rotation) * 25) * -1) + Main.player[NPC.target].velocity.Y;
                     }
                 }
-                else NPC.ai[2] = 0;
+                else AttackPhaseTimer = 0;
             }
             else
             {
                 // Enrage phase
-                NPC.ai[3]++;
+                EnrageTimer++;
                 NPC.defense = 66;
 
-                if (Main.player[NPC.target].position.X < vector8.X)
+                if (Main.player[NPC.target].position.X < NPC.Center.X)
                 {
                     if (NPC.velocity.X > -6) { NPC.velocity.X -= 0.22f; }
                 }
-                if (Main.player[NPC.target].position.X > vector8.X)
+                if (Main.player[NPC.target].position.X > NPC.Center.X)
                 {
                     if (NPC.velocity.X < 6) { NPC.velocity.X += 0.22f; }
                 }
-                if (Main.player[NPC.target].position.Y < vector8.Y)
+                if (Main.player[NPC.target].position.Y < NPC.Center.Y)
                 {
                     if (NPC.velocity.Y > 0f) NPC.velocity.Y -= 0.8f;
                     else NPC.velocity.Y -= 0.07f;
                 }
-                if (Main.player[NPC.target].position.Y > vector8.Y)
+                if (Main.player[NPC.target].position.Y > NPC.Center.Y)
                 {
                     if (NPC.velocity.Y < 0f) NPC.velocity.Y += 0.8f;
                     else NPC.velocity.Y += 0.07f;
                 }
-                if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
+                if (SprouterShotTimer >= 0 && AttackPhaseTimer > 120 && AttackPhaseTimer < 600)
                 {
-                    float num48 = 15f;
-                    float invulnDamageMult = 1.74f;
+                    float invulnDamageMult = 1.72f; //+0.20 for all birds
                     int type = ModContent.ProjectileType<MiracleSprouter>();
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);
-                    float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                    Vector2 aimVector = UsefulFunctions.Aim(NPC.Center, player.Center, 15);
+                    Vector2 fireOriginOffset = new Vector2(0, -70);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 150;
-                        num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 150;
-                        num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 150;
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + fireOriginOffset, aimVector + player.velocity, type, (int)(sproutDamage * invulnDamageMult), 0, Main.myPlayer, 35);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + fireOriginOffset, aimVector.RotatedBy(-0.4) + player.velocity, type, (int)(sproutDamage * invulnDamageMult), 0, Main.myPlayer, 40);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + fireOriginOffset, aimVector.RotatedBy(0.4) + player.velocity, type, (int)(sproutDamage * invulnDamageMult), 0, Main.myPlayer, 35);
                     }
-                    NPC.ai[1] = -90;
+                    SprouterShotTimer = -90;
+                    NPC.netUpdate = true;
+                    SprouterShotTimer = -90;
                 }
-                if (NPC.ai[3] == 100)
+                if (EnrageTimer == 100)
                 {
-                    if (NPC.ai[3] == 100)
+                    if (EnrageTimer == 100)
+                    {
+                        EnrageTimer = 1;
+                    }
 
-
-                        NPC.ai[3] = 1;
-                    // NPC.life -= 500;
-                    // No longer loses health on enrage now
-
-                    if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
+                    if (NPC.life > NPC.lifeMax)
+                    {
+                        NPC.life = NPC.lifeMax;
+                    }
                 }
-                if (NPC.ai[1] >= 0)
+                if (SprouterShotTimer >= 0)
                 {
-                    NPC.ai[3] = 0;
+                    EnrageTimer = 0;
                     for (int i = 0; i < 40; i++)
                     {
                         Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, 0, 0, 0, default, 0.3f);//was 3f
@@ -261,7 +277,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 NPC.frame.Y = 0;
             }
-            if (NPC.ai[3] == 0)
+            if (EnrageTimer == 0)
             {
                 NPC.alpha = 0;
 
@@ -302,8 +318,8 @@ namespace tsorcRevamp.NPCs.Bosses
             hunterEffect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseWavy);
             hunterEffect.Parameters["sourceRectY"].SetValue(NPC.frame.Y);
 
-            float opacity = NPC.ai[0] / (NPC.lifeMax / 10f) * 0.8f;
-            if (NPC.ai[3] != 0)
+            float opacity = EnrageDamageCounter / (NPC.lifeMax / 10f) * 0.8f;
+            if (EnrageTimer != 0)
             {
                 opacity = 1;
             }            
@@ -311,8 +327,8 @@ namespace tsorcRevamp.NPCs.Bosses
             hunterEffect.Parameters["opacity"].SetValue(opacity);
             hunterEffect.CurrentTechnique.Passes[0].Apply();
 
-            //Only draw the bird if it's not enraged
-            if (NPC.ai[3] == 0 || Main.LocalPlayer.detectCreature)
+            //Only draw the bird if the player has a hunter potion
+            if (Main.LocalPlayer.detectCreature)
             {
                 Main.spriteBatch.Draw(blurTexture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, SpriteEffects.None, 0);
                 UsefulFunctions.RestartSpritebatch(ref spriteBatch);
@@ -330,18 +346,18 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            NPC.ai[0] += hit.Damage;
+            EnrageDamageCounter += hit.Damage;
         }
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            NPC.ai[0] += hit.Damage;
+            EnrageDamageCounter += hit.Damage;
         }
         public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
         {
             hitTime = 0;
-            if (NPC.ai[0] > (NPC.lifeMax / 10))
+            if (EnrageDamageCounter > (NPC.lifeMax / 10))
             {
-                NPC.ai[3] = 1;
+                EnrageTimer = 1;
                 Color color = new Color();
                 for (int i = 0; i < 50; i++)
                 {
@@ -351,8 +367,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, 0, 0, 100, color, 0.5f);
                 }
-                NPC.ai[1] = -200;
-                NPC.ai[0] = 0;
+                SprouterShotTimer = -200;
+                EnrageDamageCounter = 0;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

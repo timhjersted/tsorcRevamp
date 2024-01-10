@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.VFX;
 
@@ -89,15 +90,12 @@ namespace tsorcRevamp.Projectiles
             behindNPCs.Add(index);
         }
 
-        /*
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.Poisoned, 120);
             target.AddBuff(BuffID.Venom, 120);
-        }*/
+        }
 
-        bool PreSetTrail = false;
-        Color trailColor = new Color(0.2f, 0.7f, 1f);
         float timeFactor = 0;
         public override void SetEffectParameters(Effect effect)
         {

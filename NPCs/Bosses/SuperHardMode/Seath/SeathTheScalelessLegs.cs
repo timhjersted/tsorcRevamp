@@ -8,13 +8,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 {
     class SeathTheScalelessLegs : ModNPC
     {
-        int breathDamage = 17;
-        int flameRainDamage = 14;
-        int meteorDamage = 17;
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Seath the Scaleless");
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers()
             {
                 Hide = true
             };

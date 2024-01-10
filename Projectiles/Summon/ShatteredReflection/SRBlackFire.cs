@@ -41,9 +41,6 @@ namespace tsorcRevamp.Projectiles.Summon.ShatteredReflection
             trailCollision = true;
         }
 
-        Vector2 destination = new Vector2(0f, 0f);
-        int channeling = 0;
-
         public override void AI()
         {
             base.AI();

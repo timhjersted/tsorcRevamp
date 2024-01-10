@@ -250,47 +250,41 @@ namespace tsorcRevamp.Projectiles.VFX
         public int segmentCount = 80;
         public float segmentLength = 60;
         public float randomness = 50;
-        bool positionSet = false;
         //public float initialAngleLimit = MathHelper.ToRadians(75); //Can diverge up to 75 degrees from 
         private void CreateLightningSegments()
-        {
-            //if (!positionSet)
+        {            
+            branches = new List<List<Vector2>>();
+            branchAngles = new List<List<float>>();
+            branchLengths = new List<List<float>>();
+
+            Tuple<List<Vector2>, List<float>, List<float>> initialLine = GenerateLightningLine(Projectile.position, Projectile.velocity.ToRotation(), segmentCount, false);
+
+            branches.Add(initialLine.Item1);
+            branchAngles.Add(initialLine.Item2);
+            branchLengths.Add(initialLine.Item3);
+
+            for (int i = 0; i < branches.Count; i++)
             {
-                branches = new List<List<Vector2>>();
-                branchAngles = new List<List<float>>();
-                branchLengths = new List<List<float>>();
-
-                Tuple<List<Vector2>, List<float>, List<float>> initialLine = GenerateLightningLine(Projectile.position, Projectile.velocity.ToRotation(), segmentCount, false);
-
-                branches.Add(initialLine.Item1);
-                branchAngles.Add(initialLine.Item2);
-                branchLengths.Add(initialLine.Item3);
-
-                for (int i = 0; i < branches.Count; i++)
+                if (branches[i].Count > 0)
                 {
-                    if (branches[i].Count > 0)
+                    for (int j = 0; j < branches[i].Count - 1; j++)
                     {
-                        for (int j = 0; j < branches[i].Count - 1; j++)
+                        if (Main.rand.NextBool(3) && j > 5)
                         {
-                            if (Main.rand.NextBool(3) && j > 5)
+                            //If it's the first set of splits, let them go longer
+                            int segmentLimit = 3;
+                            if (i == 0)
                             {
-                                //If it's the first set of splits, let them go longer
-                                int segmentLimit = 3;
-                                if (i == 0)
-                                {
-                                    segmentLimit = 12;
-                                }
-                                Tuple<List<Vector2>, List<float>, List<float>> newBranch = GenerateLightningLine(branches[i][j], Projectile.velocity.ToRotation(), Main.rand.Next(segmentLimit), true);
-                                branches.Add(newBranch.Item1);
-                                branchAngles.Add(newBranch.Item2);
-                                branchLengths.Add(newBranch.Item3);
+                                segmentLimit = 12;
                             }
+                            Tuple<List<Vector2>, List<float>, List<float>> newBranch = GenerateLightningLine(branches[i][j], Projectile.velocity.ToRotation(), Main.rand.Next(segmentLimit), true);
+                            branches.Add(newBranch.Item1);
+                            branchAngles.Add(newBranch.Item2);
+                            branchLengths.Add(newBranch.Item3);
                         }
                     }
                 }
-
-                positionSet = true;
-            }
+            }            
         }
 
         public Tuple<List<Vector2>, List<float>, List<float>> GenerateLightningLine(Vector2 initialPoint, float initialAngle, int maxLength, bool branch)

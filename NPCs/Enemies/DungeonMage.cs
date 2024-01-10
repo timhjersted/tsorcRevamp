@@ -210,7 +210,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     int type = ModContent.ProjectileType<Projectiles.Enemy.MiracleSprouter>();
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), myPos.X, myPos.Y, speedX, speedY, type, damage, 0f, NPC.whoAmI, 1);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), myPos.X, myPos.Y, speedX, speedY, type, damage, 0f, NPC.whoAmI, 110);
                     }
 
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);

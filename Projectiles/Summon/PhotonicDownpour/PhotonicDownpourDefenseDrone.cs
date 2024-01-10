@@ -48,11 +48,8 @@ namespace tsorcRevamp.Projectiles.Summon.PhotonicDownpour
 
         bool indexSet = false;
         List<float> foundIndicies = new List<float>();
-        int timer = 0;
-        int firingCooldown;
         public override void AI()
         {
-            timer++;
             Player owner = Main.player[Projectile.owner];
 
             if (!indexSet)

@@ -544,7 +544,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 int dustQuantity = (int)AI_Timer / 6;
                 for (int i = 0; i < dustQuantity; i++)
                 {
-                    if (Main.rand.Next(10) == 0 && AI_Timer < 150)
+                    if (Main.rand.NextBool(10) && AI_Timer < 150)
                     {
                         if (NPC.direction == 1)
                         {

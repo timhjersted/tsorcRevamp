@@ -262,8 +262,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             behindNPCs.Add(index);
         }
 
-        bool PreSetTrail = false;
-        Color trailColor = new Color(0.2f, 0.7f, 1f);
         float timeFactor = 0;
         public override void SetEffectParameters(Effect effect)
         {

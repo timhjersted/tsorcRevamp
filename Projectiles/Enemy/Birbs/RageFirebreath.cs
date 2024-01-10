@@ -35,9 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
 
         float size = 0;
-        Vector2 truePosition;
         float maxSize = 200;
-        float fadeIn;
         int? hostIndex;
         bool initialized = false;
         public override void AI()

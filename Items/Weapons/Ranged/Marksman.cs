@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             return new Vector2(-6, -2);
         }
 
-        int ammoleft = 6;
+        //int ammoleft = 6;
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             if (player.altFunctionUse == 2)

@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         private const int AI_Max_Splits = 2; //the exponent. projectile can split this many times. this counter is remembered for a projectile's children.
         private const int AI_Projectile_Split_Rate = 2; //the base. projectile will split into this many children each time it splits.
         private const int AI_Split_Time = 15; //when does the projectile split, in frames
-        private const int AI_Split_Angle = 15; //the spread angle for the child projectiles
+        private const int AI_Split_Angle = 11; //the spread angle for the child projectiles
 
         //all of this stuff before the AI makes the AI pretty
         //now instead of saying projectile.ai[0] i can say AI_Split_Count

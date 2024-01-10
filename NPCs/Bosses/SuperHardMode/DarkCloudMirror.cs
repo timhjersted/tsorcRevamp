@@ -12,15 +12,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     [AutoloadBossHead]
     class DarkCloudMirror : ModNPC
     {
-        int divineSparkDamage = 75;
-        int darkFlowDamage = 50;
         int antiMatDamage = 100;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 16;
             NPCID.Sets.TrailCacheLength[NPC.type] = (int)TRAIL_LENGTH;    //The length of old position to be recorded
             NPCID.Sets.TrailingMode[NPC.type] = 1;
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers()
             {
                 Hide = true
             };

@@ -96,7 +96,7 @@ namespace tsorcRevamp.NPCs.Special
 
                 if (Main.cloudBGActive >= 1f || Main.numClouds > 150)
                 {
-                    if (Main.rand.Next(3) == 0)
+                    if (Main.rand.NextBool(3))
                     {
                         Main.maxRaining = Main.rand.Next(20, 90) * 0.01f;
                     }
@@ -107,7 +107,7 @@ namespace tsorcRevamp.NPCs.Special
                 }
                 else if (Main.numClouds > 100)
                 {
-                    if (Main.rand.Next(3) == 0)
+                    if (Main.rand.NextBool(3))
                     {
                         Main.maxRaining = Main.rand.Next(10, 70) * 0.01f;
                     }
@@ -116,7 +116,7 @@ namespace tsorcRevamp.NPCs.Special
                         Main.maxRaining = Main.rand.Next(20, 60) * 0.01f;
                     }
                 }
-                else if (Main.rand.Next(3) == 0)
+                else if (Main.rand.NextBool(3))
                 {
                     Main.maxRaining = Main.rand.Next(5, 40) * 0.01f;
                 }

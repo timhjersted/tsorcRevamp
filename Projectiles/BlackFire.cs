@@ -37,9 +37,6 @@ namespace tsorcRevamp.Projectiles
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/BlackFireball", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
-        Vector2 destination = new Vector2(0f, 0f);
-        int channeling = 0;
-
         public override void AI()
         {
             base.AI();

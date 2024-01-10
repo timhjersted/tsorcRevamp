@@ -34,7 +34,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
 
         float size = 0;
-        Vector2 truePosition;
         float maxSize = 1200;
         float fadeIn;
         public override void AI()

@@ -63,7 +63,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
             return 9;
         }
 
-        float timeFactor = 0;
         float baseNoiseUOffset;
         public override void SetEffectParameters(Effect effect)
         {

@@ -41,7 +41,6 @@ namespace tsorcRevamp.NPCs.Special
             // DisplayName.SetDefault("Abyssal Fissure");
         }
 
-        bool initialized;
         float expansionSpeed = 1;
         float flashOpacity = 1;
         float startupPercent;

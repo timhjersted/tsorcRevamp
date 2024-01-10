@@ -158,9 +158,10 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				UsefulFunctions.BroadcastText("An assassin is tracking your position...", 175, 75, 255);
 				return true;
-			}*/
+			}            
+             
+            return chance;*/
 
-            return chance;
         }
 
         #endregion

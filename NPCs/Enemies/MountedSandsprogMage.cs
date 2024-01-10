@@ -75,7 +75,6 @@ namespace tsorcRevamp.NPCs.Enemies
             #region check if standing on a solid tile
 
             int y_below_feet = (int)(NPC.position.Y + (float)NPC.height + 8f) / 16;
-            bool standing_on_solid_tile = false;
             if (NPC.velocity.Y == 0f) // no jump/fall
             {
                 int x_left_edge = (int)NPC.position.X / 16;
@@ -87,7 +86,6 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (Main.tile[l, y_below_feet].HasTile && Main.tileSolid[(int)Main.tile[l, y_below_feet].TileType]) // tile exists and is solid
                     {
-                        standing_on_solid_tile = true;
                         break; // one is enough so stop checking
                     }
                 } // END traverse blocks under feet
@@ -232,8 +230,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             float quantity = (float)((float)NPC.lifeMax / (float)NPC.life * 100) / 10f - 8f; //Fun. quantity is 2 at 100% hp, 30+ with low hp.
 
-            if (Main.rand.Next((int)quantity) == 0 && NPC.spriteDirection == 1) { Dust.NewDust(new Vector2(NPC.Center.X + 18, NPC.Center.Y + 6), 26, -2, 226, NPC.velocity.X * 0f, NPC.velocity.Y * 0f, 100, default(Color), .4f); }
-            if (Main.rand.Next((int)quantity) == 0 && NPC.spriteDirection != 1) { Dust.NewDust(new Vector2(NPC.Center.X - 48, NPC.Center.Y + 6), 26, -2, 226, NPC.velocity.X * 0f, NPC.velocity.Y * 0f, 100, default(Color), .4f); }
+            if (Main.rand.NextBool((int)quantity) && NPC.spriteDirection == 1) { Dust.NewDust(new Vector2(NPC.Center.X + 18, NPC.Center.Y + 6), 26, -2, 226, NPC.velocity.X * 0f, NPC.velocity.Y * 0f, 100, default(Color), .4f); }
+            if (Main.rand.NextBool((int)quantity) && NPC.spriteDirection != 1) { Dust.NewDust(new Vector2(NPC.Center.X - 48, NPC.Center.Y + 6), 26, -2, 226, NPC.velocity.X * 0f, NPC.velocity.Y * 0f, 100, default(Color), .4f); }
 
 
             base.AI();

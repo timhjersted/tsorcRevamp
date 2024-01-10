@@ -21,12 +21,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             Projectile.hostile = true;
         }
 
-        float DetonationRange = 80;
         int DetonationTime = 240;
         float DetonationProgress = 0;
-        bool spawnedLasers = false;
-        const int LASER_COUNT = 6;
-        int[] pickedDirections = new int[LASER_COUNT];
 
         float size = 200;
         float maxSize = 200;
@@ -43,8 +39,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Prime
             return x < 0.5 ? 2 * x * x : 1 - (float)Math.Pow(-2 * x + 2, 14) / 2;
         }
 
-        float growRate;
-        float shrinkRate;
         float sizeChange = 0;
         Vector2 newCenter;
         public override void AI()

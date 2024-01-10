@@ -56,7 +56,7 @@ namespace tsorcRevamp.Projectiles.VFX
         }
 
         bool fading = false;
-        bool initialized = false;
+        bool initializedValues = false;
         float widthPercent = 0.01f;
         int realWidth;
         Vector2 targetPoint;
@@ -66,8 +66,10 @@ namespace tsorcRevamp.Projectiles.VFX
             targetPoint = Main.npc[(int)Projectile.ai[0]].Center;
             RelativeToNPC = (int)Projectile.ai[0];
 
-            if (!initialized)
+            if (!initializedValues)
             {
+                float minVelocity = 15;
+                float maxVelocity = 30;
                 if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.TheRage>())
                 {
                     //The rage fight is already chaotic as fuck, these lessen that very slightly
@@ -81,10 +83,17 @@ namespace tsorcRevamp.Projectiles.VFX
                     Projectile.timeLeft = 130;
                     speed = 1f;
                 }
+                if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.TheHunter>())
+                {
+                    Projectile.timeLeft = 130;
+                    speed = 1.15f;
+                    minVelocity = 15;
+                    maxVelocity = 35;
+                }
                 realWidth = trailWidth;
                 trailWidth = 0;
-                Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, targetPoint, Main.rand.NextFloat(15, 30)).RotatedBy(MathHelper.Pi / 3f);
-                initialized = true;
+                Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, targetPoint, Main.rand.NextFloat(minVelocity, maxVelocity)).RotatedBy(MathHelper.Pi / 3f);
+                initializedValues = true;
             }
 
 

@@ -34,7 +34,7 @@ namespace tsorcRevamp.Buffs
                 {
                     storyEffectTimer = 0;
                 }
-
+                /*
                 bool bossActive = false;
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
@@ -46,7 +46,7 @@ namespace tsorcRevamp.Buffs
                 }
 
                 // Only heal when no bosses are alive, hp isn't full and the player is standing still
-                /*if (!bossActive && player.statLife < player.statLifeMax2 && player.velocity == Vector2.Zero)
+                if (!bossActive && player.statLife < player.statLifeMax2 && player.velocity == Vector2.Zero)
                 {
                     // Wind up 1
                     if (storyEffectTimer > 0 && storyEffectTimer <= 60)

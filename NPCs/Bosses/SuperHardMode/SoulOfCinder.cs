@@ -919,7 +919,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         private void Init()
         {
             Player target = Main.player[NPC.target];
-            if (ArenaCenter.Length() < 1 || ArenaCenter == null)
+            if (ArenaCenter.Length() < 1 || ArenaCenter == Vector2.Zero)
             {
                 if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                 {

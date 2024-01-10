@@ -39,7 +39,6 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.shoot = ModContent.ProjectileType<PhotonicDownpourLaserDrone>();
         }
 
-        int triadType;
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
             // Here you can change where the minion is spawned. Most vanilla minions spawn at the cursor position

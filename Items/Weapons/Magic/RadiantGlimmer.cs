@@ -89,7 +89,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
                 }
             }
         }
-        List<Tuple<float, float, float>> psuedodust;
+        //List<Tuple<float, float, float>> psuedodust;
 
         //Psuedodust! Iinstead of doing all the normal dust bs, these are made of 4 floats:
         //0: Its x offset

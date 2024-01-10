@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
         public int PoisonFlamesDamage = 25; //should this be so high? (was 45)
         public override void SetStaticDefaults()
         {
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers()
             {
                 Hide = true
             };

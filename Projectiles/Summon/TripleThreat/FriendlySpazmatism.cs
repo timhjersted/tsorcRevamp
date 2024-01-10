@@ -267,10 +267,6 @@ namespace tsorcRevamp.Projectiles.Summon.TripleThreat
 
         }
 
-        Vector2 acceleration = Vector2.Zero;
-        float accelerationMagnitude = 5f / 60f; //Jerk is change in acceleration
-        float topSpeed = 10;
-        float flyingTime = 0;
         private void Movement(bool foundTarget, float distanceFromTarget, float distanceToIdlePosition, Vector2 vectorToIdlePosition)
         {
             if (!foundTarget)

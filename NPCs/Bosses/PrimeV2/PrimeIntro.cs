@@ -37,9 +37,6 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.behindTiles = true;
         }
 
-
-        float progress = 0;
-        bool tripped = false;
         public override void AI()
         {
             if (Main.GameUpdateCount % 180 == 0)

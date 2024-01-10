@@ -24,7 +24,6 @@ namespace tsorcRevamp.Projectiles.Magic
 
         float radius = 25;
         Vector2 targetPoint = Vector2.Zero;
-        float timer = 0;
 
         int dustIndex;
         int[] dustArray = new int[500];

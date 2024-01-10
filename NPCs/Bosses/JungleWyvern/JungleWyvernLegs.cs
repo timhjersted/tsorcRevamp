@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Ancient Jungle Wyvern");
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers()
             {
                 Hide = true
             };

@@ -26,7 +26,6 @@ namespace tsorcRevamp.Projectiles.Magic
         }
 
         int charge = 0;
-        int altFunctionTimer = 0;
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];

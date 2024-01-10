@@ -11,15 +11,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 {
     class AttraidiesFragment : ModNPC
     {
-
-        int lookMode = 0; //0 = Stand, 1 = Player's Direction, 2 = Movement Direction.
-        int attackPhase = -1;
-        int subPhase = 0;
-        int genericTimer = 0;
-        int genericTimer2 = 0;
-        int phaseTime = 400;
-        bool phaseStarted = false;
-
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 3;

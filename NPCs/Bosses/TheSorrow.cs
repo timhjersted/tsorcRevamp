@@ -458,7 +458,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
                 {
-                    float num48 = 13f;
+                    float speed = 13f;
                     float invulnDamageMult = 1.68f;//was 1.48
                     int type = ModContent.ProjectileType<WaterTrail>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.SplashWeak, NPC.Center);
@@ -466,15 +466,15 @@ namespace tsorcRevamp.NPCs.Bosses
                     // Yes do it manually. im not using a loop. i don't care //Understandable, have a nice day.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, (float)((Math.Cos(rotation) * speed) * -1), (float)((Math.Sin(rotation) * speed) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
 
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, (float)((Math.Cos(rotation + 0.4) * speed) * -1), (float)((Math.Sin(rotation + 0.4) * speed) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
 
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, (float)((Math.Cos(rotation - 0.4) * speed) * -1), (float)((Math.Sin(rotation - 0.4) * speed) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
 
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, (float)((Math.Cos(rotation + 0.8) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, (float)((Math.Cos(rotation + 0.8) * speed) * -1), (float)((Math.Sin(rotation - 0.4) * speed) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
 
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, (float)((Math.Cos(rotation - 0.8) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 80, (float)((Math.Cos(rotation - 0.8) * speed) * -1), (float)((Math.Sin(rotation - 0.4) * speed) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
                     }
                     NPC.ai[1] = -180;
                 }
@@ -485,13 +485,10 @@ namespace tsorcRevamp.NPCs.Bosses
                     turtleTimer += 500;
                     NPC.ai[3] = 1;
 
-                    // Lose health on enrage
-                    //if (NPC.life > 550)
-                    //{
-                    //    NPC.life -= 350; //amount boss takes damage when becoming enraged
-                    //}
-
-                    if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
+                    if (NPC.life > NPC.lifeMax)
+                    {
+                        NPC.life = NPC.lifeMax;
+                    }
                     NPC.netUpdate = true;
                 }
                 if (NPC.ai[1] >= 0)
@@ -750,6 +747,12 @@ namespace tsorcRevamp.NPCs.Bosses
 
             SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1.3f });
 
+            if (!Main.dedServ)
+            {
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheSorrow_Gore_1").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheSorrow_Gore_2").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheSorrow_Gore_3").Type, 1f);                
+            }
             for (int i = 0; i < 100; i++)
             {
                 int dust = Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 29, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, new Color(), 9f);
@@ -762,15 +765,6 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void HitEffect(NPC.HitInfo hit)
         {
-            if (!Main.dedServ)
-            {
-                if (NPC.life <= 0)
-                {
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheSorrow_Gore_1").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheSorrow_Gore_2").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheSorrow_Gore_3").Type, 1f);
-                }
-            }
         }
     }
 }

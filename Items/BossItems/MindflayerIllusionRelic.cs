@@ -30,7 +30,6 @@ namespace tsorcRevamp.Items.BossItems
             int effectOffset = 65;
             Vector2 spawnPoint = player.Center + new Vector2(0, -300);
 
-            int DustType = DustID.PurpleCrystalShard;
             Vector2 vfx = spawnPoint;
             if (player.direction == 1)
             {

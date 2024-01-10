@@ -129,7 +129,6 @@ namespace tsorcRevamp.Projectiles.Ranged
             }
         }
 
-        private int biohazardtimer;
         private void StickyAI()
         {
             // These 2 could probably be moved to the ModifyNPCHit hook, but in vanilla they are present in the AI
