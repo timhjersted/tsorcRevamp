@@ -147,7 +147,7 @@ namespace tsorcRevamp.Tiles
                     {
                         foreach (int buffType in player.buffType)
                         {
-                            if (Main.debuff[buffType] && !BuffID.Sets.NurseCannotRemoveDebuff[buffType])
+                            if (Main.debuff[buffType] && !BuffID.Sets.NurseCannotRemoveDebuff[buffType] && buffType != BuffID.Tipsy)
                             {
                                 player.ClearBuff(buffType);
                             }
