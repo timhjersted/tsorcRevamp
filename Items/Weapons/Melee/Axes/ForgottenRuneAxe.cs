@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         {
             if (Item.prefix == PrefixID.Dull)
             {
-                damage -= 5;
+                damage.Flat -= 5;
             }
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)

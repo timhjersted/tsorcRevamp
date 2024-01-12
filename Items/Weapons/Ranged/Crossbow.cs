@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             if (Item.prefix == PrefixID.Awful)
             {
-                damage -= 7;
+                damage.Flat -= 7;
             }
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)

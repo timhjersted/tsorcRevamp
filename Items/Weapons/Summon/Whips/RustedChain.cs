@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         {
             if (Item.prefix == PrefixID.Terrible)
             {
-                damage -= 8;
+                damage.Flat -= 8;
             }
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
