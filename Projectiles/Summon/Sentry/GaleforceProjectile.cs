@@ -14,10 +14,9 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
         public override int ProjectileHeight => 58;
         public override DamageClass ProjectileDamageType => DamageClass.Summon;
         public override bool ContactDamage => false;
+        public override bool CanShoot => true;
         public override int ShotProjectileType => ModContent.ProjectileType<GaleforceArrow>();
         public override float ProjectileInitialVelocity => 20f;
-        public override int AI1 => 0;
-        public override int AI2 => 0;
         public override bool PlaysSoundOnShot => true;
         public override SoundStyle ShootSoundStyle => new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GaleforceShot");
         public override float ShootSoundVolume => 0.6f;

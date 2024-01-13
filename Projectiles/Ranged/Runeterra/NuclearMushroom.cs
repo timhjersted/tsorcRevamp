@@ -61,6 +61,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
             player.statMana -= (int)(OmegaSquadRifle.BaseShroomManaCost * player.manaCost);
             player.ManaEffect(-(int)(OmegaSquadRifle.BaseShroomManaCost * player.manaCost));
             player.manaRegenDelay = MeleeEdits.ManaDelay;
+            Projectile.OriginalCritChance = 100;
         }
         public override void AI()
         {
@@ -127,7 +128,10 @@ namespace tsorcRevamp.Projectiles.Ranged.Runeterra
                         break;
                     }
             }
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearMushroomExplosion>(), Projectile.damage / 2, Projectile.knockBack * 10, Projectile.owner);
+            if (Main.myPlayer == Projectile.owner)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearMushroomExplosion>(), Projectile.damage / 2, Projectile.knockBack * 10, Projectile.owner);
+            }
         }
     }
 }

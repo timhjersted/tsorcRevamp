@@ -105,7 +105,7 @@ namespace tsorcRevamp.Projectiles.Summon.Tetsujin
 
         private void Attack()
         {
-            if (target != null && target.active && target.Distance(Projectile.Center) < 1000)
+            if (target != null && target.active && target.Distance(Projectile.Center) < 1000 && Main.myPlayer == Projectile.owner)
             {
                 Vector2 projVel = UsefulFunctions.Aim(Projectile.Center, target.Center, 1);
                 if (Main.GameUpdateCount % 240 == 0)

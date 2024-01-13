@@ -217,11 +217,9 @@ namespace tsorcRevamp.Projectiles.Summon.NullSprite
                 shotVector *= shotSpeed;
                 if (Main.myPlayer == Projectile.owner)
                 {
-                    int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, shotVector, shotType, Projectile.damage, 0f, Main.myPlayer);
-                    Main.projectile[p].originalDamage = Projectile.damage;
-                    Main.projectile[p].timeLeft = 600;
-                    Main.projectile[p].netUpdate = true;
-                    Projectile.netUpdate = true;
+                    Projectile p = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, shotVector, shotType, Projectile.damage, 0f, Main.myPlayer);
+                    p.originalDamage = Projectile.damage;
+                    p.netUpdate = true;
                 }
                 Projectile.velocity = (-shotVector * 1.75f).RotatedByRandom(MathHelper.ToRadians(25));
                 Projectile.netUpdate = true;

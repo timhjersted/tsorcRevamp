@@ -131,19 +131,22 @@ namespace tsorcRevamp.Projectiles.Throwing
             Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
             Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
 
-            int MaxVel = 15;
-            Vector2 RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilDroplet1>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilDroplet1>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilPotShard1>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilPotShard2>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilPotShard3>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilPotShard4>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+            if (Main.myPlayer == Projectile.owner)
+            {
+                int MaxVel = 15;
+                Vector2 RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilDroplet1>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilDroplet1>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilPotShard1>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilPotShard2>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilPotShard3>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<OilPotShard4>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+            }
         }
     }
 }

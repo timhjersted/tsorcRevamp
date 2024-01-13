@@ -29,13 +29,16 @@ namespace tsorcRevamp.Projectiles.Magic
             if (Projectile.ai[0] == 0)
             {
                 dir = (Projectile.ai[1] * 2) - 1;
-                for (int i = 0; i < count; i++)
+                if (Main.myPlayer == Projectile.owner)
                 {
-                    int proj = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position, Vector2.Zero, ModContent.ProjectileType<WhiteLotusPetal>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0, i);
-                    WhiteLotusPetal petal = Main.projectile[proj].ModProjectile as WhiteLotusPetal;
-                    petal.ownerWAI = Projectile.whoAmI;
-                    petal.dir = dir;
-                    petal.count = count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        int proj = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position, Vector2.Zero, ModContent.ProjectileType<WhiteLotusPetal>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0, i);
+                        WhiteLotusPetal petal = Main.projectile[proj].ModProjectile as WhiteLotusPetal;
+                        petal.ownerWAI = Projectile.whoAmI;
+                        petal.dir = dir;
+                        petal.count = count;
+                    }
                 }
                 Projectile.ai[0] = 1;
                 //its an upgrade to the leaf blower, it has to have the same wiggly effect that the leaf blower does

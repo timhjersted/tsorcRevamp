@@ -4,6 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Melee;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -35,15 +36,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
+            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerShadowSickle = player;
             target.AddBuff(ModContent.BuffType<SickleSlashes>(), 5 * 60);
             player.statMana += ManaRefund;
         }
-
-        public override void UpdateInventory(Player player)
-        {
-            player.GetModPlayer<tsorcRevampPlayer>().HasShadowSickle = true;
-        }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

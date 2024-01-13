@@ -112,7 +112,10 @@ namespace tsorcRevamp.Projectiles.Magic
                 Vector2 colVel1 = collision1 - player.Center;
                 colVel1.Normalize();
 
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, colVel1, ModContent.ProjectileType<LightrifleFire>(), Projectile.damage, 0, Projectile.owner, colVel1.Length(), 0);
+                if (Main.myPlayer == Projectile.owner)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, colVel1, ModContent.ProjectileType<LightrifleFire>(), Projectile.damage, 0, Projectile.owner, colVel1.Length(), 0);
+                }
 
                 Vector2 testCol1 = Vector2.Zero;
                 Vector2 testCol2 = Vector2.Zero;
@@ -149,7 +152,10 @@ namespace tsorcRevamp.Projectiles.Magic
 
                 Vector2 colVel2 = collision2 - collision1;
                 colVel2.Normalize();
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision1, colVel2, ModContent.ProjectileType<LightrifleFire>(), (int)(Projectile.damage * 2f), 0, Projectile.owner, colVel2.Length(), 1);
+                if (Main.myPlayer == Projectile.owner)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision1, colVel2, ModContent.ProjectileType<LightrifleFire>(), (int)(Projectile.damage * 2f), 0, Projectile.owner, colVel2.Length(), 1);
+                }
 
                 //And do it again for the next reflection:
                 Vector2 reflectionC = colVel2;
@@ -183,7 +189,10 @@ namespace tsorcRevamp.Projectiles.Magic
                 Vector2 colVel3 = collision3 - collision2;
                 colVel3.Normalize();
 
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision2, colVel3, ModContent.ProjectileType<LightrifleFire>(), (int)(Projectile.damage * 3f), 0, Projectile.owner, colVel3.Length(), 2);
+                if (Main.myPlayer == Projectile.owner)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision2, colVel3, ModContent.ProjectileType<LightrifleFire>(), (int)(Projectile.damage * 3f), 0, Projectile.owner, colVel3.Length(), 2);
+                }
             }
 
 

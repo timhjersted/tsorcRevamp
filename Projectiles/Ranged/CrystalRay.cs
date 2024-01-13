@@ -146,7 +146,10 @@ namespace tsorcRevamp.Projectiles.Ranged
                 if (Projectile.ai[0] != ProjectileID.ExplosiveBullet && Projectile.ai[0] != ProjectileID.CrystalBullet && Projectile.ai[0] != -999)
                 {
                     //Spawn any effects of the projectile (confetti, dust, etc) at its endpoint
-                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center + (Projectile.velocity * (Distance - 16)), Projectile.velocity, (int)Projectile.ai[0], 0, 0, Projectile.owner).Kill();
+                    if (Main.myPlayer == Projectile.owner)
+                    {
+                        Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center + (Projectile.velocity * (Distance - 16)), Projectile.velocity, (int)Projectile.ai[0], 0, 0, Projectile.owner).Kill();
+                    }
 
                     //Meteor shot reflects once
                     if (Projectile.ai[0] == ProjectileID.MeteorShot)
@@ -190,10 +193,13 @@ namespace tsorcRevamp.Projectiles.Ranged
                         Vector2 colVel2 = collision2 - collision1;
                         colVel2.Normalize();
 
-                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision1, colVel2, ModContent.ProjectileType<CrystalRay>(), (int)(Projectile.damage / 2f), 0, Projectile.owner, -999);
+                        if (Main.myPlayer == Projectile.owner)
+                        {
+                            Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision1, colVel2, ModContent.ProjectileType<CrystalRay>(), (int)(Projectile.damage / 2f), 0, Projectile.owner, -999);
+                        }
                     }
                 }
-                else if (Projectile.ai[0] == ProjectileID.CrystalBullet)
+                else if (Projectile.ai[0] == ProjectileID.CrystalBullet && Main.myPlayer == Projectile.owner)
                 {
                     for (int i = 0; i < 2; i++)
                     {
@@ -203,7 +209,10 @@ namespace tsorcRevamp.Projectiles.Ranged
                 else if (Projectile.ai[0] == ProjectileID.ExplosiveBullet)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62 with { Volume = 0.5f, Pitch = 1.1f }, Projectile.Center + Projectile.velocity * (Distance - 32));
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + Projectile.velocity * (Distance - 32), Vector2.Zero, ModContent.ProjectileType<Projectiles.FireballInferno1>(), Projectile.damage, 0.5f, Projectile.owner, -999);
+                    if (Main.myPlayer == Projectile.owner)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + Projectile.velocity * (Distance - 32), Vector2.Zero, ModContent.ProjectileType<Projectiles.FireballInferno1>(), Projectile.damage, 0.5f, Projectile.owner, -999);
+                    }
                     Projectile.damage = 0;
                 }
 

@@ -58,7 +58,10 @@ namespace tsorcRevamp.Projectiles
                 Dust.NewDustPerfect(dustPos(), DustID.InfernoFork, dustVel(), 160, default, 1.5f).noGravity = true;
             }
 
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireballInferno2>(), Projectile.damage, 0, default, 3);
+            if (Main.myPlayer == Projectile.owner)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireballInferno2>(), Projectile.damage, 0, default, 3);
+            }
         }
 
 

@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
             else if (Projectile.ai[0] != 0)
             {
                 Timer -= 4;
-                if (player.ownedProjectileCounts[ModContent.ProjectileType<GrandCometExplosion>()] < 1)
+                if (player.ownedProjectileCounts[ModContent.ProjectileType<GrandCometExplosion>()] < 1 && Main.myPlayer == Projectile.owner)
                 {
                     Projectile Explosion = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<GrandCometExplosion>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                 }

@@ -39,6 +39,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Vector2 unitVectorTowardsMouse = player.Center.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * player.direction);
             player.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/FirewallCast") with { Volume = 1f });
+            Projectile.OriginalCritChance = SteelTempest.BaseCritChanceBonus;
         }
         public override void AI()
         {

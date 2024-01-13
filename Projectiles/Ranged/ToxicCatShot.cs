@@ -217,13 +217,13 @@ namespace tsorcRevamp.Projectiles.Ranged
                 {
                     if (Main.projectile[i].active == true && Projectile.Hitbox.Intersects(Main.projectile[i].Hitbox) && (Main.projectile[i].type == ModContent.ProjectileType<ToxicCatDetonator>() || Main.projectile[i].type == ModContent.ProjectileType<ToxicCatExplosion>()))
                     {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = 1f, Pitch = 0.2f }, Main.projectile[i].Center);
+                        if (Main.myPlayer == Projectile.owner)
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = 1f, Pitch = 0.2f }, Main.projectile[i].Center);
                             Projectile.NewProjectile(player.GetSource_FromThis(), Main.projectile[i].Center, Main.projectile[i].velocity, ModContent.ProjectileType<ToxicCatExplosion>(), Projectile.damage * 2, 6f, Projectile.owner, 6, 0);
-                            Projectile.Kill();
-                            hasExploded = true;
                         }
+                        hasExploded = true;
+                        Projectile.Kill();
                     }
                 }
             }

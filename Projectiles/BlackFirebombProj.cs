@@ -122,11 +122,10 @@ namespace tsorcRevamp.Projectiles
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { PitchVariance = 0.5f }, Projectile.Center);
             Projectile.knockBack = 2f;
 
-            if (Projectile.ai[1] == 0)
+            if (Projectile.ai[1] == 0 && Main.myPlayer == Projectile.owner)
             {
                 for (int i = 0; i < 10; i++)
                 {
-
                     // Random upward vector.
                     Vector2 vel = new Vector2(Main.rand.NextFloat(-4f, 4f), Main.rand.NextFloat(-6, -2));
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, vel, ProjectileID.MolotovFire, (int)Main.player[Projectile.owner].GetTotalDamage(DamageClass.Throwing).ApplyTo(Projectile.damage / 5), Projectile.knockBack, Projectile.owner, 0, 1);

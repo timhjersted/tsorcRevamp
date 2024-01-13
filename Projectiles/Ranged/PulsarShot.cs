@@ -55,7 +55,7 @@ namespace tsorcRevamp.Projectiles.Ranged
                     target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 120);
                 }
 
-                /*if(Main.netMode != NetmodeID.MultiplayerClient)
+                /*if(Main.myPlayer == Projectile.owner)
                 {
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 5, 10);
                 }*/
@@ -100,9 +100,9 @@ namespace tsorcRevamp.Projectiles.Ranged
                 Projectile.DamageType = DamageClass.Ranged;
                 Projectile.timeLeft = 0;
 
-                if (Main.netMode != NetmodeID.Server)
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
+                if (Main.myPlayer == Projectile.owner)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 15, 15);
                 }
                 for (int i = 0; i < 110; i++)
@@ -250,9 +250,9 @@ namespace tsorcRevamp.Projectiles.Ranged
 
             if (Projectile.owner == Main.myPlayer && Projectile.timeLeft == 1)
             {
-                if (Main.netMode != NetmodeID.Server)
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
+                if (Main.myPlayer == Projectile.owner)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 15, 15);
                 }
                 for (int i = 0; i < 110; i++)
@@ -306,9 +306,9 @@ namespace tsorcRevamp.Projectiles.Ranged
                 Projectile.knockBack = 6f;
                 Projectile.DamageType = DamageClass.Ranged;
 
-                if (Main.netMode != NetmodeID.Server)
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
+                if (Main.myPlayer == Projectile.owner)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 15, 15);
                 }
 

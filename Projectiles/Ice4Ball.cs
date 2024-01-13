@@ -161,11 +161,17 @@ namespace tsorcRevamp.Projectiles
             }
             Projectile.timeLeft = 0;
             {
-                if (projCount <= 3) Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 5, ModContent.ProjectileType<Ice4Icicle>(), (int)(Projectile.damage), 3f, Projectile.owner);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 5), Projectile.position.Y + (float)(Projectile.height * 4), 0, 5, ModContent.ProjectileType<Ice4Icicle>(), (int)(Projectile.damage), 3f, Projectile.owner);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -3), Projectile.position.Y + (float)(Projectile.height * 7), 0, 5, ModContent.ProjectileType<Ice4Icicle>(), (int)(Projectile.damage), 3f, Projectile.owner);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height * 10), 0, 5, ModContent.ProjectileType<Ice4Icicle>(), (int)(Projectile.damage), 3f, Projectile.owner);
+                if (projCount <= 3)
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
+                }
+                if (Main.myPlayer == Projectile.owner)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 5, ModContent.ProjectileType<Ice4Icicle>(), (int)(Projectile.damage), 3f, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 5), Projectile.position.Y + (float)(Projectile.height * 4), 0, 5, ModContent.ProjectileType<Ice4Icicle>(), (int)(Projectile.damage), 3f, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -3), Projectile.position.Y + (float)(Projectile.height * 7), 0, 5, ModContent.ProjectileType<Ice4Icicle>(), (int)(Projectile.damage), 3f, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height * 10), 0, 5, ModContent.ProjectileType<Ice4Icicle>(), (int)(Projectile.damage), 3f, Projectile.owner);
+                }
                 Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                 int arg_1394_1 = Projectile.width;
                 int arg_1394_2 = Projectile.height;

@@ -121,7 +121,7 @@ namespace tsorcRevamp.Projectiles.Summon.TripleThreat
             {
                 Vector2 projVel = UsefulFunctions.Aim(Projectile.Center, target.Center, 1);
                 Projectile.rotation = projVel.ToRotation();
-                if (Main.GameUpdateCount % 240 == 180)
+                if (Main.GameUpdateCount % 240 == 180 && Main.myPlayer == Projectile.owner)
                 {
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, projVel, ModContent.ProjectileType<FriendlyCatLightOfDawn>(), Projectile.damage * 2, 0, Main.myPlayer, 0, Projectile.whoAmI);
                 }

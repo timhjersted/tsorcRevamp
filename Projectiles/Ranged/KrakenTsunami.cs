@@ -8,6 +8,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Armors.Ranged;
 
 namespace tsorcRevamp.Projectiles.Ranged
 {
@@ -53,6 +54,7 @@ namespace tsorcRevamp.Projectiles.Ranged
                     break;
                 }
             }
+            Projectile.originalDamage = KrakenCarcass.TsunamiBaseDmg;
         }
         public override void AI()
         {
@@ -65,8 +67,10 @@ namespace tsorcRevamp.Projectiles.Ranged
                 if (i != Projectile.whoAmI && other.active && other.friendly && Projectile.Hitbox.Intersects(other.Hitbox) && other.DamageType == DamageClass.Ranged && !other.GetGlobalProjectile<tsorcGlobalProjectile>().KrakenEmpowered && other.type != ModContent.ProjectileType<KrakenTsunamiShark>())
                 {
                     other.GetGlobalProjectile<tsorcGlobalProjectile>().KrakenEmpowered = true;
-                    Projectile Shark = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<KrakenTsunamiShark>(), Projectile.originalDamage, Projectile.knockBack, Projectile.owner);
-                    Shark.CritChance = Projectile.CritChance;
+                    if (Main.myPlayer == Projectile.owner)
+                    {
+                        Projectile Shark = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<KrakenTsunamiShark>(), Projectile.originalDamage, Projectile.knockBack, Projectile.owner);
+                    }
                     if (!SoundEngine.TryGetActiveSound(WaterSoundID, out var ActiveSound))
                     {
                         WaterSoundID = SoundEngine.PlaySound(WaterSoundStyle with { Volume = 0.5f });

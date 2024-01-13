@@ -40,6 +40,7 @@ namespace tsorcRevamp.Items.Accessories.Expert
         public override void UpdateEquip(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().SoulSerpentRing = true;
+            player.GetModPlayer<tsorcRevampPlayer>().SoulSickle = true;
             player.GetModPlayer<tsorcRevampPlayer>().SoulReaper += 13;
             player.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult += ConsSoulChanceAmplifier / 5;
             int posX = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;

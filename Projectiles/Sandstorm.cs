@@ -84,39 +84,23 @@ namespace tsorcRevamp.Projectiles
                             dustDust3.velocity.X *= 2f;
                             Dust dustDust3_2 = Main.dust[dust3];
                             dustDust3_2.velocity.Y *= 2f;
-                            if (Main.rand.NextBool(5))
+                            if (Main.rand.NextBool(5) && Main.myPlayer == Projectile.owner)
                             {
-                                int projectileMini2 = Projectile.NewProjectile(Projectile.GetSource_FromThis(),
-                                    (float)dustnum155.position.X,
-                                    (float)dustnum155.position.Y,
-                                    (float)dustnum155.velocity.X,
-                                    (float)dustnum155.velocity.Y,
-                                    ModContent.ProjectileType<Sand>(),
-                                    Projectile.damage, Projectile.knockBack, Main.player[Projectile.owner].whoAmI);
-                                Main.projectile[projectileMini2].timeLeft = 60;
-                                Main.projectile[projectileMini2].scale = 0.5f;
+                                Vector2 Position = new Vector2(dustnum155.position.X, dustnum155.position.Y);
+                                Vector2 Velocity = new Vector2(dustnum155.velocity.X, dustnum155.velocity.Y);
+                                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Position, Velocity, ModContent.ProjectileType<Sand>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 60, 0.5f);
                             }
-                            if (Main.rand.NextBool(5))
+                            if (Main.rand.NextBool(5) && Main.myPlayer == Projectile.owner)
                             {
-                                int projectileMini3 = Projectile.NewProjectile(Projectile.GetSource_FromThis(),
-                                    new Vector2(dustDust2.position.X, dustDust2.position.Y),
-                                    new Vector2(dustDust2.velocity.X, dustDust2.velocity.Y),
-                                    ModContent.ProjectileType<Sand>(),
-                                    Projectile.damage, Projectile.knockBack, Main.player[Projectile.owner].whoAmI);
-                                Main.projectile[projectileMini3].timeLeft = 60;
-                                Main.projectile[projectileMini3].scale = 0.5f;
+                                Vector2 Position = new Vector2(dustDust2.position.X, dustDust2.position.Y);
+                                Vector2 Velocity = new Vector2(dustDust2.velocity.X, dustDust2.velocity.Y);
+                                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Position, Velocity, ModContent.ProjectileType<Sand>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 60, 0.5f);
                             }
-                            if (Main.rand.NextBool(5))
+                            if (Main.rand.NextBool(5) && Main.myPlayer == Projectile.owner)
                             {
-                                int projectileMini4 = Projectile.NewProjectile(Projectile.GetSource_FromThis(),
-                                    (float)dustDust3.position.X,
-                                    (float)dustDust3.position.Y,
-                                    (float)dustDust3.velocity.X,
-                                    (float)dustDust3.velocity.Y,
-                                    ModContent.ProjectileType<Sand>(),
-                                    Projectile.damage, Projectile.knockBack, Main.player[Projectile.owner].whoAmI);
-                                Main.projectile[projectileMini4].timeLeft = 60;
-                                Main.projectile[projectileMini4].scale = 0.5f;
+                                Vector2 Position = new Vector2(dustDust3.position.X, dustDust3.position.Y);
+                                Vector2 Velocity = new Vector2(dustDust3.position.X, dustDust3.position.Y);
+                                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Position, Velocity, ModContent.ProjectileType<Sand>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 60, 0.5f);
                             }
                         }
                         Main.dust[num155].scale *= 1.5f;
@@ -137,41 +121,23 @@ namespace tsorcRevamp.Projectiles
                         Dust dustDust3_4 = Main.dust[dust3];
                         dustDust3_4.velocity.Y *= 1.2f;
                         Main.dust[dust3].scale *= num152;
-                        if (Main.rand.NextBool(5))
+                        if (Main.rand.NextBool(5) && Main.myPlayer == Projectile.owner)
                         {
-                            int projectileMini5 = Projectile.NewProjectile(Projectile.GetSource_FromThis(),
-                                (float)dust155.position.X,
-                                (float)dust155.position.Y,
-                                (float)dust155.velocity.X,
-                                (float)dust155.velocity.Y,
-                                ModContent.ProjectileType<Sand>(),
-                                Projectile.damage, Projectile.knockBack, Main.player[Projectile.owner].whoAmI);
-                            Main.projectile[projectileMini5].timeLeft = 60;
-                            Main.projectile[projectileMini5].scale = 0.5f;
+                            Vector2 Position = new Vector2(dust155.position.X, dust155.position.Y);
+                            Vector2 Velocity = new Vector2(dust155.velocity.X, dust155.velocity.Y);
+                            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Position, Velocity, ModContent.ProjectileType<Sand>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 60, 0.5f);
                         }
-                        if (Main.rand.NextBool(5))
+                        if (Main.rand.NextBool(5) && Main.myPlayer == Projectile.owner)
                         {
-                            int projectileMini6 = Projectile.NewProjectile(Projectile.GetSource_FromThis(),
-                                (float)dustDust2_3.position.X,
-                                (float)dustDust2_3.position.Y,
-                                (float)dustDust2_3.velocity.X,
-                                (float)dustDust2_3.velocity.Y,
-                                ModContent.ProjectileType<Sand>(),
-                                Projectile.damage, Projectile.knockBack, Main.player[Projectile.owner].whoAmI);
-                            Main.projectile[projectileMini6].timeLeft = 60;
-                            Main.projectile[projectileMini6].scale = 0.5f;
+                            Vector2 Position = new Vector2(dustDust2_3.position.X, dustDust2_3.position.Y);
+                            Vector2 Velocity = new Vector2(dustDust2_3.velocity.X, dustDust2_3.velocity.Y);
+                            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Position, Velocity, ModContent.ProjectileType<Sand>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 60, 0.5f);
                         }
-                        if (Main.rand.NextBool(5))
+                        if (Main.rand.NextBool(5) && Main.myPlayer == Projectile.owner)
                         {
-                            int projectileMini7 = Projectile.NewProjectile(Projectile.GetSource_FromThis(),
-                                (float)dustDust3_3.position.X,
-                                (float)dustDust3_3.position.Y,
-                                (float)dustDust3_3.velocity.X,
-                                (float)dustDust3_3.velocity.Y,
-                                ModContent.ProjectileType<Sand>(),
-                                Projectile.damage, Projectile.knockBack, Main.player[Projectile.owner].whoAmI);
-                            Main.projectile[projectileMini7].timeLeft = 60;
-                            Main.projectile[projectileMini7].scale = 0.5f;
+                            Vector2 Position = new Vector2(dustDust3_3.position.X, dustDust3_3.position.Y);
+                            Vector2 Velocity = new Vector2(dustDust3_3.velocity.X, dustDust3_3.velocity.Y);
+                            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Position, Velocity, ModContent.ProjectileType<Sand>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 60, 0.5f);
                         }
                     }
                 }

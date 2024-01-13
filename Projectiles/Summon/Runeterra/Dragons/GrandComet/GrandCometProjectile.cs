@@ -77,32 +77,34 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
                 Dust dust = Dust.NewDustDirect(Projectile.Center, Projectile.width, Projectile.height, DustID.CosmicEmber, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default, 1f);
                 dust.noGravity = true;
             }
-
-            int MaxVel = 15;
-            int ChunkDmg = Projectile.damage;
-            float ChunkKnockback = Projectile.knockBack;
-            Vector2 RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk01>(), ChunkDmg, ChunkKnockback, Projectile.owner);
-            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk02>(), ChunkDmg, ChunkKnockback, Projectile.owner);
-            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk03>(), ChunkDmg, ChunkKnockback, Projectile.owner);
-            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk04>(), ChunkDmg, ChunkKnockback, Projectile.owner);
-            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk05>(), ChunkDmg, ChunkKnockback, Projectile.owner);
-            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk06>(), ChunkDmg, ChunkKnockback, Projectile.owner);
-            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk07>(), ChunkDmg, ChunkKnockback, Projectile.owner);
-            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk08>(), ChunkDmg, ChunkKnockback, Projectile.owner);
-            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk09>(), ChunkDmg, ChunkKnockback, Projectile.owner);
-            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk10>(), ChunkDmg, ChunkKnockback, Projectile.owner);
-            RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
-            Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk11>(), ChunkDmg, ChunkKnockback, Projectile.owner);
+            if (Main.myPlayer == Projectile.owner)
+            {
+                int MaxVel = 15;
+                int ChunkDmg = Projectile.damage;
+                float ChunkKnockback = Projectile.knockBack;
+                Vector2 RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk01>(), ChunkDmg, ChunkKnockback, Projectile.owner);
+                RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk02>(), ChunkDmg, ChunkKnockback, Projectile.owner);
+                RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk03>(), ChunkDmg, ChunkKnockback, Projectile.owner);
+                RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk04>(), ChunkDmg, ChunkKnockback, Projectile.owner);
+                RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk05>(), ChunkDmg, ChunkKnockback, Projectile.owner);
+                RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk06>(), ChunkDmg, ChunkKnockback, Projectile.owner);
+                RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk07>(), ChunkDmg, ChunkKnockback, Projectile.owner);
+                RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk08>(), ChunkDmg, ChunkKnockback, Projectile.owner);
+                RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk09>(), ChunkDmg, ChunkKnockback, Projectile.owner);
+                RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk10>(), ChunkDmg, ChunkKnockback, Projectile.owner);
+                RandomVelocity = Main.rand.NextVector2Circular(MaxVel, MaxVel);
+                Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center + (RandomVelocity / 2), RandomVelocity, ModContent.ProjectileType<GrandCometChunk11>(), ChunkDmg, ChunkKnockback, Projectile.owner);
+            }
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

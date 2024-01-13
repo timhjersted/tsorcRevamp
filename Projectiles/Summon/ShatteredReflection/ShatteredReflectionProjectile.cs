@@ -109,7 +109,7 @@ namespace tsorcRevamp.Projectiles.Summon.ShatteredReflection
             if (owner.whoAmI == Main.myPlayer && Main.GameUpdateCount % 60 == Projectile.ai[0] * 60f / ownedCount)
             {
                 int? closest = UsefulFunctions.GetClosestEnemyNPC(Projectile.Center);
-                if (closest.HasValue && (Main.npc[closest.Value].type != NPCID.TargetDummy || Main.npc[closest.Value].Distance(Projectile.Center) < 2000))
+                if (closest.HasValue && (Main.npc[closest.Value].type != NPCID.TargetDummy || Main.npc[closest.Value].Distance(Projectile.Center) < 2000) && Main.myPlayer == Projectile.owner)
                 {
                     Vector2 velocity = UsefulFunctions.Aim(Projectile.Center, Main.npc[closest.Value].Center, 3);
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, velocity, ModContent.ProjectileType<SRBlackFire>(), Projectile.damage, 0, Main.myPlayer, 1);

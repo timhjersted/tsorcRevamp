@@ -51,6 +51,7 @@ namespace tsorcRevamp.NPCs
         int DarkSoulQuantity;
         public Player lastHitPlayerSummoner = Main.LocalPlayer;
         public Player lastHitPlayerRanger = Main.LocalPlayer;
+        public Player lastHitPlayerShadowSickle = Main.LocalPlayer;
 
         public float SummonTagFlatDamage;
         public float BaseSummonTagCriticalStrikeChance;
@@ -1070,7 +1071,7 @@ namespace tsorcRevamp.NPCs
                     }
                 }
                 //Dragoon Lash effect at the bottom
-                if (markedByEnchantedWhip)
+                if (markedByEnchantedWhip && Main.myPlayer == projectileOwner.whoAmI)
                 {
                     int StarDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(EnchantedWhip.BaseDamage * EnchantedWhip.StarDamageScaling / 100f);
                     Vector2 StarVector1 = new Vector2(-640, -800) + npc.Center;
@@ -1079,21 +1080,27 @@ namespace tsorcRevamp.NPCs
                     Vector2 StarMove1 = new Vector2(+32, 40);
                     Vector2 StarMove2 = new Vector2(-32, 40);
                     Vector2 StarMove3 = new Vector2(0, 40);
-                    if (Main.rand.NextBool(3))
+                    int Move = Main.rand.Next(3);
+                    switch (Move)
                     {
-                        Projectile.NewProjectile(Projectile.GetSource_None(), StarVector1, StarMove1, ModContent.ProjectileType<EnchantedWhipFallingStar>(), StarDamage, 0, Main.myPlayer);
-                    }
-                    else if (Main.rand.NextBool(3))
-                    {
-                        Projectile.NewProjectile(Projectile.GetSource_None(), StarVector2, StarMove2, ModContent.ProjectileType<EnchantedWhipFallingStar>(), StarDamage, 0, Main.myPlayer);
-                    }
-                    else
-                    {
-                        Projectile.NewProjectile(Projectile.GetSource_None(), StarVector3, StarMove3, ModContent.ProjectileType<EnchantedWhipFallingStar>(), StarDamage, 0, Main.myPlayer);
-
+                        case 0:
+                            {
+                                Projectile.NewProjectile(Projectile.GetSource_None(), StarVector1, StarMove1, ModContent.ProjectileType<EnchantedWhipFallingStar>(), StarDamage, 0, Main.myPlayer);
+                                break;
+                            }
+                        case 1:
+                            {
+                                Projectile.NewProjectile(Projectile.GetSource_None(), StarVector2, StarMove2, ModContent.ProjectileType<EnchantedWhipFallingStar>(), StarDamage, 0, Main.myPlayer);
+                                break;
+                            }
+                        case 2:
+                            {
+                                Projectile.NewProjectile(Projectile.GetSource_None(), StarVector3, StarMove3, ModContent.ProjectileType<EnchantedWhipFallingStar>(), StarDamage, 0, Main.myPlayer);
+                                break;
+                            }
                     }
                 }
-                if (markedByPolarisLeash)
+                if (markedByPolarisLeash && Main.myPlayer == projectileOwner.whoAmI)
                 {
                     int StarDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(PolarisLeashItem.BaseDamage * PolarisLeashItem.StarDamageScaling / 100f);
                     Vector2 StarVector1 = new Vector2(-640, -800) + npc.Center;
@@ -1102,17 +1109,24 @@ namespace tsorcRevamp.NPCs
                     Vector2 StarMove1 = new Vector2(+32, 40);
                     Vector2 StarMove2 = new Vector2(-32, 40);
                     Vector2 StarMove3 = new Vector2(0, 40);
-                    if (Main.rand.NextBool(3))
+                    int Move = Main.rand.Next(3);
+                    switch (Move)
                     {
-                        Projectile.NewProjectile(Projectile.GetSource_None(), StarVector1, StarMove1, ModContent.ProjectileType<PolarisLeashFallingStar>(), StarDamage, 0, Main.myPlayer);
-                    }
-                    else if (Main.rand.NextBool(3))
-                    {
-                        Projectile.NewProjectile(Projectile.GetSource_None(), StarVector2, StarMove2, ModContent.ProjectileType<PolarisLeashFallingStar>(), StarDamage, 0, Main.myPlayer);
-                    }
-                    else
-                    {
-                        Projectile.NewProjectile(Projectile.GetSource_None(), StarVector3, StarMove3, ModContent.ProjectileType<PolarisLeashFallingStar>(), StarDamage, 0, Main.myPlayer);
+                        case 0:
+                            {
+                                Projectile.NewProjectile(Projectile.GetSource_None(), StarVector1, StarMove1, ModContent.ProjectileType<PolarisLeashFallingStar>(), StarDamage, 0, Main.myPlayer);
+                                break;
+                            }
+                        case 1:
+                            {
+                                Projectile.NewProjectile(Projectile.GetSource_None(), StarVector2, StarMove2, ModContent.ProjectileType<PolarisLeashFallingStar>(), StarDamage, 0, Main.myPlayer);
+                                break;
+                            }
+                        case 2:
+                            {
+                                Projectile.NewProjectile(Projectile.GetSource_None(), StarVector3, StarMove3, ModContent.ProjectileType<PolarisLeashFallingStar>(), StarDamage, 0, Main.myPlayer);
+                                break;
+                            }
                     }
                 }
                 if (markedBySearingLash)
@@ -1124,7 +1138,10 @@ namespace tsorcRevamp.NPCs
                 if (markedByFirecracker)
                 {
                     int buffIndex = 0;
-                    Projectile.NewProjectile(projectile.GetSource_FromThis(), npc.Center, Vector2.Zero, ProjectileID.FireWhipProj, 0, 0f, projectile.owner);
+                    if (Main.myPlayer == projectileOwner.whoAmI)
+                    {
+                        Projectile.NewProjectile(projectile.GetSource_FromThis(), npc.Center, Vector2.Zero, ProjectileID.FireWhipProj, 0, 0f, projectile.owner);
+                    }
                     foreach (int buffType in npc.buffType)
                     {
                         if (buffType == ModContent.BuffType<FirecrackerDebuff>())
@@ -1136,8 +1153,11 @@ namespace tsorcRevamp.NPCs
                 }
                 if (markedByDarkHarvest)
                 {
-                    Projectile DarkHarvestProj = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), npc.Center, Vector2.Zero, ProjectileID.ScytheWhipProj, (int)(10f * SummonTagDamageMultiplier), 0f, projectile.owner);
-                    DarkHarvestProj.localNPCImmunity[npc.whoAmI] = -1;
+                    if (Main.myPlayer == projectileOwner.whoAmI)
+                    {
+                        Projectile DarkHarvestProj = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), npc.Center, Vector2.Zero, ProjectileID.ScytheWhipProj, (int)(10f * SummonTagDamageMultiplier), 0f, projectile.owner);
+                        DarkHarvestProj.localNPCImmunity[npc.whoAmI] = -1;
+                    }
                     Projectile.EmitBlackLightningParticles(npc);
                 }
                 if (markedByKaleidoscope)
@@ -1178,11 +1198,9 @@ namespace tsorcRevamp.NPCs
             if (markedByDragoonLash && (projectile.IsMinionOrSentryRelated || ProjectileID.Sets.IsAWhip[projectile.type])) //has to be outside of the main if since this is supposed to also be procced on whip-hit
             {
                 int WhipDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(DragoonLash.BaseDamage);
-                if (projectileOwner.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer >= 1)
+                if (projectileOwner.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer >= 1 && Main.myPlayer == projectileOwner.whoAmI)
                 {
-                    Projectile Fireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), projectileOwner.Center, (npc.Center - projectileOwner.Center) * 0.1f, ProjectileID.Flamelash, WhipDamage, 1f, Main.myPlayer);
-                    Fireball.DamageType = DamageClass.SummonMeleeSpeed;
-                    projectileOwner.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer = 0;
+                    Projectile Fireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), projectileOwner.Center, (npc.Center - projectileOwner.Center) * 0.1f, ProjectileID.Flamelash, WhipDamage, 1f, Main.myPlayer, 1);
                 }
             }
             #endregion
@@ -2373,7 +2391,7 @@ namespace tsorcRevamp.NPCs
                     if (tags > 0 && !shockwaveCreated)
                     {
                         shockwaveCreated = true;
-                        if (projectile.type == ModContent.ProjectileType<ToxicCatDetonator>())
+                        if (projectile.type == ModContent.ProjectileType<ToxicCatDetonator>() && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 300 * (tags / 12f), 45 * (tags / 12f));
                         }
@@ -2474,7 +2492,7 @@ namespace tsorcRevamp.NPCs
                     if (tags > 0 && !shockwaveCreated)
                     {
                         shockwaveCreated = true;
-                        if (projectile.type == ModContent.ProjectileType<BiohazardDetonator>())
+                        if (projectile.type == ModContent.ProjectileType<BiohazardDetonator>() && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 500 * (tags / 12f), 60 * (tags / 12f));
                         }

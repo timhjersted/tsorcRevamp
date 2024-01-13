@@ -19,6 +19,7 @@ using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles.Enemy.Golem;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Projectiles.Ranged;
+using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Projectiles
@@ -88,18 +89,18 @@ namespace tsorcRevamp.Projectiles
                     Main.NewText("a");
                 }
             }*/
+            Player player = Main.player[projectile.owner];
             if (projectile.friendly)
             {
-                Player owner = Main.player[projectile.owner];
                 if (projectile.type == ProjectileID.CrystalDart)
                 {
-                    projectile.damage = 1 + owner.GetWeaponDamage(owner.HeldItem);
+                    projectile.damage = 1 + player.GetWeaponDamage(player.HeldItem);
                 }
-                if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady
+                if (player.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && projectile.DamageType == DamageClass.SummonMeleeSpeed && player.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady
                     && ProjectileID.Sets.IsAWhip[projectile.type] && !ModdedWhip) //Modded whips have this in their code itself because some of them can be charged
                 {
-                    owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = true;
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = 1f }, owner.Center);
+                    player.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = true;
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = 1f }, player.Center);
                 }
             }
             if (projectile.type == ProjectileID.Fireball && projectile.ai[2] == 0)
@@ -108,6 +109,28 @@ namespace tsorcRevamp.Projectiles
                 projectile.extraUpdates = extraUpdates;
                 projectile.timeLeft = 600 * (1 + extraUpdates);
                 projectile.scale = 2f;
+            }
+            if (projectile.type == ProjectileID.DD2ExplosiveTrapT1Explosion && projectile.ai[0] == 1)
+            {
+                projectile.ArmorPenetration = 10;
+                projectile.ai[0] = 0;
+            }
+            if (projectile.type == ProjectileID.Skull && projectile.ai[0] == 1)
+            {
+                projectile.velocity = (projectile.position - player.Center) / 5;
+                projectile.DamageType = DamageClass.MagicSummonHybrid;
+                projectile.ai[0] = 0;
+            }
+            if (projectile.type == ProjectileID.Muramasa && projectile.ai[0] == 1)
+            {
+                projectile.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + player.HeldItem.crit;
+                projectile.ai[0] = 0;
+            }
+            if (projectile.type == ProjectileID.Flamelash && projectile.ai[0] == 1)
+            {
+                projectile.DamageType = DamageClass.SummonMeleeSpeed;
+                player.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer = 0;
+                projectile.ai[0] = 0;
             }
         }
         public override bool PreAI(Projectile projectile)

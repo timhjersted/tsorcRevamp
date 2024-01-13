@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Buffs.Weapons.Melee
 {
@@ -15,18 +16,16 @@ namespace tsorcRevamp.Buffs.Weapons.Melee
 
         public override void Update(NPC npc, ref int buffIndex)
         {
-            var player = Main.LocalPlayer;
-            if (player.GetModPlayer<tsorcRevampPlayer>().HasShadowSickle)
+            var player = npc.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerShadowSickle;
+            if (player.statMana > (int)(player.manaCost * 10f))
             {
-                if (player.statMana > (int)(player.manaCost * 10f))
+                if (Main.GameUpdateCount % 30 == 0)
                 {
-                    if (Main.GameUpdateCount % 30 == 0)
+                    player.statMana -= (int)(player.manaCost * 10f);
+                    player.manaRegenDelay = 200;
+                    if (Main.myPlayer == player.whoAmI)
                     {
-                        player.statMana -= (int)(player.manaCost * 10f);
-                        player.manaRegenDelay = 200;
-                        Projectile Slash = Projectile.NewProjectileDirect(npc.GetSource_Buff(buffIndex), npc.Center, Vector2.Zero, ProjectileID.Muramasa, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(ShadowSickle.BaseDamage / 2), 0, Main.myPlayer);
-                        Slash.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + player.HeldItem.crit;
-                        Slash.netUpdate = true;
+                        Projectile Slash = Projectile.NewProjectileDirect(npc.GetSource_Buff(buffIndex), npc.Center, Vector2.Zero, ProjectileID.Muramasa, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(ShadowSickle.BaseDamage / 2), 0, player.whoAmI);
                     }
                 }
             }

@@ -311,14 +311,17 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
                                         AI_Timer = attackRate;
                                         Vector2 aim = UsefulFunctions.Aim(Projectile.Center, new(currentClosestNPC_X, posY), 12);
                                         int projectileType = ModContent.ProjectileType<OwlsArrow>();
-                                        int p = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, aim, projectileType, Projectile.damage, Projectile.knockBack, Projectile.owner);
-                                        if (tokenCount > PeculiarSphere.DoubleShotMinimumSlots - 1)
+                                        if (Main.myPlayer == Projectile.owner)
                                         {
-                                            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, aim * 2, projectileType, Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
+                                            Projectile p = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, aim, projectileType, Projectile.damage, Projectile.knockBack, Projectile.owner);
+                                            if (tokenCount > PeculiarSphere.DoubleShotMinimumSlots - 1)
+                                            {
+                                                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, aim * 2, projectileType, Projectile.damage, Projectile.knockBack, Projectile.owner, 1);
+                                            }
+                                            p.originalDamage = Projectile.damage;
+                                            p.netUpdate = true;
+                                            Projectile.netUpdate = true;
                                         }
-                                        Main.projectile[p].timeLeft = 300;
-                                        Main.projectile[p].originalDamage = Projectile.damage;
-                                        Projectile.netUpdate = true;
                                         if (aim.X > 0)
                                         {
                                             shouldFaceLeft = false;

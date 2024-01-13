@@ -56,7 +56,10 @@ namespace tsorcRevamp.Projectiles
                 dustCount /= 2;
                 if (dustCount <= 5)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireballNova>(), originalDamage, 0, default);
+                    if (Main.myPlayer == Projectile.owner)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireballNova>(), originalDamage, 0, default);
+                    }
                     Projectile.Kill();
                     return;
                 }

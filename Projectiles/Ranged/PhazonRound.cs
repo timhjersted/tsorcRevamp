@@ -67,9 +67,12 @@ namespace tsorcRevamp.Projectiles.Ranged
             Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
 
-            for (int i = 0; i < 2; i++)
+            if (Main.myPlayer == Projectile.owner)
             {
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Main.rand.NextVector2Circular(10, 10), ProjectileID.CrystalShard, Projectile.damage / 4, 0.5f, Projectile.owner);
+                for (int i = 0; i < 2; i++)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Main.rand.NextVector2Circular(10, 10), ProjectileID.CrystalShard, Projectile.damage / 4, 0.5f, Projectile.owner);
+                }
             }
 
             Projectile.penetrate = 20;

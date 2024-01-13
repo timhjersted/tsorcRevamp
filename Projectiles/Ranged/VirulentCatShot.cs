@@ -110,12 +110,12 @@ namespace tsorcRevamp.Projectiles.Ranged
                 {
                     if (Main.projectile[i].active == true && Projectile.Hitbox.Intersects(Main.projectile[i].Hitbox) && (Main.projectile[i].type == ModContent.ProjectileType<VirulentCatDetonator>() || Main.projectile[i].type == ModContent.ProjectileType<VirulentCatExplosion>()))
                     {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = 1f, Pitch = 0.2f }, Main.projectile[i].Center);
+                        hasExploded = true;
+                        Projectile.Kill();
+                        if (Main.myPlayer == Projectile.owner)
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = 1f, Pitch = 0.2f }, Main.projectile[i].Center);
                             Projectile.NewProjectile(player.GetSource_FromThis(), Main.projectile[i].Center, Main.projectile[i].velocity, ModContent.ProjectileType<VirulentCatExplosion>(), Projectile.damage * 2, 8f, Projectile.owner, 6, 0);
-                            Projectile.Kill();
-                            hasExploded = true;
                         }
                     }
                 }

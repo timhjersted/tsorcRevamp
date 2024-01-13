@@ -137,7 +137,7 @@ namespace tsorcRevamp
         public int fallStart_old = -1;
 
         public bool MeleeArmorVamp10 = false;
-        public bool HasShadowSickle = false;
+
         public bool MagmaArmor;
         public bool PortlyPlateArmor;
 
@@ -360,8 +360,6 @@ namespace tsorcRevamp
             //player.eocDash = 0;
             Player.armorEffectDrawShadowEOCShield = false;
             UndeadTalisman = false;
-
-            HasShadowSickle = false;
 
             SteraksGage = false;
             InfinityEdge = false;
@@ -1234,11 +1232,13 @@ namespace tsorcRevamp
                     if (FallDist > 5)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, Player.Center);
-                        for (int i = -9; i < 10; i++)
-                        { //19 projectiles
-                            Vector2 shotDirection = new Vector2(0f, -16f);
-                            int shockwaveShot = Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * (Main.hardMode ? 2.6f : 2.4)), 12, Player.whoAmI);
-                            Main.projectile[shockwaveShot].velocity = shotDirection.RotatedBy(MathHelper.ToRadians(0 - (10f * i))); // (180 / (projectilecount - 1))
+                        if (Main.myPlayer == Player.whoAmI)
+                        {
+                            for (int i = -9; i < 10; i++)
+                            { //19 projectiles
+                                Vector2 shotDirection = new Vector2(0f, -16f);
+                                Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, shotDirection.RotatedBy(MathHelper.ToRadians(0 - (10f * i))), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * (Main.hardMode ? 2.6f : 2.4)), 12, Player.whoAmI);
+                            }
                         }
                     }
 
@@ -1897,7 +1897,6 @@ namespace tsorcRevamp
 
         public override void PostUpdate()
         {
-
             if ((Player.HasBuff(ModContent.BuffType<MagicWeapon>()) || Player.HasBuff(ModContent.BuffType<GreatMagicWeapon>()) || Player.HasBuff(ModContent.BuffType<CrystalMagicWeapon>())) && Player.meleeEnchant > 0)
             {
                 int buffIndex = 0;

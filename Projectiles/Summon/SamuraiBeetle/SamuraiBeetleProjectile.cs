@@ -1241,15 +1241,21 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
             {
                 Vector2 LightningPosition = target.Center + new Vector2(0, -1000);
                 SlashHit = true;
-                Projectile LightningStrike = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), LightningPosition, LightningPosition.DirectionTo(target.Center), ModContent.ProjectileType<SamuraiBeetleLightning>(), Projectile.damage, 0, Projectile.owner);
+                if (Main.myPlayer == Projectile.owner)
+                {
+                    Projectile LightningStrike = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), LightningPosition, LightningPosition.DirectionTo(target.Center), ModContent.ProjectileType<SamuraiBeetleLightning>(), Projectile.damage, 0, Projectile.owner);
+                }
             }
             AttackHit = true; //so it can't gain multiple thrust stacks by hitting multiple enemies at once
         }
         private void SpawnTrail()
         {
             Vector2 Position = Projectile.Center;
-            Projectile Trail = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Position, Projectile.velocity, ModContent.ProjectileType<SamuraiBeetleTrail>(), 0, 0, Projectile.owner, Projectile.whoAmI);
-            Projectile.ai[2] = Trail.whoAmI;
+            if (Main.myPlayer == Projectile.owner)
+            {
+                Projectile Trail = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Position, Projectile.velocity, ModContent.ProjectileType<SamuraiBeetleTrail>(), 0, 0, Projectile.owner, Projectile.whoAmI);
+                Projectile.ai[2] = Trail.whoAmI;
+            }
         }
         private void KillTrail()
         {

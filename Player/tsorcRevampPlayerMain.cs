@@ -391,7 +391,10 @@ namespace tsorcRevamp
                 if (Player.ownedProjectileCounts[ProjectileID.TitaniumStormShard] < 15)
                 {
                     Player.ownedProjectileCounts[ProjectileID.TitaniumStormShard]++;
-                    Projectile.NewProjectile(Player.GetSource_OnHit(victim), Player.Center, Vector2.Zero, ProjectileID.TitaniumStormShard, 50, 15f, Player.whoAmI);
+                    if (Main.myPlayer == Player.whoAmI)
+                    {
+                        Projectile.NewProjectile(Player.GetSource_OnHit(victim), Player.Center, Vector2.Zero, ProjectileID.TitaniumStormShard, 50, 15f, Player.whoAmI);
+                    }
                 }
                 else
                 {
@@ -416,9 +419,12 @@ namespace tsorcRevamp
                     Vector2 starmove1 = new Vector2(+4, 20);
                     Vector2 starmove2 = new Vector2(-4, 20);
                     Vector2 starmove3 = new Vector2(0, 20);
-                    Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector1, starmove1, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
-                    Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector2, starmove2, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
-                    Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector3, starmove3, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
+                    if (Main.myPlayer == Player.whoAmI)
+                    {
+                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector1, starmove1, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector2, starmove2, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), starvector3, starmove3, ProjectileID.ManaCloakStar, Player.statManaMax2 / 5, 2f, Main.myPlayer);
+                    }
                 }
             }
             if (Main.rand.NextBool(9) & MagicPlatingStacks <= 22 & Player.HasBuff(ModContent.BuffType<MagicPlating>()))
@@ -437,7 +443,10 @@ namespace tsorcRevamp
                 Dust dust2 = Main.dust[Dust.NewDust(Player.BottomLeft, Player.width, Player.height - 40, 6, 0f, -5f, 50, default, 1.2f)];
                 dust2.velocity.Y = Main.rand.NextFloat(-5, -2.5f);
                 dust2.velocity.X = Main.rand.NextFloat(-1, 1);
-                Projectile.NewProjectile(Player.GetSource_None(), Player.Top, Player.velocity, ProjectileID.DD2ExplosiveTrapT2Explosion, 250, 15, Player.whoAmI);
+                if (Main.myPlayer == Player.whoAmI)
+                {
+                    Projectile.NewProjectile(Player.GetSource_None(), Player.Top, Player.velocity, ProjectileID.DD2ExplosiveTrapT2Explosion, 250, 15, Player.whoAmI);
+                }
                 SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 4f });
 
                 for (int d = 0; d < 90; d++) // Upwards
@@ -481,7 +490,10 @@ namespace tsorcRevamp
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            Projectile.NewProjectile(Player.GetSource_Misc("Bloodsign"), Player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, Player.whoAmI);
+            if (Main.myPlayer == Player.whoAmI)
+            {
+                Projectile.NewProjectile(Player.GetSource_Misc("Bloodsign"), Player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, Player.whoAmI);
+            }
             //Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath58.WithVolume(0.8f).WithPitchVariance(.3f), player.position);
 
             //you died sound
@@ -760,10 +772,9 @@ namespace tsorcRevamp
                 Player.HealEffect((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
                 Player.statLife += ((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
             }
-            if (DemonPower && hit.DamageType == (DamageClass.SummonMeleeSpeed) && hit.Crit)
+            if (DemonPower && hit.DamageType == (DamageClass.SummonMeleeSpeed) && hit.Crit && Main.myPlayer == Player.whoAmI)
             {
-                Projectile WhipCritBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center - new Vector2(0, target.height / 2), Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, Player.whoAmI);
-                WhipCritBoom.ArmorPenetration = 10;
+                Projectile WhipCritBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center - new Vector2(0, target.height / 2), Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, Player.whoAmI, 1);
             }
         }
 
@@ -776,9 +787,12 @@ namespace tsorcRevamp
                 if (closest.HasValue && (Main.npc[closest.Value].type != NPCID.TargetDummy || Main.npc[closest.Value].Distance(target.Center) < 2000))
                 {
                     Vector2 velocity = UsefulFunctions.Aim(target.Bottom, Main.npc[closest.Value].Top, 3);
-                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(-1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
-                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(0, -3), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
-                    Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
+                    if (Main.myPlayer == Player.whoAmI)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(-1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
+                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(0, -3), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
+                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
+                    }
                     Main.player[proj.owner].AddBuff(ModContent.BuffType<LudensTempestCooldown>(), Items.Accessories.Magic.LudensTempest.Cooldown * 60);
                 }
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/LudensTempest") with { Volume = 0.25f }, target.Center);
@@ -831,10 +845,9 @@ namespace tsorcRevamp
             {
                 target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
             }
-            if (DemonPower && hit.DamageType == (DamageClass.SummonMeleeSpeed) && ProjectileID.Sets.IsAWhip[proj.type] && hit.Crit)
+            if (DemonPower && hit.DamageType == (DamageClass.SummonMeleeSpeed) && ProjectileID.Sets.IsAWhip[proj.type] && hit.Crit && Main.myPlayer == Player.whoAmI)
             {
-                Projectile WhipCritBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center - new Vector2(0, target.height / 2), Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, (int)Main.player[proj.owner].GetTotalDamage(DamageClass.Summon).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, proj.owner);
-                WhipCritBoom.ArmorPenetration = 10;
+                Projectile WhipCritBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center - new Vector2(0, target.height / 2), Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, (int)Main.player[proj.owner].GetTotalDamage(DamageClass.Summon).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, proj.owner, 1);
             }
             if (MiakodaFull)
             { //Miakoda Full Moon
@@ -1041,23 +1054,23 @@ namespace tsorcRevamp
         {
             //Todo: All of these accessories should use Player.GetSource_Accessory() as their source
             //They don't because that requires getting the inventory item casuing this effect. I'll do it later if I remember.
-            if (Player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge && Main.myPlayer == Player.whoAmI)
             {
                 for (int b = 0; b < 8; b++)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.SourceDamage, 4f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.SourceDamage * 3, 4f, 0, 0, 0);
                 }
             }
 
-            if (Player.GetModPlayer<tsorcRevampPlayer>().SoulSickle)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().SoulSickle && Main.myPlayer == Player.whoAmI)
             {
                 if (!Main.hardMode)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 7f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 2, 7f, 0, 0, 0);
                 }
                 else
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 80, 9f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 4, 9f, 0, 0, 0);
                 }
             }
             if (npc.type == NPCID.SkeletronPrime && Main.rand.NextBool(2))
@@ -1078,23 +1091,23 @@ namespace tsorcRevamp
 
         public override void OnHitByProjectile(Projectile proj, Player.HurtInfo hurtInfo)
         {
-            if (Player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge && Main.myPlayer == Player.whoAmI)
             {
                 for (int b = 0; b < 8; b++)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.SourceDamage, 4f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.SourceDamage * 3, 4f, 0, 0, 0);
                 }
             }
 
-            if (Player.GetModPlayer<tsorcRevampPlayer>().SoulSickle)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().SoulSickle && Main.myPlayer == Player.whoAmI)
             {
                 if (!Main.hardMode)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 6f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 2, 6f, 0, 0, 0);
                 }
                 else
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 60, 8f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 4, 8f, 0, 0, 0);
                 }
             }
             if (proj.type == ProjectileID.DeathLaser && Main.rand.NextBool(2))
@@ -1190,10 +1203,10 @@ namespace tsorcRevamp
                 {
                     for (int i = 0; i < LichKills; i++)
                     {
-                        Projectile Skull = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center + Main.rand.NextVector2CircularEdge(30, 30), Vector2.Zero, ProjectileID.BookOfSkullsSkull, (int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(NecromancersShirt.SkullBaseDmg), player.GetTotalKnockback(DamageClass.MagicSummonHybrid).ApplyTo(NecromancersShirt.SkullBaseKnockback), player.whoAmI);
-                        Skull.velocity = (Skull.position - player.Center) / 5;
-                        Skull.DamageType = DamageClass.MagicSummonHybrid;
-                        Skull.netUpdate = true;
+                        if (Main.myPlayer == player.whoAmI)
+                        {
+                            Projectile Skull = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center + Main.rand.NextVector2CircularEdge(30, 30), Vector2.Zero, ProjectileID.BookOfSkullsSkull, (int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(NecromancersShirt.SkullBaseDmg), player.GetTotalKnockback(DamageClass.MagicSummonHybrid).ApplyTo(NecromancersShirt.SkullBaseKnockback), player.whoAmI, 1);
+                        }
                     }
                     LichKills = 0;
                 }
@@ -1202,8 +1215,10 @@ namespace tsorcRevamp
             {
                 if (Kraken)
                 {
-                    Projectile Tsunami = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<KrakenTsunami>(), (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseDmg), player.GetTotalKnockback(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseKnockback), player.whoAmI);
-                    Tsunami.originalDamage = KrakenCarcass.TsunamiBaseDmg;
+                    if (Main.myPlayer == player.whoAmI)
+                    {
+                        Projectile Tsunami = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<KrakenTsunami>(), (int)player.GetTotalDamage(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseDmg), player.GetTotalKnockback(DamageClass.Ranged).ApplyTo(KrakenCarcass.TsunamiBaseKnockback), player.whoAmI);
+                    }
                 }
             }
 
@@ -1221,8 +1236,10 @@ namespace tsorcRevamp
                         SweepingBladeVelocity = player.DirectionTo(other.Center) * 17;
                         player.AddBuff(ModContent.BuffType<PlasmaWhirlwindDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/Dash") with { Volume = 1f });
-                        Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaWhirlwindDashHitbox>(), player.HeldItem.damage, 0, player.whoAmI);
-                        DashHitbox.OriginalCritChance = SteelTempest.BaseCritChanceBonus;
+                        if (Main.myPlayer == player.whoAmI)
+                        {
+                            Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaWhirlwindDashHitbox>(), player.HeldItem.damage, 0, player.whoAmI);
+                        }
                     } //cooldown is added by On-Hit in the dash projectile hitbox
                     if (!(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<NightbringerDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<Nightbringer>())
                     {
@@ -1231,14 +1248,18 @@ namespace tsorcRevamp
                         player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 5));
                         player.AddBuff(ModContent.BuffType<NightbringerDash>(), (int)(PlasmaWhirlwind.DashDuration * 60f * 2));
                         SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/Dash") with { Volume = 1f });
-                        Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<NightbringerDashHitbox>(), player.HeldItem.damage, 0, player.whoAmI);
-                        DashHitbox.OriginalCritChance = SteelTempest.BaseCritChanceBonus;
+                        if (Main.myPlayer == player.whoAmI)
+                        {
+                            Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<NightbringerDashHitbox>(), player.HeldItem.damage, 0, player.whoAmI);
+                        }
                     } //cooldown is added by On-Hit in the dash projectile hitbox
                 }
                 if ((Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && Player.HeldItem.type == ModContent.ItemType<Nightbringer>() && !Player.HasBuff(ModContent.BuffType<NightbringerFirewallCooldown>()))
                 {
-                    Projectile Firewall = Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), player.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<NightbringerFirewall>(), player.HeldItem.damage / 3, 0, Main.myPlayer);
-                    Firewall.OriginalCritChance = SteelTempest.BaseCritChanceBonus;
+                    if (Main.myPlayer == player.whoAmI)
+                    {
+                        Projectile Firewall = Projectile.NewProjectileDirect(Projectile.GetSource_NaturalSpawn(), player.Center, unitVectorTowardsMouse * 5f, ModContent.ProjectileType<NightbringerFirewall>(), player.HeldItem.damage / 3, 0, Main.myPlayer);
+                    }
                     Player.AddBuff(ModContent.BuffType<NightbringerFirewallCooldown>(), 30 * 60);
                 }
                 #endregion
@@ -1256,8 +1277,10 @@ namespace tsorcRevamp
                 }
                 if ((Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && !Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>() && player.statMana >= (int)(OmegaSquadRifle.BaseShroomManaCost * player.manaCost))
                 {
-                    Projectile Shroom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Ranged.Runeterra.NuclearMushroom>(), player.GetWeaponDamage(player.HeldItem), player.GetWeaponKnockback(player.HeldItem), Main.myPlayer);
-                    Shroom.OriginalCritChance = 100;
+                    if (Main.myPlayer == player.whoAmI)
+                    {
+                        Projectile Shroom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<Projectiles.Ranged.Runeterra.NuclearMushroom>(), player.GetWeaponDamage(player.HeldItem), player.GetWeaponKnockback(player.HeldItem), Main.myPlayer);
+                    }
                     Player.AddBuff(ModContent.BuffType<NuclearMushroomCooldown>(), OmegaSquadRifle.ShroomCooldown * 60);
                 }
                 #endregion
@@ -1368,7 +1391,6 @@ namespace tsorcRevamp
         //This means you can tank until your mana bar is exhausted, then have to back off for a bit and actually dodge
         public override void OnHurt(Player.HurtInfo info)
         {
-
             if (manaShield == 1)
             {
                 if (Player.statMana >= Items.Accessories.Defensive.ManaShield.manaCost)
@@ -1441,7 +1463,6 @@ namespace tsorcRevamp
 
         public static float CheckReduceDefense(Vector2 Position, int Width, int Height, bool fireWalk)
         {
-
             int playerTileXLeft = (int)(Position.X / 16f) - 1;
             int playerTileXRight = (int)((Position.X + Width) / 16f) + 2;
             int playerTileYBottom = (int)(Position.Y / 16f) - 1;

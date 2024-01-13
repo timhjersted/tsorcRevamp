@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
@@ -21,6 +22,17 @@ namespace tsorcRevamp.Projectiles
         {
             Projectile.type = 15;
             return true;
+        }
+        public override void OnSpawn(IEntitySource source)
+        {
+            if (Projectile.ai[0] != 0)
+            {
+                Projectile.timeLeft = (int)Projectile.ai[0];
+            }
+            if (Projectile.ai[1] != 0)
+            {
+                Projectile.scale = Projectile.ai[1];
+            }
         }
         public override void AI()
         {

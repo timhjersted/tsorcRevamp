@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Summon.NullSprite
             Projectile.height = 4;
             Projectile.friendly = true;
             Projectile.extraUpdates = 100;
-            Projectile.timeLeft = 180;
+            Projectile.timeLeft = 600;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
             Projectile.DamageType = DamageClass.Summon;

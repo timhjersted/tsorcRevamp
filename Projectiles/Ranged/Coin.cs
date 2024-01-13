@@ -73,7 +73,10 @@ namespace tsorcRevamp.Projectiles.Ranged
                             {
                                 ai1 = 1;
                             }
-                            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, UsefulFunctions.Aim(Projectile.Center, GetTarget(), 1), Main.projectile[i].type, Main.projectile[i].damage * 2, Main.projectile[i].knockBack, Projectile.owner, 0, ai1);
+                            if (Main.myPlayer == Projectile.owner)
+                            {
+                                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, UsefulFunctions.Aim(Projectile.Center, GetTarget(), 1), Main.projectile[i].type, Main.projectile[i].damage * 2, Main.projectile[i].knockBack, Projectile.owner, 0, ai1);
+                            }
                         }
 
                         if (Main.netMode != NetmodeID.Server)

@@ -1,5 +1,6 @@
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -14,10 +15,9 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
         public abstract int ProjectileHeight { get; }
         public abstract DamageClass ProjectileDamageType { get; } //should be SUmmon usually but I made an exception for one
         public abstract bool ContactDamage { get; } //if it can deal damage on contact
+        public abstract bool CanShoot { get; } //if it's supposed to shoot a projectile
         public abstract int ShotProjectileType { get; }
         public abstract float ProjectileInitialVelocity { get; }
-        public abstract int AI1 { get; } //passes this value into projectile.ai[1] of the shot projectile
-        public abstract int AI2 { get; } //same as above except it's projectile.ai[2]
         public abstract bool PlaysSoundOnShot { get; } //if it plays a sound each time ti shoots a projectile
         public abstract SoundStyle ShootSoundStyle { get; }
         public abstract float ShootSoundVolume { get; }
@@ -43,6 +43,11 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
             Projectile.sentry = true;
             CustomSetDefaults(); //need to actually call the custom function at the point it's usually called at
         }
+        public override void OnSpawn(IEntitySource source)
+        {
+            base.OnSpawn(source);
+            Projectile.ai[0] = ShotCooldown - SentryShotCooldownReductionOnSpawn;
+        }
 
         public virtual void CustomSetDefaults()
         {
@@ -63,9 +68,10 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
 
             if (Projectile.ai[0] >= ShotCooldown)
             {
-                Projectile SentryShot = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Projectile.Center, Projectile.DirectionTo(Main.MouseWorld) * ProjectileInitialVelocity, ShotProjectileType, Projectile.damage, Projectile.knockBack, owner.whoAmI, ShotCooldown - SentryShotCooldownReductionOnSpawn, AI1, AI2);
-                SentryShot.originalDamage = Projectile.originalDamage;
-                SentryShot.CritChance = Projectile.CritChance;
+                if (Main.myPlayer == Projectile.owner && CanShoot)
+                {
+                    Projectile SentryShot = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.DirectionTo(Main.MouseWorld) * ProjectileInitialVelocity, ShotProjectileType, Projectile.damage, Projectile.knockBack, owner.whoAmI, Projectile.originalDamage);
+                }
                 Projectile.ai[0] = 0;
             }
 

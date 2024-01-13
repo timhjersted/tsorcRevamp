@@ -2,6 +2,7 @@
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Melee;
@@ -23,6 +24,10 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.tileCollide = false;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 30;
+        }
+        public override void OnSpawn(IEntitySource source)
+        {
+            Projectile.OriginalCritChance = SteelTempest.BaseCritChanceBonus;
         }
         public override void AI()
         {

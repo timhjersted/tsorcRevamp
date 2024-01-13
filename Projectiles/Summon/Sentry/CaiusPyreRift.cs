@@ -13,10 +13,9 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
         public override int ProjectileHeight => 84;
         public override DamageClass ProjectileDamageType => DamageClass.MagicSummonHybrid;
         public override bool ContactDamage => false;
+        public override bool CanShoot => true;
         public override int ShotProjectileType => ModContent.ProjectileType<CaiusPyreFireball>();
         public override float ProjectileInitialVelocity => 0;
-        public override int AI1 => 0;
-        public override int AI2 => 0;
         public override bool PlaysSoundOnShot => true;
         public override SoundStyle ShootSoundStyle => SoundID.Item20;
         public override float ShootSoundVolume => 1.5f;

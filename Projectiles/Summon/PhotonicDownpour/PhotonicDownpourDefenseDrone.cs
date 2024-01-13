@@ -105,7 +105,10 @@ namespace tsorcRevamp.Projectiles.Summon.PhotonicDownpour
             {
                 Vector2 velocity = UsefulFunctions.Aim(Projectile.Center, targetCoords, 22);
                 Projectile.rotation = velocity.ToRotation() + MathHelper.PiOver2;
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, velocity, ModContent.ProjectileType<DefenseDroneFire>(), Projectile.damage, 0, Main.myPlayer, 1);
+                if (Main.myPlayer == Projectile.owner)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, velocity, ModContent.ProjectileType<DefenseDroneFire>(), Projectile.damage, 0, Main.myPlayer, 1);
+                }
                 foundProjTarget = false;
             }
         }
