@@ -22,6 +22,9 @@ namespace tsorcRevamp.Tiles.BuffStations
             AddMapEntry(new Color(169, 169, 169), Language.GetText("Necromancy Altar"));
             DustType = DustID.Bone;
         }
+
+        //public override bool HasSmartInteract(int i, int j, Terraria.GameContent.ObjectInteractions.SmartInteractScanSettings settings) => true;
+
         public override void MouseOver(int i, int j)
         {
             Player player = Main.LocalPlayer;

@@ -9,7 +9,7 @@ namespace tsorcRevamp.UI
 {
 	public class MinionInfoDisplay : InfoDisplay
 	{
-        public override bool Active() => true;
+		public override bool Active() => true;
 		public override string DisplayValue(ref Color displayColor)
 		{
 			/*float UsedMinion = 0;
@@ -35,7 +35,7 @@ namespace tsorcRevamp.UI
 
 	public class SentryInfoDisplay : InfoDisplay
 	{
-        public override bool Active() => true;
+		public override bool Active() => true;
 		public override string DisplayValue(ref Color displayColor)
 		{
 			int UsedSentry = 0;
