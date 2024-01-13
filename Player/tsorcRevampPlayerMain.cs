@@ -359,7 +359,6 @@ namespace tsorcRevamp
             {
             }
             modifiers.FinalDamage.ApplyTo(modifiers.SourceDamage.Base);
-            Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s  
             if (Player.HasBuff(ModContent.BuffType<Rejuvenation>()))
             {
                 Player.ClearBuff(ModContent.BuffType<Rejuvenation>());
@@ -372,6 +371,14 @@ namespace tsorcRevamp
             if (Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>() && !Main.player[Main.myPlayer].HasBuff(ModContent.BuffType<ScoutsBoost2Omega>()))
             {
                 Player.AddBuff(ModContent.BuffType<ScoutsBoostCooldownOmega>(), ToxicShot.ScoutsBoostOnHitCooldown * 60);
+            }
+        }
+
+        public override void PostHurt(Player.HurtInfo info)
+        {
+            if(info.Damage > 1)
+            {
+                Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s  
             }
         }
 
