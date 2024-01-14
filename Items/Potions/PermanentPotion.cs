@@ -416,10 +416,12 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override string Texture => "Terraria/Images/Item_303";
         public override int PermanentID => 15;
         public override int BuffType => BuffID.Archery;
+        public override bool CanScale => true;
 
         public override void PotionEffect(Player player)
         {
             player.archery = true;
+            player.arrowDamage *= 1f + ApplyScaling(0.1f);
         }
     }
     public class PermanentHunterPotion : PermanentPotion
