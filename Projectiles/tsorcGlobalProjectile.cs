@@ -77,6 +77,13 @@ namespace tsorcRevamp.Projectiles
         public bool ChargedWhip = false;
         public bool ModdedFlail = false;
         public bool KrakenEmpowered = false;
+        public override void SetDefaults(Projectile entity)
+        {
+            if (entity.IsMinionOrSentryRelated || ProjectileID.Sets.LightPet[entity.type] || Main.projPet[entity.type])
+            {
+                ProjectileID.Sets.ForcePlateDetection[entity.type] = false;
+            }
+        }
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
             /*projectilesource experiments

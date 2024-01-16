@@ -15,11 +15,11 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
     public class OrbOfDeception : ModItem
     {
         public static Color FilledColor = Color.YellowGreen;
-        public static float OrbDmgMod = 200f;
-        public static float OrbReturnDmgMod = 150f;
+        public static float OrbDmgMod = 100f;
+        public static float OrbReturnDmgMod = 50f;
         public static float DmgLossOnPierce = 12f;
         public static float EssenceThiefOnKillChance = 17f;
-        public static float FilledOrbDmgMod = 175f;
+        public static float FilledOrbDmgMod = 75f;
         public static float ShootSpeed = 20f;
         public static float OrbSoundVolume = 0.5f;
         public static int HealManaDivisor = 100;
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Item.channel = false;
             Item.useAnimation = 17;
             Item.useTime = 17;
-            Item.damage = 25;
+            Item.damage = 20;
             Item.crit = 6;
             Item.mana = 25;
             Item.knockBack = 8;
@@ -53,10 +53,6 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            OrbDmgMod = 200;
-            DmgLossOnPierce = 12;
-            OrbReturnDmgMod = 150;
-            FilledOrbDmgMod = 175;
             if (player.ownedProjectileCounts[ModContent.ProjectileType<OrbOfDeceptionOrb>()] != 0)
             {
                 type = ModContent.ProjectileType<OrbOfDeceptionFlame>();
@@ -97,7 +93,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ShadowOrb);
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

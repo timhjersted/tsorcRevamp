@@ -33,7 +33,8 @@ namespace tsorcRevamp
         public bool estusRing; //Whether or not the player is currently wearing an estus ring, increasing healing by 20
 
         public const float estusDrinkTimerMaxBase = 1.5f;
-        public float estusDrinkTimerReductionPStone = 0.5f;
+        public const float estusPStoneStrength = 25f;
+        public float estusDrinkTimerReductionPStone = estusDrinkTimerMaxBase * (estusPStoneStrength / 100f);
         public float estusDrinkTimerMax = estusDrinkTimerMaxBase; //This is actually seconds. How long it takes to drink a charge
         public float estusDrinkTimer; //How far through the animation we are
         public float estusHealthPerTick; //How much health to restore per tick

@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 
             recipe.AddIngredient(ModContent.ItemType<PlasmaWhirlwind>());
             recipe.AddIngredient(ItemID.LunarBar, 12);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
 
             recipe.AddTile(TileID.DemonAltar);
 

@@ -137,14 +137,14 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            modifiers.SourceDamage *= OrbOfDeception.OrbDmgMod / 100f;
+            modifiers.SourceDamage += OrbOfDeception.OrbDmgMod / 100f;
             if (Full)
             {
-                modifiers.SourceDamage *= OrbOfDeception.FilledOrbDmgMod / 100f;
+                modifiers.ScalingBonusDamage += OrbOfDeception.FilledOrbDmgMod / 100f;
             }
             if (CurrentAIState == AIState.Retracting)
             {
-                modifiers.SourceDamage *= OrbOfDeception.OrbReturnDmgMod / 100f;
+                modifiers.ScalingBonusDamage += OrbOfDeception.OrbReturnDmgMod / 100f;
             }
             modifiers.HitDirectionOverride = (Main.player[Projectile.owner].Center.X < target.Center.X) ? 1 : (-1);
         }

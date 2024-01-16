@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using rail;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,7 +86,7 @@ namespace tsorcRevamp
         public float BotCAccuracyLoss = 0.08f;
         public float CurrentTotalRangedCritChance;
 
-        public float BotCCeruleanFlaskMaxManaScaling = 12f;
+        public float BotCCeruleanFlaskMaxManaScaling = 10f;
         public float BotCMagicDamageAmp = 15f;
         public float BotCMagicAttackSpeedAmp = 15f;
 
@@ -1107,10 +1108,10 @@ namespace tsorcRevamp
             {
                 Player.autoReuseGlove = false;
             }
-            if (ModContent.GetInstance<tsorcRevampConfig>().DisableAutomaticQuickMana)
+            /*if (ModContent.GetInstance<tsorcRevampConfig>().DisableAutomaticQuickMana)
             {
                 Player.manaFlower = false;
-            }
+            }*/ // needs to be set in ceruleanflask file
             if (ModContent.GetInstance<tsorcRevampConfig>().DisableRifleScopeZoom)
             {
                 Player.scope = false;

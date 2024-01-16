@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Magic;
 
 namespace tsorcRevamp.Projectiles.Magic
 {
@@ -42,6 +43,14 @@ namespace tsorcRevamp.Projectiles.Magic
             {
                 Projectile.velocity.Y = 16f;
             }
+            if (Projectile.wet)
+            {
+                Projectile.Kill();
+            }
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.OnFire, ApprenticesWand.OnFireDuration * 60);
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {

@@ -73,7 +73,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 
             recipe.AddIngredient(ModContent.ItemType<InterstellarVesselGauntlet>());
             recipe.AddIngredient(ItemID.LunarBar, 12);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
 
             recipe.AddTile(TileID.DemonAltar);
 

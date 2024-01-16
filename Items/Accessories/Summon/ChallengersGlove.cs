@@ -43,8 +43,8 @@ namespace tsorcRevamp.Items.Accessories.Summon
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.AvengerEmblem);
             recipe.AddIngredient(ItemID.BerserkerGlove);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
-            recipe.AddTile(TileID.TinkerersWorkbench);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+            recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
         }

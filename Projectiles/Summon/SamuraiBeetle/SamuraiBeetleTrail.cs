@@ -11,11 +11,6 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
     class SamuraiBeetleTrail : DynamicTrail
     {
         public override string Texture => base.Texture;
-        public override void SetStaticDefaults()
-        {
-            ProjectileID.Sets.SentryShot[Type] = true;
-            ProjectileID.Sets.ForcePlateDetection[Type] = true;
-        }
         public override void SetDefaults()
         {
             Projectile.width = 2;

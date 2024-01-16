@@ -15,7 +15,6 @@ namespace tsorcRevamp.Projectiles
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.SentryShot[Type] = true;
-            ProjectileID.Sets.ForcePlateDetection[Type] = true;
         }
         public override void SetDefaults()
         {

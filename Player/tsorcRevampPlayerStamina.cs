@@ -214,6 +214,10 @@ namespace tsorcRevamp
 
 
             staminaResourceGain = staminaResourceGainMult * staminaResourceRegenRate; //Apply our multiplier to our base regen rate
+            if (Player.velocity == Vector2.Zero)
+            {
+                staminaResourceGain *= 1.5f;
+            }
 
             // For our resource lets make it regen slowly over time to keep it simple, let's use exampleResourceRegenTimer to count up to whatever value we want, then increase currentResource.
             staminaResourceRegenTimer++; //Increase it by 60 per second, or 1 per tick.

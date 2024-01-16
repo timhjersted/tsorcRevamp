@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -12,6 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
     class ApprenticesWand : ModItem
     {
         public const int BaseDmg = 12;
+        public const int OnFireDuration = 2;
         public override void SetDefaults()
         {
             Item.damage = BaseDmg;

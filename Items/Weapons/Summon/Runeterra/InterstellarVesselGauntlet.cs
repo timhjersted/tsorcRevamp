@@ -66,7 +66,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 
             recipe.AddIngredient(ModContent.ItemType<ScorchingPoint>());
             recipe.AddIngredient(ItemID.ChlorophyteBar, 11);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 45000);
 
             recipe.AddTile(TileID.DemonAltar);
 

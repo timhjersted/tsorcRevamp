@@ -120,7 +120,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<OrbOfDeception>());
             recipe.AddIngredient(ItemID.ChlorophyteBar, 11);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 35000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 45000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

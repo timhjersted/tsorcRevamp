@@ -32,7 +32,8 @@ Mods: {
 				'''
 			CorruptionCursed: 该物品已被[c/701070:腐化]力量[c/338338:诅咒]，目前无法使用
 			BotCNoHeal: 无法治愈[c/6d8827:被诅咒者]
-			BotCPStone: 减少 25% 元素瓶的使用时间
+			BotCPStone: 减少 {0}% 元素瓶的使用时间
+			BotCManaFlower: Decreases the time needed to drink the Cerulean Flask by {0}%
 			DSPickUpRange: 增加黑暗之魂拾取范围
 			VanityFunction: 在时装栏中也生效
 			DragoonGearCompatible: 与龙骑士套装和龙靴兼容.

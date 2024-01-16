@@ -65,7 +65,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
 
             recipe.AddIngredient(ItemID.FeralClaws);
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
 
             recipe.AddTile(TileID.DemonAltar);
 
