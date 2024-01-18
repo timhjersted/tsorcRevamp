@@ -33,7 +33,7 @@ Mods: {
 			CorruptionCursed: 该物品已被[c/701070:腐化]力量[c/338338:诅咒]，目前无法使用
 			BotCNoHeal: 无法治愈[c/6d8827:被诅咒者]
 			BotCPStone: 减少 {0}% 元素瓶的使用时间
-			BotCManaFlower: Decreases the time needed to drink the Cerulean Flask by {0}%
+			BotCManaFlower: 减少 {0}% 蓝露滴圣杯瓶的使用时间
 			DSPickUpRange: 增加黑暗之魂拾取范围
 			VanityFunction: 在时装栏中也生效
 			DragoonGearCompatible: 与龙骑士套装和龙靴兼容.
@@ -539,7 +539,7 @@ Mods: {
 				StarinaBottle: 增加 10 点魔力再生同时减少 50% 魔力再生延迟
 				ManaRegenerationBand: 增加 25 点魔力再生同时减少 100% 魔力再生延迟
 				WellFedItemsBotC: 为[c/6d8827:被诅咒者]增加 {0}% 耐力再生
-				ManaRegenerationPotionBotC: 增加 {0} 蓝露滴圣杯瓶恢复速度
+				ManaRegenerationPotionBotC: 增加 {0}% 蓝露滴圣杯瓶恢复速度
 				CelestialMagnetBotC: 魔力星只固定恢复[c/6d8827:被诅咒者]最大魔力值的4%
 				MagicCuffsBotC: 只回复[c/6d8827:被诅咒者] 受到魔法伤害减免的六分之一
 			}

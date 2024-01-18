@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Lore
         {
             for (int i = 0; i < tooltips.Count; i++)
             {
-                if (tooltips[i].Text.Contains("obscured"))
+                if (tooltips[i].Text.Contains("obscured") || tooltips[i].Text.Contains("模糊不清"))
                 {
                     if (tsorcRevampWorld.NewSlain.ContainsKey(new Terraria.ModLoader.Config.NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>())))
                     {
