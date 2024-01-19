@@ -23,8 +23,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
             Item.mana = 10;
             Item.width = 34;
             Item.height = 30;
-            Item.useTime = 20;
-            Item.useAnimation = 20;
+            Item.useTime = 30;
+            Item.useAnimation = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = Item.buyPrice(1, 0, 0, 0);
             Item.rare = ItemRarityID.Red;

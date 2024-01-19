@@ -318,8 +318,8 @@ Mods: {
 			AccessSafe: Access Safe
 			BotCHit: Hit! {0}%
 			BotCMiss: Miss! {0}%
-			MinionInfoDisplay: "{0}/{1} Minion Slot"
-			SentryInfoDisplay: "{0}/{1} Sentry Slot"
+			MinionInfoDisplay: "{0} / {1} Minion Slots"
+			SentryInfoDisplay: "{0} / {1} Sentry Slots"
 		}
 
 		World: {

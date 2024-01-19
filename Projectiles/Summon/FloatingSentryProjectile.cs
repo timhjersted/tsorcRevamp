@@ -26,8 +26,6 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = ProjectileFrameCount;
-            ProjectileID.Sets.TurretFeature[Projectile.type] = true;
-            ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
         }
 
         public override void SetDefaults()

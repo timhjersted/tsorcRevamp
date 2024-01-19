@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Humanizer;
 using System;
+using Terraria.ID;
 
 namespace tsorcRevamp.UI
 {
@@ -42,7 +43,7 @@ namespace tsorcRevamp.UI
 			for (int i = 0; i < Main.maxProjectiles; i++)
 			{
 				Projectile proj = Main.projectile[i];
-				if (proj.active && proj.sentry && proj.owner == Main.myPlayer)
+				if (proj.active && proj.sentry && proj.owner == Main.myPlayer && !ProjectileID.Sets.SentryShot[proj.type])
 				{
 					UsedSentry ++;
 				}

@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
             Projectile.netImportant = true;
             Projectile.DamageType = DamageClass.Summon;
             Projectile.minion = true;
-            Projectile.minionSlots = 1f;
+            Projectile.minionSlots = BeetleIdol.SlotsRequired;
             Projectile.friendly = true;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 100;
@@ -828,7 +828,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                         bool lineOfSight = Collision.CanHitLine(Projectile.position, Projectile.width, Projectile.height, npc.position, npc.width, npc.height);
                         // Additional check for this specific minion behavior, otherwise it will stop attacking once it dashed through an enemy while flying though tiles afterwards
                         // The number depends on various parameters seen in the movement code below. Test different ones out until it works alright
-                        bool closeThroughWall = between < 800;
+                        bool closeThroughWall = between < 800f;
 
                         if (((closest && inRange) || !foundTarget) && (lineOfSight || closeThroughWall))
                         {
@@ -864,7 +864,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
             speed = 8f;
             inertia = 10f;
             direction = Projectile.Center;
-            attackRange = 400f;
+            attackRange = 800f;
             int circleSize = 350;
             IsFlying = false;
 
@@ -886,6 +886,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                         RandomMovementSet = true;
                     }
                     Projectile.velocity = Projectile.DirectionTo(CircleVector + targetCenter) * (CircleVector + targetCenter).Distance(Projectile.Center) / 20;
+                    Projectile.tileCollide = false;
                     //Dust.NewDust(CircleVector + targetCenter, 10, 10, DustID.Torch);
                 } 
                 else if (distanceFromTarget <= attackRange)
@@ -1088,7 +1089,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                     case >120:
                         {
                             Projectile.velocity = Falling;
-                            Projectile.tileCollide = true;
+                            Projectile.tileCollide = false;
                             FallTimer = 0;
                             IsThrusting = false;
                             ThrustProgress = 0;
@@ -1238,7 +1239,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                     case >160:
                         {
                             Projectile.velocity = Falling;
-                            Projectile.tileCollide = true;
+                            Projectile.tileCollide = false;
                             FallTimer = 0;
                             IsSlashing = false;
                             SlashProgress = 0;
@@ -1258,11 +1259,11 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
             }
             if (IsSlashing && !SlashHit && ActualTarget == target)
             {
-                Vector2 LightningPosition = target.Center + new Vector2(0, -1000);
+                Vector2 LightningPosition = target.Center + new Vector2(0, -800);
                 SlashHit = true;
                 if (Main.myPlayer == Projectile.owner)
                 {
-                    Projectile LightningStrike = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), LightningPosition, LightningPosition.DirectionTo(target.Center), ModContent.ProjectileType<SamuraiBeetleLightning>(), Projectile.damage, 0, Projectile.owner);
+                    Projectile LightningStrike = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), LightningPosition, Vector2.Zero, ModContent.ProjectileType<SamuraiBeetleLightning>(), Projectile.damage, 0, Projectile.owner);
                 }
             }
             AttackHit = true; //so it can't gain multiple thrust stacks by hitting multiple enemies at once
@@ -1445,6 +1446,10 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
             {
                 Projectile.rotation = 0;
             }
+        }
+        public override void OnKill(int timeLeft)
+        {
+            KillTrail();
         }
     }
 }
