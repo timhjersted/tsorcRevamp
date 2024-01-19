@@ -16,26 +16,30 @@ using tsorcRevamp.Projectiles.Summon;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-    [Autoload(false)]
     public class DarkSword : ModItem
     {
         public string SoundPath = "tsorcRevamp/Sounds/DST/DarkSword";
         public int SwingSoundStyle = 0;
         public float SoundVolume = 1f;
         public const float DebuffDuration = 8;
+        public const float SlotsRequired = 1.5f;
+        public const int BaseCritChance = 6;
         public override void SetStaticDefaults()
         {
             ItemID.Sets.ItemsThatAllowRepeatedRightClick[Type] = true;
+            ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
+            ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
+            ItemID.Sets.StaffMinionSlotsRequired[Type] = SlotsRequired;
         }
         public override void SetDefaults()
         {
             Item.width = 58;
             Item.height = 72;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 45;
-            Item.useTime = 45;
+            Item.useAnimation = 40;
+            Item.useTime = 40;
             Item.damage = 68;
-            Item.crit = 6;
+            Item.crit = BaseCritChance;
             Item.mana = 10;
             Item.knockBack = 2f;
             Item.rare = ItemRarityID.Orange;
@@ -44,6 +48,11 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Color.Black;
+        }
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+        {
+            // Here you can change where the minion is spawned. Most vanilla minions spawn at the cursor position
+            position = Main.MouseWorld;
         }
         public override void ModifyItemScale(Player player, ref float scale)
         {

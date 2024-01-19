@@ -36,11 +36,11 @@ namespace tsorcRevamp.Projectiles.Summon
             Projectile.friendly = true; // Only controls if it deals damage to enemies on contact (more on that later)
             Projectile.minion = true; // Declares this as a minion (has many effects)
             Projectile.DamageType = DamageClass.Summon; // Declares the damage type (needed for it to deal damage)
-            Projectile.minionSlots = 3f; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
+            Projectile.minionSlots = DarkSword.SlotsRequired; // Amount of slots this minion occupies from the total minion slots available to the player (more on that later)
             Projectile.penetrate = -1; // Needed so the minion doesn't despawn on collision with enemies or tiles
 
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 100;
+            Projectile.localNPCHitCooldown = 10; //dps is limited by atack animation speed
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -48,6 +48,7 @@ namespace tsorcRevamp.Projectiles.Summon
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
+            target.GetGlobalNPC<tsorcRevampGlobalNPC>().BaseSummonTagCriticalStrikeChance += DarkSword.BaseCritChance;
         }
 
         // Here you can decide if your minion breaks things like grass or pots
@@ -59,7 +60,11 @@ namespace tsorcRevamp.Projectiles.Summon
         // This is mandatory if your minion deals contact damage (further related stuff in AI() in the Movement region)
         public override bool MinionContactDamage()
         {
-            return true;
+            if (Projectile.frame == 15)
+            {
+                return true;
+            }
+            return false;
         }
 
         // The AI of this minion is split into multiple methods to avoid bloat. This method just passes values between calls actual parts of the AI.
@@ -75,7 +80,7 @@ namespace tsorcRevamp.Projectiles.Summon
             GeneralBehavior(player, out Vector2 vectorToIdlePosition, out float distanceToIdlePosition);
             SearchForTargets(player, out bool foundTarget, out float distanceFromTarget, out Vector2 targetCenter);
             Movement(foundTarget, distanceFromTarget, targetCenter, distanceToIdlePosition, vectorToIdlePosition);
-            Visuals();
+            Visuals(distanceFromTarget);
         }
 
         // This is the "active check", makes sure the minion is alive while the player is alive, and despawns if not
@@ -210,13 +215,13 @@ namespace tsorcRevamp.Projectiles.Summon
         private void Movement(bool foundTarget, float distanceFromTarget, Vector2 targetCenter, float distanceToIdlePosition, Vector2 vectorToIdlePosition)
         {
             // Default movement parameters (here for attacking)
-            float speed = 8f;
+            float speed = 12f;
             float inertia = 20f;
 
             if (foundTarget)
             {
                 // Minion has a target: attack (here, fly towards the enemy)
-                if (distanceFromTarget > 40f)
+                if (distanceFromTarget > 50f)
                 {
                     // The immediate range around the target (so it doesn't latch onto it when close)
                     Vector2 direction = targetCenter - Projectile.Center;
@@ -233,13 +238,18 @@ namespace tsorcRevamp.Projectiles.Summon
                 {
                     // Speed up the minion if it's away from the player
                     speed = 12f;
-                    inertia = 60f;
+                    inertia = 8f;
+                }
+                else if (distanceToIdlePosition > 100f)
+                {
+                    // Slow down the minion if closer to the player
+                    speed = 7f;
+                    inertia = 14f;
                 }
                 else
                 {
-                    // Slow down the minion if closer to the player
                     speed = 4f;
-                    inertia = 80f;
+                    inertia = 60f;
                 }
 
                 if (distanceToIdlePosition > 20f)
@@ -260,24 +270,46 @@ namespace tsorcRevamp.Projectiles.Summon
             }
         }
 
-        private void Visuals()
+        private void Visuals(float distanceFromTarget)
         {
             // So it will lean slightly towards the direction it's moving
-            Projectile.rotation = Projectile.velocity.X * 0.05f;
+            //Projectile.rotation = Projectile.velocity.X * 0.05f;
 
-            // This is a simple "loop through all frames from top to bottom" animation
-            int frameSpeed = 5;
+            Projectile.spriteDirection = Projectile.velocity.X > 0 ? -1 : 1;
 
-            Projectile.frameCounter++;
-
-            if (Projectile.frameCounter >= frameSpeed)
+            if (distanceFromTarget > 100)
             {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
+                // This is a simple "loop through all frames from top to bottom" animation
+                int frameSpeed = 4;
 
-                if (Projectile.frame >= Main.projFrames[Projectile.type])
+                Projectile.frameCounter++;
+
+                if (Projectile.frameCounter >= frameSpeed)
                 {
-                    Projectile.frame = 0;
+                    Projectile.frameCounter = 0;
+                    Projectile.frame++;
+
+                    if (Projectile.frame >= 7)
+                    {
+                        Projectile.frame = 0;
+                    }
+                }
+            }
+            else
+            {
+                int frameSpeed = 3;
+
+                Projectile.frameCounter++;
+
+                if (Projectile.frameCounter >= frameSpeed)
+                {
+                    Projectile.frameCounter = 0;
+                    Projectile.frame++;
+
+                    if (Projectile.frame >= Main.projFrames[Type])
+                    {
+                        Projectile.frame = 7;
+                    }
                 }
             }
 

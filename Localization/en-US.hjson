@@ -7636,7 +7636,7 @@ Mods: {
 
 			EstusRing: {
 				DisplayName: Estus Ring
-				Tooltip: Increases the healing potency of the Estus Flask by 20HP while worn
+				Tooltip: Increases the Estus Flask's healing by {0} flat and {1}% of your max life
 			}
 
 			RingOfFavorAndProtection: {
@@ -8551,8 +8551,8 @@ Mods: {
 			}
 
 			TerrorbeakBuff: {
-				DisplayName: Terrorbeak Buff
-				Description: Mods.tsorcRevamp.Buffs.TerrorbeakBuff.Description
+				DisplayName: Terrorbeak
+				Description: They look pretty cute for a nightmare, haha!
 			}
 
 			WorldEnderTimer: {
@@ -9181,6 +9181,7 @@ Mods: {
 			SamuraiBeetleTrail.DisplayName: Samurai Beetle Trail
 			SamuraiBeetleLightning.DisplayName: Samurai Beetle Lightning
 			SamuraiBeetleProjectile.DisplayName: Samurai Beetle Projectile
+			SamuraiBeetleCloud.DisplayName: Samurai Beetle Cloud
 		}
 
 		NPCs: {
@@ -9712,7 +9713,7 @@ Mods: {
 
 			AncientDemonOfTheAbyss: {
 				DisplayName: Ancient Demon of the Abyss
-				Despawnhandler: A demon of the abyss has absorbed you into its flesh ...
+				DespawnHandler: A demon of the abyss has absorbed you into its flesh ...
 			}
 
 			BarrowWightNemesis.DisplayName: Barrow Wight Nemesis

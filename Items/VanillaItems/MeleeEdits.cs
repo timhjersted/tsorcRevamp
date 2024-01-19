@@ -171,6 +171,10 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.mana = 14;
             }
+            if (item.type == ItemID.ShadowFlameKnife)
+            {
+                item.mana = 12;
+            }
             if (item.type == ItemID.LightDisc)
             {
                 item.mana = 16;

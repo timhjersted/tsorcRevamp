@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.DamageType = DamageClass.MagicSummonHybrid;
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = Projectile.timeLeft;
+            Projectile.localNPCHitCooldown = -1;
 
             trailWidth = 50;
             trailPointLimit = 1000;

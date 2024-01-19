@@ -41,6 +41,7 @@ using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
+using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Projectiles.Magic.Runeterra.LudensTempest;
 using tsorcRevamp.Projectiles.Melee.Runeterra;
 using tsorcRevamp.Projectiles.Pets;
@@ -294,59 +295,82 @@ namespace tsorcRevamp
 
         public override bool ImmuneTo(PlayerDeathReason damageSource, int cooldownCounter, bool dodgeable)
         {
-            if (Player.HasBuff(ModContent.BuffType<Invincible>()))
+            if (Player == Main.LocalPlayer)
             {
-                return true;
-            }
-            if (Player.GetModPlayer<tsorcRevampPlayer>().BarrierRing && !Player.HasBuff(ModContent.BuffType<BarrierCooldown>()))
-            {
-                Player.AddBuff(ModContent.BuffType<BarrierCooldown>(), Items.Accessories.Defensive.BarrierRing.Cooldown * 60);
-                Player.SetImmuneTimeForAllTypes((int)(Items.Accessories.Defensive.BarrierRing.ImmuneTimeAfterHit * 60f));
-                return true;
-            }
-            if (DragonStoneImmunity)
-            {
-                int NT = Main.npc[damageSource.SourceNPCIndex].type;
-                if (NT == 2 || NT == 6 || NT == 34 || NT == 42 || NT == 48 || NT == 49 || NT == 51 || NT == 60 || NT == 61 || NT == 62 || NT == 66 || NT == 75 || NT == 87 || NT == 88 || NT == 89 || NT == 90 || NT == 91 || NT == 92 || NT == 93 || NT == 94 || NT == 112 || NT == 122 || NT == 133 || NT == 137
-                    || NT == NPCID.Probe
-                    || NT == NPCID.IceBat
-                    || NT == NPCID.Lavabat
-                    || NT == NPCID.GiantFlyingFox
-                    || NT == NPCID.RedDevil
-                    || NT == NPCID.VampireBat
-                    || NT == NPCID.IceElemental
-                    || NT == NPCID.PigronCorruption
-                    || NT == NPCID.PigronHallow
-                    || NT == NPCID.PigronCrimson
-                    || NT == NPCID.Crimera
-                    || NT == NPCID.MossHornet
-                    || NT == NPCID.CrimsonAxe
-                    || NT == NPCID.FloatyGross
-                    || NT == NPCID.Moth
-                    || NT == NPCID.Bee
-                    || NT == NPCID.FlyingFish
-                    || NT == NPCID.FlyingSnake
-                    || NT == NPCID.AngryNimbus
-                    || NT == NPCID.Parrot
-                    || NT == NPCID.Reaper
-                    || NT == NPCID.IchorSticker
-                    || NT == NPCID.DungeonSpirit
-                    || NT == NPCID.Ghost
-                    || NT == NPCID.ElfCopter
-                    || NT == NPCID.Flocko
-                    || NT == NPCID.MartianDrone
-                    || NT == NPCID.MartianProbe
-                    || NT == NPCID.ShadowFlameApparition
-                    || NT == NPCID.MothronSpawn
-                    || NT == NPCID.GraniteFlyer
-                    || NT == NPCID.FlyingAntlion
-                    || NT == NPCID.DesertDjinn
-                    || NT == NPCID.WyvernHead
-                    || NT == NPCID.Harpy
-                    || NT == NPCID.CultistDragonHead
-                    || NT == NPCID.SandElemental)
+                if (Player.HasBuff(ModContent.BuffType<Invincible>()))
                 {
                     return true;
+                }
+                if (Player.GetModPlayer<tsorcRevampPlayer>().BarrierRing && !Player.HasBuff(ModContent.BuffType<BarrierCooldown>()))
+                {
+                    Player.AddBuff(ModContent.BuffType<BarrierCooldown>(), Items.Accessories.Defensive.BarrierRing.Cooldown * 60);
+                    Player.SetImmuneTimeForAllTypes((int)(Items.Accessories.Defensive.BarrierRing.ImmuneTimeAfterHit * 60f));
+                    return true;
+                }
+                if (DragonStoneImmunity && damageSource.SourcePlayerIndex > -1)
+                {
+                    int NT = Main.npc[damageSource.SourceNPCIndex].type;
+                    if (   NT == NPCID.DemonEye
+                        || NT == NPCID.DemonEye2
+                        || NT == NPCID.EaterofSouls
+                        || NT == NPCID.CursedSkull
+                        || NT == NPCID.Hornet
+                        || NT == NPCID.Harpy
+                        || NT == NPCID.CaveBat
+                        || NT == NPCID.JungleBat
+                        || NT == NPCID.Hellbat
+                        || NT == NPCID.Vulture
+                        || NT == NPCID.Demon
+                        || NT == NPCID.VoodooDemon
+                        || NT == NPCID.Pixie
+                        || NT == NPCID.WyvernHead || NT == NPCID.WyvernLegs || NT == NPCID.WyvernBody || NT == NPCID.WyvernBody2 || NT == NPCID.WyvernBody3 || NT == NPCID.WyvernTail
+                        || NT == NPCID.GiantBat
+                        || NT == NPCID.Corruptor || NT == NPCID.VileSpit
+                        || NT == NPCID.Gastropod
+                        || NT == NPCID.WanderingEye
+                        || NT == NPCID.IlluminantBat
+                        || NT == NPCID.Probe
+                        || NT == NPCID.IceBat
+                        || NT == NPCID.Lavabat
+                        || NT == NPCID.GiantFlyingFox
+                        || NT == NPCID.RedDevil
+                        || NT == NPCID.VampireBat
+                        || NT == NPCID.IceElemental
+                        || NT == NPCID.PigronCorruption
+                        || NT == NPCID.PigronHallow
+                        || NT == NPCID.PigronCrimson
+                        || NT == NPCID.Crimera
+                        || NT == NPCID.MossHornet
+                        || NT == NPCID.CrimsonAxe
+                        || NT == NPCID.FloatyGross
+                        || NT == NPCID.Moth
+                        || NT == NPCID.Bee
+                        || NT == NPCID.FlyingFish
+                        || NT == NPCID.FlyingSnake
+                        || NT == NPCID.AngryNimbus
+                        || NT == NPCID.Parrot
+                        || NT == NPCID.Reaper
+                        || NT == NPCID.IchorSticker
+                        || NT == NPCID.DungeonSpirit
+                        || NT == NPCID.Ghost
+                        || NT == NPCID.ElfCopter
+                        || NT == NPCID.Flocko
+                        || NT == NPCID.MartianDrone
+                        || NT == NPCID.MartianProbe
+                        || NT == NPCID.ShadowFlameApparition
+                        || NT == NPCID.MothronSpawn
+                        || NT == NPCID.GraniteFlyer
+                        || NT == NPCID.FlyingAntlion
+                        || NT == NPCID.DesertDjinn
+                        || NT == NPCID.WyvernHead
+                        || NT == NPCID.Harpy
+                        || NT == NPCID.CultistDragonHead
+                        || NT == NPCID.SandElemental
+                        || NT == NPCID.SporeBat
+                        || NT == ModContent.NPCType<CloudBat>())
+                    {
+                        return true;
+                    }
                 }
             }
             return false;

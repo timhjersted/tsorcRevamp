@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using tsorcRevamp.Items.Accessories.Defensive;
 
 namespace tsorcRevamp
 {
@@ -25,12 +26,13 @@ namespace tsorcRevamp
                                     //public int estusChargesMax2; //The temporary amount of charges left
         public const int DefaultEstusHealthGain = 60; //How much 1 charge heals to begin with
         public int estusHealthGain; //The amount of health restored per charge
-        public float estusDrinkTimeReduction = 0;
+        public int estusHealthGainBonus; //A bonus to the health restored
+        public int estusHealthGainMaxHealthBonus; //A bonus to the health restored
 
 
         public bool isDrinking; //Whether or not the player is currently drinking estus
         public bool isEstusHealing; //Whether or not the player is currently healing after drinking estus
-        public bool estusRing; //Whether or not the player is currently wearing an estus ring, increasing healing by 20
+        public bool estusRing; //Whether or not the player is currently wearing an estus ring
 
         public const float estusDrinkTimerMaxBase = 1.5f;
         public const float estusPStoneStrength = 25f;
@@ -98,6 +100,8 @@ namespace tsorcRevamp
         }
         public override void PostUpdateMiscEffects()
         {
+            estusHealthGainBonus = 0;
+            estusHealthGainMaxHealthBonus = 0;
             if (Player.pStone)
             {
                 estusDrinkTimerMax = estusDrinkTimerMaxBase - estusDrinkTimerReductionPStone;
@@ -106,6 +110,12 @@ namespace tsorcRevamp
             {
                 estusDrinkTimerMax = estusDrinkTimerMaxBase;
             }
+            if (estusRing)
+            {
+                estusHealthGainMaxHealthBonus += EstusRing.PercentHealIncrease;
+                estusHealthGainBonus += EstusRing.HealIncrease;
+            }
+            estusHealthGainBonus += (int)(estusHealthGainMaxHealthBonus * Player.statLifeMax2 / 100f);
         }
 
         private void UpdateResource()
@@ -192,8 +202,7 @@ namespace tsorcRevamp
                 isDrinking = false; //No longer drinking
                 estusChargesCurrent--; //Remove a charge
                 estusDrinkTimer = 0; //Set the timer back to 0
-                if (estusRing) Player.HealEffect(estusHealthGain + 20); //Show green heal text equal to health gain
-                else Player.HealEffect(estusHealthGain);
+                Player.HealEffect(estusHealthGain + estusHealthGainBonus);
                 isEstusHealing = true; //Commence healing process
                                        //kplayer.eocDash = 0;
             }
@@ -209,8 +218,7 @@ namespace tsorcRevamp
 
                 if (estusHealingTimer <= estusHealingTimerMax && Player.statLife < Player.statLifeMax2) //If the timer is less or equal to timer max and player hp is not at max
                 {
-                    if (estusRing) estusHealthPerTick += (estusHealthGain + 20) / estusHealingTimerMax; //Heal this much each tick
-                    else estusHealthPerTick += estusHealthGain / estusHealingTimerMax;
+                    estusHealthPerTick += (estusHealthGain + estusHealthGainBonus) / estusHealingTimerMax;
 
                     if (estusHealthPerTick > (int)estusHealthPerTick)
                     {

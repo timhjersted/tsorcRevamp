@@ -1,11 +1,15 @@
 ﻿using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class EstusRing : ModItem
     {
+        public const int HealIncrease = 30;
+        public const int PercentHealIncrease = 5;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(HealIncrease, PercentHealIncrease);
         public override void SetStaticDefaults()
         {
         }

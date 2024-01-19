@@ -87,6 +87,11 @@ namespace tsorcRevamp.Items.VanillaItems
 
             Player player = Main.LocalPlayer;
 
+            if ((item.type == ItemID.ExtendoGrip || item.type == ItemID.ArchitectGizmoPack || item.type == ItemID.HandOfCreation || item.type == ItemID.Toolbelt || item.type == ItemID.Toolbox || item.type == ItemID.BuilderPotion) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("CommonItemTooltip.ItemDisabled"));
+            }
+
             if ((item.type == ItemID.OasisCrate || item.type == ItemID.OasisCrateHard || item.type == ItemID.DungeonFishingCrate || item.type == ItemID.DungeonFishingCrateHard) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
             {
                 SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("Items.VanillaItems.LockedCrates"));

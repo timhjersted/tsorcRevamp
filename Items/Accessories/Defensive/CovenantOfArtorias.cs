@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.GetCritChance(DamageClass.Generic) *= 1f + StatMult / 100f;
             player.moveSpeed *= 1f + StatMult / 100f;
             player.GetAttackSpeed(DamageClass.Generic) *= 1f + StatMult / 100f;
-            player.GetAttackSpeed(DamageClass.Melee) *= (1f + StatMult / 100f) * tsorcRevampPlayer.MeleeBonusMultiplier;
+            player.GetAttackSpeed(DamageClass.Melee) *= 1f + ((StatMult / 100f) * tsorcRevampPlayer.MeleeBonusMultiplier);
             player.lavaImmune = true;
             player.noKnockback = true;
             player.fireWalk = true;

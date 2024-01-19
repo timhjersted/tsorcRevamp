@@ -341,6 +341,7 @@ namespace tsorcRevamp
                 TileID.MushroomPlants, TileID.Cactus, TileID.Coral, TileID.ImmatureHerbs, TileID.MatureHerbs, TileID.BloomingHerbs, TileID.DyePlants, TileID.Pumpkins, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
                 TileID.Mannequin, TileID.Womannequin, TileID.DisplayDoll, TileID.Painting3X3, TileID.GolfTrophies, TileID.MasterTrophyBase, //all mannequins, trophies and relics
                 TileID.BreakableIce, TileID.MagicalIceBlock, TileID.SeaweedPlanter, TileID.AbigailsFlower, //thin ice (breakable kind), Ice Rod's ice, seaweed/herb planters, abigail's flower
+                TileID.CrackedBlueDungeonBrick, TileID.CrackedGreenDungeonBrick, TileID.CrackedPinkDungeonBrick,
                 TileID.Sunflower, TileID.Pots, TileID.Cobweb, TileID.Vines, TileID.JungleVines, TileID.HallowedVines, TileID.CrimsonVines, TileID.VineFlowers, TileID.MushroomVines, //sunflower, pots, cobwebs, all cuttable vine
                 TileID.ShadowOrbs, TileID.CorruptThorns, TileID.JungleThorns, TileID.CrimsonThorns, TileID.Sand, TileID.Pearlsand, TileID.Ebonsand, TileID.Crimsand, TileID.LandMine, TileID.RollingCactus, //orbs/hearts, all thorns, all sands, land mines, rolling cactus
                 TileID.Stalactite, TileID.ExposedGems, TileID.SmallPiles, TileID.LargePiles, TileID.LargePiles2, TileID.PlantDetritus, TileID.OasisPlants, TileID.Larva, TileID.PlanteraBulb, TileID.AntlionLarva, //all ambient objects (background breakables), QB Larva, Plantera Bulb

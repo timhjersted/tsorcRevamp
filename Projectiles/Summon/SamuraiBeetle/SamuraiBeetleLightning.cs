@@ -1,8 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ReLogic.Utilities;
 using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 
 namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
 {
@@ -14,36 +17,62 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
         {
             ProjectileID.Sets.MinionShot[Projectile.type] = true;
         }
-
+        SoundStyle ThunderLoopStyle;
+        SlotId ThunderLoopID;
         public override void SetDefaults()
         {
-            Projectile.width = 4;
-            Projectile.height = 4;
+            Projectile.width = 100;
+            Projectile.height = 2000;
             Projectile.friendly = true;
-            Projectile.extraUpdates = 1000;
-            Projectile.timeLeft = 1080;
+            Projectile.timeLeft = 360;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = -1;
+            Projectile.localNPCHitCooldown = 15;
             Projectile.DamageType = DamageClass.Summon;
+            ThunderLoopStyle = new SoundStyle(SamuraiBeetleProjectile.SoundPath + "heavy-thunder-loop") with { Volume = 1f, MaxInstances = 1 };
         }
-
+        public override void OnSpawn(IEntitySource source)
+        {
+            if (!SoundEngine.TryGetActiveSound(ThunderLoopID, out var ActiveSound))
+            {
+                ThunderLoopID = SoundEngine.PlaySound(ThunderLoopStyle);
+            }
+        }
+        public override void OnKill(int timeLeft)
+        {
+            if (SoundEngine.TryGetActiveSound(ThunderLoopID, out var ActiveSound))
+            {
+                ActiveSound.Stop();
+            }
+        }
+        public bool SoundPlayed = false;
         public override void AI()
         {
-            Projectile.localAI[0] += 1f;
-            if (Projectile.localAI[0] > 5f)
+            if (!SoundEngine.TryGetActiveSound(ThunderLoopID, out var ActiveSound) && !SoundPlayed)
             {
-                for (int i = 0; i < 2; i++)
+                ThunderLoopStyle = new SoundStyle(SamuraiBeetleProjectile.SoundPath + "heavy-thunder-out") with { Volume = 1f, MaxInstances = 1 };
+                ThunderLoopID = SoundEngine.PlaySound(ThunderLoopStyle);
+                SoundPlayed = true;
+            } 
+            else if (!SoundEngine.TryGetActiveSound(ThunderLoopID, out var activeSound) && SoundPlayed)
+            {
+                Projectile.Kill();
+            }
+
+
+            int frameSpeed = 3;
+
+            Projectile.frameCounter++;
+
+            if (Projectile.frameCounter >= frameSpeed)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+
+                if (Projectile.frame >= Main.projFrames[Type])
                 {
-                    Vector2 projectilepos = Projectile.position;
-                    projectilepos -= Projectile.velocity * (i * 0.5f);
-                    Projectile.alpha = 255;
-                    int num448 = Dust.NewDust(projectilepos, 1, 1, 70, newColor: Color.Purple);
-                    Main.dust[num448].noGravity = true;
-                    Main.dust[num448].position = projectilepos;
-                    Main.dust[num448].scale = (float)Main.rand.Next(70, 110) * 0.013f;
-                    Main.dust[num448].velocity *= 0.2f;
+                    Projectile.frame = 0;
                 }
             }
         }

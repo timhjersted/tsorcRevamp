@@ -34,6 +34,10 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 ItemID.Sets.OpenableBag[item.type] = false;
             }
+            if ((item.type == ItemID.ExtendoGrip || item.type == ItemID.ArchitectGizmoPack || item.type == ItemID.HandOfCreation || item.type == ItemID.Toolbelt || item.type == ItemID.Toolbox) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                item.accessory = false;
+            }
         }
         public override void GrabRange(Item item, Player player, ref int grabRange)
         {
@@ -48,7 +52,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
         public override bool CanUseItem(Item item, Player player)
         {
-            if ((item.type == ItemID.DirtRod || item.type == ItemID.BoneWand) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if ((item.type == ItemID.DirtRod || item.type == ItemID.BoneWand || item.type == ItemID.BuilderPotion) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 return false;
             }

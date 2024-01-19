@@ -29,7 +29,7 @@ namespace tsorcRevamp
     //update loops that run every frame
     public partial class tsorcRevampPlayer
     {
-        public static float MeleeBonusMultiplier = 0.5f;
+        public const float MeleeBonusMultiplier = 0.5f;
 
         public bool NoDamageSpread = false;
 

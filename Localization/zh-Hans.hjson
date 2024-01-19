@@ -9180,6 +9180,7 @@ Mods: {
 			SamuraiBeetleTrail.DisplayName: 圣甲虫武士
 			SamuraiBeetleLightning.DisplayName: 圣甲虫武士
 			SamuraiBeetleProjectile.DisplayName: 圣甲虫武士
+			// SamuraiBeetleCloud.DisplayName: Samurai Beetle Cloud
 		}
 
 		NPCs: {
@@ -9711,7 +9712,7 @@ Mods: {
 
 			AncientDemonOfTheAbyss: {
 				DisplayName: 渊古恶魔
-				Despawnhandler: 渊古恶魔将你融进了血肉...
+				DespawnHandler: 渊古恶魔将你融进了血肉...
 			}
 
 			BarrowWightNemesis.DisplayName: 巴罗·怀特·复仇女神

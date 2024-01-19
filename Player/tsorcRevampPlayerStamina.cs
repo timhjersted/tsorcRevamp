@@ -143,8 +143,7 @@ namespace tsorcRevamp
                     }*/
 
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.VortexBeater
-                        || Main.projectile[p].type == ProjectileID.Celeb2Weapon || Main.projectile[p].type == ProjectileID.FlyingKnife
-                        || Main.projectile[p].type == ProjectileID.ShadowFlameKnife))
+                        || Main.projectile[p].type == ProjectileID.Celeb2Weapon || Main.projectile[p].type == ProjectileID.FlyingKnife))
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= HeldProjectileDrainPerFrame;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
@@ -268,8 +267,7 @@ namespace tsorcRevamp
             ItemID.Phantasm,
             ItemID.VortexBeater,
             ItemID.Celeb2,
-            ItemID.FlyingKnife,
-            ItemID.ShadowFlameKnife
+            ItemID.FlyingKnife
         };
 
         static readonly List<int> SpecialHeldProjectileWeapons = new()
