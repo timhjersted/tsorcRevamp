@@ -8552,7 +8552,7 @@ Mods: {
 
 			TerrorbeakBuff: {
 				DisplayName: Terrorbeak
-				Description: They look pretty cute for a nightmare, haha!
+				Description: They look pretty cute for being nightmares, haha!
 			}
 
 			WorldEnderTimer: {
