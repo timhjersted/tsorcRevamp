@@ -300,8 +300,8 @@ Mods: {
 			StopEditMarkers: 点击以停止修改标记。
 			ClickToHide: 点这里隐藏
 			ClickToShow: 点这里显示
-			UpdateMusic: "正在更新红云物语音乐包(也可在QQ群645748667文件中下载): "
-			GetMusic: 点击这里以下载红云物语音乐包！无法下载的在QQ群645748667文件中下载。
+			UpdateMusic: 正在更新音乐包(也可在创意工坊搜索“The Story of Red Cloud Music”订阅音乐包):
+			GetMusic: 创意工坊搜索 “The Story of Red Cloud Music” 订阅音乐包
 			MusicNewUpdate: 点击这里以更新音乐包 (如已手动放置tsorcMusic.tmod，则忽略此提示)
 			MusicFail: 音乐包下载失败，请加QQ群645748667文件中下载。
 			AdvMapDownloadProgress: (在原版创意工坊订阅 Dark Souls Adventure Map，再在Tmod内创意工坊选择导入世界)地图下载中:
@@ -6613,7 +6613,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Summon.ChargedWhip}
-					击中敌人后召唤一个泰拉棱镜
+					击中敌人后召唤一片泰拉飘叶
 					{$CommonItemTooltip.Summon.ChargedWhipTagDmg}
 					{$CommonItemTooltip.Summon.ChargedWhipTagCrit@2}
 					{$CommonItemTooltip.Summon.ChargedWhipAtkSpeed@4}
@@ -7635,7 +7635,7 @@ Mods: {
 
 			EstusRing: {
 				DisplayName: 元素之戒
-				Tooltip: 装备时提高元素瓶 20 点生命值的治疗效果
+				Tooltip: 提高元素瓶 {0} 点生命值的治疗效果，增加 {1}% 最大生命值
 			}
 
 			RingOfFavorAndProtection: {
@@ -7663,8 +7663,8 @@ Mods: {
 				Tooltip:
 					'''
 					左键像剑一样挥舞，并对命中的目标施加疯狂状态
-					<right>召唤凤凰之喙为你而战
-					凤凰之喙只攻击疯狂状态的敌人
+					<right>召唤影怪为你而战
+					影怪只攻击疯狂状态的敌人
 					武器本身自带 6% 召唤暴击率
 					'''
 			}
@@ -8550,8 +8550,8 @@ Mods: {
 			}
 
 			TerrorbeakBuff: {
-				DisplayName: 凤凰之喙
-				Description: ""
+				DisplayName: 影怪
+				Description: 它们看起来真可爱，简直是噩梦，哈哈！
 			}
 
 			WorldEnderTimer: {
@@ -9033,7 +9033,7 @@ Mods: {
 			PyrosulfateProjectile.DisplayName: 热硫酸
 			SearingLashProjectile.DisplayName: 灼热之鞭
 			TerraFallProjectile.DisplayName: 泰拉之殇
-			TerraFallTerraprisma.DisplayName: 觉醒·泰拉棱镜
+			TerraFallTerraprisma.DisplayName: 觉醒·泰拉飘叶
 			SuperBlasterShot.DisplayName: 超级冲击波
 			DrakarthusDagger.DisplayName: 德雷克萨斯匕首
 			DrakarthusDagger2.DisplayName: 德雷克萨斯匕首2
@@ -9173,14 +9173,14 @@ Mods: {
 			FetidExhaustProjectile.DisplayName: 腐败吐息
 			ShatteredMoonlightProjectile.DisplayName: 破碎月光
 			SmallGolemFireball.DisplayName: 石巨人小火球
-			TerrorbeakProjectile.DisplayName: 凤凰之喙
+			TerrorbeakProjectile.DisplayName: 影怪
 			WorldEnderSwordSwing1.DisplayName: 末世之剑1
 			WorldEnderSwordSwing2.DisplayName: 末世之剑2
 			WorldEnderSwordSwing3.DisplayName: 末世之剑3
 			SamuraiBeetleTrail.DisplayName: 圣甲虫武士
 			SamuraiBeetleLightning.DisplayName: 圣甲虫武士
 			SamuraiBeetleProjectile.DisplayName: 圣甲虫武士
-			// SamuraiBeetleCloud.DisplayName: Samurai Beetle Cloud
+			SamuraiBeetleCloud.DisplayName: 圣甲虫武士
 		}
 
 		NPCs: {
