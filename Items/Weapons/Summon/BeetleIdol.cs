@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         }
         public override void SetDefaults()
         {
-            Item.damage = 400;
+            Item.damage = 350;
             Item.knockBack = 3f;
             Item.mana = 10;
             Item.width = 32;
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.useTime = 30;
             Item.useAnimation = 30;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.value = Item.buyPrice(0, 40, 0, 0);
+            Item.value = Item.buyPrice(2, 0, 0, 0);
             Item.UseSound = SoundID.Item44;
             Item.rare = ItemRarityID.Purple;
 
@@ -65,10 +65,11 @@ namespace tsorcRevamp.Items.Weapons.Summon
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.LunarBar, 5);
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 3);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 3);
             recipe.AddIngredient(ItemID.BeetleWings);
             recipe.AddIngredient(ItemID.BeetleHusk, 4);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 88000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 66000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

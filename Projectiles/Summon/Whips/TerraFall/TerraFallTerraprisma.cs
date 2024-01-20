@@ -2,9 +2,11 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
 {
@@ -26,8 +28,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
             Projectile.tileCollide = false;
             Projectile.timeLeft *= 5;
             Projectile.manualDirectionChange = true;
-            Projectile.damage = 115;
-            Projectile.originalDamage = 115;
             // These below are needed for a minion weapon
             Projectile.friendly = true; // Only controls if it deals damage to enemies on contact (more on that later)
             Projectile.minion = true; // Declares this as a minion (has many effects)
@@ -37,6 +37,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
 
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10;
+        }
+        public override void OnSpawn(IEntitySource source)
+        {
+            Projectile.originalDamage = TerraFallItem.BaseDamage;
         }
         public override bool? CanCutTiles()
         {

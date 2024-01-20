@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
@@ -38,10 +39,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
         {
             Player player = Main.player[Projectile.owner];
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.TerraFallStacks = ChargeTime / (MaxChargeTime / 4) + 1;
+            modPlayer.TerraFallStacks = MathF.Min(ChargeTime / (MaxChargeTime / 4) + 1, TerraFallItem.MaxStacks);
             player.AddBuff(ModContent.BuffType<TerraFallBuff>(), (int)(modPlayer.TerraFallStacks * 120 * modPlayer.SummonTagDuration));
             target.AddBuff(ModContent.BuffType<TerraFallDebuff>(), (int)(modPlayer.TerraFallStacks * 120 * modPlayer.SummonTagDuration));
-            Projectile.damage = (int)(Projectile.damage * (modPlayer.TerraFallStacks / 20.5f + 0.75f));
+            Projectile.damage = (int)(Projectile.damage * MathF.Min(modPlayer.TerraFallStacks / 20.5f + 0.75f, 1f));
         }
 
         public override bool PreDraw(ref Color lightColor)

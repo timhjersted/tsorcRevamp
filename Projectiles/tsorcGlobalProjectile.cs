@@ -139,6 +139,12 @@ namespace tsorcRevamp.Projectiles
                 player.GetModPlayer<tsorcRevampPlayer>().DragoonLashFireBreathTimer = 0;
                 projectile.ai[0] = 0;
             }
+            if (projectile.type == ProjectileID.ScytheWhipProj && projectile.ai[0] == 1)
+            {
+                projectile.localNPCImmunity[(int)projectile.ai[1]] = -1;
+                projectile.ai[0] = 0;
+                projectile.ai[1] = 0;
+            }
         }
         public override bool PreAI(Projectile projectile)
         {

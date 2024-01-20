@@ -1,4 +1,5 @@
-﻿using ReLogic.Utilities;
+﻿using Microsoft.Xna.Framework;
+using ReLogic.Utilities;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -6,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
 {
@@ -110,6 +112,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            target.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerSummoner = Main.player[Projectile.owner];
             target.AddBuff(ModContent.BuffType<CCShock>(), 600);
         }
         public override bool? CanDamage()
@@ -122,6 +125,11 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
             {
                 return true;
             }
+        }
+        public override bool PreDraw(ref Color lightColor)
+        {
+            lightColor = Color.White;
+            return true;
         }
     }
 }

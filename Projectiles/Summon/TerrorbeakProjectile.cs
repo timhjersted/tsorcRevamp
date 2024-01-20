@@ -297,7 +297,7 @@ namespace tsorcRevamp.Projectiles.Summon
             }
             else
             {
-                int frameSpeed = 3;
+                int frameSpeed = 4;
 
                 Projectile.frameCounter++;
 

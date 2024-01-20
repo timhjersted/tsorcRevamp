@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
@@ -42,11 +43,11 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         {
             Player player = Main.player[Projectile.owner];
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.NightsCrackerStacks = ChargeTime / (MaxChargeTime / 4) + 1;
+            modPlayer.NightsCrackerStacks = MathF.Min(ChargeTime / (MaxChargeTime / 4) + 1, NightsCracker.MaxStacks);
             player.AddBuff(ModContent.BuffType<NightsCrackerBuff>(), (int)(modPlayer.NightsCrackerStacks * 120 * modPlayer.SummonTagDuration));
             target.AddBuff(ModContent.BuffType<NightsCrackerDebuff>(), (int)(modPlayer.NightsCrackerStacks * 120 * modPlayer.SummonTagDuration));
             target.AddBuff(BuffID.ShadowFlame, (int)(modPlayer.NightsCrackerStacks * 120 * modPlayer.SummonTagDuration));
-            Projectile.damage = (int)(Projectile.damage * (modPlayer.NightsCrackerStacks / 27f + 0.7f));
+            Projectile.damage = (int)(Projectile.damage * MathF.Min(modPlayer.NightsCrackerStacks / 27f + 0.7f, 0.886f));
         }
         public override bool PreDraw(ref Color lightColor)
         {

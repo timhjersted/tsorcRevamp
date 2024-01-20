@@ -30,8 +30,7 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
             {
                 if (player.ownedProjectileCounts[ModContent.ProjectileType<TerraFallTerraprisma>()] == 0)
                 {
-                    int whipDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(TerraFallItem.BaseDamage);
-                    Projectile.NewProjectileDirect(player.GetSource_Buff(buffIndex), player.Center, Vector2.One, ModContent.ProjectileType<TerraFallTerraprisma>(), whipDamage, 1f, Main.myPlayer);
+                    Projectile.NewProjectileDirect(player.GetSource_Buff(buffIndex), player.Center, Vector2.One, ModContent.ProjectileType<TerraFallTerraprisma>(), 1, 1f, Main.myPlayer);
                 }
             }
         }

@@ -1155,8 +1155,7 @@ namespace tsorcRevamp.NPCs
                 {
                     if (Main.myPlayer == projectileOwner.whoAmI)
                     {
-                        Projectile DarkHarvestProj = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), npc.Center, Vector2.Zero, ProjectileID.ScytheWhipProj, (int)(10f * SummonTagDamageMultiplier), 0f, projectile.owner);
-                        DarkHarvestProj.localNPCImmunity[npc.whoAmI] = -1;
+                        Projectile DarkHarvestProj = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), npc.Center, Vector2.Zero, ProjectileID.ScytheWhipProj, (int)(20f * SummonTagDamageMultiplier), 0f, projectile.owner, 1f, npc.whoAmI);
                     }
                     Projectile.EmitBlackLightningParticles(npc);
                 }
@@ -1781,7 +1780,7 @@ namespace tsorcRevamp.NPCs
 
             if (CCShocked)
             {
-                int DoTPerS = 20;
+                int DoTPerS = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(100);
                 if (npc.lifeRegen > 0)
                 {
                     npc.lifeRegen = 0;

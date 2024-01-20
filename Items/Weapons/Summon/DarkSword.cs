@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         public int SwingSoundStyle = 0;
         public float SoundVolume = 1f;
         public const float DebuffDuration = 8;
-        public const float SlotsRequired = 1.5f;
+        public const float SlotsRequired = 2f;
         public const int BaseCritChance = 6;
         public override void SetStaticDefaults()
         {

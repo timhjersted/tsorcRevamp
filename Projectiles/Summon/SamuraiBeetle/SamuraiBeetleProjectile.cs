@@ -1259,7 +1259,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
             }
             if (IsSlashing && !SlashHit && ActualTarget == target)
             {
-                Vector2 LightningPosition = target.Center + new Vector2(0, -800);
+                Vector2 LightningPosition = target.Center + new Vector2(0, -850);
                 SlashHit = true;
                 if (Main.myPlayer == Projectile.owner)
                 {
@@ -1275,6 +1275,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
             {
                 Projectile Trail = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Position, Projectile.velocity, ModContent.ProjectileType<SamuraiBeetleTrail>(), 0, 0, Projectile.owner, Projectile.whoAmI);
                 Projectile.ai[2] = Trail.whoAmI;
+                Projectile.netUpdate = true;
             }
         }
         private void KillTrail()
