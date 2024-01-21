@@ -316,5 +316,10 @@ namespace tsorcRevamp.Projectiles.Summon
             // Some visuals here
             Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 0.78f);
         }
+        public override bool PreDraw(ref Color lightColor)
+        {
+            lightColor = new Color(1, 1, 1, 185);
+            return base.PreDraw(ref lightColor);
+        }
     }
 }

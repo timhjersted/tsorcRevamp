@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Steamworks;
-using System.CodeDom;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
@@ -9,15 +7,13 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Melee;
-using tsorcRevamp.Buffs.Weapons.Melee;
 using tsorcRevamp.Projectiles.Melee.Runeterra.WorldEnder;
-using tsorcRevamp.Projectiles.Melee.Swords;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
 {
-    public class WorldEnderItem : ModItem 
-    { 
+    public class WorldEnderItem : ModItem
+    {
         public const float TimeWindow = 3;
         public const float FirstSwingCooldown = 4;
         public const float SecondSwingCooldown = 9;

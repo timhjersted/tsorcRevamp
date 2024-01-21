@@ -29,7 +29,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Magic
                 player.immune = true;
                 if (Main.GameUpdateCount % 3 == 0 && Main.myPlayer == player.whoAmI)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.One, ModContent.ProjectileType<OrbOfSpiritualityFlameNoMana>(), player.HeldItem.damage, player.HeldItem.knockBack, player.whoAmI);
+                    Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, Vector2.One, ModContent.ProjectileType<FlameOrbOfSpirituality>(), player.HeldItem.damage, player.HeldItem.knockBack, player.whoAmI, 1);
                 }
             }
             if (player.ownedProjectileCounts[ModContent.ProjectileType<SpiritRushVisual>()] == 0 && Main.myPlayer == player.whoAmI)

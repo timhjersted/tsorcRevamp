@@ -12,14 +12,14 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     public class TerraFallItem : ModItem
     {
         public const int BaseDamage = 115;
-        public const int MaxStacks = 5; //must be adjusted manually in the whip projectile
-        public static float MinSummonTagDamage = 5;
-        public static float MaxSummonTagDamage = MinSummonTagDamage * MaxStacks;
-        public static float MinSummonTagCrit = 2;
-        public static float MaxSummonTagCrit = MinSummonTagCrit * MaxStacks;
-        public static float MinSummonTagAttackSpeed = 7;
-        public static float MaxSummonTagAttackSpeed = MinSummonTagAttackSpeed * MaxStacks;
-        public static float CritDamage = 33;
+        public const int MaxStacks = 5;
+        public const float MinSummonTagDamage = 5;
+        public const float MaxSummonTagDamage = MinSummonTagDamage * MaxStacks;
+        public const float MinSummonTagCrit = 2;
+        public const float MaxSummonTagCrit = MinSummonTagCrit * MaxStacks;
+        public const float MinSummonTagAttackSpeed = 7;
+        public const float MaxSummonTagAttackSpeed = MinSummonTagAttackSpeed * MaxStacks;
+        public const float CritDamage = 33;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MinSummonTagDamage, MaxSummonTagDamage, MinSummonTagCrit, MaxSummonTagCrit, MinSummonTagAttackSpeed, MaxSummonTagAttackSpeed, SearingLash.CritMult, CritDamage);
         public override void SetStaticDefaults()
         {

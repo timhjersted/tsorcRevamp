@@ -2,7 +2,6 @@
 using System;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Core.ItemComponents;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities;
 

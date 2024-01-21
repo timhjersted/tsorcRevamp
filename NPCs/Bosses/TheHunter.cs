@@ -210,7 +210,7 @@ namespace tsorcRevamp.NPCs.Bosses
                             {
                                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.GlowingEnergy>(), 0, 0, Main.myPlayer, NPC.whoAmI, UsefulFunctions.ColorToFloat(Color.OrangeRed));
                             }
-                        }                           
+                        }
                     }
 
                     //Pause the AttackTimer at 300 until the breath attack is over
@@ -313,11 +313,11 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     //Pause the AttackTimer at 848 until the breath attack is over
                     //Once the breath timer hits 0, increment AttackTimer to move on to the next attack phase
-                    if(breathTimer > 0)
+                    if (breathTimer > 0)
                     {
                         AttackPhaseTimer = 848;
                         breathTimer--;
-                        if(breathTimer == 0)
+                        if (breathTimer == 0)
                         {
                             AttackPhaseTimer++;
                         }
@@ -332,7 +332,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 131, Main.rand.Next(-2, 2), Main.rand.Next(-20, 2), 200, default, 1f);
                         Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 5);
                     }
-                    
+
 
                     //Slow NPC and fire breath projectiles
                     if (breathTimer < breathTimerCap)
@@ -674,7 +674,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheHunter_Gore_1").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheHunter_Gore_2").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheHunter_Gore_3").Type, 1f);                
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("TheHunter_Gore_3").Type, 1f);
             }
 
             for (int i = 0; i < 100; i++)

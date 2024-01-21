@@ -546,7 +546,7 @@ namespace tsorcRevamp
 
                         if (!other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Player.Center, new Vector2(200, 200))))
                         {
-                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), Items.Accessories.Expert.MythrilBulwark.VulnerabilityDuration * 60);
+                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
                         }
                     }
                 }
@@ -558,20 +558,20 @@ namespace tsorcRevamp
 
                         if (!other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Player.Center, new Vector2(200, 200))))
                         {
-                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), Items.Accessories.Expert.MythrilBulwark.VulnerabilityDuration * 60);
-                            other.AddBuff(BuffID.Frostburn2, Items.Accessories.Expert.MythrilBulwark.VulnerabilityDuration * 60);
+                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
+                            other.AddBuff(BuffID.Frostburn2, Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
 
                             if (Main.rand.NextBool(3))
                             {
-                                other.AddBuff(BuffID.Confused, Items.Accessories.Expert.MythrilBulwark.VulnerabilityDuration * 60);
+                                other.AddBuff(BuffID.Confused, Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
                             }
                             if (Main.rand.NextBool(3))
                             {
-                                other.AddBuff(BuffID.Bleeding, Items.Accessories.Expert.MythrilBulwark.VulnerabilityDuration * 60);
+                                other.AddBuff(BuffID.Bleeding, Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
                             }
                             if (Main.rand.NextBool(3))
                             {
-                                other.AddBuff(BuffID.Poisoned, Items.Accessories.Expert.MythrilBulwark.VulnerabilityDuration * 60);
+                                other.AddBuff(BuffID.Poisoned, Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
                             }
                         }
                     }

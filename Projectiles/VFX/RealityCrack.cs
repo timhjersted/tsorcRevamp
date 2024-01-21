@@ -252,7 +252,7 @@ namespace tsorcRevamp.Projectiles.VFX
         public float randomness = 50;
         //public float initialAngleLimit = MathHelper.ToRadians(75); //Can diverge up to 75 degrees from 
         private void CreateLightningSegments()
-        {            
+        {
             branches = new List<List<Vector2>>();
             branchAngles = new List<List<float>>();
             branchLengths = new List<List<float>>();
@@ -284,7 +284,7 @@ namespace tsorcRevamp.Projectiles.VFX
                         }
                     }
                 }
-            }            
+            }
         }
 
         public Tuple<List<Vector2>, List<float>, List<float>> GenerateLightningLine(Vector2 initialPoint, float initialAngle, int maxLength, bool branch)

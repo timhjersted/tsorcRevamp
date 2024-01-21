@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Weapons.Melee.Spears;
 
 //using tsorcRevamp.Dusts;
 

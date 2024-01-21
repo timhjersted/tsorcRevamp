@@ -1,6 +1,6 @@
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Accessories.Expert;
+using tsorcRevamp.Items.Accessories.Damage;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {

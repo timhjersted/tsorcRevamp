@@ -8,6 +8,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -929,7 +930,7 @@ namespace tsorcRevamp.NPCs.Enemies
             hmCondition.OnSuccess(ItemDropRule.Common(ItemID.SoulofLight));
             npcLoot.Add(hmCondition);
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Items.Potions.RadiantLifegem>(), 4, 1, 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.SpikedIronShield>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SpikedIronShield>(), 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.LostUndeadSoul>(), 5));
             npcLoot.Add(ItemDropRule.Common(ItemID.RagePotion, 13));
             npcLoot.Add(ItemDropRule.Common(ItemID.WrathPotion, 13));

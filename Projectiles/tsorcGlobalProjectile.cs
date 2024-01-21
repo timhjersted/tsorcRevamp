@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -19,7 +18,6 @@ using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles.Enemy.Golem;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Projectiles.Ranged;
-using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Projectiles
@@ -110,7 +108,7 @@ namespace tsorcRevamp.Projectiles
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = 1f }, player.Center);
                 }
             }
-            if (projectile.type == ProjectileID.Fireball && projectile.ai[2] == 0)
+            if (projectile.type == ProjectileID.Fireball && NPC.AnyNPCs(NPCID.Golem))
             {
                 int extraUpdates = 2;
                 projectile.extraUpdates = extraUpdates;
@@ -513,7 +511,7 @@ namespace tsorcRevamp.Projectiles
         {
             return AccuracySpecialCaseList.Contains(projectile.type) || (projectile.type == ProjectileID.Bone && projectile.ai[2] == 1) || projectile.aiStyle == ProjAIStyleID.SmallFlying;
         }
-        
+
 
         //This loads the list automatically the first time someone tries to access it
         //It works by checking if the list is null, loading it if it is, then returning it        
@@ -521,7 +519,7 @@ namespace tsorcRevamp.Projectiles
         {
             get
             {
-                if(AccuracySpecialCases == null)
+                if (AccuracySpecialCases == null)
                 {
                     PopulateAccuracySpecialCases();
                 }
@@ -539,14 +537,14 @@ namespace tsorcRevamp.Projectiles
             AccuracySpecialCases = new List<int>()
             {
                ModContent.ProjectileType<ElfinArrow>(), ModContent.ProjectileType<ToxicCatExplosion>(), ModContent.ProjectileType<VirulentCatExplosion>(), ModContent.ProjectileType<BiohazardExplosion>(),
-               ModContent.ProjectileType<KrakenTsunamiShark>(), ProjectileID.CrystalShard, ModContent.ProjectileType<ShulletBellDark>(),  ModContent.ProjectileType<ShulletBellLight>(), 
+               ModContent.ProjectileType<KrakenTsunamiShark>(), ProjectileID.CrystalShard, ModContent.ProjectileType<ShulletBellDark>(),  ModContent.ProjectileType<ShulletBellLight>(),
                 ProjectileID.ChlorophyteBullet, ProjectileID.ChlorophyteArrow, ProjectileID.HallowStar
             };
         }
 
         public static List<int> AccuracySpecialCases;
 
-    public override void OnHitPlayer(Projectile projectile, Player target, Player.HurtInfo info)
+        public override void OnHitPlayer(Projectile projectile, Player target, Player.HurtInfo info)
         {
             if (projectile.type == ProjectileID.EyeLaser && projectile.ai[0] == 1)
             {

@@ -322,7 +322,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if (EnrageTimer != 0)
             {
                 opacity = 1;
-            }            
+            }
 
             hunterEffect.Parameters["opacity"].SetValue(opacity);
             hunterEffect.CurrentTechnique.Passes[0].Apply();

@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Materials;
@@ -12,12 +13,15 @@ namespace tsorcRevamp.Items.Weapons.Summon
 {
     public class TetsujinRemote : ModItem
     {
+        public const int MinionSlots = 2;
+        public const float SummonTagDmgMult = 75f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagDmgMult);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 2;
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = MinionSlots;
         }
         public override void SetDefaults()
         {

@@ -1,17 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
-using Steamworks;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra.Melee;
-using tsorcRevamp.Buffs.Weapons.Melee;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Projectiles.Melee.Runeterra.WorldEnder;
-using tsorcRevamp.Projectiles.Melee.Swords;
 using tsorcRevamp.Projectiles.Summon;
 
 namespace tsorcRevamp.Items.Weapons.Summon
@@ -60,7 +55,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         }
         public override bool AltFunctionUse(Player player)
         {
-            if (Main.mouseRight && !Main.mouseLeft)
+            if (!Main.mouseLeft)
             {
                 return true;
             }

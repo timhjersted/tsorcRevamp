@@ -1,9 +1,9 @@
 ﻿using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
-using tsorcRevamp.Projectiles.Melee.Spears;
 using Terraria.Localization;
+using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
@@ -50,8 +50,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.ObsidianSwordfish);
-            recipe.AddIngredient(ItemID.SoulofFlight, 5);
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
+            recipe2.AddIngredient(ItemID.SoulofFlight, 5);
+            recipe2.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
             recipe2.AddTile(TileID.DemonAltar);
 

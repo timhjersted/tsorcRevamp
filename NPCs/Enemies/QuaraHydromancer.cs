@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 1500; NPC.defense = 50; NPC.value = 3600; bubbleDamage = 55; }
 
             UsefulFunctions.AddAttack(NPC, 80, ModContent.ProjectileType<Projectiles.Enemy.Bubble>(), bubbleDamage, 6, SoundID.Item87, 0);
-             UsefulFunctions.AddAttack(NPC, 300, ModContent.ProjectileType<Projectiles.Enemy.InkGeyser>(), bubbleDamage, 0, condition: (NPC npc) => { return tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WaterFiendKraken>())) && Main.netMode != NetmodeID.MultiplayerClient; });
+            UsefulFunctions.AddAttack(NPC, 300, ModContent.ProjectileType<Projectiles.Enemy.InkGeyser>(), bubbleDamage, 0, condition: (NPC npc) => { return tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WaterFiendKraken>())) && Main.netMode != NetmodeID.MultiplayerClient; });
         }
 
         #region Spawn

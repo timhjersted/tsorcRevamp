@@ -168,14 +168,14 @@ namespace tsorcRevamp.Projectiles.VFX
         public int RelativeToNPC = -1;
 
         public Vector2 RelativeCenter
-        {            
+        {
             get
             {
                 if (ScreenSpace)
                 {
                     return HostEntity.Center - Main.screenPosition;
                 }
-                if(RelativeToNPC > -1)
+                if (RelativeToNPC > -1)
                 {
                     return HostEntity.Center - Main.npc[RelativeToNPC].Center;
                 }
@@ -545,7 +545,7 @@ namespace tsorcRevamp.Projectiles.VFX
             {
                 offset = Vector2.Zero;
             }
-            if(RelativeToNPC > -1)
+            if (RelativeToNPC > -1)
             {
                 offset += Main.npc[RelativeToNPC].Center;
             }

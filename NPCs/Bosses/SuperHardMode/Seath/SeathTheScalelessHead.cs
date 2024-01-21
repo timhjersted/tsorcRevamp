@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
-using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
 
@@ -497,7 +497,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SeathBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 10, 15 ));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 10, 15));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BequeathedSoul>(), 1, 1, 2));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BlueTearstoneRing>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));

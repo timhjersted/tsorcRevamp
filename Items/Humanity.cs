@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items
             return true;
         }
 
-        
+
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             Player player = Main.LocalPlayer;

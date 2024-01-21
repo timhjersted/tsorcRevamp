@@ -6,7 +6,6 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
-using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
@@ -58,7 +57,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
             {
                 SoundCount++;
                 ThunderLoopID = SoundEngine.PlaySound(ThunderLoopStyle);
-            } 
+            }
             else if (SoundEngine.TryGetActiveSound(ThunderLoopID, out var activeSound) && !SoundPlayed && Projectile.timeLeft == 121)
             {
                 activeSound.Stop();

@@ -6,7 +6,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.NPCs.Enemies;
@@ -1075,7 +1075,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
                 if (phaseTransitionTimeRemaining == phaseTransitionDuration - 240 && Main.netMode != NetmodeID.Server)
                 {
-                    Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<Items.Accessories.Defensive.RingOfFavorAndProtection>(), 1, false, -1);
+                    Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<RingOfFavorAndProtection>(), 1, false, -1);
                 }
 
                 if (phaseTransitionTimeRemaining < phaseTransitionDuration - 300 && phaseTransitionTimeRemaining > phaseTransitionDuration - 1000)

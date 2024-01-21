@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Utilities;
 

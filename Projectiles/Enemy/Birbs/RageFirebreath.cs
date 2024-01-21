@@ -47,7 +47,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
                 hostIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.TheRage>());
                 Projectile.rotation = Projectile.velocity.ToRotation();
                 Projectile.velocity = Vector2.Zero;
-                if(Main.netMode != NetmodeID.MultiplayerClient)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 400, 30);
                 }

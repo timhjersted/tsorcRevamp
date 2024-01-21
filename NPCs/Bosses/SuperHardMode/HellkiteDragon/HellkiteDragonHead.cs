@@ -7,7 +7,6 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
-using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.Utilities;
 

@@ -18,7 +18,7 @@ using tsorcRevamp.Buffs.Weapons;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Items;
-using tsorcRevamp.Items.Accessories.Expert;
+using tsorcRevamp.Items.Accessories.Damage;
 using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Items.ItemCrates;
 using tsorcRevamp.Items.Materials;
@@ -31,12 +31,11 @@ using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Items.Weapons.Throwing;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
-using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Magic.Runeterra;
 using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.Projectiles.Summon.Whips;
 using tsorcRevamp.Projectiles.Summon.Whips.EnchantedWhip;
 using tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash;
+using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs
@@ -55,6 +54,7 @@ namespace tsorcRevamp.NPCs
 
         public float SummonTagFlatDamage;
         public float BaseSummonTagCriticalStrikeChance;
+        public float SummonTagCriticalStrikeChanceMultiplier;
         public float SummonTagCriticalStrikeChance;
         public float SummonTagScalingDamage;
         public float SummonTagArmorPenetration;
@@ -261,10 +261,6 @@ namespace tsorcRevamp.NPCs
             Electrified = false;
             Irradiated = false;
             IrradiatedByShroom = false;
-            SummonTagFlatDamage = 0f;
-            BaseSummonTagCriticalStrikeChance = 4f;
-            SummonTagScalingDamage = 0f;
-            SummonTagArmorPenetration = 0f;
             markedByCrystalNunchaku = false;
             markedByDetonationSignal = false;
             markedByDominatrix = false;
@@ -286,7 +282,6 @@ namespace tsorcRevamp.NPCs
             markedByMorningStar = false;
             markedByDarkHarvest = false;
             markedByKaleidoscope = false;
-            CrystalNunchakuScalingDamage = 0f;
             Sundered = false;
             Scorched = false;
             Shocked = false;
@@ -650,18 +645,6 @@ namespace tsorcRevamp.NPCs
         public override void OnKill(NPC npc)
         {
             Player LocalPlayer = Main.LocalPlayer;
-            if (npc.active && !npc.friendly && LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfDeception>() && Main.rand.NextBool((int)(100f / OrbOfDeception.EssenceThiefOnKillChance)))
-            {
-                Projectile.NewProjectileDirect(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ModContent.ProjectileType<EssenceThiefDelivery>(), 0, 0, LocalPlayer.whoAmI, 0);
-            }
-            else if (npc.active && !npc.friendly && LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfFlame>() && Main.rand.NextBool((int)(100f / OrbOfDeception.EssenceThiefOnKillChance)))
-            {
-                Projectile.NewProjectileDirect(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ModContent.ProjectileType<EssenceThiefDelivery>(), 0, 0, LocalPlayer.whoAmI, 1);
-            }
-            else if (npc.active && !npc.friendly && LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>() && Main.rand.NextBool((int)(100f / OrbOfDeception.EssenceThiefOnKillChance)))
-            {
-                Projectile.NewProjectileDirect(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ModContent.ProjectileType<EssenceThiefDelivery>(), 0, 0, LocalPlayer.whoAmI, 2);
-            }
 
             if (npc.type == NPCID.Golem && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
@@ -953,6 +936,12 @@ namespace tsorcRevamp.NPCs
             Player projectileOwner = Main.player[projectile.owner];
             var modPlayerProjectileOwner = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
             float SummonTagDamageMultiplier = ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type];
+            SummonTagFlatDamage = 0f;
+            BaseSummonTagCriticalStrikeChance = 4f;
+            SummonTagCriticalStrikeChanceMultiplier = 1f;
+            SummonTagScalingDamage = 0f;
+            SummonTagArmorPenetration = 0f;
+            CrystalNunchakuScalingDamage = 0f;
             #region Individual Whip debuff effects
             #region Modded Whips
             //if(markedByCrystalNunchaku) only has a special effect
@@ -986,7 +975,10 @@ namespace tsorcRevamp.NPCs
             {
                 SummonTagFlatDamage += Pyromethane.SummonTagDamage;
             }
-            //if (markedBySearingLash) Searing Lash Crit Multiplier needs to be calculated after all the flat tag critical strike chance has been added
+            if (markedBySearingLash)
+            {
+                SummonTagCriticalStrikeChanceMultiplier *= SearingLash.CritMult;
+            }
             if (markedByTerraFall)
             {
                 SummonTagFlatDamage += modPlayerProjectileOwner.TerraFallStacks * TerraFallItem.MinSummonTagDamage;
@@ -1129,10 +1121,6 @@ namespace tsorcRevamp.NPCs
                             }
                     }
                 }
-                if (markedBySearingLash)
-                {
-                    BaseSummonTagCriticalStrikeChance *= SearingLash.CritMult;
-                }
                 #endregion
                 #region Vanilla Whip Special Effects
                 if (markedByFirecracker)
@@ -1171,7 +1159,8 @@ namespace tsorcRevamp.NPCs
                 modifiers.FlatBonusDamage += SummonTagFlatDamage * SummonTagDamageMultiplier * modPlayerProjectileOwner.SummonTagStrength;
                 modifiers.ScalingBonusDamage += SummonTagScalingDamage * SummonTagDamageMultiplier * modPlayerProjectileOwner.SummonTagStrength;
                 modifiers.ArmorPenetration += SummonTagArmorPenetration * modPlayerProjectileOwner.SummonTagStrength;
-                SummonTagCriticalStrikeChance = (BaseSummonTagCriticalStrikeChance * (1f + (projectileOwner.GetTotalCritChance(DamageClass.Summon) / 100f)));
+                SummonTagCriticalStrikeChance = (BaseSummonTagCriticalStrikeChance * (1f + (projectileOwner.GetTotalCritChance(DamageClass.Summon) / 100f)) * SummonTagCriticalStrikeChanceMultiplier);
+
                 int critLevel = (int)(Math.Floor(SummonTagCriticalStrikeChance / 100f));
                 if (Main.rand.Next(1, 101) <= SummonTagCriticalStrikeChance - (100 * critLevel))
                 {
@@ -2613,6 +2602,25 @@ namespace tsorcRevamp.NPCs
                 //Add our scaling
                 npc.lifeMax = (int)(npc.lifeMax * (1f + ((numPlayers - 1f) * .5f)));
                 return;
+            }
+        }
+        public override void HitEffect(NPC npc, NPC.HitInfo hit)
+        {
+            Player LocalPlayer = Main.LocalPlayer;
+            if (npc.active && !npc.friendly && Main.rand.NextBool((int)(100f / OrbOfDeception.EssenceThiefOnKillChance)) && npc.life <= 0)
+            {
+                if (LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfDeception>())
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ModContent.ProjectileType<StackDelivery>(), 0, 0, LocalPlayer.whoAmI, 0, 1);
+                }
+                else if (LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfFlame>())
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ModContent.ProjectileType<StackDelivery>(), 0, 0, LocalPlayer.whoAmI, 1, 1);
+                }
+                else if (LocalPlayer.HeldItem.type == ModContent.ItemType<OrbOfSpirituality>())
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_None(), npc.Center, Vector2.Zero, ModContent.ProjectileType<StackDelivery>(), 0, 0, LocalPlayer.whoAmI, 2, 1);
+                }
             }
         }
 

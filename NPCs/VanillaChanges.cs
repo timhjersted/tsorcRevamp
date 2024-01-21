@@ -1,7 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using rail;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -5664,7 +5662,7 @@ namespace tsorcRevamp.NPCs
             if (npc.type == NPCID.TheDestroyer || npc.type == NPCID.TheDestroyerBody || npc.type == NPCID.TheDestroyerTail) //destroyer sword/item dmg reduction (flat, can't alter item dmg because it's a permanent stat)
             { //could do some trickery with modifydamage in global item but this makes more sense
                 modifiers.FinalDamage *= 0.85f;
-            } 
+            }
             /*if (npc.type == NPCID.GiantWormHead || npc.type == NPCID.GiantWormBody || npc.type == NPCID.GiantWormTail
                 || npc.type == NPCID.DevourerHead || npc.type == NPCID.DevourerBody || npc.type == NPCID.DevourerTail
                 || npc.type == NPCID.TombCrawlerHead || npc.type == NPCID.TombCrawlerBody || npc.type == NPCID.TombCrawlerTail
@@ -5693,7 +5691,7 @@ namespace tsorcRevamp.NPCs
                 if (projectile.IsMinionOrSentryRelated) //destroyer minion dmg reduction (flat, can't alter minion damage because they're mostly permanent projectiles)
                 {
                     modifiers.FinalDamage *= 0.7f;
-                } 
+                }
             }
             /*if ((npc.type == NPCID.GiantWormHead || npc.type == NPCID.GiantWormBody || npc.type == NPCID.GiantWormTail 
                 || npc.type == NPCID.DevourerHead || npc.type == NPCID.DevourerBody || npc.type == NPCID.DevourerTail 
@@ -5716,7 +5714,7 @@ namespace tsorcRevamp.NPCs
                 if (!projectile.IsMinionOrSentryRelated) //destroyer non minion projectile dmg reduction (reduces projectiles dmg on each hit after the first, saved on each projectile individually)
                 {
                     projectile.damage = (int)(projectile.damage * 0.8f);
-                } 
+                }
                 /*for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (Main.npc[i].type == NPCID.TheDestroyer || Main.npc[i].type == NPCID.TheDestroyerBody || Main.npc[i].type == NPCID.TheDestroyerTail)

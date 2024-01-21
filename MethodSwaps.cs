@@ -2230,13 +2230,13 @@ namespace tsorcRevamp
             }
 
             //Do well fed at the very end, so only one gets used
-            if(item.buffType == BuffID.WellFed || item.buffType == BuffID.WellFed2 || item.buffType == BuffID.WellFed3)
+            if (item.buffType == BuffID.WellFed || item.buffType == BuffID.WellFed2 || item.buffType == BuffID.WellFed3)
             {
                 return;
             }
 
             //No healing items via quick buff, those are all the domain of quick heal (both to prevent conflicts and prevent players accidentally locking out their potion sickness with honey)
-            if(item.healLife > 0)
+            if (item.healLife > 0)
             {
                 return;
             }
@@ -2426,7 +2426,7 @@ namespace tsorcRevamp
             for (int i = 0; i < 58; i++)
             {
                 //If the player can't use the item (for whatever reason) skip it
-                if(!ItemLoader.CanUseItem(player.inventory[i], player))
+                if (!ItemLoader.CanUseItem(player.inventory[i], player))
                 {
                     continue;
                 }
@@ -2437,7 +2437,7 @@ namespace tsorcRevamp
                 //Get its well fed level
                 int itemWellFedLevel = GetWellFedLevel(player.inventory[i]);
 
-                if(itemWellFedLevel == 0)
+                if (itemWellFedLevel == 0)
                 {
                     continue;
                 }
@@ -2452,7 +2452,7 @@ namespace tsorcRevamp
                 }
 
                 //If it has a longer timer than the previous best item, make it the new best item
-                if(itemWellFedLevel == bestWellFedLevel && player.inventory[i].buffTime > bestWellFedTime)
+                if (itemWellFedLevel == bestWellFedLevel && player.inventory[i].buffTime > bestWellFedTime)
                 {
                     bestWellFedIndex = i;
                     bestWellFedLevel = itemWellFedLevel;
@@ -2500,9 +2500,9 @@ namespace tsorcRevamp
             }
 
             //Use the best selected well fed item
-            if(bestWellFedIndex != -1)
+            if (bestWellFedIndex != -1)
             {
-                if(!bestWellFedInPotionBag)
+                if (!bestWellFedInPotionBag)
                 {
                     UsePotion(player.inventory[bestWellFedIndex], player);
                 }
@@ -2515,7 +2515,7 @@ namespace tsorcRevamp
 
         public static int GetWellFedLevel(Item item)
         {
-            if(item.buffType == BuffID.WellFed)
+            if (item.buffType == BuffID.WellFed)
             {
                 return 1;
             }
@@ -2603,7 +2603,7 @@ namespace tsorcRevamp
                     buffTime = 3600;
                 }
                 player.AddBuff(buffType, buffTime);
-            }            
+            }
 
             if (ItemLoader.ConsumeItem(item, player) && item.consumable)
                 item.stack--;

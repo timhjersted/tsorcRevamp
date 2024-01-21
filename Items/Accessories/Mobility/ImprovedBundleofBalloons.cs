@@ -4,7 +4,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Accessories.Mobility
 {
@@ -24,28 +23,6 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             Item.value = PriceByRarity.Pink_5;
             Item.rare = ItemRarityID.Pink;
         }
-
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.BundleofBalloons, 1);
-            recipe.AddIngredient(ItemID.AdamantiteBar, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
-
-            Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(ModContent.ItemType<ImprovedBlueBalloon>(), 1);
-            recipe2.AddIngredient(ModContent.ItemType<ImprovedWhiteBalloon>(), 1);
-            recipe2.AddIngredient(ModContent.ItemType<ImprovedYellowBalloon>(), 1);
-            recipe2.AddIngredient(ItemID.AdamantiteBar, 1);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
-            recipe2.AddTile(TileID.DemonAltar);
-
-            recipe2.Register();
-        }
-
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
             RasterizerState OverflowHiddenRasterizerState = new RasterizerState

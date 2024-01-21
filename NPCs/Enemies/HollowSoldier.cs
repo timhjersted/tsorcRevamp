@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Utilities;
 using static tsorcRevamp.SpawnHelper;
 
@@ -838,7 +839,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 30));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.FadingSoul>(), 10));
             //npcLoot.Add(ItemDropRule.Common(ItemID.CobaltShield, 15));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.IronShield>(), 15));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<IronShield>(), 15));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Lifegem>(), 15));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.RadiantLifegem>(), 30));
 

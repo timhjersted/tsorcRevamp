@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Item.rare = ItemRarityID.Expert;
             Item.UseSound = SoundID.Item7;
             Item.shootSpeed = 24f;
-            Item.channel = true;            
+            Item.channel = true;
         }
 
         public override bool CanUseItem(Player player)
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             //This happens constantly if they hold left mouse, as it gets used the instant stamina refills to that level
             int staminaUse = (int)(Item.useAnimation / player.GetAttackSpeed(Item.DamageType));
             staminaUse = (int)tsorcRevampPlayer.ReduceStamina(staminaUse);
-            if(player.altFunctionUse != 2 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < staminaUse * 2)
+            if (player.altFunctionUse != 2 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < staminaUse * 2)
             {
                 return false;
             }

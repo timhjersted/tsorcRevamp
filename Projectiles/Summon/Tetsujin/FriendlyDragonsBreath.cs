@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Summon;
 
 namespace tsorcRevamp.Projectiles.Summon.Tetsujin
 {
@@ -9,6 +10,7 @@ namespace tsorcRevamp.Projectiles.Summon.Tetsujin
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.MinionShot[Projectile.type] = true;
+            ProjectileID.Sets.SummonTagDamageMultiplier[Type] = TetsujinRemote.SummonTagDmgMult / 100f;
         }
 
         public override void SetDefaults()

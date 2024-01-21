@@ -7,6 +7,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Items.Weapons.Summon;
 
 namespace tsorcRevamp.Projectiles.Summon.Tetsujin
 {
@@ -26,6 +27,8 @@ namespace tsorcRevamp.Projectiles.Summon.Tetsujin
 
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; // This is needed so your minion can properly spawn when summoned and replaced when other minions are summoned
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true; // Make the cultist resistant to this projectile, as it's resistant to all homing projectiles.
+
+            ProjectileID.Sets.SummonTagDamageMultiplier[Type] = TetsujinRemote.SummonTagDmgMult / 100f;
         }
 
         public sealed override void SetDefaults()

@@ -2363,7 +2363,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedMagicCritChance}
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.Magic.AtkSpeed@1}, meteorite set bonus
-					{$CommonItemTooltip.LifeThreshold@2}Emergency Shield kicks:
+					{$CommonItemTooltip.LifeThreshold@2}Emergency Shield kicks in:
 					{$CommonItemTooltip.IncreasesDefenseBy@3}
 					'''
 			}
@@ -4875,8 +4875,8 @@ Mods: {
 				Tooltip:
 					'''
 					Charred, ashen bones
-					Cast into the flames of a Bonfire to increase Estus
-					Flask potency, increasing the amount of HP healed
+					Cast into the flames of a Bonfire to increase Restorative
+					Flasks potency, increasing the amount of HP and MP restored
 					'''
 				EstusFlaskPotency: "Estus Flask potency increased! Heal per charge: "
 				CeruleanFlaskPotency: "Cerulean Flask potency increased! Heal per charge: "
@@ -6037,8 +6037,7 @@ Mods: {
 				DisplayName: Biohazard
 				Tooltip:
 					'''
-					The addition of the propulsion field allows detonating shots to pierce twice,
-					and for sticking shots to home in on their target
+					The addition of the propulsion field allows detonating shots to pierce twice
 					Warning - perfectly capable of destroying entire ecosystems
 					'''
 			}
@@ -6483,6 +6482,7 @@ Mods: {
 					'''
 					Summons a glowing Tetsujin to fight for you
 					Orbits an enemy, bombarding them with light and fire
+					{$CommonItemTooltip.Summon.TagDmgMult}
 					'''
 			}
 
@@ -7000,6 +7000,7 @@ Mods: {
 					A full [c/87cefa:Orb] will deal {3}% bonus damage and its heal scales with maximum mana and magic damage
 					'''
 				OrbFilled: Orb filled!
+				StackGained: "{0} / 9"
 			}
 
 			OrbOfFlame: {
@@ -7016,7 +7017,7 @@ Mods: {
 				Details:
 					'''
 					[c/ff7f50:Fireball] deals {4}x damage({$CommonItemTooltip.Cooldown@5}) and {6}% max health damage on-hit, up to {7}
-					[c/ff7f50:Sunder] increases magic damage taken by {8}%
+					[c/ff7f50:Sunder] increases magic damage taken by {8}%({$CommonItemTooltip.SecondDuration@12})
 					[c/87cefa:Homing flames] will prioritize [c/ff7f50:sundered] targets
 					The [c/87cefa:Orb] deals {0}% more damage and {1}% on the way back
 					[c/87cefa:Homing flames restore half of their mana cost on-hit]
@@ -7048,7 +7049,7 @@ Mods: {
 					which will allow you to [c/ff00ff:dash up to 3 times]({$CommonItemTooltip.Cooldown@10})
 					[c/87cefa:Homing flames] [c/ff00ff:spawned by dashing do not restore mana, Special Ability costs {11} mana to cast]
 					[c/ff7f50:Charm] deals {4}x damage({$CommonItemTooltip.Cooldown@5}) and {6}% max health damage on-hit, up to {7}
-					[c/ff7f50:Sunder] increases magic damage taken by {8}%
+					[c/ff7f50:Sunder] increases magic damage taken by {8}%({$CommonItemTooltip.SecondDuration@12})
 					[c/87cefa:Homing flames] will prioritize [c/ff7f50:sundered] targets
 					The [c/87cefa:Orb] deals {0}% more damage and {1}% on the way back
 					[c/87cefa:Homing flames restore half of their mana cost on-hit]
@@ -7136,6 +7137,7 @@ Mods: {
 					The empowered debuff [c/b22222:increases star damage], damage over time and [c/b22222:applies {2}% summon tag critical strike chance]
 					'''
 				MeteorReady: Meteor ready!
+				StackGained: "{0} / 10"
 			}
 
 			SteraksGage: {
@@ -8574,7 +8576,7 @@ Mods: {
 		Projectiles: {
 			BlizzardBlasterShot.DisplayName: Blizzard Blaster Shot
 			AntiMaterialRound.DisplayName: Anti-Material Round
-			APShot.DisplayName: A P Shot
+			APShot.DisplayName: AP Shot
 			ArcheologistWhip.DisplayName: Archeologist Whip
 			ArrowOfBard.DisplayName: Arrow of Bard
 			ArtemisBowHeld.DisplayName: Charged Bow
@@ -8592,7 +8594,7 @@ Mods: {
 			Bolt.DisplayName: Bolt
 			Bolt1Ball.DisplayName: Bolt1 Ball
 			Bolt1Bolt.DisplayName: Bolt1 Bolt
-			Bolt1Revamped.DisplayName: Bolt1 Revamped
+			Bolt1Revamped.DisplayName: Bolt1
 			Bolt2Ball.DisplayName: Bolt2 Ball
 			Bolt2Bolt.DisplayName: Bolt2 Bolt
 			Bolt3Ball.DisplayName: Bolt3 Ball
@@ -8606,7 +8608,7 @@ Mods: {
 			BurningShards.DisplayName: Barrier
 			CernosPrimeHeld.DisplayName: Charged Bow
 			ChaosBall2.DisplayName: Chaos Ball2
-			CMSCrescent.DisplayName: C M S Crescent
+			CMSCrescent.DisplayName: Crescent Moon Sword
 			Coin.DisplayName: Coin
 			Comet.DisplayName: Comet
 			Crescent.DisplayName: Crescent
@@ -8896,18 +8898,6 @@ Mods: {
 			LightOfDawn.DisplayName: Light of Dawn
 			LightrifleFire.DisplayName: Lightrifle Fire
 			RadiantGlimmer.DisplayName: Radiant Glimmer
-			OrbOfDeceptionFlame.DisplayName: Orb Of Deception Flame
-			OrbOfDeceptionOrb.DisplayName: Orb Of Deception Orb
-			OrbOfDeceptionOrbFilled.DisplayName: Orb Of Deception Orb Filled
-			OrbOfFlameFireball.DisplayName: Orb Of Flame Fireball
-			OrbOfFlameFlame.DisplayName: Orb Of Flame Flame
-			OrbOfFlameOrb.DisplayName: Orb Of Flame Orb
-			OrbOfFlameOrbFilled.DisplayName: Orb Of Flame Orb Filled
-			OrbOfSpiritualityCharm.DisplayName: Orb Of Spirituality Charm
-			OrbOfSpiritualityFlame.DisplayName: Orb Of Spirituality Flame
-			OrbOfSpiritualityFlameNoMana.DisplayName: Orb Of Spirituality Flame No Mana
-			OrbOfSpiritualityOrb.DisplayName: Orb Of Spirituality Orb
-			OrbOfSpiritualityOrbFilled.DisplayName: Orb Of Spirituality Orb Filled
 			ShatteredPrism.DisplayName: Shattered Prism
 			MagicalBall.DisplayName: Magical Ball
 			MagicShield.DisplayName: Magic Shield
@@ -9012,7 +9002,7 @@ Mods: {
 			InterstellarVesselShip.DisplayName: Interstellar Vessel Ship
 			ScorchingPointFireball.DisplayName: Scorching Point Fireball
 			SamuraiBeetle.DisplayName: Samurai Beetle
-			GaleForceProjectile.DisplayName: Gale Force
+			GaleForceProjectile.DisplayName: Galeforce
 			ShatteredReflectionProjectile.DisplayName: Shattered Reflection
 			BarrowWightMinion.DisplayName: Barrow Wight Minion
 			NullSpriteBeam.DisplayName: Null Beam
@@ -9066,13 +9056,7 @@ Mods: {
 			SRBlackFire.DisplayName: Black Fire
 			FriendlyRetLaser.DisplayName: Laser
 			UrumiProjectile.DisplayName: Urumi
-			ScorchingPointAura.DisplayName: Scorching Point Aura
-			CenterOfTheUniverseAura.DisplayName: Center Of The Universe Aura
-			InterstellarVesselAura.DisplayName: Interstellar Vessel Aura
-			OrbOfDeceptionOrbIdle.DisplayName: Orb Of Deception Orb Idle
-			OrbOfFlameOrbIdle.DisplayName: Orb Of Flame Orb Idle
-			OrbOfSpiritualityOrbIdle.DisplayName: Orb Of Spirituality Orb Idle
-			PortlyPlateRollHitbox.DisplayName: Portly Plate Roll Hitbox
+			PortlyPlateRollHitbox.DisplayName: Portly Plate Roll
 			PrimeBeam.DisplayName: Prime Beam
 			PrimeDeathLaser.DisplayName: Prime Death Laser
 			PrimeRapidBeam.DisplayName: Prime Rapid Beam
@@ -9080,10 +9064,10 @@ Mods: {
 			IonBomb.DisplayName: Ion Bomb
 			MoltenWeld.DisplayName: Molten Weld
 			SyntheticFirestorm.DisplayName: Synthetic Firestorm
-			PlasmaWhirlwindDashHitbox.DisplayName: Plasma Whirlwind Dash Hitbox
+			PlasmaWhirlwindDashHitbox.DisplayName: Plasma Whirlwind
 			PlasmaWhirlwindSpin.DisplayName: Plasma Whirlwind Spin
 			NightbringerSpin.DisplayName: Nightbringer Spin
-			NightbringerDashHitbox.DisplayName: Nightbringer Dash Hitbox
+			NightbringerDashHitbox.DisplayName: Nightbringer
 			NightbringerFirewall.DisplayName: Nightbringer Firewall
 			HomingMissileTrail.DisplayName: Homing Missile Trail
 			ExplosionFlash.DisplayName: Explosion Flash
@@ -9093,7 +9077,6 @@ Mods: {
 			LanceBeamLaser.DisplayName: Lance Beam Laser
 			MeltdownFirestorm.DisplayName: Meltdown Firestorm
 			ShrapnelSaw.DisplayName: Shrapnel Saw
-			EssenceThiefDelivery.DisplayName: Essence Thief Delivery
 			SpiritRushVisual.DisplayName: Spirit Rush Visual
 			DefenseDroneFire.DisplayName: Defense Drone Fire
 			PhotonicDownpourDefenseDrone.DisplayName: Photonic Downpour Defense Drone
@@ -9101,13 +9084,13 @@ Mods: {
 			TelegraphFlash.DisplayName: Telegraph Flash
 			TeleportTelegraph.DisplayName: Teleport Telegraph
 			BossSelectVisuals.DisplayName: Boss Select Visuals
-			OilDroplet1.DisplayName: Oil Droplet1
-			OilDroplet2.DisplayName: Oil Droplet2
+			OilDroplet1.DisplayName: Oil Droplet
+			OilDroplet2.DisplayName: Oil Droplet
 			OilPotProjectile.DisplayName: Oil Pot
-			OilPotShard1.DisplayName: Oil Pot Shard1
-			OilPotShard2.DisplayName: Oil Pot Shard2
-			OilPotShard3.DisplayName: Oil Pot Shard3
-			OilPotShard4.DisplayName: Oil Pot Shard4
+			OilPotShard1.DisplayName: Oil Pot Shard
+			OilPotShard2.DisplayName: Oil Pot Shard
+			OilPotShard3.DisplayName: Oil Pot Shard
+			OilPotShard4.DisplayName: Oil Pot Shard
 			DroidBomb.DisplayName: Droid Bomb
 			EnemyForgottenPearlSpearProj.DisplayName: Enemy Forgotten Pearl Spear
 			BlackThrowingSpear.DisplayName: Black Throwing Spear
@@ -9127,7 +9110,6 @@ Mods: {
 			RageFirebreath.DisplayName: Rage Firebreath
 			LionheartGunshot.DisplayName: Lionheart Gunshot
 			LeonhardCMSCrescent.DisplayName: Leonhard C M S Crescent
-			CotUDragon.DisplayName: Cot U Dragon
 			BossDeath.DisplayName: Boss Death
 			EnergyGathering.DisplayName: Energy Gathering
 			GlowingEnergy.DisplayName: Glowing Energy
@@ -9135,11 +9117,11 @@ Mods: {
 			SorrowFrozenBreath.DisplayName: Sorrow Frozen Breath
 			HunterToxicBreath.DisplayName: Hunter Toxic Breath
 			AshenLord.DisplayName: Ashen Lord
-			ASOL13.DisplayName: A S O L13
+			ASOL13.DisplayName: ASOL13
 			StarForger.DisplayName: Star Forger
-			CursedTormentorProjectile.DisplayName: Cursed Tormentor Projectile
-			GaleforceProjectile.DisplayName: Galeforce Projectile
-			PyromethaneProjectile.DisplayName: Pyromethane Projectile
+			CursedTormentorProjectile.DisplayName: Cursed Tormentor
+			GaleforceProjectile.DisplayName: Galeforce
+			PyromethaneProjectile.DisplayName: Pyromethane
 			CaiusPyreFireball.DisplayName: Caius Pyre Fireball
 			CaiusPyreRift.DisplayName: Caius Pyre Rift
 			GaleforceArrow.DisplayName: Galeforce Arrow
@@ -9147,41 +9129,52 @@ Mods: {
 			RuneterraKatanaTornado.DisplayName: Runeterra Katana Tornado
 			SpiritAshKnightMinion.DisplayName: Spirit Ash Knight
 			KrakenTsunami.DisplayName: Kraken Tsunami
-			TyphoonProjectile.DisplayName: Typhoon Projectile
+			TyphoonProjectile.DisplayName: Typhoon
 			TyphoonArrow.DisplayName: Typhoon Arrow
 			RustedChainProjectile.DisplayName: Rusted Chain Projectile
 			KrakenTsunamiShark.DisplayName: Kraken Tsunami Shark
-			CenterOfTheUniverseCometZone.DisplayName: Center Of The Universe Comet Zone
-			CenterOfTheUniverseFallingComet.DisplayName: Center Of The Universe Falling Comet
-			CenterOfTheUniverseShockwave.DisplayName: Center Of The Universe Shockwave
-			GrandCometChunk01.DisplayName: Grand Comet Chunk01
-			GrandCometChunk02.DisplayName: Grand Comet Chunk02
-			GrandCometChunk03.DisplayName: Grand Comet Chunk03
-			GrandCometChunk04.DisplayName: Grand Comet Chunk04
-			GrandCometChunk05.DisplayName: Grand Comet Chunk05
-			GrandCometChunk06.DisplayName: Grand Comet Chunk06
-			GrandCometChunk07.DisplayName: Grand Comet Chunk07
-			GrandCometChunk08.DisplayName: Grand Comet Chunk08
-			GrandCometChunk09.DisplayName: Grand Comet Chunk09
-			GrandCometChunk10.DisplayName: Grand Comet Chunk10
-			GrandCometChunk11.DisplayName: Grand Comet Chunk11
-			GrandCometProjectile.DisplayName: Grand Comet Projectile
-			GrandCometShockwaveTrail.DisplayName: Grand Comet Shockwave Trail
-			GrandCometZone.DisplayName: Grand Comet Zone
+			CenterOfTheUniverseCometZone.DisplayName: Grand Comet
+			CenterOfTheUniverseFallingComet.DisplayName: Grand Comet
+			CenterOfTheUniverseShockwave.DisplayName: Center Of The Universe
+			GrandCometChunk01.DisplayName: Grand Comet Chunk
+			GrandCometChunk02.DisplayName: Grand Comet Chunk
+			GrandCometChunk03.DisplayName: Grand Comet Chunk
+			GrandCometChunk04.DisplayName: Grand Comet Chunk
+			GrandCometChunk05.DisplayName: Grand Comet Chunk
+			GrandCometChunk06.DisplayName: Grand Comet Chunk
+			GrandCometChunk07.DisplayName: Grand Comet Chunk
+			GrandCometChunk08.DisplayName: Grand Comet Chunk
+			GrandCometChunk09.DisplayName: Grand Comet Chunk
+			GrandCometChunk10.DisplayName: Grand Comet Chunk
+			GrandCometChunk11.DisplayName: Grand Comet Chunk1
+			GrandCometProjectile.DisplayName: Grand Comet
+			GrandCometShockwaveTrail.DisplayName: Grand Comet Shockwave
+			GrandCometZone.DisplayName: Grand Comet
 			BlindingPulse.DisplayName: Blinding Pulse
 			GrandCometExplosion.DisplayName: Grand Comet Explosion
-			StardustDelivery.DisplayName: Stardust Delivery
 			FetidExhaustProjectile.DisplayName: Fetid Exhaust Projectile
 			ShatteredMoonlightProjectile.DisplayName: Shattered Moonlight Projectile
 			SmallGolemFireball.DisplayName: Small Golem Fireball
 			TerrorbeakProjectile.DisplayName: Terrorbeak Projectile
-			WorldEnderSwordSwing1.DisplayName: World Ender Sword Swing1
-			WorldEnderSwordSwing2.DisplayName: World Ender Sword Swing2
-			WorldEnderSwordSwing3.DisplayName: World Ender Sword Swing3
-			SamuraiBeetleTrail.DisplayName: Samurai Beetle Trail
+			WorldEnderSwordSwing1.DisplayName: World Ender Sword
+			WorldEnderSwordSwing2.DisplayName: World Ender Sword
+			WorldEnderSwordSwing3.DisplayName: World Ender Sword
+			SamuraiBeetleTrail.DisplayName: Samurai Beetle
 			SamuraiBeetleLightning.DisplayName: Samurai Beetle Lightning
-			SamuraiBeetleProjectile.DisplayName: Samurai Beetle Projectile
-			SamuraiBeetleCloud.DisplayName: Samurai Beetle Cloud
+			SamuraiBeetleProjectile.DisplayName: Samurai Beetle
+			SamuraiBeetleCloud.DisplayName: Samurai Beetle
+			HeldOrbOfDeception.DisplayName: Orb Of Deception
+			HeldOrbOfFlame.DisplayName: Orb Of Flame
+			HeldOrbOfSpirituality.DisplayName: Orb Of Spirituality
+			ThrownOrbOfDeception.DisplayName: Orb Of Deception
+			ThrownOrbOfFlame.DisplayName: Orb Of Flame
+			ThrownOrbOfSpirituality.DisplayName: Orb Of Spirituality
+			StackDelivery.DisplayName: Stack Delivery
+			FlameOrbOfDeception.DisplayName: Orb Of Deception
+			FlameOrbOfFlame.DisplayName: Orb Of Flame
+			FlameOrbOfSpirituality.DisplayName: Orb Of Spirituality
+			CharmOrbOfFlame.DisplayName: Orb Of Flame
+			CharmOrbOfSpirituality.DisplayName: Orb Of Spirituality
 		}
 
 		NPCs: {

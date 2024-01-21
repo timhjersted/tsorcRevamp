@@ -4,11 +4,8 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.UI;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Weapons.Summon;
-using tsorcRevamp.Projectiles.Summon.Archer;
-using tsorcRevamp.Projectiles.Throwing;
 
 namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
 {
@@ -848,7 +845,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
             Projectile.friendly = foundTarget;
         }
 
- 
+
         public int ThrustProgress = 0;
         public int ThrustStacks = 0;
         public bool IsThrusting = false;
@@ -888,7 +885,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                     Projectile.velocity = Projectile.DirectionTo(CircleVector + targetCenter) * (CircleVector + targetCenter).Distance(Projectile.Center) / 20;
                     Projectile.tileCollide = false;
                     //Dust.NewDust(CircleVector + targetCenter, 10, 10, DustID.Torch);
-                } 
+                }
                 else if (distanceFromTarget <= attackRange)
                 {
                     if (!RandomMovementSet)
@@ -945,7 +942,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
         }
         public float FallTimer = 0;
         public bool ShouldRotate = false;
-        private void Attacking (Vector2 targetCenter, Vector2 SunsetQuasarVel)
+        private void Attacking(Vector2 targetCenter, Vector2 SunsetQuasarVel)
         {
             Vector2 Falling = new Vector2(DashVelocity.X / 15, FallTimer / 8.5f);
             if (IsThrusting)
@@ -953,7 +950,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                 Projectile.tileCollide = false;
                 ThrustProgress++;
                 IsSlashing = false;
-                switch (ThrustProgress) 
+                switch (ThrustProgress)
                 {
                     case 0:
                         {
@@ -972,7 +969,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                             ShouldRotate = true;
                             break;
                         }
-                    case int Preparing  when (Preparing > 1 && Preparing < 45):
+                    case int Preparing when (Preparing > 1 && Preparing < 45):
                         {
                             break;
                         }
@@ -1086,7 +1083,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                             KillTrail();
                             break;
                         }
-                    case >120:
+                    case > 120:
                         {
                             Projectile.velocity = Falling;
                             Projectile.tileCollide = false;
@@ -1236,7 +1233,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                             KillTrail();
                             break;
                         }
-                    case >160:
+                    case > 160:
                         {
                             Projectile.velocity = Falling;
                             Projectile.tileCollide = false;
@@ -1298,6 +1295,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                         KillTrail();
                         ThrustProgress = 0;
                         IsThrusting = false;
+                        ShouldRotate = false;
                     }
                 }
                 if (SlashProgress > 0)
@@ -1308,6 +1306,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                         KillTrail();
                         SlashProgress = 0;
                         IsSlashing = false;
+                        ShouldRotate = false;
                     }
                 }
                 if (IsFlying)

@@ -5,6 +5,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using tsorcRevamp.Buffs;
+using tsorcRevamp.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Throwing;
 
@@ -127,7 +128,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Accessories.Defensive.IronShield>())
+            shop.Add(new Item(ModContent.ItemType<IronShield>())
             {
                 shopCustomPrice = 200,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId

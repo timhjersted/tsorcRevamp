@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Items.Materials;
 using static tsorcRevamp.SpawnHelper;
 
@@ -46,7 +47,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             npcLoot.Add(ItemDropRule.Common(ItemID.Torch, 10, 10, 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Ranged.Thrown.ThrowingSpear>(), 1, 20, 75));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Defensive.IronShield>(), 30));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<IronShield>(), 30));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Spears.OldHalberd>(), 30));
             npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 5));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DeadChicken>(), 10));

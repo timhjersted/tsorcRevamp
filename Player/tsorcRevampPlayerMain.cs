@@ -22,7 +22,7 @@ using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items;
-using tsorcRevamp.Items.Accessories.Expert;
+using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Accessories.Summon;
 using tsorcRevamp.Items.Ammo;
 using tsorcRevamp.Items.Armors;
@@ -303,14 +303,14 @@ namespace tsorcRevamp
                 }
                 if (Player.GetModPlayer<tsorcRevampPlayer>().BarrierRing && !Player.HasBuff(ModContent.BuffType<BarrierCooldown>()))
                 {
-                    Player.AddBuff(ModContent.BuffType<BarrierCooldown>(), Items.Accessories.Defensive.BarrierRing.Cooldown * 60);
-                    Player.SetImmuneTimeForAllTypes((int)(Items.Accessories.Defensive.BarrierRing.ImmuneTimeAfterHit * 60f));
+                    Player.AddBuff(ModContent.BuffType<BarrierCooldown>(), Items.Accessories.Defensive.Rings.BarrierRing.Cooldown * 60);
+                    Player.SetImmuneTimeForAllTypes((int)(Items.Accessories.Defensive.Rings.BarrierRing.ImmuneTimeAfterHit * 60f));
                     return true;
                 }
                 if (DragonStoneImmunity && damageSource.SourcePlayerIndex > -1)
                 {
                     int NT = Main.npc[damageSource.SourceNPCIndex].type;
-                    if (   NT == NPCID.DemonEye
+                    if (NT == NPCID.DemonEye
                         || NT == NPCID.DemonEye2
                         || NT == NPCID.EaterofSouls
                         || NT == NPCID.CursedSkull
@@ -400,7 +400,7 @@ namespace tsorcRevamp
 
         public override void PostHurt(Player.HurtInfo info)
         {
-            if(info.Damage > 1)
+            if (info.Damage > 1)
             {
                 Player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s  
             }
@@ -493,9 +493,9 @@ namespace tsorcRevamp
                     dust.velocity.Y = Main.rand.NextFloat(-4, -0f);
                     dust.velocity.X = Main.rand.NextFloat(5, 1.5f);
                 }
-                Player.statLife = (int)(Player.statLifeMax2 * Items.Accessories.Expert.PhoenixSkull.HealthPercent / 100f);
-                Player.AddBuff(ModContent.BuffType<PhoenixRebirthCooldown>(), Items.Accessories.Expert.PhoenixSkull.Cooldown * 60);
-                Player.AddBuff(ModContent.BuffType<PhoenixRebirthBuff>(), Items.Accessories.Expert.PhoenixSkull.Duration * 60);
+                Player.statLife = (int)(Player.statLifeMax2 * Items.Accessories.Defensive.PhoenixSkull.HealthPercent / 100f);
+                Player.AddBuff(ModContent.BuffType<PhoenixRebirthCooldown>(), Items.Accessories.Defensive.PhoenixSkull.Cooldown * 60);
+                Player.AddBuff(ModContent.BuffType<PhoenixRebirthBuff>(), Items.Accessories.Defensive.PhoenixSkull.Duration * 60);
                 Player.SetImmuneTimeForAllTypes(1 * 60 + 30);
                 return false;
             }
@@ -791,10 +791,10 @@ namespace tsorcRevamp
                     }
                 }
             }
-            if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && (int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f) > 0)
+            if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && (int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f) > 0)
             {
-                Player.HealEffect((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
-                Player.statLife += ((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
+                Player.HealEffect((int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f));
+                Player.statLife += ((int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f));
             }
             if (DemonPower && hit.DamageType == (DamageClass.SummonMeleeSpeed) && hit.Crit && Main.myPlayer == Player.whoAmI)
             {
@@ -860,10 +860,10 @@ namespace tsorcRevamp
             {
                 LichKills++;
             }
-            if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && (int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f) > 0)
+            if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && (int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f) > 0)
             {
-                Player.HealEffect((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
-                Player.statLife += ((int)(Items.Accessories.Expert.PhoenixSkull.LifeSteal * damageDone / 100f));
+                Player.HealEffect((int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f));
+                Player.statLife += ((int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f));
             }
             if (MagmaArmor && target.HasBuff(BuffID.OnFire) || target.HasBuff(BuffID.OnFire3))
             {
@@ -979,11 +979,12 @@ namespace tsorcRevamp
 
         public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Item, consider using ModifyHitNPC instead */
         {
-            int critLevel = (int)(Math.Floor(Player.GetWeaponCrit(Player.HeldItem) / 100f));
             if ((BurningAura || BurningStone) && target.onFire == true)
             {
                 modifiers.TargetDamageMultiplier *= 1.05f;
             }
+
+            int critLevel = (int)(Math.Floor(Player.GetWeaponCrit(Player.HeldItem) / 100f));
             if (critLevel != 0)
             {
                 if (critLevel > 1)
@@ -1003,7 +1004,7 @@ namespace tsorcRevamp
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Projectile, consider using ModifyHitNPC instead */
         {
             Player owner = Main.player[proj.owner];
-            int critLevel = (int)(Math.Floor(proj.CritChance / 100f));
+
             if (modifiers.DamageType == DamageClass.Ranged && owner.GetModPlayer<tsorcRevampPlayer>().InfinityEdge)
             {
                 modifiers.CritDamage += Items.Accessories.Ranged.InfinityEdge.CritDmgIncrease / 100f;
@@ -1022,9 +1023,11 @@ namespace tsorcRevamp
             }
             if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
             {
-                modifiers.TargetDamageMultiplier *= 1f + Items.Accessories.Expert.BurningStone.DamageIncrease / 100f;
+                modifiers.TargetDamageMultiplier *= 1f + Items.Accessories.Damage.BurningStone.DamageIncrease / 100f;
             }
-            if (critLevel != 0)
+
+            int critLevel = (int)(Math.Floor(proj.CritChance / 100f));
+            if (critLevel != 0 && proj.DamageType != DamageClass.Summon && proj.DamageType != DamageClass.SummonMeleeSpeed)
             {
                 if (critLevel > 1)
                 {
@@ -1038,6 +1041,7 @@ namespace tsorcRevamp
                     modifiers.CritDamage *= 2;
                 }
             }
+
         }
 
         public override void ModifyHitByNPC(NPC npc, ref Player.HurtModifiers modifiers)
@@ -1417,11 +1421,11 @@ namespace tsorcRevamp
         {
             if (manaShield == 1)
             {
-                if (Player.statMana >= Items.Accessories.Defensive.ManaShield.manaCost)
+                if (Player.statMana >= Items.Accessories.Defensive.Shields.ManaShield.manaCost)
                 {
-                    Player.statMana -= Items.Accessories.Defensive.ManaShield.manaCost;
-                    Player.manaRegenDelay = Items.Accessories.Defensive.ManaShield.regenDelay * 60;
-                    Player.maxRegenDelay = Items.Accessories.Defensive.ManaShield.regenDelay * 60;
+                    Player.statMana -= Items.Accessories.Defensive.Shields.ManaShield.manaCost;
+                    Player.manaRegenDelay = Items.Accessories.Defensive.Shields.ManaShield.regenDelay * 60;
+                    Player.maxRegenDelay = Items.Accessories.Defensive.Shields.ManaShield.regenDelay * 60;
                 }
             }
             if (manaShield == 2)
@@ -1438,7 +1442,7 @@ namespace tsorcRevamp
             {
                 if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 75)
                 {
-                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= Items.Accessories.Expert.DragonCrestShield.staminaCost;
+                    Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= Items.Accessories.Defensive.Shields.DragonCrestShield.staminaCost;
                     //return;
                 }
             }

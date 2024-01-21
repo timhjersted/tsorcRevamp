@@ -1,7 +1,7 @@
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Localization;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Gold;
         }
 
-        public override void ModifyHitNPC(Player player,NPC target, ref NPC.HitModifiers modifiers)
+        public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
             //50 ArmorPenetration may seem big buff for player, but it actually only increase 25 damage at max
             //may add ArmorPenetration buff to this weapon, but that may be too much for such non-SHM-Boss weapon

@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using tsorcRevamp.Items.Accessories.Defensive;
+using tsorcRevamp.Items.Accessories.Defensive.Rings;
 
 namespace tsorcRevamp
 {
@@ -220,7 +220,7 @@ namespace tsorcRevamp
                 {
                     estusHealthPerTick += (estusHealthGain + estusHealthGainBonus) / estusHealingTimerMax;
 
-                    if (estusHealthPerTick > (int)estusHealthPerTick)
+                    if (estusHealthPerTick >= (int)estusHealthPerTick)
                     {
                         Player.statLife += (int)estusHealthPerTick;
                         estusHealthPerTick -= (int)estusHealthPerTick;

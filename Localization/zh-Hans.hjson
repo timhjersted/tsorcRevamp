@@ -7000,6 +7000,7 @@ Mods: {
 					满堆叠层数的 [c/87cefa:魔法珠] 对敌人额外造成 {3}% 的伤害，同时其治疗量由玩家最大魔力值和魔法伤害决定
 					'''
 				OrbFilled: 堆叠已满！
+				// StackGained: "{0} / 9"
 			}
 
 			OrbOfFlame: {
@@ -7136,6 +7137,7 @@ Mods: {
 					日照减益[c/b22222:增加星芒的伤害]，[c/b22222:施加 {2}% 的召唤标记暴击率]，并对敌人造成持续伤害
 					'''
 				MeteorReady: 彗星就绪！
+				// StackGained: "{0} / 10"
 			}
 
 			SteraksGage: {
@@ -8895,18 +8897,6 @@ Mods: {
 			LightOfDawn.DisplayName: 黎明之光
 			LightrifleFire.DisplayName: 轻步枪弹
 			RadiantGlimmer.DisplayName: 璀璨之光
-			OrbOfDeceptionFlame.DisplayName: 诡谲之珠火焰
-			OrbOfDeceptionOrb.DisplayName: 诡谲之珠
-			OrbOfDeceptionOrbFilled.DisplayName: 充能的诡谲之珠
-			OrbOfFlameFireball.DisplayName: 烈焰之珠火球
-			OrbOfFlameFlame.DisplayName: 烈焰之珠
-			OrbOfFlameOrb.DisplayName: 烈焰之珠
-			OrbOfFlameOrbFilled.DisplayName: 充能的烈焰之珠
-			OrbOfSpiritualityCharm.DisplayName: 灵性之珠爱心
-			OrbOfSpiritualityFlame.DisplayName: 灵性之珠火球
-			OrbOfSpiritualityFlameNoMana.DisplayName: 灵性之珠火焰
-			OrbOfSpiritualityOrb.DisplayName: 灵性之珠
-			OrbOfSpiritualityOrbFilled.DisplayName: 灵性之珠
 			ShatteredPrism.DisplayName: 破碎棱镜
 			MagicalBall.DisplayName: 魔力球
 			MagicShield.DisplayName: 魔力盾
@@ -9065,12 +9055,6 @@ Mods: {
 			SRBlackFire.DisplayName: 黑焱
 			FriendlyRetLaser.DisplayName: 激光
 			UrumiProjectile.DisplayName: 软剑鞭
-			ScorchingPointAura.DisplayName: 焦点灵气
-			CenterOfTheUniverseAura.DisplayName: 宇宙重心光环
-			InterstellarVesselAura.DisplayName: 星际飞船光环
-			OrbOfDeceptionOrbIdle.DisplayName: 诡谲之珠
-			OrbOfFlameOrbIdle.DisplayName: 烈焰之珠
-			OrbOfSpiritualityOrbIdle.DisplayName: 灵性之珠
 			PortlyPlateRollHitbox.DisplayName: 臃肿板甲翻滚
 			PrimeBeam.DisplayName: 旧日机械支配者的光束
 			PrimeDeathLaser.DisplayName: 旧日机械支配者的死亡激光
@@ -9092,7 +9076,6 @@ Mods: {
 			LanceBeamLaser.DisplayName: 激光束长矛
 			MeltdownFirestorm.DisplayName: 熔毁火风暴
 			ShrapnelSaw.DisplayName: 弹片锯
-			EssenceThiefDelivery.DisplayName: 精华窃取
 			SpiritRushVisual.DisplayName: 灵魂冲刺
 			DefenseDroneFire.DisplayName: 守御战机
 			PhotonicDownpourDefenseDrone.DisplayName: 光子守御战机
@@ -9126,7 +9109,6 @@ Mods: {
 			RageFirebreath.DisplayName: 烈火之息
 			LionheartGunshot.DisplayName: 狮心枪射
 			LeonhardCMSCrescent.DisplayName: 李奥纳德残月之光
-			CotUDragon.DisplayName: 铸星龙王
 			BossDeath.DisplayName: Boss死亡特效
 			EnergyGathering.DisplayName: 能量聚合
 			GlowingEnergy.DisplayName: 光辉能量
@@ -9169,7 +9151,6 @@ Mods: {
 			GrandCometZone.DisplayName: 宇宙重心彗星冲击波
 			BlindingPulse.DisplayName: 致盲激光
 			GrandCometExplosion.DisplayName: 宇宙重心彗星爆炸
-			StardustDelivery.DisplayName: 宇宙重心星尘
 			FetidExhaustProjectile.DisplayName: 腐败吐息
 			ShatteredMoonlightProjectile.DisplayName: 破碎月光
 			SmallGolemFireball.DisplayName: 石巨人小火球
@@ -9181,6 +9162,18 @@ Mods: {
 			SamuraiBeetleLightning.DisplayName: 圣甲虫武士
 			SamuraiBeetleProjectile.DisplayName: 圣甲虫武士
 			SamuraiBeetleCloud.DisplayName: 圣甲虫武士
+			// HeldOrbOfDeception.DisplayName: Orb Of Deception
+			// HeldOrbOfFlame.DisplayName: Orb Of Flame
+			// HeldOrbOfSpirituality.DisplayName: Orb Of Spirituality
+			// ThrownOrbOfDeception.DisplayName: Orb Of Deception
+			// ThrownOrbOfFlame.DisplayName: Orb Of Flame
+			// ThrownOrbOfSpirituality.DisplayName: Orb Of Spirituality
+			// StackDelivery.DisplayName: Stack Delivery
+			// FlameOrbOfDeception.DisplayName: Orb Of Deception
+			// FlameOrbOfFlame.DisplayName: Orb Of Flame
+			// FlameOrbOfSpirituality.DisplayName: Orb Of Spirituality
+			// CharmOrbOfFlame.DisplayName: Orb Of Flame
+			// CharmOrbOfSpirituality.DisplayName: Orb Of Spirituality
 		}
 
 		NPCs: {

@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles.VFX
         public override void AI()
         {
             Projectile.Center = Main.npc[(int)Projectile.ai[0]].Center - new Vector2(20, 0);
-            if (Main.GameUpdateCount % 4 == 0 && Main.netMode != NetmodeID.MultiplayerClient && effectTimer < effectLimit * 13f/20f)
+            if (Main.GameUpdateCount % 4 == 0 && Main.netMode != NetmodeID.MultiplayerClient && effectTimer < effectLimit * 13f / 20f)
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center + new Vector2(0, 100).RotatedBy(spawnRotation), Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.EnergyGathering>(), 0, 0, Main.myPlayer, Projectile.ai[0], Projectile.ai[1]);
                 spawnRotation += MathHelper.PiOver4 + Main.rand.NextFloat(0, 0.2f); //Semi-random, but not entirely

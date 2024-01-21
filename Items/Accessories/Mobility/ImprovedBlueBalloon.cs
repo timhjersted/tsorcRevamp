@@ -4,7 +4,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Accessories.Mobility
 {
@@ -23,17 +22,6 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             Item.accessory = true;
             Item.value = PriceByRarity.Blue_1;
             Item.rare = ItemRarityID.Blue;
-        }
-
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CloudinaBalloon, 1);
-            //recipe.AddIngredient(ItemID.ShadowScale, 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {

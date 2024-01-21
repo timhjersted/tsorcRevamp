@@ -176,7 +176,7 @@ namespace tsorcRevamp
 
                     ceruleanManaPerTick += ((ceruleanManaGain + ceruleanManaGainMaxManaBonus) * ceruleanManaGainManaRegenBonus * ceruleanRestorationTimerBonus) / ceruleanRestorationTimerMax; //Heal this much each tick
 
-                    if (ceruleanManaPerTick > (int)ceruleanManaPerTick)
+                    if (ceruleanManaPerTick >= (int)ceruleanManaPerTick)
                     {
                         Player.statMana += (int)ceruleanManaPerTick;
                         ceruleanManaPerTick -= (int)ceruleanManaPerTick;

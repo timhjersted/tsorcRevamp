@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using rail;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +15,6 @@ using tsorcRevamp.Buffs.Accessories;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Weapons.Summon;
-using tsorcRevamp.Items.Accessories.Expert;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.VanillaItems;
@@ -176,12 +174,14 @@ namespace tsorcRevamp
 
         public float DragoonLashFireBreathTimer = 0f;
 
-        public float SearingLashStacks;
-        public float NightsCrackerStacks;
-        public float TerraFallStacks;
+        public float SearingLashStacks = 0;
+        public float NightsCrackerStacks = 0;
+        public float TerraFallStacks = 0;
 
         public float SummonTagStrength;
         public float SummonTagDuration;
+        public bool CrystallineShard;
+        public int CrystallineCritChance;
 
         public bool MythrilBulwark = false;
         public bool IceboundMythrilAegis = false;
@@ -385,6 +385,7 @@ namespace tsorcRevamp
 
             SummonTagStrength = 1f;
             SummonTagDuration = 1f;
+            CrystallineShard = false;
 
             MaxMinionTurretMultiplier = 1;
 
@@ -1438,7 +1439,7 @@ namespace tsorcRevamp
                 }
             }
             #endregion
-            if (Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && Player.statLife >= Player.statLifeMax2 * Items.Accessories.Expert.PhoenixSkull.LifeThreshold / 100f)
+            if (Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && Player.statLife >= Player.statLifeMax2 * Items.Accessories.Defensive.PhoenixSkull.LifeThreshold / 100f)
             {
                 Player.ClearBuff(ModContent.BuffType<PhoenixRebirthBuff>());
             }
@@ -1459,7 +1460,7 @@ namespace tsorcRevamp
             }
             if (DragoonHorn && (((Player.gravDir == 1f) && (Player.velocity.Y > 0)) || ((Player.gravDir == -1f) && (Player.velocity.Y < 0))))
             {
-                Player.GetDamage(DamageClass.Melee) *= 1f + Items.Accessories.Expert.DragoonHorn.MeleeDmgMult / 100f;
+                Player.GetDamage(DamageClass.Melee) *= 1f + Items.Accessories.Melee.DragoonHorn.MeleeDmgMult / 100f;
             }
             if (BrokenSpirit)
             {
@@ -1475,6 +1476,12 @@ namespace tsorcRevamp
             }
             Player.maxMinions *= MaxMinionTurretMultiplier;
             Player.maxTurrets *= MaxMinionTurretMultiplier;
+
+            CrystallineCritChance = Player.maxMinions * Items.Accessories.Summon.CrystallineShard.CritChancePerMinion;
+            if (CrystallineShard)
+            {
+                Player.GetCritChance(DamageClass.Summon) += CrystallineCritChance;
+            }
         }
 
         public override void PostUpdateRunSpeeds()
@@ -1766,7 +1773,7 @@ namespace tsorcRevamp
                     bool hasRing = false;
                     for (int j = 3; j < 8 + Player.GetAmountOfExtraAccessorySlotsToShow(); j++)
                     {
-                        if (Player.armor[j].type == ModContent.ItemType<Items.Accessories.Expert.ChloranthyRing>() || Player.armor[j].type == ModContent.ItemType<Items.Accessories.Expert.ChloranthyRing2>())
+                        if (Player.armor[j].type == ModContent.ItemType<Items.Accessories.Mobility.ChloranthyRing>() || Player.armor[j].type == ModContent.ItemType<Items.Accessories.Mobility.ChloranthyRing2>())
                         {
                             hasRing = true;
                             break;

@@ -3,13 +3,9 @@ using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.Enums;
-using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Melee;
-using tsorcRevamp.Buffs.Weapons.Melee;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
-using tsorcRevamp.UI;
 
 namespace tsorcRevamp.Projectiles.Melee.Runeterra.WorldEnder
 {
@@ -18,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra.WorldEnder
         public abstract int Frames { get; }
         public abstract int Width { get; }
         public abstract int Height { get; }
-        public abstract int Tier {  get; }
+        public abstract int Tier { get; }
         public int ProjectileLifetime = 60;
         public Vector2 Velocity;
         public Vector2 Hitbox1 = Vector2.Zero;
@@ -125,8 +121,8 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra.WorldEnder
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             modifiers.SourceDamage += (float)(Tier / 4.5f) + (Tier == 3 ? 1 : 0);
-            if (Utils.CenteredRectangle(CritHitbox1, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox2, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox3, CritHitboxSize).Intersects(target.Hitbox) 
-                || Utils.CenteredRectangle(CritHitbox4, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox5, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox6, CritHitboxSize).Intersects(target.Hitbox) 
+            if (Utils.CenteredRectangle(CritHitbox1, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox2, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox3, CritHitboxSize).Intersects(target.Hitbox)
+                || Utils.CenteredRectangle(CritHitbox4, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox5, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox6, CritHitboxSize).Intersects(target.Hitbox)
                 || Utils.CenteredRectangle(CritHitbox7, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox8, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox9, CritHitboxSize).Intersects(target.Hitbox)
                 || Utils.CenteredRectangle(CritHitbox10, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox11, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox12, CritHitboxSize).Intersects(target.Hitbox))
             {
@@ -140,8 +136,8 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra.WorldEnder
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if (targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox1, HitboxSize)) || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox2, HitboxSize)) || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox3, HitboxSize)) 
-                || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox4, HitboxSize)) || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox5, HitboxSize)) || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox6, HitboxSize)) 
+            if (targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox1, HitboxSize)) || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox2, HitboxSize)) || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox3, HitboxSize))
+                || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox4, HitboxSize)) || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox5, HitboxSize)) || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox6, HitboxSize))
                 || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox7, HitboxSize)) || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox8, HitboxSize)) || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox9, HitboxSize))
                 || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox10, HitboxSize)) || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox11, HitboxSize)) || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox12, HitboxSize))
                 || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox13, HitboxSize)) || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox14, HitboxSize)) || targetHitbox.Intersects(Utils.CenteredRectangle(Hitbox15, HitboxSize))

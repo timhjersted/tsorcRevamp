@@ -4,7 +4,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Accessories.Mobility
 {
@@ -23,19 +22,6 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             Item.accessory = true;
             Item.value = PriceByRarity.Orange_3;
             Item.rare = ItemRarityID.Orange;
-        }
-
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.SharkronBalloon, 1);
-            recipe.AddIngredient(ItemID.LuckyHorseshoe, 1);
-            recipe.AddIngredient(ItemID.CrimtaneBar, 5);
-            recipe.AddIngredient(ItemID.TissueSample, 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2500);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {

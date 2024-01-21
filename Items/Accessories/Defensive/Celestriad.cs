@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Items.Accessories.Magic;
 using tsorcRevamp.Items.Materials;
 
