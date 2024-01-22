@@ -410,6 +410,10 @@ namespace tsorcRevamp
         {
             if (Shunpo && Player.titaniumStormCooldown >= 0)
             {
+                int TitaniumShardBaseDmg = 50; //50 is the base dmg of vanilla Titanium Shards
+                int TitaniumShardScaledBonusDmg = (int)((Player.GetDamage(DamageClass.Generic).ApplyTo(TitaniumShardBaseDmg) + Player.GetDamage(DamageClass.Melee).ApplyTo(TitaniumShardBaseDmg) 
+                 + Player.GetDamage(DamageClass.Ranged).ApplyTo(TitaniumShardBaseDmg) + Player.GetDamage(DamageClass.Magic).ApplyTo(TitaniumShardBaseDmg) 
+                 + Player.GetDamage(DamageClass.Summon).ApplyTo(TitaniumShardBaseDmg) + Player.GetDamage(DamageClass.Throwing).ApplyTo(TitaniumShardBaseDmg)) - (6f * TitaniumShardBaseDmg));
                 Player.titaniumStormCooldown = 10;
                 Player.AddBuff(BuffID.TitaniumStorm, 10 * 60);
                 if (Player.ownedProjectileCounts[ProjectileID.TitaniumStormShard] < 15)
@@ -417,20 +421,12 @@ namespace tsorcRevamp
                     Player.ownedProjectileCounts[ProjectileID.TitaniumStormShard]++;
                     if (Main.myPlayer == Player.whoAmI)
                     {
-                        Projectile.NewProjectile(Player.GetSource_OnHit(victim), Player.Center, Vector2.Zero, ProjectileID.TitaniumStormShard, 50, 15f, Player.whoAmI);
+                        Projectile.NewProjectile(Player.GetSource_OnHit(victim), Player.Center, Vector2.Zero, ProjectileID.TitaniumStormShard, TitaniumShardBaseDmg + TitaniumShardScaledBonusDmg, 15f, Player.whoAmI);
                     }
                 }
                 else
                 {
-                    int buffIndex = 0;
-                    foreach (int buffType in Player.buffType)
-                    {
-                        if (buffType == ModContent.BuffType<ShunpoBlinkCooldown>())
-                        {
-                            Player.buffTime[buffIndex] -= 40;
-                        }
-                        buffIndex++;
-                    }
+                    UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<ShunpoBlinkCooldown>(), -40);
                 }
             }
             if (CelestialCloak)
@@ -823,15 +819,7 @@ namespace tsorcRevamp
             }
             else if (LudensTempest && hit.DamageType == DamageClass.Magic && owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()) && proj.type != ModContent.ProjectileType<LudensTempestFire>() && proj.type != ModContent.ProjectileType<LudensTempestFirelet>())
             {
-                int buffIndex = 0;
-                foreach (int buffType in owner.buffType)
-                {
-                    if (buffType == ModContent.BuffType<LudensTempestCooldown>())
-                    {
-                        Player.buffTime[buffIndex] -= 20;
-                    }
-                    buffIndex++;
-                }
+                UsefulFunctions.AddPlayerBuffDuration(owner, ModContent.BuffType<LudensTempestCooldown>(), -20);
             }
             if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type] && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung)
             {

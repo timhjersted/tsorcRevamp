@@ -1,8 +1,9 @@
 ﻿using System;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs
+namespace tsorcRevamp.Buffs.Debuffs
 {
     public class Hollowed : ModBuff
     {
@@ -12,6 +13,7 @@ namespace tsorcRevamp.Buffs
         {
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = true;
+            BuffID.Sets.NurseCannotRemoveDebuff[Type] = true; //I hate having to add this but without this Bonfires just clear it instantly upon respawn...
         }
 
         public override void Update(Player player, ref int buffIndex)

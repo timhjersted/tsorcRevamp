@@ -2314,8 +2314,8 @@ namespace tsorcRevamp
                 {
                     ceruleanPlayer.isDrinking = true;
                     ceruleanPlayer.ceruleanDrinkTimer = 0;
-                    player.AddBuff(ModContent.BuffType<Crippled>(), 60 + 30);
-                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60 + 30);
+                    player.AddBuff(ModContent.BuffType<Crippled>(), (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f));
+                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f));
                 }
                 return;
             }
@@ -2369,8 +2369,8 @@ namespace tsorcRevamp
                 {
                     estusPlayer.isDrinking = true;
                     estusPlayer.estusDrinkTimer = 0;
-                    player.AddBuff(ModContent.BuffType<Crippled>(), 2 * 60);
-                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 2 * 60);
+                    player.AddBuff(ModContent.BuffType<Crippled>(), (int)(estusPlayer.estusDrinkTimerMax * 60f));
+                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), (int)(estusPlayer.estusDrinkTimerMax * 60f));
                 }
                 return;
             }

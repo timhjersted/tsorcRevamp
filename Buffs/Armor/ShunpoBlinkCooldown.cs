@@ -1,22 +1,17 @@
 ﻿using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Buffs.Armor
 {
-    public class ShunpoBlinkCooldown : ModBuff
+    public class ShunpoBlinkCooldown : CooldownDebuff
     {
-        public override void SetStaticDefaults()
+        public override bool PlaysSoundOnLastTick => true;
+        public override void CustomSetStaticDefaults()
         {
-            Main.debuff[Type] = true;
-            Main.buffNoTimeDisplay[Type] = false;
-        }
-        public override void Update(Player player, ref int buffIndex)
-        {
-            if (player.buffTime[buffIndex] == 1)
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/ShunpoReady") with { Volume = 2f });
-            }
+            LastTickSoundPath = "Runeterra/ShunpoReady";
+            LastTickSoundVolume = 2f;
         }
     }
 }

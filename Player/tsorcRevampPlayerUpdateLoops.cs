@@ -1445,7 +1445,11 @@ namespace tsorcRevamp
             }
             if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthCooldown>()))
             {
-                Player.buffTime[Player.FindBuffIndex(ModContent.BuffType<PhoenixRebirthCooldown>())]--;
+                UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<PhoenixRebirthCooldown>(), -1);
+            }
+            if (BarrierRing && Player.HasBuff(ModContent.BuffType<BarrierCooldown>()))
+            {
+                UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<BarrierCooldown>(), -1);
             }
             if (SteraksGage && Player.statLife < (Player.statLifeMax2 * Items.Accessories.Melee.SteraksGage.LifeThreshold / 100f) && !Player.HasBuff(ModContent.BuffType<SteraksGageCooldown>()))
             {

@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.Tools
         public override bool CanUseItem(Player player)
         {
 
-            if (player.HasBuff(ModContent.BuffType<Buffs.ShieldCooldown>()))
+            if (player.HasBuff(ModContent.BuffType<Buffs.Debuffs.ShieldCooldown>()))
             {
                 return false;
             }

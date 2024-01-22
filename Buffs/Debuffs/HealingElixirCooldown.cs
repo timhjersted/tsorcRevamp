@@ -1,9 +1,10 @@
 ﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    public class Stiff : CooldownDebuff
+    public class HealingElixirCooldown : CooldownDebuff
     {
         public override bool PlaysSoundOnLastTick => false;
     }

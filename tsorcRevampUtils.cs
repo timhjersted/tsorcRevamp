@@ -1394,5 +1394,45 @@ namespace tsorcRevamp
                 yield return serializer.Deserialize<T>(reader);
             }
         }
+        ///<summary> 
+        ///Increases the duration of any chosen buff on a player when called. 
+        ///For cooldown debuffs, this is a negative effect.
+        ///You can also input negative numbers to reduce the duration, especially for cooldown-related debuffs.
+        ///</summary>         
+        ///<param name="player">The player who owns the buff</param>
+        ///<param name="BuffType">The ID of the buff whose duration you want to reduce</param>
+        ///<param name="Duration">How many ticks to reduce it by (60 ticks = 1 second)</param>
+        public static void AddPlayerBuffDuration(in Player player, in int BuffType, in int Duration)
+        {
+            int buffIndex = 0;
+            foreach (int buffType in player.buffType)
+            {
+                if (buffType == BuffType)
+                {
+                    player.buffTime[buffIndex] += Duration;
+                }
+                buffIndex++;
+            }
+        }
+        ///<summary> 
+        ///Increases the duration of any chosen buff on a npc when called. 
+        ///For cooldown debuffs, this is a negative effect.
+        ///You can also input negative numbers, especially for cooldown-related debuffs.
+        ///</summary>         
+        ///<param name="npc">The npc who owns the buff</param>
+        ///<param name="BuffType">The ID of the buff whose duration you want to reduce</param>
+        ///<param name="Duration">How many ticks to reduce it by (60 ticks = 1 second)</param>
+        public static void AddNPCBuffDuration(in NPC npc, in int BuffType, in int Duration)
+        {
+            int buffIndex = 0;
+            foreach (int buffType in npc.buffType)
+            {
+                if (buffType == BuffType)
+                {
+                    npc.buffTime[buffIndex] += Duration;
+                }
+                buffIndex++;
+            }
+        }
     }
 }

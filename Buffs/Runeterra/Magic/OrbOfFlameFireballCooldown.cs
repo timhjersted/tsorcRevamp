@@ -2,24 +2,18 @@
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 
 namespace tsorcRevamp.Buffs.Runeterra.Magic
 {
-    public class OrbOfFlameFireballCooldown : ModBuff
+    public class OrbOfFlameFireballCooldown : CooldownDebuff
     {
-        public override void SetStaticDefaults()
+        public override bool PlaysSoundOnLastTick => true;
+        public override void CustomSetStaticDefaults()
         {
-            Main.debuff[Type] = true;
-            Main.buffNoTimeDisplay[Type] = false;
-            BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
-        }
-        public override void Update(Player player, ref int buffIndex)
-        {
-            if (player.buffTime[buffIndex] == 1)
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/OrbOfFlame/CharmReady") with { Volume = OrbOfDeception.OrbSoundVolume * 2 });
-            }
+            LastTickSoundPath = "Runeterra/Magic/OrbOfFlame/CharmReady";
+            LastTickSoundVolume = OrbOfDeception.OrbSoundVolume * 2;
         }
     }
 }

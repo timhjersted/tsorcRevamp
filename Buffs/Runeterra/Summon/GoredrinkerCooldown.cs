@@ -2,24 +2,22 @@
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Buffs.Runeterra.Ranged;
 
 namespace tsorcRevamp.Buffs.Runeterra.Summon
 {
-    public class GoredrinkerCooldown : ModBuff
+    public class GoredrinkerCooldown : CooldownDebuff
     {
-        public override void SetStaticDefaults()
+        public override bool PlaysSoundOnLastTick => true;
+        public override void CustomSetStaticDefaults()
         {
-            Main.debuff[Type] = true;
-            Main.buffNoTimeDisplay[Type] = false;
-            BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
+            LastTickSoundPath = "Runeterra/Summon/GoredrinkerHit";
+            LastTickSoundVolume = 1f;
         }
-        public override void Update(Player player, ref int buffIndex)
+        public override void PlayerCustomUpdate(Player player, ref int buffIndex)
         {
-            if (player.buffTime[buffIndex] == 1)
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerHit") with { Volume = 1f }, player.Center);
-                player.GetModPlayer<tsorcRevampPlayer>().GoredrinkerHits = 0;
-            }
+            player.GetModPlayer<tsorcRevampPlayer>().GoredrinkerHits = 0;
         }
     }
 }

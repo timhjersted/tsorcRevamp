@@ -46,7 +46,7 @@ Mods: {
 			Limited: Your supply of these is finite, so they are never used by Quick Buff
 			NoFallDmg: Grants immunity to fall damage
 			HolyDodge: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
-			TitaniumBonus: Attacking generates a defensive barrier of titanium shards
+			TitaniumBonus: Attacking generates a defensive barrier of titanium shards, scaling with all damage types
 			ShunpoKeybind1: "Press "
 			ShunpoKeybind2: " while hovering your mouse over an enemy to blink to it and briefly become immune"
 			ShunpoCD:
@@ -1110,6 +1110,7 @@ Mods: {
 					'''
 					Casts a Barrier around the wearer which will block an attack
 					After blocking an attack it will go on a {$CommonItemTooltip.Cooldown}
+					Cooldown only refreshes while wearing this
 					'''
 			}
 

@@ -1,16 +1,12 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Buffs.Runeterra.Magic
 {
-    public class LudensTempestCooldown : ModBuff
+    public class LudensTempestCooldown : CooldownDebuff
     {
-        public override void SetStaticDefaults()
-        {
-            Main.debuff[Type] = true;
-            Main.buffNoTimeDisplay[Type] = false;
-            BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
-        }
+        public override bool PlaysSoundOnLastTick => false;
     }
 }

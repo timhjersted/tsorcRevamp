@@ -46,12 +46,12 @@ namespace tsorcRevamp.Items.Tools
         public override bool? UseItem(Player player)
         {
             player.AddBuff(ModContent.BuffType<Buffs.GreatMagicShield>(), Duration * 60, false);
-            player.AddBuff(ModContent.BuffType<Buffs.ShieldCooldown>(), Cooldown * 60); //10 minutes and 25 seconds (10 min downtime)
+            player.AddBuff(ModContent.BuffType<Buffs.Debuffs.ShieldCooldown>(), Cooldown * 60); //10 minutes and 25 seconds (10 min downtime)
             return true;
         }
         public override bool CanUseItem(Player player)
         {
-            if (player.HasBuff(ModContent.BuffType<Buffs.ShieldCooldown>()))
+            if (player.HasBuff(ModContent.BuffType<Buffs.Debuffs.ShieldCooldown>()))
             {
                 return false;
             }

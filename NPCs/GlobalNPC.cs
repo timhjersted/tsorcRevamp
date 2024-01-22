@@ -929,7 +929,7 @@ namespace tsorcRevamp.NPCs
         }
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            if (modifiers.DamageType == DamageClass.SummonMeleeSpeed)
+            if (ProjectileID.Sets.IsAWhip[projectile.type])
             {
                 modifiers.CritDamage -= 0.5f;
             }

@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Potions
 
         public override bool CanUseItem(Player player)
         {
-            if (player.HasBuff(ModContent.BuffType<Buffs.HealingElixirCooldown>()))
+            if (player.HasBuff(ModContent.BuffType<Buffs.Debuffs.HealingElixirCooldown>()))
             {
                 return false;
             }
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Potions
         }
         public override bool? UseItem(Player player)
         {
-            player.AddBuff(ModContent.BuffType<Buffs.HealingElixirCooldown>(), Cooldown * 60);
+            player.AddBuff(ModContent.BuffType<Buffs.Debuffs.HealingElixirCooldown>(), Cooldown * 60);
             int buffIndex = 0;
 
             foreach (int buffType in player.buffType)

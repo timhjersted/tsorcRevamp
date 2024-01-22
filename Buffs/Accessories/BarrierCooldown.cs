@@ -2,22 +2,21 @@
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Buffs.Accessories
 {
-    public class BarrierCooldown : ModBuff
+    public class BarrierCooldown : CooldownDebuff
     {
-        public override void SetStaticDefaults()
+        public override bool PlaysSoundOnLastTick => true;
+        public override void CustomSetStaticDefaults()
         {
-            Main.debuff[Type] = true;
-            Main.buffNoTimeDisplay[Type] = false;
+            PlaysVanillaSound = true;
+            VanillaSoundID = SoundID.Item4;
+            LastTickSoundVolume = 2f;
         }
-        public override void Update(Player player, ref int buffIndex)
+        public override void PlayerCustomUpdate(Player player, ref int buffIndex)
         {
-            if (player.buffTime[buffIndex] == 1)
-            {
-                SoundEngine.PlaySound(SoundID.Zombie126 with { Volume = 2f });
-            }
             player.buffTime[buffIndex]++;
         }
     }

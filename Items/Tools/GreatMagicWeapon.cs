@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Tools
@@ -51,14 +52,14 @@ namespace tsorcRevamp.Items.Tools
 
             if (!modPlayer.DarkmoonCloak)
             {
-                player.AddBuff(ModContent.BuffType<Buffs.MagicImbueCooldown>(), Cooldown * 60);
+                player.AddBuff(ModContent.BuffType<MagicImbueCooldown>(), Cooldown * 60);
             }
 
             return true;
         }
         public override bool CanUseItem(Player player)
         {
-            if (player.HasBuff(ModContent.BuffType<Buffs.MagicImbueCooldown>()))
+            if (player.HasBuff(ModContent.BuffType<MagicImbueCooldown>()))
             {
                 return false;
             }

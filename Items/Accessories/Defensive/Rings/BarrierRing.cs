@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 {
     public class BarrierRing : ModItem
     {
-        public static int Cooldown = 75;
-        public static float ImmuneTimeAfterHit = 1f; //in seconds
+        public const int Cooldown = 60;
+        public const float ImmuneTimeAfterHit = 1f; //in seconds
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Cooldown);
         public override void SetStaticDefaults()
         {

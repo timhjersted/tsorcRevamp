@@ -4,13 +4,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    public class RejuvenationCooldown : ModBuff
+    public class RejuvenationCooldown : CooldownDebuff
     {
-        public override void SetStaticDefaults()
-        {
-            Main.debuff[Type] = true;
-            Main.buffNoTimeDisplay[Type] = false;
-            BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
-        }
+        public override bool PlaysSoundOnLastTick => false;
     }
 }

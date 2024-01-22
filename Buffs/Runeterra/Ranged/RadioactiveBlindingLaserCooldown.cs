@@ -2,23 +2,17 @@
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Buffs.Runeterra.Ranged
 {
-    public class RadioactiveBlindingLaserCooldown : ModBuff
+    public class RadioactiveBlindingLaserCooldown : CooldownDebuff
     {
-        public override void SetStaticDefaults()
+        public override bool PlaysSoundOnLastTick => true;
+        public override void CustomSetStaticDefaults()
         {
-            Main.debuff[Type] = true;
-            Main.buffNoTimeDisplay[Type] = false;
-            BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
-        }
-        public override void Update(Player player, ref int buffIndex)
-        {
-            if (player.buffTime[buffIndex] == 1)
-            {
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/BlindingLaserReady") with { Volume = 1f }, player.Center);
-            }
+            LastTickSoundPath = "Runeterra/Ranged/OmegaSquadRifle/BlindingLaserReady";
+            LastTickSoundVolume = 1f;
         }
     }
 }
