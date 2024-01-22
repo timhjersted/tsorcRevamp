@@ -12,6 +12,7 @@ using Terraria.ModLoader.Config;
 using TerraUI.Objects;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Accessories;
+using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Weapons.Summon;
@@ -1127,6 +1128,20 @@ namespace tsorcRevamp
                 Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.5f;
             }
 
+            if (Shunpo && !Player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC other = Main.npc[i];
+
+                    if (other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)))
+                    {
+                        Lighting.AddLight(other.Center, Color.Red.ToVector3() * 0.35f);
+                        UsefulFunctions.DustRing(other.Center, other.width / 2, DustID.Titanium, 5, 1);
+                        UsefulFunctions.DustRing(other.Center, other.width / 4, DustID.Adamantite, 5, 2);
+                    }
+                }
+            }
             if (ShadowWeight)
             {
                 Player.GetJumpState(ExtraJump.BlizzardInABottle).Enable()/* tModPorter Suggestion: Call Enable() if setting this to true, otherwise call Disable(). */;

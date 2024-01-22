@@ -48,7 +48,7 @@ Mods: {
 			HolyDodge: Grants Holy Dodge, stats provided by this armor set are doubled while Holy Dodge is active
 			TitaniumBonus: Attacking generates a defensive barrier of titanium shards, scaling with all damage types
 			ShunpoKeybind1: "Press "
-			ShunpoKeybind2: " while hovering your mouse over an enemy to blink to it and briefly become immune"
+			ShunpoKeybind2: " while hovering your mouse over an enemy to blink to it and briefly become invincible"
 			ShunpoCD:
 				'''
 				Shunpo has {$CommonItemTooltip.Cooldown}
