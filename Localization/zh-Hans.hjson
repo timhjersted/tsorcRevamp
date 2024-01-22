@@ -4876,8 +4876,8 @@ Mods: {
 				Tooltip:
 					'''
 					烧焦的灰白骨头
-					投入篝火的火焰中以增加元素瓶效力
-					增加每次使用能治疗的生命值量
+					投入篝火的火焰中以提升元素瓶和蓝露滴圣杯瓶和效果
+					增加每次使用治疗的生命值和恢复的魔力值的量
 					'''
 				EstusFlaskPotency: 元素瓶的治疗量增加了！每次治疗：
 				CeruleanFlaskPotency: 蓝露滴圣杯瓶的恢复量增加了！每次恢复：
@@ -6038,7 +6038,6 @@ Mods: {
 				Tooltip:
 					'''
 					增加的推进力场使引爆的子弹可以穿透两次
-					并将子弹固定在目标上
 					警告 - 完全能够摧毁整个生态系统
 					'''
 			}
@@ -6482,7 +6481,8 @@ Mods: {
 				Tooltip:
 					'''
 					召唤一个钢铁锻造者为你战斗
-					绕行，用光和火轰击他们
+					围绕敌人旋转，用光和火轰击他们
+					{$CommonItemTooltip.Summon.TagDmgMult}
 					'''
 			}
 
@@ -7000,7 +7000,7 @@ Mods: {
 					满堆叠层数的 [c/87cefa:魔法珠] 对敌人额外造成 {3}% 的伤害，同时其治疗量由玩家最大魔力值和魔法伤害决定
 					'''
 				OrbFilled: 堆叠已满！
-				// StackGained: "{0} / 9"
+				StackGained: "{0} / 9"
 			}
 
 			OrbOfFlame: {
@@ -7017,7 +7017,7 @@ Mods: {
 				Details:
 					'''
 					[c/ff7f50:魔法火球] 每次攻击造成 {4}x 倍伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}）
-					[c/ff7f50:割裂]的敌人受到的魔法伤害增加 {8}%
+					[c/ff7f50:割裂]的敌人受到的魔法伤害增加 {8}% ({$CommonItemTooltip.SecondDuration@12})
 					[c/87cefa:追踪火焰]优先攻击 [c/ff7f50:割裂] 的敌人
 					[c/87cefa:魔法珠]额外造成 {0}% 的伤害，返回玩家时额外造成 {1}% 
 					[c/87cefa:追踪火焰命中敌人时回复其消耗的一半魔力]
@@ -7049,7 +7049,7 @@ Mods: {
 					增益{$CommonItemTooltip.SecondDuration@9}，{$CommonItemTooltip.Cooldown@10}
 					[c/ff00ff:冲刺产生的][c/87cefa:追踪火焰][c/ff00ff:命中敌人时不恢复魔力，激活[c/ff00ff:特殊能力] 消耗 {11} 魔力]
 					[c/ff7f50:爱心]每次攻击造成 {4}x 倍伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}
-					[c/ff7f50:割裂]的敌人受到的魔法伤害增加 {8}%
+					[c/ff7f50:割裂]的敌人受到的魔法伤害增加 {8}% ({$CommonItemTooltip.SecondDuration@12})
 					[c/87cefa:追踪火焰]优先攻击 [c/ff7f50:割裂] 的敌人
 					[c/87cefa:魔法珠]额外造成 {0}% 的伤害，返回玩家时额外造成 {1}% 
 					[c/87cefa:追踪火焰命中敌人时回复其消耗的一半魔力]
@@ -7137,7 +7137,7 @@ Mods: {
 					日照减益[c/b22222:增加星芒的伤害]，[c/b22222:施加 {2}% 的召唤标记暴击率]，并对敌人造成持续伤害
 					'''
 				MeteorReady: 彗星就绪！
-				// StackGained: "{0} / 10"
+				StackGained: "{0} / 10"
 			}
 
 			SteraksGage: {
@@ -9135,17 +9135,17 @@ Mods: {
 			CenterOfTheUniverseCometZone.DisplayName: 宇宙重心彗星冲击波
 			CenterOfTheUniverseFallingComet.DisplayName: 宇宙重心坠落彗星
 			CenterOfTheUniverseShockwave.DisplayName: 宇宙重心彗星冲击波
-			GrandCometChunk01.DisplayName: 宇宙重心彗星碎片1
-			GrandCometChunk02.DisplayName: 宇宙重心彗星碎片2
-			GrandCometChunk03.DisplayName: 宇宙重心彗星碎片3
-			GrandCometChunk04.DisplayName: 宇宙重心彗星碎片4
-			GrandCometChunk05.DisplayName: 宇宙重心彗星碎片5
-			GrandCometChunk06.DisplayName: 宇宙重心彗星碎片6
-			GrandCometChunk07.DisplayName: 宇宙重心彗星碎片7
-			GrandCometChunk08.DisplayName: 宇宙重心彗星碎片8
-			GrandCometChunk09.DisplayName: 宇宙重心彗星碎片9
-			GrandCometChunk10.DisplayName: 宇宙重心彗星碎片10
-			GrandCometChunk11.DisplayName: 宇宙重心彗星碎片11
+			GrandCometChunk01.DisplayName: 宇宙重心彗星碎片
+			GrandCometChunk02.DisplayName: 宇宙重心彗星碎片
+			GrandCometChunk03.DisplayName: 宇宙重心彗星碎片
+			GrandCometChunk04.DisplayName: 宇宙重心彗星碎片
+			GrandCometChunk05.DisplayName: 宇宙重心彗星碎片
+			GrandCometChunk06.DisplayName: 宇宙重心彗星碎片
+			GrandCometChunk07.DisplayName: 宇宙重心彗星碎片
+			GrandCometChunk08.DisplayName: 宇宙重心彗星碎片
+			GrandCometChunk09.DisplayName: 宇宙重心彗星碎片
+			GrandCometChunk10.DisplayName: 宇宙重心彗星碎片
+			GrandCometChunk11.DisplayName: 宇宙重心彗星碎片
 			GrandCometProjectile.DisplayName: 宇宙重心彗星
 			GrandCometShockwaveTrail.DisplayName: 宇宙重心彗星冲击波
 			GrandCometZone.DisplayName: 宇宙重心彗星冲击波
@@ -9155,25 +9155,25 @@ Mods: {
 			ShatteredMoonlightProjectile.DisplayName: 破碎月光
 			SmallGolemFireball.DisplayName: 石巨人小火球
 			TerrorbeakProjectile.DisplayName: 影怪
-			WorldEnderSwordSwing1.DisplayName: 末世之剑1
-			WorldEnderSwordSwing2.DisplayName: 末世之剑2
-			WorldEnderSwordSwing3.DisplayName: 末世之剑3
+			WorldEnderSwordSwing1.DisplayName: 末世之剑
+			WorldEnderSwordSwing2.DisplayName: 末世之剑
+			WorldEnderSwordSwing3.DisplayName: 末世之剑
 			SamuraiBeetleTrail.DisplayName: 圣甲虫武士
 			SamuraiBeetleLightning.DisplayName: 圣甲虫武士
 			SamuraiBeetleProjectile.DisplayName: 圣甲虫武士
 			SamuraiBeetleCloud.DisplayName: 圣甲虫武士
-			// HeldOrbOfDeception.DisplayName: Orb Of Deception
-			// HeldOrbOfFlame.DisplayName: Orb Of Flame
-			// HeldOrbOfSpirituality.DisplayName: Orb Of Spirituality
-			// ThrownOrbOfDeception.DisplayName: Orb Of Deception
-			// ThrownOrbOfFlame.DisplayName: Orb Of Flame
-			// ThrownOrbOfSpirituality.DisplayName: Orb Of Spirituality
-			// StackDelivery.DisplayName: Stack Delivery
-			// FlameOrbOfDeception.DisplayName: Orb Of Deception
-			// FlameOrbOfFlame.DisplayName: Orb Of Flame
-			// FlameOrbOfSpirituality.DisplayName: Orb Of Spirituality
-			// CharmOrbOfFlame.DisplayName: Orb Of Flame
-			// CharmOrbOfSpirituality.DisplayName: Orb Of Spirituality
+			HeldOrbOfDeception.DisplayName: 诡谲之珠
+			HeldOrbOfFlame.DisplayName: 烈焰之珠
+			HeldOrbOfSpirituality.DisplayName: 灵性之珠
+			ThrownOrbOfDeception.DisplayName: 诡谲之珠
+			ThrownOrbOfFlame.DisplayName: 烈焰之珠
+			ThrownOrbOfSpirituality.DisplayName: 灵性之珠
+			StackDelivery.DisplayName: Stack Delivery
+			FlameOrbOfDeception.DisplayName: 诡谲之珠
+			FlameOrbOfFlame.DisplayName: 烈焰之珠
+			FlameOrbOfSpirituality.DisplayName: 灵性之珠
+			CharmOrbOfFlame.DisplayName: 烈焰之珠
+			CharmOrbOfSpirituality.DisplayName: 灵性之珠
 		}
 
 		NPCs: {
