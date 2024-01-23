@@ -48,7 +48,7 @@ namespace tsorcRevamp.Projectiles.Summon
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            target.GetGlobalNPC<tsorcRevampGlobalNPC>().BaseSummonTagCriticalStrikeChance += DarkSword.BaseCritChance;
+            //target.GetGlobalNPC<tsorcRevampGlobalNPC>().BaseSummonTagCriticalStrikeChance += DarkSword.BaseCritChance; has to go into global npc now because this runs before that
         }
 
         // Here you can decide if your minion breaks things like grass or pots

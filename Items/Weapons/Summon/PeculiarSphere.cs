@@ -11,9 +11,10 @@ namespace tsorcRevamp.Items.Weapons.Summon
 {
     public class PeculiarSphere : ModItem
     {
-        public static float ScalingPerSlot = 0.15f;
-        public static int DoubleShotMinimumSlots = 4;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs((int)System.Math.Round(ScalingPerSlot * 100), DoubleShotMinimumSlots);
+        public const float ScalingPerSlot = 0.15f;
+        public const int DoubleShotMinimumSlots = 4;
+        public const int BaseCritChance = 10;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs((int)System.Math.Round(ScalingPerSlot * 100), DoubleShotMinimumSlots, BaseCritChance);
         public override void SetStaticDefaults()
         {
             ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
@@ -23,13 +24,13 @@ namespace tsorcRevamp.Items.Weapons.Summon
         }
         public override void SetDefaults()
         {
-            Item.damage = 80;
+            Item.damage = 70;
             Item.knockBack = 1f;
             Item.width = 44;
             Item.height = 50;
             Item.useTime = Item.useAnimation = 36;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.value = Item.buyPrice(0, 15, 0, 0);
+            Item.value = Item.buyPrice(0, 25, 0, 0);
             Item.mana = 10;
             Item.rare = ItemRarityID.Pink;
             Item.UseSound = SoundID.Item44;

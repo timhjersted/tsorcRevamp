@@ -27,11 +27,15 @@ using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Items.Weapons.Throwing;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.Projectiles.Ranged;
+using tsorcRevamp.Projectiles.Summon;
+using tsorcRevamp.Projectiles.Summon.Archer;
+using tsorcRevamp.Projectiles.Summon.SamuraiBeetle;
 using tsorcRevamp.Projectiles.Summon.Whips;
 using tsorcRevamp.Projectiles.Summon.Whips.EnchantedWhip;
 using tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash;
@@ -1039,10 +1043,26 @@ namespace tsorcRevamp.NPCs
             #region Summon Tag Damage Calculation and Special Effects
             if (projectile.IsMinionOrSentryRelated)
             {
-                #region Runeterra effects
+                #region Minion effects
                 if (((Scorched || Shocked || Sunburnt) && (SuperScorchDuration > 0 || SuperShockDuration > 0 || SuperSunburnDuration > 0)) || Awestruck)
                 {
                     BaseSummonTagCriticalStrikeChance += ScorchingPoint.SummonTagCrit;
+                }
+                if (projectile.type == ModContent.ProjectileType<SpiritAshKnightMinion>())
+                {
+                    BaseSummonTagCriticalStrikeChance += SpiritBell.BaseCritChance;
+                }
+                if (projectile.type == ModContent.ProjectileType<TerrorbeakProjectile>())
+                {
+                    BaseSummonTagCriticalStrikeChance += DarkSword.BaseCritChance;
+                }
+                if (projectile.type == ModContent.ProjectileType<OwlsArrow>())
+                {
+                    BaseSummonTagCriticalStrikeChance += PeculiarSphere.BaseCritChance;
+                }
+                if (projectile.type == ModContent.ProjectileType<SamuraiBeetleProjectile>() || projectile.type == ModContent.ProjectileType<SamuraiBeetleLightning>())
+                {
+                    BaseSummonTagCriticalStrikeChance += BeetleIdol.BaseCritChance;
                 }
                 #endregion
                 #region Modded Whip Special Effects

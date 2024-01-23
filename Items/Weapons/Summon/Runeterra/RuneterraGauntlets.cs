@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public const int DragonDebuffDuration = 5;
         public const int SuperBurnDuration = 5;
         public const float SuperBurnDmgAmp = 50f;
-        public const float SummonTagCrit = 10f;
+        public const int SummonTagCrit = 10;
         public const float MarkDetonationCritDmgAmp = 2f;
 
         public const float BoostDmgAmp = 25f;

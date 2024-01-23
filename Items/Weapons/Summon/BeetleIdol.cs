@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Materials;
@@ -13,6 +14,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
     public class BeetleIdol : ModItem
     {
         public const float SlotsRequired = 4f;
+        public const int BaseCritChance = 20;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BaseCritChance);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
@@ -22,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         }
         public override void SetDefaults()
         {
-            Item.damage = 350;
+            Item.damage = 250;
             Item.knockBack = 3f;
             Item.mana = 10;
             Item.width = 32;

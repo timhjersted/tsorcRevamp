@@ -6412,6 +6412,7 @@ Mods: {
 					Summons a Samurai Beetle to fight for you
 					Performs a [c/FF00FF:Shocking Slash] every third hit
 					There can only be one
+					{$CommonItemTooltip.Summon.BaseCritChance}
 					'''
 			}
 
@@ -6433,6 +6434,7 @@ Mods: {
 					Its arrows seek out the cursor after a while or after bouncing off of a tile
 					Shoots two arrows while using up {1} or more minion slots
 					Repeatedly summoning this minion increases its damage by {0}% each time
+					{$CommonItemTooltip.Summon.BaseCritChance@2}
 					'''
 			}
 
@@ -7669,7 +7671,7 @@ Mods: {
 					Left Click to swing like a sword and apply Insanity on-hit
 					<right> to summon Terrorbeaks to fight for you
 					Terrorbeaks only target insane enemies
-					Crits are based on summon critical strike chance + 6%
+					{$CommonItemTooltip.Summon.BaseCritChance}
 					'''
 			}
 		}

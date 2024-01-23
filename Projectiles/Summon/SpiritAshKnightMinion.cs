@@ -234,7 +234,7 @@ namespace tsorcRevamp.Projectiles.Summon
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            target.GetGlobalNPC<tsorcRevampGlobalNPC>().BaseSummonTagCriticalStrikeChance += SpiritBell.BaseCritChance;
+            //target.GetGlobalNPC<tsorcRevampGlobalNPC>().BaseSummonTagCriticalStrikeChance += SpiritBell.BaseCritChance; has to go into global npc now because this runs before that
             modifiers.CritDamage *= 1f + SpiritBell.CritDmg / 100f;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

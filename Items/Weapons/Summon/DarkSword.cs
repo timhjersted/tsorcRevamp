@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
@@ -19,6 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         public const float DebuffDuration = 8;
         public const float SlotsRequired = 2f;
         public const int BaseCritChance = 6;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BaseCritChance);
         public override void SetStaticDefaults()
         {
             ItemID.Sets.ItemsThatAllowRepeatedRightClick[Type] = true;
