@@ -46,7 +46,7 @@ Mods: {
 			Limited: 快速治疗快捷键不会误用此药水，因为它们很稀有
 			NoFallDmg: 对坠落伤害免疫
 			HolyDodge: 赋予神圣闪避效果，当神圣闪避激活时，此盔甲套装提供的属性加倍
-			TitaniumBonus: 造成伤害会生成一个钛金防御碎片
+			TitaniumBonus: 造成伤害会生成一个全职业伤害的钛金防御碎片
 			ShunpoKeybind1: "按 "
 			ShunpoKeybind2: " 冲向鼠标悬停处所指的敌人并获得短暂的无敌帧"
 			ShunpoCD:
@@ -146,7 +146,7 @@ Mods: {
 				CritChance: 增加 {0}% 召唤暴击率
 				TagCritMult: 增加 {0}x 倍召唤标记暴击率
 				TagDmgMult: 此武器仅受到 {0}% 的召唤标记伤害加成
-				BaseCritChance: 增加 {0}% 基础暴击率
+				BaseCritChance: 武器自带 {0}% 基础召唤暴击率
 				DmgMult: 乘算增加 {0}% 召唤伤害
 			}
 
@@ -1110,6 +1110,7 @@ Mods: {
 					'''
 					在佩戴者周围释放可以豁免攻击的屏障
 					豁免攻击后屏障进入 {$CommonItemTooltip.Cooldown}
+					只有佩戴此物品时才会进入冷却
 					'''
 			}
 
@@ -6411,6 +6412,7 @@ Mods: {
 					召唤圣甲虫武士为你战斗
 					每三次攻击使用一次[c/FF00FF:电击猛击]
 					只能存在一个
+					{$CommonItemTooltip.Summon.BaseCritChance}
 					'''
 			}
 
@@ -6432,6 +6434,7 @@ Mods: {
 					射出的弓箭飞行一段时间或从物块反弹后将追踪光标所在的位置
 					重复召唤 {1} 次后猫头鹰弓箭手将射出两支箭
 					每次重复召唤将增加 {0}% 伤害
+					{$CommonItemTooltip.Summon.BaseCritChance}
 					'''
 			}
 
@@ -7667,7 +7670,7 @@ Mods: {
 					左键像剑一样挥舞，并对命中的目标施加疯狂状态
 					<right>召唤影怪为你而战
 					影怪只攻击疯狂状态的敌人
-					武器本身自带 6% 召唤暴击率
+					{$CommonItemTooltip.Summon.BaseCritChance}
 					'''
 			}
 		}
