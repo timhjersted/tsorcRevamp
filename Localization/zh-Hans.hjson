@@ -303,7 +303,7 @@ Mods: {
 			UpdateMusic: 正在更新音乐包(也可在创意工坊搜索“The Story of Red Cloud Music”订阅音乐包):
 			GetMusic: 创意工坊搜索 “The Story of Red Cloud Music” 订阅音乐包
 			MusicNewUpdate: 点击这里以更新音乐包 (如已手动放置tsorcMusic.tmod，则忽略此提示)
-			MusicFail: 音乐包下载失败，请加QQ群645748667文件中下载。
+			MusicFail: 音乐包下载失败，请在创意工坊搜索 “The Story of Red Cloud Music” 订阅音乐包
 			AdvMapDownloadProgress: (在原版创意工坊订阅 Dark Souls Adventure Map，再在Tmod内创意工坊选择导入世界)地图下载中:
 			AdvMapUpdated: 冒险地图下载完成！
 			Bless: 在这里放置一个物品以进行祝福
