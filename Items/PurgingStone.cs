@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.Items
 {
@@ -19,12 +21,10 @@ namespace tsorcRevamp.Items
             Item.width = 38;
             Item.height = 38;
             Item.useStyle = ItemUseStyleID.HoldUp;
-            Item.useAnimation = 15;
-            Item.useTime = 15;
-            Item.maxStack = 10;
-            //item.healLife = 500;
+            Item.useAnimation = 60;
+            Item.useTime = 60;
+            Item.maxStack = 9999;
             Item.consumable = true;
-            Item.scale = 1;
             Item.UseSound = SoundID.Item4;
             Item.rare = ItemRarityID.Pink;
             Item.value = PriceByRarity.Pink_5;
@@ -33,68 +33,50 @@ namespace tsorcRevamp.Items
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
+            recipe.AddIngredient(ItemID.StoneBlock, 10);
+            recipe.AddIngredient(ModContent.ItemType<Humanity>(), 2);
+            recipe.AddIngredient(ModContent.ItemType<GreenBlossom>(), 2);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2500);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
         }
-
+        public override bool AltFunctionUse(Player player)
+        {
+            if (!Main.mouseLeft)
+            {
+                return true;
+            }
+            else
+            {
+                player.altFunctionUse = 1;
+                return false;
+            }
+        }
         public override bool CanUseItem(Player player)
         {
-
-            if ((player.GetModPlayer<tsorcRevampPlayer>().cursePoints > 0) || player.HasBuff(ModContent.BuffType<CurseBuildup>()) || player.HasBuff(ModContent.BuffType<PowerfulCurseBuildup>()))
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if ((modPlayer.CurseActive || modPlayer.powerfulCurseActive) && Main.myPlayer == player.whoAmI)
             {
-                if (!player.HasBuff(BuffID.PotionSickness))
-                {
-                    return true;
-                }
+                return true;
             }
             return false;
         }
 
         public override bool? UseItem(Player player)
         {
-            int restore = player.GetModPlayer<tsorcRevampPlayer>().cursePoints;
-            player.GetModPlayer<tsorcRevampPlayer>().cursePoints = 0;
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             if (Main.myPlayer == player.whoAmI)
             {
-                player.HealEffect(restore, true);
+                modPlayer.CurseLevel = 0;
+                modPlayer.CurseActive = false;
+                modPlayer.PowerfulCurseLevel = 0;
+                modPlayer.powerfulCurseActive = false;
+                Dust.NewDust(player.TopLeft, player.width, player.height, DustID.Blood, Main.rand.NextFloat(2), Main.rand.NextFloat(2), 0, default, 1);
+                SoundEngine.PlaySound(SoundID.Item104 with { Volume = 1f});
+                return true;
             }
-
-            player.AddBuff(BuffID.PotionSickness, 10800);
-            if (Main.myPlayer == player.whoAmI)
-            {
-                player.HealEffect(500, true);
-            }
-            player.statLife += 500;
-
-            int buffIndex = 0;
-
-            foreach (int buffType in player.buffType)
-            {
-
-                if (buffType == ModContent.BuffType<CurseBuildup>() || buffType == ModContent.BuffType<PowerfulCurseBuildup>())
-                {
-                    player.DelBuff(buffIndex);
-                    player.GetModPlayer<tsorcRevampPlayer>().CurseLevel = 0;
-                    player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel = 0;
-                }
-                buffIndex++;
-            }
-            return true;
-        }
-
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            Player player = Main.LocalPlayer;
-
-            int totalLife = player.statLifeMax + player.GetModPlayer<tsorcRevampPlayer>().cursePoints;
-            tooltips.Insert(11, new TooltipLine(Mod, "CurrentMax", Language.GetTextValue("Mods.tsorcRevamp.Items.PurgingStone.Record") + totalLife));
-
+            return false;
         }
     }
 }

@@ -21,31 +21,18 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override void Update(Player player, ref int buffIndex)
         {
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             if (player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel >= 500)
             {
-                if (player.statLifeMax <= 100)
-                {
-                    Main.NewText(LangUtils.GetTextValue("Buffs.Curse.CurseText1"));
-                }
+                modPlayer.CalculateCurseStats(true);
+                modPlayer.powerfulCurseActive = true;
 
-                if (player.statLifeMax >= 200)
-                {
-                    player.GetModPlayer<tsorcRevampPlayer>().cursePoints += 100;
-                    Main.NewText(LangUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", 100));
-                }
-                else
-                {
-                    int lifeLoss = player.statLifeMax - 100;
-                    player.statLife -= lifeLoss;
-                    Main.NewText(LangUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", lifeLoss));
-                }
-
-                player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel = 0; // Reset to 0
-                player.AddBuff(ModContent.BuffType<Invincible>(), 5 * 60); // 5 seconds
-                player.AddBuff(ModContent.BuffType<Strength>(), 120 * 60); // 2 minutes
-                player.AddBuff(ModContent.BuffType<GreenBlossom>(), 120 * 60); // 2 minutes
-                player.AddBuff(ModContent.BuffType<CrimsonDrain>(), 1 * 60); // Reduced duration, but retained to add visually to the moment of curse
-                player.AddBuff(BuffID.Clairvoyance, 120 * 60); // 2 minutes
+                modPlayer.PowerfulCurseLevel = 0; // Reset to 0
+                player.AddBuff(ModContent.BuffType<Invincible>(), 5 * 60); 
+                player.AddBuff(ModContent.BuffType<Strength>(), 120 * 60); 
+                player.AddBuff(ModContent.BuffType<GreenBlossom>(), 120 * 60); 
+                player.AddBuff(ModContent.BuffType<CrimsonDrain>(), 1 * 60); 
+                player.AddBuff(BuffID.Clairvoyance, 120 * 60);
 
                 for (int i = 0; i < 50; i++)
                 {

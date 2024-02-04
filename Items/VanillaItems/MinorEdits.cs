@@ -17,10 +17,10 @@ namespace tsorcRevamp.Items.VanillaItems
         public const float TurtleSetResistBonus = 2f;
         public override void SetDefaults(Item item)
         {
-            if (item.type == ItemID.StaffofRegrowth && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            /*if ((item.type == ItemID.StaffofRegrowth || item.type == ItemID.AcornAxe) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 item.createTile = -1; //block placing grass, thus allowing use
-            }
+            }*/
             if (item.type == ItemID.DivingHelmet)
             {
                 item.accessory = true;

@@ -4022,6 +4022,28 @@ Mods: {
 					回复的生命值上限不会超过
 					你通过生命水晶和生命果达到的最大生命值
 					'''
+				/* CurseStats:
+					'''
+					Current Curse Stats:
+					Max Life Boost: {0}%
+					Life Regeneration Boost: {1}
+					Defense Boost: {2}
+					Resistance Boost: {3}
+					Damage Boost: {4}%
+					Attack Speed Boost: {5}%
+					Movement Speed Boost: {6}%
+					''' */
+				/* powerfulCurseStats:
+					'''
+					Current Powerful Curse Stats:
+					Max Life Boost: {0}%
+					Life Regeneration Boost: {1}
+					Defense Boost: {2}
+					Resistance Boost: {3}
+					Damage Boost: {4}%
+					Attack Speed Boost: {5}%
+					Movement Speed Boost: {6}%
+					''' */
 			}
 
 			BoltCrate: {
@@ -4806,7 +4828,6 @@ Mods: {
 					而是作为一个替代品将其接收
 					这意味着它自身可能曾经是一个人或其他生物					
 					'''
-				Record: "当前能恢复的最大生命值： "
 			}
 
 			RedTitanite: {
@@ -7688,6 +7709,8 @@ Mods: {
 				CurseText1: 你被诅咒了...但诅咒不再能削弱你了！
 				CurseText2: 你感到自己无敌了！
 				CurseLifeLoss: 你被诅咒了！ -{0} 生命！
+				// DisplayName: Curse
+				// Description: Mods.tsorcRevamp.Buffs.Curse.Description
 			}
 
 			ArmorDrug: {
@@ -7807,6 +7830,11 @@ Mods: {
 			PowerfulCurseBuildup: {
 				DisplayName: OP的诅咒建立
 				Description: "{$Buffs.Curse.Buildup}"
+			}
+
+			PowerfulCurse: {
+				// DisplayName: Powerful Curse
+				// Description: Mods.tsorcRevamp.Buffs.PowerfulCurse.Description
 			}
 
 			RejuvenationCooldown: {

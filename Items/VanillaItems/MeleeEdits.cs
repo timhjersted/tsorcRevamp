@@ -161,6 +161,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.BeamSword)
             {
+                item.shootsEveryUse = true;
                 item.mana = 15;
             }
             if (item.type == ItemID.Frostbrand)
@@ -186,6 +187,14 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.Excalibur)
             {
                 item.mana = 20;
+            }
+            if (item.type == ItemID.ChlorophyteSaber)
+            {
+                item.mana = 16;
+            }
+            if (item.type == ItemID.ChlorophyteClaymore)
+            {
+                item.mana = 19;
             }
             if (item.type == ItemID.TrueExcalibur)
             {

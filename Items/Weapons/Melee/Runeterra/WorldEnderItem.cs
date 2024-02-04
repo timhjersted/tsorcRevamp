@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public const float SecondSwingCooldown = 9;
         public const float ThirdSwingCooldown = 15;
         public const string SoundPath = "tsorcRevamp/Sounds/Runeterra/Melee/WorldEnder/";
-        public const float SoundVolume = 0.7f;
+        public const float SoundVolume = 0.55f;
         public int SwingSoundStyle = 1;
         public override void SetDefaults()
         {

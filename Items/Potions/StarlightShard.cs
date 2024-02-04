@@ -197,7 +197,7 @@ namespace tsorcRevamp.Items.Potions
             recipe5.Register();
 
             Recipe recipe6 = CreateRecipe();
-            recipe6.AddIngredient(ItemID.ManaCrystal, 4);
+            recipe6.AddIngredient(ItemID.ManaCrystal, 2);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>());
             recipe6.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe6.AddTile(TileID.Bottles);

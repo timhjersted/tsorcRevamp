@@ -84,6 +84,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Projectile.damage = (int)(Projectile.damage * 0.95f); //Multihit penalty
+            float SoundVolume = 0;
             if (!Hit)
             {
                 Hit = true;
@@ -92,20 +93,23 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
                     case 1:
                         {
                             SoundPath = "tsorcRevamp/Sounds/Runeterra/Melee/SteelTempest/";
+                            SoundVolume = 0.5f;
                             break;
                         }
                     case 2:
                         {
                             SoundPath = "tsorcRevamp/Sounds/Runeterra/Melee/PlasmaWhirlwind/";
+                            SoundVolume = 0.7f;
                             break;
                         }
                     case 3:
                         {
                             SoundPath = "tsorcRevamp/Sounds/Runeterra/Melee/Nightbringer/";
+                            SoundVolume = 0.7f;
                             break;
                         }
                 }
-                SoundEngine.PlaySound(new SoundStyle(SoundPath + "TornadoHit") with { Volume = 0.7f });
+                SoundEngine.PlaySound(new SoundStyle(SoundPath + "TornadoHit") with { Volume = SoundVolume });
             }
         }
         public override bool PreDraw(ref Color lightColor)

@@ -321,7 +321,7 @@ namespace tsorcRevamp
                 TileID.Statues, TileID.AlphabetStatues, TileID.BoulderStatue, TileID.Traps, TileID.Boulder, TileID.Explosives, TileID.Firework, TileID.Detonator, TileID.FakeContainers, TileID.FakeContainers2, //all statues, traps, boulders, explosives, party rockets, detonator, trapped chests
                 TileID.ActiveStoneBlock, TileID.InactiveStoneBlock, TileID.Bubble, TileID.Grate, TileID.GrateClosed, TileID.LunarOre, //toggled stone blocks, bubbles, grates open and closed, Luminite
                 TileID.Lever, TileID.PressurePlates, TileID.Switches, TileID.InletPump, TileID.OutletPump, TileID.Timers, TileID.LogicGateLamp, TileID.LogicGate, TileID.ConveyorBeltLeft, TileID.ConveyorBeltRight, TileID.LogicSensor, TileID.WirePipe, TileID.AnnouncementBox, TileID.WeightedPressurePlate, TileID.WireBulb, TileID.GemLocks, TileID.ProjectilePressurePad, // ALL (other) WIRING
-                ItemID.RedLight, ItemID.GreenLight,
+                ItemID.RedLight, ItemID.GreenLight, TileID.DesertFossil
             };
             #endregion
             //--------
@@ -364,7 +364,8 @@ namespace tsorcRevamp
                 TileID.Mannequin, TileID.Womannequin, TileID.DisplayDoll, TileID.Painting3X3, TileID.GolfTrophies, TileID.MasterTrophyBase, //all mannequins, trophies and relics
                 TileID.SeaweedPlanter, //seaweed/herb planters
                 TileID.Sunflower, TileID.Campfire, TileID.HangingLanterns, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle)
-                TileID.Sundial, TileID.Moondial //Sundial, Moondial
+                TileID.Sundial, TileID.Moondial, //Sundial, Moondial
+                TileID.Grass
             };
             #endregion
             //--------
@@ -1220,15 +1221,14 @@ namespace tsorcRevamp
             int message = reader.ReadByte();
             switch (message)
             {
-                case tsorcPacketID.SyncSoulSlotAndCurse:
+                case tsorcPacketID.SyncSoulSlot:
                     {
                         byte player = reader.ReadByte(); //player.whoAmI
                         tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
                         modPlayer.SoulSlot.Item = ItemIO.Receive(reader);
-                        modPlayer.cursePoints = reader.ReadInt32();
                         if (Main.netMode == NetmodeID.Server)
                         {
-                            modPlayer.SendSingleItemPacket(tsorcPacketID.SyncSoulSlotAndCurse, modPlayer.SoulSlot.Item, -1, whoAmI);
+                            modPlayer.SendSingleItemPacket(tsorcPacketID.SyncSoulSlot, modPlayer.SoulSlot.Item, -1, whoAmI);
                         }
                         break;
                     }
@@ -2690,7 +2690,7 @@ namespace tsorcRevamp
     public class tsorcPacketID
     {
         //Bytes because packets use bytes
-        public const byte SyncSoulSlotAndCurse = 1;
+        public const byte SyncSoulSlot = 1;
         public const byte SyncEventDust = 2;
         public const byte SyncTimeChange = 3;
         public const byte DispelShadow = 4;

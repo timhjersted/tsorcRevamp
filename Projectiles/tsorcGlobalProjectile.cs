@@ -143,6 +143,12 @@ namespace tsorcRevamp.Projectiles
                 projectile.ai[0] = 0;
                 projectile.ai[1] = 0;
             }
+            if (projectile.type == ProjectileID.HoundiusShootiusFireball)
+            {
+                projectile.penetrate = 2;
+                projectile.usesLocalNPCImmunity = true;
+                projectile.localNPCHitCooldown = -1;
+            }
         }
         public override bool PreAI(Projectile projectile)
         {

@@ -96,7 +96,7 @@ namespace tsorcRevamp
 
             if (oldClone.SoulSlot.Item.IsNotSameTypePrefixAndStack(SoulSlot.Item))
             {
-                SendSingleItemPacket(tsorcPacketID.SyncSoulSlotAndCurse, SoulSlot.Item, -1, Player.whoAmI);
+                SendSingleItemPacket(tsorcPacketID.SyncSoulSlot, SoulSlot.Item, -1, Player.whoAmI);
             }
         }
         public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
@@ -104,10 +104,10 @@ namespace tsorcRevamp
 
             //Sync soul slot
             ModPacket packet = Mod.GetPacket();
-            packet.Write((byte)tsorcPacketID.SyncSoulSlotAndCurse);
+            packet.Write((byte)tsorcPacketID.SyncSoulSlot);
             packet.Write((byte)Player.whoAmI);
             ItemIO.Send(SoulSlot.Item, packet);
-            packet.Write(cursePoints);
+            //packet.Write(cursePoints);
             packet.Send(toWho, fromWho);
 
 
@@ -136,7 +136,22 @@ namespace tsorcRevamp
             tag.Add("ReceivedGift", ReceivedGift);
             tag.Add("BearerOfTheCurse", BearerOfTheCurse);
             tag.Add("soulSlot", ItemIO.Save(SoulSlot.Item));
-            tag.Add("cursePoints", cursePoints);
+            tag.Add("Curse", CurseActive);
+            tag.Add("CurseMaxLifeMult", CurseMaxLifeMultiplier);
+            tag.Add("CurseLifeRegen", CurseLifeRegenerationBonus);
+            tag.Add("CurseDefense", CurseDefenseBonus);
+            tag.Add("CurseResist", CurseResistanceBonus);
+            tag.Add("CurseDmg", CurseDamageBonus);
+            tag.Add("CurseAtkSpd", CurseAttackSpeedBonus);
+            tag.Add("CurseMoveSpd", CurseMovementSpeedBonus);
+            tag.Add("powerfulCurse", powerfulCurseActive);
+            tag.Add("powerfulCurseMaxLifeMult", powerfulCurseMaxLifeMultiplier);
+            tag.Add("powerfulCurseLifeRegen", powerfulCurseLifeRegenerationBonus);
+            tag.Add("powerfulCurseDefense", powerfulCurseDefenseBonus);
+            tag.Add("powerfulCurseResist", powerfulCurseResistanceBonus);
+            tag.Add("powerfulCurseDmg", powerfulCurseDamageBonus);
+            tag.Add("powerfulCurseAtkSpd", powerfulCurseAttackSpeedBonus);
+            tag.Add("powerfulCurseMoveSpd", powerfulCurseMovementSpeedBonus);
             tag.Add("SoulVessel", SoulVessel);
 
             if (bagsOpened == null)
@@ -199,7 +214,22 @@ namespace tsorcRevamp
             BearerOfTheCurse = tag.GetBool("BearerOfTheCurse");
             Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
             SoulSlot.Item = soulSlotSouls.Clone();
-            cursePoints = tag.GetInt("cursePoints");
+            CurseActive = tag.GetBool("Curse");
+            CurseMaxLifeMultiplier = tag.GetFloat("CurseMaxLifeMult");
+            CurseLifeRegenerationBonus = tag.GetFloat("CurseLifeRegen");
+            CurseDefenseBonus = tag.GetFloat("CurseDefense");
+            CurseResistanceBonus = tag.GetFloat("CurseResist");
+            CurseDamageBonus = tag.GetFloat("CurseDmg");
+            CurseAttackSpeedBonus = tag.GetFloat("CurseAtkSpd");
+            CurseMovementSpeedBonus = tag.GetFloat("CurseMoveSpd");
+            powerfulCurseActive = tag.GetBool("powerfulCurse");
+            CurseMaxLifeMultiplier = tag.GetFloat("CurseMaxLifeMult");
+            powerfulCurseLifeRegenerationBonus = tag.GetFloat("powerfulCurseLifeRegen");
+            powerfulCurseDefenseBonus = tag.GetFloat("powerfulCurseDefense");
+            powerfulCurseResistanceBonus = tag.GetFloat("powerfulCurseResist");
+            powerfulCurseDamageBonus = tag.GetFloat("powerfulCurseDmg");
+            powerfulCurseAttackSpeedBonus = tag.GetFloat("powerfulCurseAtkSpd");
+            powerfulCurseMovementSpeedBonus = tag.GetFloat("powerfulCurseMoveSpd");
             SoulVessel = tag.GetInt("SoulVessel");
 
             if (bagsOpened == null)
@@ -940,7 +970,7 @@ namespace tsorcRevamp
         {
             if (CanUseItemsWhileDodging && isDodging && (modifiers.DamageType == DamageClass.Melee || modifiers.DamageType == DamageClass.MeleeNoSpeed))
             {
-                modifiers.FinalDamage *= ArtoriasArmor.DmgMultWhileRolling;
+                modifiers.FinalDamage += ArtoriasArmor.DmgMultWhileRolling;
             }
             if (Player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread)
             {
@@ -1074,7 +1104,7 @@ namespace tsorcRevamp
             {
                 for (int b = 0; b < 8; b++)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.SourceDamage * 3, 4f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.SourceDamage * 3, 4f, 0, 0, 1);
                 }
             }
 
@@ -1111,7 +1141,7 @@ namespace tsorcRevamp
             {
                 for (int b = 0; b < 8; b++)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.SourceDamage * 3, 4f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.SourceDamage * 3, 4f, 0, 0, 1);
                 }
             }
 

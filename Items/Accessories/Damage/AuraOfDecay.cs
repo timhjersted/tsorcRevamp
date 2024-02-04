@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories.Damage
 
             if (Main.GameUpdateCount % 180 == 0 && player.whoAmI == Main.myPlayer)
             {
-                Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.AuraOfDecay>(), 5 * 60, 0, Main.myPlayer, player.whoAmI);
+                Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.AuraOfDecay>(), 200, 0, Main.myPlayer, player.whoAmI);
             }
         }
         public override bool CanEquipAccessory(Player player, int slot, bool modded)

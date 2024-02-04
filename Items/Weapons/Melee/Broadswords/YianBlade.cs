@@ -14,15 +14,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public int ManaRestoration = 100;
         public int BaseManaCost = 200;
-        public int ProjectileDmgMult = 8;
+        public int ProjectileDmgMult = 6;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ManaRestoration, BaseManaCost);
-        public override void SetStaticDefaults()
-        {
-        }
-
         public override void SetDefaults()
         {
-
             Item.width = 44;
             Item.height = 44;
             Item.useStyle = ItemUseStyleID.Swing;
@@ -40,7 +35,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.shootSpeed = 5f;
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.DarkMagenta;
-
         }
 
         public override void AddRecipes()

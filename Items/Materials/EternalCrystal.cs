@@ -81,13 +81,13 @@ namespace tsorcRevamp.Items.Materials
             recipe.Register();
 
             Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(ItemID.LifeCrystal, 27);
+            recipe2.AddIngredient(ItemID.LifeCrystal, 13);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();
 
             Recipe recipe3 = CreateRecipe();
-            recipe3.AddIngredient(ItemID.LifeFruit, 9);
+            recipe3.AddIngredient(ItemID.LifeFruit, 7);
             recipe3.AddTile(TileID.DemonAltar);
 
             recipe3.Register();

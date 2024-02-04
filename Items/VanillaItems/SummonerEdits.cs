@@ -32,6 +32,10 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 24;
             }
 
+            if (item.type == ItemID.HoundiusShootius)
+            {
+                item.damage = 25;
+            }
             if (item.type == ItemID.StaffoftheFrostHydra) //buff, using static immunity frame in tml1.4.4, vanilla damage is 100
             {
                 item.damage = 100; //now uses local iframes in globalprojectile

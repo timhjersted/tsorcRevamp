@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
     public class SpiritBell : ModItem
     {
         public const int BaseCritChance = 15;
-        public const float CritDmg = 100f;
+        public const float CritDmg = 50f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BaseCritChance, CritDmg);
         public override void SetStaticDefaults()
         {

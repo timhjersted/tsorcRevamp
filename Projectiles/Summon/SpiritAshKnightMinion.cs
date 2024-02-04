@@ -102,7 +102,7 @@ namespace tsorcRevamp.Projectiles.Summon
             vectorToIdlePosition = idlePosition - Projectile.Center;
             distanceToIdlePosition = vectorToIdlePosition.Length();
 
-            if (Main.myPlayer == player.whoAmI && distanceToIdlePosition > 2000f)
+            if (Main.myPlayer == player.whoAmI && distanceToIdlePosition > 1500f)
             {
                 // Whenever you deal with non-regular events that change the behavior or position drastically, make sure to only run the code on the owner of the projectile,
                 // and then set netUpdate to true

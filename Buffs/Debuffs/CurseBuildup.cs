@@ -23,26 +23,17 @@ namespace tsorcRevamp.Buffs.Debuffs
         {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-            if (modPlayer.CurseLevel >= 100 && player.statLifeMax > 100)
+            if (modPlayer.CurseLevel >= 100)
             {
-                if (player.statLifeMax <= 100)
-                {
-                    Main.NewText(LangUtils.GetTextValue("Buffs.Curse.CurseText1"));
-                }
-
-                if (player.statLifeMax >= 120)
-                {
-                    modPlayer.cursePoints += 20;
-                    player.statLife -= 20;
-                    Main.NewText(LangUtils.GetTextValue("Buffs.Curse.CurseLifeLoss", 20));
-                }
+                modPlayer.CalculateCurseStats(false);
+                modPlayer.CurseActive = true;
+                player.AddBuff(ModContent.BuffType<Curse>(), 2);
 
                 modPlayer.CurseLevel = 0; // Reset it to 0
 
-                player.AddBuff(ModContent.BuffType<Invincible>(), 480, false); // 8 seconds
-                player.AddBuff(ModContent.BuffType<GreenBlossom>(), 3600, false);
-                player.AddBuff(ModContent.BuffType<Strength>(), 3600, false);
-                Main.NewText(LangUtils.GetTextValue("Buffs.Curse.CurseText2"));
+                player.AddBuff(ModContent.BuffType<Invincible>(), 8 * 60, false); // 8 seconds
+                player.AddBuff(ModContent.BuffType<GreenBlossom>(), 60 * 60, false);
+                player.AddBuff(ModContent.BuffType<Strength>(), 60 * 60, false);
 
                 for (int i = 0; i < 30; i++)
                 {

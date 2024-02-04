@@ -17,7 +17,6 @@ namespace tsorcRevamp.Projectiles
         }
         public override void SetDefaults()
         {
-            Projectile.damage = 0;
             Projectile.width = 1;
             Projectile.height = 1;
             Projectile.friendly = true;
@@ -27,7 +26,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.hide = true;
 
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = NPC.immuneTime;
+            Projectile.localNPCHitCooldown = 20;
 
             trailWidth = 45;
             trailPointLimit = 2000;
