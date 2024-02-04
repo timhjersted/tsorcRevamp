@@ -178,7 +178,7 @@ Mods: {
 			05: 水晶碎块经常暗示附近的秘密、箱子或隐藏路径...
 			06: 在正常战斗中使用药剂通常是生存所必需的
 			07: 死亡时失去灵魂可以在模组配置中禁用，试试吧就像塞尔达传说那样
-			08: 某些黑暗区域的敌人掉落人性，可以恢复因诅咒而损失的生命值
+			08: 某些黑暗区域的敌人掉落人性，可以刷新诅咒的效果
 			09: 物品提示通常包含对你的生存至关重要的信息...
 			10: 留意你物品的描述，看看是否有能用黑暗之魂升级的物品
 			11: 可以在BOSS掉落的独特物品上找到进展线索
@@ -4018,32 +4018,31 @@ Mods: {
 				DisplayName: 人性
 				Tooltip:
 					'''
-					吸收诅咒，恢复你所有因诅咒而失去的生命值上限
-					回复的生命值上限不会超过
-					你通过生命水晶和生命果达到的最大生命值
+					使用后刷新 诅咒 的效果
+					<right>刷新 邪孽 的效果
 					'''
-				/* CurseStats:
+				CurseStats:
 					'''
-					Current Curse Stats:
-					Max Life Boost: {0}%
-					Life Regeneration Boost: {1}
-					Defense Boost: {2}
-					Resistance Boost: {3}
-					Damage Boost: {4}%
-					Attack Speed Boost: {5}%
-					Movement Speed Boost: {6}%
-					''' */
-				/* powerfulCurseStats:
+					当前诅咒效果：
+					最大生命值: {0}%
+					生命再生: {1}
+					防御: {2}
+					抵抗力: {3}
+					伤害加成: {4}%
+					攻击速度: {5}%
+					移动速度: {6}%
 					'''
-					Current Powerful Curse Stats:
-					Max Life Boost: {0}%
-					Life Regeneration Boost: {1}
-					Defense Boost: {2}
-					Resistance Boost: {3}
-					Damage Boost: {4}%
-					Attack Speed Boost: {5}%
-					Movement Speed Boost: {6}%
-					''' */
+				powerfulCurseStats:
+					'''
+					当前邪孽效果：
+					最大生命值: {0}%
+					生命再生: {1}
+					防御: {2}
+					抵抗力: {3}
+					伤害加成: {4}%
+					攻击速度: {5}%
+					移动速度: {6}%
+					'''
 			}
 
 			BoltCrate: {
@@ -4818,15 +4817,12 @@ Mods: {
 				DisplayName: 净化石
 				Tooltip:
 					'''
-					包裹头骨的灰色石头
-					来自卡里姆伯爵——阿斯特的秘宝
-					移除累积的诅咒，并将你的最大生命值恢复到 500
-					恢复量不会超出生命水晶或生命果实所达到的最大值
-					不能在药水疾病期间使用
-					人类对诅咒束手无策，只能设法转移其影响
-					净化石本身并不会直接驱散诅咒
-					而是作为一个替代品将其接收
-					这意味着它自身可能曾经是一个人或其他生物					
+					'包裹头骨的灰色石头
+					来自卡里姆伯爵—阿斯特的秘宝'
+					使用后移除累积的诅咒
+					'人类对诅咒束手无策，只能设法转移其影响
+					净化石本身并不直接驱散诅咒，而是将其吸收
+					这意味着它可能曾经是一个人或其他生物'
 					'''
 			}
 
@@ -7708,9 +7704,9 @@ Mods: {
 				Buildup: 当计数器达到 {0}, 厄运就会降临. 诅咒已达到 {1}
 				CurseText1: 你被诅咒了...但诅咒不再能削弱你了！
 				CurseText2: 你感到自己无敌了！
-				CurseLifeLoss: 你被诅咒了！ -{0} 生命！
-				// DisplayName: Curse
-				// Description: Mods.tsorcRevamp.Buffs.Curse.Description
+				CurseLifeLoss: 你被诅咒了！
+				DisplayName: 诅咒
+				Description: 物极必反
 			}
 
 			ArmorDrug: {
@@ -7788,8 +7784,8 @@ Mods: {
 			}
 
 			CurseBuildup: {
-				DisplayName: 诅咒建立
-				Description: "{$Buffs.Curse.Buildup}"
+				DisplayName: 诅咒
+				Description: 你被诅咒了！
 			}
 
 			DarkInferno: {
@@ -7828,13 +7824,13 @@ Mods: {
 			}
 
 			PowerfulCurseBuildup: {
-				DisplayName: OP的诅咒建立
+				DisplayName: 邪孽
 				Description: "{$Buffs.Curse.Buildup}"
 			}
 
 			PowerfulCurse: {
-				// DisplayName: Powerful Curse
-				// Description: Mods.tsorcRevamp.Buffs.PowerfulCurse.Description
+				DisplayName: 邪孽
+				Description: 否极泰来
 			}
 
 			RejuvenationCooldown: {
