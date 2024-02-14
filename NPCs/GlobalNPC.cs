@@ -389,6 +389,8 @@ namespace tsorcRevamp.NPCs
         }
         public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
         {
+            int playerX = (int)(Main.LocalPlayer.Center.X / 16f);
+            int playerY = (int)(Main.LocalPlayer.Center.Y / 16f);
 
             if (tsorcRevampWorld.TheEnd)
             {
@@ -447,8 +449,8 @@ namespace tsorcRevamp.NPCs
             //graveyard
             if (spawnInfo.Player.ZoneGraveyard && !Main.hardMode)
             {
-                pool.Add(NPCID.BigMisassembledSkeleton, 0.2f);
-                pool.Add(NPCID.BoneThrowingSkeleton2, 0.2f);
+                pool.Add(NPCID.BigMisassembledSkeleton, 0.03f);
+                pool.Add(NPCID.BoneThrowingSkeleton2, 0.03f);
             }
 
             //HARD MODE SECTION
@@ -458,7 +460,6 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.DesertDjinn, 0.075f);
                 pool.Add(NPCID.DiabolistWhite, 0.02f); //was 0.1
-                //pool.Add(ModContent.NPCType<Enemies.RingedKnight>(), 0.25f);
                 pool.Add(ModContent.NPCType<Enemies.LothricSpearKnight>(), 0.08f);
                 pool.Add(ModContent.NPCType<Enemies.LothricKnight>(), 0.08f);
 
@@ -471,24 +472,29 @@ namespace tsorcRevamp.NPCs
             }
 
             //machine temple (in water)
-            if (spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
-            {
-                if (!pool.ContainsKey(NPCID.GreenJellyfish))
-                {
-                    pool.Remove(NPCID.GreenJellyfish);
-                }
-                if (!pool.ContainsKey(ModContent.NPCType<Enemies.MutantToad>()))
-                {
-                    pool.Remove(ModContent.NPCType<Enemies.MutantToad>());
-                }
+            if (spawnInfo.Water && playerY < 1430 && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
+            {            
+                // 98 = WallID.GreenDungeonSlabUnsafe
+                
+                    // Clear the existing pool to ensure no other NPCs can spawn
+                    pool.Clear();
 
-                pool.Add(NPCID.GreenJellyfish, 6f);
-                pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 4f);
+                    // Add specific NPCs back into the pool with their spawn weights
+                    pool.Add(NPCID.GreenJellyfish, 15f);
+                    pool.Add(ModContent.NPCType<Enemies.SuperHardMode.ManOfWar>(), 0.2f);
+                    pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 4f);
+                    pool.Add(ModContent.NPCType<Enemies.GhostOfTheDrowned>(), 2f);
+
+
+
             }
             //machine temple (not in water)
-            if (!spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode && !tsorcRevampWorld.SuperHardMode)
+            if (!spawnInfo.Water && playerY < 1430 && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
             {
-                pool.Add(ModContent.NPCType<Enemies.SuperHardMode.IceSkeleton>(), 0.2f);
+                pool.Clear();
+                pool.Add(ModContent.NPCType<Enemies.GhostOfTheDrowned>(), 3f);
+                pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 1f);
+
             }
             //sky
             if (spawnInfo.Player.ZoneSkyHeight && Main.hardMode)
@@ -2597,7 +2603,8 @@ namespace tsorcRevamp.NPCs
                 }
                 else
                 {
-                    if (npc.ModNPC.GetType().Namespace.Contains("SuperHardMode") && NPC.TypeToDefaultHeadIndex != ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>)
+                    if (npc.ModNPC.GetType().Namespace.Contains("SuperHardMode") && (npc.ModNPC.GetType() != typeof(NPCs.Bosses.SuperHardMode.Gwyn))
+)
                     {
                         base.SetDefaults(npc);
                         npc.lifeMax = (int)(tsorcRevampWorld.SHMScale * npc.lifeMax);
@@ -2620,7 +2627,7 @@ namespace tsorcRevamp.NPCs
                 //npc.lifeMax = (int)Math.Round(npc.lifeMax * (1f + (0.7f * ((float)bossLifeScale - 1f))));
 
                 //Add our scaling
-                npc.lifeMax = (int)(npc.lifeMax * (1f + ((numPlayers - 1f) * .5f)));
+                npc.lifeMax = (int)(npc.lifeMax * (1f + ((numPlayers - 1f) * .4f))); // was .5
                 return;
             }
         }

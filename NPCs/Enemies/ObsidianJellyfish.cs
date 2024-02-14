@@ -35,7 +35,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.lifeMax = 10;
                 NPC.defense = 999;
                 NPC.value = 600;
-                NPC.damage = 50;
+                NPC.damage = 80;
             }
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
