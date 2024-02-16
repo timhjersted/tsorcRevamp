@@ -480,8 +480,8 @@ namespace tsorcRevamp.NPCs
                     pool.Clear();
 
                     // Add specific NPCs back into the pool with their spawn weights
-                    pool.Add(NPCID.GreenJellyfish, 15f);                  
-                    pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 4f);
+                    pool.Add(NPCID.GreenJellyfish, 10f);                  
+                    pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 2f);
                     pool.Add(ModContent.NPCType<Enemies.GhostOfTheDrowned>(), 2f);
 
 

@@ -135,8 +135,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 NPC.position.Y = Pt.position.Y - 65 + (float)((30 * Math.Sin(NPC.ai[3])) * -1);
                 NPC.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
 
-                float MinDIST = 300f;
-                float MaxDIST = 600f;
+                float MinDIST = 400f;
+                float MaxDIST = 700f;
                 Vector2 Diff = NPC.position - Pt.position;
                 if (Diff.Length() > MaxDIST)
                 {
