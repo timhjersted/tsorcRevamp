@@ -43,7 +43,10 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             num51 = num48 / num51;
             speedX *= num51;
             speedY *= num51;
-            Projectile.NewProjectile(player.GetSource_ItemUse(Item), new Vector2(player.position.X + (player.width * 0.5f), player.position.Y + (player.height * 0.5f)), new Vector2((float)speedX, (float)speedY), ModContent.ProjectileType<Projectiles.DevilSickle>(), (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(player.inventory[player.selectedItem].damage)), 3, player.whoAmI);
+            if (Main.myPlayer == player.whoAmI)
+            {
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), new Vector2(player.position.X + (player.width * 0.5f), player.position.Y + (player.height * 0.5f)), new Vector2((float)speedX, (float)speedY), ModContent.ProjectileType<Projectiles.DevilSickle>(), (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(player.inventory[player.selectedItem].damage)), 3, player.whoAmI);
+            }
             return true;
         }
 

@@ -90,7 +90,10 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             int damage = (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage));
             float knockback = player.inventory[player.selectedItem].knockBack;
 
-            Projectile.NewProjectile(player.GetSource_ItemUse(Item), position, speed, ModContent.ProjectileType<Projectiles.Sandstorm>(), damage, knockback, player.whoAmI);
+            if (player.whoAmI == Main.myPlayer)
+            {
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), position, speed, ModContent.ProjectileType<Projectiles.Sandstorm>(), damage, knockback, player.whoAmI);
+            }
 
             return true;
         }

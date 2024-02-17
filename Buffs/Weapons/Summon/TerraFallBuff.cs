@@ -26,12 +26,9 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
             AttackSpeed = player.GetModPlayer<tsorcRevampPlayer>().TerraFallStacks * TerraFallItem.MinSummonTagAttackSpeed;
             player.GetAttackSpeed(DamageClass.Summon) += AttackSpeed / 100f;
 
-            if (player.whoAmI == Main.myPlayer)
+            if (player.whoAmI == Main.myPlayer && player.ownedProjectileCounts[ModContent.ProjectileType<TerraFallTerraprisma>()] == 0)
             {
-                if (player.ownedProjectileCounts[ModContent.ProjectileType<TerraFallTerraprisma>()] == 0)
-                {
-                    Projectile.NewProjectileDirect(player.GetSource_Buff(buffIndex), player.Center, Vector2.One, ModContent.ProjectileType<TerraFallTerraprisma>(), 1, 1f, Main.myPlayer);
-                }
+                Projectile.NewProjectileDirect(player.GetSource_Buff(buffIndex), player.Center, Vector2.One, ModContent.ProjectileType<TerraFallTerraprisma>(), 1, 1f, Main.myPlayer);
             }
         }
         public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)

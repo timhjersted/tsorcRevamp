@@ -61,7 +61,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
-
             Vector2 muzzleOffset = Vector2.Normalize(speed) * 25f;
             if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0))
             {
@@ -74,7 +73,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
             speedAbs = 7f / speedAbs; // for speed consistency
             mySpeedX *= speedAbs;
             mySpeedY *= speedAbs;
-            Projectile.NewProjectile(player.GetSource_ItemUse(Item), new Vector2(position.X, position.Y), new Vector2(mySpeedX, mySpeedY), ModContent.ProjectileType<Projectiles.FarronDart>(), damage, knockBack, player.whoAmI);
+            if (Main.myPlayer == player.whoAmI)
+            {
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), new Vector2(position.X, position.Y), new Vector2(mySpeedX, mySpeedY), ModContent.ProjectileType<Projectiles.FarronDart>(), damage, knockBack, player.whoAmI);
+            }
 
             return false;
         }

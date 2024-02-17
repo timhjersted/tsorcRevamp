@@ -23,7 +23,10 @@ namespace tsorcRevamp.Buffs
             player.moveSpeed *= 1f - Slowness / 100f;
 
             Lighting.AddLight(player.Center, .400f, .400f, .700f);
-            Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.GreatMagicShield>(), 0, 0f, player.whoAmI);
+            if (Main.myPlayer == player.whoAmI)
+            {
+                Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.GreatMagicShield>(), 0, 0f, player.whoAmI);
+            }
         }
     }
 }

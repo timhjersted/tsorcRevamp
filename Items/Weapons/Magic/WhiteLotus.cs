@@ -38,7 +38,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
-            Projectile.NewProjectile(source, player.Center, speed, ModContent.ProjectileType<WhiteLotusCore>(), damage, knockBack, Main.myPlayer, 0, Main.rand.Next(2));
+            if (Main.myPlayer == player.whoAmI)
+            {
+                Projectile.NewProjectile(source, player.Center, speed, ModContent.ProjectileType<WhiteLotusCore>(), damage, knockBack, Main.myPlayer, 0, Main.rand.Next(2));
+            }
             return false;
         }
 

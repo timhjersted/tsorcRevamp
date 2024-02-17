@@ -120,9 +120,12 @@ namespace tsorcRevamp.Items
                     player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 20;
                 }
 
-                for (int i = 0; i < 7; i++)
+                if (player.whoAmI == Main.myPlayer)
                 {
-                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center + new Vector2(4 * player.direction, -20), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.GlintstoneSpeck>(), damage, 2.5f, Main.myPlayer);
+                    for (int i = 0; i < 7; i++)
+                    {
+                        Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center + new Vector2(4 * player.direction, -20), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.GlintstoneSpeck>(), damage, 2.5f, Main.myPlayer);
+                    }
                 }
 
                 //if (Main.mouseItem == null) // Not sure why but seems like it's not null if you're using something

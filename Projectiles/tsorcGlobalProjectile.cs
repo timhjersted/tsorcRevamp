@@ -13,9 +13,12 @@ using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Armors.Ranged;
+using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles.Enemy.Golem;
+using tsorcRevamp.Projectiles.Melee;
+using tsorcRevamp.Projectiles.Melee.Spears;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.Utilities;
@@ -454,7 +457,10 @@ namespace tsorcRevamp.Projectiles
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Melee/LethalTempoFullyStacked") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0045f }, player.Center);
                 }
                 player.AddBuff(ModContent.BuffType<LethalTempo>(), player.GetModPlayer<tsorcRevampPlayer>().BotCLethalTempoDuration * 60);
-                AppliedLethalTempo = true;
+                if (projectile.type != ModContent.ProjectileType<FetidExhaustProjectile>())
+                {
+                    AppliedLethalTempo = true;
+                }
             }
             #endregion
 

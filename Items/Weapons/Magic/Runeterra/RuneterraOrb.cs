@@ -123,7 +123,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         }
         public override void HoldItem(Player player)
         {
-            if (player.ownedProjectileCounts[OrbProjectile] == 0 && player.ownedProjectileCounts[HeldOrbProjectile] == 0 && !player.dead)
+            if (player.ownedProjectileCounts[OrbProjectile] == 0 && player.ownedProjectileCounts[HeldOrbProjectile] == 0 && !player.dead && player.whoAmI == Main.myPlayer)
             {
                 Projectile.NewProjectile(Projectile.InheritSource(player), player.Center, Vector2.Zero, HeldOrbProjectile, 0, 0, player.whoAmI);
             }

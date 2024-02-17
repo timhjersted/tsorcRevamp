@@ -206,7 +206,7 @@ namespace tsorcRevamp.Items
             {
                 // This code runs once halfway through the useTime of the item. 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.75f, PitchVariance = 0.3f }, player.Center); // Plays sound.
-                if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
+                if (Main.myPlayer == player.whoAmI)
                 {
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), 2000); // Gives player souls.
                     Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, ModContent.ProjectileType<Projectiles.Soulsplosion>(), 250, 15, 0);
@@ -288,7 +288,7 @@ namespace tsorcRevamp.Items
                 // This code runs at the end of the usetime of the item
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.9f, PitchVariance = 0.3f }, player.Center); // Plays sound.
 
-                if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
+                if (Main.myPlayer == player.whoAmI)
                 {
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), 5000); // Gives player souls.
                     Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, ModContent.ProjectileType<Projectiles.Soulsplosion>(), 600, 15, 0);
@@ -378,7 +378,7 @@ namespace tsorcRevamp.Items
             {
                 // This code runs once halfway through the useTime of the item.
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 1f, PitchVariance = 0.3f }, player.Center); // Plays sound.
-                if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
+                if (Main.myPlayer == player.whoAmI)
                 {
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), 10000); // Gives player souls.
                     Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, ModContent.ProjectileType<Projectiles.SoulsplosionLarge>(), 2000, 15, 0);

@@ -22,6 +22,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.MaxUpdates = 2;
             Projectile.light = 5;
             DrawHeldProjInFrontOfHeldItemAndArms = true;
+            Projectile.scale = 5;
         }
 
         Vector2[] lastpos = new Vector2[20];

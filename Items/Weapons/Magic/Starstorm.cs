@@ -38,15 +38,18 @@ namespace tsorcRevamp.Items.Weapons.Magic
             float y = (float)(Main.mouseY + Main.screenPosition.Y);
             float speedX = (Main.rand.Next(-20, 20)) / 10f;
             float speedY = 14.9f;
-            int type = ProjectileID.Starfury;
+            int type = ProjectileID.Starfury; //this one has some wacky code I can't decipher
             int damage = Item.damage;
             float knockback = 3.0f;
             int owner = player.whoAmI;
             y = player.position.Y - 800f;
 
-            for (int i = 0; i < 5; i++)
+            if (player.whoAmI == Main.myPlayer)
             {
-                Projectile.NewProjectile(player.GetSource_ItemUse(Item), x + ((i * 40) - 80), y, speedX, speedY, type, damage, knockback, owner);
+                for (int i = 0; i < 5; i++)
+                {
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), x + ((i * 40) - 80), y, speedX, speedY, type, damage, knockback, owner);
+                }
             }
             return true;
         }

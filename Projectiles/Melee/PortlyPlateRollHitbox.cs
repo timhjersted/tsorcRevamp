@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 
 
@@ -18,6 +19,10 @@ namespace tsorcRevamp.Projectiles.Melee
             Projectile.tileCollide = false;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 30;
+        }
+        public override void OnSpawn(IEntitySource source)
+        {
+            Projectile.originalDamage = Projectile.damage;
         }
         public override void AI()
         {

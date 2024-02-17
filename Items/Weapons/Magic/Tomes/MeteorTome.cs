@@ -43,8 +43,11 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 
         public override bool? UseItem(Player player)
         {
-            Projectile.NewProjectile(player.GetSource_ItemUse(Item), (float)(Main.mouseX + Main.screenPosition.X) - 100 + Main.rand.Next(200), player.position.Y - 800.0f,
-               (float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Meteor>(), (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage)), 2.0f, player.whoAmI);
+            if (Main.myPlayer == player.whoAmI)
+            {
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), (float)(Main.mouseX + Main.screenPosition.X) - 100 + Main.rand.Next(200), player.position.Y - 800.0f,
+                   (float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Meteor>(), (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage)), 2.0f, player.whoAmI);
+            }
             return true;
         }
     }

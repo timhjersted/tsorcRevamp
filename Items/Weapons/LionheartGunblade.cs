@@ -90,7 +90,10 @@ namespace tsorcRevamp.Items.Weapons
             {
                 Item.useStyle = ItemUseStyleID.Shoot;
                 Item.noMelee = true;
-                Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<LionheartGunshot>(), damage, knockback);
+                if (Main.myPlayer == player.whoAmI)
+                {
+                    Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<LionheartGunshot>(), damage, knockback);
+                }
                 SoundEngine.PlaySound(SoundID.Item11);
             }
             else

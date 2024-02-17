@@ -6,6 +6,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items
@@ -110,10 +111,10 @@ namespace tsorcRevamp.Items
             if (player.itemTime == 1)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 1f, PitchVariance = 0.3f }, player.Center); // Plays sound.
-                if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
+                if (Main.myPlayer == player.whoAmI)
                 {
                     //player.QuickSpawnItem(mod.ItemType("DarkSoul"), 2000); // Gives player souls.
-                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top + new Vector2(0, -32), player.velocity, ProjectileID.DD2ExplosiveTrapT2Explosion, 200, 15, 0);
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top + new Vector2(0, -32), player.velocity, ModContent.ProjectileType<ModDD2ExplosiveTrapT2Explosion>(), 200, 15, 0);
                 }
 
                 for (int d = 0; d < 90; d++) // Upwards

@@ -46,10 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.OnFire, 12 * 60, false);
-            Projectile Fireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 5f), ProjectileID.BallofFire, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
-            Fireball.DamageType = DamageClass.Melee;
-            Fireball.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit;
-            Fireball.netUpdate = true;
+            Projectile Fireball = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 5f), ProjectileID.BallofFire, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer, player.GetTotalCritChance(DamageClass.Melee) + Item.crit);
         }
 
         public override void MeleeEffects(Terraria.Player player, Rectangle rectangle)

@@ -57,9 +57,12 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             Vector2 projVector = new Vector2(10, 0).RotatedByRandom(MathHelper.TwoPi);
-            for (int i = 0; i < 5; i++)
+            if (Main.myPlayer == player.whoAmI)
             {
-                Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, projVector.RotatedBy(i * MathHelper.TwoPi / 5f), ModContent.ProjectileType<Projectiles.Magic.CelestialShard>(), damage, player.inventory[player.selectedItem].knockBack, player.whoAmI);
+                for (int i = 0; i < 5; i++)
+                {
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, projVector.RotatedBy(i * MathHelper.TwoPi / 5f), ModContent.ProjectileType<Projectiles.Magic.CelestialShard>(), damage, player.inventory[player.selectedItem].knockBack, player.whoAmI);
+                }
             }
 
             return true;
