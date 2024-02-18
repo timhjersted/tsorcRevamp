@@ -9201,6 +9201,8 @@ Mods: {
 			FlameOrbOfSpirituality.DisplayName: 灵性之珠
 			CharmOrbOfFlame.DisplayName: 烈焰之珠
 			CharmOrbOfSpirituality.DisplayName: 灵性之珠
+			// AncientFireAxeFireball.DisplayName: Ancient Fire Axe Fireball
+			// ModDD2ExplosiveTrapT2Explosion.DisplayName: Mod D D2 Explosive Trap T2 Explosion
 		}
 
 		NPCs: {

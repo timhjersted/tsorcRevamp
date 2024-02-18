@@ -6,7 +6,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles
+namespace tsorcRevamp.Projectiles.Melee.Axes
 {
     class AncientFireAxeFireball : ModProjectile
     {
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.friendly = true;
             Projectile.light = 0.8f;
             Projectile.alpha = 100;
-            Projectile.DamageType = DamageClass.Magic;
+            Projectile.DamageType = DamageClass.Melee;
         }
         public override void OnSpawn(IEntitySource source)
         {

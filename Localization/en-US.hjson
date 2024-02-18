@@ -9202,6 +9202,8 @@ Mods: {
 			FlameOrbOfSpirituality.DisplayName: Orb Of Spirituality
 			CharmOrbOfFlame.DisplayName: Orb Of Flame
 			CharmOrbOfSpirituality.DisplayName: Orb Of Spirituality
+			AncientFireAxeFireball.DisplayName: Ancient Fire Axe Fireball
+			ModDD2ExplosiveTrapT2Explosion.DisplayName: Mod D D2 Explosive Trap T2 Explosion
 		}
 
 		NPCs: {
