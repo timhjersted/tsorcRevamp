@@ -1102,9 +1102,9 @@ namespace tsorcRevamp
             //They don't because that requires getting the inventory item casuing this effect. I'll do it later if I remember.
             if (Player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge && Main.myPlayer == Player.whoAmI)
             {
-                for (int b = 0; b < 8; b++)
+                for (int b = 0; b < 5; b++)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.SourceDamage * 3, 4f, 0, 0, 1);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.Damage * 2, 4f, 0, 0, 1);
                 }
             }
 
@@ -1139,9 +1139,9 @@ namespace tsorcRevamp
         {
             if (Player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge && Main.myPlayer == Player.whoAmI)
             {
-                for (int b = 0; b < 8; b++)
+                for (int b = 0; b < 5; b++)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.SourceDamage * 3, 4f, 0, 0, 1);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.Damage * 2, 4f, 0, 0, 1);
                 }
             }
 

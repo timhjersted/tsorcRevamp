@@ -6834,7 +6834,7 @@ Mods: {
 				DisplayName: 钢铁风暴
 				Tooltip:
 					'''
-					<right> 以释放 [c/708090:突刺]
+					<right>释放 [c/708090:突刺]
 					[c/708090:突刺]敌人时获得一层[c/708090:钢铁风暴堆叠]
 					获得两层堆叠后，下次<right>将会释放一阵 [c/708090:旋风]
 					[c/708090:“死亡如风，常伴吾身”]
@@ -6855,7 +6855,7 @@ Mods: {
 				DisplayName: 等离子风暴
 				Tooltip:
 					'''
-					<right> 以释放 [c/708090:突刺]
+					<right>释放 [c/708090:突刺]
 					[c/708090:突刺]敌人时获得一层[c/708090:钢铁风暴堆叠]
 					获得两层堆叠后，下次<right>将会释放一阵 [c/708090:旋风]
 					{$Items.PlasmaWhirlwind.Keybind1}特殊能力键{$Items.PlasmaWhirlwind.Keybind2}
@@ -6884,7 +6884,7 @@ Mods: {
 				DisplayName: 夜之使者
 				Tooltip:
 					'''
-					<right> 以释放 [c/708090:突刺]
+					<right>释放 [c/708090:突刺]
 					[c/708090:突刺]敌人时获得一层[c/708090:钢铁风暴堆叠]
 					获得两层堆叠后，下次<right>将会释放一阵 [c/708090:旋风]
 					{$Items.PlasmaWhirlwind.Keybind1}特殊能力键{$Items.PlasmaWhirlwind.Keybind2}
