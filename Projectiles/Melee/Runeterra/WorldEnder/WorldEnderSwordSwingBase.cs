@@ -120,13 +120,13 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra.WorldEnder
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            modifiers.SourceDamage += (float)(Tier / 4.5f) + (Tier == 3 ? 1 : 0);
+            modifiers.ScalingBonusDamage += (float)(Tier / 2.5f) + (Tier == 3 ? 0.5f : 0);
             if (Utils.CenteredRectangle(CritHitbox1, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox2, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox3, CritHitboxSize).Intersects(target.Hitbox)
                 || Utils.CenteredRectangle(CritHitbox4, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox5, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox6, CritHitboxSize).Intersects(target.Hitbox)
                 || Utils.CenteredRectangle(CritHitbox7, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox8, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox9, CritHitboxSize).Intersects(target.Hitbox)
                 || Utils.CenteredRectangle(CritHitbox10, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox11, CritHitboxSize).Intersects(target.Hitbox) || Utils.CenteredRectangle(CritHitbox12, CritHitboxSize).Intersects(target.Hitbox))
             {
-                modifiers.SourceDamage += (float)Projectile.CritChance / 100f * Tier;
+                modifiers.FinalDamage += MathF.Min(Projectile.CritChance / 100f, 1f);
                 modifiers.SetCrit();
             }
             else
