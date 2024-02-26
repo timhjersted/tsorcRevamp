@@ -22,7 +22,11 @@ namespace tsorcRevamp.NPCs.Bosses
     [AutoloadBossHead]
     class TheSorrow : ModNPC
     {
-        int waterTrailsDamage = 30;
+        int waterTrailsDamage = 33;
+        int sorrowFrozenBreathDamage = 38;
+        int iceSpiritDamage = 43;
+        int iceShardDamage = 48;
+        
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
@@ -35,7 +39,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = 19000;
-            NPC.damage = 60;
+            NPC.damage = 65;
             NPC.defense = 34;
             NPC.knockBackResist = 0f;
             NPC.scale = 1.4f;
@@ -47,7 +51,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
             NPC.HitSound = SoundID.NPCHit1;
-            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.DeathSound = SoundID.DD2_BetsyDeath;
             NPC.coldDamage = true;
             DrawOffsetY = +70;
             NPC.width = 140;
@@ -230,7 +234,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 12);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, breathVel, ModContent.ProjectileType<Projectiles.Enemy.Birbs.SorrowFrozenBreath>(), waterTrailsDamage, 0f, Main.myPlayer, -breathTimer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, breathVel, ModContent.ProjectileType<Projectiles.Enemy.Birbs.SorrowFrozenBreath>(), sorrowFrozenBreathDamage, 0f, Main.myPlayer, -breathTimer);
                 }
             }
 
@@ -265,8 +269,8 @@ namespace tsorcRevamp.NPCs.Bosses
                     velocity += Target.velocity / 1.5f;
                     if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), waterTrailsDamage / 4, 0.5f, Main.myPlayer); //EnemySpellIcestormBall
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), waterTrailsDamage / 4, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), iceShardDamage / 4, 0.5f, Main.myPlayer); //EnemySpellIcestormBall
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), iceShardDamage / 4, 0.5f, Main.myPlayer);
                     }
                 }
 
@@ -299,7 +303,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)Target.Center.X - 800 + Main.rand.Next(1600), (float)Target.Center.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 2.5f, ModContent.ProjectileType<IceSpirit>(), waterTrailsDamage, 2f, Main.myPlayer); //ProjectileID.CultistBossFireBallClone
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)Target.Center.X - 800 + Main.rand.Next(1600), (float)Target.Center.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 2.5f, ModContent.ProjectileType<IceSpirit>(), iceSpiritDamage, 2f, Main.myPlayer); //ProjectileID.CultistBossFireBallClone
                 }
 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit5 with { Volume = 0.3f, PitchVariance = 2f }, NPC.Center);
@@ -332,7 +336,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 // Normal Phase
                 NPC.alpha = 0;
-                NPC.defense = 24;
+                NPC.defense = 34;
                 NPC.damage = 120;
                 NPC.netUpdate = true;
 

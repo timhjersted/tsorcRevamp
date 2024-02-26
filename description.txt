@@ -1,9 +1,9 @@
-The Story of Red Cloud is a massive 20+ hour Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack.
+The Story of Red Cloud is a massive 30+ hour Dark Souls-inspired adventure built inside the world of Terraria using a custom world, mod, and companion soundtrack.
 
 In development over 7 years, your 1-4 player journey will span 18 dungeons spread across an expansive, hand-crafted open world filled with shortcuts, hidden paths, epic boss fights, and countless secrets.
 
 
-✅ The Custom World will load automatically when you reach the Select World screen. To create a fresh or updated map, click New on the World screen.
+✅ The Custom World will load automatically when you reach the Select World screen. To create a fresh or updated world, click New on the World screen.
 
 ✅ To download TSORC's Music Mod, click the text prompt you'll see on TML's main menu after enabling this mod.
 
@@ -12,7 +12,7 @@ In development over 7 years, your 1-4 player journey will span 18 dungeons sprea
 
 ✅ TOP FEATURES
 ------------------------------------------
-*Companion Soundtrack with 67 songs! (Dark Souls, Elden Ring and Zelda fans will love it)
+*Companion Soundtrack with 65 songs! (Dark Souls and Elden Ring fans will love it)
 *43 bosses (16 vanilla plus 27 mod bosses)
 *100+ new enemies and 8 friendly NPCs
 *800+ new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
@@ -82,9 +82,10 @@ Some mods interfere with the Adventure Map, but may be used if you're playing on
 
 ⚠️ PROJECT STATUS:
 ------------------------------------------
-The game is fairly polished up to the end of the main story (defeating Attraidies). We recommend waiting to play this third chapter when we're out of beta, unless you'd like to be a part of the journey to 1.0.
+The game is fairly polished up to the end of the main story (defeating Attraidies). The post-Attraidies expansion (aka Super Hardmode) is fully playable but game balance is still WIP and not all bosses have been revamped.
 
-The new update has just gotten out of a long beta period, due to a slowdown in the mod's development. We decided to release the update because it should massively improve the experience, even though it might contain issues we haven't been able to spot yet. We'll likely release a few patches after this, to address upcoming issues and introduce a small amount of content that is not quite finished yet.
+The latest 0.15 update released after a 6 month beta period, due to a slowdown in the mod's development. We decided to release the update because it should massively improve the experience, even though it might contain issues we haven't been able to spot yet. Going forward, we'll continue to release occasional patches to address bugs and game feedback, as well as introduce a small amount of content that is not quite finished yet.
 
 We're looking for new team members to help us, as we're struggling to find time to keep updating this mod.
+
 We still have big plans, but looking at it realistically, in the team's current state it's unlikely we'll ever reach 1.0, unless we can collect a few new team members willing to help us reach this. So if you want to see a full release become reality, come help us directly or spread the message to people who might be interested!

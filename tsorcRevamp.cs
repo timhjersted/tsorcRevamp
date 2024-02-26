@@ -343,11 +343,11 @@ namespace tsorcRevamp
                 TileID.BreakableIce, TileID.MagicalIceBlock, TileID.SeaweedPlanter, TileID.AbigailsFlower, //thin ice (breakable kind), Ice Rod's ice, seaweed/herb planters, abigail's flower
                 TileID.CrackedBlueDungeonBrick, TileID.CrackedGreenDungeonBrick, TileID.CrackedPinkDungeonBrick,
                 TileID.Sunflower, TileID.Pots, TileID.Cobweb, TileID.Vines, TileID.JungleVines, TileID.HallowedVines, TileID.CrimsonVines, TileID.VineFlowers, TileID.MushroomVines, //sunflower, pots, cobwebs, all cuttable vine
-                TileID.ShadowOrbs, TileID.CorruptThorns, TileID.JungleThorns, TileID.CrimsonThorns, TileID.Sand, TileID.Pearlsand, TileID.Ebonsand, TileID.Crimsand, TileID.LandMine, TileID.RollingCactus, //orbs/hearts, all thorns, all sands, land mines, rolling cactus
+                TileID.ShadowOrbs, TileID.CorruptThorns, TileID.JungleThorns, TileID.CrimsonThorns, TileID.Sand, TileID.Pearlsand, TileID.Ebonsand, TileID.Crimsand, TileID.Silt, TileID.Slush, TileID.LandMine, TileID.RollingCactus, //orbs/hearts, all thorns, all sands, land mines, rolling cactus
                 TileID.Stalactite, TileID.ExposedGems, TileID.SmallPiles, TileID.LargePiles, TileID.LargePiles2, TileID.PlantDetritus, TileID.OasisPlants, TileID.Larva, TileID.PlanteraBulb, TileID.AntlionLarva, //all ambient objects (background breakables), QB Larva, Plantera Bulb
                 TileID.Campfire, TileID.HangingLanterns, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle)
                 TileID.Sundial, TileID.Moondial, //Sundial, Moondial
-                TileID.LivingFire, TileID.LivingCursedFire, TileID.LivingDemonFire, TileID.LivingFrostFire, TileID.LivingIchor, TileID.ManaCrystal,
+                TileID.LivingFire, TileID.LivingCursedFire, TileID.LivingDemonFire, TileID.LivingFrostFire, TileID.LivingIchor
             };
             #endregion
             //--------
@@ -380,7 +380,7 @@ namespace tsorcRevamp
                 TileID.Stalactite, TileID.ExposedGems, TileID.SmallPiles, TileID.LargePiles, TileID.LargePiles2, TileID.PlantDetritus, TileID.OasisPlants, TileID.Larva, TileID.PlanteraBulb, TileID.AntlionLarva, //all ambient objects (background breakables), QB Larva, Plantera Bulb
                 TileID.Plants, TileID.Plants2, TileID.CorruptPlants, TileID.JunglePlants, TileID.JunglePlants2, TileID.HallowedPlants, TileID.HallowedPlants2, TileID.LongMoss, TileID.CrimsonPlants, TileID.LilyPad, TileID.Cattail, TileID.SeaOats, TileID.OasisPlants, TileID.Seaweed, //cuttable plants - all biomes
                 TileID.Lever, TileID.PressurePlates, TileID.Switches, TileID.InletPump, TileID.OutletPump, TileID.Timers, TileID.LogicGateLamp, TileID.LogicGate, TileID.ConveyorBeltLeft, TileID.ConveyorBeltRight, TileID.LogicSensor, TileID.WirePipe, TileID.AnnouncementBox, TileID.WeightedPressurePlate, TileID.WireBulb, TileID.GemLocks, TileID.ProjectilePressurePad, //wiring, incl pressure plates
-                TileID.WoodenBeam, TileID.LivingFire, TileID.LivingFrostFire, TileID.LivingCursedFire, TileID.LivingDemonFire, TileID.LivingUltrabrightFire
+                TileID.WoodenBeam, TileID.LivingFire, TileID.LivingFrostFire, TileID.LivingCursedFire, TileID.LivingDemonFire, TileID.LivingUltrabrightFire, TileID.ChimneySmoke
             };
             #endregion
             //--------

@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = 22000;
-            NPC.damage = 65;
+            NPC.damage = 70;
             NPC.defense = 36;
             NPC.knockBackResist = 0f;
             NPC.scale = 1.4f;
@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
             NPC.HitSound = SoundID.NPCHit1;
-            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.DeathSound = SoundID.DD2_BetsyDeath;
             DrawOffsetY = 70;
             NPC.width = 110;
             NPC.height = 60;
@@ -190,7 +190,8 @@ namespace tsorcRevamp.NPCs.Bosses
             if (EnrageTimer == 0)
             {
                 NPC.damage = 130;
-                NPC.defense = 26;
+                //NPC.defense = 36;
+                NPC.netUpdate = true;
 
                 //For the first 10 seconds: Fire miracle sprouters
                 //Chance to use 'final breath attack' if below 25% health
@@ -380,8 +381,9 @@ namespace tsorcRevamp.NPCs.Bosses
                 // Enrage Phase
                 EnrageTimer++;
                 NPC.alpha = 235;
-                NPC.defense = 70;//+14 for all birds
+                //NPC.defense = 70;//+14 for all birds
                 NPC.damage = 170;//+10 for all birds
+                NPC.netUpdate = true;
 
                 //Movement
                 if (player.Center.X < NPC.Center.X)

@@ -22,7 +22,12 @@ namespace tsorcRevamp.NPCs.Bosses
     [AutoloadBossHead]
     class TheRage : ModNPC
     {
-        int fireTrailsDamage = 28; //23 was a bit too easy for folks based on some feedback and watching a LP
+        int fireTrailsDamage = 33; //23 was a bit too easy for folks based on some feedback and watching a LP
+        int rageBreathDamage = 38;
+        int demonBoltDamage = 40;
+        int homingFireDamage = 43;
+        int rageFirebombDamage = 46;
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
@@ -35,7 +40,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = 16000;
-            NPC.damage = 55;
+            NPC.damage = 60;
             NPC.defense = 32;
             NPC.knockBackResist = 0f;
             NPC.value = 120000;
@@ -46,7 +51,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
             NPC.HitSound = SoundID.NPCHit1;
-            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.DeathSound = SoundID.DD2_BetsyDeath;
             NPC.timeLeft = 22500;
 
             DrawOffsetY = +70;
@@ -189,7 +194,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 0.035f); //needs to be slow for demon sickle
                     speed += Main.player[NPC.target].velocity / 5; //10 works for demon sickle, /2 was way too sensitive to player speed
 
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.Birbs.RageDemonBolt>(), fireTrailsDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.Birbs.RageDemonBolt>(), demonBoltDamage, 0f, Main.myPlayer);
                 }
 
                 FlameShotTimer2 = 0;
@@ -214,7 +219,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 200 + Main.rand.Next(400), (float)player.position.Y - 480f, (float)(-40 + Main.rand.Next(80)) / 10, 3f, ProjectileID.CultistBossFireBall, fireTrailsDamage, 3f, Main.myPlayer); //ProjectileID.NebulaBlaze2 would be cool to use at the end of attraidies or gwyn fight with the text, "The spirit of your father summons cosmic light to aid you!"
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 200 + Main.rand.Next(400), (float)player.position.Y - 480f, (float)(-40 + Main.rand.Next(80)) / 10, 3f, ProjectileID.CultistBossFireBall, homingFireDamage, 3f, Main.myPlayer); //ProjectileID.NebulaBlaze2 would be cool to use at the end of attraidies or gwyn fight with the text, "The spirit of your father summons cosmic light to aid you!"
                 }
                 FlameShotTimer3 = 0;
                 FlameShotCounter3++;
@@ -231,7 +236,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 12);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, breathVel, ModContent.ProjectileType<Projectiles.Enemy.Birbs.RageFireBreath>(), fireTrailsDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, breathVel, ModContent.ProjectileType<Projectiles.Enemy.Birbs.RageFireBreath>(), rageBreathDamage, 0f, Main.myPlayer);
                 }
             }
             if (breathTimer < 0)
@@ -277,8 +282,8 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (velocity != Vector2.Zero && Math.Abs(velocity.X) < -velocity.Y) //No throwing if it failed to find a valid trajectory, or if it'd throw at too shallow of an angle for players to dodge
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.Birbs.RageFirebomb>(), fireTrailsDamage, 0.5f, Main.myPlayer);
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.Birbs.RageFirebomb>(), fireTrailsDamage, 0.5f, Main.myPlayer); //ProjectileID.LostSoulHostile
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.Birbs.RageFirebomb>(), rageFirebombDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<Projectiles.Enemy.Birbs.RageFirebomb>(), rageFirebombDamage, 0.5f, Main.myPlayer); //ProjectileID.LostSoulHostile
                     }
 
                 }
@@ -317,7 +322,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 // Normal Phase
                 NPC.alpha = 0;
                 NPC.damage = 110;
-                NPC.defense = 22;
+                //NPC.defense = 32;
+                NPC.netUpdate = true;
 
                 if (NPC.ai[2] < 600)
                 {
@@ -391,9 +397,10 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 // Enrage Phase              
                 NPC.ai[3]++;
-                //NPC.alpha = 210; //No longer goes invisible, that can just be a Hunter mechanic
-                NPC.defense = 45;
+                //NPC.alpha = 210; //No longer goes invisible
+                //NPC.defense = 32;
                 NPC.damage = 140;
+                NPC.netUpdate = true;
 
                 // FlameShotCounter2 = 0;
 
@@ -444,7 +451,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.ai[3] = 1;
 
                     // Gains life on enrage: re-added to fit with rage theme                 
-                    NPC.life += 200;
+                    NPC.life += 250;
 
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }
