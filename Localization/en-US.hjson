@@ -1620,7 +1620,11 @@ Mods: {
 
 			EssenceOfMana: {
 				DisplayName: Essence of Mana
-				Tooltip: "{$CommonItemTooltip.IncreasesMaxManaByPercent}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.IncreasesMaxManaByPercent}
+					Increases mana costs by {1}%
+					'''
 			}
 
 			GemBox: {
