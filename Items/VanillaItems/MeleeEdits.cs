@@ -270,6 +270,18 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 110; //vanilla 80
                 item.mana = 10;
             }
+            if (item.type == ItemID.JoustingLance)
+            {
+                item.damage = 30; //vanilla 60
+            }
+            if (item.type == ItemID.HallowJoustingLance)
+            {
+                item.damage = 40; //vanilla 90
+            }
+            if (item.type == ItemID.ShadowJoustingLance)
+            {
+                item.damage = 60; //vanilla 130
+            }
         }
 
         public static void SetMeleeSlashColor(Item item)
