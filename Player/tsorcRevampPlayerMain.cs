@@ -1022,7 +1022,11 @@ namespace tsorcRevamp
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Projectile, consider using ModifyHitNPC instead */
         {
             Player owner = Main.player[proj.owner];
-
+            
+            if (ShunpoTimer > 0 && (proj.type == ProjectileID.JoustingLance || proj.type == ProjectileID.HallowJoustingLance || proj.type == ProjectileID.ShadowJoustingLance))
+            {
+                modifiers.FinalDamage *= 0.15f;
+            }
             if (modifiers.DamageType == DamageClass.Ranged && owner.GetModPlayer<tsorcRevampPlayer>().InfinityEdge)
             {
                 modifiers.CritDamage += Items.Accessories.Ranged.InfinityEdge.CritDmgIncrease / 100f;
