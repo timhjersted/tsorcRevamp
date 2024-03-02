@@ -52,7 +52,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
                 Item.useStyle = ItemUseStyleID.Shoot;
                 Item.noUseGraphic = true;
                 Item.noMelee = true;
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<OldHalberdProj>(), damage, knockback, player.whoAmI);
+                if (Main.myPlayer == player.whoAmI)
+                {
+                    Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<OldHalberdProj>(), damage, knockback, player.whoAmI);
+                }
                 return true;
             }
             Item.useStyle = ItemUseStyleID.Swing;

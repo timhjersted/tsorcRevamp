@@ -42,7 +42,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
                 {
                     if (thisProjectile == null || thisProjectile.active == false || thisProjectile.type != ModContent.ProjectileType<ElfinTargeting>())
                     {
-                        thisProjectile = Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), Main.npc[closest.Value].position, Vector2.Zero, ModContent.ProjectileType<ElfinTargeting>(), 0, 0, player.whoAmI, closest.Value);
+                        if (Main.myPlayer == player.whoAmI)
+                        {
+                            thisProjectile = Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), Main.npc[closest.Value].position, Vector2.Zero, ModContent.ProjectileType<ElfinTargeting>(), 0, 0, player.whoAmI, closest.Value);
+                        }
                     }
                     else
                     {
@@ -63,7 +66,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             }
 
             Vector2 projVel = speed + Main.rand.NextVector2CircularEdge(randomness, randomness);
-            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, projVel, ModContent.ProjectileType<ElfinArrow>(), damage, knockBack, player.whoAmI, target);
+            if (Main.myPlayer == player.whoAmI)
+            {
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, projVel, ModContent.ProjectileType<ElfinArrow>(), damage, knockBack, player.whoAmI, target);
+            }
             return false;
         }
     }

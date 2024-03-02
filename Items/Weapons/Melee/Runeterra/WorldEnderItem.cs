@@ -98,31 +98,35 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 return true;
             }
             Item.noMelee = true;
-            switch (player.GetModPlayer<tsorcRevampPlayer>().WorldEnderSwing)
+            if (Main.myPlayer == player.whoAmI)
             {
-                case 1:
-                    {
-                        Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<WorldEnderSwordSwing1>(), damage, 0, Main.myPlayer);
-                        SoundEngine.PlaySound(new SoundStyle(SoundPath + "Q1Cast") with { Volume = SoundVolume });
-                        player.GetModPlayer<tsorcRevampPlayer>().WorldEnderSwing++;
-                        break;
-                    }
-                case 2:
-                    {
-                        Projectile.NewProjectile(source, position, velocity * 0.6f, ModContent.ProjectileType<WorldEnderSwordSwing2>(), damage, 0, Main.myPlayer);
-                        SoundEngine.PlaySound(new SoundStyle(SoundPath + "Q2Cast") with { Volume = SoundVolume });
-                        player.GetModPlayer<tsorcRevampPlayer>().WorldEnderSwing++;
-                        break;
-                    }
-                case 3:
-                    {
-                        Projectile.NewProjectile(source, position, velocity * 0.6f, ModContent.ProjectileType<WorldEnderSwordSwing3>(), damage, 0, Main.myPlayer);
-                        SoundEngine.PlaySound(new SoundStyle(SoundPath + "Q3Cast") with { Volume = SoundVolume });
-                        player.GetModPlayer<tsorcRevampPlayer>().WorldEnderSwing = 1;
-                        break;
-                    }
+                switch (player.GetModPlayer<tsorcRevampPlayer>().WorldEnderSwing)
+                {
+                    case 1:
+                        {
+                            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<WorldEnderSwordSwing1>(), damage, 0, Main.myPlayer);
+                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "Q1Cast") with { Volume = SoundVolume });
+                            player.GetModPlayer<tsorcRevampPlayer>().WorldEnderSwing++;
+                            break;
+                        }
+                    case 2:
+                        {
+                            Projectile.NewProjectile(source, position, velocity * 0.6f, ModContent.ProjectileType<WorldEnderSwordSwing2>(), damage, 0, Main.myPlayer);
+                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "Q2Cast") with { Volume = SoundVolume });
+                            player.GetModPlayer<tsorcRevampPlayer>().WorldEnderSwing++;
+                            break;
+                        }
+                    case 3:
+                        {
+                            Projectile.NewProjectile(source, position, velocity * 0.6f, ModContent.ProjectileType<WorldEnderSwordSwing3>(), damage, 0, Main.myPlayer);
+                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "Q3Cast") with { Volume = SoundVolume });
+                            player.GetModPlayer<tsorcRevampPlayer>().WorldEnderSwing = 1;
+                            break;
+                        }
+                }
             }
             return true;
+
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {

@@ -70,7 +70,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
                     speed += player.velocity;
 
-                    Projectile.NewProjectile(source, position, speed, ModContent.ProjectileType<Coin>(), 0, 0, player.whoAmI);
+                    if (Main.myPlayer == player.whoAmI)
+                    {
+                        Projectile.NewProjectile(source, position, speed, ModContent.ProjectileType<Coin>(), 0, 0, player.whoAmI);
+                    }
                 }
                 return false;
             }

@@ -69,12 +69,15 @@ namespace tsorcRevamp.Items.Weapons.Ranged
                 targetList.Sort((NPC a, NPC b) => (int)(Vector2.Distance(a.Center, player.Center) - Vector2.Distance(b.Center, player.Center)));
                 for (int j = 0; j < targetList.Count; j++)
                 {
-                    int projectile = Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, type, damage, knockBack, player.whoAmI);
-                    BlizzardBlasterShot BlizzardBlasterShot = Main.projectile[projectile].ModProjectile as BlizzardBlasterShot;
-                    BlizzardBlasterShot.target = targetList[j];
-                    if (j >= 5)
+                    if (Main.myPlayer == player.whoAmI)
                     {
-                        break;
+                        int projectile = Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, type, damage, knockBack, player.whoAmI);
+                        BlizzardBlasterShot BlizzardBlasterShot = Main.projectile[projectile].ModProjectile as BlizzardBlasterShot;
+                        BlizzardBlasterShot.target = targetList[j];
+                        if (j >= 5)
+                        {
+                            break;
+                        }
                     }
                 }
             }

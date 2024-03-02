@@ -73,7 +73,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             {
                 float vX = speed.X + Main.rand.Next(-spread, spread + 1) * spreadMult;
                 float vY = speed.Y + Main.rand.Next(-spread, spread + 1) * spreadMult;
-                Projectile.NewProjectile(player.GetSource_ItemUse(Item), position, new Vector2(vX, vY), type, damage, knockBack, player.whoAmI);
+                if (Main.myPlayer == player.whoAmI)
+                {
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), position, new Vector2(vX, vY), type, damage, knockBack, player.whoAmI);
+                } 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item11);
             }
 

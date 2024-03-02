@@ -42,7 +42,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            Projectile.NewProjectile(source, player.Center, velocity, ModContent.ProjectileType<Projectiles.Ranged.CrystalRay>(), damage, knockback, player.whoAmI, type);
+            if (Main.myPlayer == player.whoAmI)
+            {
+                Projectile.NewProjectile(source, player.Center, velocity, ModContent.ProjectileType<Projectiles.Ranged.CrystalRay>(), damage, knockback, player.whoAmI, type);
+            } 
             return false;
         }
 

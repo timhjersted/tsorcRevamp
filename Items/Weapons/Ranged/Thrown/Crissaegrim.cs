@@ -74,7 +74,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Thrown
                 Vector2 shiftedSpeed = new Vector2(mySpeedX, mySpeedY).RotatedByRandom(MathHelper.ToRadians(8));
                 float speedOffset = 1f - (Main.rand.NextFloat() * 0.2f);
                 shiftedSpeed *= speedOffset;
-                Projectile.NewProjectile(player.GetSource_ItemUse(Item),
+                if (Main.myPlayer == player.whoAmI)
+                {
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item),
                                (float)player.position.X + (player.width * 0.5f),
                                (float)player.position.Y + (player.height * 0.5f),
                                (float)shiftedSpeed.X,
@@ -84,7 +86,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Thrown
                                Item.knockBack,
                                Main.myPlayer
                                );
-
+                }
             }
             return false;
         }

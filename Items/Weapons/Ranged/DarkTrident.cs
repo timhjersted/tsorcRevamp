@@ -70,7 +70,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged
                 Item.useStyle = ItemUseStyleID.HoldUp;
             }
 
-            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<DarkTridentHeld>(), damage, knockback, player.whoAmI, type);
+
+            if (Main.myPlayer == player.whoAmI)
+            {
+                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<DarkTridentHeld>(), damage, knockback, player.whoAmI, type);
+            }
             return false;
         }
 
