@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void SetDefaults()
         {
             Item.damage = 160;
-            Item.height = 58;
+            Item.height = 54;
             Item.knockBack = 4;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Magic;
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useTime = 15;
             Item.value = PriceByRarity.Red_10;
-            Item.width = 16;
+            Item.width = 28;
             Item.shoot = ModContent.ProjectileType<Projectiles.Ice5Ball>();
         }
 

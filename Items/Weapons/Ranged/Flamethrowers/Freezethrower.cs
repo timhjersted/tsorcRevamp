@@ -14,8 +14,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Flamethrowers
         }
         public override void SetDefaults()
         {
-            Item.width = 54;
-            Item.height = 16;
+            Item.width = 60;
+            Item.height = 22;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 30;
             Item.useTime = 5;
