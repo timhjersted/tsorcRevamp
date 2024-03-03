@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Potions
 {
     class HolyWarElixir : ModItem
     {
-        public static int Duration = 10;
+        public static int Duration = 6;
         public static int Cooldown = 60;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Cooldown);
         public override void SetStaticDefaults()

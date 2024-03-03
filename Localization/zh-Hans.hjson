@@ -1620,7 +1620,11 @@ Mods: {
 
 			EssenceOfMana: {
 				DisplayName: 魔法精华
-				Tooltip: "{$CommonItemTooltip.IncreasesMaxManaByPercent}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.IncreasesMaxManaByPercent}
+					增加 {1}% 魔力消耗
+					'''
 			}
 
 			GemBox: {
