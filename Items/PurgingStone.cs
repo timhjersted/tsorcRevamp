@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.StoneBlock, 10);
+            recipe.AddIngredient(ItemID.StoneBlock, 1);
             recipe.AddIngredient(ModContent.ItemType<Humanity>(), 2);
             recipe.AddIngredient(ModContent.ItemType<GreenBlossom>(), 2);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2500);

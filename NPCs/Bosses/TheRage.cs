@@ -23,10 +23,10 @@ namespace tsorcRevamp.NPCs.Bosses
     class TheRage : ModNPC
     {
         int fireTrailsDamage = 33; //23 was a bit too easy for folks based on some feedback and watching a LP
-        int rageBreathDamage = 38;
-        int demonBoltDamage = 40;
-        int homingFireDamage = 43;
-        int rageFirebombDamage = 46;
+        int rageBreathDamage = 36;
+        int demonBoltDamage = 39;
+        int homingFireDamage = 42;
+        int rageFirebombDamage = 45;
 
         public override void SetStaticDefaults()
         {

@@ -4,7 +4,9 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.UI;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items;
 using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -685,6 +687,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(new CommonDrop(ItemID.IronskinPotion, 5, 1, 50, 2));
             npcLoot.Add(new CommonDrop(ItemID.ArcheryPotion, 5, 1, 50, 2));
             npcLoot.Add(new CommonDrop(ItemID.RegenerationPotion, 5, 1, 50, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 1, 1));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>(), 5, 1, 1));
         }
     }
 }

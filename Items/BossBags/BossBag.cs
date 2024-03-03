@@ -172,6 +172,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ItemID.Ruby, 1, 2, 10));
             itemLoot.Add(ItemDropRule.Common(ItemID.Amber, 1, 2, 10));
             itemLoot.Add(ItemDropRule.Common(ItemID.Diamond, 1, 2, 10));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>()));
         }
     }
     public class AncestralSpiritBag : BossBag
@@ -209,6 +210,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 1, 2, 4));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 1, 2, 4));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BattlefrontPotion>(), 1, 2, 4));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>()));
         }
     }
     #endregion
@@ -323,6 +325,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ItemID.HallowedBar, 1, 20, 35));
             itemLoot.Add(ItemDropRule.Common(ItemID.SoulofFright, 1, 25, 40));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheMachineMask>(), 7));
+            itemLoot.Add(ItemDropRule.Common(ItemID.LargeRuby, 1, 2, 2));
         }
     }
     public class WyvernMageBag : BossBag
@@ -478,6 +481,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.Bows.ElfinBow>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfChaos>(), 1, 3, 6));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));
         }
     }
     public class WyvernMageShadowBag : BossBag

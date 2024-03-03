@@ -567,7 +567,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                     if (Phase >= 1) shot1.timeLeft = 720;
                 }
             }
-            if (Phase == 6)
+            if (Phase == 6 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 float num48 = 5f; //used for projectile velocity
                 Vector2 vector8 = new Vector2(NPC.Center.X, NPC.Center.Y - 30);
