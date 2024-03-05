@@ -180,21 +180,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                     {
                         offset = MathHelper.ToRadians(-30 + 10 * projectileTimer);
                     }
-                    if (projectileType < 6)
+                    if (projectileType < 6 && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 10);
                         projVector = projVector.RotatedBy(offset);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedirectingShark>(), cursedFlamesDamage, 0f, Main.myPlayer, 0, NPC.target);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     }
-                    if (projectileType >= 6 && projectileType != 9)
+                    if (projectileType >= 6 && projectileType != 9 && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 5);
                         projVector = projVector.RotatedBy(offset);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, NPC.target, 1f);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     }
-                    if (projectileType == 9)
+                    if (projectileType == 9 && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 12);
                         projVector = projVector.RotatedBy(offset);

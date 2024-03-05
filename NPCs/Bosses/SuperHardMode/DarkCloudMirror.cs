@@ -97,11 +97,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region Attacks
         void AntiMatAttack()
         {
-            if (AttackModeCounter == 0)
+            if (AttackModeCounter == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<AntimatTargeting>(), 0, 0.5f, Main.myPlayer, AttackModeLimit + 1, NPC.whoAmI);
             }
-            if (AttackModeCounter == AttackModeLimit)
+            if (AttackModeCounter == AttackModeLimit && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 7), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage / 2, 0.5f, Main.myPlayer);
             }

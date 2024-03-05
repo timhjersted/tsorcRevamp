@@ -122,7 +122,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                 float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 35 / 2); //was divided by 5 after parethesis
                 float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 43 / 4); //4 was 2
-                if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                     num51 = num48 / num51;
@@ -250,7 +250,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 300 + (NPC.height / 2));
                     float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
                     float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15); //10 was 0x15
-                    if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                    if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                         num51 = num48 / num51;

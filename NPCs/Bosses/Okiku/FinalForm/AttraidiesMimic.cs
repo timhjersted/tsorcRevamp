@@ -103,11 +103,17 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 {
                     if (left)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, -6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 56, 0f, Main.myPlayer);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, -6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 56, 0f, Main.myPlayer);
+                        }
                     }
                     else
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, 6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 56, 0f, Main.myPlayer);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, 6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 56, 0f, Main.myPlayer);
+                        }
                     }
                     genericTimer2 = 0;
                 }
@@ -135,21 +141,24 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 if (genericTimer2 >= 50)
                 {
                     int randomrot = Main.rand.Next(-20, 20) / 2;
-                    if (subPhase == 0)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 9; i++)
+                        if (subPhase == 0)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)Math.Sin(randomrot + ((360 / 13) * (1 + i)) * 3), (float)Math.Cos(randomrot + ((360 / 13) * (1 + i)) * 3), ModContent.ProjectileType<ShadowOrb>(), 50, 0f, Main.myPlayer);
+                            for (int i = 0; i < 9; i++)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)Math.Sin(randomrot + ((360 / 13) * (1 + i)) * 3), (float)Math.Cos(randomrot + ((360 / 13) * (1 + i)) * 3), ModContent.ProjectileType<ShadowOrb>(), 50, 0f, Main.myPlayer);
+                            }
+                            genericTimer2 = 0;
                         }
-                        genericTimer2 = 0;
-                    }
-                    if (subPhase == 1)
-                    {
-                        for (int i = 0; i < 6; i++)
+                        if (subPhase == 1)
                         {
+                            for (int i = 0; i < 6; i++)
+                            {
 
+                            }
+                            genericTimer2 = -200;
                         }
-                        genericTimer2 = -200;
                     }
                 }
             }
@@ -173,7 +182,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 {
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     rotation += Main.rand.Next(-50, 50) / 100;
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * 0.5) * -1), (float)((Math.Sin(rotation) * 0.5) * -1), ModContent.ProjectileType<PhasedMatterBlast>(), 50, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * 0.5) * -1), (float)((Math.Sin(rotation) * 0.5) * -1), ModContent.ProjectileType<PhasedMatterBlast>(), 50, 0f, Main.myPlayer);
+                    }
                     genericTimer2 = 0;
                 }
             }

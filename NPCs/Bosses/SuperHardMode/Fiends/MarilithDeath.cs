@@ -53,13 +53,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             }
             NPC.velocity *= 0.95f;
             progress++;
-            if (progress % 10 == 0)
+            if (progress % 10 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 SoundEngine.PlaySound(SoundID.Item62 with { Volume = 0.5f, Pitch = Main.rand.NextFloat(-0.2f, 0.2f) }, NPC.Center);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2Circular(150, 150), Vector2.Zero, ModContent.ProjectileType<CataclysmicFirestorm>(), 55, 0.5f, Main.myPlayer);
             }
 
-            if (progress % 11 == 0)
+            if (progress % 11 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Thunder_0") with { Volume = 0.5f, Pitch = Main.rand.NextFloat(-0.2f, 0.2f) }, NPC.Center);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2Circular(1, 1), ModContent.ProjectileType<MarilithLightning>(), 55, 0.5f, Main.myPlayer);

@@ -43,9 +43,12 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
-            projectile.originalDamage = Item.damage;
-            player.UpdateMaxTurrets();
+            if (Main.myPlayer == player.whoAmI)
+            {
+                var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
+                projectile.originalDamage = Item.damage;
+                player.UpdateMaxTurrets();
+            }
 
             return false;
         }

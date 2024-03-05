@@ -102,8 +102,11 @@ namespace tsorcRevamp.Items.Weapons.Summon
             else
             {
                 player.AddBuff(ModContent.BuffType<TerrorbeakBuff>(), 2);
-                Projectile Terrorbeak = Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<TerrorbeakProjectile>(), damage, knockback);
-                Terrorbeak.originalDamage = Item.damage;
+                if (Main.myPlayer == player.whoAmI)
+                {
+                    Projectile Terrorbeak = Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<TerrorbeakProjectile>(), damage, knockback);
+                    Terrorbeak.originalDamage = Item.damage;
+                }
                 switch (SwingSoundStyle)
                 {
                     case 0:

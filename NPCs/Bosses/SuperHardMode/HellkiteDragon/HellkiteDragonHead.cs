@@ -128,8 +128,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 spawnOffset.Normalize(); //Shorten the vector to make it have a length of 1
                 spawnOffset *= 64; //Multiply it so it has a length of 16. The length determines how far offset the projectile will be, 16 units = 1 tile
 
-                //float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), (int)(NPC.Center.X + spawnOffset.X), (int)(NPC.Center.Y + spawnOffset.Y), NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 3.2f, Main.myPlayer);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    //float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (int)(NPC.Center.X + spawnOffset.X), (int)(NPC.Center.Y + spawnOffset.Y), NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 3.2f, Main.myPlayer);
+                }
 
 
                 //play breath sound
@@ -156,7 +159,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
             //FIRE FROM ABOVE ATTACK
             //Counts up each tick. Used to space out shots
-            if (DarkBeadShotTimer >= 25 && DarkBeadShotCounter < 8)
+            if (DarkBeadShotTimer >= 25 && DarkBeadShotCounter < 8 && Main.netMode != NetmodeID.MultiplayerClient)
             {
 
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 4.5f, ProjectileID.Fireball, flameRainDamage, 2f, Main.myPlayer); //6.5 too fast
@@ -171,7 +174,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
 
             //METEOR SPACED OUT ATTACK
-            if (MeteorShotTimer >= 58 && MeteorShotCounter < 9)
+            if (MeteorShotTimer >= 58 && MeteorShotCounter < 9 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 200 + Main.rand.Next(500), (float)nT.position.Y - 600f, (float)(-50 + Main.rand.Next(100)) / Main.rand.Next(3, 10), 5.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //8.9f is speed, 4.9 too slow, (float)nT.position.Y - 400f starts projectile closer above the player vs 500?
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.1f, PitchVariance = 0.2f }, NPC.Center);
@@ -185,7 +188,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 }
             }
 
-            if (Main.rand.NextBool(200) && NPC.life < NPC.lifeMax / 10) //200 was pretty awesome but a bit crazy, and now we're doing it for last 10% of life
+            if (Main.rand.NextBool(200) && NPC.life < NPC.lifeMax / 10 && Main.netMode != NetmodeID.MultiplayerClient) //200 was pretty awesome but a bit crazy, and now we're doing it for last 10% of life
             {
                 for (int pcy = 0; pcy < 8; pcy++)
                 {

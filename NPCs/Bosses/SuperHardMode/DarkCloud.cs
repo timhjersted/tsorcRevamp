@@ -1408,21 +1408,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region Attacks
         void DragoonLanceAttack()
         {
-            if (AttackModeCounter >= 60 && AttackModeCounter < 180 && ((AttackModeCounter) % 5 == 0))
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
-                DarkCloudParticleEffect(5, 15);
-            }
-            if (AttackModeCounter >= 180 && AttackModeCounter < 300 && ((AttackModeCounter - 2) % 5 == 0))
-            {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
-                DarkCloudParticleEffect(5, 15);
-            }
-            if (AttackModeCounter >= 300 && AttackModeCounter < 420 && ((AttackModeCounter) % 5 == 0))
-            {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
-                DarkCloudParticleEffect(5, 15);
-            }
+                if (AttackModeCounter >= 60 && AttackModeCounter < 180 && ((AttackModeCounter) % 5 == 0))
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
+                    DarkCloudParticleEffect(5, 15);
+                }
+                if (AttackModeCounter >= 180 && AttackModeCounter < 300 && ((AttackModeCounter - 2) % 5 == 0))
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
+                    DarkCloudParticleEffect(5, 15);
+                }
+                if (AttackModeCounter >= 300 && AttackModeCounter < 420 && ((AttackModeCounter) % 5 == 0))
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
+                    DarkCloudParticleEffect(5, 15);
+                }
+            } 
         }
 
         void DivineSparkAttack()
@@ -1445,7 +1448,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     telegraphTimer += 200;
                 }
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, laserVector, ModContent.ProjectileType<DarkDivineSpark>(), 0, 0.5f, Main.myPlayer, telegraphTimer, NPC.whoAmI);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, laserVector, ModContent.ProjectileType<DarkDivineSpark>(), 0, 0.5f, Main.myPlayer, telegraphTimer, NPC.whoAmI);
+                }
             }
 
             //Spawn the big laser
@@ -1460,7 +1466,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     direction = -1;
                 }
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, new Vector2(1, 0).RotatedBy(initialTargetRotation), ModContent.ProjectileType<DarkDivineSpark>(), divineSparkDamage, 0.5f, Main.myPlayer, direction * 999, NPC.whoAmI);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, new Vector2(1, 0).RotatedBy(initialTargetRotation), ModContent.ProjectileType<DarkDivineSpark>(), divineSparkDamage, 0.5f, Main.myPlayer, direction * 999, NPC.whoAmI);
+                }
             }
         }
 
@@ -1469,7 +1478,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (AttackModeCounter % 4 == 0)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2CircularEdge(darkFlowRadius, darkFlowRadius), Vector2.Zero, ModContent.ProjectileType<DarkFlow>(), darkFlowDamage, 0.5f, Main.myPlayer, NPC.whoAmI, 1200 - AttackModeCounter);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2CircularEdge(darkFlowRadius, darkFlowRadius), Vector2.Zero, ModContent.ProjectileType<DarkFlow>(), darkFlowDamage, 0.5f, Main.myPlayer, NPC.whoAmI, 1200 - AttackModeCounter);
+                }
             }
         }
 
@@ -1554,7 +1566,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 attackVel = new Vector2(speed, 0);
                         float tally = (AttackModeCounter - 40) / 20;
                         attackVel = attackVel.RotatedBy(MathHelper.TwoPi * (i / boltCount) + MathHelper.ToRadians(15 * tally));
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        }
                     }
                 }
             }
@@ -1574,7 +1589,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Vector2 attackVel = new Vector2(speed, 0).RotatedBy(attackAngle);
                     for (int i = 0; i < 5; i++)
                     {
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel.RotatedBy(i * MathHelper.TwoPi / 5), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel.RotatedBy(i * MathHelper.TwoPi / 5), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        }
                     }
                 }
             }
@@ -1597,9 +1615,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         count++;
                         Vector2 attackVel = new Vector2(speed, 0).RotatedBy(attackAngle + MathHelper.ToRadians(15 * count));
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel.RotatedBy(-MathHelper.PiOver4), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel.RotatedBy(MathHelper.PiOver4), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel.RotatedBy(-MathHelper.PiOver4), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel.RotatedBy(MathHelper.PiOver4), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        }
 
                     }
                 }
@@ -1615,7 +1636,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     for (int i = 0; i < 13; i++)
                     {
                         Vector2 offset = (i - 7) * new Vector2(1.05f, 1.05f);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, (arrowRainTargetingVector + offset), ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, (arrowRainTargetingVector + offset), ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
+                        }
                     }
                 }
                 else
@@ -1623,7 +1647,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     for (int i = 0; i < 13; i++)
                     {
                         Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Target.Center, 5 + i, 0.05f, true, false);
-                        if (velocity != Vector2.Zero)
+                        if (velocity != Vector2.Zero && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
                         }
@@ -1650,11 +1674,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.AntimatTargeting>(), 0, 0.5f, Main.myPlayer, i, NPC.whoAmI);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.AntimatTargeting>(), 0, 0.5f, Main.myPlayer, i, NPC.whoAmI);
+                    }
                 }
             }
 
-            if (AttackModeCounter % 300 == 299)
+            if (AttackModeCounter % 300 == 299 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 14).RotatedBy(MathHelper.ToRadians(10)), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Target.Center, 16), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
@@ -2605,7 +2632,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2627,7 +2654,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2659,7 +2686,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 100 + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2683,7 +2710,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.Center.Y - 10f);
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = (((Main.player[NPC.target].position.Y - 10) + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2707,7 +2734,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2731,7 +2758,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 20);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 30);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2755,7 +2782,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 20);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 30);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2779,7 +2806,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2800,7 +2827,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2821,7 +2848,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 1000 + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2853,7 +2880,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2875,7 +2902,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2901,7 +2928,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2924,7 +2951,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2948,7 +2975,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;

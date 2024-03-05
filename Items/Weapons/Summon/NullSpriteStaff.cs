@@ -55,8 +55,11 @@ namespace tsorcRevamp.Items.Weapons.Summon
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             player.AddBuff(Item.buffType, 2);
-            int p = Projectile.NewProjectile(source, position, speed, type, damage, knockBack);
-            Main.projectile[p].originalDamage = Item.damage;
+            if (Main.myPlayer == player.whoAmI)
+            {
+                int p = Projectile.NewProjectile(source, position, speed, type, damage, knockBack);
+                Main.projectile[p].originalDamage = Item.damage;
+            }
             return true;
         }
     }

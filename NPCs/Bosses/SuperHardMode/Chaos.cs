@@ -301,7 +301,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         void NonClientAttacks()
         {
             NPC.ai[1] += 0.35f;
-            if (NPC.ai[1] >= 10f)
+            if (NPC.ai[1] >= 10f && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 if (Main.rand.NextBool(90))
                 {
@@ -421,7 +421,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         }
                         NPC.life += NPC.lifeMax / 6;
                         if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0f, Main.myPlayer);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0f, Main.myPlayer);
+                        }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item4, NPC.Center); NPC.netUpdate = true;
                         chaosHealed += 1;
                     }
@@ -461,7 +464,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #region Gore
         public override void OnKill()
         {
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), (int)NPC.position.X, (int)NPC.position.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.ChaosDeathAnimation>(), 0, 0f, Main.myPlayer);
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), (int)NPC.position.X, (int)NPC.position.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.ChaosDeathAnimation>(), 0, 0f, Main.myPlayer);
+            }
         }
         #endregion
         public override bool CheckActive()
