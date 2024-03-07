@@ -87,7 +87,7 @@ namespace tsorcRevamp.NPCs.Bosses
             get => Main.player[NPC.target];
         }
 
-        int finalStandTimer = 0;
+        public int finalStandTimer = 0;
         float rotationTarget;
         float rotationSpeed;
         int finalStandDelay = 0;
@@ -443,7 +443,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     aimingDown = !aimingDown;
                 }
 
-                if (MoveTimer % 200 < 120 && MoveTimer % 200 > 60 && MoveTimer < 850 && MoveTimer % 3 == 0)
+                if (MoveTimer % 200 < 120 && MoveTimer % 200 > 60 && MoveTimer < 850 && MoveTimer % 9 == 0)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -722,7 +722,6 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             //Switch into final stand
-            //if(true)
             if (NPC.life < NPC.lifeMax / 4f)
             {
                 finalStandTimer++;
@@ -731,6 +730,8 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.dontTakeDamage = true;
                     finalStandDelay++;
                     NPC.velocity *= 0.99f;
+
+                    UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Triad.IncineratingGaze>());
                 }
                 else
                 {

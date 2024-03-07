@@ -1450,6 +1450,14 @@ namespace tsorcRevamp
                         break;
                     }
 
+                case tsorcPacketID.SyncCurse:
+                    {
+                        byte player = reader.ReadByte(); //player.whoAmI
+                        tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
+                        //modPlayer.cursePoints = reader.ReadInt32();
+                        break;
+                    }
+
                 default:
                     {
                         Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
@@ -2709,6 +2717,11 @@ namespace tsorcRevamp
         /// Just deletes the NPC whose index is specified.
         /// </summary>
         public const byte DeleteNPC = 13;
+
+        /// <summary>
+        /// Syncs the curse points of a player
+        /// </summary>
+        public const byte SyncCurse = 14;
     }
 
     //config moved to separate file

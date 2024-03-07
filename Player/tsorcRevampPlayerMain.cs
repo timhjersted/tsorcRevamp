@@ -107,8 +107,14 @@ namespace tsorcRevamp
             packet.Write((byte)tsorcPacketID.SyncSoulSlot);
             packet.Write((byte)Player.whoAmI);
             ItemIO.Send(SoulSlot.Item, packet);
-            //packet.Write(cursePoints);
             packet.Send(toWho, fromWho);
+
+            /*
+            ModPacket packet2 = Mod.GetPacket();
+            packet2.Write((byte)tsorcPacketID.SyncCurse);
+            packet2.Write((byte)Player.whoAmI);
+            packet2.Write(cursePoints);
+            packet2.Send(toWho, fromWho);*/
 
 
             /**
@@ -1108,7 +1114,7 @@ namespace tsorcRevamp
             {
                 for (int b = 0; b < 5; b++)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.Damage * 2, 4f, 0, 0, 1);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.Damage * 2, 4f, Player.whoAmI, 0, 1);
                 }
             }
 
@@ -1116,11 +1122,11 @@ namespace tsorcRevamp
             {
                 if (!Main.hardMode)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 2, 7f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 2, 7f, Player.whoAmI);
                 }
                 else
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 4, 9f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 4, 9f, Player.whoAmI);
                 }
             }
             if (npc.type == NPCID.SkeletronPrime && Main.rand.NextBool(2))
@@ -1145,7 +1151,7 @@ namespace tsorcRevamp
             {
                 for (int b = 0; b < 5; b++)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.Damage * 2, 4f, 0, 0, 1);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), hurtInfo.Damage * 2, 4f, Player.whoAmI, 0, 1);
                 }
             }
 
@@ -1153,11 +1159,11 @@ namespace tsorcRevamp
             {
                 if (!Main.hardMode)
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 2, 6f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 2, 6f, Player.whoAmI);
                 }
                 else
                 {
-                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 4, 8f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), hurtInfo.SourceDamage * 4, 8f, Player.whoAmI);
                 }
             }
             if (proj.type == ProjectileID.DeathLaser && Main.rand.NextBool(2))

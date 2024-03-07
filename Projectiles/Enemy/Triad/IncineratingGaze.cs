@@ -8,6 +8,7 @@ using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Bosses;
 
 namespace tsorcRevamp.Projectiles.Enemy.Triad
 {
@@ -44,15 +45,50 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
         SoundStyle LaserSoundStyle = new SoundStyle("tsorcRevamp/Sounds/Custom/ChargeBeam") with { PlayOnlyIfFocused = false, MaxInstances = 0 };
         bool soundPaused;
         ActiveSound laserSound;
+        bool initialized;
+        bool spawnedDuringFinalStand;
         public override void AI()
         {
+            //If retinazer is not alive, immediately kill the projectile
             if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.RetinazerV2>()))
             {
                 Projectile.timeLeft = 0;
                 Projectile.Kill();
                 Projectile.active = false;
                 laserWidth = 1;
+                if (laserSound != null)
+                {
+                    laserSound.Stop();
+                }
             }
+            else
+            {
+                //When the projectile is spawned, store whether it was spawned during retinazer's final stand phase or not
+                RetinazerV2 hostRet = (RetinazerV2)Main.npc[UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.RetinazerV2>()).Value].ModNPC;
+                if (!initialized)
+                {
+                    if (hostRet.finalStandTimer != 0)
+                    {
+                        spawnedDuringFinalStand = true;
+                    }
+                }
+
+                //If it was not spawned during final stand, and retinazer is in final stand, immediately kill the projectile
+                //Fixes an issue where if retinazer was pushed into final stand while firing the beam then the beam could linger during its final stand activation, instantly slapping the player
+                if(!spawnedDuringFinalStand && hostRet.finalStandTimer != 0)
+                {
+                    if (laserSound != null)
+                    {
+                        laserSound.Stop();
+                    }
+                    Projectile.timeLeft = 0;
+                    Projectile.Kill();
+                    Projectile.active = false;
+                    laserWidth = 1;
+                }
+            }
+
+
             if (chargeProgress < firingTime)
             {
                 if (chargeProgress == 0)
