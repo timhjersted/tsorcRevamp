@@ -110,10 +110,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         }
                         if (breath)
                         {
-
-                            float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, (float)((Math.Cos(rotation) * 25) * -1), (float)((Math.Sin(rotation) * 25) * -1), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 40;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, (float)((Math.Cos(rotation) * 25) * -1), (float)((Math.Sin(rotation) * 25) * -1), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 40;
+                            }
                             NPC.netUpdate = true;
 
 
@@ -147,9 +149,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                                 speedX *= num51;
                                 speedY *= num51;
                                 int type = ModContent.ProjectileType<Projectiles.Enemy.TetsujinLaser>();//44;//0x37; //14;
-                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, blasterDamage, 0f, Main.myPlayer);
-                                Main.projectile[num54].timeLeft = 650;
-                                Main.projectile[num54].aiStyle = 23;
+                                if (Main.netMode != NetmodeID.MultiplayerClient)
+                                {
+                                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, blasterDamage, 0f, Main.myPlayer);
+                                    Main.projectile[num54].timeLeft = 650;
+                                    Main.projectile[num54].aiStyle = 23;
+                                }
                                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item12 with { Volume = 0.8f }, NPC.Center);
                                 //customAi1 = 1f;
                             }

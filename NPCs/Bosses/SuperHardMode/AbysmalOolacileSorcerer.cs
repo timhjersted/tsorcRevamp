@@ -187,36 +187,42 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public void FireProjectiles()
         {
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (DarkBeadShotTimer >= 12 && DarkBeadShotCounter < 5)
             {
-                if (DarkBeadShotTimer >= 12 && DarkBeadShotCounter < 5)
+                Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 7);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 7);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    DarkBeadShotTimer = 0;
-                    DarkBeadShotCounter++;
+                }
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                DarkBeadShotTimer = 0;
+                DarkBeadShotCounter++;
+            }
+
+            if (SecondAttackCounter >= 60)
+            {
+                if (Main.rand.NextBool(20))
+                {
+                    Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2);
+                    projVelocity.Y -= 520;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkOrb>(), darkOrbDamage, 0f, Main.myPlayer);
+                    }
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24, NPC.Center);
+                    NPCSpawningTimer = 1f;
+                    SecondAttackCounter = 0;
                 }
 
-                if (SecondAttackCounter >= 60)
+                if (Main.rand.NextBool(16))
                 {
-                    if (Main.rand.NextBool(20))
+                    Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 8);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2);
-                        projVelocity.Y -= 520;
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkOrb>(), darkOrbDamage, 0f, Main.myPlayer);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24, NPC.Center);
-                        NPCSpawningTimer = 1f;
-                        SecondAttackCounter = 0;
-                    }
-
-                    if (Main.rand.NextBool(16))
-                    {
-                        Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 8);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileSeeker>(), seekerDamage, 0f, Main.myPlayer);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                        NPCSpawningTimer = 1f;
                     }
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                    NPCSpawningTimer = 1f;
                 }
             }
         }

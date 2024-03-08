@@ -181,14 +181,14 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.velocity.X = 0;
                 }
 
-                if (whirlingTimer > 110 && whirlingTimer < 300 && whirlingTimer % 30 == 0)
+                if (whirlingTimer > 110 && whirlingTimer < 300 && whirlingTimer % 30 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int knifeRight = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(NPC.velocity.X + Main.rand.NextFloat(4f, 6f), Main.rand.NextFloat(-7f, -2f)), ProjectileID.BoneDagger, knivesDamage, 5, Main.myPlayer);
                     Main.projectile[knifeRight].friendly = false;
                     Main.projectile[knifeRight].hostile = true;
 
                 }
-                if (whirlingTimer > 95 && whirlingTimer < 300 && knife2timer % 30 == 0)
+                if (whirlingTimer > 95 && whirlingTimer < 300 && knife2timer % 30 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int knifeLeft = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(NPC.velocity.X + Main.rand.NextFloat(-6f, -4f), Main.rand.NextFloat(-7f, -2f)), ProjectileID.BoneDagger, knivesDamage, 5, Main.myPlayer);
                     Main.projectile[knifeLeft].friendly = false;

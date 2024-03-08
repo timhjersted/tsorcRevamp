@@ -376,16 +376,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellHoldBall>();
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, holdBallDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 105;
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, holdBallDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 105;
+                                Main.projectile[num54].aiStyle = 1;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             NPC.ai[1] = 1f;
-
-
-
-
-
                         }
                         NPC.netUpdate = true;
                     }
@@ -402,9 +400,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBall>();
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, energyBallDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 100;
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, energyBallDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 100;
+                                Main.projectile[num54].aiStyle = 1;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -420,9 +421,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             speedX *= 0;
                             speedY *= 0;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightPillarBall>();
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, lightPillarDamage, 0f, Main.myPlayer, NPC.direction);
-                            Main.projectile[num54].timeLeft = 300;
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, lightPillarDamage, 0f, Main.myPlayer, NPC.direction);
+                                Main.projectile[num54].timeLeft = 300;
+                                Main.projectile[num54].aiStyle = 1;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -441,9 +445,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.BlackBreath>();
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, blackBreathDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 10;
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, blackBreathDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 10;
+                                Main.projectile[num54].aiStyle = 1;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -462,9 +469,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>();
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, lightning3Damage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 300;
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, lightning3Damage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 300;
+                                Main.projectile[num54].aiStyle = 1;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -483,9 +493,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>();
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, ice3Damage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 40;
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, ice3Damage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 40;
+                                Main.projectile[num54].aiStyle = 1;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -493,12 +506,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     }
                     if (Main.rand.NextBool(200))
                     {
-                        num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position.X + 20, NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
-                        Main.projectile[num58].timeLeft = 400;
-                        Main.projectile[num58].rotation = Main.rand.Next(700) / 100f;
-                        Main.projectile[num58].ai[0] = NPC.target;
-
-
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            num58 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position.X + 20, NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
+                            Main.projectile[num58].timeLeft = 400;
+                            Main.projectile[num58].rotation = Main.rand.Next(700) / 100f;
+                            Main.projectile[num58].ai[0] = NPC.target;
+                        }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                         customAi1 = 1f;
 
@@ -517,9 +531,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>();
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, lightning4Damage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 300;
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, lightning4Damage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 300;
+                                Main.projectile[num54].aiStyle = 1;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -541,9 +558,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.Okiku.MassiveCrystalShardsSpell>();
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, shardsDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 100;
-                            Main.projectile[num54].aiStyle = 4;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, shardsDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 100;
+                                Main.projectile[num54].aiStyle = 4;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
                             NPC.ai[3] = 0; ;
                         }
@@ -553,12 +573,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                     if (Main.rand.NextBool(250))
                     {
-                        num59 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position.X + 20, NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
-                        Main.projectile[num59].timeLeft = 500;
-                        Main.projectile[num59].rotation = Main.rand.Next(700) / 100f;
-                        Main.projectile[num59].ai[0] = NPC.target;
-
-
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            num59 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position.X + 20, NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
+                            Main.projectile[num59].timeLeft = 500;
+                            Main.projectile[num59].rotation = Main.rand.Next(700) / 100f;
+                            Main.projectile[num59].ai[0] = NPC.target;
+                        }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                         customAi1 = 1f;
 
@@ -584,9 +605,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         speedX *= num51;
                         speedY *= num51;
                         int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>();
-                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 1;
-                        Main.projectile[num54].aiStyle = 1;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
+                            Main.projectile[num54].timeLeft = 1;
+                            Main.projectile[num54].aiStyle = 1;
+                        }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                         NPC.ai[1] = 1f;
                     }
@@ -608,9 +632,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         speedX *= num51;
                         speedY *= num51;
                         int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBall>();
-                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, energyBallDamage, 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 300;
-                        Main.projectile[num54].aiStyle = 1;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, energyBallDamage, 0f, Main.myPlayer);
+                            Main.projectile[num54].timeLeft = 300;
+                            Main.projectile[num54].aiStyle = 1;
+                        }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                         customAi1 = 1f;
                     }
@@ -629,9 +656,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         speedX *= num51;
                         speedY *= num51;
                         int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGravity4Ball>();
-                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, gravityBallDamage, 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 60;
-                        Main.projectile[num54].aiStyle = 1;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, gravityBallDamage, 0f, Main.myPlayer);
+                            Main.projectile[num54].timeLeft = 60;
+                            Main.projectile[num54].aiStyle = 1;
+                        }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                         customAi1 = 1f;
                     }

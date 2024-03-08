@@ -512,15 +512,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         }
                     }
 
-                    if (clearSpace && Main.netMode != NetmodeID.MultiplayerClient)
+                    if (clearSpace)
                     {
                         Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 5);
 
                         speed.Y += Main.rand.NextFloat(-2f, -6f);
                         if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, poisonStrikeDamage, 0f, Main.myPlayer);
-
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, poisonStrikeDamage, 0f, Main.myPlayer);
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
                         }
                     }
@@ -547,8 +549,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spawnPosition, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(Color.OrangeRed));
-                        Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
                     }
+                    Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
 
                     // Store the player's position 
                     if (framesSinceStoredPosition >= 25)
@@ -563,7 +565,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 }
                 // Bomb Attack Far
-                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) > 400 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) > 400)
                 {
                     float bombProjectileSpeed = 14f;
 
@@ -572,7 +574,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     //speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
                     speed += Main.player[NPC.target].velocity;
 
-                    int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                    }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
 
                     // Reset targetPosition 
@@ -589,14 +594,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
                 // Bomb Attack Close
-                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) <= 400 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (NPC.ai[1] == 925f && NPC.Distance(player.Center) <= 400)
                 {
                     float bombProjectileSpeed = 9f;
                     Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, targetPosition, bombProjectileSpeed, fallback: true);
 
                     speed.Y += Main.rand.NextFloat(-1f, -2f); //adds random variation from -1 to 2
 
-                    int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                    }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
 
                     // Reset targetPosition 
@@ -733,13 +741,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 // Rain of Cursed Flame at 1/3 life
-                if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 60 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (NPC.life <= NPC.lifeMax / 3 && Main.GameUpdateCount % 60 == 0)
                 {
                     Player nT = Main.player[NPC.target];
 
                     for (int pcy = 0; pcy < 3; pcy++)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 550f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), poisonStrikeDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 550f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), poisonStrikeDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
+                        }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.2f, Pitch = 0.01f }); //flamethrower
                     }
                 }

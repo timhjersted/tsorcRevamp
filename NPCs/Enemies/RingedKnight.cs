@@ -549,31 +549,34 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center); //Play slash/swing sound
 
-                        if (NPC.direction == 1)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            if (!standing_on_solid_tile)
+                            if (NPC.direction == 1)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -66), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                if (!standing_on_solid_tile)
+                                {
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -66), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                }
+                                else
+                                {
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                }
+
                             }
+
                             else
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
-                            }
+                                if (!standing_on_solid_tile)
+                                {
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -66), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
 
-                        }
-
-                        else
-                        {
-                            if (!standing_on_solid_tile)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -66), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
-
+                                }
+                                else
+                                {
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                }
                             }
-                            else
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
-                            }
-                        }
+                        }                           
                     }
 
                     if (NPC.ai[3] >= 49) //If timer is 69
@@ -688,14 +691,17 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center); //Play slash/swing sound
 
-                        if (NPC.direction == 1)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
-                        }
+                            if (NPC.direction == 1)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                            }
 
-                        else
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                            else
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), projSlash, (int)(ringedKnightDamage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                            }
                         }
                     }
                     if (NPC.ai[1] > 470 && NPC.ai[1] < 489)
@@ -770,36 +776,39 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45 with { Volume = 1.0f, PitchVariance = 0.3f }, player.Center); //Play slash/swing sound
 
-                    if (lifePercentage <= 60)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        if (NPC.direction == 1)
+                        if (lifePercentage <= 60)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(48, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
-                            NPC.velocity.X += 10.5f;
-                            //npc.velocity.Y -= 2f;
-                        }
+                            if (NPC.direction == 1)
+                            {
+                                Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(48, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
+                                NPC.velocity.X += 10.5f;
+                                //npc.velocity.Y -= 2f;
+                            }
 
+                            else
+                            {
+                                Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-48, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
+                                NPC.velocity.X -= 10.5f;
+                                //npc.velocity.Y -= 2f;
+                            }
+                        }
                         else
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-48, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
-                            NPC.velocity.X -= 10.5f;
-                            //npc.velocity.Y -= 2f;
-                        }
-                    }
-                    else
-                    {
-                        if (NPC.direction == 1)
-                        {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
-                            NPC.velocity.X += 10.5f;
-                            //npc.velocity.Y -= 2f;
-                        }
+                            if (NPC.direction == 1)
+                            {
+                                Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
+                                NPC.velocity.X += 10.5f;
+                                //npc.velocity.Y -= 2f;
+                            }
 
-                        else
-                        {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-44, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
-                            NPC.velocity.X -= 10.5f;
-                            //npc.velocity.Y -= 2f;
+                            else
+                            {
+                                Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-44, -2), new Vector2(0, 0), projStab, (int)(ringedKnightDamage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
+                                NPC.velocity.X -= 10.5f;
+                                //npc.velocity.Y -= 2f;
+                            }
                         }
                     }
                 }

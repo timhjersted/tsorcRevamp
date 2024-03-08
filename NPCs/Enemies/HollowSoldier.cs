@@ -377,29 +377,32 @@ namespace tsorcRevamp.NPCs.Enemies
 
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center); //Play slash/swing sound
 
-                        if (NPC.direction == 1)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            if (!standing_on_solid_tile)
+                            if (NPC.direction == 1)
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(14, -60), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                if (!standing_on_solid_tile)
+                                {
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(14, -60), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                }
+                                else
+                                {
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(14, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                }
                             }
-                            else
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(14, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
-                            }
-                        }
 
-                        else
-                        {
-                            if (!standing_on_solid_tile)
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-10, -60), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
-                            }
                             else
                             {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-10, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                if (!standing_on_solid_tile)
+                                {
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-10, -60), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                }
+                                else
+                                {
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-10, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowLesserSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                                }
                             }
-                        }
+                        } 
                     }
 
                     if (NPC.ai[3] >= 49) //If timer is 69
@@ -514,15 +517,18 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center); //Play slash/swing sound
 
-                        if (NPC.direction == 1)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowGreaterSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
-                        }
+                            if (NPC.direction == 1)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowGreaterSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                            }
 
-                        else
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowGreaterSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
-                        }
+                            else
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), hollowGreaterSlashDamage, 5, Main.myPlayer, NPC.whoAmI, 0);
+                            }
+                        }                         
                     }
                     if (NPC.ai[1] > 470 && NPC.ai[1] < 510)
                     {

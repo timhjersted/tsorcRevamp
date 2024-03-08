@@ -84,21 +84,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 Main.dust[dust].noGravity = true;
             }
 
-
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+   
+            if (NPC.ai[0] >= 12 && NPC.ai[2] < 3)
             {
-                if (NPC.ai[0] >= 12 && NPC.ai[2] < 3)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float num48 = 3f;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                     int type = ModContent.ProjectileType<Projectiles.Enemy.FrozenSawII>();
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, frozenSawDamage, 0f, Main.myPlayer);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                    NPC.ai[0] = 0;
-                    NPC.ai[2]++;
-                    //Timer2 = 0;
                 }
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                NPC.ai[0] = 0;
+                NPC.ai[2]++;
+                //Timer2 = 0;
             }
 
 
@@ -172,14 +172,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                     //speed += Main.rand.NextVector2Circular(-10, -8);
                     if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                     {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        if (Main.rand.NextBool(4))
                         {
-                            if (Main.rand.NextBool(4))
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, 80, 0f, Main.myPlayer);
                                 //ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
                             }
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
                         }
 
                         if (Timer2 >= 400)
@@ -188,13 +188,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
                             if (Main.rand.NextBool(2))
                             {
-                                if (Main.netMode != NetmodeID.MultiplayerClient)
+                                float num48 = 2f;
+                                Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 220 + (NPC.height / 2));
+                                float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
+                                float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
+                                if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                                 {
-                                    float num48 = 2f;
-                                    Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 220 + (NPC.height / 2));
-                                    float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
-                                    float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
-                                    if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
+                                    if (Main.netMode != NetmodeID.MultiplayerClient)
                                     {
                                         float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                                         num51 = num48 / num51;
@@ -203,9 +203,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                                         int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>();//44;//0x37; //14;
                                         int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, lightningDamage, 0f, Main.myPlayer);
                                         Main.projectile[num54].timeLeft = 250;
-                                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
-                                        NPC.ai[3] = 0;
                                     }
+                                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
+                                    NPC.ai[3] = 0;
                                 }
                             }
                         }

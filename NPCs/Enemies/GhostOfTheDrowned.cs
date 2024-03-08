@@ -468,25 +468,34 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (AI_Timer == 34)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
-                        stab.timeLeft = 6;
-                        stab.velocity.X = 5;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
+                            stab.timeLeft = 6;
+                            stab.velocity.X = 5;
+                        }
                     }
 
                     if (AI_Timer == 50)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
-                        stab.timeLeft = 6;
-                        stab.velocity.X = 5;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
+                            stab.timeLeft = 6;
+                            stab.velocity.X = 5;
+                        }
                     }
 
                     if (AI_Timer == 77)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
-                        stab.timeLeft = 6;
-                        stab.velocity.X = 5;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
+                            stab.timeLeft = 6;
+                            stab.velocity.X = 5;
+                        }
                     }
                 }
                 else
@@ -494,25 +503,34 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (AI_Timer == 34)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
-                        stab.timeLeft = 6;
-                        stab.velocity.X = -5;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
+                            stab.timeLeft = 6;
+                            stab.velocity.X = -5;
+                        }
                     }
 
                     if (AI_Timer == 50)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
-                        stab.timeLeft = 6;
-                        stab.velocity.X = -5;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
+                            stab.timeLeft = 6;
+                            stab.velocity.X = -5;
+                        }
                     }
 
                     if (AI_Timer == 76)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
-                        stab.timeLeft = 6;
-                        stab.velocity.X = -5;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI, 3, 2)];
+                            stab.timeLeft = 6;
+                            stab.velocity.X = -5;
+                        }
                     }
                 }
 
@@ -565,10 +583,13 @@ namespace tsorcRevamp.NPCs.Enemies
                     Vector2 shootPos;
                     if (NPC.direction == 1) shootPos = new Vector2(NPC.Center.X + 40, NPC.Center.Y - 10);
                     else shootPos = new Vector2(NPC.Center.X - 54, NPC.Center.Y - 10);
-                    Projectile bubble = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), shootPos, new Vector2(NPC.direction * Main.rand.NextFloat(6, 12), Main.rand.NextFloat(-2f, 2f)), ProjectileID.Bubble, spearStabDamage, 5, Main.myPlayer, NPC.whoAmI)];
-                    bubble.friendly = false;
-                    bubble.hostile = true;
-                    bubble.tileCollide = false;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile bubble = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), shootPos, new Vector2(NPC.direction * Main.rand.NextFloat(6, 12), Main.rand.NextFloat(-2f, 2f)), ProjectileID.Bubble, spearStabDamage, 5, Main.myPlayer, NPC.whoAmI)];
+                        bubble.friendly = false;
+                        bubble.hostile = true;
+                        bubble.tileCollide = false;
+                    }
                 }
 
                 if (AI_Timer > 150)

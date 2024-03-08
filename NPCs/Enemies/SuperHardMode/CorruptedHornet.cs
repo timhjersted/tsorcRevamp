@@ -86,8 +86,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         num90 = num87 / num90;
                         num88 *= num90;
                         num89 *= num90;
-                        int num93 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector12.X, vector12.Y, num88, num89, ProjectileID.CursedFlameHostile, cursedFlameDamage, 0f, Main.myPlayer);
-                        Main.projectile[num93].timeLeft = 300;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int num93 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector12.X, vector12.Y, num88, num89, ProjectileID.CursedFlameHostile, cursedFlameDamage, 0f, Main.myPlayer);
+                            Main.projectile[num93].timeLeft = 300;
+                        }
                         NPC.ai[3] = 101f;
                         NPC.netUpdate = true;
                     }

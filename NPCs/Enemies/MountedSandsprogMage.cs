@@ -167,7 +167,10 @@ namespace tsorcRevamp.NPCs.Enemies
                         speedX *= num51;
                         speedY *= num51;
                         int type = ProjectileID.MartianTurretBolt;
-                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + 12, vector8.Y - 18, speedX, speedY, type, boltDamage, 0f, Main.myPlayer, 0, 1);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + 12, vector8.Y - 18, speedX, speedY, type, boltDamage, 0f, Main.myPlayer, 0, 1);
+                        }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_GoblinBomberThrow, NPC.Center);
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot") with { Volume = 0.6f, PitchVariance = 0.3f }, NPC.Center);
                         boltTimer = 1;
@@ -214,7 +217,10 @@ namespace tsorcRevamp.NPCs.Enemies
                         speedX *= num51;
                         speedY *= num51;
                         int type = ProjectileID.MartianTurretBolt;
-                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X - 6, vector8.Y - 18, speedX, speedY, type, 11, 0f, Main.myPlayer, 0, 1);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X - 6, vector8.Y - 18, speedX, speedY, type, 11, 0f, Main.myPlayer, 0, 1);
+                        }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_GoblinBomberThrow, NPC.Center);
                         Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot") with { Volume = 0.6f, PitchVariance = 0.3f }, NPC.Center);
                         boltTimer = 1;

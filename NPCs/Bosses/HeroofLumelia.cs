@@ -594,10 +594,8 @@ namespace tsorcRevamp.NPCs.Bosses
                         {
                             //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 800f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
-                        
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5, NPC.Center);
                         }
-
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5, NPC.Center);
                         NPC.netUpdate = true;
 
                     }
@@ -618,9 +616,8 @@ namespace tsorcRevamp.NPCs.Bosses
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(400), (float)nT.position.Y - 900f, (float)(-50 + Main.rand.Next(100)) / 10, 9.1f, ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer); //was 8.9f near 10, tried Main.rand.Next(2, 5)
-
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5, NPC.Center);
                         }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5, NPC.Center);
 
                         NPC.netUpdate = true;
 
@@ -643,9 +640,9 @@ namespace tsorcRevamp.NPCs.Bosses
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             //customAi1 = 132f;
                         }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     }
 
                     NPC.netUpdate = true;
@@ -667,9 +664,9 @@ namespace tsorcRevamp.NPCs.Bosses
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             //customAi1 = 132f;
                         }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     }
 
                     NPC.netUpdate = true;
@@ -685,8 +682,8 @@ namespace tsorcRevamp.NPCs.Bosses
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                         }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 
                         //go to smoke bomb attack
                         customAi1 = 200f;
@@ -733,9 +730,9 @@ namespace tsorcRevamp.NPCs.Bosses
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
                                 {
                                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySmokebomb>(), smokebombDamage, 0f, Main.myPlayer);
-                                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.3f }, NPC.Center); //Play swing-throw sound
-                                    customAi1 = 1f;
                                 }
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.3f }, NPC.Center); //Play swing-throw sound
+                                customAi1 = 1f;
                             }
                         }
                     }

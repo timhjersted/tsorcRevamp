@@ -101,21 +101,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
             bool flag25 = false;
             ProjectileTimer += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
-            if (ProjectileTimer >= 10f && Main.netMode != NetmodeID.MultiplayerClient)
+            if (ProjectileTimer >= 10f)
             {
                 if (Main.rand.NextBool(90))
                 {
-                    Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 9);
-                    projVector += Main.rand.NextVector2Circular(20, 20);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 9);
+                        projVector += Main.rand.NextVector2Circular(20, 20);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 0f, Main.myPlayer);
+                    }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     ProjectileTimer = 1f;
                 }
                 if (Main.rand.NextBool(20))
                 {
-                    Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 13);
-                    projVector += Main.rand.NextVector2Circular(10, 10);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.TheOracle>(), oracleDamage, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 13);
+                        projVector += Main.rand.NextVector2Circular(10, 10);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.TheOracle>(), oracleDamage, 0f, Main.myPlayer);
+                    }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     ProjectileTimer = 1f;
                 }

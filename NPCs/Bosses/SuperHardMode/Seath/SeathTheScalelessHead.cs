@@ -303,12 +303,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
                 if (Main.netMode != NetmodeID.MultiplayerClient) //ModContent.ProjectileType<Projectiles.Enemy.FrozenTear>()
                 {
-
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 300 + Main.rand.Next(300), (float)nT.position.Y - 630f, (float)(-50 + Main.rand.Next(100)) / 10, 4f, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), smallShardDamage, 2.5f, Main.myPlayer); //ProjectileID.FrostBlastHostile //ProjectileID.FrostShard 5 was 10.1f was 14.9f is speed - 1f was 2f
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit5 with { Volume = 0.1f, Pitch = 0.0f }, NPC.Center); //
                 }
-
-
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit5 with { Volume = 0.1f, Pitch = 0.0f }, NPC.Center); //
 
                 FrostShotTimer = 0;
                 FrostShotCounter++;
@@ -323,16 +320,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
                 if (Main.netMode != NetmodeID.MultiplayerClient) //ModContent.ProjectileType<Projectiles.Enemy.FrozenTear>()
                 {
-
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(100), (float)nT.position.Y - 600f, (float)(-5 + Main.rand.Next(50)) / 10, 3.1f, ProjectileID.FrostBlastHostile, smallShardDamage, 6f, Main.myPlayer); //ProjectileID.FrostBlastHostile //ModContent.ProjectileType<Projectiles.Enemy.Bubble>() ProjectileID.FrostShard 5 was 10.1f was 14.9f is speed - 1f was 2f
-                    Lighting.AddLight(NPC.Center, Color.DeepPink.ToVector3() * 3f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal with { Volume = 0.2f, Pitch = 0.0f }, NPC.Center); //ice materialize - good, NPCHit5 is a nice ice sound
-                                                                                                                                         //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.2f, Pitch = 0.1f }, NPC.Center); //flame thrower
-
                 }
-
-
-
+                Lighting.AddLight(NPC.Center, Color.DeepPink.ToVector3() * 3f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.2f, Pitch = 0.1f }, NPC.Center); //flame thrower
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal with { Volume = 0.2f, Pitch = 0.0f }, NPC.Center); //ice materialize - good, NPCHit5 is a nice ice sound
                 FrostShot2Timer = 0;
                 FrostShot2Counter++;
 
@@ -341,7 +333,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
 
             //massive ice crystal shards falling down   
-            if (Main.rand.NextBool(250) && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.rand.NextBool(250))
             {
 
                 float num48 = 6f;
@@ -355,7 +347,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     speedX *= num51;
                     speedY *= num51;
                     int type = ModContent.ProjectileType<Projectiles.Enemy.Okiku.MassiveCrystalShardsSpell>();
-                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, largeShardDamage, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, largeShardDamage, 0f, Main.myPlayer);
+                    }
                     Main.projectile[num54].timeLeft = 100;
                     Main.projectile[num54].aiStyle = 4;
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.2f, Pitch = -0.9f }, NPC.Center); //ice materialize - good
@@ -378,7 +373,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
 
             //ice storm horizontal attack
-            if (Main.rand.NextBool(180) && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.rand.NextBool(180))
             {
                 float num48 = 6f;
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width / 2), NPC.position.Y + (NPC.height / 2)); //.2 was .5
@@ -391,7 +386,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     speedX *= num51;
                     speedY *= num51;
                     int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>();
-                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
+                    }
                     Main.projectile[num54].timeLeft = 1;
                     Main.projectile[num54].aiStyle = 1;
                     //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 120, 0.3f, .1f); //ice mist howl sounds crazy

@@ -2632,16 +2632,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, deathBallDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 6;
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                num51 = num48 / num51;
+                                speedX *= num51;
+                                speedY *= num51;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>();//44;//0x37; //14;
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, deathBallDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 6;
+                                Main.projectile[num54].aiStyle = 1;
+                            }                          
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -2654,16 +2657,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 700;
-                            Main.projectile[num54].aiStyle = 23;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                num51 = num48 / num51;
+                                speedX *= num51;
+                                speedY *= num51;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 700;
+                                Main.projectile[num54].aiStyle = 23;
+                            }                          
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -2686,16 +2692,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 100 + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellHoldBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, holdBallDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 105;
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                num51 = num48 / num51;
+                                speedX *= num51;
+                                speedY *= num51;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellHoldBall>();//44;//0x37; //14;
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, holdBallDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 105;
+                                Main.projectile[num54].aiStyle = 1;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             NPC.ai[1] = 1f;
                         }
@@ -2710,16 +2719,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.Center.Y - 10f);
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = (((Main.player[NPC.target].position.Y - 10) + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyDragoonLance>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, dragoonLanceDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 700;
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                num51 = num48 / num51;
+                                speedX *= num51;
+                                speedY *= num51;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyDragoonLance>();//44;//0x37; //14;
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, dragoonLanceDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 700;
+                                Main.projectile[num54].aiStyle = 1;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -2734,16 +2746,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 600;
-                            Main.projectile[num54].aiStyle = 23;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                num51 = num48 / num51;
+                                speedX *= num51;
+                                speedY *= num51;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 600;
+                                Main.projectile[num54].aiStyle = 23;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             NPC.ai[1] = 1f;
                         }
@@ -2758,17 +2773,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 20);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 30);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            //int damage = 80;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 450;
-                            Main.projectile[num54].aiStyle = 23;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                num51 = num48 / num51;
+                                speedX *= num51;
+                                speedY *= num51;
+                                //int damage = 80;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 450;
+                                Main.projectile[num54].aiStyle = 23;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -2782,16 +2800,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 20);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 30);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellArmageddonBlastBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, armageddonDamage, 0f, Main.myPlayer);
-                            //Main.projectile[num54].timeLeft = 0;
-                            Main.projectile[num54].aiStyle = 23;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                num51 = num48 / num51;
+                                speedX *= num51;
+                                speedY *= num51;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellArmageddonBlastBall>();//44;//0x37; //14;
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, armageddonDamage, 0f, Main.myPlayer);
+                                //Main.projectile[num54].timeLeft = 0;
+                                Main.projectile[num54].aiStyle = 23;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -2806,16 +2827,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGravity1Ball>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, gravityBallDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 40;
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                num51 = num48 / num51;
+                                speedX *= num51;
+                                speedY *= num51;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGravity1Ball>();//44;//0x37; //14;
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, gravityBallDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 40;
+                                Main.projectile[num54].aiStyle = 1;
+                            }                                
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             NPC.ai[1] = 1f;
                         }
@@ -2827,16 +2851,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 270;
-                            Main.projectile[num54].aiStyle = 23;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                num51 = num48 / num51;
+                                speedX *= num51;
+                                speedY *= num51;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 270;
+                                Main.projectile[num54].aiStyle = 23;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -2848,16 +2875,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 1000 + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, crazedPurpleCrushDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 600;
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                num51 = num48 / num51;
+                                speedX *= num51;
+                                speedY *= num51;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>();//44;//0x37; //14;
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, crazedPurpleCrushDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 600;
+                                Main.projectile[num54].aiStyle = 1;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -2880,16 +2910,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, shadowShotDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 200;
-                            Main.projectile[num54].aiStyle = 23; //was 23
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                num51 = num48 / num51;
+                                speedX *= num51;
+                                speedY *= num51;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>();//44;//0x37; //14;
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, shadowShotDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 200;
+                                Main.projectile[num54].aiStyle = 23; //was 23
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -2902,16 +2935,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 0;//was 70
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                num51 = num48 / num51;
+                                speedX *= num51;
+                                speedY *= num51;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>();//44;//0x37; //14;
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 0;//was 70
+                                Main.projectile[num54].aiStyle = 1;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             NPC.ai[1] = 1f;
                         }
@@ -2928,16 +2964,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>(); //44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, darkArrowDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 1300;
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                num51 = num48 / num51;
+                                speedX *= num51;
+                                speedY *= num51;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>(); //44;//0x37; //14;
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, darkArrowDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 1300;
+                                Main.projectile[num54].aiStyle = 1;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -2951,16 +2990,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormWave>(); //44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, stormWaveDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 1300;
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                num51 = num48 / num51;
+                                speedX *= num51;
+                                speedY *= num51;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormWave>(); //44;//0x37; //14;
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, stormWaveDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 1300;
+                                Main.projectile[num54].aiStyle = 1;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
@@ -2975,16 +3017,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                         float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)) && Main.netMode != NetmodeID.MultiplayerClient)
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>(); //44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, darkArrowDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 1300;
-                            Main.projectile[num54].aiStyle = 1;
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                num51 = num48 / num51;
+                                speedX *= num51;
+                                speedY *= num51;
+                                int type = ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>(); //44;//0x37; //14;
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, darkArrowDamage, 0f, Main.myPlayer);
+                                Main.projectile[num54].timeLeft = 1300;
+                                Main.projectile[num54].aiStyle = 1;
+                            }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }

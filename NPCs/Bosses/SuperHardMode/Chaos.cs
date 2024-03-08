@@ -301,13 +301,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         void NonClientAttacks()
         {
             NPC.ai[1] += 0.35f;
-            if (NPC.ai[1] >= 10f && Main.netMode != NetmodeID.MultiplayerClient)
+            if (NPC.ai[1] >= 10f)
             {
                 if (Main.rand.NextBool(90))
                 {
                     Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 9);
                     projTarget += Main.rand.NextVector2Circular(3, 3);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
+                    }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     NPC.ai[1] = 1f;
                 }
@@ -315,7 +318,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 8);
                     projTarget += Main.rand.NextVector2Circular(3, 3);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>(), iceStormDamage, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>(), iceStormDamage, 0f, Main.myPlayer);
+                    }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     NPC.ai[1] = 1f;
                 }
@@ -323,7 +329,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 8);
                     projTarget += Main.rand.NextVector2Circular(3, 3);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatFireballBall>(), greatFireballDamage, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatFireballBall>(), greatFireballDamage, 0f, Main.myPlayer);
+                    }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     NPC.ai[1] = 1f;
                 }
@@ -331,7 +340,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 8);
                     projTarget += Main.rand.NextVector2Circular(3, 3);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlazeBall>(), blazeBallDamage, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlazeBall>(), blazeBallDamage, 0f, Main.myPlayer);
+                    }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     NPC.ai[1] = 1f;
                 }
@@ -339,12 +351,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 11);
                     projTarget += Main.rand.NextVector2Circular(3, 3);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>(), purpleCrushDamage, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>(), purpleCrushDamage, 0f, Main.myPlayer);
+                    }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     NPC.ai[1] = 1f;
                 }
 
-                if (Main.rand.NextBool(205))
+                if (Main.rand.NextBool(205) && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), Main.player[NPC.target].position.X - 100 + Main.rand.Next(300), Main.player[NPC.target].position.Y - 530.0f, (float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Enemy.EnemyMeteor>(), meteorDamage, 2.0f, Main.myPlayer);
                 }
@@ -362,7 +377,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 8);
                     projTarget += Main.rand.NextVector2Circular(3, 3);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.ObscureSeeker>(), obscureSeekerDamage, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.ObscureSeeker>(), obscureSeekerDamage, 0f, Main.myPlayer);
+                    }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     NPC.ai[1] = 1f;
                 }
@@ -370,7 +388,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 12);
                     projTarget += Main.rand.NextVector2Circular(3, 3);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), crystalFireDamage, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), crystalFireDamage, 0f, Main.myPlayer);
+                    }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     NPC.ai[1] = 1f;
                 }
@@ -378,7 +399,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 5);
                     projTarget += Main.rand.NextVector2Circular(3, 3);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.FireTrails>(), fireTrailsDamage, 0f, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.FireTrails>(), fireTrailsDamage, 0f, Main.myPlayer);
+                    }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     NPC.ai[1] = 1f;
                 }

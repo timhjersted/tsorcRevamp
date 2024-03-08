@@ -99,17 +99,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 Main.dust[dust].noGravity = true;
             }
 
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (NPC.ai[0] >= 5 && NPC.ai[2] < 3)
             {
-                if (NPC.ai[0] >= 5 && NPC.ai[2] < 3)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 projectileVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projectileVelocity.X, projectileVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
-
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                    NPC.ai[0] = 0;
-                    NPC.ai[2]++;
                 }
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                NPC.ai[0] = 0;
+                NPC.ai[2]++;
             }
 
             if (NPC.ai[1] >= 10)
