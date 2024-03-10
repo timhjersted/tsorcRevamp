@@ -832,8 +832,13 @@ namespace tsorcRevamp.Items
                         }
                     }
 
+                    //Disable decrafting of anything with a dark soul in its recipe
                     Main.recipe[i].DisableDecraft();
                 }
+
+                //Enable decrafting of anything if moon lord is dead (purely an example)
+                //The 'NPC.downedMoonlord' part can be replaced by any expression, even a complex one, that ultimately spits out 'true' or 'false'
+                //Main.recipe[i].AddDecraftCondition(new Condition(Language.GetText("Conditions.Blah"), () => NPC.downedMoonlord));
             }
         }
         public override bool? UseItem(Item item, Player player)
