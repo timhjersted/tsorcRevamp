@@ -510,6 +510,8 @@ namespace tsorcRevamp.Items
             }
         }
 
+        
+
         public override bool OnPickup(Item item, Player player)
         {
             if (PotionBagUIState.IsValidPotion(item) && player.HasItem(ModContent.ItemType<PotionBag>()))
@@ -829,6 +831,8 @@ namespace tsorcRevamp.Items
                             hasSoulRecipe.Add(j);
                         }
                     }
+
+                    Main.recipe[i].DisableDecraft();
                 }
             }
         }
