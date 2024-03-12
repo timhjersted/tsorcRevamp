@@ -1,44 +1,44 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Terraria.GameContent.Creative;
 using Terraria;
-using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Projectiles.Melee.Spears;
 using tsorcRevamp.Projectiles.Summon.NullSprite;
+using Microsoft.Xna.Framework;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Summon.ForgottenImp;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-    public class NullSpriteStaff : ModItem
+    class ForgottenImpHalberd : ModItem
     {
+        public const float SlotsRequired = 1f;
+        public const int BaseDmg = 25;
+        public const int BleedProcBaseDmg = BaseDmg * 4;
+        public const int BleedDuration = 5;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Null Sprite Staff");
-            /* Tooltip.SetDefault("Summons a null sprite to fight for you" +
-                "\nNull sprites apply a permanent stacking debuff" +
-                "\nthat increases damage taken from all sources" +
-                "\nTakes 3/4th of a minion slot"); */
-
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 0.75f;
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1f;
         }
         public override void SetDefaults()
         {
-            Item.damage = 86;
+            Item.damage = 25;
             Item.knockBack = 1f;
-            Item.width = 44;
-            Item.height = 50;
-            Item.useTime = Item.useAnimation = 36;
+            Item.width = 54;
+            Item.height = 54;
+            Item.useTime = Item.useAnimation = 30;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.value = Item.buyPrice(2, 0, 0, 0);
+            Item.rare = ItemRarityID.LightPurple;
+            Item.value = PriceByRarity.fromItem(Item);
             Item.mana = 10;
-            Item.rare = ItemRarityID.Yellow;
             Item.UseSound = SoundID.Item44;
-            Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;
-            Item.buffType = ModContent.BuffType<NullSpriteBuff>();
-            Item.shoot = ModContent.ProjectileType<NullSprite>();
+            Item.buffType = ModContent.BuffType<ForgottenImpBuff>();
+            Item.shoot = ModContent.ProjectileType<ForgottenImpProjectile>();
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
@@ -54,6 +54,18 @@ namespace tsorcRevamp.Items.Weapons.Summon
                 Main.projectile[p].originalDamage = Item.damage;
             }
             return false;
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+
+            recipe.AddIngredient(ItemID.ImpStaff);
+            recipe.AddIngredient(ModContent.ItemType<ImpHead>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
+
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
         }
     }
 }

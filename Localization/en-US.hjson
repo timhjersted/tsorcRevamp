@@ -1620,11 +1620,7 @@ Mods: {
 
 			EssenceOfMana: {
 				DisplayName: Essence of Mana
-				Tooltip:
-					'''
-					{$CommonItemTooltip.IncreasesMaxManaByPercent}
-					Increases mana costs by {1}%
-					'''
+				Tooltip: "{$CommonItemTooltip.IncreasesMaxManaByPercent}"
 			}
 
 			GemBox: {
@@ -5994,7 +5990,13 @@ Mods: {
 
 			ForgottenImpHalberd: {
 				DisplayName: Forgotten Imp Halberd
-				Tooltip: A crescent shaped spear used by imps.
+				Tooltip:
+					'''
+					A crescent shaped spear used by imps.
+					Summons a petrified imp to fight for you
+					Petrified imps cause enemies to hemorrhage after a few hits
+					Melee hits proc this faster
+					'''
 			}
 
 			ForgottenPearlSpear: {
@@ -7695,6 +7697,11 @@ Mods: {
 					{$CommonItemTooltip.Summon.BaseCritChance}
 					'''
 			}
+
+			ImpHead: {
+				DisplayName: Imp Head
+				Tooltip: Sold by the Dwarf once {$Conditions.HunterDowned}
+			}
 		}
 
 		Buffs: {
@@ -8602,6 +8609,16 @@ Mods: {
 				DisplayName: C C Shock
 				Description: Mods.tsorcRevamp.Buffs.CCShock.Description
 			}
+
+			ForgottenImpBuff: {
+				DisplayName: Forgotten Imp Buff
+				Description: The forgotten Imp will fight for you
+			}
+
+			Hemorrhage: {
+				DisplayName: Hemorrhage
+				Description: Mods.tsorcRevamp.Buffs.Hemorrhage.Description
+			}
 		}
 
 		Projectiles: {
@@ -9005,7 +9022,6 @@ Mods: {
 			DarkTridentThrown.DisplayName: Dark Trident Thrown
 			DragoonLanceProj.DisplayName: Dragoon Lance
 			FetidExhaust.DisplayName: Noxious Jet
-			ForgottenImpHalberdProj.DisplayName: Forgotten Imp Halberd
 			ForgottenPearlSpearProj.DisplayName: Forgotten Pearl Spear
 			ForgottenPolearmProj.DisplayName: Forgotten Polearm
 			ForgottenRadiantLanceProj.DisplayName: Forgotten Radiant Lance
@@ -9208,6 +9224,8 @@ Mods: {
 			CharmOrbOfSpirituality.DisplayName: Orb Of Spirituality
 			AncientFireAxeFireball.DisplayName: Ancient Fire Axe Fireball
 			ModDD2ExplosiveTrapT2Explosion.DisplayName: Mod D D2 Explosive Trap T2 Explosion
+			ForgottenImpDagger.DisplayName: Forgotten Imp Dagger
+			ForgottenImpProjectile.DisplayName: Forgotten Imp Projectile
 		}
 
 		NPCs: {
@@ -10558,7 +10576,8 @@ Mods: {
 			AdventureModeDisabled: Sandbox-only
 			AdventureModeEnabled: Adventure Mode-only
 			BotCEnabled: Bearer of the Curse-only
-			SorrowDowned: Sorrow has been defeated
+			SorrowDowned: The Sorrow has been defeated
+			HunterDowned: The Hunter has been defeated
 			SHM1Downed: One Guardians of the Abyss slain
 			SHM3Downed: Three Guardians of the Abyss slain
 			SHM6Downed: Six Guardians of the Abyss slain

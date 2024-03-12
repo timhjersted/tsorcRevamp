@@ -33,9 +33,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             Projectile Skull = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 10), ProjectileID.BookOfSkullsSkull, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
-            Skull.DamageType = DamageClass.Melee;
-            Skull.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit;
-            Skull.netUpdate = true;
         }
 
         //TODO: Remove this

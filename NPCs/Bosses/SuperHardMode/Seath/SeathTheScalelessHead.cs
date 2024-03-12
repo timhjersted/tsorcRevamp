@@ -350,9 +350,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, largeShardDamage, 0f, Main.myPlayer);
+                        Main.projectile[num54].timeLeft = 100;
+                        Main.projectile[num54].aiStyle = 4;
                     }
-                    Main.projectile[num54].timeLeft = 100;
-                    Main.projectile[num54].aiStyle = 4;
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.2f, Pitch = -0.9f }, NPC.Center); //ice materialize - good
                     Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 2f);
                     Dust.NewDust(NPC.position, NPC.width * 2, NPC.height * 2, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y);
@@ -389,9 +389,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
+                        Main.projectile[num54].timeLeft = 1;
+                        Main.projectile[num54].aiStyle = 1;
                     }
-                    Main.projectile[num54].timeLeft = 1;
-                    Main.projectile[num54].aiStyle = 1;
                     //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 120, 0.3f, .1f); //ice mist howl sounds crazy
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.1f, Pitch = -0.6f }, NPC.Center); //ice materialize - good
                     //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.1f, Pitch = -0.9f }, NPC.Center); //flame thrower

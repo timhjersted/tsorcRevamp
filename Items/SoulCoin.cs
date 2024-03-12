@@ -28,7 +28,6 @@ namespace tsorcRevamp.Items
             Item.rare = ItemRarityID.Lime;
             DarkSoulRarity = 12;
         }
-
         public override bool GrabStyle(Player player)
         {
             Vector2 vectorItemToPlayer = player.Center - Item.Center;

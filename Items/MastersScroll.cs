@@ -24,11 +24,9 @@ namespace tsorcRevamp.Items
             Item.autoReuse = false;
             Item.value = 0;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.shoot = ProjectileID.Ale;
             Item.rare = ItemRarityID.Master;
         }
-
-        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
+        public override bool? UseItem(Player player)
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -36,11 +34,13 @@ namespace tsorcRevamp.Items
                 {
                     Main.GameMode = 2;
                     Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.MastersScroll.Enabled"), Color.DarkRed);
+                    return true;
                 }
                 else
                 {
                     Main.GameMode = 1;
                     Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.MastersScroll.Disabled"), Color.DarkRed);
+                    return true;
                 }
             }
             else
@@ -51,9 +51,9 @@ namespace tsorcRevamp.Items
                     timePacket.Write(tsorcPacketID.SyncMasterScroll);
                     timePacket.Write(Main.GameMode);
                     timePacket.Send();
+                    return true;
                 }
             }
-
             return false;
         }
     }

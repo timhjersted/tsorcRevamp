@@ -210,11 +210,11 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedMechBossAny);
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Spears.ForgottenImpHalberd>())
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Summon.ForgottenImpHalberd>())
             {
                 shopCustomPrice = 6000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, Condition.DownedMechBossAny);
+            }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.HunterDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>()))));
 
             shop.Register();
         }

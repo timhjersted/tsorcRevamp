@@ -33,10 +33,6 @@ namespace tsorcRevamp.Items
         {
             if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain < 120)
             {
-                player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain += 20;
-                player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain += 40;
-                Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.SublimeBoneDust.EstusFlaskPotency") + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain, Color.OrangeRed);
-                Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.SublimeBoneDust.CeruleanFlaskPotency") + Main.LocalPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain, Color.RoyalBlue);
                 return true;
             }
 
@@ -44,6 +40,18 @@ namespace tsorcRevamp.Items
             {
                 return false;
             }
+        }
+        public override bool? UseItem(Player player)
+        {
+            if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain < 120)
+            {
+                player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain += 20;
+                player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain += 40;
+                Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.SublimeBoneDust.EstusFlaskPotency") + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain, Color.OrangeRed);
+                Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.SublimeBoneDust.CeruleanFlaskPotency") + Main.LocalPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain, Color.RoyalBlue);
+                return true;
+            }
+            return false;
         }
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)

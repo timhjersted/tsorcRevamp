@@ -213,11 +213,6 @@ namespace tsorcRevamp.Projectiles
                     projectile.extraUpdates = 3;
                 }
 
-                if (projectile.type == ProjectileID.JoustingLance || projectile.type == ProjectileID.HallowJoustingLance || projectile.type == ProjectileID.ShadowJoustingLance)
-                {
-                    projectile.CritChance = 0;
-                }
-
                 if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaCrescentBoost && !(projectile.type == (int)ModContent.ProjectileType<MiakodaCrescent>() || projectile.type == (int)ModContent.ProjectileType<ShulletBellDark>() || projectile.type == (int)ModContent.ProjectileType<ShulletBellLight>() || projectile.type == (int)ModContent.ProjectileType<Bloodsign>()))
                 {
                     if (Main.rand.NextBool(2))

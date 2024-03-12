@@ -48,6 +48,9 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
+using tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile;
+using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
+using tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss;
 using tsorcRevamp.NPCs.Special;
 using tsorcRevamp.Projectiles.Summon;
 using tsorcRevamp.Projectiles.Summon.Archer;
@@ -116,6 +119,27 @@ namespace tsorcRevamp
         public static List<int> BannedItems;
         public static List<int> RestrictedHooks;
         public static List<int> DisabledRecipes;
+        public static List<int> GiantWormSegments;
+        public static List<int> DevourerSegments;
+        public static List<int> TombCrawlerSegments;
+        public static List<int> DiggerSegments;
+        public static List<int> LeechSegments;
+        public static List<int> SeekerSegments;
+        public static List<int> DuneSplicerSegments;
+        public static List<int> StardustWormSegments;
+        public static List<int> CrawltipedeSegments;
+        public static List<int> EaterOfWorldsSegments;
+        public static List<int> DestroyerSegments;
+        public static List<int> JungleWyvernSegments;
+        public static List<int> JuvenileJungleWyvernSegments;
+        public static List<int> ParasyticWormSegments;
+        public static List<int> SerpentOfTheAbyssSegments;
+        public static List<int> MechaDragonSegments;
+        public static List<int> SerrisSegments;
+        public static List<int> GhostDragonSegments;
+        public static List<int> HellkiteDragonSegments;
+        public static List<int> LichKingSerpentSegments;
+        public static List<int> SeathSegments;
         public static Dictionary<BossExtras, (IItemDropRuleCondition Condition, int ID)> BossExtrasDescription;
         public static Dictionary<int, BossExtras> AssignedBossExtras;
         public static Dictionary<int, int> BossBagIDtoNPCID;
@@ -1089,6 +1113,174 @@ namespace tsorcRevamp
             CustomDungeonWalls[63] = true; //flower wall
             CustomDungeonWalls[65] = true; //grass wall
             CustomDungeonWalls[71] = true; //ice wall
+            #endregion
+
+            //--------
+            #region Worm Segment Lists
+            GiantWormSegments = new List<int>()
+            {
+            NPCID.GiantWormHead,
+            NPCID.GiantWormBody,
+            NPCID.GiantWormTail
+            };
+
+            DevourerSegments = new List<int>()
+            {
+                NPCID.DevourerHead,
+                NPCID.DevourerBody,
+                NPCID.DevourerTail
+            };
+
+            TombCrawlerSegments = new List<int>()
+        {
+            NPCID.TombCrawlerHead,
+            NPCID.TombCrawlerBody,
+            NPCID.TombCrawlerTail
+        };
+
+            DiggerSegments = new List<int>()
+        {
+            NPCID.DiggerHead,
+            NPCID.DiggerBody,
+            NPCID.DiggerTail
+        };
+
+            LeechSegments = new List<int>()
+        {
+            NPCID.LeechHead,
+            NPCID.LeechBody,
+            NPCID.LeechTail
+        };
+
+            SeekerSegments = new List<int>()
+        {
+            NPCID.SeekerHead,
+            NPCID.SeekerBody,
+            NPCID.SeekerTail
+        };
+
+            DuneSplicerSegments = new List<int>()
+        {
+            NPCID.DuneSplicerHead,
+            NPCID.DuneSplicerBody,
+            NPCID.DuneSplicerTail
+        };
+
+            StardustWormSegments = new List<int>()
+        {
+            NPCID.StardustWormHead,
+            NPCID.StardustWormBody,
+            NPCID.StardustWormTail
+        };
+
+            CrawltipedeSegments = new List<int>()
+        {
+            NPCID.SolarCrawltipedeHead,
+            NPCID.SolarCrawltipedeBody,
+            NPCID.SolarCrawltipedeTail
+        };
+
+            EaterOfWorldsSegments = new List<int>()
+        {
+            NPCID.EaterofWorldsHead,
+            NPCID.EaterofWorldsBody,
+            NPCID.EaterofWorldsTail
+        };
+
+            DestroyerSegments = new List<int>()
+        {
+            NPCID.TheDestroyer,
+            NPCID.TheDestroyerBody,
+            NPCID.TheDestroyerTail
+        };
+
+            JungleWyvernSegments = new List<int>()
+        {
+            ModContent.NPCType<JungleWyvernHead>(),
+            ModContent.NPCType<JungleWyvernBody>(),
+            ModContent.NPCType<JungleWyvernBody2>(),
+            ModContent.NPCType<JungleWyvernBody3>(),
+            ModContent.NPCType<JungleWyvernLegs>(),
+            ModContent.NPCType<JungleWyvernTail>()
+        };
+
+            JuvenileJungleWyvernSegments = new List<int>()
+        {
+            ModContent.NPCType<JungleWyvernJuvenileHead>(),
+            ModContent.NPCType<JungleWyvernJuvenileBody>(),
+            ModContent.NPCType<JungleWyvernJuvenileBody2>(),
+            ModContent.NPCType<JungleWyvernJuvenileBody3>(),
+            ModContent.NPCType<JungleWyvernJuvenileLegs>(),
+            ModContent.NPCType<JungleWyvernJuvenileTail>()
+        };
+
+            ParasyticWormSegments = new List<int>()
+        {
+            ModContent.NPCType<ParasyticWormHead>(),
+            ModContent.NPCType<ParasyticWormBody>(),
+            ModContent.NPCType<ParasyticWormTail>()
+        };
+
+            SerpentOfTheAbyssSegments = new List<int>()
+        {
+            ModContent.NPCType<SerpentOfTheAbyssHead>(),
+            ModContent.NPCType<SerpentOfTheAbyssBody>(),
+            ModContent.NPCType<SerpentOfTheAbyssTail>()
+        };
+
+            MechaDragonSegments = new List<int>() //Wyvern Mage's Dragon
+        {
+            ModContent.NPCType<MechaDragonHead>(),
+            ModContent.NPCType<MechaDragonBody>(),
+            ModContent.NPCType<MechaDragonBody2>(),
+            ModContent.NPCType<MechaDragonBody3>(),
+            ModContent.NPCType<MechaDragonLegs>(),
+            ModContent.NPCType<MechaDragonTail>()
+        };
+
+            SerrisSegments = new List<int>()
+        {
+            ModContent.NPCType<SerrisHead>(),
+            ModContent.NPCType<SerrisBody>(),
+            ModContent.NPCType<SerrisTail>()
+        };
+
+            GhostDragonSegments = new List<int>() //Wyvern Mage Shadow's Dragon
+        {
+            ModContent.NPCType<GhostDragonHead>(),
+            ModContent.NPCType<GhostDragonBody>(),
+            ModContent.NPCType<GhostDragonBody2>(),
+            ModContent.NPCType<GhostDragonBody3>(),
+            ModContent.NPCType<GhostDragonLegs>(),
+            ModContent.NPCType<GhostDragonTail>()
+        };
+
+            HellkiteDragonSegments = new List<int>()
+        {
+            ModContent.NPCType<HellkiteDragonHead>(),
+            ModContent.NPCType<HellkiteDragonBody>(),
+            ModContent.NPCType<HellkiteDragonBody2>(),
+            ModContent.NPCType<HellkiteDragonBody3>(),
+            ModContent.NPCType<HellkiteDragonLegs>(),
+            ModContent.NPCType<HellkiteDragonTail>()
+        };
+
+            LichKingSerpentSegments = new List<int>()
+        {
+            ModContent.NPCType<LichKingSerpentHead>(),
+            ModContent.NPCType<LichKingSerpentBody>(),
+            ModContent.NPCType<LichKingSerpentTail>()
+        };
+
+            SeathSegments = new List<int>()
+        {
+            ModContent.NPCType<SeathTheScalelessHead>(),
+            ModContent.NPCType<SeathTheScalelessBody>(),
+            ModContent.NPCType<SeathTheScalelessBody2>(),
+            ModContent.NPCType<SeathTheScalelessBody3>(),
+            ModContent.NPCType<SeathTheScalelessLegs>(),
+            ModContent.NPCType<SeathTheScalelessTail>()
+        };
             #endregion
         }
 

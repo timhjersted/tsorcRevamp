@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Melee.Swords;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -45,17 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(BuffID.OnFire, 6 * 60, false);
             Projectile Flamethrower = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 2f), ProjectileID.Flames, (int)(player.GetTotalDamage(DamageClass.Melee).ApplyTo((float)Item.damage / 2f)), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
-            Flamethrower.DamageType = DamageClass.Melee;
-            Flamethrower.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit;
-            Flamethrower.ai[0] = 2f; //inflicts OnFire instead of Hellfire and for less time
-            Flamethrower.usesLocalNPCImmunity = false;
-            Flamethrower.localNPCHitCooldown = 0;
-            Flamethrower.usesIDStaticNPCImmunity = true;
-            Flamethrower.idStaticNPCHitCooldown = 20;
-            Flamethrower.ArmorPenetration = 0;
-            Flamethrower.netUpdate = true;
         }
 
         public override void MeleeEffects(Player player, Rectangle rectangle)

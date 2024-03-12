@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Melee.Swords;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -34,19 +35,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile Bone = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 10), ProjectileID.Bone, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
-            Bone.DamageType = DamageClass.Melee;
-            Bone.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit;
-            Bone.damage -= Bone.damage / 4;
-            Bone.netUpdate = true;
+            //Projectile Bone = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 10), ModContent.ProjectileType<CalciumBladeBone>(), (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
         }
-
-        //TODO: Remove this
-        public override bool CanShoot(Player player)
-        {
-            return true;
-        }
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

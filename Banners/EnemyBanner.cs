@@ -10,6 +10,7 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.NPCs.Friendly;
 

@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons
         public const int MaxMarks = 5;
         public const float MarkExtraDmgMultBase = 1.5f;
         public const float MarkDistanceBasedDmgDivisor = 7f;
-        public const int BaseDmg = 70;
+        public const int BaseDmg = 60;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMarks);
         public override void SetStaticDefaults()
         {
@@ -32,7 +32,6 @@ namespace tsorcRevamp.Items.Weapons
             Item.height = 100;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.shoot = ModContent.ProjectileType<Nothing>();
-            Item.scale = 1.1f;
             Item.shootSpeed = 5f;
             Item.useAmmo = AmmoID.Bullet;
             Item.DamageType = DamageClass.Generic;

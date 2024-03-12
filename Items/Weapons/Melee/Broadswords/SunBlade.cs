@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -58,9 +59,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                     || target.type == ModContent.NPCType<LichKingSerpentTail>()
                     || target.type == ModContent.NPCType<NPCs.Enemies.DemonSpirit>()
                     || target.type == ModContent.NPCType<NPCs.Enemies.CrazedDemonSpirit>()
-                    || target.type == ModContent.NPCType<NPCs.Enemies.ParasyticWormHead>()
-                    || target.type == ModContent.NPCType<NPCs.Enemies.ParasyticWormBody>()
-                    || target.type == ModContent.NPCType<NPCs.Enemies.ParasyticWormTail>()
+                    || target.type == ModContent.NPCType<ParasyticWormHead>()
+                    || target.type == ModContent.NPCType<ParasyticWormBody>()
+                    || target.type == ModContent.NPCType<ParasyticWormTail>()
                     )
             {
                 modifiers.FinalDamage *= 4;

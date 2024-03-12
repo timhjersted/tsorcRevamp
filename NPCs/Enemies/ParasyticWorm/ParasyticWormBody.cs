@@ -3,13 +3,12 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Enemies
+namespace tsorcRevamp.NPCs.Enemies.ParasyticWorm
 {
-    class ParasyticWormTail : ModNPC
+    class ParasyticWormBody : ModNPC
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Parasytic Worm");
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers()
             {
                 Hide = true
@@ -21,12 +20,13 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             AnimationType = 10;
             NPC.netAlways = true;
+            NPC.npcSlots = 1;
             NPC.width = 38;
-            NPC.height = 20;
+            NPC.height = 24;
             NPC.aiStyle = 6;
             NPC.timeLeft = 750;
-            NPC.damage = 20;
-            NPC.defense = 15;
+            NPC.damage = 40;
+            NPC.defense = 24;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.lavaImmune = true;
@@ -35,8 +35,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
-            NPC.value = 500;
-            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.value = 460;
 
             bodyTypes = new int[13];
             int bodyID = ModContent.NPCType<ParasyticWormBody>();
@@ -46,6 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
         int[] bodyTypes;
+
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
             return false;

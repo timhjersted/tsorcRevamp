@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
         public abstract int ProjectileFrameCount { get; } //may have up to 6 frames, you can extend this by extending the switch case below
         public abstract int ProjectileWidth { get; }
         public abstract int ProjectileHeight { get; }
-        public abstract DamageClass ProjectileDamageType { get; } //should be SUmmon usually but I made an exception for one
+        public abstract DamageClass ProjectileDamageType { get; } //should be Summon usually but I made an exception for one
         public abstract bool ContactDamage { get; } //if it can deal damage on contact
         public abstract bool CanShoot { get; } //if it's supposed to shoot a projectile
         public abstract int ShotProjectileType { get; }

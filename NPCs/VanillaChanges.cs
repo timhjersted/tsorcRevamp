@@ -5659,21 +5659,7 @@ namespace tsorcRevamp.NPCs
             {
                 modifiers.FinalDamage *= 2;
             }
-            if (npc.type == NPCID.TheDestroyer || npc.type == NPCID.TheDestroyerBody || npc.type == NPCID.TheDestroyerTail) //destroyer sword/item dmg reduction (flat, can't alter item dmg because it's a permanent stat)
-            { //could do some trickery with modifydamage in global item but this makes more sense
-                modifiers.FinalDamage *= 0.85f;
-            }
-            /*if (npc.type == NPCID.GiantWormHead || npc.type == NPCID.GiantWormBody || npc.type == NPCID.GiantWormTail
-                || npc.type == NPCID.DevourerHead || npc.type == NPCID.DevourerBody || npc.type == NPCID.DevourerTail
-                || npc.type == NPCID.TombCrawlerHead || npc.type == NPCID.TombCrawlerBody || npc.type == NPCID.TombCrawlerTail
-                || npc.type == NPCID.DiggerHead || npc.type == NPCID.DiggerBody || npc.type == NPCID.DiggerTail
-                || npc.type == NPCID.LeechHead || npc.type == NPCID.LeechBody || npc.type == NPCID.LeechTail
-                || npc.type == NPCID.SeekerHead || npc.type == NPCID.SeekerBody || npc.type == NPCID.SeekerTail
-                || npc.type == NPCID.DuneSplicerHead || npc.type == NPCID.DuneSplicerBody || npc.type == NPCID.DuneSplicerTail
-                || npc.type == NPCID.StardustWormHead || npc.type == NPCID.StardustWormBody || npc.type == NPCID.StardustWormTail)
-            {
-                modifiers.FinalDamage *= 0.9f;
-            }*/ //worm enemy sword/item dmg reduction
+            base.ModifyHitByItem(npc, player, item, ref modifiers);
         }
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
@@ -5686,70 +5672,16 @@ namespace tsorcRevamp.NPCs
                     modifiers.FinalDamage *= 2;
                 }
             }
-            if (npc.type == NPCID.TheDestroyer || npc.type == NPCID.TheDestroyerBody || npc.type == NPCID.TheDestroyerTail)
-            {
-                if (projectile.IsMinionOrSentryRelated) //destroyer minion dmg reduction (flat, can't alter minion damage because they're mostly permanent projectiles)
-                {
-                    modifiers.FinalDamage *= 0.7f;
-                }
-            }
-            /*if ((npc.type == NPCID.GiantWormHead || npc.type == NPCID.GiantWormBody || npc.type == NPCID.GiantWormTail 
-                || npc.type == NPCID.DevourerHead || npc.type == NPCID.DevourerBody || npc.type == NPCID.DevourerTail 
-                || npc.type == NPCID.TombCrawlerHead || npc.type == NPCID.TombCrawlerBody || npc.type == NPCID.TombCrawlerTail
-                || npc.type == NPCID.DiggerHead || npc.type == NPCID.DiggerBody || npc.type == NPCID.DiggerTail 
-                || npc.type == NPCID.LeechHead || npc.type == NPCID.LeechBody || npc.type == NPCID.LeechTail
-                || npc.type == NPCID.SeekerHead || npc.type == NPCID.SeekerBody || npc.type == NPCID.SeekerTail
-                || npc.type == NPCID.DuneSplicerHead || npc.type == NPCID.DuneSplicerBody || npc.type == NPCID.DuneSplicerTail 
-                || npc.type == NPCID.StardustWormHead || npc.type == NPCID.StardustWormBody || npc.type == NPCID.StardustWormTail)
-                && projectile.IsMinionOrSentryRelated)
-            {
-                modifiers.FinalDamage *= 0.75f;
-            }*/ //worm enemy minion dmg reduction
+            base.ModifyHitByProjectile(npc, projectile, ref modifiers);
         }
 
         public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            if (npc.type == NPCID.TheDestroyer || npc.type == NPCID.TheDestroyerBody || npc.type == NPCID.TheDestroyerTail)
-            {
-                if (!projectile.IsMinionOrSentryRelated) //destroyer non minion projectile dmg reduction (reduces projectiles dmg on each hit after the first, saved on each projectile individually)
-                {
-                    projectile.damage = (int)(projectile.damage * 0.8f);
-                }
-                /*for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i].type == NPCID.TheDestroyer || Main.npc[i].type == NPCID.TheDestroyerBody || Main.npc[i].type == NPCID.TheDestroyerTail)
-                    {
-                        Main.npc[i].immune[projectile.owner] = 5;
-                    }
-                }*/
-            }
-            /*if ((npc.type == NPCID.GiantWormHead || npc.type == NPCID.GiantWormBody || npc.type == NPCID.GiantWormTail
-                || npc.type == NPCID.DevourerHead || npc.type == NPCID.DevourerBody || npc.type == NPCID.DevourerTail
-                || npc.type == NPCID.TombCrawlerHead || npc.type == NPCID.TombCrawlerBody || npc.type == NPCID.TombCrawlerTail
-                || npc.type == NPCID.DiggerHead || npc.type == NPCID.DiggerBody || npc.type == NPCID.DiggerTail
-                || npc.type == NPCID.LeechHead || npc.type == NPCID.LeechBody || npc.type == NPCID.LeechTail
-                || npc.type == NPCID.SeekerHead || npc.type == NPCID.SeekerBody || npc.type == NPCID.SeekerTail
-                || npc.type == NPCID.DuneSplicerHead || npc.type == NPCID.DuneSplicerBody || npc.type == NPCID.DuneSplicerTail
-                || npc.type == NPCID.StardustWormHead || npc.type == NPCID.StardustWormBody || npc.type == NPCID.StardustWormTail)
-                && !projectile.IsMinionOrSentryRelated)
-            {
-                projectile.damage = (int)(projectile.damage * 0.9f);
-            }*/ //worm enemy non minion dmg reduction
             base.OnHitByProjectile(npc, projectile, hit, damageDone);
         }
 
         public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            /*if (npc.type == NPCID.TheDestroyer || npc.type == NPCID.TheDestroyerBody || npc.type == NPCID.TheDestroyerTail)
-            {
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i].type == NPCID.TheDestroyer || Main.npc[i].type == NPCID.TheDestroyerBody || Main.npc[i].type == NPCID.TheDestroyerTail)
-                    {
-                        Main.npc[i].immune[player.whoAmI] = 5;
-                    }
-                }
-            }*/
             base.OnHitByItem(npc, player, item, hit, damageDone);
         }
 

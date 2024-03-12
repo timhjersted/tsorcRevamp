@@ -1620,11 +1620,7 @@ Mods: {
 
 			EssenceOfMana: {
 				DisplayName: 魔法精华
-				Tooltip:
-					'''
-					{$CommonItemTooltip.IncreasesMaxManaByPercent}
-					增加 {1}% 魔力消耗
-					'''
+				Tooltip: "{$CommonItemTooltip.IncreasesMaxManaByPercent}"
 			}
 
 			GemBox: {
@@ -7694,6 +7690,11 @@ Mods: {
 					{$CommonItemTooltip.Summon.BaseCritChance}
 					'''
 			}
+
+			ImpHead: {
+				// DisplayName: Imp Head
+				// Tooltip: Sold by the Dwarf once {$Conditions.HunterDowned}
+			}
 		}
 
 		Buffs: {
@@ -8601,6 +8602,16 @@ Mods: {
 				DisplayName: 电击猛击
 				Description: Mods.tsorcRevamp.Buffs.CCShock.Description
 			}
+
+			ForgottenImpBuff: {
+				// DisplayName: Forgotten Imp Buff
+				// Description: Mods.tsorcRevamp.Buffs.ForgottenImpBuff.Description
+			}
+
+			Hemorrhage: {
+				// DisplayName: Hemorrhage
+				// Description: Mods.tsorcRevamp.Buffs.Hemorrhage.Description
+			}
 		}
 
 		Projectiles: {
@@ -9004,7 +9015,6 @@ Mods: {
 			DarkTridentThrown.DisplayName: 暗黑三叉戟之掷
 			DragoonLanceProj.DisplayName: 龙骑枪
 			FetidExhaust.DisplayName: 腐败吐息
-			ForgottenImpHalberdProj.DisplayName: 被遗忘的小鬼之戟
 			ForgottenPearlSpearProj.DisplayName: 被遗忘的珍珠矛
 			ForgottenPolearmProj.DisplayName: 被遗忘的长枪
 			ForgottenRadiantLanceProj.DisplayName: 被遗忘的光辉之枪
@@ -9207,6 +9217,8 @@ Mods: {
 			CharmOrbOfSpirituality.DisplayName: 灵性之珠
 			// AncientFireAxeFireball.DisplayName: Ancient Fire Axe Fireball
 			// ModDD2ExplosiveTrapT2Explosion.DisplayName: Mod D D2 Explosive Trap T2 Explosion
+			// ForgottenImpDagger.DisplayName: Forgotten Imp Dagger
+			// ForgottenImpProjectile.DisplayName: Forgotten Imp Projectile
 		}
 
 		NPCs: {
@@ -10562,6 +10574,7 @@ Mods: {
 			AdventureModeEnabled: 仅限冒险模式
 			BotCEnabled: 仅限被诅咒者
 			SorrowDowned: 悲伤已被击败
+			// HunterDowned: The Hunter has been defeated
 			SHM1Downed: 一名深渊守护者被击败
 			SHM3Downed: 三名深渊守护者被击败
 			SHM6Downed: 六名深渊守护者被击败

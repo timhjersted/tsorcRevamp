@@ -189,10 +189,10 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int shot1 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 30, speedX, speedY, type, projDamage, 0f, Main.myPlayer, 0, 0);
+                        Main.projectile[shot1].friendly = false;
+                        Main.projectile[shot1].hostile = true;
                     }
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/PulsarShot") with { Volume = 0.6f, PitchVariance = 0.3f }, NPC.Center);
-                    Main.projectile[shot1].friendly = false;
-                    Main.projectile[shot1].hostile = true;
 
                 }
 

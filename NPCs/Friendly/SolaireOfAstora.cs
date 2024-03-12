@@ -192,12 +192,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedMechBossAny);
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Spears.ForgottenImpHalberd>())
-            {
-                shopCustomPrice = 6000,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, Condition.DownedMechBossAny);
-
 
             shop.Register();
         }

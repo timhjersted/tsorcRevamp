@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Enemies
+namespace tsorcRevamp.NPCs.Enemies.ParasyticWorm
 {
     class ParasyticWormHead : ModNPC
     {
