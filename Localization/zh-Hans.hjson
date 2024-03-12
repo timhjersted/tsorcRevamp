@@ -39,7 +39,7 @@ Mods: {
 			DragoonGearCompatible: 与龙骑士套装和龙靴兼容.
 			BootsDisableThis: 如果同时装备了赫尔墨斯靴或幽灵靴，则不会生效
 			FireDamage: 所有的火焰对木质敌人造成双倍伤害
-			OnFire: 着火了
+			OnFire: 着火
 			CursedInferno: 诅咒狱火
 			Ichor: 灵液
 			Banner: 旗帜
@@ -67,7 +67,8 @@ Mods: {
 			StaminaRegen: 增加 {0}% 耐力再生
 			StaminaRecovery: 增加 {0}% 耐力回复速度
 			DRStat: 增加 {0} 抵抗力
-			BadDRStat: 增加 {0}% 受到的伤害
+			BadDRStat: 减少 {0}% 伤害减免
+			DmgTaken: 增加 {0}% 受到的伤害
 			Cooldown: "{0} 秒冷却"
 			CritDmg: 暴击时造成 {0}% 额外伤害
 			LifeThreshold: 当生命值低于 {0}% 时，
@@ -153,7 +154,7 @@ Mods: {
 			PermanentPotion: {
 				CanScale:
 					'''
-					[c/77ff77:提供较弱的 {0}药水 增益效果]
+					[c/77ff77:提供{0}药水的增益效果]
 					[c/77ff77:在永久药水未激活时，使用对应的普通药水以增加其效率]
 					[c/77ff77:当前总使用次数：]{1}
 					[c/77ff77:当前药水效率：]{2}%
@@ -161,8 +162,8 @@ Mods: {
 				NoScaling: 永久获得 {0} 增益
 				GeneralTooltip:
 					'''
-					不占用buff栏位.
-					左键单击使用以开/关效果.
+					不占用Buff栏位
+					左键单击使用以开/关效果
 					'''
 				Flask: 不兼容武器灌注
 				Food: 不兼容其它食物
@@ -1003,7 +1004,8 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamage}
-					{$CommonItemTooltip.BadDefense@1}（gkd 带着这玩意打无伤）
+					{$CommonItemTooltip.BadDefense@1}
+					{$CommonItemTooltip.BadDRStat@2}（gkd 带着这玩意打无伤）
 					'''
 			}
 
@@ -1667,7 +1669,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Melee.Only}
-					{$CommonItemTooltip.ObsidianShield} 同时免疫 {$CommonItemTooltip.OnFire}
+					{$CommonItemTooltip.ObsidianShield} 同时免疫{$CommonItemTooltip.OnFire}
 					{$CommonItemTooltip.DRStat}
 					{$CommonItemTooltip.NonMeleeBadDmg@1}
 					{$CommonItemTooltip.BadMoveSpeedMult@2}
@@ -2739,7 +2741,7 @@ Mods: {
 					'''
 					一套由传奇生物的外壳制成的盔甲
 					{$CommonItemTooltip.PercentIncreasedRangedCritChance}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@1}远程暴击率加倍
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@1}远程暴击率 x{3} 倍
 					{$CommonItemTooltip.PercentChanceToSaveAmmo@2}
 					'''
 			}
@@ -4266,6 +4268,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance}
 					{$CommonItemTooltip.Thorns@1}，获得战斗药水效果
 					{$CommonItemTooltip.BadDRStat@2}
+					{$CommonItemTooltip.DmgTaken@3}
 					不与恶魔药水、护甲药水或力量药水叠加
 					'''
 			}
@@ -5990,7 +5993,13 @@ Mods: {
 
 			ForgottenImpHalberd: {
 				DisplayName: 被遗忘的小鬼之戟
-				Tooltip: 小鬼使用的月牙长矛
+				Tooltip:
+					'''
+					小鬼使用的月牙长矛
+					召唤一个石化小鬼为你而战
+					石化小鬼在几次攻击后对敌人施加大出血
+					近战攻击会更快地触发这一效果
+					'''
 			}
 
 			ForgottenPearlSpear: {
@@ -7692,8 +7701,8 @@ Mods: {
 			}
 
 			ImpHead: {
-				// DisplayName: Imp Head
-				// Tooltip: Sold by the Dwarf once {$Conditions.HunterDowned}
+				DisplayName: 小鬼头
+				Tooltip: {$Conditions.HunterDowned}后由树妖出售
 			}
 		}
 
@@ -8604,13 +8613,13 @@ Mods: {
 			}
 
 			ForgottenImpBuff: {
-				// DisplayName: Forgotten Imp Buff
-				// Description: Mods.tsorcRevamp.Buffs.ForgottenImpBuff.Description
+				DisplayName: 被遗忘的小鬼
+				Description: 被遗忘的小鬼会为你而战
 			}
 
 			Hemorrhage: {
-				// DisplayName: Hemorrhage
-				// Description: Mods.tsorcRevamp.Buffs.Hemorrhage.Description
+				DisplayName: 大出血
+				Description: Mods.tsorcRevamp.Buffs.Hemorrhage.Description
 			}
 		}
 
@@ -8635,7 +8644,7 @@ Mods: {
 			Bolt.DisplayName: 弩箭
 			Bolt1Ball.DisplayName: 电火花
 			Bolt1Bolt.DisplayName: 电火花
-			Bolt1Revamped.DisplayName: 升级电火花
+			Bolt1Revamped.DisplayName: 电火花
 			Bolt2Ball.DisplayName: 电弧
 			Bolt2Bolt.DisplayName: 电弧
 			Bolt3Ball.DisplayName: 电磁场
@@ -9215,10 +9224,10 @@ Mods: {
 			FlameOrbOfSpirituality.DisplayName: 灵性之珠
 			CharmOrbOfFlame.DisplayName: 烈焰之珠
 			CharmOrbOfSpirituality.DisplayName: 灵性之珠
-			// AncientFireAxeFireball.DisplayName: Ancient Fire Axe Fireball
-			// ModDD2ExplosiveTrapT2Explosion.DisplayName: Mod D D2 Explosive Trap T2 Explosion
-			// ForgottenImpDagger.DisplayName: Forgotten Imp Dagger
-			// ForgottenImpProjectile.DisplayName: Forgotten Imp Projectile
+			AncientFireAxeFireball.DisplayName: 古代火斧
+			ModDD2ExplosiveTrapT2Explosion.DisplayName: Mod D D2 Explosive Trap T2 Explosion
+			ForgottenImpDagger.DisplayName: 被遗忘的小鬼之戟
+			ForgottenImpProjectile.DisplayName: 被遗忘的小鬼之戟
 		}
 
 		NPCs: {
@@ -10573,8 +10582,8 @@ Mods: {
 			AdventureModeDisabled: 仅限沙盒模式
 			AdventureModeEnabled: 仅限冒险模式
 			BotCEnabled: 仅限被诅咒者
-			SorrowDowned: 悲伤已被击败
-			// HunterDowned: The Hunter has been defeated
+			SorrowDowned: 击败悲伤
+			HunterDowned: 击败猎手
 			SHM1Downed: 一名深渊守护者被击败
 			SHM3Downed: 三名深渊守护者被击败
 			SHM6Downed: 六名深渊守护者被击败

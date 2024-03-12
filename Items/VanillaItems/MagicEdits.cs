@@ -78,6 +78,11 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 140; //vanilla 52, buff as SHM weapon
                 item.mana = 60; //vanilla 30
             }
+            if (item.type == ItemID.BubbleGun)
+            {
+                item.damage = 50; //vanilla 70
+                item.mana = 10; //vanilla 5
+            }
 
             //Lunar items
             if (item.type == ItemID.NebulaBlaze)

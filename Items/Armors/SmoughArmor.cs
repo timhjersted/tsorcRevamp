@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public static int StaminaShieldCost = 40;
         public static float BadAtkSpeedManaCost = 50f;
-        public static float CritChance = 100f;
+        public static float CritChance => Main.hardMode ? 50f : 100f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BadAtkSpeedManaCost, CritChance);
         public override void SetStaticDefaults()
         {

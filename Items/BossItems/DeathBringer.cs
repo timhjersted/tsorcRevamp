@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.BossItems
             recipe.AddIngredient(ItemID.SoulofNight, 1);
             recipe.AddIngredient(ItemID.Bone, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
-            recipe.AddTile(TileID.DemonAltar);
+            recipe.AddTile(TileID.LunarCraftingStation);
             recipe.Register();
         }
     }

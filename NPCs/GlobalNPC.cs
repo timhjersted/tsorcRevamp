@@ -11,6 +11,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
+using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Magic;
 using tsorcRevamp.Buffs.Runeterra.Summon;
@@ -1303,6 +1304,18 @@ namespace tsorcRevamp.NPCs
                         modifiers.CritDamage *= 2;
                     }
                 }
+            }
+        }
+
+        public override void ModifyHitPlayer(NPC npc, Player target, ref Player.HurtModifiers modifiers)
+        {
+            if (target.HasBuff(ModContent.BuffType<Battlefront>()))
+            {
+                modifiers.FinalDamage *= BattlefrontPotion.DamageTakenIncrease / 100f;
+            }
+            if (target.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[46])
+            {
+                modifiers.FinalDamage *= 1 + (BattlefrontPotion.DamageTakenIncrease*1.5f / 100f);
             }
         }
 

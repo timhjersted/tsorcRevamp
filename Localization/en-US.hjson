@@ -68,6 +68,7 @@ Mods: {
 			StaminaRecovery: Increases stamina recovery speed by {0}%
 			DRStat: Increases Resistance by {0}
 			BadDRStat: Decreases damage reduction by {0}%
+			DmgTaken: Increases damage taken by {0}%
 			Cooldown: "{0} seconds cooldown"
 			CritDmg: Critical strikes deal {0}% more damage
 			LifeThreshold: "If life falls below {0}%: "
@@ -1004,6 +1005,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.BadDefense@1}
+					{$CommonItemTooltip.BadDRStat@2}
 					'''
 			}
 
@@ -2738,7 +2740,7 @@ Mods: {
 					'''
 					Armor made from the shell of a legendary creature
 					{$CommonItemTooltip.PercentIncreasedRangedCritChance}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@1}Doubled ranged critical strike chance
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@1}ranged critical strike chance x{3}
 					{$CommonItemTooltip.PercentChanceToSaveAmmo@2}
 					'''
 			}
@@ -4265,6 +4267,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance}
 					{$CommonItemTooltip.Thorns@1} and grants the Battle potion effect
 					{$CommonItemTooltip.BadDRStat@2}
+					{$CommonItemTooltip.DmgTaken@3}
 					Does not stack with Demon Drug, Armor Drug, or Strength Potions.
 					'''
 			}

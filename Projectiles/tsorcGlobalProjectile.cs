@@ -8,10 +8,12 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Armors.Ranged;
 using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
@@ -22,6 +24,8 @@ using tsorcRevamp.Projectiles.Melee.Spears;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.Utilities;
+using MiakodaCrescent = tsorcRevamp.Projectiles.Pets.MiakodaCrescent;
+using MiakodaNew = tsorcRevamp.Projectiles.Pets.MiakodaNew;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -677,6 +681,18 @@ namespace tsorcRevamp.Projectiles
 
             #endregion
 
+        }
+
+        public override void ModifyHitPlayer(Projectile projectile, Player target, ref Player.HurtModifiers modifiers)
+        {
+            if (target.HasBuff(ModContent.BuffType<Battlefront>()))
+            {
+                modifiers.FinalDamage *= 1 + BattlefrontPotion.DamageTakenIncrease / 100f;
+            }
+            if (target.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[46])
+            {
+                modifiers.FinalDamage *= 1 + (BattlefrontPotion.DamageTakenIncrease*1.5f / 100f);
+            }
         }
 
         public override bool PreKill(Projectile projectile, int timeLeft)
