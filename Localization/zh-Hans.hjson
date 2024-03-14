@@ -1173,7 +1173,7 @@ Mods: {
 					'''
 					亚尔特留斯曾经佩戴的戒指之一
 					继承清晰之戒的免疫效果
-					按下绑定的苍狼之戒快捷键以短暂提高生命恢复和伤害
+					按下绑定的苍狼之戒快捷键以短暂提高生命恢复和受到的伤害
 					效果生效期间受到伤害会移除生命恢复效果加成，并进入长时间的冷却
 					在深渊中时{$CommonItemTooltip.IncreasesDefenseBy}
 					赋予酸性毒液灌注效果
@@ -1299,7 +1299,7 @@ Mods: {
 				Tooltip:
 					'''
 					亚尔特留斯曾经佩戴的戒指之一
-					按下绑定的苍狼之戒快捷键以短暂提高生命恢复和伤害
+					按下绑定的苍狼之戒快捷键以短暂提高生命恢复和受到的伤害
 					效果生效期间受到伤害会移除生命恢复效果加成，并进入长时间的冷却
 					在深渊中时{$CommonItemTooltip.IncreasesDefenseBy} 
 					赋予酸性毒液灌注效果
@@ -7702,7 +7702,7 @@ Mods: {
 
 			ImpHead: {
 				DisplayName: 小鬼头
-				Tooltip: {$Conditions.HunterDowned}后由树妖出售
+				Tooltip: "{$Conditions.HunterDowned}后由树妖出售"
 			}
 		}
 

@@ -44,7 +44,16 @@ namespace tsorcRevamp.Items.BossItems
             recipe.AddIngredient(ItemID.Bone, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.LunarCraftingStation);
+            recipe.AddCondition(tsorcRevampWorld.AdventureModeEnabled);
             recipe.Register();
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ItemID.SoulofNight, 1);
+            recipe2.AddIngredient(ItemID.Bone, 1);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
+            recipe2.AddTile(TileID.DemonAltar);
+            recipe2.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
+            recipe2.Register();
         }
     }
 }
