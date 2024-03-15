@@ -93,8 +93,8 @@ namespace tsorcRevamp
         public int BotCConquerorDuration = 4;
         public float BotCConquerorStacks = 0;
         public int BotCConquerorMaxStacks = 10;
-        public float BotCConquerorBonus = 0.09f;
-        public float BotCWhipRangeMult = 0.75f;
+        public float BotCConquerorBonus = 0.08f;
+        public float BotCFullConquerorBonusTagDuration = 0.34f;
 
         public bool SteraksGage = false;
         public bool InfinityEdge = false;
@@ -118,6 +118,8 @@ namespace tsorcRevamp
 
         public int SoulVessel = 0;
         public float MaxManaAmplifier;
+
+        public int CritColorTier = 0;
 
         public int MagicPlatingStacks = 0;
 
@@ -1061,7 +1063,10 @@ namespace tsorcRevamp
                 Player.GetDamage(DamageClass.Summon) *= BotCSummonBaseDamageMult + (BotCConquerorStacks * BotCConquerorBonus);
                 Player.GetDamage(DamageClass.MagicSummonHybrid) /= BotCSummonBaseDamageMult + (BotCConquerorStacks * BotCConquerorBonus); //neutralizing Conqueror damage changes
                 Player.GetDamage(DamageClass.MagicSummonHybrid) *= 1f + BotCConquerorStacks * BotCConquerorBonus / 4.5f; //adding small benefit for usage of Conqueror
-                Player.whipRangeMultiplier *= BotCWhipRangeMult;
+                if (BotCConquerorStacks == BotCConquerorMaxStacks)
+                {
+                    SummonTagDuration += BotCFullConquerorBonusTagDuration;
+                }
 
 
 

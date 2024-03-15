@@ -58,9 +58,9 @@ namespace tsorcRevamp.NPCs
         public Player lastHitPlayerShadowSickle = Main.LocalPlayer;
 
         public float SummonTagFlatDamage;
-        public float BaseSummonTagCriticalStrikeChance;
-        public float SummonTagCriticalStrikeChanceMultiplier;
         public float SummonTagCriticalStrikeChance;
+        public float SummonTagCriticalStrikeChanceMultiplier;
+        public float FinalSummonCriticalStrikeChance;
         public float SummonTagScalingDamage;
         public float SummonTagArmorPenetration;
         public bool markedByCrystalNunchaku;
@@ -136,6 +136,8 @@ namespace tsorcRevamp.NPCs
         public bool Electrified;
         public bool Irradiated;
         public bool IrradiatedByShroom;
+
+        public int CritColorTier = 0;
 
 
         //Custom AI personality paramaters
@@ -939,7 +941,7 @@ namespace tsorcRevamp.NPCs
         }
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            if (ProjectileID.Sets.IsAWhip[projectile.type])
+            if (ProjectileID.Sets.IsAWhip[projectile.type] || projectile.DamageType == DamageClass.Summon)
             {
                 modifiers.CritDamage -= 0.5f;
             }
@@ -947,7 +949,7 @@ namespace tsorcRevamp.NPCs
             var modPlayerProjectileOwner = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
             float SummonTagDamageMultiplier = ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type];
             SummonTagFlatDamage = 0f;
-            BaseSummonTagCriticalStrikeChance = 4f;
+            SummonTagCriticalStrikeChance = 0;
             SummonTagCriticalStrikeChanceMultiplier = 1f;
             SummonTagScalingDamage = 0f;
             SummonTagArmorPenetration = 0f;
@@ -961,7 +963,7 @@ namespace tsorcRevamp.NPCs
             }
             if (markedByDominatrix)
             {
-                BaseSummonTagCriticalStrikeChance += Dominatrix.SummonTagCrit;
+                SummonTagCriticalStrikeChance += Dominatrix.SummonTagCrit;
             }
             //if (markedByDragoonLash) only has a special effect
             if (markedByEnchantedWhip)
@@ -971,7 +973,7 @@ namespace tsorcRevamp.NPCs
             if (markedByNightsCracker)
             {
                 SummonTagFlatDamage += modPlayerProjectileOwner.NightsCrackerStacks * NightsCracker.MinSummonTagDamage;
-                BaseSummonTagCriticalStrikeChance += modPlayerProjectileOwner.NightsCrackerStacks * NightsCracker.MinSummonTagCrit;
+                SummonTagCriticalStrikeChance += modPlayerProjectileOwner.NightsCrackerStacks * NightsCracker.MinSummonTagCrit;
             }
             if (markedByPolarisLeash)
             {
@@ -979,7 +981,7 @@ namespace tsorcRevamp.NPCs
             }
             if (markedByPyrosulfate)
             {
-                BaseSummonTagCriticalStrikeChance += Pyrosulfate.SummonTagCrit;
+                SummonTagCriticalStrikeChance += Pyrosulfate.SummonTagCrit;
             }
             if (markedByPyromethane)
             {
@@ -992,12 +994,12 @@ namespace tsorcRevamp.NPCs
             if (markedByTerraFall)
             {
                 SummonTagFlatDamage += modPlayerProjectileOwner.TerraFallStacks * TerraFallItem.MinSummonTagDamage;
-                BaseSummonTagCriticalStrikeChance += modPlayerProjectileOwner.TerraFallStacks * TerraFallItem.MinSummonTagCrit;
+                SummonTagCriticalStrikeChance += modPlayerProjectileOwner.TerraFallStacks * TerraFallItem.MinSummonTagCrit;
             }
             if (markedByUrumi)
             {
                 SummonTagArmorPenetration += Urumi.SummonTagArmorPen;
-                BaseSummonTagCriticalStrikeChance += Urumi.SummonTagCrit;
+                SummonTagCriticalStrikeChance += Urumi.SummonTagCrit;
             }
             if (markedByRustedChain)
             {
@@ -1033,7 +1035,7 @@ namespace tsorcRevamp.NPCs
             if (markedByMorningStar)
             {
                 SummonTagFlatDamage += SummonerEdits.MorningStarTagDmg;
-                BaseSummonTagCriticalStrikeChance += SummonerEdits.MorningStarTagCritChance;
+                SummonTagCriticalStrikeChance += SummonerEdits.MorningStarTagCritChance;
             }
             if (markedByDarkHarvest)
             {
@@ -1042,7 +1044,7 @@ namespace tsorcRevamp.NPCs
             if (markedByKaleidoscope)
             {
                 SummonTagFlatDamage += SummonerEdits.KaleidoscopeTagDmg;
-                BaseSummonTagCriticalStrikeChance += SummonerEdits.KaleidoscopeTagCritChance;
+                SummonTagCriticalStrikeChance += SummonerEdits.KaleidoscopeTagCritChance;
             }
             #endregion
             #endregion
@@ -1052,23 +1054,23 @@ namespace tsorcRevamp.NPCs
                 #region Minion effects
                 if (((Scorched || Shocked || Sunburnt) && (SuperScorchDuration > 0 || SuperShockDuration > 0 || SuperSunburnDuration > 0)) || Awestruck)
                 {
-                    BaseSummonTagCriticalStrikeChance += ScorchingPoint.SummonTagCrit;
+                    SummonTagCriticalStrikeChance += ScorchingPoint.SummonTagCrit;
                 }
                 if (projectile.type == ModContent.ProjectileType<SpiritAshKnightMinion>())
                 {
-                    BaseSummonTagCriticalStrikeChance += SpiritBell.BaseCritChance;
+                    SummonTagCriticalStrikeChance += SpiritBell.BaseCritChance;
                 }
                 if (projectile.type == ModContent.ProjectileType<TerrorbeakProjectile>())
                 {
-                    BaseSummonTagCriticalStrikeChance += DarkSword.BaseCritChance;
+                    SummonTagCriticalStrikeChance += DarkSword.BaseCritChance;
                 }
                 if (projectile.type == ModContent.ProjectileType<OwlsArrow>())
                 {
-                    BaseSummonTagCriticalStrikeChance += PeculiarSphere.BaseCritChance;
+                    SummonTagCriticalStrikeChance += PeculiarSphere.BaseCritChance;
                 }
                 if (projectile.type == ModContent.ProjectileType<SamuraiBeetleProjectile>() || projectile.type == ModContent.ProjectileType<SamuraiBeetleLightning>())
                 {
-                    BaseSummonTagCriticalStrikeChance += BeetleIdol.BaseCritChance;
+                    SummonTagCriticalStrikeChance += BeetleIdol.BaseCritChance;
                 }
                 #endregion
                 #region Modded Whip Special Effects
@@ -1185,28 +1187,10 @@ namespace tsorcRevamp.NPCs
                 modifiers.FlatBonusDamage += SummonTagFlatDamage * SummonTagDamageMultiplier * modPlayerProjectileOwner.SummonTagStrength;
                 modifiers.ScalingBonusDamage += SummonTagScalingDamage * SummonTagDamageMultiplier * modPlayerProjectileOwner.SummonTagStrength;
                 modifiers.ArmorPenetration += SummonTagArmorPenetration * modPlayerProjectileOwner.SummonTagStrength;
-                SummonTagCriticalStrikeChance = (BaseSummonTagCriticalStrikeChance * (1f + (projectileOwner.GetTotalCritChance(DamageClass.Summon) / 100f)) * SummonTagCriticalStrikeChanceMultiplier);
+                FinalSummonCriticalStrikeChance = (projectile.CritChance + SummonTagCriticalStrikeChance) * (1f + (SummonTagCriticalStrikeChance / 100f)) * SummonTagCriticalStrikeChanceMultiplier;
+                //SummonTagCriticalStrikeChance = (BaseSummonTagCriticalStrikeChance * (1f + (projectileOwner.GetTotalCritChance(DamageClass.Summon) / 100f)) * SummonTagCriticalStrikeChanceMultiplier);
 
-                int critLevel = (int)(Math.Floor(SummonTagCriticalStrikeChance / 100f));
-                if (Main.rand.Next(1, 101) <= SummonTagCriticalStrikeChance - (100 * critLevel))
-                {
-                    modifiers.SetCrit();
-                }
-                if (critLevel >= 1)
-                {
-                    modifiers.SetCrit();
-                    if (Main.rand.Next(1, 101) <= SummonTagCriticalStrikeChance - (100 * critLevel))
-                    {
-                        modifiers.CritDamage *= 2;
-                    }
-                }
-                if (critLevel > 1)
-                {
-                    for (int i = 1; i < critLevel; i++)
-                    {
-                        modifiers.CritDamage *= 2;
-                    }
-                }
+                modPlayerProjectileOwner.OverCrit((int)FinalSummonCriticalStrikeChance, projectile.DamageType, ref modifiers, out CritColorTier, ProjectileID.Sets.IsAWhip[projectile.type], projectile, npc.Hitbox);
 
             }
             if (markedByDragoonLash && (projectile.IsMinionOrSentryRelated || ProjectileID.Sets.IsAWhip[projectile.type])) //has to be outside of the main if since this is supposed to also be procced on whip-hit
@@ -1306,17 +1290,260 @@ namespace tsorcRevamp.NPCs
                 }
             }
         }
+        public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            //If this hit takes it below 1/5th health, roll a chance to flee based on its Cowardice trait
+            if (npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5)
+            {
+                if (Main.rand.NextFloat() < npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Cowardice && !npc.boss)
+                {
+                    Fleeing = true;
+                }
+            }
 
+            if (!CrystalNunchakuProc && !(CrystalNunchakuStacks == 0) && markedByCrystalNunchaku)
+            {
+                CrystalNunchakuStacks -= 1;
+            }
+            if (CrystalNunchakuProc && markedByCrystalNunchaku)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().CrystalNunchakuDefenseDamage = 15f - (CrystalNunchakuStacks * 1.5f);
+                player.AddBuff(ModContent.BuffType<CrystalShield>(), 4 * 60);
+            }
+        }
+        public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            Player player = Main.player[projectile.owner];
+            var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
+            if (projectile.IsMinionOrSentryRelated && CritColorTier > 0)
+            {
+                modPlayer.OverCritColor(npc.Hitbox, damageDone, CritColorTier);
+            }
+            //If this hit takes it below 1/5th health, roll a chance to flee based on its Cowardice trait
+            if (npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5)
+            {
+                if (Main.rand.NextFloat() < npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Cowardice && !npc.boss)
+                {
+                    Fleeing = true;
+                }
+            }
+
+            #region Vanilla Whips applying their modded counterparts
+            if (projectile.type == ProjectileID.BlandWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<LeatherWhipDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.ThornWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<SnapthornDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+                player.AddBuff(BuffID.ThornWhipPlayerBuff, (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.BoneWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<SpinalTapDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.FireWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<FirecrackerDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.CoolWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<CoolWhipDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+                player.AddBuff(BuffID.CoolWhipPlayerBuff, (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.SwordWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<DurendalDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+                player.AddBuff(BuffID.SwordWhipPlayerBuff, (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.MaceWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<MorningStarDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.ScytheWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<DarkHarvestDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+                player.AddBuff(BuffID.ScytheWhipPlayerBuff, (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            if (projectile.type == ProjectileID.RainbowWhip)
+            {
+                npc.AddBuff(ModContent.BuffType<KaleidoscopeDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
+            }
+            #endregion
+            #region Crystal Nunchaku effects
+            if (!CrystalNunchakuProc && !(CrystalNunchakuStacks == 0) && !projectile.npcProj && !projectile.trap && markedByCrystalNunchaku && projectile.type != ModContent.ProjectileType<CrystalNunchakuProjectile>())
+            {
+                CrystalNunchakuStacks -= 1;
+            }
+            if (CrystalNunchakuProc && !projectile.npcProj && !projectile.trap && markedByCrystalNunchaku)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().CrystalNunchakuDefenseDamage = 15f - (CrystalNunchakuStacks * 1.5f);
+                player.AddBuff(ModContent.BuffType<CrystalShield>(), 4 * 60);
+            }
+            #endregion
+            if (hit.DamageType == DamageClass.Ranged && damageDone > npc.life && modPlayer.BoneRing)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner, ai2: 1);
+                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner, ai2: 1);
+                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner, ai2: 1);
+                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner, ai2: 1);
+                }
+            }
+            #region Ranged Weapons
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<ToxicCatExplosion>()))
+            {
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetToxicCatBlobs = true;
+                int tags;
+
+                bool shockwaveCreated = false;
+                for (int i = 0; i < 1000; i++)
+                {
+                    tags = 0;
+                    Projectile p = Main.projectile[i];
+                    if (p.active && p.type == ModContent.ProjectileType<ToxicCatShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
+                    {
+                        for (int q = 0; q < 1000; q++)
+                        {
+                            Projectile ñ = Main.projectile[q];
+                            if (ñ.active && ñ.type == ModContent.ProjectileType<ToxicCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
+                            {
+                                tags++;
+                            }
+                        }
+                        float volume = (tags * 0.3f) + 0.7f;
+                        float pitch = tags * 0.08f;
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = volume, Pitch = -pitch }, projectile.Center);
+
+                        p.timeLeft = 2;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<ToxicCatExplosion>(), (int)(projectile.damage * 1.8f), tags + 3, projectile.owner, tags, 0);
+                        }
+                        int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ToxicCatDrain>());
+
+                        if (buffindex != -1)
+                        {
+                            npc.DelBuff(buffindex);
+                        }
+                    }
+
+                    if (tags > 0 && !shockwaveCreated)
+                    {
+                        shockwaveCreated = true;
+                        if (projectile.type == ModContent.ProjectileType<ToxicCatDetonator>() && Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 300 * (tags / 12f), 45 * (tags / 12f));
+                        }
+                    }
+
+                }
+            }
+
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ViruCatDrain && (projectile.type == ModContent.ProjectileType<VirulentCatDetonator>() || projectile.type == ModContent.ProjectileType<VirulentCatExplosion>()))
+            {
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetViruCatBlobs = true;
+                int tags;
+
+                bool shockwaveCreated = false;
+                for (int i = 0; i < 1000; i++)
+                {
+                    tags = 0;
+                    Projectile p = Main.projectile[i];
+                    if (p.active && p.type == ModContent.ProjectileType<VirulentCatShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
+                    {
+                        for (int q = 0; q < 1000; q++)
+                        {
+                            Projectile ñ = Main.projectile[q];
+                            if (ñ.active && ñ.type == ModContent.ProjectileType<VirulentCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
+                            {
+                                tags++;
+                            }
+                        }
+                        float volume = (tags * 0.3f) + 0.7f;
+                        float pitch = tags * 0.08f;
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = volume, Pitch = -pitch }, projectile.Center);
+
+                        //Main.NewText(pitch);
+                        p.timeLeft = 2;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<VirulentCatExplosion>(), (projectile.damage * 2), tags + 3, projectile.owner, tags, 0);
+                        }
+                        int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ViruCatDrain>());
+
+                        if (buffindex != -1)
+                        {
+                            npc.DelBuff(buffindex);
+                        }
+                    }
+                    if (tags > 0 && !shockwaveCreated)
+                    {
+                        shockwaveCreated = true;
+                        if (projectile.type == ModContent.ProjectileType<VirulentCatDetonator>())
+                        {
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 400 * (tags / 12f), 50 * (tags / 12f));
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().BiohazardDrain && (projectile.type == ModContent.ProjectileType<BiohazardDetonator>() || projectile.type == ModContent.ProjectileType<BiohazardExplosion>()))
+            {
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetBiohazardBlobs = true;
+                int tags;
+
+
+                bool shockwaveCreated = false;
+                for (int i = 0; i < 1000; i++)
+                {
+                    tags = 0;
+                    Projectile p = Main.projectile[i];
+                    if (p.active && p.type == ModContent.ProjectileType<BiohazardShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
+                    {
+                        for (int q = 0; q < 1000; q++)
+                        {
+                            Projectile ñ = Main.projectile[q];
+                            if (ñ.active && ñ.type == ModContent.ProjectileType<BiohazardShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
+                            {
+                                tags++;
+                            }
+                        }
+                        float volume = (tags * 0.3f) + 0.7f;
+                        float pitch = tags * 0.08f;
+
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = volume, Pitch = -pitch }, projectile.Center);
+
+                        p.timeLeft = 2;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<BiohazardExplosion>(), (projectile.damage * 2), tags + 3, projectile.owner, tags, 0);
+                        }
+                        int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.BiohazardDrain>());
+
+                        if (buffindex != -1)
+                        {
+                            npc.DelBuff(buffindex);
+                        }
+                    }
+                    if (tags > 0 && !shockwaveCreated)
+                    {
+                        shockwaveCreated = true;
+                        if (projectile.type == ModContent.ProjectileType<BiohazardDetonator>() && Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 500 * (tags / 12f), 60 * (tags / 12f));
+                        }
+                    }
+                }
+            }
+            #endregion
+        }
         public override void ModifyHitPlayer(NPC npc, Player target, ref Player.HurtModifiers modifiers)
         {
-            if (target.HasBuff(ModContent.BuffType<Battlefront>()))
-            {
-                modifiers.FinalDamage *= BattlefrontPotion.DamageTakenIncrease / 100f;
-            }
-            if (target.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[46])
-            {
-                modifiers.FinalDamage *= 1 + (BattlefrontPotion.DamageTakenIncrease*1.5f / 100f);
-            }
         }
 
         public override bool? CanBeHitByItem(NPC npc, Player player, Item item)
@@ -2278,252 +2505,6 @@ namespace tsorcRevamp.NPCs
                         break;
                     }
                 default: break;
-            }
-        }
-        public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
-        {
-            //If this hit takes it below 1/5th health, roll a chance to flee based on its Cowardice trait
-            if (npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5)
-            {
-                if (Main.rand.NextFloat() < npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Cowardice && !npc.boss)
-                {
-                    Fleeing = true;
-                }
-            }
-
-            if (!CrystalNunchakuProc && !(CrystalNunchakuStacks == 0) && markedByCrystalNunchaku)
-            {
-                CrystalNunchakuStacks -= 1;
-            }
-            if (CrystalNunchakuProc && markedByCrystalNunchaku)
-            {
-                player.GetModPlayer<tsorcRevampPlayer>().CrystalNunchakuDefenseDamage = 15f - (CrystalNunchakuStacks * 1.5f);
-                player.AddBuff(ModContent.BuffType<CrystalShield>(), 4 * 60);
-            }
-        }
-        public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            //If this hit takes it below 1/5th health, roll a chance to flee based on its Cowardice trait
-            if (npc.life > npc.lifeMax / 5 && npc.life - damageDone < npc.lifeMax / 5)
-            {
-                if (Main.rand.NextFloat() < npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Cowardice && !npc.boss)
-                {
-                    Fleeing = true;
-                }
-            }
-
-            Player player = Main.player[projectile.owner];
-            var modPlayer = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
-            #region Vanilla Whips applying their modded counterparts
-            if (projectile.type == ProjectileID.BlandWhip)
-            {
-                npc.AddBuff(ModContent.BuffType<LeatherWhipDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
-            }
-            if (projectile.type == ProjectileID.ThornWhip)
-            {
-                npc.AddBuff(ModContent.BuffType<SnapthornDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
-                player.AddBuff(BuffID.ThornWhipPlayerBuff, (int)(4 * 60 * modPlayer.SummonTagDuration));
-            }
-            if (projectile.type == ProjectileID.BoneWhip)
-            {
-                npc.AddBuff(ModContent.BuffType<SpinalTapDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
-            }
-            if (projectile.type == ProjectileID.FireWhip)
-            {
-                npc.AddBuff(ModContent.BuffType<FirecrackerDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
-            }
-            if (projectile.type == ProjectileID.CoolWhip)
-            {
-                npc.AddBuff(ModContent.BuffType<CoolWhipDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
-                player.AddBuff(BuffID.CoolWhipPlayerBuff, (int)(4 * 60 * modPlayer.SummonTagDuration));
-            }
-            if (projectile.type == ProjectileID.SwordWhip)
-            {
-                npc.AddBuff(ModContent.BuffType<DurendalDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
-                player.AddBuff(BuffID.SwordWhipPlayerBuff, (int)(4 * 60 * modPlayer.SummonTagDuration));
-            }
-            if (projectile.type == ProjectileID.MaceWhip)
-            {
-                npc.AddBuff(ModContent.BuffType<MorningStarDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
-            }
-            if (projectile.type == ProjectileID.ScytheWhip)
-            {
-                npc.AddBuff(ModContent.BuffType<DarkHarvestDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
-                player.AddBuff(BuffID.ScytheWhipPlayerBuff, (int)(4 * 60 * modPlayer.SummonTagDuration));
-            }
-            if (projectile.type == ProjectileID.RainbowWhip)
-            {
-                npc.AddBuff(ModContent.BuffType<KaleidoscopeDebuff>(), (int)(4 * 60 * modPlayer.SummonTagDuration));
-            }
-            #endregion
-            #region Crystal Nunchaku effects
-            if (!CrystalNunchakuProc && !(CrystalNunchakuStacks == 0) && !projectile.npcProj && !projectile.trap && markedByCrystalNunchaku && projectile.type != ModContent.ProjectileType<CrystalNunchakuProjectile>())
-            {
-                CrystalNunchakuStacks -= 1;
-            }
-            if (CrystalNunchakuProc && !projectile.npcProj && !projectile.trap && markedByCrystalNunchaku)
-            {
-                Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>().CrystalNunchakuDefenseDamage = 15f - (CrystalNunchakuStacks * 1.5f);
-                Main.player[projectile.owner].AddBuff(ModContent.BuffType<CrystalShield>(), 4 * 60);
-            }
-            #endregion
-            if (hit.DamageType == DamageClass.Ranged && damageDone > npc.life && modPlayer.BoneRing)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner, ai2: 1);
-                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner, ai2: 1);
-                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner, ai2: 1);
-                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), Main.rand.NextVector2FromRectangle(npc.Hitbox), projectile.velocity, ProjectileID.Bone, projectile.damage / 3, projectile.knockBack, projectile.owner, ai2: 1);
-                }
-            }
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<ToxicCatExplosion>()))
-            {
-                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetToxicCatBlobs = true;
-                int tags;
-
-                bool shockwaveCreated = false;
-                for (int i = 0; i < 1000; i++)
-                {
-                    tags = 0;
-                    Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<ToxicCatShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
-                    {
-                        for (int q = 0; q < 1000; q++)
-                        {
-                            Projectile ñ = Main.projectile[q];
-                            if (ñ.active && ñ.type == ModContent.ProjectileType<ToxicCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
-                            {
-                                tags++;
-                            }
-                        }
-                        float volume = (tags * 0.3f) + 0.7f;
-                        float pitch = tags * 0.08f;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = volume, Pitch = -pitch }, projectile.Center);
-
-                        p.timeLeft = 2;
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<ToxicCatExplosion>(), (int)(projectile.damage * 1.8f), tags + 3, projectile.owner, tags, 0);
-                        }
-                        int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ToxicCatDrain>());
-
-                        if (buffindex != -1)
-                        {
-                            npc.DelBuff(buffindex);
-                        }
-                    }
-
-                    if (tags > 0 && !shockwaveCreated)
-                    {
-                        shockwaveCreated = true;
-                        if (projectile.type == ModContent.ProjectileType<ToxicCatDetonator>() && Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 300 * (tags / 12f), 45 * (tags / 12f));
-                        }
-                    }
-
-                }
-            }
-
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ViruCatDrain && (projectile.type == ModContent.ProjectileType<VirulentCatDetonator>() || projectile.type == ModContent.ProjectileType<VirulentCatExplosion>()))
-            {
-                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetViruCatBlobs = true;
-                int tags;
-
-                bool shockwaveCreated = false;
-                for (int i = 0; i < 1000; i++)
-                {
-                    tags = 0;
-                    Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<VirulentCatShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
-                    {
-                        for (int q = 0; q < 1000; q++)
-                        {
-                            Projectile ñ = Main.projectile[q];
-                            if (ñ.active && ñ.type == ModContent.ProjectileType<VirulentCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
-                            {
-                                tags++;
-                            }
-                        }
-                        float volume = (tags * 0.3f) + 0.7f;
-                        float pitch = tags * 0.08f;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = volume, Pitch = -pitch }, projectile.Center);
-
-                        //Main.NewText(pitch);
-                        p.timeLeft = 2;
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<VirulentCatExplosion>(), (projectile.damage * 2), tags + 3, projectile.owner, tags, 0);
-                        }
-                        int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ViruCatDrain>());
-
-                        if (buffindex != -1)
-                        {
-                            npc.DelBuff(buffindex);
-                        }
-                    }
-                    if (tags > 0 && !shockwaveCreated)
-                    {
-                        shockwaveCreated = true;
-                        if (projectile.type == ModContent.ProjectileType<VirulentCatDetonator>())
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 400 * (tags / 12f), 50 * (tags / 12f));
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().BiohazardDrain && (projectile.type == ModContent.ProjectileType<BiohazardDetonator>() || projectile.type == ModContent.ProjectileType<BiohazardExplosion>()))
-            {
-                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetBiohazardBlobs = true;
-                int tags;
-
-
-                bool shockwaveCreated = false;
-                for (int i = 0; i < 1000; i++)
-                {
-                    tags = 0;
-                    Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<BiohazardShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
-                    {
-                        for (int q = 0; q < 1000; q++)
-                        {
-                            Projectile ñ = Main.projectile[q];
-                            if (ñ.active && ñ.type == ModContent.ProjectileType<BiohazardShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
-                            {
-                                tags++;
-                            }
-                        }
-                        float volume = (tags * 0.3f) + 0.7f;
-                        float pitch = tags * 0.08f;
-
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = volume, Pitch = -pitch }, projectile.Center);
-
-                        p.timeLeft = 2;
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(player.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<BiohazardExplosion>(), (projectile.damage * 2), tags + 3, projectile.owner, tags, 0);
-                        }
-                        int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.BiohazardDrain>());
-
-                        if (buffindex != -1)
-                        {
-                            npc.DelBuff(buffindex);
-                        }
-                    }
-                    if (tags > 0 && !shockwaveCreated)
-                    {
-                        shockwaveCreated = true;
-                        if (projectile.type == ModContent.ProjectileType<BiohazardDetonator>() && Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 500 * (tags / 12f), 60 * (tags / 12f));
-                        }
-                    }
-                }
             }
         }
 

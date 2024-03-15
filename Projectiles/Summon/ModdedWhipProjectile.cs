@@ -39,6 +39,7 @@ namespace tsorcRevamp.Projectiles.Summon
         {
             // This makes the projectile use whip collision detection and allows flasks to be applied to it.
             ProjectileID.Sets.IsAWhip[Type] = true;
+            tsorcRevamp.WhipTipBases.Add(Type, WhipTipBase);
         }
         public override void SetDefaults()
         {

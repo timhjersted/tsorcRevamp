@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         public const float ScalingPerSlot = 0.15f;
         public const int DoubleShotMinimumSlots = 4;
         public const int BaseCritChance = 10;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs((int)System.Math.Round(ScalingPerSlot * 100), DoubleShotMinimumSlots, BaseCritChance);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs((int)System.Math.Round(ScalingPerSlot * 100), DoubleShotMinimumSlots);
         public override void SetStaticDefaults()
         {
             ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
@@ -25,6 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         public override void SetDefaults()
         {
             Item.damage = 70;
+            Item.crit = BaseCritChance;
             Item.knockBack = 1f;
             Item.width = 44;
             Item.height = 50;

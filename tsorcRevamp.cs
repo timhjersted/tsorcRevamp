@@ -146,6 +146,8 @@ namespace tsorcRevamp
         public static Dictionary<int, List<int>> RemovedBossBagLoot;
         public static Dictionary<int, List<IItemDropRule>> AddedBossBagLoot;
         public static Dictionary<int, List<(int ID, int Count)>> ModifiedRecipes;
+        public static Dictionary<int, Vector2> WhipTipBases;
+        public static Dictionary<int, float> WhipRanges;
 
         internal BonfireUIState BonfireUIState;
         internal UserInterface _bonfireUIState; //"but zeo!", you say
@@ -855,7 +857,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<OolacileDemonBag>()         , ModContent.NPCType<AncientOolacileDemon>()                                        },
                 {   ModContent.ItemType<SlograBag>()                , ModContent.NPCType<Slogra>()                                                      },
                 {   ModContent.ItemType<GaibonBag>()                , ModContent.NPCType<Gaibon>()                                                      },
-                {   ModContent.ItemType<JungleWyvernBag>()          , ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>()                   },
+                {   ModContent.ItemType<JungleWyvernBag>()          , ModContent.NPCType<JungleWyvernHead>()                                            },
                 {   ModContent.ItemType<AncientDemonBag>()          , ModContent.NPCType<AncientDemon>()                                                },
                 {   ModContent.ItemType<HeroOfLumeliaBag>()         , ModContent.NPCType<HeroofLumelia>()                                               },
                 {   ModContent.ItemType<TheRageBag>()               , ModContent.NPCType<TheRage>()                                                     },
@@ -863,22 +865,22 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<TheHunterBag>()             , ModContent.NPCType<TheHunter>()                                                   },
                 {   ModContent.ItemType<TheMachineBag>()            , ModContent.NPCType<TheMachine>()                                                  },
                 {   ModContent.ItemType<TriadBag>()                 , ModContent.NPCType<Cataluminance>()                                               },
-                {   ModContent.ItemType<WyvernMageBag>()            , ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()                           },
-                {   ModContent.ItemType<SerrisBag>()                , ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()                                  },
-                {   ModContent.ItemType<DeathBag>()                 , ModContent.NPCType<NPCs.Bosses.Death>()                                           },
-                {   ModContent.ItemType<MindflayerIllusionBag>()    , ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>()                     },
-                {   ModContent.ItemType<AttraidiesBag>()            , ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()                      },
-                {   ModContent.ItemType<KrakenBag>()                , ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>()                         },
-                {   ModContent.ItemType<MarilithBag>()              , ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>()                        },
-                {   ModContent.ItemType<LichBag>()                  , ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>()                           },
+                {   ModContent.ItemType<WyvernMageBag>()            , ModContent.NPCType<WyvernMage>()                                                  },
+                {   ModContent.ItemType<SerrisBag>()                , ModContent.NPCType<SerrisX>()                                                     },
+                {   ModContent.ItemType<DeathBag>()                 , ModContent.NPCType<Death>()                                                       },
+                {   ModContent.ItemType<MindflayerIllusionBag>()    , ModContent.NPCType<BrokenOkiku>()                                                 },
+                {   ModContent.ItemType<AttraidiesBag>()            , ModContent.NPCType<Attraidies>()                                                  },
+                {   ModContent.ItemType<KrakenBag>()                , ModContent.NPCType<WaterFiendKraken>()                                            },
+                {   ModContent.ItemType<MarilithBag>()              , ModContent.NPCType<FireFiendMarilith>()                                           },
+                {   ModContent.ItemType<LichBag>()                  , ModContent.NPCType<EarthFiendLich>()                                              },
                 {   ModContent.ItemType<BlightBag>()                , ModContent.NPCType<Blight>()                                                      },
                 {   ModContent.ItemType<ChaosBag>()                 , ModContent.NPCType<Chaos>()                                                       },
-                {   ModContent.ItemType<WyvernMageShadowBag>()      , ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()  },
+                {   ModContent.ItemType<WyvernMageShadowBag>()      , ModContent.NPCType<WyvernMageShadow>()                                            },
                 {   ModContent.ItemType<OolacileSorcererBag>()      , ModContent.NPCType<AbysmalOolacileSorcerer>()                                     },
                 {   ModContent.ItemType<ArtoriasBag>()              , ModContent.NPCType<Artorias>()                                                    },
-                {   ModContent.ItemType<HellkiteBag>()              , ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>() },
-                {   ModContent.ItemType<SeathBag>()                 , ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()       },
-                {   ModContent.ItemType<WitchkingBag>()             , ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()                         },
+                {   ModContent.ItemType<HellkiteBag>()              , ModContent.NPCType<HellkiteDragonHead>()                                          },
+                {   ModContent.ItemType<SeathBag>()                 , ModContent.NPCType<SeathTheScalelessHead>()                                       },
+                {   ModContent.ItemType<WitchkingBag>()             , ModContent.NPCType<Witchking>()                                                   },
                 {   ModContent.ItemType<DarkCloudBag>()             , ModContent.NPCType<DarkCloud>()                                                   },
                 {   ModContent.ItemType<GwynBag>()                  , ModContent.NPCType<Gwyn>()                                                        }
                 #endregion
@@ -1280,6 +1282,34 @@ namespace tsorcRevamp
             ModContent.NPCType<SeathTheScalelessBody3>(),
             ModContent.NPCType<SeathTheScalelessLegs>(),
             ModContent.NPCType<SeathTheScalelessTail>()
+        };
+            #endregion
+
+            //--------
+            #region WhipTipBaseSize dictionary and WhipRange dictionary
+            WhipTipBases = new Dictionary<int, Vector2>()
+        {
+            { ProjectileID.BlandWhip, new Vector2(10, 18) },
+            { ProjectileID.ThornWhip, new Vector2(22, 26) },
+            { ProjectileID.BoneWhip, new Vector2(14, 18) },
+            { ProjectileID.FireWhip, new Vector2(18, 26) },
+            { ProjectileID.CoolWhip, new Vector2(14, 24) },
+            { ProjectileID.SwordWhip, new Vector2(10, 16) },
+            { ProjectileID.MaceWhip, new Vector2(14, 14) },
+            { ProjectileID.ScytheWhip, new Vector2(28, 20) },
+            { ProjectileID.RainbowWhip, new Vector2(14, 30) }
+        };
+            WhipRanges = new Dictionary<int, float>()
+        {
+            { ProjectileID.BlandWhip, 0.65f },
+            { ProjectileID.ThornWhip, 0.8f },
+            { ProjectileID.BoneWhip, 0.95f },
+            { ProjectileID.FireWhip, 1.4f },
+            { ProjectileID.CoolWhip, 1.5f },
+            { ProjectileID.SwordWhip, 1.75f },
+            { ProjectileID.MaceWhip, 1.6f },
+            { ProjectileID.ScytheWhip, 2.15f },
+            { ProjectileID.RainbowWhip, 2.2f }
         };
             #endregion
         }

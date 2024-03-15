@@ -237,7 +237,7 @@ namespace tsorcRevamp.Items
                     }
                 case 4:
                     {
-                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Conqueror", LangUtils.GetTextValue("Items.Darksign.Summon", (int)(modPlayer.BotCSummonBaseDamageMult * 100f), (int)(modPlayer.BotCConquerorBonus * 100f), (int)(modPlayer.BotCConquerorMaxStacks * modPlayer.BotCConquerorBonus * 100f), (int)(modPlayer.BotCConquerorMaxStacks), (int)((1f - modPlayer.BotCWhipRangeMult) * 100f))));
+                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Conqueror", LangUtils.GetTextValue("Items.Darksign.Summon", (int)(modPlayer.BotCSummonBaseDamageMult * 100f), (int)(modPlayer.BotCConquerorBonus * 100f), (int)(modPlayer.BotCConquerorMaxStacks * modPlayer.BotCConquerorBonus * 100f), (int)(modPlayer.BotCConquerorMaxStacks), (int)((1f - modPlayer.BotCFullConquerorBonusTagDuration) * 100f))));
                         break;
                     }
             }

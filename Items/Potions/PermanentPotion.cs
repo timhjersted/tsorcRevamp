@@ -1051,7 +1051,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetCritChance(DamageClass.Generic) += ApplyScaling(BattlefrontPotion.DamageCritIncrease);
             player.thorns += ApplyScaling(BattlefrontPotion.Thorns / 100f);
             player.enemySpawns = true;
-            player.endurance -= ApplyScaling(BattlefrontPotion.DRDecrease / 100f);
+            player.endurance -= ApplyScaling(BattlefrontPotion.ResistanceDecrease / 100f);
         }
     }
 

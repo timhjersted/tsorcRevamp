@@ -258,21 +258,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     if (Main.myPlayer == player.whoAmI)
                     {
                         Projectile Tornado = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<RuneterraKatanaTornado>(), damage, knockback * 2, player.whoAmI, Tier);
-                        switch (Tier)
-                        {
-                            case 2:
-                                {
-                                    Tornado.width = 120;
-                                    Tornado.height = 180;
-                                    break;
-                                }
-                            case 3:
-                                {
-                                    Tornado.width = 140;
-                                    Tornado.height = 180;
-                                    break;
-                                }
-                        }
                     }
                 }
             }

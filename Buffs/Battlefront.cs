@@ -17,7 +17,7 @@ namespace tsorcRevamp.Buffs
             player.GetDamage(DamageClass.Generic) += BattlefrontPotion.DamageCritIncrease / 100f;
             player.GetCritChance(DamageClass.Generic) += BattlefrontPotion.DamageCritIncrease;
             player.thorns += BattlefrontPotion.Thorns / 100f;
-            player.endurance -= BattlefrontPotion.DRDecrease / 100f;
+            player.endurance -= BattlefrontPotion.ResistanceDecrease / 100f;
             player.enemySpawns = true;
         }
     }

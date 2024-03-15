@@ -88,6 +88,47 @@ namespace tsorcRevamp.Projectiles
             {
                 ProjectileID.Sets.ForcePlateDetection[entity.type] = false;
             }
+            Main.NewText(entity.WhipSettings.RangeMultiplier);
+            if (tsorcRevamp.WhipRanges.ContainsKey(entity.type))
+            {
+                entity.WhipSettings.RangeMultiplier = tsorcRevamp.WhipRanges[entity.type];
+            }
+            if (entity.type == ProjectileID.BlandWhip)
+            {
+                entity.WhipSettings.RangeMultiplier = 0.65f;
+            }
+            if (entity.type == ProjectileID.ThornWhip)
+            {
+                entity.WhipSettings.RangeMultiplier = 0.8f;
+            }
+            if (entity.type == ProjectileID.BoneWhip)
+            {
+                entity.WhipSettings.RangeMultiplier = 0.9f;
+            }
+            if (entity.type == ProjectileID.FireWhip)
+            {
+                entity.WhipSettings.RangeMultiplier = 1.25f;
+            }
+            if (entity.type == ProjectileID.CoolWhip)
+            {
+                entity.WhipSettings.RangeMultiplier = 1.35f;
+            }
+            if (entity.type == ProjectileID.SwordWhip)
+            {
+                entity.WhipSettings.RangeMultiplier = 1.55f;
+            }
+            if (entity.type == ProjectileID.MaceWhip)
+            {
+                entity.WhipSettings.RangeMultiplier = 1.3f;
+            }
+            if (entity.type == ProjectileID.ScytheWhip)
+            {
+                entity.WhipSettings.RangeMultiplier = 1.75f;
+            }
+            if (entity.type == ProjectileID.RainbowWhip)
+            {
+                entity.WhipSettings.RangeMultiplier = 1.7f;
+            }
         }
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
@@ -602,97 +643,10 @@ namespace tsorcRevamp.Projectiles
             {
                 modifiers.SourceDamage += KrakenCarcass.TsunamiDmgBoost / 100f;
             }
-
-            #region Vanilla whip tip crits
-
-            Vector2 LeatherTip = new Vector2(10, 18) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
-            Vector2 SnapTip = new Vector2(22, 26) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
-            Vector2 SpinalTip = new Vector2(14, 18) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
-            Vector2 CoolTip = new Vector2(14, 24) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
-            Vector2 FireTip = new Vector2(18, 26) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
-            Vector2 DurenTip = new Vector2(10, 16) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
-            Vector2 MorningTip = new Vector2(14, 14) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
-            Vector2 DarkTip = new Vector2(28, 20) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
-            Vector2 KaleidoTip = new Vector2(14, 30) * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize;
-            List<Vector2> points = projectile.WhipPointsForCollision;
-            if (projectile.type == ProjectileID.BlandWhip)
-            {
-                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], LeatherTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], LeatherTip).Intersects(target.Hitbox))
-                {
-                    modifiers.SetCrit();
-                }
-            }
-            if (projectile.type == ProjectileID.ThornWhip)
-            {
-                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], SnapTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], SnapTip).Intersects(target.Hitbox))
-                {
-                    modifiers.SetCrit();
-                }
-            }
-            if (projectile.type == ProjectileID.BoneWhip)
-            {
-                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], SpinalTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], SpinalTip).Intersects(target.Hitbox))
-                {
-                    modifiers.SetCrit();
-                }
-            }
-            if (projectile.type == ProjectileID.CoolWhip)
-            {
-                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], CoolTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], CoolTip).Intersects(target.Hitbox))
-                {
-                    modifiers.SetCrit();
-                }
-            }
-            if (projectile.type == ProjectileID.FireWhip)
-            {
-                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], FireTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], FireTip).Intersects(target.Hitbox))
-                {
-                    modifiers.SetCrit();
-                }
-            }
-            if (projectile.type == ProjectileID.SwordWhip)
-            {
-                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], DurenTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], DurenTip).Intersects(target.Hitbox))
-                {
-                    modifiers.SetCrit();
-                }
-            }
-            if (projectile.type == ProjectileID.MaceWhip)
-            {
-                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], MorningTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], MorningTip).Intersects(target.Hitbox))
-                {
-                    modifiers.SetCrit();
-                }
-            }
-            if (projectile.type == ProjectileID.ScytheWhip)
-            {
-                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], DarkTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], DarkTip).Intersects(target.Hitbox))
-                {
-                    modifiers.SetCrit();
-                }
-            }
-            if (projectile.type == ProjectileID.RainbowWhip)
-            {
-                if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], KaleidoTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], KaleidoTip).Intersects(target.Hitbox))
-                {
-                    modifiers.SetCrit();
-                }
-            }
-
-            #endregion
-
         }
 
         public override void ModifyHitPlayer(Projectile projectile, Player target, ref Player.HurtModifiers modifiers)
         {
-            if (target.HasBuff(ModContent.BuffType<Battlefront>()))
-            {
-                modifiers.FinalDamage *= 1 + BattlefrontPotion.DamageTakenIncrease / 100f;
-            }
-            if (target.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[46])
-            {
-                modifiers.FinalDamage *= 1 + (BattlefrontPotion.DamageTakenIncrease*1.5f / 100f);
-            }
         }
 
         public override bool PreKill(Projectile projectile, int timeLeft)

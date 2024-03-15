@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
         public override int WhipWidth => 11;
         public override int WhipHeight => 14;
         public override int WhipSegments => 20;
-        public override float WhipRangeMult => 2f;
+        public override float WhipRangeMult => 1.8f;
         public override int DustId => DustID.TerraBlade;
         public override int DustWidth => 10;
         public override int DustHeight => 10;

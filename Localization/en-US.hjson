@@ -67,8 +67,7 @@ Mods: {
 			StaminaRegen: Increases stamina regeneration rate by {0}%
 			StaminaRecovery: Increases stamina recovery speed by {0}%
 			DRStat: Increases Resistance by {0}
-			BadDRStat: Decreases damage reduction by {0}%
-			DmgTaken: Increases damage taken by {0}%
+			BadDRStat: Decreases resistance by {0}
 			Cooldown: "{0} seconds cooldown"
 			CritDmg: Critical strikes deal {0}% more damage
 			LifeThreshold: "If life falls below {0}%: "
@@ -147,7 +146,6 @@ Mods: {
 				CritChance: Increases summon crit chance by {0}%
 				TagCritMult: Multiplies summon tag critical strike chance by {0}x
 				TagDmgMult: This weapon scales with only {0}% Tag Damage
-				BaseCritChance: "{0}% increased base critical strike chance"
 				DmgMult: Increases summon damage by {0}% multiplicatively
 			}
 
@@ -2740,7 +2738,7 @@ Mods: {
 					'''
 					Armor made from the shell of a legendary creature
 					{$CommonItemTooltip.PercentIncreasedRangedCritChance}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@1}ranged critical strike chance x{3}
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@1}Doubles weapon critical strike chance({3}% max)
 					{$CommonItemTooltip.PercentChanceToSaveAmmo@2}
 					'''
 			}
@@ -3749,7 +3747,7 @@ Mods: {
 					[c/6efaff:Summon base damage is reduced to {0}%, but hitting enemies with whips will grant a stack of Conqueror(2 on a crit),]
 					[c/6efaff:these increase summon damage temporarily and fall off after a few seconds, if not refreshed.]
 					[c/6efaff:Each stack grants {1}% damage, up to {2}% at the maximum of {3} stacks.]
-					[c/6efaff:Whip range is decreased by {4}%.]
+					[c/6efaff:At max stacks, gain {4}% Summon Tag Duration.]
 					'''
 				End:
 					'''
@@ -4267,7 +4265,6 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance}
 					{$CommonItemTooltip.Thorns@1} and grants the Battle potion effect
 					{$CommonItemTooltip.BadDRStat@2}
-					{$CommonItemTooltip.DmgTaken@3}
 					Does not stack with Demon Drug, Armor Drug, or Strength Potions.
 					'''
 			}
@@ -6438,7 +6435,6 @@ Mods: {
 					Summons a Samurai Beetle to fight for you
 					Performs a [c/FF00FF:Shocking Slash] every third hit
 					There can only be one
-					{$CommonItemTooltip.Summon.BaseCritChance}
 					'''
 			}
 
@@ -6460,7 +6456,6 @@ Mods: {
 					Its arrows seek out the cursor after a while or after bouncing off of a tile
 					Shoots two arrows while using up {1} or more minion slots
 					Repeatedly summoning this minion increases its damage by {0}% each time
-					{$CommonItemTooltip.Summon.BaseCritChance@2}
 					'''
 			}
 
@@ -6491,8 +6486,7 @@ Mods: {
 					'''
 					Summons a Spirit Ash Knight to fight for you
 					The Knight will bounce from walls towards enemies
-					{$CommonItemTooltip.Summon.BaseCritChance}
-					{$CommonItemTooltip.CritDmg@1}
+					{$CommonItemTooltip.CritDmg}
 					'''
 			}
 
@@ -7593,10 +7587,10 @@ Mods: {
 					Minion Slots: {5}
 					Turret Slots: {6}
 					Whip Range: {7}%
-					Tips: Hitting enemies with the tip of a whip always results in a crit (+50% damage)
-					Each minion has a 4% base critical strike chance
-					Summon Tag Critical Strike Chance increases this base value
-					Final Minion Crit Chance: Base Summon Tag Crit Chance * Player Summon Crit Chance
+					Tips: Hitting enemies with the tip of a whip always results in a crit
+					Minions can crit based on your summon critical strike chance
+					Summon Tag crit chance increases minion critical strike chance multiplicatively
+					Summon critical strike damage is reduced to 150% from 200%
 					'''
 				Throwing:
 					'''
@@ -7697,7 +7691,6 @@ Mods: {
 					Left Click to swing like a sword and apply Insanity on-hit
 					<right> to summon Terrorbeaks to fight for you
 					Terrorbeaks only target insane enemies
-					{$CommonItemTooltip.Summon.BaseCritChance}
 					'''
 			}
 

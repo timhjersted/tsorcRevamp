@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         public const float DebuffDuration = 8;
         public const float SlotsRequired = 2f;
         public const int BaseCritChance = 6;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BaseCritChance);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs();
         public override void SetStaticDefaults()
         {
             ItemID.Sets.ItemsThatAllowRepeatedRightClick[Type] = true;

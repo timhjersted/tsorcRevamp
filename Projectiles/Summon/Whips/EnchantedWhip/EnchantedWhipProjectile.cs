@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.EnchantedWhip
         public override int WhipWidth => 18;
         public override int WhipHeight => 18;
         public override int WhipSegments => 16;
-        public override float WhipRangeMult => 0.8f;
+        public override float WhipRangeMult => 0.75f;
         public override int DustId => 15;
         public override int DustWidth => 5;
         public override int DustHeight => 5;

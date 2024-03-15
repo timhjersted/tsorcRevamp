@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
     {
         public const int BaseCritChance = 15;
         public const float CritDmg = 50f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BaseCritChance, CritDmg);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritDmg);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
@@ -25,7 +25,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
         }
         public override void SetDefaults()
         {
-            Item.damage = 17;
+            Item.damage = 14;
+            Item.crit = BaseCritChance;
             Item.knockBack = 3f;
             Item.mana = 10;
             Item.width = 50;

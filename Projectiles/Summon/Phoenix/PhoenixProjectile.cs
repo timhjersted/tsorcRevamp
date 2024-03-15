@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Summon.Phoenix
         public int WarmupStacksFallOffTimer = 0;
         public int WarmupStacksTimer = 0;
         public int WarmupStacks = 0;
-        public int BaseAttackSpeedCooldown = 33; //Lower is better
+        public int BaseAttackSpeedCooldown = 37; //Lower is better
 
         public override void SetStaticDefaults()
         {

@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Prefixes;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
@@ -60,6 +61,14 @@ namespace tsorcRevamp.Items.VanillaItems
         public static float KaleidoscopeTagCritChance = 5;
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
+            if (item.DamageType == DamageClass.Summon || item.DamageType == DamageClass.SummonMeleeSpeed)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Damage");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CritChance", (int)(item.crit + Main.LocalPlayer.GetTotalCritChance(DamageClass.Summon)) + Language.GetTextValue("LegacyTooltip.41")));
+                }
+            }
             if (item.type == ItemID.BlandWhip)
             {
                 int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");

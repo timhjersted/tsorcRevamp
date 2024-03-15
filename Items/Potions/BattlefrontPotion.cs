@@ -7,11 +7,10 @@ namespace tsorcRevamp.Items.Potions
 {
     public class BattlefrontPotion : ModItem
     {
-        public static float DamageCritIncrease = 12f;
-        public static float Thorns = 200f;
-        public static float DRDecrease = 12f;
-        public static float DamageTakenIncrease = 12f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageCritIncrease, Thorns, DRDecrease, DamageTakenIncrease);
+        public const float DamageCritIncrease = 12f;
+        public const float Thorns = 200f;
+        public const float ResistanceDecrease = 20f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageCritIncrease, Thorns, ResistanceDecrease);
         public override void SetStaticDefaults()
         {
         }

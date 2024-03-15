@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -13,8 +14,8 @@ namespace tsorcRevamp.Items.Armors.Ranged
         public static float CritChance = 16f;
         public static float LifeThreshold = 50f;
         public static int AmmoChance = 20;  //changing this number has no effect since an ammo consumption chance stat doesn't exist
-        public static float CCIncrease => Main.hardMode ? 0.5f : 1f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance, LifeThreshold, AmmoChance, 1 + CCIncrease);
+        public const float CritCap = 50f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance, LifeThreshold, AmmoChance, CritCap);
         public override void SetStaticDefaults()
         {
         }
@@ -40,7 +41,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         {
             if (player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f))
             {
-                player.GetCritChance(DamageClass.Ranged) += CCIncrease * player.GetWeaponCrit(player.HeldItem);
+                player.GetCritChance(DamageClass.Ranged) += MathF.Min(player.GetWeaponCrit(player.HeldItem), CritCap);
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Black, 1.0f);
                 Main.dust[dust].noGravity = true;

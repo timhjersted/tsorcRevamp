@@ -12,6 +12,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 using Terraria.UI;
+using Terraria.WorldBuilding;
 using TerraUI.Objects;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Accessories;
@@ -746,139 +747,177 @@ namespace tsorcRevamp
 
             return startingItems;
         }
+        public static float AmmoReservationRangedCritDamage = 10f;
+        public static float SharpenedMeleeArmorPen = 50f;
+        public static float MythrilOcrichalcumCritDmg = 25f;
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            if (modifiers.DamageType == DamageClass.MagicSummonHybrid)
+            {
+                modifiers.CritDamage -= 0.25f;
+            }
+            if (CanUseItemsWhileDodging && isDodging && (modifiers.DamageType == DamageClass.Melee || modifiers.DamageType == DamageClass.MeleeNoSpeed))
+            {
+                modifiers.FinalDamage += ArtoriasArmor.DmgMultWhileRolling;
+            }
+            if (Player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread)
+            {
+                modifiers.DamageVariationScale *= 0;
+            }
+            if (Player.GetModPlayer<tsorcRevampPlayer>().Sharpened)
+            {
+                modifiers.ScalingArmorPenetration += SharpenedMeleeArmorPen / 100f;
+            }
+            if (Player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationPotion)
+            {
+                modifiers.CritDamage += Player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationDamageScaling * AmmoReservationRangedCritDamage / 100f;
+            }
+            if (OldWeapon)
+            {
+                float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
+                modifiers.TargetDamageMultiplier *= damageMult;
+            }
+            if (Player.GetModPlayer<tsorcRevampPlayer>().MythrilOrichalcumCritDamage)
+            {
+                modifiers.CritDamage += MythrilOcrichalcumCritDmg / 100f;
+            }
+        }
+        public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Item, consider using ModifyHitNPC instead */
+        {
+            if ((BurningAura || BurningStone) && target.onFire == true)
+            {
+                modifiers.TargetDamageMultiplier *= 1.05f;
+            }
+            OverCrit(Player.GetWeaponCrit(Player.HeldItem), item.DamageType, ref modifiers, out CritColorTier, false, null, target.Hitbox);
+        }
+        public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Projectile, consider using ModifyHitNPC instead */
+        {
+            Player owner = Main.player[proj.owner];
 
+            if (ShunpoTimer > 0 && (proj.type == ProjectileID.JoustingLance || proj.type == ProjectileID.HallowJoustingLance || proj.type == ProjectileID.ShadowJoustingLance))
+            {
+                modifiers.FinalDamage *= 0.15f;
+            }
+            if (modifiers.DamageType == DamageClass.Ranged && owner.GetModPlayer<tsorcRevampPlayer>().InfinityEdge)
+            {
+                modifiers.CritDamage += Items.Accessories.Ranged.InfinityEdge.CritDmgIncrease / 100f;
+            }
+            if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>())
+            {
+                modifiers.FinalDamage *= 0.55f;
+            }
+            if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung && ProjectileID.Sets.IsAWhip[proj.type])
+            {
+                modifiers.SourceDamage += Items.Accessories.Summon.Goredrinker.WhipDmgRange / 100f;
+            }
+            if (Player.GetModPlayer<tsorcRevampPlayer>().ChallengersGloveCritDamage && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type])
+            {
+                modifiers.CritDamage += ChallengersGlove.WhipCritDamage / 100f;
+            }
+            if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
+            {
+                modifiers.TargetDamageMultiplier *= 1f + Items.Accessories.Damage.BurningStone.DamageIncrease / 100f;
+            }
+            if (!proj.IsMinionOrSentryRelated)
+            {
+                OverCrit(proj.CritChance, proj.DamageType, ref modifiers, out CritColorTier, ProjectileID.Sets.IsAWhip[proj.type], proj, target.Hitbox);
+            }
+        }
+        public bool WhipTipCrit(in Projectile projectile, in List<Vector2> points, in Rectangle targetHitbox)
+        {
+            Player player = Main.player[projectile.owner];
+            Vector2 TipBase = tsorcRevamp.WhipTipBases[projectile.type];
+            if (Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 2], TipBase * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize).Intersects(targetHitbox) || 
+                Utils.CenteredRectangle(projectile.WhipPointsForCollision[points.Count - 1], TipBase * player.whipRangeMultiplier * projectile.WhipSettings.RangeMultiplier * player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize).Intersects(targetHitbox))
+            {
+                return true;
+            }
+            return false;
+        }
+        public void OverCrit(in int CritChance, DamageClass damageType, ref NPC.HitModifiers modifiers, out int critColorTier, in bool IsWhip, Projectile projectile, Rectangle targetHitbox)
+        {
+            int critLevel = (int)(Math.Floor(CritChance / 100f));
+            critColorTier = 0;
+            if (critLevel != 0 && damageType != DamageClass.Summon && damageType != DamageClass.SummonMeleeSpeed)
+            {
+                if (critLevel > 1)
+                {
+                    for (int i = 1; i < critLevel; i++)
+                    {
+                        modifiers.CritDamage *= 2;
+                        modifiers.HideCombatText();
+                        critColorTier++;
+                    }
+                }
+                if (Main.rand.Next(1, 101) <= (float)CritChance - (100 * critLevel))
+                {
+                    modifiers.CritDamage *= 2;
+                    modifiers.HideCombatText();
+                    critColorTier++;
+                }
+            }
+            else if (critLevel != 0 && (damageType == DamageClass.Summon || damageType == DamageClass.SummonMeleeSpeed) && !IsWhip)
+            {
+                modifiers.SetCrit();
+                if (critLevel > 1)
+                {
+                    for (int i = 1; i < critLevel; i++)
+                    {
+                        modifiers.CritDamage *= 2;
+                        modifiers.HideCombatText();
+                        critColorTier++;
+                    }
+                }
+                if (Main.rand.Next(1, 101) <= (float)CritChance - (100 * critLevel))
+                {
+                    modifiers.CritDamage *= 2;
+                    modifiers.HideCombatText();
+                    critColorTier++;
+                }
+            }
+            else if (IsWhip)
+            {
+                if (WhipTipCrit(projectile, projectile.WhipPointsForCollision, targetHitbox))
+                {
+                    modifiers.SetCrit();
+                    if (critLevel > 0)
+                    {
+                        for (int i = 0; i < critLevel; i++)
+                        {
+                            modifiers.CritDamage *= 2;
+                            modifiers.HideCombatText();
+                            critColorTier++;
+                        }
+                    }
+                    if (Main.rand.Next(1, 101) <= (float)CritChance - (100 * critLevel))
+                    {
+                        modifiers.CritDamage *= 2;
+                        modifiers.HideCombatText();
+                        critColorTier++;
+                    }
+                }
+            }
+            else
+            {
+                if (Main.rand.Next(1, 101) <= (float)CritChance - (100 * critLevel))
+                {
+                    modifiers.SetCrit();
+                }
+            }
+        }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-        }
-
-        public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
-        {
+            if (CritColorTier > 0 && hit.DamageType != DamageClass.MagicSummonHybrid)
+            {
+                OverCritColor(target.Hitbox, damageDone, CritColorTier);
+            }
             if (MagmaArmor && target.HasBuff(BuffID.OnFire) || target.HasBuff(BuffID.OnFire3))
             {
                 target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
             }
-            if (MeleeArmorVamp10)
-            {
-                if (Main.rand.NextBool(10))
-                {
-                    Player.HealEffect(10);
-                    Player.statLife += 10;
-                }
-            }
-            if (MiakodaFull)
-            { //Miakoda Full Moon
-                if (MiakodaEffectsTimer > Items.Pets.MiakodaFull.HealCooldown * 60)
-                {
-                    if (hit.Crit)
-                    {
-
-                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
-                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
-
-                        int HealAmount = (int)((Math.Floor((double)(Player.statLifeMax2 / 100)) * 2) + 2);
-                        Player.statLife += HealAmount;
-                        Player.HealEffect(HealAmount, false);
-                        if (Player.statLife > Player.statLifeMax2)
-                        {
-                            Player.statLife = Player.statLifeMax2;
-                        }
-
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.7f }, Player.Center);
-
-                        MiakodaEffectsTimer = 0;
-                    }
-                }
-            }
-
-            if (MiakodaCrescent)
-            { //Miakoda Crescent Moon
-                if (MiakodaEffectsTimer > Items.Pets.MiakodaCrescent.BoostCooldown * 60)
-                {
-                    if (hit.Crit)
-                    {
-                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
-                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
-                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
-
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item100 with { Volume = 0.75f }, Player.Center);
-
-                        MiakodaEffectsTimer = 0;
-                    }
-                }
-            }
-
-            if (MiakodaNew)
-            { //Miakoda New Moon
-                if (MiakodaEffectsTimer > Items.Pets.MiakodaNew.BoostCooldown * 60)
-                {
-                    if (hit.Crit)
-                    {
-                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
-                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
-                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = true;
-
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item81 with { Volume = 0.75f }, Player.Center);
-
-                        MiakodaEffectsTimer = 0;
-                    }
-                }
-            }
-            if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && (int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f) > 0)
-            {
-                Player.HealEffect((int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f));
-                Player.statLife += ((int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f));
-            }
-            if (DemonPower && hit.DamageType == (DamageClass.SummonMeleeSpeed) && hit.Crit && Main.myPlayer == Player.whoAmI)
+            if (DemonPower && hit.DamageType == DamageClass.SummonMeleeSpeed && hit.Crit && Main.myPlayer == Player.whoAmI)
             {
                 Projectile WhipCritBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center - new Vector2(0, target.height / 2), Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, Player.whoAmI, 1);
-            }
-        }
-
-        public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
-        {
-            Player owner = Main.player[proj.owner];
-            if (LudensTempest && hit.DamageType == DamageClass.Magic && !owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()) && !owner.DeadOrGhost)
-            {
-                int? closest = UsefulFunctions.GetClosestEnemyNPC(target.Center);
-                if (closest.HasValue && (Main.npc[closest.Value].type != NPCID.TargetDummy || Main.npc[closest.Value].Distance(target.Center) < 2000))
-                {
-                    Vector2 velocity = UsefulFunctions.Aim(target.Bottom, Main.npc[closest.Value].Top, 3);
-                    if (Main.myPlayer == Player.whoAmI)
-                    {
-                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(-1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
-                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(0, -3), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
-                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
-                    }
-                    Main.player[proj.owner].AddBuff(ModContent.BuffType<LudensTempestCooldown>(), Items.Accessories.Magic.LudensTempest.Cooldown * 60);
-                }
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/LudensTempest") with { Volume = 0.25f }, target.Center);
-            }
-            else if (LudensTempest && hit.DamageType == DamageClass.Magic && owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()) && proj.type != ModContent.ProjectileType<LudensTempestFire>() && proj.type != ModContent.ProjectileType<LudensTempestFirelet>())
-            {
-                UsefulFunctions.AddPlayerBuffDuration(owner, ModContent.BuffType<LudensTempestCooldown>(), -20);
-            }
-            if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type] && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung)
-            {
-                Player.statLife += (int)MathF.Max(MathF.Min((Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife), 20) / (int)((float)GoredrinkerHits * 1.5f + 1), 1);
-                Player.HealEffect((int)MathF.Max(MathF.Min((Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife), 20) / (int)((float)GoredrinkerHits * 1.5f + 1), 1));
-                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerHit") with { Volume = 0.25f }, target.Center);
-                GoredrinkerHits++;
-            }
-            else if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type] && owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()))
-            {
-                int buffIndex = 0;
-                foreach (int buffType in owner.buffType)
-                {
-                    if (buffType == ModContent.BuffType<GoredrinkerCooldown>())
-                    {
-                        if (Player.buffTime[buffIndex] < 15)
-                        {
-                            GoredrinkerHits = 0;
-                        }
-                        Player.buffTime[buffIndex] -= 15;
-                    }
-                    buffIndex++;
-                }
             }
             if (Lich && hit.Damage >= target.life)
             {
@@ -889,14 +928,6 @@ namespace tsorcRevamp
                 Player.HealEffect((int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f));
                 Player.statLife += ((int)(Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f));
             }
-            if (MagmaArmor && target.HasBuff(BuffID.OnFire) || target.HasBuff(BuffID.OnFire3))
-            {
-                target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
-            }
-            if (DemonPower && hit.DamageType == (DamageClass.SummonMeleeSpeed) && ProjectileID.Sets.IsAWhip[proj.type] && hit.Crit && Main.myPlayer == Player.whoAmI)
-            {
-                Projectile WhipCritBoom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center - new Vector2(0, target.height / 2), Vector2.Zero, ProjectileID.DD2ExplosiveTrapT1Explosion, (int)Main.player[proj.owner].GetTotalDamage(DamageClass.Summon).ApplyTo(AncientDemonArmor.ExplosionBaseDmg), 0, proj.owner, 1);
-            }
             if (MiakodaFull)
             { //Miakoda Full Moon
                 if (MiakodaEffectsTimer > Items.Pets.MiakodaFull.HealCooldown * 60)
@@ -905,8 +936,6 @@ namespace tsorcRevamp
                     {
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
-
-
 
                         //2 per 100 max hp, plus 2
                         int HealAmount = (int)((Math.Floor((double)(Player.statLifeMax2 / 100)) * Items.Pets.MiakodaFull.MaxHPHealPercent) + Items.Pets.MiakodaFull.BaseHealing);
@@ -957,7 +986,98 @@ namespace tsorcRevamp
                     }
                 }
             }
+        }
+        public void OverCritColor(in Rectangle targetHitbox, in int damageDealt, in int CritColorTier)
+        {
+            Color ColorOfCrit = Color.Red;
+            switch (CritColorTier)
+            {
+                case 1:
+                    {
+                        ColorOfCrit = Color.Blue;
+                        break;
+                    }
+                case 2:
+                    {
+                        ColorOfCrit = Color.Purple;
+                        break;
+                    }
+                case 3:
+                    {
+                        ColorOfCrit = Color.DarkViolet;
+                        break;
+                    }
+                case 4:
+                    {
+                        ColorOfCrit = Color.White;
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+            CombatText.NewText(targetHitbox, ColorOfCrit, damageDealt, true, false);
+        }
+        public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
+        {
+            if (MeleeArmorVamp10)
+            {
+                if (Main.rand.NextBool(10))
+                {
+                    Player.HealEffect(10);
+                    Player.statLife += 10;
+                }
+            }
 
+        }
+
+        public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
+        {
+            Player owner = Main.player[proj.owner];
+            if (LudensTempest && hit.DamageType == DamageClass.Magic && !owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()) && !owner.DeadOrGhost)
+            {
+                int? closest = UsefulFunctions.GetClosestEnemyNPC(target.Center);
+                if (closest.HasValue && (Main.npc[closest.Value].type != NPCID.TargetDummy || Main.npc[closest.Value].Distance(target.Center) < 2000))
+                {
+                    Vector2 velocity = UsefulFunctions.Aim(target.Bottom, Main.npc[closest.Value].Top, 3);
+                    if (Main.myPlayer == Player.whoAmI)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(-1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
+                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(0, -3), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
+                        Projectile.NewProjectile(Projectile.GetSource_None(), target.Center, velocity + new Vector2(1, -2), ModContent.ProjectileType<LudensTempestFire>(), (int)(hit.SourceDamage * Items.Accessories.Magic.LudensTempest.ProcDmg), 0, Main.myPlayer, 0);
+                    }
+                    Main.player[proj.owner].AddBuff(ModContent.BuffType<LudensTempestCooldown>(), Items.Accessories.Magic.LudensTempest.Cooldown * 60);
+                }
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Magic/LudensTempest") with { Volume = 0.25f }, target.Center);
+            }
+            else if (LudensTempest && hit.DamageType == DamageClass.Magic && owner.HasBuff(ModContent.BuffType<LudensTempestCooldown>()) && proj.type != ModContent.ProjectileType<LudensTempestFire>() && proj.type != ModContent.ProjectileType<LudensTempestFirelet>())
+            {
+                UsefulFunctions.AddPlayerBuffDuration(owner, ModContent.BuffType<LudensTempestCooldown>(), -20);
+            }
+            if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type] && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung)
+            {
+                Player.statLife += (int)MathF.Max(MathF.Min((Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife), 20) / (int)((float)GoredrinkerHits * 1.5f + 1), 1);
+                Player.HealEffect((int)MathF.Max(MathF.Min((Player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(Items.Accessories.Summon.Goredrinker.HealBaseValue) * Player.statLifeMax2 / Player.statLife), 20) / (int)((float)GoredrinkerHits * 1.5f + 1), 1));
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerHit") with { Volume = 0.25f }, target.Center);
+                GoredrinkerHits++;
+            }
+            else if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type] && owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()))
+            {
+                int buffIndex = 0;
+                foreach (int buffType in owner.buffType)
+                {
+                    if (buffType == ModContent.BuffType<GoredrinkerCooldown>())
+                    {
+                        if (Player.buffTime[buffIndex] < 15)
+                        {
+                            GoredrinkerHits = 0;
+                        }
+                        Player.buffTime[buffIndex] -= 15;
+                    }
+                    buffIndex++;
+                }
+            }
 
             if (proj.type == ModContent.ProjectileType<Projectiles.Ranged.PiercingPlasma>())
             {
@@ -968,108 +1088,6 @@ namespace tsorcRevamp
                     UsefulFunctions.DustRing(Player.Center, 70, DustID.FireworkFountain_Red, 100, 18);
                 }
             }
-        }
-        public static float AmmoReservationRangedCritDamage = 10f;
-        public static float SharpenedMeleeArmorPen = 50f;
-        public static float MythrilOcrichalcumCritDmg = 25f;
-        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-            if (CanUseItemsWhileDodging && isDodging && (modifiers.DamageType == DamageClass.Melee || modifiers.DamageType == DamageClass.MeleeNoSpeed))
-            {
-                modifiers.FinalDamage += ArtoriasArmor.DmgMultWhileRolling;
-            }
-            if (Player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread)
-            {
-                modifiers.DamageVariationScale *= 0;
-            }
-            if (Player.GetModPlayer<tsorcRevampPlayer>().Sharpened)
-            {
-                modifiers.ScalingArmorPenetration += SharpenedMeleeArmorPen / 100f;
-            }
-            if (Player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationPotion)
-            {
-                modifiers.CritDamage += Player.GetModPlayer<tsorcRevampPlayer>().AmmoReservationDamageScaling * AmmoReservationRangedCritDamage / 100f;
-            }
-            if (OldWeapon)
-            {
-                float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
-                modifiers.TargetDamageMultiplier *= damageMult;
-            }
-            if (Player.GetModPlayer<tsorcRevampPlayer>().MythrilOrichalcumCritDamage)
-            {
-                modifiers.CritDamage += MythrilOcrichalcumCritDmg / 100f;
-            }
-        }
-
-        public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Item, consider using ModifyHitNPC instead */
-        {
-            if ((BurningAura || BurningStone) && target.onFire == true)
-            {
-                modifiers.TargetDamageMultiplier *= 1.05f;
-            }
-
-            int critLevel = (int)(Math.Floor(Player.GetWeaponCrit(Player.HeldItem) / 100f));
-            if (critLevel != 0)
-            {
-                if (critLevel > 1)
-                {
-                    for (int i = 1; i < critLevel; i++)
-                    {
-                        modifiers.CritDamage *= 2;
-                    }
-                }
-                if (Main.rand.Next(1, 101) <= (float)Player.GetWeaponCrit(Player.HeldItem) - (100 * critLevel))
-                {
-                    modifiers.CritDamage *= 2;
-                }
-            }
-        }
-
-        public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Projectile, consider using ModifyHitNPC instead */
-        {
-            Player owner = Main.player[proj.owner];
-            
-            if (ShunpoTimer > 0 && (proj.type == ProjectileID.JoustingLance || proj.type == ProjectileID.HallowJoustingLance || proj.type == ProjectileID.ShadowJoustingLance))
-            {
-                modifiers.FinalDamage *= 0.15f;
-            }
-            if (modifiers.DamageType == DamageClass.Ranged && owner.GetModPlayer<tsorcRevampPlayer>().InfinityEdge)
-            {
-                modifiers.CritDamage += Items.Accessories.Ranged.InfinityEdge.CritDmgIncrease / 100f;
-            }
-            if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>())
-            {
-                modifiers.FinalDamage *= 0.55f;
-            }
-            if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung && ProjectileID.Sets.IsAWhip[proj.type])
-            {
-                modifiers.SourceDamage += Items.Accessories.Summon.Goredrinker.WhipDmgRange / 100f;
-            }
-            if (Player.GetModPlayer<tsorcRevampPlayer>().ChallengersGloveCritDamage && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type])
-            {
-                modifiers.CritDamage += ChallengersGlove.WhipCritDamage / 100f;
-            }
-            if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
-            {
-                modifiers.TargetDamageMultiplier *= 1f + Items.Accessories.Damage.BurningStone.DamageIncrease / 100f;
-            }
-
-            int critLevel = (int)(Math.Floor(proj.CritChance / 100f));
-            if (critLevel != 0 && proj.DamageType != DamageClass.Summon && proj.DamageType != DamageClass.SummonMeleeSpeed)
-            {
-                if (critLevel > 1)
-                {
-                    for (int i = 1; i < critLevel; i++)
-                    {
-                        modifiers.CritDamage *= 2;
-                    }
-                }
-                if (Main.rand.Next(1, 101) <= (float)proj.CritChance - (100 * critLevel))
-                {
-                    modifiers.CritDamage *= 2;
-                }
-            }
-
         }
 
         public override void ModifyHitByNPC(NPC npc, ref Player.HurtModifiers modifiers)

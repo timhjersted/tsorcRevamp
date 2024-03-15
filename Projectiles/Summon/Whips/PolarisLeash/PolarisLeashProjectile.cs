@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash
         public override int WhipWidth => 18;
         public override int WhipHeight => 18;
         public override int WhipSegments => 20;
-        public override float WhipRangeMult => 1.1f;
+        public override float WhipRangeMult => 0.88f;
         public override int DustId => DustID.WhiteTorch;
         public override int DustWidth => 10;
         public override int DustHeight => 10;

@@ -57,11 +57,15 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
                 case 2:
                     {
                         dustID = DustID.CoralTorch;
+                        Projectile.width = 120;
+                        Projectile.height = 180;
                         break;
                     }
                 case 3:
                     {
                         dustID = DustID.Torch;
+                        Projectile.width = 140;
+                        Projectile.height = 180;
                         break;
                     }
             }

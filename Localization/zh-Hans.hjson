@@ -68,7 +68,6 @@ Mods: {
 			StaminaRecovery: 增加 {0}% 耐力回复速度
 			DRStat: 增加 {0} 抵抗力
 			BadDRStat: 减少 {0}% 伤害减免
-			DmgTaken: 增加 {0}% 受到的伤害
 			Cooldown: "{0} 秒冷却"
 			CritDmg: 暴击时造成 {0}% 额外伤害
 			LifeThreshold: 当生命值低于 {0}% 时，
@@ -147,7 +146,6 @@ Mods: {
 				CritChance: 增加 {0}% 召唤暴击率
 				TagCritMult: 增加 {0}x 倍召唤标记暴击率
 				TagDmgMult: 此武器仅受到 {0}% 的召唤标记伤害加成
-				BaseCritChance: 武器自带 {0}% 基础召唤暴击率
 				DmgMult: 乘算增加 {0}% 召唤伤害
 			}
 
