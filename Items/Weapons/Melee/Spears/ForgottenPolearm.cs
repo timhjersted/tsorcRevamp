@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -6,40 +7,19 @@ using tsorcRevamp.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
-    public class ForgottenPolearm : ModItem
+    public class ForgottenPolearm : ModdedSpearItem
     {
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Forgotten Polearm");
-            // Tooltip.SetDefault("Shimmering ephemeral energy.");
-        }
-
-        public override void SetDefaults()
-        {
-            Item.damage = 27;
-            Item.knockBack = 3f;
-
-            Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 11;
-            Item.useTime = 6;
-            Item.shootSpeed = 10;
-            //item.shoot = ProjectileID.DarkLance;
-
-            Item.height = 50;
-            Item.width = 50;
-
-            Item.DamageType = DamageClass.Melee;
-            Item.noMelee = true;
-            Item.noUseGraphic = true;
-
-            Item.value = PriceByRarity.Orange_3;
-            Item.rare = ItemRarityID.Orange;
-            Item.maxStack = 1;
-            Item.UseSound = SoundID.Item1;
-            Item.shoot = ModContent.ProjectileType<ForgottenPolearmProj>();
-        }
-
+        public override int ProjectileID => ModContent.ProjectileType<ForgottenPolearmProj>();
+        public override int Width => 52;
+        public override int Height => 52;
+        public override int BaseDmg => 28;
+        public override int BaseCritChance => 0;
+        public override float BaseKnockback => 3;
+        public override int UseAnimationTime => 22;
+        public override int UseTime => 22;
+        public override int Rarity => ItemRarityID.Orange;
+        public override int Value => PriceByRarity.fromItem(Item);
+        public override SoundStyle UseSoundID => SoundID.Item71;
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -6,41 +7,20 @@ using tsorcRevamp.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
-    public class AncientBloodLance : ModItem
+    public class AncientBloodLance : ModdedSpearItem
     {
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Ancient Blood Lance");
-            // Tooltip.SetDefault("Pierces multiple times on every hit.");
-        }
-
-        public override void SetDefaults()
-        {
-            Item.damage = 33;
-            Item.knockBack = 6.5f;
-
-            Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 13;
-            Item.useTime = 4;
-            Item.shootSpeed = 8;
-            //item.shoot = ProjectileID.DarkLance;
-
-            Item.height = 50;
-            Item.width = 50;
-
-            Item.DamageType = DamageClass.Melee;
-            Item.noMelee = true;
-            Item.noUseGraphic = true;
-
-            Item.value = PriceByRarity.Orange_3;
-            Item.rare = ItemRarityID.Orange;
-            Item.maxStack = 1;
-            Item.UseSound = SoundID.Item1;
-            Item.shoot = ModContent.ProjectileType<AncientBloodLanceProj>();
-
-        }
-
+        public override int ProjectileID => ModContent.ProjectileType<AncientBloodLanceProj>();
+        public override int Width => 64;
+        public override int Height => 64;
+        public override int BaseDmg => 38;
+        public override int BaseCritChance => 0;
+        public override float BaseKnockback => 6.5f;
+        public override int UseAnimationTime => 19;
+        public override int UseTime => 19;
+        public override int Rarity => ItemRarityID.Orange;
+        public override int Value => PriceByRarity.fromItem(Item);
+        public override SoundStyle UseSoundID => SoundID.Item71;
+        public const int BurnDuration = 5;
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

@@ -8,9 +8,10 @@ using Terraria.Enums;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
 
-namespace tsorcRevamp.Projectiles.Melee.Spears
+namespace tsorcRevamp.Projectiles.Melee
 {
     public class FetidExhaustProjectile : ModProjectile
     {

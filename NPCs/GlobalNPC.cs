@@ -981,11 +981,11 @@ namespace tsorcRevamp.NPCs
             }
             if (markedByPyrosulfate)
             {
-                SummonTagCriticalStrikeChance += Pyrosulfate.SummonTagCrit;
+                SummonTagCriticalStrikeChance += Pyrosulfate.SummonTagDamage;
             }
             if (markedByPyromethane)
             {
-                SummonTagFlatDamage += Pyromethane.SummonTagDamage;
+                SummonTagFlatDamage += Pyromethane.SummonTagCrit;
             }
             if (markedBySearingLash)
             {

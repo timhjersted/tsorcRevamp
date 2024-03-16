@@ -172,13 +172,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheSorrow>()))));
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Spears.ForgottenPearlSpear>())
-            {
-                shopCustomPrice = 4000,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheSorrow>()))));
-
-
 
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Axes.ForgottenPoisonAxe>())
             {

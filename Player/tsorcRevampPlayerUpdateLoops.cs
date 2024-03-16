@@ -144,7 +144,9 @@ namespace tsorcRevamp
         public bool PortlyPlateArmor;
 
         public bool OldWeapon = false;
+
         public bool PhoenixSkull = false;
+        public bool BossBlockedPhoenixRevive = false;
 
         public bool MythrilOrichalcumCritDamage = false;
         public bool Shunpo = false;
@@ -364,6 +366,8 @@ namespace tsorcRevamp
         public float powerfulCurseMovementSpeedBonus;
         public float powerfulCurseLifeRegenerationBonus;
 
+        public float CursePositiveStatsMultiplier;
+
         public override void ResetEffects()
         {
             BeastMode1 = false;
@@ -387,6 +391,7 @@ namespace tsorcRevamp
             Goredrinker = false;
 
             BoneRing = false;
+            CursePositiveStatsMultiplier = 1f;
 
             ChloranthyRing1 = false;
             ChloranthyRing2 = false;
@@ -1038,9 +1043,6 @@ namespace tsorcRevamp
         }
         public override void PostUpdateEquips()
         {
-            float MinionDmgReduction = 15 + (Main.hardMode ? 25 : 0) + (tsorcRevampWorld.SuperHardMode ? 40 : 0);
-            Player.GetDamage(DamageClass.Summon) -= MinionDmgReduction / 100f;
-            Player.GetDamage(DamageClass.SummonMeleeSpeed) += MinionDmgReduction / 100f;
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 Player.GetAttackSpeed(DamageClass.Melee) *= BotCMeleeBaseAttackSpeedMult + (BotCLethalTempoStacks * BotCLethalTempoBonus);
@@ -1067,7 +1069,6 @@ namespace tsorcRevamp
                 {
                     SummonTagDuration += BotCFullConquerorBonusTagDuration;
                 }
-
 
 
                 #region Lifegem Healing and Starlight Shard Restoration
@@ -1122,6 +1123,16 @@ namespace tsorcRevamp
                 }
 
                 #endregion
+            }
+
+            if (PhoenixSkull && tsorcRevampWorld.BossAlive && !BossBlockedPhoenixRevive)
+            {
+                Player.AddBuff(ModContent.BuffType<PhoenixRebirthCooldown>(), Items.Accessories.Defensive.PhoenixSkull.BossChargeDuration * 60);
+                BossBlockedPhoenixRevive = true;
+            }
+            if (BossBlockedPhoenixRevive && !tsorcRevampWorld.BossAlive)
+            {
+                BossBlockedPhoenixRevive = false;
             }
             if (ModContent.GetInstance<tsorcRevampConfig>().DisableGloveAutoswing)
             {
@@ -1598,11 +1609,11 @@ namespace tsorcRevamp
         {
             if (CurseActive && CurseLifeRegenerationBonus > 0)
             {
-                Player.lifeRegen += (int)CurseLifeRegenerationBonus;
+                Player.lifeRegen += (int)(CurseLifeRegenerationBonus * CursePositiveStatsMultiplier);
             }
             if (powerfulCurseActive && powerfulCurseLifeRegenerationBonus > 0)
             {
-                Player.lifeRegen += (int)powerfulCurseLifeRegenerationBonus;
+                Player.lifeRegen += (int)(powerfulCurseLifeRegenerationBonus * CursePositiveStatsMultiplier);
             }
         }
         public override void UpdateBadLifeRegen()
@@ -2091,9 +2102,9 @@ namespace tsorcRevamp
         const float weakCurseBonus = 30f;
 
         ///<summary> 
-        ///The percentage of positive stats granted to the player by a curse
+        ///The base percentage of positive stats granted to the player by a curse. Used for resetting the active percentage back to normal. 
         ///</summary>  
-        const float CursePositiveStatPercentage = 0.67f;
+        public const float BaseCursePositiveStatPercentage = 0.67f;
 
         ///<summary> 
         ///Multiplies the life regeneration taken/given by curses
@@ -2247,11 +2258,11 @@ namespace tsorcRevamp
 
                     if (isCursePowerful)
                     {
-                        powerfulCurseMaxLifeMultiplier = (powerfulCurseBonus / (float)PositiveStatsAmount) * CursePositiveStatPercentage;
+                        powerfulCurseMaxLifeMultiplier = (powerfulCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage;
                     }
                     else
                     {
-                        CurseMaxLifeMultiplier = (weakCurseBonus / (float)PositiveStatsAmount) * CursePositiveStatPercentage;
+                        CurseMaxLifeMultiplier = (weakCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage;
                     }
                 }
                 else if (Main.rand.NextBool(7) && !pickedLifeRegeneration)
@@ -2261,11 +2272,11 @@ namespace tsorcRevamp
 
                     if (isCursePowerful)
                     {
-                        powerfulCurseLifeRegenerationBonus = ((powerfulCurseBonus / (float)PositiveStatsAmount) * CursePositiveStatPercentage) * CurseLifeRegenerationMultiplier;
+                        powerfulCurseLifeRegenerationBonus = ((powerfulCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage) * CurseLifeRegenerationMultiplier;
                     }
                     else
                     {
-                        CurseLifeRegenerationBonus = ((weakCurseBonus / (float)PositiveStatsAmount) * CursePositiveStatPercentage) * CurseLifeRegenerationMultiplier;
+                        CurseLifeRegenerationBonus = ((weakCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage) * CurseLifeRegenerationMultiplier;
                     }
                 }
                 else if (Main.rand.NextBool(7) && !pickedDefense)
@@ -2275,11 +2286,11 @@ namespace tsorcRevamp
 
                     if (isCursePowerful)
                     {
-                        powerfulCurseDefenseBonus = ((powerfulCurseBonus / (float)PositiveStatsAmount) * CurseDefenseMultiplier) * CursePositiveStatPercentage;
+                        powerfulCurseDefenseBonus = ((powerfulCurseBonus / (float)PositiveStatsAmount) * CurseDefenseMultiplier) * BaseCursePositiveStatPercentage;
                     }
                     else
                     {
-                        CurseDefenseBonus = ((weakCurseBonus / (float)PositiveStatsAmount) * CurseDefenseMultiplier) * CursePositiveStatPercentage;
+                        CurseDefenseBonus = ((weakCurseBonus / (float)PositiveStatsAmount) * CurseDefenseMultiplier) * BaseCursePositiveStatPercentage;
                     }
                 }
                 else if (Main.rand.NextBool(7) && !pickedResistance)
@@ -2289,11 +2300,11 @@ namespace tsorcRevamp
 
                     if (isCursePowerful)
                     {
-                        powerfulCurseResistanceBonus = (powerfulCurseBonus / (float)PositiveStatsAmount) * CursePositiveStatPercentage;
+                        powerfulCurseResistanceBonus = (powerfulCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage;
                     }
                     else
                     {
-                        CurseResistanceBonus = (weakCurseBonus / (float)PositiveStatsAmount) * CursePositiveStatPercentage;
+                        CurseResistanceBonus = (weakCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage;
                     }
                 }
                 else if (Main.rand.NextBool(7) && !pickedDamage)
@@ -2303,11 +2314,11 @@ namespace tsorcRevamp
 
                     if (isCursePowerful)
                     {
-                        powerfulCurseDamageBonus = (powerfulCurseBonus / (float)PositiveStatsAmount) * CursePositiveStatPercentage;
+                        powerfulCurseDamageBonus = (powerfulCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage;
                     }
                     else
                     {
-                        CurseDamageBonus = (weakCurseBonus / (float)PositiveStatsAmount) * CursePositiveStatPercentage;
+                        CurseDamageBonus = (weakCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage;
                     }
                 }
                 else if (Main.rand.NextBool(7) && !pickedAttackSpeed)
@@ -2317,11 +2328,11 @@ namespace tsorcRevamp
 
                     if (isCursePowerful)
                     {
-                        powerfulCurseAttackSpeedBonus = ((powerfulCurseBonus / (float)PositiveStatsAmount) * CursePositiveStatPercentage) * CurseAttackSpeedMultiplier;
+                        powerfulCurseAttackSpeedBonus = ((powerfulCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage) * CurseAttackSpeedMultiplier;
                     }
                     else
                     {
-                        CurseAttackSpeedBonus = ((weakCurseBonus / (float)PositiveStatsAmount) * CursePositiveStatPercentage) * CurseAttackSpeedMultiplier;
+                        CurseAttackSpeedBonus = ((weakCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage) * CurseAttackSpeedMultiplier;
                     }
                 }
                 else if (Main.rand.NextBool(7) && !pickedMovementSpeed)
@@ -2331,11 +2342,11 @@ namespace tsorcRevamp
 
                     if (isCursePowerful)
                     {
-                        powerfulCurseMovementSpeedBonus = ((powerfulCurseBonus / (float)PositiveStatsAmount) * CurseMovementSpeedMultiplier) * CursePositiveStatPercentage;
+                        powerfulCurseMovementSpeedBonus = ((powerfulCurseBonus / (float)PositiveStatsAmount) * CurseMovementSpeedMultiplier) * BaseCursePositiveStatPercentage;
                     }
                     else
                     {
-                        CurseMovementSpeedBonus = ((weakCurseBonus / (float)PositiveStatsAmount) * CurseMovementSpeedMultiplier) * CursePositiveStatPercentage;
+                        CurseMovementSpeedBonus = ((weakCurseBonus / (float)PositiveStatsAmount) * CurseMovementSpeedMultiplier) * BaseCursePositiveStatPercentage;
                     }
                 }
             }
@@ -2425,17 +2436,37 @@ namespace tsorcRevamp
             {
                 Player.AddBuff(ModContent.BuffType<Curse>(), 2);
             }
+            else
+            {
+                CurseMaxLifeMultiplier = 0;
+                CurseLifeRegenerationBonus = 0;
+                CurseDefenseBonus = 0;
+                CurseResistanceBonus = 0;
+                CurseDamageBonus = 0;
+                CurseAttackSpeedBonus = 0;
+                CurseMovementSpeedBonus = 0;
+            }
             if (powerfulCurseActive)
             {
                 Player.AddBuff(ModContent.BuffType<PowerfulCurse>(), 2);
             }
-            Player.statLifeMax2 = (int)(Player.statLifeMax2 * (1f + (CurseMaxLifeMultiplier / 100f) + (powerfulCurseMaxLifeMultiplier / 100f)));
+            else
+            {
+                powerfulCurseMaxLifeMultiplier = 0;
+                powerfulCurseLifeRegenerationBonus = 0;
+                powerfulCurseDefenseBonus = 0;
+                powerfulCurseResistanceBonus = 0;
+                powerfulCurseDamageBonus = 0;
+                powerfulCurseAttackSpeedBonus = 0;
+                powerfulCurseMovementSpeedBonus = 0;
+            }
+            Player.statLifeMax2 = (int)(Player.statLifeMax2 * (1f + ((CurseMaxLifeMultiplier / 100f) * ((CurseMaxLifeMultiplier > 0) ? CursePositiveStatsMultiplier : 1f)) + ((powerfulCurseMaxLifeMultiplier / 100f) * ((powerfulCurseMaxLifeMultiplier > 0) ? CursePositiveStatsMultiplier : 1f))));
             //life regen is in updateregen functions
-            Player.statDefense += (int)MathF.Round(CurseDefenseBonus + powerfulCurseDefenseBonus);
-            Player.endurance += (CurseResistanceBonus + powerfulCurseResistanceBonus) / 100f;
-            Player.GetDamage(DamageClass.Generic) += (CurseDamageBonus + powerfulCurseDamageBonus) / 100f;
-            Player.GetAttackSpeed(DamageClass.Generic) += (CurseAttackSpeedBonus + powerfulCurseAttackSpeedBonus) / 100f;
-            Player.moveSpeed += (CurseMovementSpeedBonus + powerfulCurseMovementSpeedBonus) / 100f;
+            Player.statDefense += (int)MathF.Round((CurseDefenseBonus * ((CurseDefenseBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseDefenseBonus * ((powerfulCurseDefenseBonus > 0) ? CursePositiveStatsMultiplier : 1f)));
+            Player.endurance += ((CurseResistanceBonus * ((CurseResistanceBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseResistanceBonus * ((powerfulCurseResistanceBonus > 0) ? CursePositiveStatsMultiplier : 1f))) / 100f;
+            Player.GetDamage(DamageClass.Generic) += ((CurseDamageBonus * ((CurseDamageBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseDamageBonus * ((powerfulCurseDamageBonus > 0) ? CursePositiveStatsMultiplier : 1f))) / 100f;
+            Player.GetAttackSpeed(DamageClass.Generic) += ((CurseAttackSpeedBonus * ((CurseAttackSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseAttackSpeedBonus * ((powerfulCurseAttackSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f))) / 100f;
+            Player.moveSpeed += ((CurseMovementSpeedBonus * ((CurseMovementSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseMovementSpeedBonus * ((powerfulCurseMovementSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f))) / 100f;
         }
     }
 }

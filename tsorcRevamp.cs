@@ -140,6 +140,7 @@ namespace tsorcRevamp
         public static List<int> HellkiteDragonSegments;
         public static List<int> LichKingSerpentSegments;
         public static List<int> SeathSegments;
+        public static List<int> UntargetableNPCs;
         public static Dictionary<BossExtras, (IItemDropRuleCondition Condition, int ID)> BossExtrasDescription;
         public static Dictionary<int, BossExtras> AssignedBossExtras;
         public static Dictionary<int, int> BossBagIDtoNPCID;
@@ -1303,14 +1304,25 @@ namespace tsorcRevamp
         {
             { ProjectileID.BlandWhip, 0.65f },
             { ProjectileID.ThornWhip, 0.8f },
-            { ProjectileID.BoneWhip, 0.95f },
-            { ProjectileID.FireWhip, 1.4f },
-            { ProjectileID.CoolWhip, 1.5f },
-            { ProjectileID.SwordWhip, 1.75f },
-            { ProjectileID.MaceWhip, 1.6f },
-            { ProjectileID.ScytheWhip, 2.15f },
-            { ProjectileID.RainbowWhip, 2.2f }
+            { ProjectileID.BoneWhip, 0.9f },
+            { ProjectileID.FireWhip, 1.25f },
+            { ProjectileID.CoolWhip, 1.35f },
+            { ProjectileID.SwordWhip, 1.55f },
+            { ProjectileID.MaceWhip, 1.3f },
+            { ProjectileID.ScytheWhip, 1.75f },
+            { ProjectileID.RainbowWhip, 1.7f }
         };
+            #endregion
+
+            //-------
+            #region Untargetable NPC list
+            UntargetableNPCs = new List<int>()
+            {
+            ModContent.NPCType<Bonfirefly>(),
+            ModContent.NPCType<AbyssPortal>(), 
+            ModContent.NPCType<AttraidiesApparition>(),
+            ModContent.NPCType<GwynBossVision>()
+            };
             #endregion
         }
 

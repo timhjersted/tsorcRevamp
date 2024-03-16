@@ -4,9 +4,10 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Melee;
 using tsorcRevamp.Projectiles.Melee.Spears;
 
-namespace tsorcRevamp.Items.Weapons.Melee.Spears
+namespace tsorcRevamp.Items.Weapons.Melee
 {
     public class FetidExhaust : ModItem
     {

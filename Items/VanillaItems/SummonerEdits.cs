@@ -16,49 +16,117 @@ namespace tsorcRevamp.Items.VanillaItems
 
         public override void SetDefaults(Item item)
         {
-            if (item.type == ItemID.RainbowWhip) //nerf
+            #region Minions
+            if (item.type == ItemID.AbigailsFlower)
+            {
+            }
+            if (item.type == ItemID.BabyBirdStaff)
+            {
+            }
+            if (item.type == ItemID.SlimeStaff)
+            {
+            }
+            if (item.type == ItemID.FlinxStaff)
+            {
+                item.damage = 7;
+            }
+            if (item.type == ItemID.VampireFrogStaff)
+            {
+                item.damage = 9;
+            }
+            if (item.type == ItemID.HornetStaff)
+            {
+            }
+            if (item.type == ItemID.ImpStaff)
+            {
+                item.damage = 16;
+            }
+            if (item.type == ItemID.SpiderStaff)
+            {
+                item.damage = 21;
+            }
+            if (item.type == ItemID.SanguineStaff)
+            {
+                item.damage = 29;
+            }
+            if (item.type == ItemID.PirateStaff)
+            {
+            }
+            if (item.type == ItemID.Smolstar)
+            {
+                item.damage = 5;
+            }
+            if (item.type == ItemID.OpticStaff)
+            {
+            }
+            if (item.type == ItemID.PygmyStaff)
+            {
+            }
+            if (item.type == ItemID.StormTigerStaff)
+            {
+                item.damage = 34;
+            }
+            if (item.type == ItemID.DeadlySphereStaff)
+            {
+                item.damage = 35;
+            }
+            if (item.type == ItemID.RavenStaff)
+            {
+                item.damage = 48;
+            }
+            if (item.type == ItemID.XenoStaff)
+            {
+                item.damage = 30;
+            }
+            if (item.type == ItemID.TempestStaff)
+            {
+            }
+            if (item.type == ItemID.StardustCellStaff)
+            {
+            }
+            if (item.type == ItemID.StardustDragonStaff)
+            {
+                item.damage = 30;
+            }
+            #endregion
+
+            #region Whips
+            if (item.type == ItemID.RainbowWhip)
             {
                 item.damage = 100;
             }
-            if (item.type == ItemID.ScytheWhip) //nerf
+            if (item.type == ItemID.ScytheWhip)
             {
                 item.damage = 85;
             }
-            if (item.type == ItemID.MaceWhip) //nerf
+            if (item.type == ItemID.MaceWhip)
             {
                 item.damage = 95;
             }
-            if (item.type == ItemID.BoneWhip) //nerf
-            {
-                item.damage = 24;
-            }
+            #endregion
 
+            #region Turrets/Sentries
             if (item.type == ItemID.HoundiusShootius)
             {
                 item.damage = 25;
             }
             if (item.type == ItemID.StaffoftheFrostHydra) //buff, using static immunity frame in tml1.4.4, vanilla damage is 100
-            {
-                item.damage = 100; //now uses local iframes in globalprojectile
+            {//now uses local iframes in globalprojectile
+                item.damage = 110;
             }
-
-            //Lunar items
-            if (item.type == ItemID.StardustDragonStaff) //holy the scaling on this weapon is insane, it needs a nerf
-            {
-                item.damage = 35;
-            }
+            #endregion
         }
         public static int LeatherWhipTagDmg = 4;
         public static int SnapthornTagDmg = 6;
         public static int SpinalTapTagDmg = 7;
-        public static float FirecrackerScalingDmg = 200f;
+        public static float FirecrackerScalingDmg = 275f;
         public static int CoolWhipTagDmg = 6;
         public static int DurendalTagDmg = 9;
         public static int DarkHarvestTagDmg = 10;
-        public static float MorningStarTagDmg = 4;
-        public static float MorningStarTagCritChance = 6;
+        public static float MorningStarTagDmg = 6;
+        public static float MorningStarTagCritChance = 12;
         public static float KaleidoscopeTagDmg = 10;
-        public static float KaleidoscopeTagCritChance = 5;
+        public static float KaleidoscopeTagCritChance = 10;
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
             if (item.DamageType == DamageClass.Summon || item.DamageType == DamageClass.SummonMeleeSpeed)

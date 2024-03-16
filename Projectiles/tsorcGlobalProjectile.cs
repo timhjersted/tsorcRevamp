@@ -88,46 +88,9 @@ namespace tsorcRevamp.Projectiles
             {
                 ProjectileID.Sets.ForcePlateDetection[entity.type] = false;
             }
-            Main.NewText(entity.WhipSettings.RangeMultiplier);
             if (tsorcRevamp.WhipRanges.ContainsKey(entity.type))
             {
                 entity.WhipSettings.RangeMultiplier = tsorcRevamp.WhipRanges[entity.type];
-            }
-            if (entity.type == ProjectileID.BlandWhip)
-            {
-                entity.WhipSettings.RangeMultiplier = 0.65f;
-            }
-            if (entity.type == ProjectileID.ThornWhip)
-            {
-                entity.WhipSettings.RangeMultiplier = 0.8f;
-            }
-            if (entity.type == ProjectileID.BoneWhip)
-            {
-                entity.WhipSettings.RangeMultiplier = 0.9f;
-            }
-            if (entity.type == ProjectileID.FireWhip)
-            {
-                entity.WhipSettings.RangeMultiplier = 1.25f;
-            }
-            if (entity.type == ProjectileID.CoolWhip)
-            {
-                entity.WhipSettings.RangeMultiplier = 1.35f;
-            }
-            if (entity.type == ProjectileID.SwordWhip)
-            {
-                entity.WhipSettings.RangeMultiplier = 1.55f;
-            }
-            if (entity.type == ProjectileID.MaceWhip)
-            {
-                entity.WhipSettings.RangeMultiplier = 1.3f;
-            }
-            if (entity.type == ProjectileID.ScytheWhip)
-            {
-                entity.WhipSettings.RangeMultiplier = 1.75f;
-            }
-            if (entity.type == ProjectileID.RainbowWhip)
-            {
-                entity.WhipSettings.RangeMultiplier = 1.7f;
             }
         }
         public override void OnSpawn(Projectile projectile, IEntitySource source)
@@ -196,6 +159,11 @@ namespace tsorcRevamp.Projectiles
                 projectile.penetrate = 2;
                 projectile.usesLocalNPCImmunity = true;
                 projectile.localNPCHitCooldown = -1;
+            }
+            if (projectile.type == ProjectileID.CoolWhipProj && projectile.ai[0] == 1)
+            {
+                projectile.ai[0] = 0;
+                projectile.ArmorPenetration = 30;
             }
         }
         public override bool PreAI(Projectile projectile)

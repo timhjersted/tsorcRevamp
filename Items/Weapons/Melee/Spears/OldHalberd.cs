@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
@@ -8,61 +9,20 @@ using tsorcRevamp.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
-    class OldHalberd : ModItem
+    class OldHalberd : ModdedSpearItem
     {
-        public static int BaseDamage = 35;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Main.LocalPlayer.GetTotalDamage(DamageClass.Melee).ApplyTo(BaseDamage));
-        public override void SetStaticDefaults()
-        {
-            ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
-        }
-        public override void SetDefaults()
-        {
-            Item.damage = BaseDamage;
-            Item.width = 60;
-            Item.height = 60;
-            Item.knockBack = 6;
-            Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 32;
-            Item.rare = ItemRarityID.White;
-            Item.UseSound = SoundID.Item1;
-            Item.useTime = 32;
-            Item.value = 7000;
-            Item.shootSpeed = 4f;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
-            Item.useStyle = ItemUseStyleID.Swing;
-        }
-
-        public override bool AltFunctionUse(Player player)
-        {
-            if (!Main.mouseLeft && player.ItemTimeIsZero)
-            {
-                return true;
-            }
-            else
-            {
-                player.altFunctionUse = 1;
-                return false;
-            }
-        }
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-        {
-            if (player.altFunctionUse == 2)
-            {
-                Item.useStyle = ItemUseStyleID.Shoot;
-                Item.noUseGraphic = true;
-                Item.noMelee = true;
-                if (Main.myPlayer == player.whoAmI)
-                {
-                    Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<OldHalberdProj>(), damage, knockback, player.whoAmI);
-                }
-                return true;
-            }
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.noUseGraphic = false;
-            Item.noMelee = false;
-            return true;
-        }
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Main.LocalPlayer.GetTotalDamage(DamageClass.Melee).ApplyTo(BaseDmg));
+        public override int ProjectileID => ModContent.ProjectileType<OldHalberdProj>();
+        public override int Width => 60;
+        public override int Height => 60;
+        public override int BaseDmg => 35;
+        public override int BaseCritChance => 0;
+        public override float BaseKnockback => 6;
+        public override int UseAnimationTime => 29;
+        public override int UseTime => 29;
+        public override int Rarity => ItemRarityID.White;
+        public override int Value => PriceByRarity.fromItem(Item);
+        public override SoundStyle UseSoundID => SoundID.Item71;
         public override void HoldItem(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().OldWeapon = true;

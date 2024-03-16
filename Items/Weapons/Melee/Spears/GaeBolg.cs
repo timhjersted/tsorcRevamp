@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -6,40 +7,19 @@ using tsorcRevamp.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
-    public class GaeBolg : ModItem
+    public class GaeBolg : ModdedSpearItem
     {
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Gae Bolg");
-            // Tooltip.SetDefault("Pierce reality \nCan be upgraded into its mythical form with 70,000 Dark Souls");
-        }
-
-        public override void SetDefaults()
-        {
-            Item.damage = 79;
-            Item.knockBack = 5.5f;
-
-            Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 15;
-            Item.useTime = 15;
-            Item.shootSpeed = 12;
-
-            Item.height = 40;
-            Item.width = 40;
-
-            Item.DamageType = DamageClass.Melee;
-            Item.noMelee = true;
-            Item.noUseGraphic = true;
-
-            Item.value = PriceByRarity.LightPurple_6;
-            Item.rare = ItemRarityID.LightPurple;
-            Item.maxStack = 1;
-            Item.UseSound = SoundID.Item1;
-            Item.shoot = ModContent.ProjectileType<GaeBolgProj>();
-
-        }
-
+        public override int ProjectileID => ModContent.ProjectileType<GaeBolgProj>();
+        public override int Width => 54;
+        public override int Height => 54;
+        public override int BaseDmg => 79;
+        public override int BaseCritChance => 0;
+        public override float BaseKnockback => 5.5f;
+        public override int UseAnimationTime => 19;
+        public override int UseTime => 19;
+        public override int Rarity => ItemRarityID.LightPurple;
+        public override int Value => PriceByRarity.fromItem(Item);
+        public override SoundStyle UseSoundID => SoundID.Item71;
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

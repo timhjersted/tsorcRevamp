@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class CovenantOfArtorias : ModItem
     {
-        public static float StatMult = 7f;
+        public static float StatMult = 9f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StatMult, 1f + tsorcRevampPlayer.MeleeBonusMultiplier);
         public override void SetStaticDefaults()
         {

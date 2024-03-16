@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     {
         public const int BaseDamage = 42;
         public const int MaxStacks = 5; //must be adjusted manually in the whip projectile
-        public static float MinSummonTagDamage = 3;
+        public static float MinSummonTagDamage = 2;
         public static float MaxSummonTagDamage = MinSummonTagDamage * MaxStacks;
-        public static float MinSummonTagCrit = 1;
+        public static float MinSummonTagCrit = 3;
         public static float MaxSummonTagCrit = MinSummonTagCrit * MaxStacks;
         public static float MinSummonTagAttackSpeed = 5;
         public static float MaxSummonTagAttackSpeed = MinSummonTagAttackSpeed * MaxStacks;

@@ -2,25 +2,14 @@ using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Tiles.Trophies;
 
 namespace tsorcRevamp.Items.Placeable.Trophies
 {
-    public class SpazmatismTrophy : ModItem
+    public class SpazmatismTrophy : TrophyItem
     {
-        public override void SetStaticDefaults()
-        {
-            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-        }
-
-        public override void SetDefaults()
-        {
-            Item.DefaultToPlaceableTile(ModContent.TileType<Tiles.Trophies.SpazmatismTrophyTile>());
-
-            Item.width = 32;
-            Item.height = 32;
-            Item.maxStack = 9999;
-            Item.rare = ItemRarityID.Blue;
-            Item.value = Item.buyPrice(0, 15, 0, 0);
-        }
+        public override int TileID => ModContent.TileType<SpazmatismTrophyTile>();
+        public override int Rarity => ItemRarityID.Lime;
+        public override int Value => PriceByRarity.fromItem(Item);
     }
 }

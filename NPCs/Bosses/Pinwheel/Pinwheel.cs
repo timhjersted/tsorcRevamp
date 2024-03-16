@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Utilities;
 
@@ -2529,6 +2530,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.PinwheelBag>())); //Bag is dropped as an item at the end of death anim instead, because checking for anything else seems to fail
             }*/
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ForgottenPearlSpear>(), 1, 1, 1));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MaskOfTheChild>(), 1, 1, 1));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MaskOfTheFather>(), 1, 1, 1));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MaskOfTheMother>(), 1, 1, 1));

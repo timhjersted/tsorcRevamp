@@ -10,11 +10,9 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Body)]
     public class WitchkingRobe : ModItem
     {
-        public static float AtkSpeed = 25f;
-        public static float WhipRange = 30f;
-        public static float DmgAmp = 6f;
+        public static float DmgAmp = 8f;
         public static int MinionBoost = 2;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeed, WhipRange, DmgAmp, MinionBoost);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgAmp, MinionBoost);
         public override void SetStaticDefaults()
         {
         }
@@ -28,10 +26,8 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Summon) += AtkSpeed / 100f;
             player.GetDamage(DamageClass.Summon) *= 1f + DmgAmp / 100f;
             player.maxMinions += MinionBoost;
-            player.whipRangeMultiplier += WhipRange / 100f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {

@@ -13,7 +13,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         public static float LifeSteal = 5f;
         public static int Duration = 5;
         public static float LifeThreshold = 95f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Cooldown, HealthPercent, LifeSteal, Duration, LifeThreshold);
+        public const int BossChargeDuration = 30;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Cooldown, HealthPercent, LifeSteal, Duration, LifeThreshold, BossChargeDuration);
         public override void SetStaticDefaults()
         {
             int EquipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Face);

@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Head)]
     public class WitchkingHelmet : ModItem
     {
-        public static float DmgAmp = 7f;
+        public static float DmgAmp = 9f;
         public static int MinionSlot = 1;
         public static int SentrySlot = 1;
         public static float CritChance = 20f;

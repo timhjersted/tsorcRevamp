@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -7,61 +8,19 @@ using tsorcRevamp.Projectiles.Melee.Spears;
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
 
-    public class CobaltHalberd : ModItem
+    public class CobaltHalberd : ModdedSpearItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Cobalt Halberd");
-            /* Tooltip.SetDefault("Left-click to stab like a spear, right-click to swing" +
-                                "\nSwing strike does 25% more damage"); */
-
-        }
-
-        public override void SetDefaults()
-        {
-            Item.rare = ItemRarityID.LightRed;
-            Item.damage = 29;
-            Item.width = 76;
-            Item.height = 74;
-            Item.knockBack = (float)6;
-            Item.maxStack = 1;
-            Item.DamageType = DamageClass.Melee;
-            Item.autoReuse = false;
-            Item.scale = 1;
-            Item.useAnimation = 28;
-            Item.UseSound = SoundID.Item1;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 28;
-            Item.value = PriceByRarity.LightRed_4;
-            Item.shootSpeed = 2.7f;
-        }
-        public override bool AltFunctionUse(Player player)
-        {
-            return true;
-        }
-
-        public override bool CanUseItem(Player player)
-        {
-            if (player.altFunctionUse == 2)
-            {
-
-                Item.useStyle = ItemUseStyleID.Swing;
-                Item.shoot = ProjectileID.None;
-                Item.noMelee = false;
-                Item.noUseGraphic = false;
-                Item.damage = 36;
-            }
-            else
-            {
-                Item.damage = 29;
-                Item.noMelee = true;
-                Item.noUseGraphic = true;
-                Item.useStyle = ItemUseStyleID.Shoot;
-                Item.shoot = ModContent.ProjectileType<CobaltHalberdProj>();
-            }
-            return base.CanUseItem(player);
-        }
-
+        public override int ProjectileID => ModContent.ProjectileType<CobaltHalberdProj>();
+        public override int Width => 74;
+        public override int Height => 74;
+        public override int BaseDmg => 40;
+        public override int BaseCritChance => 6;
+        public override float BaseKnockback => 6;
+        public override int UseAnimationTime => 26;
+        public override int UseTime => 26;
+        public override int Rarity => ItemRarityID.LightRed;
+        public override int Value => PriceByRarity.fromItem(Item);
+        public override SoundStyle UseSoundID => SoundID.Item71;
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

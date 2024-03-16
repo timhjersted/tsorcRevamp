@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
     public class Urumi : ModItem
     {
-        public static float SummonTagArmorPen = 6;
+        public static float SummonTagArmorPen = 8;
         public const int WhipArmorPen = 10;
-        public static float SummonTagCrit = 4;
+        public static float SummonTagCrit = 6;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagArmorPen, SummonTagCrit, WhipArmorPen);
         public override void SetStaticDefaults()
         {

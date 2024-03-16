@@ -1223,7 +1223,7 @@ namespace tsorcRevamp
                 NPC other = Main.npc[i];
                 Vector2 MouseHitboxSize = new Vector2(100, 100);
 
-                if (tsorcRevamp.Shunpo.JustReleased && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) && player.GetModPlayer<tsorcRevampPlayer>().Shunpo && !player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
+                if (tsorcRevamp.Shunpo.JustReleased && other.active && !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) && player.GetModPlayer<tsorcRevampPlayer>().Shunpo && !player.HasBuff(ModContent.BuffType<ShunpoBlinkCooldown>()))
                 {
                     player.immune = true;
                     player.SetImmuneTimeForAllTypes((int)(ShunpoBlink.ShunpoBlinkImmunityTime * 60));
@@ -1303,7 +1303,7 @@ namespace tsorcRevamp
                 {
                     NPC other = Main.npc[i];
 
-                    if (other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<PlasmaWhirlwind>())
+                    if (other.active && !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<PlasmaWhirlwindDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<PlasmaWhirlwind>())
                     {
                         player.immune = true;
                         player.SetImmuneTimeForAllTypes((int)(PlasmaWhirlwind.DashDuration * 60f * 5));
@@ -1315,7 +1315,7 @@ namespace tsorcRevamp
                             Projectile DashHitbox = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaWhirlwindDashHitbox>(), player.HeldItem.damage, 0, player.whoAmI);
                         }
                     } //cooldown is added by On-Hit in the dash projectile hitbox
-                    if (!(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && other.active && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<NightbringerDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<Nightbringer>())
+                    if (!(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && other.active && !tsorcRevamp.UntargetableNPCs.Contains(other.type) && !other.friendly && other.Hitbox.Intersects(Utils.CenteredRectangle(Main.MouseWorld, MouseHitboxSize)) & other.Distance(Player.Center) <= 400 && !other.HasBuff(ModContent.BuffType<NightbringerDashCooldown>()) && player.HeldItem.type == ModContent.ItemType<Nightbringer>())
                     {
                         player.immune = true;
                         SweepingBladeVelocity = player.DirectionTo(other.Center) * 17;

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
@@ -9,10 +10,8 @@ namespace tsorcRevamp.Items.Tools
 {
     class TomeOfHealth : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-        }
-
+        public const int HealAmount = 220;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(HealAmount);
         public override void SetDefaults()
         {
             Item.height = 38;
@@ -33,10 +32,10 @@ namespace tsorcRevamp.Items.Tools
         }
         public override bool? UseItem(Player player)
         {
-            player.statLife += 220;
+            player.statLife += HealAmount;
             if (player.statLife > player.statLifeMax2) player.statLife = player.statLifeMax2;
-            player.HealEffect(220, true);
-            player.AddBuff(BuffID.PotionSickness, 3600);
+            player.HealEffect(HealAmount, true);
+            player.AddBuff(BuffID.PotionSickness, ((player.pStone) ? 45 : 60) * 60);
             return true;
         }
 

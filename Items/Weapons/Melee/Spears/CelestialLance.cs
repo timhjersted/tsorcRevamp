@@ -1,53 +1,35 @@
 
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
-    public class CelestialLance : ModItem
+    public class CelestialLance : ModdedSpearItem
     {
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Celestial Lance");
-            // Tooltip.SetDefault("Celestial lance fabled to hold sway over the world.\nDoubled damage while falling and has a chance to heal 6 HP on hit.");
-        }
-
-
-        public override void SetDefaults()
-        {
-            Item.damage = 250;
-            Item.knockBack = 10f;
-
-            Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 11;
-            Item.useTime = 1;
-            Item.shootSpeed = 8;
-            //item.shoot = ProjectileID.DarkLance;
-
-            Item.height = 50;
-            Item.width = 50;
-
-            Item.DamageType = DamageClass.Melee;
-            Item.noMelee = true;
-            Item.noUseGraphic = true;
-
-            Item.value = PriceByRarity.Red_10;
-            Item.rare = ItemRarityID.Red;
-            Item.maxStack = 1;
-            Item.UseSound = SoundID.Item1;
-            Item.shoot = ModContent.ProjectileType<CelestialLanceProj>();
-
-        }
-
+        public override int ProjectileID => ModContent.ProjectileType<CelestialLanceProj>();
+        public override int Width => 44;
+        public override int Height => 44;
+        public override int BaseDmg => 250;
+        public override int BaseCritChance => 0;
+        public override float BaseKnockback => 10;
+        public override int UseAnimationTime => 17;
+        public override int UseTime => 17;
+        public override int Rarity => ItemRarityID.Red;
+        public override int Value => PriceByRarity.fromItem(Item);
+        public override SoundStyle UseSoundID => SoundID.Item71;
+        public const float BonusDmgWhileFalling = 200f;
+        public const int HealOnHit = 6;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BonusDmgWhileFalling, HealOnHit);
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
             if (player.gravDir == 1f && player.velocity.Y > 0 || player.gravDir == -1f && player.velocity.Y < 0)
             {
-                damage += 2f;
+                damage += BonusDmgWhileFalling / 100f;
             }
         }
 

@@ -148,10 +148,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                             {
                                 target.AddBuff(ModContent.BuffType<CoolWhipDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
                                 player.AddBuff(BuffID.CoolWhipPlayerBuff, (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 5 * 60));
-                                if (player.ownedProjectileCounts[ProjectileID.CoolWhipProj] == 0)
+                                if (player.ownedProjectileCounts[ProjectileID.CoolWhipProj] == 0 && Main.myPlayer == player.whoAmI)
                                 {
-                                    Projectile Snowflake = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ProjectileID.CoolWhipProj, 15, 0, player.whoAmI);
-                                    Snowflake.ArmorPenetration = 30;
+                                    Projectile Snowflake = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center, Vector2.Zero, ProjectileID.CoolWhipProj, 15, 0, player.whoAmI, 1);
                                 }
                                 break;
                             }

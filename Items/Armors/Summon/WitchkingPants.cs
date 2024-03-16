@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Legs)]
     public class WitchkingPants : ModItem
     {
-        public static float DmgAmp = 7f;
+        public static float DmgAmp = 9f;
         public static int MinionSlot = 1;
         public static int SentrySlot = 1;
         public static float MoveSpeed = 44f;

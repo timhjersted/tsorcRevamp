@@ -4,7 +4,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Projectiles.Melee.Swords;
+using tsorcRevamp.Projectiles.Melee.Broadswords;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
@@ -65,7 +65,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 if (player.statMana <= MANA_COST) return false;
                 player.statMana -= MANA_COST;
                 player.manaRegenDelay = 220;
-                Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<DrakarthusDagger>(), damage, knockback, player.whoAmI);
+                if (Main.myPlayer == player.whoAmI)
+                {
+                    Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<DrakarthusDagger>(), damage, knockback, player.whoAmI);
+                }
             }
             else
             {
@@ -96,7 +99,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                     for (int j = 0; j < 6; j++)
                     {
                         Vector2 shotDir = new Vector2(0, 12).RotatedBy(MathHelper.ToRadians(0 - (60f * j)) + randOffset);
-                        Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, shotDir, ModContent.ProjectileType<DrakarthusDagger2>(), damage, knockback, player.whoAmI);
+                        if (Main.myPlayer == player.whoAmI)
+                        {
+                            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, shotDir, ModContent.ProjectileType<DrakarthusDagger2>(), damage, knockback, player.whoAmI);
+                        }
                     }
                     proj.Kill();
                     break;

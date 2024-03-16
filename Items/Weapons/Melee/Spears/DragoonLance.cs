@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -6,40 +7,19 @@ using tsorcRevamp.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
-    public class DragoonLance : ModItem
+    public class DragoonLance : ModdedSpearItem
     {
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Dragoon Lance");
-            // Tooltip.SetDefault("A spear forged from the fang of the Dragoon Serpent.");
-        }
-
-        public override void SetDefaults()
-        {
-            Item.damage = 140;
-            Item.knockBack = 15f;
-
-            Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 11;
-            Item.useTime = 1;
-            Item.shootSpeed = 10;
-
-            Item.height = 74;
-            Item.width = 74;
-
-            Item.DamageType = DamageClass.Melee;
-            Item.noMelee = true;
-            Item.noUseGraphic = true;
-
-            Item.value = PriceByRarity.Yellow_8;
-            Item.rare = ItemRarityID.Yellow;
-            Item.maxStack = 1;
-            Item.UseSound = SoundID.Item1;
-            Item.shoot = ModContent.ProjectileType<DragoonLanceProj>();
-
-        }
-
+        public override int ProjectileID => ModContent.ProjectileType<DragoonLanceProj>();
+        public override int Width => 74;
+        public override int Height => 74;
+        public override int BaseDmg => 140;
+        public override int BaseCritChance => 0;
+        public override float BaseKnockback => 15;
+        public override int UseAnimationTime => 17;
+        public override int UseTime => 17;
+        public override int Rarity => ItemRarityID.Yellow;
+        public override int Value => PriceByRarity.fromItem(Item);
+        public override SoundStyle UseSoundID => SoundID.Item71;
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

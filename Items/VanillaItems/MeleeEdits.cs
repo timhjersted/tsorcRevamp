@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.VanillaItems
 {
     class MeleeEdits : GlobalItem
     {
-        public static int ManaDelay = 720;
+        public static int ManaDelay = 540;
         public override void SetDefaults(Item item)
         {
             SetMeleeSlashColor(item);
@@ -235,6 +235,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.VampireKnives)
             {
+                item.damage = 24;
                 item.mana = 35;
             }
             if (item.type == ItemID.ScourgeoftheCorruptor)
@@ -557,6 +558,7 @@ namespace tsorcRevamp.Items.VanillaItems
             else return base.IsArmorSet(head, body, legs);
         }
         public static int GoldenGiFlatDamage = 3;
+        public const float SolarSetDR = 14f;
         public override void UpdateArmorSet(Player player, string set)
         {
             if (set == "GoldenGi")
@@ -575,7 +577,8 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (set == "SolarSet")
             {
-                player.setBonus += "\n" + LangUtils.GetTextValue("CommonItemTooltip.DRStat", 12);
+                player.setBonus += "\n" + LangUtils.GetTextValue("CommonItemTooltip.DRStat", SolarSetDR);
+                player.endurance += (SolarSetDR - 12f) / 100f;
             }
         }
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)

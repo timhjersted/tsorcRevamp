@@ -1667,9 +1667,9 @@ namespace tsorcRevamp
                             Main.spriteBatch.End();
                             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                         }
-                        if (Main.projectile[i].ModProjectile is Projectiles.Melee.Spears.FetidExhaustProjectile)
+                        if (Main.projectile[i].ModProjectile is Projectiles.Melee.FetidExhaustProjectile)
                         {
-                            Projectiles.Melee.Spears.FetidExhaustProjectile jet = (Projectiles.Melee.Spears.FetidExhaustProjectile)Main.projectile[i].ModProjectile;
+                            Projectiles.Melee.FetidExhaustProjectile jet = (Projectiles.Melee.FetidExhaustProjectile)Main.projectile[i].ModProjectile;
                             jet.additiveContext = true;
                             Color color = Color.White;
                             jet.PreDraw(ref color);

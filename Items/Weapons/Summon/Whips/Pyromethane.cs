@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
     public class Pyromethane : ModItem
     {
-        public static float SummonTagDamage = 10;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagDamage);
+        public static float SummonTagCrit = 12;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagCrit);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao

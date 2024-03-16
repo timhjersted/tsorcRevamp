@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Melee.Swords
+namespace tsorcRevamp.Projectiles.Melee.Broadswords
 {
     public class DrakarthusDagger : ModProjectile
     {

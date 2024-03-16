@@ -1,56 +1,37 @@
 
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Projectiles.Melee.Spears;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
-    public class Longinus : ModItem
+    public class Longinus : ModdedSpearItem
     {
-
-        public override void SetStaticDefaults()
-        {
-            // Tooltip.SetDefault("Legendary spear fabled to hold sway over the world.\nIncreases attack damage by 30% when falling and has a chance to heal 3 HP on hit.");
-        }
-
-
-        public override void SetDefaults()
-        {
-            Item.damage = 175;
-            Item.knockBack = 9f;
-
-            Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 11;
-            Item.useTime = 1;
-            Item.shootSpeed = 8;
-            //item.shoot = ProjectileID.DarkLance;
-
-            Item.height = 50;
-            Item.width = 50;
-
-            Item.DamageType = DamageClass.Melee;
-            Item.noMelee = true;
-            Item.noUseGraphic = true;
-
-            Item.value = PriceByRarity.Cyan_9;
-            Item.rare = ItemRarityID.Cyan;
-            Item.maxStack = 1;
-            Item.UseSound = SoundID.Item1;
-            Item.shoot = ModContent.ProjectileType<LonginusProj>();
-
-        }
-
+        public override int ProjectileID => ModContent.ProjectileType<LonginusProj>();
+        public override int Width => 64;
+        public override int Height => 64;
+        public override int BaseDmg => 175;
+        public override int BaseCritChance => 0;
+        public override float BaseKnockback => 9;
+        public override int UseAnimationTime => 20;
+        public override int UseTime => 20;
+        public override int Rarity => ItemRarityID.Cyan;
+        public override int Value => PriceByRarity.fromItem(Item);
+        public override SoundStyle UseSoundID => SoundID.Item71;
+        public const float BonusDmgWhileFalling = 130f;
+        public const int HealOnHit = 3;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BonusDmgWhileFalling, HealOnHit);
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
             if (player.gravDir == 1f && player.velocity.Y > 0 || player.gravDir == -1f && player.velocity.Y < 0)
             {
-                damage += 1.3f;
+                damage += BonusDmgWhileFalling / 100f;
             }
         }
-
-
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

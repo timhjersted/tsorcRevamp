@@ -24,7 +24,6 @@ namespace tsorcRevamp.Items.Debug
         }
         public override bool? UseItem(Player player)
         {
-            player.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 600 * 60);
             player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread = !player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread;
             Main.NewText("Damage spread " + !player.GetModPlayer<tsorcRevampPlayer>().NoDamageSpread);
             return true;

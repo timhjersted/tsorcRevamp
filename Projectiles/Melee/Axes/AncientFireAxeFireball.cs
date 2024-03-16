@@ -10,15 +10,21 @@ namespace tsorcRevamp.Projectiles.Melee.Axes
 {
     class AncientFireAxeFireball : ModProjectile
     {
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[Type] = 8;
+        }
         public override void SetDefaults()
         {
-            Projectile.width = 16;
-            Projectile.height = 16;
-            Projectile.aiStyle = 8;
+            Projectile.width = 66;
+            Projectile.height = 28;
             Projectile.friendly = true;
             Projectile.light = 0.8f;
             Projectile.alpha = 100;
             Projectile.DamageType = DamageClass.Melee;
+            Projectile.penetrate = 10;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = -1;
         }
         public override void OnSpawn(IEntitySource source)
         {
@@ -39,12 +45,38 @@ namespace tsorcRevamp.Projectiles.Melee.Axes
             {
                 Projectile.velocity.Y += 0.2f;
             }
-            Projectile.rotation += 0.3f * (float)Projectile.direction;
-            if (Projectile.velocity.Y > 16f)
-            {
-                Projectile.velocity.Y = 16f;
-            }
+            Projectile.rotation = Projectile.velocity.ToRotation();
             Lighting.AddLight(Projectile.Center, Projectile.light * 0.4f, Projectile.light * 0.1f, Projectile.light * 1f);
+            Projectile.frameCounter++;
+            int frameSpeed = 5;
+            if (Projectile.frameCounter >= frameSpeed)
+            {
+                Projectile.frameCounter = 0;
+                Projectile.frame++; 
+                if (Projectile.frame >= Main.projFrames[Type])
+                {
+                    Projectile.frame = 0;
+                }
+            }
+        }
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            if (Main.rand.NextBool(2))
+            {
+                Projectile.velocity = -Projectile.velocity;
+                Projectile.velocity.Y *= 1.5f;
+            }
+            else
+            {
+                Projectile.velocity.Y = -Projectile.velocity.Y;
+                Projectile.velocity.Y *= 1.5f;
+            }
+            Projectile.penetrate--;
+            if (Projectile.owner == Main.myPlayer)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<AncientFireAxeFireballBurst>(), Projectile.damage / 2, Projectile.knockBack, Main.myPlayer, Projectile.CritChance);
+            }
+            return false;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

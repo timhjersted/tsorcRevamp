@@ -9226,6 +9226,9 @@ Mods: {
 			ModDD2ExplosiveTrapT2Explosion.DisplayName: Mod D D2 Explosive Trap T2 Explosion
 			ForgottenImpDagger.DisplayName: 被遗忘的小鬼之戟
 			ForgottenImpProjectile.DisplayName: 被遗忘的小鬼之戟
+			// AncientFireAxeFireballBurst.DisplayName: Ancient Fire Axe Fireball Burst
+			// AncientFireSwordSlash.DisplayName: Ancient Fire Sword Slash
+			// SupremeDragoonLanceProjectile.DisplayName: Supreme Dragoon Lance Projectile
 		}
 
 		NPCs: {

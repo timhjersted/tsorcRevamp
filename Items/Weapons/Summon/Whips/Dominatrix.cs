@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
     public class Dominatrix : ModItem
     {
-        public static float SummonTagCrit = 6;
+        public static float SummonTagCrit = 9;
         public static float CritDamage = 50;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagCrit, CritDamage);
         public override void SetStaticDefaults()

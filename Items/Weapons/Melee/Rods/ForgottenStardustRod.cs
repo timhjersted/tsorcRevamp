@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -33,15 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Rods
         {
             if (player.whoAmI == Main.myPlayer && Main.rand.NextBool(4))
             {
-                Projectile.NewProjectile(player.GetSource_ItemUse(Item),
-               (float)(Main.mouseX + Main.screenPosition.X) - 100 + Main.rand.Next(200),
-               (float)(Main.mouseY + Main.screenPosition.Y) - 500.0f,
-               (float)(-40 + Main.rand.Next(80)) / 10,
-               14.9f,
-               ModContent.ProjectileType<Projectiles.Meteor>(),
-               50,
-               2.0f,
-               player.whoAmI);
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), new Vector2((float)(Main.mouseX + Main.screenPosition.X) - 100 + Main.rand.Next(200), (float)(Main.mouseY + Main.screenPosition.Y) - 500.0f), new Vector2((float)(-40 + Main.rand.Next(80)) / 10, 14.9f), ModContent.ProjectileType<Projectiles.Meteor>(), 50, 2, player.whoAmI);
             }
             return true;
         }

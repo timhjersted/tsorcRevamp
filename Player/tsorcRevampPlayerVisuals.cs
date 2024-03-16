@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.Melee;
 using tsorcRevamp.Projectiles.Melee.Spears;
 using tsorcRevamp.Projectiles.Summon.ShatteredReflection;
 

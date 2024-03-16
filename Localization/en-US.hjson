@@ -1477,10 +1477,9 @@ Mods: {
 				Tooltip:
 					'''
 					This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth.
-					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicDamage}]
-					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicCritChance@1}]
-					[c/ffbf00:{$CommonItemTooltip.LifeRegen@2}]
-					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@3}.] Your previous max HP is restored when the ring is removed.
+					[c/ffbf00:{$CommonItemTooltip.Magic.DmgMult}]
+					[c/ffbf00:{$CommonItemTooltip.LifeRegen@1}]
+					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@2}.] Your previous max HP is restored when the ring is removed.
 					'''
 			}
 
@@ -1530,7 +1529,8 @@ Mods: {
 					'''
 					The great Ring of Artorias.
 					Once held strength too great for this world to bear.
-					[c/ffbf00:It now grants immunity to Powerful Curse Buildup, Blackout, Obstructed and Freezing.]
+					[c/ffbf00:It grants immunity to Blackout, Obstructed and Freezing.]
+					[c/ffbf00:On top of this, it increases the positive stats gained after being cursed by {0}%]
 					'''
 			}
 
@@ -3082,10 +3082,8 @@ Mods: {
 				DisplayName: Witchking Robe
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Summon.DmgMult@2}
-					{$CommonItemTooltip.IncreasesMaxMinionsBy@3}
-					{$CommonItemTooltip.Summon.AtkSpeed}
-					{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
+					{$CommonItemTooltip.Summon.DmgMult}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
 					{$CommonItemTooltip.SetBonus}Empowers the Witchking's Sword
 					'''
 			}
@@ -5418,7 +5416,7 @@ Mods: {
 				DisplayName: Tome of Health
 				Tooltip:
 					'''
-					Spell tome that heals 220 HP
+					Spell tome that heals {0} HP
 					Shares cooldown with potions
 					Cannot be used with "Quick Heal"
 					'''
@@ -5949,9 +5947,8 @@ Mods: {
 				DisplayName: Ancient Dragon Lance
 				Tooltip:
 					'''
-					Said to pierce any armor, even through walls
-					Can hit multiple times
-					Inherits Trident water effect
+					Said to pierce any armor({0} armor penetration)
+					Inherits Tridents water effect
 					'''
 			}
 
@@ -5965,17 +5962,13 @@ Mods: {
 				Tooltip:
 					'''
 					Celestial lance fabled to hold sway over the world.
-					Doubled damage while falling and has a chance to heal 6 HP on hit.
+					{0}% increased damage while falling and has a chance to heal {1} HP on hit.
 					'''
 			}
 
 			CobaltHalberd: {
 				DisplayName: Cobalt Halberd
-				Tooltip:
-					'''
-					Left-click to stab like a spear, right-click to swing
-					Swing strike does 25% more damage
-					'''
+				Tooltip: ""
 			}
 
 			DragoonLance: {
@@ -6028,7 +6021,7 @@ Mods: {
 				Tooltip:
 					'''
 					Legendary spear fabled to hold sway over the world.
-					Increases attack damage by 30% when falling and has a chance to heal 3 HP on hit.
+					Increases attack damage by {0}% when falling and has a chance to heal {1} HP on hit.
 					'''
 			}
 
@@ -6038,7 +6031,6 @@ Mods: {
 					'''
 					Does random damage from 0 to {0}
 					Maximum damage is increased by damage modifiers.
-					<right> to stab like a spear
 					'''
 			}
 
@@ -7505,6 +7497,7 @@ Mods: {
 					Grants {2}% lifesteal for {3} seconds after reviving if worn
 					Lifesteal stops after healing to {4}% life
 					Cooldown only refreshes while wearing this
+					Needs {5} seconds to charge up during a boss fight
 					'''
 			}
 
@@ -9222,6 +9215,9 @@ Mods: {
 			ModDD2ExplosiveTrapT2Explosion.DisplayName: Mod D D2 Explosive Trap T2 Explosion
 			ForgottenImpDagger.DisplayName: Forgotten Imp Dagger
 			ForgottenImpProjectile.DisplayName: Forgotten Imp Projectile
+			AncientFireAxeFireballBurst.DisplayName: Ancient Fire Axe Fireball Burst
+			AncientFireSwordSlash.DisplayName: Ancient Fire Sword Slash
+			SupremeDragoonLanceProjectile.DisplayName: Supreme Dragoon Lance Projectile
 		}
 
 		NPCs: {

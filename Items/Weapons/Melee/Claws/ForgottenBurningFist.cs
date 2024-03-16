@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -46,15 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
         {
             if (player.whoAmI == Main.myPlayer && Main.rand.NextBool(10))
             {
-                Projectile.NewProjectile(player.GetSource_ItemUse(Item),
-               player.position.X,
-               player.position.Y,
-               (float)(-40 + Main.rand.Next(80)) / 10,
-               14.9f,
-               ModContent.ProjectileType<Projectiles.GreatFireballBall>(),
-               70,
-               2.0f,
-               player.whoAmI);
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.position, new Vector2((float)(-40 + Main.rand.Next(80)) / 10, 14.9f), ModContent.ProjectileType<Projectiles.GreatFireballBall>(), 70, 2, player.whoAmI);
             }
             return true;
         }

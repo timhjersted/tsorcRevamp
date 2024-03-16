@@ -8,10 +8,9 @@ namespace tsorcRevamp.Items.Accessories.Magic
     public class DuskCrownRing : ModItem
     {
         public static float MagicDmg = 100f;
-        public static int MagicCrit = 50;
         public static int LifeRegen = 7;
         public static float BadMaxLife = 50f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MagicDmg, MagicCrit, LifeRegen, BadMaxLife);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MagicDmg, LifeRegen, BadMaxLife);
         public override void SetStaticDefaults()
         {
         }
@@ -29,8 +28,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
         public override void UpdateEquip(Player player)
         {
             player.statLifeMax2 = (int)(player.statLifeMax2 * (1f - BadMaxLife / 100f));
-            player.GetDamage(DamageClass.Magic) += MagicDmg / 100f;
-            player.GetCritChance(DamageClass.Magic) += MagicCrit;
+            player.GetDamage(DamageClass.Magic) *= 1f + MagicDmg / 100f;
             player.lifeRegen += LifeRegen;
         }
     }

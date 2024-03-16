@@ -11,8 +11,7 @@ namespace tsorcRevamp.Buffs
         public const float EnduranceResistBonus = 1f;
         public const float IceBarrierResistBonus = 8f;
         public const float SolarDR = 25f;
-        public const float BeetleDR = 17f;
-        public const float NebulaDMG = 12f;
+        public const float BeetleDR = 18f;
         public override void Update(int type, Player player, ref int buffIndex)
         {
             if (type == BuffID.ManaSickness)
@@ -72,21 +71,6 @@ namespace tsorcRevamp.Buffs
             if (type == BuffID.BeetleEndurance3)
             {
                 player.endurance += BeetleDR * 3f / 100f;
-            }
-
-            if (type == BuffID.NebulaUpDmg1)
-            {
-                player.GetDamage(DamageClass.Generic) += -0.15f + NebulaDMG / 100f;
-            }
-
-            if (type == BuffID.NebulaUpDmg2)
-            {
-                player.GetDamage(DamageClass.Generic) += -0.3f + NebulaDMG / 100f * 2f;
-            }
-
-            if (type == BuffID.NebulaUpDmg3)
-            {
-                player.GetDamage(DamageClass.Generic) += -0.45f + NebulaDMG / 100f * 3f;
             }
         }
 
@@ -150,21 +134,6 @@ namespace tsorcRevamp.Buffs
             if (type == BuffID.BeetleEndurance3)
             {
                 tip = LangUtils.GetTextValue("CommonItemTooltip.DRStat", BeetleDR * 3);
-            }
-
-            if (type == BuffID.NebulaUpDmg1)
-            {
-                tip = Language.GetTextValue("CommonItemTooltip.PercentIncreasedDamage", NebulaDMG);
-            }
-
-            if (type == BuffID.NebulaUpDmg2)
-            {
-                tip = Language.GetTextValue("CommonItemTooltip.PercentIncreasedDamage", NebulaDMG * 2f);
-            }
-
-            if (type == BuffID.NebulaUpDmg3)
-            {
-                tip = Language.GetTextValue("CommonItemTooltip.PercentIncreasedDamage", NebulaDMG * 3f);
             }
         }
 
