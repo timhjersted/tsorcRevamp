@@ -67,7 +67,7 @@ Mods: {
 			StaminaRegen: 增加 {0}% 耐力再生
 			StaminaRecovery: 增加 {0}% 耐力回复速度
 			DRStat: 增加 {0} 抵抗力
-			BadDRStat: 减少 {0}% 伤害减免
+			BadDRStat: 减少 {0}% 抵抗力
 			Cooldown: "{0} 秒冷却"
 			CritDmg: 暴击时造成 {0}% 额外伤害
 			LifeThreshold: 当生命值低于 {0}% 时，
@@ -1477,10 +1477,9 @@ Mods: {
 				Tooltip:
 					'''
 					这枚魔法皇冠样式的魔戒是乌拉席露的黄昏公主出生时铸造的
-					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicDamage}]
-					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicCritChance@1}]
-					[c/ffbf00:{$CommonItemTooltip.LifeRegen@2}]
-					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@3}.] 当这枚戒指被摘下时，你的最大生命值会恢复至正常值
+					[c/ffbf00:{$CommonItemTooltip.Magic.DmgMult}]
+					[c/ffbf00:{$CommonItemTooltip.LifeRegen@1}]
+					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@2}.] 当这枚戒指被摘下时，你的最大生命值会恢复至正常值
 					'''
 			}
 
@@ -1530,7 +1529,8 @@ Mods: {
 					'''
 					亚尔特留斯曾佩戴的戒指
 					曾拥有着这个世界所无法承受的力量
-					[c/ffbf00:现在它可以使佩戴者免疫诅咒、黑视、遮蔽与冰冻]
+					[c/ffbf00:免疫、黑视、遮蔽与冰冻]
+					[c/ffbf00:在诅咒达到 {0}%后，提高从诅咒获得的正面属性增益幅度]
 					'''
 			}
 
@@ -2739,7 +2739,7 @@ Mods: {
 					'''
 					一套由传奇生物的外壳制成的盔甲
 					{$CommonItemTooltip.PercentIncreasedRangedCritChance}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@1}远程暴击率 x{3} 倍
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@1}远程暴击率翻倍（最多到 {3}%）
 					{$CommonItemTooltip.PercentChanceToSaveAmmo@2}
 					'''
 			}
@@ -3083,10 +3083,8 @@ Mods: {
 				DisplayName: 巫师王长袍
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Summon.DmgMult@2}
-					{$CommonItemTooltip.IncreasesMaxMinionsBy@3}
-					{$CommonItemTooltip.Summon.AtkSpeed}
-					{$CommonItemTooltip.IncreasesWhipRangeByPercent@1}
+					{$CommonItemTooltip.Summon.DmgMult}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
 					{$CommonItemTooltip.SetBonus}增强了巫师王之剑
 					'''
 			}
@@ -3749,7 +3747,7 @@ Mods: {
 					[c/6efaff:召唤伤害减少至 {0}%，用鞭子攻击敌人会增加一层征服者堆叠（暴击时增加两层）]
 					[c/6efaff:堆叠层数增加你的召唤伤害，如果一段时间没有刷新则堆叠层数会减少]
 					[c/6efaff:每层增加 {1}% 伤害，最高到 {3} 层获得 {2}% 加成]
-					[c/6efaff:鞭子范围减少 {4}%]
+					[c/6efaff:满层时，增加 {4}% 召唤标记持续时间]
 					'''
 				End:
 					'''
@@ -4266,7 +4264,6 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance}
 					{$CommonItemTooltip.Thorns@1}，获得战斗药水效果
 					{$CommonItemTooltip.BadDRStat@2}
-					{$CommonItemTooltip.DmgTaken@3}
 					不与恶魔药水、护甲药水或力量药水叠加
 					'''
 			}
@@ -5418,9 +5415,9 @@ Mods: {
 				DisplayName: 生命之书
 				Tooltip:
 					'''
-					治疗 220 生命值的法术书
+					治疗 {0} 生命值的魔法书
 					共享药水疾病冷却时间
-					不能与“快速治疗”一起使用
+					不能通过快速治疗快捷键使用
 					'''
 			}
 
@@ -5839,7 +5836,7 @@ Mods: {
 
 			DiamondMace: {
 				DisplayName: 钻石权杖
-				Tooltip: 一把钻石做的权杖，有1/15概率回复20点生命
+				Tooltip: 一把钻石做的权杖，有1/15概率回复 20 生命值
 			}
 
 			Mjolnir: {
@@ -5950,8 +5947,7 @@ Mods: {
 				DisplayName: 远古龙枪
 				Tooltip:
 					'''
-					据说可以穿透任何盔甲，甚至可以穿墙
-					每次攻击造成多段伤害
+					据说可以穿透任何盔甲（{0} 护甲穿透）
 					继承三叉戟的水中移动效果
 					'''
 			}
@@ -5966,17 +5962,13 @@ Mods: {
 				Tooltip:
 					'''
 					传说中的天界之矛掌管着世界
-					坠落时增加 100% 攻击伤害，每次攻击有机会回复 6 生命值
+					坠落时增加 {0}% 伤害，每次攻击有机会回复 {1} 生命值
 					'''
 			}
 
 			CobaltHalberd: {
 				DisplayName: 钴戟
-				Tooltip:
-					'''
-					左键像长矛一样戳刺，右键挥舞
-					挥舞时提高 25% 的伤害
-					'''
+				Tooltip: ""
 			}
 
 			DragoonLance: {
@@ -6029,7 +6021,7 @@ Mods: {
 				Tooltip:
 					'''
 					称霸世界的传说长矛
-					坠落时增加 30% 攻击伤害，每次攻击有机会回复 3 点生命值
+					坠落时增加 {0}% 伤害，每次攻击有机会回复 {1} 生命值
 					'''
 			}
 
@@ -6039,7 +6031,6 @@ Mods: {
 					'''
 					造成从 0 到 {0} 的随机伤害
 					随伤害词缀的最大伤害变化而变化
-					<right> 像长矛一样刺出
 					'''
 			}
 
@@ -6436,7 +6427,6 @@ Mods: {
 					召唤圣甲虫武士为你战斗
 					每三次攻击使用一次[c/FF00FF:电击猛击]
 					只能存在一个
-					{$CommonItemTooltip.Summon.BaseCritChance}
 					'''
 			}
 
@@ -6458,7 +6448,6 @@ Mods: {
 					射出的弓箭飞行一段时间或从物块反弹后将追踪光标所在的位置
 					重复召唤 {1} 次后猫头鹰弓箭手将射出两支箭
 					每次重复召唤将增加 {0}% 伤害
-					{$CommonItemTooltip.Summon.BaseCritChance}
 					'''
 			}
 
@@ -6489,8 +6478,7 @@ Mods: {
 					'''
 					召唤一只灵灰骑士为你而战
 					灵灰骑士可以穿墙攻击敌人
-					{$CommonItemTooltip.Summon.BaseCritChance}
-					{$CommonItemTooltip.CritDmg@1}
+					{$CommonItemTooltip.CritDmg}
 					'''
 			}
 
@@ -7509,6 +7497,7 @@ Mods: {
 					复活后获得凤凰涅槃增益，造成伤害的 {2}% 转化为自己的生命值，持续 {3} 秒
 					凤凰涅槃最多恢复 {4}% 的生命值
 					只有佩戴此物品时才会进入冷却
+					Boss存活时需要 {5} 秒充能
 					'''
 			}
 
@@ -7590,10 +7579,10 @@ Mods: {
 					仆从栏: {5}
 					哨兵栏: {6}
 					鞭子范围: {7}%
-					用鞭子的尖端击中敌人总是会造成暴击（50% 伤害加成）
-					每个召唤物有 4% 的基础暴击率
-					召唤标记暴击率会增加此基础值
-					实际召唤暴击率: 基础召唤标记暴击率 * 玩家召唤暴击率
+					用鞭子的尖端击中敌人总是会造成暴击
+					召唤物受到玩家的召唤暴击率加成
+					召唤标记暴击率乘算增加召唤物的暴击率
+					召唤暴击造成的伤害由其它职业 200% 降为 150%
 					'''
 				Throwing:
 					'''
@@ -7692,9 +7681,8 @@ Mods: {
 				Tooltip:
 					'''
 					左键像剑一样挥舞，并对命中的目标施加疯狂状态
-					<right>召唤影怪为你而战
+					右键召唤影怪为你而战
 					影怪只攻击疯狂状态的敌人
-					{$CommonItemTooltip.Summon.BaseCritChance}
 					'''
 			}
 
@@ -9226,9 +9214,9 @@ Mods: {
 			ModDD2ExplosiveTrapT2Explosion.DisplayName: Mod D D2 Explosive Trap T2 Explosion
 			ForgottenImpDagger.DisplayName: 被遗忘的小鬼之戟
 			ForgottenImpProjectile.DisplayName: 被遗忘的小鬼之戟
-			// AncientFireAxeFireballBurst.DisplayName: Ancient Fire Axe Fireball Burst
-			// AncientFireSwordSlash.DisplayName: Ancient Fire Sword Slash
-			// SupremeDragoonLanceProjectile.DisplayName: Supreme Dragoon Lance Projectile
+			AncientFireAxeFireballBurst.DisplayName: 古代火斧
+			AncientFireSwordSlash.DisplayName: 古代火剑
+			SupremeDragoonLanceProjectile.DisplayName: 至尊龙骑枪
 		}
 
 		NPCs: {
