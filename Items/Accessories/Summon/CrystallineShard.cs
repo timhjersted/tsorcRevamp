@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
     [LegacyName("Oxyale")]
     public class CrystallineShard : ModItem
     {
-        public const int CritChancePerMinion = 6;
+        public const int CritChancePerMinion = 4;
         public const float MaximumMinionIncrease = 2;
         public const float WhipRangeMultiplier = 33.4f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaximumMinionIncrease, WhipRangeMultiplier);

@@ -277,6 +277,10 @@ namespace tsorcRevamp.Projectiles.Summon
                 }
             }
             Projectile.spriteDirection = Projectile.direction;
+            /*if (Projectile.spriteDirection == -1)
+            {
+                Projectile.rotation -= (float)Math.PI;
+            }*/
 
             // Some visuals here
             Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 0.78f);

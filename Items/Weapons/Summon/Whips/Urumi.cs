@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     {
         public static float SummonTagArmorPen = 8;
         public const int WhipArmorPen = 10;
-        public static float SummonTagCrit = 6;
+        public static float SummonTagCrit = 8;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagArmorPen, SummonTagCrit, WhipArmorPen);
         public override void SetStaticDefaults()
         {

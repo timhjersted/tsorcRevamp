@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public override float SoundVolumeAbstract => 0.5f;
         public static float SoundVolume;
         public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/";
-        public override int Damage => 60;
+        public override int Damage => 50;
         public override float Knockback => 5f;
         public override int Width => 30;
         public override int Height => 34;

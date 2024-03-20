@@ -21,13 +21,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.height = 38;
             Item.knockBack = 4f;
             Item.DamageType = DamageClass.Melee;
-            Item.useTime = 17;
-            Item.useAnimation = 17;
+            Item.useTime = 20;
+            Item.useAnimation = 20;
+            Item.shootSpeed = 65;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Green_2;
             Item.shoot = ModContent.ProjectileType<AncientFireSwordSlash>();
-            Item.shootSpeed = 10;
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.OrangeRed;
         }

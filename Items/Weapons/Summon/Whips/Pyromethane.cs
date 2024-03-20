@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
     public class Pyromethane : ModItem
     {
-        public static float SummonTagCrit = 12;
+        public static float SummonTagCrit = 15;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagCrit);
         public override void SetStaticDefaults()
         {

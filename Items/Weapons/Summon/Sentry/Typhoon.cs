@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
         }
         public override void SetDefaults()
         {
-            Item.damage = 40;
+            Item.damage = 36;
             Item.knockBack = 9f;
             Item.mana = 10;
             Item.width = 36;

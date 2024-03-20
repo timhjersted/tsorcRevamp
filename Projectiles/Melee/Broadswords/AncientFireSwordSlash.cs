@@ -1,90 +1,102 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Melee.Broadswords
 {
     class AncientFireSwordSlash : ModProjectile
     {
-
+        public Vector2 Velocity;
+        public int ProjectileLifetime;
+        public int Frames = 6;
         public override void SetStaticDefaults()
         {
+            Main.projFrames[Type] = Frames;
+            ProjectileID.Sets.NoMeleeSpeedVelocityScaling[Type] = true;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 28;
-            Projectile.height = 58;
+            Projectile.width = 16;
+            Projectile.height = 50;
             Projectile.penetrate = -1;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
             Projectile.ownerHitCheck = true;
             Projectile.DamageType = DamageClass.Melee;
-            Projectile.timeLeft = 20;
+            ProjectileLifetime = (int)(20 / Main.player[Projectile.owner].GetTotalAttackSpeed(DamageClass.Melee));
+            Projectile.timeLeft = ProjectileLifetime;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = -1;
         }
-        public override bool PreDraw(ref Color lightColor)
+        public override void OnSpawn(IEntitySource source)
         {
-            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
-            Color color;
-            SpriteEffects spriteEffects = SpriteEffects.None;
-            if (Projectile.velocity.X > 0)
-            {
-                spriteEffects = SpriteEffects.FlipVertically;
-            }
-            if (Main.dayTime)
-            {
-                color = lightColor;
-            }
-            else
-            {
-                color = Color.White;
-            }
-
-            if (Projectile.ai[0] > 8)
-            {
-                Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, texture.Bounds, color, Projectile.rotation, texture.Size() / 2f, Projectile.scale, spriteEffects, 0);
-            }
-
-            return false;
+            Velocity = Projectile.velocity;
+            Projectile.spriteDirection = Main.player[Projectile.owner].direction;
+            Projectile.velocity = Vector2.Zero;
+            Projectile.damage /= 2;
         }
 
         public override void OnKill(int timeLeft)
         {
             for (int i = 0; i < 20; i++)
             {
-                int dust = Dust.NewDust(new Vector2(Projectile.position.X - 11, Projectile.position.Y - 11), Projectile.width + 22, Projectile.height + 22, 89, 0, 0, 70, default, 1f);
+                int dust = Dust.NewDust(new Vector2(Projectile.position.X - 11, Projectile.position.Y - 11), Projectile.width + 22, Projectile.height + 22, DustID.Torch, 0, 0, 70, default, 1f);
                 Main.dust[dust].noGravity = true;
             }
         }
 
-
+        public bool ReverseAnimation = false;
         public override void AI()
         {
-            Projectile.ai[0]++;
-            Projectile.rotation = Projectile.velocity.ToRotation();
-
-            Projectile.velocity *= 1.2f;
-
-            if (Projectile.ai[0] > 8)
+            Player player = Main.player[Projectile.owner];
+            Projectile.rotation = Velocity.ToRotation();
+            if (Projectile.spriteDirection == -1)
             {
-
-                Lighting.AddLight(Projectile.position, 0.0452f, 0.21f, 0.1f);
-
-                for (int d = 0; d < 2; d++)
-                {
-                    int dust = Dust.NewDust(new Vector2(Projectile.position.X - 11, Projectile.position.Y - 11), Projectile.width + 22, Projectile.height + 22, 89, Projectile.velocity.X * 0f, Projectile.velocity.Y * 0f, 30, default, 1f);
-                    Main.dust[dust].noGravity = true;
-
-                }
-
-                for (int d = 0; d < 2; d++)
-                {
-                    int dust = Dust.NewDust(new Vector2(Projectile.position.X - 11, Projectile.position.Y - 11), Projectile.width + 22, Projectile.height + 22, 110, Projectile.velocity.X * 0f, Projectile.velocity.Y * 0f, 30, default, 1f);
-                    Main.dust[dust].noGravity = true;
-                }
+                Projectile.rotation -= (float)Math.PI;
             }
 
+            player.heldProj = Projectile.whoAmI;
+
+            // Keep locked onto the player, but extend further based on the given velocity (Requires ShouldUpdatePosition returning false to work)
+            Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter, reverseRotation: false, addGfxOffY: false);
+            Projectile.Center = playerCenter + Velocity;
+
+            int frameSpeed = (int)Math.Round((double)ProjectileLifetime / ((double)Frames * 2));
+            Projectile.frameCounter++;
+
+            if (Projectile.frameCounter >= frameSpeed)
+            {
+                Projectile.frameCounter = 0;
+                if (!ReverseAnimation)
+                {
+                    Projectile.frame++;
+                }
+                else
+                {
+                    Projectile.frame--;
+                }
+                if (Projectile.frame >= Main.projFrames[Type])
+                {
+                    ReverseAnimation = true;
+                    Projectile.frame -= 2;
+                }
+            }
+        }
+        public override void ModifyDamageHitbox(ref Rectangle hitbox)
+        {
+            hitbox.Inflate(14, 0);
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (Main.rand.NextBool(2))
+            {
+                target.AddBuff(BuffID.OnFire, 5 * 60);
+            }
         }
     }
 }

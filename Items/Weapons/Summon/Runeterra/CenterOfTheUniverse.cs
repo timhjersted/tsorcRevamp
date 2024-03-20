@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public override float SoundVolumeAbstract => 1f;
         public static float SoundVolume;
         public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/";
-        public override int Damage => 160;
+        public override int Damage => 150;
         public override float Knockback => 6f;
         public override int Width => 48;
         public override int Height => 56;

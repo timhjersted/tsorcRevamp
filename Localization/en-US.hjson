@@ -484,12 +484,21 @@ Mods: {
 					The full power of this blade has been sealed by the embodiment of chaos
 					Defeat it to fully unlock its power!
 					'''
-				HerculesBeetle: "{$CommonItemTooltip.Summon.TagStrength}"
-				NecromanticScroll: "{$CommonItemTooltip.Summon.TagDuration}"
+				HerculesBeetle:
+					'''
+					{$CommonItemTooltip.Summon.TagStrength}
+					{$CommonItemTooltip.Summon.CritChance@1}
+					'''
+				NecromanticScroll:
+					'''
+					{$CommonItemTooltip.Summon.TagDuration}
+					{$CommonItemTooltip.Summon.CritChance@1}
+					'''
 				PapyrusScarab:
 					'''
 					{$CommonItemTooltip.Summon.TagStrength}
 					{$CommonItemTooltip.Summon.TagDuration@1}
+					{$CommonItemTooltip.Summon.CritChance@2}
 					'''
 				FlinxFurChainedSetBonus: "{$CommonItemTooltip.IncreasesMaxMinionsBy}"
 				AngelWings: "[c/ffbf00:You will discover these in time...]"
@@ -5494,7 +5503,7 @@ Mods: {
 				Tooltip:
 					'''
 					The blade hits with a powerful magic flame.
-					Spawns a fireball on-hit.
+					Spawns a bouncy fireball on-hit, which explodes for each enemy hit and when bouncing.
 					Knocks back foes with a force that also sets them ablaze, doing damage over time.
 					'''
 			}
@@ -5528,7 +5537,7 @@ Mods: {
 				Tooltip:
 					'''
 					The blade is a magic flame, slicing quickly. 
-					Spawns a gust of fire on-hit.
+					Casts a small fiery slash on each swing.
 					Will set enemies ablaze and do damage over time.
 					'''
 			}

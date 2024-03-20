@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -46,7 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.OnFire, 12 * 60, false);
-            Projectile Fireball = Projectile.NewProjectileDirect(Projectile.InheritSource(Item), player.Center, UsefulFunctions.Aim(player.Center, target.Center, 5f), ModContent.ProjectileType<AncientFireAxeFireball>(), (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage / 2), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer, Item.crit + player.GetTotalCritChance(DamageClass.Melee));
+            Projectile Fireball = Projectile.NewProjectileDirect(Projectile.InheritSource(Item), player.Center, UsefulFunctions.Aim(player.Center, Main.MouseWorld, 7.5f), ModContent.ProjectileType<AncientFireAxeFireball>(), (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer, Item.crit + player.GetTotalCritChance(DamageClass.Melee));
         }
 
         public override void MeleeEffects(Terraria.Player player, Rectangle rectangle)

@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         }
         public override void SetDefaults()
         {
-            Item.damage = 14;
+            Item.damage = 13;
             Item.crit = BaseCritChance;
             Item.knockBack = 3f;
             Item.mana = 10;

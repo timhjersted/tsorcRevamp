@@ -19,27 +19,31 @@ namespace tsorcRevamp.Items.VanillaItems
             #region Minions
             if (item.type == ItemID.AbigailsFlower)
             {
+                item.damage = 5;
             }
             if (item.type == ItemID.BabyBirdStaff)
             {
+                item.damage = 6;
             }
             if (item.type == ItemID.SlimeStaff)
             {
+                item.damage = 7;
             }
             if (item.type == ItemID.FlinxStaff)
             {
-                item.damage = 7;
+                item.damage = 6;
             }
             if (item.type == ItemID.VampireFrogStaff)
             {
-                item.damage = 9;
+                item.damage = 8;
             }
             if (item.type == ItemID.HornetStaff)
             {
+                item.damage = 11;
             }
             if (item.type == ItemID.ImpStaff)
             {
-                item.damage = 16;
+                item.damage = 14;
             }
             if (item.type == ItemID.SpiderStaff)
             {
@@ -51,6 +55,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.PirateStaff)
             {
+                item.damage = 37;
             }
             if (item.type == ItemID.Smolstar)
             {
@@ -58,35 +63,39 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.OpticStaff)
             {
+                item.damage = 22;
             }
             if (item.type == ItemID.PygmyStaff)
             {
+                item.damage = 37;
             }
             if (item.type == ItemID.StormTigerStaff)
             {
-                item.damage = 34;
+                item.damage = 33;
             }
             if (item.type == ItemID.DeadlySphereStaff)
             {
-                item.damage = 35;
+                item.damage = 34;
             }
             if (item.type == ItemID.RavenStaff)
             {
-                item.damage = 48;
+                item.damage = 47;
             }
             if (item.type == ItemID.XenoStaff)
             {
-                item.damage = 30;
+                item.damage = 28;
             }
             if (item.type == ItemID.TempestStaff)
             {
+                //not gonna nerf this so it might actually have a use
             }
             if (item.type == ItemID.StardustCellStaff)
             {
+                //not gonna nerf this so it might actually have a use
             }
             if (item.type == ItemID.StardustDragonStaff)
             {
-                item.damage = 30;
+                item.damage = 26;
             }
             #endregion
 
@@ -249,7 +258,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagStrengthBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.HerculesBeetle").FormatWith(MethodSwaps.SummonTagDurationBoost)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagStrengthBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.HerculesBeetle").FormatWith(MethodSwaps.ScrollSummonTagDurationBoost, MethodSwaps.BeetleSummonCritChance)));
                 }
                 int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
                 if (ttindex1 != -1)
@@ -262,7 +271,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
                 if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagDurationBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.NecromanticScroll").FormatWith(MethodSwaps.SummonTagDurationBoost)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagDurationBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.NecromanticScroll").FormatWith(MethodSwaps.ScrollSummonTagDurationBoost, MethodSwaps.ScrollSummonCritChance)));
                 }
                 int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
                 if (ttindex1 != -1)
@@ -275,7 +284,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
                 if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagStrengthDurationBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.PapyrusScarab").FormatWith(MethodSwaps.SummonTagStrengthBoost, MethodSwaps.SummonTagDurationBoost)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagStrengthDurationBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.PapyrusScarab").FormatWith(MethodSwaps.BeetleSummonTagStrengthBoost, MethodSwaps.ScrollSummonTagDurationBoost, MethodSwaps.ScarabSummonCritChance)));
                 }
                 int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
                 if (ttindex1 != -1)

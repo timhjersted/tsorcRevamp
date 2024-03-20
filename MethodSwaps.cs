@@ -1429,8 +1429,11 @@ namespace tsorcRevamp
             orig(self, i);
         }
 
-        public static float SummonTagStrengthBoost = 50;
-        public static float SummonTagDurationBoost = 50;
+        public static float BeetleSummonTagStrengthBoost = 50;
+        public const float BeetleSummonCritChance = 7f;
+        public static float ScrollSummonTagDurationBoost = 50;
+        public const float ScrollSummonCritChance = 8f;
+        public const float ScarabSummonCritChance = BeetleSummonCritChance + ScrollSummonCritChance;
         private static void On_Player_ApplyEquipFunctional(On_Player.orig_ApplyEquipFunctional orig, Player self, Item currentItem, bool hideVisual)
         {
             var modPlayer = self.GetModPlayer<tsorcRevampPlayer>();
@@ -1438,23 +1441,26 @@ namespace tsorcRevamp
             {
                 self.endurance += MinorEdits.WormScarfResistBonus / 100f;
             }
-            if (currentItem.type == ItemID.NecromanticScroll)
-            {
-                self.GetDamage(DamageClass.Summon) -= 0.1f;
-                modPlayer.SummonTagDuration += SummonTagDurationBoost / 100f;
-            }
             if (currentItem.type == ItemID.HerculesBeetle)
             {
                 self.GetKnockback(DamageClass.Summon) -= 2f;
                 self.GetDamage(DamageClass.Summon) -= 0.15f;
-                modPlayer.SummonTagStrength += SummonTagStrengthBoost / 100f;
+                self.GetCritChance(DamageClass.Summon) += BeetleSummonCritChance;
+                modPlayer.SummonTagStrength += BeetleSummonTagStrengthBoost / 100f;
+            }
+            if (currentItem.type == ItemID.NecromanticScroll)
+            {
+                self.GetDamage(DamageClass.Summon) -= 0.1f;
+                self.GetCritChance(DamageClass.Summon) += ScrollSummonCritChance;
+                modPlayer.SummonTagDuration += ScrollSummonTagDurationBoost / 100f;
             }
             if (currentItem.type == ItemID.PapyrusScarab)
             {
                 self.GetKnockback(DamageClass.Summon) -= 2f;
                 self.GetDamage(DamageClass.Summon) -= 0.15f;
-                self.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength += SummonTagStrengthBoost / 100f;
-                modPlayer.SummonTagDuration += SummonTagDurationBoost / 100f;
+                self.GetCritChance(DamageClass.Summon) += ScarabSummonCritChance;
+                self.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength += BeetleSummonTagStrengthBoost / 100f;
+                modPlayer.SummonTagDuration += ScrollSummonTagDurationBoost / 100f;
             }
             orig(self, currentItem, hideVisual);
         }
