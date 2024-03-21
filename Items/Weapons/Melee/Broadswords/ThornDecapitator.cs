@@ -3,49 +3,50 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Melee.Broadswords;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     public class ThornDecapitator : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Thorn Decapitator");
-            // Tooltip.SetDefault("Creates spore clouds on top of struck enemies");
-
-        }
-        public int shootstacks = 0;
-
         public override void SetDefaults()
         {
             Item.width = 70;
             Item.height = 80;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 25;
-            Item.autoReuse = true;
             Item.useTime = 25;
-            Item.maxStack = 1;
-            Item.damage = 29;
+            Item.damage = 22;
             Item.knockBack = 5;
-            Item.useTurn = false;
+            Item.mana = 6;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.Orange_3;
             Item.DamageType = DamageClass.Melee;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            Item.shoot = ModContent.ProjectileType<ThornDecapitatorThorn>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Cyan;
-            Item.shootSpeed = 1f;
-            Item.scale = 0.8f;
+            Item.shootSpeed = 5;
         }
-        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
+        public override bool AltFunctionUse(Player player)
         {
-            target.AddBuff(BuffID.Poisoned, 3 * 60);
-            Projectile Spore = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), target.Center, Vector2.Zero, ProjectileID.SporeTrap, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
-            Spore.DamageType = DamageClass.Melee;
-            Spore.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit;
-            Spore.damage /= 3;
-            Spore.netUpdate = true;
+            if (!Main.mouseLeft)
+            {
+                return true;
+            }
+            else
+            {
+                player.altFunctionUse = 1;
+                return false;
+            }
+        }
+        public override bool CanShoot(Player player)
+        {
+            if (player.altFunctionUse != 2)
+            {
+                return true;
+            }
+            return false;
         }
         public override void AddRecipes()
         {

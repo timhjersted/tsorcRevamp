@@ -5658,7 +5658,11 @@ Mods: {
 
 			MagmaTooth: {
 				DisplayName: Magma Tooth
-				Tooltip: Chance to light enemies on hellish fire.
+				Tooltip:
+					'''
+					Spawns an erupting volcano every 10th hit
+					Inflicts hellfire
+					'''
 			}
 
 			MoonlightGreatsword: {
@@ -5696,7 +5700,7 @@ Mods: {
 					'''
 					A sword used to kill magic users.
 					[c/ffbf00:Does up to 8x damage to mages]
-					Every third hit with the Blade generates a magic slash
+					Casts runes close to the user
 					'''
 			}
 
@@ -5705,7 +5709,7 @@ Mods: {
 				Tooltip:
 					'''
 					A blade honed sharp by the magic of the coming night.
-					Right click to dash, consuming stamina and making you immune for a moment
+					Right click to dash, consuming stamina, increasing damage dealt and making you immune for a moment
 					'''
 			}
 
@@ -5731,7 +5735,7 @@ Mods: {
 
 			ThornDecapitator: {
 				DisplayName: Thorn Decapitator
-				Tooltip: Creates spore clouds on top of struck enemies
+				Tooltip: Casts thorns that move around the player randomly
 			}
 
 			UltimaWeapon: {
@@ -7122,6 +7126,7 @@ Mods: {
 				Details:
 					'''
 					[c/7fffd4:Turboboost increases spaceships damage, movement speed and increases the vessel's attack speed]
+					[c/7fffd4:Turboboost adds {3}% max health damage on-hit, up to {4}]
 					[c/7fffd4:Turboboost will actively drain your mana]
 					The [c/b22222:vessel] itself uses half a minion slot and scales with the amount of [c/b22222:spaceships] summoned
 					[c/b22222:Vessel's hits apply the Shocked debuff and can mark enemies]
@@ -7149,10 +7154,11 @@ Mods: {
 				Details:
 					'''
 					[c/00008b:Grand Comet deals massive damage in a huge area and leaves behind a shockwave]
-					[c/00008b:Grand Comet applies the Awestruck debuff]({$CommonItemTooltip.SecondDuration@3})
+					[c/00008b:Grand Comet applies the Awestruck debuff]({$CommonItemTooltip.SecondDuration@5})
 					This further increases star damage and deals massive damage over time
-					Star damage increase is {4}% multiplicatively
+					Star damage increase is {6}% multiplicatively
 					[c/7fffd4:Turboboost increases star damage, movement speed and increases the Star Forger's attack speed]
+					[c/7fffd4:Turboboost adds {3}% max health damage on-hit, up to {4}]
 					[c/7fffd4:Turboboost will actively drain your mana]
 					The [c/b22222:Star Forger] itself uses half a minion slot and scales with the amount of [c/b22222:stars] summoned
 					[c/b22222:Star Forger's hits apply the Sunburnt debuff and can mark enemies]
@@ -9227,6 +9233,10 @@ Mods: {
 			AncientFireAxeFireballBurst.DisplayName: Ancient Fire Axe Fireball Burst
 			AncientFireSwordSlash.DisplayName: Ancient Fire Sword Slash
 			SupremeDragoonLanceProjectile.DisplayName: Supreme Dragoon Lance Projectile
+			MagmaToothVolcano.DisplayName: Magma Tooth Volcano
+			RuneBladeRune.DisplayName: Rune Blade Rune
+			ThornDecapitatorThorn.DisplayName: Thorn Decapitator Thorn
+			MjolnirElectrosphere.DisplayName: Mjolnir Electrosphere
 		}
 
 		NPCs: {

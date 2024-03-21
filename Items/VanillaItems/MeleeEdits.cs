@@ -26,11 +26,6 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.width = 36;
                 item.height = 40;
             }
-            if (item.type == ItemID.Seedler)
-            {
-                item.width = 48;
-                item.height = 48;
-            }
             // Phaseblades
             if (item.type == ItemID.BluePhaseblade || item.type == ItemID.GreenPhaseblade || item.type == ItemID.YellowPhaseblade || item.type == ItemID.RedPhaseblade
                 || item.type == ItemID.WhitePhaseblade || item.type == ItemID.PurplePhaseblade || item.type == ItemID.OrangePhaseblade)
@@ -47,11 +42,6 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.width = 56;
                 item.height = 56;
-            }
-            if (item.type == ItemID.ChlorophyteClaymore)
-            {
-                item.width = 66;
-                item.height = 66;
             }
             if (item.type == ItemID.BloodLustCluster)
             {
@@ -99,18 +89,6 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.mana = 6;
             }
-            if (item.type == ItemID.Trimarang)
-            {
-                item.mana = 6;
-            }
-            if (item.type == ItemID.IceBlade)
-            {
-                item.mana = 8;
-            }
-            if (item.type == ItemID.EnchantedSword)
-            {
-                item.mana = 9;
-            }
             if (item.type == ItemID.FruitcakeChakram)
             {
                 item.mana = 5;
@@ -119,9 +97,22 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.mana = 4;
             }
+            if (item.type == ItemID.Trimarang)
+            {
+                item.mana = 6;
+            }
+            if (item.type == ItemID.IceBlade)
+            {
+                item.shootsEveryUse = true;
+                item.mana = 7;
+            }
+            if (item.type == ItemID.EnchantedSword)
+            {
+                item.mana = 9;
+            }
             if (item.type == ItemID.ThunderSpear)
             {
-                item.mana = 7;
+                item.mana = 5;
             }
             if (item.type == ItemID.Starfury)
             {
@@ -129,13 +120,12 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.LightsBane)
             {
-                item.mana = 9;
                 item.width = 50;
                 item.height = 50;
             }
             if (item.type == ItemID.BladeofGrass)
             {
-                item.mana = 13;
+                item.mana = 7;
                 item.width = 68;
                 item.height = 68;
             }
@@ -151,10 +141,6 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.mana = 10;
             }
-            if (item.type == ItemID.NightsEdge)
-            {
-                item.mana = 14;
-            }
             if (item.type == ItemID.FlyingKnife)
             {
                 item.mana = 20;
@@ -162,10 +148,11 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.BeamSword)
             {
                 item.shootsEveryUse = true;
-                item.mana = 15;
+                item.mana = 12;
             }
             if (item.type == ItemID.Frostbrand)
             {
+                item.shootsEveryUse = true;
                 item.mana = 14;
             }
             if (item.type == ItemID.Bananarang)
@@ -178,98 +165,101 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.LightDisc)
             {
-                item.mana = 16;
+                item.mana = 13;
             }
             if (item.type == ItemID.BouncingShield)
             {
-                item.mana = 22;
-            }
-            if (item.type == ItemID.Excalibur)
-            {
-                item.mana = 20;
+                item.mana = 17;
             }
             if (item.type == ItemID.ChlorophyteSaber)
             {
+                item.shootsEveryUse = true;
                 item.mana = 16;
             }
             if (item.type == ItemID.ChlorophyteClaymore)
             {
+                item.width = 66;
+                item.height = 66;
+                item.shootsEveryUse = true;
                 item.mana = 19;
-            }
-            if (item.type == ItemID.TrueExcalibur)
-            {
-                item.damage = 75;
-                item.mana = 26;
             }
             if (item.type == ItemID.TrueNightsEdge)
             {
                 item.damage = 85;
-                item.mana = 33;
+                item.mana = 20;
+            }
+            if (item.type == ItemID.Seedler)
+            {
+                item.shootsEveryUse = true;
+                item.width = 48;
+                item.height = 48;
+                item.mana = 13;
             }
             if (item.type == ItemID.PossessedHatchet)
             {
-                item.mana = 20;
+                item.damage = 110; //vanilla 80
+                item.mana = 14;
+            }
+            if (item.type == ItemID.Flairon)
+            {
+                item.mana = 19;
+            }
+            if (item.type == ItemID.GolemFist)
+            {
+                item.damage = 125; //vanilla 90
             }
             if (item.type == ItemID.PaladinsHammer)
             {
-                item.mana = 20;
+                item.mana = 17;
             }
             if (item.type == ItemID.TerraBlade)
             {
-                item.mana = 35;
+                item.mana = 25;
             }
             if (item.type == ItemID.TheHorsemansBlade)
             {
                 item.damage = 200;
                 item.useTime = 20;
                 item.useAnimation = 20;
-                item.mana = 28;
+                item.mana = 18;
             }
             if (item.type == ItemID.DD2SquireBetsySword)
             {
-                item.mana = 22;
+                item.mana = 20;
             }
             if (item.type == ItemID.PiercingStarlight)
             {
-                item.damage = 50;
+                item.damage = 35;
             }
             if (item.type == ItemID.VampireKnives)
             {
                 item.damage = 24;
-                item.mana = 35;
+                item.mana = 33;
             }
             if (item.type == ItemID.ScourgeoftheCorruptor)
             {
-                item.mana = 17;
+                item.mana = 16;
+            }
+            if (item.type == ItemID.InfluxWaver)
+            {
+                item.shootsEveryUse = true;
+                item.mana = 25;
             }
             if (item.type == ItemID.DayBreak)
             {
-                item.mana = 40;
+                item.mana = 30;
             }
             if (item.type == ItemID.Terrarian)
             {
-                item.mana = 50;
+                item.mana = 33;
             }
             if (item.type == ItemID.Meowmere)
             {
-                item.mana = 50;
+                item.mana = 33;
             }
             if (item.type == ItemID.StarWrath)
             {
-                item.mana = 60;
-            }
-            if (item.type == ItemID.Flairon)
-            {
-                item.mana = 25;
-            }
-            if (item.type == ItemID.GolemFist)
-            {
-                item.damage = 125; //vanilla 90
-            }
-            if (item.type == ItemID.PossessedHatchet)
-            {
-                item.damage = 110; //vanilla 80
-                item.mana = 10;
+                item.mana = 36;
             }
         }
 

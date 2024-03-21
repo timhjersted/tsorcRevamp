@@ -5,52 +5,42 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.Projectiles.Melee;
+using tsorcRevamp.Projectiles.Melee.Broadswords;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     class RuneBlade : ModItem
     {
+        public int RuneRange = 150;
         public override void SetStaticDefaults()
         {
         }
 
         public override void SetDefaults()
         {
-            Item.height = 38;
-            Item.width = 38;
+            Item.height = 44;
+            Item.width = 44;
             Item.rare = ItemRarityID.Green;
-            Item.damage = 20;
+            Item.damage = 18;
             Item.knockBack = 5;
             Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
+            Item.useTime = 20;
             Item.useAnimation = 20;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 20;
             Item.value = PriceByRarity.Green_2;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
-            Item.shootSpeed = 7.5f;
+            Item.shoot = ModContent.ProjectileType<RuneBladeRune>();
+            Item.shootSpeed = 0;
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Cyan;
 
         }
-        public int HitStacks = 0;
-        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            HitStacks += 1;
-
-            if (HitStacks >= 3)
-            {
-                Projectile Slash = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, Main.MouseWorld - player.Center, ProjectileID.DD2SquireSonicBoom, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer, 0, 0, 1);
-                Slash.damage += Slash.damage / 2; //basically 1.5x
-                Slash.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit;
-                Slash.timeLeft = 15;
-                Slash.scale = 0.8f;
-                Slash.penetrate = 3;
-                Slash.netUpdate = true;
-
-                HitStacks = 0;
-            }
+            damage /= 2;
+            position = player.Center + Main.rand.NextVector2Circular(RuneRange, RuneRange);
         }
 
         public override void MeleeEffects(Player player, Rectangle rectangle)

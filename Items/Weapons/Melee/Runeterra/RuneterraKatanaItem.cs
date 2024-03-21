@@ -21,17 +21,16 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         //Plasma Wirlwind specific
         public const float DashDuration = 0.2f;
         public const int DashCooldown = 6;
-        public static float PercentHealthDamage = 0.1f;
-        public static int HealthDamageCap = 450;
-        public abstract int DashCooldownBuffID { get; }
-        public abstract int DashDustID { get; }
-        public abstract int DashBuffID { get; }
-        public abstract int SpinProjectileID { get; }
+        public static float DashAndSlashPercentHealthDamage = 1f;
+        public static int HealthDamageCap = (int)(450000f * DashAndSlashPercentHealthDamage / 100f);
 
         //Nightbringer specific
         public const int WindwallDuration = 5;
         public const int WindwallCooldown = 30;
-
+        public abstract int DashCooldownBuffID { get; }
+        public abstract int DashDustID { get; }
+        public abstract int DashBuffID { get; }
+        public abstract int SpinProjectileID { get; }
         public abstract int Tier { get; }
         public abstract float SwingSoundVolume { get; }
         public abstract int RarityID { get; }
@@ -211,6 +210,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     Item.useStyle = ItemUseStyleID.Shoot;
                     Item.noUseGraphic = true;
                     Item.noMelee = true;
+                    player.AddBuff(ThrustCooldownBuffID, AttackSpeedScalingDuration);
                     SoundEngine.PlaySound(new SoundStyle(SoundPath + "Spin") with { Volume = 1f });
                     if (Main.myPlayer == player.whoAmI)
                     {
@@ -249,6 +249,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     Item.useStyle = ItemUseStyleID.Shoot;
                     Item.noUseGraphic = true;
                     Item.noMelee = true;
+                    player.AddBuff(ThrustCooldownBuffID, AttackSpeedScalingDuration);
                     SoundEngine.PlaySound(new SoundStyle(SoundPath + "Spin") with { Volume = 1f });
                     if (Main.myPlayer == player.whoAmI)
                     {
@@ -296,7 +297,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
                 if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue(LocalizationPath + "Details").FormatWith((float)AttackSpeedScalingDuration / 60f, PercentHealthDamage, HealthDamageCap, DashCooldown, WindwallDuration, WindwallCooldown)));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue(LocalizationPath + "Details").FormatWith((float)AttackSpeedScalingDuration / 60f, DashAndSlashPercentHealthDamage, HealthDamageCap, DashCooldown, WindwallDuration, WindwallCooldown)));
                 }
             }
             else

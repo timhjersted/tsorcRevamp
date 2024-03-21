@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.timeLeft = baseTimeLeft;
             Projectile.DamageType = DamageClass.MeleeNoSpeed;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 5;
+            Projectile.localNPCHitCooldown = (Projectile.velocity == Vector2.Zero) ? 6 : 5;
         }
         private static Vector2 ringScale = new Vector2(0.2f);
         private int frameTimer;
@@ -87,7 +87,6 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.damage = (int)(Projectile.damage * 0.95f); //Multihit penalty
             float SoundVolume = 0;
             if (!Hit)
             {

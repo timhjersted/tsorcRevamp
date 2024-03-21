@@ -5,7 +5,9 @@ using System;
 using Terraria;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles;
+using static Humanizer.In;
 
 namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {
@@ -96,7 +98,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             Mouth.rotation = 0f; // might need "some" calibration
             Head.AddSegment(Mouth, false);
         }
-
         public override void AltSequenceEnd()
         {
             // Do meteor thingy...

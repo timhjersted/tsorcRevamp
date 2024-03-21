@@ -3,27 +3,27 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Melee;
+using tsorcRevamp.Projectiles.Melee.Broadswords;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     class MagmaTooth : ModItem
     {
-
+        public int HitCounter = 0;
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Chance to light enemies on hellish fire.");
         }
         public override void SetDefaults()
         {
             Item.width = 58;
             Item.height = 58;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 32;
-            Item.scale = 1.2f;
-            Item.useTime = 32;
-            Item.maxStack = 1;
-            Item.damage = 42;
-            Item.knockBack = 8;
+            Item.useAnimation = 33;
+            Item.useTime = 33;
+            Item.scale = 1.25f;
+            Item.damage = 44;
+            Item.knockBack = 7.5f;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.Orange_3;
@@ -35,10 +35,13 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile Volcano = Projectile.NewProjectileDirect(Item.GetSource_FromThis(), target.Center, Vector2.Zero, ProjectileID.Volcano, (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer);
-            Volcano.CritChance = (int)player.GetTotalCritChance(DamageClass.Melee) + Item.crit;
-            Volcano.netUpdate = true;
+            HitCounter++;
             target.AddBuff(BuffID.OnFire3, 300, false);
+            if (HitCounter >= 10)
+            {
+                Projectile.NewProjectile(Item.GetSource_FromThis(), target.Center + new Vector2(0, -20), Vector2.Zero, ModContent.ProjectileType<MagmaToothVolcano>(), (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer, player.GetTotalCritChance(DamageClass.Melee) + Item.crit);
+                HitCounter -= 10;
+            }
         }
         public override void MeleeEffects(Player player, Rectangle hitbox)
         {
@@ -49,7 +52,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.FieryGreatsword, 1);
+            recipe.AddIngredient(ItemID.FieryGreatsword);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);
 

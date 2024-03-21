@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             modifiers.SourceDamage *= 4;
-            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * PlasmaWhirlwind.PercentHealthDamage / 100f, PlasmaWhirlwind.HealthDamageCap * 3);
+            modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * PlasmaWhirlwind.DashAndSlashPercentHealthDamage / 100f, PlasmaWhirlwind.HealthDamageCap);
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

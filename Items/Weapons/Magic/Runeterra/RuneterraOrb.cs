@@ -28,7 +28,6 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
 
         public const float OrbDmgMod = 50f;
         public const float OrbReturnDmgMod = 50f;
-        public const float DmgLossOnPierce = 12f;
         public const float EssenceThiefOnKillChance = 20f;
         public const float FilledOrbDmgMod = 75f;
         public const float ShootSpeed = 20f;
@@ -37,8 +36,8 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
         public const int HealBaseValue = 4;
 
         public const float FireballDmgMod = 250f;
-        public const float FireballHPPercentDmg = 0.1f;
-        public const int FireballHPDmgCap = 450;
+        public const float FireballHPPercentDmg = 0.6f;
+        public const int FireballHPDmgCap = (int)(450000f * FireballHPPercentDmg / 100f);
         public const float MagicSunder = 20f;
         public const int FireballCD = 4;
         public const int FireballDuration = 6;

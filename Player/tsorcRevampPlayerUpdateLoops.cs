@@ -19,6 +19,7 @@ using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.VanillaItems;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
@@ -112,6 +113,8 @@ namespace tsorcRevamp
         public bool CanUseItemsWhileDodging;
 
         public bool Kraken;
+
+        public int SeveringDuskDashTime = 0;
 
         public bool Lich;
         public int LichKills = 0;
@@ -1125,6 +1128,10 @@ namespace tsorcRevamp
                 #endregion
             }
 
+            if (SeveringDuskDashTime > 0)
+            {
+                Player.GetDamage(DamageClass.Melee) += SeveringDusk.DashBonusDmg / 100f;
+            }
             if (PhoenixSkull && tsorcRevampWorld.BossAlive && !BossBlockedPhoenixRevive)
             {
                 Player.AddBuff(ModContent.BuffType<PhoenixRebirthCooldown>(), Items.Accessories.Defensive.PhoenixSkull.BossChargeDuration * 60);

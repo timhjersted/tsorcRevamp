@@ -146,7 +146,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Humanity>(), 5);
             recipe.AddIngredient(ModContent.ItemType<LivingLog>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

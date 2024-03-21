@@ -43,8 +43,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
             }
             if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
-                modifiers.SourceDamage += 0.25f;
-                modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 3000, 150);
+                modifiers.SourceDamage += InterstellarVesselGauntlet.BoostDmgAmp / 100f;
+                modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * InterstellarVesselGauntlet.BoostPercentHPDmg / 100f, InterstellarVesselGauntlet.BoostPercentHPDmgCap);
             }
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks >= 6)
             {

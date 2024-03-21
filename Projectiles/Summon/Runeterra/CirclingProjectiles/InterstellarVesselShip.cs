@@ -7,6 +7,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
+using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.NPCs;
 
@@ -43,7 +44,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
             if (owner.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
                 modifiers.SourceDamage += InterstellarVesselGauntlet.BoostDmgAmp / 100f;
-                modifiers.FinalDamage.Flat += Math.Min(target.lifeMax / 3000, 150);
+                modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * InterstellarVesselGauntlet.BoostPercentHPDmg / 100f, InterstellarVesselGauntlet.BoostPercentHPDmgCap);
             }
             if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks >= 6)
             {

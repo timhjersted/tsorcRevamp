@@ -310,6 +310,14 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 CometZone = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<GrandCometZone>(), (int)BaseOriginalDamage * 2, player.GetTotalKnockback(DamageClass.Summon).ApplyTo(player.HeldItem.knockBack * 10), player.whoAmI); //this damage only applies to the shockwave after the explosion and hits once
             }
         }
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            Player player = Main.player[Projectile.owner];
+            if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+            {
+                modifiers.FinalDamage.Flat += Math.Min(target.lifeMax * InterstellarVesselGauntlet.BoostPercentHPDmg / 100f, InterstellarVesselGauntlet.BoostPercentHPDmgCap);
+            }
+        }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
@@ -675,7 +683,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             return false;
         }
-
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(SyncAltSequence);

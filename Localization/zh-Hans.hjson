@@ -9217,6 +9217,10 @@ Mods: {
 			AncientFireAxeFireballBurst.DisplayName: 古代火斧
 			AncientFireSwordSlash.DisplayName: 古代火剑
 			SupremeDragoonLanceProjectile.DisplayName: 至尊龙骑枪
+			// MagmaToothVolcano.DisplayName: Magma Tooth Volcano
+			// RuneBladeRune.DisplayName: Rune Blade Rune
+			// ThornDecapitatorThorn.DisplayName: Thorn Decapitator Thorn
+			// MjolnirElectrosphere.DisplayName: Mjolnir Electrosphere
 		}
 
 		NPCs: {

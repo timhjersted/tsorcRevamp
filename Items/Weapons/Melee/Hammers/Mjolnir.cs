@@ -3,6 +3,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Melee;
+using tsorcRevamp.Projectiles.Melee.Hammers;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Hammers
 {
@@ -10,8 +12,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
     {
         public override void SetStaticDefaults()
         {
-            /* Tooltip.SetDefault("Shatter the earth" +
-                                "\nSummons electrospheres upon hitting an enemy"); */
         }
         public override void SetDefaults()
         {
@@ -34,14 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (hit.Crit)
-            {
-                Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center, Vector2.Zero, ProjectileID.Electrosphere, (int)(damageDone * 0.75f), hit.Knockback, Main.myPlayer);
-            }
-            else
-            {
-                Projectile.NewProjectileDirect(Projectile.GetSource_None(), target.Center, Vector2.Zero, ProjectileID.Electrosphere, damageDone, hit.Knockback, Main.myPlayer);
-            }
+            Projectile.NewProjectile(Item.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<MjolnirElectrosphere>(), (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer, player.GetTotalCritChance(DamageClass.Melee) + Item.crit);
         }
         public override void AddRecipes()
         {

@@ -44,8 +44,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
         public static int BlindingLaserSeedDmgMult = 2;
         public const int BlindingLaserCooldown = 5;
         public const int BlindingLaserBonusCritChance = 100;
-        public const float BlindingLaserPercentHPDmg = 0.1f;
-        public const int BlindingLaserHPDmgCap = 450;
+        public const float BlindingLaserPercentHPDmg = 0.8f;
+        public const int BlindingLaserHPDmgCap = (int)(450000f * BlindingLaserPercentHPDmg / 100f);
         public static int BaseLaserManaCost;
 
         public const int ShroomCooldown = 5;

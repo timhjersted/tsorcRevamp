@@ -38,6 +38,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public const float MarkDetonationCritDmgAmp = 2f;
 
         public const float BoostDmgAmp = 25f;
+        public const float BoostPercentHPDmg = 0.05f;
+        public const int BoostPercentHPDmgCap = (int)(450000f * BoostPercentHPDmg / 100f);
 
         public const int AwestruckDebuffDuration = 10;
         public const float AwestruckStarDamageAmp = 10f;
@@ -149,7 +151,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
                 int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
                 if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue(LocalizationPath + "Details", ScorchingPoint.MarkChance, ScorchingPoint.SuperBurnDuration, ScorchingPoint.SummonTagCrit, AwestruckDebuffDuration, AwestruckStarDamageAmp)));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue(LocalizationPath + "Details", ScorchingPoint.MarkChance, ScorchingPoint.SuperBurnDuration, ScorchingPoint.SummonTagCrit, InterstellarVesselGauntlet.BoostPercentHPDmg, InterstellarVesselGauntlet.BoostPercentHPDmgCap, CenterOfTheUniverse.AwestruckDebuffDuration, CenterOfTheUniverse.AwestruckStarDamageAmp)));
                 }
             }
             else

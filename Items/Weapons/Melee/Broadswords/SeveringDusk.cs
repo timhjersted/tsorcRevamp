@@ -8,13 +8,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     class SeveringDusk : ModItem
     {
+        public const float DashBonusDmg = 50f; //player gains this as bonus melee dmg while dashing
         public override void SetStaticDefaults()
         {
         }
         public override void SetDefaults()
         {
-            Item.rare = ItemRarityID.Blue;
-            Item.damage = 100;
+            Item.rare = ItemRarityID.Yellow;
+            Item.damage = 170;
             Item.width = 78;
             Item.height = 78;
             Item.knockBack = 5;
@@ -28,24 +29,22 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.DarkMagenta;
         }
-
-        int dashTimer;
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.altFunctionUse == 2)
             {
+                tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
                 tsorcRevampStaminaPlayer playerStamina = player.GetModPlayer<tsorcRevampStaminaPlayer>();
-                if (playerStamina.staminaResourceCurrent > 30)
+                if (playerStamina.staminaResourceCurrent > 30 && modPlayer.SeveringDuskDashTime < 1)
                 {
                     playerStamina.staminaResourceCurrent -= 30;
                     player.velocity = UsefulFunctions.Aim(player.Center, Main.MouseWorld, 30);
                     player.immuneTime = 30;
-                    dashTimer = 20;
+                    modPlayer.SeveringDuskDashTime = 20;
                     if (Main.netMode != NetmodeID.SinglePlayer)
                     {
                         NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, player.whoAmI, 0f, 0f, 0f, 0);
                     }
-                    tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
                     modPlayer.effectRadius = 350;
                 }
             }
@@ -58,12 +57,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void HoldItem(Player player)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().SetAuraState(tsorcAuraState.Darkness);
-            if (dashTimer > 0)
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.SetAuraState(tsorcAuraState.Darkness);
+            if (modPlayer.SeveringDuskDashTime > 0)
             {
+                player.ResetMeleeHitCooldowns();
                 player.immune = true;
-                dashTimer--;
-                if (dashTimer == 0)
+                modPlayer.SeveringDuskDashTime--;
+                if (modPlayer.SeveringDuskDashTime == 0)
                 {
                     player.velocity *= 0.1f;
                     if (Main.netMode != NetmodeID.SinglePlayer)
@@ -71,14 +72,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                         NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, player.whoAmI, 0f, 0f, 0f, 0);
                     }
                 }
-                for (int i = 0; i < Main.maxNPCs; i++)
+                /*for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC npc = Main.npc[i];
                     if (npc.active && !npc.friendly && npc.Distance(player.Center) < 70)
                     {
-                        npc.StrikeNPC(npc.CalculateHitInfo(Item.damage, 0, false, 0, DamageClass.Melee, true), false, true);
+                        npc.StrikeNPC(npc.CalculateHitInfo((int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage * 4), 0, true, 0, DamageClass.Melee, true), false, true);
                     }
-                }
+                }*/
             }
             base.HoldItem(player);
         }
