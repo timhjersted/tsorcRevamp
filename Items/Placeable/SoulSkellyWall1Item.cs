@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Placeable
             Item.useAnimation = 15;
             Item.useTime = 10;
             Item.autoReuse = true;
-            Item.maxStack = 99;
+            Item.maxStack = Item.CommonMaxStack;
             Item.consumable = true;
             Item.width = 38;
             Item.height = 44;

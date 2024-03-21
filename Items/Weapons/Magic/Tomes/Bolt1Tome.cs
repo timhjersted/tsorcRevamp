@@ -24,7 +24,6 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.height = 10;
             Item.knockBack = 0.1f;
             Item.autoReuse = true;
-            Item.maxStack = 1;
             Item.rare = ItemRarityID.Blue;
             Item.shootSpeed = 6f;
             Item.DamageType = DamageClass.Magic;

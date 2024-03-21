@@ -14,7 +14,6 @@ namespace tsorcRevamp.Items.Lore
             Item.width = 28;
             Item.height = 32;
             Item.consumable = false;
-            Item.maxStack = 1;
             Item.value = 50000;
             Item.rare = ItemRarityID.Purple;
         }

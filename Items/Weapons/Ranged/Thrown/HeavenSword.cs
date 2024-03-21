@@ -19,7 +19,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Thrown
             Item.useAnimation = 16;
             Item.useTime = 16;
             Item.autoReuse = true;
-            Item.maxStack = 1;
             Item.damage = 75;
             Item.knockBack = 5;
             Item.UseSound = SoundID.Item1;

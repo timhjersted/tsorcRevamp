@@ -15,7 +15,6 @@ namespace tsorcRevamp.Items.BossItems
         {
             Item.width = 26;
             Item.height = 32;
-            Item.maxStack = 1;
             Item.useAnimation = 45;
             Item.useTime = 45;
             Item.useStyle = ItemUseStyleID.Shoot;

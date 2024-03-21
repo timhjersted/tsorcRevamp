@@ -19,7 +19,6 @@ namespace tsorcRevamp.Items.Accessories.Magic
             Item.width = 10;
             Item.accessory = true;
             Item.height = 12;
-            Item.maxStack = 1;
             Item.value = PriceByRarity.Blue_1;
             Item.rare = ItemRarityID.Blue;
         }

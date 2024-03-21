@@ -30,7 +30,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
             Item.value = PriceByRarity.Yellow_8;
             Item.rare = ItemRarityID.Yellow;
-            Item.maxStack = 1;
             Item.UseSound = SoundID.Item1;
             Item.shoot = ModContent.ProjectileType<Projectiles.Melee.ShrapnelSaw>();
 

@@ -21,7 +21,6 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 7;
             Item.useTime = 7;
-            Item.maxStack = 1;
             Item.damage = 64;
             Item.knockBack = 8;
             Item.autoReuse = true;

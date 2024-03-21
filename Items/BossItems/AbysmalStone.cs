@@ -16,7 +16,6 @@ namespace tsorcRevamp.Items.BossItems
             Item.width = 22;
             Item.height = 24;
             Item.consumable = false;
-            Item.maxStack = 1;
             Item.value = 700000;
             Item.rare = ItemRarityID.Pink;
             Item.useTime = 45;

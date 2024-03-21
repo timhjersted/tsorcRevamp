@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.useAnimation = 60;
             Item.useTime = 60;
-            Item.maxStack = 9999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.consumable = true;
             Item.UseSound = SoundID.Item4;
             Item.rare = ItemRarityID.Pink;

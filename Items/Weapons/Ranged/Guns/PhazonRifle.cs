@@ -20,7 +20,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 12;
             Item.useTime = 4;
-            Item.maxStack = 1;
             Item.damage = 25;
             Item.knockBack = 0.01f;
             Item.autoReuse = true;

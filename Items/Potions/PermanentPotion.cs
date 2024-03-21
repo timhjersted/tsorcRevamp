@@ -104,7 +104,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             Item.width = 16;
             Item.height = 25;
             Item.consumable = false;
-            Item.maxStack = 1;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 8;
             Item.useTime = 8;
@@ -1153,7 +1152,6 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             Item.width = 16;
             Item.height = 25;
             Item.consumable = false;
-            Item.maxStack = 1;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 8;
             Item.useTime = 8;

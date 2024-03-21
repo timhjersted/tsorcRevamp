@@ -22,7 +22,6 @@ namespace tsorcRevamp.Items.Accessories.Summon
             Item.width = 32;
             Item.height = 26;
             Item.accessory = true;
-            Item.maxStack = 1;
             Item.rare = ItemRarityID.Cyan;
             Item.value = PriceByRarity.Cyan_9;
         }

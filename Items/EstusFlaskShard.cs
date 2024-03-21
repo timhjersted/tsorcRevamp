@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items
             Item.height = 12;
             Item.rare = ItemRarityID.Yellow;
             Item.value = 0;
-            Item.maxStack = 10;
+            Item.maxStack = Item.CommonMaxStack;
         }
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)

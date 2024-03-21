@@ -25,7 +25,6 @@ namespace tsorcRevamp.Items
             Item.useAnimation = 10;
             Item.useTime = 10;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.maxStack = 1;
         }
 
         public override bool CanUseItem(Player player)

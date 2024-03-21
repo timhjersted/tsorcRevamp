@@ -17,7 +17,6 @@ public class HerosCrest : ModItem
         Item.width = 24;
         Item.height = 24;
         Item.accessory = true;
-        Item.maxStack = 1;
         Item.expert = true;
         Item.value = PriceByRarity.Yellow_8;
     }

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.ItemCrates
 
         public override void SetDefaults()
         {
-            Item.maxStack = 999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.consumable = true;
             Item.width = 19;
             Item.height = 19;

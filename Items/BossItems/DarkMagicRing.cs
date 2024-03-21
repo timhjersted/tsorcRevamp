@@ -20,7 +20,6 @@ namespace tsorcRevamp.Items.BossItems
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.useAnimation = 5;
             Item.useTime = 5;
-            Item.maxStack = 1;
             Item.consumable = false;
         }
 

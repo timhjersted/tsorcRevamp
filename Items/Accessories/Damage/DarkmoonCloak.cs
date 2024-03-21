@@ -25,7 +25,6 @@ namespace tsorcRevamp.Items.Accessories.Damage
             Item.width = 28;
             Item.height = 28;
             Item.accessory = true;
-            Item.maxStack = 1;
             Item.rare = ItemRarityID.Pink;
             Item.value = PriceByRarity.Pink_5;
         }

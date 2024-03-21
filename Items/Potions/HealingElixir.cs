@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Potions
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useTime = 45;
-            Item.maxStack = 9999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.scale = 1;
             Item.rare = ItemRarityID.LightRed;
             Item.value = 1000;

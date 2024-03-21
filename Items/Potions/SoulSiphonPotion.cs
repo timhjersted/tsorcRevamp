@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Potions
             Item.useTime = 17;
             Item.useTurn = true;
             Item.UseSound = SoundID.Item3;
-            Item.maxStack = 9999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.consumable = true;
             Item.rare = ItemRarityID.Lime;
             Item.value = 5000;

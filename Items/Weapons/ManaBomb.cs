@@ -3,7 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.Items.Weapons.Magic
+namespace tsorcRevamp.Items.Weapons
 {
     class ManaBomb : ModItem
     {
@@ -22,9 +22,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.damage = 250;
             Item.useAnimation = 30;
             Item.useTime = 30;
-            Item.maxStack = 30;
+            Item.maxStack = Item.CommonMaxStack;
             Item.consumable = true;
-            Item.scale = 1;
             Item.UseSound = SoundID.Item29;
             Item.value = 150000;
             Item.useTurn = true;

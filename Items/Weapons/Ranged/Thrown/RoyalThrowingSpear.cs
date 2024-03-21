@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Thrown
             Item.damage = 21;
             Item.height = 66;
             Item.knockBack = 6;
-            Item.maxStack = 2000;
+            Item.maxStack = Item.CommonMaxStack;
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.DamageType = DamageClass.Ranged;

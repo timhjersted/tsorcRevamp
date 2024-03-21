@@ -16,7 +16,6 @@ namespace tsorcRevamp.Items.Lore
 
         public override void SetDefaults()
         {
-            Item.maxStack = 1;
             Item.width = 20;
             Item.height = 20;
             Item.rare = ItemRarityID.Pink;

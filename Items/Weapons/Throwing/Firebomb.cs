@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Throwing
             Item.useTime = 50;
             Item.UseSound = SoundID.Item1;
             Item.consumable = true;
-            Item.maxStack = 999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.DamageType = DamageClass.Throwing;
         }
     }

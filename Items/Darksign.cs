@@ -29,8 +29,6 @@ namespace tsorcRevamp.Items
             refItem.SetDefaults(ItemID.SoulofSight);
             Item.width = 30;
             Item.height = 40;
-            Item.maxStack = 1;
-            Item.value = 1;
             Item.consumable = false;
             Item.useAnimation = 60;
             Item.useTime = 60;

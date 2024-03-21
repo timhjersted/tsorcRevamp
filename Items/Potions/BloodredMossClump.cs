@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Potions
             Item.width = 16;
             Item.height = 25;
             Item.consumable = true;
-            Item.maxStack = 360;
+            Item.maxStack = Item.CommonMaxStack;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 35;
             Item.useTime = 35;

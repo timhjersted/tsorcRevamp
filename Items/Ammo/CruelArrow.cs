@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Ammo
             Item.damage = 7;
             Item.height = 28;
             Item.knockBack = (float)3.5;
-            Item.maxStack = 9999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.DamageType = DamageClass.Ranged;
             Item.shootSpeed = 6.5f;
             Item.value = 50;

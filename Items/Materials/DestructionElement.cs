@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Materials
             Item.height = 32;
             Item.rare = ItemRarityID.Red;
             Item.value = 350000;
-            Item.maxStack = 99;
+            Item.maxStack = Item.CommonMaxStack;
         }
 
         float rotation = 0;

@@ -1,6 +1,7 @@
 ﻿using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Potions;
+using Terraria;
 
 namespace tsorcRevamp.Items.Materials
 {
@@ -15,7 +16,7 @@ namespace tsorcRevamp.Items.Materials
         {
             Item.height = 12;
             Item.width = 24;
-            Item.maxStack = 30;
+            Item.maxStack = Item.CommonMaxStack;
             Item.value = 2;
         }
     }

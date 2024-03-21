@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Materials
         {
             Item.width = 20;
             Item.height = 18;
-            Item.maxStack = 99;
+            Item.maxStack = Item.CommonMaxStack;
             Item.value = 350000;
             Item.rare = ItemRarityID.Red;
         }

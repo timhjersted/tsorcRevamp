@@ -22,7 +22,6 @@ namespace tsorcRevamp.Items.Accessories.Melee
             Item.width = 32;
             Item.height = 26;
             Item.accessory = true;
-            Item.maxStack = 1;
             Item.expert = true;
             Item.value = PriceByRarity.Purple_11;
         }

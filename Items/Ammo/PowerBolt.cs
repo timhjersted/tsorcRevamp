@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Ammo
             Item.damage = 40;
             Item.height = 28;
             Item.knockBack = 3f;
-            Item.maxStack = 9999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.shootSpeed = 3.5f;
             Item.value = 1000;
             Item.shoot = ModContent.ProjectileType<BoltProjectile>();

@@ -19,10 +19,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             Item.width = 24;
             Item.height = 24;
             Item.accessory = true;
-            Item.useAnimation = 100;
             Item.defense = 8;
-            Item.useTime = 100;
-            Item.maxStack = 1;
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.Orange_3;
         }

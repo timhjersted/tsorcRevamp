@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items
             Item.useTime = 60;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.UseSound = SoundID.Item4;
-            Item.maxStack = 99;
+            Item.maxStack = Item.CommonMaxStack;
             Item.consumable = true;
         }
         public override bool CanUseItem(Player player)

@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items
             Item.width = 34;
             Item.height = 40;
             Item.consumable = true;
-            Item.maxStack = 99;
+            Item.maxStack = Item.CommonMaxStack;
             Item.value = 1000;
             Item.rare = ItemRarityID.Blue;
             Item.useTime = 45;

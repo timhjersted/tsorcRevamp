@@ -215,15 +215,15 @@ namespace tsorcRevamp.Items
             }
             if (potionList.Contains(item.type))
             {
-                item.maxStack = 9999;
+                item.maxStack = Item.CommonMaxStack;
             }
             else if (ammoList.Contains(item.type))
             {
-                item.maxStack = 9999;
+                item.maxStack = Item.CommonMaxStack;
             }
             if (torchList.Contains(item.type))
             {
-                item.maxStack = 9999;
+                item.maxStack = Item.CommonMaxStack;
             }
         }
 

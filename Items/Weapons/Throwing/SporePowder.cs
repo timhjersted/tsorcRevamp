@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Throwing
         {
             Item.width = 22;
             Item.height = 26;
-            Item.maxStack = 500;
+            Item.maxStack = Item.CommonMaxStack;
             Item.damage = 13;
             Item.rare = ItemRarityID.Green;
             Item.value = 50;

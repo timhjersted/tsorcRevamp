@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Potions
             Item.width = 40;
             Item.height = 40;
             Item.scale = 0.9f;
-            Item.maxStack = 99;
+            Item.maxStack = Item.CommonMaxStack;
             Item.rare = ItemRarityID.Blue;
             Item.UseSound = SoundID.Item20;
             Item.useStyle = ItemUseStyleID.HoldUp; //no idea why it still swings sometimes

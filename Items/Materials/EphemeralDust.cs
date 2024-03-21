@@ -1,4 +1,5 @@
-﻿using Terraria.ID;
+﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Materials
@@ -12,7 +13,7 @@ namespace tsorcRevamp.Items.Materials
             Item.height = 14;
             Item.rare = ItemRarityID.Blue;
             Item.value = 1000;
-            Item.maxStack = 999;
+            Item.maxStack = Item.CommonMaxStack;
         }
     }
 }

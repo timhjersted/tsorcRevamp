@@ -20,7 +20,6 @@ namespace tsorcRevamp.Items.Accessories.Mobility
             Item.width = 32;
             Item.height = 26;
             Item.accessory = true;
-            Item.maxStack = 1;
             Item.rare = ItemRarityID.Blue;
             Item.value = PriceByRarity.Blue_1;
         }

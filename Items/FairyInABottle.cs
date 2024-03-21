@@ -18,7 +18,6 @@ namespace tsorcRevamp.Items
             Item.width = 18;
             Item.height = 18;
             Item.consumable = true;
-            Item.maxStack = 1;
             Item.value = 0;
             Item.rare = ItemRarityID.Pink;
             Item.useTime = 5;

@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Utilities;
+using Terraria;
 
 namespace tsorcRevamp.Items.Materials
 {
@@ -17,7 +18,7 @@ namespace tsorcRevamp.Items.Materials
             Item.height = 16;
             Item.rare = ItemRarityID.Orange;
             Item.value = 1000;
-            Item.maxStack = 100;
+            Item.maxStack = Item.CommonMaxStack;
             Item.rare = ItemRarityID.LightRed;
         }
 

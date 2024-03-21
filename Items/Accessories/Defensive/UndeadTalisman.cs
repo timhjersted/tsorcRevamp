@@ -19,7 +19,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
             Item.width = 22;
             Item.height = 32;
-            Item.maxStack = 1;
             Item.rare = ItemRarityID.Green;
             Item.accessory = true;
             Item.value = PriceByRarity.Green_2;

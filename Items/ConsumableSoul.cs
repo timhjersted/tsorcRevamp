@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items
             refItem.SetDefaults(ItemID.SoulofSight);
             Item.width = 14;
             Item.height = 22;
-            Item.maxStack = 999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.autoReuse = true;
             Item.useTurn = true;
             Item.value = 1;
@@ -249,7 +249,7 @@ namespace tsorcRevamp.Items
             refItem.SetDefaults(ItemID.SoulofSight);
             Item.width = 14;
             Item.height = 22;
-            Item.maxStack = 999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.autoReuse = true;
             Item.useTurn = true;
             Item.value = 1;
@@ -341,7 +341,7 @@ namespace tsorcRevamp.Items
             refItem.SetDefaults(ItemID.SoulofSight);
             Item.width = 14;
             Item.height = 22;
-            Item.maxStack = 999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.autoReuse = true;
             Item.useTurn = true;
             Item.value = 1;

@@ -15,7 +15,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useAnimation = 14;
             Item.useTime = 14;
             Item.autoReuse = true;
-            Item.maxStack = 1;
             Item.damage = 300;
             Item.crit = 26;
             Item.knockBack = 5;

@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items
             Item.useStyle = ItemUseStyleID.Swing;
             Item.rare = ItemRarityID.Yellow;
             Item.value = 0;
-            Item.maxStack = 10;
+            Item.maxStack = Item.CommonMaxStack;
             Item.useAnimation = 20;
             Item.useTime = 20;
             Item.shoot = ProjectileID.PurificationPowder;

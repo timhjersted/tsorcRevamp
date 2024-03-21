@@ -24,7 +24,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.mana = 10;
             Item.width = 64;
             Item.height = 64;
-            Item.maxStack = 1;
             Item.rare = ItemRarityID.LightRed;
 
             Item.consumable = false;

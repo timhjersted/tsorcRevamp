@@ -23,7 +23,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.width = 48;
             Item.height = 48;
             Item.knockBack = 9f;
-            Item.maxStack = 1;
             Item.autoReuse = true;
             Item.useTurn = false;
             Item.useAnimation = 40;

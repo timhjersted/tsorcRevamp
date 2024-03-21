@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Potions
             Item.useStyle = ItemUseStyleID.DrinkLiquid;
             Item.useAnimation = 15;
             Item.useTime = 15;
-            Item.maxStack = 9999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.potion = true;
             Item.healLife = Healing;
             Item.rare = ItemRarityID.Green;

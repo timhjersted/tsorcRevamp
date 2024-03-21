@@ -20,7 +20,6 @@ namespace tsorcRevamp.Items.Tools
             Item.stack = 1;
             Item.width = 34;
             Item.height = 10;
-            Item.maxStack = 1;
             Item.rare = ItemRarityID.Pink;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;

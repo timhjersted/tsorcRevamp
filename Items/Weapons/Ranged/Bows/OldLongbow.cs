@@ -21,7 +21,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.DamageType = DamageClass.Ranged;
             Item.autoReuse = true;
             Item.knockBack = 4f;
-            Item.maxStack = 1;
             Item.noMelee = true;
             Item.rare = ItemRarityID.White;
             Item.scale = 0.9f;

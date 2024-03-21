@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Placeable.Trophies
 
             Item.width = 32;
             Item.height = 32;
-            Item.maxStack = 9999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.rare = Rarity;
             Item.value = Value;
         }
