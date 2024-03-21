@@ -196,7 +196,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.Hardmode);
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.ManaBomb>())
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.ManaBomb>())
             {
                 shopCustomPrice = 300,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
