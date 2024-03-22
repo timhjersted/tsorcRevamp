@@ -9,6 +9,8 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.Utilities;
 using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Items.Weapons.Melee.Axes;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -186,7 +188,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenIceBrand>())
             {
-                shopCustomPrice = 4000,
+                shopCustomPrice = ForgottenIceBrand.CoinPrice,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.SorrowDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))));
 
@@ -194,17 +196,17 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Axes.ForgottenPoisonAxe>())
             {
-                shopCustomPrice = 6000,
+                shopCustomPrice = ForgottenPoisonAxe.CoinPrice,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedMechBossAny);
 
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenSwordbreaker>())
             {
-                shopCustomPrice = 6000,
+                shopCustomPrice = ForgottenSwordbreaker.CoinPrice,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedMechBossAny);
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Summon.ForgottenImpHalberd>())
+            shop.Add(new Item(ModContent.ItemType<Items.Materials.ImpHead>())
             {
                 shopCustomPrice = 6000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId

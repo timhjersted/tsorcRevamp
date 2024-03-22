@@ -2,7 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Items.Weapons.Ranged.Thrown;
+using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {

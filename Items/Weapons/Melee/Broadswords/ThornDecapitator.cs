@@ -53,6 +53,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.BladeofGrass);
+            recipe.AddIngredient(ItemID.ShadowScale);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
 
             recipe.AddTile(TileID.DemonAltar);

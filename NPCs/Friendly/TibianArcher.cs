@@ -126,7 +126,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Ranged.Crossbow>())
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Ranged.Specialist.Crossbow>())
             {
                 shopCustomPrice = 75,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId

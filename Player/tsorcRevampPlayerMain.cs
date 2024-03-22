@@ -706,7 +706,7 @@ namespace tsorcRevamp
             startingItems.Add(ForgottenRuneAxe);
 
             Item Crossbow = new Item();
-            Crossbow.SetDefaults(ModContent.ItemType<Crossbow>());
+            Crossbow.SetDefaults(ModContent.ItemType<Items.Weapons.Ranged.Specialist.Crossbow>());
             Crossbow.prefix = PrefixID.Awful;
             startingItems.Add(Crossbow);
 

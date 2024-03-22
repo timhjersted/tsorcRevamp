@@ -33,9 +33,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             if (target.type == NPCID.EaterofSouls
                 || target.type == NPCID.BigEater
                 || target.type == NPCID.LittleEater
-                || target.type == NPCID.EaterofWorldsHead
-                || target.type == NPCID.EaterofWorldsBody
-                || target.type == NPCID.EaterofWorldsTail
+                || tsorcRevamp.EaterOfWorldsSegments.Contains(target.type)
+                || tsorcRevamp.DevourerSegments.Contains(target.type)
                 || target.type == ModContent.NPCType<NPCs.Enemies.BasiliskShifter>()
                 )
             {

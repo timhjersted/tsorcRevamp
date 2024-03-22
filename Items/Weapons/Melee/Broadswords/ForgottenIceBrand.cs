@@ -6,6 +6,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     class ForgottenIceBrand : ModItem
     {
+        public const int CoinPrice = 4000;
         public override void SetStaticDefaults()
         {
             // Tooltip.SetDefault("A sword imbued with ice.\n" + "Will randomly cast ice 2.");

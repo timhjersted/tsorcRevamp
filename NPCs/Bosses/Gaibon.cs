@@ -11,6 +11,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Weapons.Ranged;
+using tsorcRevamp.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Utilities;
 

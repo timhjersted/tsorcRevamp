@@ -7,7 +7,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     public class BlackKnightSpear : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/Thrown/ThrowingSpear";
 
         public override void SetDefaults()
         {

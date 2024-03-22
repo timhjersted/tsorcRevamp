@@ -844,7 +844,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 shieldPower = NPC.defense * 4;
             }
 
-            if (projectile.type != ModContent.ProjectileType<Items.Weapons.Ranged.BlizzardBlasterShot>())
+            if (projectile.type != ModContent.ProjectileType<Items.Weapons.Ranged.Specialist.BlizzardBlasterShot>())
             {
                 if (shielding)
                 {

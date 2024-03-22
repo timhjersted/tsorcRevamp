@@ -108,6 +108,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.EnchantedSword)
             {
+                item.shootsEveryUse = true;
                 item.mana = 9;
             }
             if (item.type == ItemID.ThunderSpear)
@@ -116,6 +117,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.Starfury)
             {
+                item.shootsEveryUse = true;
                 item.mana = 10;
             }
             if (item.type == ItemID.LightsBane)

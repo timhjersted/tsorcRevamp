@@ -6,6 +6,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     class ForgottenSwordbreaker : ModItem
     {
+        public const int CoinPrice = 6000;
         public override void SetStaticDefaults()
         {
             // Tooltip.SetDefault("[c/ffbf00:Striking an enemy may temporarily make you deflect attacks.]");

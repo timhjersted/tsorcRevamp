@@ -13,7 +13,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         const int HEAL_AMOUNT = 3;
         public override void SetStaticDefaults()
         {
-            // Tooltip.SetDefault("Heals 2 hp on hit");
         }
         public override void SetDefaults()
         {

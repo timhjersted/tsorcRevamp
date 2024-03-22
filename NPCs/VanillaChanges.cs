@@ -5886,12 +5886,12 @@ namespace tsorcRevamp.NPCs
 
                 if (Main.rand.NextBool(100))
                 { // 1%
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.Pulsar>(), 1, false, -1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.Specialist.Pulsar>(), 1, false, -1);
                 }
 
                 else if (Main.rand.NextBool(100))
                 { // 1% 
-                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.ToxicCatalyzer>(), 1, false, -1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.Specialist.ToxicCatalyzer>(), 1, false, -1);
                 }
             }
 

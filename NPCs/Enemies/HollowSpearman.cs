@@ -560,7 +560,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f }, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile spear = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -16), UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center + new Vector2(0, -20), 10), ModContent.ProjectileType<Projectiles.ThrowingSpear>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI)];
+                        Projectile spear = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -16), UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center + new Vector2(0, -20), 10), ModContent.ProjectileType<Projectiles.Throwing.ThrowingSpear>(), spearStabDamage, 5, Main.myPlayer, NPC.whoAmI)];
                         spear.friendly = false;
                         spear.hostile = true;
                     }
@@ -642,7 +642,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             Player player = Main.player[NPC.target];
-            if (projectile.type != ModContent.ProjectileType<Items.Weapons.Ranged.BlizzardBlasterShot>())
+            if (projectile.type != ModContent.ProjectileType<Items.Weapons.Ranged.Specialist.BlizzardBlasterShot>())
             {
                 if (AI_State == State_Shielding || AI_State == State_Thrusting || AI_State == State_Throwing)
                 {
