@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Throwing
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item1;
             Item.noMelee = true;
-            Item.DamageType = DamageClass.Ranged;
+            Item.DamageType = DamageClass.Throwing;
             Item.value = PriceByRarity.LightRed_4;
             Item.noUseGraphic = true;
             Item.shoot = ProjectileID.PurificationPowder;

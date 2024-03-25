@@ -55,11 +55,6 @@ namespace tsorcRevamp.Projectiles
             {
                 Projectile.netUpdate = true;
             }
-
-            if (UsefulFunctions.IsTileReallySolid(Projectile.Center / 16f))
-            {
-                dying = true;
-            }
             Projectile.rotation = Projectile.velocity.ToRotation();
 
             for (int i = collisionEndPadding; i < trailPositions.Count - collisionFrequency - 1 - collisionPadding; i += collisionFrequency)

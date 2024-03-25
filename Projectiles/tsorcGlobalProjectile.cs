@@ -26,6 +26,7 @@ using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.Utilities;
 using MiakodaCrescent = tsorcRevamp.Projectiles.Pets.MiakodaCrescent;
 using MiakodaNew = tsorcRevamp.Projectiles.Pets.MiakodaNew;
+using tsorcRevamp.Items.Weapons.Summon;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -411,9 +412,9 @@ namespace tsorcRevamp.Projectiles
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.3f }, target.position);
             }
 
-            if ((projectile.type >= ProjectileID.MonkStaffT3 && projectile.type <= ProjectileID.DD2BetsyArrow || (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] == 0)) && tsorcRevampWorld.DownedBetsy)
+            if ((projectile.type >= ProjectileID.MonkStaffT3 && projectile.type <= ProjectileID.DD2BetsyArrow || (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] == 0)) && Condition.DownedOldOnesArmyT3.IsMet())
             {
-                target.AddBuff(BuffID.BetsysCurse, 10 * 60);
+                target.AddBuff(BuffID.BetsysCurse, EtherianWyvernStaff.DebuffDuration * 60);
             }
 
             #region Runeterra Poison Darts

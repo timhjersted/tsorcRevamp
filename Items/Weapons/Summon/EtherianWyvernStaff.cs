@@ -8,16 +8,18 @@ using tsorcRevamp.Projectiles.Summon.NullSprite;
 using Microsoft.Xna.Framework;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Projectiles.Summon.ForgottenImp;
+using tsorcRevamp.Projectiles.Summon.EtherianWyvern;
+using Terraria.Localization;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-    class ForgottenImpHalberd : ModItem
+    class EtherianWyvernStaff : ModItem
     {
         public const float SlotsRequired = 1f;
         public const int BaseDmg = 25;
-        public const int BleedProcBaseDmg = BaseDmg * 4;
-        public const int BleedDuration = 5;
-        public const float SummonTagDmgMult = 100f;
+        public const int DebuffDuration = 7;
+        public const float SummonTagDmgMult = 75f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagDmgMult);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
@@ -33,13 +35,14 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.height = 54;
             Item.useTime = Item.useAnimation = 30;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.rare = ItemRarityID.LightPurple;
+            Item.rare = ItemRarityID.Yellow;
             Item.value = PriceByRarity.fromItem(Item);
             Item.mana = 10;
             Item.UseSound = SoundID.Item44;
             Item.DamageType = DamageClass.Summon;
-            Item.buffType = ModContent.BuffType<ForgottenImpBuff>();
-            Item.shoot = ModContent.ProjectileType<ForgottenImpProjectile>();
+            Item.buffType = ModContent.BuffType<EtherianWyvernBuff>();
+            Item.shoot = ModContent.ProjectileType<EtherianWyvernProjectile>();
+            Item.noMelee = true;
         }
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
@@ -55,18 +58,6 @@ namespace tsorcRevamp.Items.Weapons.Summon
                 Main.projectile[p].originalDamage = Item.damage;
             }
             return false;
-        }
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-
-            recipe.AddIngredient(ItemID.ImpStaff);
-            recipe.AddIngredient(ModContent.ItemType<ImpHead>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
-
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
         }
     }
 }

@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Summon
             Main.projPet[Type] = true;
             ProjectileID.Sets.MinionSacrificable[Type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Type] = true;
-            ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = SummonTagDamageMultiplier;
+            ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = SummonTagDamageMultiplier / 100f;
             CustomSetStaticDefaults();
         }
         public virtual void CustomSetStaticDefaults()
@@ -229,14 +229,14 @@ namespace tsorcRevamp.Projectiles.Summon
                 if (distanceToIdlePosition > 600f)
                 {
                     // Speed up the minion if it's away from the player
-                    speed = 12f;
-                    inertia = 60f;
+                    speed *= 1.5f;
+                    inertia *= 3f;
                 }
                 else
                 {
                     // Slow down the minion if closer to the player
-                    speed = 8f;
-                    inertia = 80f;
+                    speed *= 1f;
+                    inertia *= 4f;
                 }
 
                 if (distanceToIdlePosition > 20f)

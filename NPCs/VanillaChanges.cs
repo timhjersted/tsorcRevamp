@@ -17,6 +17,7 @@ using tsorcRevamp.Items.Placeable.Relics;
 using tsorcRevamp.Items.Placeable.Trophies;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Vanity;
+using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs
@@ -5944,6 +5945,13 @@ namespace tsorcRevamp.NPCs
                 npcLoot.Add(notExpertCondition);
                 npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<AncestralSpiritRelic>()));
                 npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<AncestralSpiritTrophy>(), 10));
+            }
+
+            if (npc.type == NPCID.DD2Betsy)
+            {
+                IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+                notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<EtherianWyvernStaff>()));
+                npcLoot.Add(notExpertCondition);
             }
 
             if (npc.type == NPCID.GoblinArcher)

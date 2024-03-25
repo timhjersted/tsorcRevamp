@@ -9,6 +9,7 @@ using tsorcRevamp.Items.Accessories.Magic;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.VanillaItems
@@ -81,6 +82,7 @@ namespace tsorcRevamp.Items.VanillaItems
             SimpleModTooltip(Mod, item, tooltips, ItemID.MonkStaffT3, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.DD2SquireBetsySword, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.DD2BetsyBow, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
+            SimpleModTooltip(Mod, item, tooltips, ModContent.ItemType<EtherianWyvernStaff>(), Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.StarinaBottle, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.StarinaBottle"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.ManaRegenerationBand, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaRegenerationBand"));
 

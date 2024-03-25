@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.useAnimation = 25;
             Item.UseSound = SoundID.Item5;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.value = PriceByRarity.Green_2;
+            Item.value = PriceByRarity.fromItem(Item);
         }
 
         public override void AddRecipes()

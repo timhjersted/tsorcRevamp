@@ -7706,6 +7706,15 @@ Mods: {
 				DisplayName: Imp Head
 				Tooltip: Sold by the Dwarf once {$Conditions.HunterDowned}
 			}
+
+			EtherianWyvernStaff: {
+				DisplayName: Etherian Wyvern Staff
+				Tooltip:
+					'''
+					Summons an etherian wyvern which breathes fire at opponents and rams them
+					{$CommonItemTooltip.Summon.TagDmgMult}
+					'''
+			}
 		}
 
 		Buffs: {
@@ -8623,6 +8632,11 @@ Mods: {
 				DisplayName: Hemorrhage
 				Description: Mods.tsorcRevamp.Buffs.Hemorrhage.Description
 			}
+
+			EtherianWyvernBuff: {
+				DisplayName: Etherian Wyvern Buff
+				Description: The etherian wyvern will fight for you
+			}
 		}
 
 		Projectiles: {
@@ -9237,6 +9251,8 @@ Mods: {
 			RuneBladeRune.DisplayName: Rune Blade Rune
 			ThornDecapitatorThorn.DisplayName: Thorn Decapitator Thorn
 			MjolnirElectrosphere.DisplayName: Mjolnir Electrosphere
+			EtherianWyvernFireball.DisplayName: Etherian Wyvern Fireball
+			EtherianWyvernProjectile.DisplayName: Etherian Wyvern Projectile
 		}
 
 		NPCs: {

@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Summon.ForgottenImp
         public override int ProjectileBuffType => ModContent.BuffType<ForgottenImpBuff>();
         public override bool ContactDamage => throw new NotImplementedException();
         public override DamageClass ProjectileDamageType => DamageClass.Summon;
-        public override float SummonTagDamageMultiplier => 1f;
+        public override float SummonTagDamageMultiplier => ForgottenImpHalberd.SummonTagDmgMult;
         public override int ShotProjectileType => ModContent.ProjectileType<ForgottenImpDagger>();
         public override void CustomSetStaticDefaults()
         {

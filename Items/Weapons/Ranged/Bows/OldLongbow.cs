@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Bows
 {
@@ -14,7 +15,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
 
         public override void SetDefaults()
         {
-
             Item.damage = 32;
             Item.height = 66;
             Item.width = 16;
@@ -31,12 +31,22 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.useTime = 25;
             Item.UseSound = SoundID.Item5;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.value = 50000;
-
+            Item.value = PriceByRarity.fromItem(Item);
         }
         public override void HoldItem(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().OldWeapon = true;
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+
+            recipe.AddIngredient(ItemID.WoodenBow);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
+
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
         }
     }
 }

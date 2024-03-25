@@ -1,32 +1,35 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles
 {
-    class CaiusPyreFireball : DynamicTrail
+    class EtherianWyvernFireball : DynamicTrail
     {
         public override string Texture => base.Texture;
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.SentryShot[Type] = true;
+            ProjectileID.Sets.MinionShot[Type] = true;
+            ProjectileID.Sets.SummonTagDamageMultiplier[Type] = EtherianWyvernStaff.SummonTagDmgMult / 100f;
         }
         public override void SetDefaults()
         {
-            Projectile.sentry = true;
             Projectile.width = 16;
             Projectile.height = 16;
             Projectile.timeLeft = 120;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            Projectile.DamageType = DamageClass.MagicSummonHybrid;
+            Projectile.DamageType = DamageClass.Summon;
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
+            Projectile.extraUpdates = 1;
 
             trailWidth = 50;
             trailPointLimit = 1000;
@@ -50,10 +53,6 @@ namespace tsorcRevamp.Projectiles
         {
             base.AI();
 
-            if (Projectile.owner == Main.myPlayer)
-            {
-                UsefulFunctions.SmoothHoming(Projectile, Main.MouseWorld, 1f, 20, null, true, 0.1f);
-            }
             if (Projectile.wet)
             {
                 Projectile.Kill();
@@ -74,9 +73,9 @@ namespace tsorcRevamp.Projectiles
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (Main.rand.NextBool(4))
+            if (Condition.DownedOldOnesArmyT3.IsMet())
             {
-                target.AddBuff(BuffID.OnFire, 300);
+                target.AddBuff(BuffID.BetsysCurse, EtherianWyvernStaff.DebuffDuration * 60);
             }
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
@@ -84,7 +83,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override void OnKill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.45f }, Projectile.position);
+            SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.45f }, Projectile.position);
         }
         Vector2 samplePointOffset1;
         Vector2 samplePointOffset2;

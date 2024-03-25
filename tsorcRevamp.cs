@@ -982,7 +982,10 @@ namespace tsorcRevamp
                 {   ItemID.MoonLordBossBag          ,   new List<IItemDropRule>()                                                        },
                 {   ItemID.QueenSlimeBossBag        ,   new List<IItemDropRule>()                                                        },
                 {   ItemID.FairyQueenBossBag        ,   new List<IItemDropRule>()                                                        },
-                {   ItemID.BossBagBetsy             ,   new List<IItemDropRule>()                                                        },
+                {   ItemID.BossBagBetsy             ,   new List<IItemDropRule>()
+                                                        {
+                                                            ItemDropRule.Common(ModContent.ItemType<EtherianWyvernStaff>())
+                                                        } },
                 {   ItemID.DeerclopsBossBag         ,   new List<IItemDropRule>()                                                        }
                 #endregion
             };

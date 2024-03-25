@@ -534,7 +534,7 @@ Mods: {
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:一个类似于大金字塔的符号，月亮在它的右侧，刻在上面]"
 				LargeSapphire: "[c/ffbf00:上面刻着飞龙法师堡垒附近的一座雪山的符号]"
-				VulnerabilityHex: 如果已击败双足翼龙，则施加双足翼龙诅咒减益
+				// VulnerabilityHex: Applies a vulnerability hex if Betsy has been defeated
 				StarinaBottle: 增加 10 点魔力再生同时减少 50% 魔力再生延迟
 				ManaRegenerationBand: 增加 25 点魔力再生同时减少 100% 魔力再生延迟
 				WellFedItemsBotC: 为[c/6d8827:被诅咒者]增加 {0}% 耐力再生
@@ -7690,6 +7690,15 @@ Mods: {
 				DisplayName: 小鬼头
 				Tooltip: "{$Conditions.HunterDowned}后由树妖出售"
 			}
+
+			EtherianWyvernStaff: {
+				// DisplayName: Etherian Wyvern Staff
+				/* Tooltip:
+					'''
+					Summons an etherian wyvern which breathes fire at opponents and rams them
+					{$CommonItemTooltip.Summon.TagDmgMult}
+					''' */
+			}
 		}
 
 		Buffs: {
@@ -8607,6 +8616,11 @@ Mods: {
 				DisplayName: 大出血
 				Description: Mods.tsorcRevamp.Buffs.Hemorrhage.Description
 			}
+
+			EtherianWyvernBuff: {
+				// DisplayName: Etherian Wyvern Buff
+				// Description: The etherian wyvern will fight for you
+			}
 		}
 
 		Projectiles: {
@@ -9221,6 +9235,8 @@ Mods: {
 			// RuneBladeRune.DisplayName: Rune Blade Rune
 			// ThornDecapitatorThorn.DisplayName: Thorn Decapitator Thorn
 			// MjolnirElectrosphere.DisplayName: Mjolnir Electrosphere
+			// EtherianWyvernFireball.DisplayName: Etherian Wyvern Fireball
+			// EtherianWyvernProjectile.DisplayName: Etherian Wyvern Projectile
 		}
 
 		NPCs: {

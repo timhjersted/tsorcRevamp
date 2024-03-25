@@ -838,7 +838,7 @@ namespace tsorcRevamp
                 Tile thisTile = Main.tile[(int)tilePos.X, (int)tilePos.Y];
 
                 //null = tile is not instantiated at all (yes, that is possible) | active = tile is not air | inActive = actuated | Main.tileSolid = is it solid
-                if (thisTile != null && thisTile.HasTile && !thisTile.IsActuated && Main.tileSolid[thisTile.TileType])
+                if (thisTile != null && thisTile.HasTile && !thisTile.IsActuated && Main.tileSolid[thisTile.TileType] && !TileID.Sets.Platforms[thisTile.TileType])
                 {
                     return true;
                 }
