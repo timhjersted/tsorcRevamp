@@ -12,9 +12,8 @@ namespace tsorcRevamp.Items.Accessories.Summon
         public static float SummonDamage = 12;
         public static float SummonAttackSpeed = 12;
         public static float WhipRangeIncrease = 10;
-        public static float WhipCritDamage = 12;
         public static float WhipCritHitboxSize = 3;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonDamage, SummonAttackSpeed, WhipRangeIncrease, WhipCritDamage, WhipCritHitboxSize);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonDamage, SummonAttackSpeed, WhipRangeIncrease, WhipCritHitboxSize);
         public override void SetStaticDefaults()
         {
         }
@@ -35,7 +34,6 @@ namespace tsorcRevamp.Items.Accessories.Summon
             player.GetAttackSpeed(DamageClass.Summon) += SummonAttackSpeed / 100f;
             player.whipRangeMultiplier += WhipRangeIncrease / 100f;
             player.aggro += 400;
-            player.GetModPlayer<tsorcRevampPlayer>().ChallengersGloveCritDamage = true;
             player.GetModPlayer<tsorcRevampPlayer>().WhipCritHitboxSize = WhipCritHitboxSize;
         }
         public override void AddRecipes()

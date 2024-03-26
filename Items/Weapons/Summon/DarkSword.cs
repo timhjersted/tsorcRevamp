@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         }
         public override void ModifyItemScale(Player player, ref float scale)
         {
-            scale = player.whipRangeMultiplier;
+            scale *= player.whipRangeMultiplier + (player.meleeScaleGlove ? 0.1f : 0f);
         }
         public override bool AltFunctionUse(Player player)
         {

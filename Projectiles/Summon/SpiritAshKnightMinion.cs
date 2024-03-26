@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Summon
             Projectile.friendly = true;
             Projectile.minion = true;
             Projectile.DamageType = DamageClass.Summon;
-            Projectile.minionSlots = 1f;
+            Projectile.minionSlots = SpiritBell.SlotsRequired;
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = AttackFrameSpeed * 2;
@@ -181,7 +181,7 @@ namespace tsorcRevamp.Projectiles.Summon
                         bool lineOfSight = Collision.CanHitLine(Projectile.position, Projectile.width, Projectile.height, npc.position, npc.width, npc.height);
                         // Additional check for this specific minion behavior, otherwise it will stop attacking once it dashed through an enemy while flying though tiles afterwards
                         // The number depends on various parameters seen in the movement code below. Test different ones out until it works alright
-                        bool closeThroughWall = between < distanceFromTarget / 4;
+                        bool closeThroughWall = between < distanceFromTarget / 2;
 
                         if (((closest && inRange) || (!foundTarget && inRange)) && (lineOfSight || closeThroughWall))
 
@@ -209,7 +209,7 @@ namespace tsorcRevamp.Projectiles.Summon
         {
             width = (int)(width * 0.25f);
             height = (int)(height * 0.25f);
-            fallThrough = false;
+            fallThrough = true;
             return true;
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
@@ -234,8 +234,7 @@ namespace tsorcRevamp.Projectiles.Summon
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            //target.GetGlobalNPC<tsorcRevampGlobalNPC>().BaseSummonTagCriticalStrikeChance += SpiritBell.BaseCritChance; has to go into global npc now because this runs before that
-            modifiers.CritDamage *= 1f + SpiritBell.CritDmg / 100f;
+            modifiers.CritDamage += SpiritBell.CritDmg / 100f;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

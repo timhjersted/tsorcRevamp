@@ -1057,22 +1057,6 @@ namespace tsorcRevamp.NPCs
                 {
                     SummonTagCriticalStrikeChance += ScorchingPoint.SummonTagCrit;
                 }
-                if (projectile.type == ModContent.ProjectileType<SpiritAshKnightMinion>())
-                {
-                    SummonTagCriticalStrikeChance += SpiritBell.BaseCritChance;
-                }
-                if (projectile.type == ModContent.ProjectileType<TerrorbeakProjectile>())
-                {
-                    SummonTagCriticalStrikeChance += DarkSword.BaseCritChance;
-                }
-                if (projectile.type == ModContent.ProjectileType<OwlsArrow>())
-                {
-                    SummonTagCriticalStrikeChance += PeculiarSphere.BaseCritChance;
-                }
-                if (projectile.type == ModContent.ProjectileType<SamuraiBeetleProjectile>() || projectile.type == ModContent.ProjectileType<SamuraiBeetleLightning>())
-                {
-                    SummonTagCriticalStrikeChance += BeetleIdol.BaseCritChance;
-                }
                 #endregion
                 #region Modded Whip Special Effects
                 //Crystal Nunchaku Effect located in ModifyIncomingHit

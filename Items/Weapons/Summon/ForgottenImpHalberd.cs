@@ -11,51 +11,25 @@ using tsorcRevamp.Projectiles.Summon.ForgottenImp;
 
 namespace tsorcRevamp.Items.Weapons.Summon
 {
-    class ForgottenImpHalberd : ModItem
+    class ForgottenImpHalberd : ModdedMinionItem
     {
-        public const float SlotsRequired = 1f;
-        public const int BaseDmg = 25;
-        public const int BleedProcBaseDmg = BaseDmg * 4;
-        public const int BleedDuration = 5;
+        public override int Width => 54;
+        public override int Height => 54;
+        public override int MinionProjectileType => ModContent.ProjectileType<ForgottenImpProjectile>();
+        public override int MinionBuffType => ModContent.BuffType<ForgottenImpBuff>();
+        public const int BaseDamage = 25;
+        public override int BaseDmg => BaseDamage;
+        public override int Crit => 0;
+        public const float RequiredSlots = 1f;
+        public override float SlotsRequired => RequiredSlots;
         public const float SummonTagDmgMult = 100f;
-        public override void SetStaticDefaults()
-        {
-            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-            ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
-            ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = SlotsRequired;
-        }
-        public override void SetDefaults()
-        {
-            Item.damage = BaseDmg;
-            Item.knockBack = 1f;
-            Item.width = 54;
-            Item.height = 54;
-            Item.useTime = Item.useAnimation = 30;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.rare = ItemRarityID.LightPurple;
-            Item.value = PriceByRarity.fromItem(Item);
-            Item.mana = 10;
-            Item.UseSound = SoundID.Item44;
-            Item.DamageType = DamageClass.Summon;
-            Item.buffType = ModContent.BuffType<ForgottenImpBuff>();
-            Item.shoot = ModContent.ProjectileType<ForgottenImpProjectile>();
-        }
-        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
-        {
-            // Here you can change where the minion is spawned. Most vanilla minions spawn at the cursor position
-            position = Main.MouseWorld;
-        }
-        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
-        {
-            player.AddBuff(Item.buffType, 2);
-            if (Main.myPlayer == player.whoAmI)
-            {
-                int p = Projectile.NewProjectile(source, position, speed, type, damage, knockBack);
-                Main.projectile[p].originalDamage = Item.damage;
-            }
-            return false;
-        }
+        public override float SummonTagDmgMulti => SummonTagDmgMult;
+        public override int UseTimeAnimation => 30;
+        public override int Mana => 10;
+        public override float Knockback => 1f;
+        public override int Rarity => ItemRarityID.LightPurple;
+        public const int BleedProcBaseDmg = BaseDamage * 4;
+        public const int BleedDuration = 5;
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

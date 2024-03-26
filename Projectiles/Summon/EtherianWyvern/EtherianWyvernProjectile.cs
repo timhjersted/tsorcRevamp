@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Summon.EtherianWyvern
         public override int Height => 50;
         public override float MinionSlotsRequired => EtherianWyvernStaff.SlotsRequired;
         public override int ProjectileBuffType => ModContent.BuffType<EtherianWyvernBuff>();
-        public override bool ContactDamage => throw new NotImplementedException();
+        public override bool ContactDamage => true;
         public override DamageClass ProjectileDamageType => DamageClass.Summon;
         public override float SummonTagDamageMultiplier => EtherianWyvernStaff.SummonTagDmgMult;
         public override int ShotProjectileType => ModContent.ProjectileType<EtherianWyvernFireball>();
@@ -36,10 +36,6 @@ namespace tsorcRevamp.Projectiles.Summon.EtherianWyvern
             {
                 target.AddBuff(BuffID.BetsysCurse, EtherianWyvernStaff.DebuffDuration * 60);
             }
-        }
-        public override bool MinionContactDamage()
-        {
-            return true;
         }
         public override void Movement(bool foundTarget, float distanceFromTarget, Vector2 targetCenter, float distanceToIdlePosition, Vector2 vectorToIdlePosition)
         {

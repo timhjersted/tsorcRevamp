@@ -14,18 +14,19 @@ namespace tsorcRevamp.Items.Weapons.Summon
     public class SpiritBell : ModItem
     {
         public const int BaseCritChance = 15;
-        public const float CritDmg = 50f;
+        public const float CritDmg = 35f;
+        public const float SlotsRequired = 1f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritDmg);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
             ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
-            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = 1;
+            ItemID.Sets.StaffMinionSlotsRequired[Item.type] = SlotsRequired;
         }
         public override void SetDefaults()
         {
-            Item.damage = 13;
+            Item.damage = 12;
             Item.crit = BaseCritChance;
             Item.knockBack = 3f;
             Item.mana = 10;
@@ -34,8 +35,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.useTime = 30;
             Item.useAnimation = 30;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.value = Item.buyPrice(0, 2, 80, 0);
             Item.rare = ItemRarityID.Blue;
+            Item.value = PriceByRarity.fromItem(Item);
             Item.UseSound = SoundID.Item35;
 
             Item.noMelee = true;
@@ -63,7 +64,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Bell);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 2000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

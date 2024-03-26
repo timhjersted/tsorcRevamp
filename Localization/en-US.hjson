@@ -1861,8 +1861,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedSummonDamage@0}
 					{$CommonItemTooltip.Summon.AtkSpeed@1}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@2}
-					{$CommonItemTooltip.Summon.WhipCritDmg@3}
-					{$CommonItemTooltip.Summon.WhipCritHitbox@4}
+					{$CommonItemTooltip.Summon.WhipCritHitbox@3}
 					{$CommonItemTooltip.Summon.WhipKnockback}
 					{$CommonItemTooltip.MeleeWhipAutoswing}
 					{$CommonItemTooltip.AggroBoost}

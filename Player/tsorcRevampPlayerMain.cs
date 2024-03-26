@@ -810,10 +810,6 @@ namespace tsorcRevamp
             {
                 modifiers.SourceDamage += Items.Accessories.Summon.Goredrinker.WhipDmgRange / 100f;
             }
-            if (Player.GetModPlayer<tsorcRevampPlayer>().ChallengersGloveCritDamage && proj.DamageType == DamageClass.SummonMeleeSpeed && ProjectileID.Sets.IsAWhip[proj.type])
-            {
-                modifiers.CritDamage += ChallengersGlove.WhipCritDamage / 100f;
-            }
             if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
             {
                 modifiers.TargetDamageMultiplier *= 1f + Items.Accessories.Damage.BurningStone.DamageIncrease / 100f;

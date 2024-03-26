@@ -6,6 +6,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items.Armors.Summon;
+using tsorcRevamp.Items.Weapons.Summon;
 using tsorcRevamp.Prefixes;
 using tsorcRevamp.Utilities;
 
@@ -322,7 +323,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 }
                 else if (item.prefix == ModContent.PrefixType<Tenacious>())
                 {
-                    scaleDelta = -0.3f;
+                    scaleDelta = -0.2f;
                 }
                 else
                     switch (item.prefix)

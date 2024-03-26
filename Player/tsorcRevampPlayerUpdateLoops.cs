@@ -155,7 +155,6 @@ namespace tsorcRevamp
         public bool Shunpo = false;
         public float ShunpoTimer = 0;
         public Vector2 ShunpoVelocity;
-        public bool ChallengersGloveCritDamage = false;
         public float WhipCritHitboxSize = 1f;
 
         public int SteelTempestStacks = 0;

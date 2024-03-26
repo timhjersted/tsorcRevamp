@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Summon.ForgottenImp
         public override int ProjectileFrames => 12;
         public override int Width => 66;
         public override int Height => 52;
-        public override float MinionSlotsRequired => ForgottenImpHalberd.SlotsRequired;
+        public override float MinionSlotsRequired => ForgottenImpHalberd.RequiredSlots;
         public override int ProjectileBuffType => ModContent.BuffType<ForgottenImpBuff>();
         public override bool ContactDamage => throw new NotImplementedException();
         public override DamageClass ProjectileDamageType => DamageClass.Summon;
