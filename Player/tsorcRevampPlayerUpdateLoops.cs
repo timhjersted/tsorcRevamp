@@ -86,7 +86,7 @@ namespace tsorcRevamp
         public float BotCAccuracyLoss = 0.08f;
         public float CurrentTotalRangedCritChance;
 
-        public float BotCCeruleanFlaskMaxManaScaling = 10f;
+        public const float BotCCeruleanFlaskMaxManaScaling = 25f;
         public float BotCMagicDamageAmp = 15f;
         public float BotCMagicAttackSpeedAmp = 15f;
 
@@ -404,7 +404,6 @@ namespace tsorcRevamp
 
             MythrilOrichalcumCritDamage = false;
             Shunpo = false;
-            ChallengersGloveCritDamage = false;
             WhipCritHitboxSize = 1;
 
             PhoenixSkull = false;

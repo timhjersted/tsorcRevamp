@@ -17,7 +17,7 @@ namespace tsorcRevamp
         {
             return player.GetModPlayer<tsorcRevampCeruleanPlayer>();
         }
-        public static float ManaRegenPotRestorationTimerBonus = 20f;
+        public const float ManaRegenPotRestorationTimerBonus = 20f;
 
         public int ceruleanChargesCurrent = 6; //Current amount of charges left
         public const int DefaultCeruleanChargesMax = 6; //How many charges the player starts with
@@ -31,8 +31,8 @@ namespace tsorcRevamp
         public bool isDrinking; //Whether or not the player is currently drinking estus
         public bool isCeruleanRestoring; //Whether or not the player is currently healing after drinking estus
 
-        public const float ceruleanDrinkTimerMaxBase = 1f; //This is actually seconds. How long it takes to drink a charge
-        public const float ceruleanManaFlowerStrength = 25f;
+        public const float ceruleanDrinkTimerMaxBase = 0.9f; //This is actually seconds. How long it takes to drink a charge
+        public const float ceruleanManaFlowerStrength = 33.4f;
         public float ceruleanDrinkTimerReductionManaFlower = ceruleanDrinkTimerMaxBase * (ceruleanManaFlowerStrength / 100f);
         public float ceruleanDrinkTimerMax = ceruleanDrinkTimerMaxBase;
         public float ceruleanDrinkTimer; //How far through the animation we are
@@ -75,23 +75,24 @@ namespace tsorcRevamp
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f }, Player.position);
             }
         }
+        public const float ManaRegenBonusDivisor = 200f; //lower is better
+        public const float ManaRegenDelayBonusDivisor = 3.8f; //lower is better
         public override void PostUpdateMiscEffects()
         {
             if (Player.manaFlower)
             {
-                ceruleanDrinkTimerReductionManaFlower = ceruleanDrinkTimerMaxBase * 0.25f;
                 ceruleanDrinkTimerMax = ceruleanDrinkTimerMaxBase - ceruleanDrinkTimerReductionManaFlower;
             }
             else
             {
                 ceruleanDrinkTimerMax = ceruleanDrinkTimerMaxBase;
             }
-            ceruleanManaGainMaxManaBonus = Player.statManaMax2 * Player.GetModPlayer<tsorcRevampPlayer>().BotCCeruleanFlaskMaxManaScaling / 100f;
-            ceruleanManaGainManaRegenBonus = 1f + ((float)Player.manaRegenBonus / 220f); //manaRegenBonus is usually in the double digits so this is good scaling 
-            ceruleanRestorationTimerBonus = 1f + (Player.manaRegenDelayBonus / 4f);  //manaRegenDelayBonus is given out at 1 or 0.5 by 2 sources in vanilla so this is also very good scaling
+            ceruleanManaGainMaxManaBonus = Player.statManaMax2 * tsorcRevampPlayer.BotCCeruleanFlaskMaxManaScaling / 100f;
+            ceruleanManaGainManaRegenBonus = 1f + ((float)Player.manaRegenBonus / ManaRegenBonusDivisor); //manaRegenBonus is usually in the double digits so this is good scaling 
+            ceruleanRestorationTimerBonus = 1f + (Player.manaRegenDelayBonus / ManaRegenDelayBonusDivisor);  //manaRegenDelayBonus is given out at 1 or 0.5 by 2 sources in vanilla so this is also very good scaling
             if (Player.manaRegenBuff) //so mana regen pot does something
             {
-                ceruleanRestorationTimerBonus = 1f + (ManaRegenPotRestorationTimerBonus / 100f) + (Player.manaRegenDelayBonus / 3.5f);
+                ceruleanRestorationTimerBonus = 1f + (ManaRegenPotRestorationTimerBonus / 100f) + (Player.manaRegenDelayBonus / (ManaRegenDelayBonusDivisor - 0.4f));
             }
             ceruleanRestorationTimerMax = 300 * ceruleanRestorationTimerBonus; //base value does not affect the total mana restored
             if (ModContent.GetInstance<tsorcRevampConfig>().DisableAutomaticQuickMana)
