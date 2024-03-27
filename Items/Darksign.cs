@@ -230,7 +230,7 @@ namespace tsorcRevamp.Items
                     }
                 case 3:
                     {
-                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CeruleanFlask", LangUtils.GetTextValue("Items.Darksign.Magic", modPlayer.BotCCeruleanFlaskMaxManaScaling, modPlayer.BotCMagicDamageAmp, modPlayer.BotCMagicAttackSpeedAmp)));
+                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CeruleanFlask", LangUtils.GetTextValue("Items.Darksign.Magic", tsorcRevampPlayer.BotCCeruleanFlaskMaxManaScaling, modPlayer.BotCMagicDamageAmp, modPlayer.BotCMagicAttackSpeedAmp)));
                         break;
                     }
                 case 4:
