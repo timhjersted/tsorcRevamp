@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
 
             Item.rare = ItemRarityID.Green;
             Item.DamageType = DamageClass.Melee;
-            Item.damage = 60;
+            Item.damage = 55;
             Item.width = 48;
             Item.height = 48;
             Item.knockBack = 9f;

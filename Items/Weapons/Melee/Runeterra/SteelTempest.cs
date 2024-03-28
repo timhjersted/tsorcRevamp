@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public override float SwingSoundVolume => 0.15f;
         public override int RarityID => ItemRarityID.Green;
         public override int Value => Item.buyPrice(0, 10, 0, 0);
-        public override int BaseDamage => 20;
+        public override int BaseDamage => 22;
         public override int ItemWidth => 86;
         public override int ItemHeight => 82;
         public override float ItemScale => 0.7f;

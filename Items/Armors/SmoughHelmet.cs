@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class SmoughHelmet : ModItem
     {
-        public static float Dmg = 15f;
+        public static float Dmg = 10f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
         public override void SetStaticDefaults()
         {

@@ -144,6 +144,7 @@ Mods: {
 				MinionSentrySlot: Increases maximum minions by {0} and sentries by {1}
 				FlatDmg: Increases summon damage by {0} flat
 				CritChance: Increases summon crit chance by {0}%
+				CritMult: Increases summon critical strike chance by {0}% multiplicatively
 				TagCritMult: Multiplies summon tag critical strike chance by {0}x
 				TagDmgMult: This weapon scales with only {0}% Tag Damage
 				DmgMult: Increases summon damage by {0}% multiplicatively
@@ -197,9 +198,17 @@ Mods: {
 			25: Remember to dodgeroll
 			26: I am so fucking mad
 			27: Grey Stone Gates cannot be broken and must be opened by a lever or switch
+			Poem:
+				'''
+				You're bad, 
+				you're mad,
+				cope, seethe and mald,
+				until you're bald.
+				'''
 			WallDeathReason: " was consumed by The Wall of Flesh"
 			BotC1: Bearer of the Curse mode can be disabled at any time...
 			BotC2: Bearer of the Curse mode is intended for experienced players
+			BotC3: Try reading the Darksigns description
 			IWantToRemoveThisCaptainObviousShit: Avoid getting hit by enemy attacks
 			TotallyNotMeantToBeToxic: Get Good :)
 			HeavyRoll: Heavy roll you got there!
@@ -2836,7 +2845,8 @@ Mods: {
 				Tooltip:
 					'''
 					Increases the effectiveness of the Dragon Crest Shield
-					Set Bonus: Decreases all attack speed by {0}% multiplicatively but grants {1}% increased critical strike chance
+					Set Bonus: Decreases all attack speed by {0}% multiplicatively but guarantees critical hits
+					Critical strike damage is reduced by {1}%
 					Also increases mana costs by {0}%
 					'''
 			}
@@ -3081,7 +3091,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.DmgMult}
 					{$CommonItemTooltip.Summon.MinionSentrySlot@1}
-					{$CommonItemTooltip.Summon.CritChance@3}
+					{$CommonItemTooltip.Summon.CritMult@3}
 					{$CommonItemTooltip.Summon.TagStrength@4}
 					'''
 			}
@@ -4221,7 +4231,7 @@ Mods: {
 					While boost is active, gain the following bonuses:
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
 					{$CommonItemTooltip.NoKnockback}
-					{$CommonItemTooltip.ReducesDamageTakenByPercent@2}
+					{$CommonItemTooltip.DRStat@2}
 					Can switch between forms at an altar
 					'''
 			}

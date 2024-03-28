@@ -220,7 +220,7 @@ namespace tsorcRevamp.Items
             {
                 case 1:
                     {
-                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "LethalTempo", LangUtils.GetTextValue("Items.Darksign.Melee", (int)(modPlayer.BotCMeleeBaseAttackSpeedMult * 100f), (int)(modPlayer.BotCLethalTempoBonus * 100f), (int)(modPlayer.BotCLethalTempoBonus * modPlayer.BotCLethalTempoMaxStacks * 100f) + 1, (int)modPlayer.BotCLethalTempoMaxStacks)));
+                        tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "LethalTempo", LangUtils.GetTextValue("Items.Darksign.Melee", (int)(modPlayer.BotCMeleeBaseAttackSpeedMult * 100f), (int)(modPlayer.BotCLethalTempoBonus * 100f), (int)(modPlayer.BotCLethalTempoBonus * modPlayer.BotCLethalTempoMaxStacks * 100f), (int)modPlayer.BotCLethalTempoMaxStacks)));
                         break;
                     }
                 case 2:

@@ -11,6 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     class MagmaTooth : ModItem
     {
         public int HitCounter = 0;
+        public const int HitsNeeded = 8;
         public override void SetStaticDefaults()
         {
         }
@@ -23,6 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.useTime = 33;
             Item.scale = 1.25f;
             Item.damage = 44;
+            Item.crit = 4;
             Item.knockBack = 7.5f;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Orange;
@@ -37,10 +39,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         {
             HitCounter++;
             target.AddBuff(BuffID.OnFire3, 300, false);
-            if (HitCounter >= 10)
+            if (HitCounter >= HitsNeeded)
             {
-                Projectile.NewProjectile(Item.GetSource_FromThis(), target.Center + new Vector2(0, -20), Vector2.Zero, ModContent.ProjectileType<MagmaToothVolcano>(), (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer, player.GetTotalCritChance(DamageClass.Melee) + Item.crit);
-                HitCounter -= 10;
+                Projectile.NewProjectile(Item.GetSource_FromThis(), target.Center + new Vector2(0, 30), Vector2.Zero, ModContent.ProjectileType<MagmaToothVolcano>(), (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer, player.GetTotalCritChance(DamageClass.Melee) + Item.crit);
+                HitCounter -= HitsNeeded;
             }
         }
         public override void MeleeEffects(Player player, Rectangle hitbox)

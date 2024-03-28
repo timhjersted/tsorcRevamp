@@ -17,15 +17,15 @@ namespace tsorcRevamp.NPCs
         {
             if (tsorcRevamp.DestroyerSegments.Contains(npc.type)) //destroyer sword/item dmg reduction (flat, can't alter item dmg because it's a permanent stat)
             { //could do some trickery with modifydamage in global item but this makes more sense
-                modifiers.FinalDamage *= 0.85f;
+                modifiers.FinalDamage *= 0.65f;
             }
             if (tsorcRevamp.JungleWyvernSegments.Contains(npc.type)) 
             {
-                modifiers.FinalDamage *= 0.9f;
+                modifiers.FinalDamage *= 0.75f;
             }
             if (tsorcRevamp.EaterOfWorldsSegments.Contains(npc.type))
             {
-                modifiers.FinalDamage *= 0.95f;
+                modifiers.FinalDamage *= 0.9f;
             }
         }
 
@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs
                     modifiers.FinalDamage *= 0.8f;
                 }
             }
-            if (tsorcRevamp.JungleWyvernSegments.Contains(npc.type))
+            if (tsorcRevamp.EaterOfWorldsSegments.Contains(npc.type))
             {
                 if (projectile.IsMinionOrSentryRelated)
                 {
@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs
                     projectile.damage = (int)(projectile.damage * 0.85f);
                 }
             }
-            if (tsorcRevamp.JungleWyvernSegments.Contains(npc.type))
+            if (tsorcRevamp.EaterOfWorldsSegments.Contains(npc.type))
             {
                 if (!projectile.IsMinionOrSentryRelated)
                 {

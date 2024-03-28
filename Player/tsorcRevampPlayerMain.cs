@@ -752,6 +752,14 @@ namespace tsorcRevamp
         public static float MythrilOcrichalcumCritDmg = 25f;
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
+            if (SmoughAttackSpeedReduction)
+            {
+                if (modifiers.DamageType != DamageClass.SummonMeleeSpeed)
+                {
+                    modifiers.SetCrit();
+                }
+                modifiers.CritDamage -= SmoughArmor.BadCritDmg / 100f;
+            }
             if (modifiers.DamageType == DamageClass.MagicSummonHybrid)
             {
                 modifiers.CritDamage -= 0.25f;
@@ -784,6 +792,13 @@ namespace tsorcRevamp
         }
         public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Item, consider using ModifyHitNPC instead */
         {
+            if (SmoughAttackSpeedReduction)
+            {
+                if (modifiers.DamageType == DamageClass.SummonMeleeSpeed)
+                {
+                    modifiers.SetCrit();
+                }
+            }
             if ((BurningAura || BurningStone) && target.onFire == true)
             {
                 modifiers.TargetDamageMultiplier *= 1.05f;
@@ -794,6 +809,13 @@ namespace tsorcRevamp
         {
             Player owner = Main.player[proj.owner];
 
+            if (SmoughAttackSpeedReduction && modifiers.DamageType == DamageClass.SummonMeleeSpeed)
+            {
+                if (!ProjectileID.Sets.IsAWhip[proj.type])
+                {
+                    modifiers.SetCrit();
+                }
+            }
             if (ShunpoTimer > 0 && (proj.type == ProjectileID.JoustingLance || proj.type == ProjectileID.HallowJoustingLance || proj.type == ProjectileID.ShadowJoustingLance))
             {
                 modifiers.FinalDamage *= 0.15f;

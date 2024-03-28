@@ -9,8 +9,8 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
 {
     public class MagmaToothVolcano : ModProjectile
     {
-        public int Frames = 1;
-        public int ProjectileLifetime = 120;
+        public int Frames = 13;
+        public int ProjectileLifetime = 100;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Type] = Frames;
@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
             Projectile.width = 50;
             Projectile.height = 200;
             Projectile.friendly = true;
-            Projectile.timeLeft = 120;
+            Projectile.timeLeft = ProjectileLifetime;
             Projectile.usesIDStaticNPCImmunity = true;
             Projectile.idStaticNPCHitCooldown = 15;
             Projectile.DamageType = DamageClass.Melee;
@@ -33,19 +33,33 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
             Projectile.ai[0] = 0;
             Projectile.velocity = Vector2.Zero;
         }
+        public bool ReverseAnimation = false;
         public override void AI()
         {
             Projectile.frameCounter++;
-            int frameSpeed = ProjectileLifetime / Frames;
+            int frameSpeed = ProjectileLifetime / (Frames + 4);
             if (Projectile.frameCounter >= frameSpeed)
             {
                 Projectile.frameCounter = 0;
-                Projectile.frame++;
+                if (!ReverseAnimation)
+                {
+                    Projectile.frame++;
+                }
+                else
+                {
+                    Projectile.frame--;
+                }
                 if (Projectile.frame >= Frames) 
                 {
-                    Projectile.frame = 0;
+                    Projectile.frame = 4 - 1;
+                    ReverseAnimation = true;
                 }
             }
+            Lighting.AddLight(Projectile.Center, TorchID.Torch);
+        }
+        public override bool? CanDamage()
+        {
+            return !ReverseAnimation;
         }
         public override void OnKill(int timeLeft)
         {

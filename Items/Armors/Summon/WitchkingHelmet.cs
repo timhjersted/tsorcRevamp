@@ -32,6 +32,7 @@ namespace tsorcRevamp.Items.Armors.Summon
             player.maxMinions += MinionSlot;
             player.maxTurrets += SentrySlot;
             player.GetCritChance(DamageClass.Summon) += CritChance;
+            player.GetCritChance(DamageClass.Summon) *= 1f + CritChance / 100f;
             player.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength += TagStrength / 100f;
         }
         public override void ArmorSetShadows(Player player)

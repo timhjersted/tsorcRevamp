@@ -71,11 +71,11 @@ namespace tsorcRevamp
 
         public int MaxMinionTurretMultiplier;
 
-        public float BotCMeleeBaseAttackSpeedMult = 0.85f;
+        public float BotCMeleeBaseAttackSpeedMult = 0.83f;
         public int BotCLethalTempoDuration = 3;
         public float BotCLethalTempoStacks = 0;
-        public int BotCLethalTempoMaxStacks = 10;
-        public float BotCLethalTempoBonus = 0.03f;
+        public int BotCLethalTempoMaxStacks = 6;
+        public float BotCLethalTempoBonus = 0.07f;
 
         public float BotCRangedBaseCritMult = 0.5f;
         public float BotCCurrentAccuracyPercent = 0f;
@@ -1004,7 +1004,6 @@ namespace tsorcRevamp
             if (MiakodaNewBoost)
             {
                 Player.moveSpeed += Items.Pets.MiakodaNew.MoveSpeed2 / 100f;
-                Player.endurance *= 0.5f;
                 Player.endurance += Items.Pets.MiakodaNew.DamageReduction / 100f;
                 Player.noKnockback = true;
             }
@@ -1772,15 +1771,27 @@ namespace tsorcRevamp
 
             int option = Main.rand.Next(DeathTextList.Count);
             text = DeathTextList[option];
-            if (BearerOfTheCurse && Main.rand.NextBool(5))
+            if (BearerOfTheCurse && Main.rand.NextBool(10))
             {
-                if (Main.rand.NextBool(2))
+                if (Main.rand.NextBool(3))
                 {
                     text = LangUtils.GetTextValue("DeathText.BotC1");
                 }
-                else
+                else if(Main.rand.NextBool(3))
                 {
                     text = LangUtils.GetTextValue("DeathText.BotC2");
+                }
+                else
+                {
+                    text = LangUtils.GetTextValue("DeathText.BotC3");
+                }
+            }
+
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BurdenOfSmough)
+            {
+                if (Main.rand.NextBool(10))
+                {
+                    text = LangUtils.GetTextValue("DeathText.HeavyRoll");
                 }
             }
 
@@ -1794,13 +1805,9 @@ namespace tsorcRevamp
                 {
                     text = LangUtils.GetTextValue("DeathText.TotallyNotMeantToBeToxic");
                 }
-            }
-
-            if (Player.GetModPlayer<tsorcRevampPlayer>().BurdenOfSmough)
-            {
-                if (Main.rand.NextBool(10))
+                if (Main.rand.NextBool(200))
                 {
-                    text = LangUtils.GetTextValue("DeathText.HeavyRoll");
+                    text = LangUtils.GetTextValue("DeathText.Poem");
                 }
             }
 

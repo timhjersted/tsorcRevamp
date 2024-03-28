@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 40;
             Item.useTime = 40;
-            Item.damage = 68;
+            Item.damage = 50;
             Item.crit = BaseCritChance;
             Item.mana = 10;
             Item.knockBack = 2f;

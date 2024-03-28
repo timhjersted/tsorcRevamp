@@ -197,9 +197,17 @@ Mods: {
 			25: 不要忘记翻滚啊！
 			26: 我真是**的疯了
 			27: 石头构成的门不能被稿子挖开，必须用拉杆或开关打开
+			/* Poem:
+				'''
+				You're bad, 
+				you're mad,
+				cope, seethe and mald,
+				until you're bald.
+				''' */
 			WallDeathReason: 被血肉之墙吞噬
 			BotC1: 被诅咒者模式可以随时关闭...
 			BotC2: 被诅咒者模式是为有通关经验的玩家设计的...
+			// BotC3: Try reading the Darksigns description
 			IWantToRemoveThisCaptainObviousShit: 尽量避免被敌人击中...
 			TotallyNotMeantToBeToxic: 继续变强吧 :)
 			HeavyRoll: 你干得不错。

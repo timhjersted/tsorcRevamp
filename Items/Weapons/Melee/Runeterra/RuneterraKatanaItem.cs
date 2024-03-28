@@ -69,10 +69,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public override void ModifyWeaponCrit(Player player, ref float crit)
         {
             crit *= 2;
-            if (player.GetModPlayer<tsorcRevampPlayer>().SmoughAttackSpeedReduction)
-            {
-                crit -= 100;
-            }
         }
         public override void HoldItem(Player player)
         {
@@ -306,14 +302,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                 if (ttindex != -1)
                 {
                     tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Shift", LangUtils.GetTextValue("CommonItemTooltip.Details")));
-                }
-            }
-            if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SmoughAttackSpeedReduction)
-            {
-                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
-                if (ttindex != -1)
-                {
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue("Items.SteelTempest.SmoughBalance")));
                 }
             }
         }
