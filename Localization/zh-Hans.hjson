@@ -9,7 +9,7 @@ Mods: {
 			ForBotCOnly: 仅限[c/6d8827:被诅咒者]：
 			UniqueBarrier: 不与其他屏障或盾牌法术叠加
 			NonConsumable: 物品不被消耗
-			UnusableDuringBoss: 有BOSS存活时不能使用！
+			UnusableDuringBoss: 有Boss存活时不能使用！
 			MeleeWhipAutoswing: 激活近战武器自动挥舞
 			RecipeTooltip: "[c/66fc03:黑暗之魂合成材料]"
 			WingsDisabled:
@@ -144,6 +144,7 @@ Mods: {
 				MinionSentrySlot: 增加 {0} 召唤栏和 {1} 哨兵栏
 				FlatDmg: 增加 {0} 点召唤伤害
 				CritChance: 增加 {0}% 召唤暴击率
+				CritMult: 乘算增加 {0}% 召唤暴击率
 				TagCritMult: 增加 {0}x 倍召唤标记暴击率
 				TagDmgMult: 此武器仅受到 {0}% 的召唤标记伤害加成
 				DmgMult: 乘算增加 {0}% 召唤伤害
@@ -170,9 +171,9 @@ Mods: {
 		}
 
 		DeathText: {
-			01: 翻滚使你对攻击免疫。掌握它是生存的必要条件！
+			01: 翻滚使你对攻击免疫，掌握它是生存的必要条件！
 			02: 发光的绿色头骨通常隐藏着重要的秘密...右键以打开
-			03: 可以在“控件”中更改绑定的翻滚快捷键。尝试左Shift绑定翻滚、左Alt绑定智能光标
+			03: 可以在“控件”中更改绑定的翻滚快捷键，尝试左Shift绑定翻滚、左Alt绑定智能光标
 			04: 你可以躲避半空中的攻击，跨过较长的距离并立即改变你的移动方向...
 			05: 水晶碎块经常暗示附近的秘密、箱子或隐藏路径...
 			06: 在正常战斗中使用药剂通常是生存所必需的
@@ -180,15 +181,15 @@ Mods: {
 			08: 某些黑暗区域的敌人掉落人性，可以刷新诅咒的效果
 			09: 物品提示通常包含对你的生存至关重要的信息...
 			10: 留意你物品的描述，看看是否有能用黑暗之魂升级的物品
-			11: 可以在BOSS掉落的独特物品上找到进展线索
+			11: 可以在Boss掉落的独特物品上找到进展线索
 			12: 如果你感到迷茫，就探索在地图上未显示出来的地方，几乎每个方向都有秘密和路径
 			13: 箴言文字泡提供了许多重要提示
 			14: 如果你的暴击几率超过100%，你就有机会造成多重暴击，从而造成4倍或更多的伤害
 			15: 用鞭子尖端攻击敌人必定造成暴击
 			16: 青色压力板只能用小型实体射弹激活
-			17: 一些原版物品的合成配方已被禁用。你必须通过在世界上探索以找到这些物品
+			17: 一些原版物品的合成配方已被禁用，你必须通过在世界上探索以找到这些物品
 			18: 在武器上有一个负面的修饰词缀？与绿宝石传令官Jade交谈，她可以用祝福来移除它
-			19: 你可能会在有能力打败BOSS之前就提前遭遇他们。如果陷入困境，等你变强了再回来
+			19: 你可能会在有能力打败Boss之前就提前遭遇他们，如果陷入困境，等你变强了再回来
 			20: 推荐使用 RecipeBrowser(合成表) 辅助模组，轻松查看新获得的物品有哪些合成配方
 			21: 欢迎来到泰拉瑞亚的类黑暗之魂模组
 			22: 绿花戒指大大提高了你的闪避能力，让你可以更好地躲避...
@@ -197,22 +198,22 @@ Mods: {
 			25: 不要忘记翻滚啊！
 			26: 我真是**的疯了
 			27: 石头构成的门不能被稿子挖开，必须用拉杆或开关打开
-			/* Poem:
+			Poem:
 				'''
-				You're bad, 
-				you're mad,
-				cope, seethe and mald,
-				until you're bald.
-				''' */
+				键盘敲击声声急，
+				       泰拉世界战不休。
+				       技艺不精莫气馁，
+				       菜就多练定出头。
+				'''
 			WallDeathReason: 被血肉之墙吞噬
 			BotC1: 被诅咒者模式可以随时关闭...
 			BotC2: 被诅咒者模式是为有通关经验的玩家设计的...
-			// BotC3: Try reading the Darksigns description
+			BotC3: 请查看暗符获取关于被诅咒者模式的详细信息
 			IWantToRemoveThisCaptainObviousShit: 尽量避免被敌人击中...
 			TotallyNotMeantToBeToxic: 继续变强吧 :)
 			HeavyRoll: 你干得不错。
-			BossDeath1: 不要放弃！ 一些BOSS需要多次尝试才能击败。
-			BossDeath2: 可能会提前碰到不是当前时期的某些BOSS。如果你打不过，试着提升装备后再来挑战。
+			BossDeath1: 不要放弃！ 一些Boss需要多次尝试才能击败。
+			BossDeath2: 可能会提前碰到不是当前时期的某些Boss。如果你打不过，试着提升装备后再来挑战。
 			DarkCloud: 你无法摆脱你的阴暗面。
 			Tonberry: (O_O;)
 			Marilith: 一些强大的攻击只能通过翻滚闪避！
@@ -542,7 +543,7 @@ Mods: {
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:一个类似于大金字塔的符号，月亮在它的右侧，刻在上面]"
 				LargeSapphire: "[c/ffbf00:上面刻着飞龙法师堡垒附近的一座雪山的符号]"
-				// VulnerabilityHex: Applies a vulnerability hex if Betsy has been defeated
+				VulnerabilityHex: 如果已击败双足翼龙，则施加双足翼龙诅咒减益
 				StarinaBottle: 增加 10 点魔力再生同时减少 50% 魔力再生延迟
 				ManaRegenerationBand: 增加 25 点魔力再生同时减少 100% 魔力再生延迟
 				WellFedItemsBotC: 为[c/6d8827:被诅咒者]增加 {0}% 耐力再生
@@ -1860,8 +1861,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedSummonDamage@0}
 					{$CommonItemTooltip.Summon.AtkSpeed@1}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@2}
-					{$CommonItemTooltip.Summon.WhipCritDmg@3}
-					{$CommonItemTooltip.Summon.WhipCritHitbox@4}
+					{$CommonItemTooltip.Summon.WhipCritHitbox@3}
 					{$CommonItemTooltip.Summon.WhipKnockback}
 					{$CommonItemTooltip.MeleeWhipAutoswing}
 					{$CommonItemTooltip.AggroBoost}
@@ -2837,8 +2837,9 @@ Mods: {
 				Tooltip:
 					'''
 					加强龙纹盾的效果
-					{$CommonItemTooltip.SetBonus}增加 {1}% 暴击率
-					乘算降低 {0}% 攻击速度，增加 {0}% 魔力消耗
+					{$CommonItemTooltip.SetBonus}乘算降低 {0}% 攻击速度但攻击必定暴击
+					减少 {1}% 暴击伤害
+					增加 {0}% 魔力消耗
 					'''
 			}
 
@@ -3082,7 +3083,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.DmgMult}
 					{$CommonItemTooltip.Summon.MinionSentrySlot@1}
-					{$CommonItemTooltip.Summon.CritChance@3}
+					{$CommonItemTooltip.Summon.CritMult@3}
 					{$CommonItemTooltip.Summon.TagStrength@4}
 					'''
 			}
@@ -3896,7 +3897,7 @@ Mods: {
 				DisplayName: 泰拉精华
 				Tooltip:
 					'''
-					几乎同时召唤所有BOSS
+					几乎同时召唤所有Boss
 					你绝对活不下来
 					'''
 			}
@@ -4221,7 +4222,7 @@ Mods: {
 					Miakoda 是一个当地方言的名字，意思是“月亮的力量”
 					【新月形态】，{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					当你暴击时用迈达斯灌注武器使敌人掉落更多钱币
-					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}，{$CommonItemTooltip.ReducesDamageTakenByPercent@2}，{$CommonItemTooltip.NoKnockback}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}，{$CommonItemTooltip.DRStat@2}，{$CommonItemTooltip.NoKnockback}
 					{$CommonItemTooltip.SecondDuration@3}, {$CommonItemTooltip.Cooldown@4}
 					可以在恶魔祭坛上切换形态
 					'''
@@ -5655,7 +5656,11 @@ Mods: {
 
 			MagmaTooth: {
 				DisplayName: 岩浆牙
-				Tooltip: 有概率用地狱之火点燃敌人
+				Tooltip:
+					'''
+					每十次攻击生成一个爆发火山
+					施加狱火减益
+					'''
 			}
 
 			MoonlightGreatsword: {
@@ -5692,7 +5697,7 @@ Mods: {
 				Tooltip:
 					'''
 					一把用来杀死各种法师的剑
-					每攻击三次会产生一个魔法波纹
+					在玩家周围生成符文
 					[c/ffbf00:对法师造成高达八倍的伤害]
 					“似乎夺心魔王也是法师...”
 					'''
@@ -5703,7 +5708,7 @@ Mods: {
 				Tooltip:
 					'''
 					一把被残夜魔力锻造过的锋利的剑
-					<right> 冲刺，消耗耐力让你暂时免疫攻击
+					<right> 冲刺，消耗耐力让你暂时免疫攻击并增加伤害
 					'''
 			}
 
@@ -5729,7 +5734,7 @@ Mods: {
 
 			ThornDecapitator: {
 				DisplayName: 荆棘斩首者
-				Tooltip: 击中敌人产生孢子云
+				Tooltip: 击中敌人在玩家周围生成荆棘
 			}
 
 			UltimaWeapon: {
@@ -7121,6 +7126,7 @@ Mods: {
 				Details:
 					'''
 					[c/7fffd4:涡轮增压增加飞船的伤害、移动速度和霸天龙神的攻击速度]
+					[c/7fffd4:涡轮增压额外造成相当于目标最大生命值 {3}% 的伤害，最多 {4}]
 					[c/7fffd4:涡轮增压会快速消耗你的魔力]
 					[c/b22222:霸天龙神]本身消耗半个仆从栏，并根据召唤的[c/b22222:飞船]数量进行缩放
 					[c/b22222:霸天龙神对敌人施加出其不意减益，并且可以标记敌人]
@@ -7148,10 +7154,11 @@ Mods: {
 				Details:
 					'''
 					[c/00008b:彗星在大范围内造成巨大破坏并释放冲击波]
-					[c/00008b:彗星施加惶恐减益]({$CommonItemTooltip.SecondDuration@3})
+					[c/00008b:彗星施加惶恐减益]({$CommonItemTooltip.SecondDuration@5})
 					惶恐减益会增加星芒伤害，并造成高额持续伤害
-					乘算增加 {4}% 星芒伤害
+					乘算增加 {6}% 星芒伤害
 					[c/7fffd4:涡轮增压增加星芒伤害、移动速度和铸星龙王的攻击速度]
+					[c/7fffd4:涡轮增压额外造成相当于目标最大生命值 {3}% 的伤害，最多 {4}]
 					[c/7fffd4:涡轮增压会快速消耗你的魔力]
 					[c/b22222:铸星龙王]本身消耗半个仆从栏，并根据召唤的[c/b22222:星芒]数量进行缩放
 					[c/b22222:铸星龙王对敌人施加日照减益，并且可以标记敌人]
@@ -7700,12 +7707,12 @@ Mods: {
 			}
 
 			EtherianWyvernStaff: {
-				// DisplayName: Etherian Wyvern Staff
-				/* Tooltip:
+				DisplayName: 以太飞龙法杖
+				Tooltip:
 					'''
-					Summons an etherian wyvern which breathes fire at opponents and rams them
+					召唤以太飞龙向你的敌人喷洒火焰
 					{$CommonItemTooltip.Summon.TagDmgMult}
-					''' */
+					'''
 			}
 		}
 
@@ -7750,7 +7757,7 @@ Mods: {
 				DisplayName: 篝火
 				Description:
 					'''
-					稍微停留一会... 让你的灵魂被治愈 
+					稍微停留一会...让你的灵魂被治愈 
 					禁止敌怪生成
 					'''
 			}
@@ -7929,7 +7936,7 @@ Mods: {
 
 			GravityField: {
 				DisplayName: 重力井
-				Description: 存活的BOSS加重了空间中的引力！
+				Description: 存活的Boss加重了空间中的引力！
 			}
 
 			GreatMagicBarrier: {
@@ -8327,7 +8334,7 @@ Mods: {
 
 			SunsetQuasarBuff: {
 				DisplayName: 金乌西坠
-				Description: 耀日类星体会保护你
+				Description: 落日类星体会保护你
 			}
 
 			TerraFallBuff: {
@@ -8626,8 +8633,8 @@ Mods: {
 			}
 
 			EtherianWyvernBuff: {
-				// DisplayName: Etherian Wyvern Buff
-				// Description: The etherian wyvern will fight for you
+				DisplayName: 以太飞龙
+				Description: 以太飞龙为你而战
 			}
 		}
 
@@ -9239,12 +9246,12 @@ Mods: {
 			AncientFireAxeFireballBurst.DisplayName: 古代火斧
 			AncientFireSwordSlash.DisplayName: 古代火剑
 			SupremeDragoonLanceProjectile.DisplayName: 至尊龙骑枪
-			// MagmaToothVolcano.DisplayName: Magma Tooth Volcano
-			// RuneBladeRune.DisplayName: Rune Blade Rune
-			// ThornDecapitatorThorn.DisplayName: Thorn Decapitator Thorn
-			// MjolnirElectrosphere.DisplayName: Mjolnir Electrosphere
-			// EtherianWyvernFireball.DisplayName: Etherian Wyvern Fireball
-			// EtherianWyvernProjectile.DisplayName: Etherian Wyvern Projectile
+			MagmaToothVolcano.DisplayName: 岩浆牙
+			RuneBladeRune.DisplayName: 符文之刃
+			ThornDecapitatorThorn.DisplayName: 荆棘斩首者
+			MjolnirElectrosphere.DisplayName: 雷神之锤
+			EtherianWyvernFireball.DisplayName: 以太飞龙的火球
+			EtherianWyvernProjectile.DisplayName: 以太飞龙
 		}
 
 		NPCs: {
@@ -9345,8 +9352,8 @@ Mods: {
 			}
 
 			ExampleBoss: {
-				DisplayName: 示例BOSS
-				DespawnHandler: 示例BOSS回归默认维度...
+				DisplayName: 示例Boss
+				DespawnHandler: 示例Boss回归默认维度...
 			}
 
 			FireFiendMarilith: {
@@ -9647,7 +9654,7 @@ Mods: {
 			AbyssPortal.DisplayName: 深渊裂缝
 			AttraidiesApparition.DisplayName: 阿卓迪斯
 			Faraam.DisplayName: 法拉姆
-			GwynBossVision.DisplayName: 葛温BOSS
+			GwynBossVision.DisplayName: 葛温Boss
 			LeonhardPhase1.DisplayName: ???
 			IchorGlob.DisplayName: 灵焰
 			IchorMissile.DisplayName: 灵焰飞弹

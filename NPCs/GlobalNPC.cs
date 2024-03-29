@@ -1063,7 +1063,10 @@ namespace tsorcRevamp.NPCs
                 if (markedByDetonationSignal) //Detonation Signal effect
                 {
                     int buffIndex = 0;
-                    Projectile.NewProjectile(Projectile.GetSource_None(), npc.Top, Vector2.Zero, ProjectileID.DD2ExplosiveTrapT2Explosion, 0, 0, Main.myPlayer);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_None(), npc.Top, Vector2.Zero, ProjectileID.DD2ExplosiveTrapT2Explosion, 0, 0, Main.myPlayer);
+                    }
                     SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1.5f, PitchVariance = 0.3f }, npc.Top);
                     npc.AddBuff(ModContent.BuffType<DetonationSignalBuff>(), 4 * 60);
                     foreach (int buffType in npc.buffType)
@@ -1086,25 +1089,25 @@ namespace tsorcRevamp.NPCs
                     Vector2 StarMove2 = new Vector2(-32, 40);
                     Vector2 StarMove3 = new Vector2(0, 40);
                     int Move = Main.rand.Next(3);
-                    switch (Move)
-                    {
-                        case 0:
-                            {
-                                Projectile.NewProjectile(Projectile.GetSource_None(), StarVector1, StarMove1, ModContent.ProjectileType<EnchantedWhipFallingStar>(), StarDamage, 0, Main.myPlayer);
-                                break;
-                            }
-                        case 1:
-                            {
-                                Projectile.NewProjectile(Projectile.GetSource_None(), StarVector2, StarMove2, ModContent.ProjectileType<EnchantedWhipFallingStar>(), StarDamage, 0, Main.myPlayer);
-                                break;
-                            }
-                        case 2:
-                            {
-                                Projectile.NewProjectile(Projectile.GetSource_None(), StarVector3, StarMove3, ModContent.ProjectileType<EnchantedWhipFallingStar>(), StarDamage, 0, Main.myPlayer);
-                                break;
-                            }
-                    }
-                }
+                        switch (Move)
+                        {
+                            case 0:
+                                {
+                                    Projectile.NewProjectile(Projectile.GetSource_None(), StarVector1, StarMove1, ModContent.ProjectileType<EnchantedWhipFallingStar>(), StarDamage, 0, Main.myPlayer);
+                                    break;
+                                }
+                            case 1:
+                                {
+                                    Projectile.NewProjectile(Projectile.GetSource_None(), StarVector2, StarMove2, ModContent.ProjectileType<EnchantedWhipFallingStar>(), StarDamage, 0, Main.myPlayer);
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    Projectile.NewProjectile(Projectile.GetSource_None(), StarVector3, StarMove3, ModContent.ProjectileType<EnchantedWhipFallingStar>(), StarDamage, 0, Main.myPlayer);
+                                    break;
+                                }
+                        }
+                    }                
                 if (markedByPolarisLeash && Main.myPlayer == projectileOwner.whoAmI)
                 {
                     int StarDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(PolarisLeashItem.BaseDamage * PolarisLeashItem.StarDamageScaling / 100f);

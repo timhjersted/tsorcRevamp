@@ -3812,7 +3812,10 @@ namespace tsorcRevamp.NPCs
                         i2 *= i3;
                         vector38.X += i1;
                         vector38.Y += i2;
-                        int i9 = Projectile.NewProjectile(npc.GetSource_FromThis(), vector38.X, vector38.Y, i1, i2, i8, i7, 0f, Main.myPlayer, 1);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int i9 = Projectile.NewProjectile(npc.GetSource_FromThis(), vector38.X, vector38.Y, i1, i2, i8, i7, 0f, Main.myPlayer, 1);
+                        }
                     }
                 }
 
@@ -3849,8 +3852,11 @@ namespace tsorcRevamp.NPCs
                     num222 *= num223;
                     int num224 = 18;
                     int num225 = 44;
-                    int num226 = Projectile.NewProjectile(npc.GetSource_FromThis(), vector28.X, vector28.Y, num221, num222, num225, num224, 0f, Main.myPlayer);
-                    Main.projectile[num226].timeLeft = 420;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int num226 = Projectile.NewProjectile(npc.GetSource_FromThis(), vector28.X, vector28.Y, num221, num222, num225, num224, 0f, Main.myPlayer);
+                        Main.projectile[num226].timeLeft = 420;
+                    }
                     npc.ai[3] = 0f;
 
                 }
@@ -3867,8 +3873,11 @@ namespace tsorcRevamp.NPCs
                     num222 *= num223;
                     int num224 = 21;
                     int num225 = 44;
-                    int num226 = Projectile.NewProjectile(npc.GetSource_FromThis(), vector28.X, vector28.Y, num221, num222, num225, num224, 0f, Main.myPlayer);
-                    Main.projectile[num226].timeLeft = 420;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int num226 = Projectile.NewProjectile(npc.GetSource_FromThis(), vector28.X, vector28.Y, num221, num222, num225, num224, 0f, Main.myPlayer);
+                        Main.projectile[num226].timeLeft = 420;
+                    }
                     npc.ai[3] = 0f;
 
                 }
@@ -5274,7 +5283,10 @@ namespace tsorcRevamp.NPCs
                         PrimeLaserCooldown -= 100; //150
                     }
                     Vector2 projVel = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center, 1);
-                    Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedLaser>(), 40, 0, Main.myPlayer, npc.target, npc.whoAmI);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedLaser>(), 40, 0, Main.myPlayer, npc.target, npc.whoAmI);
+                    }
                 }
             }
 
@@ -5291,17 +5303,20 @@ namespace tsorcRevamp.NPCs
                         dustPos = dustPos.RotatedBy(MathHelper.PiOver2);
                         Dust.NewDustPerfect(npc.Center + dustPos, DustID.Torch, Main.npc[(int)npc.ai[3]].velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
 
-                        if (destroyerChargeTimer > -180 && destroyerChargeTimer <= 740 && destroyerChargeTimer % 120 == 0 && laserToggle)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Vector2 projVel = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(220, 220), 1);
-                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 80, 0, Main.myPlayer, 2000 + npc.target, npc.whoAmI);
-                        }
+                            if (destroyerChargeTimer > -180 && destroyerChargeTimer <= 740 && destroyerChargeTimer % 120 == 0 && laserToggle)
+                            {
+                                Vector2 projVel = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(220, 220), 1);
+                                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 80, 0, Main.myPlayer, 2000 + npc.target, npc.whoAmI);
+                            }
 
-                        //Shoot confining lasers above it to keep the player from circling
-                        if (destroyerChargeTimer > -60 && (Main.GameUpdateCount + npc.whoAmI * 5) % 300 == 0)
-                        {
-                            Vector2 projVel = new Vector2(Main.rand.NextFloat(-1, 1), Main.rand.NextFloat(-1, 0.05f));
-                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -4, npc.whoAmI);
+                            //Shoot confining lasers above it to keep the player from circling
+                            if (destroyerChargeTimer > -60 && (Main.GameUpdateCount + npc.whoAmI * 5) % 300 == 0)
+                            {
+                                Vector2 projVel = new Vector2(Main.rand.NextFloat(-1, 1), Main.rand.NextFloat(-1, 0.05f));
+                                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -4, npc.whoAmI);
+                            }
                         }
                     }
 
@@ -5338,7 +5353,7 @@ namespace tsorcRevamp.NPCs
                             }
 
                             //Cancel the attack if it's too close to a "safe angle", which ensures the player can always avoid the attack
-                            if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2)
+                            if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2 && Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, style, npc.whoAmI);
                             }
@@ -5349,7 +5364,7 @@ namespace tsorcRevamp.NPCs
                     if (Main.GameUpdateCount % 150 == 0 && (destroyerAttackIndex == 0 || destroyerAttackIndex == 2))
                     {
                         Vector2 projVel = UsefulFunctions.Aim(npc.Center, Main.player[npc.target].Center, 1);
-                        if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.Pi / 6f && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.Pi / 6f)
+                        if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.Pi / 6f && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.Pi / 6f && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, 1000 + npc.target, npc.whoAmI);
                         }

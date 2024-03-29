@@ -303,29 +303,32 @@ namespace tsorcRevamp.NPCs.Special
                     Vector2 spawnPosition = new Vector2(34, 0).RotatedBy(difference.ToRotation()); //34 is the distance we will spawn the projectile away from npc.Center
                     Vector2 velocity = new Vector2(0.1f, 0).RotatedBy(difference.ToRotation()); //Give it velocity so it can face the right direction
 
-                    if (NPC.downedBoss1 || NPC.downedBoss2) //Does more damage post EoC/EoW/BoC, otherewise he's a joke
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        if (Math.Abs(NPC.velocity.X) < 4.5f) //If not moving at extreme speed, use this proj
+                        if (NPC.downedBoss1 || NPC.downedBoss2) //Does more damage post EoC/EoW/BoC, otherewise he's a joke
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 10, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                            if (Math.Abs(NPC.velocity.X) < 4.5f) //If not moving at extreme speed, use this proj
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 10, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                            }
+
+                            else //If moving at extreme speeds, use this higher damage projectile
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 12, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                            }
                         }
 
-                        else //If moving at extreme speeds, use this higher damage projectile
+                        else
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 12, 0f, Main.myPlayer, 0, NPC.whoAmI);
-                        }
-                    }
+                            if (Math.Abs(NPC.velocity.X) < 4.5f) //If not moving at extreme speed, use this proj
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 8, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                            }
 
-                    else
-                    {
-                        if (Math.Abs(NPC.velocity.X) < 4.5f) //If not moving at extreme speed, use this proj
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 8, 0f, Main.myPlayer, 0, NPC.whoAmI);
-                        }
-
-                        else //If moving at extreme speeds, use this higher damage projectile
-                        {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 10, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                            else //If moving at extreme speeds, use this higher damage projectile
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 10, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                            }
                         }
                     }
                     NPC.ai[1] = 0; //Reset timer
@@ -412,45 +415,47 @@ namespace tsorcRevamp.NPCs.Special
                             {
                                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = .8f, PitchVariance = 0.3f }, player.Center); //Play swing-throw sound
 
-                                if (Math.Abs(NPC.Center.X - player.Center.X) > 14 * 16) //If player is far
+                                if (Main.netMode != NetmodeID.MultiplayerClient)
                                 {
-                                    if (NPC.direction == 1)
+                                    if (Math.Abs(NPC.Center.X - player.Center.X) > 14 * 16) //If player is far
                                     {
-                                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(9, Main.rand.Next(-4, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                        if (NPC.direction == 1)
+                                        {
+                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(9, Main.rand.Next(-4, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                        }
+
+                                        else
+                                        {
+                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(-9, Main.rand.Next(-4, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                        }
                                     }
 
-                                    else
+                                    else if (Math.Abs(NPC.Center.X - player.Center.X) > 8 * 16 && Math.Abs(NPC.Center.X - player.Center.X) <= 14 * 16) //If player is medium distance
                                     {
-                                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(-9, Main.rand.Next(-4, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                        if (NPC.direction == 1)
+                                        {
+                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(7, Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                        }
+
+                                        else
+                                        {
+                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(-7, Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                        }
+                                    }
+
+                                    else //If player is close
+                                    {
+                                        if (NPC.direction == 1)
+                                        {
+                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(5, Main.rand.Next(-2, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                        }
+
+                                        else
+                                        {
+                                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(-5, Main.rand.Next(-2, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                        }
                                     }
                                 }
-
-                                else if (Math.Abs(NPC.Center.X - player.Center.X) > 8 * 16 && Math.Abs(NPC.Center.X - player.Center.X) <= 14 * 16) //If player is medium distance
-                                {
-                                    if (NPC.direction == 1)
-                                    {
-                                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(7, Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
-                                    }
-
-                                    else
-                                    {
-                                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(-7, Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
-                                    }
-                                }
-
-                                else //If player is close
-                                {
-                                    if (NPC.direction == 1)
-                                    {
-                                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(5, Main.rand.Next(-2, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
-                                    }
-
-                                    else
-                                    {
-                                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(-5, Main.rand.Next(-2, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
-                                    }
-                                }
-
                             }
 
                             if (NPC.ai[2] == 60)

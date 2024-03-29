@@ -800,8 +800,11 @@ namespace tsorcRevamp
                 Item staff = new();
                 staff.SetDefaults(ModContent.ItemType<Items.Weapons.Summon.PeculiarSphere>());
                 int damage = staff.damage;
-                int p = Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Archer.NondescriptOwlProjectile>(), damage, 0, Player.whoAmI);
-                Main.projectile[p].originalDamage = damage;
+                if (Main.myPlayer == Player.whoAmI)
+                {
+                    int p = Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.Archer.NondescriptOwlProjectile>(), damage, 0, Player.whoAmI);
+                    Main.projectile[p].originalDamage = damage;
+                }    
             }
 
             if (Player.HasBuff(ModContent.BuffType<SunsetQuasarBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarMinion>()] == 0)
@@ -809,8 +812,11 @@ namespace tsorcRevamp
                 Item staff = new();
                 staff.SetDefaults(ModContent.ItemType<Items.Weapons.Summon.SunsetQuasar>());
                 int damage = staff.damage;
-                int p = Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarMinion>(), damage, 0, Player.whoAmI);
-                Main.projectile[p].originalDamage = damage;
+                if (Main.myPlayer == Player.whoAmI)
+                {
+                    int p = Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Summon.SunsetQuasar.SunsetQuasarMinion>(), damage, 0, Player.whoAmI);
+                    Main.projectile[p].originalDamage = damage;
+                }
             }
 
             if (Player.HasBuff(BuffID.ShadowFlame))
