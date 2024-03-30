@@ -6618,7 +6618,7 @@ Mods: {
 				DisplayName: Pyrosulfate
 				Tooltip:
 					'''
-					{$CommonItemTooltip.PercentSummonTagCritChance}
+					{$CommonItemTooltip.SummonTagDamage}
 					{$CommonItemTooltip.Whips}
 					Inflicts Cursed Inferno
 					'''
@@ -6628,7 +6628,7 @@ Mods: {
 				DisplayName: Pyromethane
 				Tooltip:
 					'''
-					{$CommonItemTooltip.SummonTagDamage}
+					{$CommonItemTooltip.PercentSummonTagCritChance}
 					{$CommonItemTooltip.Whips}
 					Inflicts Ichor
 					'''
