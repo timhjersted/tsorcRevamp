@@ -10,7 +10,8 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
     public class ThornDecapitatorThorn : ModProjectile
     {
         public int Frames = 1;
-        public int ProjectileLifetime = 360 * 2;
+        public const int ExtraUpdates = 2;
+        public int ProjectileLifetime = 360 * ExtraUpdates;
         public Vector2 CircularEdge;
         public int Timer = 0;
         public int CircleSize = 100;
@@ -23,12 +24,11 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
             Projectile.width = 20;
             Projectile.height = 20;
             Projectile.friendly = true;
-            Projectile.extraUpdates = 1;
+            Projectile.extraUpdates = ExtraUpdates - 1;
             Projectile.timeLeft = ProjectileLifetime;
             Projectile.usesIDStaticNPCImmunity = true;
             Projectile.idStaticNPCHitCooldown = 15;
             Projectile.DamageType = DamageClass.Melee;
-            Projectile.frame = Main.rand.Next(Frames);
             CircularEdge = Main.rand.NextVector2CircularEdge(CircleSize, CircleSize);
             Projectile.penetrate = 2;
             Projectile.tileCollide = false;
@@ -47,11 +47,12 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
                 CircularEdge = Main.rand.NextVector2CircularEdge(CircleSize, CircleSize);
                 Timer = 0;
             }
-        }
-        public override void OnKill(int timeLeft)
-        {
-            SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 0.4f, PitchVariance = 0.1f });
-            Dust.NewDust(Projectile.Center, 100, 100, DustID.FlameBurst, 0f, 0f, 250, Color.DarkRed, 2.5f);
+            // Set spriteDirection based on moving left or right. Left -1, right 1
+            Projectile.spriteDirection = (Vector2.Dot(Projectile.velocity, Vector2.UnitX) >= 0f).ToDirectionInt();
+
+            // Point towards where it is moving, applied offset for top right of the sprite respecting spriteDirection
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 - MathHelper.PiOver4 * Projectile.spriteDirection;
+            Dust.NewDust(Projectile.TopLeft, Projectile.width, Projectile.height, DustID.JungleSpore, 0, 0, 0, Color.Red, 0.2f);
         }
     }
 }

@@ -38,6 +38,8 @@ using tsorcRevamp.Items.Weapons.Summon.Runeterra;
 using tsorcRevamp.NPCs.Bosses;
 using tsorcRevamp.NPCs.Bosses.JungleWyvern;
 using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
+using tsorcRevamp.NPCs.Bosses.Okiku.FirstForm;
+using tsorcRevamp.NPCs.Bosses.Okiku.SecondForm;
 using tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm;
 using tsorcRevamp.NPCs.Bosses.Pinwheel;
 using tsorcRevamp.NPCs.Bosses.PrimeV2;
@@ -48,6 +50,7 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
+using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile;
 using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss;
@@ -141,6 +144,7 @@ namespace tsorcRevamp
         public static List<int> LichKingSerpentSegments;
         public static List<int> SeathSegments;
         public static List<int> UntargetableNPCs;
+        public static List<int> MageNPCs;
         public static Dictionary<BossExtras, (IItemDropRuleCondition Condition, int ID)> BossExtrasDescription;
         public static Dictionary<int, BossExtras> AssignedBossExtras;
         public static Dictionary<int, int> BossBagIDtoNPCID;
@@ -1325,6 +1329,46 @@ namespace tsorcRevamp
             ModContent.NPCType<AbyssPortal>(), 
             ModContent.NPCType<AttraidiesApparition>(),
             ModContent.NPCType<GwynBossVision>()
+            };
+            #endregion
+
+            //-------
+            #region Mage NPC list
+            MageNPCs = new List<int>()
+            {
+                NPCID.DarkCaster,
+                NPCID.GoblinSorcerer,
+                NPCID.GoblinSummoner,
+                NPCID.CultistBoss,
+                NPCID.DiabolistRed,
+                NPCID.DiabolistWhite,
+                NPCID.RaggedCaster,
+                NPCID.RaggedCasterOpenCoat,
+                NPCID.Necromancer,
+                NPCID.NecromancerArmored,
+                ModContent.NPCType<UndeadCaster>(),
+                ModContent.NPCType<MindflayerServant>(),
+                ModContent.NPCType<DungeonMage>(),
+                ModContent.NPCType<MountedSandsprogMage>(),
+                ModContent.NPCType<SandsprogMage>(),
+                ModContent.NPCType<Necromancer>(),
+                ModContent.NPCType<NecromancerElemental>(),
+                ModContent.NPCType<Warlock>(),
+                ModContent.NPCType<DemonSpirit>(),
+                ModContent.NPCType<ShadowMage>(),
+                ModContent.NPCType<AttraidiesIllusion>(),
+                ModContent.NPCType<AttraidiesManifestation>(),
+                ModContent.NPCType<AttraidiesMimic>(),
+                ModContent.NPCType<WyvernMage>(),
+                ModContent.NPCType<DarkShogunMask>(),
+                ModContent.NPCType<DarkDragonMask>(),
+                ModContent.NPCType<Okiku>(),
+                ModContent.NPCType<BrokenOkiku>(),
+                ModContent.NPCType<Attraidies>(),
+                ModContent.NPCType<MindflayerKingServant>(),
+                ModContent.NPCType<MindflayerServant>(),
+                ModContent.NPCType<MindflayerIllusion>(),
+                ModContent.NPCType<LichKingDisciple>()
             };
             #endregion
         }

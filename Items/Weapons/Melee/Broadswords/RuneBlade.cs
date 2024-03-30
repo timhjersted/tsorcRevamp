@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
@@ -13,6 +14,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     class RuneBlade : ModItem
     {
         public int RuneRange = 150;
+        public const int MageDmgAmp = 6;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MageDmgAmp);
         public override void SetStaticDefaults()
         {
         }
@@ -65,46 +68,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void ModifyHitNPC(Player player, NPC target, ref NPC.HitModifiers modifiers)
         {
-            if (target.type == NPCID.DarkCaster
-                || target.type == NPCID.GoblinSorcerer
-                || target.type == ModContent.NPCType<UndeadCaster>()
-                || target.type == ModContent.NPCType<MindflayerServant>()
-                )
+            if (tsorcRevamp.MageNPCs.Contains(target.type))
             {
-                modifiers.FinalDamage *= 8;
-            }
-            if (target.type == NPCID.Tim
-                || target.type == ModContent.NPCType<DungeonMage>()
-                || target.type == ModContent.NPCType<MountedSandsprogMage>()
-                || target.type == ModContent.NPCType<SandsprogMage>()
-                || target.type == ModContent.NPCType<Necromancer>()
-                || target.type == ModContent.NPCType<NecromancerElemental>()
-                || target.type == ModContent.NPCType<Warlock>()
-                || target.type == ModContent.NPCType<DemonSpirit>()
-                || target.type == ModContent.NPCType<ShadowMage>()
-                || target.type == ModContent.NPCType<AttraidiesIllusion>()
-                || target.type == ModContent.NPCType<AttraidiesManifestation>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.AttraidiesMimic>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()
-                )
-            {
-                modifiers.FinalDamage *= 4;
-            }
-            if (target.type == ModContent.NPCType<CrazedDemonSpirit>()
-
-                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.DarkDragonMask>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.Okiku>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>()
-                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()
-
-                || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerKingServant>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerServant>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerIllusion>()
-                || target.type == ModContent.NPCType<LichKingDisciple>()
-                )
-            {
-                modifiers.FinalDamage *= 8;
+                modifiers.FinalDamage *= MageDmgAmp;
             }
         }
 

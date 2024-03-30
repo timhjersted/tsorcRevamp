@@ -5708,8 +5708,8 @@ Mods: {
 				Tooltip:
 					'''
 					A sword used to kill magic users.
-					[c/ffbf00:Does up to 8x damage to mages]
 					Casts runes close to the user
+					[c/ffbf00:Deals {0}x damage to mages]
 					'''
 			}
 
