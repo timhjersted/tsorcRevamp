@@ -1487,8 +1487,8 @@ Mods: {
 					'''
 					这枚魔法皇冠样式的魔戒是乌拉席露的黄昏公主出生时铸造的
 					[c/ffbf00:{$CommonItemTooltip.Magic.DmgMult}]
-					[c/ffbf00:{$CommonItemTooltip.LifeRegen@1}]
-					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@2}.] 当这枚戒指被摘下时，你的最大生命值会恢复至正常值
+					[c/ffbf00:{$CommonItemTooltip.LifeRegen@1}，{$CommonItemTooltip.BadMaxLife@2}]
+					当这枚戒指被摘下时，你的最大生命值会恢复至正常值
 					'''
 			}
 
@@ -2747,7 +2747,7 @@ Mods: {
 					'''
 					一套由传奇生物的外壳制成的盔甲
 					{$CommonItemTooltip.PercentIncreasedRangedCritChance}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@1}远程暴击率翻倍（最多到 {3}%）
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeThreshold@1}远程暴击率翻倍（最多增加 {3}%）
 					{$CommonItemTooltip.PercentChanceToSaveAmmo@2}
 					'''
 			}
@@ -6609,7 +6609,7 @@ Mods: {
 				DisplayName: 热硫酸
 				Tooltip:
 					'''
-					{$CommonItemTooltip.PercentSummonTagCritChance}
+					{$CommonItemTooltip.SummonTagDamage}
 					{$CommonItemTooltip.Whips}
 					施加诅咒焰减益
 					'''
@@ -6619,7 +6619,7 @@ Mods: {
 				DisplayName: 燠沼气
 				Tooltip:
 					'''
-					{$CommonItemTooltip.SummonTagDamage}
+					{$CommonItemTooltip.PercentSummonTagCritChance}
 					{$CommonItemTooltip.Whips}
 					施加灵液减益
 					'''
