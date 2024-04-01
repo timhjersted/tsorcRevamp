@@ -11,7 +11,7 @@ namespace tsorcRevamp.UI
     public class MinionInfoDisplay : InfoDisplay
     {
         public override bool Active() => true;
-        public override string DisplayValue(ref Color displayColor)
+        public override string DisplayValue(ref Color displayColor, ref Color displayShadowColor)
         {
             /*float UsedMinion = 0;
 			for (int i = 0; i < Main.maxProjectiles; i++)
@@ -37,7 +37,7 @@ namespace tsorcRevamp.UI
     public class SentryInfoDisplay : InfoDisplay
     {
         public override bool Active() => true;
-        public override string DisplayValue(ref Color displayColor)
+        public override string DisplayValue(ref Color displayColor, ref Color displayShadowColor)
         {
             int UsedSentry = 0;
             for (int i = 0; i < Main.maxProjectiles; i++)

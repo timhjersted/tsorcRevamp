@@ -7,7 +7,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Ho
 
 public interface IHoldItemWhileDead
 {
-    public static readonly GlobalHookList<GlobalItem> Hook = ItemLoader.AddModHook(new GlobalHookList<GlobalItem>(typeof(Hook).GetMethod(nameof(HoldItemWhileDead))));
+    //public static readonly GlobalHookList<GlobalItem> Hook = ItemLoader.AddModHook(new GlobalHookList<GlobalItem>(typeof(Hook).GetMethod(nameof(HoldItemWhileDead))));
+    public static readonly GlobalHookList<GlobalItem> Hook = ItemLoader.AddModHook(GlobalHookList<GlobalItem>.Create(g => ((Hook)g).HoldItemWhileDead));
 
     void HoldItemWhileDead(Item item, Player player);
 

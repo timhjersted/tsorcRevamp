@@ -7,7 +7,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Ho
 
 public interface ICanDoMeleeDamage
 {
-    public static readonly GlobalHookList<GlobalItem> Hook = ItemLoader.AddModHook(new GlobalHookList<GlobalItem>(typeof(Hook).GetMethod(nameof(CanDoMeleeDamage))));
+    //public static readonly GlobalHookList<GlobalItem> Hook = ItemLoader.AddModHook(new GlobalHookList<GlobalItem>(typeof(Hook).GetMethod(nameof(CanDoMeleeDamage))));
+    public static readonly GlobalHookList<GlobalItem> Hook = ItemLoader.AddModHook(GlobalHookList<GlobalItem>.Create(g => ((Hook)g).CanDoMeleeDamage));
 
     bool CanDoMeleeDamage(Item item, Player player);
 

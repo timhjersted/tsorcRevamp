@@ -8,7 +8,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Ho
 
 public interface ICanMeleeCollideWithNPC
 {
-    public static readonly GlobalHookList<GlobalItem> Hook = ItemLoader.AddModHook(new GlobalHookList<GlobalItem>(typeof(Hook).GetMethod(nameof(CanMeleeCollideWithNPC))));
+    //public static readonly GlobalHookList<GlobalItem> Hook = ItemLoader.AddModHook(new GlobalHookList<GlobalItem>(typeof(Hook).GetMethod(nameof(CanMeleeCollideWithNPC))));
+    public static readonly GlobalHookList<GlobalItem> Hook = ItemLoader.AddModHook(GlobalHookList<GlobalItem>.Create(g => ((Hook)g).CanMeleeCollideWithNPC));
 
     bool? CanMeleeCollideWithNPC(Item item, Player player, NPC target, Rectangle itemRectangle);
 

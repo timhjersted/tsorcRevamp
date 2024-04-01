@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Terraria.Localization;
 using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp
@@ -7,7 +8,7 @@ namespace tsorcRevamp
     [BackgroundColor(30, 60, 40, 220)]
     public class tsorcRevampConfig : ModConfig
     {
-        public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) => true;
+        public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) => true;
         public override ConfigScope Mode => ConfigScope.ServerSide;
         [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.AdventureMode")]
         [BackgroundColor(60, 140, 80, 192)]
