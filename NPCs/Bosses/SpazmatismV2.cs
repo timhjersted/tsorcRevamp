@@ -53,9 +53,9 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
 
-        int FireJetDamage = 40;
-        int CursedMalestromDamage = 50;
-        int CursedFireballDamage = 35;
+        int FireJetDamage = 37; // 40
+        int CursedMalestromDamage = 47; // 50
+        int CursedFireballDamage = 32; //35
 
         //If this is set to anything but -1, the boss will *only* use that attack ID
         int testAttack = -1;

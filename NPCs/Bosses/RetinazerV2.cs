@@ -49,8 +49,8 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
 
-        int DeathLaserDamage = 27;
-        int PiercingGazeDamage = 35;
+        int DeathLaserDamage = 24; // 27
+        int PiercingGazeDamage = 32; // 35
 
         //If this is set to anything but -1, the boss will *only* use that attack ID
         int testAttack = -1;

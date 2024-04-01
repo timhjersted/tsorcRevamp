@@ -50,10 +50,10 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         }
 
 
-        int frozenSawDamage = 30;
-        int lightningDamage = 40;
+        int frozenSawDamage = 39;
+        int lightningDamage = 49;
 
-        int plasmaDamage = 40;
+        int plasmaDamage = 44;
         int lifeTimer = 0;
 
         int holdTimer = 0;

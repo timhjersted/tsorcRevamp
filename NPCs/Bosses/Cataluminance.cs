@@ -56,9 +56,9 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
 
-        int StarBlastDamage = 35;
-        int FinalStandStarDamage = 30;
-        int TrailDamage = 50;
+        int StarBlastDamage = 32; // 35
+        int FinalStandStarDamage = 27; // 30
+        int TrailDamage = 47; // 50
 
         //If this is set to anything but -1, the boss will *only* use that attack ID
         int testAttack = -1;

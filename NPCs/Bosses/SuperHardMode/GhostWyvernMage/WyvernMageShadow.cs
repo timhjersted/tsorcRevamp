@@ -46,8 +46,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         }
 
         int mageShadowTimer = 0;
-        int frozenSawDamage = 28;
-        int lightningDamage = 34;
+        int frozenSawDamage = 45; // 28
+        int lightningDamage = 60; // 34
         int Timer2 = -Main.rand.Next(200);
 
         #region AI

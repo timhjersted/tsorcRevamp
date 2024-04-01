@@ -22,11 +22,11 @@ namespace tsorcRevamp.NPCs.Bosses
     [AutoloadBossHead]
     class TheRage : ModNPC
     {
-        int fireTrailsDamage = 33; //23 was a bit too easy for folks based on some feedback and watching a LP
-        int rageBreathDamage = 36;
-        int demonBoltDamage = 39;
-        int homingFireDamage = 42;
-        int rageFirebombDamage = 45;
+        int fireTrailsDamage = 27; //23 was a bit too easy for folks based on some feedback and watching a LP, 33 was too much given randomness
+        int rageBreathDamage = 30;
+        int demonBoltDamage = 33;
+        int homingFireDamage = 36;
+        int rageFirebombDamage = 39;
 
         public override void SetStaticDefaults()
         {
@@ -161,7 +161,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
                 {
                     UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheRage.HeatWave"), 235, 199, 23);//deep yellow
-                    holdTimer = 9000;
+                    holdTimer = 15000;
                 }
             }
 
@@ -215,7 +215,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 FlameShotCounter++;
             }
             // Homing Fireballs Attack: Part of 2nd phase 
-            if (FlameShotTimer3 >= 25 && FlameShotCounter3 < 10)
+            if (FlameShotTimer3 >= 25 && FlameShotCounter3 < 8)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -291,7 +291,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             // Spawn Meteor Hell at 1/5th life
-            if (Main.rand.NextBool(80) && NPC.Distance(player.Center) > 150 && NPC.life <= NPC.lifeMax / 5)
+            if (Main.rand.NextBool(85) && NPC.Distance(player.Center) > 160 && NPC.life <= NPC.lifeMax / 5)
             {
 
                 if (player.position.Y + 50 >= NPC.position.Y)
@@ -451,7 +451,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.ai[3] = 1;
 
                     // Gains life on enrage: re-added to fit with rage theme                 
-                    NPC.life += 250;
+                    NPC.life += 300;
 
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }
