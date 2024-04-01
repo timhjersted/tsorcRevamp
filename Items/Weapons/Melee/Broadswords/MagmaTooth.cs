@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Projectiles.Melee;
@@ -12,6 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public int HitCounter = 0;
         public const int HitsNeeded = 8;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(HitsNeeded);
         public override void SetStaticDefaults()
         {
         }

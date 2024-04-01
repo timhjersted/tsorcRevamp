@@ -5669,7 +5669,7 @@ Mods: {
 				DisplayName: Magma Tooth
 				Tooltip:
 					'''
-					Spawns an erupting volcano every 10th hit
+					Spawns an erupting volcano every {0}th hit
 					Inflicts hellfire
 					'''
 			}
