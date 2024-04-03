@@ -1938,7 +1938,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found the Temple of Golem -",
+  "text": "- You\u0027ve found the Temple of Golem - --NEWLINE  --NEWLINE You must offer two Large Rubies and defeat Plantera to enter.",
   "tileX": 6098,
   "tileY": 1386,
   "textWidth": 320,
