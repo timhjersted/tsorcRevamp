@@ -32,6 +32,9 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<SupersonicBoots>(), 1);
             recipe.AddIngredient(ItemID.AngelWings, 1);
+            recipe.AddIngredient(ItemID.SoulofMight, 5);
+            recipe.AddIngredient(ItemID.SoulofFright, 5);
+            recipe.AddIngredient(ItemID.SoulofSight, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
             recipe.AddTile(TileID.DemonAltar);
 

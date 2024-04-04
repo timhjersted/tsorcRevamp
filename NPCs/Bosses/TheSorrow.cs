@@ -184,7 +184,11 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (distance < 200)
                     {
                         player.AddBuff(BuffID.Slow, 30, false);
-                        player.AddBuff(BuffID.Frostburn, 30, false);
+                    }
+
+                    if (distance < 75)
+                    {                       
+                        player.AddBuff(BuffID.Frostburn, 60, false);
                     }
 
                     // Announce proximity debuffs once
