@@ -7703,7 +7703,7 @@ Mods: {
 
 			ImpHead: {
 				DisplayName: 小鬼头
-				Tooltip: "{$Conditions.HunterDowned}后由树妖出售"
+				Tooltip: "{$Conditions.HunterDowned}后由小矮人出售"
 			}
 
 			EtherianWyvernStaff: {
