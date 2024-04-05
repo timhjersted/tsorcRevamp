@@ -13,8 +13,8 @@ namespace tsorcRevamp.Items.Weapons.Summon
 {
     public class BeetleIdol : ModItem
     {
-        public const float SlotsRequired = 4f;
-        public const int BaseCritChance = 20;
+        public const float SlotsRequired = 6f;
+        public const int BaseCritChance = 100;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs();
         public override void SetStaticDefaults()
         {

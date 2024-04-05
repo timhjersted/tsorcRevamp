@@ -12,6 +12,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
     public class SamuraiBeetleProjectile : ModProjectile
     {
         public const string SoundPath = "tsorcRevamp/Sounds/CrossCode/";
+        public const float SoundVolume = 0.4f;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 36;
@@ -961,7 +962,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                         {
                             SpawnTrail();
                             //Dust.NewDustDirect(Projectile.Center, 20, 20, DustID.Cloud, DashVelocity.X / 10, DashVelocity.Y / 10, 0, Color.Purple, 2f);
-                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "samurai-jump") with { Volume = 1f });
+                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "samurai-jump") with { Volume = SoundVolume });
                             if (Main.myPlayer == Projectile.owner)
                             {
                                 Projectile.NewProjectile(Projectile.GetSource_None(), Projectile.Bottom, Vector2.Zero, ModContent.ProjectileType<SamuraiBeetleCloud>(), 0, 0, Projectile.owner);
@@ -977,7 +978,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                         {
                             DashVelocity = Projectile.DirectionTo(targetCenter) * targetCenter.Distance(Projectile.Center) / 5;
                             //Dust.NewDustDirect(Projectile.Center, 20, 20, DustID.Cloud, DashVelocity.X / 10, DashVelocity.Y / 10, 0, Color.Purple, 2f);
-                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "samurai-jump") with { Volume = 1f });
+                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "samurai-jump") with { Volume = SoundVolume });
                             if (Main.myPlayer == Projectile.owner)
                             {
                                 Projectile.NewProjectile(Projectile.GetSource_None(), Projectile.Bottom, Vector2.Zero, ModContent.ProjectileType<SamuraiBeetleCloud>(), 0, 0, Projectile.owner);
@@ -1014,7 +1015,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                         {
                             Projectile.velocity = DashVelocity;
                             //should hit on this tick
-                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "sword-slide") with { Volume = 1f });
+                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "sword-slide") with { Volume = SoundVolume });
                             break;
                         }
                     case 51:
@@ -1115,7 +1116,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                         {
                             ShouldRotate = true;
                             SpawnTrail();
-                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "samurai-jump") with { Volume = 1f });
+                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "samurai-jump") with { Volume = SoundVolume });
                             if (Main.myPlayer == Projectile.owner)
                             {
                                 Projectile.NewProjectile(Projectile.GetSource_None(), Projectile.Bottom, Vector2.Zero, ModContent.ProjectileType<SamuraiBeetleCloud>(), 0, 0, Projectile.owner);
@@ -1131,7 +1132,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                         {
                             DashVelocity = Projectile.DirectionTo(targetCenter) * targetCenter.Distance(Projectile.Center) / 5;
                             Projectile.ResetLocalNPCHitImmunity();
-                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "samurai-jump") with { Volume = 1f });
+                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "samurai-jump") with { Volume = SoundVolume });
                             if (Main.myPlayer == Projectile.owner)
                             {
                                 Projectile.NewProjectile(Projectile.GetSource_None(), Projectile.Bottom, Vector2.Zero, ModContent.ProjectileType<SamuraiBeetleCloud>(), 0, 0, Projectile.owner);
@@ -1166,7 +1167,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
                     case 65:
                         {
                             Projectile.velocity = DashVelocity;
-                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "sword-slash") with { Volume = 1f });
+                            SoundEngine.PlaySound(new SoundStyle(SoundPath + "sword-slash") with { Volume = SoundVolume });
                             //should hit on this tick
                             break;
                         }

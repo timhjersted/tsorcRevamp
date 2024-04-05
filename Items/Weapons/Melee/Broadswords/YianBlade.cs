@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     {
         public int ManaRestoration = 100;
         public int BaseManaCost = 200;
-        public int ProjectileDmgMult = 6;
+        public int ProjectileDmgMult = 4;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ManaRestoration, BaseManaCost);
         public override void SetDefaults()
         {

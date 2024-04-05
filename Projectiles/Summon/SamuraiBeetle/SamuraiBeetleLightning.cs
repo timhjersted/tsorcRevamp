@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
 {
     public class SamuraiBeetleLightning : ModProjectile
     {
-        public float Volume = 0.75f;
+        public float Volume = 0.3f;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Type] = 8;
