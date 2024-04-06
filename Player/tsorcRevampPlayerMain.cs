@@ -49,6 +49,7 @@ using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.Projectiles.Ranged;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
+using static Humanizer.In;
 
 namespace tsorcRevamp
 {
@@ -830,7 +831,7 @@ namespace tsorcRevamp
             }
             if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung && ProjectileID.Sets.IsAWhip[proj.type])
             {
-                modifiers.SourceDamage += Items.Accessories.Summon.Goredrinker.WhipDmgRange / 100f;
+                modifiers.SourceDamage += Items.Accessories.Summon.Goredrinker.WhipDmgRange / 100f / 3f; //guaranteed crit is in overcrit
             }
             if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
             {
@@ -854,6 +855,7 @@ namespace tsorcRevamp
         }
         public void OverCrit(in int CritChance, DamageClass damageType, ref NPC.HitModifiers modifiers, out int critColorTier, in bool IsWhip, Projectile projectile, Rectangle targetHitbox)
         {
+            Player player = Main.player[projectile.owner];
             int critLevel = (int)(Math.Floor(CritChance / 100f));
             critColorTier = 0;
             if (critLevel != 0 && damageType != DamageClass.Summon && damageType != DamageClass.SummonMeleeSpeed)
@@ -895,7 +897,7 @@ namespace tsorcRevamp
             }
             else if (IsWhip)
             {
-                if (WhipTipCrit(projectile, projectile.WhipPointsForCollision, targetHitbox))
+                if (WhipTipCrit(projectile, projectile.WhipPointsForCollision, targetHitbox) || (Goredrinker && !player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung))
                 {
                     modifiers.SetCrit();
                     if (critLevel > 0)

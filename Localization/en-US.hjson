@@ -7220,7 +7220,7 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.IncreasesMaxLifeBy@1}
 					[c/dc143c:Empowers whip swings occasionally({$CommonItemTooltip.Cooldown@2})]
-					[c/dc143c:Empowered whip swings gain extra damage, range and heal you on-hit]
+					[c/dc143c:Empowered whip swings gain extra damage, range, are guaranteed to crit and heal you on-hit]
 					Heal scales with whip damage and missing life
 					Cooldown is reduced on every normal whip hit
 					'''

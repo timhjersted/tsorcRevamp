@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
         public const float SummonDamage = 10f;
         public const int MaxLife = 40;
         public const float HealBaseValue = 7f;
-        public const float WhipDmgRange = 33f; //dmg gets applied in playermain
+        public const float WhipDmgRange = 33f; //dmg is divided by 3 and gets applied in playermain
         public const int Cooldown = 12;
 
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonDamage, MaxLife, Cooldown);
