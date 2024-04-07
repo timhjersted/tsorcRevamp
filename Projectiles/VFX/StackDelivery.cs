@@ -88,7 +88,7 @@ namespace tsorcRevamp.Projectiles.VFX
                         }
                         else
                         {
-                            CombatText.NewText(PlayerRect, Color.Navy, player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount + LangUtils.GetTextValue("Items.CenterOfTheUniverse.StackGained", player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount));
+                             CombatText.NewText(PlayerRect, Color.Navy, LangUtils.GetTextValue("Items.CenterOfTheUniverse.StackGained", player.GetModPlayer<tsorcRevampPlayer>().CenterOfTheUniverseStardustCount));
                         }
                         break;
                     }
