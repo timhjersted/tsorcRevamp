@@ -808,8 +808,6 @@ namespace tsorcRevamp
         }
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Projectile, consider using ModifyHitNPC instead */
         {
-            Player owner = Main.player[proj.owner];
-
             if (SmoughAttackSpeedReduction && modifiers.DamageType == DamageClass.SummonMeleeSpeed)
             {
                 if (!ProjectileID.Sets.IsAWhip[proj.type])
@@ -821,7 +819,7 @@ namespace tsorcRevamp
             {
                 modifiers.FinalDamage *= 0.15f;
             }
-            if (modifiers.DamageType == DamageClass.Ranged && owner.GetModPlayer<tsorcRevampPlayer>().InfinityEdge)
+            if (modifiers.DamageType == DamageClass.Ranged && InfinityEdge)
             {
                 modifiers.CritDamage += Items.Accessories.Ranged.InfinityEdge.CritDmgIncrease / 100f;
             }
@@ -829,7 +827,7 @@ namespace tsorcRevamp
             {
                 modifiers.FinalDamage *= 0.55f;
             }
-            if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung && ProjectileID.Sets.IsAWhip[proj.type])
+            if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && !Player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung && ProjectileID.Sets.IsAWhip[proj.type])
             {
                 modifiers.SourceDamage += Items.Accessories.Summon.Goredrinker.WhipDmgRange / 100f / 3f; //guaranteed crit is in overcrit
             }
@@ -855,7 +853,6 @@ namespace tsorcRevamp
         }
         public void OverCrit(in int CritChance, DamageClass damageType, ref NPC.HitModifiers modifiers, out int critColorTier, in bool IsWhip, Projectile projectile, Rectangle targetHitbox)
         {
-            Player player = Main.player[projectile.owner];
             int critLevel = (int)(Math.Floor(CritChance / 100f));
             critColorTier = 0;
             if (critLevel != 0 && damageType != DamageClass.Summon && damageType != DamageClass.SummonMeleeSpeed)
@@ -897,7 +894,7 @@ namespace tsorcRevamp
             }
             else if (IsWhip)
             {
-                if (WhipTipCrit(projectile, projectile.WhipPointsForCollision, targetHitbox) || (Goredrinker && !player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung))
+                if (WhipTipCrit(projectile, projectile.WhipPointsForCollision, targetHitbox) || (Goredrinker && !Player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung))
                 {
                     modifiers.SetCrit();
                     if (critLevel > 0)
