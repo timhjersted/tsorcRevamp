@@ -793,19 +793,20 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
                 NPC.dontTakeDamage = true;
             }
-            if (MoveTimer == 220) //Spawn clones at the chosen random location and teleport main boss away
+            if (MoveTimer == 220 && Main.netMode != NetmodeID.MultiplayerClient) //Spawn clones at the chosen random location and teleport main boss away
             {
-                if (cloneSpawnLocation1.HasValue)
-                {
-                    int cloneLeft = NPC.NewNPC(NPC.GetSource_FromThis(), (int)cloneSpawnLocation1.Value.X, (int)cloneSpawnLocation1.Value.Y + 70, ModContent.NPCType<Pinwheel>(), 0, 0, 0, Phase, 1);
-                    Main.npc[cloneLeft].boss = false;
-                }
-                if (cloneSpawnLocation2.HasValue)
-                {
-                    int cloneRight = NPC.NewNPC(NPC.GetSource_FromThis(), (int)cloneSpawnLocation2.Value.X, (int)cloneSpawnLocation2.Value.Y + 70, ModContent.NPCType<Pinwheel>(), 0, 0, 0, Phase, 1);
-                    Main.npc[cloneRight].boss = false;
-                }
-
+              
+                    if (cloneSpawnLocation1.HasValue)
+                    {
+                        int cloneLeft = NPC.NewNPC(NPC.GetSource_FromThis(), (int)cloneSpawnLocation1.Value.X, (int)cloneSpawnLocation1.Value.Y + 70, ModContent.NPCType<Pinwheel>(), 0, 0, 0, Phase, 1);
+                        Main.npc[cloneLeft].boss = false;
+                    }
+                    if (cloneSpawnLocation2.HasValue)
+                    {
+                        int cloneRight = NPC.NewNPC(NPC.GetSource_FromThis(), (int)cloneSpawnLocation2.Value.X, (int)cloneSpawnLocation2.Value.Y + 70, ModContent.NPCType<Pinwheel>(), 0, 0, 0, Phase, 1);
+                        Main.npc[cloneRight].boss = false;
+                    }
+              
                 ExecuteQueuedTeleport(NPC);
                 justTeleported = true;
                 justSkippedMove = true; //This makes it so that the boss and new clones all attack at the same time once the move ends, except when they're skipping using BlindingPulse in first phase
