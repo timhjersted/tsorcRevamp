@@ -225,7 +225,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         public abstract int DragonTier { get; }
 
         public float BaseOriginalDamage;
-        public int BaseAttackSpeed = 15;
+        public int BaseAttackSpeed = 14;
         public abstract void SetupBody();
 
         public override void AutoStaticDefaults()
@@ -375,7 +375,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
-                Projectile.localNPCHitCooldown = BaseAttackSpeed - (BaseAttackSpeed / 3);
+                Projectile.localNPCHitCooldown = BaseAttackSpeed / 2;
             }
             else { Projectile.localNPCHitCooldown = BaseAttackSpeed; }
 

@@ -13,7 +13,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 {
     public abstract class RuneterraCirclingProjectiles : DynamicTrail
     {
-        public float angularSpeed = 0.03f;
+        public const float BaseSpeed = 0.03f;
+        public float angularSpeed = BaseSpeed;
         public float currentAngle = 0;
         public abstract int ProjFrames { get; }
         public abstract int Width { get; }
@@ -136,11 +137,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
 
             if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
-                angularSpeed = 0.075f;
+                angularSpeed = BaseSpeed * 1.5f;
             }
             if (!player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
-                angularSpeed = 0.03f;
+                angularSpeed = BaseSpeed;
                 if (Main.netMode == NetmodeID.MultiplayerClient)
                 {
                     ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();

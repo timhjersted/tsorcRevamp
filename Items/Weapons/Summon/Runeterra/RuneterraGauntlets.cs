@@ -37,7 +37,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public const int SummonTagCrit = 10;
         public const float MarkDetonationCritDmgAmp = 2f;
 
-        public const float BoostDmgAmp = 25f;
         public const float BoostPercentHPDmg = 0.05f;
         public const int BoostPercentHPDmgCap = (int)(450000f * BoostPercentHPDmg / 100f);
 
