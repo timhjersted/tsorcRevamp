@@ -21,8 +21,8 @@ namespace tsorcRevamp.Projectiles.Melee.Runeterra
             Projectile.DamageType = DamageClass.Melee;
             Projectile.ContinuouslyUpdateDamageStats = true;
             Projectile.tileCollide = false;
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 30;
+            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.idStaticNPCHitCooldown = PlasmaWhirlwind.DashCooldown * 60 - 1;
         }
         public override void OnSpawn(IEntitySource source)
         {
