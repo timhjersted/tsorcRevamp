@@ -20,17 +20,6 @@ namespace tsorcRevamp.Items.Accessories
             Item.rare = ItemRarityID.LightRed;
         }
 
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<FrozenStarlight>(), 1);
-            recipe.AddIngredient(ItemID.StarVeil);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
-        }
-
         public override void UpdateEquip(Player player)
         {
             Lighting.AddLight((int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16, (int)(player.position.Y + 2f) / 16, 0.75f, 0.75f, 1.5f);

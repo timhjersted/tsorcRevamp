@@ -119,7 +119,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BandOfCosmicPower>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PermanentShinePotion>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PermanentNightOwlPotion>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImprovedBlueBalloon>()));
+            itemLoot.Add(ItemDropRule.Common(ItemID.CloudinaBalloon));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 1, 3, 6));
         }
     }

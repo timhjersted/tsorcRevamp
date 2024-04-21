@@ -1547,7 +1547,7 @@ namespace tsorcRevamp
                 {
                     self.statMana = self.statManaMax2;
                 }
-                itemToPickUp.TurnToAir();
+                itemToPickUp = new Item();
                 return itemToPickUp;
             }
             return orig(self, playerIndex, worldItemArrayIndex, itemToPickUp);

@@ -588,7 +588,7 @@ namespace tsorcRevamp.NPCs.Bosses
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BandOfCosmicPower>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<PermanentShinePotion>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<PermanentNightOwlPotion>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ImprovedBlueBalloon>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.CloudinaBalloon));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 1, 1, 3));
             npcLoot.Add(notExpertCondition);
         }
