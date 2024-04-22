@@ -1519,12 +1519,12 @@ namespace tsorcRevamp
                 self.manaRegenDelay = MeleeEdits.ManaDelay;
             }
         }
-
+        public const float ManaRestorationCuffsPercentage = 25;
         private static void On_Player_OnHurt_Part2(On_Player.orig_OnHurt_Part2 orig, Player self, Player.HurtInfo info)
         {
             if (self.magicCuffs && self.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                int ManaGain = info.SourceDamage / 7;
+                int ManaGain = (int)(info.SourceDamage * (ManaRestorationCuffsPercentage / 100f));
                 self.statMana += ManaGain;
                 if (self.statMana > self.statManaMax2)
                 {
@@ -1535,19 +1535,20 @@ namespace tsorcRevamp
             }
             orig(self, info);
         }
-
+        public const float ManaStarMaxManaPercentage = 6;
         private static Item On_Player_PickupItem(On_Player.orig_PickupItem orig, Player self, int playerIndex, int worldItemArrayIndex, Item itemToPickUp)
         {
             if ((itemToPickUp.type == ItemID.Star || itemToPickUp.type == ItemID.SugarPlum || itemToPickUp.type == ItemID.SoulCake || itemToPickUp.type == ItemID.ManaCloakStar) && self.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
+                int ManaGain = (int)(self.statManaMax2 * (ManaStarMaxManaPercentage / 100f));
                 SoundEngine.PlaySound(SoundID.Grab, new Vector2((int)self.position.X, (int)self.position.Y));
-                self.statMana += self.statManaMax2 / 25;
-                self.ManaEffect(self.statManaMax2 / 25);
+                self.statMana += ManaGain;
+                self.ManaEffect(ManaGain);
                 if (self.statMana > self.statManaMax2)
                 {
                     self.statMana = self.statManaMax2;
                 }
-                itemToPickUp = new Item();
+                itemToPickUp.type = ItemID.None;
                 return itemToPickUp;
             }
             return orig(self, playerIndex, worldItemArrayIndex, itemToPickUp);

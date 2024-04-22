@@ -169,34 +169,19 @@ namespace tsorcRevamp.Items.VanillaItems
                 SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaRegenerationPotionBotC").FormatWith(tsorcRevampCeruleanPlayer.ManaRegenPotRestorationTimerBonus));
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ItemID.CelestialMagnet)
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && (item.type == ItemID.CelestialMagnet || item.type == ItemID.ManaCloak || item.type == ItemID.CelestialEmblem))
             {
-                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.CelestialMagnetBotC"));
-            }
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ItemID.ManaCloak)
-            {
-                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.CelestialMagnetBotC"));
-            }
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ItemID.CelestialEmblem)
-            {
-                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.CelestialMagnetBotC"));
+                SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("Items.VanillaItems.CelestialMagnetBotC", MethodSwaps.ManaStarMaxManaPercentage));
             }
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ItemID.MagicCuffs)
             {
-                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicCuffsBotC"));
+                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicCuffsBotC", MethodSwaps.ManaRestorationCuffsPercentage));
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ItemID.CelestialCuffs)
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && (item.type == ItemID.CelestialCuffs | item.type == ModContent.ItemType<CelestialCloak>()))
             {
-                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.CelestialMagnetBotC") + "\n" + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicCuffsBotC"));
-            }
-
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.type == ModContent.ItemType<CelestialCloak>())
-            {
-                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.CelestialMagnetBotC") + "\n" + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicCuffsBotC"));
+                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.CelestialMagnetBotC", MethodSwaps.ManaStarMaxManaPercentage) + "\n" + Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MagicCuffsBotC", MethodSwaps.ManaRestorationCuffsPercentage));
             }
 
         }

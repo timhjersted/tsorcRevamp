@@ -557,8 +557,8 @@ Mods: {
 				ManaRegenerationBand: Increases mana regen by 25 and decreases mana regen delay by 100%
 				WellFedItemsBotC: Increases stamina regen by {0}% for the [c/6d8827:Bearer of the Curse]
 				ManaRegenerationPotionBotC: Increases Cerulean Flask restoration time by {0}%
-				CelestialMagnetBotC: Mana Star pickups only restore 4% of the [c/6d8827:Bearer of the Curse's] maximum mana
-				MagicCuffsBotC: Only restores a sixth of pre-mitigation damage taken by the [c/6d8827:Bearer of the Curse] as mana
+				CelestialMagnetBotC: Mana Star pickups only restore {0}% of the [c/6d8827:Bearer of the Curse's] maximum mana
+				MagicCuffsBotC: Only restores {0}% of pre-mitigation damage taken by the [c/6d8827:Bearer of the Curse] as mana
 			}
 
 			AbandonedStumpBanner: {
