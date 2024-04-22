@@ -548,8 +548,8 @@ Mods: {
 				ManaRegenerationBand: 增加 25 点魔力再生同时减少 100% 魔力再生延迟
 				WellFedItemsBotC: 为[c/6d8827:被诅咒者]增加 {0}% 耐力再生
 				ManaRegenerationPotionBotC: 增加 {0}% 蓝露滴圣杯瓶恢复速度
-				CelestialMagnetBotC: 魔力星只固定恢复[c/6d8827:被诅咒者]最大魔力值的4%
-				MagicCuffsBotC: 只回复[c/6d8827:被诅咒者] 受到魔法伤害减免的六分之一
+				CelestialMagnetBotC: 魔力星只固定恢复[c/6d8827:被诅咒者]最大魔力值的 {0}%
+				MagicCuffsBotC: 只恢复[c/6d8827:被诅咒者]受到伤害 {0}% 的魔力
 			}
 
 			AbandonedStumpBanner: {
