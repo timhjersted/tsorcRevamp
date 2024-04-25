@@ -95,7 +95,7 @@ namespace tsorcRevamp
         public float BotCConquerorStacks = 0;
         public int BotCConquerorMaxStacks = 10;
         public float BotCConquerorBonus = 0.08f;
-        public float BotCFullConquerorBonusTagDuration = 0.34f;
+        public float BotCFullConquerorBonusTagDuration = 0.2f;
 
         public bool SteraksGage = false;
         public bool InfinityEdge = false;

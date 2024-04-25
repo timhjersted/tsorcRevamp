@@ -1431,7 +1431,7 @@ namespace tsorcRevamp
 
         public static float BeetleSummonTagStrengthBoost = 50;
         public const float BeetleSummonCritChance = 7f;
-        public static float ScrollSummonTagDurationBoost = 50;
+        public static float ScrollSummonTagDurationBoost = 33;
         public const float ScrollSummonCritChance = 8f;
         public const float ScarabSummonCritChance = BeetleSummonCritChance + ScrollSummonCritChance;
         private static void On_Player_ApplyEquipFunctional(On_Player.orig_ApplyEquipFunctional orig, Player self, Item currentItem, bool hideVisual)

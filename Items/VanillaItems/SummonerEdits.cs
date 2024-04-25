@@ -96,7 +96,11 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.StardustDragonStaff)
             {
-                item.damage = 26;
+                //nerf in another function
+            }
+            if (item.type == ItemID.EmpressBlade)
+            {
+                //nerf in another function
             }
             #endregion
 

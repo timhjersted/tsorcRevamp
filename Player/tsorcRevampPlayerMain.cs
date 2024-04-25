@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -834,6 +835,11 @@ namespace tsorcRevamp
             if (BurningAura || BurningStone && target.onFire == true && proj.type != ModContent.ProjectileType<Projectiles.HomingFireball>())
             {
                 modifiers.TargetDamageMultiplier *= 1f + Items.Accessories.Damage.BurningStone.DamageIncrease / 100f;
+            }
+            if (proj.type == ProjectileID.StardustDragon1 || proj.type == ProjectileID.StardustDragon2 || proj.type == ProjectileID.StardustDragon3 || proj.type == ProjectileID.StardustDragon4)
+            {
+                float DragonStacks = Player.ownedProjectileCounts[ProjectileID.StardustDragon1] + Player.ownedProjectileCounts[ProjectileID.StardustDragon2] + Player.ownedProjectileCounts[ProjectileID.StardustDragon3] + Player.ownedProjectileCounts[ProjectileID.StardustDragon4];
+                modifiers.SourceDamage *= MathF.Max(0.5f - DragonStacks / 100f, 0.2f);
             }
             if (!proj.IsMinionOrSentryRelated)
             {
