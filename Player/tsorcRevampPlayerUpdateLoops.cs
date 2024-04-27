@@ -1995,6 +1995,17 @@ namespace tsorcRevamp
             // spawnRate means how much enemy can spawn every tick, 1 second equals 60 ticks
             spawnRateFieldInfo = typeof(NPC).GetField("spawnRate", BindingFlags.Static | BindingFlags.NonPublic);
             spawnRate = (int)spawnRateFieldInfo.GetValue(null);
+
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)//could also add condition like !Player.wet, Player.honeyWet
+            {
+                Tile tile = Main.tile[(int)(Player.Center.X / 16f), (int)(Player.Center.Y / 16f)];
+                if (tile.WallType == WallID.StarRoyaleBrickWall)//whatever special walls using in the adventure map
+                {
+                    Player.gravity = 0f;// no gravity for sure or tiny gravity?
+                    Player.velocity.Y *= 0.9f;// >1f could make player move faster and faster, or lower make the player only rise for certain time which limit the height player moved
+                    Player.velocity.Y -= 0.15f;
+                }
+            }
         }
 
         public override void PostUpdate()
