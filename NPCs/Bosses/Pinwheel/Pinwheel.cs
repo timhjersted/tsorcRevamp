@@ -6,9 +6,13 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.UI;
+using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Utilities;
@@ -535,40 +539,51 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                     }
                 }
 
-                if (MoveTimer == 90 && Main.netMode != NetmodeID.MultiplayerClient && Phase < 5) //Shoot bouncing fireball
-                {
-                    int type = ProjectileID.Fireball;
-                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0, 1);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                    shot1.friendly = false;
-                    shot1.hostile = true;
-                    shot1.timeLeft = 600;
-                    if (Phase >= 1) shot1.timeLeft = 720;
+                if (MoveTimer == 90 && Phase < 5) //Shoot bouncing fireball
+                {                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int type = ProjectileID.Fireball;
+                        Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0, 1);
+                        shot1.friendly = false;
+                        shot1.hostile = true;
+                        shot1.timeLeft = 600;
+                        if (Phase >= 1) shot1.timeLeft = 720;
+                    }
                 }
 
-                if (MoveTimer == 120 && Main.netMode != NetmodeID.MultiplayerClient && Phase < 3) //Shoot bouncing fireball
+                if (MoveTimer == 120 && Phase < 3) //Shoot bouncing fireball
                 {
-                    int type = ProjectileID.Fireball;
-                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0, 1);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                    shot1.friendly = false;
-                    shot1.hostile = true;
-                    shot1.timeLeft = 600;
-                    if (Phase >= 1) shot1.timeLeft = 720;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int type = ProjectileID.Fireball;
+                        Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0, 1);
+                        
+                        shot1.friendly = false;
+                        shot1.hostile = true;
+                        shot1.timeLeft = 600;
+                        if (Phase >= 1) shot1.timeLeft = 720;
+                    }
                 }
 
-                if (MoveTimer == 150 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot bouncing fireball
-                {
-                    int type = ProjectileID.Fireball;
-                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0, 1);
+                if (MoveTimer == 150) //Shoot bouncing fireball
+                {                        
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                    shot1.friendly = false;
-                    shot1.hostile = true;
-                    shot1.timeLeft = 600;
-                    if (Phase >= 1) shot1.timeLeft = 720;
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int type = ProjectileID.Fireball;
+                        Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX, speedY), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0, 1);
+                        shot1.friendly = false;
+                        shot1.hostile = true;
+                        shot1.timeLeft = 600;
+                        if (Phase >= 1) shot1.timeLeft = 720;
+                    }
                 }
             }
-            if (Phase == 6 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Phase == 6)
             {
                 float num48 = 5f; //used for projectile velocity
                 Vector2 vector8 = new Vector2(NPC.Center.X, NPC.Center.Y - 30);
@@ -592,36 +607,48 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 }
 
                 if (MoveTimer == 90 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot bouncing fireball
-                {
-                    int type = ProjectileID.CultistBossFireBallClone;
-
-                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX * 0.5f, speedY * 0.5f), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0);
+                {                        
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                    shot1.friendly = false;
-                    shot1.hostile = true;
-                    shot1.timeLeft = 600;
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int type = ProjectileID.CultistBossFireBallClone;
+
+                        Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX * 0.5f, speedY * 0.5f), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0);
+                        shot1.friendly = false;
+                        shot1.hostile = true;
+                        shot1.timeLeft = 600;
+                    }
                 }
 
-                if (MoveTimer == 120 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot bouncing fireball
-                {
-                    int type = ProjectileID.CultistBossFireBallClone;
-
-                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX * 0.5f, speedY * 0.5f), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0);
+                if (MoveTimer == 120) //Shoot bouncing fireball
+                {                        
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                    shot1.friendly = false;
-                    shot1.hostile = true;
-                    shot1.timeLeft = 600;
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int type = ProjectileID.CultistBossFireBallClone;
+
+                        Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX * 0.5f, speedY * 0.5f), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0);
+                        shot1.friendly = false;
+                        shot1.hostile = true;
+                        shot1.timeLeft = 600;
+                    }
                 }
 
-                if (MoveTimer == 150 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot bouncing fireball
-                {
-                    int type = ProjectileID.CultistBossFireBallClone;
-
-                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX * 0.5f, speedY * 0.5f), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0);
+                if (MoveTimer == 150) //Shoot bouncing fireball
+                {                        
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                    shot1.friendly = false;
-                    shot1.hostile = true;
-                    shot1.timeLeft = 600;
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int type = ProjectileID.CultistBossFireBallClone;
+
+                        Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(speedX * 0.5f, speedY * 0.5f), type, (int)(DamageNumbers["BouncingFireballDamage"] * damageModifier), 0f, Main.myPlayer, 0, 0);
+                        shot1.friendly = false;
+                        shot1.hostile = true;
+                        shot1.timeLeft = 600;
+                    }
                 }
             }
         }
@@ -641,73 +668,80 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             Vector2 shootSpeed = UsefulFunctions.Aim(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 30), Target.Center, 6);
             if (Phase >= 1) shootSpeed = UsefulFunctions.Aim(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 30), Target.Center, 8);
 
-            if (MoveTimer == 90 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot killable Gaibon fireballs
-            {
+            if (MoveTimer == 90) //Shoot killable Gaibon fireballs
+            {                    
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                if (Phase < 6 || Phase == 6)
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC shot1 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopLeft.X, (int)lanternTopLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                    shot1.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                }
-                if (Phase < 5 || Phase == 6)
-                {
-                    NPC shot2 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleRight.X, (int)lanternMiddleRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                    shot2.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                }
-                if (Phase < 4 || Phase == 6)
-                {
-                    NPC shot3 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomLeft.X, (int)lanternBottomLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                    shot3.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                }
-                if (Phase < 6 || Phase == 6)
-                {
-                    NPC shot4 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopRight.X, (int)lanternTopRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                    shot4.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                }
-                if (Phase < 2 || Phase == 6)
-                {
-                    NPC shot5 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleLeft.X, (int)lanternMiddleLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                    shot5.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                }
-                if (Phase < 3 || Phase == 6)
-                {
-                    NPC shot6 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomRight.X, (int)lanternBottomRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                    shot6.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                    if (Phase < 6 || Phase == 6)
+                    {
+                        NPC shot1 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopLeft.X, (int)lanternTopLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
+                        shot1.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                    }
+                    if (Phase < 5 || Phase == 6)
+                    {
+                        NPC shot2 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleRight.X, (int)lanternMiddleRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
+                        shot2.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                    }
+                    if (Phase < 4 || Phase == 6)
+                    {
+                        NPC shot3 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomLeft.X, (int)lanternBottomLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
+                        shot3.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                    }
+                    if (Phase < 6 || Phase == 6)
+                    {
+                        NPC shot4 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopRight.X, (int)lanternTopRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
+                        shot4.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                    }
+                    if (Phase < 2 || Phase == 6)
+                    {
+                        NPC shot5 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleLeft.X, (int)lanternMiddleLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
+                        shot5.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                    }
+                    if (Phase < 3 || Phase == 6)
+                    {
+                        NPC shot6 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomRight.X, (int)lanternBottomRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
+                        shot6.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                    }
                 }
             }
 
-            if (MoveTimer == 120 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot killable Gaibon fireballs
+            if (MoveTimer == 120) //Shoot killable Gaibon fireballs
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-                if (Phase < 6 || Phase == 6)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC shot1 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopLeft.X, (int)lanternTopLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                    shot1.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                }
-                if (Phase < 5 || Phase == 6)
-                {
-                    NPC shot2 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleRight.X, (int)lanternMiddleRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                    shot2.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                }
-                if (Phase < 4 || Phase == 6)
-                {
-                    NPC shot3 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomLeft.X, (int)lanternBottomLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                    shot3.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                }
-                if (Phase < 6 || Phase == 6)
-                {
-                    NPC shot4 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopRight.X, (int)lanternTopRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                    shot4.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                }
-                if (Phase < 2 || Phase == 6)
-                {
-                    NPC shot5 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleLeft.X, (int)lanternMiddleLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                    shot5.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                }
-                if (Phase < 3 || Phase == 6)
-                {
-                    NPC shot6 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomRight.X, (int)lanternBottomRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                    shot6.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                    if (Phase < 6 || Phase == 6)
+                    {
+                        NPC shot1 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopLeft.X, (int)lanternTopLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
+                        shot1.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                    }
+                    if (Phase < 5 || Phase == 6)
+                    {
+                        NPC shot2 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleRight.X, (int)lanternMiddleRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
+                        shot2.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                    }
+                    if (Phase < 4 || Phase == 6)
+                    {
+                        NPC shot3 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomLeft.X, (int)lanternBottomLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
+                        shot3.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                    }
+                    if (Phase < 6 || Phase == 6)
+                    {
+                        NPC shot4 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopRight.X, (int)lanternTopRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
+                        shot4.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                    }
+                    if (Phase < 2 || Phase == 6)
+                    {
+                        NPC shot5 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleLeft.X, (int)lanternMiddleLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
+                        shot5.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                    }
+                    if (Phase < 3 || Phase == 6)
+                    {
+                        NPC shot6 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomRight.X, (int)lanternBottomRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
+                        shot6.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                    }
                 }
             }
         }
@@ -732,7 +766,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 }
             }
 
-            if (MoveTimer >= 120 && MoveTimer < 300 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (MoveTimer >= 120 && MoveTimer < 300)
             {
                 Vector2 vector8 = new Vector2(NPC.Center.X - 5, NPC.Center.Y - 30);
                 Vector2 shootSpeed = UsefulFunctions.Aim(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 30), Target.Center, 1f);
@@ -742,15 +776,18 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 if (Phase == 6) shootSpeed = UsefulFunctions.Aim(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 30), Target.Center, 1.4f);
                 int projectileType = ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>();
 
-                if (Phase < 6)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(shootSpeed.X * Main.rand.NextFloat(2.5f, 4.5f), shootSpeed.Y * Main.rand.NextFloat(2.5f, 4.5f)), projectileType, (int)(DamageNumbers["FlamethrowerDamage"] * damageModifier), 0f, Main.myPlayer, 0);
-                    shot1.timeLeft = 70;
-                }
-                if (Phase == 6)
-                {
-                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(shootSpeed.X * Main.rand.NextFloat(2.5f, 4.5f), shootSpeed.Y * Main.rand.NextFloat(2.5f, 4.5f)), projectileType, (int)(DamageNumbers["FlamethrowerDamage"] * damageModifier), 0f, Main.myPlayer, 1);
-                    shot1.timeLeft = 70;
+                    if (Phase < 6)
+                    {
+                        Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(shootSpeed.X * Main.rand.NextFloat(2.5f, 4.5f), shootSpeed.Y * Main.rand.NextFloat(2.5f, 4.5f)), projectileType, (int)(DamageNumbers["FlamethrowerDamage"] * damageModifier), 0f, Main.myPlayer, 0);
+                        shot1.timeLeft = 70;
+                    }
+                    if (Phase == 6)
+                    {
+                        Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(vector8.X, vector8.Y), new Vector2(shootSpeed.X * Main.rand.NextFloat(2.5f, 4.5f), shootSpeed.Y * Main.rand.NextFloat(2.5f, 4.5f)), projectileType, (int)(DamageNumbers["FlamethrowerDamage"] * damageModifier), 0f, Main.myPlayer, 1);
+                        shot1.timeLeft = 70;
+                    }
                 }
 
                 //play breath sound
@@ -793,9 +830,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
                 NPC.dontTakeDamage = true;
             }
-            if (MoveTimer == 220 && Main.netMode != NetmodeID.MultiplayerClient) //Spawn clones at the chosen random location and teleport main boss away
+            if (MoveTimer == 220) //Spawn clones at the chosen random location and teleport main boss away
             {
-              
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
                     if (cloneSpawnLocation1.HasValue)
                     {
                         int cloneLeft = NPC.NewNPC(NPC.GetSource_FromThis(), (int)cloneSpawnLocation1.Value.X, (int)cloneSpawnLocation1.Value.Y + 70, ModContent.NPCType<Pinwheel>(), 0, 0, 0, Phase, 1);
@@ -806,6 +844,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                         int cloneRight = NPC.NewNPC(NPC.GetSource_FromThis(), (int)cloneSpawnLocation2.Value.X, (int)cloneSpawnLocation2.Value.Y + 70, ModContent.NPCType<Pinwheel>(), 0, 0, 0, Phase, 1);
                         Main.npc[cloneRight].boss = false;
                     }
+                }
               
                 ExecuteQueuedTeleport(NPC);
                 justTeleported = true;
@@ -843,22 +882,31 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 }
             }
 
-            if (Phase == 6 && MoveTimer > 120 && MoveTimer < 250 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Phase == 6 && MoveTimer > 120 && MoveTimer < 250)
             {
                 if (MoveTimer % rightSideShotDelay == 0)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(Main.rand.NextFloat(NPC.Center.X, NPC.Center.X + 120), NPC.Bottom.Y), new Vector2(0, Main.rand.NextFloat(-3.5f, -1.5f)), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(Main.rand.NextFloat(NPC.Center.X, NPC.Center.X + 120), NPC.Bottom.Y), new Vector2(0, Main.rand.NextFloat(-3.5f, -1.5f)), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
+                    }
                 }
 
                 if ((MoveTimer - 15) % leftSideShotDelay == 0)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(Main.rand.NextFloat(NPC.Center.X - 120, NPC.Center.X), NPC.Bottom.Y), new Vector2(0, Main.rand.NextFloat(-3.5f, -1.5f)), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(Main.rand.NextFloat(NPC.Center.X - 120, NPC.Center.X), NPC.Bottom.Y), new Vector2(0, Main.rand.NextFloat(-3.5f, -1.5f)), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
+                    }
                 }
 
                 if (MoveTimer == 220)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie81 with { Volume = 0.8f, Pitch = -1f, PitchVariance = 1f, MaxInstances = 5 }, NPC.Center); //wraith
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X, NPC.Center.Y - 30), new Vector2(0, Main.rand.NextFloat(0, -1f)), ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackKnightHomingCrystal>(), (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X, NPC.Center.Y - 30), new Vector2(0, Main.rand.NextFloat(0, -1f)), ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackKnightHomingCrystal>(), (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
+                    }
                 }
             }
         }
@@ -883,40 +931,47 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 NPC.noGravity = true;
             }
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && MoveTimer == 120)
+            if (MoveTimer == 120)
             {
                 if (Phase < 6)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/BlindingPulse") with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 5 }, NPC.Center);
-
-                    for (int i = 0; i < 30; i++)
+                    
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 position = new Vector2(0, 80).RotatedBy(i * MathHelper.Pi / 15);
-                        position += NPC.Center;
-                        Vector2 velocity = UsefulFunctions.Aim(NPC.Center, position, 1f);
-                        Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 3f, ModContent.ProjectileType<Projectiles.Enemy.BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier), 0f, Main.myPlayer);
-                        shot1.timeLeft = 90;
+                        for (int i = 0; i < 30; i++)
+                        {
+                            Vector2 position = new Vector2(0, 80).RotatedBy(i * MathHelper.Pi / 15);
+                            position += NPC.Center;
+                            Vector2 velocity = UsefulFunctions.Aim(NPC.Center, position, 1f);
+
+                            Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 3f, ModContent.ProjectileType<Projectiles.Enemy.BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier), 0f, Main.myPlayer);
+                            shot1.timeLeft = 90;
+                        }
                     }
                 }
 
                 if (Phase == 6) //In final phase, create larger faster ring with demon sickles
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/BlindingPulse") with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 5 }, NPC.Center);
-
-                    for (int i = 0; i < 60; i++)
+                    
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 position = new Vector2(0, 80).RotatedBy(i * MathHelper.Pi / 30f);
-                        position += NPC.Center;
-                        Vector2 velocity = UsefulFunctions.Aim(NPC.Center, position, 1f);
-                        Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 8f, ModContent.ProjectileType<Projectiles.Enemy.BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier), 0f, Main.myPlayer);
-                        shot1.timeLeft = 105;
-                    }
-                    for (int i = 0; i < 20; i++)
-                    {
-                        Vector2 position = new Vector2(0, 80).RotatedBy(i * MathHelper.Pi / 10);
-                        position += NPC.Center;
-                        Vector2 velocity = UsefulFunctions.Aim(NPC.Center, position, 0.1f);
-                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity, ProjectileID.DemonSickle, (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier), 0f, Main.myPlayer);
+                        for (int i = 0; i < 60; i++)
+                        {
+                            Vector2 position = new Vector2(0, 80).RotatedBy(i * MathHelper.Pi / 30f);
+                            position += NPC.Center;
+                            Vector2 velocity = UsefulFunctions.Aim(NPC.Center, position, 1f);
+                            Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 8f, ModContent.ProjectileType<Projectiles.Enemy.BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier), 0f, Main.myPlayer);
+                            shot1.timeLeft = 105;
+                        }
+                        for (int i = 0; i < 20; i++)
+                        {
+                            Vector2 position = new Vector2(0, 80).RotatedBy(i * MathHelper.Pi / 10);
+                            position += NPC.Center;
+                            Vector2 velocity = UsefulFunctions.Aim(NPC.Center, position, 0.1f);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity, ProjectileID.DemonSickle, (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier), 0f, Main.myPlayer);
+                        }
                     }
                 }
             }
@@ -987,25 +1042,42 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                     justTeleported = false;
 
                     if (deathAnimationProgress % 12 == 0 && deathAnimationProgress > 150 && !isClone)
-                    {
+                    {                        
+                        Vector2 explosionLocation = Main.rand.NextVector2Circular(100, 100);
+                        for (int i = 0; i < 40; i++) //Shadowflame
+                        {
+                            Dust.NewDustDirect(NPC.Center + explosionLocation - new Vector2(-4, -4), 8, 8, DustID.Shadowflame, Main.rand.NextFloat(-3, 3), Main.rand.NextFloat(-3, 3), 50, default(Color), Main.rand.NextFloat(1f, 4f));
+                            Dust dust = Dust.NewDustDirect(NPC.Center + explosionLocation - new Vector2(-4, -4), 8, 8, DustID.ShadowbeamStaff, Main.rand.NextFloat(-3, 3), Main.rand.NextFloat(-3, 3), 50, default(Color), Main.rand.NextFloat(1f, 4f));
+                            dust.velocity *= 2;
+                        }
+
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14 with { MaxInstances = 3 }, NPC.Center); 
+
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Vector2 explosionLocation = Main.rand.NextVector2Circular(100, 100);
-                            for (int i = 0; i < 40; i++) //Shadowflame
-                            {
-                                Dust.NewDustDirect(NPC.Center + explosionLocation - new Vector2(-4, -4), 8, 8, DustID.Shadowflame, Main.rand.NextFloat(-3, 3), Main.rand.NextFloat(-3, 3), 50, default(Color), Main.rand.NextFloat(1f, 4f));
-                                Dust dust = Dust.NewDustDirect(NPC.Center + explosionLocation - new Vector2(-4, -4), 8, 8, DustID.ShadowbeamStaff, Main.rand.NextFloat(-3, 3), Main.rand.NextFloat(-3, 3), 50, default(Color), Main.rand.NextFloat(1f, 4f));
-                                dust.velocity *= 2;
-                            }
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14 with { MaxInstances = 3 }, NPC.Center);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + explosionLocation, Main.rand.NextVector2Circular(5, 5), ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 0, 0, Main.myPlayer, 100, 30);
                         }
                     }
-                    if (deathAnimationProgress == deathAnimationDuration && Main.netMode != NetmodeID.Server)
-                    {
-                        Item.NewItem(NPC.GetSource_FromThis(), NPC.Center, ModContent.ItemType<Items.BossBags.PinwheelBag>(), 1);
-                    }
 
+                    if (deathAnimationProgress == deathAnimationDuration && Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
+                        {
+                            if (Main.expertMode || Main.masterMode)
+                            {
+                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<Items.BossBags.PinwheelBag>(), 1, false, -1);
+                            }
+                            else
+                            {
+                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<ForgottenPearlSpear>(), 1, false, -1);
+                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<MaskOfTheChild>(), 1, false, -1);
+                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<MaskOfTheFather>(), 1, false, -1);
+                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<MaskOfTheMother>(), 1, false, -1);
+                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<EstusRing>(), 1, false, -1);
+
+                            }
+                        }
+                    }
                     base.HandleDeath();
                 }
             }
@@ -1015,6 +1087,8 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 justTeleported = true;
             }
         }
+
+        
 
         public override void AttackTransition()
         {
@@ -1075,9 +1149,12 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                     }
                 }
 
-                if (phaseTransitionTimeRemaining == phaseTransitionDuration - 240 && Main.netMode != NetmodeID.Server)
+                if (phaseTransitionTimeRemaining == phaseTransitionDuration - 240 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<RingOfFavorAndProtection>(), 1, false, -1);
+                    for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
+                    {
+                        Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<RingOfFavorAndProtection>(), 1, false, -1);
+                    }
                 }
 
                 if (phaseTransitionTimeRemaining < phaseTransitionDuration - 300 && phaseTransitionTimeRemaining > phaseTransitionDuration - 1000)
@@ -1104,7 +1181,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                     NPC.velocity.Y = 0f;
                 }
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && phaseTransitionTimeRemaining == phaseTransitionDuration - 720)
+                if (phaseTransitionTimeRemaining == phaseTransitionDuration - 720)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/BlindingPulse") with { Volume = 1.1f, PitchVariance = 0.2f, MaxInstances = 5 }, NPC.Center);
 
@@ -1113,12 +1190,15 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                         Vector2 position = new Vector2(0, 80).RotatedBy(i * MathHelper.Pi / 30f);
                         position += NPC.Center;
                         Vector2 velocity = UsefulFunctions.Aim(NPC.Center, position, 1f);
-                        Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 8f, ModContent.ProjectileType<Projectiles.Enemy.BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier) + 6, 0f, Main.myPlayer);
-                        shot1.timeLeft = 105;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 8f, ModContent.ProjectileType<Projectiles.Enemy.BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier) + 6, 0f, Main.myPlayer);
+                            shot1.timeLeft = 105;
+                        }
                     }
                 }
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && phaseTransitionTimeRemaining == phaseTransitionDuration - 800)
+                if (phaseTransitionTimeRemaining == phaseTransitionDuration - 800)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/BlindingPulse") with { Volume = 1.1f, Pitch = -0.2f, MaxInstances = 5 }, NPC.Center);
 
@@ -1127,12 +1207,15 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                         Vector2 position = new Vector2(0, 80).RotatedBy(i * MathHelper.Pi / 30f);
                         position += NPC.Center;
                         Vector2 velocity = UsefulFunctions.Aim(NPC.Center, position, 1f);
-                        Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 8f, ModContent.ProjectileType<Projectiles.Enemy.BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier) + 6, 0f, Main.myPlayer);
-                        shot1.timeLeft = 105;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 8f, ModContent.ProjectileType<Projectiles.Enemy.BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier) + 6, 0f, Main.myPlayer);
+                            shot1.timeLeft = 105;
+                        }
                     }
                 }
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && phaseTransitionTimeRemaining == phaseTransitionDuration - 920)
+                if (phaseTransitionTimeRemaining == phaseTransitionDuration - 920)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/BlindingPulse") with { Volume = 1f, Pitch = -0.4f, MaxInstances = 5 }, NPC.Center);
 
@@ -1141,8 +1224,11 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                         Vector2 position = new Vector2(0, 80).RotatedBy(i * MathHelper.Pi / 30f);
                         position += NPC.Center;
                         Vector2 velocity = UsefulFunctions.Aim(NPC.Center, position, 1f);
-                        Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 12f, ModContent.ProjectileType<Projectiles.Enemy.BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier) + 10, 0f, Main.myPlayer);
-                        shot1.timeLeft = 80;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(position.X, position.Y - 30), velocity * 12f, ModContent.ProjectileType<Projectiles.Enemy.BlindingPulse>(), (int)(DamageNumbers["BlindingPulseDamage"] * damageModifier) + 10, 0f, Main.myPlayer);
+                            shot1.timeLeft = 80;
+                        }
                     }
                 }
             }
@@ -2524,23 +2610,17 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             }
             else { potionType = ItemID.HealingPotion; }
         }
+
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             /*if (NPC.lifeMax == (int)(5000 * HealthScale)) 
             {
                 npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.PinwheelBag>())); //Bag is dropped as an item at the end of death anim instead, because checking for anything else seems to fail
             }*/
-            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ForgottenPearlSpear>(), 1, 1, 1));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MaskOfTheChild>(), 1, 1, 1));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MaskOfTheFather>(), 1, 1, 1));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MaskOfTheMother>(), 1, 1, 1));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<EstusRing>(), 1, 1, 1));
 
-            npcLoot.Add(notExpertCondition);
+            //npcLoot.Add(notExpertCondition);
             //npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>())); if you want to give it an extra one time drop outside of expert mode
         }
-
 
         #region Modified Teleportation Functions
 

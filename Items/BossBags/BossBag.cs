@@ -28,6 +28,7 @@ using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
+using tsorcRevamp.Items.Weapons.Melee.Spears;
 
 namespace tsorcRevamp.Items.BossBags
 {
@@ -93,6 +94,7 @@ namespace tsorcRevamp.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ForgottenPearlSpear>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EstusRing>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.MaskOfTheChild>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Armors.MaskOfTheMother>()));

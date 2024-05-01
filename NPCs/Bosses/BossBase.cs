@@ -471,6 +471,23 @@ namespace tsorcRevamp.NPCs.Bosses
         /// </summary>
         public void NextMove()
         {
+            MoveTimer = 0;
+
+            if (justSkippedMove) //If you skipped the previous move
+            {
+                attackTransitionTimeRemaining = 30; //I set the time to half a second to allow time to sync... Should be enough - Chroma 
+                justSkippedMove = false; //Reset justSkippedMove
+            }
+            else
+            {
+                attackTransitionTimeRemaining = attackTransitionDuration;
+            }
+
+            //Multiplayer clients should never pick their next move, just let the server to pick one and sync it over
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
 
             if (!randomAttacks)
             {
@@ -523,15 +540,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 //Sync it
                 NPC.netUpdate = true;
-            }
-
-            if (justSkippedMove) //If you skipped the previous move
-            {
-                attackTransitionTimeRemaining = 30; //I set the time to half a second to allow time to sync... Should be enough - Chroma 
-                justSkippedMove = false; //Reset justSkippedMove
-            }
-            else { attackTransitionTimeRemaining = attackTransitionDuration; }
-            MoveTimer = 0;
+            }            
         }
 
         public void NextPhase()

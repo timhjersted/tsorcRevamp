@@ -4214,15 +4214,18 @@ namespace tsorcRevamp.NPCs
             {
                 //Pick a random point to target. Make sure it's at least 11 blocks away from the player to avoid cheap hits.
                 Vector2 teleportTarget = Vector2.Zero;
-                if (range < 12)
+                if (range < 13)
                 {
-                    range = 12;
+                    range = 13;
                 }
                 teleportTarget.X = Main.rand.Next(11, range);
                 if (Main.rand.NextBool())
                 {
                     teleportTarget.X *= -1;
                 }
+
+                //Move teleportTarget up a few blocks, since in the next step the algorithm will search downward from this point to find a valid landing spot
+                teleportTarget.Y -= 12;
 
                 //Add the player's position to it to convert it to an actual tile coordinate
                 teleportTarget += Main.player[npc.target].position / 16;
@@ -4268,12 +4271,19 @@ namespace tsorcRevamp.NPCs
                         }
 
                         //Then teleport and return
-                        Vector2 newPosition = Vector2.Zero;
-                        newPosition.X = ((int)teleportTarget.X * 16 - npc.width / 2); //Center npc at target
-                        newPosition.Y = (((int)teleportTarget.Y + y) * 16 - npc.height); //Subtract npc.height from y so block is under feet
+                        teleportTarget.X = ((int)teleportTarget.X * 16 - npc.width / 2); //Center npc at target
+                        teleportTarget.Y = (((int)teleportTarget.Y + y) * 16 - npc.height); //Subtract npc.height from y so block is under feet
                         npc.TargetClosest(true);
                         npc.netUpdate = true;
-                        return newPosition;
+
+                        if(teleportTarget.Length() < 400)
+                        {
+                            Main.NewText("Teleport error!");
+                            Main.NewText("NPC Name: " + npc.GivenOrTypeName);
+                            Main.NewText("Target coordinates: " + teleportTarget);
+                            Main.NewText("Please report this to our discord!");
+                        }
+                        return teleportTarget;
                     }
                 }
             }
