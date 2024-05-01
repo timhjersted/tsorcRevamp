@@ -4278,10 +4278,10 @@ namespace tsorcRevamp.NPCs
 
                         if(teleportTarget.Length() < 400)
                         {
-                            Main.NewText("Teleport error!");
-                            Main.NewText("NPC Name: " + npc.GivenOrTypeName);
-                            Main.NewText("Target coordinates: " + teleportTarget);
-                            Main.NewText("Please report this to our discord!");
+                            UsefulFunctions.BroadcastText("Teleport error!");
+                            UsefulFunctions.BroadcastText("NPC Name: " + npc.GivenOrTypeName);
+                            UsefulFunctions.BroadcastText("Target coordinates: " + teleportTarget);
+                            UsefulFunctions.BroadcastText("Please report this to our discord!");
                         }
                         return teleportTarget;
                     }
