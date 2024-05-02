@@ -63,6 +63,10 @@ using tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles;
 using tsorcRevamp.Projectiles.Summon.SamuraiBeetle;
 using tsorcRevamp.Projectiles.Summon.SunsetQuasar;
 using tsorcRevamp.Projectiles.Summon.Tetsujin;
+using tsorcRevamp.Projectiles.Summon.EtherianWyvern;
+using tsorcRevamp.Projectiles.Summon.PhotonicDownpour;
+using tsorcRevamp.Projectiles.Summon.ShatteredReflection;
+using tsorcRevamp.Projectiles.Summon.TripleThreat;
 using tsorcRevamp.Tiles;
 using tsorcRevamp.Tiles.BuffStations;
 using tsorcRevamp.Tiles.Relics;
@@ -1766,57 +1770,77 @@ namespace tsorcRevamp
                     "AddMinionInfo",
                     ModContent.ItemType<PhoenixEgg>(),
                     ModContent.BuffType<PhoenixBuff>(),
-                    ModContent.ProjectileType<PhoenixProjectile>(),
-                    2f
+                    new Dictionary<string, object>()
+                    {
+                        ["ProjID"] = ModContent.ProjectileType<PhoenixProjectile>(),
+                        ["Slot"] = 2f,
+                    }
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
                     ModContent.ItemType<SunsetQuasar>(),
                     ModContent.BuffType<SunsetQuasarBuff>(),
-                    ModContent.ProjectileType<SunsetQuasarMinion>(),
-                    1f
+                    ModContent.ProjectileType<SunsetQuasarMinion>()
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
                     ModContent.ItemType<ScorchingPoint>(),
                     ModContent.BuffType<CenterOfTheHeat>(),
-                    ModContent.ProjectileType<ScorchingPointFireball>(),
-                    0.5f
+                    new Dictionary<string, object>()
+                    {
+                        ["ProjID"] = ModContent.ProjectileType<ScorchingPointFireball>(),
+                        ["Slot"] = 0.5f,
+                    }
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
                     ModContent.ItemType<InterstellarVesselGauntlet>(),
                     ModContent.BuffType<InterstellarCommander>(),
-                    ModContent.ProjectileType<InterstellarVesselShip>(),
-                    0.5f
+                    new Dictionary<string, object>()
+                    {
+                        ["ProjID"] = ModContent.ProjectileType<InterstellarVesselShip>(),
+                        ["Slot"] = 0.5f,
+                    }
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
                     ModContent.ItemType<CenterOfTheUniverse>(),
                     ModContent.BuffType<CenterOfTheUniverseBuff>(),
-                    ModContent.ProjectileType<CenterOfTheUniverseStar>(),
-                    0.5f
+                    new Dictionary<string, object>()
+                    {
+                        ["ProjID"] = ModContent.ProjectileType<CenterOfTheUniverseStar>(),
+                        ["Slot"] = 0.5f,
+                    }
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
                     ModContent.ItemType<TetsujinRemote>(),
                     ModContent.BuffType<TetsujinBuff>(),
-                    ModContent.ProjectileType<TetsujinProjectile>(),
-                    2f
+                    new Dictionary<string, object>()
+                    {
+                        ["ProjID"] = ModContent.ProjectileType<TetsujinProjectile>(),
+                        ["Slot"] = 2f,
+                    }
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
                     ModContent.ItemType<NullSpriteStaff>(),
                     ModContent.BuffType<NullSpriteBuff>(),
-                    ModContent.ProjectileType<NullSprite>(),
-                    0.75f
+                    new Dictionary<string, object>()
+                    {
+                        ["ProjID"] = ModContent.ProjectileType<NullSprite>(),
+                        ["Slot"] = 0.75f,
+                    }
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
                     ModContent.ItemType<BeetleIdol>(),
                     ModContent.BuffType<SamuraiBeetleBuff>(),
-                    ModContent.ProjectileType<SamuraiBeetleProjectile>(),
-                    4f
+                    new Dictionary<string, object>()
+                    {
+                        ["ProjID"] = ModContent.ProjectileType<SamuraiBeetleProjectile>(),
+                        ["Slot"] = 6f,
+                    }
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
@@ -1829,6 +1853,43 @@ namespace tsorcRevamp
                     ModContent.ItemType<SpiritBell>(),
                     ModContent.BuffType<SpiritAshKnightBuff>(),
                     ModContent.ProjectileType<SpiritAshKnightMinion>()
+                    );
+                summonersAssociation.Call(
+                    "AddMinionInfo",
+                    ModContent.ItemType<EtherianWyvernStaff>(),
+                    ModContent.BuffType<EtherianWyvernBuff>(),
+                    ModContent.ProjectileType<EtherianWyvernProjectile>()
+                    );
+                summonersAssociation.Call(
+                    "AddMinionInfo",
+                    ModContent.ItemType<PhotonicDownpour>(),
+                    ModContent.BuffType<PhotonicDownpourBuff>(),
+                    new List<int>
+                    {
+                        ModContent.ProjectileType<PhotonicDownpourLaserDrone>(),
+                        ModContent.ProjectileType<PhotonicDownpourDefenseDrone>(),
+                    }
+                    );
+                summonersAssociation.Call(
+                    "AddMinionInfo",
+                    ModContent.ItemType<ShatteredReflection>(),
+                    ModContent.BuffType<ShatteredReflectionBuff>(),
+                    new Dictionary<string, object>()
+                    {
+                        ["ProjID"] = ModContent.ProjectileType<ShatteredReflectionProjectile>(),
+                        ["Slot"] = 2f,
+                    }
+                    );
+                summonersAssociation.Call(
+                    "AddMinionInfo",
+                    ModContent.ItemType<TripleThreat>(),
+                    ModContent.BuffType<TripleThreatBuff>(),
+                    new List<int>
+                    {
+                        ModContent.ProjectileType<FriendlyRetinazer>(),
+                        ModContent.ProjectileType<FriendlySpazmatism>(),
+                        ModContent.ProjectileType<FriendlyCataluminance>(),
+                    }
                     );
             }
 
