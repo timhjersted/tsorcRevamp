@@ -61,7 +61,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
             if (Filters.Scene[FilterID] == null)
             {
-                Filters.Scene[FilterID] = new Filter(new ScreenShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TriadShockwave", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "TriadShockwavePass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
+                Filters.Scene[FilterID] = new Filter(new ScreenShaderData(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TriadShockwave"), "TriadShockwavePass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
                 tsorcRevampWorld.boundShaders.Add(FilterID);
             }
 

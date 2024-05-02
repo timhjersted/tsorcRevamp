@@ -93,7 +93,7 @@ namespace tsorcRevamp.NPCs.Special
 
             if (Filters.Scene[filterIndex] == null)
             {
-                Filters.Scene[filterIndex] = new Filter(new ScreenShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/AbyssPortal", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "AbyssPortalPass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
+                Filters.Scene[filterIndex] = new Filter(new ScreenShaderData(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/AbyssPortal"), "AbyssPortalPass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
             }
 
             if (Main.netMode != NetmodeID.Server && !Filters.Scene[filterIndex].IsActive())

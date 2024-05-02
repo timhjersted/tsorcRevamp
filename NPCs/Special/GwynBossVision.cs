@@ -150,7 +150,7 @@ namespace tsorcRevamp.NPCs.Special
                 //Apply the shader, caching it as well
                 if (data == null)
                 {
-                    data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/MarilithIntro", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "MarilithIntroPass");
+                    data = new ArmorShaderData(ModContent.Request<Effect>("tsorcRevamp/Effects/MarilithIntro"), "MarilithIntroPass");
                 }*/
 
                 if (textures[i] == null || textures[i].IsDisposed)

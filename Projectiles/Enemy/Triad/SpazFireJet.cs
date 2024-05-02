@@ -131,7 +131,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             //Apply the shader, caching it as well
             if (data == null)
             {
-                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/SpazFireJet", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "SpazFireJetPass");
+                data = new ArmorShaderData(ModContent.Request<Effect>("tsorcRevamp/Effects/SpazFireJet"), "SpazFireJetPass");
             }
 
             //Pass relevant data to the shader via these parameters

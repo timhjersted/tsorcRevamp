@@ -173,7 +173,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             //Apply the shader, caching it as well
             if (data == null)
             {
-                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/FireWallShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "FireWallShaderPass");
+                data = new ArmorShaderData(ModContent.Request<Effect>("tsorcRevamp/Effects/FireWallShader"), "FireWallShaderPass");
             }
 
             //Pass relevant data to the shader via these parameters
