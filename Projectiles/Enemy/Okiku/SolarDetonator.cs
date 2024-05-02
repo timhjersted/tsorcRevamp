@@ -153,7 +153,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             //Apply the shader, caching it as well
             if (data == null)
             {
-                data = new ArmorShaderData(ModContent.Request<Effect>("tsorcRevamp/Effects/SolarDetonation"), "SolarDetonationShaderPass");
+                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/SolarDetonation", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "SolarDetonationShaderPass");
             }
 
             //Pass the size parameter in through the "saturation" variable, because there isn't a "size" one

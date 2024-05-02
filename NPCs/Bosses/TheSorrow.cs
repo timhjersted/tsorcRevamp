@@ -576,7 +576,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             if (Main.netMode != NetmodeID.Server && Filters.Scene[FilterID] == null)
             {
-                Filters.Scene[FilterID] = new Filter(new ScreenShaderData(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/Meltwater"), "EffectPass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
+                Filters.Scene[FilterID] = new Filter(new ScreenShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/Meltwater", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "EffectPass").UseImage("Images/Misc/noise"), EffectPriority.VeryHigh);
                 tsorcRevampWorld.boundShaders.Add(FilterID);
             }
 

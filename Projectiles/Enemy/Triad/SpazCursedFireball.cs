@@ -49,7 +49,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Triad
             //Apply the shader, caching it as well
             if (data == null)
             {
-                data = new ArmorShaderData(ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFireball"), "CursedFireballPass");
+                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/CursedFireball", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "CursedFireballPass");
             }
 
             Rectangle sourceRectangle = new Rectangle(0, 0, (int)Projectile.width * 4, (int)Projectile.height * 4);

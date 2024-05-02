@@ -103,7 +103,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             //Apply the shader, caching it as well
             if (data == null)
             {
-                data = new ArmorShaderData(ModContent.Request<Effect>("tsorcRevamp/Effects/MarilithFireAura"), "MarilithFireAuraPass");
+                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/MarilithFireAura", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "MarilithFireAuraPass");
             }
 
             //data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.AcidDye), Main.LocalPlayer);

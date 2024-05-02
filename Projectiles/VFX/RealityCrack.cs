@@ -83,7 +83,7 @@ namespace tsorcRevamp.Projectiles.VFX
                     //If we have reached the point no more entries exist, then create a new one
                     if (Filters.Scene[currentIndex] == null)
                     {
-                        Filters.Scene[currentIndex] = new Filter(new ScreenShaderData(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/RealityCrack"), "RealityCrackPass"), EffectPriority.VeryHigh);
+                        Filters.Scene[currentIndex] = new Filter(new ScreenShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/RealityCrack", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "RealityCrackPass"), EffectPriority.VeryHigh);
                         filterIndex = currentIndex;
                         initialized = true;
                         break;
