@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -46,22 +47,19 @@ namespace tsorcRevamp.Items.Debug
             //NPCs.Bosses.PrimeV2.PrimeV2.ActuatePrimeArena();
 
             //NPC.NewNPC(Item.GetSource_FromThis(), (int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>());
-            Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.GlowingEnergy>(), 0, 0, Main.myPlayer, 600, UsefulFunctions.ColorToFloat(new Color(1.0f, 0.4f, 0.1f, 1.0f)));
+            //Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.GlowingEnergy>(), 0, 0, Main.myPlayer, 600, UsefulFunctions.ColorToFloat(new Color(1.0f, 0.4f, 0.1f, 1.0f)));
 
             //Uncomment this to make the debug tome max out your perma potions
             //return false;
 
-            return false;
-            /*
+            //return false;
+            
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            foreach(KeyValuePair<Terraria.ModLoader.Config.ItemDefinition, int> k in modPlayer.consumedPotions)
+            foreach(KeyValuePair<int, int> k in modPlayer.consumedPotions)
             {
-                if(k.Key.Type == ModContent.ItemType<Items.Potions.CharcoalPineResin>()){
-                    modPlayer.consumedPotions[k.Key] = 15;
-                }
-                //modPlayer.consumedPotions[k.Key] = 999;
+                modPlayer.consumedPotions[k.Key] = 999;
             }
-            return false;*/
+            return false;
         }
 
         //For multiplayer testing, because I only have enough hands for one keyboard. Makes the player holding it float vaguely near the next other player.

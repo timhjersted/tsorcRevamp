@@ -781,7 +781,7 @@ namespace tsorcRevamp.Items
         public override void OnConsumeItem(Item item, Player player)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.consumedPotions ??= new Dictionary<ItemDefinition, int>();
+            modPlayer.consumedPotions ??= new Dictionary<int, int>();
 
             bool isPotion = false;
             if (potionList.Contains(item.type))
@@ -798,16 +798,15 @@ namespace tsorcRevamp.Items
             }
 
 
-            if (isPotion)
+            if (isPotion && item.buffType != 0)
             {
-                ItemDefinition pot = new(item.type);
-                if (modPlayer.consumedPotions.ContainsKey(pot))
+                if (modPlayer.consumedPotions.ContainsKey(item.buffType))
                 {
-                    modPlayer.consumedPotions[pot] += 1;
+                    modPlayer.consumedPotions[item.buffType] += 1;
                 }
                 else
                 {
-                    modPlayer.consumedPotions.Add(pot, 1);
+                    modPlayer.consumedPotions.Add(item.buffType, 1);
                 }
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.type == ItemID.ManaCrystal)

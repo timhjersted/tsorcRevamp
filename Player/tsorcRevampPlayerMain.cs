@@ -59,7 +59,7 @@ namespace tsorcRevamp
         public static readonly int PermanentBuffCount = 58;
         public static List<int> startingItemsList;
         public List<int> bagsOpened;
-        public Dictionary<ItemDefinition, int> consumedPotions;
+        public Dictionary<int, int> consumedPotions;
 
         public override void Initialize()
         {
@@ -195,8 +195,18 @@ namespace tsorcRevamp
             tag.Add("PermanentBuffToggles", permaBuffs);
             tag.Add("finishedQuest", finishedQuest);
 
-            consumedPotions ??= new Dictionary<ItemDefinition, int>();
-            tag.Add("consumedPotionsKeys", consumedPotions.Keys.ToList());
+            consumedPotions ??= new Dictionary<int, int>();
+
+            List<BuffDefinition> buffDefinitions = new List<BuffDefinition>();
+            foreach (int i in consumedPotions.Keys)
+            {
+                if (i != 0)
+                {
+                    buffDefinitions.Add(new BuffDefinition(i));
+                }
+            }
+
+            tag.Add("consumedPotionsBuffTypes", buffDefinitions);
             tag.Add("consumedPotionsValues", consumedPotions.Values.ToList());
         }
 
@@ -295,14 +305,39 @@ namespace tsorcRevamp
             bool? quest = tag.GetBool("finishedQuest");
             finishedQuest = quest ?? false;
 
-            consumedPotions ??= new Dictionary<ItemDefinition, int>();
+            consumedPotions ??= new Dictionary<int, int>();
+
+            //Convert old potion count saving system to the new one
             if (tag.ContainsKey("consumedPotionsKeys"))
             {
                 List<ItemDefinition> potKey = tag.GetList<ItemDefinition>("consumedPotionsKeys") as List<ItemDefinition>;
                 List<int> potValue = tag.GetList<int>("consumedPotionsValues") as List<int>;
                 for (int i = 0; i < potKey.Count; i++)
                 {
-                    consumedPotions.Add(potKey[i], potValue[i]);
+                    Item potion = new();
+                    potion.SetDefaults(potKey[i].Type);
+                    if(potion.buffType == 0) //Mana, healing, recall, etc potions got read into this for some reason
+                    {
+                        continue;
+                    }
+                    if (consumedPotions.ContainsKey(potion.buffType))
+                    {
+                        consumedPotions[potion.buffType] += potValue[i];
+                    }
+                    else
+                    {
+                        consumedPotions.Add(potion.buffType, potValue[i]);
+                    }
+                }
+            }
+
+            if (tag.ContainsKey("consumedPotionsBuffTypes"))
+            {
+                List<BuffDefinition> potKey = tag.GetList<BuffDefinition>("consumedPotionsBuffTypes") as List<BuffDefinition>;
+                List<int> potValue = tag.GetList<int>("consumedPotionsValues") as List<int>;
+                for (int i = 0; i < potKey.Count; i++)
+                {
+                    consumedPotions.Add(potKey[i].Type, potValue[i]);
                 }
             }
         }

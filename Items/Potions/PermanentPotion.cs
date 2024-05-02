@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -57,23 +58,15 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             get
             {
-                //this all seems a bit scary to do every frame but i cant think of a better way ;-;
-                tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
-                int consumedAmount = 0;
-                if (modPlayer.consumedPotions.Count > 0)
+                tsorcRevampPlayer p = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
+                if(p.consumedPotions.Keys.Contains(BuffType))
                 {
-                    foreach (ItemDefinition def in modPlayer.consumedPotions.Keys)
-                    {
-                        int itemID = def.Type;
-                        Item potion = new();
-                        potion.SetDefaults(itemID);
-                        if (potion.buffType == BuffType)
-                        {
-                            consumedAmount += modPlayer.consumedPotions[def];
-                        }
-                    }
+                    return Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().consumedPotions[BuffType];
                 }
-                return consumedAmount;
+                else
+                {
+                    return 0;
+                }
             }
         }
 
