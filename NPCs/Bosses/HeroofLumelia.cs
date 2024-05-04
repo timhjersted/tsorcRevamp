@@ -686,14 +686,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 
                         //go to smoke bomb attack
-                        customAi1 = 200f;
-                        NPC.knockBackResist = 0.1f;
-
-                        if (Main.rand.NextBool(2))
-                        {
-                            //or chance to reset - decided not to use for now
-                            //customAi1 = 1f;
-                        }
+                        customAi1 = 200f;                                       
                     }
                     NPC.netUpdate = true;
 

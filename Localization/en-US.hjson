@@ -5099,7 +5099,7 @@ Mods: {
 
 			FarronDart: {
 				DisplayName: Farron Dart
-				Tooltip: Rapidly shoots controllable farron darts
+				Tooltip: Rapidly shoots controllable farron darts. Hold attack for precision control. Can be used creatively.
 			}
 
 			FireBombRune: {

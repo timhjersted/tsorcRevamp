@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 0;
-            NPC.knockBackResist = 0.36f;
+            NPC.knockBackResist = 0f;
             NPC.scale = 1.15f;
             NPC.boss = true;
             Banner = NPC.type;
@@ -178,7 +178,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 NPC.ai[1]++;
                 NPC.ai[2]++;
-                NPC.knockBackResist = 0.36f;
+                
 
                 #region Sounds & Jumps
                 // Play creature sounds

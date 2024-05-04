@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 20000; // life / 1.25 in HM
-            NPC.knockBackResist = 0.04f;
+            NPC.knockBackResist = 0.0f;
             NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.RedKnightBanner>();
@@ -154,7 +154,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.ai[1]++;
                 NPC.ai[2]++;
-                NPC.knockBackResist = 0.4f;
+                NPC.knockBackResist = 0f;
 
                 #region Sounds & Jumps
                 // Play creature sounds
