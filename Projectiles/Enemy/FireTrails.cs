@@ -14,8 +14,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetDefaults()
         {
-            Projectile.width = 15;
-            Projectile.height = 15;
+            Projectile.width = 6;
+            Projectile.height = 6;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
             Projectile.MaxUpdates = 2;
@@ -26,10 +26,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.light = .9f;
 
             trailCollision = true;
-            trailWidth = 25;
+            trailWidth = 20;
             trailPointLimit = 150;
             trailYOffset = 30;
-            trailMaxLength = 850;
+            trailMaxLength = 200;
             NPCSource = false;
             collisionPadding = 0;
             collisionEndPadding = 1;

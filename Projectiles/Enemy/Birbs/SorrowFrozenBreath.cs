@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
             maxSize = 150;
             if (!initialized)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, Projectile.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_BetsyDeath, Projectile.Center);
                 hostIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.TheSorrow>());
                 Projectile.rotation = Projectile.velocity.ToRotation();
                 Projectile.velocity = Vector2.Zero;

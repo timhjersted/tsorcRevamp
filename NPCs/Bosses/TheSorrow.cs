@@ -256,7 +256,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 // Play breath sound
                 if (Main.rand.NextBool(3))
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.9f, PitchVariance = 1f }, NPC.Center); //flame thrower
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 1.3f, PitchVariance = 1f }, NPC.Center); //flame thrower
                 }
             }
         }
@@ -341,7 +341,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 // Normal Phase
                 NPC.alpha = 0;
                 NPC.defense = 34;
-                NPC.damage = 120;
+                NPC.damage = 80;
                 NPC.netUpdate = true;
 
                 if (NPC.ai[2] < 600)

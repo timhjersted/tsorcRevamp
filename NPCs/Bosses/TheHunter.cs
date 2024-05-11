@@ -189,7 +189,7 @@ namespace tsorcRevamp.NPCs.Bosses
             // Normal Phase
             if (EnrageTimer == 0)
             {
-                NPC.damage = 130;
+                NPC.damage = 90;
                 //NPC.defense = 36;
                 NPC.netUpdate = true;
 
@@ -244,7 +244,7 @@ namespace tsorcRevamp.NPCs.Bosses
                             //play breath sound
                             if (Main.rand.NextBool(3))
                             {
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.9f, PitchVariance = 1f }, NPC.Center); //flame thrower
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 1f, PitchVariance = 1f }, NPC.Center); //flame thrower
                             }
                         }
                     }

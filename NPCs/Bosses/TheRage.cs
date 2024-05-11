@@ -22,11 +22,11 @@ namespace tsorcRevamp.NPCs.Bosses
     [AutoloadBossHead]
     class TheRage : ModNPC
     {
-        int fireTrailsDamage = 27; //23 was a bit too easy for folks based on some feedback and watching a LP, 33 was too much given randomness
-        int rageBreathDamage = 30;
-        int demonBoltDamage = 33;
-        int homingFireDamage = 36;
-        int rageFirebombDamage = 39;
+        int fireTrailsDamage = 24; //23 was a bit too easy for folks based on some feedback and watching a LP, 33 was too much given randomness
+        int rageBreathDamage = 27;
+        int demonBoltDamage = 30;
+        int homingFireDamage = 33;
+        int rageFirebombDamage = 36;
 
         public override void SetStaticDefaults()
         {
@@ -166,7 +166,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             // Getting close to the rage triggers on fire!
-            if (NPC.Distance(player.Center) < 80)
+            if (NPC.Distance(player.Center) < 40)
             {
                 player.AddBuff(BuffID.OnFire, 300, false);
             }
@@ -209,13 +209,13 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 600 + Main.rand.Next(1200), (float)player.position.Y - 600f, (float)(-40 + Main.rand.Next(80)) / 10, 2f, ModContent.ProjectileType<FireTrails>(), fireTrailsDamage, 2f, Main.myPlayer); //  ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>()
                 }
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, PitchVariance = 2 }, NPC.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.9f, PitchVariance = 2 }, NPC.Center);
 
                 FlameShotTimer = 0;
                 FlameShotCounter++;
             }
             // Homing Fireballs Attack: Part of 2nd phase 
-            if (FlameShotTimer3 >= 25 && FlameShotCounter3 < 8)
+            if (FlameShotTimer3 >= 25 && FlameShotCounter3 < 5)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -230,9 +230,10 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 breathTimer++;
             }
-            if (breathTimer > 380)
+            if (breathTimer > 780)
             {
-                breathTimer = -29;
+                breathTimer = -19;
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 breathVel = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 12);
@@ -241,17 +242,20 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             if (breathTimer < 0)
             {
+                //NPC.velocity.X *= 0.15f;
+                //NPC.velocity.Y *= 0.15f;
                 // Play breath sound
                 if (Main.rand.NextBool(3))
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.9f, PitchVariance = 1f }, NPC.Center); //flame thrower
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 1.3f, PitchVariance = 1f }, NPC.Center); //flame thrower
                 }
             }
-            if (breathTimer > 180)
+            if (breathTimer > 580)
             {
+
                 Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1);
             }
-            if (breathTimer == 180 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (breathTimer == 580 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.GlowingEnergy>(), 0, 0, Main.myPlayer, NPC.whoAmI, UsefulFunctions.ColorToFloat(Color.Red));
             }
@@ -260,10 +264,10 @@ namespace tsorcRevamp.NPCs.Bosses
             // Fire Bomb Attack
             Timer++;
 
-            int bombFrequency = 350; // 1st phase frequency
+            int bombFrequency = 325; // 1st phase frequency
             if (NPC.life < NPC.lifeMax / 2)
             {
-                bombFrequency = 130; // 2nd phase frequency
+                bombFrequency = 125; // 2nd phase frequency
             }
 
             if (Main.rand.NextBool(bombFrequency) && player.position.Y + 30 >= NPC.position.Y)
@@ -272,7 +276,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     for (int i = 0; i < 6; i++)
                     {
-                        int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
+                        int pink = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 3f);
                         Main.dust[pink].noGravity = true;
                     }
 
@@ -291,7 +295,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             // Spawn Meteor Hell at 1/5th life
-            if (Main.rand.NextBool(85) && NPC.Distance(player.Center) > 160 && NPC.life <= NPC.lifeMax / 5)
+            if (Main.rand.NextBool(120) && NPC.Distance(player.Center) > 160 && NPC.life <= NPC.lifeMax / 5)
             {
 
                 if (player.position.Y + 50 >= NPC.position.Y)
@@ -321,7 +325,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 // Normal Phase
                 NPC.alpha = 0;
-                NPC.damage = 110;
+                NPC.damage = 70;
                 //NPC.defense = 32;
                 NPC.netUpdate = true;
 
@@ -352,10 +356,10 @@ namespace tsorcRevamp.NPCs.Bosses
                     {
                         float speed = 6f;
                         int type = ModContent.ProjectileType<FireTrails>();
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.5f, PitchVariance = 1f }, NPC.Center); //flame thrower
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.7f, PitchVariance = 1f }, NPC.Center); //flame thrower
                         float rotation = (float)Math.Atan2(NPC.Center.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + 600, NPC.Center.Y - 120, (float)((Math.Cos(rotation) * speed) * -1), (float)((Math.Sin(rotation) * speed) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 120, (float)((Math.Cos(rotation + 0.2) * speed) * -1), (float)((Math.Sin(rotation + 0.4) * speed) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
+                        //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 120, (float)((Math.Cos(rotation + 0.2) * speed) * -1), (float)((Math.Sin(rotation + 0.4) * speed) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 600, NPC.Center.Y - 120, (float)((Math.Cos(rotation - 0.2) * speed) * -1), (float)((Math.Sin(rotation - 0.4) * speed) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
                         NPC.ai[1] = -90;
                         // Added some dust so the projectiles aren't just appearing out of thin air
@@ -385,92 +389,93 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.velocity.Y *= 0.98f;
                     if ((NPC.velocity.X < 2f) && (NPC.velocity.X > -2f) && (NPC.velocity.Y < 2f) && (NPC.velocity.Y > -2f))
                     {
+
                         float rotation = (float)Math.Atan2(NPC.Center.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         NPC.velocity.X = (float)(Math.Cos(rotation) * 22) * -1;
-                        NPC.velocity.Y = (float)(Math.Sin(rotation) * 22) * -1;//22 w 25, seems to be speed of dash
+                        NPC.velocity.Y = (float)(Math.Sin(rotation) * 22) * -1;//22 w 25, seems to be speed of dash}
+                    }
+                    }
+                    else NPC.ai[2] = 0;
+                    FlameShotCounter = 0;
+                }
+                else
+                {
+                    // Enrage Phase              
+                    NPC.ai[3]++;
+                    //NPC.alpha = 210; //No longer goes invisible
+                    //NPC.defense = 32;
+                    NPC.damage = 140;
+                    NPC.netUpdate = true;
+
+                    // FlameShotCounter2 = 0;
+
+                    if (Main.player[NPC.target].position.X < NPC.Center.X)
+                    {
+                        if (NPC.velocity.X > -6) { NPC.velocity.X -= 0.22f; }
+                    }
+                    if (Main.player[NPC.target].position.X > NPC.Center.X)
+                    {
+                        if (NPC.velocity.X < 6) { NPC.velocity.X += 0.22f; }
+                    }
+                    if (Main.player[NPC.target].position.Y < NPC.Center.Y)
+                    {
+                        if (NPC.velocity.Y > 0f) NPC.velocity.Y -= 0.8f;
+                        else NPC.velocity.Y -= 0.07f;
+                    }
+                    if (Main.player[NPC.target].position.Y > NPC.Center.Y)
+                    {
+                        if (NPC.velocity.Y < 0f) NPC.velocity.Y += 0.8f;
+                        else NPC.velocity.Y += 0.07f;
+                    }
+                    if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
+                    {
+
+                        float speed = 7f;
+                        float invulnDamageMult = 1.64f;
+                        int type = ModContent.ProjectileType<FireTrails>();
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                        float rotation = (float)Math.Atan2(NPC.Center.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + 300, NPC.Center.Y - 150, (float)((Math.Cos(rotation) * speed) * -1), (float)((Math.Sin(rotation) * speed) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 150, (float)((Math.Cos(rotation + 0.2) * speed) * -1), (float)((Math.Sin(rotation + 0.4) * speed) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 300, NPC.Center.Y - 150, (float)((Math.Cos(rotation - 0.2) * speed) * -1), (float)((Math.Sin(rotation - 0.4) * speed) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        NPC.ai[1] = -90;
+                        // Added some dust so the projectiles aren't just appearing out of thin air
+                        for (int i = 0; i < 20; i++)
+                        {
+                            int fireDust = Dust.NewDust(new Vector2(NPC.Center.X + 300, NPC.Center.Y - 150), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
+                            Main.dust[fireDust].noGravity = true;
+                            fireDust = Dust.NewDust(new Vector2(NPC.Center.X, NPC.Center.Y - 150), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
+                            Main.dust[fireDust].noGravity = true;
+                            fireDust = Dust.NewDust(new Vector2(NPC.Center.X - 300, NPC.Center.Y - 150), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
+                            Main.dust[fireDust].noGravity = true;
+                        }
+                    }
+
+                    if (NPC.ai[3] == 100)
+                    {
+                        NPC.ai[3] = 1;
+
+                        // Gains life on enrage: re-added to fit with rage theme                 
+                        NPC.life += 300;
+
+                        if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
+                    }
+                    if (NPC.ai[1] >= 0)
+                    {
+                        NPC.ai[3] = 0;
+                        for (int i = 0; i < 40; i++)
+                        {
+                            Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, 0, 0, 0, new Color(), 3f);
+                        }
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                        }
+
+
                     }
                 }
-                else NPC.ai[2] = 0;
-                FlameShotCounter = 0;
             }
-            else
-            {
-                // Enrage Phase              
-                NPC.ai[3]++;
-                //NPC.alpha = 210; //No longer goes invisible
-                //NPC.defense = 32;
-                NPC.damage = 140;
-                NPC.netUpdate = true;
-
-                // FlameShotCounter2 = 0;
-
-                if (Main.player[NPC.target].position.X < NPC.Center.X)
-                {
-                    if (NPC.velocity.X > -6) { NPC.velocity.X -= 0.22f; }
-                }
-                if (Main.player[NPC.target].position.X > NPC.Center.X)
-                {
-                    if (NPC.velocity.X < 6) { NPC.velocity.X += 0.22f; }
-                }
-                if (Main.player[NPC.target].position.Y < NPC.Center.Y)
-                {
-                    if (NPC.velocity.Y > 0f) NPC.velocity.Y -= 0.8f;
-                    else NPC.velocity.Y -= 0.07f;
-                }
-                if (Main.player[NPC.target].position.Y > NPC.Center.Y)
-                {
-                    if (NPC.velocity.Y < 0f) NPC.velocity.Y += 0.8f;
-                    else NPC.velocity.Y += 0.07f;
-                }
-                if (NPC.ai[1] >= 0 && NPC.ai[2] > 120 && NPC.ai[2] < 600)
-                {
-
-                    float speed = 7f;
-                    float invulnDamageMult = 1.64f;
-                    int type = ModContent.ProjectileType<FireTrails>();
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    float rotation = (float)Math.Atan2(NPC.Center.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + 300, NPC.Center.Y - 150, (float)((Math.Cos(rotation) * speed) * -1), (float)((Math.Sin(rotation) * speed) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 150, (float)((Math.Cos(rotation + 0.2) * speed) * -1), (float)((Math.Sin(rotation + 0.4) * speed) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 300, NPC.Center.Y - 150, (float)((Math.Cos(rotation - 0.2) * speed) * -1), (float)((Math.Sin(rotation - 0.4) * speed) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
-                    NPC.ai[1] = -90;
-                    // Added some dust so the projectiles aren't just appearing out of thin air
-                    for (int i = 0; i < 20; i++)
-                    {
-                        int fireDust = Dust.NewDust(new Vector2(NPC.Center.X + 300, NPC.Center.Y - 150), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
-                        Main.dust[fireDust].noGravity = true;
-                        fireDust = Dust.NewDust(new Vector2(NPC.Center.X, NPC.Center.Y - 150), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
-                        Main.dust[fireDust].noGravity = true;
-                        fireDust = Dust.NewDust(new Vector2(NPC.Center.X - 300, NPC.Center.Y - 150), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
-                        Main.dust[fireDust].noGravity = true;
-                    }
-                }
-
-                if (NPC.ai[3] == 100)
-                {
-                    NPC.ai[3] = 1;
-
-                    // Gains life on enrage: re-added to fit with rage theme                 
-                    NPC.life += 300;
-
-                    if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
-                }
-                if (NPC.ai[1] >= 0)
-                {
-                    NPC.ai[3] = 0;
-                    for (int i = 0; i < 40; i++)
-                    {
-                        Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, 0, 0, 0, new Color(), 3f);
-                    }
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
-                    }
-
-
-                }
-            }
-        }
         public override void FindFrame(int currentFrame)
         {
             if (Main.dedServ)
