@@ -5091,7 +5091,7 @@ Mods: {
 
 			FarronDart: {
 				DisplayName: 法兰短箭
-				Tooltip: 射出可操控的光箭
+				Tooltip: 射出可操控的光箭，摁住左键以精确控制轨迹，在某些地方会很有用
 			}
 
 			FireBombRune: {
