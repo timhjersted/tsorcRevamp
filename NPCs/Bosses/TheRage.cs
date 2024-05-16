@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Bosses
     [AutoloadBossHead]
     class TheRage : ModNPC
     {
-        int fireTrailsDamage = 24; //23 was a bit too easy for folks based on some feedback and watching a LP, 33 was too much given randomness
+        int fireTrailsDamage = 24;   
         int rageBreathDamage = 27;
         int demonBoltDamage = 30;
         int homingFireDamage = 33;

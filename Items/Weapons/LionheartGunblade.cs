@@ -93,7 +93,7 @@ namespace tsorcRevamp.Items.Weapons
                 {
                     Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<LionheartGunshot>(), damage, knockback);
                 }
-                SoundEngine.PlaySound(SoundID.Item11);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item82 with { Volume = 0.2f});
             }
             else
             {

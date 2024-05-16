@@ -1797,7 +1797,7 @@ Mods: {
 				DisplayName: Supersonic Wings
 				Tooltip:
 					'''
-					Moderate supersonic movement speed, flight, fire-walk skill,
+					Awesome supersonic movement speed, flight, fire-walk skill,
 					plus all the previous abilities of Supersonic Boots.
 					{$CommonItemTooltip.DragoonGearCompatible}
 					{$CommonItemTooltip.BootsDisableThis}
@@ -1808,7 +1808,7 @@ Mods: {
 				DisplayName: Supersonic Wings II
 				Tooltip:
 					'''
-					Awesome supersonic movement speed, virtually limitless flight,
+					Awesome supersonic movement speed, improved agility, virtually limitless flight,
 					plus all the previous abilities of Supersonic Wings and Improved Bundle of Balloons
 					{$CommonItemTooltip.DragoonGearCompatible}
 					{$CommonItemTooltip.BootsDisableThis}

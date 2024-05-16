@@ -70,7 +70,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
 
         public override void HorizontalWingSpeeds(Player player, ref float speed, ref float acceleration)
         {
-            speed = 9f;
+            speed = 6f;
             acceleration = 0.3f;
         }
 

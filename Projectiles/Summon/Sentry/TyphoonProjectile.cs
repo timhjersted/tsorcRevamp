@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
         public override float ProjectileInitialVelocity => 25f;
         public override bool PlaysSoundOnShot => true;
         public override SoundStyle ShootSoundStyle => new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GaleforceShot");
-        public override float ShootSoundVolume => 0.7f;
+        public override float ShootSoundVolume => 0.2f; // was 0.7f
         public override bool SpawnsDust => true;
         public override int ProjectileDustID => DustID.Torch;
         public override void CustomAI()

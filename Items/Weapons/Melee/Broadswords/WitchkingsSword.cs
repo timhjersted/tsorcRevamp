@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
     class WitchkingsSword : ModItem
     {
         public static int DebuffDuration = 3;
-        public static int TagDuration = 2;
+        public static int TagDuration = 2; 
         public override void SetStaticDefaults()
         {
             ItemID.Sets.BonusAttackSpeedMultiplier[Type] = 0.5f;
@@ -27,8 +27,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.height = 100;
             Item.knockBack = 8;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 15;
-            Item.useTime = 15;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.rare = ItemRarityID.Red;

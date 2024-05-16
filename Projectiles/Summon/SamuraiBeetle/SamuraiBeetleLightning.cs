@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
 {
     public class SamuraiBeetleLightning : ModProjectile
     {
-        public float Volume = 0.3f;
+        public float Volume = 0.05f;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Type] = 8;
@@ -24,12 +24,13 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
         public int SoundCount = 0;
         public override void SetDefaults()
         {
-            Projectile.width = 80;
-            Projectile.height = 2000;
+            Projectile.width = 40;
+            Projectile.height = 1000;
             Projectile.friendly = true;
             Projectile.timeLeft = 272;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
+            Projectile.scale = 2;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 15;
             Projectile.DamageType = DamageClass.Summon;

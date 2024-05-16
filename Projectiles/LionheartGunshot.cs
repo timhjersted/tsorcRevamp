@@ -18,24 +18,23 @@ namespace tsorcRevamp.Projectiles
             Projectile.height = 16;
             Projectile.penetrate = 3;
             Projectile.friendly = true;
-            Projectile.tileCollide = true;
-            Projectile.DamageType = DamageClass.Generic;
-            Projectile.knockBack = 0f;
             Projectile.tileCollide = false;
+            Projectile.DamageType = DamageClass.Generic;
+            Projectile.knockBack = 0f;          
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 100;
 
-            trailWidth = 35;
-            trailPointLimit = 900;
+            trailWidth = 16;
+            trailPointLimit = 100;
             trailCollision = true;
             collisionFrequency = 2;
             trailYOffset = 50;
-            trailMaxLength = 500;
+            trailMaxLength = 50;
             collisionEndPadding = 1;
             collisionPadding = 1;
 
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/RadiantStrand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            //customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            //customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/RadiantStrand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             //customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
         public override void AI()
