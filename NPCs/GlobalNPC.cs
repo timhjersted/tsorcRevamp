@@ -4334,6 +4334,10 @@ namespace tsorcRevamp.NPCs
 
         public static void ExecuteQueuedTeleport(NPC npc)
         {
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().TeleportTelegraph == Vector2.Zero)
+            {
+                return;
+            }
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
             SoundEngine.PlaySound(SoundID.Item8, npc.Center);
