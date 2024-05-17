@@ -2006,6 +2006,12 @@ namespace tsorcRevamp
                     Player.velocity.Y -= 0.15f;
                 }
             }
+
+            if (tsorcRevampWorld.InBoneArea && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.SuperHardMode)
+            {
+                Player.AddBuff(BuffID.WitheredWeapon, 5*60);
+                Player.AddBuff(BuffID.Blackout, 5*60);
+            }
         }
 
         public override void PostUpdate()

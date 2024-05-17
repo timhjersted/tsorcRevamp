@@ -894,12 +894,12 @@ namespace tsorcRevamp
 
         //MAKE CATACOMBS DUNGEON BIOME - This code was blocking spawns in the catacombs, but catacombs now works as dungeon without it likely
         //because of other code improving dungeon spawn detection
-
-        //public override void TileCountsAvailable(int[] tileCounts) {
-        //Main.dungeonTiles += tileCounts[TileID.BoneBlock];
-        //Main.dungeonTiles += tileCounts[TileID.MeteoriteBrick];
-
-        //}
+        public int boneCount;
+        public static bool InBoneArea => ModContent.GetInstance<tsorcRevampWorld>().boneCount > 60;
+        public override void TileCountsAvailable(ReadOnlySpan<int> tileCounts)
+        {
+            boneCount = tileCounts[TileID.BoneBlock];
+        }
 
         Stopwatch bossTimer = new Stopwatch();
         public override void PreUpdateWorld()
