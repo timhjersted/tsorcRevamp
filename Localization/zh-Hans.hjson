@@ -56,7 +56,7 @@ Mods: {
 				'''
 			NotBound: "[c/fff68f:<控制中未绑定>]"
 			BonusMagicDmg: 增加 {0}% 魔法伤害
-			UniqueImbue: 和其他武器不兼容
+			UniqueImbue: 和其他武器灌注不兼容
 			LifeRegen: 增加 {0} 点生命再生
 			BadLifeRegen: 减少 {0} 点生命再生
 			BadDefense: 减少 {0} 点防御
@@ -399,7 +399,7 @@ Mods: {
 			RealAttraidiesDesc: 使用幻象掉落的噬魂怪遗物以迎接这挑战吧！
 			HellkiteDragonDesc: 经常在村庄上方的天空中游荡，寻找它的下一顿餐食...
 			WaterFiendKrakenDesc: 双峰之间大裂缝底部的丛林蜥蜴砖大门隐藏着秘密...
-			EarthFiendLichDesc: 挖开西海最深处的丛林蜥蜴砖大门...
+			EarthFiendLichDesc: 探索灰烬洞穴西边的古老神庙...
 			WitchkingDesc: 在地下深处的灰烬洞窟中找到他，那里笼罩在极度黑暗之中...
 			ArtoriasDesc: 深渊的力量渗透了遗忘之城东边的隧道...
 			SeathTheScalelessDesc: 追寻冻样深处的丛林蜥蜴砖大门...
@@ -3569,6 +3569,50 @@ Mods: {
 				Duo1: 斯洛格拉和盖波
 				Attraidies1: 阿卓迪斯初始阶段
 				Attraidies2: 阿卓迪斯最终阶段
+				1: "{$BossChecklist.LeonhardDesc}"
+				2: 李奥纳德出现之地的下方有什么，苦痛之路的终点又有什么？
+				3: "{$BossChecklist.PinwheelDesc}"
+				4: 寻找大地神庙令人不寒而栗的深处，找到喷泉汇集成一汪水塘的地方...
+				5: 探索腐化神殿，还有传言说猩红正在地表蔓延...
+				6: 阿拉齐姆双峰裂谷的东边...
+				7: "{$BossChecklist.AncientOolacileDemonDesc}"
+				8: 探索被烧毁家园东边的奥里德部落雨林...
+				9: "{$BossChecklist.SlograAndGaibonDesc}"
+				10: 自丛林遗迹到失落之城，蜂蛹随处可见...
+				11: 找到丛林地下的花间湖，打开尘封的大门...
+				12: 雪山上巫师住所的地下室，通往一处冰封之地...
+				13: "{$BossChecklist.JungleWyvernDesc}"
+				14: "{$BossChecklist.AncientDemonDesc}"
+				15: 穿过火焰神庙西侧的四道大门，你会在祭坛上找到答案吗？
+				16: 探索东边被钴大门封锁的神圣洞穴...
+				17: "{$BossChecklist.TheRageDesc}"
+				18: "{$BossChecklist.WyvernMageDesc}"
+				19: "{$BossChecklist.TheSorrowDesc}"
+				20: "{$BossChecklist.SerrisDesc}"
+				21: "{$BossChecklist.DeathDesc}"
+				22: "{$BossChecklist.TheHunterDesc}"
+				23: 它在暗影神庙的尽头等待着你...
+				24: 在一座断裂的、熟悉的桥下，你会找到被淹没的机器神殿，那里有什么？
+				25: 在阿拉齐姆双峰之上，他们凝视上天，下观沟壑。
+				26: 大金字塔里为什么会有和猎手场地一样的粉色花苞？
+				27: 大金字塔的传送机通往何方？
+				28: 石巨人控制着村庄上方空岛的力场...
+				29: 阿卓迪斯之塔顶端的光明碎块和暗黑碎块补全了合成所需的最后之物...
+				30: "{$BossChecklist.RealAttraidiesDesc}"
+				31: "{$BossChecklist.HellkiteDragonDesc}"
+				32: "{$BossChecklist.WitchkingDesc}"
+				33: 解开熔岩空域神庙东边三座附魔石柱的谜题
+				34: "{$BossChecklist.WaterFiendKrakenDesc}"
+				35: "{$BossChecklist.EarthFiendLichDesc}"
+				36: "{$BossChecklist.FireFiendMarilithDesc}"
+				37: "{$BossChecklist.BlightDesc}"
+				38: "{$BossChecklist.AbysmalOolacileSorcererDesc}"
+				39: "{$BossChecklist.ArtoriasDesc}"
+				40: "{$BossChecklist.SeathTheScalelessDesc}"
+				41: "{$BossChecklist.WyvernMageShadowDesc}"
+				42: "{$BossChecklist.ChaosDesc}"
+				43: "{$BossChecklist.DarkCloudDesc}"
+				44: "{$BossChecklist.GwynDesc}"
 			}
 
 			BraveWarriorSoul: {
@@ -9663,7 +9707,7 @@ Mods: {
 			AttraidiesApparition.DisplayName: 阿卓迪斯
 			Faraam.DisplayName: 法拉姆
 			GwynBossVision.DisplayName: 葛温Boss
-			LeonhardPhase1.DisplayName: ???
+			LeonhardPhase1.DisplayName: 李奥纳德
 			IchorGlob.DisplayName: 灵焰
 			IchorMissile.DisplayName: 灵焰飞弹
 			NamelessKing.DisplayName: 无名之王

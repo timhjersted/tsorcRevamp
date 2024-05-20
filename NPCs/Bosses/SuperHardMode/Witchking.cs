@@ -45,6 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.value = 350000;
             NPC.knockBackResist = 0.0f;
+            NPC.rarity =32;
             NPC.boss = true;
             AnimationType = NPCID.PossessedArmor;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Witchking.DespawnHandler"), Color.Purple, DustID.PurpleTorch);

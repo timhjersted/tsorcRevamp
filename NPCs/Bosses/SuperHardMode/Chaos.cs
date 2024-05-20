@@ -38,6 +38,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.value = 670000;
+            NPC.rarity = 42;
             NPC.boss = true;
             NPC.lavaImmune = true;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Chaos.DespawnHandler"), Color.Yellow, DustID.GoldFlame);

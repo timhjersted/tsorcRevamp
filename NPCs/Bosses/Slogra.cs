@@ -43,6 +43,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.4f;
             NPC.value = 130000;
+            NPC.rarity = 9;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Slogra.DespawnHandler"), Color.DarkGreen, DustID.Demonite);
 
         }

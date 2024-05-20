@@ -46,6 +46,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             NPC.noTileCollide = true;
             NPC.boss = true;
             NPC.value = 600000;
+            NPC .rarity =30;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Attraidies.DespawnHandler"), Color.DarkMagenta, DustID.PurpleCrystalShard);

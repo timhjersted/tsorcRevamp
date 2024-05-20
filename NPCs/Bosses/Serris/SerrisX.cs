@@ -39,6 +39,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             NPC.noTileCollide = true;
             NPC.boss = true;
             NPC.value = 500000;
+            NPC.rarity =20;
 
             //If one already exists, don't add text to the others despawnhandler (so it doesn't show duplicate messages if you die)
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) || NPC.CountNPCS(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()) > 1)

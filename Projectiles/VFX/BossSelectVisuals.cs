@@ -10,6 +10,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Projectiles.VFX
 {
@@ -225,6 +226,7 @@ namespace tsorcRevamp.Projectiles.VFX
             }
 
 
+            string mouseOverGuideText = "";
             string mouseOver = "";
             Vector2 mouseOverPos = Vector2.Zero;
             float mouseOverHeight = 0;
@@ -287,6 +289,8 @@ namespace tsorcRevamp.Projectiles.VFX
                         currentDownedList[i].scale = 1.1f;
                         Main.LocalPlayer.mouseInterface = true;
                         mouseOver = currentDownedList[i].TypeName;
+                        //need put mouseOverGuideText with questionmarkTexture, currently text only shows after Boss Downed
+                        mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome." + currentDownedList[i].rarity);
                         mouseOverPos = currentDownedList[i].Center;
                         mouseOverHeight = currentDownedList[i].height;
                         if (currentDownedList[i].type == NPCID.BrainofCthulhu)
@@ -366,6 +370,10 @@ namespace tsorcRevamp.Projectiles.VFX
             if (mouseOver != "")
             {
                 DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, mouseOver, mouseOverPos - Main.screenPosition + new Vector2(1.1f * -FontAssets.ItemStack.Value.MeasureString(mouseOver).X / 2f, mouseOverHeight * 0.75f), Color.White, 0, Vector2.Zero, 1.2f, SpriteEffects.None, 0);
+            }
+            if (mouseOverGuideText != "")
+            {
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, mouseOverGuideText, new Vector2(Main.screenWidth/2, Main.screenHeight * 2 / 5) + new Vector2(1.1f * -FontAssets.ItemStack.Value.MeasureString(mouseOverGuideText).X / 2f, 0), Color.White, 0, Vector2.Zero, 1.2f, SpriteEffects.None, 0);
             }
 
             return false;

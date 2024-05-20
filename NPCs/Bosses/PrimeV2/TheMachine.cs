@@ -45,6 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
             NPC.value = 600000;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.TheMachine.DespawnHandler"), Color.DarkGray, DustID.Torch);
             NPC.friendly = false;
+            NPC.rarity =24;
 
             //You can also specify BossBase specific values here
             introDuration = 120;

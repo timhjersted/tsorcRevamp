@@ -46,6 +46,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.behindTiles = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.DD2_BetsyDeath;
+            NPC.rarity =22;
             DrawOffsetY = 70;
             NPC.width = 110;
             NPC.height = 60;

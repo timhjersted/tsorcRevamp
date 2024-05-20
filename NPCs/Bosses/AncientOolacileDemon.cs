@@ -49,6 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.knockBackResist = 0.0f;
             NPC.lavaImmune = true;
             NPC.boss = true;
+            NPC.rarity = 7;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.AncientOolacileDemon.DespawnHandler"), Color.Gold, DustID.GoldFlame);
 
             //alt code: if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EaterofWorldsHead))

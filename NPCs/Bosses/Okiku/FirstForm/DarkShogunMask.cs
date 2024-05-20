@@ -42,6 +42,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             NPC.noGravity = true;
             NPC.knockBackResist = 0f;
             NPC.value = 50000;
+            NPC.rarity =29;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.DarkShogunMask.DespawnHandler"), Color.DarkMagenta, 54);
         }
         public override void FindFrame(int frameHeight)

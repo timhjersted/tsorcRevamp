@@ -61,6 +61,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             NPC.lifeMax = (int)(2000 * HealthScale);
             NPC.timeLeft = 180;
             NPC.value = 187500;  //7500 DS
+            NPC.rarity =3;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Pinwheel.DespawnHandler1"), Color.Firebrick, 6);
 
 

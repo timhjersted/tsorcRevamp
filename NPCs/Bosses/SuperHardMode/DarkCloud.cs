@@ -43,6 +43,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 1500000;
+            NPC.rarity = 43;
             NPC.knockBackResist = 0f;
             NPC.boss = true;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.DarkCloud.DespawnHandler"), Color.Blue, DustID.ShadowbeamStaff);

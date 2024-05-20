@@ -44,6 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             NPC.lavaImmune = true;
             NPC.boss = true;
             NPC.value = 600000;
+            NPC.rarity = 35;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.EarthFiendLich.DespawnHandler"), Color.DarkGreen, DustID.GreenFairy);
 
         }

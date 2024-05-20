@@ -49,6 +49,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 20000; // life / 1.25 in HM
             NPC.knockBackResist = 0.0f;
             NPC.lavaImmune = true;
+            NPC.rarity =2;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.RedKnightBanner>();
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.RedKnight.DespawnHandler"), Color.Red, DustID.RedTorch);

@@ -46,6 +46,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.behindTiles = true;
             NPC.value = 250000;
             NPC.lavaImmune = true;
+            NPC.rarity =31;
             Color textColor = new Color(175, 75, 255);
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.HellkiteDragonHead.DespawnHandler"), textColor, 174);
 

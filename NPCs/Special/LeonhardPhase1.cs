@@ -46,6 +46,7 @@ namespace tsorcRevamp.NPCs.Special
             NPC.dontTakeDamageFromHostiles = true;
             NPC.lavaImmune = true;
             despawnHandler = new NPCDespawnHandler(null, Color.Teal, 54);
+            NPC.rarity = 1;
         }
 
         public override void HitEffect(NPC.HitInfo hit)

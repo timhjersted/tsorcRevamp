@@ -44,6 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.noTileCollide = false;
             NPC.lavaImmune = true;
             NPC.value = 430000;
+            NPC.rarity =38;
             NPC.width = 28;
             NPC.knockBackResist = 0f;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.AbysmalOolacileSorcerer.DespawnHandler"), Color.DarkRed, DustID.Firework_Red);

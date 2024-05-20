@@ -43,6 +43,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.noTileCollide = false;
             NPC.behindTiles = true;
             NPC.value = 670000;
+            NPC.rarity = 40;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.SeathTheScalelessHead.DespawnHandler"), Color.Cyan, DustID.BlueFairy);
         }
 

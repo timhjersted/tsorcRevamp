@@ -1821,6 +1821,7 @@ namespace tsorcRevamp.NPCs
                         npc.defense = 15;
                         npc.scale = 1.25f;
                         npc.value = 25450;
+                        npc.rarity = 8;
                         break;
                     }
 
@@ -1839,6 +1840,7 @@ namespace tsorcRevamp.NPCs
                         //damage changes here are for first phase
                         npc.damage = 27; //legacy: 37
                         npc.value = 33330;
+                        npc.rarity = 4;
                         //npc.lifeMax = 4615; //Which is actually 7k hp in expert mode 
                         if (Main.expertMode)
                         {
@@ -1875,6 +1877,7 @@ namespace tsorcRevamp.NPCs
                         npc.knockBackResist = 0f;
                         npc.buffImmune[BuffID.Frostburn] = true;
                         npc.buffImmune[BuffID.CursedInferno] = true;
+                        npc.rarity = 5;
                         break;
                     }
 
@@ -1897,6 +1900,7 @@ namespace tsorcRevamp.NPCs
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.buffImmune[BuffID.Frostburn] = true;
                         npc.buffImmune[BuffID.CursedInferno] = true;
+                        npc.rarity = 6;
                         break;
                     }
 
@@ -1938,6 +1942,7 @@ namespace tsorcRevamp.NPCs
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.QueenBee.DespawnHandler"), Color.Yellow, DustID.YellowTorch);
 
                         npc.value = 67430;
+                        npc.rarity = 10;
                         break;
                     }
                 #endregion
@@ -1951,6 +1956,7 @@ namespace tsorcRevamp.NPCs
                         npc.defense = 12;
                         npc.damage = 45; //legacy: 50, then 35
                         npc.lifeMax = 4400;
+                        npc.rarity = 11;
                         npc.buffImmune[BuffID.OnFire] = true;
                         break;
                     }
@@ -1971,6 +1977,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Deerclops.DespawnHandler"), Color.Gold, DustID.GoldFlame);
                         npc.value = 103520; //is dearclops that hard?
+                        npc.rarity = 12;
                         break;
                     }
                 #endregion
@@ -1981,6 +1988,7 @@ namespace tsorcRevamp.NPCs
                         npc.value = 120580; //more souls to help start of HM(I can't tolerate this after all the other balance changes smh)
                         npc.damage = 100;
                         npc.lifeMax = 14000;
+                        npc.rarity = 15;
                         break;
                     }
 
@@ -2035,6 +2043,7 @@ namespace tsorcRevamp.NPCs
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.QueenSlime.DespawnHandler"), Color.Pink, DustID.PinkCrystalShard);
 
                         npc.value = 134780;
+                        npc.rarity = 16;
                         break;
                     }
 
@@ -2088,6 +2097,7 @@ namespace tsorcRevamp.NPCs
                         npc.scale = 1.25f;
                         npc.damage = Main.expertMode ? 40 /* x4 in expert */: 60; //legacy: 200, vanilla: 70
                         npc.defense = 20; //legacy: 50, vanilla: 0
+                        npc.rarity = 23;
                         destroyerAttackIndex = 0; //These variables are static and global, since we don't have any way to attach extra data to the destroyers NPC instance itself
                         destroyerChargeTimer = 0;
                         destroyerJustSpawned = true;
@@ -2178,6 +2188,7 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = 35000; //base 30k
                         npc.damage = 93; //base 70
                         npc.value = 295930;
+                        npc.rarity = 26;
                         break;
                     }
 
@@ -2252,6 +2263,11 @@ namespace tsorcRevamp.NPCs
                         npc.buffImmune[BuffID.Venom] = true;
                         break;
                     }
+                case (NPCID.GolemHeadFree):
+                    {
+                        npc.rarity = 27;
+                        break;
+                    }
 
                 case int golemfists when (golemfists == NPCID.GolemFistLeft || golemfists == NPCID.GolemFistRight):
                     {
@@ -2289,6 +2305,7 @@ namespace tsorcRevamp.NPCs
                         }
                         npc.lifeMax = 200000;
                         npc.value = 444440;
+                        npc.rarity = 28;
                         break;
                     }
                 #endregion
@@ -2379,6 +2396,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.MoonLordFreeEye):
                     {
                         npc.value = 0; //currently unkillable
+                        npc.rarity = 33;
                         break;
                     }
 

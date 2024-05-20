@@ -49,6 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             NPC.lavaImmune = true;
             NPC.boss = true;
             NPC.value = 600000;
+            NPC.rarity = 36;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.FireFiendMarilith.DespawnHandler"), Color.OrangeRed, DustID.FireworkFountain_Red);
         }
         int holdBallDamage = 50;

@@ -40,6 +40,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.boss = true;
             NPC.lavaImmune = true;
             NPC.value = 660000;
+            NPC.rarity = 41;
             NPC.width = 28;
             NPC.knockBackResist = 0f;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.WyvernMageShadow.DespawnHandler"), Color.DarkCyan, DustID.Demonite);

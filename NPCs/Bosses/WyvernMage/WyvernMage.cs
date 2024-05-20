@@ -45,6 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             NPC.lavaImmune = true;
             NPC.boss = true;
             NPC.value = 150000;
+            NPC.rarity =18;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.WyvernMage.DespawnHandler"), Color.DarkCyan, DustID.Demonite);
             nextWarpPoint = Main.rand.NextVector2CircularEdge(320, 320);
         }

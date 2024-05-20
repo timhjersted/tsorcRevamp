@@ -42,6 +42,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.value = 650000;
+            NPC.rarity = 37;
             NPC.friendly = false;
             NPC.alpha = 255;
             NPC.boss = true;

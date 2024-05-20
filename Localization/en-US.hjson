@@ -379,7 +379,7 @@ Mods: {
 		}
 
 		BossChecklist: {
-			LeonhardDesc: Explore the suspension bridge between snow-topped mountains
+			LeonhardDesc: Explore the suspension bridge between snow-topped mountains.
 			PinwheelDesc: Seek Catacombs of the Drowned under the village.
 			AncientOolacileDemonDesc: Legends mention the Oolacile Forest...
 			SlograAndGaibonName: Slogra and Gaibon
@@ -399,7 +399,7 @@ Mods: {
 			RealAttraidiesDesc: Use the Mindflayer Illusion Relic dropped by Attraidies' illusion.
 			HellkiteDragonDesc: Often sighted roaming the skies above the Village, searching for its next feast.
 			WaterFiendKrakenDesc: Seek out the lihzahrd gate in the Great Chasm.
-			EarthFiendLichDesc: Seek out the lihzahrd gate below the Western Ocean.
+			EarthFiendLichDesc: Find the ancient Temple west side of the Ashen Cave.
 			WitchkingDesc: Found in his lair deep underground, shrouded in extreme darkness.
 			ArtoriasDesc: The Abyss pervades the tunnels east of the Forgotten City.
 			SeathTheScalelessDesc: Seek out the lihzahrd gate below the Eastern Ocean.
@@ -3578,6 +3578,50 @@ Mods: {
 				Duo1: Slogra and Gaibon
 				Attraidies1: Attraidies First Phase
 				Attraidies2: Attraidies Final Form
+				1: "{$BossChecklist.LeonhardDesc}"
+				2: What is under Leonhard or at end of the Path of Pain?
+				3: "{$BossChecklist.PinwheelDesc}"
+				4: Seek the chilling depths of Earth Temple, where the fountains pool their waters.
+				5: Deep inside the Corruption Temple, also rumours about crimson on world surface.
+				6: Somewhere east of the Arazium Mountain Chasm.
+				7: "{$BossChecklist.AncientOolacileDemonDesc}"
+				8: Explore Rainforest of the Orid Tribe, east of your burned house.
+				9: "{$BossChecklist.SlograAndGaibonDesc}"
+				10: From the Jungle Ruins to Forgotten City, Larvas are everywhere.
+				11: Found Lake of Flowered Paths in underground jungle, open the shut gate.
+				12: Check the basement of Wizard's house, to an icy land.
+				13: "{$BossChecklist.JungleWyvernDesc}"
+				14: "{$BossChecklist.AncientDemonDesc}"
+				15: Pass the four gate west of the Fire Temple, will you find answer on the altar?
+				16: Search the Hallowed Caverns which been sealed by Cobalt.
+				17: "{$BossChecklist.TheRageDesc}"
+				18: "{$BossChecklist.WyvernMageDesc}"
+				19: "{$BossChecklist.TheSorrowDesc}"
+				20: "{$BossChecklist.SerrisDesc}"
+				21: "{$BossChecklist.DeathDesc}"
+				22: "{$BossChecklist.TheHunterDesc}"
+				23: It awaits at the end of Shadow Temple.
+				24: Below a Broken, familiar Bridge, you will find the Flooded Machine Temple.
+				25: Atop the Twin Peaks of Arazium, they gaze at Sky Above and the Great Chasm Below.
+				26: Why Great Pyramid and Hunter's arena have the same pink bulds?
+				27: Where does the Teleporter of the Great Pyramid lead to?
+				28: Golem controls the forcefield of the float island above the village.
+				29: Craft the 8 Crests with shards found at the top of Attraidies Tower.
+				30: "{$BossChecklist.RealAttraidiesDesc}"
+				31: "{$BossChecklist.HellkiteDragonDesc}"
+				32: "{$BossChecklist.WitchkingDesc}"
+				33: Solve the puzzle of Three stone pillars on the west Side of the Ashen Cave.
+				34: "{$BossChecklist.WaterFiendKrakenDesc}"
+				35: "{$BossChecklist.EarthFiendLichDesc}"
+				36: "{$BossChecklist.FireFiendMarilithDesc}"
+				37: "{$BossChecklist.BlightDesc}"
+				38: "{$BossChecklist.AbysmalOolacileSorcererDesc}"
+				39: "{$BossChecklist.ArtoriasDesc}"
+				40: "{$BossChecklist.SeathTheScalelessDesc}"
+				41: "{$BossChecklist.WyvernMageShadowDesc}"
+				42: "{$BossChecklist.ChaosDesc}"
+				43: "{$BossChecklist.DarkCloudDesc}"
+				44: "{$BossChecklist.GwynDesc}"
 			}
 
 			BraveWarriorSoul: {
