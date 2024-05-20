@@ -373,7 +373,7 @@ namespace tsorcRevamp
                 TileID.Solidifier, TileID.BoneWelder, TileID.FleshCloningVat, TileID.GlassKiln, TileID.LihzahrdFurnace, TileID.LivingLoom, TileID.SkyMill, TileID.IceMachine, TileID.SteampunkBoiler, TileID.HoneyDispenser, TileID.LesionStation, //theme furniture crafting stations
                 TileID.Containers, TileID.Containers2, TileID.PiggyBank, TileID.Safes, TileID.DefendersForge, TileID.Banners, TileID.WarTableBanner, TileID.SharpeningStation, TileID.AmmoBox, TileID.CrystalBall, TileID.BewitchingTable, TileID.WarTable, TileID.CatBast, TileID.SliceOfCake, //chests, piggy bank, safe, defenders forge, banners, buff stations
                 TileID.Candles, TileID.WaterCandle, TileID.PlatinumCandle, TileID.PeaceCandle, TileID.ClayPot, TileID.Cannon, TileID.BeachPiles, TileID.Crystals, //all candles, clay pot, cannons, seashells, crystal/gelatin shards 
-                TileID.MushroomPlants, TileID.Cactus, TileID.Coral, TileID.ImmatureHerbs, TileID.MatureHerbs, TileID.BloomingHerbs, TileID.DyePlants, TileID.Pumpkins, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
+                TileID.MushroomPlants, TileID.Cactus, TileID.Coral, TileID.ImmatureHerbs, TileID.MatureHerbs, TileID.BloomingHerbs, TileID.DyePlants, TileID.Pumpkins, TileID.GardenGnome,//mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins, garden gnome
                 TileID.Mannequin, TileID.Womannequin, TileID.DisplayDoll, TileID.Painting3X3, TileID.GolfTrophies, TileID.MasterTrophyBase, //all mannequins, trophies and relics
                 TileID.BreakableIce, TileID.MagicalIceBlock, TileID.SeaweedPlanter, TileID.AbigailsFlower, //thin ice (breakable kind), Ice Rod's ice, seaweed/herb planters, abigail's flower
                 TileID.CrackedBlueDungeonBrick, TileID.CrackedGreenDungeonBrick, TileID.CrackedPinkDungeonBrick,
@@ -395,7 +395,7 @@ namespace tsorcRevamp
                 TileID.Solidifier, TileID.BoneWelder, TileID.FleshCloningVat, TileID.GlassKiln, TileID.LihzahrdFurnace, TileID.LivingLoom, TileID.SkyMill, TileID.IceMachine, TileID.SteampunkBoiler, TileID.HoneyDispenser, TileID.LesionStation, //theme furniture crafting stations
                 TileID.Containers, TileID.Containers2, TileID.PiggyBank, TileID.Safes, TileID.DefendersForge, TileID.Banners, TileID.WarTableBanner, TileID.SharpeningStation, TileID.AmmoBox, TileID.CrystalBall, TileID.BewitchingTable, TileID.WarTable, TileID.CatBast, TileID.SliceOfCake, //chests, piggy bank, safe, defenders forge, banners, buff stations
                 TileID.Candles, TileID.WaterCandle, TileID.PlatinumCandle, TileID.PeaceCandle, TileID.ClayPot, TileID.Cannon, TileID.BeachPiles, //all candles, clay pot, cannons, seashells
-                TileID.MushroomPlants, TileID.Cactus, TileID.Coral, TileID.ImmatureHerbs, TileID.MatureHerbs, TileID.BloomingHerbs, TileID.DyePlants, TileID.Pumpkins, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins
+                TileID.MushroomPlants, TileID.Cactus, TileID.Coral, TileID.ImmatureHerbs, TileID.MatureHerbs, TileID.BloomingHerbs, TileID.DyePlants, TileID.Pumpkins, TileID.GardenGnome, //mushrooms, cactus, coral, all forms of herbs, dye plants, pumpkins, garden gnome
                 TileID.Mannequin, TileID.Womannequin, TileID.DisplayDoll, TileID.Painting3X3, TileID.GolfTrophies, TileID.MasterTrophyBase, //all mannequins, trophies and relics
                 TileID.SeaweedPlanter, //seaweed/herb planters
                 TileID.Sunflower, TileID.Campfire, TileID.HangingLanterns, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle)
@@ -2007,7 +2007,7 @@ namespace tsorcRevamp
                     new Dictionary<string, object>()
                     {
                         ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Pinwheel.DisplayName"),
-                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.Pinwheel"),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.PinwheelDesc"),
                     }
                     );
 

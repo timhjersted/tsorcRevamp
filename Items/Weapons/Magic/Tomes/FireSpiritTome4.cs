@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.scale = 1.3f;
             Item.rare = ItemRarityID.Purple;
             Item.shootSpeed = 44;
-            Item.mana = 50;
+            Item.mana = 40;
             Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.DyingStarHoldout>();
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         public override void ModifyManaCost(Player player, ref float reduce, ref float mult)
         {
             player.manaRegenDelay = 180;
-            mult = 0;
+            //mult = 0;
         }
 
         public override bool CanUseItem(Player player)

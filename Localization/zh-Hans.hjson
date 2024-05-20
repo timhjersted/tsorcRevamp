@@ -54,7 +54,7 @@ Mods: {
 				瞬步有 {$CommonItemTooltip.Cooldown}
 				在防御屏障最大化后攻击敌人可以减少瞬步的冷却
 				'''
-			NotBound: "[c/fff68f:<控件中未绑定>]"
+			NotBound: "[c/fff68f:<控制中未绑定>]"
 			BonusMagicDmg: 增加 {0}% 魔法伤害
 			UniqueImbue: 和其他武器不兼容
 			LifeRegen: 增加 {0} 点生命再生
@@ -173,7 +173,7 @@ Mods: {
 		DeathText: {
 			01: 翻滚使你对攻击免疫，掌握它是生存的必要条件！
 			02: 发光的绿色头骨通常隐藏着重要的秘密...右键以打开
-			03: 可以在“控件”中更改绑定的翻滚快捷键，尝试左Shift绑定翻滚、左Alt绑定智能光标
+			03: 可以在“控制”中更改绑定的翻滚快捷键，尝试左Shift绑定翻滚、左Alt绑定智能光标
 			04: 你可以躲避半空中的攻击，跨过较长的距离并立即改变你的移动方向...
 			05: 水晶碎块经常暗示附近的秘密、箱子或隐藏路径...
 			06: 在正常战斗中使用药剂通常是生存所必需的
@@ -380,7 +380,7 @@ Mods: {
 
 		BossChecklist: {
 			LeonhardDesc: 探索双峰之间的吊桥...
-			Pinwheel: 深入村庄附近的溺亡者地下墓穴...
+			PinwheelDesc: 深入村庄附近的溺亡者地下墓穴...
 			AncientOolacileDemonDesc: 有传言提到了失落的乌拉席露森林...
 			SlograAndGaibonName: 斯洛格拉和盖波
 			SlograAndGaibonDesc: 在黑曜石神庙深处找到它们...
@@ -3831,7 +3831,7 @@ Mods: {
 					只要不耗尽体力就可以了......"
 					从这些土匪的表现来看，我想他们掌握的还不够熟练
 					或许我应该在战斗中多加练习，避免重蹈覆辙？
-					[c/ffbf00:按 左Alt 翻滚，或在控件中将其绑定到你用着顺手的键位]
+					[c/ffbf00:按 左Alt 翻滚，或在控制中将其绑定到你用着顺手的键位]
 					'''
 			}
 
@@ -7730,7 +7730,11 @@ Mods: {
 				CurseText2: 你感到自己无敌了！
 				CurseLifeLoss: 你被诅咒了！
 				DisplayName: 诅咒
-				Description: 物极必反
+				Description:
+					'''
+					物极必反
+					有传言说使用人性和净化石可以缓解痛苦
+					'''
 			}
 
 			ArmorDrug: {
@@ -7854,7 +7858,11 @@ Mods: {
 
 			PowerfulCurse: {
 				DisplayName: 邪孽
-				Description: 否极泰来
+				Description:
+					'''
+					否极泰来
+					有传言说使用人性和净化石可以缓解痛苦
+					'''
 			}
 
 			RejuvenationCooldown: {
@@ -9813,7 +9821,7 @@ Mods: {
 			}
 
 			ManOfWar.DisplayName: 战争缔造者
-			OolacileDemon.DisplayName: 乌拉席露不稳定恶魔
+			OolacileDemon.DisplayName: 乌拉席露大恶魔
 
 			OolacileKnight: {
 				DisplayName: 乌拉席露骑士

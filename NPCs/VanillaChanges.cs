@@ -2003,7 +2003,7 @@ namespace tsorcRevamp.NPCs
                       ):
                     {
                         {
-                            npc.lifeMax = 333;
+                            npc.lifeMax = 222;
                             npc.value = 610;
                         }
                         if (npc.type == NPCID.LeechHead)

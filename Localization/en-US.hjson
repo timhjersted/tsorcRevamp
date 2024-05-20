@@ -379,8 +379,8 @@ Mods: {
 		}
 
 		BossChecklist: {
-			LeonhardDesc: Explore.
-			Pinwheel: Seek Catacombs of the Drowned under the village.
+			LeonhardDesc: Explore the suspension bridge between snow-topped mountains
+			PinwheelDesc: Seek Catacombs of the Drowned under the village.
 			AncientOolacileDemonDesc: Legends mention the Oolacile Forest...
 			SlograAndGaibonName: Slogra and Gaibon
 			SlograAndGaibonDesc: Found in the depths of the Meteor Temple.
@@ -7740,7 +7740,11 @@ Mods: {
 				CurseText2: You feel invincible!
 				CurseLifeLoss: You have been cursed!
 				DisplayName: Curse
-				Description: You have been cursed!
+				Description:
+					'''
+					You have been cursed!
+					There are rumors that Humanity and Purging Stone can alleviate pain
+					'''
 			}
 
 			ArmorDrug: {
@@ -7864,7 +7868,11 @@ Mods: {
 
 			PowerfulCurse: {
 				DisplayName: Powerful Curse
-				Description: You have been cursed!
+				Description:
+					'''
+					You have been cursed!
+					There are rumors that Humanity and Purging Stone can alleviate pain
+					'''
 			}
 
 			RejuvenationCooldown: {
