@@ -86,6 +86,7 @@ Mods: {
 			FlatDmg: 增加 {0} 点伤害
 			MaxStamina: 增加 {0}% 耐力上限
 			CanBeBlessed: 要修复此损坏的物品，请找绿宝石传令官进行祝福
+			Trident: 手持时可提高在水中的移动能力
 
 			Melee: {
 				ArmorPenPercent: 增加 {0}% 近战护甲穿透

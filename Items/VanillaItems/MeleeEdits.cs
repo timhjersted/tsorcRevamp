@@ -576,6 +576,28 @@ namespace tsorcRevamp.Items.VanillaItems
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
             Player player = Main.player[Main.myPlayer];
+            if (item.type == ItemID.Swordfish)
+            {
+                tooltips.Add(new TooltipLine(Mod, "BOTCNoHeal", LangUtils.GetTextValue("CommonItemTooltip.Trident")));
+            }
+            if (item.type == ItemID.ObsidianSwordfish)
+            {
+                tooltips.Add(new TooltipLine(Mod, "BOTCNoHeal", LangUtils.GetTextValue("CommonItemTooltip.Trident")));
+            }
+        }
+        public override void HoldItem(Item item, Player player)
+        {
+            if (item.type == ItemID.Swordfish)
+            {
+                player.accFlipper = true;
+                player.ignoreWater = true;
+            }
+            if (item.type == ItemID.ObsidianSwordfish)
+            {
+                player.accFlipper = true;
+                player.ignoreWater = true;
+                player.AddBuff(BuffID.ObsidianSkin, 1);
+            }
         }
     }
 }

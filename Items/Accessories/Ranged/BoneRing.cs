@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Accessories.Defensive.Rings;
 
 namespace tsorcRevamp.Items.Accessories.Ranged
 {
@@ -14,6 +15,7 @@ namespace tsorcRevamp.Items.Accessories.Ranged
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(RangedDmgCrit);
         public override void SetStaticDefaults()
         {
+            ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<RingOfTheBlueEye>();
         }
         public override void SetDefaults()
         {

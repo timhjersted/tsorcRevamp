@@ -86,6 +86,7 @@ Mods: {
 			FlatDmg: Increases damage dealt by {0} flat
 			MaxStamina: Increases maximum stamina by {0}%
 			CanBeBlessed: To repair this broken item, let it be blessed by the Emerald Herald
+			Trident: Increases mobility in water when held
 
 			Melee: {
 				ArmorPenPercent: Increases melee armor penetration by {0}%
