@@ -520,8 +520,8 @@ Mods: {
 					'''
 				CobaltDrill:
 					'''
-					[c/ffbf00:使用这个进入飞龙法师]
-					[c/ffbf00:位于东边神圣洞穴上方的堡垒]
+					[c/ffbf00:使用这个进入飞龙法师的堡垒]
+					[c/ffbf00:位于东边神圣洞穴上方的雪山]
 					'''
 				DivingHelmet: 可以放在饰品栏或头部盔甲栏中
 				MechanicalSkull: "{$CommonItemTooltip.NonConsumable}"

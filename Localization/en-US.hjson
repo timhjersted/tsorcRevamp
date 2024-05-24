@@ -10083,13 +10083,13 @@ Mods: {
 			LivingGlowshroom: {
 				DisplayName: Living Glowshroom
 				DisplayName2: ???
-				DisplayName3: FleeingFungi
+				DisplayName3: Fleeing Fungi
 			}
 
 			LivingShroom: {
 				DisplayName: Living Shroom
 				DisplayName2: ???
-				DisplayName3: FleeingFungi
+				DisplayName3: Fleeing Fungi
 			}
 
 			ShamanElder: {

@@ -432,6 +432,7 @@ namespace tsorcRevamp
                 CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageHeart").Type);
                 CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageUnit").Type);
                 CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageConnector").Type);
+                CrossModTiles.Add(MagicStorage.Find<ModTile>("EnvironmentAccess").Type);
             }
 
             Mod MagicStorageExtra;
@@ -2450,6 +2451,7 @@ namespace tsorcRevamp
                 toDisable.Add(magicStorage.Find<ModTile>("StorageHeart").Type);
                 toDisable.Add(magicStorage.Find<ModTile>("StorageUnit").Type);
                 toDisable.Add(magicStorage.Find<ModTile>("StorageConnector").Type);
+                toDisable.Add(magicStorage.Find<ModTile>("EnvironmentAccess").Type);
             }
             foreach (var tileID in toDisable)
             {

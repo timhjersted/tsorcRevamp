@@ -500,7 +500,14 @@ namespace tsorcRevamp
                 }
                 else
                 {
-                    UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<ShunpoBlinkCooldown>(), -40);
+                    if (Player.HasBuff(BuffID.Smolstar))
+                    {
+                        UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<ShunpoBlinkCooldown>(), -4);
+                    }
+                    else
+                    {
+                        UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<ShunpoBlinkCooldown>(), -40);
+                    }
                 }
             }
             if (CelestialCloak)
@@ -779,6 +786,11 @@ namespace tsorcRevamp
                 StorageUnit.SetDefaults(unit.Type);
                 StorageUnit.stack = 16;
                 startingItems.Add(StorageUnit);
+
+                Item EnvironmentAccess = new();
+                MagicStorage.TryFind("EnvironmentAccess", out ModItem ea);
+                EnvironmentAccess.SetDefaults(ea.Type);
+                startingItems.Add(EnvironmentAccess);
 
             }
 

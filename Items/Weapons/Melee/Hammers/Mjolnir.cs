@@ -35,6 +35,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
             Projectile.NewProjectile(Item.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<MjolnirElectrosphere>(), (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage), player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), Main.myPlayer, player.GetTotalCritChance(DamageClass.Melee) + Item.crit);
+            if (player.wet)
+            {
+                player.AddBuff(BuffID.Electrified, 90);
+            }
         }
         public override void AddRecipes()
         {

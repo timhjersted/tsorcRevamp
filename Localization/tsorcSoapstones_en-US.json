@@ -1658,7 +1658,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found the Forgotten City\u0027s Cavern of Graves - --NEWLINE  --NEWLINE \u0022The door is sealed shut but has no key hole...\u0022",
+  "text": "- You\u0027ve found the Forgotten City\u0027s Cavern of Graves - --NEWLINE  --NEWLINE \u0022The door is sealed shut but has no key hole...\u0022 --NEWLINE  --NEWLINE You see the Sun Banners hang on the gate, what do they mean?",
   "tileX": 5117,
   "tileY": 1743,
   "textWidth": 320,
