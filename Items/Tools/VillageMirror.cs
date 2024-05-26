@@ -35,19 +35,19 @@ namespace tsorcRevamp.Items.Tools
                 Main.NewText(LangUtils.GetTextValue("CommonItemTooltip.UnusableDuringBoss"), Color.Yellow);
                 return false;
             }
-            if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            /*if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {*/
+            if (!player.GetModPlayer<tsorcRevampPlayer>().townWarpSet)
             {
-                if (!player.GetModPlayer<tsorcRevampPlayer>().townWarpSet)
-                {
-                    Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.NoLocation"), 255, 240, 20);
-                    return false;
-                }
-                else if (player.GetModPlayer<tsorcRevampPlayer>().townWarpWorld != Main.worldID)
-                {
-                    Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.WrongWorld"), 255, 240, 20);
-                    return false;
-                }
+                Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.NoLocation"), 255, 240, 20);
+                return false;
             }
+            else if (player.GetModPlayer<tsorcRevampPlayer>().townWarpWorld != Main.worldID)
+            {
+                Main.NewText(LangUtils.GetTextValue("Items.GreatMagicMirror.WrongWorld"), 255, 240, 20);
+                return false;
+            }
+            //}
             return base.CanUseItem(player);
         }
         public override void UseStyle(Player player, Rectangle rectangle)
