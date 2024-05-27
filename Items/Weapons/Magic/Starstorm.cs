@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             float y = (float)(Main.mouseY + Main.screenPosition.Y);
             float speedX = (Main.rand.Next(-20, 20)) / 10f;
             float speedY = 14.9f;
-            int type = ModContent.ProjectileType<Projectiles.StarfallProjectile>(); //this one has some wacky code I can't decipher
+            int type = ModContent.ProjectileType<Projectiles.StarfallProjectile>();
             int damage = Item.damage;
             float knockback = 3.0f;
             int owner = player.whoAmI;
