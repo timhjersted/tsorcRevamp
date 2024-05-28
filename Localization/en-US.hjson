@@ -3579,6 +3579,7 @@ Mods: {
 				Duo1: Slogra and Gaibon
 				Attraidies1: Attraidies First Phase
 				Attraidies2: Attraidies Final Form
+				Next: Next Boss:
 				1: "{$BossChecklist.LeonhardDesc}"
 				2: What is under Leonhard or at end of the Path of Pain?
 				3: "{$BossChecklist.PinwheelDesc}"
@@ -3623,6 +3624,7 @@ Mods: {
 				42: "{$BossChecklist.ChaosDesc}"
 				43: "{$BossChecklist.DarkCloudDesc}"
 				44: "{$BossChecklist.GwynDesc}"
+				45: Congratulations! You have unlocked the true ending of the game!
 			}
 
 			BraveWarriorSoul: {

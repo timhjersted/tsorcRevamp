@@ -87,7 +87,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
             // This is needed so the buff that keeps your minion alive and allows you to despawn it properly applies
             player.AddBuff(Item.buffType, 2);
 
-            if (Main.myPlayer == player.whoAmI && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.myPlayer == player.whoAmI)
             {
                 // Minions have to be spawned manually, then have originalDamage assigned to the damage of the summon item
                 Projectile CirclingBall = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer, SoundVolumeAbstract);
@@ -97,7 +97,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
                 CirclingBall.originalDamage = Item.damage;
             }
 
-            if (player.ownedProjectileCounts[DragonType] == 0 && Main.myPlayer == player.whoAmI && Main.netMode != NetmodeID.MultiplayerClient)
+            if (player.ownedProjectileCounts[DragonType] == 0 && Main.myPlayer == player.whoAmI)
             {
                 Dragon = Projectile.NewProjectileDirect(source, position, Vector2.Zero, DragonType, damage, 0, Main.myPlayer);
                 Dragon.originalDamage = Item.damage;

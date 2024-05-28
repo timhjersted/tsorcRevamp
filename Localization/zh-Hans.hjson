@@ -3570,6 +3570,7 @@ Mods: {
 				Duo1: 斯洛格拉和盖波
 				Attraidies1: 阿卓迪斯初始阶段
 				Attraidies2: 阿卓迪斯最终阶段
+				Next: 下一个 Boss:
 				1: "{$BossChecklist.LeonhardDesc}"
 				2: 李奥纳德出现之地的下方有什么，苦痛之路的终点又有什么？
 				3: "{$BossChecklist.PinwheelDesc}"
@@ -3614,6 +3615,7 @@ Mods: {
 				42: "{$BossChecklist.ChaosDesc}"
 				43: "{$BossChecklist.DarkCloudDesc}"
 				44: "{$BossChecklist.GwynDesc}"
+				45: 恭喜！你已经解锁了游戏的真实结局！
 			}
 
 			BraveWarriorSoul: {

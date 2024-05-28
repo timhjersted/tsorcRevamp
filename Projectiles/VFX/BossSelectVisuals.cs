@@ -290,7 +290,8 @@ namespace tsorcRevamp.Projectiles.VFX
                         Main.LocalPlayer.mouseInterface = true;
                         mouseOver = currentDownedList[i].TypeName;
                         //need put mouseOverGuideText with questionmarkTexture, currently text only shows after Boss Downed
-                        mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome." + currentDownedList[i].rarity);
+                        int nextBoss = currentDownedList[i].rarity + 1;
+                        mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Next") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + nextBoss);
                         mouseOverPos = currentDownedList[i].Center;
                         mouseOverHeight = currentDownedList[i].height;
                         if (currentDownedList[i].type == NPCID.BrainofCthulhu)
