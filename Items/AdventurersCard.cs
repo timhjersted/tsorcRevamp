@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items
             int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
 
             tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "GenericStats", LangUtils.GetTextValue("Items.AdventurersCard.Generic",
-                (int)Math.Round(player.endurance * 100), 100 - (int)(100f / (100f + (player.endurance * 100f)) * 100f), (int)(player.moveSpeed * 100), player.lifeRegen / 2f, (int)(player.manaCost * 100), player.manaRegen / 2f, player.manaRegenDelayBonus,
+                (int)Math.Round(player.endurance * 100), 100 - (int)(100f / (100f + (player.endurance * 100f)) * 100f), (int)(player.moveSpeed * 100), player.lifeRegen / 2f, (int)(player.manaCost * 100), player.manaRegen / 2f, player.manaRegenDelayBonus * 100,
                 (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGain * 100f), (float)Math.Round(60f / (player.GetModPlayer<tsorcRevampPlayer>().spawnRate) * 100, 1))));
 
             switch (ClassCounter)

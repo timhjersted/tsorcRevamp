@@ -5832,7 +5832,7 @@ Mods: {
 				Tooltip: Restores {0} mana on-hit, crits restore mana twice
 				Tooltip2:
 					'''
-					Right click to cast a homing blaze projectile for {0} mana
+					Right click using all mana to cast a homing blaze, need at least {0} mana
 					Blaze deals {1}x the swords damage
 					'''
 			}
@@ -7613,7 +7613,7 @@ Mods: {
 					Life Regen: {3} per second
 					Mana Efficiency: {4}%
 					Mana Regen: {5} per second
-					Mana Regen Delay Bonus: {6}
+					Mana Regen Delay Bonus: {6}%
 					Stamina Regen: {7}%
 					'''
 				Melee:

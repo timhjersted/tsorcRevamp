@@ -91,7 +91,7 @@ Mods: {
 			Melee: {
 				ArmorPenPercent: 增加 {0}% 近战护甲穿透
 				FlatDmg: 增加近战伤害 {0} 点
-				Bonus: （近战武器获得 {0}x 倍加成）
+				Bonus: （近战武器获得 {0} 倍加成）
 				BadDmg: 减少 {0}% 近战伤害
 				Only: 仅供近战战士使用
 				DmgMult: 乘算增加 {0}% 近战伤害
@@ -125,7 +125,7 @@ Mods: {
 				AtkSpeed: 增加 {0}% 召唤攻击速度
 				WhipDmg: 增加 {0}% 鞭子伤害
 				WhipCritDmg: 增加 {0}% 鞭子暴击伤害
-				WhipCritHitbox: 增加 {0}x 倍鞭子尖端暴击判定大小
+				WhipCritHitbox: 增加 {0} 倍鞭子尖端暴击判定大小
 				TagStrength: 增加 {0}% 召唤标记伤害和护甲穿透
 				BadTagStrengthMult: 乘算减少 {0}% 召唤标记伤害和护甲穿透
 				TagDuration: 增加 {0}% 召唤标记持续时间
@@ -146,7 +146,7 @@ Mods: {
 				FlatDmg: 增加 {0} 点召唤伤害
 				CritChance: 增加 {0}% 召唤暴击率
 				CritMult: 乘算增加 {0}% 召唤暴击率
-				TagCritMult: 增加 {0}x 倍召唤标记暴击率
+				TagCritMult: 增加 {0} 倍召唤标记暴击率
 				TagDmgMult: 此武器仅受到 {0}% 的召唤标记伤害加成
 				DmgMult: 乘算增加 {0}% 召唤伤害
 			}
@@ -1153,7 +1153,7 @@ Mods: {
 					{$CommonItemTooltip.DRStat}, 每次受击会消耗 {1} 魔力值
 					[c/00ffd4:{$CommonItemTooltip.IncreasesMaxManaByPercent@2}]
 					[c/00ffd4:{$CommonItemTooltip.StaminaRegen@3}]
-					触发后一段时间内抑制魔力的自然恢复与人为恢复，({$CommonItemTooltip.SecondDuration@4})
+					触发后一段时间内抑制魔力的自然恢复与人为恢复({$CommonItemTooltip.SecondDuration@4})
 					乘算减少 {5}% 魔法、召唤、远程伤害
 					'''
 			}
@@ -1445,7 +1445,7 @@ Mods: {
 
 			DragonStone: {
 				DisplayName: 龙之石
-				Tooltip: 增加 {0}x 倍对敌人造成的减益伤害
+				Tooltip: 增加 {0} 倍对敌人造成的减益伤害
 			}
 
 			DragoonBoots: {
@@ -1987,7 +1987,7 @@ Mods: {
 					亚尔特留斯的附魔盔甲
 					{$CommonItemTooltip.Melee.DmgMult}
 					{$CommonItemTooltip.SetBonus}允许你在翻滚时使用武器
-					翻滚时造成 {1}x 倍近战伤害
+					翻滚时造成 {1} 倍近战伤害
 					上面有巴罗之刃留下的细长切口
 					'''
 			}
@@ -5822,8 +5822,8 @@ Mods: {
 				Tooltip: 命中时恢复 {0} 魔力，暴击时恢复效果翻倍
 				Tooltip2:
 					'''
-					右键消耗 {0} 魔力释放追踪的火焰
-					火焰造成 {1}x 倍伤害
+					右键消耗全部魔力释放追踪火魇，最少需要 {0} 魔力 
+					火魇造成 {1} 倍伤害
 					'''
 			}
 
@@ -5994,7 +5994,7 @@ Mods: {
 				Tooltip:
 					'''
 					用于斩杀各种飞龙的剑
-					对飞行的野兽造成 {0}x 倍伤害
+					对飞行的野兽造成 {0} 倍伤害
 					'''
 			}
 
@@ -6972,7 +6972,7 @@ Mods: {
 					'''
 					将种子转化为[c/ba55d3:恶毒飞镖]，并允许你从草中收集种子
 					[c/ba55d3:恶毒飞镖] 对敌人造成 [c/ba55d3:酸性毒液] 减益并自动追踪附近敌人
-					也可以使用其它飞镖作为弹药，但使用毒镖造成 {0}x 倍伤害
+					也可以使用其它飞镖作为弹药，但使用毒镖造成 {0} 倍伤害
 					在使用时[c/ba55d3:有条件的限制玩家的移动] 
 					手持该物品时，获得[c/ba55d3:移动速度和耐力回复提升]
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
@@ -6999,7 +6999,7 @@ Mods: {
 					'''
 					将种子转化为[c/ba55d3:外星激光]，并允许你从草中收集种子
 					[c/ba55d3:外星激光] 对敌人造成短暂的 [c/ba55d3:触电] 减益并自动追踪附近敌人
-					也可以使用其它飞镖作为弹药，但使用毒镖造成 {0}x 倍伤害
+					也可以使用其它飞镖作为弹药，但使用毒镖造成 {0} 倍伤害
 					在使用时[c/ba55d3:有条件的限制玩家的移动] 
 					手持该物品时，获得[c/ba55d3:移动速度和耐力回复提升]
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
@@ -7008,7 +7008,7 @@ Mods: {
 					'''
 				Details:
 					'''
-					[c/00ffff:致盲激光] 造成 {4}x 伤害, 使用种子作为弹药时伤害再次乘 {5} ({$CommonItemTooltip.Cooldown@6})
+					[c/00ffff:致盲激光] 造成 {4} 伤害, 使用种子作为弹药时伤害再次乘 {5} ({$CommonItemTooltip.Cooldown@6})
 					[c/00ffff:致盲激光] 获得 {7}% 暴击几率加成和 {8}% 每击最大生命值伤害，最大到 {9}
 					[c/ba55d3:外星激光]造成的 [c/ba55d3:触电] 减益受到远程伤害和暴击率加成
 					手持该武器时获得 [c/ba55d3:侦察兵激励] 增益：
@@ -7027,7 +7027,7 @@ Mods: {
 					'''
 					将种子转化为 [c/ba55d3:放射性飞镖] ，并允许你从草中收集种子
 					[c/ba55d3:放射性飞镖] 对敌人造成短暂的 [c/ba55d3:辐射] 减益并自动追踪附近敌人
-					也可以使用其它飞镖作为弹药，但使用毒镖造成 {0}x 倍伤害
+					也可以使用其它飞镖作为弹药，但使用毒镖造成 {0} 倍伤害
 					在使用时[c/ba55d3:有条件的限制玩家的移动]
 					手持该物品时，获得[c/ba55d3:移动速度和耐力回复提升]
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
@@ -7042,7 +7042,7 @@ Mods: {
 					[c/adff2f:蘑菇弹] 在发射后需要 {10} 秒来引爆，({$CommonItemTooltip.Cooldown@11})
 					[c/adff2f:蘑菇弹] 的爆炸造成巨量的伤害并施加更强的 [c/adff2f:辐射] 减益
 					[c/adff2f:蘑菇弹] 爆炸和 [c/ba55d3:放射性飞镖] 造成的 [c/adff2f:辐射] 减益相互叠加
-					[c/00ffff:致盲激光] 造成 {4}x 倍伤害, 使用种子作为弹药时伤害再次乘 {5} ({$CommonItemTooltip.Cooldown@6})
+					[c/00ffff:致盲激光] 造成 {4} 倍伤害, 使用种子作为弹药时伤害再次乘 {5} ({$CommonItemTooltip.Cooldown@6})
 					[c/00ffff:致盲激光] 获得 {7}% 暴击几率加成和 {8}% 每击最大生命值伤害，最大到 {9}
 					[c/ba55d3:放射性飞镖] 造成的 [c/ba55d3:辐射] 减益受到远程伤害和暴击率加成
 					手持该武器时获得 [c/ba55d3:侦察兵激励] 增益：
@@ -7091,7 +7091,7 @@ Mods: {
 					'''
 				Details:
 					'''
-					[c/ff7f50:魔法火球] 每次攻击造成 {4}x 倍伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}）
+					[c/ff7f50:魔法火球] 每次攻击造成 {4} 倍伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}）
 					[c/ff7f50:割裂]的敌人受到的魔法伤害增加 {8}% ({$CommonItemTooltip.SecondDuration@12})
 					[c/87cefa:追踪火焰]优先攻击 [c/ff7f50:割裂] 的敌人
 					[c/87cefa:魔法珠]额外造成 {0}% 的伤害，返回玩家时额外造成 {1}% 
@@ -7123,7 +7123,7 @@ Mods: {
 					按 [c/ff00ff:特殊能力键] 获得增益，允许你[c/ff00ff:冲刺三次]
 					增益{$CommonItemTooltip.SecondDuration@9}，{$CommonItemTooltip.Cooldown@10}
 					[c/ff00ff:冲刺产生的][c/87cefa:追踪火焰][c/ff00ff:命中敌人时不恢复魔力，激活[c/ff00ff:特殊能力] 消耗 {11} 魔力]
-					[c/ff7f50:爱心]每次攻击造成 {4}x 倍伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}
+					[c/ff7f50:爱心]每次攻击造成 {4} 倍伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}
 					[c/ff7f50:割裂]的敌人受到的魔法伤害增加 {8}% ({$CommonItemTooltip.SecondDuration@12})
 					[c/87cefa:追踪火焰]优先攻击 [c/ff7f50:割裂] 的敌人
 					[c/87cefa:魔法珠]额外造成 {0}% 的伤害，返回玩家时额外造成 {1}% 
@@ -7604,6 +7604,7 @@ Mods: {
 					生命回复: {3}/秒
 					魔力消耗: {4}%
 					魔力回复: {5}/秒
+					魔力再生延迟加成: {6}%
 					耐力再生速率: {7}%
 					'''
 				Melee:

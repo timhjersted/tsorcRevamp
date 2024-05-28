@@ -12,9 +12,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     public class YianBlade : ModItem
     {
-        public int ManaRestoration = 100;
+        public int ManaRestoration = 66;
         public int BaseManaCost = 200;
-        public int ProjectileDmgMult = 4;
+        public int ProjectileDmgMult = 3;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ManaRestoration, BaseManaCost);
         public override void SetDefaults()
         {
@@ -72,7 +72,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 Blaze2.damage /= 2;
                 Blaze2.netUpdate = true;
 
-                player.statMana -= (int)(player.manaCost * BaseManaCost);
+                player.statMana -= player.statMana;
                 player.manaRegenDelay = MeleeEdits.ManaDelay;
                 player.altFunctionUse = 1;
             }
@@ -96,6 +96,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             {
                 return false;
             }
+        }
+        public override void HoldItem(Player player)
+        {
+            player.manaRegenDelayBonus -= 0.5f / 2;//actually -50%, don't know why vanilla using /2 for regen
         }
 
         public override void MeleeEffects(Player player, Rectangle rectangle)

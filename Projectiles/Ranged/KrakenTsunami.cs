@@ -58,13 +58,14 @@ namespace tsorcRevamp.Projectiles.Ranged
         }
         public override void AI()
         {
+            Player player = Main.player[Projectile.owner];
             Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Water, Scale: 2);
             dust.noGravity = true;
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile other = Main.projectile[i];
 
-                if (i != Projectile.whoAmI && other.active && other.friendly && Projectile.Hitbox.Intersects(other.Hitbox) && other.DamageType == DamageClass.Ranged && !other.GetGlobalProjectile<tsorcGlobalProjectile>().KrakenEmpowered && other.type != ModContent.ProjectileType<KrakenTsunamiShark>())
+                if (i != Projectile.whoAmI && other.active && other.friendly && Projectile.Hitbox.Intersects(other.Hitbox) && other.DamageType == DamageClass.Ranged && !other.GetGlobalProjectile<tsorcGlobalProjectile>().KrakenEmpowered && other.type != ModContent.ProjectileType<KrakenTsunamiShark>() && player.ownedProjectileCounts[ModContent.ProjectileType<KrakenTsunamiShark>()] < 10)
                 {
                     other.GetGlobalProjectile<tsorcGlobalProjectile>().KrakenEmpowered = true;
                     if (Main.myPlayer == Projectile.owner)
