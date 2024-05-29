@@ -729,6 +729,10 @@ namespace tsorcRevamp
         public static void BuildSoapstones()
         {
             string jsonPath = "tsorcRevamp/Localization/tsorcSoapstones_" + Language.ActiveCulture.Name + ".json";
+            if (Language.ActiveCulture.Name != "zh-Hans" && Language.ActiveCulture.Name != "en-US")
+            {
+                jsonPath = "tsorcRevamp/Localization/tsorcSoapstones_en-US.json";
+            }
             tsorcRevamp mod = ModContent.GetInstance<tsorcRevamp>();
 
             bool skipRead = false;
