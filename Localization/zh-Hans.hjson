@@ -3571,6 +3571,7 @@ Mods: {
 				Attraidies1: 阿卓迪斯初始阶段
 				Attraidies2: 阿卓迪斯最终阶段
 				Next: 下一个 Boss:
+				DeathCountText: 死亡次数: {0}
 				1: "{$BossChecklist.LeonhardDesc}"
 				2: 李奥纳德出现之地的下方有什么，苦痛之路的终点又有什么？
 				3: "{$BossChecklist.PinwheelDesc}"

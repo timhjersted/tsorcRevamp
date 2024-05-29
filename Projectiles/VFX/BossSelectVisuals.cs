@@ -377,6 +377,9 @@ namespace tsorcRevamp.Projectiles.VFX
                 DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, mouseOverGuideText, new Vector2(Main.screenWidth/2, Main.screenHeight * 2 / 5) + new Vector2(1.1f * -FontAssets.ItemStack.Value.MeasureString(mouseOverGuideText).X / 2f, 0), Color.White, 0, Vector2.Zero, 1.2f, SpriteEffects.None, 0);
             }
 
+            string DeathCountText = LangUtils.GetTextValue("Items.BossRematchTome.DeathCountText", Main.player[Projectile.owner].numberOfDeathsPVE);
+            DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, DeathCountText, new Vector2(Main.screenWidth/2, Main.screenHeight * 3 / 5) + new Vector2(1.1f * -FontAssets.ItemStack.Value.MeasureString(DeathCountText).X / 2f, 0), Color.White, 0, Vector2.Zero, 1.2f, SpriteEffects.None, 0);
+            
             return false;
         }
 

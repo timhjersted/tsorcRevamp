@@ -3580,6 +3580,7 @@ Mods: {
 				Attraidies1: Attraidies First Phase
 				Attraidies2: Attraidies Final Form
 				Next: Next Boss:
+				DeathCountText: Death Times: {0}
 				1: "{$BossChecklist.LeonhardDesc}"
 				2: What is under Leonhard or at end of the Path of Pain?
 				3: "{$BossChecklist.PinwheelDesc}"
