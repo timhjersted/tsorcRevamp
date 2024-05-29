@@ -7776,8 +7776,7 @@ Mods: {
 		Buffs: {
 			VanillaBuffs: {
 				Warmth: Reduces damage taken from cold sources by {0}%
-				ManaSickness: Reduces all damage dealt by {0}%
-				SolarShield: "{$CommonItemTooltip.DRStat}, repel enemies when taking damage"
+				ManaSickness: SolarShield: "{$CommonItemTooltip.DRStat}, repel enemies when taking damage"
 				WeaponImbue: Increases melee crit by {0}% and increases whip damage by {1}% multiplicatively
 			}
 

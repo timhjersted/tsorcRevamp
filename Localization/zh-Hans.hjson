@@ -7767,8 +7767,11 @@ Mods: {
 		Buffs: {
 			VanillaBuffs: {
 				Warmth: 减少 {0}% 受到的冷系伤害
-				ManaSickness: 减少 {0}% 所有类型伤害
-				SolarShield: "{$CommonItemTooltip.ReducesDamageTakenByPercent}, 受到伤害时击退敌人"
+				ManaSickness:
+					'''
+					减少 {0}% 魔法、召唤、远程伤害
+					减少 {1}% 近战伤害
+					'''
 				WeaponImbue: 增加 {0}% 近战暴击伤害，乘算增加 {1}% 鞭子伤害
 			}
 

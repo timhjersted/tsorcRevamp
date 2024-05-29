@@ -16,7 +16,7 @@ namespace tsorcRevamp.Buffs
         {
             if (type == BuffID.ManaSickness)
             {
-                player.GetDamage(DamageClass.Melee) *= 1f - player.manaSickReduction;
+                player.GetDamage(DamageClass.Melee) *= 1f - player.manaSickReduction / 2; //decrease half damage for melee
                 player.GetDamage(DamageClass.Ranged) *= 1f - player.manaSickReduction;
                 player.GetDamage(DamageClass.Summon) *= 1f - player.manaSickReduction;
                 player.GetDamage(DamageClass.Throwing) *= 1f - player.manaSickReduction;
@@ -93,7 +93,7 @@ namespace tsorcRevamp.Buffs
 
             if (type == BuffID.ManaSickness)
             {
-                tip = LangUtils.GetTextValue("Buffs.VanillaBuffs.ManaSickness", (int)(100 * Main.LocalPlayer.manaSickReduction));
+                tip = LangUtils.GetTextValue("Buffs.VanillaBuffs.ManaSickness", (int)(100 * Main.LocalPlayer.manaSickReduction), (int)(100 * Main.LocalPlayer.manaSickReduction)/2);
             }
 
             if (type == BuffID.AmmoReservation)
