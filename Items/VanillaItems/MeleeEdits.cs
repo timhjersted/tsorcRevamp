@@ -1,10 +1,13 @@
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Utilities;
+using tsorcRevamp;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
@@ -75,50 +78,50 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.WoodenBoomerang)
             {
-                item.mana = 0;
+                //item.mana = 0;
             }
             if (item.type == ItemID.EnchantedBoomerang)
             {
-                item.mana = 5;
+                //item.mana = 5;
             }
             if (item.type == ItemID.Shroomerang)
             {
-                item.mana = 5;
+                //item.mana = 5;
             }
             if (item.type == ItemID.IceBoomerang)
             {
-                item.mana = 4;
+                //item.mana = 4;
             }
             if (item.type == ItemID.FruitcakeChakram)
             {
-                item.mana = 3;
+                //item.mana = 3;
             }
             if (item.type == ItemID.BloodyMachete)
             {
-                item.mana = 2;
+                //item.mana = 2;
             }
             if (item.type == ItemID.Trimarang)
             {
-                item.mana = 4;
+                //item.mana = 4;
             }
             if (item.type == ItemID.IceBlade)
             {
                 item.shootsEveryUse = true;
-                item.mana = 5;
+                //item.mana = 5;
             }
             if (item.type == ItemID.EnchantedSword)
             {
                 item.shootsEveryUse = true;
-                item.mana = 7;
+                //item.mana = 7;
             }
             if (item.type == ItemID.ThunderSpear)
             {
-                item.mana = 3;
+                //item.mana = 3;
             }
             if (item.type == ItemID.Starfury)
             {
                 item.shootsEveryUse = true;
-                item.mana = 8;
+                //item.mana = 8;
             }
             if (item.type == ItemID.LightsBane)
             {
@@ -127,84 +130,84 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.BladeofGrass)
             {
-                item.mana = 5;
+                //item.mana = 5;
                 item.width = 68;
                 item.height = 68;
             }
             if (item.type == ItemID.ThornChakram)
             {
-                item.mana = 6;
+                //item.mana = 6;
             }
             if (item.type == ItemID.CombatWrench)
             {
-                item.mana = 7;
+                //item.mana = 7;
             }
             if (item.type == ItemID.Flamarang)
             {
-                item.mana = 8;
+                //item.mana = 8;
             }
             if (item.type == ItemID.FlyingKnife)
             {
-                item.mana = 18;
+                //item.mana = 18;
             }
             if (item.type == ItemID.BeamSword)
             {
                 item.shootsEveryUse = true;
-                item.mana = 10;
+                //item.mana = 10;
             }
             if (item.type == ItemID.Frostbrand)
             {
                 item.shootsEveryUse = true;
-                item.mana = 12;
+                //item.mana = 12;
             }
             if (item.type == ItemID.Bananarang)
             {
-                item.mana = 12;
+                //item.mana = 12;
             }
             if (item.type == ItemID.ShadowFlameKnife)
             {
-                item.mana = 10;
+                //item.mana = 10;
             }
             if (item.type == ItemID.LightDisc)
             {
-                item.mana = 11;
+                //item.mana = 11;
             }
             if (item.type == ItemID.BouncingShield)
             {
-                item.mana = 15;
+                //item.mana = 15;
             }
             if (item.type == ItemID.ChlorophyteSaber)
             {
                 item.shootsEveryUse = true;
-                item.mana = 14;
+                //item.mana = 14;
             }
             if (item.type == ItemID.ChlorophyteClaymore)
             {
                 item.width = 66;
                 item.height = 66;
                 item.shootsEveryUse = true;
-                item.mana = 17;
+                //item.mana = 17;
             }
             if (item.type == ItemID.TrueNightsEdge)
             {
                 item.damage = 85;
-                item.mana = 18;
+                //item.mana = 18;
             }
             if (item.type == ItemID.Seedler)
             {
                 item.shootsEveryUse = true;
                 item.width = 48;
                 item.height = 48;
-                item.mana = 11;
+                //item.mana = 11;
             }
             if (item.type == ItemID.PossessedHatchet)
             {
                 item.damage = 110; //vanilla 80
-                item.mana = 12;
+                //item.mana = 12;
             }
             if (item.type == ItemID.Flairon)
             {
-                item.mana = 17;
+                //item.mana = 17;
             }
             if (item.type == ItemID.GolemFist)
             {
@@ -212,22 +215,22 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.PaladinsHammer)
             {
-                item.mana = 15;
+                //item.mana = 15;
             }
             if (item.type == ItemID.TerraBlade)
             {
-                item.mana = 23;
+                //item.mana = 23;
             }
             if (item.type == ItemID.TheHorsemansBlade)
             {
                 item.damage = 200;
                 item.useTime = 20;
                 item.useAnimation = 20;
-                item.mana = 16;
+                //item.mana = 16;
             }
             if (item.type == ItemID.DD2SquireBetsySword)
             {
-                item.mana = 18;
+                //item.mana = 18;
             }
             if (item.type == ItemID.PiercingStarlight)
             {
@@ -236,32 +239,32 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.VampireKnives)
             {
                 item.damage = 20;
-                item.mana = 31;
+                //item.mana = 31;
             }
             if (item.type == ItemID.ScourgeoftheCorruptor)
             {
-                item.mana = 14;
+                //item.mana = 14;
             }
             if (item.type == ItemID.InfluxWaver)
             {
                 item.shootsEveryUse = true;
-                item.mana = 23;
+                //item.mana = 23;
             }
             if (item.type == ItemID.DayBreak)
             {
-                item.mana = 28;
+                //item.mana = 28;
             }
             if (item.type == ItemID.Terrarian)
             {
-                item.mana = 31;
+                //item.mana = 31;
             }
             if (item.type == ItemID.Meowmere)
             {
-                item.mana = 31;
+                //item.mana = 31;
             }
             if (item.type == ItemID.StarWrath)
             {
-                item.mana = 34;
+                //item.mana = 34;
             }
         }
 
@@ -522,7 +525,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
         public override bool? UseItem(Item item, Player player)
         {
-            if (item.DamageType != DamageClass.Magic && item.mana > 0)
+            if ((item.DamageType != DamageClass.Magic && item.mana > 0) || VanillaProjectileMelee(item))
             {
                 player.manaRegenDelay = ManaDelay;
                 return true;
@@ -598,6 +601,55 @@ namespace tsorcRevamp.Items.VanillaItems
                 player.ignoreWater = true;
                 player.AddBuff(BuffID.ObsidianSkin, 1);
             }
+            /*if (VanillaProjectileMelee(item))
+            {
+                Main.NewText("This item is VanillaProjectileMelee");
+            }*/
+        }
+        public int GetMeleeManaCost(Item item)
+        {
+            int baseCost = (int)MathHelper.Clamp((item.damage * 60 / item.useTime) * 1 / 4, 0, 20);//edit numbers here if u wnat to adjust mana cost
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                baseCost += 10;
+            }
+            return baseCost;
+        }
+        public bool VanillaProjectileMelee(Item item)
+        {
+            //what a miracle that vanilla melee code don't crash
+            Projectile Judge = new();
+            Judge.SetDefaults(item.shoot);
+            if (item.DamageType == DamageClass.Melee && item.type < ItemID.Count
+                && Judge.aiStyle != ProjAIStyleID.Spear
+                && item.type != ItemID.WoodenBoomerang
+                || item.shoot != 0
+                || item.type >= 3278 && item.type <=3292 //WoodYoyo = 3278
+                //|| Judge.aiStyle == ProjAIStyleID.Yoyo
+                || Judge.aiStyle == ProjAIStyleID.Flail
+                || Judge.aiStyle == ProjAIStyleID.Boomerang
+                )
+            {
+                return true;
+            }
+            return false;
+        }
+        public override bool CanUseItem(Item item, Player player)
+        {
+            if (VanillaProjectileMelee(item) && player.statMana < player.manaCost * GetMeleeManaCost(item))
+            {
+                return false;
+            }
+            return  true;
+        }
+        public override bool Shoot(Item item, Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            //mercy, yoyo only use mana once when left click to unleash 
+            if (VanillaProjectileMelee(item) && player.statMana >= player.manaCost * GetMeleeManaCost(item))
+            {
+                player.statMana -= (int)(player.manaCost * GetMeleeManaCost(item));
+            }
+            return true;
         }
     }
 }
