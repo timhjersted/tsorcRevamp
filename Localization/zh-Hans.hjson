@@ -1987,7 +1987,7 @@ Mods: {
 					亚尔特留斯的附魔盔甲
 					{$CommonItemTooltip.Melee.DmgMult}
 					{$CommonItemTooltip.SetBonus}允许你在翻滚时使用武器
-					翻滚时造成 {1} 倍近战伤害
+					翻滚时额外增加 {1} 倍近战伤害
 					上面有巴罗之刃留下的细长切口
 					'''
 			}

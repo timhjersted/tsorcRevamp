@@ -1996,7 +1996,7 @@ Mods: {
 					Enchanted armor of Artorias of the Abyss.
 					{$CommonItemTooltip.Melee.DmgMult}
 					{$CommonItemTooltip.SetBonus}Allows you to use items while dodgerolling
-					Multiplies melee damage dealt by {1}x while dodgerolling
+					Increase additional {1}x melee damage while dodgerolling
 					'''
 			}
 

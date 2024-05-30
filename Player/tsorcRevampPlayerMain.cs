@@ -864,6 +864,10 @@ namespace tsorcRevamp
                     modifiers.SetCrit();
                 }
             }
+            if (CanUseItemsWhileDodging && isDodging && (proj.type == ProjectileID.NebulaBlaze2) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.Broadswords.YianBlade>())
+            {
+                modifiers.FinalDamage -= ArtoriasArmor.DmgMultWhileRolling;
+            }
             if (ShunpoTimer > 0 && (proj.type == ProjectileID.JoustingLance || proj.type == ProjectileID.HallowJoustingLance || proj.type == ProjectileID.ShadowJoustingLance))
             {
                 modifiers.FinalDamage *= 0.15f;
