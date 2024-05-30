@@ -1314,7 +1314,7 @@ Mods: {
 					灌注效果可通过隐藏饰品关闭
 					'''
 				Keybind1: "按 "
-				Keybind2: " 键以暂时大幅提高生命恢复和伤害"
+				Keybind2: " 键以短暂提高生命恢复和受到的伤害"
 			}
 
 			ZirconRing: {
@@ -7773,6 +7773,7 @@ Mods: {
 					减少 {0}% 魔法、召唤、远程伤害
 					减少 {1}% 近战伤害
 					'''
+				SolarShield: "{$CommonItemTooltip.ReducesDamageTakenByPercent}, 受到伤害时击退敌人"
 				WeaponImbue: 增加 {0}% 近战暴击伤害，乘算增加 {1}% 鞭子伤害
 			}
 

@@ -335,6 +335,16 @@ namespace tsorcRevamp
             if (MapMarkersUIState.Visible) mod.MarkerInterface.Update(gameTime);
         }
 
+        public static Vector2 OurDrawBorderString(SpriteBatch sb, string text, DynamicSpriteFont font, Vector2 pos, Color color, float scale = 1f, float anchorx = 0f, float anchory = 0f, int maxCharactersDisplayed = -1)
+        {
+            if (maxCharactersDisplayed != -1 && text.Length > maxCharactersDisplayed)
+                text.Substring(0, maxCharactersDisplayed);
+
+            Vector2 vector = font.MeasureString(text);
+            Terraria.UI.Chat.ChatManager.DrawColorCodedStringWithShadow(sb, font, text, pos, color, 0f, new Vector2(anchorx, anchory) * vector, new Vector2(scale), -1f, 1.5f);
+            return vector * scale;
+        }
+
         public override void PostDrawInterface(SpriteBatch spriteBatch)
         {
             tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
@@ -343,14 +353,21 @@ namespace tsorcRevamp
             {
                 SoapstoneTileEntity soapstone = tsorcRevamp.NearbySoapstone;
                 float scaleMod = (float)((ModContent.GetInstance<tsorcRevampConfig>().SoapstoneScale / 100f) + 1) / Main.GameViewMatrix.Zoom.X;
+                //different Font because MouseText don't perform well in chinese language
+                DynamicSpriteFont font = FontAssets.MouseText.Value;
+                if (Language.ActiveCulture.Name == "zh-Hans")
+                {
+                    font = FontAssets.ItemStack.Value;
+                }
 
                 if (soapstone.timer > 0 && !soapstone.hidden)
                 {
                     float textWidth = soapstone.textWidth > 0 ? soapstone.textWidth : SoapstoneMessage.DEFAULT_WIDTH;
                     textWidth *= scaleMod;
 
-                    string text = UsefulFunctions.WrapString(soapstone.text, FontAssets.ItemStack.Value, textWidth, scaleMod);
-                    textWidth += FontAssets.ItemStack.Value.MeasureString(" ").X * scaleMod;
+                    //Wrap when find blank between words, but chinese language don't have " ", so manually edit all the textWidth in Soapstones_zh-Hans.json
+                    string text = UsefulFunctions.WrapString(soapstone.text, font, textWidth, scaleMod);
+                    textWidth += font.MeasureString(" ").X * scaleMod;
                     float alpha = (soapstone.timer / 20f);
                     if (soapstone.timer >= 20)
                     {
@@ -361,7 +378,7 @@ namespace tsorcRevamp
                     Vector2 textPositionWorld = new Vector2(soapstone.Position.X, soapstone.Position.Y) * 16f - new Vector2((textWidth / 2) - 4, 64);
 
                     //right padding
-                    textWidth += FontAssets.ItemStack.Value.MeasureString(" ").X * scaleMod;
+                    textWidth += font.MeasureString(" ").X * scaleMod;
 
                     Main.spriteBatch.End();
                     Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); //allows it to have alpha
@@ -369,15 +386,15 @@ namespace tsorcRevamp
                     Texture2D boxTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/blackpixel", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
                     int lineCount = text.Count(a => a == '\n') + 1;
-                    float height = scaleMod * (FontAssets.ItemStack.Value.LineSpacing * lineCount) + 8;
+                    float height = scaleMod * (font.LineSpacing * lineCount) + 8;
                     Rectangle drect = new((int)textPosition.X - 4, (int)textPosition.Y - 4, (int)textWidth + 8, (int)height);
                     Rectangle drectWorld = new((int)textPositionWorld.X - 4, (int)textPositionWorld.Y - 4, (int)textWidth + 8, (int)height);
 
-                    Color bgColor = new(0, 0, 0, (0.5f * alpha) + 0.1f);
+                    Color bgColor = new(0, 0, 0, (0.5f * alpha) + 0.25f);
                     Main.spriteBatch.Draw(boxTexture, drect, bgColor);
 
-                    Color textColor = new(1, 1, 1, alpha);
-                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, text, textPosition, textColor, 0, Vector2.Zero, scaleMod, SpriteEffects.None, 0);
+                    //DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, text, textPosition, Color.White, 0, Vector2.Zero, scaleMod, SpriteEffects.None, 0);
+                    OurDrawBorderString(Main.spriteBatch, text, font, textPosition, Color.White, scaleMod, 0, 0, -1);
                     return;
                 }
                 else
