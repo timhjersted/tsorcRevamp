@@ -149,6 +149,7 @@ namespace tsorcRevamp
         public static List<int> SeathSegments;
         public static List<int> UntargetableNPCs;
         public static List<int> MageNPCs;
+        public static List<int> VanillaMeleeBlackList;
         public static Dictionary<BossExtras, (IItemDropRuleCondition Condition, int ID)> BossExtrasDescription;
         public static Dictionary<int, BossExtras> AssignedBossExtras;
         public static Dictionary<int, int> BossBagIDtoNPCID;
@@ -1374,6 +1375,13 @@ namespace tsorcRevamp
                 ModContent.NPCType<MindflayerServant>(),
                 ModContent.NPCType<MindflayerIllusion>(),
                 ModContent.NPCType<LichKingDisciple>()
+            };
+            #endregion
+            #region Vanilla Melee BlackList
+            VanillaMeleeBlackList = new List<int>()
+            {
+                ItemID.SolarEruption, ItemID.DayBreak, ItemID.PossessedHatchet, ItemID.Bananarang
+                //ItemID.ChainKnife, ItemID.ChainGuillotines, ItemID.GolemFist, ItemID.KOCannon, ItemID.PiercingStarlight
             };
             #endregion
         }

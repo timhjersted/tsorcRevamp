@@ -59,6 +59,9 @@ namespace tsorcRevamp
         public static readonly int PermanentBuffCount = 58;
         public static List<int> startingItemsList;
         public List<int> bagsOpened;
+        public static int LastHit = 1;
+        public static bool SameHit = false;
+        public static bool DiffHit = false;
         public Dictionary<int, int> consumedPotions;
 
         public override void Initialize()
@@ -854,6 +857,16 @@ namespace tsorcRevamp
                 modifiers.TargetDamageMultiplier *= 1.05f;
             }
             OverCrit(Player.GetWeaponCrit(Player.HeldItem), item.DamageType, ref modifiers, out CritColorTier, false, null, target.Hitbox);
+
+            if (target.whoAmI == tsorcRevampPlayer.LastHit)
+            {
+                tsorcRevampPlayer.SameHit = true;
+            }
+            else
+            {
+                tsorcRevampPlayer.DiffHit = true;
+            }
+            tsorcRevampPlayer.LastHit = target.whoAmI;
         }
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Projectile, consider using ModifyHitNPC instead */
         {

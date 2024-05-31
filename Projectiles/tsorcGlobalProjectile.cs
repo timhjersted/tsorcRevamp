@@ -535,7 +535,7 @@ namespace tsorcRevamp.Projectiles
         /// <returns></returns>
         public static bool IsAccuracySpecialCase(Projectile projectile)
         {
-            return AccuracySpecialCaseList.Contains(projectile.type) || (projectile.type == ProjectileID.Bone && projectile.ai[2] == 1) || projectile.aiStyle == ProjAIStyleID.SmallFlying;
+            return AccuracySpecialCaseList.Contains(projectile.type) || (projectile.type == ProjectileID.Bone && projectile.ai[2] == 1);
         }
 
 

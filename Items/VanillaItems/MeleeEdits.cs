@@ -5,9 +5,9 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Localization;
 using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Utilities;
-using tsorcRevamp;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
@@ -587,6 +587,10 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 tooltips.Add(new TooltipLine(Mod, "BOTCNoHeal", LangUtils.GetTextValue("CommonItemTooltip.Trident")));
             }
+            if (VanillaProjectileMelee(item))
+            {
+                tooltips.Add(new TooltipLine(Mod, "ManaCost", Language.GetTextValue("CommonItemTooltip.UsesMana", GetMeleeManaCost(item, player))));
+            }
         }
         public override void HoldItem(Item item, Player player)
         {
@@ -601,19 +605,22 @@ namespace tsorcRevamp.Items.VanillaItems
                 player.ignoreWater = true;
                 player.AddBuff(BuffID.ObsidianSkin, 1);
             }
-            /*if (VanillaProjectileMelee(item))
+            if (VanillaProjectileMelee(item) && player.HasItem(ModContent.ItemType<Items.Debug.DebugTome>()))
             {
                 Main.NewText("This item is VanillaProjectileMelee");
-            }*/
+                return;
+            }
         }
-        public int GetMeleeManaCost(Item item)
+        public int GetMeleeManaCost(Item item, Player player)
         {
-            int baseCost = (int)MathHelper.Clamp((item.damage * 60 / item.useTime) * 1 / 4, 0, 20);//edit numbers here if u wnat to adjust mana cost
+            int baseCost = (int)MathHelper.Clamp((item.damage * 60 / item.useTime) * 1 / 4, 0, 25);//edit numbers here if u wnat to adjust mana cost
+            int finalCost = 0;
             if (tsorcRevampWorld.SuperHardMode)
             {
                 baseCost += 10;
             }
-            return baseCost;
+            finalCost = (int)(baseCost * player.manaCost);
+            return finalCost;
         }
         public bool VanillaProjectileMelee(Item item)
         {
@@ -622,13 +629,11 @@ namespace tsorcRevamp.Items.VanillaItems
             Judge.SetDefaults(item.shoot);
             if (item.DamageType == DamageClass.Melee && item.type < ItemID.Count
                 && Judge.aiStyle != ProjAIStyleID.Spear
-                && item.type != ItemID.WoodenBoomerang
-                || item.shoot != 0
-                || item.type >= 3278 && item.type <=3292 //WoodYoyo = 3278
-                //|| Judge.aiStyle == ProjAIStyleID.Yoyo
-                || Judge.aiStyle == ProjAIStyleID.Flail
-                || Judge.aiStyle == ProjAIStyleID.Boomerang
-                )
+                && item.shoot != 0
+                || tsorcRevamp.VanillaMeleeBlackList.Contains(item.type)
+                //|| Judge.aiStyle == ProjAIStyleID.Flail
+                //|| Judge.aiStyle == ProjAIStyleID.Boomerang
+                || Judge.aiStyle == ProjAIStyleID.Yoyo)
             {
                 return true;
             }
@@ -636,7 +641,7 @@ namespace tsorcRevamp.Items.VanillaItems
         }
         public override bool CanUseItem(Item item, Player player)
         {
-            if (VanillaProjectileMelee(item) && player.statMana < player.manaCost * GetMeleeManaCost(item))
+            if (VanillaProjectileMelee(item) && player.statMana < GetMeleeManaCost(item, player))
             {
                 return false;
             }
@@ -645,11 +650,38 @@ namespace tsorcRevamp.Items.VanillaItems
         public override bool Shoot(Item item, Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             //mercy, yoyo only use mana once when left click to unleash 
-            if (VanillaProjectileMelee(item) && player.statMana >= player.manaCost * GetMeleeManaCost(item))
+            if (VanillaProjectileMelee(item) && player.statMana >= GetMeleeManaCost(item, player))
             {
-                player.statMana -= (int)(player.manaCost * GetMeleeManaCost(item));
+                player.statMana -= GetMeleeManaCost(item, player);
             }
             return true;
+        }
+        public bool TrueMelee(Item item)
+        {
+            if (item.DamageType == DamageClass.Melee && item.shoot == 0)
+            {
+                return true;
+            }
+            return false;
+        }
+        public void ReboundProjectile(Player player)
+        {
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile Proj = Main.projectile[i];
+                if (Proj.active && Proj.hostile && Proj.damage < player.HeldItem.damage)
+                {
+                    Rectangle ProjBox = Proj.getRect();
+                    if (ProjBox.Intersects(player.HeldItem.Hitbox))
+                    {
+                        Vector2 boi = Main.MouseWorld - Proj.Center;
+                        boi.Normalize();
+                        Proj.hostile = false;
+                        Proj.friendly = true;
+                        Proj.velocity = boi * Proj.velocity.Length();
+                    }
+                }
+            }
         }
     }
 }
