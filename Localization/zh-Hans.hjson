@@ -55,8 +55,12 @@ Mods: {
 				在防御屏障最大化后攻击敌人可以减少瞬步的冷却
 				'''
 			NotBound: "[c/fff68f:<控制中未绑定>]"
-			BonusMagicDmg: 增加 {0}% 魔法伤害
-			UniqueImbue: 和其他武器灌注不兼容
+			BonusMagicDmg: 将 {0}% 的魔法伤害加成转化为近战伤害加成
+			UniqueImbue:
+				'''
+				有几率反弹射弹
+				和其他武器灌注不兼容
+				'''
 			LifeRegen: 增加 {0} 点生命再生
 			BadLifeRegen: 减少 {0} 点生命再生
 			BadDefense: 减少 {0} 点防御
@@ -327,6 +331,7 @@ Mods: {
 			AccessSafe: 打开保险箱
 			BotCHit: 中！{0}%
 			BotCMiss: 马… {0}%
+			Rebound: 反弹！
 			MinionInfoDisplay: "{0}/{1} 召唤栏"
 			SentryInfoDisplay: "{0}/{1} 哨兵栏"
 		}
@@ -8010,7 +8015,7 @@ Mods: {
 				Description:
 					'''
 					{$CommonItemTooltip.IncreasesDefenseBy}
-					{$CommonItemTooltip.BadDmgMultiplier@1}
+					{$CommonItemTooltip.BadDmgMult@1}
 					{$CommonItemTooltip.Slowness@2}
 					'''
 			}

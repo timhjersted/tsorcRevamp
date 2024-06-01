@@ -55,8 +55,12 @@ Mods: {
 				Hitting enemies after maxing out the defensive barrier reduces Shunpo's current Cooldown
 				'''
 			NotBound: ": <Not bound, set it in your Controls settings>"
-			BonusMagicDmg: Adds {0}% of bonus magic damage
-			UniqueImbue: Not compatible with other weapon imbues
+			BonusMagicDmg: Converts {0}% of magic damage bonus to melee damage bonus
+			UniqueImbue:
+				'''
+				Have chance to rebound projectiles
+				Not compatible with other weapon imbues
+				'''
 			LifeRegen: Increases life regeneration by {0}
 			BadLifeRegen: Decreases life regeneration by {0}
 			BadDefense: Decreases defense by {0}
@@ -327,6 +331,7 @@ Mods: {
 			AccessSafe: Access Safe
 			BotCHit: Hit! {0}%
 			BotCMiss: Miss! {0}%
+			Rebound: Rebound!
 			MinionInfoDisplay: "{0} / {1} Minion Slots"
 			SentryInfoDisplay: "{0} / {1} Sentry Slots"
 		}
@@ -8019,7 +8024,7 @@ Mods: {
 				Description:
 					'''
 					{$CommonItemTooltip.IncreasesDefenseBy}
-					{$CommonItemTooltip.BadDmgMultiplier@1}
+					{$CommonItemTooltip.BadDmgMult@1}
 					{$CommonItemTooltip.Slowness@2}
 					'''
 			}

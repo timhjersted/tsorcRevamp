@@ -20,6 +20,7 @@ using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
 using tsorcRevamp.Projectiles.Pets;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
@@ -284,6 +285,7 @@ namespace tsorcRevamp
         public bool MagicWeapon;
         public bool GreatMagicWeapon;
         public bool CrystalMagicWeapon;
+        public bool ReboundProjectile;
         public bool DarkmoonCloak;
 
         //increased grab range immediately after killing a boss
@@ -463,6 +465,7 @@ namespace tsorcRevamp
             MagicWeapon = false;
             GreatMagicWeapon = false;
             CrystalMagicWeapon = false;
+            ReboundProjectile =false;
 
             DarkmoonCloak = false;
             manaShield = 0;
@@ -1544,6 +1547,30 @@ namespace tsorcRevamp
             {
                 AddCurseStats();
                 //liferegen is in updateliferegen function
+            }
+
+            if (ReboundProjectile && Main.rand.NextBool(8))
+            {
+                Item item = Player.HeldItem;
+                Rectangle ItemBox = ItemMeleeAttackAiming.GetMeleeHitbox(Player, item);
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    Projectile other = Main.projectile[i];
+                    //ModContent.GetInstance<MeleeEdits>().TrueMelee(item) && 
+                    if (other.active && !other.friendly && ItemBox.Intersects(other.Hitbox) && UsefulFunctions.IsProjectileSafeToFuckWith(i))
+                    {
+                        Rectangle playerRect = Utils.CenteredRectangle(Player.Center, Player.Size);
+                        //CombatText.NewText(playerRect, Color.White, "Intersect!");
+
+                        Vector2 newVec = Main.MouseWorld - other.Center;
+                        newVec.Normalize();
+                        other.hostile = false;
+                        other.friendly = true;
+                        other.velocity = newVec * other.velocity.Length();
+
+                        CombatText.NewText(playerRect, Color.White, LangUtils.GetTextValue("UI.Rebound"));
+                    }
+                }
             }
         }
 

@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.Localization;
 using tsorcRevamp.Items.Armors.Melee;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.Buffs;
 
 namespace tsorcRevamp.Items.VanillaItems
 {
@@ -592,6 +593,73 @@ namespace tsorcRevamp.Items.VanillaItems
                 tooltips.Add(new TooltipLine(Mod, "ManaCost", Language.GetTextValue("CommonItemTooltip.UsesMana", GetMeleeManaCost(item, player))));
             }
         }
+        public override void ModifyHitNPC(Item item, Player player, NPC target, ref NPC.HitModifiers modifiers)
+        {
+            Rectangle targetRect = Utils.CenteredRectangle(target.Center, target.Size);
+            int effect = Main.rand.Next(1, 8);
+            int heal = !Main.hardMode ? 5
+                        : tsorcRevampWorld.SuperHardMode ? 20
+                        : 10;
+            int AttackSpeed = !Main.hardMode ? BuffID.ThornWhipPlayerBuff
+                        : tsorcRevampWorld.SuperHardMode ? BuffID.ScytheWhipPlayerBuff
+                        : BuffID.SwordWhipPlayerBuff;
+            int MagivWeapon = !Main.hardMode ? ModContent.BuffType<MagicWeapon>()
+                        : tsorcRevampWorld.SuperHardMode ? ModContent.BuffType<GreatMagicWeapon>()
+                        : ModContent.BuffType<CrystalMagicWeapon>();
+            if (TrueMelee(item))
+            {
+                if (tsorcRevampPlayer.SameHit && Main.rand.NextBool(8))
+                {
+                    //CombatText.NewText(targetRect, Color.White, "SameHit");
+                    switch (effect)
+                    {
+                        case 1:
+                        {
+                            player.Heal(heal);
+                            break;
+                        }
+                        case 2:
+                        {
+                            player.AddBuff(BuffID.Honey, 60 * 5);
+                            break;
+                        }
+                        case 3:
+                        {
+                            target.SimpleStrikeNPC(item.damage, 0, false, 0f);
+                            break;
+                        }
+                        case 4:
+                        {
+                            player.AddBuff(AttackSpeed, 60 * 5);
+                            break;
+                        }
+                        case 5:
+                        {
+                            modifiers.ScalingArmorPenetration += 0.5f;
+                            break;
+                        }
+                        case 6:
+                        {
+                           modifiers.SetCrit();
+                           break;
+                        }
+                        case 7:
+                        {
+                           player.AddBuff(MagivWeapon, 60 * 5);
+                           break;
+                        }
+                    }
+                    //Main.NewText("Effect: " + effect);
+                    tsorcRevampPlayer.SameHit = false;
+                }
+                if (tsorcRevampPlayer.DiffHit && Main.rand.NextBool(8))
+                {
+                    //CombatText.NewText(targetRect, Color.White, "DiffHit");
+                    target.AddBuff(BuffID.Confused, 60 * 5);
+                    tsorcRevampPlayer.DiffHit = false;
+                }
+            }
+        }
         public override void HoldItem(Item item, Player player)
         {
             if (item.type == ItemID.Swordfish)
@@ -608,6 +676,11 @@ namespace tsorcRevamp.Items.VanillaItems
             if (VanillaProjectileMelee(item) && player.HasItem(ModContent.ItemType<Items.Debug.DebugTome>()))
             {
                 Main.NewText("This item is VanillaProjectileMelee");
+                return;
+            }
+            if (TrueMelee(item) && player.HasItem(ModContent.ItemType<Items.Debug.DebugTome>()))
+            {
+                Main.NewText("This item is TrueMelee");
                 return;
             }
         }
@@ -663,25 +736,6 @@ namespace tsorcRevamp.Items.VanillaItems
                 return true;
             }
             return false;
-        }
-        public void ReboundProjectile(Player player)
-        {
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                Projectile Proj = Main.projectile[i];
-                if (Proj.active && Proj.hostile && Proj.damage < player.HeldItem.damage)
-                {
-                    Rectangle ProjBox = Proj.getRect();
-                    if (ProjBox.Intersects(player.HeldItem.Hitbox))
-                    {
-                        Vector2 boi = Main.MouseWorld - Proj.Center;
-                        boi.Normalize();
-                        Proj.hostile = false;
-                        Proj.friendly = true;
-                        Proj.velocity = boi * Proj.velocity.Length();
-                    }
-                }
-            }
         }
     }
 }

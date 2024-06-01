@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Tools
 {
     public class GreatMagicWeapon : ModItem
     {
-        public static int Duration = 60;
+        public static int Duration = 240;
         public static int Cooldown = 120;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(tsorcGlobalItem.BonusDamage2, Duration, Cooldown);
         public override void SetStaticDefaults()

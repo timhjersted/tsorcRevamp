@@ -471,9 +471,9 @@ namespace tsorcRevamp.Items
                 StaminaPlayer.staminaResourceCurrent -= tsorcRevampPlayer.ReduceStamina(scaledUseAnimation);
             }
         }
-        public static float BonusDamage1 = 50f;
-        public static float BonusDamage2 = 75f;
-        public static float BonusDamage3 = 100f;
+        public static float BonusDamage1 = 30f;
+        public static float BonusDamage2 = 50f;
+        public static float BonusDamage3 = 75f;
         public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();

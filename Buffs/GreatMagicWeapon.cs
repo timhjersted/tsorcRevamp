@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.VanillaItems;
 
 namespace tsorcRevamp.Buffs
 {
@@ -14,6 +15,7 @@ namespace tsorcRevamp.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             player.GetModPlayer<tsorcRevampPlayer>().GreatMagicWeapon = true;
+            player.GetModPlayer<tsorcRevampPlayer>().ReboundProjectile = true;
         }
     }
 }
