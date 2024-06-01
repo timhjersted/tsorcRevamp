@@ -16,8 +16,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetDefaults()
         {
             Item.consumable = false;
-            Item.damage = 40;
-            Item.mana = 5;
+            Item.damage = 50;
+            //Item.mana = 5;
             Item.height = 34;
             Item.knockBack = 7;
             Item.noMelee = true;

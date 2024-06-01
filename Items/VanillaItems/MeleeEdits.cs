@@ -731,7 +731,7 @@ namespace tsorcRevamp.Items.VanillaItems
         }
         public bool TrueMelee(Item item)
         {
-            if (item.DamageType == DamageClass.Melee && item.shoot == 0)
+            if (item.DamageType == DamageClass.Melee && item.shoot == 0 || item.shoot == ModContent.ProjectileType<Projectiles.Nothing>())
             {
                 return true;
             }
