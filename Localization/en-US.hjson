@@ -1118,7 +1118,7 @@ Mods: {
 			}
 
 			BandOfStarforging: {
-				DisplayName: Band Of Starforging
+				DisplayName: Band of Starforging
 				Tooltip:
 					'''
 					{$CommonItemTooltip.LifeRegen}
@@ -1280,7 +1280,7 @@ Mods: {
 			}
 
 			RingOfClarity: {
-				DisplayName: Ring Of Clarity
+				DisplayName: Ring of Clarity
 				Tooltip:
 					'''
 					Immunity to {$CommonItemTooltip.OnFire}, Burning, Chilled, {$CommonItemTooltip.CursedInferno}, {$CommonItemTooltip.Ichor}, 
@@ -1291,7 +1291,7 @@ Mods: {
 			}
 
 			RingOfTheBlueEye: {
-				DisplayName: Ring Of The Blue Eye
+				DisplayName: Ring of the Blue Eye
 				Tooltip: Bones fly out in retaliation when player is hurt
 			}
 
@@ -1559,7 +1559,7 @@ Mods: {
 			}
 
 			RingOfPower: {
-				DisplayName: Ring Of Power
+				DisplayName: Ring of Power
 				Tooltip:
 					'''
 					A great ring of power gifted to men.
@@ -1720,7 +1720,7 @@ Mods: {
 			}
 
 			BootsOfHaste: {
-				DisplayName: Boots Of Haste
+				DisplayName: Boots of Haste
 				Tooltip:
 					'''
 					{$CommonItemTooltip.MoveSpeedMult}
@@ -2403,17 +2403,17 @@ Mods: {
 			}
 
 			MaskOfTheChild: {
-				DisplayName: Mask Of The Child
+				DisplayName: Mask of the Child
 				Tooltip: ""
 			}
 
 			MaskOfTheFather: {
-				DisplayName: Mask Of The Father
+				DisplayName: Mask of the Father
 				Tooltip: ""
 			}
 
 			MaskOfTheMother: {
-				DisplayName: Mask Of The Mother
+				DisplayName: Mask of the Mother
 				Tooltip: ""
 			}
 
@@ -3113,7 +3113,7 @@ Mods: {
 			}
 
 			SymbolOfAvarice: {
-				DisplayName: Symbol Of Avarice
+				DisplayName: Symbol of Avarice
 				Tooltip:
 					'''
 					{$CommonItemTooltip.SoulDrops}
@@ -3986,7 +3986,7 @@ Mods: {
 			}
 
 			FadingSoul: {
-				DisplayName: Fading soul
+				DisplayName: Fading Soul
 				Tooltip: Consume to gain a mere 50 souls
 			}
 
@@ -4584,37 +4584,37 @@ Mods: {
 			}
 
 			PermanentCursedFlamesImbuement: {
-				DisplayName: Permanent Flask Of Cursed Flames
+				DisplayName: Permanent Flask of Cursed Flames
 				Tooltip: ""
 				BuffName: Weapon Imbuement: Cursed Flames
 			}
 
 			PermanentFireImbuement: {
-				DisplayName: Permanent Flask Of Fire
+				DisplayName: Permanent Flask of Fire
 				Tooltip: ""
 				BuffName: Weapon Imbue: Fire
 			}
 
 			PermanentGoldImbuement: {
-				DisplayName: Permanent Flask Of Gold
+				DisplayName: Permanent Flask of Gold
 				Tooltip: ""
 				BuffName: Weapon Imbue: Gold
 			}
 
 			PermanentIchorImbuement: {
-				DisplayName: Permanent Flask Of Ichor
+				DisplayName: Permanent Flask of Ichor
 				Tooltip: ""
 				BuffName: Weapon Imbue: Ichor
 			}
 
 			PermanentNanitesImbuement: {
-				DisplayName: Permanent Flask Of Nanites
+				DisplayName: Permanent Flask of Nanites
 				Tooltip: ""
 				BuffName: Weapon Imbue: Nanites
 			}
 
 			PermanentPartyImbuement: {
-				DisplayName: Permanent Flask Of Party
+				DisplayName: Permanent Flask of Party
 				Tooltip: ""
 				BuffName: Weapon Imbue: Confetti
 			}
@@ -5195,7 +5195,7 @@ Mods: {
 			}
 
 			FlamesOfTheNight: {
-				DisplayName: Flames Of The Night
+				DisplayName: Flames of the Night
 				Tooltip: A full sprectral array of green flame will light up the skies
 			}
 
@@ -7735,7 +7735,7 @@ Mods: {
 			}
 
 			RingOfFavorAndProtection: {
-				DisplayName: Ring Of Favor And Protection
+				DisplayName: Ring of Favor And Protection
 				Tooltip:
 					'''
 					Increases HP by 20 and stamina by 10 while worn
@@ -8887,7 +8887,7 @@ Mods: {
 			FarronHailSpawner.DisplayName: Farron Hail Spawner
 			GreatFarronDart.DisplayName: Great Farron Dart
 			GreatFarronDartSpawner.DisplayName: Great Farron Dart Spawner
-			SwordOfLordGwyn.DisplayName: Sword Of Lord Gwyn
+			SwordOfLordGwyn.DisplayName: Sword of Lord Gwyn
 			TackleProjectile.DisplayName: Gwyn
 			Hellwing.DisplayName: Hellwing
 			HerosArrow.DisplayName: Heros Arrow
@@ -9136,8 +9136,8 @@ Mods: {
 			FriendlyTetsujinLaser.DisplayName: Friendly Tetsujin Laser
 			NullSprite.DisplayName: Null Sprite
 			PhoenixProjectile.DisplayName: Phoenix Juvenile
-			CenterOfTheUniverseStar.DisplayName: Center Of The Universe Star
-			CenterOfTheUniverseStellarNova.DisplayName: Center Of The Universe Stellar Nova
+			CenterOfTheUniverseStar.DisplayName: Center of the Universe Star
+			CenterOfTheUniverseStellarNova.DisplayName: Center of the Universe Stellar Nova
 			InterstellarVesselShip.DisplayName: Interstellar Vessel Ship
 			ScorchingPointFireball.DisplayName: Scorching Point Fireball
 			SamuraiBeetle.DisplayName: Samurai Beetle
@@ -9191,7 +9191,7 @@ Mods: {
 			VirulentCatShot.DisplayName: Virulent Cat Shot
 			WhiteLotusCore.DisplayName: White Lotus Core
 			WhiteLotusPetal.DisplayName: White Lotus Petal
-			FriendlyCatLightOfDawn.DisplayName: Light Of Dawn
+			FriendlyCatLightOfDawn.DisplayName: Light of Dawn
 			SRBlackFire.DisplayName: Black Fire
 			FriendlyRetLaser.DisplayName: Laser
 			UrumiProjectile.DisplayName: Urumi
@@ -9241,7 +9241,7 @@ Mods: {
 			Slash.DisplayName: Slash
 			BarbarousThornBladeBriar.DisplayName: Barbarous Thorn Blade Briar
 			YellowTailFishbone.DisplayName: Yellow Tail Fishbone
-			ArrowOfBardProjectile.DisplayName: Arrow Of Bard Projectile
+			ArrowOfBardProjectile.DisplayName: Arrow of Bard Projectile
 			BoltProjectile.DisplayName: Bolt Projectile
 			CruelArrowProjectile.DisplayName: Cruel Arrow Projectile
 			RageDemonBolt.DisplayName: Rage Demon Bolt
@@ -9274,7 +9274,7 @@ Mods: {
 			KrakenTsunamiShark.DisplayName: Kraken Tsunami Shark
 			CenterOfTheUniverseCometZone.DisplayName: Grand Comet
 			CenterOfTheUniverseFallingComet.DisplayName: Grand Comet
-			CenterOfTheUniverseShockwave.DisplayName: Center Of The Universe
+			CenterOfTheUniverseShockwave.DisplayName: Center of the Universe
 			GrandCometChunk01.DisplayName: Grand Comet Chunk
 			GrandCometChunk02.DisplayName: Grand Comet Chunk
 			GrandCometChunk03.DisplayName: Grand Comet Chunk
@@ -9302,18 +9302,18 @@ Mods: {
 			SamuraiBeetleLightning.DisplayName: Samurai Beetle Lightning
 			SamuraiBeetleProjectile.DisplayName: Samurai Beetle
 			SamuraiBeetleCloud.DisplayName: Samurai Beetle
-			HeldOrbOfDeception.DisplayName: Orb Of Deception
-			HeldOrbOfFlame.DisplayName: Orb Of Flame
-			HeldOrbOfSpirituality.DisplayName: Orb Of Spirituality
-			ThrownOrbOfDeception.DisplayName: Orb Of Deception
-			ThrownOrbOfFlame.DisplayName: Orb Of Flame
-			ThrownOrbOfSpirituality.DisplayName: Orb Of Spirituality
+			HeldOrbOfDeception.DisplayName: Orb of Deception
+			HeldOrbOfFlame.DisplayName: Orb of Flame
+			HeldOrbOfSpirituality.DisplayName: Orb of Spirituality
+			ThrownOrbOfDeception.DisplayName: Orb of Deception
+			ThrownOrbOfFlame.DisplayName: Orb of Flame
+			ThrownOrbOfSpirituality.DisplayName: Orb of Spirituality
 			StackDelivery.DisplayName: Stack Delivery
-			FlameOrbOfDeception.DisplayName: Orb Of Deception
-			FlameOrbOfFlame.DisplayName: Orb Of Flame
-			FlameOrbOfSpirituality.DisplayName: Orb Of Spirituality
-			CharmOrbOfFlame.DisplayName: Orb Of Flame
-			CharmOrbOfSpirituality.DisplayName: Orb Of Spirituality
+			FlameOrbOfDeception.DisplayName: Orb of Deception
+			FlameOrbOfFlame.DisplayName: Orb of Flame
+			FlameOrbOfSpirituality.DisplayName: Orb of Spirituality
+			CharmOrbOfFlame.DisplayName: Orb of Flame
+			CharmOrbOfSpirituality.DisplayName: Orb of Spirituality
 			AncientFireAxeFireball.DisplayName: Ancient Fire Axe Fireball
 			ModDD2ExplosiveTrapT2Explosion.DisplayName: Mod D D2 Explosive Trap T2 Explosion
 			ForgottenImpDagger.DisplayName: Forgotten Imp Dagger
@@ -9782,7 +9782,7 @@ Mods: {
 			DemonElemental.DisplayName: Demon Elemental
 			DemonSpirit.DisplayName: Demon Spirit
 			DestroyerLaserProbe.DisplayName: Laser Probe
-			DiscipleOfAttraidies.DisplayName: Disciple Of Attraidies
+			DiscipleOfAttraidies.DisplayName: Disciple of Attraidies
 			DungeonMage.DisplayName: Dungeon Mage
 			Dunlending.DisplayName: Dunlending
 			DworcFleshhunter.DisplayName: Dworc Fleshhunter
@@ -9795,7 +9795,7 @@ Mods: {
 			GaibonFireball.DisplayName: Gaibon Fireball
 			GhostOfTheDarkmoonKnight.DisplayName: Ghost of the Darkmoon Knight
 			GhostoftheForgottenKnight.DisplayName: Ghost of the Forgotten Knight
-			GhostOfTheForgottenWarrior.DisplayName: Ghost Of The Forgotten Warrior
+			GhostOfTheForgottenWarrior.DisplayName: Ghost of the Forgotten Warrior
 			HollowSoldier.DisplayName: Hollow Soldier
 			HollowWarrior.DisplayName: Hollow Warrior
 			HumanityPhantom.DisplayName: Humanity Phantom
@@ -9883,11 +9883,11 @@ Mods: {
 			IceSkeleton.DisplayName: Ice Skeleton
 
 			KnightOfGwyn: {
-				DisplayName: Knight Of Gwyn
+				DisplayName: Knight of Gwyn
 				DespawnHandler: Knight of Gwyn stands victorious...
 			}
 
-			ManOfWar.DisplayName: Man Of War
+			ManOfWar.DisplayName: Man of War
 			OolacileDemon.DisplayName: Ephemeral Oolacile Demon
 
 			OolacileKnight: {
@@ -10361,7 +10361,7 @@ Mods: {
 
 			HomingMissile.DisplayName: Homing Missile
 			Byakhee.DisplayName: Byakhee
-			ClericOfSorrow.DisplayName: Cleric Of Sorrow
+			ClericOfSorrow.DisplayName: Cleric of Sorrow
 			Willowisp.DisplayName: Willowisp
 			GreatRedThresher.DisplayName: Great Red Thresher
 			LeonhardPhase2.DisplayName: Leonhard Phase2
@@ -10376,8 +10376,8 @@ Mods: {
 				DespawnHandler2: Pinwheels rage subsides...
 			}
 
-			GhostOfAHollowWarrior.DisplayName: Ghost Of A Hollow Warrior
-			GhostOfTheDrowned.DisplayName: Ghost Of The Drowned
+			GhostOfAHollowWarrior.DisplayName: Ghost of a Hollow Warrior
+			GhostOfTheDrowned.DisplayName: Ghost of the Drowned
 			HollowSpearman.DisplayName: Hollow Spearman
 			PinwheelFireball.DisplayName: PinwheelFireball
 		}

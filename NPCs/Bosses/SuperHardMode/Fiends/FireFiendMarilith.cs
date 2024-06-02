@@ -155,7 +155,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
                         if (!hasCovenant && !displayedWarning)
                         {
-                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.FireFiendMarilith.Abyss"), Color.Purple);
+                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.FireFiendMarilith.Abyss"), Color.MediumPurple);
                             displayedWarning = true;
                         }
                     }

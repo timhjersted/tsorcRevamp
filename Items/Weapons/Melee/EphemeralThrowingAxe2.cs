@@ -17,7 +17,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             Item.consumable = false;
             Item.damage = 50;
-            //Item.mana = 5;
             Item.height = 34;
             Item.knockBack = 7;
             Item.noMelee = true;
@@ -32,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.width = 22;
             Item.shoot = ModContent.ProjectileType<Projectiles.EphemeralThrowingAxeProj2>();
 
-            Item.mana = 11;
+            Item.mana = 8;
         }
 
         public override void AddRecipes()

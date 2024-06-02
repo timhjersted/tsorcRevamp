@@ -975,7 +975,7 @@ namespace tsorcRevamp
                             Player.velocity += UsefulFunctions.Aim(new Vector2(4484, 355) * 16, Player.Center, 20);
                             if (TextCooldown <= 0)
                             {
-                                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("EoLForcefield.Expelled"), Color.Purple);
+                                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("EoLForcefield.Expelled"), Color.Pink);
                                 TextCooldown = 240;
                             }
                         }
