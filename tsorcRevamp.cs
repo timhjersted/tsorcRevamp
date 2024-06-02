@@ -222,6 +222,11 @@ namespace tsorcRevamp
         {
             TextureAssets.Npc[NPCID.Deerclops] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/AncestralSpirit");
             TextureAssets.NpcHeadBoss[39] = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/AncestralSpirit_Head_Boss");
+            TextureAssets.Gore[GoreID.DeerclopsHead] = ModContent.Request<Texture2D>("tsorcRevamp/Gores/AncestorSpirit_Gore_1");
+            TextureAssets.Gore[GoreID.DeerclopsAntler] = ModContent.Request<Texture2D>("tsorcRevamp/Gores/AncestorSpirit_Gore_3");
+            TextureAssets.Gore[GoreID.DeerclopsBody] = ModContent.Request<Texture2D>("tsorcRevamp/Gores/AncestorSpirit_Gore_5");
+            TextureAssets.Gore[GoreID.DeerclopsArm] = ModContent.Request<Texture2D>("tsorcRevamp/Gores/AncestorSpirit_Gore_6");
+            TextureAssets.Gore[GoreID.DeerclopsLeg] = ModContent.Request<Texture2D>("tsorcRevamp/Gores/AncestorSpirit_Gore_7");
 
             toggleDragoonBoots = KeybindLoader.RegisterKeybind(this, "Dragoon Boots", Microsoft.Xna.Framework.Input.Keys.Z);
             reflectionShiftKey = KeybindLoader.RegisterKeybind(this, "Reflection Shift", Microsoft.Xna.Framework.Input.Keys.O);
@@ -1390,6 +1395,11 @@ namespace tsorcRevamp
         {
             TextureAssets.Npc[NPCID.Deerclops] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_{NPCID.Deerclops}");
             TextureAssets.NpcHeadBoss[39] = ModContent.Request<Texture2D>($"Terraria/Images/NPC_Head_Boss_39");
+            TextureAssets.Gore[GoreID.DeerclopsHead] = ModContent.Request<Texture2D>($"Terraria/Images/Gore_{GoreID.DeerclopsHead}");
+            TextureAssets.Gore[GoreID.DeerclopsAntler] = ModContent.Request<Texture2D>($"Terraria/Images/Gore_{GoreID.DeerclopsAntler}");
+            TextureAssets.Gore[GoreID.DeerclopsBody] = ModContent.Request<Texture2D>($"Terraria/Images/Gore_{GoreID.DeerclopsBody}");
+            TextureAssets.Gore[GoreID.DeerclopsArm] = ModContent.Request<Texture2D>($"Terraria/Images/Gore_{GoreID.DeerclopsArm}");
+            TextureAssets.Gore[GoreID.DeerclopsLeg] = ModContent.Request<Texture2D>($"Terraria/Images/Gore_{GoreID.DeerclopsLeg}");
             tsorcItemDropRuleConditions.SuperHardmodeRule = null;
             tsorcItemDropRuleConditions.FirstBagRule = null;
             tsorcItemDropRuleConditions.CursedRule = null;
