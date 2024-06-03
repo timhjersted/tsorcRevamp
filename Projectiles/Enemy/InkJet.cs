@@ -42,9 +42,9 @@ namespace tsorcRevamp.Projectiles.Enemy
                 buffLengthMod = 2;
             }
 
-            target.AddBuff(BuffID.BrokenArmor, 180 / buffLengthMod, false);
+            target.AddBuff(BuffID.BrokenArmor, 600 / buffLengthMod, false);
             target.AddBuff(BuffID.Blackout, 600 / buffLengthMod, false);
-            target.AddBuff(BuffID.Venom, 600 / buffLengthMod, false);
+            target.AddBuff(BuffID.Venom, 240 / buffLengthMod, false);
             target.AddBuff(BuffID.Obstructed, 120 / buffLengthMod, false);
         }
 
