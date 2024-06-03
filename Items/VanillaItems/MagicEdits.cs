@@ -134,5 +134,12 @@ namespace tsorcRevamp.Items.VanillaItems
                 }
             }
         }
+        public override void ModifyHitNPC(Item item, Player player, NPC target, ref NPC.HitModifiers modifiers)
+        {
+            if (item.type == ItemID.SoulDrain && target.type == NPCID.TheDestroyerBody)
+            {
+                modifiers.FinalDamage -= 0.5f;
+            }
+        }
     }
 }

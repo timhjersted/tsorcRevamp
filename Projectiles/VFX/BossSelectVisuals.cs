@@ -228,12 +228,14 @@ namespace tsorcRevamp.Projectiles.VFX
 
             string mouseOverGuideText = "";
             string mouseOver = "";
+            string DeathCountText = "";
             Vector2 mouseOverPos = Vector2.Zero;
             float mouseOverHeight = 0;
             for (int i = 0; i < currentDownedList.Count; i++)
             {
                 Vector2 drawPos = new Vector2(350 * UsefulFunctions.EasingCurve(Math.Min(radius, 1)), 0).RotatedBy(-i * MathHelper.TwoPi / currentDownedList.Count);
                 drawPos.X *= 1.2f;
+                DeathCountText = LangUtils.GetTextValue("Items.BossRematchTome.DeathCountText", Main.player[Projectile.owner].numberOfDeathsPVE);
 
                 //Bunnies are used in place of non-defeated bosses, and are not rendered
                 if (currentDownedList[i].type == NPCID.Bunny)
@@ -377,8 +379,10 @@ namespace tsorcRevamp.Projectiles.VFX
                 DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.ItemStack.Value, mouseOverGuideText, new Vector2(Main.screenWidth/2, Main.screenHeight * 2 / 5) + new Vector2(1.1f * -FontAssets.ItemStack.Value.MeasureString(mouseOverGuideText).X / 2f, 0), Color.White, 0, Vector2.Zero, 1.2f, SpriteEffects.None, 0);
             }
 
-            string DeathCountText = LangUtils.GetTextValue("Items.BossRematchTome.DeathCountText", Main.player[Projectile.owner].numberOfDeathsPVE);
-            DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, DeathCountText, new Vector2(Main.screenWidth/2, Main.screenHeight * 3 / 5) + new Vector2(1.1f * -FontAssets.ItemStack.Value.MeasureString(DeathCountText).X / 2f, 0), Color.White, 0, Vector2.Zero, 1.2f, SpriteEffects.None, 0);
+            if (DeathCountText != "")
+            {
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, DeathCountText, new Vector2(Main.screenWidth/2, Main.screenHeight * 3 / 5) + new Vector2(1.1f * -FontAssets.ItemStack.Value.MeasureString(DeathCountText).X / 2f, 0), Color.White, 0, Vector2.Zero, 1.2f, SpriteEffects.None, 0);
+            }
             
             return false;
         }
