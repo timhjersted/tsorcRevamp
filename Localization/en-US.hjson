@@ -1919,6 +1919,16 @@ Mods: {
 				Tooltip: Grants damage reduction
 			}
 
+			AbyssArrow: {
+				DisplayName: Abyssal Arrow
+				Tooltip: Inflicts Daybroken
+			}
+
+			AbyssBullet: {
+				DisplayName: Abyssal Bullet
+				Tooltip: "Inflicts Daybroken"
+			}
+
 			ArrowOfBard: {
 				DisplayName: Arrow of Bard
 				Tooltip: '''"The arrow which slew Smaug."'''
@@ -9327,6 +9337,8 @@ Mods: {
 			MjolnirElectrosphere.DisplayName: Mjolnir Electrosphere
 			EtherianWyvernFireball.DisplayName: Etherian Wyvern Fireball
 			EtherianWyvernProjectile.DisplayName: Etherian Wyvern Projectile
+			AbyssArrowProjectile.DisplayName: Abyss Arrow Projectile
+			AbyssBulletProjectile.DisplayName: Abyss Bullet Projectile
 		}
 
 		NPCs: {
