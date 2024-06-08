@@ -30,14 +30,15 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
 
         public override void AI()
         {
-                int dust = Dust.NewDust(Projectile.position, 1, 1, DustID.SolarFlare, Projectile.velocity.X, Projectile.velocity.Y, 0, default, 1f);
-                Main.dust[dust].noGravity = true;
-                Main.dust[dust].velocity *= 0.2f;
-                Projectile.localAI[0] = 0;
-                Lighting.AddLight(Projectile.Center, 0f, 0f, 0.4f);
-            }
+            int dust = Dust.NewDust(Projectile.position, 1, 1, DustID.SolarFlare, Projectile.velocity.X, Projectile.velocity.Y, 0, default, 1f);
+            Main.dust[dust].noGravity = true;
+            Main.dust[dust].velocity *= 0.2f;
+            Projectile.localAI[0] = 0;
+            Lighting.AddLight(Projectile.Center, 0f, 0f, 0.4f);
+        }
 
-		public override void OnKill(int timeLeft) {
+		public override void OnKill(int timeLeft) 
+        {
             Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
             for (int i = 0; i < 5; i++)

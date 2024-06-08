@@ -91,6 +91,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -112,8 +113,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Ancient Oolacile Demon)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -129,8 +129,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Slogra)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -145,8 +144,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Gaibon)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -161,8 +159,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Jungle Wyvern)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -181,6 +178,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -200,8 +198,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Ancient Demon)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -223,8 +220,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Hero of Lumelia)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -245,8 +241,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (The Rage)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -261,8 +256,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (The Sorrow)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -276,8 +270,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (The Hunter)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -294,8 +287,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (The Triad)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -315,8 +307,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (The Triad)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -334,8 +325,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Wyvern Mage)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -349,8 +339,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Serris)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -363,8 +352,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Death)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -379,8 +367,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Mindflayer Illusion)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -392,8 +379,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Attraidies)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -414,8 +400,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Water Fiend Kraken)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -428,8 +413,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Fire Fiend Marilith)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -444,8 +428,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Earth Fiend Lich)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -459,8 +442,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Blight)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -473,8 +455,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Chaos)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -490,8 +471,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Wyvern Mage Shadow)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -504,8 +484,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Abysmal Oolacile Sorcerer)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -520,8 +499,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Artorias)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -534,8 +512,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Hellkite Dragon)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -551,8 +528,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Seath the Scaleless)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -567,8 +543,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Witchking)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -582,8 +557,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Dark Cloud)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
@@ -598,8 +572,7 @@ namespace tsorcRevamp.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Gwyn, Lord of Cinder)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            ItemID.Sets.BossBag[Type] = true;
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {

@@ -1926,7 +1926,7 @@ Mods: {
 
 			AbyssBullet: {
 				DisplayName: Abyssal Bullet
-				Tooltip: "Inflicts Daybroken"
+				Tooltip: Inflicts Daybroken
 			}
 
 			ArrowOfBard: {

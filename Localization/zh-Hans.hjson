@@ -1910,6 +1910,16 @@ Mods: {
 				Tooltip: 给予伤害减免
 			}
 
+			AbyssArrow: {
+				DisplayName: 深渊箭
+				Tooltip: 施加破晓
+			}
+
+			AbyssBullet: {
+				DisplayName: 深渊弹
+				Tooltip: 施加破晓
+			}
+
 			ArrowOfBard: {
 				DisplayName: 吟游诗人之箭
 				Tooltip: '''"杀死斯摩格的那支箭"'''
@@ -5654,7 +5664,7 @@ Mods: {
 				Tooltip:
 					'''
 					用来杀死巫师王的剑
-					[c/ffbf00:对巫王造成 3 倍伤害并击碎巫师王和亚尔特留斯的防御护盾]
+					[c/ffbf00:对巫师王造成 3 倍伤害并击碎巫师王和亚尔特留斯的防御护盾]
 					'''
 			}
 
@@ -6776,7 +6786,7 @@ Mods: {
 				DisplayName: 巫师王卷轴
 				Tooltip:
 					'''
-					要关闭通往深渊的传送门，你必须找到巫王并修复他掉落的奇怪戒指
+					要关闭通往深渊的传送门，你必须找到巫师王并修复他掉落的奇怪戒指
 					他会在晚上出现在深渊之外，并且更频繁地出现在地下深处，尤其是在地牢中
 					找到他的最可靠方法是戴上亚尔特留斯之约戒指，亲入深渊一探究竟
 					'''
@@ -9318,6 +9328,8 @@ Mods: {
 			MjolnirElectrosphere.DisplayName: 雷神之锤
 			EtherianWyvernFireball.DisplayName: 以太飞龙的火球
 			EtherianWyvernProjectile.DisplayName: 以太飞龙
+			AbyssArrowProjectile.DisplayName: 深渊箭
+			AbyssBulletProjectile.DisplayName: 深渊弹
 		}
 
 		NPCs: {
@@ -10151,7 +10163,7 @@ Mods: {
 					'''
 					关于[c/ffbf00:亚尔特留斯]和另一个在这些土地上游荡被称为[c/383838:巫师王]的黑暗生物，
 					有一件事你应该知道，
-					[c/383838:巫王]和[c/ffbf00:亚尔特留斯]都受到黑暗魔法的保护，使他们几乎无敌，但我听说
+					[c/383838:巫师王]和[c/ffbf00:亚尔特留斯]都受到黑暗魔法的保护，使他们几乎无敌，但我听说
 					[c/cffffa:火焰恶魔马瑞丽斯]和某些传说在天空中漫游的[c/cffffa:幻影]携带着凶猛的魔法之刃。
 					名为[c/fcff00:巴罗之刃] 的武器或许足以粉碎他们的防护屏障...
 					'''
@@ -10181,7 +10193,7 @@ Mods: {
 					'''
 				SandboxSHMQuote4:
 					'''
-					传说[c/383838：巫王]和[c/ffbf00:亚尔特留斯]都受到黑暗魔法的保护，但我听说
+					传说[c/383838：巫师王]和[c/ffbf00:亚尔特留斯]都受到黑暗魔法的保护，但我听说
 					[c/cffffa:火焰恶魔马瑞丽斯]和某些传说在天空中漫游的[c/cffffa:幻影]携带着凶猛的魔法之刃。
 					这样强大的武器或许足以粉碎他们的防护屏障...
 					'''
