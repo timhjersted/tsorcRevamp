@@ -386,7 +386,7 @@ Mods: {
 
 		BossChecklist: {
 			LeonhardDesc: 探索双峰之间的吊桥...
-			PinwheelDesc: 深入村庄附近的溺亡者地下墓穴...
+			PinwheelDesc: 深入村庄入口附近的溺亡者地下墓穴...
 			AncientOolacileDemonDesc: 有传言提到了失落的乌拉席露森林...
 			SlograAndGaibonName: 斯洛格拉和盖波
 			SlograAndGaibonDesc: 在黑曜石神庙深处找到它们...
@@ -3970,7 +3970,7 @@ Mods: {
 				Tooltip:
 					'''
 					元素瓶的碎片
-					把它带到绿宝石传令官那里可以增加烧瓶的使用次数
+					把它带到绿宝石传令官那里可以增加元素瓶的使用次数
 					'''
 			}
 
@@ -10436,7 +10436,7 @@ Mods: {
 
 		Configs: {
 			tsorcRevampConfig: {
-				DisplayName: "[c/bb1c74:红][c/b52e83:云][c/b33c93:物][c/ad4c9f:语] [c/9589d5:模][c/9589d5:组][c/8d97e5:设][c/8d9be7:置]"
+				DisplayName: "[c/ad4c9f:红][c/ad4c9f:云][c/ad4c9f:物][c/ad4c9f:语] [c/8d9be7:模][c/8d9be7:组][c/8d9be7:设][c/8d9be7:置]"
 
 				AdventureMode: {
 					Label: 冒险模式：模组游玩基础

@@ -130,8 +130,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                             }
                         case 1:
                             {
-                                target.AddBuff(ModContent.BuffType<SnapthornDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
-                                player.AddBuff(BuffID.ThornWhipPlayerBuff, (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                if (!player.HasBuff(BuffID.ScytheWhipPlayerBuff) && !player.HasBuff(BuffID.SwordWhipPlayerBuff))
+                                {
+                                    target.AddBuff(ModContent.BuffType<SnapthornDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                    player.AddBuff(BuffID.ThornWhipPlayerBuff, (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                }
                                 break;
                             }
                         case 2:
@@ -156,14 +159,20 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                             }
                         case 5:
                             {
-                                target.AddBuff(ModContent.BuffType<DurendalDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
-                                player.AddBuff(BuffID.SwordWhipPlayerBuff, (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                if (!player.HasBuff(BuffID.ThornWhipPlayerBuff) && !player.HasBuff(BuffID.ScytheWhipPlayerBuff))
+                                {
+                                    target.AddBuff(ModContent.BuffType<DurendalDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                    player.AddBuff(BuffID.SwordWhipPlayerBuff, (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                }
                                 break;
                             }
                         case 6:
                             {
-                                target.AddBuff(ModContent.BuffType<DarkHarvestDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
-                                player.AddBuff(BuffID.ScytheWhipPlayerBuff, (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                if (!player.HasBuff(BuffID.ThornWhipPlayerBuff) && !player.HasBuff(BuffID.SwordWhipPlayerBuff))
+                                {
+                                    target.AddBuff(ModContent.BuffType<DarkHarvestDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                    player.AddBuff(BuffID.ScytheWhipPlayerBuff, (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
+                                }
                                 break;
                             }
                         case 7:
