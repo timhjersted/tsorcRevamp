@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items
 
         public override bool CanUseItem(Player player)
         {
-            return (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax < 150);
+            return (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax < 185);
         }
 
         public override bool? UseItem(Player player)

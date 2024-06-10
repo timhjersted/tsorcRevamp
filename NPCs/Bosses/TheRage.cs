@@ -22,11 +22,11 @@ namespace tsorcRevamp.NPCs.Bosses
     [AutoloadBossHead]
     class TheRage : ModNPC
     {
-        int fireTrailsDamage = 24;   
-        int rageBreathDamage = 27;
-        int demonBoltDamage = 30;
-        int homingFireDamage = 33;
-        int rageFirebombDamage = 36;
+        int fireTrailsDamage = 27;   
+        int rageBreathDamage = 30;
+        int demonBoltDamage = 33;
+        int homingFireDamage = 36;
+        int rageFirebombDamage = 39;
 
         public override void SetStaticDefaults()
         {
