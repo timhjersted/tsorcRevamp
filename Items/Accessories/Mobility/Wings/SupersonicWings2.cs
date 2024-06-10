@@ -63,7 +63,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             ascentWhenFalling = 0.85f;
             ascentWhenRising = 0.15f;
             maxCanAscendMultiplier = 1f;
-            maxAscentMultiplier = 3f;
+            maxAscentMultiplier = 2.6f;
             constantAscend = 0.135f;
 
         }
@@ -107,7 +107,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             }
             if (!restricted)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 2;
+                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 3;
                 /** W1K's original code
                 if (player.controlLeft) {
                     if (player.velocity.X > -3) player.velocity.X -= (float)(player.moveSpeed - 1f) / 10;
