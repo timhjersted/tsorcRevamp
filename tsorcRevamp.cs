@@ -1385,7 +1385,10 @@ namespace tsorcRevamp
             #region Vanilla Melee BlackList
             VanillaMeleeBlackList = new List<int>()
             {
-                ItemID.SolarEruption, ItemID.DayBreak, ItemID.PossessedHatchet, ItemID.Bananarang
+                ItemID.SolarEruption, ItemID.DayBreak,
+                ItemID.PossessedHatchet, ItemID.Bananarang,
+                ItemID.Flairon, ItemID.NorthPole,
+                ItemID.ScourgeoftheCorruptor, ItemID.VampireKnives, ItemID.Zenith
                 //ItemID.ChainKnife, ItemID.ChainGuillotines, ItemID.GolemFist, ItemID.KOCannon, ItemID.PiercingStarlight
             };
             #endregion

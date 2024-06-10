@@ -212,7 +212,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.GolemFist)
             {
-                item.damage = 125; //vanilla 90
+                item.damage = 110; //vanilla 90
             }
             if (item.type == ItemID.PaladinsHammer)
             {
@@ -686,7 +686,7 @@ namespace tsorcRevamp.Items.VanillaItems
         }
         public int GetMeleeManaCost(Item item, Player player)
         {
-            int baseCost = (int)MathHelper.Clamp((item.damage * 60 / item.useTime) * 1 / 4, 0, 25);//edit numbers here if u wnat to adjust mana cost
+            int baseCost = (int)MathHelper.Clamp((item.damage * 60 / item.useTime) * 1 / 4, 0, 20);//edit numbers here if u wnat to adjust mana cost
             int finalCost = 0;
             if (tsorcRevampWorld.SuperHardMode)
             {
