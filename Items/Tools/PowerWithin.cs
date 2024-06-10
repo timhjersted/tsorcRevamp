@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Tools
     {
         public static float DamageIncrease = 10f;
         public static float StaminaRegen = 30f;
-        public static int Duration = 30;
+        public static int Duration = 20;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageIncrease, StaminaRegen, Duration);
         public override void SetStaticDefaults()
         {

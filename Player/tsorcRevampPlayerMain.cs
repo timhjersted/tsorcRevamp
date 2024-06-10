@@ -60,6 +60,7 @@ namespace tsorcRevamp
         public static List<int> startingItemsList;
         public List<int> bagsOpened;
         public static int LastHit = 1;
+        public static int ShunpoCooldownPerHit = -40;
         public static bool SameHit = false;
         public static bool DiffHit = false;
         public Dictionary<int, int> consumedPotions;
@@ -489,7 +490,7 @@ namespace tsorcRevamp
             {
                 int TitaniumShardBaseDmg = 50; //50 is the base dmg of vanilla Titanium Shards
                 // may be too much damage buff applied to Titanium Shard?
-                int TitaniumShardScaledBonusDmg = (int)((Player.GetDamage(DamageClass.Generic).ApplyTo(TitaniumShardBaseDmg) + Player.GetDamage(DamageClass.Melee).ApplyTo(TitaniumShardBaseDmg) 
+                int TitaniumShardScaledBonusDmg = (int)((Player.GetDamage(DamageClass.Melee).ApplyTo(TitaniumShardBaseDmg) 
                  + Player.GetDamage(DamageClass.Ranged).ApplyTo(TitaniumShardBaseDmg) + Player.GetDamage(DamageClass.Magic).ApplyTo(TitaniumShardBaseDmg) 
                  + Player.GetDamage(DamageClass.Summon).ApplyTo(TitaniumShardBaseDmg) + Player.GetDamage(DamageClass.Throwing).ApplyTo(TitaniumShardBaseDmg)) - (6f * TitaniumShardBaseDmg));
                 Player.titaniumStormCooldown = 10;
@@ -504,14 +505,7 @@ namespace tsorcRevamp
                 }
                 else
                 {
-                    if (Player.HasBuff(BuffID.Smolstar) || Player.HasBuff(BuffID.UFOMinion))
-                    {
-                        UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<ShunpoBlinkCooldown>(), -4);
-                    }
-                    else
-                    {
-                        UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<ShunpoBlinkCooldown>(), -40);
-                    }
+                    UsefulFunctions.AddPlayerBuffDuration(Player, ModContent.BuffType<ShunpoBlinkCooldown>(), ShunpoCooldownPerHit);
                 }
             }
             if (CelestialCloak)
@@ -909,6 +903,10 @@ namespace tsorcRevamp
             if (!proj.IsMinionOrSentryRelated)
             {
                 OverCrit(proj.CritChance, proj.DamageType, ref modifiers, out CritColorTier, ProjectileID.Sets.IsAWhip[proj.type], proj, target.Hitbox);
+            }
+            if (ProjectileID.Sets.MinionSacrificable[proj.type])
+            {
+                ShunpoCooldownPerHit = -4;
             }
         }
         public bool WhipTipCrit(in Projectile projectile, in List<Vector2> points, in Rectangle targetHitbox)
