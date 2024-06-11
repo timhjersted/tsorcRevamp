@@ -45,36 +45,40 @@ namespace tsorcRevamp.UI
 
             if (player.whoAmI == Main.myPlayer && !Main.gameMenu)
             {
-                int chargesFrameCount = 13;
+                // Adjusting chargesFrameCount to 24 to match the max stack
+                int chargesFrameCount = 24; // Changed from 13 to 25
                 int chargesCurrent = ceruleanPlayer.ceruleanChargesCurrent;
                 int chargesMax = ceruleanPlayer.ceruleanChargesMax;
                 float chargesPercentage = (float)chargesCurrent / chargesMax;
                 chargesPercentage = Utils.Clamp(chargesPercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
-
 
                 UsefulFunctions.EnsureLoaded(ref textureFull, "tsorcRevamp/UI/CeruleanFlask_full");
                 UsefulFunctions.EnsureLoaded(ref textureEmpty, "tsorcRevamp/UI/CeruleanFlask_empty");
                 UsefulFunctions.EnsureLoaded(ref textureCharges, "tsorcRevamp/UI/CeruleanFlask_charges");
 
                 int frameHeight = textureCharges.Height / chargesFrameCount;
-                int frame;
-                frame = ceruleanPlayer.ceruleanChargesCurrent;
+                int frame = ceruleanPlayer.ceruleanChargesCurrent;
 
                 int drawFrame = frameHeight * frame;
                 Rectangle sourceRectangle = new Rectangle(0, drawFrame, textureCharges.Width, frameHeight);
-                Color numbercolor;
-                if (ceruleanPlayer.ceruleanChargesCurrent == 0) { numbercolor = Color.LightPink; }
-                else { numbercolor = Color.White; }
-
+                Color numbercolor = Color.GhostWhite; // Changed color to blue
+                if (ceruleanPlayer.ceruleanChargesCurrent == 0)
+                {
+                    numbercolor = Color.LightPink;
+                }
 
                 int cropAmount = (int)(textureFull.Height * (1 - chargesPercentage));
                 Main.spriteBatch.Draw(textureEmpty, new Rectangle(Main.screenWidth - ConfigInstance.CeruleanFlaskPosX + 4, Main.screenHeight - ConfigInstance.CeruleanFlaskPosY, textureFull.Width, textureFull.Height), Color.White);
-                Main.spriteBatch.Draw(textureCharges, new Vector2(Main.screenWidth - ConfigInstance.CeruleanFlaskPosX + 4, Main.screenHeight - ConfigInstance.CeruleanFlaskPosY - 20), sourceRectangle, numbercolor, 0, new Vector2(0, 0), 1.3f, SpriteEffects.None, 1);
+               // Main.spriteBatch.Draw(textureCharges, new Vector2(Main.screenWidth - ConfigInstance.CeruleanFlaskPosX + 4, Main.screenHeight - ConfigInstance.CeruleanFlaskPosY - 40), sourceRectangle, numbercolor, 0, new Vector2(0, 0), 1.0f, SpriteEffects.None, 1);
+               // The line above displayed the previous number of charges
 
-                //the cropped texture is shorter, so its Y position needs to be offset by the height difference
+                // the cropped texture is shorter, so its Y position needs to be offset by the height difference
                 Rectangle overlaySourceRectangle = new Rectangle(0, cropAmount, textureFull.Width, textureFull.Height - cropAmount);
                 Main.spriteBatch.Draw(textureFull, new Vector2(Main.screenWidth - ConfigInstance.CeruleanFlaskPosX + 4, Main.screenHeight - ConfigInstance.CeruleanFlaskPosY + cropAmount), overlaySourceRectangle, numbercolor, 0, new Vector2(0, 0), 1f, SpriteEffects.None, 1);
 
+                // Draw the number next to the sprite (new)
+                Vector2 numberPosition = new Vector2(Main.screenWidth - ConfigInstance.CeruleanFlaskPosX + textureFull.Width + 8, Main.screenHeight - ConfigInstance.CeruleanFlaskPosY + (textureFull.Height / 2) - 10);
+                Utils.DrawBorderString(spriteBatch, ceruleanPlayer.ceruleanChargesCurrent.ToString(), numberPosition, numbercolor, 1f);
             }
             base.Draw(spriteBatch);
         }
@@ -98,3 +102,5 @@ namespace tsorcRevamp.UI
         }
     }
 }
+
+

@@ -59,7 +59,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
             else
             {
-                if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 6)
+                if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 12)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
                     chat.Add(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.HasShard"));
@@ -96,7 +96,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
             if (chatState == 0 || chatState == 1 || chatState == 2 || chatState == 3 || chatState == 4 || chatState == 5 || chatState == 6 || chatState == 7) { button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v1"); }
             if (chatState == 8 || chatState == 9) { button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v2"); }
-            if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 6) { button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v3"); }
+            if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 12) { button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v3"); }
 
         }
 
@@ -114,13 +114,13 @@ namespace tsorcRevamp.NPCs.Friendly
             }
             else
             {
-                if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 6)
+                if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 12)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item37); // Reforge/Anvil sound
                     Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.BringShards");
                     int ShardItemIndex = Main.LocalPlayer.FindItem(ModContent.ItemType<Items.EstusFlaskShard>());
 
-                    if (Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 6)
+                    if (Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 12)
                     {
                         Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax += 1;
                         Main.LocalPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax += 2;
