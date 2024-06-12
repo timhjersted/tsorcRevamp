@@ -54,7 +54,9 @@ namespace tsorcRevamp
 
             Terraria.On_Main.StartInvasion += BlockInvasions;
 
-            Terraria.On_Main.UpdateTime_StartNight += DisableEyeSpawn;
+            //Terraria.On_Main.UpdateTime_StartNight += DisableEyeSpawn;
+            
+            On_NPC.SpawnOnPlayer += DisableBossSpawn;
 
             Terraria.On_NPC.AI_037_Destroyer += DestroyerAIRevamp;
 
@@ -3318,13 +3320,22 @@ namespace tsorcRevamp
 
         internal static void DisableEyeSpawn(Terraria.On_Main.orig_UpdateTime_StartNight orig, ref bool stopEvents)
         {
+            orig(ref stopEvents);
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 WorldGen.spawnEye = false;
             }
+        }
+
+        internal static void DisableBossSpawn(Terraria.On_NPC.orig_SpawnOnPlayer orig, int plr, int Type)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Type == NPCID.EyeofCthulhu || Type == NPCID.Deerclops) 
+            {
+                return;
+            }
             else
             {
-                orig(ref stopEvents);
+                orig(plr, Type);
             }
         }
 
