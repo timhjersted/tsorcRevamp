@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 
             Item.UseSound = SoundID.Item25;
             Item.mana = 14;
-            Item.damage = 80;
+            Item.damage = 90;
             Item.useAnimation = Item.useTime = 15;
             Item.shoot = ModContent.ProjectileType<Projectiles.StarfallProjectile>();
             Item.autoReuse = true;

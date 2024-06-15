@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items
         {
             Player player = Main.LocalPlayer;
 
-            tooltips.Insert(4, new TooltipLine(Mod, "UsedCounter", Language.GetTextValue("Mods.tsorcRevamp.Items.StaminaVessel.UsedCounter") + (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax - 100) / 5));
+            tooltips.Insert(4, new TooltipLine(Mod, "UsedCounter", Language.GetTextValue("Mods.tsorcRevamp.Items.StaminaVessel.UsedCounter") + (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax - tsorcRevampStaminaPlayer.DefaultStaminaResourceMax) / 5));
 
         }
 

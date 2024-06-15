@@ -290,6 +290,7 @@ Mods: {
 			Souls: 黑暗之魂
 			StaminaUse: "耐力消耗: "
 			StaminaUseOnHitOnly: "命中时耐力消耗: "
+			Tired: 疲惫
 			14: "14"
 			StaminaRegenReduction:
 				'''
@@ -2296,7 +2297,7 @@ Mods: {
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@5}
 					{$CommonItemTooltip.LifeThreshold@3}龙鳞套装能力激活
 					触发双倍的该套装提供的魔力再生、星星斗篷效果
-					并获得{$CommonItemTooltip.PercentIncreasedMagicDamageCritChance@4}的效果
+					{$CommonItemTooltip.PercentIncreasedMagicDamageCritChance@4}
 					'''
 			}
 
@@ -4954,7 +4955,7 @@ Mods: {
 				Tooltip:
 					'''
 					永久增加 5 点耐力上限
-					消耗 10 次后耐力达到最大值
+					消耗 12 次后耐力达到最大值
 					'''
 				UsedCounter: "当前已使用次数: "
 			}
@@ -5468,7 +5469,7 @@ Mods: {
 				DisplayName: 群星坠落
 				Tooltip:
 					'''
-					召唤似雨般的归巢之星
+					召唤似雨般的归巢之星追踪你的敌人
 					“只属于你的流星雨”
 					'''
 			}
@@ -7621,6 +7622,7 @@ Mods: {
 					魔力消耗: {4}%
 					魔力回复: {5}/秒
 					魔力再生延迟加成: {6}%
+					耐力总量: {9}
 					耐力再生速率: {7}%
 					'''
 				Melee:

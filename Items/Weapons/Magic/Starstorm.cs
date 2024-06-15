@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 30;
             Item.useTime = 30;
-            Item.damage = 108;
+            Item.damage = 40;
             Item.knockBack = 6;
             Item.autoReuse = true;
             Item.alpha = 100;
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             float speedX = (Main.rand.Next(-20, 20)) / 10f;
             float speedY = 14.9f;
             int type = ModContent.ProjectileType<Projectiles.StarfallProjectile>();
-            int damage = Item.damage;
+            int damage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage);
             float knockback = 3.0f;
             int owner = player.whoAmI;
             y = player.position.Y - 800f;

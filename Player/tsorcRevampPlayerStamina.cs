@@ -22,7 +22,7 @@ namespace tsorcRevamp
         // Here we include a custom resource, similar to mana or health.
         // Creating some variables to define the current value of our Stamina resource as well as the current maximum value. We also include a temporary max value, as well as some variables to handle the natural regeneration of this resource.
         public float staminaResourceCurrent;
-        public const float DefaultStaminaResourceMax = 100;
+        public const float DefaultStaminaResourceMax = 125;
         public float staminaResourceMax;
         public float staminaResourceMax2;
         public float staminaResourceRegenRate;
@@ -157,7 +157,8 @@ namespace tsorcRevamp
                         || Main.projectile[p].type == ProjectileID.ChargedBlasterCannon || Main.projectile[p].type == ProjectileID.MedusaHead
                         || Main.projectile[p].type == ProjectileID.ChainKnife || Main.projectile[p].type == ProjectileID.LastPrism
                         || Main.projectile[p].type == ProjectileID.LaserMachinegun
-                        || Main.projectile[p].type == ProjectileID.DD2PhoenixBow || Main.projectile[p].type == ProjectileID.Phantasm))
+                        || Main.projectile[p].type == ProjectileID.DD2PhoenixBow || Main.projectile[p].type == ProjectileID.DD2PhoenixBowShot
+                        || Main.projectile[p].type == ProjectileID.Phantasm))
                     {
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= HeldProjectileDrainPerFrame;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
@@ -248,7 +249,11 @@ namespace tsorcRevamp
                     }
                 }
             }
-
+            if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
+            {
+                Rectangle PlayerRect = Utils.CenteredRectangle(Player.Center, Player.Size);
+                CombatText.NewText(Player.Hitbox, Color.White, LangUtils.GetTextValue("UI.Tired"));
+            }
 
             // Limit exampleResourceCurrent from going over the limit imposed by exampleResourceMax.
             staminaResourceCurrent = Utils.Clamp(staminaResourceCurrent, 0, staminaResourceMax2);

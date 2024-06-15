@@ -564,7 +564,8 @@ namespace tsorcRevamp.Projectiles
             {
                ModContent.ProjectileType<ElfinArrow>(), ModContent.ProjectileType<ToxicCatExplosion>(), ModContent.ProjectileType<VirulentCatExplosion>(), ModContent.ProjectileType<BiohazardExplosion>(),
                ModContent.ProjectileType<KrakenTsunamiShark>(), ProjectileID.CrystalShard, ModContent.ProjectileType<ShulletBellDark>(),  ModContent.ProjectileType<ShulletBellLight>(),
-                ProjectileID.ChlorophyteBullet, ProjectileID.ChlorophyteArrow, ProjectileID.HallowStar
+               ProjectileID.ChlorophyteBullet, ProjectileID.ChlorophyteArrow, ProjectileID.HallowStar,
+               ProjectileID.DD2PhoenixBow
             };
         }
 

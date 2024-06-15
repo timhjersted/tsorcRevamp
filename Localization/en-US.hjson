@@ -290,6 +290,7 @@ Mods: {
 			Souls: Souls
 			StaminaUse: "Stamina Use: "
 			StaminaUseOnHitOnly: "Stamina Use on-hit: "
+			Tired: Tired
 			14: "14"
 			StaminaRegenReduction:
 				'''
@@ -4962,7 +4963,7 @@ Mods: {
 				Tooltip:
 					'''
 					Permanently increases max stamina by 5
-					Stamina maxes out after consuming 10
+					Stamina maxes out after consuming 12
 					'''
 				UsedCounter: "Consumed so far: "
 			}
@@ -7630,6 +7631,7 @@ Mods: {
 					Mana Efficiency: {4}%
 					Mana Regen: {5} per second
 					Mana Regen Delay Bonus: {6}%
+					Max Stamina : {9}
 					Stamina Regen: {7}%
 					'''
 				Melee:
