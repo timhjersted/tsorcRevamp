@@ -12,11 +12,11 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Shields
 
     public class DragonCrestShield : ModItem
     {
-        public static float damageResistance = 85f;
+        public static float damageResistance = 90f;
         public static float damageResistance2 = 8f;
-        public static float damageResistance3 = 35f;
-        public static int staminaCost = 75;
-        public static float BadStaminaRegen = 15f;
+        public static float damageResistance3 = 45f;
+        public static int staminaCost = 50;
+        public static float BadStaminaRegen = 5f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(damageResistance, damageResistance2, damageResistance3, staminaCost, BadStaminaRegen);
         public static tsorcRevampStaminaPlayer ModPlayer(Player player)
         {
@@ -47,19 +47,19 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Shields
 
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult -= BadStaminaRegen / 100f;
 
-            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 75 && player.itemAnimation == 0)
+            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 50 && player.itemAnimation == 0)
             {
                 player.endurance += damageResistance / 100f;
                 player.buffImmune[BuffID.OnFire] = true;
             }
 
-            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 75 && player.itemAnimation > 1)
+            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 50 && player.itemAnimation > 1)
             {
                 player.endurance += damageResistance3 / 100f;
                 player.buffImmune[BuffID.OnFire] = true;
             }
 
-            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 75)
+            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 50)
             {
                 player.noKnockback = false;
                 player.endurance += damageResistance2 / 100f;
