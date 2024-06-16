@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
             Projectile.width = 5;
             Projectile.extraUpdates = 1;
             Projectile.timeLeft = 1200;
-            Projectile.light = 1f;
+            Projectile.light = 0.5f;
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
             Main.dust[dust].noGravity = true;
             Main.dust[dust].velocity *= 0.2f;
             Projectile.localAI[0] = 0;
-            Lighting.AddLight(Projectile.Center, 0f, 0f, 0.4f);
+            Lighting.AddLight(Projectile.Center, 0.9f, 0.5f, 0f);
         }
 
 		public override void OnKill(int timeLeft) 

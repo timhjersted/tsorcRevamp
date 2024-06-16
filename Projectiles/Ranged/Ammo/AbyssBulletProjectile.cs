@@ -29,5 +29,21 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
         {
             target.AddBuff(BuffID.Daybreak, 3 * 60);
         }
+
+		public override void AI()
+        {
+            Lighting.AddLight(Projectile.Center, 0.9f, 0.5f, 0f);
+        }
+
+		public override void OnKill(int timeLeft) 
+        {
+            Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.position);
+            for (int i = 0; i < 5; i++)
+			{
+				Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.SolarFlare, 1f);
+				dust.noGravity = true;
+            }
+        }
     }
 }
