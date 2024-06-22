@@ -348,7 +348,7 @@ namespace tsorcRevamp
             //This one works a little different from the others, because it's an event with two bosses that spawns them in an action instead of normally
             //As such, it doesn't "save". Instead, it simply has a custom condition that returns "false" if the boss has truly been beaten. Without this, it would save after just running once...
             List<int> SoggyandGaibonEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Bosses.Slogra>(), ModContent.NPCType<NPCs.Bosses.Gaibon>() };
-            List<Vector2> SoggyandGaibonLocations = new List<Vector2>() { new Vector2(6192, 1297), new Vector2(6192, 1167) };
+            List<Vector2> SoggyandGaibonLocations = new List<Vector2>() { new Vector2(6192, 1267), new Vector2(6192, 1267) };
             ScriptedEvent SlograAndGaibonEvent = new ScriptedEvent(new Vector2(6192, 1267), 30, SoggyandGaibonEnemyTypeList, SoggyandGaibonLocations, DustID.Shadowflame, false, true, true, LangUtils.GetTextValue("Events.SlograAndGaibon"), Color.Purple, false, SlograGaibonCondition);
             //SERRIS
             //Like Slogra and Gaibon, this one works a little different due to spawning two bosses.
@@ -408,7 +408,7 @@ namespace tsorcRevamp
             ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, true, true, LangUtils.GetTextValue("Events.SorrowAttraidies"), Color.OrangeRed, false, AttraidiesTheSorrowCondition);
 
             //TWIN EATER OF WORLDS FIGHT
-            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1215), 20, default, DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.TwinEaters"), Color.Purple, false, TwinEoWCustomCondition, TwinEoWAction);
+            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1215), 15, default, DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.TwinEaters"), Color.Purple, false, TwinEoWCustomCondition, TwinEoWAction);
 
             //DUNLENDING AMBUSH
             List<int> DunledingAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>() };

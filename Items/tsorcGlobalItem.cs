@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -14,6 +15,7 @@ using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Debug;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.UI;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items
 {
@@ -91,15 +93,27 @@ namespace tsorcRevamp.Items
                 }
                 else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * .8f && !item.CountsAsClass(DamageClass.Melee) && !(item.type == ModContent.ItemType<Weapons.Ranged.Bows.SagittariusBow>() || item.type == ModContent.ItemType<Weapons.Ranged.Bows.ArtemisBow>() || item.type == ModContent.ItemType<Weapons.Ranged.Bows.CernosPrime>()))
                 {
+                    if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
+                    {
+                        CombatText.NewText(player.Hitbox, Color.White, LangUtils.GetTextValue("UI.Tired"));
+                    }
                     return false;
                 }
                 else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * player.GetAttackSpeed(DamageClass.Melee) * .8f && item.CountsAsClass(DamageClass.Melee))
                 {
+                    if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
+                    {
+                        CombatText.NewText(player.Hitbox, Color.White, LangUtils.GetTextValue("UI.Tired"));
+                    }
                     return false;
                 }
 
                 if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 50 && (item.type == ModContent.ItemType<Weapons.Magic.DivineSpark>() || (item.type == ModContent.ItemType<Weapons.Magic.DivineBoomCannon>())))
                 {
+                    if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
+                    {
+                        CombatText.NewText(player.Hitbox, Color.White, LangUtils.GetTextValue("UI.Tired"));
+                    }
                     return false;
                 }
 
@@ -110,7 +124,6 @@ namespace tsorcRevamp.Items
             }
 
             return true;
-
         }
 
 
@@ -126,11 +139,17 @@ namespace tsorcRevamp.Items
             return base.CanEquipAccessory(item, player, slot, modded);
         }
 
+        public static int[] badPrefixes = { 7, 8, 9, 10, 11, 13, 14, 22, 23, 24, 29, 30, 31, 39, 40, 41, 47, 48, 49, 50, 56 };
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
             if (hasSoulRecipe.Contains(item.type))
             {
                 tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "RecipeTooltip", $"[i:{ModContent.ItemType<DarkSoul>()}]" + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.RecipeTooltip")));
+            }
+
+            if (badPrefixes.Contains<int>(item.prefix) && !NPC.AnyNPCs(NPCID.GoblinTinkerer))
+            {
+                tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "ReforgeTooltip", $"[i:{ItemID.LivingFireBlock}]" + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ReforgeTooltip")));
             }
 
             if (item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0)

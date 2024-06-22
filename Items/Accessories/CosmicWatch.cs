@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -39,20 +40,20 @@ namespace tsorcRevamp.Items.Accessories
             if (Main.netMode == NetmodeID.SinglePlayer)
             {
                 Main.dayTime = !Main.dayTime;
-                Main.time = 0;
+                Main.time = 1;
                 if (Main.dayTime)
                 {
-                    Main.NewText(LangUtils.GetTextValue("Items.CosmicWatch.Day"), 175, 75, 255);
+                    Main.NewText(LangUtils.GetTextValue("Items.CosmicWatch.Day"), Color.Orange);
                 }
                 else Main.NewText(LangUtils.GetTextValue("Items.CosmicWatch.Night"), 175, 75, 255);
             }
 
-            if (Main.netMode != NetmodeID.SinglePlayer && (player.whoAmI == Main.LocalPlayer.whoAmI))
+            if (Main.netMode == NetmodeID.MultiplayerClient && (player.whoAmI == Main.LocalPlayer.whoAmI))
             {
                 ModPacket timePacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
                 timePacket.Write(tsorcPacketID.SyncTimeChange);
                 timePacket.Write(!Main.dayTime);
-                timePacket.Write(0);
+                timePacket.Write(1);
                 timePacket.Send();
             }
             return true;

@@ -2599,6 +2599,11 @@ namespace tsorcRevamp.NPCs
         //This method lets us scale the stats of NPC's in expert mode.
         public override void ApplyDifficultyAndPlayerScaling(NPC npc, int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */
         {
+            if (Main.player[1] != null && Main.player[1].active && Main.player[1].name == "MPTestDummy")
+            {
+                numPlayers -= 1;
+            }
+
             if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp") && npc.boss)
             {
                 //Counter expert mode automatic scaling
@@ -3235,7 +3240,7 @@ namespace tsorcRevamp.NPCs
                     foreach (Player player in Main.player)
                     {
                         //For some reason, Main.player always has 255 entries. This ensures we're only pulling real players from it.
-                        if (player.active)
+                        if (player.active && player.name != "MPTestDummy")
                         {
                             targetIDs[targetCount] = player.whoAmI;
                             targetAlive[targetCount] = true;

@@ -150,37 +150,37 @@ namespace tsorcRevamp
         public static readonly int White_0 = Item.buyPrice(platinum: 0, gold: 0, silver: 40, copper: 0);
 
         //underground chest loots (shoe spikes, CiaB, etc), shadow orb items, floating island
-        public static readonly int Blue_1 = Item.buyPrice(platinum: 0, gold: 2, silver: 25, copper: 0);
+        public static readonly int Blue_1 = Item.buyPrice(platinum: 0, gold: 1, silver: 25, copper: 0);
 
         //gold dungeon chest (handgun, cobalt shield, etc), goblin invasion
-        public static readonly int Green_2 = Item.buyPrice(platinum: 0, gold: 4, silver: 50, copper: 0);
+        public static readonly int Green_2 = Item.buyPrice(platinum: 0, gold: 2, silver: 50, copper: 0);
 
         //hell, underground jungle
-        public static readonly int Orange_3 = Item.buyPrice(platinum: 0, gold: 7, silver: 50, copper: 0);
+        public static readonly int Orange_3 = Item.buyPrice(platinum: 0, gold: 3, silver: 50, copper: 0);
 
         //early hardmode (hm ores), mimics
         public static readonly int LightRed_4 = Item.buyPrice(platinum: 0, gold: 12, silver: 50, copper: 0);
 
         //hallowed tier. post mech, pre plantera. pirates.
-        public static readonly int Pink_5 = Item.buyPrice(platinum: 0, gold: 25, silver: 50, copper: 0);
+        public static readonly int Pink_5 = Item.buyPrice(platinum: 0, gold: 18, silver: 50, copper: 0);
 
         //some biome mimic gear, high level tinkerer combinations (ankh charm, mechanical glove). seldom used in vanilla
-        public static readonly int LightPurple_6 = Item.buyPrice(platinum: 0, gold: 37, silver: 50, copper: 0);
+        public static readonly int LightPurple_6 = Item.buyPrice(platinum: 0, gold: 24, silver: 50, copper: 0);
 
         //plantera, golem, chlorophyte
-        public static readonly int Lime_7 = Item.buyPrice(platinum: 0, gold: 47, silver: 50, copper: 0);
+        public static readonly int Lime_7 = Item.buyPrice(platinum: 0, gold: 30, silver: 50, copper: 0);
 
         //post-plantera dungeon, martian madness, pumpkin/frost moon
-        public static readonly int Yellow_8 = Item.buyPrice(platinum: 0, gold: 55, silver: 0, copper: 0);
+        public static readonly int Yellow_8 = Item.buyPrice(platinum: 0, gold: 36, silver: 0, copper: 0);
 
         //lunar fragments, dev armor. seldom used in vanilla
-        public static readonly int Cyan_9 = Item.buyPrice(platinum: 0, gold: 67, silver: 50, copper: 0);
+        public static readonly int Cyan_9 = Item.buyPrice(platinum: 0, gold: 42, silver: 50, copper: 0);
 
         //luminite, lunar fragment gear, moon lord drops
-        public static readonly int Red_10 = Item.buyPrice(platinum: 0, gold: 80, silver: 0, copper: 0);
+        public static readonly int Red_10 = Item.buyPrice(platinum: 0, gold: 48, silver: 0, copper: 0);
 
         //no vanilla items have purple rarity base. only cyan and red with modifiers can be purple. im guessing on the price.
-        public static readonly int Purple_11 = Item.buyPrice(platinum: 1, gold: 20, silver: 0, copper: 0);
+        public static readonly int Purple_11 = Item.buyPrice(platinum: 0, gold: 54, silver: 0, copper: 0);
 
         public static int fromItem(Item item)
         {

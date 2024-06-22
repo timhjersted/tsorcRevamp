@@ -12,6 +12,7 @@ Mods: {
 			UnusableDuringBoss: 有Boss存活时不能使用！
 			MeleeWhipAutoswing: 激活近战武器自动挥舞
 			RecipeTooltip: "[c/66fc03:黑暗之魂合成材料]"
+			// ReforgeTooltip: The [c/206100:Emerald Herald] can [c/d1a21f:Bless] this to remove its negative prefix
 			WingsDisabled:
 				'''
 				这些翅膀已被凶残的[c/009400:茂林飞鸟-猎手][c/383838:诅咒]
@@ -185,6 +186,7 @@ Mods: {
 			07: 死亡时失去灵魂可以在模组配置中禁用，试试吧就像塞尔达传说那样
 			08: 某些黑暗区域的敌人掉落人性，可以刷新诅咒的效果
 			09: 物品提示通常包含对你的生存至关重要的信息...
+			// PermaPot: Permanent potions need special crystals, but normal shards can be refined into them
 			10: 留意你物品的描述，看看是否有能用黑暗之魂升级的物品
 			11: 可以在Boss掉落的独特物品上找到进展线索
 			12: 如果你感到迷茫，就探索在地图上未显示出来的地方，几乎每个方向都有秘密和路径
@@ -192,6 +194,7 @@ Mods: {
 			14: 如果你的暴击几率超过100%，你就有机会造成多重暴击，从而造成4倍或更多的伤害
 			15: 用鞭子尖端攻击敌人必定造成暴击
 			16: 青色压力板只能用小型实体射弹激活
+			// PermaPot2: Some perma potions can be strengthened, and eventually surpass their normal variants.
 			17: 一些原版物品的合成配方已被禁用，你必须通过在世界上探索以找到这些物品
 			18: 在武器上有一个负面的修饰词缀？与绿宝石传令官Jade交谈，她可以用祝福来移除它
 			19: 你可能会在有能力打败Boss之前就提前遭遇他们，如果陷入困境，等你变强了再回来
@@ -203,6 +206,7 @@ Mods: {
 			25: 不要忘记翻滚啊！
 			26: 我真是**的疯了
 			27: 石头构成的门不能被稿子挖开，必须用拉杆或开关打开
+			// GoodLuck: You've now seen almost every death tip, but your journey is nowhere near over. Good luck, we hope you enjoy it!
 			Poem:
 				'''
 				键盘敲击声声急，

@@ -259,7 +259,10 @@ namespace tsorcRevamp.Projectiles
             Projectile.DamageType = DamageClass.Magic;
             Projectile.damage = 25;
 
-            LaserOrigin = ProjectileSource ? Main.projectile[UsefulFunctions.DecodeID(HostIdentifier)].position : Main.npc[HostIdentifier].position;
+            if (HostIdentifier != -1)
+            {
+                LaserOrigin = ProjectileSource ? Main.projectile[UsefulFunctions.DecodeID(HostIdentifier)].position : Main.npc[HostIdentifier].position;
+            }
         }
 
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
@@ -589,7 +592,7 @@ namespace tsorcRevamp.Projectiles
 
             if (!ProjectileSource)
             {
-                if (!Main.npc[HostIdentifier].active)
+                if (HostIdentifier != -1 && !Main.npc[HostIdentifier].active)
                 {
                     Projectile.active = false;
                 }

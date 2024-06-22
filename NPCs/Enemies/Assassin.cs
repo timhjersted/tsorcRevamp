@@ -62,7 +62,11 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
 
-
+        //Never despawn except by timing out
+        public override bool CheckActive()
+        {
+            return false;
+        }
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

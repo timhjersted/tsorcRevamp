@@ -1864,18 +1864,39 @@ namespace tsorcRevamp
             return orig(self);
         }
 
+        static int deathTextTimer = 0;
+        static bool needPickDeathText = false;
         private static void Main_DrawInterface_35_YouDied(Terraria.On_Main.orig_DrawInterface_35_YouDied orig)
         {
             orig();
+            tsorcRevampPlayer modPlayer = Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>();
+
             if (Main.player[Main.myPlayer].dead)
             {
-                string textValue2 = Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().DeathText;
+                deathTextTimer = 450;
+            }
+            else
+            {
+                if(deathTextTimer > 0)
+                {
+                    deathTextTimer--;
+                }
+            }
+
+            if (Main.player[Main.myPlayer].dead || deathTextTimer > 0)
+            {
+                string textValue2 = modPlayer.DeathText;
                 if (textValue2 == null)
                 {
                     textValue2 = "";
                 }
                 float scale = 0.5f;
-                Main.spriteBatch.DrawString(FontAssets.DeathText.Value, textValue2, new Vector2((float)(Main.screenWidth / 2) - 40 - FontAssets.MouseText.Value.MeasureString(textValue2).X / 2f, (float)(Main.screenHeight / 2) + 220), Main.player[Main.myPlayer].GetDeathAlpha(Microsoft.Xna.Framework.Color.Transparent), 0f, default(Vector2), scale, SpriteEffects.None, 0f);
+                Color textColor = new Color(180, 100, 100, 80);
+                if(deathTextTimer < 60)
+                {
+                    textColor *= ((float)deathTextTimer) / 60f;
+                }
+                Main.spriteBatch.DrawString(FontAssets.DeathText.Value, textValue2, new Vector2((float)(Main.screenWidth / 2) - 40 - FontAssets.MouseText.Value.MeasureString(textValue2).X / 2f, (float)(Main.screenHeight / 2) + 220), textColor, 0f, default(Vector2), scale, SpriteEffects.None, 0f);
             }
         }
 
@@ -2474,6 +2495,12 @@ namespace tsorcRevamp
             //Then repeat for the potion bag
             for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
             {
+                //Do not autouse favorited food items!
+                if (PotionBagItems[i].favorited)
+                {
+                    continue;
+                }
+
                 //If the player can't use the item (for whatever reason) skip it
                 if (!ItemLoader.CanUseItem(PotionBagItems[i], player))
                 {

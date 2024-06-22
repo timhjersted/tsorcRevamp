@@ -343,6 +343,8 @@ namespace tsorcRevamp
         public static Vector2 RealMouseWorld;
 
         public string DeathText;
+        public string DeathTextOverride = "";
+        public int currentDeathTextIndex;
         bool setDeathText = false;
         public static List<string> DeathTextList;
 
@@ -1769,7 +1771,7 @@ namespace tsorcRevamp
         }
 
 
-        public string PickDeathText(Projectile projectile = null)
+        public string PickDeathText()
         {
             string text;
             DeathTextList = new List<string>() {
@@ -1782,6 +1784,7 @@ namespace tsorcRevamp
              LangUtils.GetTextValue("DeathText.07"),
              LangUtils.GetTextValue("DeathText.08"),
              LangUtils.GetTextValue("DeathText.09"),
+             LangUtils.GetTextValue("DeathText.PermaPot"),
              LangUtils.GetTextValue("DeathText.10"),
              LangUtils.GetTextValue("DeathText.11"),
              LangUtils.GetTextValue("DeathText.12"),
@@ -1789,6 +1792,7 @@ namespace tsorcRevamp
              LangUtils.GetTextValue("DeathText.14"),
              LangUtils.GetTextValue("DeathText.15"),
              LangUtils.GetTextValue("DeathText.16"),
+             LangUtils.GetTextValue("DeathText.PermaPot2"),
              LangUtils.GetTextValue("DeathText.17"),
              LangUtils.GetTextValue("DeathText.18"),
              LangUtils.GetTextValue("DeathText.19"),
@@ -1799,24 +1803,50 @@ namespace tsorcRevamp
              LangUtils.GetTextValue("DeathText.24"),
              LangUtils.GetTextValue("DeathText.25"),
              LangUtils.GetTextValue("DeathText.26"),
-             LangUtils.GetTextValue("DeathText.27")
+             LangUtils.GetTextValue("DeathText.27"),
             };
 
-            int option = Main.rand.Next(DeathTextList.Count);
-            text = DeathTextList[option];
+            //Allow outside sources to override the text
+            if(DeathTextOverride != "")
+            {
+                text = DeathTextOverride;
+                DeathTextOverride = "";
+                return LangUtils.GetTextValue("DeathText.Tip") + text;
+            }
+
+            //The final one, only ever displays once
+            if(currentDeathTextIndex == DeathTextList.Count)
+            {
+                currentDeathTextIndex++;
+                return LangUtils.GetTextValue("DeathText.Tip") + LangUtils.GetTextValue("DeathText.GoodLuck");
+            }
+
+            if(currentDeathTextIndex < DeathTextList.Count)
+            {
+                text = DeathTextList[currentDeathTextIndex];
+            }
+            else
+            {
+                text = DeathTextList[Main.rand.Next(DeathTextList.Count)];
+            }
+            bool deathTextOverridden = false;
+
             if (BearerOfTheCurse && Main.rand.NextBool(10))
             {
                 if (Main.rand.NextBool(3))
                 {
                     text = LangUtils.GetTextValue("DeathText.BotC1");
+                    deathTextOverridden = true;
                 }
                 else if(Main.rand.NextBool(3))
                 {
                     text = LangUtils.GetTextValue("DeathText.BotC2");
+                    deathTextOverridden = true;
                 }
                 else
                 {
                     text = LangUtils.GetTextValue("DeathText.BotC3");
+                    deathTextOverridden = true;
                 }
             }
 
@@ -1825,6 +1855,7 @@ namespace tsorcRevamp
                 if (Main.rand.NextBool(10))
                 {
                     text = LangUtils.GetTextValue("DeathText.HeavyRoll");
+                    deathTextOverridden = true;
                 }
             }
 
@@ -1833,14 +1864,12 @@ namespace tsorcRevamp
                 if (Main.rand.NextBool(20))
                 {
                     text = LangUtils.GetTextValue("DeathText.IWantToRemoveThisCaptainObviousShit");
+                    deathTextOverridden = true;
                 }
                 if (Main.rand.NextBool(100))
                 {
                     text = LangUtils.GetTextValue("DeathText.TotallyNotMeantToBeToxic");
-                }
-                if (Main.rand.NextBool(200))
-                {
-                    text = LangUtils.GetTextValue("DeathText.Poem");
+                    deathTextOverridden = true;
                 }
             }
 
@@ -1860,6 +1889,7 @@ namespace tsorcRevamp
                 if (Main.rand.NextBool())
                 {
                     text = LangUtils.GetTextValue("DeathText.BossDeath1");
+                    deathTextOverridden = true;
                 }
                 else if (Main.rand.NextBool() && (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>() ||
                     Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.SpazmatismV2>() || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Cataluminance>()
@@ -1868,28 +1898,27 @@ namespace tsorcRevamp
                     || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>()))
                 {
                     text = LangUtils.GetTextValue("DeathText.BossDeath2");
+                    deathTextOverridden = true;
                 }
 
                 if (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>())
                 {
                     text = LangUtils.GetTextValue("DeathText.DarkCloud");
+                    deathTextOverridden = true;
                 }
 
                 //If you want to add custom text for other bosses, stick it here using the line above as a template
             }
 
-            if (projectile != null && projectile.type == ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>() && projectile.damage > 999)
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>()) || NPC.AnyNPCs(NPCID.TheDestroyer))
             {
-                text = LangUtils.GetTextValue("DeathText.Tonberry");
-            }
-
-            if (projectile != null && projectile.type == ModContent.ProjectileType<Projectiles.Enemy.Marilith.CataclysmicFirestorm>())
-            {
-                if (Main.rand.NextBool())
+                //Don't tell them rolling is mandatory if they died trying (and failing) to roll out of the way lol
+                if (Main.rand.NextBool() && !wasJustRolling && !tsorcRevamp.DodgerollKey.Current)
                 {
                     text = LangUtils.GetTextValue("DeathText.Marilith");
+                    deathTextOverridden = true;
                 }
-                else
+                else if(Main.rand.NextBool())
                 {
                     bool hasRing = false;
                     for (int j = 3; j < 8 + Player.GetAmountOfExtraAccessorySlotsToShow(); j++)
@@ -1903,8 +1932,14 @@ namespace tsorcRevamp
                     if (!hasRing)
                     {
                         text = LangUtils.GetTextValue("DeathText.ChloranthyRingTip");
+                        deathTextOverridden = true;
                     }
                 }
+            }
+
+            if (!deathTextOverridden)
+            {
+                currentDeathTextIndex++;
             }
 
             return LangUtils.GetTextValue("DeathText.Tip") + text;
@@ -1940,11 +1975,6 @@ namespace tsorcRevamp
         {
             if (Player.whoAmI == Main.myPlayer)
             {
-                if (DeathText == null)
-                {
-                    DeathText = PickDeathText();
-
-                }
                 if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath)
                 {
                     if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>() && Main.mouseItem.stack > 0)

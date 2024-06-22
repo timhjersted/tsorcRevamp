@@ -19,10 +19,13 @@ namespace tsorcRevamp.Projectiles
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(Terraria.ID.BuffID.Slow, 240);
-            if (Main.rand.NextBool(30))
+            if (!target.boss)
             {
-                target.AddBuff(Terraria.ID.BuffID.Frozen, 120);
+                target.AddBuff(Terraria.ID.BuffID.Slow, 240);
+                if (Main.rand.NextBool(30))
+                {
+                    target.AddBuff(Terraria.ID.BuffID.Frozen, 120);
+                }
             }
         }
         public override void AI()

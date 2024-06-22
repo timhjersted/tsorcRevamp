@@ -388,7 +388,8 @@ namespace tsorcRevamp
                 TileID.Stalactite, TileID.ExposedGems, TileID.SmallPiles, TileID.LargePiles, TileID.LargePiles2, TileID.PlantDetritus, TileID.OasisPlants, TileID.Larva, TileID.PlanteraBulb, TileID.AntlionLarva, //all ambient objects (background breakables), QB Larva, Plantera Bulb
                 TileID.Campfire, TileID.HangingLanterns, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle)
                 TileID.Sundial, TileID.Moondial, //Sundial, Moondial
-                TileID.LivingFire, TileID.LivingCursedFire, TileID.LivingDemonFire, TileID.LivingFrostFire, TileID.LivingIchor
+                TileID.LivingFire, TileID.LivingCursedFire, TileID.LivingDemonFire, TileID.LivingFrostFire, TileID.LivingIchor,
+                TileID.CopperCoinPile, TileID.SilverCoinPile, TileID.GoldCoinPile, TileID.PlatinumCoinPile
             };
             #endregion
             //--------
@@ -1604,7 +1605,7 @@ namespace tsorcRevamp
                         }
 
                         //Sync it to clients
-                        NetMessage.SendData(MessageID.WorldData);
+                        NetMessage.SendData(MessageID.SetTime);
 
                         break;
                     }

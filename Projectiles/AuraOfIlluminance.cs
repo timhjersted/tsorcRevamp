@@ -95,22 +95,23 @@ namespace tsorcRevamp.Projectiles
                 if (Projectile.owner == Main.myPlayer)
                 {
                     Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), averageCenter, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 10, 0, Main.myPlayer, 0);
+                }
 
-
-                    for (int i = 0; i < Main.maxNPCs; i++)
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC thisNPC = Main.npc[i];
+                    if (thisNPC.active && !thisNPC.friendly && thisNPC.Distance(averageCenter) < 1000 && thisNPC.damage > 0 && !thisNPC.dontTakeDamage)
                     {
-                        NPC thisNPC = Main.npc[i];
-                        if (thisNPC.active && !thisNPC.friendly && thisNPC.Distance(averageCenter) < 1000 && thisNPC.damage > 0 && !thisNPC.dontTakeDamage)
+                        float damage = 1 - (thisNPC.Distance(averageCenter) / 1000f);
+                        damage *= damage;
+                        if (damage > 0)
                         {
-                            float damage = 1 - (thisNPC.Distance(averageCenter) / 1000f);
-                            damage *= damage;
-                            if (damage > 0)
+                            NPC.HitInfo info = new NPC().CalculateHitInfo((int)(damage * 2000), 0);
+                            Main.npc[i].StrikeNPC(info);
+
+                            if (Main.netMode != NetmodeID.SinglePlayer)
                             {
-                                if (Main.netMode == NetmodeID.MultiplayerClient)
-                                {
-                                    NetMessage.SendData(MessageID.DamageNPC, number: i, number2: (int)(damage * 2000));
-                                }
-                                //Main.npc[i].StrikeNPC((int)(damage * 2000), 0, 0);
+                                NetMessage.SendStrikeNPC(Main.npc[i], info);
                             }
                         }
                     }

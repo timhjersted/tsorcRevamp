@@ -477,20 +477,20 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
+        int moveIndex = 0;
         void ChangeMove()
         {
             NPC.knockBackResist = 0.9f;
             Timer = 0;
-            List<Action> possibleMoves = MoveList;
-
-            if (CurrentMove != null && CurrentMove != Charge)
+            moveIndex++;
+            if(moveIndex >= MoveList.Count)
             {
-                possibleMoves.Remove(CurrentMove);
+                moveIndex = 0;
             }
 
-            CurrentMove = possibleMoves[Main.rand.Next(0, possibleMoves.Count)];
+            CurrentMove = MoveList[moveIndex];
 
-            if (slograDead && Main.rand.NextBool())
+            if (slograDead)
             {
                 //possibleMoves.Remove(Scatter);
                 CurrentMove = Charge;

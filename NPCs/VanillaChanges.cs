@@ -1352,22 +1352,10 @@ namespace tsorcRevamp.NPCs
                         break;
                     }
 
-                case int mushroombeetle when (
-                mushroombeetle == NPCID.AnomuraFungus ||
-                mushroombeetle == NPCID.MushiLadybug
-                ):
-                    {
-                        npc.lifeMax = 1000;
-                        npc.defense = 50;
-                        npc.damage = 100;
-                        npc.value = 1820;
-                        break;
-                    }
-
                 case (NPCID.GiantFungiBulb):
                     {
                         npc.defense = 80;
-                        npc.lifeMax = 1500;
+                        npc.lifeMax = 500;
                         npc.damage = 50;
                         npc.value = 2370;
                         break;
@@ -2092,7 +2080,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Destroyer.DespawnHandler"), Color.Orange, DustID.Torch);
 
-                        npc.lifeMax = 100000;
+                        npc.lifeMax = 90000;
                         npc.value = 203430;
                         npc.scale = 1.25f;
                         npc.damage = Main.expertMode ? 40 /* x4 in expert */: 60; //legacy: 200, vanilla: 70

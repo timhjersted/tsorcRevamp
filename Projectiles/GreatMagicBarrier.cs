@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Accessories;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -24,10 +25,11 @@ namespace tsorcRevamp.Projectiles
         }
         public override void AI()
         {
-
+            Projectile.timeLeft++;
             var player = Main.player[Projectile.owner];
 
-            if (player.dead)
+            //Destroy the projectile if the conditions for it to exist are no longer met
+            if (player.dead || !player.HasBuff<Buffs.GreatMagicBarrier>())
             {
                 Projectile.Kill();
                 return;
@@ -42,8 +44,7 @@ namespace tsorcRevamp.Projectiles
 
             Player projOwner = Main.player[Projectile.owner];
             projOwner.heldProj = Projectile.whoAmI; //this makes it appear in front of the player
-            Projectile.velocity.X = player.velocity.X;
-            Projectile.velocity.Y = player.velocity.Y;
+            Projectile.Center = projOwner.Center;
         }
         public override bool? CanDamage()
         {

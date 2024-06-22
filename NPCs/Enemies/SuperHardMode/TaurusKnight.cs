@@ -50,6 +50,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int chargeDamage = 0;
         bool chargeDamageFlag = false;
 
+        //Never despawn except by timing out
+        public override bool CheckActive()
+        {
+            return false;
+        }
+
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {

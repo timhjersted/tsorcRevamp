@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -33,6 +34,11 @@ namespace tsorcRevamp.Projectiles
             Main.dust[thisDust].noGravity = true;
 
             Projectile.rotation += 0.3f;
+            int? closestNPC = UsefulFunctions.GetClosestEnemyNPC(Projectile.Center);
+            if (closestNPC.HasValue)
+            {
+                UsefulFunctions.SmoothHoming(Projectile, Main.npc[closestNPC.Value].Center, 0.3f, 15f, Main.npc[closestNPC.Value].velocity, false);
+            }
         }
         public override void OnKill(int timeLeft)
         {
@@ -50,6 +56,8 @@ namespace tsorcRevamp.Projectiles
 
             if (Main.myPlayer == Projectile.owner)
             {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 150, 20);
+
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<Explosion>(), Projectile.damage, 8f, Projectile.owner);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<Explosion>(), Projectile.damage, 8f, Projectile.owner);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -2), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<Explosion>(), Projectile.damage, 8f, Projectile.owner);

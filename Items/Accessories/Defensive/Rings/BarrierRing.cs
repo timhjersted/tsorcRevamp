@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System.Threading;
+using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -39,7 +40,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
         public override void UpdateEquip(Player player)
         {
             player.GetModPlayer<tsorcRevampPlayer>().BarrierRing = true;
-            if (!player.HasBuff(ModContent.BuffType<BarrierCooldown>()) && player.whoAmI == Main.myPlayer)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Barrier>()] == 0 && player.whoAmI == Main.myPlayer)
             {
                 Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.Barrier>(), 0, 0f, player.whoAmI);
                 Lighting.AddLight(player.Center, .450f, .450f, .600f);

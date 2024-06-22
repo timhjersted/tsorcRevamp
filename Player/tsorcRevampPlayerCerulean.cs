@@ -19,8 +19,8 @@ namespace tsorcRevamp
         }
         public const float ManaRegenPotRestorationTimerBonus = 20f;
 
-        public int ceruleanChargesCurrent = 6; //Current amount of charges left
-        public const int DefaultCeruleanChargesMax = 6; //How many charges the player starts with
+        public int ceruleanChargesCurrent = 999; //Current amount of charges left
+        public const int DefaultCeruleanChargesMax = 999; //How many charges the player starts with
         public int ceruleanChargesMax; //The max amount of charges the player has
         public const int DefaultCeruleanManaGain = 120; //How much 1 charge heals to begin with
         public int ceruleanManaGain; //The amount of mana restored per charge
@@ -43,15 +43,15 @@ namespace tsorcRevamp
 
         public override void SaveData(TagCompound tag) //Save current amount of charges and restore amount
         {
-            tag.Add("ceruleanChargesMax", ceruleanChargesMax);
-            tag.Add("ceruleanChargesCurrent", ceruleanChargesCurrent);
+            //tag.Add("ceruleanChargesMax", ceruleanChargesMax);
+            //tag.Add("ceruleanChargesCurrent", ceruleanChargesCurrent);
             tag.Add("ceruleanManaGain", ceruleanManaGain);
         }
 
         public override void LoadData(TagCompound tag) //Load saved data
         {
-            ceruleanChargesMax = tag.GetInt("ceruleanChargesMax");
-            ceruleanChargesCurrent = tag.GetInt("ceruleanChargesCurrent");
+            //ceruleanChargesMax = tag.GetInt("ceruleanChargesMax");
+            //ceruleanChargesCurrent = tag.GetInt("ceruleanChargesCurrent");
             ceruleanManaGain = tag.GetInt("ceruleanManaGain");
         }
 
@@ -130,7 +130,6 @@ namespace tsorcRevamp
             }
 
             //Slow player for whole duration of action
-            Player.velocity.X *= 0.9f;
             Player.eocHit = 0;
 
             if (ceruleanDrinkTimer >= ceruleanDrinkTimerMax) //Once finished drinking:
@@ -159,7 +158,7 @@ namespace tsorcRevamp
                 }
 
                 isDrinking = false; //No longer drinking
-                ceruleanChargesCurrent--; //Remove a charge
+                //ceruleanChargesCurrent--; //Remove a charge
                 ceruleanDrinkTimer = 0; //Set the timer back to 0
                 Player.ManaEffect((int)((ceruleanManaGain + ceruleanManaGainMaxManaBonus) * ceruleanManaGainManaRegenBonus * ceruleanRestorationTimerBonus)); //Show blue restoration text equal to mana gain
                 isCeruleanRestoring = true; //Commence restoration process

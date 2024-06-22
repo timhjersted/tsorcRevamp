@@ -52,6 +52,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             earthTridentDamage = (int)(earthTridentDamage * tsorcRevampWorld.SHMScale);
         }
 
+        //Never despawn except by timing out
+        public override bool CheckActive()
+        {
+            return false;
+        }
+
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {

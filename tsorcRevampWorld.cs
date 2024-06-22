@@ -1571,7 +1571,7 @@ namespace tsorcRevamp
             { ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>(), new Vector2(1098, 962) },
             { ModContent.NPCType<NPCs.Bosses.Death>(), new Vector2(1076, 545) },
             { ModContent.NPCType<NPCs.Bosses.TheHunter>(), new Vector2(295, 1515) },
-            { NPCID.TheDestroyer, new Vector2(2109, 857) },
+            { NPCID.TheDestroyer, new Vector2(2109, 856) },
             { ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>(), new Vector2(5066, 1056) },
             { ModContent.NPCType<NPCs.Bosses.Cataluminance>(), new Vector2(2884, 240) },
             { NPCID.Plantera, new Vector2(5828, 1746) },

@@ -18,7 +18,7 @@ namespace tsorcRevamp.Buffs
         {
             player.statDefense += Defense;
             Lighting.AddLight(player.Center, .7f, .7f, .45f);
-            if (Main.myPlayer == player.whoAmI)
+            if (Main.myPlayer == player.whoAmI && player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.GreatMagicBarrier>()] == 0)
             {
                 Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.GreatMagicBarrier>(), 0, 0f, player.whoAmI);
             }

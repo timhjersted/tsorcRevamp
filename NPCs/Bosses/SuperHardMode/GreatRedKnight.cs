@@ -151,6 +151,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
         #endregion
+        
+        //Never despawn except by timing out
+        public override bool CheckActive()
+        {
+            return false;
+        }
 
         public override void AI()
         {

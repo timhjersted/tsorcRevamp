@@ -12,6 +12,7 @@ Mods: {
 			UnusableDuringBoss: Can not be used while a boss is alive!
 			MeleeWhipAutoswing: Enables auto swing for melee weapons
 			RecipeTooltip: "[c/66fc03:Dark Soul recipe material]"
+			ReforgeTooltip: The [c/206100:Emerald Herald] can [c/d1a21f:Bless] this to remove its negative prefix
 			WingsDisabled:
 				'''
 				These wings have been [c/383838:cursed] by a ferocious [c/009400:Hunter]
@@ -177,32 +178,35 @@ Mods: {
 
 		DeathText: {
 			01: The dodgeroll makes you immune to attacks. Mastering it is necessary for survival!
-			02: Glowing green skulls often hold important secrets...Right Click to open them.
+			02: Glowing green skulls often hold important secrets...Right Click to open them
 			03: The dodgeroll keybind can be changed in Controls. Try LeftShift for dodge and LeftAlt for Auto Select
-			04: You can dodge mid-air to avoid attacks, cross longer gaps and reverse your momentum instantly...
-			05: Crystal shards often hint at secrets, chests or hidden paths nearby...
-			06: Using potions during normal combat is often necessary to survive
-			07: Losing souls on death can be disabled in the config. Try it for more of a Legend of Zelda experience
-			08: Enemies in certain dark areas drop Humanity, which can reroll curse stats
-			09: Item tooltips often have information vital to your survival...
-			10: Check the description of your items to see if any can be upgraded with Dark Souls
-			11: Progression clues can be found on unique items dropped by bosses
+			04: Crystal shards often hint at secrets, chests or hidden paths nearby...
+			05: Losing souls on death can be disabled in the config. Try it for more of a Legend of Zelda experience
+			06: Check the description of your items to see if any can be upgraded with Dark Souls
+			07: Teal Pressure Pads can only be activated with small projectiles
+			08: If you can do something, you're intended to! Be clever, and use 'cheap' tricks to gain every advantage
+			09: Using potions during normal combat is often necessary to survive
+			PermaPot: Permanent potions need special crystals, but normal shards can be refined into them
+			10: You can dodge mid-air to avoid attacks, cross longer gaps and reverse your momentum instantly...
+			11: Get a bad modifier on a weapon? Talk to Jade, the Emerald Herald. She can remove it with her Blessing
 			12: If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction
 			13: Soapstones offer many important hints
-			14: If you go above 100% crit chance, you have a chance to multicrit, allowing you to deal 4 or more times the damage.
+			14: Play with the Recipe Browser mod to easily see what your loot can be transformed into
 			15: Hitting enemies with the tip of a whip will always result in a crit
-			16: Teal Pressure Pads can only be activated with small projectiles
+			16: I am so fucking mad
+			PermaPot2: Some perma potions can be strengthened, and eventually surpass their normal variants.
 			17: Some vanilla recipes have been removed. You must find these items in the world by exploring
-			18: Get a bad modifier on a weapon? Talk to Jade, the Emerald Herald. She can remove it with her Blessing
+			18: Item tooltips often have information vital to your survival...
 			19: You may encounter bosses before you can defeat them. If in doubt, come back when you're stronger
-			20: Play with the Recipe Browser mod to easily see what your loot can be transformed into
-			21: Welcome to the Dark Souls of Terraria
+			20: Welcome to the Dark Souls of Terraria
+			21: Grey Stone Gates cannot be broken and must be opened by a lever or switch
 			22: The Chloranthy Ring massively improves your dodgeroll, allowing superior evasion...
-			23: Teal pressure plates must be hit with a small projectile to activate
-			24: Use a Recipe Browser mod to investigate any item that says it's a "Dark Soul recipe material".
-			25: Remember to dodgeroll
-			26: I am so fucking mad
-			27: Grey Stone Gates cannot be broken and must be opened by a lever or switch
+			23: Enemies in certain dark areas drop Humanity, which can reroll curse stats
+			24: Need more advice? Join the discord, and get tips without even needing to die for them.
+			25: Progression clues can be found by hovering over entries in the Boss Rematch Tome, or some unique items dropped by bosses
+			26: Remember to dodgeroll
+			27: If you go above 100% crit chance you have a chance to multicrit, allowing you to deal 4 or more times the damage
+			GoodLuck: You've now seen almost every death tip, but your journey is nowhere near over. Good luck, we hope you enjoy it!
 			Poem:
 				'''
 				You're bad, 
@@ -213,12 +217,12 @@ Mods: {
 			WallDeathReason: " was consumed by The Wall of Flesh"
 			BotC1: Bearer of the Curse mode can be disabled at any time...
 			BotC2: Bearer of the Curse mode is intended for experienced players
-			BotC3: Try reading the Darksigns description
+			BotC3: Try reading the Darksign's description
 			IWantToRemoveThisCaptainObviousShit: Avoid getting hit by enemy attacks
 			TotallyNotMeantToBeToxic: Get Good :)
 			HeavyRoll: Heavy roll you got there!
 			BossDeath1: Don't give up! Some bosses might take several tries to defeat
-			BossDeath2: Certain bosses can be fought earlier than necessary. If you're struggling, try waiting until you're more powerful.
+			BossDeath2: Certain bosses can be fought earlier than necessary. If you're struggling, try waiting until you're more powerful
 			DarkCloud: You can't outrun your shadow
 			Tonberry: (O_O;)
 			Marilith: Some powerful attacks can only be avoided by dodgerolling!
@@ -3596,23 +3600,23 @@ Mods: {
 				Attraidies1: Attraidies First Phase
 				Attraidies2: Attraidies Final Form
 				Next: Next Boss:
-				DeathCountText: Death Times: {0}
+				DeathCountText: Death Count: {0}
 				1: "{$BossChecklist.LeonhardDesc}"
-				2: What is under Leonhard or at end of the Path of Pain?
+				2: What is under Leonhard, or at end of the Path of Ambition?
 				3: "{$BossChecklist.PinwheelDesc}"
 				4: Seek the chilling depths of Earth Temple, where the fountains pool their waters.
-				5: Deep inside the Corruption Temple, also rumours about crimson on world surface.
+				5: Delve deep inside the Corruption Temple, or investigate rumours about crimson on the surface.
 				6: Somewhere east of the Arazium Mountain Chasm.
 				7: "{$BossChecklist.AncientOolacileDemonDesc}"
-				8: Explore Rainforest of the Orid Tribe, east of your burned house.
+				8: Explore the Rainforest of the Orid Tribe, east of your burned house.
 				9: "{$BossChecklist.SlograAndGaibonDesc}"
 				10: From the Jungle Ruins to Forgotten City, Larvas are everywhere.
-				11: Found Lake of Flowered Paths in underground jungle, open the shut gate.
+				11: Found past the Lake of Flowered Paths in underground jungle, open the shut gate.
 				12: Check the basement of Wizard's house, to an icy land.
 				13: "{$BossChecklist.JungleWyvernDesc}"
 				14: "{$BossChecklist.AncientDemonDesc}"
-				15: Pass the four gate west of the Fire Temple, will you find answer on the altar?
-				16: Search the Hallowed Caverns which been sealed by Cobalt.
+				15: Pass the four gate west of the Fire Temple, will you find an answer on the altar?
+				16: Search the Hallowed Caverns which have been sealed by Cobalt.
 				17: "{$BossChecklist.TheRageDesc}"
 				18: "{$BossChecklist.WyvernMageDesc}"
 				19: "{$BossChecklist.TheSorrowDesc}"
@@ -3622,10 +3626,10 @@ Mods: {
 				23: It awaits at the end of Shadow Temple.
 				24: Below a Broken, familiar Bridge, you will find the Flooded Machine Temple.
 				25: Atop the Twin Peaks of Arazium, they gaze at Sky Above and the Great Chasm Below.
-				26: Why Great Pyramid and Hunter's arena have the same pink bulds?
+				26: Why do the Great Pyramid and Hunter's arena have the same pink flowers?
 				27: Where does the Teleporter of the Great Pyramid lead to?
-				28: Golem controls the forcefield of the float island above the village.
-				29: Craft the 8 Crests with shards found at the top of Attraidies Tower.
+				28: Golem controls the forcefield of the floating island above the village.
+				29: Craft the 8 Crests with shards found at the top of Attraidies' Tower.
 				30: "{$BossChecklist.RealAttraidiesDesc}"
 				31: "{$BossChecklist.HellkiteDragonDesc}"
 				32: "{$BossChecklist.WitchkingDesc}"
@@ -3978,7 +3982,7 @@ Mods: {
 				Tooltip:
 					'''
 					A shard of a Restoration Flask
-					Take it to the Emerald Herald to increase all flask uses
+					Take it to the Emerald Herald to increase flask uses
 					'''
 			}
 
@@ -5045,8 +5049,8 @@ Mods: {
 				Tooltip:
 					'''
 					A lost beginner's tome
-					Drops a small lightning strike upon collision
-					Has a chance to electrify enemies
+					Emits a short but powerful zap
+					Electrocutes enemies
 					'''
 			}
 
@@ -5054,9 +5058,9 @@ Mods: {
 				DisplayName: Bolt 2 Tome
 				Tooltip:
 					'''
-					A lost tome for artisans.
-					Drops a lightning strike upon collision
-					Electrifies enemies
+					A lost tome for artisans
+					Emits a long ranged torrent of electricity
+					Electrocutes and chains rapidly between enemies
 					'''
 			}
 
@@ -5064,9 +5068,9 @@ Mods: {
 				DisplayName: Bolt 3 Tome
 				Tooltip:
 					'''
-					A lost tome fabled to deal great damage.
-
-					Electrifies and paralyzes enemiesOnly mages will be able to realize this tome's full potential. 
+					A lost tome fabled to deal great damage
+					Drops a lingering lightning strike on enemies
+					Only mages will be able to realize this tome's full potential.
 					'''
 			}
 
@@ -5074,10 +5078,9 @@ Mods: {
 				DisplayName: Bolt 4 Tome
 				Tooltip:
 					'''
-					A lost legendary tome. You command the forces of the sky.
-
-					Electrifies and paralyzes enemies
-					Only the most powerful mages will be able to cast this spell.
+					A lost legendary tome
+					You command the forces of the sky
+					Only the most powerful mages will be able to cast this spell
 					'''
 			}
 
@@ -5158,7 +5161,7 @@ Mods: {
 
 			ExplosionRune: {
 				DisplayName: Explosion Rune
-				Tooltip: Projectile that explodes with 5 small fireballs at the point of impact.
+				Tooltip: Homing projectile that explodes with 5 fireballs at the point of impact.
 			}
 
 			FarronDart: {
@@ -6365,9 +6368,9 @@ Mods: {
 				DisplayName: Quadro Cannon
 				Tooltip:
 					'''
-					Four shot burst
+					Fires four shotgun blasts in a row
+					Each blast itself fires four bullets
 					Only the first shot consumes ammo
-					Fires a spread of four bullets with each shot
 					'''
 			}
 
@@ -10610,11 +10613,12 @@ Mods: {
 				}
 
 				GravityFix: {
-					Label: Disable Gravitation Effect Screen Flip
+					Label: Gravitation No Longer Flips Screen
 					Tooltip:
 						'''
-						IN BETA! (Mostly working, but there will be some minor bugs)
 						Flipping gravity will only flip your character instead of the whole screen.
+						WARNING! Some parts of the mod rely on this, and will be very disorienting otherwise
+						Only disable if it is hard-incompatible with another mod
 						'''
 				}
 

@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.VFX
             Projectile.penetrate = -1;
             Projectile.scale = 1;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 999;
+            Projectile.timeLeft = 99999;
         }
 
         bool inititalized = false;
@@ -183,7 +183,6 @@ namespace tsorcRevamp.Projectiles.VFX
                         Main.LocalPlayer.mouseInterface = true;
                         if (Main.mouseLeft && Main.mouseLeftRelease)
                         {
-                            Projectile.timeLeft = 999;
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
                             if (currentDownedList == HardmodeDownedBosses)
                             {
@@ -209,7 +208,6 @@ namespace tsorcRevamp.Projectiles.VFX
                         Main.LocalPlayer.mouseInterface = true;
                         if (Main.mouseLeft && Main.mouseLeftRelease)
                         {
-                            Projectile.timeLeft = 999;
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
                             if (currentDownedList == HardmodeDownedBosses)
                             {

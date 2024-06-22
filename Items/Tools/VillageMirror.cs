@@ -84,16 +84,8 @@ namespace tsorcRevamp.Items.Tools
                     }
 
                     Vector2 destination;
-                    if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-                    {
-                        destination.X = (float)(4182 * 16) - (float)((float)player.width / 2.0);
-                        destination.Y = (float)(714 * 16) - (float)player.height;
-                    }
-                    else
-                    {
-                        destination.X = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpX * 16) - (float)((float)player.width / 2.0);
-                        destination.Y = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpY * 16) - (float)player.height;
-                    }
+                    destination.X = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpX * 16) - (float)((float)player.width / 2.0);
+                    destination.Y = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpY * 16) - (float)player.height;
 
                     player.PotionOfReturnOriginalUsePosition = player.Bottom;
                     player.SafeTeleport(destination);

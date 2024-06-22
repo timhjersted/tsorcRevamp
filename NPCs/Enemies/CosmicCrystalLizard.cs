@@ -109,13 +109,21 @@ namespace tsorcRevamp.NPCs.Enemies
             set => NPC.ai[AI_Timer_Slot] = value;
         }
 
-        public int spawntimer = 0;
+        public int despawntimer = 0;
         public int peaceouttimer = 0;
         public int idleframe = 1;
         public int immuneframe = 0;
 
         public override void AI()
         {
+            //Despawn naturally after idling for 200 seconds
+            despawntimer++;
+            if(despawntimer > 72000)
+            {
+                AI_State = State_Fleeing;
+                AI_Timer = 0;
+            }
+
             if (peaceouttimer < 0)
                 peaceouttimer = 0;
             NPC.netUpdate = false;
@@ -965,6 +973,11 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
+        //Never despawn except by timing out
+        public override bool CheckActive()
+        {
+            return false;
+        }
 
         public override void HitEffect(NPC.HitInfo hit)
         {

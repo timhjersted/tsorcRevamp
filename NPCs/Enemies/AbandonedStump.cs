@@ -88,6 +88,11 @@ namespace tsorcRevamp.NPCs.Enemies
         // Our AI here makes our NPC sit waiting for a player to enter range then spawns minions to attack.
         public override void AI()
         {
+            if(weaknessTextCooldown > 0)
+            {
+                weaknessTextCooldown--;
+            }
+
             NPC.GivenName = LangUtils.GetTextValue("NPCs.AbandonedStump.GivenName1");
             // The npc starts in the asleep state, waiting for a player to enter range
             if (AI_State == State_Asleep)
@@ -290,7 +295,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public int wooddropped = 0;
         public int resindropped = 0;
-
+        int weaknessTextCooldown = 0;
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             bool weakness = (item.Name.Contains("Axe") || item.Name.Contains("axe") || item.Name.Contains("saw") || (item.type == ItemID.BloodLustCluster) || (item.type == ItemID.SawtoothShark) || (item.type == ItemID.Drax)
@@ -304,7 +309,11 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (weakness)
             {
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.Weakness"), false, false);
+                if (weaknessTextCooldown == 0)
+                {
+                    weaknessTextCooldown = 30;
+                    CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.Weakness"), false, false);
+                }
                 modifiers.FlatBonusDamage += 4;
                 modifiers.SourceDamage *= 2; //I never want to see or hear the word "axe" again in my life
                 if (Main.rand.NextBool(2) && wooddropped < 5)
@@ -320,7 +329,11 @@ namespace tsorcRevamp.NPCs.Enemies
                  || item.type == ModContent.ItemType<ForgottenRisingSun>() || item.type == ModContent.ItemType<MagmaTooth>()
                  || item.type == ItemID.FieryGreatsword || item.type == ItemID.MoltenHamaxe || item.type == ItemID.MoltenPickaxe || item.type == ModContent.ItemType<SunBlade>())
             {
-                CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.Weakness"), false, false);
+                if (weaknessTextCooldown == 0)
+                {
+                    weaknessTextCooldown = 30;
+                    CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.Weakness"), false, false);
+                }
                 modifiers.FlatBonusDamage += 4;
                 modifiers.SourceDamage *= 2; //I never want to see or hear the word "axe" again in my life
                 if (Main.rand.NextBool(3) && resindropped < 1)

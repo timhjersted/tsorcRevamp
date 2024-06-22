@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Microsoft.Build.Evaluation;
+using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -64,6 +65,7 @@ namespace tsorcRevamp
         public static bool SameHit = false;
         public static bool DiffHit = false;
         public Dictionary<int, int> consumedPotions;
+        public Dictionary<Vector2, int> soulDeathLocations = new Dictionary<Vector2, int>();
 
         public override void Initialize()
         {
@@ -166,6 +168,8 @@ namespace tsorcRevamp
             tag.Add("powerfulCurseAtkSpd", powerfulCurseAttackSpeedBonus);
             tag.Add("powerfulCurseMoveSpd", powerfulCurseMovementSpeedBonus);
             tag.Add("SoulVessel", SoulVessel);
+            tag.Add("DeathTextIndex", currentDeathTextIndex);
+            //tag.Add("SoulLocation", );
 
             if (bagsOpened == null)
             {
@@ -254,6 +258,11 @@ namespace tsorcRevamp
             powerfulCurseAttackSpeedBonus = tag.GetFloat("powerfulCurseAtkSpd");
             powerfulCurseMovementSpeedBonus = tag.GetFloat("powerfulCurseMoveSpd");
             SoulVessel = tag.GetInt("SoulVessel");
+
+            if(tag.ContainsKey("DeathTextIndex"))
+            {
+                currentDeathTextIndex = tag.GetInt("DeathTextIndex");
+            }
 
             if (bagsOpened == null)
             {
@@ -534,6 +543,10 @@ namespace tsorcRevamp
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
+            if (Player.whoAmI == Main.myPlayer)
+            {                
+                DeathText = PickDeathText();
+            }
             if (PhoenixSkull && !Player.HasBuff(ModContent.BuffType<PhoenixRebirthCooldown>()))
             {
                 Dust dust1 = Main.dust[Dust.NewDust(Player.BottomLeft, Player.width, Player.height - 40, 6, 0f, -5f, 100, default, 1.8f)];
@@ -1239,10 +1252,6 @@ namespace tsorcRevamp
                 Player.AddBuff(BuffID.OnFire, 600);
             }
 
-            if (hurtInfo.Damage >= Player.statLife)
-            {
-                DeathText = PickDeathText();
-            }
             if (Player.HasBuff(ModContent.BuffType<MagicPlating>()))
             {
                 MagicPlatingStacks = 0;
@@ -1276,10 +1285,12 @@ namespace tsorcRevamp
                 Player.AddBuff(BuffID.OnFire, 180);
             }
 
-
             if (hurtInfo.Damage >= Player.statLife)
             {
-                DeathText = PickDeathText(proj);
+                if (proj.type == ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>() && proj.damage > 999)
+                {
+                    Player.GetModPlayer<tsorcRevampPlayer>().DeathTextOverride = LangUtils.GetTextValue("DeathText.Tonberry");
+                }
             }
         }
 
@@ -1596,7 +1607,6 @@ namespace tsorcRevamp
                 Player.QuickSpawnItem(Player.GetSource_Loot(), ModContent.ItemType<DiamondPickaxe>());
                 gotPickaxe = true;
             }
-            DeathText = PickDeathText();
         }
 
 
@@ -1606,7 +1616,6 @@ namespace tsorcRevamp
             Player.statLife = Player.statLifeMax2;
             if (BearerOfTheCurse) Player.AddBuff(ModContent.BuffType<Hollowed>(), 2);
             Player.AddBuff(ModContent.BuffType<Invincible>(), 360);
-            DeathText = PickDeathText();
         }
 
         public static bool CheckBossZen()

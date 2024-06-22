@@ -118,7 +118,7 @@ namespace tsorcRevamp.Projectiles
                     //Drain BotC players stamina
                     if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                     {
-                        player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent = 0;
+                        player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30;
                     }
                 }
             }

@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         public override void ModifyManaCost(Player player, ref float reduce, ref float mult)
         {
             player.manaRegenDelay = 180;
-            //mult = 0;
+            mult = 0;
         }
 
         public override bool CanUseItem(Player player)

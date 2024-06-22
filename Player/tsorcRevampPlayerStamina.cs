@@ -249,11 +249,6 @@ namespace tsorcRevamp
                     }
                 }
             }
-            if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
-            {
-                Rectangle PlayerRect = Utils.CenteredRectangle(Player.Center, Player.Size);
-                CombatText.NewText(Player.Hitbox, Color.White, LangUtils.GetTextValue("UI.Tired"));
-            }
 
             // Limit exampleResourceCurrent from going over the limit imposed by exampleResourceMax.
             staminaResourceCurrent = Utils.Clamp(staminaResourceCurrent, 0, staminaResourceMax2);

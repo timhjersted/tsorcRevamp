@@ -172,6 +172,7 @@ namespace tsorcRevamp.Tiles
                         if (bonfireHealTimer % 6 == 0)
                         {
                             player.statLife += (int)healquantity;
+                            player.statMana += (int)healquantity;
                             if (healquantity >= 1)
                             {
                                 healquantity = 0;
@@ -193,6 +194,7 @@ namespace tsorcRevamp.Tiles
                         if (bonfireHealTimer % 6 == 0)
                         {
                             player.statLife += (int)healquantity;
+                            player.statMana += (int)healquantity;
                             if (healquantity >= 1)
                             {
                                 healquantity = 0;
@@ -213,6 +215,7 @@ namespace tsorcRevamp.Tiles
                         if (bonfireHealTimer % 6 == 0)
                         {
                             player.statLife += (int)healquantity;
+                            player.statMana += (int)healquantity;
                             if (healquantity >= 1)
                             {
                                 healquantity = 0;
@@ -233,6 +236,7 @@ namespace tsorcRevamp.Tiles
                         if (bonfireHealTimer % 6 == 0)
                         {
                             player.statLife += (int)healquantity;
+                            player.statMana += (int)healquantity;
                             if (healquantity >= 1)
                             {
                                 healquantity = 0;
