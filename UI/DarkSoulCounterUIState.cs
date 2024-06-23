@@ -40,7 +40,7 @@ namespace tsorcRevamp.UI
             counterFrame.Height.Set(0, 0f);
             area.Append(counterFrame);
 
-            soulQuantityText = new UIText("0", 0.5f, true); // text to show stat
+            soulQuantityText = new UIText("0", 0.4f, true); // text to show stat
             soulQuantityText.Width.Set(0, 0f);
             soulQuantityText.Height.Set(0, 0f);
             soulQuantityText.Top.Set(12, 0f);

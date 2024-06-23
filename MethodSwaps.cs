@@ -1731,6 +1731,11 @@ namespace tsorcRevamp
                             RealityCrack proj = (RealityCrack)Main.projectile[i].ModProjectile;
                             proj.CreateRenderTarget();
                         }
+                        if (Main.projectile[i].ModProjectile is RealityFracture)
+                        {
+                            RealityFracture proj = (RealityFracture)Main.projectile[i].ModProjectile;
+                            proj.CreateRenderTarget();
+                        }
                     }
                 }
             }

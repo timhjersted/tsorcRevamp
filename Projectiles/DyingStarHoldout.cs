@@ -145,7 +145,7 @@ namespace tsorcRevamp.Projectiles
                 Vector2 velocity = Projectile.velocity;
                 velocity.Normalize();
                 velocity *= 30;
-                player.statMana -= (int)(10 * player.manaCost);
+                player.statMana -= (int)(5 * player.manaCost);
                 if (Main.myPlayer == Projectile.owner)
                 {
                     Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), player.Center, velocity, ModContent.ProjectileType<Projectiles.Fireball3>(), Projectile.damage / 30, 0, Projectile.owner).rotation = velocity.ToRotation() + MathHelper.PiOver2;

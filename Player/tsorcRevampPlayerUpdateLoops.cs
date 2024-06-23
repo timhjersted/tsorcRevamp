@@ -2019,7 +2019,7 @@ namespace tsorcRevamp
                 ceruleanPlayer.ceruleanDrinkTimer = 0;
             }
 
-            if (Player.respawnTimer > 240 && !tsorcRevampWorld.BossAlive)
+            if (Player.respawnTimer > 240 && !tsorcRevampWorld.BossAlive && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Special.AbyssCataclysm>()))
             {
                 Player.respawnTimer = 240;
             }
@@ -2064,7 +2064,7 @@ namespace tsorcRevamp
                 }
             }
 
-            if (tsorcRevampWorld.InBoneArea && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.SuperHardMode)
+            if (Main.tile[(Player.Center / 16).ToPoint()].WallType == WallID.PinkDungeonTileUnsafe && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.SuperHardMode)
             {
                 Player.AddBuff(BuffID.WitheredWeapon, 5*60);
                 Player.AddBuff(BuffID.Blackout, 5*60);

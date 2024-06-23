@@ -55,6 +55,7 @@ namespace tsorcRevamp.Projectiles.VFX
         float beamWidth;
         float beamLength;
         int direction;
+        bool initialized = false;
         public override void AI()
         {
             if (direction == 0)
@@ -89,7 +90,22 @@ namespace tsorcRevamp.Projectiles.VFX
                 beamLength += 100;
                 Projectile.rotation += 0.003f * direction;
             }
+            else if (style == 4)
+            {
+                if(!initialized)
+                {
+                    beamWidth = 25;
+                    Projectile.timeLeft = 15;
+                    initialized = true;
+                }
 
+                beamLength += 100;
+                if (beamLength > Projectile.ai[2])
+                {
+                    beamLength = Projectile.ai[2];
+                }
+                Projectile.rotation = Projectile.velocity.ToRotation();
+            }
             if (Projectile.timeLeft == 1)
             {
                 Projectile.timeLeft++;

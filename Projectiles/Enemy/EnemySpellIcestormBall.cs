@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 Projectile.soundDelay = 10;
                 //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
-                Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item30 with { Volume = 0.8f }, Projectile.Center); //ice materialize - good
+                Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item30 with { Volume = 0.6f, Pitch = 0.5f }, Projectile.Center); //ice materialize - good
                 //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 120, 0.3f, .1f); //ice mist howl sounds crazy
             }
             int thisDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);

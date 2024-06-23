@@ -9336,6 +9336,9 @@ Mods: {
 			EtherianWyvernProjectile.DisplayName: 以太飞龙
 			AbyssArrowProjectile.DisplayName: 深渊箭
 			AbyssBulletProjectile.DisplayName: 深渊弹
+			// RealityBomb.DisplayName: Reality Bomb
+			// RealityFracture.DisplayName: Reality Fracture
+			// BlightCataclysm.DisplayName: Blight Cataclysm
 		}
 
 		NPCs: {
@@ -9580,6 +9583,8 @@ Mods: {
 				DisplayName: 枯萎
 				DespawnHandler: 命中注定难过此劫！
 				OutOfRange: 枯萎把自己包裹在无法穿透的光线中—你离它太远了！
+				// CataclysmWarning: Blight's instability begins tearing the barrier between the world and the Abyss
+				// Cataclysm: The barrier is shattered!! Nothing but darkness remains...
 			}
 
 			Chaos: {
@@ -10388,6 +10393,8 @@ Mods: {
 			GhostOfTheDrowned.DisplayName: 溺尸
 			HollowSpearman.DisplayName: 空洞矛手
 			PinwheelFireball.DisplayName: 三焱家族火球
+			// AbyssFracture.DisplayName: Abyss Fracture
+			// AbyssCataclysm.DisplayName: Abyss Cataclysm
 		}
 
 		Prefixes: {

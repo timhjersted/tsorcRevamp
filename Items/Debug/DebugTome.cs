@@ -39,10 +39,13 @@ namespace tsorcRevamp.Items.Debug
 
             Main.NewText(player.Center / 16);
 
-
+            //Main.NewText(Main.tile[(player.Center / 16).ToPoint()].WallType);
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item70, player.Center);
 
+
+
+            NPC.NewNPC(source, (int)position.X, (int)position.Y, ModContent.NPCType<NPCs.Special.AbyssCataclysm>());
 
             //NPCs.Bosses.PrimeV2.PrimeV2.ActuatePrimeArena();
 
@@ -53,12 +56,13 @@ namespace tsorcRevamp.Items.Debug
             //return false;
 
             //return false;
-            
+
+            /*
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             foreach(KeyValuePair<int, int> k in modPlayer.consumedPotions)
             {
                 modPlayer.consumedPotions[k.Key] = 999;
-            }
+            }*/
             return false;
         }
 

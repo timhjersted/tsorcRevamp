@@ -13,7 +13,7 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
         public override void CustomSetStaticDefaults()
         {
             LastTickSoundPath = "Runeterra/Summon/GoredrinkerHit";
-            LastTickSoundVolume = 1f;
+            LastTickSoundVolume = .35f;
         }
         public override void PlayerCustomUpdate(Player player, ref int buffIndex)
         {

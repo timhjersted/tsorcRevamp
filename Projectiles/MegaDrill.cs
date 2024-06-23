@@ -22,7 +22,6 @@ namespace tsorcRevamp.Projectiles
             Projectile.MaxUpdates = 2;
             Projectile.light = 5;
             DrawHeldProjInFrontOfHeldItemAndArms = true;
-            Projectile.scale = 5;
         }
 
         Vector2[] lastpos = new Vector2[20];
@@ -59,7 +58,6 @@ namespace tsorcRevamp.Projectiles
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D MyTexture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<MegaDrill>()];
             Rectangle fromrect = new Rectangle(0, 0, Projectile.width, Projectile.height);
             Vector2 PC;
             Color targetColor = new Color(10, 50, 255, 0);
@@ -74,7 +72,7 @@ namespace tsorcRevamp.Projectiles
 
 
                 Main.spriteBatch.Draw(
-                            MyTexture,
+                             (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<MegaDrill>()],
                             PC - Main.screenPosition,
                             fromrect,
                             targetColor,
@@ -96,7 +94,7 @@ namespace tsorcRevamp.Projectiles
                 PC = lastpos[modlastposindex] + new Vector2(Projectile.width / 2, Projectile.height / 2);
 
                 Main.spriteBatch.Draw(
-                            MyTexture,
+                             (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<MegaDrill>()],
                             PC - Main.screenPosition,
                             fromrect,
                             targetColor,

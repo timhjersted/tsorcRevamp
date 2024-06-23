@@ -65,12 +65,21 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
 
             if (Projectile.ai[0] >= ShotCooldown)
             {
-                if (Main.myPlayer == Projectile.owner && CanShoot)
+                if (CanShoot)
                 {
-                    Projectile SentryShot = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.DirectionTo(Main.MouseWorld) * ProjectileInitialVelocity, ShotProjectileType, Projectile.damage, Projectile.knockBack, owner.whoAmI, Projectile.originalDamage);
+                    if (Main.myPlayer == Projectile.owner)
+                    {
+                        Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.DirectionTo(Main.MouseWorld) * ProjectileInitialVelocity, ShotProjectileType, Projectile.damage, Projectile.knockBack, owner.whoAmI, Projectile.originalDamage);
+                    }
+                    if(PlaysSoundOnShot)
+                    {
+                        SoundEngine.PlaySound(ShootSoundStyle with { Volume = ShootSoundVolume }, Projectile.Center);
+                    }
                 }
                 Projectile.ai[0] = 0;
             }
+
+            
 
             switch (Projectile.ai[0])
             {
@@ -126,15 +135,19 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
                     }
             }
 
-            if (Projectile.ai[0] == 0 && PlaysSoundOnShot)
+            if (!CanShoot)
             {
-                SoundEngine.PlaySound(ShootSoundStyle with { Volume = ShootSoundVolume }, Projectile.Center);
+                Projectile.frame = 0;
+                Projectile.ai[0] = 0;
             }
-
-            if (SpawnsDust)
+            else
             {
-                Dust.NewDust(Projectile.VisualPosition, Projectile.width, Projectile.height, ProjectileDustID);
+                if (SpawnsDust)
+                {
+                    Dust.NewDust(Projectile.VisualPosition, Projectile.width, Projectile.height, ProjectileDustID);
+                }
             }
+            
 
             CustomAI();
         }

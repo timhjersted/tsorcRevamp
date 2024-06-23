@@ -22,6 +22,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.MaxUpdates = 2;
+            Projectile.timeLeft = 1000;
         }
 
         int distfrommaster = 0;
@@ -29,21 +30,26 @@ namespace tsorcRevamp.Projectiles
         int lastposindex = 0;
         public override void AI()
         {
-            if (this.Projectile.timeLeft > 100)
+            if (Projectile.ai[2] != 0)
             {
-                this.Projectile.rotation -= (float)0.01;
-                this.Projectile.position.X = Main.npc[(int)this.Projectile.ai[0]].position.X + (float)Math.Sin(this.Projectile.rotation) * distfrommaster;
-                this.Projectile.position.Y = Main.npc[(int)this.Projectile.ai[0]].position.Y + (float)Math.Cos(this.Projectile.rotation) * distfrommaster;
-                if (distfrommaster < this.Projectile.ai[1]) distfrommaster += 2;
+                Projectile.rotation = Projectile.ai[2];
+                Projectile.ai[2] = 0;
+            }
+            if (Projectile.timeLeft > 100)
+            {
+                Projectile.rotation -= (float)0.01;
+                Projectile.position.X = Main.npc[(int)Projectile.ai[0]].position.X + (float)Math.Sin(Projectile.rotation) * distfrommaster;
+                Projectile.position.Y = Main.npc[(int)Projectile.ai[0]].position.Y + (float)Math.Cos(Projectile.rotation) * distfrommaster;
+                if (distfrommaster < Projectile.ai[1]) distfrommaster += 2;
             }
             else
             {
-                this.Projectile.velocity.X = 0;
-                this.Projectile.velocity.Y = 0;
-                this.Projectile.scale *= 0.9f;
-                this.Projectile.damage = 0;
+                Projectile.velocity.X = 0;
+                Projectile.velocity.Y = 0;
+                Projectile.scale *= 0.9f;
+                Projectile.damage = 0;
             }
-            lastpos[lastposindex] = this.Projectile.position;
+            lastpos[lastposindex] = Projectile.position;
             lastposindex++;
             if (lastposindex > 19) lastposindex = 0;
         }
@@ -67,8 +73,7 @@ namespace tsorcRevamp.Projectiles
         public override void PostDraw(Color lightColor)
         {
             Random rand1 = new Random((int)Main.GameUpdateCount);
-            Texture2D MyTexture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<Projectiles.Comet>()];
-            Rectangle fromrect = new Rectangle(0, 0, this.Projectile.width, this.Projectile.height);
+            Rectangle fromrect = new Rectangle(0, 0, Projectile.width, Projectile.height);
             Vector2 PC;
             Color targetColor = new Color(0, 50, 255, 0);
             int modlastposindex = lastposindex;
@@ -78,17 +83,17 @@ namespace tsorcRevamp.Projectiles
                 float scalemod = rand1.Next(50, 150) / 100f;
                 lastpos[modlastposindex].X += rand1.Next(-1, 1);
                 lastpos[modlastposindex].Y += rand1.Next(-1, 1);
-                PC = lastpos[modlastposindex] + new Vector2(this.Projectile.width / 2, this.Projectile.height / 2);
+                PC = lastpos[modlastposindex] + new Vector2(Projectile.width / 2, Projectile.height / 2);
 
 
                 Main.EntitySpriteDraw(
-                            MyTexture,
+                            (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<Projectiles.Comet>()],
                             PC - Main.screenPosition,
                             fromrect,
                             targetColor,
-                            this.Projectile.rotation + rotmod,
-                            new Vector2(this.Projectile.width / 2, this.Projectile.height / 2),
-                            1f * (0.1f * i) * this.Projectile.scale * scalemod,
+                            Projectile.rotation + rotmod,
+                            new Vector2(Projectile.width / 2, Projectile.height / 2),
+                            1f * (0.1f * i) * Projectile.scale * scalemod,
                             SpriteEffects.None,
                             0);
                 modlastposindex++;
@@ -103,16 +108,16 @@ namespace tsorcRevamp.Projectiles
             {
                 float rotmod = rand1.Next(-100, 100) / 100f;
                 float scalemod = rand1.Next(50, 150) / 100f;
-                PC = lastpos[modlastposindex] + new Vector2(this.Projectile.width / 2, this.Projectile.height / 2);
+                PC = lastpos[modlastposindex] + new Vector2(Projectile.width / 2, Projectile.height / 2);
 
                 Main.EntitySpriteDraw(
-                            MyTexture,
+                            (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<Projectiles.Comet>()],
                             PC - Main.screenPosition,
                             fromrect,
                             targetColor,
-                            this.Projectile.rotation + rotmod,
-                            new Vector2(this.Projectile.width / 2, this.Projectile.height / 2),
-                            1f * (0.09f * i) * this.Projectile.scale * scalemod,
+                            Projectile.rotation + rotmod,
+                            new Vector2(Projectile.width / 2, Projectile.height / 2),
+                            1f * (0.09f * i) * Projectile.scale * scalemod,
                             SpriteEffects.None,
                             0);
                 modlastposindex++;

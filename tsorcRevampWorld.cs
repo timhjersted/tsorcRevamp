@@ -1246,8 +1246,27 @@ namespace tsorcRevamp
         //Clean up 'orphaned' screen shaders whose host died in mysterious ways before it could do so itself
 
         public static List<string> boundShaders = new List<string>();
+        public static Dictionary<string, NPC> boundNPCShaders = new Dictionary<string, NPC>();
         public static void CleanUpScreenShaders()
         {
+            List<string> deadKeys = new List<string>();
+            foreach (var pair in boundNPCShaders)
+            {
+                if(!pair.Value.active)
+                {
+                    deadKeys.Add(pair.Key);
+                }
+            }
+            foreach (var key in deadKeys)
+            {
+                if (Filters.Scene[key] != null)
+                {
+                    Filters.Scene[key].GetShader().UseOpacity(0).UseImage(tsorcRevamp.NoiseTurbulent);
+                    Filters.Scene[key].Deactivate();
+                }
+                boundNPCShaders.Remove(key);
+            }
+
             for (int i = 0; i < 16; i++)
             {
                 string currentIndex = "tsorcRevamp:shockwave" + i;

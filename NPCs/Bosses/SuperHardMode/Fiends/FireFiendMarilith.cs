@@ -508,9 +508,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
         private void InitializeFirewalls()
         {
-            NPC.lifeMax = NPC.lifeMax * Main.CurrentFrameFlags.ActivePlayersCount;
-            NPC.life = NPC.lifeMax;
-
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<MarilithAura>(), 0, 0.5f, Main.myPlayer);

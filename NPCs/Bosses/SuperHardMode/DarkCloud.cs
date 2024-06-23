@@ -65,14 +65,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public static int darkArrowDamage = 45;
         public static int stormWaveDamage = 95;
 
-        public static int divineSparkDamage = 75;
+        public static int divineSparkDamage = 110;
         public static int darkFlowDamage = 50;
         public static int antiMatDamage = 100;
         public static int darkSlashDamage = 25; //This one gets x16'd
-        public static int swordDamage = 50;
-        public static int freezeBoltDamage = 60;
-        public static int confinedBlastDamage = 200; //Very high because it isn't compensating for doubling/quadrupling, and is very easy to dodge
-        public static int arrowRainDamage = 50;
+        public static int swordDamage = 100;
+        public static int freezeBoltDamage = 85;
+        public static int confinedBlastDamage = 250; //Very high because it isn't compensating for doubling/quadrupling, and is very easy to dodge
+        public static int arrowRainDamage = 70;
         #endregion
 
         #region First Phase Vars
@@ -1785,7 +1785,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (phaseChangeCounter == 240)
             {
                 NPC.velocity = Vector2.Zero;
-                NPC.lifeMax = 300000 * Main.CurrentFrameFlags.ActivePlayersCount;
+                NPC.lifeMax = 700000 * Main.CurrentFrameFlags.ActivePlayersCount;
                 NPC.life = NPC.lifeMax;
                 changingPhases = false;
                 NPC.dontTakeDamage = false;

@@ -12,7 +12,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.VFX
 {
-    class RealityCrack : ModProjectile
+    class RealityFracture : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -43,22 +43,16 @@ namespace tsorcRevamp.Projectiles.VFX
         public override void AI()
         {
             Projectile.timeLeft++;
-            effectTimer++;
+
+            if(!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>()))
+            {
+                Projectile.Kill();
+                return;
+            }
 
             if (Projectile.ai[0] == 1)
             {
                 effectLimit = 250;
-            }
-
-            if (newCrackDelay <= 0)
-            {
-                SoundEngine.PlaySound(SoundID.Shatter with { Volume = 0.5f });
-                newCrack = true;
-                newCrackDelay += 0.1f * (effectLimit - effectTimer);
-            }
-            else
-            {
-                newCrackDelay--;
             }
 
             //Get an unused copy of the effect from the scene filter dictionary, or create one if they're all in use
@@ -68,7 +62,7 @@ namespace tsorcRevamp.Projectiles.VFX
                 int index = 0;
                 do
                 {
-                    string currentIndex = "tsorcRevamp:realitycrack" + index;
+                    string currentIndex = "tsorcRevamp:realityfracture" + index;
 
                     //If there is an unused loaded shader, then start using it instead of creating a new one
                     if (Filters.Scene[currentIndex] != null && !Filters.Scene[currentIndex].Active)
@@ -140,44 +134,46 @@ namespace tsorcRevamp.Projectiles.VFX
         }
 
 
-        public RenderTarget2D renTarget;
-        Vector2 storedPosition;
         public override bool PreDraw(ref Color lightColor)
         {
             return false;
         }
 
 
+        Vector2 storedPosition;
+        public RenderTarget2D renTarget;
+        public RenderTarget2D tempTarget;
+        public Vector2 newCrackLocation = Vector2.Zero;
         Vector2 targetOffset;
         public static Effect preRenderEffect;
+        public static Effect blurEffect;
         public void CreateRenderTarget()
         {
-            if (!newCrack)
+            if (newCrackLocation == Vector2.Zero)
             {
                 return;
             }
-            else
-            {
-                newCrack = false;
-            }
-            Projectile.velocity = Main.rand.NextVector2CircularEdge(1, 1);
+            newCrackLocation.Normalize();
+            Projectile.velocity = newCrackLocation;
+            newCrackLocation = Vector2.Zero;
+
             //Store a reference to the graphics device to simplify code
             GraphicsDevice device = Main.graphics.GraphicsDevice;
 
             //Create a rendertarget. Instead of drawing all 200 lightning branches every frame, we will draw them once and store the results in this.
             //Once that is done, we can simply draw this one rendertarget to display the full lightning strike
-            if (renTarget == null || renTarget.IsDisposed)
+            if (tempTarget == null || tempTarget.IsDisposed)
             {
-                renTarget = new RenderTarget2D(device, device.PresentationParameters.BackBufferWidth * 2, device.PresentationParameters.BackBufferHeight * 3, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
+                tempTarget = new RenderTarget2D(device, device.PresentationParameters.BackBufferWidth * 2, device.PresentationParameters.BackBufferHeight * 3, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
 
-                targetOffset = renTarget.Size() / 2;
+                targetOffset = tempTarget.Size() / 2;
                 storedPosition = Main.screenPosition - targetOffset;
             }
 
             device.Clear(Color.Transparent);
 
             //Set the device target to the new rendertarget
-            device.SetRenderTarget(renTarget);
+            device.SetRenderTarget(tempTarget);
 
             //Clear it, so that whatever was previously stored on the backbuffer (like other lightning) doesn't get put in this target
 
@@ -207,6 +203,45 @@ namespace tsorcRevamp.Projectiles.VFX
             //If I do this instead, then everything drawn *before* the lightning (tiles, backrounds, etc) is blacked out this frame
             //device.SetRenderTargets(bindings);
             device.SetRenderTarget(null);
+
+            //Then draw it to a second rendertarget to blur it by applying a second shader in the process
+            if (renTarget == null || renTarget.IsDisposed)
+            {
+                renTarget = new RenderTarget2D(device, device.PresentationParameters.BackBufferWidth * 2, device.PresentationParameters.BackBufferHeight * 3, false, device.PresentationParameters.BackBufferFormat, device.PresentationParameters.DepthStencilFormat, device.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
+
+                targetOffset = renTarget.Size() / 2;
+                storedPosition = Main.screenPosition - targetOffset;
+            }
+            device.Clear(Color.Transparent);
+            device.SetRenderTarget(renTarget);
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+
+            if (blurEffect == null)
+            {
+                blurEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/BlurEffect", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            }
+            blurEffect.CurrentTechnique.Passes[0].Apply();
+
+            Main.spriteBatch.Draw(tempTarget, Vector2.Zero, new Rectangle(0, 0, tempTarget.Width, tempTarget.Height), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tempTarget, Vector2.Zero, new Rectangle(0, 0, tempTarget.Width, tempTarget.Height), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tempTarget, Vector2.Zero, new Rectangle(0, 0, tempTarget.Width, tempTarget.Height), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(tempTarget, Vector2.Zero, new Rectangle(0, 0, tempTarget.Width, tempTarget.Height), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+
+
+            Main.spriteBatch.End();
+
+            device.SetRenderTarget(null);
+
+
+            //Clean up the temp target to free up memory
+            if (tempTarget != null && !tempTarget.IsDisposed)
+            {
+                tempTarget.Dispose();
+            }
+            if (tempTarget != null)
+            {
+                tempTarget = null;
+            }
         }
         public void DrawSegments()
         {

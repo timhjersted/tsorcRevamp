@@ -21,6 +21,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.MaxUpdates = 2;
+            Projectile.timeLeft = 400;
         }
 
         Vector2[] lastpos = new Vector2[20];
@@ -52,7 +53,6 @@ namespace tsorcRevamp.Projectiles
         }
         public override void PostDraw(Color lightColor)
         {
-            Texture2D MyTexture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<Projectiles.Comet>()];
             Rectangle fromrect = new Rectangle(0, 0, this.Projectile.width, this.Projectile.height);
             Vector2 PC;
             Color targetColor = new Color(0, 50, 255, 0);
@@ -67,7 +67,7 @@ namespace tsorcRevamp.Projectiles
 
 
                 Main.spriteBatch.Draw(
-                            MyTexture,
+                            (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<Projectiles.Comet>()],
                             PC - Main.screenPosition,
                             fromrect,
                             targetColor,
@@ -90,7 +90,7 @@ namespace tsorcRevamp.Projectiles
                 PC = lastpos[modlastposindex] + new Vector2(this.Projectile.width / 2, this.Projectile.height / 2);
 
                 Main.spriteBatch.Draw(
-                            MyTexture,
+                            (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<Projectiles.Comet>()],
                             PC - Main.screenPosition,
                             fromrect,
                             targetColor,

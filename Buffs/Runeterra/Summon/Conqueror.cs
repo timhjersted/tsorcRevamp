@@ -37,7 +37,6 @@ namespace tsorcRevamp.Buffs.Runeterra.Summon
                 {
                     modPlayer.BotCConquerorStacks--;
                     player.buffTime[buffIndex] = (int)(((float)modPlayer.BotCConquerorDuration / 6f) * 60f);
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/ConquerorFallOff") with { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.0054f }, player.Center);
                 }
                 else
                 {

@@ -9344,6 +9344,9 @@ Mods: {
 			EtherianWyvernProjectile.DisplayName: Etherian Wyvern Projectile
 			AbyssArrowProjectile.DisplayName: Abyss Arrow Projectile
 			AbyssBulletProjectile.DisplayName: Abyss Bullet Projectile
+			RealityBomb.DisplayName: Reality Bomb
+			RealityFracture.DisplayName: Reality Fracture
+			BlightCataclysm.DisplayName: Blight Cataclysm
 		}
 
 		NPCs: {
@@ -9588,6 +9591,8 @@ Mods: {
 				DisplayName: Blight
 				DespawnHandler: Inevitable
 				OutOfRange: Blight encloses itself in impenetrable light -- you're too far away!
+				CataclysmWarning: Blight's instability begins tearing the barrier between the world and the Abyss
+				Cataclysm: The barrier is shattered!! Nothing but darkness remains...
 			}
 
 			Chaos: {
@@ -10397,6 +10402,8 @@ Mods: {
 			GhostOfTheDrowned.DisplayName: Ghost of the Drowned
 			HollowSpearman.DisplayName: Hollow Spearman
 			PinwheelFireball.DisplayName: PinwheelFireball
+			AbyssFracture.DisplayName: Abyss Fracture
+			AbyssCataclysm.DisplayName: Abyss Cataclysm
 		}
 
 		Prefixes: {

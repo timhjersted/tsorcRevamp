@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
@@ -23,15 +24,62 @@ namespace tsorcRevamp.Projectiles
 
         Vector2[] lastpos = new Vector2[20];
         int lastposindex = 0;
+        bool refracting = false;
+        int refractionTimer = 0;
         public override void AI()
         {
-            Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X);
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>()))
+            {
+                Projectile.active = false;
+                return;
+            }
+
+            //Used to set scale remotely, and to tell projectiles when to 'refract' through blight in final stand
+            if (Projectile.ai[0] != 0)
+            {
+                if (Projectile.ai[0] < 0)
+                {
+                    refractionTimer = -(int)Projectile.ai[0];
+                    refracting = true;
+                }
+                else
+                {
+                    Projectile.scale = Projectile.ai[0];
+                }
+
+                Projectile.ai[0] = 0;
+            }
+
+            if (Projectile.ai[1] != 0)
+            {
+                Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X);
 
 
-            Projectile.rotation += (Main.rand.Next(-100, 100)) / 2400f;
+                Projectile.rotation += (Main.rand.Next(-100, 100)) / 2400f;
 
-            Projectile.velocity.Y = (float)Math.Sin(Projectile.rotation) * Projectile.ai[1];
-            Projectile.velocity.X = (float)Math.Cos(Projectile.rotation) * Projectile.ai[1];
+                Projectile.velocity.Y = (float)Math.Sin(Projectile.rotation) * Projectile.ai[1];
+                Projectile.velocity.X = (float)Math.Cos(Projectile.rotation) * Projectile.ai[1];
+            }
+
+            if (Projectile.ai[2] != 0)
+            {
+                Projectile.timeLeft = (int)Projectile.ai[2];
+                Projectile.ai[2] = 0;
+            }
+
+            if(refracting)
+            {
+                refractionTimer--;
+                if(refractionTimer <= 0)
+                {
+                    Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
+                    if(target != null)
+                    {
+                        Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, target.Center, 8);
+                    }
+                    refracting = false;
+                }
+            }
 
             if (Projectile.timeLeft < 100)
             {
@@ -41,8 +89,10 @@ namespace tsorcRevamp.Projectiles
 
             lastpos[lastposindex] = Projectile.position;
             lastposindex++;
-            if (lastposindex > 19) lastposindex = 0;
-
+            if (lastposindex > 19)
+            {
+                lastposindex = 0;
+            }
         }
 
         public override void PostDraw(Color lightColor)
