@@ -5091,7 +5091,7 @@ Mods: {
 
 			ChaosTome: {
 				DisplayName: Chaos Tome
-				Tooltip: Casts a purple flame that can pass through solid objects.
+				Tooltip: Casts a unstable red energy ball that can pass through solid objects.
 			}
 
 			CrystalMagicWeapon: {
@@ -5210,7 +5210,7 @@ Mods: {
 
 			FlamesOfTheNight: {
 				DisplayName: Flames of the Night
-				Tooltip: A full sprectral array of green flame will light up the skies
+				Tooltip: A full sprectral array of purple flame will light up the skies
 			}
 
 			FlameStrikeScroll: {

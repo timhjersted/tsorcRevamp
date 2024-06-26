@@ -21,15 +21,10 @@ namespace tsorcRevamp.Projectiles
 
         public override void AI()
         {
-            if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
-            {
-                Projectile.soundDelay = 10;
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item9, Projectile.Center);
-            }
             Vector2 arg_2675_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
             int arg_2675_1 = Projectile.width;
             int arg_2675_2 = Projectile.height;
-            int arg_2675_3 = 15;
+            int arg_2675_3 = 135;
             float arg_2675_4 = 0f;
             float arg_2675_5 = 0f;
             int arg_2675_6 = 100;

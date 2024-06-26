@@ -15,7 +15,7 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
         public override float HoldoutRangeMax => 265f;
         public override float HitboxSize => 1;
         public override float Scale => 1;
-        public override int dustID => DustID.Blood;
+        public override int dustID => DustID.GemAmber;
         bool hasHealed = false;
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

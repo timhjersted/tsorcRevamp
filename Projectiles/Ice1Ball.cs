@@ -50,7 +50,7 @@ namespace tsorcRevamp.Projectiles
             Vector2 arg_2675_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
             int arg_2675_1 = Projectile.width;
             int arg_2675_2 = Projectile.height;
-            int arg_2675_3 = 15;
+            int arg_2675_3 = 135;
             float arg_2675_4 = 0f;
             float arg_2675_5 = 0f;
             int arg_2675_6 = 100;
@@ -66,7 +66,7 @@ namespace tsorcRevamp.Projectiles
                 Main.dust[num47].noGravity = true;
             }
 
-            int n1337 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, 172, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 2f);
+            int n1337 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, 135, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 2f);
 
 
             for (int i = 0; i < 2; i++)
@@ -191,7 +191,7 @@ namespace tsorcRevamp.Projectiles
                         Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                         int arg_1394_1 = Projectile.width;
                         int arg_1394_2 = Projectile.height;
-                        int arg_1394_3 = 15;
+                        int arg_1394_3 = 135;
                         float arg_1394_4 = 0f;
                         float arg_1394_5 = 0f;
                         int arg_1394_6 = 100;
@@ -203,7 +203,7 @@ namespace tsorcRevamp.Projectiles
                     Vector2 arg_1422_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                     int arg_1422_1 = Projectile.width;
                     int arg_1422_2 = Projectile.height;
-                    int arg_1422_3 = 172;
+                    int arg_1422_3 = 135;
                     float arg_1422_4 = 0f;
                     float arg_1422_5 = 0f;
                     int arg_1422_6 = 100;

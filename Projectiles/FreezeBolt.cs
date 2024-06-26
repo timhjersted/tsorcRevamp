@@ -29,11 +29,11 @@ namespace tsorcRevamp.Projectiles
                 Projectile.localAI[0] = 1f;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, Projectile.Center);
             }
-            int num40 = Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, 15, Projectile.velocity.X, Projectile.velocity.Y, 100, default(Color), 3f);
+            int num40 = Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, 135, Projectile.velocity.X, Projectile.velocity.Y, 100, default(Color), 2.5f);
             Main.dust[num40].noGravity = true;
             if (Main.rand.NextBool(10))
             {
-                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 15, Projectile.velocity.X, Projectile.velocity.Y, 100, default(Color), 1.4f);
+                Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 135, Projectile.velocity.X, Projectile.velocity.Y, 100, default(Color), 1.4f);
             }
             if (Projectile.ai[1] >= 20f)
             {

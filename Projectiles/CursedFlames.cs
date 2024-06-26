@@ -30,12 +30,12 @@ namespace tsorcRevamp.Projectiles
                 int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y),
                                          Projectile.width,
                                          Projectile.height,
-                                         75,
+                                         27,
                                          Projectile.velocity.X * 0.2f,
                                          Projectile.velocity.Y * 0.2f,
                                          100,
                                          default,
-                                         3f);
+                                         2f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity.X *= 0.3f;
                 Main.dust[dust].velocity.Y *= 0.3f;
@@ -50,7 +50,7 @@ namespace tsorcRevamp.Projectiles
                 Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y),
                                              Projectile.width,
                                              Projectile.height,
-                                             75,
+                                             27,
                                              -Projectile.velocity.X * 0.3f,
                                              -Projectile.velocity.Y * 0.3f,
                                              100,

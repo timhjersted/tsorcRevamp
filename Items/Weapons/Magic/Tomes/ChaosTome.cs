@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 25;
             Item.useTime = 25;
-            Item.damage = 60;
+            Item.damage = 95;
             Item.knockBack = 4f;
             Item.mana = 8;
             Item.rare = ItemRarityID.Pink;
@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.useTurn = true;
             Item.autoReuse = true;
             Item.value = PriceByRarity.Pink_5;
-            Item.shootSpeed = 8;
+            Item.shootSpeed = 11;
             Item.shoot = ModContent.ProjectileType<Projectiles.ChaosBall2>();
         }
 

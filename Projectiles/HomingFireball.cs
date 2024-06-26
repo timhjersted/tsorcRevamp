@@ -51,7 +51,7 @@ namespace tsorcRevamp.Projectiles
             for (int i = 0; i < 5; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(12, 12);
-                int thisDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 15, vel.X, vel.Y, 100, default, 2f);
+                int thisDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6, vel.X, vel.Y, 100, default, 2f);
                 Main.dust[thisDust].noGravity = true;
             }
             return true;

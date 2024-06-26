@@ -31,11 +31,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void AI()
         {
-            if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
-            {
-                Projectile.soundDelay = 10;
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item9, Projectile.Center);
-            }
+            
             for (int d = 0; d < 2; d++)
             {
                 int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.Poisoned, 0, 0, 100, default(Color), 1.3f);

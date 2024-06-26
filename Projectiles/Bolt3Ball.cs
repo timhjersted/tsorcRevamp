@@ -30,12 +30,7 @@ namespace tsorcRevamp.Projectiles
                 Projectile.timeLeft = 0;
             }
 
-            if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
-            {
-                Projectile.soundDelay = 10;
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item9, Projectile.Center);
-            }
-            int num47 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 2f);
+            int num47 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 226, 0f, 0f, 100, default, 1f);
             Dust expr_2684 = Main.dust[num47];
             expr_2684.velocity *= 0.3f;
             Main.dust[num47].position.X = Projectile.position.X + (float)(Projectile.width / 2) + 4f + (float)Main.rand.Next(-4, 5);

@@ -24,13 +24,8 @@ namespace tsorcRevamp.Projectiles
         }
         public override void AI()
         {
-            if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
-            {
-                Projectile.soundDelay = 10;
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item9, Projectile.Center);
-            }
 
-            int thisDust = Dust.NewDust(new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y), Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
+            int thisDust = Dust.NewDust(new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y), Projectile.width, Projectile.height, 6, 0, 0, 100, default, 2f);
             Main.dust[thisDust].noGravity = true;
 
             Projectile.rotation += 0.3f;
@@ -46,9 +41,9 @@ namespace tsorcRevamp.Projectiles
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
             for (int i = 0; i < 20; i++)
             {
-                int thisDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
+                int thisDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6, 0, 0, 100, default, 2f);
                 Main.dust[thisDust].noGravity = true;
-                thisDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f); ;
+                thisDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6, 0, 0, 100, default, 2f); ;
                 Main.dust[thisDust].noGravity = true;
             }
 
