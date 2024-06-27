@@ -16,7 +16,6 @@ namespace tsorcRevamp.Items.Armors
         public static float MaxStamina = 20f;
         public static float StaminaRegen = 20f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, MinionSlots, MaxStamina, StaminaRegen);
-        public override string Texture => "tsorcRevamp/Items/Armors/DragoonGreaves";
         public override void SetStaticDefaults()
         {
         }

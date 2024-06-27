@@ -11,7 +11,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
 {
     public class SupremeDragoonLance : ModdedSpearItem
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/Spears/DragoonLance";
         public override int ProjectileID => ModContent.ProjectileType<SupremeDragoonLanceProjectile>();
         public override int Width => 50;
         public override int Height => 50;
