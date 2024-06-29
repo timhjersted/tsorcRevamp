@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class DragoonArmor : ModItem
     {
-        public static float Dmg = 30f;
-        public static float MeleeSpeed = 30f;
+        public static float Dmg = 24f;
+        public static float MeleeSpeed = 26f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MeleeSpeed);
         public override void SetStaticDefaults()
         {

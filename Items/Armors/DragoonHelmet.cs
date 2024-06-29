@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors
         public static int MaxMana = 140;
         public static float ManaCost = 14f;
         public static int ManaRegen = 9;
-        public static float CritChance = 30f;
+        public static float CritChance = 24f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost, ManaRegen, CritChance);
         public override void SetStaticDefaults()
         {

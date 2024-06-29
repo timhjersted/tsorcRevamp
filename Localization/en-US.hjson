@@ -6319,7 +6319,7 @@ Mods: {
 				DisplayName: Antimat Rifle
 				Tooltip:
 					'''
-					Unbelievable damage at the cost of a 2.5 second cooldown between shots 
+					Unbelievable damage at the cost of a 2 second cooldown between shots 
 					Fires piercing high-velocity rounds that punch through thin walls
 					Damage increases with enemy armor
 					'''

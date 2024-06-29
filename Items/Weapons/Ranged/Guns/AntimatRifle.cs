@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Antimat Rifle");
-            /* Tooltip.SetDefault("Unbelievable damage at the cost of a 2.5 second cooldown between shots \n" +
+            /* Tooltip.SetDefault("Unbelievable damage at the cost of a 2 second cooldown between shots \n" +
                                 "Fires piercing high-velocity rounds that punch through thin walls\n" +
                                 "Damage increases with enemy armor"); */
         }
@@ -28,18 +28,18 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Item.height = 26;
             Item.knockBack = 5;
             Item.noMelee = true;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ItemRarityID.Purple;
             Item.scale = (float)0.9;
             Item.useAmmo = AmmoID.Bullet;
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = AmmoID.Bullet;
             Item.shootSpeed = 10;
             //item.pretendType=96;
-            Item.useAnimation = 150;
-            Item.useTime = 150;
+            Item.useAnimation = 120;
+            Item.useTime = 120;
             Item.UseSound = SoundID.Item36;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.value = PriceByRarity.Red_10;
+            Item.value = PriceByRarity.Purple_11;
         }
 
         public override void AddRecipes()

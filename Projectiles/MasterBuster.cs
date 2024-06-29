@@ -133,7 +133,7 @@ namespace tsorcRevamp.Projectiles
                 if (Main.rand.NextBool(5))
                 {
                     Vector2 offset = Projectile.velocity.RotatedByRandom(MathHelper.ToRadians(8));
-                    Dust dust = Main.dust[Dust.NewDust((player.Center + (Projectile.velocity * (Distance * (float)(j / 100f)))) + offset - Vector2.One * 4f, 8, 8, 45, 0.0f, 0.0f, 125, Color.LightBlue, 4.0f)];
+                    Dust dust = Main.dust[Dust.NewDust((player.Center + (Projectile.velocity * (Distance * (float)(j / 100f)))) + offset - Vector2.One * 4f, 8, 8, 111, 0.0f, 0.0f, 125, Color.LightBlue, 2f)];
                     dust.velocity = Vector2.Zero;
                     dust.noGravity = true;
                     dust.rotation = Projectile.rotation;

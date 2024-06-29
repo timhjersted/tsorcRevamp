@@ -91,7 +91,7 @@ namespace tsorcRevamp.Projectiles.Ranged
                     {//tracer
                         Vector2 DustPos = Projectile.position;
 
-                        int DustIndex = Dust.NewDust(DustPos, 0, 0, 6, 0, 0, 100, default(Color), 1.7f);
+                        int DustIndex = Dust.NewDust(DustPos, 0, 0, 272, 0, 0, 100, default(Color), 1.6f);
                         Main.dust[DustIndex].noGravity = true;
                         Main.dust[DustIndex].velocity = new Vector2(0, 0);
                     }
@@ -101,7 +101,7 @@ namespace tsorcRevamp.Projectiles.Ranged
                         int DustWidth = Projectile.width;
                         int DustHeight = Projectile.height;
 
-                        Dust.NewDust(DustPos, DustWidth, DustHeight, 6, 0, 0, 100, default(Color), 1.1f);
+                        Dust.NewDust(DustPos, DustWidth, DustHeight, 272, 0, 0, 100, default(Color), 1.1f);
                         int DustIndex = Dust.NewDust(DustPos, DustWidth, DustHeight, 31, 0, 0, 100, default(Color), 3f);
                         Main.dust[DustIndex].noGravity = true;
                     }

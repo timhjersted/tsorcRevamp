@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Legs)]
     public class DragoonGreaves2 : ModItem
     {
-        public static float MoveSpeed = 45f;
+        public static float MoveSpeed = 25f;
         public static int MinionSlots = 3;
         public static float MaxStamina = 20f;
         public static float StaminaRegen = 20f;

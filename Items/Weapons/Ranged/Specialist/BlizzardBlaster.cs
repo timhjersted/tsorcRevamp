@@ -55,13 +55,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             for (int i = 0; i < 24; i++)
             {
                 float coneAngle = aimRotation + MathHelper.ToRadians(135) + Main.rand.NextFloat(-WIDTH, WIDTH);
-                Dust dust = Dust.NewDustPerfect(player.Center + Vector2.One.RotatedBy(coneAngle) * 20f, 229, Vector2.One.RotatedBy(coneAngle) * Main.rand.NextFloat(3f, 24f), 0, default, 3f);
+                Dust dust = Dust.NewDustPerfect(player.Center + Vector2.One.RotatedBy(coneAngle) * 20f, 185, Vector2.One.RotatedBy(coneAngle) * Main.rand.NextFloat(3f, 24f), 0, default, 3f);
                 dust.noGravity = true;
             }
             for (int i = 0; i < 6; i++)
             {
                 float coneAngle = aimRotation + MathHelper.ToRadians(135) + (((i % 2) * 2) - 1);
-                Dust dust = Dust.NewDustPerfect(player.Center + Vector2.One.RotatedBy(coneAngle) * 20f, 229, Vector2.One.RotatedBy(coneAngle) * Main.rand.NextFloat(3f, 24f), 0, default, 3f);
+                Dust dust = Dust.NewDustPerfect(player.Center + Vector2.One.RotatedBy(coneAngle) * 20f, 185, Vector2.One.RotatedBy(coneAngle) * Main.rand.NextFloat(3f, 24f), 0, default, 3f);
                 dust.noGravity = true;
             }
             if (targetList.Count != 0)
