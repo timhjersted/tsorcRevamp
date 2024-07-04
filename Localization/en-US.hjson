@@ -9347,6 +9347,7 @@ Mods: {
 			RealityBomb.DisplayName: Reality Bomb
 			RealityFracture.DisplayName: Reality Fracture
 			BlightCataclysm.DisplayName: Blight Cataclysm
+			FreezeBolt3.DisplayName: Freeze Bolt3
 		}
 
 		NPCs: {

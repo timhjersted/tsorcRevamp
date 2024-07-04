@@ -12,7 +12,7 @@ Mods: {
 			UnusableDuringBoss: 有Boss存活时不能使用！
 			MeleeWhipAutoswing: 激活近战武器自动挥舞
 			RecipeTooltip: "[c/66fc03:黑暗之魂合成材料]"
-			// ReforgeTooltip: The [c/206100:Emerald Herald] can [c/d1a21f:Bless] this to remove its negative prefix
+			ReforgeTooltip: "[c/206100:绿衣朝圣者]可以[c/d1a21f:祝福]此物品以移除负面词缀"
 			WingsDisabled:
 				'''
 				这些翅膀已被凶残的[c/009400:茂林飞鸟-猎手][c/383838:诅咒]
@@ -90,7 +90,7 @@ Mods: {
 			DefenseCap: 防御被限定不超过 {0}
 			FlatDmg: 增加 {0} 点伤害
 			MaxStamina: 增加 {0}% 耐力上限
-			CanBeBlessed: 要修复此损坏的物品，请找绿宝石传令官进行祝福
+			CanBeBlessed: 要修复此损坏的物品，请找绿衣朝圣者进行祝福
 			Trident: 手持时可提高在水中的移动能力
 
 			Melee: {
@@ -180,33 +180,33 @@ Mods: {
 			01: 翻滚使你对攻击免疫，掌握它是生存的必要条件！
 			02: 发光的绿色头骨通常隐藏着重要的秘密...右键以打开
 			03: 可以在“控制”中更改绑定的翻滚快捷键，尝试左Shift绑定翻滚、左Alt绑定智能光标
-			04: 你可以躲避半空中的攻击，跨过较长的距离并立即改变你的移动方向...
-			05: 水晶碎块经常暗示附近的秘密、箱子或隐藏路径...
-			06: 在正常战斗中使用药剂通常是生存所必需的
-			07: 死亡时失去灵魂可以在模组配置中禁用，试试吧就像塞尔达传说那样
-			08: 某些黑暗区域的敌人掉落人性，可以刷新诅咒的效果
-			09: 物品提示通常包含对你的生存至关重要的信息...
-			// PermaPot: Permanent potions need special crystals, but normal shards can be refined into them
-			10: 留意你物品的描述，看看是否有能用黑暗之魂升级的物品
-			11: 可以在Boss掉落的独特物品上找到进展线索
+			04: 水晶碎块经常暗示附近的秘密、箱子或隐藏路径...
+			05: 死亡时失去灵魂可以在模组配置中禁用，试试吧就像塞尔达传说那样
+			06: 留意你物品的描述，看看是否有能用黑暗之魂升级的物品
+			07: 青色压力板只能用小型实体射弹激活
+			08: 你所能到之处皆！聪明点，用各种技巧来增强自己
+			09: 在正常战斗中使用药剂通常是生存所必需的
+			PermaPot: 永久药水需要特殊的永恒水晶，但水晶碎块可以合成它们
+			10: 你可以躲避半空中的攻击，跨过较长的距离并立即改变你的移动方向...
+			11: 在武器上有一个负面的修饰词缀？与绿衣朝圣者Jade交谈，她可以用祝福来移除它
 			12: 如果你感到迷茫，就探索在地图上未显示出来的地方，几乎每个方向都有秘密和路径
 			13: 箴言文字泡提供了许多重要提示
-			14: 如果你的暴击几率超过100%，你就有机会造成多重暴击，从而造成4倍或更多的伤害
+			14: 推荐使用 RecipeBrowser(合成表) 辅助模组，轻松查看新获得的物品有哪些合成配方
 			15: 用鞭子尖端攻击敌人必定造成暴击
-			16: 青色压力板只能用小型实体射弹激活
-			// PermaPot2: Some perma potions can be strengthened, and eventually surpass their normal variants.
+			16: 我真是**的疯了
+			PermaPot2: 一些永久药水可以被不断加强，最终超过它们原有的效果
 			17: 一些原版物品的合成配方已被禁用，你必须通过在世界上探索以找到这些物品
-			18: 在武器上有一个负面的修饰词缀？与绿宝石传令官Jade交谈，她可以用祝福来移除它
+			18: 物品提示通常包含对你的生存至关重要的信息...
 			19: 你可能会在有能力打败Boss之前就提前遭遇他们，如果陷入困境，等你变强了再回来
-			20: 推荐使用 RecipeBrowser(合成表) 辅助模组，轻松查看新获得的物品有哪些合成配方
-			21: 欢迎来到泰拉瑞亚的类黑暗之魂模组
+			20: 欢迎来到泰拉瑞亚的类黑暗之魂模组
+			21: 石头构成的门不能被稿子挖开，必须用拉杆或开关打开
 			22: 绿花戒指大大提高了你的闪避能力，让你可以更好地躲避...
-			23: 青色压力板必须用小型实体射弹攻击以激活
-			24: 使用 RecipeBrowser(合成表) 辅助模组查看被标记为<黑暗之魂合成材料>的物品
-			25: 不要忘记翻滚啊！
-			26: 我真是**的疯了
-			27: 石头构成的门不能被稿子挖开，必须用拉杆或开关打开
-			// GoodLuck: You've now seen almost every death tip, but your journey is nowhere near over. Good luck, we hope you enjoy it!
+			23: 某些黑暗区域的敌人掉落人性，可以刷新诅咒的效果
+			24: 需要更多提示？加入QQ群：645748667
+			25: 可以在Boss重召唤书或Boss掉落的独特物品上找到下一步的线索
+			26: 不要忘记翻滚啊！
+			27: 如果你的暴击几率超过100%，你就有机会造成多重暴击，从而造成4倍或更多的伤害
+			GoodLuck: 现在你已经看到了几乎所有的死亡提示，但你的旅程还远未结束。祝你好运，我们希望你能享受它！
 			Poem:
 				'''
 				键盘敲击声声急，
@@ -3593,7 +3593,7 @@ Mods: {
 				Next: 下一个 Boss:
 				DeathCountText: 死亡次数: {0}
 				1: "{$BossChecklist.LeonhardDesc}"
-				2: 李奥纳德出现之地的下方有什么，苦痛之路的终点又有什么？
+				2: 李奥纳德出现之地的下方有什么，野心之路的终点又有什么？
 				3: "{$BossChecklist.PinwheelDesc}"
 				4: 寻找大地神庙令人不寒而栗的深处，找到喷泉汇集成一汪水塘的地方...
 				5: 探索腐化神殿，还有传言说猩红正在地表蔓延...
@@ -3975,7 +3975,7 @@ Mods: {
 				Tooltip:
 					'''
 					元素瓶的碎片
-					把它带到绿宝石传令官那里可以增加元素瓶的使用次数
+					把它带到绿衣朝圣者那里可以增加元素瓶的使用次数
 					'''
 			}
 
@@ -5041,8 +5041,8 @@ Mods: {
 				Tooltip:
 					'''
 					丢失的初学者之书，《奔雷诀》第一卷《层岚碾城》
-					碰撞时会发出小闪电
-					有一定几率使敌人触电
+					释放一道强力闪电
+					使敌人触电
 					'''
 			}
 
@@ -5051,8 +5051,8 @@ Mods: {
 				Tooltip:
 					'''
 					遗失的工匠典籍，《奔雷诀》第二卷《云秤崩兮》
-					碰撞时会发出闪电
-					使敌人触电
+					释放一簇闪电洪流
+					使敌人触电并连锁附近的敌人
 					'''
 			}
 
@@ -5061,8 +5061,8 @@ Mods: {
 				Tooltip:
 					'''
 					失落的传说巨著，《奔雷诀》第三卷《阴阳相汲》
-					使敌人带电并麻痹
-					造成巨大的伤害，只有法师才能充分发挥这本书的潜力 
+					对敌人进行持续的雷击
+					只有法师才能充分发挥这本书的潜力 
 					'''
 			}
 
@@ -5071,7 +5071,6 @@ Mods: {
 				Tooltip:
 					'''
 					失传的禁忌魔咒，《奔雷诀》第四卷《雷聩千里》
-					使敌人带电并麻痹
 					你操纵着苍天的伟力
 					只有最强大的法师才能施展这个法术
 					'''
@@ -6360,7 +6359,7 @@ Mods: {
 				DisplayName: 加农炮
 				Tooltip:
 					'''
-					四发连发
+					四连发
 					只有第一发会消耗弹药
 					每次射击都会发射四发子弹
 					'''
@@ -9336,9 +9335,10 @@ Mods: {
 			EtherianWyvernProjectile.DisplayName: 以太飞龙
 			AbyssArrowProjectile.DisplayName: 深渊箭
 			AbyssBulletProjectile.DisplayName: 深渊弹
-			// RealityBomb.DisplayName: Reality Bomb
-			// RealityFracture.DisplayName: Reality Fracture
-			// BlightCataclysm.DisplayName: Blight Cataclysm
+			RealityBomb.DisplayName: Reality Bomb
+			RealityFracture.DisplayName: 次元碎片
+			BlightCataclysm.DisplayName: 枯萎风暴
+			FreezeBolt3.DisplayName: 霜与电高阶
 		}
 
 		NPCs: {
@@ -9583,8 +9583,8 @@ Mods: {
 				DisplayName: 枯萎
 				DespawnHandler: 命中注定难过此劫！
 				OutOfRange: 枯萎把自己包裹在无法穿透的光线中—你离它太远了！
-				// CataclysmWarning: Blight's instability begins tearing the barrier between the world and the Abyss
-				// Cataclysm: The barrier is shattered!! Nothing but darkness remains...
+				CataclysmWarning: 枯萎开始撕裂世界和深渊之间的屏障
+				Cataclysm: 障碍被打破了！！除了黑暗什么都没有留下...
 			}
 
 			Chaos: {
@@ -10023,7 +10023,7 @@ Mods: {
 			}
 
 			EmeraldHerald: {
-				DisplayName: 绿宝石传令官
+				DisplayName: 绿衣朝圣者
 				Name1: Jade
 				FirstEncounter:
 					'''
@@ -10393,8 +10393,8 @@ Mods: {
 			GhostOfTheDrowned.DisplayName: 溺尸
 			HollowSpearman.DisplayName: 空洞矛手
 			PinwheelFireball.DisplayName: 三焱家族火球
-			// AbyssFracture.DisplayName: Abyss Fracture
-			// AbyssCataclysm.DisplayName: Abyss Cataclysm
+			AbyssFracture.DisplayName: 破碎深渊
+			AbyssCataclysm.DisplayName: 深渊风暴
 		}
 
 		Prefixes: {
@@ -10596,7 +10596,7 @@ Mods: {
 					Label: 箴言文字泡缩放比率
 					Tooltip:
 						'''
-						增加所有蜡石文字泡对话框的大小比率
+						增加所有箴言文字泡对话框的大小比率
 						默认为 0%
 						'''
 				}
@@ -10611,11 +10611,12 @@ Mods: {
 				}
 
 				GravityFix: {
-					Label: 禁用重力效果屏幕翻转
+					Label: 重力药水不再翻转屏幕
 					Tooltip:
 						'''
-						仍在测试！ (大部分运行正常，但会有一些小bug)
-						翻转重力只会翻转你的角色，而不是整个屏幕
+						翻转重力时只会翻转你的角色，而不是整个屏幕
+						强烈推荐游玩本模组时开启
+						当它与另一个模组不兼容时可以禁用此选项
 						'''
 				}
 
