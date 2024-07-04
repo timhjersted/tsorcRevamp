@@ -14,11 +14,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override int ProjectileID => ModContent.ProjectileType<SupremeDragoonLanceProjectile>();
         public override int Width => 50;
         public override int Height => 50;
-        public override int BaseDmg => 300;
+        public override int BaseDmg => 450;
         public override int BaseCritChance => 26;
         public override float BaseKnockback => 15f;
-        public override int UseAnimationTime => 15;
-        public override int UseTime => 15;
+        public override int UseAnimationTime => 21;
+        public override int UseTime => 21;
         public override int Rarity => ItemRarityID.Purple;
         public override int Value => PriceByRarity.fromItem(Item);
         public override SoundStyle UseSoundID => SoundID.Item71;

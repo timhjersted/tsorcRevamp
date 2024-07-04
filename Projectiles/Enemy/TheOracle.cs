@@ -23,8 +23,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.rotation += .5f;
             if (Main.rand.NextBool(4))
             {
-                int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, 50, Color.Green, 3.0f);
-                Main.dust[dust].noGravity = false;
+                int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 75, 0, 0, 50, Color.Green, 2f);
+                Main.dust[dust].noGravity = true;
             }
             Lighting.AddLight(Projectile.position, 0.5f, 0.6f, 0.1f);
 

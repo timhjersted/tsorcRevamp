@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Legs)]
     public class BlueHerosPants : ModItem
     {
-        public static float MoveSpeed = 11f;
+        public static float MoveSpeed = 10f;
         public static int MinionSlots = 1;
         public static float MaxStamina = 11f;
         public static float StaminaRegen = 11f;
