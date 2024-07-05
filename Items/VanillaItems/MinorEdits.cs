@@ -120,5 +120,42 @@ namespace tsorcRevamp.Items.VanillaItems
                 }
             }
         }
+        public override void AddRecipes()
+        {
+            Recipe recipe1 = Recipe.Create(ItemID.FragmentSolar, 40)
+            .AddIngredient(ItemID.SolarSolenianBanner, 1)
+            .AddIngredient(ItemID.SolarSrollerBanner, 1)
+            .AddIngredient(ItemID.SolarCoriteBanner, 1)
+            .AddIngredient(ItemID.SolarCrawltipedeBanner, 1)
+            .AddIngredient(ItemID.SolarDrakomireBanner, 1)
+            .AddTile(TileID.LunarCraftingStation);
+            recipe1.Register();
+
+            Recipe recipe2 = Recipe.Create(ItemID.FragmentVortex, 40)
+            .AddIngredient(ItemID.VortexHornetBanner, 1)
+            .AddIngredient(ItemID.VortexHornetQueenBanner, 1)
+            .AddIngredient(ItemID.VortexRiflemanBanner, 1)
+            .AddIngredient(ItemID.VortexSoldierBanner, 1)
+            .AddTile(TileID.LunarCraftingStation);
+            recipe2.Register();
+
+            Recipe recipe3 = Recipe.Create(ItemID.FragmentNebula, 40)
+            .AddIngredient(ItemID.NebulaBrainBanner, 1)
+            .AddIngredient(ItemID.NebulaBeastBanner, 1)
+            .AddIngredient(ItemID.NebulaSoldierBanner, 1)
+            .AddIngredient(ItemID.NebulaHeadcrabBanner, 1)
+            .AddTile(TileID.LunarCraftingStation);
+            recipe3.Register();
+
+            Recipe recipe4 = Recipe.Create(ItemID.FragmentStardust, 40)
+            .AddIngredient(ItemID.StardustLargeCellBanner, 1)
+            .AddIngredient(ItemID.StardustJellyfishBanner, 1)
+            .AddIngredient(ItemID.StardustSoldierBanner, 1)
+            .AddIngredient(ItemID.StardustSpiderBanner, 1)
+            .AddIngredient(ItemID.StardustWormBanner, 1)
+            .AddTile(TileID.LunarCraftingStation);
+            recipe4.Register();
+
+        }
     }
 }
