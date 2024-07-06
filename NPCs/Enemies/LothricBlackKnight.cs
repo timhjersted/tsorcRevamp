@@ -43,13 +43,14 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.npcSlots = 5;
             NPC.knockBackResist = 0.15f;
             NPC.aiStyle = -1;
-            NPC.damage = 65;
+            NPC.damage = 55;
             NPC.defense = 15;
             NPC.height = 44;
             NPC.width = 20;
             NPC.lifeMax = 1000;
             if (Main.hardMode)
             {
+                NPC.knockBackResist = 0.05f;
                 NPC.lifeMax = 1500;
                 NPC.defense = 40;
                 NPC.value = 7500;  // was 1000
@@ -57,11 +58,12 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (tsorcRevampWorld.SuperHardMode)
             {
-                NPC.lifeMax = 3000;
-                NPC.defense = 85;
-                NPC.damage = 100;
-                NPC.value = 12000;  // was 1600
-                lothricDamage = 35;
+                NPC.knockBackResist = 0.0f;
+                NPC.lifeMax = 5000;
+                NPC.defense = 95;
+                NPC.damage = 65;
+                NPC.value = 13000;  // was 1600
+                lothricDamage = 30;
             }
             NPC.value = 5000;
             NPC.HitSound = SoundID.NPCHit1;

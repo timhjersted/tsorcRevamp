@@ -24,36 +24,44 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Main.npcFrameCount[NPC.type] = 15;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.CursedInferno] = true;
-            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Ichor] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Ichor] = true;           
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire3] = true;
         }
         public override void SetDefaults()
         {
             NPC.knockBackResist = 0;
-            NPC.damage = 84;
+            NPC.damage = 55;
             NPC.defense = 25;
             NPC.height = 40;
             NPC.width = 30;
-            NPC.lifeMax = 75000;
+            NPC.lifeMax = 90000;
             NPC.scale = 1f;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;
-            NPC.value = 700000;
-            NPC.rarity =39;
+            NPC.value = 750000;
+            NPC.rarity = 39;
             NPC.boss = true;
             NPC.lavaImmune = true;
+            NPC.coldDamage = true;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Artorias.DespawnHandler"), Color.Gold, DustID.GoldFlame);
+
+            tsorcRevampGlobalNPC artoriasGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            artoriasGlobalNPC.Agility = 0.1f;
         }
 
-        public int poisonStrikeDamage = 60;
-        public int redKnightsSpearDamage = 76;
-        public int redMagicDamage = 64;
-        public int burningSphereDamage = 231;
+        public int attackPatternCounter = 0;
 
-        int darkBeadDamage = 72;
+        public int poisonStrikeDamage = 30;
+        public int redKnightsSpearDamage = 30;
+        public int redMagicDamage = 34;
+        public int burningSphereDamage = 36;
+
+        int darkBeadDamage = 30;
 
 
-        public int blackBreathDamage = 108;
-        public int phantomSeekerDamage = 112;
+        public int blackBreathDamage = 32;
+        public int phantomSeekerDamage = 32;
 
         //This attack does damage equal to 25% of your max health no matter what, so its damage stat is irrelevant and only listed for readability.
         public int gravityBallDamage = 0;
@@ -64,6 +72,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public float DarkBeadShotCounter;
         public float poisonTimer = 0;
         public float poisonTimer2 = 0;
+
+
+
+        // Track which thresholds have already spawned their NPCs
+        private bool spawned90 = false;
+        private bool spawned60 = false;
+        private int spawned40 = 0; // Spawn two at 40%
+        private int spawned20 = 0; // Spawn 3 at 20%
+
 
         //chaos
         int holdTimer = 0;
@@ -95,17 +112,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //PROJECTILE HIT LOGIC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            if (NPC.justHit && Main.rand.NextBool(12))
+            if (NPC.justHit && Main.rand.NextBool(13))
             {
                 tsorcRevampAIs.TeleportImmediately(NPC, 20, true);
                 poisonTimer = 1f;
                 DarkBeadShotCounter = 0;
                 DarkBeadShotTimer = 0;
             }
-            if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(7))//
+            if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(12))//
             {
-                NPC.velocity.Y = Main.rand.NextFloat(-5f, -3f); //was 6 and 3
-                float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-9f, -6f);
+                NPC.velocity.Y = Main.rand.NextFloat(-8f, -5f); //was 6 and 3
+                float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-6f, -9f);
+                NPC.velocity.X = v;
+                DarkBeadShotCounter = 0;
+                DarkBeadShotTimer = 0;
+                NPC.netUpdate = true;
+            }
+            if (NPC.justHit && NPC.Distance(player.Center) > 350 && Main.rand.NextBool(8))//
+            {
+                NPC.velocity.Y = Main.rand.NextFloat(-8f, -5f); //was 6 and 3
+                float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(3f, 5f);
                 NPC.velocity.X = v;
                 DarkBeadShotCounter = 0;
                 DarkBeadShotTimer = 0;
@@ -119,8 +145,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Main.rand.NextBool(8))
             {
 
-                NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f);
-                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 4f);
+                NPC.velocity.Y = Main.rand.NextFloat(-3f, -6f);
+                NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(3f, 5f);
                 poisonTimer = 1f;
                 DarkBeadShotCounter = 0;
                 DarkBeadShotTimer = 0;
@@ -128,10 +154,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             }
 
-            if (NPC.justHit && Main.rand.NextBool(25))
+            if (NPC.justHit && Main.rand.NextBool(20))
             {
                 tsorcRevampAIs.TeleportImmediately(NPC, 20, true);
-                poisonTimer = 30f;
+                poisonTimer = 0f;
             }
         }
         //public static Texture2D spearTexture;
@@ -156,6 +182,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
             }
         }
+
+
+        void SpawnNPC()
+        {
+            int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.LothricBlackKnight>(), 0); // Spawns Lothric Black Knight
+            Main.npc[Spawned].velocity.Y = -8;
+            Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
+            NPC.ai[0] = 20 - Main.rand.Next(80);
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
+            }
+        }
+
 
         public override void AI()
         {
@@ -189,8 +229,31 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
 
-            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 32, NPC.velocity.X - 3f, NPC.velocity.Y, 150, Color.Yellow, 1f);
-            Main.dust[dust].noGravity = true;
+            // Spawn NPC at 90% health
+            if (!spawned90 && NPC.life <= NPC.lifeMax * 0.9)
+            {
+                SpawnNPC();
+                spawned90 = true;
+            }
+            // Spawn NPC at 60% health
+            else if (!spawned60 && NPC.life <= NPC.lifeMax * 0.6)
+            {
+                SpawnNPC();
+                spawned60 = true;
+            }
+            // Spawn two NPCs at 40% health
+            else if (spawned40 < 2 && NPC.life <= NPC.lifeMax * 0.4)
+            {
+                SpawnNPC();
+                spawned40++;
+            }
+            // Spawn NPC at 20% health
+            else if (spawned20 < 3 && NPC.life <= NPC.lifeMax * 0.2)
+            {
+                SpawnNPC();
+                spawned20++;
+            }
+
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -201,36 +264,36 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Counts up each tick. Used to space out shots
                 if (DarkBeadShotTimer <= 81)
                 {
-                    Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                    Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 3f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                     if (Main.rand.NextBool(2))
                     {
-                        int pink2 = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.5f);
+                        int pink2 = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y, Scale: 1.4f);
 
                         Main.dust[pink2].noGravity = true;
                     }
 
                 }
-                if (DarkBeadShotTimer == 55)
+                if (DarkBeadShotTimer == 65)
                 {
                     if (NPC.Distance(player.Center) >= 221)
                     {
-                        NPC.velocity.Y = Main.rand.NextFloat(-12f, -3f); //was 6 and 3 && NPC.velocity.Y == 0
-                        float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-9f, 9f);
+                        NPC.velocity.Y = Main.rand.NextFloat(-3f, -9f); //was 6 and 3 && NPC.velocity.Y == 0
+                        float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(2f, 6f);
                         NPC.velocity.X = v;
 
                     }
                     if (NPC.Distance(player.Center) <= 220)
                     {
-                        NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f); //was 6 and 3 && NPC.velocity.Y == 0
-                        float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-16f, -11f);
+                        NPC.velocity.Y = Main.rand.NextFloat(-3f, -9f); //was 6 and 3 && NPC.velocity.Y == 0
+                        float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-3f, -9f);
                         NPC.velocity.X = v;
                     }
                 }
 
-                if (DarkBeadShotTimer >= 82 && DarkBeadShotCounter < 2)
+                if (DarkBeadShotTimer >= 85 && DarkBeadShotCounter < 2)
                 {
-                    poisonTimer = 1f;
-                    Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 7f);
+                    //poisonTimer = 1f;
+                    Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 5f);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.ArtoriasDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
@@ -239,7 +302,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if (DarkBeadShotCounter <= 1)
                     {
-                        DarkBeadShotTimer = 72;
+                        DarkBeadShotTimer = 80;
                     }
 
                     DarkBeadShotCounter++;
@@ -256,142 +319,168 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
                 poisonTimer++; ;
-
-
-                //TELEGRAPH DUSTS
-                if (poisonTimer >= 150 && poisonTimer <= 179)
-                {
-                    Lighting.AddLight(NPC.Center, Color.YellowGreen.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                    if (Main.rand.NextBool(2))
-                    {
-                        int dust3 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 0.5f);
-                        Main.dust[dust3].noGravity = true;
-                    }
-                }
-
-
-                //POISON FROM ABOVE ATTACK
-                if (poisonTimer <= 100 && NPC.Distance(player.Center) > 250)
-                {
-
-                    if (Main.rand.NextBool(130)) //30 was cool for great red knight
-                    {
-                        //POISON
-                        for (int pcy = 0; pcy < 5; pcy++)
+                // SHADOW SHOT FROM ABOVE ATTACK
+                if (poisonTimer == 200)
+                { 
+                        for (int pcy = 0; pcy < 2; pcy++)
                         {
-                            //Player nT = Main.player[npc.target];
+                           
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 10 + Main.rand.Next(10), (float)player.position.Y - 300f, (float)(-10 + Main.rand.Next(10)) / 10, 2.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 2f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   
+                                Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 0.5f);
+
+                                // Number of projectiles in the shotgun blast
+                                int numProjectiles = 3;
+                                // Spread angle in degrees
+                                float spreadAngle = 3f;
+
+                                for (int i = 0; i < numProjectiles; i++)
+                                {
+                                    // Calculate the horizontal velocity component
+                                    float horizontalVelocity = (i - (numProjectiles - 1) / 2f) * spreadAngle / (numProjectiles - 1);
+
+                                    // Introduce a slight random variation in speed
+                                    float speedVariation = 1.0f + Main.rand.NextFloat(-0.1f, 0.1f);  // Varies speed by ±10%
+
+                                    // Calculate the final velocity
+                                    Vector2 finalVelocity = new Vector2(horizontalVelocity / 10, 3.1f) * speedVariation;
+
+                                    // Create the projectile
+                                    Projectile.NewProjectile(NPC.GetSource_FromThis(),
+                                                             player.position.X - 5 + Main.rand.Next(10),
+                                                             player.position.Y - 400f,
+                                                             finalVelocity.X,
+                                                             finalVelocity.Y,
+                                                             ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(),
+                                                             redMagicDamage,
+                                                             2f,
+                                                             Main.myPlayer);
+                                }
                             }
+
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }); //fire
 
-                            //int FireAttack = Projectile... 
-                            //Main.projectile[FireAttack].timeLeft = 15296;
-                            //DarkBeadShotCounter = 0;
+                          
                             NPC.netUpdate = true;
                         }
-
-                    }
+                        
+                        if (DarkBeadShotTimer >= 86)
+                        {
+                            DarkBeadShotCounter = 0;
+                            DarkBeadShotTimer = 0;
+                        }           
                 }
 
 
-                //FIRE ATTACK 2
+                // SHADOW SHOT ATTACKS x 3
 
-                if (poisonTimer <= 100)
+                if (poisonTimer == 400)
                 {
                     Player nT = Main.player[NPC.target];
-                    if (Main.rand.NextBool(330)) //30 was cool for great red knight
-                    {
-                        //FIRE
-                        for (int pcy = 0; pcy < 2; pcy++)
-                        {
-                            int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X - 100 + Main.rand.Next(200), (int)NPC.Center.Y - 500, NPCID.BurningSphere, 0);
-                            Main.npc[spawned].damage = burningSphereDamage;
-                            Main.npc[spawned].velocity += Main.player[NPC.target].velocity;
-                            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
 
-                            if (Main.netMode == NetmodeID.Server)
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            // Determine the attack pattern
+                            switch (attackPatternCounter)
                             {
-                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
+                                case 0: // Curtain Call
+                                {
+                                        int numProjectiles = 20;
+                                        float spacing = 100f;
+
+                                        for (int i = 0; i < numProjectiles; i++)
+                                        {
+                                            Vector2 position = new Vector2(player.position.X - 500 + i * spacing, player.position.Y - 400f);
+                                            Vector2 velocity = UsefulFunctions.Aim(position, player.Center, 1.3f);
+
+                                            Projectile.NewProjectile(NPC.GetSource_FromThis(),
+                                                                     position.X,
+                                                                     position.Y,
+                                                                     velocity.X,
+                                                                     velocity.Y,
+                                                                     ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(),
+                                                                     redMagicDamage,
+                                                                     2f,
+                                                                     Main.myPlayer);
+                                        }
+                                        break;
+                                }
+                                case 1: // Shotgun blast on two Sides
+                                {
+                                        int numProjectiles = 6;
+                                        float spreadAngle = 2f;
+
+                                        for (int side = -1; side <= 1; side += 2)
+                                        {
+                                            for (int i = 0; i < numProjectiles; i++)
+                                            {
+                                                float horizontalVelocity = (i - (numProjectiles - 1) / 2f) * spreadAngle;
+                                                float speedVariation = 1.0f + Main.rand.NextFloat(-0.1f, 0.1f);
+                                                Vector2 finalVelocity = new Vector2(horizontalVelocity, -1.1f) * speedVariation;
+
+                                                Projectile.NewProjectile(NPC.GetSource_FromThis(),
+                                                                            player.position.X + 200 * side,
+                                                                            player.position.Y + 300f,
+                                                                            finalVelocity.X,
+                                                                            finalVelocity.Y,
+                                                                            ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(),
+                                                                            redMagicDamage,
+                                                                            2f,
+                                                                            Main.myPlayer);
+                                            }
+                                        }
+                                        break;
+                                }
+                                case 2: // Bottom Up
+                                {
+                                    int numProjectiles = 25;
+                                    float spacing = 100f;
+
+                                    for (int i = 0; i < numProjectiles; i++)
+                                    {
+                                        Vector2 position = new Vector2(player.position.X + 400 - i * spacing, player.position.Y + 500);
+                                        Vector2 velocity = UsefulFunctions.Aim(position, player.Center, 1.3f);
+
+                                        Projectile.NewProjectile(NPC.GetSource_FromThis(),
+                                                                    position.X,
+                                                                    position.Y,
+                                                                    velocity.X,
+                                                                    velocity.Y,
+                                                                    ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>(),
+                                                                    redMagicDamage,
+                                                                    2f,
+                                                                    Main.myPlayer);
+                                    }
+                                    break;
+                                }
                             }
+
+                            // Increment the attack pattern counter, wrapping around if necessary
+                            attackPatternCounter = (attackPatternCounter + 1) % 3;
                         }
 
 
-                        /*//HELLWING ATMOSPHERE BUT DOES NO DAMAGE YET
-                        for (int pcy = 0; pcy < 2; pcy++)
-                        {
-                            //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
-                            int FireAttack = Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 300f, (float)(-50 + Main.rand.Next(100)) / 10, 5.1f, ProjectileID.Hellwing, redMagicDamage, 12f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>()
-                            Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 5);
-                            //Main.projectile[FireAttack].timeLeft = 15296;
-                            npc.netUpdate = true;
-                        }
-                        */
-                    }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }); //fire
 
-                    if (Main.rand.NextBool(220))
-                    {
-                        for (int pcy = 0; pcy < 3; pcy++)
-                        {
-                            int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X - 600 + Main.rand.Next(600), (int)NPC.Center.Y - 500, NPCID.BurningSphere, 0);
-                            Main.npc[spawned].damage = burningSphereDamage;
-                            Main.npc[spawned].velocity += Main.player[NPC.target].velocity;
-                            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
+                           
+                            NPC.netUpdate = true;
+                        
+                        poisonTimer = 0f;
+                    
 
-                            if (Main.netMode == NetmodeID.Server)
-                            {
-                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
-                            }
-                        }
-                    }
-
-                    if (Main.rand.NextBool(450))
-                    {
-                        for (int pcy = 0; pcy < 7; pcy++)
-                        {
-                            int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X - 500 + Main.rand.Next(500), (int)NPC.Center.Y - 700, NPCID.BurningSphere, 0);
-                            Main.npc[spawned].damage = burningSphereDamage;
-                            Main.npc[spawned].velocity += Main.player[NPC.target].velocity;
-                            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
-
-                            if (Main.netMode == NetmodeID.Server)
-                            {
-                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
-                            }
-                        }
-                    }
+                    
                 }
 
-                /*ULTIMATE DEATH ATTACK - BLANKET OF FIRE ABOVE PLAYER THAT CURSES
-                  Player player = Main.player[npc.target];
-                  if (npc.Distance(player.Center) > 20 && Main.rand.NextBool(3))
-                  {
-                      Player nT = Main.player[npc.target];
-                      if (Main.rand.NextBool(8))
-                      {
-                          UsefulFunctions.BroadcastText("Death!", 175, 75, 255);
-                      }
-
-                      for (int pcy = 0; pcy < 3; pcy++)
-                      {
-                          //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
-                          Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.CursedDragonsBreath>(), redMagicDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
-                          Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 5);
-                          npc.netUpdate = true;
-                      }
-                  }
-
-                  */
+               
 
                 if (Main.rand.NextBool(10) && NPC.life <= NPC.lifeMax / 2)
                 {
 
                     //ULTIMATE DEATH ATTACK - BLANKET OF FIRE ABOVE PLAYER THAT CURSES
-                    //Player player = Main.player[npc.target];
-                    if (NPC.Distance(player.Center) > 200 && Main.rand.NextBool(3))
+                   
+                    if (NPC.Distance(player.Center) > 200 && Main.rand.NextBool(4))
                     {
                         Player nT = Main.player[NPC.target];
 
@@ -403,8 +492,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 540f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), poisonStrikeDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
+                                  Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 540f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), poisonStrikeDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
                             }
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.2f, Pitch = 0.01f }); //flamethrower
                             NPC.netUpdate = true;
@@ -413,15 +501,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
 
-
-
-
-
                 //OFFENSIVE JUMPS
-                if (poisonTimer >= 160 && poisonTimer <= 161 && NPC.Distance(player.Center) > 400)
+                if (poisonTimer == 160 && NPC.Distance(player.Center) > 200)
                 {
                     //CHANCE TO JUMP 
-                    if (Main.rand.NextBool(20))
+                    if (Main.rand.NextBool(2))
                     {
                         Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                         if (Main.rand.NextBool(3))
@@ -429,113 +513,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.TeleportationPotion, NPC.velocity.X, NPC.velocity.Y);
 
                         }
-                        NPC.velocity.Y = -10f; //9             
+                        NPC.velocity.Y = Main.rand.NextFloat(-3f, -6f);
+                        NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(3f, 5f);
                         NPC.TargetClosest(true);
                         DarkBeadShotCounter = 0;
-                        DarkBeadShotTimer = 20;
+                        DarkBeadShotTimer = 40;
                         NPC.netUpdate = true;
 
                     }
                 }
-                //SPEAR ATTACK
-
-                if (poisonTimer == 180f) //180 (without 2nd condition) and 185 created an insane attack && poisonTimer <= 181f
-                {
-                    NPC.TargetClosest(true);
-                    /*
-                    //if (Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
-                    //{
-                    Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12); //0.4f, true, true																								
-                    speed += Main.player[NPC.target].velocity;
-                    //speed += Main.rand.NextVector2Circular(-4, -2);
-
-                    if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.
-                    
-                    sSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.6f, Pitch = 0.3f }, NPC.position); //Play swing-throw sound
-                                                                                                                                //go to poison attack
-                        poisonTimer = 185f;
-
-                        if (Main.rand.NextBool(3))
-                        {
-                            //or chance to reset
-                            DarkBeadShotCounter = 0;
-                            poisonTimer = 1f;
-
-                        }
-
-                    }
-                    */
-
-
-                    int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.BurningSphere, 0);
-                    Main.npc[spawned].damage = burningSphereDamage;
-                    Main.npc[spawned].velocity += Main.player[NPC.target].velocity;
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 0.4f }, NPC.Center);
-                    poisonTimer = 185f;
-
-                    if (Main.netMode == NetmodeID.Server)
-                    {
-                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
-                    }
-
-
-                }
-
-
-                //POISON ATTACK DUST TELEGRAPH
-                if (poisonTimer >= 310 && NPC.life >= NPC.lifeMax / 2) //was 180
-                {
-                    //if(Main.rand.NextBool(60))
-                    //{
-                    Lighting.AddLight(NPC.Center, Color.Yellow.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                    if (Main.rand.NextBool(2) && NPC.Distance(player.Center) > 10)
-                    {
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Teleporter, NPC.velocity.X, NPC.velocity.Y);
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Teleporter, NPC.velocity.X, NPC.velocity.Y);
-                    }
-
-                    //POISON ATTACK
-                    if (poisonTimer >= 350 && Main.rand.NextBool(2)) //30 was cool for great red knight
-                    {
-                        NPC.TargetClosest(true);
-                        //if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 500)
-                        if (Collision.CanHitLine(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
-                        {
-                            Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 9); //0.4f, true, true																								
-                            speed2 += Main.player[NPC.target].velocity / 2;
-
-                            if (((speed2.X < 0f) && (NPC.velocity.X < 0f)) || ((speed2.X > 0f) && (NPC.velocity.X > 0f)))
-                            {
-                                if (Main.netMode != NetmodeID.MultiplayerClient)
-                                {
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
-                                }
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item125 with { Volume = 0.3f, Pitch = 0.0f }); //phantasmal bolt fire 2
-                            }
-
-
-
-                            if (poisonTimer >= 255)
-                            {
-
-                                if (Main.rand.NextBool(3))
-                                {
-                                    DarkBeadShotCounter = 0;
-                                    DarkBeadShotTimer = 0;
-                                }
-                                poisonTimer = 1f;
-                            }
-                            //}
-                        }
-                    }
-
-                }
+                
 
                 //DD2DrakinShot FINAL ATTACK
-                if (poisonTimer >= 186f && NPC.life <= NPC.lifeMax / 2)
+                if (poisonTimer >= 300f && NPC.life <= NPC.lifeMax / 2)
                 {
                     bool clearSpace = true;
                     for (int i = 0; i < 10; i++)
@@ -562,7 +552,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                         }
 
-                        if (poisonTimer >= 230f)
+                        if (poisonTimer >= 340f)
                         {
                             poisonTimer = 1f;
                         }
@@ -571,75 +561,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
 
-
-                //old code
-                customAi1 += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
-                if (customAi1 >= 10f)
-                {
-
-                    if ((customspawn2 < 27) && Main.rand.NextBool(1500))
-                    {
-                        int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.LothricBlackKnight>(), 0); // Spawns Lothric Black Knight
-                        Main.npc[Spawned].velocity.Y = -8;
-                        Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                        NPC.ai[0] = 20 - Main.rand.Next(80);
-                        customspawn2 += 1f;
-                        if (Main.netMode == NetmodeID.Server)
-                        {
-                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-                        }
-                    }
-                }
-
-
             }
         }
 
-        /*
-        if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
-        {
-            NPC.noTileCollide = false;
-            NPC.noGravity = false;
-        }
-        if ((!Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
-        {
-            NPC.noTileCollide = true;
-            NPC.noGravity = true;
-            NPC.velocity.Y = 0f;
-            if (NPC.position.Y > Main.player[NPC.target].position.Y)
-            {
-                NPC.velocity.Y -= 3f;
-            }
-            if (NPC.position.Y < Main.player[NPC.target].position.Y)
-            {
-                NPC.velocity.Y += 8f;
-            }
-         }
         
-        */
-
-
-        /*
-         if (spearTexture == null || texture.IsDisposed)
-         {
-             spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/ArtoriasGreatsword");
-         }
-         if (poisonTimer >= 120 && poisonTimer <= 180f)
-         {
-             int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 1f);
-             Main.dust[dust].noGravity = true;
-
-             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-             if (NPC.spriteDirection == -1)
-             {
-                 spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing left (8, 38 work)
-             }
-             else
-             {
-                 spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing right, first value is height, higher number is higher
-             }
-         }
-         */
         public override void SendExtraAI(BinaryWriter writer)
         {
             if (NPC.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
