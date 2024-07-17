@@ -1188,7 +1188,7 @@ namespace tsorcRevamp
             bool charm = false;
             foreach (Player p in Main.player)
             {
-                for (int i = 3; i <= 8; i++)
+                for (int i = 3; i <= 8 + p.extraAccessorySlots; i++)
                 {
                     if (p.armor[i].type == ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>())
                     {
