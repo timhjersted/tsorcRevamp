@@ -37,17 +37,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
                 damage.Flat -= 5;
             }
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            if (Item.prefix == PrefixID.Dull)
-            {
-                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
-                if (ttindex != -1)
-                {
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CanBeBlessed", LangUtils.GetTextValue("CommonItemTooltip.CanBeBlessed")));
-                }
-            }
-        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

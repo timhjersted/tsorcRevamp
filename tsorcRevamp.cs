@@ -407,7 +407,8 @@ namespace tsorcRevamp
                 TileID.SeaweedPlanter, //seaweed/herb planters
                 TileID.Sunflower, TileID.Campfire, TileID.HangingLanterns, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle)
                 TileID.Sundial, TileID.Moondial, //Sundial, Moondial
-                TileID.Grass
+                TileID.Grass,
+                TileID.CopperCoinPile, TileID.SilverCoinPile, TileID.GoldCoinPile, TileID.PlatinumCoinPile
             };
             #endregion
             //--------
@@ -551,6 +552,7 @@ namespace tsorcRevamp
                 ItemID.BlueHorseshoeBalloon,
                 ItemID.WhiteHorseshoeBalloon,
                 ItemID.YellowHorseshoeBalloon,
+                ItemID.BalloonHorseshoeFart,
                 ItemID.BalloonHorseshoeHoney
                 #endregion
                 ,

@@ -40,17 +40,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
                 damage.Flat -= 7;
             }
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            if (Item.prefix == PrefixID.Awful)
-            {
-                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
-                if (ttindex != -1)
-                {
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CanBeBlessed", LangUtils.GetTextValue("CommonItemTooltip.CanBeBlessed")));
-                }
-            }
-        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

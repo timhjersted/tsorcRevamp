@@ -1884,6 +1884,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 42; //was 30 for a long time, then 38 briefly
                         npc.defense = 22;
                         npc.value = 0;
+                        npc.boss = true;
                         npc.buffImmune[BuffID.Poisoned] = true;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.buffImmune[BuffID.Frostburn] = true;
@@ -1898,6 +1899,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 24; //legacy: 22, was 18 for a long time, then 22 briefly
                         npc.defense = 5;
                         npc.value = 0; //ignored
+                        npc.boss = true;
                         npc.buffImmune[BuffID.Poisoned] = true;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.buffImmune[BuffID.Frostburn] = true;
@@ -1910,6 +1912,7 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = 155;
                         npc.defense = 8;
                         npc.value = 0; //ignored
+                        npc.boss = true;
                         npc.buffImmune[BuffID.Poisoned] = true;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.buffImmune[BuffID.Frostburn] = true;
@@ -5606,6 +5609,77 @@ namespace tsorcRevamp.NPCs
                 }
             }
         }
+
+        /*public override void HitEffect(NPC npc, NPC.HitInfo hit)
+        {
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                if (npc.type == 412 || npc.type == 413 || npc.type == 414 || npc.type == 415 || npc.type == 416 || npc.type == 417 || npc.type == 418 || npc.type == 419 || npc.type == 518)
+                {
+                    if (npc.life <= 0)
+                    {
+                        if (NPC.FindFirstNPC(NPCID.LunarTowerSolar) != -1)
+                        {
+                            Main.NewText("LunarTowerSolar exist");
+                        }
+                        Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, 0f, 0f, 629, 0, 0f, Main.myPlayer, NPC.FindFirstNPC(NPCID.LunarTowerSolar));
+                        Main.NewText("new projectile");
+                        if (NPC.FindFirstNPC(NPCID.LunarTowerSolar) == -1)
+                        {
+                            Main.NewText("LunarTowerSolar disappear");
+                        }
+                    }
+                }
+                if (npc.type == 425 || npc.type == 426 || npc.type == 427 || npc.type == 429)
+                {
+                    if (npc.life <= 0)
+                    {
+                        if (NPC.FindFirstNPC(NPCID.LunarTowerVortex) != -1)
+                        {
+                            Main.NewText("LunarTowerVortex exist");
+                        }
+                        Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, 0f, 0f, 629, 0, 0f, Main.myPlayer, NPC.FindFirstNPC(NPCID.LunarTowerVortex));
+                        Main.NewText("new projectile");
+                        if (NPC.FindFirstNPC(NPCID.LunarTowerVortex) == -1)
+                        {
+                            Main.NewText("LunarTowerVortex disappear");
+                        }
+                    }
+                }
+                if (npc.type == 420 || npc.type == 421 || npc.type == 423 || npc.type == 424)
+                {
+                    if (npc.life <= 0)
+                    {
+                        if (NPC.FindFirstNPC(NPCID.LunarTowerNebula) != -1)
+                        {
+                            Main.NewText("LunarTowerNebula exist");
+                        }
+                        Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, 0f, 0f, 629, 0, 0f, Main.myPlayer, NPC.FindFirstNPC(NPCID.LunarTowerNebula));
+                        Main.NewText("new projectile");
+                        if (NPC.FindFirstNPC(NPCID.LunarTowerNebula) == -1)
+                        {
+                            Main.NewText("LunarTowerNebula disappear");
+                        }
+                    }
+                }
+                if (npc.type == 402 || npc.type == 405 || npc.type == 407 || npc.type == 409 || npc.type == 411)
+                {
+                    if (npc.life <= 0)
+                    {
+                        if (NPC.FindFirstNPC(NPCID.LunarTowerStardust) != -1)
+                        {
+                            Main.NewText("LunarTowerStardust exist");
+                        }
+                        Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, 0f, 0f, 629, 0, 0f, Main.myPlayer, NPC.FindFirstNPC(NPCID.LunarTowerStardust));
+                        Main.NewText("new projectile");
+                        if (NPC.FindFirstNPC(NPCID.LunarTowerStardust) == -1)
+                        {
+                            Main.NewText("LunarTowerStardust disappear");
+                        }
+                    }
+                }
+            }
+        }*/
 
         //Something about the way the game draws the destroyer is fucked up, so instead of re-drawing it myself i'm just fucking with the way the game draws normally draws it
         //This has to be done in a kinda convoluted way. We can't just end then begin the spritebatch every time we draw a piece

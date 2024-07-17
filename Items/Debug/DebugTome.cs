@@ -100,5 +100,12 @@ namespace tsorcRevamp.Items.Debug
             }
             //return false;
         }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            Player player = Main.LocalPlayer;
+            // player is 2x3 size in terraria, so player.position is actually the postion of top left block
+            tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "CoordinateTooltip", "Player World Coordinate: " + player.position.X + ", "+ player.position.Y));
+            tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "CoordinateTooltip", "T-edit Coordinate: " + (int)(player.position.X / 16) + ", "+ (int)(player.position.Y / 16)));
+        }
     }
 }

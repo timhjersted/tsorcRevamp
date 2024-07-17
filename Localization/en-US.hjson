@@ -59,7 +59,7 @@ Mods: {
 			BonusMagicDmg: Converts {0}% of magic damage bonus to melee damage bonus
 			UniqueImbue:
 				'''
-				Have chance to rebound projectiles
+				Has 1/8 chance to reflect projectiles
 				Not compatible with other weapon imbues
 				'''
 			LifeRegen: Increases life regeneration by {0}
