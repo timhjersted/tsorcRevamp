@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Pets
         }
         public override void SetDefaults()
         {
-            Item.CloneDefaults(ItemID.DD2PetGhost);
+            Item.CloneDefaults(ItemID.DD2PetGato);
             Item.shoot = ModContent.ProjectileType<Projectiles.Pets.RTQ2>();
             Item.buffType = ModContent.BuffType<Buffs.RTQ2>();
         }
