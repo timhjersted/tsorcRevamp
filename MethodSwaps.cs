@@ -20,6 +20,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Tools;
 using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
@@ -2240,6 +2241,9 @@ namespace tsorcRevamp
 
             for (int i = 0; i < 58; i++)
             {
+                // stupid hack. prevents spamming the chat if you hold quick buff without setting a location
+                if (player.inventory[i].type == ModContent.ItemType<GreatMagicMirror>() || player.inventory[i].type == ModContent.ItemType<VillageMirror>())
+                    return;
                 CheckUseBuffPotion(player.inventory[i], player);
             }
             for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
