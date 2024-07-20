@@ -629,6 +629,32 @@ namespace tsorcRevamp.Projectiles
             {
                 return true;
             }
+            /*if (projectile.type == ProjectileID.TowerDamageBolt)
+            {
+                if (NPC.AnyNPCs(NPCID.LunarTowerVortex))
+                {
+                    Main.NewText("Tower existtttttttttttttttttttt.");
+                    
+                }
+                else
+                {
+                    Main.NewText("Tower gone gone gone gone gone.");
+                }
+                if (Main.projectile[ProjectileID.TowerDamageBolt].active)
+                {
+                    Main.NewText("Bolt exist.");
+                }
+                if ((int)projectile.ai[0] == -1)
+                {
+                    Main.NewText("Because target none");
+                }
+                if (!Main.npc[(int)projectile.ai[0]].active)
+                {
+                    Main.NewText("Because tower inactive");
+                }
+                Main.NewText("TowerDamageBolt killed");
+            }
+            return true;*/
         }
 
 
