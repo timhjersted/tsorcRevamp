@@ -2243,7 +2243,7 @@ namespace tsorcRevamp
             {
                 // stupid hack. prevents spamming the chat if you hold quick buff without setting a location
                 if (player.inventory[i].type == ModContent.ItemType<GreatMagicMirror>() || player.inventory[i].type == ModContent.ItemType<VillageMirror>())
-                    continue;
+                    return;
                 CheckUseBuffPotion(player.inventory[i], player);
             }
             for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
