@@ -11,6 +11,7 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     //[AutoloadBossHead]
+    [Autoload(false)]
     class KnightOfGwyn : ModNPC
     {
         public override void SetStaticDefaults()

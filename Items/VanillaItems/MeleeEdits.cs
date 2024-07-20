@@ -716,6 +716,10 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if (VanillaProjectileMelee(item) && player.statMana < GetMeleeManaCost(item, player))
             {
+                if (player.manaFlower)
+                {
+                    player.QuickMana();
+                }
                 return false;
             }
             return  true;
