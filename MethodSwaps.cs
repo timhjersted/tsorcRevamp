@@ -2232,6 +2232,8 @@ namespace tsorcRevamp
             orig();
         }
 
+        static readonly List<int> IgnoreForQuickBuff = [ModContent.ItemType<GreatMagicMirror>(), ModContent.ItemType<VillageMirror>(), ItemID.MagicMirror, ItemID.RecallPotion];
+
         private static void CustomQuickBuff(Terraria.On_Player.orig_QuickBuff orig, Player player)
         {
             if (player.noItems || player.dead)
@@ -2242,8 +2244,8 @@ namespace tsorcRevamp
             for (int i = 0; i < 58; i++)
             {
                 // stupid hack. prevents spamming the chat if you hold quick buff without setting a location
-                if (player.inventory[i].type == ModContent.ItemType<GreatMagicMirror>() || player.inventory[i].type == ModContent.ItemType<VillageMirror>())
-                    return;
+                if (IgnoreForQuickBuff.Contains(player.inventory[i].type))
+                    continue;
                 CheckUseBuffPotion(player.inventory[i], player);
             }
             for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
@@ -2466,6 +2468,8 @@ namespace tsorcRevamp
             //Check inventory first
             for (int i = 0; i < 58; i++)
             {
+                if (IgnoreForQuickBuff.Contains(player.inventory[i].type))
+                    continue;
                 //If the player can't use the item (for whatever reason) skip it
                 if (!ItemLoader.CanUseItem(player.inventory[i], player))
                 {
