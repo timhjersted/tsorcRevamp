@@ -288,7 +288,7 @@ namespace tsorcRevamp
                         ItemLoader.HoldoutOffset(modPlayer.Player.gravDir, modPlayer.Player.HeldItem.type, ref originOffset);
 
                         holdOffset.Y = originOffset.Y;
-                        drawPos += holdOffset;
+                        drawPos.Y += holdOffset.Y;
 
                         SpriteEffects effect = SpriteEffects.None;
                         Color drawColor = Color.White;
