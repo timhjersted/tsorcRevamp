@@ -319,6 +319,7 @@ namespace tsorcRevamp
                         //Sword+stab support
                         if (modPlayer.Player.HeldItem.useStyle == ItemUseStyleID.Swing || modPlayer.Player.HeldItem.useStyle == ItemUseStyleID.Thrust)
                         {
+                            drawPos.X += holdOffset.X;
                             drawPos -= new Vector2(modPlayer.Player.HeldItem.width / 2, modPlayer.Player.HeldItem.height / 2);
                             origin.Y = modPlayer.Player.HeldItem.height;
 
