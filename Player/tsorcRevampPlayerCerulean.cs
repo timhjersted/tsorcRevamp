@@ -19,8 +19,8 @@ namespace tsorcRevamp
         }
         public const float ManaRegenPotRestorationTimerBonus = 20f;
 
-        public int ceruleanChargesCurrent = 72; //Current amount of charges left
-        public const int DefaultCeruleanChargesMax = 72; //How many charges the player starts with
+        public int ceruleanChargesCurrent = 9; //Current amount of charges left
+        public const int DefaultCeruleanChargesMax = 9; //How many charges the player starts with
         public int ceruleanChargesMax; //The max amount of charges the player has
         public const int DefaultCeruleanManaGain = 120; //How much 1 charge heals to begin with
         public int ceruleanManaGain; //The amount of mana restored per charge

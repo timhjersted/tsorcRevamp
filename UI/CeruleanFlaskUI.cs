@@ -46,7 +46,7 @@ namespace tsorcRevamp.UI
             if (player.whoAmI == Main.myPlayer && !Main.gameMenu)
             {
                 // Adjusting chargesFrameCount to 24 to match the max stack
-                int chargesFrameCount = 24; // Changed from 13 to 25
+                int chargesFrameCount = 73; // Changed from 13 to 25
                 int chargesCurrent = ceruleanPlayer.ceruleanChargesCurrent;
                 int chargesMax = ceruleanPlayer.ceruleanChargesMax;
                 float chargesPercentage = (float)chargesCurrent / chargesMax;
@@ -57,7 +57,8 @@ namespace tsorcRevamp.UI
                 UsefulFunctions.EnsureLoaded(ref textureCharges, "tsorcRevamp/UI/CeruleanFlask_charges");
 
                 int frameHeight = textureCharges.Height / chargesFrameCount;
-                int frame = ceruleanPlayer.ceruleanChargesCurrent;
+                int frame;
+                frame = ceruleanPlayer.ceruleanChargesCurrent;
 
                 int drawFrame = frameHeight * frame;
                 Rectangle sourceRectangle = new Rectangle(0, drawFrame, textureCharges.Width, frameHeight);

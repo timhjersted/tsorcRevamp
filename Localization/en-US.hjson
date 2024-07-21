@@ -3978,10 +3978,10 @@ Mods: {
 			}
 
 			EstusFlaskShard: {
-				DisplayName: Restoration Flask Shard
+				DisplayName: Estus Flask Shard
 				Tooltip:
 					'''
-					A shard of a Restoration Flask
+					A shard with Healing and Mana-Restoring power
 					Take it to the Emerald Herald to increase flask uses
 					'''
 			}

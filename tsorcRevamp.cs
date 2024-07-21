@@ -777,7 +777,7 @@ namespace tsorcRevamp
                 {   ItemID.KingSlimeBossBag         , BossExtras.StaminaVessel      },
                 {   ItemID.EyeOfCthulhuBossBag      , BossExtras.StaminaVessel
                                                     | BossExtras.SublimeBoneDust    },
-                {   ItemID.EaterOfWorldsBossBag     , BossExtras.DarkSoulsOnly      },
+                {   ItemID.EaterOfWorldsBossBag     , BossExtras.EstusFlaskShard    },
                 {   ItemID.BrainOfCthulhuBossBag    , BossExtras.StaminaVessel      },
                 {   ItemID.QueenBeeBossBag          , BossExtras.DarkSoulsOnly      },
                 {   ItemID.SkeletronBossBag         , BossExtras.SublimeBoneDust    },
@@ -804,7 +804,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<JungleWyvernBag>()          , BossExtras.EstusFlaskShard    },
                 {   ModContent.ItemType<AncestralSpiritBag>()       , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<AncientDemonBag>()          , BossExtras.StaminaVessel      },
-                {   ModContent.ItemType<HeroOfLumeliaBag>()         , BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<HeroOfLumeliaBag>()         , BossExtras.SublimeBoneDust    },
                 {   ModContent.ItemType<TheRageBag>()               , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<TheSorrowBag>()             , BossExtras.EstusFlaskShard    },
                 {   ModContent.ItemType<TheHunterBag>()             , BossExtras.SublimeBoneDust    },
@@ -813,7 +813,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<WyvernMageBag>()            , BossExtras.SoulVessel         },
                 {   ModContent.ItemType<SerrisBag>()                , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<DeathBag>()                 , BossExtras.StaminaVessel      },
-                {   ModContent.ItemType<MindflayerIllusionBag>()    , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<MindflayerIllusionBag>()    , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<AttraidiesBag>()            , BossExtras.EstusFlaskShard    },
                 {   ModContent.ItemType<KrakenBag>()                , BossExtras.GuardianSoul
                                                                     | BossExtras.StaminaVessel

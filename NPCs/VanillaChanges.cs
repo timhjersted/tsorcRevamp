@@ -1884,7 +1884,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 42; //was 30 for a long time, then 38 briefly
                         npc.defense = 22;
                         npc.value = 0;
-                        npc.boss = true;
+                        //npc.boss = true; // causes treasure bags to drop from all segments
                         npc.buffImmune[BuffID.Poisoned] = true;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.buffImmune[BuffID.Frostburn] = true;
@@ -1899,7 +1899,6 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 24; //legacy: 22, was 18 for a long time, then 22 briefly
                         npc.defense = 5;
                         npc.value = 0; //ignored
-                        npc.boss = true;
                         npc.buffImmune[BuffID.Poisoned] = true;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.buffImmune[BuffID.Frostburn] = true;
@@ -1912,7 +1911,6 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = 155;
                         npc.defense = 8;
                         npc.value = 0; //ignored
-                        npc.boss = true;
                         npc.buffImmune[BuffID.Poisoned] = true;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.buffImmune[BuffID.Frostburn] = true;
