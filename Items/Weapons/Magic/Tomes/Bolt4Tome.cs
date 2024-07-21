@@ -29,6 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.mana = 70;
+            Item.scale = 0.8f;
             Item.useAnimation = 60;
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;
