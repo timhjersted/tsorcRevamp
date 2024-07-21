@@ -170,7 +170,7 @@ namespace tsorcRevamp
                             Vector2 originOffset = new Vector2(0, textureMidpoint);
                             ItemLoader.HoldoutOffset(drawInfo.drawPlayer.gravDir, drawInfo.drawPlayer.HeldItem.type, ref originOffset);
                             holdOffset.Y = originOffset.Y;
-                            drawPos += holdOffset;
+                            drawPos.Y += holdOffset.Y;
 
                             //Set the origin based on the offset point
                             Vector2 origin = new Vector2(-originOffset.X, textureMidpoint);
