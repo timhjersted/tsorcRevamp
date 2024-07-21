@@ -17,14 +17,14 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         public override void SetDefaults()
         {
             Item.width = 28;
-            Item.height = 30;
+            Item.height = 32;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 7;
             Item.useTime = 7;
             Item.damage = 64;
             Item.knockBack = 8;
             Item.autoReuse = true;
-            Item.scale = 1.3f;
+            Item.scale = 1f;
             Item.UseSound = SoundID.Item20;
             Item.rare = ItemRarityID.Lime;
             Item.shootSpeed = 22;

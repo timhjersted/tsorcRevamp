@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void SetDefaults()
         {
             Item.damage = 190;
-            Item.height = 58;
+            Item.height = 78;
             Item.knockBack = 4;
             Item.autoReuse = true;
             Item.noMelee = true;
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useTime = 40;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = PriceByRarity.Red_10;
-            Item.width = 16;
+            Item.width = 30;
             Item.shoot = ModContent.ProjectileType<Projectiles.Bolt4Ball>();
         }
         public override void AddRecipes()
