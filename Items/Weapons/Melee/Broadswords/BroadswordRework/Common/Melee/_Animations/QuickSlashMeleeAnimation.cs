@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.ModLoader;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Hooks.Items;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities;
 
@@ -41,6 +42,18 @@ public class QuickSlashMeleeAnimation : MeleeAnimation, ICanDoMeleeDamage
         float minValue = baseAngle - MathHelper.PiOver2 * 1.25f;
         float maxValue = baseAngle + MathHelper.PiOver2 * 1.0f;
 
+        bool flipped = player.gravDir != 1f && ModContent.GetInstance<tsorcRevampConfig>().GravityFix;
+
+        Tuple<float, float> temp = new(minValue, maxValue);
+        if (flipped) {
+            minValue += MathHelper.PiOver2;
+            maxValue += MathHelper.PiOver2;
+            if (player.direction == 1) {
+                minValue += (float)Math.PI;
+                maxValue += (float)Math.PI;
+            } 
+        }
+
         if (dir < 0)
         {
             Utils.Swap(ref minValue, ref maxValue);
@@ -60,6 +73,11 @@ public class QuickSlashMeleeAnimation : MeleeAnimation, ICanDoMeleeDamage
             (0.9f, maxValue),
             (1.0f, maxValue)
         );
+
+        if (flipped) {
+            minValue = temp.Item1;
+            maxValue = temp.Item2;
+        }
         //Main.NewText("New: " + (float)(MathHelper.Pi * step - (Math.Sin(2 * MathHelper.Pi * step) / 2f) / 2f) / MathHelper.Pi);
         return animation.GetValue(step);
     }

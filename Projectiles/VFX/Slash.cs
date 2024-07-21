@@ -86,10 +86,13 @@ namespace tsorcRevamp.Projectiles.VFX
                 }
             }
 
+            bool flipped = owner.gravDir == -1f && ModContent.GetInstance<tsorcRevampConfig>().GravityFix;
 
             if (Projectile.timeLeft > 10 && !reachedEnd)
             {
-                Projectile.rotation = QuickSlashMeleeAnimation.MeleeSwingRotation(owner, owner.HeldItem, flippedSwing) + MathHelper.PiOver2;
+                Projectile.rotation = QuickSlashMeleeAnimation.MeleeSwingRotation(owner, owner.HeldItem, flippedSwing);
+                if (owner.gravDir == 1f) Projectile.rotation += MathHelper.PiOver2;
+                else if (owner.direction == 1) Projectile.rotation += (float)Math.PI;
 
                 //Skip the first
                 if (lastPercent == 0)
