@@ -48,7 +48,9 @@ namespace tsorcRevamp.Projectiles.Pets
                 int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 57, Projectile.velocity.X, Projectile.velocity.Y, 200, Color.White, 1f);
                 Main.dust[dust].noGravity = true;
             }
-
+            if (!Main.dedServ) {
+                Lighting.AddLight(Projectile.Center, 0.5f, 0.9f, 0.3f);
+            }
         }
 
     }
