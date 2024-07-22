@@ -114,7 +114,7 @@ namespace tsorcRevamp.Tiles
             var pos = new Vector2(i + 0.5f, j); // the + .5f makes the effect reach from equal distance to left and right
             var distance = Math.Abs(Vector2.Distance(player.Center, (pos * 16)));
 
-            if (Main.tile[i, j].TileFrameY >= 74 && distance <= 80f && !player.dead)
+            if (Main.tile[i, j].TileFrameY >= 74 && distance <= 80f && !player.dead && !Main.gamePaused)
             {
                 player.AddBuff(ModContent.BuffType<Buffs.Bonfire>(), 30);
 
