@@ -11,7 +11,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {
     public class AshenLord : RuneterraDragon
     {
-        public override float Scale => 1f;
+    // My first edit, according to guides and chat gpt, shrinking the float scale here will shrink the Ashenlord size on the Scorching Point summoner weapon so that it is not as massive visually, if it works we can mirror this as a temporary fix to the rest of the upgrades to this weapon to resolve it visual size
+        public override float Scale => 0.25f; 
         public override int BuffType => ModContent.BuffType<CenterOfTheHeat>();
         public override int DebuffType => ModContent.BuffType<ScorchingDebuff>();
         public override int PairedProjectileType => ModContent.ProjectileType<ScorchingPointFireball>();
