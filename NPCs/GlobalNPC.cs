@@ -536,8 +536,8 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.NebulaBrain, 0.2f); //.1 is 3%
                 pool.Add(NPCID.NebulaHeadcrab, 0.4f); //.1 is 3%
-                pool.Add(NPCID.NebulaBeast, 0.6f); //.1 is 3%
-                pool.Add(NPCID.NebulaSoldier, 0.5f); //.1 is 3%
+                pool.Add(NPCID.NebulaBeast, 0.3f); //.1 is 3%
+                pool.Add(NPCID.NebulaSoldier, 0.4f); //.1 is 3%
             }
             //spaceships or flesh background of crimson biome
             if ((spawnInfo.SpawnTileType == TileID.MartianConduitPlating || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.Flesh || spawnInfo.Player.ZoneCrimson) && tsorcRevampWorld.SuperHardMode)
