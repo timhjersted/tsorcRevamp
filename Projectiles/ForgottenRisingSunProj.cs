@@ -8,11 +8,10 @@ namespace tsorcRevamp.Projectiles
 {
     class ForgottenRisingSunProj : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/ForgottenRisingSun";
         public override void SetDefaults()
         {
-            Projectile.width = 25;
-            Projectile.height = 25;
+            Projectile.width = 33;
+            Projectile.height = 33;
             Projectile.aiStyle = 3;
             Projectile.timeLeft = 2400;
             Projectile.friendly = true;
@@ -32,6 +31,11 @@ namespace tsorcRevamp.Projectiles
                     Projectile.Kill();
                 }
             }
+            int dust = Dust.NewDust(Projectile.position, 1, 1, DustID.FlameBurst, Projectile.velocity.X, Projectile.velocity.Y, 0, default, 1.7f);
+            Main.dust[dust].noGravity = true;
+            Main.dust[dust].velocity *= 0.2f;
+            Projectile.localAI[0] = 0;
+            Lighting.AddLight(Projectile.Center, 0.9f, 0.5f, 0f);
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
@@ -47,6 +51,11 @@ namespace tsorcRevamp.Projectiles
             }
 
             return false;
+        }
+        
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.Daybreak, 4 * 60);
         }
     }
 }

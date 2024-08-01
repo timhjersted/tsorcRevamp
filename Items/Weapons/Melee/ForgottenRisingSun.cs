@@ -12,10 +12,10 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.width = 22;
             Item.height = 22;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 14;
-            Item.useTime = 14;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
             Item.autoReuse = true;
-            Item.damage = 300;
+            Item.damage = 450;
             Item.crit = 26;
             Item.knockBack = 5;
             Item.UseSound = SoundID.Item1;
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.shoot = ModContent.ProjectileType<Projectiles.ForgottenRisingSunProj>();
             Item.rare = ItemRarityID.Red;
 
-            Item.mana = 15;
+            Item.mana = 18;
         }
 
         public override bool CanUseItem(Player player)
