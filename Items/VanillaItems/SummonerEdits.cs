@@ -30,6 +30,10 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.damage = 7;
             }
+            if (item.type == ProjectileType<BabySlime>)
+            {
+                target.AddBuff(BuffID.Confused, 30);
+            }
             if (item.type == ItemID.FlinxStaff)
             {
                 item.damage = 6;
