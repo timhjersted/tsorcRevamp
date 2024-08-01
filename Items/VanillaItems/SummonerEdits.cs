@@ -24,7 +24,11 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.BabyBirdStaff)
             {
-                item.damage = 6;
+                item.damage = 3;
+            }
+            if (item.type == ItemID.BabyBirdStaff)
+            {
+                float SlotsRequired = 0.5f;
             }
             if (item.type == ItemID.SlimeStaff)
             {
