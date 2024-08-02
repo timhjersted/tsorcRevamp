@@ -408,11 +408,10 @@ namespace tsorcRevamp.Projectiles
                 target.AddBuff(BuffID.Frostburn, 60);
             }
             
-            if(entity.type == ProjectileID.BabyBird)
+            if (entity.type == ProjectileID.BabyBird)
             {
                 entity.minionSlots = 2f;
             }
-
 
             if (projectile.type == ProjectileID.VampireFrog)
             {
