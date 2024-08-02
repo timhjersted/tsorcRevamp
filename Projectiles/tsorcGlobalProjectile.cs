@@ -397,6 +397,16 @@ namespace tsorcRevamp.Projectiles
             {
                 target.AddBuff(ModContent.BuffType<Buffs.CrescentMoonlight>(), 3 * 60); // Adds the ExampleJavelin debuff for a very small DoT
             }
+            
+            if (projectile.type == ProjectileID.BabySlime)
+            {
+                target.AddBuff(BuffID.Slow, 60);
+            }
+
+            if (projectile.type == ProjectileID.FlinxMinion)
+            {
+                target.AddBuff(BuffID.Frostburn, 60);
+            }
 
             if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaNewBoost && projectile.type != (int)ModContent.ProjectileType<MiakodaNew>())
             {
