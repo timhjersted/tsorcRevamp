@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.BabyBirdStaff)
             {
-                item.damage = 6;
+                item.damage = 3;
             }
             if (item.type == ItemID.SlimeStaff)
             {
@@ -32,11 +32,12 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.FlinxStaff)
             {
-                item.damage = 6;
+                item.damage = 1;
             }
             if (item.type == ItemID.VampireFrogStaff)
             {
-                item.damage = 8;
+                item.damage = 1;
+                Item.knockBack = 1f;
             }
             if (item.type == ItemID.HornetStaff)
             {
