@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.FlinxStaff)
             {
-                item.damage = 6;
+                item.damage = 1;
             }
             if (item.type == ItemID.VampireFrogStaff)
             {
