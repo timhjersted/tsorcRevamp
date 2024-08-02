@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useAnimation = 20;
             Item.useTime = 20;
             Item.autoReuse = true;
-            Item.damage = 450;
+            Item.damage = 445;
             Item.crit = 26;
             Item.knockBack = 5;
             Item.UseSound = SoundID.Item1;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override bool CanUseItem(Player player)
         {
-            return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.ForgottenRisingSunProj>()] < 10;
+            return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.ForgottenRisingSunProj>()] < 15;
         }
     }
 }

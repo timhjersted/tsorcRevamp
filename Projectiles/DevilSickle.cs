@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.height = 40;
             Projectile.scale = 0.9f;
             Projectile.alpha = 100;
-            Projectile.timeLeft = 130;
+            Projectile.timeLeft = 500;
             Projectile.friendly = true;
             Projectile.penetrate = 5;
             Projectile.tileCollide = true;
@@ -35,11 +35,12 @@ namespace tsorcRevamp.Projectiles
             );
             Main.dust[dust].noGravity = true;
             Projectile.rotation += Projectile.direction * 0.8f;
+            Lighting.AddLight(Projectile.Center, 0.9f, 0.5f, 0f);
 
-            if (Projectile.velocity.X <= 7f && Projectile.velocity.Y <= 7f && Projectile.velocity.X >= -7f && Projectile.velocity.Y >= -7f)
+            if (Projectile.velocity.X <= 12f && Projectile.velocity.Y <= 12f && Projectile.velocity.X >= -12f && Projectile.velocity.Y >= -12f)
             {
-                Projectile.velocity.X *= 1.06f;
-                Projectile.velocity.Y *= 1.06f;
+                Projectile.velocity.X *= 1.05f;
+                Projectile.velocity.Y *= 1.05f;
             }
         }
 
@@ -47,7 +48,7 @@ namespace tsorcRevamp.Projectiles
         {
             if (Main.rand.NextBool(5))
             {
-                target.AddBuff(BuffID.OnFire, 7 * 60); //420 blaze it 
+                target.AddBuff(BuffID.OnFire3, 5 * 60); //420 blaze it 
             }
         }
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
@@ -56,10 +57,6 @@ namespace tsorcRevamp.Projectiles
             {
                 target.AddBuff(BuffID.OnFire, 7 * 60);
             }
-        }
-        public override void OnKill(int timeLeft)
-        {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
         }
     }
 }

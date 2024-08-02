@@ -20,8 +20,8 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.height = 28;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.autoReuse = true;
-            Item.useAnimation = 15;
-            Item.useTime = 15;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
             Item.damage = 40;
             Item.knockBack = 5;
             Item.scale = 0.9f;

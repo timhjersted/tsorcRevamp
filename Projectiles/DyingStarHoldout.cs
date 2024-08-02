@@ -24,6 +24,11 @@ namespace tsorcRevamp.Projectiles
             Projectile.hostile = false;
         }
 
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.Daybreak, 300);
+        }
+
         int charge = 0;
         int altFunctionTimer = 0;
         public override void AI()
