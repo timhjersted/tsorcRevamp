@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Weapons.Magic.Runeterra
     {
         public override int Width => 32;
         public override int Height => 32;
-        public override int Damage => 22;
-        public override int ManaCost => 25;
+        public override int Damage => 18;
+        public override int ManaCost => 20;
         public override int Rarity => ItemRarityID.Green;
         public override int Value => Item.buyPrice(0, 10, 0, 0);
         public override int HeldOrbProjectile => ModContent.ProjectileType<HeldOrbOfDeception>();
