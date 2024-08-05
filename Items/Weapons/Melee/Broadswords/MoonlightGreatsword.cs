@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
         }
         public override void SetDefaults()
         {
-            Item.rare = ItemRarityID.Amber;
+            Item.rare = ItemRarityID.Purple;
             Item.damage = 600;
             Item.height = 88;
             Item.width = 88;
