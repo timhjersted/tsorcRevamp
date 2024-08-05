@@ -36,7 +36,8 @@ namespace tsorcRevamp.Projectiles.Melee
             Projectile.timeLeft = 70;
             Projectile.width = 10;
             Projectile.height = 250;
-            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 8;
         }
 
         float laserWidth = 30;

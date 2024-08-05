@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         public static float MeleeCrit = 30f;
         public static float MeleeSpeed = 30f;
         public static int MaxDefense = 40;
-        public static int LifeRegen = 30;
+        public static int LifeRegen = 20;
         public static float DRToMoveSpeedRatio = 1.5f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MeleeCrit, MeleeSpeed, MaxDefense, LifeRegen, DRToMoveSpeedRatio);
         public override void SetStaticDefaults()

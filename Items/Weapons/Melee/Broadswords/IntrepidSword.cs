@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.height = 62;
             Item.useAnimation = 20;
             Item.useTime = 20;
-            Item.damage = 280;
+            Item.damage = 240;
             Item.knockBack = 3;
             Item.autoReuse = true;
             Item.useTurn = false;
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
-            damage *= (-0.01f * player.statDefense) + 1;
+            damage *= (-0.005f * player.statDefense) + 1;
         }
 
         public override void AddRecipes()

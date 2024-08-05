@@ -235,7 +235,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.PiercingStarlight)
             {
-                item.damage = 35;
+                item.damage = 50;
             }
             if (item.type == ItemID.VampireKnives)
             {

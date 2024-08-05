@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if (item.type == ItemID.Minishark)
             {
-                item.damage = 4;
+                item.damage = 5;
             }
             if (item.type == ItemID.CrystalBullet)
             {
@@ -66,7 +66,7 @@ namespace tsorcRevamp.Items.VanillaItems
             //same damage as Gastraphetes, vanilla damage is 53
             if (item.type == ItemID.Tsunami)
             {
-                item.damage = 25;
+                item.damage = 35;
             }
         }
         public override void ModifyWeaponCrit(Item item, Player player, ref float crit)

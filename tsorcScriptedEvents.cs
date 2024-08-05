@@ -245,7 +245,7 @@ namespace tsorcRevamp
 
             //BLACK KNIGHT IN HALLOWED CAVES
             ScriptedEvent BlackKnightHallowed = new ScriptedEvent(new Vector2(7454, 1413), 40, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, false, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
-            BlackKnightHallowed.SetCustomStats(8000, 20, 80, 5000);
+            BlackKnightHallowed.SetCustomStats(6000, 20, 80, 5000);
             BlackKnightHallowed.SetCustomDrops(new List<int>() { ModContent.ItemType<SoulCoin>(), ModContent.ItemType<PurgingStone>() }, new List<int>() { 50, 1 });
 
             //QUEEN SLIME
@@ -259,7 +259,7 @@ namespace tsorcRevamp
             //GREAT RED KNIGHT ON FLOATING TROPICAL ISLAND
             ScriptedEvent GreatRedKnightTropicalIsland = new ScriptedEvent(new Vector2(7874, 390), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(), DustID.Shadowflame, true, false, true, LangUtils.GetTextValue("Events.GreatRedKnightInvasion"), Color.Red, false, null, SetNightCustomAction);
             GreatRedKnightInDesert.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion, ModContent.ItemType<HolyWarElixir>() }, new List<int>() { 5, 3, 1 });
-            GreatRedKnightInDesert.SetCustomStats(null, null, null, 20000);
+            GreatRedKnightInDesert.SetCustomStats(16000, null, null, 20000);
 
             //Ancestral Spirit
             ScriptedEvent AncestralSpiritEvent = new ScriptedEvent(new Vector2(4043, 143), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.Blue, false, null, SetNightCustomAction);
