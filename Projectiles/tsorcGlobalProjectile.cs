@@ -418,6 +418,11 @@ namespace tsorcRevamp.Projectiles
                 player.statLife += modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 1, true);
                 player.HealEffect(modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 1, true));
 
+            if (entity.type == ProjectileID.Hornet)
+            {
+                entity.minionSlots = 2f;
+            }
+
             if (projectile.type == ProjectileID.HornetStinger)
             {
                 target.AddBuff(BuffID.BoneJavelin, 360);
