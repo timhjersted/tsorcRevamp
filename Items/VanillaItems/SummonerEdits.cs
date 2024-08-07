@@ -41,11 +41,11 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.HornetStaff)
             {
-                item.damage = 11;
+                item.damage = 6;
             }
             if (item.type == ItemID.ImpStaff)
             {
-                item.damage = 14;
+                item.damage = 16;
             }
             if (item.type == ItemID.SpiderStaff)
             {
