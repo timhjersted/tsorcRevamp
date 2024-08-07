@@ -418,6 +418,15 @@ namespace tsorcRevamp.Projectiles
                 player.statLife += modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 1, true);
                 player.HealEffect(modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 1, true));
 
+            if (projectile.type == ProjectileID.HornetStinger)
+            {
+                target.AddBuff(BuffID.BoneJavelin, 360);
+            }
+
+            if (projectile.type == ProjectileID.ImpFireball)
+            {
+                target.AddBuff(BuffID.ShadowFlame, 360);
+            }
 
             if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaNewBoost && projectile.type != (int)ModContent.ProjectileType<MiakodaNew>())
             {
