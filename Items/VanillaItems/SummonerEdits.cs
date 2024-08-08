@@ -85,7 +85,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.XenoStaff)
             {
-                item.damage = 28;
+                item.damage = 32;
             }
             if (item.type == ItemID.TempestStaff)
             {
