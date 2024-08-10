@@ -400,12 +400,12 @@ namespace tsorcRevamp.Projectiles
 
             if (projectile.type == ProjectileID.BabySlime)
             {
-                target.AddBuff(BuffID.Slow, 60);
+                target.AddBuff(BuffID.Slow, 120);
             }
 
             if (projectile.type == ProjectileID.FlinxMinion)
             {
-                target.AddBuff(BuffID.Frostburn, 60);
+                target.AddBuff(BuffID.Frostburn, 120);
             }
             
             if (entity.type == ProjectileID.BabyBird)
