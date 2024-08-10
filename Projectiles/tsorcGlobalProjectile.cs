@@ -417,6 +417,7 @@ namespace tsorcRevamp.Projectiles
             {
                 player.statLife += modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 1, true);
                 player.HealEffect(modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 1, true));
+            }
 
             if (entity.type == ProjectileID.Hornet)
             {
@@ -432,6 +433,17 @@ namespace tsorcRevamp.Projectiles
             {
                 target.AddBuff(BuffID.ShadowFlame, 360);
             }
+
+            if (projectile.type == ProjectileID.PygmySpear)
+            {
+                target.AddBuff(BuffID.Ichor, 120);
+            }
+
+            if (projectile.type == ProjectileID.BatOfLight)
+            {
+                player.statLife += modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 2, true);
+                player.HealEffect(modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 2, true));
+             }
 
             if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaNewBoost && projectile.type != (int)ModContent.ProjectileType<MiakodaNew>())
             {
