@@ -359,9 +359,9 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
                     }
                 }
                 Projectile.tileCollide = true;
-                float num25 = 0.5f;
-                float num26 = 4f;
-                float num27 = 4f;
+                float num25 = 1f;
+                float num26 = 8f;
+                float num27 = 8f;
                 float num28 = 0.1f;
                 if (attackTarget != -1)
                 {
@@ -464,7 +464,7 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
                             num35 += (int)Projectile.velocity.X;
                             if (!WorldGen.SolidTile(num35, projGroundTileY - 1) && !WorldGen.SolidTile(num35, projGroundTileY - 2))
                             {
-                                Projectile.velocity.Y = -5.1f;
+                                Projectile.velocity.Y = -10.2f;
                             }
                             else if (!WorldGen.SolidTile(num35, projGroundTileY - 2))
                             {
@@ -494,47 +494,47 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
                         num37 *= -1f;
                         if (num37 < 60f)
                         {
-                            Projectile.velocity.Y = -6f;
+                            Projectile.velocity.Y = -12f;
                         }
                         else if (num37 < 80f)
                         {
-                            Projectile.velocity.Y = -7f;
+                            Projectile.velocity.Y = -14f;
                         }
                         else if (num37 < 100f)
                         {
-                            Projectile.velocity.Y = -8f;
+                            Projectile.velocity.Y = -16f;
                         }
                         else if (num37 < 120f)
                         {
-                            Projectile.velocity.Y = -9f;
+                            Projectile.velocity.Y = -18f;
                         }
                         else if (num37 < 140f)
                         {
-                            Projectile.velocity.Y = -10f;
+                            Projectile.velocity.Y = -20f;
                         }
                         else if (num37 < 160f)
                         {
-                            Projectile.velocity.Y = -11f;
+                            Projectile.velocity.Y = -22f;
                         }
                         else if (num37 < 190f)
                         {
-                            Projectile.velocity.Y = -12f;
+                            Projectile.velocity.Y = -24f;
                         }
                         else if (num37 < 210f)
                         {
-                            Projectile.velocity.Y = -13f;
+                            Projectile.velocity.Y = -26f;
                         }
                         else if (num37 < 270f)
                         {
-                            Projectile.velocity.Y = -14f;
+                            Projectile.velocity.Y = -28f;
                         }
                         else if (num37 < 310f)
                         {
-                            Projectile.velocity.Y = -15f;
+                            Projectile.velocity.Y = -30f;
                         }
                         else
                         {
-                            Projectile.velocity.Y = -16f;
+                            Projectile.velocity.Y = -32f;
                         }
                     }
                     if (Projectile.wet && num34 == 0f)
