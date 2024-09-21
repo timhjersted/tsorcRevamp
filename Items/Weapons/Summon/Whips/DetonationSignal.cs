@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     public class DetonationSignal : ModItem
     {
         public static float SummonTagScalingDamage = 350f;
-        public static float BonusContactDamage = 300f;
+        public static float BonusContactDamage = 50f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagScalingDamage, BonusContactDamage);
         public override void SetStaticDefaults()
         {

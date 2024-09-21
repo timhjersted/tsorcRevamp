@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lifeMax = 1000;
             NPC.alpha = 20;
-            NPC.scale = .7f;
+            NPC.scale = 0.8f;
             NPC.knockBackResist = 0.1f;
             NPC.noGravity = true;
             NPC.value = 2000; // life / 2.5 / 2 bc it's so simple : was 125
@@ -50,13 +50,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void AI()
         {
             DrawOffsetY = 20;
-            if (Main.GameUpdateCount % 60 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.GameUpdateCount % 150 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Player closestPlayer = UsefulFunctions.GetClosestPlayer(NPC.Center);
                 if (closestPlayer != null && Collision.CanHit(NPC, closestPlayer))
                 {
                     Vector2 targetVector = UsefulFunctions.Aim(NPC.Center, closestPlayer.Center, 1);
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<Projectiles.Enemy.JellyfishLightning>(), 30, 1, Main.myPlayer, 0, NPC.whoAmI);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<Projectiles.Enemy.JellyfishLightning>(), 60, 1, Main.myPlayer, 0, NPC.whoAmI);
                 }
             }
         }
