@@ -131,7 +131,7 @@ namespace tsorcRevamp
             RedKnightOolicileForest,
             BlackKnightHallowed,
             QueenSlimeEvent,
-            GreatRedKnightTropicalIsland,
+            GoblinSharkTropicalIsland,
             GreatRedKnightInDesert,
             AncestralSpirit,
             SkeletronHidden,
@@ -256,10 +256,10 @@ namespace tsorcRevamp
             GreatRedKnightInDesert.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<Humanity>() }, new List<int>() { 2, 2, 2 });
             GreatRedKnightInDesert.SetCustomStats(null, null, null, 20000);
 
-            //GREAT RED KNIGHT ON FLOATING TROPICAL ISLAND
-            ScriptedEvent GreatRedKnightTropicalIsland = new ScriptedEvent(new Vector2(7874, 390), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(), DustID.Shadowflame, true, false, true, LangUtils.GetTextValue("Events.GreatRedKnightInvasion"), Color.Red, false, null, SetNightCustomAction);
-            GreatRedKnightInDesert.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion, ModContent.ItemType<HolyWarElixir>() }, new List<int>() { 5, 3, 1 });
-            GreatRedKnightInDesert.SetCustomStats(16000, null, null, 20000);
+            //HEMOGLOBIN SHARK ON THE FLOATING TROPICAL ISLAND
+            ScriptedEvent GoblinSharkTropicalIsland = new ScriptedEvent(new Vector2(7874, 390), 40, NPCID.GoblinShark, DustID.CrimsonSpray, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, null, SetNightCustomAction);
+            GoblinSharkTropicalIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion, ItemID.SharpTears }, new List<int>() { 5, 3, 1 });
+            GoblinSharkTropicalIsland.SetCustomStats(5000, null, null, 15000);
 
             //Ancestral Spirit
             ScriptedEvent AncestralSpiritEvent = new ScriptedEvent(new Vector2(4043, 143), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.Blue, false, null, SetNightCustomAction);
@@ -554,7 +554,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.RedKnightOolicileForest, RedKnightOolicileForest},
                 {ScriptedEventType.QueenSlimeEvent, QueenSlimeEvent},
                 {ScriptedEventType.BlackKnightHallowed, BlackKnightHallowed},
-                {ScriptedEventType.GreatRedKnightTropicalIsland, GreatRedKnightTropicalIsland},
+                {ScriptedEventType.GoblinSharkTropicalIsland, GoblinSharkTropicalIsland},
                 {ScriptedEventType.GreatRedKnightInDesert, GreatRedKnightInDesert},
                 {ScriptedEventType.AncestralSpirit, AncestralSpiritEvent},
                 {ScriptedEventType.OldManEvent, OldManEvent},

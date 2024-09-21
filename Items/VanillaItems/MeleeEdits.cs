@@ -107,12 +107,10 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.IceBlade)
             {
-                item.shootsEveryUse = true;
                 //item.mana = 5;
             }
             if (item.type == ItemID.EnchantedSword)
             {
-                item.shootsEveryUse = true;
                 //item.mana = 7;
             }
             if (item.type == ItemID.ThunderSpear)
@@ -121,7 +119,6 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.Starfury)
             {
-                item.shootsEveryUse = true;
                 //item.mana = 8;
             }
             if (item.type == ItemID.LightsBane)
@@ -153,12 +150,10 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.BeamSword)
             {
-                item.shootsEveryUse = true;
                 //item.mana = 10;
             }
             if (item.type == ItemID.Frostbrand)
             {
-                item.shootsEveryUse = true;
                 //item.mana = 12;
             }
             if (item.type == ItemID.Bananarang)
@@ -179,14 +174,12 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.ChlorophyteSaber)
             {
-                item.shootsEveryUse = true;
                 //item.mana = 14;
             }
             if (item.type == ItemID.ChlorophyteClaymore)
             {
                 item.width = 66;
                 item.height = 66;
-                item.shootsEveryUse = true;
                 //item.mana = 17;
             }
             if (item.type == ItemID.TrueNightsEdge)
@@ -196,7 +189,6 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.Seedler)
             {
-                item.shootsEveryUse = true;
                 item.width = 48;
                 item.height = 48;
                 //item.mana = 11;
@@ -224,10 +216,14 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.TheHorsemansBlade)
             {
-                item.damage = 200;
+                item.damage = 220;
                 item.useTime = 20;
                 item.useAnimation = 20;
                 //item.mana = 16;
+            }
+            if (item.type == ItemID.NorthPole)
+            {
+                item.damage = 180;
             }
             if (item.type == ItemID.DD2SquireBetsySword)
             {
@@ -248,7 +244,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.InfluxWaver)
             {
-                item.shootsEveryUse = true;
+                item.damage = 130;
                 //item.mana = 23;
             }
             if (item.type == ItemID.DayBreak)
@@ -523,16 +519,6 @@ namespace tsorcRevamp.Items.VanillaItems
             }
         }
 
-
-        public override bool? UseItem(Item item, Player player)
-        {
-            if ((item.DamageType != DamageClass.Magic && item.mana > 0) || VanillaProjectileMelee(item))
-            {
-                player.manaRegenDelay = ManaDelay;
-                return true;
-            }
-            return null;
-        }
         public override string IsArmorSet(Item head, Item body, Item legs)
         {
             if (head.type == ModContent.ItemType<AncientGoldenHelmet>() && body.type == ItemID.Gi && legs.type == ModContent.ItemType<AncientGoldenGreaves>())
@@ -587,10 +573,6 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.ObsidianSwordfish)
             {
                 tooltips.Add(new TooltipLine(Mod, "BOTCNoHeal", LangUtils.GetTextValue("CommonItemTooltip.Trident")));
-            }
-            if (VanillaProjectileMelee(item))
-            {
-                tooltips.Add(new TooltipLine(Mod, "ManaCost", Language.GetTextValue("CommonItemTooltip.UsesMana", GetMeleeManaCost(item, player))));
             }
         }
         public override void ModifyHitNPC(Item item, Player player, NPC target, ref NPC.HitModifiers modifiers)
@@ -673,66 +655,8 @@ namespace tsorcRevamp.Items.VanillaItems
                 player.ignoreWater = true;
                 player.AddBuff(BuffID.ObsidianSkin, 1);
             }
-            if (VanillaProjectileMelee(item) && player.HasItem(ModContent.ItemType<Items.Debug.DebugTome>()))
-            {
-                Main.NewText("This item is VanillaProjectileMelee");
-                return;
-            }
-            if (TrueMelee(item) && player.HasItem(ModContent.ItemType<Items.Debug.DebugTome>()))
-            {
-                Main.NewText("This item is TrueMelee");
-                return;
-            }
         }
-        public int GetMeleeManaCost(Item item, Player player)
-        {
-            int baseCost = (int)MathHelper.Clamp((item.damage * 60 / item.useTime) * 1 / 4, 0, 20);//edit numbers here if u wnat to adjust mana cost
-            int finalCost = 0;
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                baseCost += 10;
-            }
-            finalCost = (int)(baseCost * player.manaCost);
-            return finalCost;
-        }
-        public bool VanillaProjectileMelee(Item item)
-        {
-            //what a miracle that vanilla melee code don't crash
-            Projectile Judge = new();
-            Judge.SetDefaults(item.shoot);
-            if (item.DamageType == DamageClass.Melee && item.type < ItemID.Count
-                && Judge.aiStyle != ProjAIStyleID.Spear
-                && item.shoot != 0
-                || tsorcRevamp.VanillaMeleeBlackList.Contains(item.type)
-                //|| Judge.aiStyle == ProjAIStyleID.Flail
-                //|| Judge.aiStyle == ProjAIStyleID.Boomerang
-                || Judge.aiStyle == ProjAIStyleID.Yoyo)
-            {
-                return true;
-            }
-            return false;
-        }
-        public override bool CanUseItem(Item item, Player player)
-        {
-            if (VanillaProjectileMelee(item) && player.statMana < GetMeleeManaCost(item, player))
-            {
-                if (player.manaFlower)
-                {
-                    player.QuickMana();
-                }
-                return false;
-            }
-            return  true;
-        }
-        public override bool Shoot(Item item, Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-        {
-            //mercy, yoyo only use mana once when left click to unleash 
-            if (VanillaProjectileMelee(item) && player.statMana >= GetMeleeManaCost(item, player))
-            {
-                player.statMana -= GetMeleeManaCost(item, player);
-            }
-            return true;
-        }
+
         public bool TrueMelee(Item item)
         {
             if (item.DamageType == DamageClass.Melee && item.shoot == 0 || item.shoot == ModContent.ProjectileType<Projectiles.Nothing>())

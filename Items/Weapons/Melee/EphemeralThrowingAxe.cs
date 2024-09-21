@@ -15,12 +15,13 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void SetDefaults()
         {
+            Item.rare = ItemRarityID.Green;
             Item.damage = 40;
             Item.height = 34;
             Item.knockBack = 7;
             Item.noMelee = true;
             Item.noUseGraphic = true;
-            Item.DamageType = DamageClass.Melee;
+            Item.DamageType = DamageClass.MeleeNoSpeed;
             Item.shootSpeed = 8;
             Item.useAnimation = 22;
             Item.UseSound = SoundID.Item1;
@@ -29,8 +30,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.value = 150000;
             Item.width = 22;
             Item.shoot = ModContent.ProjectileType<Projectiles.EphemeralThrowingAxeProj>();
-
-            Item.mana = 5;
         }
 
         public override void AddRecipes()

@@ -637,7 +637,9 @@ namespace tsorcRevamp
                 ItemID.MechanicalEye,
                 ItemID.MechanicalSkull,
                 ItemID.MechanicalWorm,
-                ItemID.CelestialSigil
+                ItemID.CelestialSigil,
+                ItemID.NaughtyPresent,
+                ItemID.PumpkinMoonMedallion
                 #endregion
                 ,
                 #region Large Gems IDs

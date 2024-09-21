@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Throwing
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = PriceByRarity.LightRed_4;
-            Item.DamageType = DamageClass.Throwing;
+            Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<Projectiles.Throwing.HeavenSword>();
             Item.rare = ItemRarityID.LightRed;
         }

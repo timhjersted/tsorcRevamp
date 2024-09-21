@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Throwing
             Item.maxStack = Item.CommonMaxStack;
             Item.noMelee = true;
             Item.noUseGraphic = true;
-            Item.DamageType = DamageClass.Throwing;
+            Item.DamageType = DamageClass.Ranged;
             Item.scale = 0.8f;
             Item.shootSpeed = 8;
             Item.useAnimation = 18;

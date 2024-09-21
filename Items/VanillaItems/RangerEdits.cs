@@ -57,6 +57,16 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 55; //vanilla 45
             }
 
+            if (item.type == ItemID.StakeLauncher)
+            {
+                item.damage = 120; //vanilla 45
+            }
+
+            if (item.type == ItemID.ElfMelter)
+            {
+                item.damage = 110; //vanilla 45
+            }
+
             //Lunar items
             if (item.type == ItemID.Phantasm)
             {
@@ -67,6 +77,16 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.Tsunami)
             {
                 item.damage = 35;
+            }
+            	
+            if (item.type == ItemID.Xenopopper)
+            {
+                item.damage = 60;
+            }
+
+            if (item.type == ItemID.ElectrosphereLauncher)
+            {
+                item.damage = 80;
             }
         }
         public override void ModifyWeaponCrit(Item item, Player player, ref float crit)

@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.SanguineStaff)
             {
-                item.damage = 29;
+                item.damage = 35;
             }
             if (item.type == ItemID.PirateStaff)
             {
@@ -80,7 +80,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.RavenStaff)
             {
-                item.damage = 47;
+                item.damage = 70;
             }
             if (item.type == ItemID.XenoStaff)
             {
@@ -111,7 +111,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.ScytheWhip)
             {
-                item.damage = 85;
+                item.damage = 105;
             }
             if (item.type == ItemID.MaceWhip)
             {

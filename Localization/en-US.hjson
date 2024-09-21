@@ -235,6 +235,7 @@ Mods: {
 			Death: The fated day of your death has arrived.
 			QueenSlime: Queen Slime emerges from her Hallowed cave!
 			GreatRedKnightInvasion: A Great Red Knight has invaded your world!
+			GoblinShark: A Hemogoblin Shark is thirsty for blood!
 			AncestralSpirit: The Ancestral Spirit has been disturbed!
 			SkeletronHidden: Skeletron, Lord of Graves, has awoken!
 			EoC: The Eye sees you!
@@ -563,6 +564,7 @@ Mods: {
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:A symbol resembling a large pyramid with the moon to its right side is carved into it]"
 				LargeSapphire: "[c/ffbf00:A symbol resembling a snow-capped mountain near a fortress is carved into it]"
+				LargeRuby: "[c/ffbf00:A symbol resembling a ancient jungle temple accessible via a large pyramid is carved into it]"
 				VulnerabilityHex: Applies a vulnerability hex if Betsy has been defeated
 				StarinaBottle: Increases mana regen by 10 and decreases mana regen delay by 50%
 				ManaRegenerationBand: Increases mana regen by 25 and decreases mana regen delay by 100%
@@ -1558,7 +1560,7 @@ Mods: {
 					'''
 					The great Ring of Artorias.
 					Once held strength too great for this world to bear.
-					[c/ffbf00:It grants immunity to Blackout, Obstructed and Freezing.]
+					[c/ffbf00:It grants immunity to Blackout, Obstructed, Freezing and Acid Venom.]
 					[c/ffbf00:On top of this, it increases the positive stats gained after being cursed by {0}%]
 					'''
 			}
@@ -9991,6 +9993,8 @@ Mods: {
 					LikeNPC_Princess: I like {NPCName}.
 					Princess_LovesNPC: I like {NPCName}.
 				}
+
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			DwarvenGuard: {
@@ -10030,6 +10034,8 @@ Mods: {
 					LikeNPC_Princess: I like {NPCName}.
 					Princess_LovesNPC: I like {NPCName}.
 				}
+
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			EmeraldHerald: {
@@ -10088,6 +10094,8 @@ Mods: {
 					LikeNPC_Princess: I like {NPCName}.
 					Princess_LovesNPC: I like {NPCName}.
 				}
+
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			FreedFairy: {
@@ -10114,6 +10122,8 @@ Mods: {
 					LikeNPC_Princess: I like {NPCName}.
 					Princess_LovesNPC: I like {NPCName}.
 				}
+
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			LivingGlowshroom: {
@@ -10238,6 +10248,8 @@ Mods: {
 					LikeNPC_Princess: I like {NPCName}.
 					Princess_LovesNPC: I like {NPCName}.
 				}
+
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			SolaireOfAstora: {
@@ -10273,6 +10285,8 @@ Mods: {
 					LikeNPC_Princess: I like {NPCName}.
 					Princess_LovesNPC: I like {NPCName}.
 				}
+
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			TibianArcher: {
@@ -10308,6 +10322,8 @@ Mods: {
 					LikeNPC_Princess: I like {NPCName}.
 					Princess_LovesNPC: I like {NPCName}.
 				}
+
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			TibianMage: {
@@ -10350,6 +10366,8 @@ Mods: {
 					LikeNPC_Princess: I like {NPCName}.
 					Princess_LovesNPC: I like {NPCName}.
 				}
+
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			UndeadMerchant: {
@@ -10381,6 +10399,8 @@ Mods: {
 					LikeNPC_Princess: I like {NPCName}.
 					Princess_LovesNPC: I like {NPCName}.
 				}
+
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			HomingMissile.DisplayName: Homing Missile

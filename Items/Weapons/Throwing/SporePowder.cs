@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Throwing
             Item.noMelee = true;
             Item.shootSpeed = 4;
             Item.shoot = ModContent.ProjectileType<Projectiles.SporePowder>();
-            Item.DamageType = DamageClass.Throwing;
+            Item.DamageType = DamageClass.Ranged;
         }
 
         public override void AddRecipes()

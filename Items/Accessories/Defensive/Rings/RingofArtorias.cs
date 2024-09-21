@@ -30,6 +30,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             player.buffImmune[BuffID.Frozen] = true;
             player.buffImmune[BuffID.Blackout] = true;
             player.buffImmune[BuffID.Obstructed] = true;
+            player.buffImmune[BuffID.Venom] = true;
         }
 
     }

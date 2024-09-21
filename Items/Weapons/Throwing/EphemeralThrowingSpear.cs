@@ -13,13 +13,14 @@ namespace tsorcRevamp.Items.Weapons.Throwing
 
         public override void SetDefaults()
         {
+            Item.rare = ItemRarityID.Green;
             Item.consumable = true;
             Item.damage = 29;
             Item.height = 64;
             Item.knockBack = 6;
             Item.maxStack = Item.CommonMaxStack;
             Item.noUseGraphic = true;
-            Item.DamageType = DamageClass.Throwing;
+            Item.DamageType = DamageClass.Ranged;
             Item.scale = 0.9f;
             Item.shootSpeed = 14;
             Item.useAnimation = 15;

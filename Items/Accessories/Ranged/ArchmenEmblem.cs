@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Accessories.Ranged
     public class ArchmenEmblem : ModItem
     {
         public static float RangedDmg = 15f;
-        public static int FlatRangedDmg = 5;
+        public static int FlatRangedDmg = 4;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(RangedDmg, FlatRangedDmg);
         public override void SetStaticDefaults()
         {
