@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Throwing
             Item.UseSound = SoundID.Item1;
             Item.consumable = true;
             Item.maxStack = Item.CommonMaxStack;
-            Item.DamageType = DamageClass.Throwing;
+            Item.DamageType = DamageClass.Ranged;
         }
         public override void AddRecipes()
         {
