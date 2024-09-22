@@ -3,9 +3,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles
+namespace tsorcRevamp.Projectiles.Melee
 {
-    class StarfallProjectile : ModProjectile
+    class StarstormProjectile : ModProjectile
     {
         public override void SetDefaults()
         {
@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.height = 24;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            Projectile.DamageType = DamageClass.Magic;
+            Projectile.DamageType = DamageClass.Melee;
             Projectile.light = 0.8f;
         }
 
@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles
             UsefulFunctions.HomeOnEnemy(Projectile, 240, 15f, false, 1.25f, true);
 
 
-            int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 92, Projectile.velocity.X, Projectile.velocity.Y, 128, default, 1.2f);
+            int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 86, Projectile.velocity.X, Projectile.velocity.Y, 128, default, 1.1f);
             Main.dust[dust].noGravity = true;
             Main.dust[dust].velocity *= 0.3f;
 

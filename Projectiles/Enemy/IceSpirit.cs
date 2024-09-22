@@ -19,8 +19,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.damage = 50;
             Projectile.friendly = false;
             Projectile.penetrate = 3;
-            Projectile.alpha = 150;
-            Projectile.light = .9f;
+            Projectile.alpha = 70;
+            Projectile.light = .85f;
             Projectile.coldDamage = true;
         }
 

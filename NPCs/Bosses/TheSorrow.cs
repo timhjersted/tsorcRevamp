@@ -85,7 +85,6 @@ namespace tsorcRevamp.NPCs.Bosses
             get => NPC.life <= NPC.lifeMax / 2;
         }
 
-        float turtleTimer;
         bool announcedDebuffs = false;
         float ice3Timer;
 
@@ -121,28 +120,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 IceSpiritAttack();
             }
 
-            // Spawn Turtles!
-            turtleTimer++;
-            if (turtleTimer > 3700 && (Target.Center.Y + 20 >= NPC.Center.Y) && breathTimer > 0 && !secondPhase)
-            {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit24 with { Volume = 0.5f }, NPC.Center);
-
-                Dust.NewDust(NPC.Center, NPC.width, NPC.height, DustID.PoisonStaff, NPC.velocity.X, NPC.velocity.Y);
-                Dust.NewDust(NPC.Center, NPC.width, NPC.height, DustID.PoisonStaff, NPC.velocity.X, NPC.velocity.Y);
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int Turtle = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.IceTortoise, 0);
-
-                    if (Main.netMode == NetmodeID.Server)
-                    {
-                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Turtle, 0f, 0f, 0f, 0);
-                    }
-                }
-
-                turtleTimer = 0;
-            }
-
             //DARK ELF MAGE SPAWN
             /*
             if ((customspawn1 < 3) && Main.rand.NextBool(2000))
@@ -165,7 +142,7 @@ namespace tsorcRevamp.NPCs.Bosses
             // Displaying slow range with ring
             if (secondPhase)
             {
-                UsefulFunctions.DustRing(NPC.Center, 200, DustID.IceTorch, 10, 2f);
+                UsefulFunctions.DustRing(NPC.Center, 200, DustID.IceTorch, 25, 7f);
             }
 
             // Check every player in the game to see if they are in range
@@ -493,7 +470,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     // Ice Spirit Attack
                     iceSpiritTimer = 900;
-                    turtleTimer += 300;
                     NPC.ai[3] = 1;
 
                     if (NPC.life > NPC.lifeMax)

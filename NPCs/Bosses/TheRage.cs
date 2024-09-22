@@ -216,7 +216,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 FlameShotCounter++;
             }
             // Homing Fireballs Attack: Part of 2nd phase 
-            if (FlameShotTimer3 >= 25 && FlameShotCounter3 < 5)
+            if (FlameShotTimer3 >= 35 && FlameShotCounter3 < 5)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -293,33 +293,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 }
 
-            }
-
-            // Spawn Meteor Hell at 1/5th life
-            if (Main.rand.NextBool(120) && NPC.Distance(player.Center) > 160 && NPC.life <= NPC.lifeMax / 5)
-            {
-
-                if (player.position.Y + 50 >= NPC.position.Y)
-                {
-                    int Meteor = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.MeteorHead, 0);
-
-                    for (int i = 0; i < 20; i++)
-                    {
-                        int fireDust = Dust.NewDust(new Vector2(NPC.Center.X + 500, NPC.Center.Y - 100), DustID.Shadowflame, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
-                        Main.dust[fireDust].noGravity = true;
-                        fireDust = Dust.NewDust(new Vector2(NPC.Center.X, NPC.Center.Y - 100), DustID.Shadowflame, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
-                        Main.dust[fireDust].noGravity = true;
-                        fireDust = Dust.NewDust(new Vector2(NPC.Center.X - 500, NPC.Center.Y - 100), DustID.Shadowflame, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Purple, 2f);
-                        Main.dust[fireDust].noGravity = true;
-                    }
-
-                    //Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit24 with { Volume = 0.5f }, NPC.Center);
-
-                    if (Main.netMode == NetmodeID.Server)
-                    {
-                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Meteor, 0f, 0f, 0f, 0);
-                    }
-                }
             }
 
             if (NPC.ai[3] == 0)

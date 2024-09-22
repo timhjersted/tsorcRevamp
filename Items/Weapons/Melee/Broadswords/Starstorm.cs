@@ -3,7 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
 
-namespace tsorcRevamp.Items.Weapons.Magic
+namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
 {
     class Starstorm : ModItem
     {
@@ -26,9 +26,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.scale = 1.15f;
             Item.UseSound = SoundID.Item9;
             Item.rare = ItemRarityID.LightRed;
-            Item.mana = 13;
             Item.value = PriceByRarity.LightRed_4;
-            Item.DamageType = DamageClass.Magic;
+            Item.DamageType = DamageClass.Melee;
         }
 
 
@@ -38,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             float y = (float)(Main.mouseY + Main.screenPosition.Y);
             float speedX = (Main.rand.Next(-20, 20)) / 10f;
             float speedY = 14.9f;
-            int type = ModContent.ProjectileType<Projectiles.StarfallProjectile>();
+            int type = ModContent.ProjectileType<Projectiles.Melee.StarstormProjectile>();
             int damage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage);
             float knockback = 3.0f;
             int owner = player.whoAmI;
