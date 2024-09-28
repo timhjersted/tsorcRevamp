@@ -17,17 +17,19 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.width = 42;
             Item.height = 42;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 30;
-            Item.useTime = 30;
-            Item.damage = 40;
+            Item.useAnimation = 25;
+            Item.useTime = 50;
+            Item.damage = 45;
             Item.knockBack = 6;
             Item.autoReuse = true;
             Item.alpha = 100;
             Item.scale = 1.15f;
-            Item.UseSound = SoundID.Item9;
+            Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Melee;
+            Item.shootsEveryUse = false;
+            
         }
 
 
@@ -48,6 +50,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                 for (int i = 0; i < 5; i++)
                 {
                     Projectile.NewProjectile(player.GetSource_ItemUse(Item), x + ((i * 40) - 80), y, speedX, speedY, type, damage, knockback, owner);
+                    Item.UseSound = SoundID.Item9;
                 }
             }
             return true;

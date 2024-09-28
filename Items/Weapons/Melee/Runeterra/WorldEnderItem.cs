@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 45;
             Item.useTime = 45;
-            Item.damage = 666;
+            Item.damage = 850;
             Item.knockBack = 20f;
             Item.rare = ItemRarityID.Red;
             Item.value = PriceByRarity.Red_10;
