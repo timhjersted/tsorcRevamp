@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     public class SearingLashItem : ModItem
     {
         public const int BaseDamage = 33;
-        public const int BatDmgScaling = 50;
+        public const int BatDmgScaling = 25;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BatDmgScaling);
         public override void SetStaticDefaults()
         {
