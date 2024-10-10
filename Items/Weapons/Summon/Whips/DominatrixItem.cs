@@ -7,11 +7,12 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-    public class Dominatrix : ModItem
+    [LegacyName("Dominatrix")]
+    public class DominatrixItem : ModItem
     {
-        public static float SummonTagCrit = 12;
-        public static float CritDamage = 50;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagCrit, CritDamage);
+        public const int ThornDmgScaling = 35;
+        public const int BaseDmg = 21;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ThornDmgScaling);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
@@ -23,12 +24,12 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
             Item.width = 60;
 
             Item.DamageType = DamageClass.SummonMeleeSpeed;
-            Item.damage = 20;
+            Item.damage = BaseDmg;
             Item.knockBack = 2;
             Item.rare = ItemRarityID.Green;
             Item.value = Item.buyPrice(0, 6, 0, 0);
 
-            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.DominatrixProjectile>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.Dominatrix.DominatrixProjectile>();
             Item.shootSpeed = 4;
 
             Item.useStyle = ItemUseStyleID.Swing;

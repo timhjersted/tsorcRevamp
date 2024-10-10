@@ -5,6 +5,7 @@ using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs
 {
+    [Autoload(false)] //no longer used
     public class UrumiDebuff : ModBuff
     {
         public override void SetStaticDefaults()

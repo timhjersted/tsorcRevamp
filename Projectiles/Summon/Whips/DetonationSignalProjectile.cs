@@ -6,6 +6,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
+using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
@@ -25,10 +26,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override float MaxChargeDmgDivisor => 1f;
         public override float ChargeRangeBonus => 0;
         public override int WhipDebuffId => ModContent.BuffType<DetonationSignalDebuff>();
-        public override int WhipDebuffDuration => 4;
+        public override int WhipDebuffDuration => DetonationSignal.BonusContactDamageDuration;
         public override float WhipMultihitPenalty => 0.8f;
         public override Color WhipLineColor => Color.OrangeRed;
-        public override void CustomDust(List<Vector2> points)
+        public override void CustomDustAndTipEffects(List<Vector2> points)
         {
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, 25, 0f, 0f, 150, default, 0.75f);
         }

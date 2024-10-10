@@ -12,15 +12,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     public class TerraFallItem : ModItem
     {
         public const int BaseDamage = 115;
-        public const int MaxStacks = 5;
-        public const float MinSummonTagDamage = 4;
-        public const float MaxSummonTagDamage = MinSummonTagDamage * MaxStacks;
-        public const float MinSummonTagCrit = 5;
-        public const float MaxSummonTagCrit = MinSummonTagCrit * MaxStacks;
-        public const float MinSummonTagAttackSpeed = 7;
-        public const float MaxSummonTagAttackSpeed = MinSummonTagAttackSpeed * MaxStacks;
-        public const float CritDamage = 33;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MinSummonTagDamage, MaxSummonTagDamage, MinSummonTagCrit, MaxSummonTagCrit, MinSummonTagAttackSpeed, MaxSummonTagAttackSpeed, SearingLash.CritMult, CritDamage);
+        public const int TagDmg = 10;
+        public const int TagCrit = 10;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(TagDmg, TagCrit);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
@@ -55,7 +49,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<NightsCracker>());
+            recipe.AddIngredient(ModContent.ItemType<NightsCrackerItem>());
             recipe.AddIngredient(ItemID.SwordWhip);
             recipe.AddIngredient(ItemID.RainbowWhip);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>());

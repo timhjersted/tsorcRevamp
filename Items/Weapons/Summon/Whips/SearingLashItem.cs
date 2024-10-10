@@ -4,15 +4,15 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
-using tsorcRevamp.Projectiles.Summon.Whips.EnchantedWhip;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
-    public class EnchantedWhip : ModItem
+    [LegacyName("SearingLash")]
+    public class SearingLashItem : ModItem
     {
-        public const int BaseDamage = 18;
-        public static float StarDamageScaling = 45;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StarDamageScaling);
+        public const int BaseDamage = 33;
+        public const int BatDmgScaling = 50;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BatDmgScaling);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
@@ -20,23 +20,24 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 
         public override void SetDefaults()
         {
-            Item.height = 60;
-            Item.width = 52;
+            Item.height = 84;
+            Item.width = 88;
 
             Item.DamageType = DamageClass.SummonMeleeSpeed;
             Item.damage = BaseDamage;
-            Item.knockBack = 1.5f;
-            Item.rare = ItemRarityID.Blue;
-            Item.value = Item.buyPrice(0, 3, 50, 0);
+            Item.knockBack = 3;
+            Item.rare = ItemRarityID.Orange;
+            Item.value = Item.buyPrice(0, 8, 50, 0);
 
-            Item.shoot = ModContent.ProjectileType<EnchantedWhipProjectile>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.SearingLash.SearingLashProjectile>();
             Item.shootSpeed = 4;
 
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 40; // for some reason a lower use speed gives it increased range....
-            Item.useAnimation = 40;
+            Item.useTime = 30;
+            Item.useAnimation = 30;
             Item.noMelee = true;
             Item.noUseGraphic = true;
+            Item.channel = true;
         }
         public override bool MeleePrefix()
         {
@@ -45,9 +46,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.BlandWhip, 1);
-            recipe.AddIngredient(ItemID.FallenStar, 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 4000);
+            recipe.AddIngredient(ItemID.HellstoneBar, 3);
+            recipe.AddIngredient(ItemID.MeteoriteBar, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 6000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

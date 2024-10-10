@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 
-namespace tsorcRevamp.Projectiles.Summon.Whips
+namespace tsorcRevamp.Projectiles.Summon.Whips.Dominatrix
 {
     public class DominatrixProjectile : ModdedWhipProjectile
     {
@@ -26,20 +26,12 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override float MaxChargeDmgDivisor => 1f;
         public override float ChargeRangeBonus => 0;
         public override int WhipDebuffId => ModContent.BuffType<DominatrixDebuff>();
-        public override int WhipDebuffDuration => 4;
+        public override int WhipDebuffDuration => DefaultWhipDebuffDuration;
         public override float WhipMultihitPenalty => 0.6f;
         public override Color WhipLineColor => Color.MediumVioletRed;
-        public override void CustomDust(List<Vector2> points)
+        public override void CustomDustAndTipEffects(List<Vector2> points)
         {
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], DustWidth, DustHeight, DustID.CrimsonPlants, 0f, 0f, 150, default, 1.3f);
-        }
-        public override void CustomModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-            modifiers.CritDamage *= 1f + (Dominatrix.CritDamage / 100);
-        }
-        public override void CustomOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            target.AddBuff(BuffID.BloodButcherer, WhipDebuffDuration * 60);
         }
         public override bool PreDraw(ref Color lightColor)
         {

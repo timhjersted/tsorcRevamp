@@ -202,7 +202,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                             }
                         case 12:
                             {
-                                player.GetModPlayer<tsorcRevampPlayer>().SearingLashStacks = 2;
                                 target.AddBuff(ModContent.BuffType<SearingLashDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
                                 break;
                             }
@@ -218,7 +217,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                             }
                         case 15:
                             {
-                                player.GetModPlayer<tsorcRevampPlayer>().NightsCrackerStacks = 2;
                                 target.AddBuff(ModContent.BuffType<NightsCrackerDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
                                 player.AddBuff(ModContent.BuffType<NightsCrackerBuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
                                 break;
@@ -237,7 +235,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
                             }
                         case 18:
                             {
-                                player.GetModPlayer<tsorcRevampPlayer>().TerraFallStacks = 2;
                                 target.AddBuff(ModContent.BuffType<TerraFallDebuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
                                 player.AddBuff(ModContent.BuffType<TerraFallBuff>(), (int)(player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration * TagDuration * 60));
                                 break;

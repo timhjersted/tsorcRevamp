@@ -235,6 +235,7 @@ Mods: {
 			Death: 命定之死已至！
 			QueenSlime: 史莱姆女皇从她的神圣洞穴中现身！
 			GreatRedKnightInvasion: 一位卓越赭骑士入侵了你的世界！
+			// GoblinShark: A Hemogoblin Shark is thirsty for blood!
 			AncestralSpirit: 你惊扰了先祖之灵！
 			SkeletronHidden: 坟墓之主骷髅王已苏醒！
 			EoC: 克苏鲁之眼盯上你了！
@@ -554,6 +555,7 @@ Mods: {
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:一个类似于大金字塔的符号，月亮在它的右侧，刻在上面]"
 				LargeSapphire: "[c/ffbf00:上面刻着飞龙法师堡垒附近的一座雪山的符号]"
+				// LargeRuby: "[c/ffbf00:A symbol resembling a ancient jungle temple accessible via a large pyramid is carved into it]"
 				VulnerabilityHex: 如果已击败双足翼龙，则施加双足翼龙诅咒减益
 				StarinaBottle: 增加 10 点魔力再生同时减少 50% 魔力再生延迟
 				ManaRegenerationBand: 增加 25 点魔力再生同时减少 100% 魔力再生延迟
@@ -6586,19 +6588,6 @@ Mods: {
 				Tooltip: 召唤一群三子小眼为你而战
 			}
 
-			CrystalNunchaku: {
-				DisplayName: 水晶双截棍
-				Tooltip:
-					'''
-					攻击敌人会施加 {4} 秒水晶标记
-					5 秒后提高自身防御或敌人受到的伤害
-					标记期间对敌人造成（本鞭子以外）伤害会减少敌人的易伤状态并提高自己的防御
-					对敌人增伤从 {0}% 降到 {1}%，自己的防御从 {3} 增加到 {2}
-					“进攻才是最好的防御，又或恰恰相反？”
-					'''
-				BotCTooltip: 可能使[c/6d8827:被诅咒者]更加脆弱
-			}
-
 			DetonationSignal: {
 				DisplayName: 引爆信号
 				Tooltip:
@@ -6610,13 +6599,18 @@ Mods: {
 					'''
 			}
 
-			Dominatrix: {
-				DisplayName: 主宰
+			TerraFallItem: {
+				DisplayName: 泰拉之殇
 				Tooltip:
 					'''
-					{$CommonItemTooltip.PercentSummonTagCritChance}
-					施加血型屠宰减益
-					{$CommonItemTooltip.CritDmg@1}
+					{$CommonItemTooltip.Summon.ChargedWhip}
+					击中敌人后召唤一片泰拉飘叶
+					{$CommonItemTooltip.Summon.ChargedWhipTagDmg}
+					{$CommonItemTooltip.Summon.ChargedWhipTagCrit@2}
+					{$CommonItemTooltip.Summon.ChargedWhipAtkSpeed@4}
+					{$CommonItemTooltip.Summon.WhipCC}
+					{$CommonItemTooltip.Summon.TagCritMult@6}
+					{$CommonItemTooltip.CritDmg@7}
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -6632,33 +6626,6 @@ Mods: {
 					'''
 			}
 
-			EnchantedWhip: {
-				DisplayName: 附魔之鞭
-				Tooltip:
-					'''
-					{$CommonItemTooltip.SummonTagDamage}
-					用附魔之力击打敌人
-					被附魔的敌人会在被召唤物击中后引来落星
-					落星的伤害是鞭子的 {1}% 
-					{$CommonItemTooltip.Whips}
-					'''
-			}
-
-			NightsCracker: {
-				DisplayName: 碎夜
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Summon.ChargedWhip}
-					{$CommonItemTooltip.Summon.ChargedWhipTagDmg}
-					{$CommonItemTooltip.Summon.ChargedWhipTagCrit@2}
-					{$CommonItemTooltip.Summon.ChargedWhipAtkSpeed@4}
-					{$CommonItemTooltip.Summon.WhipCC}
-					{$CommonItemTooltip.Summon.TagCritMult@6}
-					{$CommonItemTooltip.CritDmg@7}
-					{$CommonItemTooltip.Whips}
-					'''
-			}
-
 			PolarisLeashItem: {
 				DisplayName: 北极星之鞭
 				Tooltip:
@@ -6670,6 +6637,18 @@ Mods: {
 					这些星星的伤害为鞭子伤害的 {2}%
 					你的召唤物会集中攻击被北极星标记的敌人
 					'''
+			}
+
+			NightsCrackerItem: {
+				// DisplayName: Night's Cracker
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Summon.ChargedWhip}
+					Whip summons a damaging slash which applies a marking debuff up to {0} times
+					At max stacks the next slash consumes the marks to deal extra damage
+					'Charge at the right time'
+					{$CommonItemTooltip.Whips}
+					''' */
 			}
 
 			Pyrosulfate: {
@@ -6692,29 +6671,50 @@ Mods: {
 					'''
 			}
 
-			SearingLash: {
-				DisplayName: 灼热之鞭
+			CrystalNunchaku: {
+				DisplayName: 水晶双截棍
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Summon.ChargedWhip}
-					被此鞭子击中的敌人会剧烈烧伤
-					{$CommonItemTooltip.Summon.TagCritMult}
-					{$CommonItemTooltip.Whips}
+					攻击敌人会施加 {4} 秒水晶标记
+					5 秒后提高自身防御或敌人受到的伤害
+					标记期间对敌人造成（本鞭子以外）伤害会减少敌人的易伤状态并提高自己的防御
+					对敌人增伤从 {0}% 降到 {1}%，自己的防御从 {3} 增加到 {2}
+					“进攻才是最好的防御，又或恰恰相反？”
 					'''
+				BotCTooltip: 可能使[c/6d8827:被诅咒者]更加脆弱
 			}
 
-			TerraFallItem: {
-				DisplayName: 泰拉之殇
-				Tooltip:
+			SearingLashItem: {
+				// DisplayName: Searing Lash
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.Summon.ChargedWhip}
-					击中敌人后召唤一片泰拉飘叶
-					{$CommonItemTooltip.Summon.ChargedWhipTagDmg}
-					{$CommonItemTooltip.Summon.ChargedWhipTagCrit@2}
-					{$CommonItemTooltip.Summon.ChargedWhipAtkSpeed@4}
-					{$CommonItemTooltip.Summon.WhipCC}
-					{$CommonItemTooltip.Summon.TagCritMult@6}
-					{$CommonItemTooltip.CritDmg@7}
+					Enemies struck by this whip will burn horribly
+					Summons hellbats on-hit to further chase enemies
+					Hellbats scale with {0}% whip damage
+					{$CommonItemTooltip.Whips}
+					''' */
+			}
+
+			DominatrixItem: {
+				// DisplayName: Dominatrix
+				/* Tooltip:
+					'''
+					Strike enemies to plant thorns in them
+					Thorns are released by enemies hit by summons
+					Thorns scale with {0}% whip damage
+					{$CommonItemTooltip.Whips}
+					''' */
+			}
+
+			EnchantedWhip: {
+				DisplayName: 附魔之鞭
+				Tooltip:
+					'''
+					{$CommonItemTooltip.SummonTagDamage}
+					用附魔之力击打敌人
+					被附魔的敌人会在被召唤物击中后引来落星
+					落星的伤害是鞭子的 {1}% 
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -6727,6 +6727,15 @@ Mods: {
 					{$CommonItemTooltip.PercentSummonTagCritChance@1}
 					鞭子本身带有 {2} 护甲穿透
 					{$CommonItemTooltip.Whips}
+					'''
+			}
+
+			RustedChain: {
+				DisplayName: 锈蚀铁链
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Summon.TagArmorPen}
+					{$CommonItemTooltip.SummonTagDamage@1}
 					'''
 			}
 
@@ -7715,15 +7724,6 @@ Mods: {
 			LichBone: {
 				DisplayName: 巫妖王之骨
 				Tooltip: ""
-			}
-
-			RustedChain: {
-				DisplayName: 锈蚀铁链
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Summon.TagArmorPen}
-					{$CommonItemTooltip.SummonTagDamage@1}
-					'''
 			}
 
 			PinwheelBag: {
@@ -9340,6 +9340,10 @@ Mods: {
 			RealityFracture.DisplayName: 次元碎片
 			BlightCataclysm.DisplayName: 枯萎风暴
 			FreezeBolt3.DisplayName: 霜与电高阶
+			// StarstormProjectile.DisplayName: Starstorm Projectile
+			// DominatrixThorn.DisplayName: Dominatrix Thorn
+			// SearingLashBat.DisplayName: Searing Lash Bat
+			// NightsCrackerTrail.DisplayName: Nights Cracker Trail
 		}
 
 		NPCs: {
@@ -9982,6 +9986,8 @@ Mods: {
 					LikeNPC_Princess: 我喜欢 {NPCName}.
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
+
+				// Census.SpawnCondition: Conditions unknown
 			}
 
 			DwarvenGuard: {
@@ -10021,6 +10027,8 @@ Mods: {
 					LikeNPC_Princess: 我喜欢 {NPCName}.
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
+
+				// Census.SpawnCondition: Conditions unknown
 			}
 
 			EmeraldHerald: {
@@ -10079,6 +10087,8 @@ Mods: {
 					LikeNPC_Princess: 我喜欢 {NPCName}.
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
+
+				// Census.SpawnCondition: Conditions unknown
 			}
 
 			FreedFairy: {
@@ -10105,6 +10115,8 @@ Mods: {
 					LikeNPC_Princess: 我喜欢 {NPCName}.
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
+
+				// Census.SpawnCondition: Conditions unknown
 			}
 
 			LivingGlowshroom: {
@@ -10228,6 +10240,8 @@ Mods: {
 					LikeNPC_Princess: 我喜欢 {NPCName}.
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
+
+				// Census.SpawnCondition: Conditions unknown
 			}
 
 			SolaireOfAstora: {
@@ -10263,6 +10277,8 @@ Mods: {
 					LikeNPC_Princess: 我喜欢 {NPCName}.
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
+
+				// Census.SpawnCondition: Conditions unknown
 			}
 
 			TibianArcher: {
@@ -10298,6 +10314,8 @@ Mods: {
 					LikeNPC_Princess: 我喜欢 {NPCName}.
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
+
+				// Census.SpawnCondition: Conditions unknown
 			}
 
 			TibianMage: {
@@ -10340,6 +10358,8 @@ Mods: {
 					LikeNPC_Princess: 我喜欢 {NPCName}.
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
+
+				// Census.SpawnCondition: Conditions unknown
 			}
 
 			UndeadMerchant: {
@@ -10371,6 +10391,8 @@ Mods: {
 					LikeNPC_Princess: 我喜欢 {NPCName}.
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
+
+				// Census.SpawnCondition: Conditions unknown
 			}
 
 			HomingMissile.DisplayName: 追踪导弹

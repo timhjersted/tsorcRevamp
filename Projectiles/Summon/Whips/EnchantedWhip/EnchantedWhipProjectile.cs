@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.EnchantedWhip
         public override float MaxChargeDmgDivisor => 1f;
         public override float ChargeRangeBonus => 0;
         public override int WhipDebuffId => ModContent.BuffType<EnchantedWhipDebuff>();
-        public override int WhipDebuffDuration => 4;
+        public override int WhipDebuffDuration => DefaultWhipDebuffDuration;
         public override float WhipMultihitPenalty => 0.55f;
         public override Color WhipLineColor => Color.DeepSkyBlue;
         public override bool PreDraw(ref Color lightColor)

@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips
 {
@@ -26,10 +27,20 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override float MaxChargeDmgDivisor => 1f;
         public override float ChargeRangeBonus => 0;
         public override int WhipDebuffId => ModContent.BuffType<CrystalNunchakuDebuff>();
-        public override int WhipDebuffDuration => CrystalNunchaku.BuffDuration;
+        public override int WhipDebuffDuration => 0; //custom tag so the duration can't be refreshed after a proc
         public override float WhipMultihitPenalty => 0.7f;
         public override Color WhipLineColor => Color.BlueViolet;
-        public override void CustomDust(List<Vector2> points)
+        public override void CustomOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (!target.HasBuff(WhipDebuffId))
+            {
+                var globalNPC = target.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                Player player = Main.player[Projectile.owner];
+                globalNPC.CrystalNunchakuWielder = player;
+                target.AddBuff(WhipDebuffId, (int)(CrystalNunchaku.BuffDuration * 60 * player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
+            }
+        }
+        public override void CustomDustAndTipEffects(List<Vector2> points)
         {
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.HallowedTorch, 0f, 0f, 150, default, 0.75f);
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.PinkCrystalShard, 0f, 0f, 150, default, 1f);

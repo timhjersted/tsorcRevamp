@@ -42,7 +42,9 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash
             {
                 Projectile.timeLeft = 2;
             }
-            Dust.NewDust(Projectile.Center, 10, 10, DustID.IceRod, 0f, 0f, 150, default(Color), 1f);
+            Dust.NewDust(Projectile.Center, 10, 10, DustID.IceRod, 0f, 0f, 150, Color.MediumSpringGreen, 1f);
+            Lighting.AddLight(Projectile.Center, Color.MediumSpringGreen.ToVector3() * 1f);
+            Projectile.rotation += 0.03f;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

@@ -43,7 +43,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
 
         float waitTimer = 0;
         float fixedSpeed = 1;
-        public bool FinalStandMode = false;
         Vector2 trailVelocity;
         List<Vector2> trailVelocities;
         public bool PlayAnimation = true;
@@ -134,7 +133,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseWavy);
             effect.Parameters["fadeOut"].SetValue(0.85f);
-            effect.Parameters["finalStand"].SetValue(FinalStandMode.ToInt());
+            effect.Parameters["finalStand"].SetValue(0);
             effect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
             effect.Parameters["shaderColor"].SetValue(rgbColor.ToVector4());
             effect.Parameters["shaderColor2"].SetValue(new Color(0f, 0f, 2f).ToVector4());

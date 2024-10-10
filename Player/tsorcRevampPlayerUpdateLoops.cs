@@ -30,6 +30,8 @@ namespace tsorcRevamp
     //update loops that run every frame
     public partial class tsorcRevampPlayer
     {
+        public Vector2 CursorPosition = new Vector2(0, 0); //just so it doesn't null
+
         public const float MeleeBonusMultiplier = 0.5f;
 
         public bool NoDamageSpread = false;
@@ -181,10 +183,6 @@ namespace tsorcRevamp
         public float CrystalNunchakuDefenseDamage;
 
         public float DragoonLashFireBreathTimer = 0f;
-
-        public float SearingLashStacks = 0;
-        public float NightsCrackerStacks = 0;
-        public float TerraFallStacks = 0;
 
         public float SummonTagStrength;
         public float SummonTagDuration;

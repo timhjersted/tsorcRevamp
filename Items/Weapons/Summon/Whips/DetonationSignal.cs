@@ -4,14 +4,16 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Projectiles.Summon;
 
 namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
     public class DetonationSignal : ModItem
     {
-        public static float SummonTagScalingDamage = 350f;
-        public static float BonusContactDamage = 50f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagScalingDamage, BonusContactDamage);
+        public const float SummonTagScalingDamage = 300f;
+        public const float BonusContactDamage = 50f;
+        public const int BonusContactDamageDuration = ModdedWhipProjectile.DefaultWhipDebuffDuration;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagScalingDamage, BonusContactDamage, BonusContactDamageDuration);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao

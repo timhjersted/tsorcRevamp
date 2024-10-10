@@ -33,16 +33,11 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
         public override Color WhipLineColor => Color.Red;
         public override void CustomModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            modifiers.CritDamage *= 1f + (TerraFallItem.CritDamage / 100f);
         }
         public override void CustomOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player player = Main.player[Projectile.owner];
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.TerraFallStacks = MathF.Min(ChargeTime / (MaxChargeTime / 4) + 1, TerraFallItem.MaxStacks);
-            player.AddBuff(ModContent.BuffType<TerraFallBuff>(), (int)(modPlayer.TerraFallStacks * 120 * modPlayer.SummonTagDuration));
-            target.AddBuff(ModContent.BuffType<TerraFallDebuff>(), (int)(modPlayer.TerraFallStacks * 120 * modPlayer.SummonTagDuration));
-            Projectile.damage = (int)(Projectile.damage * MathF.Min(modPlayer.TerraFallStacks / 20.5f + 0.75f, 1f));
         }
 
         public override bool PreDraw(ref Color lightColor)

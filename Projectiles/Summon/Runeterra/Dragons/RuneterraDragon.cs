@@ -373,13 +373,24 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             {
                 Projectile.damage = 1;
             }
+
+            //I figure this whole area needs syncing
+
+            if (Main.myPlayer == player.whoAmI)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().CursorPosition = Main.MouseWorld;
+            }
+
             if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
                 Projectile.localNPCHitCooldown = BaseAttackSpeed / 2;
             }
             else { Projectile.localNPCHitCooldown = BaseAttackSpeed; }
 
-            Vector2 movementVec = Main.MouseWorld - Projectile.Center;
+
+            Vector2 movementVec = player.GetModPlayer<tsorcRevampPlayer>().CursorPosition - Projectile.Center;
+
+            //until here
 
             float length = movementVec.Length();
 

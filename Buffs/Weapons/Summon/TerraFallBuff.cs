@@ -23,7 +23,7 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
 
         public override void Update(Player player, ref int buffIndex)
         {
-            AttackSpeed = player.GetModPlayer<tsorcRevampPlayer>().TerraFallStacks * TerraFallItem.MinSummonTagAttackSpeed;
+            AttackSpeed = 1;
             player.GetAttackSpeed(DamageClass.Summon) += AttackSpeed / 100f;
 
             if (player.whoAmI == Main.myPlayer && player.ownedProjectileCounts[ModContent.ProjectileType<TerraFallTerraprisma>()] == 0)

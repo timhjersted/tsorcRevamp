@@ -9,10 +9,9 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
 {
     public class Urumi : ModItem
     {
-        public static float SummonTagArmorPen = 8;
+        public const float CritDamage = 33;
         public const int WhipArmorPen = 10;
-        public static float SummonTagCrit = 8;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagArmorPen, SummonTagCrit, WhipArmorPen);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritDamage, WhipArmorPen);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao

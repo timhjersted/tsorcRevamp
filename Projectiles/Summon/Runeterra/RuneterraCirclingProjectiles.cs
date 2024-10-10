@@ -116,7 +116,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             base.AI();
 
             Player player = Main.player[Projectile.owner];
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
             if (angularSpeed > 0.03f)
             {
@@ -135,11 +135,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
                 return;
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+            if (modPlayer.InterstellarBoost)
             {
                 angularSpeed = BaseSpeed * 1.5f;
             }
-            if (!player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
+            if (!modPlayer.InterstellarBoost)
             {
                 angularSpeed = BaseSpeed;
                 if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -147,8 +147,9 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
                     ModPacket minionPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
                     minionPacket.Write(tsorcPacketID.SyncMinionRadius);
                     minionPacket.Write((byte)player.whoAmI);
-                    minionPacket.Write(player.GetModPlayer<tsorcRevampPlayer>().MinionCircleRadius);
-                    minionPacket.Write(player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost);
+                    minionPacket.Write(modPlayer.MinionCircleRadius);
+                    minionPacket.Write(modPlayer.InterstellarBoost);
+                    //minionPacket.WriteVector2(modPlayer.CursorPosition);
                     minionPacket.Send();
                 }
             }

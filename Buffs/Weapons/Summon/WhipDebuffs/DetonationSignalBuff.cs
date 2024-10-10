@@ -36,7 +36,7 @@ namespace tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs
         {
             if (exploded)
             {
-                modifiers.SourceDamage *= DetonationSignal.BonusContactDamage / 100f;
+                modifiers.SourceDamage += DetonationSignal.BonusContactDamage / 100f;
             }
         }
     }

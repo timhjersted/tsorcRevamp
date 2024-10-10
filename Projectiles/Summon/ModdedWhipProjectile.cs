@@ -27,14 +27,16 @@ namespace tsorcRevamp.Projectiles.Summon
         public abstract Vector2 WhipTipBase { get; } //the size of the whip tips sprite
         public abstract float MaxChargeDmgDivisor { get; } //how much bonus dmg it will deal by charging up, higher is better
         public abstract float ChargeRangeBonus { get; } //how much range it will gain from charging up, higher is better
-
         public abstract int WhipDebuffId { get; } //the ID of the whip's debuff
-        public abstract int WhipDebuffDuration { get; } //how long it will inflict it's debuff for, usually should be 4 seconds
+        public abstract int WhipDebuffDuration { get; } //how long it will inflict it's debuff for
+        public const int DefaultWhipBuffDuration = 4; //duration for tag effects that are applied to the player like attack speed
+        public const int DefaultWhipDebuffDuration = 4; //duration for tag effects that are applied to the enemy like tag damage
         public abstract float WhipMultihitPenalty { get; } //how much dmg it loses on-hit, to recude it's crowd control: 1 is no dmg loss, 0.5 would mean it loses half it's dmg on each enemy hit
         public abstract Color WhipLineColor { get; } //color of the line that gets generated between each whip segment, depending on the whip it might not even be visible most of the time but you should set this to something fitting your whip anyways
-        public virtual void CustomDust(List<Vector2> points) { } //for whips that release more dust
+        public virtual void CustomDustAndTipEffects(List<Vector2> points) { } //for whips that release more dust
         public virtual void CustomModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) { } //for special whips, simply set the values used in the modifyhit function to 0 to nullify them
         public virtual void CustomOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) { } //for special whips, simply set the values used in the onhit function to 0 to nullify them
+        public int TimesHitThisSwing;
         public override void SetStaticDefaults()
         {
             // This makes the projectile use whip collision detection and allows flasks to be applied to it.
@@ -62,6 +64,7 @@ namespace tsorcRevamp.Projectiles.Summon
             {
                 Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ChargedWhip = true;
             }
+            TimesHitThisSwing = 0;
         }
 
         public float Timer
@@ -107,7 +110,7 @@ namespace tsorcRevamp.Projectiles.Summon
             List<Vector2> points = Projectile.WhipPointsForCollision;
             Projectile.FillWhipControlPoints(Projectile, points);
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], DustWidth, DustHeight, DustId, 0f, 0f, 150, DustColor, DustScale);
-            CustomDust(points);
+            CustomDustAndTipEffects(points);
 
             if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady && Timer == 1) //this check is needed at the start to allow all goredrinker hits to calculate dmg correctly
             {
@@ -178,12 +181,16 @@ namespace tsorcRevamp.Projectiles.Summon
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(WhipDebuffId, (int)(WhipDebuffDuration * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
+            if (WhipDebuffDuration != 0)
+            {
+                target.AddBuff(WhipDebuffId, (int)(WhipDebuffDuration * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
+            }
             if (Projectile.type != ModContent.ProjectileType<PolarisLeashProjectile>())
             {
                 Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
             }
             Projectile.damage = (int)(Projectile.damage * WhipMultihitPenalty); // Multihit penalty. Decrease the damage the more enemies the whip hits.
+            TimesHitThisSwing++;
             CustomOnHitNPC(target, hit, damageDone);
         }
 

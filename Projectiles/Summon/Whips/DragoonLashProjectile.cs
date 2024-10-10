@@ -26,11 +26,11 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override float MaxChargeDmgDivisor => 1f;
         public override float ChargeRangeBonus => 0;
         public override int WhipDebuffId => ModContent.BuffType<DragoonLashDebuff>();
-        public override int WhipDebuffDuration => 4;
+        public override int WhipDebuffDuration => DefaultWhipDebuffDuration;
         public override float WhipMultihitPenalty => 0.75f;
         public override Color WhipLineColor => Color.CadetBlue;
         public bool Hit = false;
-        public override void CustomDust(List<Vector2> points)
+        public override void CustomDustAndTipEffects(List<Vector2> points)
         {
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.PurpleTorch, 0f, 0f, 150, default, 1f);
         }

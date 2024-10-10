@@ -10,11 +10,11 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     public class CrystalNunchaku : ModItem
     {
         public const float MinSummonTagScalingDamage = 0;
-        public const float MaxSummonTagScalingDamage = 33;
+        public const float MaxSummonTagScalingDamage = 20f;
         public const int MinSummonTagDefense = 0;
-        public const float MaxSummonTagDefense = 15;
-        public const int BuffDuration = 20;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxSummonTagScalingDamage, MinSummonTagScalingDamage, MaxSummonTagDefense, MinSummonTagDefense, BuffDuration);
+        public const float MaxSummonTagDefense = 12f;
+        public const int BuffDuration = 20; //takes 5 seconds to activate
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs((int)MaxSummonTagScalingDamage, MinSummonTagScalingDamage, (int)MaxSummonTagDefense, MinSummonTagDefense, BuffDuration);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao

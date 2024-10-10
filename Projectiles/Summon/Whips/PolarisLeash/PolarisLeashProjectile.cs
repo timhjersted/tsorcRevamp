@@ -26,10 +26,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash
         public override float MaxChargeDmgDivisor => 1f;
         public override float ChargeRangeBonus => 0;
         public override int WhipDebuffId => BuffID.Frostburn2; //does not inflict its debuff itself, the star does
-        public override int WhipDebuffDuration => 4;
+        public override int WhipDebuffDuration => DefaultWhipDebuffDuration;
         public override float WhipMultihitPenalty => 0.75f;
         public override Color WhipLineColor => Color.Wheat;
-        public override void CustomDust(List<Vector2> points)
+        public override void CustomDustAndTipEffects(List<Vector2> points)
         {
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.Ice, 0f, 0f, 150, default, 1f);
         }

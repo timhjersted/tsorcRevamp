@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override float MaxChargeDmgDivisor => 1f;
         public override float ChargeRangeBonus => 0;
         public override int WhipDebuffId => ModContent.BuffType<RustedChainDebuff>();
-        public override int WhipDebuffDuration => 4;
+        public override int WhipDebuffDuration => DefaultWhipDebuffDuration;
         public override float WhipMultihitPenalty => 0.4f;
         public override Color WhipLineColor => Color.Brown;
         public override bool PreDraw(ref Color lightColor)

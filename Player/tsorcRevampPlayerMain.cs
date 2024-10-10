@@ -1523,6 +1523,7 @@ namespace tsorcRevamp
                         minionPacket.Write((byte)Player.whoAmI);
                         minionPacket.Write(MinionCircleRadius);
                         minionPacket.Write(InterstellarBoost);
+                        //minionPacket.WriteVector2(CursorPosition);
                         minionPacket.Send();
                     }
                 }

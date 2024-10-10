@@ -26,12 +26,13 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override float MaxChargeDmgDivisor => 1f;
         public override float ChargeRangeBonus => 0;
         public override int WhipDebuffId => ModContent.BuffType<UrumiDebuff>();
-        public override int WhipDebuffDuration => 4;
+        public override int WhipDebuffDuration => 0;
         public override float WhipMultihitPenalty => 0.6f;
         public override Color WhipLineColor => Color.DarkSlateGray;
         public override void CustomModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             modifiers.ArmorPenetration += Urumi.WhipArmorPen;
+            modifiers.CritDamage *= 1f + (Urumi.CritDamage / 100);
         }
         public override bool PreDraw(ref Color lightColor)
         {

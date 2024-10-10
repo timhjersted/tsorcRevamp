@@ -6597,37 +6597,27 @@ Mods: {
 				Tooltip: Summons a member of the Triad to fight for you
 			}
 
-			CrystalNunchaku: {
-				DisplayName: Crystal Nunchaku
-				Tooltip:
-					'''
-					Tags hit enemies with a parasytic crystal for {4} seconds
-					After 5 seconds this will either increase your own defense or increase the enemies damage taken from all sources
-					Hitting the enemy during infection will decrease the damage bonus and increase your defensive bonus(except for the whip itself)
-					Damage bonus ranges from {0}% to {1}%, Defense bonus ranges from {2} to {3}
-					'The best defense is a good offense, or was it the other way around?'
-					'''
-				BotCTooltip: May make the [c/6d8827:Bearer of the Curse] more vulnerable
-			}
-
 			DetonationSignal: {
 				DisplayName: Detonation Signal
 				Tooltip:
 					'''
 					Enemies struck by this whip will explode once on minion hit
 					Explosion increases the damage dealt by {0}%
-					Exploded enemies will also deal {1}% the contact damage to you for 4 seconds
+					Exploded enemies will also deal {1}% increased contact damage to you for {2} seconds
 					{$CommonItemTooltip.Whips}
 					'''
 			}
 
-			Dominatrix: {
-				DisplayName: Dominatrix
+			TerraFallItem: {
+				DisplayName: Terra Fall
 				Tooltip:
 					'''
-					{$CommonItemTooltip.PercentSummonTagCritChance}
-					Inflicts Blood Butcherer debuff
-					{$CommonItemTooltip.CritDmg@1}
+					{$CommonItemTooltip.Summon.ChargedWhip}
+					Whip applies a marking debuff if not fully charged
+					Summons a great wave of energy if fully charged
+					The wave of energy consumes the mark to deal heavy damage
+					Summons a Terraprisma after consuming a mark
+					The Terraprisma applies {0} tag damage and {1} tag crit
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -6643,43 +6633,27 @@ Mods: {
 					'''
 			}
 
-			EnchantedWhip: {
-				DisplayName: Enchanted Whip
-				Tooltip:
-					'''
-					{$CommonItemTooltip.SummonTagDamage}
-					Strike enemies with an enchantment
-					Enchanted enemies will be showered by stars upon minion hits
-					Star damage scales with {1}% of this whips damage
-					{$CommonItemTooltip.Whips}
-					'''
-			}
-
-			NightsCracker: {
-				DisplayName: Night's Cracker
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Summon.ChargedWhip}
-					{$CommonItemTooltip.Summon.ChargedWhipTagDmg}
-					{$CommonItemTooltip.Summon.ChargedWhipTagCrit@2}
-					{$CommonItemTooltip.Summon.ChargedWhipAtkSpeed@4}
-					{$CommonItemTooltip.Summon.WhipCC}
-					{$CommonItemTooltip.Summon.TagCritMult@6}
-					{$CommonItemTooltip.CritDmg@7}
-					{$CommonItemTooltip.Whips}
-					'''
-			}
-
 			PolarisLeashItem: {
 				DisplayName: Polaris Leash
 				Tooltip:
 					'''
-					{$CommonItemTooltip.SummonTagDamage}
-					Striking enemies will create Polaris, which scales with {1}% of this whips damage
+					Striking enemies will create Polaris, which scales with {0}% of this whips damage
 					Polaris stays on your cursor and hits enemies with a frigid enchantment
 					Enchanted Enemies will also be showered by polar stars when struck by minions
-					These scale with {2}% of this whips damage
+					These scale with {1}% of this whips damage
 					Your summons will focus enemies struck by Polaris
+					'''
+			}
+
+			NightsCrackerItem: {
+				DisplayName: Night's Cracker
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Summon.ChargedWhip}
+					Whip summons a damaging slash which applies a marking debuff up to {0} times
+					At max stacks the next slash consumes the marks to deal extra damage
+					'Charge at the right time'
+					{$CommonItemTooltip.Whips}
 					'''
 			}
 
@@ -6703,29 +6677,49 @@ Mods: {
 					'''
 			}
 
-			SearingLash: {
+			CrystalNunchaku: {
+				DisplayName: Crystal Nunchaku
+				Tooltip:
+					'''
+					Tags hit enemies with a parasytic crystal for {4} seconds
+					After 5 seconds this will either increase your own defense or increase the enemies' damage taken from summons
+					Hitting the enemy during infection will decrease the damage bonus and increase your defensive bonus(except for minion/sentry hits)
+					Damage bonus ranges from {0}% to {1}%, Defense bonus ranges from {2} to {3} after 10 hits
+					'The best defense is a good offense, or was it the other way around?'
+					'''
+				BotCTooltip: May make the [c/6d8827:Bearer of the Curse] more vulnerable
+			}
+
+			SearingLashItem: {
 				DisplayName: Searing Lash
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Summon.ChargedWhip}
 					Enemies struck by this whip will burn horribly
-					{$CommonItemTooltip.Summon.TagCritMult}
+					Summons hellbats on-hit to further chase enemies
+					Hellbats scale with {0}% whip damage
 					{$CommonItemTooltip.Whips}
 					'''
 			}
 
-			TerraFallItem: {
-				DisplayName: Terra Fall
+			DominatrixItem: {
+				DisplayName: Dominatrix
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Summon.ChargedWhip}
-					Summons a Terraprisma after striking an enemy
-					{$CommonItemTooltip.Summon.ChargedWhipTagDmg}
-					{$CommonItemTooltip.Summon.ChargedWhipTagCrit@2}
-					{$CommonItemTooltip.Summon.ChargedWhipAtkSpeed@4}
-					{$CommonItemTooltip.Summon.WhipCC}
-					{$CommonItemTooltip.Summon.TagCritMult@6}
-					{$CommonItemTooltip.CritDmg@7}
+					Strike enemies to plant thorns in them
+					Thorns are released by enemies hit by summons
+					Thorns scale with {0}% whip damage
+					{$CommonItemTooltip.Whips}
+					'''
+			}
+
+			EnchantedWhip: {
+				DisplayName: Enchanted Whip
+				Tooltip:
+					'''
+					Strike enemies with an enchantment
+					Enchanted enemies will be showered by stars upon minion hits
+					Stars scale with {0}% whip damage
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -6734,10 +6728,18 @@ Mods: {
 				DisplayName: Urumi
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Summon.TagArmorPen}
-					{$CommonItemTooltip.PercentSummonTagCritChance@1}
-					The whip itself ignores {2} defense
+					This whip ignores {1} defense
+					{$CommonItemTooltip.Summon.WhipCritDmg}
 					{$CommonItemTooltip.Whips}
+					'''
+			}
+
+			RustedChain: {
+				DisplayName: Rusted Chain
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Summon.TagArmorPen}
+					'This rust is almost infectious'
 					'''
 			}
 
@@ -7726,15 +7728,6 @@ Mods: {
 			LichBone: {
 				DisplayName: Lich Bone
 				Tooltip: ""
-			}
-
-			RustedChain: {
-				DisplayName: Rusted Chain
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Summon.TagArmorPen}
-					{$CommonItemTooltip.SummonTagDamage@1}
-					'''
 			}
 
 			PinwheelBag: {
@@ -9351,6 +9344,10 @@ Mods: {
 			RealityFracture.DisplayName: Reality Fracture
 			BlightCataclysm.DisplayName: Blight Cataclysm
 			FreezeBolt3.DisplayName: Freeze Bolt3
+			StarstormProjectile.DisplayName: Starstorm Projectile
+			DominatrixThorn.DisplayName: Dominatrix Thorn
+			SearingLashBat.DisplayName: Searing Lash Bat
+			NightsCrackerTrail.DisplayName: Nights Cracker Trail
 		}
 
 		NPCs: {

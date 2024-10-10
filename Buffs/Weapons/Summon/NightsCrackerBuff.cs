@@ -21,7 +21,7 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
 
         public override void Update(Player player, ref int buffIndex)
         {
-            AttackSpeed = player.GetModPlayer<tsorcRevampPlayer>().NightsCrackerStacks * NightsCracker.MinSummonTagAttackSpeed;
+            AttackSpeed = 1;
             player.GetAttackSpeed(DamageClass.Summon) += AttackSpeed / 100;
         }
         public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
