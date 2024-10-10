@@ -510,11 +510,7 @@ Mods: {
 					{$CommonItemTooltip.Summon.TagStrength}
 					{$CommonItemTooltip.Summon.CritChance@1}
 					'''
-				NecromanticScroll:
-					'''
-					{$CommonItemTooltip.Summon.TagDuration}
-					{$CommonItemTooltip.Summon.CritChance@1}
-					'''
+				NecromanticScroll: "{$CommonItemTooltip.Summon.TagDuration}"
 				PapyrusScarab:
 					'''
 					{$CommonItemTooltip.Summon.TagStrength}
@@ -10727,6 +10723,7 @@ Mods: {
 			SHM3Downed: Three Guardians of the Abyss slain
 			SHM6Downed: Six Guardians of the Abyss slain
 			SHM9Downed: Nine Guardians of the Abyss slain
+			RageDowned: Mods.tsorcRevamp.Conditions.RageDowned
 		}
 	}
 }
