@@ -390,6 +390,11 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             Vector2 movementVec = player.GetModPlayer<tsorcRevampPlayer>().CursorPosition - Projectile.Center;
 
+            if (Main.GameUpdateCount % 6 == 0)
+            {
+                Projectile.netUpdate = true;
+            }
+
             //until here
 
             float length = movementVec.Length();

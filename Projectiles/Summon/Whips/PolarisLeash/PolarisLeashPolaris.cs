@@ -31,7 +31,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash
             if (Main.myPlayer == Projectile.owner && Main.MouseWorld != Projectile.Center)
             {
                 Projectile.Center = Main.MouseWorld;
-                Projectile.netUpdate = true;
+                if (Main.GameUpdateCount % 6 == 0)
+                {
+                    Projectile.netUpdate = true;
+                }
             }
             Player player = Main.player[Projectile.owner];
             if (player.dead || !player.active)
