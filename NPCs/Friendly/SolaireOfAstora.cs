@@ -162,9 +162,9 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenStardustRod>())
             {
-                shopCustomPrice = 8000,
+                shopCustomPrice = 3500,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, Condition.DownedDestroyer);
+            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheRage>()))));
 
 
 
@@ -179,7 +179,7 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 shopCustomPrice = ForgottenPoisonAxe.CoinPrice,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, Condition.DownedMechBossAny);
+            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheRage>()))));
 
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Broadswords.ForgottenSwordbreaker>())
             {

@@ -61,7 +61,7 @@ namespace tsorcRevamp.Projectiles
                         Vector2 dir = Main.rand.NextVector2CircularEdge(radius, radius);
                         Vector2 dustPos = player.Center + dir;
                         Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
-                        Dust.NewDustPerfect(dustPos, DustID.MagicMirror, Vector2.Zero, 200, default, 0.75f).noGravity = true;
+                        Dust.NewDustPerfect(dustPos, DustID.Flare, Vector2.Zero, 200, default, 0.75f).noGravity = true;
                     }
                 }
                 else
@@ -98,7 +98,7 @@ namespace tsorcRevamp.Projectiles
                             }
                             else
                             {
-                                Dust.NewDustPerfect(player.Center + dustPoint, DustID.MagicMirror, (diff * 2).RotatedBy(Main.rand.NextFloat(MathHelper.Pi / -3, MathHelper.Pi / 3)) + (diff * 5), 200, default, 1f).noGravity = true;
+                                Dust.NewDustPerfect(player.Center + dustPoint, DustID.Flare, (diff * 2).RotatedBy(Main.rand.NextFloat(MathHelper.Pi / -3, MathHelper.Pi / 3)) + (diff * 5), 200, default, 1f).noGravity = true;
                             }
                         }
                     }
@@ -144,7 +144,7 @@ namespace tsorcRevamp.Projectiles
                     Vector2 dir = Main.rand.NextVector2CircularEdge(radius, radius);
                     Vector2 dustPos = player.Center + dir;
                     Vector2 dustVel = new Vector2(0.4f, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
-                    Dust.NewDustPerfect(dustPos, DustID.MagicMirror, dustVel, 200, default, 0.75f).noGravity = true;
+                    Dust.NewDustPerfect(dustPos, DustID.Flare, dustVel, 200, default, 0.75f).noGravity = true;
                 }
 
                 Vector2 velocity = Projectile.velocity;

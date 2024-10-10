@@ -198,13 +198,17 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.JungleWyvern.JungleWyvernHead>()))));
 
-
-
             shop.Add(new Item(ItemID.HolyArrow)
             {
                 shopCustomPrice = 1,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheHunter>()))));
+            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheSorrow>()))));
+
+            shop.Add(new Item(ItemID.ChlorophyteArrow)
+            {
+                shopCustomPrice = 1,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, Condition.DownedMechBossAny);
 
             shop.Register();
         }

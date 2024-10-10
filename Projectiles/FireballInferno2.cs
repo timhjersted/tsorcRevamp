@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(BuffID.OnFire, 300);
+            target.AddBuff(BuffID.Daybreak, 300);
         }
 
         float size = 130;

@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         }
         public override void CustomOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(BuffID.OnFire3, WhipDebuffDuration * 60);
+            target.AddBuff(BuffID.Daybreak, WhipDebuffDuration * 60);
         }
         public override bool PreDraw(ref Color lightColor)
         {
