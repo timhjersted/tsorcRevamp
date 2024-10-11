@@ -154,6 +154,7 @@ Mods: {
 				TagCritMult: 增加 {0} 倍召唤标记暴击率
 				TagDmgMult: 此武器仅受到 {0}% 的召唤标记伤害加成
 				DmgMult: 乘算增加 {0}% 召唤伤害
+				// Knockback: Increases summon knockback
 			}
 
 			PermanentPotion: {
@@ -10727,6 +10728,7 @@ Mods: {
 			SHM3Downed: 三名深渊守护者被击败
 			SHM6Downed: 六名深渊守护者被击败
 			SHM9Downed: 九名深渊守护者被击败
+			// RageDowned: Mods.tsorcRevamp.Conditions.RageDowned
 		}
 	}
 }

@@ -1447,7 +1447,6 @@ namespace tsorcRevamp
             }
             if (currentItem.type == ItemID.HerculesBeetle)
             {
-                self.GetKnockback(DamageClass.Summon) -= 2f;
                 self.GetDamage(DamageClass.Summon) -= 0.15f;
                 self.GetCritChance(DamageClass.Summon) += BeetleSummonCritChance;
                 modPlayer.SummonTagStrength += BeetleSummonTagStrengthBoost / 100f;
@@ -1459,7 +1458,6 @@ namespace tsorcRevamp
             }
             if (currentItem.type == ItemID.PapyrusScarab)
             {
-                self.GetKnockback(DamageClass.Summon) -= 2f;
                 self.GetDamage(DamageClass.Summon) -= 0.15f;
                 self.GetCritChance(DamageClass.Summon) += ScarabSummonCritChance;
                 self.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength += BeetleSummonTagStrengthBoost / 100f;

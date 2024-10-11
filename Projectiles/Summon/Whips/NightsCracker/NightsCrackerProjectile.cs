@@ -24,10 +24,11 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
         public override int DustHeight => 10;
         public override Color DustColor => default;
         public override float DustScale => 1f;
-        public const float MaximumChargeTime = 210;
         public override float MaxChargeTime => MaximumChargeTime;
+        public const float MaximumChargeTime = 160;
         public override Vector2 WhipTipBase => new Vector2(11, 17);
-        public override float MaxChargeDmgDivisor => 3.85f;
+        public override float MaxChargeDmgMultiplier => MaxChargeDmgMult;
+        public const float MaxChargeDmgMult = 2.25f;
         public override float ChargeRangeBonus => 0.06f;
         public override int WhipDebuffId => ModContent.BuffType<NightsCrackerDebuff>();
         public override int WhipDebuffDuration => 0; //set to 0 so it does nothing and I can make a custom calculation
@@ -41,6 +42,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
             if (Main.myPlayer == player.whoAmI && player.ownedProjectileCounts[ModContent.ProjectileType<NightsCrackerTrail>()] == 0)
             {
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Projectile.WhipPointsForCollision[points.Count - 1], ModContent.ProjectileType<NightsCrackerTrail>(), Projectile.damage, Projectile.knockBack, player.whoAmI, Projectile.whoAmI, (ChargeTime >= MaxChargeTime) ? 1 : 0, ChargeTime);
+                player.ownedProjectileCounts[ModContent.ProjectileType<NightsCrackerTrail>()]++; //without this it'd spawn two trails because of extraupdate spawning them in the same tick, before their owned number increases
             }
         }
         public override void CustomModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)

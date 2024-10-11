@@ -22,7 +22,7 @@ namespace tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs
             {
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().NightsCrackerStacks = 0;
             }
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().NightsCrackerStacks >= NightsCrackerItem.MaxStacks)
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().NightsCrackerStacks == NightsCrackerItem.MaxStacks)
             {
                 Dust.NewDust(npc.TopLeft, npc.width, npc.height, DustID.Shadowflame, Main.rand.NextFloat(), Main.rand.NextFloat(), 0, default, 1.25f);
             }

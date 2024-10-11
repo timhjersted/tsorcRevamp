@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.EnchantedWhip
         public override float DustScale => 1f;
         public override float MaxChargeTime => 0;
         public override Vector2 WhipTipBase => new Vector2(24, 34);
-        public override float MaxChargeDmgDivisor => 1f;
+        public override float MaxChargeDmgMultiplier => 1f;
         public override float ChargeRangeBonus => 0;
         public override int WhipDebuffId => ModContent.BuffType<EnchantedWhipDebuff>();
         public override int WhipDebuffDuration => DefaultWhipDebuffDuration;

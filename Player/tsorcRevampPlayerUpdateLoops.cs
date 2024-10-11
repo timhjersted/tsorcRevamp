@@ -1537,10 +1537,15 @@ namespace tsorcRevamp
             Player.maxMinions *= MaxMinionTurretMultiplier;
             Player.maxTurrets *= MaxMinionTurretMultiplier;
 
-            CrystallineCritChance = Player.maxMinions * Items.Accessories.Summon.CrystallineShard.CritChancePerMinion;
+            CrystallineCritChance = Player.maxMinions / MaxMinionTurretMultiplier * Items.Accessories.Summon.CrystallineShard.CritChancePerMinion;
             if (CrystallineShard)
             {
                 Player.GetCritChance(DamageClass.Summon) += CrystallineCritChance;
+            }
+
+            if (Player.HasAmmo(Player.HeldItem) && Player.HeldItem.useAmmo != 0 && AmmoBox)
+            {
+                Player.GetCritChance(DamageClass.Ranged) += Player.ChooseAmmo(Player.HeldItem).damage;
             }
 
             if (CurseActive || powerfulCurseActive)

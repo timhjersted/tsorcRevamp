@@ -18,7 +18,7 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
         {
             if (player.whoAmI == Main.myPlayer && player.ownedProjectileCounts[ModContent.ProjectileType<PolarisLeashPolaris>()] == 0)
             {
-                int whipDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(PolarisLeashItem.BaseDamage * PolarisLeashItem.StarDamageScaling / 100f);
+                int whipDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(PolarisLeashItem.BaseDamage * PolarisLeashItem.PolarisDamageScaling / 100f);
                 Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.One, ModContent.ProjectileType<PolarisLeashPolaris>(), whipDamage, 1f, Main.myPlayer);
             }
         }

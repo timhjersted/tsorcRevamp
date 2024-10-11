@@ -134,7 +134,7 @@ Mods: {
 				TagStrength: Increases Summon Tag Damage and Armor Penetration by {0}%
 				BadTagStrengthMult: Decreases Summon Tag Damage and Armor Penetration by {0}% multiplicatively
 				TagDuration: Increases the duration of Summon Tag effects by {0}%
-				ChargedWhip: Stats of this whip scale with how long you've charged it
+				ChargedWhip: Hold <right> to charge for more damage and range
 				ChargedWhipTagDmg: "{0}-{1} summon tag damage"
 				ChargedWhipTagCrit: "{0}-{1}% summon tag critical strike chance"
 				ChargedWhipAtkSpeed: Gain {0}-{1}% summon attack speed upon striking an enemy
@@ -154,6 +154,7 @@ Mods: {
 				TagCritMult: Multiplies summon tag critical strike chance by {0}x
 				TagDmgMult: This weapon scales with only {0}% Tag Damage
 				DmgMult: Increases summon damage by {0}% multiplicatively
+				Knockback: Increases summon knockback
 			}
 
 			PermanentPotion: {
@@ -470,7 +471,7 @@ Mods: {
 				ManaCost1: "Requires "
 				ManaCost2: " mana to cast projectile"
 				AmmoReservationPotion: "{$CommonItemTooltip.Ranged.CritDmg}"
-				AmmoBox: Increases ammo critical strike chance by the ammo's base damage
+				AmmoBox: Increases critical strike chance by your ammo's base damage
 				HerosShirt:
 					'''
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.MaxStamina@1}
@@ -509,6 +510,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.TagStrength}
 					{$CommonItemTooltip.Summon.CritChance@1}
+					{$CommonItemTooltip.Summon.Knockback}
 					'''
 				NecromanticScroll: "{$CommonItemTooltip.Summon.TagDuration}"
 				PapyrusScarab:
@@ -516,6 +518,7 @@ Mods: {
 					{$CommonItemTooltip.Summon.TagStrength}
 					{$CommonItemTooltip.Summon.TagDuration@1}
 					{$CommonItemTooltip.Summon.CritChance@2}
+					{$CommonItemTooltip.Summon.Knockback}
 					'''
 				FlinxFurChainedSetBonus: "{$CommonItemTooltip.IncreasesMaxMinionsBy}"
 				AngelWings: "[c/ffbf00:You will discover these in time...]"

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
@@ -23,12 +24,13 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
         {
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 30;
             Projectile.width = 20;
             Projectile.height = 20;
             Projectile.DamageType = DamageClass.SummonMeleeSpeed;
             Projectile.penetrate = -1;
-
+            Projectile.timeLeft = 2;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = -1;
 
             trailWidth = 50;
             trailPointLimit = 4000;
@@ -43,18 +45,27 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
             noDiscontinuityCheck = true;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedTormentor", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
+        public override void OnSpawn(IEntitySource source)
+        {
+            base.OnSpawn(source);
+            Player player = Main.player[Projectile.owner];
+            Projectile.timeLeft = player.itemAnimationMax;
+        }
         public override void AI()
         {
-            base.AI();
-            Projectile.tileCollide = false;
             Player player = Main.player[Projectile.owner];
-            bool FullyCharged = (Projectile.ai[1] == 1) ? true : false;
-            Color TrailColor = FullyCharged ? new Color(0.1f, 1.2f, 0.2f, 0.25f) : new Color(1.2f, 0.1f, 1.2f, 0.25f);
-            Lighting.AddLight(Projectile.Center, TrailColor.ToVector3() * 1f);
 
             Projectile Whip = Main.projectile[(int)Projectile.ai[0]];
             List<Vector2> points = Whip.WhipPointsForCollision;
             Projectile.FillWhipControlPoints(Whip, points);
+            //Main.NewText(player.itemAnimationMax);
+
+            base.AI();
+            Projectile.tileCollide = false;
+
+            bool FullyCharged = (Projectile.ai[1] == 1) ? true : false;
+            Color TrailColor = FullyCharged ? new Color(0.5f, 1f, 0.2f, 0.25f) : new Color(0.25f, 0.08f, 1f, 0.25f);
+            Lighting.AddLight(Projectile.Center, TrailColor.ToVector3() * 1f);
 
             Projectile.velocity = Projectile.Center.DirectionTo(Whip.WhipPointsForCollision[points.Count - 1]) * Projectile.Center.Distance(Whip.WhipPointsForCollision[points.Count - 1]);
         }
@@ -72,7 +83,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
         public override void SetEffectParameters(Effect effect)
         {
             bool FullyCharged = (Projectile.ai[1] == 1) ? true : false;
-            Color TrailColor = FullyCharged ? new Color(0.1f, 1.2f, 0.2f, 0.25f) : new Color(1.2f, 0.1f, 1.2f, 0.25f);
+            Color TrailColor = FullyCharged ? new Color(0.5f, 1f, 0.2f, 0.25f) : new Color(0.25f, 0.08f, 1f, 0.25f);
             float hostVel = Projectile.velocity.Length();
 
             float modifiedTime = 0.0007f * hostVel;
@@ -116,7 +127,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
                 if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().NightsCrackerStacks == NightsCrackerItem.MaxStacks)
                 {
                     SoundEngine.PlaySound(SoundID.Item104 with { Volume = 1f }, target.Center);
-                    Dust.NewDust(target.TopLeft, target.width, target.height, DustID.Shadowflame, Main.rand.NextFloat(), Main.rand.NextFloat(), 0, default, 1.25f);
                 }
             }
         }
@@ -126,22 +136,19 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
             {
                 case > NightsCrackerItem.MaxStacks:
                     {
+                        modifiers.SourceDamage *= MathF.Max(Projectile.ai[2] / (NightsCrackerProjectile.MaximumChargeTime / NightsCrackerProjectile.MaxChargeDmgMult), 1f);
                         target.GetGlobalNPC<tsorcRevampGlobalNPC>().NightsCrackerStacks = 0;
                         break;
                     }
                 case NightsCrackerItem.MaxStacks:
                     {
-                        modifiers.SourceDamage += 0.5f;
-                        modifiers.SourceDamage *= MathF.Max(Projectile.ai[2] / (NightsCrackerProjectile.MaximumChargeTime / 6.6f), 1f);
-                        modifiers.Knockback += 0.5f;
-                        modifiers.Knockback *= MathF.Max(Projectile.ai[2] / (NightsCrackerProjectile.MaximumChargeTime / 6.6f), 1f);
+                        modifiers.SourceDamage += MathF.Max(Projectile.ai[2] / (NightsCrackerProjectile.MaximumChargeTime / (NightsCrackerProjectile.MaxChargeDmgMult * 4f)), 0.5f);
                         target.GetGlobalNPC<tsorcRevampGlobalNPC>().NightsCrackerStacks++;
                         break;
                     }
                 case < NightsCrackerItem.MaxStacks:
                     {
-                        modifiers.SourceDamage *= MathF.Max(Projectile.ai[2] / (NightsCrackerProjectile.MaximumChargeTime / 2.2f), 1f);
-                        modifiers.Knockback *= MathF.Max(Projectile.ai[2] / (NightsCrackerProjectile.MaximumChargeTime / 2.2f), 1f);
+                        modifiers.SourceDamage *= MathF.Max(Projectile.ai[2] / (NightsCrackerProjectile.MaximumChargeTime / NightsCrackerProjectile.MaxChargeDmgMult), 1f);
                         break; 
                     }
             }

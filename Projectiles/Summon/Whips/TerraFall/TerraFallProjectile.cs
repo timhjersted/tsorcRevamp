@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
         public override float DustScale => 1f;
         public override float MaxChargeTime => 210;
         public override Vector2 WhipTipBase => new Vector2(11, 14);
-        public override float MaxChargeDmgDivisor => 4f;
+        public override float MaxChargeDmgMultiplier => 4f;
         public override float ChargeRangeBonus => 0.08f;
         public override int WhipDebuffId => ModContent.BuffType<TerraFallDebuff>();
         public override int WhipDebuffDuration => 0; //set to 0 so it does nothing and I can make a custom calculation

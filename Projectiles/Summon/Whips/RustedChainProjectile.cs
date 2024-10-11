@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override float DustScale => 0.5f;
         public override float MaxChargeTime => 0;
         public override Vector2 WhipTipBase => new Vector2(10, 16);
-        public override float MaxChargeDmgDivisor => 1f;
+        public override float MaxChargeDmgMultiplier => 1f;
         public override float ChargeRangeBonus => 0;
         public override int WhipDebuffId => ModContent.BuffType<RustedChainDebuff>();
         public override int WhipDebuffDuration => DefaultWhipDebuffDuration;

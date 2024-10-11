@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.Dominatrix
         public override float DustScale => 1f;
         public override float MaxChargeTime => 0;
         public override Vector2 WhipTipBase => new Vector2(16, 20);
-        public override float MaxChargeDmgDivisor => 1f;
+        public override float MaxChargeDmgMultiplier => 1f;
         public override float ChargeRangeBonus => 0;
         public override int WhipDebuffId => ModContent.BuffType<DominatrixDebuff>();
         public override int WhipDebuffDuration => DefaultWhipDebuffDuration;

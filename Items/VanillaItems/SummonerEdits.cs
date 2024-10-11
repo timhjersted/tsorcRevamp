@@ -263,7 +263,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagStrengthBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.HerculesBeetle").FormatWith(MethodSwaps.ScrollSummonTagDurationBoost, MethodSwaps.BeetleSummonCritChance)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagStrengthBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.HerculesBeetle").FormatWith(MethodSwaps.BeetleSummonTagStrengthBoost, MethodSwaps.BeetleSummonCritChance)));
                 }
                 int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
                 if (ttindex1 != -1)
@@ -276,7 +276,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
                 if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagDurationBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.NecromanticScroll").FormatWith(MethodSwaps.ScrollSummonTagDurationBoost, MethodSwaps.ScrollSummonCritChance)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagDurationBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.NecromanticScroll").FormatWith(MethodSwaps.ScrollSummonTagDurationBoost)));
                 }
                 int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
                 if (ttindex1 != -1)
@@ -317,19 +317,6 @@ namespace tsorcRevamp.Items.VanillaItems
             float scaleDelta;
             if (item.DamageType == DamageClass.SummonMeleeSpeed)
             {
-                if (item.prefix == ModContent.PrefixType<Brave>())
-                {
-                    scaleDelta = -0.1f;
-                }
-                else if (item.prefix == ModContent.PrefixType<Reckless>())
-                {
-                    scaleDelta = -0.2f;
-                }
-                else if (item.prefix == ModContent.PrefixType<Tenacious>())
-                {
-                    scaleDelta = -0.2f;
-                }
-                else
                     switch (item.prefix)
                     {
 

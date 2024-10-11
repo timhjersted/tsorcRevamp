@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.SearingLash
         public override float DustScale => 1f;
         public override float MaxChargeTime => 210;
         public override Vector2 WhipTipBase => new Vector2(10, 12);
-        public override float MaxChargeDmgDivisor => 3.3f;
+        public override float MaxChargeDmgMultiplier => 2f;
         public override float ChargeRangeBonus => 0.1f;
         public override int WhipDebuffId => BuffID.OnFire;
         public override int WhipDebuffDuration => 0; //set to 0 so it does nothing and I can make a custom calculation
@@ -41,8 +41,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.SearingLash
             var modPlayer = Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>();
             if (Main.myPlayer == player.whoAmI && TimesHitThisSwing < 6 + 1) //6 Bats can be spawned each swing max
             {
-                int BatDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(SearingLashItem.BaseDamage * SearingLashItem.BatDmgScaling / 100f * MathF.Max(ChargeTime / (MaxChargeTime / MaxChargeDmgDivisor * 1.5f), 1f));
-                Projectile.NewProjectile(Projectile.GetSource_None(), player.Center, player.Center.DirectionTo(target.Center).SafeNormalize(Vector2.Zero) * 3.5f, ModContent.ProjectileType<SearingLashBat>(), BatDamage, 0, Main.myPlayer);
+                int BatDamage = (int)player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(SearingLashItem.BaseDamage * SearingLashItem.BatDmgScaling / 100f * MathF.Max(ChargeTime / (MaxChargeTime / MaxChargeDmgMultiplier * 1.25f), 1f));
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, player.Center.DirectionTo(target.Center).SafeNormalize(Vector2.Zero) * 3.5f, ModContent.ProjectileType<SearingLashBat>(), BatDamage, 0, Main.myPlayer);
             }
         }
         public override bool PreDraw(ref Color lightColor)

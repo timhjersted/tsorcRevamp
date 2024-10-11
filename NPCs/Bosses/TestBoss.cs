@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.aiStyle = 0;
             NPC.width = 80;
             NPC.height = 100;
-            NPC.damage = 1;
+            NPC.damage = 10;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.lifeMax = Int32.MaxValue;
@@ -74,7 +74,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 thisWatch.Start();
             }
 
-            watchTimer = 100;
+            watchTimer = 300;
             damageCounter += damageDone;
             if (hit.Crit)
             {

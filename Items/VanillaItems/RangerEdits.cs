@@ -78,7 +78,7 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.damage = 35;
             }
-            	
+
             if (item.type == ItemID.Xenopopper)
             {
                 item.damage = 60;
@@ -87,13 +87,6 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.ElectrosphereLauncher)
             {
                 item.damage = 80;
-            }
-        }
-        public override void ModifyWeaponCrit(Item item, Player player, ref float crit)
-        {
-            if (item.ammo != AmmoID.None && player.GetModPlayer<tsorcRevampPlayer>().AmmoBox)
-            {
-                crit += item.damage;
             }
         }
     }

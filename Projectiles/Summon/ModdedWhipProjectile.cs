@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Summon
         public abstract float DustScale { get; } //multiplier determining the size of the whips dust
         public abstract float MaxChargeTime { get; } //Updates twice a tick so /2 this for the actual amount of ticks this needs
         public abstract Vector2 WhipTipBase { get; } //the size of the whip tips sprite
-        public abstract float MaxChargeDmgDivisor { get; } //how much bonus dmg it will deal by charging up, higher is better
+        public abstract float MaxChargeDmgMultiplier { get; } //how much bonus dmg it will deal by charging up, higher is better
         public abstract float ChargeRangeBonus { get; } //how much range it will gain from charging up, higher is better
         public abstract int WhipDebuffId { get; } //the ID of the whip's debuff
         public abstract int WhipDebuffDuration { get; } //how long it will inflict it's debuff for
@@ -37,6 +37,7 @@ namespace tsorcRevamp.Projectiles.Summon
         public virtual void CustomModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) { } //for special whips, simply set the values used in the modifyhit function to 0 to nullify them
         public virtual void CustomOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) { } //for special whips, simply set the values used in the onhit function to 0 to nullify them
         public int TimesHitThisSwing;
+        public bool FinishedCharging = false;
         public override void SetStaticDefaults()
         {
             // This makes the projectile use whip collision detection and allows flasks to be applied to it.
@@ -65,6 +66,7 @@ namespace tsorcRevamp.Projectiles.Summon
                 Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ChargedWhip = true;
             }
             TimesHitThisSwing = 0;
+            FinishedCharging = false;
         }
 
         public float Timer
@@ -72,6 +74,7 @@ namespace tsorcRevamp.Projectiles.Summon
             get => Projectile.ai[0];
             set => Projectile.ai[0] = value;
         }
+
 
         public float ChargeTime
         {
@@ -134,33 +137,37 @@ namespace tsorcRevamp.Projectiles.Summon
         // Returns true if fully charged or charging is disabled
         private bool Charge(Player owner)
         {
+            //Main.NewText(Main.mouseRightRelease);
             // Like other whips, this whip updates twice per frame (Projectile.extraUpdates = 1), so 120 is equal to 1 second.
-            if (!owner.channel || ChargeTime >= MaxChargeTime)
+            if ((Main.mouseRightRelease && ChargeTime > 2) || ChargeTime >= MaxChargeTime || owner.altFunctionUse != 2 || FinishedCharging || owner.GetModPlayer<tsorcRevampPlayer>().isDodging)
             {
+                FinishedCharging = true;
                 return true; // finished charging
             }
-
-            ChargeTime += 1f * (owner.GetTotalAttackSpeed(DamageClass.SummonMeleeSpeed));
-            ChargeTimer2 += 1f * (owner.GetTotalAttackSpeed(DamageClass.SummonMeleeSpeed));
-
-            if (ChargeTimer2 >= (MaxChargeTime / 15))
+            else
             {
-                Projectile.WhipSettings.Segments++;
-                Projectile.WhipSettings.RangeMultiplier += ChargeRangeBonus;
-                ChargeTimer2 = 0;
+                ChargeTime += 1f * (owner.GetTotalAttackSpeed(DamageClass.SummonMeleeSpeed));
+                ChargeTimer2 += 1f * (owner.GetTotalAttackSpeed(DamageClass.SummonMeleeSpeed));
+
+                if (ChargeTimer2 >= (MaxChargeTime / 15))
+                {
+                    Projectile.WhipSettings.Segments++;
+                    Projectile.WhipSettings.RangeMultiplier += ChargeRangeBonus;
+                    ChargeTimer2 = 0;
+                }
+
+                owner = Main.player[Projectile.owner];
+                Vector2 mountedCenter = owner.MountedCenter;
+                Vector2 unitVectorTowardsMouse = mountedCenter.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * owner.direction);
+                owner.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
+                Projectile.velocity = unitVectorTowardsMouse * 4;
+
+                // Reset the animation and item timer while charging.
+                owner.itemAnimation = owner.itemAnimationMax;
+                owner.itemTime = owner.itemTimeMax;
+
+                return false; // still charging}
             }
-
-            owner = Main.player[Projectile.owner];
-            Vector2 mountedCenter = owner.MountedCenter;
-            Vector2 unitVectorTowardsMouse = mountedCenter.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * owner.direction);
-            owner.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
-            Projectile.velocity = unitVectorTowardsMouse * 4;
-
-            // Reset the animation and item timer while charging.
-            owner.itemAnimation = owner.itemAnimationMax;
-            owner.itemTime = owner.itemTimeMax;
-
-            return false; // still charging
         }
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
@@ -170,8 +177,7 @@ namespace tsorcRevamp.Projectiles.Summon
             List<Vector2> points = Projectile.WhipPointsForCollision;
             if (MaxChargeTime > 0)
             {
-                modifiers.SourceDamage *= MathF.Max(ChargeTime / (MaxChargeTime / MaxChargeDmgDivisor), 1f);
-                modifiers.Knockback *= MathF.Max(ChargeTime / (MaxChargeTime / MaxChargeDmgDivisor), 1f);
+                modifiers.SourceDamage *= MathF.Max(ChargeTime / (MaxChargeTime / MaxChargeDmgMultiplier), 1f);
             }
             if (Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 2], WhipTip).Intersects(target.Hitbox) | Utils.CenteredRectangle(Projectile.WhipPointsForCollision[points.Count - 1], WhipTip).Intersects(target.Hitbox))
             {

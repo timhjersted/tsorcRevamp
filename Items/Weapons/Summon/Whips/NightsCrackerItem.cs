@@ -15,6 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxStacks);
         public override void SetStaticDefaults()
         {
+            ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
         }
 
@@ -42,6 +43,18 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         public override bool MeleePrefix()
         {
             return true;
+        }
+        public override bool AltFunctionUse(Player player)
+        {
+            if (!Main.mouseLeft)
+            {
+                return true;
+            }
+            else
+            {
+                player.altFunctionUse = 1;
+                return false;
+            }
         }
         public override void AddRecipes()
         {
