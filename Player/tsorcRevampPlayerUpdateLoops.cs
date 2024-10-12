@@ -1545,7 +1545,7 @@ namespace tsorcRevamp
 
             if (Player.HasAmmo(Player.HeldItem) && Player.HeldItem.useAmmo != 0 && AmmoBox)
             {
-                Player.GetCritChance(DamageClass.Ranged) += Player.ChooseAmmo(Player.HeldItem).damage;
+                Player.GetCritChance(DamageClass.Ranged) += Player.ChooseAmmo(Player.HeldItem).damage / 2;
             }
 
             if (CurseActive || powerfulCurseActive)
