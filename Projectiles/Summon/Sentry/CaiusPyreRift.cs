@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles.Summon.Sentry
         public override float ProjectileInitialVelocity => 0;
         public override bool PlaysSoundOnShot => true;
         public override SoundStyle ShootSoundStyle => SoundID.Item20;
-        public override float ShootSoundVolume => 1.5f;
+        public override float ShootSoundVolume => 1f;
         public override bool SpawnsDust => true;
         public override int ProjectileDustID => DustID.RedTorch;
     }

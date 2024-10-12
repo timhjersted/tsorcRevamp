@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Accessories.Ranged
     public class GoldenHairpin : ModItem
     {
         public int AmmoType = 0;
-        public float DmgMult = 20f;
+        public float Dmg = 28f;
         public const int SwitchTiming = 7; //every X seconds
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMult, SwitchTiming);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, SwitchTiming);
         public override void SetStaticDefaults()
         {
 
@@ -36,38 +36,38 @@ namespace tsorcRevamp.Items.Accessories.Ranged
             {
                 case SwitchTiming * 60 * 0:
                     {
-                        player.arrowDamage *= 1f + DmgMult / 100f;
+                        player.arrowDamage += Dmg / 100f;
                         SoundEngine.PlaySound(SoundID.Item102 with { Volume = 3f });
                         CombatText.NewText(PlayerRect, Color.BurlyWood, LangUtils.GetTextValue("Items.GoldenHairpin.Bow"));
                         break;
                     }
                 case int Arrow when (Arrow > 0 && Arrow <= SwitchTiming * 60 - 1):
                     {
-                        player.arrowDamage *= 1f + DmgMult / 100f;
+                        player.arrowDamage += Dmg / 100f;
                         break;
                     }
                 case SwitchTiming * 60 * 1:
                     {
-                        player.bulletDamage *= 1f + DmgMult / 100f;
+                        player.bulletDamage += Dmg / 100f;
                         SoundEngine.PlaySound(SoundID.Item149 with { Volume = 3f });
                         CombatText.NewText(PlayerRect, Color.BurlyWood, LangUtils.GetTextValue("Items.GoldenHairpin.Gun"));
                         break;
                     }
                 case int Bullet when (Bullet > SwitchTiming * 60 * 1 && Bullet <= SwitchTiming * 60 * 2 - 1):
                     {
-                        player.bulletDamage *= 1f + DmgMult / 100f;
+                        player.bulletDamage += Dmg / 100f;
                         break;
                     }
                 case SwitchTiming * 60 * 2:
                     {
-                        player.specialistDamage *= 1f + DmgMult / 100f;
+                        player.specialistDamage += Dmg / 100f;
                         SoundEngine.PlaySound(SoundID.Item14 with { Volume = 3f });
                         CombatText.NewText(PlayerRect, Color.BurlyWood, LangUtils.GetTextValue("Items.GoldenHairpin.Specialist"));
                         break;
                     }
                 case int Specialist when (Specialist >= SwitchTiming * 60 * 2 && Specialist <= SwitchTiming * 60 * 3 - 1):
                     {
-                        player.specialistDamage *= 1f + DmgMult / 100f;
+                        player.specialistDamage += Dmg / 100f;
                         break;
                     }
                 case int Reset when (Reset > SwitchTiming * 60 * 3):

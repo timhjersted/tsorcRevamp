@@ -14,7 +14,7 @@ namespace tsorcRevamp.Buffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.GetDamage(DamageClass.Generic) *= 1f + DemonDrugPotion.DmgMultiplier / 100f;
+            player.GetDamage(DamageClass.Generic) += DemonDrugPotion.Dmg / 100f;
             player.statDefense -= DemonDrugPotion.BadDefense;
         }
     }

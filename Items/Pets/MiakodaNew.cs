@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Pets
     {
         public static float MoveSpeed1 = 5f;
         public static float MoveSpeed2 = 90f;
-        public static float DamageReduction = 50f;
+        public static float DamageReduction = 55f;
         public static float BoostDuration = 2.5f;
         public static int BoostCooldown = 12;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed1, MoveSpeed2, DamageReduction, BoostDuration, BoostCooldown);

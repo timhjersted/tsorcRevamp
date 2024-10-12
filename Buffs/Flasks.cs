@@ -13,8 +13,8 @@ namespace tsorcRevamp.Buffs
         public static float GoldFlaskDMG = 15f;
         public static float ConfettiFlaskDMG = 16f;
         public static float CursedFlaskDMG = 10f;
-        public static float VenomFlaskDMGCrit = 8f;
-        public static float NanitesFlaskDMGCrit = 11f;
+        public static float VenomFlaskCrit = 12f;
+        public static float NanitesFlaskCrit = 17f;
         public override void Update(int type, Player player, ref int buffIndex)
         {
             if (type == BuffID.WeaponImbuePoison)
@@ -55,14 +55,14 @@ namespace tsorcRevamp.Buffs
 
             if (type == BuffID.WeaponImbueVenom)
             {
-                player.GetCritChance(DamageClass.Melee) += VenomFlaskDMGCrit;
-                player.GetDamage(DamageClass.SummonMeleeSpeed) *= 1f + VenomFlaskDMGCrit / 100f;
+                player.GetCritChance(DamageClass.Melee) += VenomFlaskCrit;
+                player.GetCritChance(DamageClass.SummonMeleeSpeed) += VenomFlaskCrit;
             }
 
             if (type == BuffID.WeaponImbueNanites)
             {
-                player.GetCritChance(DamageClass.Melee) += NanitesFlaskDMGCrit;
-                player.GetDamage(DamageClass.SummonMeleeSpeed) *= 1f + NanitesFlaskDMGCrit / 100f;
+                player.GetCritChance(DamageClass.Melee) += NanitesFlaskCrit;
+                player.GetCritChance(DamageClass.SummonMeleeSpeed) += NanitesFlaskCrit;
             }
         }
 
@@ -100,12 +100,12 @@ namespace tsorcRevamp.Buffs
 
             if (type == BuffID.WeaponImbueVenom)
             {
-                tip += "\n" + LangUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", VenomFlaskDMGCrit, VenomFlaskDMGCrit);
+                tip += "\n" + LangUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", VenomFlaskCrit, VenomFlaskCrit);
             }
 
             if (type == BuffID.WeaponImbueNanites)
             {
-                tip += "\n" + LangUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", NanitesFlaskDMGCrit, NanitesFlaskDMGCrit);
+                tip += "\n" + LangUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", NanitesFlaskCrit, NanitesFlaskCrit);
             }
         }
 

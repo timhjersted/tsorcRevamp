@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Head)]
     public class KrakenHead : ModItem
     {
-        public static float CritChanceMult = 20f;
+        public static float CritChance = 45f;
         public const int SoulCost = 70000;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChanceMult);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -25,8 +25,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Ranged) += CritChanceMult;
-            player.GetCritChance(DamageClass.Ranged) *= 1f + CritChanceMult / 100f;
+            player.GetCritChance(DamageClass.Ranged) += CritChance;
         }
         public override void AddRecipes()
         {

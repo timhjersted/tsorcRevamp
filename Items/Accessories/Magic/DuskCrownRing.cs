@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
         public override void UpdateEquip(Player player)
         {
             player.statLifeMax2 = (int)(player.statLifeMax2 * (1f - BadMaxLife / 100f));
-            player.GetDamage(DamageClass.Magic) *= 1f + MagicDmg / 100f;
+            player.GetDamage(DamageClass.Magic) += MagicDmg / 100f;
             player.lifeRegen += LifeRegen;
         }
     }

@@ -40,11 +40,11 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.FlaskofVenom)
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", LangUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", Flasks.VenomFlaskDMGCrit, Buffs.Flasks.VenomFlaskDMGCrit)));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LangUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", Flasks.VenomFlaskCrit, Buffs.Flasks.VenomFlaskCrit)));
             }
             if (item.type == ItemID.FlaskofNanites)
             {
-                tooltips.Insert(3, new TooltipLine(Mod, "", LangUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", Flasks.NanitesFlaskDMGCrit, Buffs.Flasks.NanitesFlaskDMGCrit)));
+                tooltips.Insert(3, new TooltipLine(Mod, "", LangUtils.GetTextValue("Buffs.VanillaBuffs.WeaponImbue", Flasks.NanitesFlaskCrit, Buffs.Flasks.NanitesFlaskCrit)));
             }
         }
         public override void AddRecipes()

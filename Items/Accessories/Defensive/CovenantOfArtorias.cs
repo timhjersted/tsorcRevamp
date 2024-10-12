@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class CovenantOfArtorias : ModItem
     {
-        public static float StatMult = 9f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StatMult, 1f + tsorcRevampPlayer.MeleeBonusMultiplier);
+        public static float Resistance = 21f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Resistance);
         public override void SetStaticDefaults()
         {
         }
@@ -36,12 +36,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Generic) *= 1f + StatMult / 100f;
-            player.GetCritChance(DamageClass.Generic) += StatMult;
-            player.GetCritChance(DamageClass.Generic) *= 1f + StatMult / 100f;
-            player.moveSpeed *= 1f + StatMult / 100f;
-            player.GetAttackSpeed(DamageClass.Generic) *= 1f + StatMult / 100f;
-            player.GetAttackSpeed(DamageClass.Melee) *= 1f + ((StatMult / 100f) * tsorcRevampPlayer.MeleeBonusMultiplier);
+            player.endurance += Resistance / 100f;
             player.lavaImmune = true;
             player.noKnockback = true;
             player.fireWalk = true;

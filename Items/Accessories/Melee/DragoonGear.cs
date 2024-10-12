@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Accessories.Melee
 {
     public class DragoonGear : ModItem
     {
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DragoonHorn.MeleeDmgMult);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DragoonHorn.MeleeDmg);
         public override void SetStaticDefaults()
         {
         }

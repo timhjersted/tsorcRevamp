@@ -9,10 +9,10 @@ namespace tsorcRevamp.Items.Armors.Ranged
     [AutoloadEquip(EquipType.Body)]
     public class TriceratopsBody : ModItem
     {
-        public static int FlatDmg = 3;
-        public static float SpecialistDmgMult = 20f;
-        public static int AmmoChance = 25; //changing this number has no effect since an ammo consumption chance stat doesn't exist
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(FlatDmg, SpecialistDmgMult, AmmoChance);
+        public const int FlatDmg = 3;
+        public const float SpecialistDmg = 22f;
+        public const int AmmoChance = 25; //changing this number has no effect since an ammo consumption chance stat doesn't exist
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(FlatDmg, SpecialistDmg, AmmoChance);
         public override void SetStaticDefaults()
         {
         }
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
         public override void UpdateArmorSet(Player player)
         {
-            player.specialistDamage *= 1f + SpecialistDmgMult / 100f;
+            player.specialistDamage += SpecialistDmg / 100f;
             player.ammoCost75 = true;
         }
         public override void AddRecipes()

@@ -1129,6 +1129,12 @@ namespace tsorcRevamp
                                             (ItemID.SoulofLight, 5)
                                         }                                                   },
                 #endregion
+
+                { ItemID.PapyrusScarab,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.PygmyNecklace, 1),
+                                            (ModContent.ItemType<DarkSoul>(), 20000)
+                                        }                                                   },
             };
             #endregion
 

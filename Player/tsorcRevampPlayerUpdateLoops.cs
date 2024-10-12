@@ -16,6 +16,7 @@ using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.VanillaItems;
@@ -64,6 +65,8 @@ namespace tsorcRevamp
         public bool DragoonHorn = false;
 
         public bool ConditionOverload = true;
+
+        public float WhipCritDamage = 135f;
 
         public int CurseLevel = 1;
         public int PowerfulCurseLevel = 1;
@@ -124,6 +127,8 @@ namespace tsorcRevamp
 
         public int SoulVessel = 0;
         public float MaxManaAmplifier;
+
+        public bool ZirconRing = false;
 
         public int CritColorTier = 0;
 
@@ -447,6 +452,8 @@ namespace tsorcRevamp
             BoneRevenge = false;
             SoulSiphon = false;
             SoulSiphonScaling = 1f;
+
+            ZirconRing = false;
 
             CrimsonDrain = false;
             Shockwave = false;
@@ -1007,7 +1014,7 @@ namespace tsorcRevamp
 
             if (MiakodaCrescentBoost)
             {
-                Player.GetDamage(DamageClass.Generic) *= 1.07f;
+                Player.GetDamage(DamageClass.Generic) += Items.Pets.MiakodaCrescent.Dmg2 / 100f;
             }
 
             if (MiakodaNewBoost)
@@ -1520,7 +1527,7 @@ namespace tsorcRevamp
             }
             if (DragoonHorn && (((Player.gravDir == 1f) && (Player.velocity.Y > 0)) || ((Player.gravDir == -1f) && (Player.velocity.Y < 0))))
             {
-                Player.GetDamage(DamageClass.Melee) *= 1f + Items.Accessories.Melee.DragoonHorn.MeleeDmgMult / 100f;
+                Player.GetDamage(DamageClass.Melee) += Items.Accessories.Melee.DragoonHorn.MeleeDmg / 100f;
             }
             if (BrokenSpirit)
             {
@@ -1541,6 +1548,7 @@ namespace tsorcRevamp
             if (CrystallineShard)
             {
                 Player.GetCritChance(DamageClass.Summon) += CrystallineCritChance;
+                Player.whipRangeMultiplier -= CrystallineCritChance;
             }
 
             if (Player.HasAmmo(Player.HeldItem) && Player.HeldItem.useAmmo != 0 && AmmoBox)
@@ -1548,7 +1556,12 @@ namespace tsorcRevamp
                 Player.GetCritChance(DamageClass.Ranged) += Player.ChooseAmmo(Player.HeldItem).damage / 2;
             }
 
-            if (CurseActive || powerfulCurseActive)
+            if (ZirconRing)
+            {
+                Player.statLifeMax2 += (int)(Player.statLifeMax2 * Items.Accessories.Defensive.Rings.ZirconRing.MaxLifeIncrease / 100f);
+            }
+
+                if (CurseActive || powerfulCurseActive)
             {
                 AddCurseStats();
                 //liferegen is in updateliferegen function

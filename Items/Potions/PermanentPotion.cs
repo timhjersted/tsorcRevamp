@@ -653,8 +653,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.meleeEnchant = 1;
-            player.GetCritChance(DamageClass.Melee) += ApplyScaling(Flasks.VenomFlaskDMGCrit);
-            player.GetDamage(DamageClass.SummonMeleeSpeed) *= (1f + ApplyScaling(Flasks.VenomFlaskDMGCrit / 100f));
+            player.GetCritChance(DamageClass.Melee) += ApplyScaling(Flasks.VenomFlaskCrit);
+            player.GetDamage(DamageClass.SummonMeleeSpeed) *= (1f + ApplyScaling(Flasks.VenomFlaskCrit / 100f));
         }
     }
 
@@ -680,8 +680,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.meleeEnchant = 6;
-            player.GetCritChance(DamageClass.Melee) += ApplyScaling(Flasks.NanitesFlaskDMGCrit);
-            player.GetDamage(DamageClass.SummonMeleeSpeed) *= (1f + ApplyScaling(Flasks.NanitesFlaskDMGCrit / 100f));
+            player.GetCritChance(DamageClass.Melee) += ApplyScaling(Flasks.NanitesFlaskCrit);
+            player.GetDamage(DamageClass.SummonMeleeSpeed) *= (1f + ApplyScaling(Flasks.NanitesFlaskCrit / 100f));
         }
     }
 
@@ -1088,7 +1088,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void PotionEffect(Player player)
         {
-            player.GetDamage(DamageClass.Generic) *= (1.0f + ApplyScaling(DemonDrugPotion.DmgMultiplier / 100f));
+            player.GetDamage(DamageClass.Generic) += ApplyScaling(DemonDrugPotion.Dmg / 100f);
             player.statDefense -= (int)ApplyScaling(DemonDrugPotion.BadDefense);
         }
     }

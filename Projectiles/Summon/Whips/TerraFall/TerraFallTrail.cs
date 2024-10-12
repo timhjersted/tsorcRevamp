@@ -7,14 +7,16 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.NPCs;
+using tsorcRevamp.Projectiles.Summon.Whips.NightsCracker;
 using tsorcRevamp.Projectiles.VFX;
 
-namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
+namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
 {
-    public class NightsCrackerTrail : DynamicTrail
+    public class TerraFallTrail : DynamicTrail
     {
         public bool FullyCharged;
         public override void SetStaticDefaults()
@@ -58,13 +60,12 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
             Projectile Whip = Main.projectile[(int)Projectile.ai[0]];
             List<Vector2> points = Whip.WhipPointsForCollision;
             Projectile.FillWhipControlPoints(Whip, points);
-            //Main.NewText(player.itemAnimationMax);
 
             base.AI();
             Projectile.tileCollide = false;
 
             FullyCharged = (Projectile.ai[1] == 1) ? true : false;
-            Color TrailColor = FullyCharged ? new Color(0.5f, 1f, 0.2f, 0.25f) : new Color(0.25f, 0.08f, 1f, 0.25f);
+            Color TrailColor = FullyCharged ? new Color(0.15f, 1f, 0.8f, 0.25f) : new Color(0.1f, 1f, 0.1f, 0.25f);
             Lighting.AddLight(Projectile.Center, TrailColor.ToVector3() * 1f);
 
             Projectile.velocity = Projectile.Center.DirectionTo(Whip.WhipPointsForCollision[points.Count - 1]) * Projectile.Center.Distance(Whip.WhipPointsForCollision[points.Count - 1]);
@@ -83,7 +84,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
         public override void SetEffectParameters(Effect effect)
         {
             FullyCharged = (Projectile.ai[1] == 1) ? true : false;
-            Color TrailColor = FullyCharged ? new Color(0.5f, 1f, 0.2f, 0.25f) : new Color(0.25f, 0.08f, 1f, 0.25f);
+            Color TrailColor = FullyCharged ? new Color(0.15f, 1f, 0.8f, 0.25f) : new Color(0.1f, 1f, 0.1f, 0.25f);
             float hostVel = Projectile.velocity.Length();
 
             float modifiedTime = 0.0007f * hostVel;
@@ -120,29 +121,33 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<NightsCrackerDebuff>(), ModdedWhipProjectile.DefaultWhipDebuffDuration * 60);
-            if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().NightsCrackerStacks < NightsCrackerItem.MaxStacks)
+            target.AddBuff(ModContent.BuffType<TerraFallDebuff>(), ModdedWhipProjectile.DefaultWhipDebuffDuration * 60);
+            if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().TerraFallStacks < TerraFallItem.MaxStacks)
             {
-                target.GetGlobalNPC<tsorcRevampGlobalNPC>().NightsCrackerStacks++;
-                if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().NightsCrackerStacks == NightsCrackerItem.MaxStacks)
+                target.GetGlobalNPC<tsorcRevampGlobalNPC>().TerraFallStacks++;
+                if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().TerraFallStacks == TerraFallItem.MaxStacks)
                 {
-                    SoundEngine.PlaySound(SoundID.Item104 with { Volume = 1f }, target.Center);
+                    SoundEngine.PlaySound(SoundID.Item60 with { Volume = 1f }, target.Center);
                 }
             }
-            if (FullyCharged && target.GetGlobalNPC<tsorcRevampGlobalNPC>().markedByNightsCracker)
+            if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().markedByTerraFall)
             {
-                target.GetGlobalNPC<tsorcRevampGlobalNPC>().NightsCrackerStacks = 0;
+                Main.player[Projectile.owner].AddBuff(ModContent.BuffType<TerraFallBuff>(), ModdedWhipProjectile.DefaultWhipBuffDuration * 60);
+                if(FullyCharged)
+                {
+                    target.GetGlobalNPC<tsorcRevampGlobalNPC>().TerraFallStacks = 0;
+                }
             }
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            if (FullyCharged && target.GetGlobalNPC<tsorcRevampGlobalNPC>().markedByNightsCracker)
+            if (FullyCharged && target.GetGlobalNPC<tsorcRevampGlobalNPC>().markedByTerraFall)
             {
-                modifiers.SourceDamage += MathF.Max(Projectile.ai[2] / (NightsCrackerProjectile.MaximumChargeTime / (NightsCrackerProjectile.MaxChargeDmgMult * 4f)), 0.5f);
+                modifiers.SourceDamage += MathF.Max(Projectile.ai[2] / (TerraFallProjectile.MaximumChargeTime / (TerraFallProjectile.MaxChargeDmgMult * 5f)), 0.5f);
             }
             else
             {
-                modifiers.SourceDamage *= MathF.Max(Projectile.ai[2] / (NightsCrackerProjectile.MaximumChargeTime / NightsCrackerProjectile.MaxChargeDmgMult), 1f);
+                modifiers.SourceDamage *= MathF.Max(Projectile.ai[2] / (TerraFallProjectile.MaximumChargeTime / TerraFallProjectile.MaxChargeDmgMult), 1f);
             }
         }
     }

@@ -20,23 +20,23 @@ namespace tsorcRevamp.Items.VanillaItems
             #region Minions
             if (item.type == ItemID.AbigailsFlower)
             {
-                item.damage = 5;
+                item.damage = 6;
             }
             if (item.type == ItemID.BabyBirdStaff)
             {
-                item.damage = 6;
+                item.damage = 7;
             }
             if (item.type == ItemID.SlimeStaff)
             {
-                item.damage = 7;
+                item.damage = 8;
             }
             if (item.type == ItemID.FlinxStaff)
             {
-                item.damage = 6;
+                item.damage = 8;
             }
             if (item.type == ItemID.VampireFrogStaff)
             {
-                item.damage = 8;
+                item.damage = 10;
             }
             if (item.type == ItemID.HornetStaff)
             {
@@ -44,23 +44,23 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.ImpStaff)
             {
-                item.damage = 14;
+                item.damage = 15;
             }
             if (item.type == ItemID.SpiderStaff)
             {
-                item.damage = 21;
+                item.damage = 23;
             }
             if (item.type == ItemID.SanguineStaff)
             {
-                item.damage = 35;
+                item.damage = 31;
             }
             if (item.type == ItemID.PirateStaff)
             {
-                item.damage = 37;
+                item.damage = 40;
             }
             if (item.type == ItemID.Smolstar)
             {
-                item.damage = 5;
+                item.damage = 6;
             }
             if (item.type == ItemID.OpticStaff)
             {
@@ -68,15 +68,15 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.PygmyStaff)
             {
-                item.damage = 37;
+                item.damage = 36;
             }
             if (item.type == ItemID.StormTigerStaff)
             {
-                item.damage = 33;
+                item.damage = 34;
             }
             if (item.type == ItemID.DeadlySphereStaff)
             {
-                item.damage = 34;
+                item.damage = 35;
             }
             if (item.type == ItemID.RavenStaff)
             {
@@ -84,7 +84,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.XenoStaff)
             {
-                item.damage = 28;
+                item.damage = 29;
             }
             if (item.type == ItemID.TempestStaff)
             {
@@ -107,7 +107,7 @@ namespace tsorcRevamp.Items.VanillaItems
             #region Whips
             if (item.type == ItemID.RainbowWhip)
             {
-                item.damage = 100;
+                item.damage = 75;
             }
             if (item.type == ItemID.ScytheWhip)
             {
@@ -122,7 +122,7 @@ namespace tsorcRevamp.Items.VanillaItems
             #region Turrets/Sentries
             if (item.type == ItemID.HoundiusShootius)
             {
-                item.damage = 25;
+                item.damage = 33;
             }
             if (item.type == ItemID.StaffoftheFrostHydra) //buff, using static immunity frame in tml1.4.4, vanilla damage is 100
             {//now uses local iframes in globalprojectile
@@ -137,9 +137,9 @@ namespace tsorcRevamp.Items.VanillaItems
         public static int CoolWhipTagDmg = 6;
         public static int DurendalTagDmg = 9;
         public static int DarkHarvestTagDmg = 10;
-        public static float MorningStarTagDmg = 6;
-        public static float MorningStarTagCritChance = 12;
-        public static float KaleidoscopeTagDmg = 10;
+        public static float MorningStarTagDmg = 7;
+        public static float MorningStarTagCritChance = 8;
+        public static float KaleidoscopeTagDmg = 14;
         public static float KaleidoscopeTagCritChance = 10;
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
@@ -276,12 +276,17 @@ namespace tsorcRevamp.Items.VanillaItems
                 int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
                 if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagDurationBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.NecromanticScroll").FormatWith(MethodSwaps.ScrollSummonTagDurationBoost)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagDurationBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.NecromanticScroll").FormatWith(MethodSwaps.ScrollSummonTagDurationBoost, MethodSwaps.ScrollSummonCritChance)));
                 }
                 int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
                 if (ttindex1 != -1)
                 {
                     tooltips.RemoveAt(ttindex1);
+                }
+                int ttindex2 = tooltips.FindIndex(t => t.Name == "Tooltip0");
+                if (ttindex2 != -1)
+                {
+                    tooltips.RemoveAt(ttindex2);
                 }
             }
             if (item.type == ItemID.PapyrusScarab)

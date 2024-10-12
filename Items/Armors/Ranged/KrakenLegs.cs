@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.Armors.Ranged
     public class KrakenLegs : ModItem
     {
         public const int SoulCost = 70000;
-        public const float DmgMult = 20f;
+        public const float Dmg = 30f;
         public const float MoveSpeed = 36f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMult, MoveSpeed);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MoveSpeed);
         public override void SetStaticDefaults()
         {
         }
@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Ranged) *= 1f + DmgMult / 100f;
+            player.GetDamage(DamageClass.Ranged) += Dmg / 100f;
             player.moveSpeed += MoveSpeed / 100f;
         }
         public override void AddRecipes()

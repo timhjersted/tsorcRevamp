@@ -11,10 +11,11 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     [LegacyName("TerraFall")]
     public class TerraFallItem : ModItem
     {
-        public const int BaseDamage = 115;
-        public const int TagDmg = 10;
-        public const int TagCrit = 10;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(TagDmg, TagCrit);
+        public const int BaseDamage = 85;
+        public const int MaxStacks = 4;
+        public const int TagDmg = 20;
+        public const int TagCrit = 12;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(TagDmg, TagCrit, MaxStacks);
         public override void SetStaticDefaults()
         {
             ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;

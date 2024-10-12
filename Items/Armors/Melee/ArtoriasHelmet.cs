@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Armors.Melee
     public class ArtoriasHelmet : ModItem
     {
         public const int SoulCost = 70000;
-        public static float CritChanceMult = 20f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChanceMult);
+        public static float CritChance = 30f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -26,8 +26,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += CritChanceMult;
-            player.GetCritChance(DamageClass.Melee) *= 1f + CritChanceMult / 100f;
+            player.GetCritChance(DamageClass.Melee) += CritChance;
         }
         public override void AddRecipes()
         {

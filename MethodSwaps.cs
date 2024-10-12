@@ -1434,10 +1434,11 @@ namespace tsorcRevamp
             orig(self, i);
         }
 
-        public static float BeetleSummonTagStrengthBoost = 33;
+        public const float BeetleSummonTagStrengthBoost = 50;
         public const float BeetleSummonCritChance = 7f;
-        public static float ScrollSummonTagDurationBoost = 25;
-        public const float ScarabSummonCritChance = BeetleSummonCritChance;
+        public const float ScrollSummonCritChance = 10f;
+        public const float ScrollSummonTagDurationBoost = 50;
+        public const float ScarabSummonCritChance = BeetleSummonCritChance + ScrollSummonCritChance - 6f;
         private static void On_Player_ApplyEquipFunctional(On_Player.orig_ApplyEquipFunctional orig, Player self, Item currentItem, bool hideVisual)
         {
             var modPlayer = self.GetModPlayer<tsorcRevampPlayer>();
@@ -1454,6 +1455,8 @@ namespace tsorcRevamp
             if (currentItem.type == ItemID.NecromanticScroll)
             {
                 self.GetDamage(DamageClass.Summon) -= 0.1f;
+                self.maxMinions -= 1;
+                self.GetCritChance(DamageClass.Summon) += ScrollSummonCritChance;
                 modPlayer.SummonTagDuration += ScrollSummonTagDurationBoost / 100f;
             }
             if (currentItem.type == ItemID.PapyrusScarab)

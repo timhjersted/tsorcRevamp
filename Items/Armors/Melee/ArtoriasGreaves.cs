@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Melee
     public class ArtoriasGreaves : ModItem
     {
         public const int SoulCost = 70000;
-        public static float AtkSpeedMult = 20f;
+        public static float AtkSpeedMult = 44f;
         public static float MoveSpeed = 40f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AtkSpeedMult, MoveSpeed);
         public override void SetStaticDefaults()
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Armors.Melee
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetAttackSpeed(DamageClass.Melee) *= 1f + AtkSpeedMult / 100f;
+            player.GetAttackSpeed(DamageClass.Melee) += AtkSpeedMult / 100f;
             player.moveSpeed += MoveSpeed / 100f;
         }
         public override void AddRecipes()

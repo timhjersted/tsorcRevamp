@@ -52,7 +52,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.CirclingProjectiles
             }
             if (target.HasBuff(ModContent.BuffType<AwestruckDebuff>()))
             {
-                modifiers.FinalDamage *= 1f + CenterOfTheUniverse.AwestruckStarDamageAmp / 100f;
+                modifiers.FinalDamage += CenterOfTheUniverse.AwestruckStarDamageAmp / 100f;
             }
         }
         public override void CustomOnHitNPC(NPC target)

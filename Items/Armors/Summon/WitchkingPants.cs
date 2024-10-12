@@ -10,12 +10,12 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Legs)]
     public class WitchkingPants : ModItem
     {
-        public static float DmgAmp = 9f;
+        public static float Dmg = 19f;
         public static int MinionSlot = 1;
         public static int SentrySlot = 1;
         public static float MoveSpeed = 44f;
         public static float TagDuration = 40f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgAmp, MinionSlot, SentrySlot, MoveSpeed, TagDuration);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MinionSlot, SentrySlot, MoveSpeed, TagDuration);
         public override void SetStaticDefaults()
         {
         }
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) *= 1f + DmgAmp / 100f;
+            player.GetDamage(DamageClass.Summon) += Dmg / 100f;
             player.maxMinions += MinionSlot;
             player.maxTurrets += SentrySlot;
             player.moveSpeed += MoveSpeed / 100f;

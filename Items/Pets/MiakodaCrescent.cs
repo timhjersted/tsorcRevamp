@@ -9,11 +9,11 @@ namespace tsorcRevamp.Items.Pets
 {
     class MiakodaCrescent : ModItem
     {
-        public static float DamageMultiplier1 = 3f;
-        public static float DamageMultiplier2 = 7f;
+        public static float Dmg1 = 4f;
+        public static float Dmg2 = 8f;
         public static float BoostDuration = 2.5f;
         public static int BoostCooldown = 12;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageMultiplier1, DamageMultiplier2, BoostDuration, BoostCooldown);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg1, Dmg2, BoostDuration, BoostCooldown);
         public override void SetStaticDefaults()
         {
         }

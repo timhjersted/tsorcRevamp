@@ -131,8 +131,8 @@ Mods: {
 				WhipDmg: Increases whip damage by {0}%
 				WhipCritDmg: Increases the damage of whip crits by {0}%
 				WhipCritHitbox: Increases the Whip Tip Crit Hitbox Size to {0}x
-				TagStrength: Increases Summon Tag Damage and Armor Penetration by {0}%
-				BadTagStrengthMult: Decreases Summon Tag Damage and Armor Penetration by {0}% multiplicatively
+				TagStrength: Increases Summon Tag Damage, Armor Pen, and Crit by {0}%
+				BadTagStrengthMult: Decreases Summon Tag Damage, Armor Pen and Crit by {0}% multiplicatively
 				TagDuration: Increases the duration of Summon Tag effects by {0}%
 				ChargedWhip: Hold <right> to charge for more damage and range
 				ChargedWhipTagDmg: "{0}-{1} summon tag damage"
@@ -512,7 +512,11 @@ Mods: {
 					{$CommonItemTooltip.Summon.CritChance@1}
 					{$CommonItemTooltip.Summon.Knockback}
 					'''
-				NecromanticScroll: "{$CommonItemTooltip.Summon.TagDuration}"
+				NecromanticScroll: 
+					'''
+					{$CommonItemTooltip.Summon.TagDuration}
+					{$CommonItemTooltip.Summon.CritChance@1}
+					'''
 				PapyrusScarab:
 					'''
 					{$CommonItemTooltip.Summon.TagStrength}
@@ -1186,7 +1190,7 @@ Mods: {
 					[c/ffbf00:The Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous in this realm.]
 					[c/00ffd4:Grants immunity to particular dangers caused by the Abyss and foes empowered by it, such as Crippled, Poisoned, On Fire and Oiled]
 					Also grants protection from lava, knockback, Blackened Flames and fire blocks, but increases enemy spawn rates.
-					Increases damage, critical strike chance, movement and attack speed{$CommonItemTooltip.Melee.Bonus@1} by {0}% multiplicatively
+					{$CommonItemTooltip.DRStat}
 					'''
 			}
 
@@ -1486,7 +1490,7 @@ Mods: {
 				Tooltip:
 					'''
 					Gear worn by Dragoons
-					Increases melee damage by {0}% multiplicatively while falling
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage} whilst falling
 					{$CommonItemTooltip.NoFallDmg}
 					Faster Jump, which also results in a higher jump.
 					Press Dragoon Boots to toggle high jump
@@ -1498,7 +1502,7 @@ Mods: {
 				Tooltip:
 					'''
 					Horn inhabited by the spirit of a dragon.
-					Increases melee damage by {0}% multiplicatively while falling
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage} whilst falling
 					'''
 			}
 
@@ -1507,7 +1511,7 @@ Mods: {
 				Tooltip:
 					'''
 					This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth.
-					[c/ffbf00:{$CommonItemTooltip.Magic.DmgMult}]
+					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicDamage}]
 					[c/ffbf00:{$CommonItemTooltip.LifeRegen@1}]
 					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@2}.] Your previous max HP is restored when the ring is removed.
 					'''
@@ -1517,7 +1521,7 @@ Mods: {
 				DisplayName: Golden Hairpin
 				Tooltip:
 					'''
-					Increases either arrow, bullet or specialist damage by {0}% multiplicatively
+					Increases either arrow, bullet or specialist damage by {0}%
 					Ammo type is decided by a timer that picks one of the three regularly
 					Plays a sound to indicate the switch every {1} seconds
 					'''
@@ -1611,8 +1615,8 @@ Mods: {
 				DisplayName: Hero's Crest
 				Tooltip:
 					'''
-					Increases damage dealt, critical strike chance, maximum life, 
-					and defense by {0}% multiplicatively. {$CommonItemTooltip.Luck@1}
+					Permanently increases damage dealt and crit chance by {0}%,
+					defense by {0}, maximum life by {1} and Luck by {1}%
 					"Proof of the hero's accomplishments"
 					'''
 			}
@@ -1645,7 +1649,11 @@ Mods: {
 
 			EnchantedWizardsHat: {
 				DisplayName: Enchanted Wizard's Hat
-				Tooltip: "{$CommonItemTooltip.Magic.DmgMult}"
+				Tooltip: 
+					'''
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					{$CommonItemTooltip.Magic.AtkSpeed@1}
+					'''
 			}
 
 			EssenceOfMana: {
@@ -1894,11 +1902,11 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.IncreasesMaxMinionsBy}
-					Decreases Whip range by {1}%
-					Increases your summon critical strike chance for each minion slot you have
+					For each minion slot you have,
+					increase summon critical strike chance but also decrease whip range by {1}%
 					"A magical substance found only in the Crystalline Dimension"
 					'''
-				CriticalStrikeChance: "Current Increase: "
+				CriticalStrikeChance: "Current Modifier: "
 			}
 
 			ShamanEmblem: {
@@ -1906,8 +1914,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
-					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
-					{$CommonItemTooltip.IncreasesMaxSentriesBy@2}
+					{$CommonItemTooltip.IncreasesMaxSentriesBy@1}
 					'''
 			}
 
@@ -2015,7 +2022,7 @@ Mods: {
 				Tooltip:
 					'''
 					Enchanted armor of Artorias of the Abyss.
-					{$CommonItemTooltip.Melee.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
 					{$CommonItemTooltip.SetBonus}Allows you to use items while dodgerolling
 					Increase additional {1}x melee damage while dodgerolling
 					'''
@@ -2026,7 +2033,7 @@ Mods: {
 				Tooltip:
 					'''
 					Enchanted armor of Artorias.
-					{$CommonItemTooltip.Melee.AtkSpeedMult}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
 					'''
 			}
@@ -2036,7 +2043,7 @@ Mods: {
 				Tooltip:
 					'''
 					Enchanted helmet of Artorias.
-					{$CommonItemTooltip.Melee.CritMult}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
 			}
 
@@ -2055,14 +2062,14 @@ Mods: {
 
 			KrakenHead: {
 				DisplayName: Kraken Head
-				Tooltip: "{$CommonItemTooltip.Ranged.CritMult}"
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedRangedCritChance}"
 			}
 
 			KrakenLegs: {
 				DisplayName: Kraken Legs
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Ranged.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedRangedDamage}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
 					'''
 			}
@@ -2071,7 +2078,7 @@ Mods: {
 				DisplayName: Necromancers Pants
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Magic.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
 					'''
 			}
@@ -2092,7 +2099,7 @@ Mods: {
 
 			NecromancersSkullmask: {
 				DisplayName: Necromancers Skullmask
-				Tooltip: "{$CommonItemTooltip.Magic.CritMult}"
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMagicCritChance}"
 			}
 
 			BlueHerosHat: {
@@ -2234,9 +2241,10 @@ Mods: {
 				DisplayName: Hollow Soldier Breastplate
 				Tooltip:
 					'''
-					Increases damage dealt by 10% multiplicatively
-					Set Bonus: Nullifies life regen, increases damage dealt by 15% multiplicatively again
-					Increases maximum stamina and stamina regen by 10%
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					Set Bonus: Heavily reduced life regen
+					{$CommonItemTooltip.PercentIncreasedCritChance@1}
+					Increases maximum stamina and stamina regen by {2}%
 					'''
 			}
 
@@ -2812,7 +2820,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Ranged.FlatDmg}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasesSpecialistDamageByPercent@1} multiplicatively
+					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.IncreasesSpecialistDamageByPercent@1}
 					{$CommonItemTooltip.PercentChanceToSaveAmmo@2}
 					'''
 			}
@@ -3100,7 +3108,7 @@ Mods: {
 				DisplayName: Witchking Pants
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Summon.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.Summon.MinionSentrySlot@1}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@3}
 					{$CommonItemTooltip.Summon.TagDuration@4}
@@ -3111,9 +3119,9 @@ Mods: {
 				DisplayName: Witchking Helmet
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Summon.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.Summon.MinionSentrySlot@1}
-					{$CommonItemTooltip.Summon.CritMult@3}
+					{$CommonItemTooltip.Summon.CritChance@3}
 					{$CommonItemTooltip.Summon.TagStrength@4}
 					'''
 			}
@@ -3122,7 +3130,7 @@ Mods: {
 				DisplayName: Witchking Robe
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Summon.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
 					{$CommonItemTooltip.SetBonus}Empowers the Witchking's Sword
 					'''
@@ -4265,10 +4273,10 @@ Mods: {
 					Miakoda - an ancient being of light over 100 years old, 
 					who has vowed to help you find your wife and defeat Attraidies.
 					Miakoda is an indigenous name that means "Power of the Moon".
-					{$CommonItemTooltip.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedDamage}
 					Crescent Moon Form - Imbues weapons with Crescent Moonlight
 					when you hit a crit ({$CommonItemTooltip.SecondDuration@2}, {$CommonItemTooltip.Cooldown@3})
-					{$CommonItemTooltip.DmgMult@1} again while weapon imbue is active
+					{$CommonItemTooltip.PercentIncreasedDamage@1} again while weapon imbue is active
 					Can switch between forms at an altar
 					'''
 			}
@@ -6612,10 +6620,9 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.Summon.ChargedWhip}
-					Whip applies a marking debuff if not fully charged
-					Summons a great wave of energy if fully charged
-					The wave of energy consumes the mark to deal heavy damage
-					Summons a Terraprisma after consuming a mark
+					Whip summons a damaging slash which applies a marking debuff up to {2} times
+					Summons a Terraprisma after fully stacking the mark
+					At max stacks the next fully charged slash consumes the marks to deal extra damage
 					The Terraprisma applies {0} tag damage and {1} tag crit
 					{$CommonItemTooltip.Whips}
 					'''
@@ -6650,7 +6657,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.ChargedWhip}
 					Whip summons a damaging slash which applies a marking debuff up to {0} times
-					At max stacks the next slash consumes the marks to deal extra damage
+					At max stacks the next fully charged slash consumes the marks to deal extra damage
 					'Charge at the right time'
 					{$CommonItemTooltip.Whips}
 					'''
@@ -7236,7 +7243,7 @@ Mods: {
 					[c/00008b:Grand Comet deals massive damage in a huge area and leaves behind a shockwave]
 					[c/00008b:Grand Comet applies the Awestruck debuff]({$CommonItemTooltip.SecondDuration@5})
 					This further increases star damage and deals massive damage over time
-					Star damage increase is {6}% multiplicatively
+					Star damage increase is {6}%
 					[c/7fffd4:Turboboost increases star movement speed and increases the Star Forger's attack speed]
 					[c/7fffd4:Turboboost adds {3}% max health damage on-hit, up to {4}]
 					[c/7fffd4:Turboboost will actively drain your mana and will be cancelled by Mana Sickness]
@@ -7677,9 +7684,8 @@ Mods: {
 					Turret Slots: {6}
 					Whip Range: {7}%
 					Tips: Hitting enemies with the tip of a whip always results in a crit
+					Whip tip critical strike damage is {8}%
 					Minions can crit based on your summon critical strike chance
-					Summon Tag crit chance increases minion critical strike chance multiplicatively
-					Summon critical strike damage is reduced to 150% from 200%
 					'''
 				Throwing:
 					'''
@@ -7798,7 +7804,7 @@ Mods: {
 					Reduces melee damage dealt by {1}%
 					'''
 				SolarShield: "{$CommonItemTooltip.DRStat}, repel enemies when taking damage"
-				WeaponImbue: Increases melee crit by {0}% and increases whip damage by {1}% multiplicatively
+				WeaponImbue: "Increases melee and whip crit by {0}%"
 			}
 
 			Curse: {

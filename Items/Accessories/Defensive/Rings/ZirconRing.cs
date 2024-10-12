@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 
         public override void UpdateEquip(Player player)
         {
-            player.statLifeMax2 += (int)(player.statLifeMax2 * MaxLifeIncrease / 100f);
+            player.GetModPlayer<tsorcRevampPlayer>().ZirconRing = true;
         }
     }
 }

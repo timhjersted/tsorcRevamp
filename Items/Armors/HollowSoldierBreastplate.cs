@@ -9,10 +9,9 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class HollowSoldierBreastplate : ModItem
     {
-        public static float DmgMult = 15f;
-        public static float MaxStamina = 10f;
-        public static float StaminaRegen = 10f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMult, MaxStamina, StaminaRegen);
+        public const float Dmg = 20f;
+        public const float MaxStaminaAndRegen = 10f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, Dmg / 2, MaxStaminaAndRegen);
         public override void SetStaticDefaults()
         {
         }
@@ -26,7 +25,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Generic) *= 1.1f;
+            player.GetDamage(DamageClass.Generic) += Dmg / 100f;
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
@@ -39,9 +38,9 @@ namespace tsorcRevamp.Items.Armors
                 player.lifeRegenCount = 0;
                 player.lifeRegenTime = 0;
             }
-            player.GetDamage(DamageClass.Generic) *= 1f + DmgMult / 100f;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + MaxStamina / 100f;
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1f + StaminaRegen / 100f;
+            player.GetCritChance(DamageClass.Generic) += Dmg / 2;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult *= 1f + MaxStaminaAndRegen / 100f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 *= 1f + MaxStaminaAndRegen / 100f;
         }
         public override void AddRecipes()
         {

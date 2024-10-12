@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Armors.Magic
     [AutoloadEquip(EquipType.Head)]
     public class NecromancersSkullmask : ModItem
     {
-        public static float CritChanceMult = 20f;
+        public static float CritChance = 36f;
         public const int SoulCost = 70000;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChanceMult);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {
         }
@@ -25,8 +25,7 @@ namespace tsorcRevamp.Items.Armors.Magic
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Magic) += CritChanceMult;
-            player.GetCritChance(DamageClass.Magic) *= 1f + CritChanceMult / 100f;
+            player.GetCritChance(DamageClass.Magic) += CritChance;
         }
         public override void AddRecipes()
         {

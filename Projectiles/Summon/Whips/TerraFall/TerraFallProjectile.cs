@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Projectiles.Summon.Whips.NightsCracker;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
 {
@@ -23,23 +24,26 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
         public override int DustHeight => 10;
         public override Color DustColor => default;
         public override float DustScale => 1f;
-        public override float MaxChargeTime => 210;
+        public override float MaxChargeTime => MaximumChargeTime;
+        public const float MaximumChargeTime = 150;
         public override Vector2 WhipTipBase => new Vector2(11, 14);
-        public override float MaxChargeDmgMultiplier => 4f;
+        public override float MaxChargeDmgMultiplier => MaxChargeDmgMult;
+        public const float MaxChargeDmgMult = 2.5f;
         public override float ChargeRangeBonus => 0.08f;
         public override int WhipDebuffId => ModContent.BuffType<TerraFallDebuff>();
         public override int WhipDebuffDuration => 0; //set to 0 so it does nothing and I can make a custom calculation
         public override float WhipMultihitPenalty => 1f; //set to 1 so it does nothing and I can make a custom calculation
         public override Color WhipLineColor => Color.Red;
-        public override void CustomModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-        }
-        public override void CustomOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        public override void CustomDustAndTipEffects(List<Vector2> points)
         {
             Player player = Main.player[Projectile.owner];
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (Main.myPlayer == player.whoAmI && player.ownedProjectileCounts[ModContent.ProjectileType<TerraFallTrail>()] == 0)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Projectile.WhipPointsForCollision[points.Count - 1], ModContent.ProjectileType<TerraFallTrail>(), Projectile.damage, Projectile.knockBack, player.whoAmI, Projectile.whoAmI, (ChargeTime >= MaxChargeTime) ? 1 : 0, ChargeTime);
+                player.ownedProjectileCounts[ModContent.ProjectileType<TerraFallTrail>()]++; //without this it'd spawn two trails because of extraupdate spawning them in the same tick, before their owned number increases
+            }
         }
-
         public override bool PreDraw(ref Color lightColor)
         {
             List<Vector2> list = new List<Vector2>();

@@ -10,8 +10,9 @@ namespace tsorcRevamp.Items.Accessories.Magic
     [LegacyName("GrandWizardsHat")]
     public class EnchantedWizardsHat : ModItem
     {
-        public static float DmgMult = 10f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgMult);
+        public const float Dmg = 14f;
+        public const float CastSpeed = 10f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, CastSpeed);
         public override void SetStaticDefaults()
         {
         }
@@ -39,7 +40,8 @@ namespace tsorcRevamp.Items.Accessories.Magic
 
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Magic) *= 1f + DmgMult / 100f;
+            player.GetDamage(DamageClass.Magic) += Dmg / 100f;
+            player.GetAttackSpeed(DamageClass.Magic) += CastSpeed / 100f;
         }
 
     }

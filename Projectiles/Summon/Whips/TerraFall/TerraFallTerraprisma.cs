@@ -6,6 +6,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
+using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
@@ -70,6 +71,10 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
             ai156_blacklistedTargets.Clear();
             AI_156_Think(ai156_blacklistedTargets);
             Dust.NewDust(Projectile.Center, Projectile.width / 2, Projectile.height / 2, DustID.TerraBlade);
+        }
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(ModContent.BuffType<TerraFallShardDebuff>(), (int)(ModdedWhipProjectile.DefaultWhipDebuffDuration * 60 * Main.player[Projectile.owner].GetModPlayer<tsorcRevampPlayer>().SummonTagDuration));
         }
         private void AI_156_Think(List<int> blacklist)
         {
@@ -239,6 +244,20 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
             int result = -1;
             float num = -1f;
             NPC ownerMinionAttackTargetNPC = Projectile.OwnerMinionAttackTargetNPC;
+            for (int i = 0; i < 200; i++)
+            {
+                NPC nPC = Main.npc[i];
+                if (nPC.CanBeChasedBy(Projectile) && (nPC.boss || !blackListedTargets.Contains(i)) && !nPC.HasBuff(ModContent.BuffType<TerraFallShardDebuff>()))
+                {
+                    float num2 = nPC.Distance(center);
+                    if (!(num2 > 1000f) && (!(num2 > num) || num == -1f) && (skipBodyCheck || Projectile.CanHitWithOwnBody(nPC)))
+                    {
+                        num = num2;
+                        result = i;
+                    }
+                    return result;
+                }
+            }
             if (ownerMinionAttackTargetNPC != null && ownerMinionAttackTargetNPC.CanBeChasedBy(Projectile))
             {
                 bool flag = true;

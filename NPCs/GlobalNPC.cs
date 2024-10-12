@@ -61,7 +61,6 @@ namespace tsorcRevamp.NPCs
 
         public float SummonTagFlatDamage;
         public float SummonTagCriticalStrikeChance;
-        public float SummonTagCriticalStrikeChanceMultiplier;
         public float FinalSummonCriticalStrikeChance;
         public float SummonTagScalingDamage;
         public float SummonTagArmorPenetration;
@@ -76,6 +75,7 @@ namespace tsorcRevamp.NPCs
         public bool markedByPyromethane;
         public bool markedBySearingLash;
         public bool markedByTerraFall;
+        public bool markedByTerraFallShard;
         public bool markedByUrumi;
         public bool markedByRustedChain;
         public bool markedByLeatherWhip;
@@ -95,6 +95,7 @@ namespace tsorcRevamp.NPCs
         public Player CrystalNunchakuWielder;
 
         public int NightsCrackerStacks = 0;
+        public int TerraFallStacks = 0;
 
         public bool Scorched;
         public int ScorchMarks = 0;
@@ -283,6 +284,7 @@ namespace tsorcRevamp.NPCs
             markedByPyromethane = false;
             markedBySearingLash = false;
             markedByTerraFall = false;
+            markedByTerraFallShard = false;
             markedByUrumi = false;
             markedByLeatherWhip = false;
             markedBySnapthorn = false;
@@ -940,16 +942,15 @@ namespace tsorcRevamp.NPCs
         }
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            if (ProjectileID.Sets.IsAWhip[projectile.type] || projectile.DamageType == DamageClass.Summon)
-            {
-                modifiers.CritDamage -= 0.5f;
-            }
             Player projectileOwner = Main.player[projectile.owner];
             var modPlayerProjectileOwner = Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>();
+            if (ProjectileID.Sets.IsAWhip[projectile.type])
+            {
+                modifiers.CritDamage -= (200f - modPlayerProjectileOwner.WhipCritDamage) / 100f;
+            }
             float SummonTagDamageMultiplier = ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type];
             SummonTagFlatDamage = 0f;
             SummonTagCriticalStrikeChance = 0;
-            SummonTagCriticalStrikeChanceMultiplier = 1f;
             SummonTagScalingDamage = 0f;
             SummonTagArmorPenetration = 0f;
             #region Individual Whip debuff effects
@@ -974,13 +975,14 @@ namespace tsorcRevamp.NPCs
             {
                 SummonTagCriticalStrikeChance += Pyromethane.SummonTagCrit;
             }
-            if (markedByNightsCracker)
-            {
-            }
+            //if(markedByNightsCracker) is used by the whip itself
             //if (markedByPolarisLeash) only has a special effect
             //if (markedByDragoonLash) only has a special effect
-            if (markedByTerraFall)
+            //if(markedByTerraFall) is used by the whip itself
+            if (markedByTerraFallShard)
             {
+                SummonTagFlatDamage += TerraFallItem.TagDmg;
+                SummonTagCriticalStrikeChance += TerraFallItem.TagCrit;
             }
             if (markedByDetonationSignal)
             {
@@ -1156,8 +1158,7 @@ namespace tsorcRevamp.NPCs
                 modifiers.FlatBonusDamage += SummonTagFlatDamage * SummonTagDamageMultiplier * modPlayerProjectileOwner.SummonTagStrength;
                 modifiers.ScalingBonusDamage += SummonTagScalingDamage * SummonTagDamageMultiplier * modPlayerProjectileOwner.SummonTagStrength;
                 modifiers.ArmorPenetration += SummonTagArmorPenetration * modPlayerProjectileOwner.SummonTagStrength;
-                FinalSummonCriticalStrikeChance = (projectile.CritChance + SummonTagCriticalStrikeChance) * (1f + (SummonTagCriticalStrikeChance / 100f)) * SummonTagCriticalStrikeChanceMultiplier;
-                //SummonTagCriticalStrikeChance = (BaseSummonTagCriticalStrikeChance * (1f + (projectileOwner.GetTotalCritChance(DamageClass.Summon) / 100f)) * SummonTagCriticalStrikeChanceMultiplier);
+                FinalSummonCriticalStrikeChance = projectile.CritChance + (SummonTagCriticalStrikeChance * modPlayerProjectileOwner.SummonTagStrength);
 
                 modPlayerProjectileOwner.OverCrit((int)FinalSummonCriticalStrikeChance, projectile.DamageType, ref modifiers, out CritColorTier, ProjectileID.Sets.IsAWhip[projectile.type], projectile, npc.Hitbox);
 

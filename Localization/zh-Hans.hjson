@@ -6646,7 +6646,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.ChargedWhip}
 					Whip summons a damaging slash which applies a marking debuff up to {0} times
-					At max stacks the next slash consumes the marks to deal extra damage
+					At max stacks the next fully charged slash consumes the marks to deal extra damage
 					'Charge at the right time'
 					{$CommonItemTooltip.Whips}
 					''' */
@@ -8719,6 +8719,11 @@ Mods: {
 				DisplayName: 以太飞龙
 				Description: 以太飞龙为你而战
 			}
+
+			TerraFallShardDebuff: {
+				// DisplayName: Terra Fall Shard Debuff
+				// Description: Mods.tsorcRevamp.Buffs.TerraFallShardDebuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -9345,6 +9350,7 @@ Mods: {
 			// DominatrixThorn.DisplayName: Dominatrix Thorn
 			// SearingLashBat.DisplayName: Searing Lash Bat
 			// NightsCrackerTrail.DisplayName: Nights Cracker Trail
+			// TerraFallTrail.DisplayName: Terra Fall Trail
 		}
 
 		NPCs: {

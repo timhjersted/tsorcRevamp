@@ -9,12 +9,12 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Head)]
     public class WitchkingHelmet : ModItem
     {
-        public static float DmgAmp = 9f;
+        public static float Dmg = 19f;
         public static int MinionSlot = 1;
         public static int SentrySlot = 1;
-        public static float CritChance = 20f;
+        public static float CritChance = 25f;
         public static float TagStrength = 40f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DmgAmp, MinionSlot, SentrySlot, CritChance, TagStrength);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MinionSlot, SentrySlot, CritChance, TagStrength);
         public override void SetStaticDefaults()
         {
         }
@@ -28,11 +28,10 @@ namespace tsorcRevamp.Items.Armors.Summon
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Summon) *= 1f + DmgAmp / 100f;
+            player.GetDamage(DamageClass.Summon) += Dmg / 100f;
             player.maxMinions += MinionSlot;
             player.maxTurrets += SentrySlot;
             player.GetCritChance(DamageClass.Summon) += CritChance;
-            player.GetCritChance(DamageClass.Summon) *= 1f + CritChance / 100f;
             player.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength += TagStrength / 100f;
         }
         public override void ArmorSetShadows(Player player)

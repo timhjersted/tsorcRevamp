@@ -45,12 +45,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
                 player.ownedProjectileCounts[ModContent.ProjectileType<NightsCrackerTrail>()]++; //without this it'd spawn two trails because of extraupdate spawning them in the same tick, before their owned number increases
             }
         }
-        public override void CustomModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-        }
-        public override void CustomOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-        }
         public override bool PreDraw(ref Color lightColor)
         {
             List<Vector2> list = new List<Vector2>();
