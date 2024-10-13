@@ -196,19 +196,18 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.Hardmode);
 
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.GreatEnergyBeamScroll>())
+            {
+                shopCustomPrice = 3500,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>()))));
+
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.ManaBomb>())
             {
                 shopCustomPrice = 300,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.Hardmode);
 
-
-
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.GreatEnergyBeamScroll>())
-            {
-                shopCustomPrice = 3500,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>()))));
 
 
 
@@ -221,6 +220,12 @@ namespace tsorcRevamp.NPCs.Friendly
             shop.Add(new Item(ModContent.ItemType<ForgottenThunderBowScroll>())
             {
                 shopCustomPrice = 5000,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
+
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.Tomes.FlareTome>())
+            {
+                shopCustomPrice = 10000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
 

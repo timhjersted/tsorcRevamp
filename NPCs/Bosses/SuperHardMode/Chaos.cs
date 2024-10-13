@@ -508,7 +508,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.ChaosBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<FlareTome>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ElfinBow>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulOfChaos>(), 1, 2, 4));

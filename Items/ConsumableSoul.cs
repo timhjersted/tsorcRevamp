@@ -27,8 +27,8 @@ namespace tsorcRevamp.Items
             Item.useTurn = true;
             Item.value = 1;
             Item.consumable = true;
-            Item.useAnimation = 60; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
-            Item.useTime = 60;
+            Item.useAnimation = 30; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
+            Item.useTime = 30;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.rare = ItemRarityID.Green; // Mainly for colour consistency.
         }
@@ -254,8 +254,8 @@ namespace tsorcRevamp.Items
             Item.useTurn = true;
             Item.value = 1;
             Item.consumable = true;
-            Item.useAnimation = 120;
-            Item.useTime = 120;
+            Item.useAnimation = 60;
+            Item.useTime = 60;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.rare = ItemRarityID.Green; // Mainly for colour consistency.
         }
@@ -346,8 +346,8 @@ namespace tsorcRevamp.Items
             Item.useTurn = true;
             Item.value = 1;
             Item.consumable = true;
-            Item.useAnimation = 240; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
-            Item.useTime = 240;
+            Item.useAnimation = 120; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
+            Item.useTime = 120;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.rare = ItemRarityID.Green; // Mainly for colour consistency.
         }

@@ -223,6 +223,18 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
+            shop.Add(new Item(ModContent.ItemType<Items.Darksign>())
+            {
+                shopCustomPrice = 5,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+            shop.Add(new Item(ModContent.ItemType<Items.MastersScroll>())
+            {
+                shopCustomPrice = 5,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
 
 
             shop.Add(new Item(ModContent.ItemType<Items.Accessories.Defensive.CovenantOfArtorias>())
