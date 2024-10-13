@@ -1434,10 +1434,11 @@ namespace tsorcRevamp
             orig(self, i);
         }
 
-        public const float BeetleSummonTagStrengthBoost = 50;
+        public const float BeetleSummonTagStrengthBoost = 33f;
         public const float BeetleSummonCritChance = 7f;
+        public const float ScrollSummonTagDurationBoost = 33f;
         public const float ScrollSummonCritChance = 10f;
-        public const float ScrollSummonTagDurationBoost = 50;
+        public const float ScarabTagBoost = 20f;
         public const float ScarabSummonCritChance = BeetleSummonCritChance + ScrollSummonCritChance - 6f;
         private static void On_Player_ApplyEquipFunctional(On_Player.orig_ApplyEquipFunctional orig, Player self, Item currentItem, bool hideVisual)
         {
@@ -1450,21 +1451,20 @@ namespace tsorcRevamp
             {
                 self.GetDamage(DamageClass.Summon) -= 0.15f;
                 self.GetCritChance(DamageClass.Summon) += BeetleSummonCritChance;
-                modPlayer.SummonTagStrength += BeetleSummonTagStrengthBoost / 100f;
+                modPlayer.HerculesBeetle = true;
             }
             if (currentItem.type == ItemID.NecromanticScroll)
             {
                 self.GetDamage(DamageClass.Summon) -= 0.1f;
                 self.maxMinions -= 1;
                 self.GetCritChance(DamageClass.Summon) += ScrollSummonCritChance;
-                modPlayer.SummonTagDuration += ScrollSummonTagDurationBoost / 100f;
+                modPlayer.NecromanticScroll = true;
             }
             if (currentItem.type == ItemID.PapyrusScarab)
             {
                 self.GetDamage(DamageClass.Summon) -= 0.15f;
                 self.GetCritChance(DamageClass.Summon) += ScarabSummonCritChance;
-                self.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength += BeetleSummonTagStrengthBoost / 100f;
-                modPlayer.SummonTagDuration += ScrollSummonTagDurationBoost / 100f;
+                modPlayer.PapyrusScarab = true;
             }
             orig(self, currentItem, hideVisual);
         }

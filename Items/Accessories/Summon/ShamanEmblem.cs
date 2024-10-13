@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Accessories.Summon
 {
     public class ShamanEmblem : ModItem
     {
-        public static float SummonDamage = 16;
-        public static int MaximumTurretIncrease = 3;
+        public const float SummonDamage = 14f;
+        public const int MaximumTurretIncrease = 2;
 
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonDamage, MaximumTurretIncrease);
         public override void SetStaticDefaults()

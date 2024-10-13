@@ -512,7 +512,7 @@ Mods: {
 					{$CommonItemTooltip.Summon.CritChance@1}
 					{$CommonItemTooltip.Summon.Knockback}
 					'''
-				NecromanticScroll: 
+				NecromanticScroll:
 					'''
 					{$CommonItemTooltip.Summon.TagDuration}
 					{$CommonItemTooltip.Summon.CritChance@1}
@@ -520,8 +520,9 @@ Mods: {
 				PapyrusScarab:
 					'''
 					{$CommonItemTooltip.Summon.TagStrength}
-					{$CommonItemTooltip.Summon.TagDuration@1}
-					{$CommonItemTooltip.Summon.CritChance@2}
+					{$CommonItemTooltip.Summon.TagDuration}
+					Tag boosts do not stack with downgrades
+					{$CommonItemTooltip.Summon.CritChance@1}
 					{$CommonItemTooltip.Summon.Knockback}
 					'''
 				FlinxFurChainedSetBonus: "{$CommonItemTooltip.IncreasesMaxMinionsBy}"
@@ -1055,8 +1056,7 @@ Mods: {
 				DisplayName: Condition Overload
 				Tooltip:
 					'''
-					Enemies take exponentially increasing
-					bonus damage for every debuff affecting them.
+					Enemies take bonus damage for every debuff affecting them.
 					"H Deimos CO farm 3/4 LF despoil"
 					Debuffs inflicted by whips excluded.
 					'''
@@ -1649,7 +1649,7 @@ Mods: {
 
 			EnchantedWizardsHat: {
 				DisplayName: Enchanted Wizard's Hat
-				Tooltip: 
+				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMagicDamage}
 					{$CommonItemTooltip.Magic.AtkSpeed@1}
@@ -5851,7 +5851,7 @@ Mods: {
 				Tooltip: Inflicts 1-2 random debuffs on-hit
 				Empowered:
 					'''
-					Also inflicts 1-2 random whip debuffs each hit
+					Now inflicts 1 random whip debuff each hit instead
 					Scales with whip damage, range and summon crit instead of melee stats
 					'''
 			}
@@ -7804,7 +7804,7 @@ Mods: {
 					Reduces melee damage dealt by {1}%
 					'''
 				SolarShield: "{$CommonItemTooltip.DRStat}, repel enemies when taking damage"
-				WeaponImbue: "Increases melee and whip crit by {0}%"
+				WeaponImbue: Increases melee and whip crit by {0}%
 			}
 
 			Curse: {
@@ -8727,6 +8727,11 @@ Mods: {
 				DisplayName: Etherian Wyvern Buff
 				Description: The etherian wyvern will fight for you
 			}
+
+			TerraFallShardDebuff: {
+				DisplayName: Terra Fall Shard Debuff
+				Description: Mods.tsorcRevamp.Buffs.TerraFallShardDebuff.Description
+			}
 		}
 
 		Projectiles: {
@@ -9353,6 +9358,7 @@ Mods: {
 			DominatrixThorn.DisplayName: Dominatrix Thorn
 			SearingLashBat.DisplayName: Searing Lash Bat
 			NightsCrackerTrail.DisplayName: Nights Cracker Trail
+			TerraFallTrail.DisplayName: Terra Fall Trail
 		}
 
 		NPCs: {

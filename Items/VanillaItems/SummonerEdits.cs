@@ -48,35 +48,35 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.SpiderStaff)
             {
-                item.damage = 23;
+                item.damage = 20;
             }
             if (item.type == ItemID.SanguineStaff)
             {
-                item.damage = 31;
+                item.damage = 26;
             }
             if (item.type == ItemID.PirateStaff)
             {
-                item.damage = 40;
+                item.damage = 34;
             }
             if (item.type == ItemID.Smolstar)
             {
-                item.damage = 6;
+                item.damage = 5;
             }
             if (item.type == ItemID.OpticStaff)
             {
-                item.damage = 22;
+                item.damage = 20;
             }
             if (item.type == ItemID.PygmyStaff)
             {
-                item.damage = 36;
+                item.damage = 28;
             }
             if (item.type == ItemID.StormTigerStaff)
             {
-                item.damage = 34;
+                item.damage = 25;
             }
             if (item.type == ItemID.DeadlySphereStaff)
             {
-                item.damage = 35;
+                item.damage = 26;
             }
             if (item.type == ItemID.RavenStaff)
             {
@@ -84,11 +84,11 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.XenoStaff)
             {
-                item.damage = 29;
+                item.damage = 22;
             }
             if (item.type == ItemID.TempestStaff)
             {
-                //not gonna nerf this so it might actually have a use
+                item.damage = 40;
             }
             if (item.type == ItemID.StardustCellStaff)
             {
@@ -126,14 +126,14 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.StaffoftheFrostHydra) //buff, using static immunity frame in tml1.4.4, vanilla damage is 100
             {//now uses local iframes in globalprojectile
-                item.damage = 110;
+                item.damage = 100;
             }
             #endregion
         }
         public static int LeatherWhipTagDmg = 4;
         public static int SnapthornTagDmg = 6;
         public static int SpinalTapTagDmg = 7;
-        public static float FirecrackerScalingDmg = 275f;
+        public static float FirecrackerScalingDmg = 200f;
         public static int CoolWhipTagDmg = 6;
         public static int DurendalTagDmg = 9;
         public static int DarkHarvestTagDmg = 10;
@@ -143,12 +143,20 @@ namespace tsorcRevamp.Items.VanillaItems
         public static float KaleidoscopeTagCritChance = 10;
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
-            if (item.DamageType == DamageClass.Summon || item.DamageType == DamageClass.SummonMeleeSpeed)
+            if (item.DamageType == DamageClass.Summon)
             {
                 int ttindex = tooltips.FindIndex(t => t.Name == "Damage");
                 if (ttindex != -1)
                 {
                     tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CritChance", (int)(item.crit + Main.LocalPlayer.GetTotalCritChance(DamageClass.Summon)) + Language.GetTextValue("LegacyTooltip.41")));
+                }
+            }
+            if (item.DamageType == DamageClass.SummonMeleeSpeed)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Damage");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CritChance", (int)(item.crit + Main.LocalPlayer.GetTotalCritChance(DamageClass.SummonMeleeSpeed)) + Language.GetTextValue("LegacyTooltip.41")));
                 }
             }
             if (item.type == ItemID.BlandWhip)
@@ -294,7 +302,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
                 if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagStrengthDurationBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.PapyrusScarab").FormatWith(MethodSwaps.BeetleSummonTagStrengthBoost, MethodSwaps.ScrollSummonTagDurationBoost, MethodSwaps.ScarabSummonCritChance)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "SummonTagStrengthDurationBoost", Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.PapyrusScarab").FormatWith(MethodSwaps.ScarabTagBoost, MethodSwaps.ScarabSummonCritChance)));
                 }
                 int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip1");
                 if (ttindex1 != -1)

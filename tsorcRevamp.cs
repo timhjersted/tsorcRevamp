@@ -1336,7 +1336,7 @@ namespace tsorcRevamp
         };
             WhipRanges = new Dictionary<int, float>()
         {
-            { ProjectileID.BlandWhip, 0.65f },
+            { ProjectileID.BlandWhip, 0.7f },
             { ProjectileID.ThornWhip, 0.8f },
             { ProjectileID.BoneWhip, 0.9f },
             { ProjectileID.FireWhip, 1.25f },

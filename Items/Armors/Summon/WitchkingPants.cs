@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Armors.Summon
         public static int MinionSlot = 1;
         public static int SentrySlot = 1;
         public static float MoveSpeed = 44f;
-        public static float TagDuration = 40f;
+        public static float TagDuration = 30f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MinionSlot, SentrySlot, MoveSpeed, TagDuration);
         public override void SetStaticDefaults()
         {

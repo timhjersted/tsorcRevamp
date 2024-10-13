@@ -943,14 +943,14 @@ namespace tsorcRevamp
                 {
                     for (int i = 1; i < critLevel; i++)
                     {
-                        modifiers.CritDamage *= 2;
+                        modifiers.CritDamage += 1;
                         modifiers.HideCombatText();
                         critColorTier++;
                     }
                 }
                 if (Main.rand.Next(1, 101) <= (float)CritChance - (100 * critLevel))
                 {
-                    modifiers.CritDamage *= 2;
+                    modifiers.CritDamage += 1;
                     modifiers.HideCombatText();
                     critColorTier++;
                 }
@@ -962,14 +962,14 @@ namespace tsorcRevamp
                 {
                     for (int i = 1; i < critLevel; i++)
                     {
-                        modifiers.CritDamage *= 2;
+                        modifiers.CritDamage += 1;
                         modifiers.HideCombatText();
                         critColorTier++;
                     }
                 }
                 if (Main.rand.Next(1, 101) <= (float)CritChance - (100 * critLevel))
                 {
-                    modifiers.CritDamage *= 2;
+                    modifiers.CritDamage += 1;
                     modifiers.HideCombatText();
                     critColorTier++;
                 }
@@ -983,14 +983,14 @@ namespace tsorcRevamp
                     {
                         for (int i = 0; i < critLevel; i++)
                         {
-                            modifiers.CritDamage *= 2;
+                            modifiers.CritDamage += 1;
                             modifiers.HideCombatText();
                             critColorTier++;
                         }
                     }
                     if (Main.rand.Next(1, 101) <= (float)CritChance - (100 * critLevel))
                     {
-                        modifiers.CritDamage *= 2;
+                        modifiers.CritDamage += 1;
                         modifiers.HideCombatText();
                         critColorTier++;
                     }

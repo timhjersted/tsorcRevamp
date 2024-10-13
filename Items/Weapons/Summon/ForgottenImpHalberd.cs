@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
         public override int Height => 54;
         public override int MinionProjectileType => ModContent.ProjectileType<ForgottenImpProjectile>();
         public override int MinionBuffType => ModContent.BuffType<ForgottenImpBuff>();
-        public const int BaseDamage = 25;
+        public const int BaseDamage = 23;
         public override int BaseDmg => BaseDamage;
         public override int Crit => 0;
         public const float RequiredSlots = 1f;

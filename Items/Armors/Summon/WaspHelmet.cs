@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     [AutoloadEquip(EquipType.Head)]
     public class WaspHelmet : ModItem
     {
-        public static float TagStrength = 25f;
+        public static float TagStrength = 20f;
         public static float CritChance = 10f;
         public static int MinionSlot = 1;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(TagStrength, MinionSlot, CritChance);

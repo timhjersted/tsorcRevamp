@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Accessories.Damage
 {
     public class ConditionOverload : ModItem
     {
-
+        public const float Dmg = 11f;
         public override void SetStaticDefaults()
         {
         }

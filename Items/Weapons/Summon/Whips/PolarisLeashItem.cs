@@ -12,8 +12,8 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     public class PolarisLeashItem : ModItem
     {
         public const int BaseDamage = 66;
-        public static float PolarisDamageScaling = 66;
-        public static float StarDamageScaling = 33;
+        public static float PolarisDamageScaling = 50;
+        public static float StarDamageScaling = 20;
         public const int BuffDuration = 10;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PolarisDamageScaling, StarDamageScaling);
         public override void SetStaticDefaults()

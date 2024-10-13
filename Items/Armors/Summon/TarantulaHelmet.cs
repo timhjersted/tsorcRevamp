@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public static float WhipDmg = 25f;
         public static float WhipRange = 30f;
-        public static float SummonTagDuration = 33f;
+        public static float SummonTagDuration = 22f;
         public static float CritChance = 10f;
         public static float AtkSpeed = 12f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(WhipDmg, WhipRange, AtkSpeed, tsorcRevampPlayer.MythrilOcrichalcumCritDmg, SummonTagDuration, CritChance);

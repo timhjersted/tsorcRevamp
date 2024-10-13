@@ -66,6 +66,10 @@ namespace tsorcRevamp
 
         public bool ConditionOverload = true;
 
+        public bool HerculesBeetle = false;
+        public bool NecromanticScroll = false;
+        public bool PapyrusScarab = false;
+
         public float WhipCritDamage = 135f;
 
         public int CurseLevel = 1;
@@ -101,7 +105,7 @@ namespace tsorcRevamp
         public float BotCConquerorStacks = 0;
         public int BotCConquerorMaxStacks = 10;
         public float BotCConquerorBonus = 0.08f;
-        public float BotCFullConquerorBonusTagDuration = 0.2f;
+        public float BotCFullConquerorBonusTagDuration = 0.1f;
 
         public bool SteraksGage = false;
         public bool InfinityEdge = false;
@@ -1140,7 +1144,19 @@ namespace tsorcRevamp
 
                 #endregion
             }
-
+            if (PapyrusScarab && !HerculesBeetle && !NecromanticScroll)
+            {
+                SummonTagStrength += MethodSwaps.ScarabTagBoost / 100f;
+                SummonTagDuration += MethodSwaps.ScarabTagBoost / 100f;
+            }
+            if (HerculesBeetle)
+            {
+                SummonTagStrength += MethodSwaps.BeetleSummonTagStrengthBoost / 100f;
+            }
+            if (NecromanticScroll)
+            {
+                SummonTagDuration += MethodSwaps.ScrollSummonTagDurationBoost / 100f;
+            }
             if (SeveringDuskDashTime > 0)
             {
                 Player.GetDamage(DamageClass.Melee) += SeveringDusk.DashBonusDmg / 100f;

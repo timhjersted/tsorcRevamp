@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override int WhipWidth => 10;
         public override int WhipHeight => 12;
         public override int WhipSegments => 10;
-        public override float WhipRangeMult => 0.6f;
+        public override float WhipRangeMult => 0.65f;
         public override int DustId => DustID.Iron;
         public override int DustWidth => 10;
         public override int DustHeight => 10;

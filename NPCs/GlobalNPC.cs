@@ -904,7 +904,7 @@ namespace tsorcRevamp.NPCs
             }
             if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().ConditionOverload)
             {
-                int debuffCounter = 1;
+                float debuffCounter = 0;
                 foreach (int buffType in npc.buffType)
                 {
                     if (Main.debuff[buffType] && !(BuffID.Sets.IsATagBuff[buffType]))
@@ -936,8 +936,10 @@ namespace tsorcRevamp.NPCs
                         debuffCounter++;
                     }
                 }
-                double scalar = Math.Pow(1.15, debuffCounter - 1); //was 1.2 before, then 1.1
-                modifiers.FinalDamage *= (float)scalar;
+                if (debuffCounter > 1)
+                {
+                    modifiers.FinalDamage += debuffCounter * ConditionOverload.Dmg / 100f;
+                }
             }
         }
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
@@ -1236,7 +1238,7 @@ namespace tsorcRevamp.NPCs
             {
                 modifiers.FinalDamage *= 4;
             }
-            if (item.DamageType == DamageClass.SummonMeleeSpeed)
+            /*if (item.DamageType == DamageClass.SummonMeleeSpeed)
             {
                 int critLevel = (int)(Math.Floor(player.GetWeaponCrit(player.HeldItem) / 100f));
                 if (Main.rand.Next(1, 101) <= player.GetWeaponCrit(player.HeldItem) - (100 * critLevel))
@@ -1248,17 +1250,17 @@ namespace tsorcRevamp.NPCs
                     modifiers.SetCrit();
                     if (Main.rand.Next(1, 101) <= player.GetWeaponCrit(player.HeldItem) - (100 * critLevel))
                     {
-                        modifiers.CritDamage *= 2;
+                        modifiers.CritDamage += 1;
                     }
                 }
                 if (critLevel > 1)
                 {
                     for (int i = 1; i < critLevel; i++)
                     {
-                        modifiers.CritDamage *= 2;
+                        modifiers.CritDamage += 1;
                     }
                 }
-            }
+            }*/
         }
         public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {

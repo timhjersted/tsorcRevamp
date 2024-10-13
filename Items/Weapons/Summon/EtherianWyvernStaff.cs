@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
     class EtherianWyvernStaff : ModItem
     {
         public const float SlotsRequired = 1f;
-        public const int BaseDmg = 25;
+        public const int BaseDmg = 21;
         public const int DebuffDuration = 7;
         public const float SummonTagDmgMult = 75f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagDmgMult);
