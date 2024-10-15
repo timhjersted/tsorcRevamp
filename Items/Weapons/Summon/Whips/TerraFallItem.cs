@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -15,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         public const int MaxStacks = 4;
         public const int TagDmg = 20;
         public const int TagCrit = 12;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(TagDmg, TagCrit, MaxStacks);
+        //public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(TagDmg, TagCrit, MaxStacks);
         public override void SetStaticDefaults()
         {
             ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
@@ -43,6 +44,15 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.channel = true;
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            var modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
+            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+            if (ttindex != -1)
+            {
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "TagDmg", Language.GetTextValue(Tooltip.Key + "0", (int)(TagDmg * modPlayer.SummonTagStrength), (int)(TagCrit * modPlayer.SummonTagStrength), MaxStacks)));
+            }
         }
         public override bool MeleePrefix()
         {

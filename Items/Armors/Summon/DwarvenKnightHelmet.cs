@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     class DwarvenKnightHelmet : ModItem
     {
         public static float Dmg = 7f;
-        public static float TagStrength = 10f;
+        public static float TagStrength = 7f;
         public static float CritChance = 7f;
         public static int MinionSlots = 1;
         public static int SentrySlots = 1;

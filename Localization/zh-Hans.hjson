@@ -6614,6 +6614,14 @@ Mods: {
 					{$CommonItemTooltip.CritDmg@7}
 					{$CommonItemTooltip.Whips}
 					'''
+				/* Tooltip0:
+					'''
+					Whip summons a damaging slash which applies a marking debuff up to {2} times
+					Summons a Terraprisma after fully stacking the mark
+					At max stacks the next fully charged slash consumes the marks to deal extra damage
+					The Terraprisma applies {0} tag damage and {1}% tag crit
+					{$CommonItemTooltip.Whips}
+					''' */
 			}
 
 			DragoonLash: {
@@ -6660,6 +6668,12 @@ Mods: {
 					{$CommonItemTooltip.Whips}
 					施加诅咒焰减益
 					'''
+				/* Tooltip0:
+					'''
+					{$CommonItemTooltip.SummonTagDamage}
+					{$CommonItemTooltip.Whips}
+					Inflicts Cursed Inferno
+					''' */
 			}
 
 			Pyromethane: {
@@ -6670,6 +6684,12 @@ Mods: {
 					{$CommonItemTooltip.Whips}
 					施加灵液减益
 					'''
+				/* Tooltip0:
+					'''
+					{$CommonItemTooltip.PercentSummonTagCritChance}
+					{$CommonItemTooltip.Whips}
+					Inflicts Ichor
+					''' */
 			}
 
 			CrystalNunchaku: {
@@ -6738,6 +6758,11 @@ Mods: {
 					{$CommonItemTooltip.Summon.TagArmorPen}
 					{$CommonItemTooltip.SummonTagDamage@1}
 					'''
+				/* Tooltip0:
+					'''
+					{$CommonItemTooltip.Summon.TagArmorPen}
+					'This rust is almost infectious'
+					''' */
 			}
 
 			Galeforce: {

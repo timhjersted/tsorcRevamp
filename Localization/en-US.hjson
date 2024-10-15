@@ -1204,7 +1204,7 @@ Mods: {
 				Tooltip:
 					'''
 					One of the rings worn by Artorias.
-					Inherits Ring of Clarity immunities
+					Inherits {$Items.RingOfClarity.DisplayName} immunities
 					Press Wolf Ring to massively increase life regen and damage taken temporarily
 					Removes the life regen if hit during the effect and puts it on a long cooldown
 					{$CommonItemTooltip.IncreasesDefenseBy} within the Abyss
@@ -6617,13 +6617,13 @@ Mods: {
 
 			TerraFallItem: {
 				DisplayName: Terra Fall
-				Tooltip:
+				Tooltip: "{$CommonItemTooltip.Summon.ChargedWhip}"
+				Tooltip0:
 					'''
-					{$CommonItemTooltip.Summon.ChargedWhip}
 					Whip summons a damaging slash which applies a marking debuff up to {2} times
 					Summons a Terraprisma after fully stacking the mark
 					At max stacks the next fully charged slash consumes the marks to deal extra damage
-					The Terraprisma applies {0} tag damage and {1} tag crit
+					The Terraprisma applies {0} tag damage and {1}% tag crit
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -6665,7 +6665,8 @@ Mods: {
 
 			Pyrosulfate: {
 				DisplayName: Pyrosulfate
-				Tooltip:
+				Tooltip: ""
+				Tooltip0:
 					'''
 					{$CommonItemTooltip.SummonTagDamage}
 					{$CommonItemTooltip.Whips}
@@ -6675,7 +6676,8 @@ Mods: {
 
 			Pyromethane: {
 				DisplayName: Pyromethane
-				Tooltip:
+				Tooltip: ""
+				Tooltip0:
 					'''
 					{$CommonItemTooltip.PercentSummonTagCritChance}
 					{$CommonItemTooltip.Whips}
@@ -6742,7 +6744,8 @@ Mods: {
 
 			RustedChain: {
 				DisplayName: Rusted Chain
-				Tooltip:
+				Tooltip: ""
+				Tooltip0:
 					'''
 					{$CommonItemTooltip.Summon.TagArmorPen}
 					'This rust is almost infectious'

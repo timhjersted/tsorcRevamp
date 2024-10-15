@@ -169,7 +169,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
 
         public override bool? CanHitNPC(NPC target)
         {
-            return target == this.target;
+            if (!target.dontTakeDamage && !target.friendly)
+            {
+                return target == this.target;
+            }
+            else
+            {
+                return target == null;
+            }
         }
 
         public override void SetDefaults()
@@ -192,8 +199,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
 
         public override void AI()
         {
-            if (target == null) Projectile.Kill();
-            else Projectile.Center = target.Center;
+            if (target == null)
+            {
+                Projectile.Kill();
+            }
+            else
+            {
+                Projectile.Center = target.Center;
+            }
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

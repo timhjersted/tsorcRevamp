@@ -28,15 +28,22 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash
 
         public override void AI()
         {
-            if (Main.myPlayer == Projectile.owner && Main.MouseWorld != Projectile.Center)
-            {
-                Projectile.Center = Main.MouseWorld;
-                if (Main.GameUpdateCount % 6 == 0)
-                {
-                    Projectile.netUpdate = true;
-                }
-            }
             Player player = Main.player[Projectile.owner];
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+
+            Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().CursorPosition = Main.MouseWorld; //this must be LocalPlayer because it's only supposed to set your own cursor position to that value, since it's a player instanced value
+
+            if (Main.netMode == NetmodeID.MultiplayerClient && Main.GameUpdateCount % 6 == 0)
+            {
+                ModPacket cursorPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                cursorPacket.Write(tsorcPacketID.SyncOwnerCursor);
+                cursorPacket.Write((byte)player.whoAmI);
+                cursorPacket.WriteVector2(player.GetModPlayer<tsorcRevampPlayer>().CursorPosition);
+                cursorPacket.Send();
+            }
+
+            Projectile.velocity = Projectile.Center.DirectionTo(modPlayer.CursorPosition) * 10;
+
             if (player.dead || !player.active)
             {
                 player.ClearBuff(ModContent.BuffType<PolarisLeashBuff>());
@@ -47,7 +54,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.PolarisLeash
             }
             Dust.NewDust(Projectile.Center, 10, 10, DustID.IceRod, 0f, 0f, 150, Color.MediumSpringGreen, 1f);
             Lighting.AddLight(Projectile.Center, Color.MediumSpringGreen.ToVector3() * 1f);
-            Projectile.rotation += 0.03f;
+            Projectile.rotation = Projectile.velocity.ToRotation();
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public static float WhipDmg = 16f;
         public static float AtkSpeed = 8f;
-        public static float TagDuration = 10f;
+        public static float TagDuration = 7f;
         public static float CritChance = 5f;
         public static float WhipRange = 30f;
         public static int LifeRegen = 3;

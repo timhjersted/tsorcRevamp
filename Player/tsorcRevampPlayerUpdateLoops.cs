@@ -411,6 +411,10 @@ namespace tsorcRevamp
             WolfRing = false;
             BarrierRing = false;
 
+            HerculesBeetle = false;
+            NecromanticScroll = false;
+            PapyrusScarab = false;
+
             BrokenSpirit = false;
 
             MythrilOrichalcumCritDamage = false;
@@ -1144,18 +1148,18 @@ namespace tsorcRevamp
 
                 #endregion
             }
-            if (PapyrusScarab && !HerculesBeetle && !NecromanticScroll)
+            if (PapyrusScarab)
             {
-                SummonTagStrength += MethodSwaps.ScarabTagBoost / 100f;
-                SummonTagDuration += MethodSwaps.ScarabTagBoost / 100f;
+                SummonTagStrength += SummonerEdits.ScarabTagBoost / 100f * (HerculesBeetle ? 0 : 1f);
+                SummonTagDuration += SummonerEdits.ScarabTagBoost / 100f * (NecromanticScroll ? 0 : 1f);
             }
             if (HerculesBeetle)
             {
-                SummonTagStrength += MethodSwaps.BeetleSummonTagStrengthBoost / 100f;
+                SummonTagStrength += SummonerEdits.BeetleSummonTagStrengthBoost / 100f;
             }
             if (NecromanticScroll)
             {
-                SummonTagDuration += MethodSwaps.ScrollSummonTagDurationBoost / 100f;
+                SummonTagDuration += SummonerEdits.ScrollSummonTagDurationBoost / 100f;
             }
             if (SeveringDuskDashTime > 0)
             {

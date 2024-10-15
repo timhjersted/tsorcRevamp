@@ -146,17 +146,6 @@ namespace tsorcRevamp.NPCs.Friendly
             },
             Condition.DownedEyeOfCthulhu);
 
-
-
-            shop.Add(new Item(ModContent.ItemType<Items.Accessories.Ranged.InfinityEdge>())
-            {
-                shopCustomPrice = 1300,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            },
-            Condition.DownedEyeOfCthulhu);
-
-
-
             shop.Add(new Item(ModContent.ItemType<Items.ItemCrates.RoyalThrowingSpearCrate>())
             {
                 shopCustomPrice = 12,

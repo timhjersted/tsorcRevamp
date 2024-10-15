@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {
     public class StarForger : RuneterraDragon
     {
-        public override float Scale => 0.8f;
+        public override float Scale => 0.6f;
         public override int BuffType => ModContent.BuffType<CenterOfTheUniverseBuff>();
         public override int DebuffType => ModContent.BuffType<SunburnDebuff>();
         public override int PairedProjectileType => ModContent.ProjectileType<CenterOfTheUniverseStar>();

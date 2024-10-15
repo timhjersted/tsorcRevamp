@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             Projectile.hostile = false;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
-            Projectile.DamageType = DamageClass.Magic;
+            Projectile.DamageType = DamageClass.Ranged;
             Projectile.light = 1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;

@@ -40,8 +40,9 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             if (Main.myPlayer == player.whoAmI && player.ownedProjectileCounts[ModContent.ProjectileType<TerraFallTrail>()] == 0)
             {
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Projectile.WhipPointsForCollision[points.Count - 1], ModContent.ProjectileType<TerraFallTrail>(), Projectile.damage, Projectile.knockBack, player.whoAmI, Projectile.whoAmI, (ChargeTime >= MaxChargeTime) ? 1 : 0, ChargeTime);
+                Projectile Trail = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), player.Center, Projectile.WhipPointsForCollision[points.Count - 1], ModContent.ProjectileType<TerraFallTrail>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, Projectile.whoAmI, player.itemAnimationMax, ChargeTime);
                 player.ownedProjectileCounts[ModContent.ProjectileType<TerraFallTrail>()]++; //without this it'd spawn two trails because of extraupdate spawning them in the same tick, before their owned number increases
+                Trail.netUpdate = true;
             }
         }
         public override bool PreDraw(ref Color lightColor)

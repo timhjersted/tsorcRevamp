@@ -241,6 +241,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
             ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = ScorchingPoint.DragonSummonTagDmgMult / 100f;
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 999999999;
         }
         SoundStyle BreathLoopStyle;
         SlotId BreathLoopID;
@@ -363,6 +364,10 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
         }
         public override void AI()
         {
+            if (Main.GameUpdateCount % 120 == 0)
+            {
+                Projectile.netUpdate = true;
+            }
             Player player = Main.player[Projectile.owner];
             if (player.HasBuff(BuffType))
             {
@@ -376,24 +381,30 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             //I figure this whole area needs syncing
 
-            if (Main.myPlayer == player.whoAmI)
+            Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().CursorPosition = Main.MouseWorld;
+
+            if (Main.netMode == NetmodeID.MultiplayerClient && Main.GameUpdateCount % 6 == 0)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().CursorPosition = Main.MouseWorld;
+                ModPacket cursorPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                cursorPacket.Write(tsorcPacketID.SyncOwnerCursor);
+                cursorPacket.Write((byte)player.whoAmI);
+                cursorPacket.WriteVector2(player.GetModPlayer<tsorcRevampPlayer>().CursorPosition);
+                cursorPacket.Send();
             }
+
 
             if (player.GetModPlayer<tsorcRevampPlayer>().InterstellarBoost)
             {
                 Projectile.localNPCHitCooldown = BaseAttackSpeed / 2;
             }
-            else { Projectile.localNPCHitCooldown = BaseAttackSpeed; }
+            else 
+            { 
+                Projectile.localNPCHitCooldown = BaseAttackSpeed; 
+            }
 
 
             Vector2 movementVec = player.GetModPlayer<tsorcRevampPlayer>().CursorPosition - Projectile.Center;
 
-            if (Main.GameUpdateCount % 6 == 0)
-            {
-                Projectile.netUpdate = true;
-            }
 
             //until here
 
@@ -435,7 +446,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 
             Projectile.rotation = movementVec.ToRotation() - (Projectile.velocity.X > 0f ? 0f : MathF.PI);
 
-            NPC targetMob = GetTargetWithinXDegree(Main.player[Projectile.owner], 300f, out bool keepCharge, out bool flip);
+            NPC targetMob = GetTargetWithinXDegree(player, 300f, out bool keepCharge, out bool flip);
 
             int dir = 1;
             if (Projectile.velocity.X < 0)

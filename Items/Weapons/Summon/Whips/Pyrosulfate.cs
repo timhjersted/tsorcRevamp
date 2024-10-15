@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -10,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     public class Pyrosulfate : ModItem
     {
         public static float SummonTagDamage = 9;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagDamage);
+        //public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagDamage);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
@@ -35,6 +36,14 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
             Item.useAnimation = 30;
             Item.noMelee = true;
             Item.noUseGraphic = true;
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+            if (ttindex != -1)
+            {
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "TagDmg", Language.GetTextValue(Tooltip.Key + "0", (int)(SummonTagDamage * Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength))));
+            }
         }
         public override bool MeleePrefix()
         {

@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Summon.ForgottenImp
         public override void CustomSetDefaults()
         {
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 40;
+            Projectile.localNPCHitCooldown = 10;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {

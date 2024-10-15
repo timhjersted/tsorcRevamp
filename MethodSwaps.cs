@@ -1434,12 +1434,6 @@ namespace tsorcRevamp
             orig(self, i);
         }
 
-        public const float BeetleSummonTagStrengthBoost = 33f;
-        public const float BeetleSummonCritChance = 7f;
-        public const float ScrollSummonTagDurationBoost = 33f;
-        public const float ScrollSummonCritChance = 10f;
-        public const float ScarabTagBoost = 20f;
-        public const float ScarabSummonCritChance = BeetleSummonCritChance + ScrollSummonCritChance - 6f;
         private static void On_Player_ApplyEquipFunctional(On_Player.orig_ApplyEquipFunctional orig, Player self, Item currentItem, bool hideVisual)
         {
             var modPlayer = self.GetModPlayer<tsorcRevampPlayer>();
@@ -1450,20 +1444,20 @@ namespace tsorcRevamp
             if (currentItem.type == ItemID.HerculesBeetle)
             {
                 self.GetDamage(DamageClass.Summon) -= 0.15f;
-                self.GetCritChance(DamageClass.Summon) += BeetleSummonCritChance;
+                self.GetCritChance(DamageClass.Summon) += SummonerEdits.BeetleSummonCritChance;
                 modPlayer.HerculesBeetle = true;
             }
             if (currentItem.type == ItemID.NecromanticScroll)
             {
                 self.GetDamage(DamageClass.Summon) -= 0.1f;
                 self.maxMinions -= 1;
-                self.GetCritChance(DamageClass.Summon) += ScrollSummonCritChance;
+                self.GetCritChance(DamageClass.Summon) += SummonerEdits.ScrollSummonCritChance;
                 modPlayer.NecromanticScroll = true;
             }
             if (currentItem.type == ItemID.PapyrusScarab)
             {
                 self.GetDamage(DamageClass.Summon) -= 0.15f;
-                self.GetCritChance(DamageClass.Summon) += ScarabSummonCritChance;
+                self.GetCritChance(DamageClass.Summon) += SummonerEdits.ScarabSummonCritChance;
                 modPlayer.PapyrusScarab = true;
             }
             orig(self, currentItem, hideVisual);
@@ -1523,12 +1517,11 @@ namespace tsorcRevamp
                 self.manaRegenDelay = MeleeEdits.ManaDelay;
             }
         }
-        public const float ManaRestorationCuffsPercentage = 25;
         private static void On_Player_OnHurt_Part2(On_Player.orig_OnHurt_Part2 orig, Player self, Player.HurtInfo info)
         {
             if (self.magicCuffs && self.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                int ManaGain = (int)(info.SourceDamage * (ManaRestorationCuffsPercentage / 100f));
+                int ManaGain = (int)(info.SourceDamage * (MagicEdits.BotCManaRestorationCuffsPercentage / 100f));
                 self.statMana += ManaGain;
                 if (self.statMana > self.statManaMax2)
                 {
@@ -1539,12 +1532,11 @@ namespace tsorcRevamp
             }
             orig(self, info);
         }
-        public const float ManaStarMaxManaPercentage = 6;
         private static Item On_Player_PickupItem(On_Player.orig_PickupItem orig, Player self, int playerIndex, int worldItemArrayIndex, Item itemToPickUp)
         {
             if ((itemToPickUp.type == ItemID.Star || itemToPickUp.type == ItemID.SugarPlum || itemToPickUp.type == ItemID.SoulCake || itemToPickUp.type == ItemID.ManaCloakStar) && self.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                int ManaGain = (int)(self.statManaMax2 * (ManaStarMaxManaPercentage / 100f));
+                int ManaGain = (int)(self.statManaMax2 * (MagicEdits.BotCManaStarMaxManaPercentage / 100f));
                 SoundEngine.PlaySound(SoundID.Grab, new Vector2((int)self.position.X, (int)self.position.Y));
                 self.statMana += ManaGain;
                 self.ManaEffect(ManaGain);

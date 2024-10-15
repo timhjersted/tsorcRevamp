@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {
     public class AshenLord : RuneterraDragon
     {
-        public override float Scale => 1f;
+        public override float Scale => 0.8f;
         public override int BuffType => ModContent.BuffType<CenterOfTheHeat>();
         public override int DebuffType => ModContent.BuffType<ScorchingDebuff>();
         public override int PairedProjectileType => ModContent.ProjectileType<ScorchingPointFireball>();

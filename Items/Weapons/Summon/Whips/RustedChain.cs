@@ -1,3 +1,4 @@
+using Humanizer;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.Creative;
@@ -13,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     {
         public const int SummonTagArmorPen = 10;
         public const int BaseDmg = 10;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagArmorPen);
+        //public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonTagArmorPen);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao
@@ -50,6 +51,14 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
                 {
                     damage.Flat -= 4;
                 }
+            }
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+            if (ttindex != -1)
+            {
+                tooltips.Insert(ttindex, new TooltipLine(Mod, "TagArmPen", Language.GetTextValue(Tooltip.Key + "0", (int)(SummonTagArmorPen * Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SummonTagStrength))));
             }
         }
         public override bool MeleePrefix()

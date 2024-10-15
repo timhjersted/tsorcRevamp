@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     public class AncientDemonArmor : ModItem
     {
         public static float WhipDmg = 16f;
-        public static float TagDuration = 20f;
+        public static float TagDuration = 12f;
         public static float WhipRange = 30f;
         public static float AtkSpeed = 16f;
         public static float LifeThreshold = 50f;

@@ -30,7 +30,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
             Projectile.height = 20;
             Projectile.DamageType = DamageClass.SummonMeleeSpeed;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 2;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
 
@@ -47,15 +46,21 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
             noDiscontinuityCheck = true;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedTormentor", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
-        public override void OnSpawn(IEntitySource source)
-        {
-            base.OnSpawn(source);
-            Player player = Main.player[Projectile.owner];
-            Projectile.timeLeft = player.itemAnimationMax;
-        }
+        public int Timer = 0;
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
+
+            Timer++;
+
+            Main.NewText(Timer);
+
+            float swingTime = Projectile.ai[1] * Projectile.MaxUpdates;
+            if (Timer >= swingTime)
+            {
+                Projectile.Kill();
+                return;
+            }
 
             Projectile Whip = Main.projectile[(int)Projectile.ai[0]];
             List<Vector2> points = Whip.WhipPointsForCollision;
@@ -64,7 +69,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
             base.AI();
             Projectile.tileCollide = false;
 
-            FullyCharged = (Projectile.ai[1] == 1) ? true : false;
+            FullyCharged = (Projectile.ai[2] >= TerraFallProjectile.MaximumChargeTime) ? true : false;
             Color TrailColor = FullyCharged ? new Color(0.15f, 1f, 0.8f, 0.25f) : new Color(0.1f, 1f, 0.1f, 0.25f);
             Lighting.AddLight(Projectile.Center, TrailColor.ToVector3() * 1f);
 
@@ -83,7 +88,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
         Vector2 samplePointOffset2;
         public override void SetEffectParameters(Effect effect)
         {
-            FullyCharged = (Projectile.ai[1] == 1) ? true : false;
+            FullyCharged = (Projectile.ai[2] >= TerraFallProjectile.MaximumChargeTime) ? true : false;
             Color TrailColor = FullyCharged ? new Color(0.15f, 1f, 0.8f, 0.25f) : new Color(0.1f, 1f, 0.1f, 0.25f);
             float hostVel = Projectile.velocity.Length();
 

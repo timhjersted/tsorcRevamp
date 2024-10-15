@@ -1158,7 +1158,7 @@ namespace tsorcRevamp.NPCs
                 #endregion
 
                 modifiers.FlatBonusDamage += SummonTagFlatDamage * SummonTagDamageMultiplier * modPlayerProjectileOwner.SummonTagStrength;
-                modifiers.ScalingBonusDamage += SummonTagScalingDamage * SummonTagDamageMultiplier * modPlayerProjectileOwner.SummonTagStrength;
+                modifiers.ScalingBonusDamage += SummonTagScalingDamage * SummonTagDamageMultiplier;
                 modifiers.ArmorPenetration += SummonTagArmorPenetration * modPlayerProjectileOwner.SummonTagStrength;
                 FinalSummonCriticalStrikeChance = projectile.CritChance + (SummonTagCriticalStrikeChance * modPlayerProjectileOwner.SummonTagStrength);
 

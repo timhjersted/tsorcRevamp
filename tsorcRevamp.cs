@@ -408,7 +408,8 @@ namespace tsorcRevamp
                 TileID.Sunflower, TileID.Campfire, TileID.HangingLanterns, //Sunflowers, Campfires, Lanterns(including Heart Lantern and Star in a Bottle)
                 TileID.Sundial, TileID.Moondial, //Sundial, Moondial
                 TileID.Grass,
-                TileID.CopperCoinPile, TileID.SilverCoinPile, TileID.GoldCoinPile, TileID.PlatinumCoinPile
+                TileID.CopperCoinPile, TileID.SilverCoinPile, TileID.GoldCoinPile, TileID.PlatinumCoinPile,
+                TileID.Pigronata
             };
             #endregion
             //--------
@@ -423,7 +424,8 @@ namespace tsorcRevamp
                 TileID.Stalactite, TileID.ExposedGems, TileID.SmallPiles, TileID.LargePiles, TileID.LargePiles2, TileID.PlantDetritus, TileID.OasisPlants, TileID.Larva, TileID.PlanteraBulb, TileID.AntlionLarva, //all ambient objects (background breakables), QB Larva, Plantera Bulb
                 TileID.Plants, TileID.Plants2, TileID.CorruptPlants, TileID.JunglePlants, TileID.JunglePlants2, TileID.HallowedPlants, TileID.HallowedPlants2, TileID.LongMoss, TileID.CrimsonPlants, TileID.LilyPad, TileID.Cattail, TileID.SeaOats, TileID.OasisPlants, TileID.Seaweed, //cuttable plants - all biomes
                 TileID.Lever, TileID.PressurePlates, TileID.Switches, TileID.InletPump, TileID.OutletPump, TileID.Timers, TileID.LogicGateLamp, TileID.LogicGate, TileID.ConveyorBeltLeft, TileID.ConveyorBeltRight, TileID.LogicSensor, TileID.WirePipe, TileID.AnnouncementBox, TileID.WeightedPressurePlate, TileID.WireBulb, TileID.GemLocks, TileID.ProjectilePressurePad, //wiring, incl pressure plates
-                TileID.WoodenBeam, TileID.LivingFire, TileID.LivingFrostFire, TileID.LivingCursedFire, TileID.LivingDemonFire, TileID.LivingUltrabrightFire, TileID.ChimneySmoke
+                TileID.WoodenBeam, TileID.LivingFire, TileID.LivingFrostFire, TileID.LivingCursedFire, TileID.LivingDemonFire, TileID.LivingUltrabrightFire, TileID.ChimneySmoke,
+                TileID.Pigronata
             };
             #endregion
             //--------
@@ -513,7 +515,8 @@ namespace tsorcRevamp
                 TileID.VanityTreeSakuraSaplings,
                 TileID.VanityTreeWillowSaplings,
                 TileID.VanityTreeYellowWillow,
-                TileID.Books
+                TileID.Books,
+                TileID.Pigronata
             };
             #endregion
             //--------
@@ -1096,6 +1099,10 @@ namespace tsorcRevamp
                 { ItemID.DiamondRobe,   new List<(int ItemID, int Count)>()
                                         {
                                             (ModContent.ItemType<DarkSoul>(), 800)
+                                        }                                                   },
+                { ItemID.AmberRobe,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ModContent.ItemType<DarkSoul>(), 200)
                                         }                                                   },
                 #endregion
 
@@ -1752,6 +1759,22 @@ namespace tsorcRevamp
                             minionPacket.Write(modPlayer.InterstellarBoost);
                             //minionPacket.WriteVector2(modPlayer.CursorPosition);
                             minionPacket.Send();
+                        }
+                        break;
+                    }
+                case tsorcPacketID.SyncOwnerCursor:
+                    {
+                        byte player = reader.ReadByte(); //player.whoAmI
+                        tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
+                        modPlayer.CursorPosition = reader.ReadVector2();
+
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            ModPacket cursorPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                            cursorPacket.Write(tsorcPacketID.SyncOwnerCursor);
+                            cursorPacket.Write(player);
+                            cursorPacket.WriteVector2(modPlayer.CursorPosition);
+                            cursorPacket.Send();
                         }
                         break;
                     }
@@ -3105,6 +3128,7 @@ namespace tsorcRevamp
         /// Syncs the curse points of a player
         /// </summary>
         public const byte SyncCurse = 14;
+        public const byte SyncOwnerCursor = 15;
     }
 
     //config moved to separate file

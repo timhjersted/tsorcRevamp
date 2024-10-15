@@ -498,10 +498,7 @@ namespace tsorcRevamp
             if (Shunpo && Player.titaniumStormCooldown >= 0)
             {
                 int TitaniumShardBaseDmg = 50; //50 is the base dmg of vanilla Titanium Shards
-                // may be too much damage buff applied to Titanium Shard?
-                int TitaniumShardScaledBonusDmg = (int)((Player.GetDamage(DamageClass.Melee).ApplyTo(TitaniumShardBaseDmg) 
-                 + Player.GetDamage(DamageClass.Ranged).ApplyTo(TitaniumShardBaseDmg) + Player.GetDamage(DamageClass.Magic).ApplyTo(TitaniumShardBaseDmg) 
-                 + Player.GetDamage(DamageClass.Summon).ApplyTo(TitaniumShardBaseDmg) + Player.GetDamage(DamageClass.Throwing).ApplyTo(TitaniumShardBaseDmg)) - (6f * TitaniumShardBaseDmg));
+                int TitaniumShardScaledBonusDmg = (int)Player.GetDamage(DamageClass.Generic).ApplyTo(TitaniumShardBaseDmg);
                 Player.titaniumStormCooldown = 10;
                 Player.AddBuff(BuffID.TitaniumStorm, 10 * 60);
                 if (Player.ownedProjectileCounts[ProjectileID.TitaniumStormShard] < 15)

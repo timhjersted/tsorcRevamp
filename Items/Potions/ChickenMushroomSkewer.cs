@@ -31,6 +31,8 @@ namespace tsorcRevamp.Items.Potions
             Item.maxStack = Item.CommonMaxStack;
             Item.scale = .6f;
             Item.value = 500;
+            Item.buffType = BuffID.WellFed3;
+            Item.buffTime = ExquisitelyStuffedDuration * 60;
         }
 
 
@@ -55,7 +57,6 @@ namespace tsorcRevamp.Items.Potions
                 player.HealEffect(Healing, true);
                 player.AddBuff(BuffID.PotionSickness, player.pStone ? BaseSickness * 60 / 4 * 3 / PhilosophersStoneEfficiency : BaseSickness * 60);
             }
-            player.AddBuff(BuffID.WellFed3, ExquisitelyStuffedDuration * 60);
             return true;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)

@@ -28,12 +28,12 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra
         bool playedSound2 = false;
         public override void PlaySound(Player player)
         {
-            if (!playedSound && !playedSound2 && Main.rand.NextBool(2000) && !player.HasBuff(ModContent.BuffType<InCombat>()))
+            if (!playedSound && !playedSound2 && Main.rand.NextBool(4000) && !player.HasBuff(ModContent.BuffType<InCombat>()))
             {
                 playedSound = true;
                 SoundSlotID = SoundEngine.PlaySound(new SoundStyle(SoundPath + "OrbAmbient1", SoundType.Ambient) with { Volume = OrbOfDeception.OrbSoundVolume }); //can give funny pitch hehe
             }
-            else if (!playedSound && !playedSound2 && Main.rand.NextBool(2000) && !player.HasBuff(ModContent.BuffType<InCombat>()))
+            else if (!playedSound && !playedSound2 && Main.rand.NextBool(4000) && !player.HasBuff(ModContent.BuffType<InCombat>()))
             {
                 playedSound2 = true;
                 SoundSlotID = SoundEngine.PlaySound(new SoundStyle(SoundPath + "OrbAmbient2", SoundType.Ambient) with { Volume = OrbOfDeception.OrbSoundVolume }); //can give funny pitch hehe

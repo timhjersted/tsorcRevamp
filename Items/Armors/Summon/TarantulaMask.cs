@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public static float Dmg = 12f;
         public static float CritChance = 13f;
-        public static float SummonTagStrength = 22f;
+        public static float SummonTagStrength = 15f;
         public static int MinionSlot = 1;
         public static int TurretSlot = 1;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, MinionSlot, TurretSlot, tsorcRevampPlayer.MythrilOcrichalcumCritDmg, CritChance, SummonTagStrength);

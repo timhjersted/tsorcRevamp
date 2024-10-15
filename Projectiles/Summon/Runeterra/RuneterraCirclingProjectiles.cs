@@ -34,6 +34,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
             ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = ScorchingPoint.BallSummonTagDmgMult / 100f;
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 999999999;
         }
         public sealed override void SetDefaults()
         {

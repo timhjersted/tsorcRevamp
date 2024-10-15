@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
 {
     public class ASOL13 : RuneterraDragon
     {
-        public override float Scale => 0.85f;
+        public override float Scale => 0.65f;
         public override int BuffType => ModContent.BuffType<InterstellarCommander>();
         public override int DebuffType => ModContent.BuffType<ShockedDebuff>();
         public override int PairedProjectileType => ModContent.ProjectileType<InterstellarVesselShip>();

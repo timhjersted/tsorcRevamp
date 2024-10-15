@@ -17,7 +17,7 @@ namespace tsorcRevamp.Buffs.Weapons.Melee
         public override void Update(NPC npc, ref int buffIndex)
         {
             var player = npc.GetGlobalNPC<tsorcRevampGlobalNPC>().lastHitPlayerShadowSickle;
-            if (player.statMana > (int)(player.manaCost * 10f))
+            if ((player.statMana > (int)(player.manaCost * 10f)) && !npc.dontTakeDamage)
             {
                 if (Main.GameUpdateCount % 30 == 0)
                 {
