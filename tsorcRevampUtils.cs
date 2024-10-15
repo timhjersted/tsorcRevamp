@@ -826,6 +826,32 @@ namespace tsorcRevamp
         }
 
         ///<summary> 
+        ///Gets the closest projectile of a given type to a given point. Returns that projectile's whoami.
+        ///Uses nullable ints, will return null if it can't find one. You've been warned!
+        ///</summary>
+        ///<param name="point">The point it's comparing to</param>
+        ///<param name="type">The type of the projectile to search for</param>
+        public static int? GetClosestProjectile(Vector2 point, int type)
+        {
+            int? closestProj = null;
+            float distance = float.MaxValue;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.projectile[i].active)
+                {
+                    float newDistance = Vector2.DistanceSquared(point, Main.projectile[i].Center);
+                    if (newDistance < distance)
+                    {
+                        distance = newDistance;
+                        closestProj = i;
+                    }
+                }
+            }
+
+            return closestNPC;
+        }
+
+        ///<summary> 
         ///Does this tile exist, and if so is it solid?
         ///Yes, this requires all of this to learn the answer safely. Nothing can be easy here.
         ///Also returns false if the tile is null, or if the coordinates you gave it are out of range of the tile array.
