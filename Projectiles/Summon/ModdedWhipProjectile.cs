@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -37,7 +38,6 @@ namespace tsorcRevamp.Projectiles.Summon
         public virtual void CustomModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) { } //for special whips, simply set the values used in the modifyhit function to 0 to nullify them
         public virtual void CustomOnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) { } //for special whips, simply set the values used in the onhit function to 0 to nullify them
         public int TimesHitThisSwing;
-        public bool FinishedCharging = false;
         public override void SetStaticDefaults()
         {
             // This makes the projectile use whip collision detection and allows flasks to be applied to it.
@@ -66,7 +66,32 @@ namespace tsorcRevamp.Projectiles.Summon
                 Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ChargedWhip = true;
             }
             TimesHitThisSwing = 0;
-            FinishedCharging = false;
+        }
+        public override void OnSpawn(IEntitySource source)
+        {
+            Player player = Main.player[Projectile.owner];
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                modPlayer.FinishedChargingWhip = false;
+                Projectile.netUpdate = true;
+
+                ModPacket whipPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                whipPacket.Write(tsorcPacketID.SyncWhipCharging);
+                whipPacket.Write((byte)player.whoAmI);
+                whipPacket.Write(modPlayer.FinishedChargingWhip);
+                whipPacket.Send();
+
+                ModPacket cursorPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                cursorPacket.Write(tsorcPacketID.SyncOwnerCursor);
+                cursorPacket.Write((byte)player.whoAmI);
+                cursorPacket.WriteVector2(player.GetModPlayer<tsorcRevampPlayer>().CursorPosition);
+                cursorPacket.Send();
+            }
+            else
+            {
+                modPlayer.FinishedChargingWhip = false;
+            }
         }
 
         public float Timer
@@ -84,7 +109,7 @@ namespace tsorcRevamp.Projectiles.Summon
         private float ChargeTimer2 = 0;
         public override void AI()
         {
-            Player owner = Main.player[Projectile.owner];
+            Player player = Main.player[Projectile.owner];
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2; // Without PiOver2, the rotation would be off by 90 degrees counterclockwise.
 
             Projectile.Center = Main.GetPlayerArmPosition(Projectile) + Projectile.velocity * Timer;
@@ -92,7 +117,7 @@ namespace tsorcRevamp.Projectiles.Summon
             // However, the use of UnitX basically turns it into a more complicated way of checking if the projectile's velocity is above or equal to zero on the X axis.
             Projectile.spriteDirection = Projectile.velocity.X >= 0f ? 1 : -1;
 
-            if (!Charge(owner))
+            if (!Charge(player))
             {
                 return; // timer doesn't update while charging, freezing the animation at the start.
             }
@@ -100,14 +125,14 @@ namespace tsorcRevamp.Projectiles.Summon
 
             Timer++;
 
-            float swingTime = owner.itemAnimationMax * Projectile.MaxUpdates;
-            if (Timer >= swingTime || owner.itemAnimation <= 0)
+            float swingTime = player.itemAnimationMax * Projectile.MaxUpdates;
+            if (Timer >= swingTime || player.itemAnimation <= 0)
             {
                 Projectile.Kill();
                 return;
             }
 
-            owner.heldProj = Projectile.whoAmI;
+            player.heldProj = Projectile.whoAmI;
 
             // Plays a whipcrack sound at the tip of the whip.
             List<Vector2> points = Projectile.WhipPointsForCollision;
@@ -115,16 +140,16 @@ namespace tsorcRevamp.Projectiles.Summon
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], DustWidth, DustHeight, DustId, 0f, 0f, 150, DustColor, DustScale);
             CustomDustAndTipEffects(points);
 
-            if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady && Timer == 1) //this check is needed at the start to allow all goredrinker hits to calculate dmg correctly
+            if (player.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && player.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady && Timer == 1) //this check is needed at the start to allow all goredrinker hits to calculate dmg correctly
             {
-                owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = true;
+                player.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung = true;
             }
 
             if (Timer == swingTime / 2)
             {
-                if (owner.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !owner.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && owner.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung)
+                if (player.GetModPlayer<tsorcRevampPlayer>().Goredrinker && !player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && player.GetModPlayer<tsorcRevampPlayer>().GoredrinkerSwung)
                 {
-                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = .3f }, owner.Center);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/GoredrinkerSwing") with { Volume = .3f }, player.Center);
                 }
                 else
                 {
@@ -135,39 +160,63 @@ namespace tsorcRevamp.Projectiles.Summon
 
         // This method handles a charging mechanic.
         // Returns true if fully charged or charging is disabled
-        private bool Charge(Player owner)
+        private bool Charge(Player player)
         {
-            //Main.NewText(Main.mouseRightRelease);
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             // Like other whips, this whip updates twice per frame (Projectile.extraUpdates = 1), so 120 is equal to 1 second.
-            if ((Main.mouseRightRelease && ChargeTime > 2) || ChargeTime >= MaxChargeTime || owner.altFunctionUse != 2 || FinishedCharging || owner.GetModPlayer<tsorcRevampPlayer>().isDodging)
+            if (Main.myPlayer == player.whoAmI)
             {
-                FinishedCharging = true;
+                if ((Main.mouseRightRelease && ChargeTime > 2) || ChargeTime >= MaxChargeTime || player.altFunctionUse != 2 || modPlayer.FinishedChargingWhip || player.GetModPlayer<tsorcRevampPlayer>().isDodging)
+                {
+                    if (Main.netMode == NetmodeID.MultiplayerClient && !modPlayer.FinishedChargingWhip)
+                    {
+                        modPlayer.FinishedChargingWhip = true;
+                        ModPacket whipPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                        whipPacket.Write(tsorcPacketID.SyncWhipCharging);
+                        whipPacket.Write((byte)player.whoAmI);
+                        whipPacket.Write(modPlayer.FinishedChargingWhip);
+                        whipPacket.Send();
+                    }
+                    modPlayer.FinishedChargingWhip = true;
+                    return true; // finished charging
+                }
+            }
+            else if (modPlayer.FinishedChargingWhip)
+            {
                 return true; // finished charging
             }
-            else
+            ChargeTime += 1f * (player.GetTotalAttackSpeed(DamageClass.SummonMeleeSpeed));
+            ChargeTimer2 += 1f * (player.GetTotalAttackSpeed(DamageClass.SummonMeleeSpeed));
+
+
+            if (ChargeTimer2 >= (MaxChargeTime / 15))
             {
-                ChargeTime += 1f * (owner.GetTotalAttackSpeed(DamageClass.SummonMeleeSpeed));
-                ChargeTimer2 += 1f * (owner.GetTotalAttackSpeed(DamageClass.SummonMeleeSpeed));
-
-                if (ChargeTimer2 >= (MaxChargeTime / 15))
-                {
-                    Projectile.WhipSettings.Segments++;
-                    Projectile.WhipSettings.RangeMultiplier += ChargeRangeBonus;
-                    ChargeTimer2 = 0;
-                }
-
-                owner = Main.player[Projectile.owner];
-                Vector2 mountedCenter = owner.MountedCenter;
-                Vector2 unitVectorTowardsMouse = mountedCenter.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * owner.direction);
-                owner.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
-                Projectile.velocity = unitVectorTowardsMouse * 4;
-
-                // Reset the animation and item timer while charging.
-                owner.itemAnimation = owner.itemAnimationMax;
-                owner.itemTime = owner.itemTimeMax;
-
-                return false; // still charging
+                Projectile.WhipSettings.Segments++;
+                Projectile.WhipSettings.RangeMultiplier += ChargeRangeBonus;
+                ChargeTimer2 = 0;
             }
+
+            Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().CursorPosition = Main.MouseWorld; //this must be LocalPlayer because it's only supposed to set your own cursor position to that value, since it's a player instanced value
+
+            if (Main.netMode == NetmodeID.MultiplayerClient && Main.GameUpdateCount % 6 == 0)
+            {
+                ModPacket cursorPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                cursorPacket.Write(tsorcPacketID.SyncOwnerCursor);
+                cursorPacket.Write((byte)player.whoAmI);
+                cursorPacket.WriteVector2(modPlayer.CursorPosition);
+                cursorPacket.Send();
+            }
+
+            Vector2 mountedCenter = player.MountedCenter;
+            Vector2 unitVectorTowardsMouse = mountedCenter.DirectionTo(modPlayer.CursorPosition).SafeNormalize(Vector2.UnitX * player.direction);
+            player.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : (-1));
+            Projectile.velocity = unitVectorTowardsMouse * 4;
+
+            // Reset the animation and item timer while charging.
+            player.itemAnimation = player.itemAnimationMax;
+            player.itemTime = player.itemTimeMax;
+
+            return false; // still charging
         }
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)

@@ -7,6 +7,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp

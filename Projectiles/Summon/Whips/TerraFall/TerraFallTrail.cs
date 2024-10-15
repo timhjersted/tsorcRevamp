@@ -75,7 +75,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
             Projectile.FillWhipControlPoints(Whip, points);
 
             base.AI();
-            Projectile.tileCollide = false;
 
             FullyCharged = (Projectile.ai[2] >= TerraFallProjectile.MaximumChargeTime) ? true : false;
             Color TrailColor = FullyCharged ? new Color(0.15f, 1f, 0.8f, 0.25f) : new Color(0.1f, 1f, 0.1f, 0.25f);

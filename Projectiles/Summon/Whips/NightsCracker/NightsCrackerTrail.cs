@@ -73,6 +73,8 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
             List<Vector2> points = Whip.WhipPointsForCollision;
             Projectile.FillWhipControlPoints(Whip, points);
 
+            base.AI();
+
             FullyCharged = (Projectile.ai[2] >= NightsCrackerProjectile.MaximumChargeTime) ? true : false;
             Color TrailColor = FullyCharged ? new Color(0.5f, 1f, 0.2f, 0.25f) : new Color(0.25f, 0.08f, 1f, 0.25f);
             Lighting.AddLight(Projectile.Center, TrailColor.ToVector3() * 1f);

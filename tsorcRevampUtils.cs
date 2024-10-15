@@ -870,6 +870,7 @@ namespace tsorcRevamp
                     {
                         distance = newDistance;
                         closestProj = i;
+                        return closestProj;
                     }
                 }
             }

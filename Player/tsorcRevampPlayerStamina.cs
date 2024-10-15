@@ -192,7 +192,7 @@ namespace tsorcRevamp
                         }
                     }
 
-                    if (Main.projectile[p].active && Main.projectile[p].type > 0 && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].GetGlobalProjectile<tsorcGlobalProjectile>().ChargedWhip && Player.channel)
+                    if (Main.projectile[p].active && Main.projectile[p].type > 0 && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].GetGlobalProjectile<tsorcGlobalProjectile>().ChargedWhip && !Player.GetModPlayer<tsorcRevampPlayer>().FinishedChargingWhip)
                     {
                         staminaResourceCurrent -= ChargedWhipDrainPerFrame;
                         staminaResourceRegenRate *= 0f;

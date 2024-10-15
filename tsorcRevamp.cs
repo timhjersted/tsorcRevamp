@@ -1778,6 +1778,22 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.SyncWhipCharging:
+                    {
+                        byte player = reader.ReadByte(); //player.whoAmI
+                        tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
+                        modPlayer.FinishedChargingWhip = reader.ReadBoolean();
+
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            ModPacket whipPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                            whipPacket.Write(tsorcPacketID.SyncWhipCharging);
+                            whipPacket.Write(player);
+                            whipPacket.Write(modPlayer.FinishedChargingWhip);
+                            whipPacket.Send();
+                        }
+                        break;
+                    }
                 case tsorcPacketID.TeleportAllPlayers:
                     {
                         Vector2 targetLocation = reader.ReadVector2();
@@ -3129,6 +3145,7 @@ namespace tsorcRevamp
         /// </summary>
         public const byte SyncCurse = 14;
         public const byte SyncOwnerCursor = 15;
+        public const byte SyncWhipCharging = 16;
     }
 
     //config moved to separate file

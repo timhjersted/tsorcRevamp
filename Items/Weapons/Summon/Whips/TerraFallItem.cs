@@ -43,7 +43,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
             Item.useAnimation = 30;
             Item.noMelee = true;
             Item.noUseGraphic = true;
-            Item.channel = true;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

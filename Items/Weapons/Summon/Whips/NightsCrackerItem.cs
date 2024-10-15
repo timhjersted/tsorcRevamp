@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     [LegacyName("NightsCracker")]
     public class NightsCrackerItem : ModItem
     {
-        public const int BaseDamage = 56;
+        public const int BaseDamage = 62;
         public const int MaxStacks = 3;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxStacks);
         public override void SetStaticDefaults()
@@ -38,7 +38,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
             Item.useAnimation = 30;
             Item.noMelee = true;
             Item.noUseGraphic = true;
-            Item.channel = true;
         }
         public override bool MeleePrefix()
         {

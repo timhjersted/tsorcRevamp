@@ -71,6 +71,7 @@ namespace tsorcRevamp
         public bool PapyrusScarab = false;
 
         public float WhipCritDamage = 135f;
+        public bool FinishedChargingWhip = false;
 
         public int CurseLevel = 1;
         public int PowerfulCurseLevel = 1;
