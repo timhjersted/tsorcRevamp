@@ -41,7 +41,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.PurpleTorch, 0f, 0f, 150, default, 1f);
             if (Main.myPlayer == player.whoAmI && player.ownedProjectileCounts[ModContent.ProjectileType<NightsCrackerTrail>()] == 0)
             {
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Projectile.WhipPointsForCollision[points.Count - 1], ModContent.ProjectileType<NightsCrackerTrail>(), Projectile.damage, Projectile.knockBack, player.whoAmI, Projectile.whoAmI, (ChargeTime >= MaxChargeTime) ? 1 : 0, ChargeTime);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Projectile.WhipPointsForCollision[points.Count - 1], ModContent.ProjectileType<NightsCrackerTrail>(), Projectile.damage, Projectile.knockBack, player.whoAmI, 0, player.itemAnimationMax, ChargeTime);
                 player.ownedProjectileCounts[ModContent.ProjectileType<NightsCrackerTrail>()]++; //without this it'd spawn two trails because of extraupdate spawning them in the same tick, before their owned number increases
             }
         }

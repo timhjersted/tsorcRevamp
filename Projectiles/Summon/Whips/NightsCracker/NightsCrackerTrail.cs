@@ -10,6 +10,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.NPCs;
+using tsorcRevamp.Projectiles.Summon.Whips.TerraFall;
 using tsorcRevamp.Projectiles.VFX;
 
 namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
@@ -19,6 +20,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
         public bool FullyCharged;
         public override void SetStaticDefaults()
         {
+            base.SetStaticDefaults();
         }
         public override void SetDefaults()
         {
@@ -28,7 +30,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
             Projectile.height = 20;
             Projectile.DamageType = DamageClass.SummonMeleeSpeed;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 2;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
 
@@ -45,25 +46,34 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
             noDiscontinuityCheck = true;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CursedTormentor", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
-        public override void OnSpawn(IEntitySource source)
-        {
-            base.OnSpawn(source);
-            Player player = Main.player[Projectile.owner];
-            Projectile.timeLeft = player.itemAnimationMax;
-        }
+        public int Timer = 0;
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
 
-            Projectile Whip = Main.projectile[(int)Projectile.ai[0]];
+            Timer++;
+
+            float swingTime = Projectile.ai[1] * Projectile.MaxUpdates;
+            if (Timer >= swingTime)
+            {
+                Projectile.Kill();
+                return;
+            }
+
+            Projectile Whip;
+            int? ProjID = UsefulFunctions.GetClosestPlayerProjectile(player.Center, ModContent.ProjectileType<NightsCrackerProjectile>(), player.whoAmI);
+            if (ProjID == null)
+            {
+                return;
+            }
+            else
+            {
+                Whip = Main.projectile[(int)ProjID];
+            }
             List<Vector2> points = Whip.WhipPointsForCollision;
             Projectile.FillWhipControlPoints(Whip, points);
-            //Main.NewText(player.itemAnimationMax);
 
-            base.AI();
-            Projectile.tileCollide = false;
-
-            FullyCharged = (Projectile.ai[1] == 1) ? true : false;
+            FullyCharged = (Projectile.ai[2] >= NightsCrackerProjectile.MaximumChargeTime) ? true : false;
             Color TrailColor = FullyCharged ? new Color(0.5f, 1f, 0.2f, 0.25f) : new Color(0.25f, 0.08f, 1f, 0.25f);
             Lighting.AddLight(Projectile.Center, TrailColor.ToVector3() * 1f);
 
@@ -82,7 +92,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
         Vector2 samplePointOffset2;
         public override void SetEffectParameters(Effect effect)
         {
-            FullyCharged = (Projectile.ai[1] == 1) ? true : false;
+            FullyCharged = (Projectile.ai[2] >= NightsCrackerProjectile.MaximumChargeTime) ? true : false;
             Color TrailColor = FullyCharged ? new Color(0.5f, 1f, 0.2f, 0.25f) : new Color(0.25f, 0.08f, 1f, 0.25f);
             float hostVel = Projectile.velocity.Length();
 

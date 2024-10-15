@@ -21,6 +21,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
         public bool FullyCharged;
         public override void SetStaticDefaults()
         {
+            base.SetStaticDefaults();
         }
         public override void SetDefaults()
         {
@@ -53,8 +54,6 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
 
             Timer++;
 
-            Main.NewText(Timer);
-
             float swingTime = Projectile.ai[1] * Projectile.MaxUpdates;
             if (Timer >= swingTime)
             {
@@ -62,7 +61,16 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
                 return;
             }
 
-            Projectile Whip = Main.projectile[(int)Projectile.ai[0]];
+            Projectile Whip;
+            int? ProjID = UsefulFunctions.GetClosestPlayerProjectile(player.Center, ModContent.ProjectileType<TerraFallProjectile>(), player.whoAmI);
+            if (ProjID == null)
+            {
+                return;
+            }
+            else
+            {
+                Whip = Main.projectile[(int)ProjID];
+            }
             List<Vector2> points = Whip.WhipPointsForCollision;
             Projectile.FillWhipControlPoints(Whip, points);
 

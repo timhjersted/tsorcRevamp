@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.TerraFall
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             if (Main.myPlayer == player.whoAmI && player.ownedProjectileCounts[ModContent.ProjectileType<TerraFallTrail>()] == 0)
             {
-                Projectile Trail = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), player.Center, Projectile.WhipPointsForCollision[points.Count - 1], ModContent.ProjectileType<TerraFallTrail>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, Projectile.whoAmI, player.itemAnimationMax, ChargeTime);
+                Projectile Trail = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), player.Center, Projectile.WhipPointsForCollision[points.Count - 1], ModContent.ProjectileType<TerraFallTrail>(), Projectile.damage, Projectile.knockBack, Main.myPlayer, 0, player.itemAnimationMax, ChargeTime);
                 player.ownedProjectileCounts[ModContent.ProjectileType<TerraFallTrail>()]++; //without this it'd spawn two trails because of extraupdate spawning them in the same tick, before their owned number increases
                 Trail.netUpdate = true;
             }

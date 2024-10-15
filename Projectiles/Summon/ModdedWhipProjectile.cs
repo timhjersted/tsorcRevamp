@@ -166,7 +166,7 @@ namespace tsorcRevamp.Projectiles.Summon
                 owner.itemAnimation = owner.itemAnimationMax;
                 owner.itemTime = owner.itemTimeMax;
 
-                return false; // still charging}
+                return false; // still charging
             }
         }
 

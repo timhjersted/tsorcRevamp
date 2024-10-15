@@ -840,7 +840,7 @@ namespace tsorcRevamp
                 if (Main.projectile[i].active)
                 {
                     float newDistance = Vector2.DistanceSquared(point, Main.projectile[i].Center);
-                    if (newDistance < distance)
+                    if (newDistance < distance && Main.projectile[i].type == type)
                     {
                         distance = newDistance;
                         closestProj = i;
@@ -848,7 +848,33 @@ namespace tsorcRevamp
                 }
             }
 
-            return closestNPC;
+            return closestProj;
+        }
+        ///<summary> 
+        ///Gets the closest projectile of a given type to a given point. Returns that projectile's whoami.
+        ///Uses nullable ints, will return null if it can't find one. You've been warned!
+        ///Contains a check to ensure the projectile is owned by the correct player.
+        ///</summary>
+        ///<param name="point">The point it's comparing to</param>
+        ///<param name="type">The type of the projectile to search for</param>
+        public static int? GetClosestPlayerProjectile(Vector2 point, int type, in int playerID)
+        {
+            int? closestProj = null;
+            float distance = float.MaxValue;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.projectile[i].active)
+                {
+                    float newDistance = Vector2.DistanceSquared(point, Main.projectile[i].Center);
+                    if (newDistance < distance && playerID == Main.projectile[i].owner && Main.projectile[i].type == type)
+                    {
+                        distance = newDistance;
+                        closestProj = i;
+                    }
+                }
+            }
+
+            return closestProj;
         }
 
         ///<summary> 
