@@ -2755,11 +2755,18 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
         public void ExecuteQueuedTeleport(NPC npc)
         {
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            
+            if (globalNPC.TeleportTelegraph == Vector2.Zero)
+            {
+                return;
+            }
 
             //SoundEngine.PlaySound(SoundID.Item8, npc.Center);
 
 
             Vector2 diff = globalNPC.TeleportTelegraph - npc.Center;
+	
+
             float length = diff.Length();
             diff.Normalize();
             Vector2 offset = Vector2.Zero;
