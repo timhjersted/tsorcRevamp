@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Effects;
@@ -35,11 +36,11 @@ namespace tsorcRevamp.NPCs.Bosses
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
         }
-
+        public const int BaseHP = 16000;
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 16000;
+            NPC.lifeMax = BaseHP;
             NPC.damage = 60;
             NPC.defense = 32;
             NPC.knockBackResist = 0f;
@@ -81,7 +82,7 @@ namespace tsorcRevamp.NPCs.Bosses
             get => NPC.life <= NPC.lifeMax / 2;
         }
 
-        public int Timer
+        public int EnrageDamageCounter
         {
             get => (int)NPC.ai[0];
             set => NPC.ai[0] = value;
@@ -91,9 +92,21 @@ namespace tsorcRevamp.NPCs.Bosses
             get => Main.player[NPC.target];
         }
 
+        public int LifeLastFrame = BaseHP;
+
         NPCDespawnHandler despawnHandler;
+        public override void OnSpawn(IEntitySource source)
+        {
+            LifeLastFrame = NPC.life;
+        }
         public override void AI()
         {
+            if (NPC.life < LifeLastFrame)
+            {
+                EnrageDamageCounter += LifeLastFrame - NPC.life;
+                hitTime = 0;
+            }
+
             NPC.width = 160;
             NPC.height = 75;
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
@@ -116,9 +129,9 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.ai[2]++;
             NPC.ai[1]++;
             hitTime++;
-            if (NPC.ai[0] > 0)
+            if (EnrageDamageCounter > 0)
             {
-                NPC.ai[0] -= hitTime / 10;
+                EnrageDamageCounter -= hitTime / 10;
             }
 
             flapWings++;
@@ -263,7 +276,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
             // Fire Bomb Attack
-            Timer++;
+            EnrageDamageCounter++;
 
             int bombFrequency = 325; // 1st phase frequency
             if (NPC.life < NPC.lifeMax / 2)
@@ -293,6 +306,28 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 }
 
+            }
+            if (EnrageDamageCounter > (NPC.lifeMax / 10))
+            {
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheRage.Enrage"), Color.Orange);
+
+                NPC.ai[3] = 1;
+                for (int i = 0; i < 50; i++)
+                {
+                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
+                }
+                for (int i = 0; i < 20; i++)
+                {
+                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, 0, 0, 100, default, 3f);
+                }
+                NPC.ai[1] = -250;
+                EnrageDamageCounter = 0;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                }
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62, NPC.Center);
             }
 
             if (NPC.ai[3] == 0)
@@ -448,8 +483,9 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
                     }
-                }
             }
+            LifeLastFrame = NPC.life;
+        }
         public override void FindFrame(int currentFrame)
         {
             if (Main.dedServ)
@@ -498,40 +534,6 @@ namespace tsorcRevamp.NPCs.Bosses
         public override bool CheckActive()
         {
             return false;
-        }
-        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
-        {
-            NPC.ai[0] += hit.Damage;
-        }
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            NPC.ai[0] += hit.Damage;
-        }
-        public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
-        {
-            hitTime = 0;
-            if (NPC.ai[0] > (NPC.lifeMax / 10))
-            {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheRage.Enrage"), Color.Orange);
-
-                NPC.ai[3] = 1;
-                for (int i = 0; i < 50; i++)
-                {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
-                }
-                for (int i = 0; i < 20; i++)
-                {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, 0, 0, 100, default, 3f);
-                }
-                NPC.ai[1] = -250;
-                NPC.ai[0] = 0;
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
-                }
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item62, NPC.Center);
-            }
         }
         public override void BossLoot(ref string name, ref int potionType)
         {
@@ -666,7 +668,7 @@ namespace tsorcRevamp.NPCs.Bosses
             rageEffect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);
             rageEffect.Parameters["sourceRectY"].SetValue(NPC.frame.Y);
 
-            float opacity = NPC.ai[0] / (NPC.lifeMax / 10f) * 0.8f;
+            float opacity = EnrageDamageCounter / (NPC.lifeMax / 10f) * 0.8f;
             if (NPC.ai[3] != 0)
             {
                 opacity = 1;

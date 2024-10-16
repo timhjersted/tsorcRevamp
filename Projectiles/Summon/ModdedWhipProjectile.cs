@@ -74,7 +74,6 @@ namespace tsorcRevamp.Projectiles.Summon
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 modPlayer.FinishedChargingWhip = false;
-                Projectile.netUpdate = true;
 
                 ModPacket whipPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
                 whipPacket.Write(tsorcPacketID.SyncWhipCharging);

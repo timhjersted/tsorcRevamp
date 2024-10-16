@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Effects;
@@ -22,6 +23,7 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         int sproutDamage = 33;
         int cursedBreathDamage = 30;
+        public const int BaseHP = 22000;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
@@ -32,7 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 22000;
+            NPC.lifeMax = BaseHP;
             NPC.damage = 70;
             NPC.defense = 36;
             NPC.knockBackResist = 0f;
@@ -52,7 +54,11 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.height = 60;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.TheHunter.DespawnHandler"), Color.Green, 89);
         }
-
+        public int LifeLastFrame = BaseHP;
+        public override void OnSpawn(IEntitySource source)
+        {
+            LifeLastFrame = NPC.life;
+        }
         int hitTime = 0;
         public float flapWings;
         public float FrogSpawnTimer;
@@ -89,6 +95,36 @@ namespace tsorcRevamp.NPCs.Bosses
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+            if (NPC.life < LifeLastFrame)
+            {
+                EnrageDamageCounter += LifeLastFrame - NPC.life;
+                hitTime = 0;
+            }
+
+            //Activate enrage if damage counter has stacked up more than 10% of its health
+            if (EnrageDamageCounter > (NPC.lifeMax / 10))
+            {
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheHunter.Enrage"), Color.Orange);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                }
+
+                for (int i = 0; i < 50; i++)
+                {
+                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
+                }
+                for (int i = 0; i < 20; i++)
+                {
+                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, 0, 0, 100, default, 3f);
+                }
+
+                EnrageTimer = -300;
+                SprouterShotTimer = 0;
+                EnrageDamageCounter = 0;
+            }
+
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             SprouterShotTimer++;
             AttackPhaseTimer++;
@@ -439,6 +475,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
                 }
             }
+            LifeLastFrame = NPC.life;
         }
         public override void FindFrame(int currentFrame)
         {
@@ -601,44 +638,6 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             target.AddBuff(BuffID.Bleeding, 30 * 60, false);
         }
-
-        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
-        {
-            EnrageDamageCounter += hit.Damage;
-        }
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            EnrageDamageCounter += hit.Damage;
-        }
-        public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
-        {
-            hitTime = 0;
-
-            //Activate enrage if damage counter has stacked up more than 10% of its health
-            if (EnrageDamageCounter > (NPC.lifeMax / 10))
-            {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheHunter.Enrage"), Color.Orange);
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
-                }
-
-                for (int i = 0; i < 50; i++)
-                {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
-                }
-                for (int i = 0; i < 20; i++)
-                {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 18, 0, 0, 100, default, 3f);
-                }
-
-                EnrageTimer = -300;
-                SprouterShotTimer = 0;
-                EnrageDamageCounter = 0;
-            }
-        }
-
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.GreaterHealingPotion;

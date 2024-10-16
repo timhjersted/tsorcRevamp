@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Effects;
@@ -34,11 +35,11 @@ namespace tsorcRevamp.NPCs.Bosses
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn2] = true;
         }
-
+        public const int BaseHP = 19000;
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 19000;
+            NPC.lifeMax = BaseHP;
             NPC.damage = 65;
             NPC.defense = 34;
             NPC.knockBackResist = 0f;
@@ -59,8 +60,12 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.height = 60;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.TheSorrow.DespawnHandler"), Color.DarkCyan, 29);
         }
-
-        //npc.ai[0] = damage taken counter
+        public int LifeLastFrame = BaseHP;
+        public override void OnSpawn(IEntitySource source)
+        {
+            LifeLastFrame = NPC.life;
+        }
+        //Timer = damage taken counter
         //npc.ai[1] = invulnerability timer
         //npc.ai[3] = state counter
         public float flapWings;
@@ -71,7 +76,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         float breathTimer = 60;
 
-        public int Timer
+        public int EnrageDamageCounter
         {
             get => (int)NPC.ai[0];
             set => NPC.ai[0] = value;
@@ -92,6 +97,36 @@ namespace tsorcRevamp.NPCs.Bosses
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+            if (NPC.life < LifeLastFrame)
+            {
+                EnrageDamageCounter += LifeLastFrame - NPC.life;
+                hitTime = 0;
+            }
+
+            if (EnrageDamageCounter > (NPC.lifeMax / 10))
+            {
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheSorrow.Enrage"), Color.Orange);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
+                }
+
+                for (int i = 0; i < 50; i++)
+                { // Dustsplosion on enrage
+                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
+                }
+                for (int i = 0; i < 20; i++)
+                {
+                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 29, 0, 0, 100, default, 3f);
+                }
+
+
+                NPC.ai[3] = 1; // Begin inisibility/high defense state
+                NPC.ai[1] = -180;
+                EnrageDamageCounter = 0; // Reset damage counter
+            }
+
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             HandleScreenShader();
 
@@ -135,6 +170,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
             */
+            LifeLastFrame = NPC.life;
         }
 
         void InflictDebuffs()
@@ -297,8 +333,8 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.ai[1]++;
             NPC.ai[2]++;
             hitTime++;
-            if (NPC.ai[0] > 0) NPC.ai[0] -= hitTime / 10;
-            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 29, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 0.1f + (10.5f * (NPC.ai[0] / (NPC.lifeMax / 10)))); //10.5 was 15.5
+            if (EnrageDamageCounter > 0) EnrageDamageCounter -= hitTime / 10;
+            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 29, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 0.1f + (10.5f * (EnrageDamageCounter / (NPC.lifeMax / 10)))); //10.5 was 15.5
             Main.dust[dust].noGravity = true;
 
             // Flap Wings
@@ -610,7 +646,7 @@ namespace tsorcRevamp.NPCs.Bosses
             sorrowEffect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseWavy);
             sorrowEffect.Parameters["sourceRectY"].SetValue(NPC.frame.Y);
 
-            float opacity = NPC.ai[0] / (NPC.lifeMax / 10f) * 0.8f;
+            float opacity = EnrageDamageCounter / (NPC.lifeMax / 10f) * 0.8f;
             if (NPC.ai[3] != 0)
             {
                 sorrowEffect.Parameters["noiseVoronoi"].SetValue(tsorcRevamp.NoiseVoronoi);
@@ -649,40 +685,6 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             return false;
-        }
-
-        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
-        {
-            NPC.ai[0] += hit.Damage;
-        }
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            NPC.ai[0] += hit.Damage;
-        }
-        public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
-        {
-            hitTime = 0;
-            if (NPC.ai[0] > (NPC.lifeMax / 10))
-            {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.TheSorrow.Enrage"), Color.Orange);
-
-                NPC.ai[3] = 1; // Begin inisibility/high defense state
-                for (int i = 0; i < 50; i++)
-                { // Dustsplosion on enrage
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
-                }
-                for (int i = 0; i < 20; i++)
-                {
-                    Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 29, 0, 0, 100, default, 3f);
-                }
-                NPC.ai[1] = -180;
-                NPC.ai[0] = 0; // Reset damage counter
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(), 0, 0, Main.myPlayer, 1200, 60);
-                }
-            }
         }
         public override bool CheckActive()
         {
