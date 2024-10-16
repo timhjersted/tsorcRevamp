@@ -330,6 +330,12 @@ Mods: {
 			SelectWorld: Select World Type:
 			TSORCMap: New Story of Red Cloud Adventure Map
 			VanillaMap: New Vanilla Map
+			TSORCMapFailed:
+				'''
+				Error: Adventure Map template missing or corrupted!
+				Head back to the main menu and ensure it has finished downloading.
+				If this error persists, download it manually from our discord instead: https://discord.gg/UGE6Mstrgz
+				'''
 			Back: Back
 			SpawnSetHoverText: Set Spawn
 			SpawnSet: Spawn point set!
@@ -10741,7 +10747,7 @@ Mods: {
 			SHM3Downed: Three Guardians of the Abyss slain
 			SHM6Downed: Six Guardians of the Abyss slain
 			SHM9Downed: Nine Guardians of the Abyss slain
-			RageDowned: Mods.tsorcRevamp.Conditions.RageDowned
+			RageDowned: The Rage has been defeated
 		}
 	}
 }

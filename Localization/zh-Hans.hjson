@@ -131,10 +131,10 @@ Mods: {
 				WhipDmg: 增加 {0}% 鞭子伤害
 				WhipCritDmg: 增加 {0}% 鞭子暴击伤害
 				WhipCritHitbox: 增加 {0} 倍鞭子尖端暴击判定大小
-				TagStrength: 增加 {0}% 召唤标记伤害和护甲穿透
-				BadTagStrengthMult: 乘算减少 {0}% 召唤标记伤害和护甲穿透
+				TagStrength: 乘算增加 {0}% 召唤标记伤害、护甲穿透和暴击率
+				BadTagStrengthMult: 乘算减少 {0}% 召唤标记伤害、护甲穿透和暴击率
 				TagDuration: 增加 {0}% 召唤标记持续时间
-				ChargedWhip: 这个鞭子的属性随着你充能的时间长短而变化
+				ChargedWhip: 长按右键蓄力以增加鞭子伤害和范围
 				ChargedWhipTagDmg: "{0}-{1} 召唤标记伤害"
 				ChargedWhipTagCrit: "{0}-{1}% 召唤标记暴击率"
 				ChargedWhipAtkSpeed: 击中敌人时获得 {0}-{1}% 召唤攻击速度
@@ -154,7 +154,7 @@ Mods: {
 				TagCritMult: 增加 {0} 倍召唤标记暴击率
 				TagDmgMult: 此武器仅受到 {0}% 的召唤标记伤害加成
 				DmgMult: 乘算增加 {0}% 召唤伤害
-				// Knockback: Increases summon knockback
+				Knockback: 增加召唤击退力
 			}
 
 			PermanentPotion: {
@@ -185,7 +185,7 @@ Mods: {
 			05: 死亡时失去灵魂可以在模组配置中禁用，试试吧就像塞尔达传说那样
 			06: 留意你物品的描述，看看是否有能用黑暗之魂升级的物品
 			07: 青色压力板只能用小型实体射弹激活
-			08: 你所能到之处皆！聪明点，用各种技巧来增强自己
+			08: 万事皆允！聪明点，用各种技巧来增强自己
 			09: 在正常战斗中使用药剂通常是生存所必需的
 			PermaPot: 永久药水需要特殊的永恒水晶，但水晶碎块可以合成它们
 			10: 你可以躲避半空中的攻击，跨过较长的距离并立即改变你的移动方向...
@@ -200,7 +200,7 @@ Mods: {
 			18: 物品提示通常包含对你的生存至关重要的信息...
 			19: 你可能会在有能力打败Boss之前就提前遭遇他们，如果陷入困境，等你变强了再回来
 			20: 欢迎来到泰拉瑞亚的类黑暗之魂模组
-			21: 石头构成的门不能被稿子挖开，必须用拉杆或开关打开
+			21: 石头构成的门不能被镐子挖开，必须用拉杆或开关打开
 			22: 绿花戒指大大提高了你的闪避能力，让你可以更好地躲避...
 			23: 某些黑暗区域的敌人掉落人性，可以刷新诅咒的效果
 			24: 需要更多提示？加入QQ群：645748667
@@ -236,7 +236,7 @@ Mods: {
 			Death: 命定之死已至！
 			QueenSlime: 史莱姆女皇从她的神圣洞穴中现身！
 			GreatRedKnightInvasion: 一位卓越赭骑士入侵了你的世界！
-			// GoblinShark: A Hemogoblin Shark is thirsty for blood!
+			GoblinShark: 一只血浆哥布林鲨鱼正渴望鲜血！
 			AncestralSpirit: 你惊扰了先祖之灵！
 			SkeletronHidden: 坟墓之主骷髅王已苏醒！
 			EoC: 克苏鲁之眼盯上你了！
@@ -330,6 +330,12 @@ Mods: {
 			SelectWorld: 选择世界大小:
 			TSORCMap: 新的红云物语冒险地图
 			VanillaMap: 新的原版随机生成地图
+			TSORCMapFailed:
+				'''
+				冒险地图下载失败！
+				在原版创意工坊订阅 Dark Souls Adventure Map，再在Tmod内创意工坊选择导入世界
+				如仍失败，请加QQ群：645748667
+				'''
 			Back: 返回
 			SpawnSetHoverText: 设置重生点
 			SpawnSet: 重生点已设置！
@@ -506,12 +512,23 @@ Mods: {
 					这把武器的最终力量被混沌的化身封印了
 					击败它来释放全部力量！
 					'''
-				HerculesBeetle: "{$CommonItemTooltip.Summon.TagStrength}"
-				NecromanticScroll: "{$CommonItemTooltip.Summon.TagDuration}"
+				HerculesBeetle:
+					'''
+					{$CommonItemTooltip.Summon.TagStrength}
+					{$CommonItemTooltip.Summon.CritChance@1}
+					{$CommonItemTooltip.Summon.Knockback}
+					'''
+				NecromanticScroll:
+					'''
+					{$CommonItemTooltip.Summon.TagDuration}
+					{$CommonItemTooltip.Summon.CritChance@1}
+					'''
 				PapyrusScarab:
 					'''
 					{$CommonItemTooltip.Summon.TagStrength}
 					{$CommonItemTooltip.Summon.TagDuration@1}
+					{$CommonItemTooltip.Summon.CritChance@2}
+					{$CommonItemTooltip.Summon.Knockback}
 					'''
 				FlinxFurChainedSetBonus: "{$CommonItemTooltip.IncreasesMaxMinionsBy}"
 				AngelWings: "[c/ffbf00:你会在将来合适的时机找到这些...]"
@@ -556,7 +573,7 @@ Mods: {
 				RecallItem: "{$CommonItemTooltip.UnusableDuringBoss}"
 				LargeAmethyst: "[c/ffbf00:一个类似于大金字塔的符号，月亮在它的右侧，刻在上面]"
 				LargeSapphire: "[c/ffbf00:上面刻着飞龙法师堡垒附近的一座雪山的符号]"
-				// LargeRuby: "[c/ffbf00:A symbol resembling a ancient jungle temple accessible via a large pyramid is carved into it]"
+				LargeRuby: "[c/ffbf00:上面雕刻着一个符号，它形似一座可通过大型金字塔进入的古老丛林神庙]"
 				VulnerabilityHex: 如果已击败双足翼龙，则施加双足翼龙诅咒减益
 				StarinaBottle: 增加 10 点魔力再生同时减少 50% 魔力再生延迟
 				ManaRegenerationBand: 增加 25 点魔力再生同时减少 100% 魔力再生延迟
@@ -1179,7 +1196,7 @@ Mods: {
 					[c/ffbf00:深渊遍布世界，如我们自身之镜，但其黑暗更加深远...]
 					[c/00ffd4:对一些深渊相关敌人造成的减益免疫，例如残废、中毒、着火以及涂油]
 					免疫击退、熔岩、火块和地狱黯炎，但是会提升敌人生成速度
-					乘算增加 {0}% 伤害、暴击率、移动速度、攻击速度{$CommonItemTooltip.Melee.Bonus@1}
+					{$CommonItemTooltip.DRStat}
 					'''
 			}
 
@@ -1193,7 +1210,7 @@ Mods: {
 				Tooltip:
 					'''
 					亚尔特留斯曾经佩戴的戒指之一
-					继承清晰之戒的免疫效果
+					继承{$Items.RingOfClarity.DisplayName}的免疫效果
 					按下绑定的苍狼之戒快捷键以短暂提高生命恢复和受到的伤害
 					效果生效期间受到伤害会移除生命恢复效果加成，并进入长时间的冷却
 					在深渊中时{$CommonItemTooltip.IncreasesDefenseBy}
@@ -1479,7 +1496,7 @@ Mods: {
 				Tooltip:
 					'''
 					龙骑士的全部套装
-					从高处落下时乘算增加 {0}% 近战伤害
+					从高处落下时，{$CommonItemTooltip.PercentIncreasedMeleeDamage}
 					{$CommonItemTooltip.NoFallDmg}
 					跳的更快，跳的更高
 					按下绑定的龙骑士之靴快捷键让你跳的更高
@@ -1491,7 +1508,7 @@ Mods: {
 				Tooltip:
 					'''
 					寄托着龙之精神的号角
-					从高处落下时乘算增加 {0}% 近战伤害
+					从高处落下时，{$CommonItemTooltip.PercentIncreasedMeleeDamage}
 					'''
 			}
 
@@ -1500,7 +1517,7 @@ Mods: {
 				Tooltip:
 					'''
 					这枚魔法皇冠样式的魔戒是乌拉席露的黄昏公主出生时铸造的
-					[c/ffbf00:{$CommonItemTooltip.Magic.DmgMult}]
+					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicDamage}]
 					[c/ffbf00:{$CommonItemTooltip.LifeRegen@1}，{$CommonItemTooltip.BadMaxLife@2}]
 					当这枚戒指被摘下时，你的最大生命值会恢复至正常值
 					'''
@@ -1510,7 +1527,7 @@ Mods: {
 				DisplayName: 金钗
 				Tooltip:
 					'''
-					乘算增加 {0}% 弓箭、子弹或特殊弹药的伤害
+					增加 {0}% 弓箭、子弹或特殊弹药的伤害
 					增伤的类型定期从三种弹药中选择一种
 					七秒一更换
 					'''
@@ -1604,8 +1621,9 @@ Mods: {
 				DisplayName: 英雄证章
 				Tooltip:
 					'''
-					伤害、暴击、生命与防御 
-					均乘算增加 {0}% ，{$CommonItemTooltip.Luck@1}
+					永久增加 {0}% 伤害和暴击率
+					增加 {0} 生命、{1} 防御和 {1}% 运气
+					均乘算增加 {0}% 
 					"英雄功业的证明"
 					'''
 			}
@@ -1638,7 +1656,11 @@ Mods: {
 
 			EnchantedWizardsHat: {
 				DisplayName: 附魔巫师帽
-				Tooltip: "{$CommonItemTooltip.Magic.DmgMult}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					{$CommonItemTooltip.Magic.AtkSpeed@1}
+					'''
 			}
 
 			EssenceOfMana: {
@@ -1887,11 +1909,11 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.IncreasesMaxMinionsBy}
-					鞭子攻击范围减少 {1}%
-					每拥有一个仆从槽，你的召唤暴击率就会增加
+					每拥有一个仆从栏位
+					增加 {1}% 召唤暴击率，但减少 {1}% 鞭子攻击范围
 					"一种只在水晶维度中发现的神奇物质"
 					'''
-				CriticalStrikeChance: "当前召唤暴击率增加量: "
+				CriticalStrikeChance: "当前召唤属性改变量: "
 			}
 
 			ShamanEmblem: {
@@ -1899,8 +1921,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
-					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
-					{$CommonItemTooltip.IncreasesMaxSentriesBy@2}
+					{$CommonItemTooltip.IncreasesMaxSentriesBy@1}
 					'''
 			}
 
@@ -2008,7 +2029,7 @@ Mods: {
 				Tooltip:
 					'''
 					亚尔特留斯的附魔盔甲
-					{$CommonItemTooltip.Melee.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
 					{$CommonItemTooltip.SetBonus}允许你在翻滚时使用武器
 					翻滚时额外增加 {1} 倍近战伤害
 					上面有巴罗之刃留下的细长切口
@@ -2020,7 +2041,7 @@ Mods: {
 				Tooltip:
 					'''
 					亚尔特留斯的附魔腿甲
-					{$CommonItemTooltip.Melee.AtkSpeedMult}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
 					'''
 			}
@@ -2030,7 +2051,7 @@ Mods: {
 				Tooltip:
 					'''
 					亚尔特留斯的附魔头盔
-					{$CommonItemTooltip.Melee.CritMult}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
 			}
 
@@ -2049,14 +2070,14 @@ Mods: {
 
 			KrakenHead: {
 				DisplayName: 海妖头盔
-				Tooltip: "{$CommonItemTooltip.Ranged.CritMult}"
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedRangedCritChance}"
 			}
 
 			KrakenLegs: {
 				DisplayName: 海妖腿
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Ranged.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedRangedDamage}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
 					'''
 			}
@@ -2065,7 +2086,7 @@ Mods: {
 				DisplayName: 巫妖王靴子
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Magic.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
 					'''
 			}
@@ -2086,7 +2107,7 @@ Mods: {
 
 			NecromancersSkullmask: {
 				DisplayName: 巫妖王头盔
-				Tooltip: "{$CommonItemTooltip.Magic.CritMult}"
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMagicCritChance}"
 			}
 
 			BlueHerosHat: {
@@ -2228,9 +2249,10 @@ Mods: {
 				DisplayName: 空洞士兵胸甲
 				Tooltip:
 					'''
-					乘算增加 10% 伤害
-					{$CommonItemTooltip.SetBonus}禁用生命再生，再乘算增加 15% 的伤害
-					增加10%最大耐力与耐力恢复速度
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					套装效果: 大幅减少生命再生
+					{$CommonItemTooltip.PercentIncreasedCritChance@1}
+					增加 {2}% 耐力上限与耐力恢复速度
 					'''
 			}
 
@@ -3094,7 +3116,7 @@ Mods: {
 				DisplayName: 巫师王裤子
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Summon.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.Summon.MinionSentrySlot@1}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@3}
 					{$CommonItemTooltip.Summon.TagDuration@4}
@@ -3105,9 +3127,9 @@ Mods: {
 				DisplayName: 巫师王帽子
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Summon.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.Summon.MinionSentrySlot@1}
-					{$CommonItemTooltip.Summon.CritMult@3}
+					{$CommonItemTooltip.Summon.CritChance@3}
 					{$CommonItemTooltip.Summon.TagStrength@4}
 					'''
 			}
@@ -3116,7 +3138,7 @@ Mods: {
 				DisplayName: 巫师王长袍
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Summon.DmgMult}
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
 					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
 					{$CommonItemTooltip.SetBonus}增强了巫师王之剑
 					'''
@@ -3977,7 +3999,7 @@ Mods: {
 				DisplayName: 元素瓶碎片
 				Tooltip:
 					'''
-					元素瓶的碎片
+					元素瓶的碎片，蕴含魔力和生命的力量
 					把它带到绿衣朝圣者那里可以增加元素瓶的使用次数
 					'''
 			}
@@ -4261,9 +4283,9 @@ Mods: {
 					Miakoda，一个存世百年之久的光之造物
 					它发誓要帮助你找到你的妻子并击败阿卓迪斯
 					Miakoda 是一个当地方言的名字，意思是“月亮的力量”
-					【峨眉月形态】，{$CommonItemTooltip.DmgMult}
+					【峨眉月形态】，{$CommonItemTooltip.PercentIncreasedDamage}
 					当你暴击时用月之光灌注武器
-					再{$CommonItemTooltip.DmgMult@1}
+					再{$CommonItemTooltip.PercentIncreasedDamage@1}
 					{$CommonItemTooltip.SecondDuration@2}, {$CommonItemTooltip.Cooldown@3}
 					可以在恶魔祭坛上切换形态
 					'''
@@ -4968,7 +4990,7 @@ Mods: {
 			}
 
 			SublimeBoneDust: {
-				DisplayName: 崇高的骨尘
+				DisplayName: 崇高骨尘
 				Tooltip:
 					'''
 					烧焦的灰白骨头
@@ -6602,26 +6624,15 @@ Mods: {
 
 			TerraFallItem: {
 				DisplayName: 泰拉之殇
-				Tooltip:
+				Tooltip: "{$CommonItemTooltip.Summon.ChargedWhip}"
+				Tooltip0:
 					'''
-					{$CommonItemTooltip.Summon.ChargedWhip}
-					击中敌人后召唤一片泰拉飘叶
-					{$CommonItemTooltip.Summon.ChargedWhipTagDmg}
-					{$CommonItemTooltip.Summon.ChargedWhipTagCrit@2}
-					{$CommonItemTooltip.Summon.ChargedWhipAtkSpeed@4}
-					{$CommonItemTooltip.Summon.WhipCC}
-					{$CommonItemTooltip.Summon.TagCritMult@6}
-					{$CommonItemTooltip.CritDmg@7}
+					命中时产生一道锋芒额外伤害敌人并叠加层数，最多叠加 {2} 次
+					叠满后召唤出一片旧日之叶
+					叠满后，下一次完全蓄力攻击的锋芒会消耗层数造成额外伤害
+					旧日之叶施加 {0} 点召唤标记伤害和 {1}% 召唤标记暴击率
 					{$CommonItemTooltip.Whips}
 					'''
-				/* Tooltip0:
-					'''
-					Whip summons a damaging slash which applies a marking debuff up to {2} times
-					Summons a Terraprisma after fully stacking the mark
-					At max stacks the next fully charged slash consumes the marks to deal extra damage
-					The Terraprisma applies {0} tag damage and {1}% tag crit
-					{$CommonItemTooltip.Whips}
-					''' */
 			}
 
 			DragoonLash: {
@@ -6636,60 +6647,49 @@ Mods: {
 			}
 
 			PolarisLeashItem: {
-				DisplayName: 北极星之鞭
+				DisplayName: 北辰之链
 				Tooltip:
 					'''
-					{$CommonItemTooltip.SummonTagDamage}
-					击中敌人会产生北极星，它的伤害是这个鞭子伤害的 {1}%
+					击中敌人会产生北极星，它的伤害是这个鞭子伤害的 {0}%
 					北极星会停留在你的光标上，用寒冷的魔法打击敌人
 					被魔法击中的敌人在被仆从击中时也会被北极星攻击
-					这些星星的伤害为鞭子伤害的 {2}%
+					星星造成 {1}% 鞭子伤害
 					你的召唤物会集中攻击被北极星标记的敌人
 					'''
 			}
 
 			NightsCrackerItem: {
-				// DisplayName: Night's Cracker
-				/* Tooltip:
+				DisplayName: 碎夜
+				Tooltip:
 					'''
 					{$CommonItemTooltip.Summon.ChargedWhip}
-					Whip summons a damaging slash which applies a marking debuff up to {0} times
-					At max stacks the next fully charged slash consumes the marks to deal extra damage
-					'Charge at the right time'
+					命中时产生一道锋芒额外伤害敌人并叠加层数，最多叠加 {0} 次
+					叠满后，下一次完全蓄力攻击的锋芒会消耗层数造成额外伤害
+					'长按右键以蓄力'
 					{$CommonItemTooltip.Whips}
-					''' */
+					'''
 			}
 
 			Pyrosulfate: {
 				DisplayName: 热硫酸
-				Tooltip:
+				Tooltip: ""
+				Tooltip0:
 					'''
 					{$CommonItemTooltip.SummonTagDamage}
 					{$CommonItemTooltip.Whips}
 					施加诅咒焰减益
 					'''
-				/* Tooltip0:
-					'''
-					{$CommonItemTooltip.SummonTagDamage}
-					{$CommonItemTooltip.Whips}
-					Inflicts Cursed Inferno
-					''' */
 			}
 
 			Pyromethane: {
 				DisplayName: 燠沼气
-				Tooltip:
+				Tooltip: ""
+				Tooltip0:
 					'''
 					{$CommonItemTooltip.PercentSummonTagCritChance}
 					{$CommonItemTooltip.Whips}
 					施加灵液减益
 					'''
-				/* Tooltip0:
-					'''
-					{$CommonItemTooltip.PercentSummonTagCritChance}
-					{$CommonItemTooltip.Whips}
-					Inflicts Ichor
-					''' */
 			}
 
 			CrystalNunchaku: {
@@ -6706,26 +6706,26 @@ Mods: {
 			}
 
 			SearingLashItem: {
-				// DisplayName: Searing Lash
-				/* Tooltip:
+				DisplayName: 灼热之鞭
+				Tooltip:
 					'''
 					{$CommonItemTooltip.Summon.ChargedWhip}
-					Enemies struck by this whip will burn horribly
-					Summons hellbats on-hit to further chase enemies
-					Hellbats scale with {0}% whip damage
+					击中敌人使其剧烈烧伤
+					击中敌人时召唤地狱蝙蝠追击敌人
+					地狱蝙蝠造成 {0}% 鞭子伤害
 					{$CommonItemTooltip.Whips}
-					''' */
+					'''
 			}
 
 			DominatrixItem: {
-				// DisplayName: Dominatrix
-				/* Tooltip:
+				DisplayName: 主宰
+				Tooltip:
 					'''
-					Strike enemies to plant thorns in them
-					Thorns are released by enemies hit by summons
-					Thorns scale with {0}% whip damage
+					攻击敌人会在他们身上种下荆棘
+					当敌人被召唤物击中时会释放荆棘
+					荆棘造成 {0}% 鞭子伤害
 					{$CommonItemTooltip.Whips}
-					''' */
+					'''
 			}
 
 			EnchantedWhip: {
@@ -6735,7 +6735,7 @@ Mods: {
 					{$CommonItemTooltip.SummonTagDamage}
 					用附魔之力击打敌人
 					被附魔的敌人会在被召唤物击中后引来落星
-					落星的伤害是鞭子的 {1}% 
+					落星的伤害是鞭子的 {0}% 
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -6744,25 +6744,20 @@ Mods: {
 				DisplayName: 软剑鞭
 				Tooltip:
 					'''
-					{$CommonItemTooltip.Summon.TagArmorPen}
-					{$CommonItemTooltip.PercentSummonTagCritChance@1}
-					鞭子本身带有 {2} 护甲穿透
+					{1} 点护甲穿透
+					{$CommonItemTooltip.Summon.WhipCritDmg}
 					{$CommonItemTooltip.Whips}
 					'''
 			}
 
 			RustedChain: {
 				DisplayName: 锈蚀铁链
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Summon.TagArmorPen}
-					{$CommonItemTooltip.SummonTagDamage@1}
-					'''
-				/* Tooltip0:
+				Tooltip: ""
+				Tooltip0:
 					'''
 					{$CommonItemTooltip.Summon.TagArmorPen}
 					'This rust is almost infectious'
-					''' */
+					'''
 			}
 
 			Galeforce: {
@@ -7259,7 +7254,7 @@ Mods: {
 					[c/00008b:彗星在大范围内造成巨大破坏并释放冲击波]
 					[c/00008b:彗星施加惶恐减益]({$CommonItemTooltip.SecondDuration@5})
 					惶恐减益会增加星芒伤害，并造成高额持续伤害
-					乘算增加 {6}% 星芒伤害
+					增加 {6}% 星芒伤害
 					[c/7fffd4:涡轮增压增加星芒的移动速度和铸星龙王的攻击速度]
 					[c/7fffd4:涡轮增压额外造成相当于目标最大生命值 {3}% 的伤害，最多 {4}]
 					[c/7fffd4:涡轮增压会快速消耗你的魔力，并在触发魔力病时结束]
@@ -7700,9 +7695,8 @@ Mods: {
 					哨兵栏: {6}
 					鞭子范围: {7}%
 					用鞭子的尖端击中敌人总是会造成暴击
+					鞭子尖端的暴击伤害为 {8}%
 					召唤物受到玩家的召唤暴击率加成
-					召唤标记暴击率乘算增加召唤物的暴击率
-					召唤暴击造成的伤害由其它职业 200% 降为 150%
 					'''
 				Throwing:
 					'''
@@ -7821,7 +7815,7 @@ Mods: {
 					减少 {1}% 近战伤害
 					'''
 				SolarShield: "{$CommonItemTooltip.ReducesDamageTakenByPercent}, 受到伤害时击退敌人"
-				WeaponImbue: 增加 {0}% 近战暴击伤害，乘算增加 {1}% 鞭子伤害
+				WeaponImbue: 增加 {0}% 近战和鞭子暴击率
 			}
 
 			Curse: {
@@ -10019,7 +10013,7 @@ Mods: {
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
 
-				// Census.SpawnCondition: Conditions unknown
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			DwarvenGuard: {
@@ -10060,7 +10054,7 @@ Mods: {
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
 
-				// Census.SpawnCondition: Conditions unknown
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			EmeraldHerald: {
@@ -10082,7 +10076,7 @@ Mods: {
 				Tip2: 如果你偶然发现一件武器遭受了低劣词缀的可怕诅咒，把它带给我，我会祝福它。
 				Tip3: 我希望你有敏锐的眼光，因为这是一片充满奥秘的土地...
 				Tip4: 在你的旅程中，尤其是在试图找回丢失的黑暗之魂时，持续使用药水是至关重要的。
-				Tip5: 可以使用镐子或粘性炸弹来打破宽度为 1 格的墙壁。石制门需要找到开关来开启。如果不确定你面对的是哪种门，先给它来一稿子再说。
+				Tip5: 可以使用镐子或粘性炸弹来打破宽度为 1 格的墙壁。石制门需要找到开关来开启。如果不确定你面对的是哪种门，先给它来一镐子再说。
 				Tip6: 黑暗之魂具有特殊的特性。 你死后将丢失所有的黑暗之魂，但仍有机会找回它们。但如果再次死亡，已经掉落的黑暗之魂就会永久消逝。
 				Tip7: 在你的旅途中，你会遇到未点燃的篝火，点燃它们并享受它们提供的宁静。你可以将它们用作检查点和存储库。
 				Tip8: 你可以将多余的弹药、武器和盔甲存放在保存点和篝火处的保险箱和猪猪存钱罐中。
@@ -10120,7 +10114,7 @@ Mods: {
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
 
-				// Census.SpawnCondition: Conditions unknown
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			FreedFairy: {
@@ -10148,7 +10142,7 @@ Mods: {
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
 
-				// Census.SpawnCondition: Conditions unknown
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			LivingGlowshroom: {
@@ -10273,7 +10267,7 @@ Mods: {
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
 
-				// Census.SpawnCondition: Conditions unknown
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			SolaireOfAstora: {
@@ -10310,7 +10304,7 @@ Mods: {
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
 
-				// Census.SpawnCondition: Conditions unknown
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			TibianArcher: {
@@ -10347,7 +10341,7 @@ Mods: {
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
 
-				// Census.SpawnCondition: Conditions unknown
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			TibianMage: {
@@ -10391,7 +10385,7 @@ Mods: {
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
 
-				// Census.SpawnCondition: Conditions unknown
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			UndeadMerchant: {
@@ -10424,7 +10418,7 @@ Mods: {
 					Princess_LovesNPC: 我喜欢 {NPCName}.
 				}
 
-				// Census.SpawnCondition: Conditions unknown
+				Census.SpawnCondition: Conditions unknown
 			}
 
 			HomingMissile.DisplayName: 追踪导弹
@@ -10759,7 +10753,7 @@ Mods: {
 			SHM3Downed: 三名深渊守护者被击败
 			SHM6Downed: 六名深渊守护者被击败
 			SHM9Downed: 九名深渊守护者被击败
-			// RageDowned: Mods.tsorcRevamp.Conditions.RageDowned
+			RageDowned: 击败愤怒
 		}
 	}
 }
