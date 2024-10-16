@@ -1,5 +1,5 @@
 displayName = The Story of Red Cloud
 author = Zeodexic, RecursiveCollapse, Vibrent, MarfMaster, Urgiv
-version = 0.15.17
+version = 0.15.18
 homepage = https://discord.gg/kSptDbe
 
