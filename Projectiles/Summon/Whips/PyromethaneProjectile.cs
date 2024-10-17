@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override int WhipDebuffDuration => DefaultWhipDebuffDuration;
         public override float WhipMultihitPenalty => 0.65f;
         public override Color WhipLineColor => Color.White;
-        public override void CustomDustAndTipEffects(List<Vector2> points)
+        public override void CustomAIDustAndTipEffects(List<Vector2> points)
         {
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], DustWidth, DustHeight, DustID.IchorTorch, 0f, 0f, 150, default, DustScale);
         }

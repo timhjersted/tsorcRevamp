@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.SearingLash
         public override int WhipDebuffDuration => 0; //set to 0 so it does nothing and I can make a custom calculation
         public override float WhipMultihitPenalty => 0.65f;
         public override Color WhipLineColor => Color.OrangeRed;
-        public override void CustomDustAndTipEffects(List<Vector2> points)
+        public override void CustomAIDustAndTipEffects(List<Vector2> points)
         {
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, 25, 0f, 0f, 150, default, 1f);
         }

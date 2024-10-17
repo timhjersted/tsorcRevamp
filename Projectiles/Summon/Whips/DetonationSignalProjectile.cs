@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override int WhipDebuffDuration => DetonationSignal.BonusContactDamageDuration;
         public override float WhipMultihitPenalty => 0.8f;
         public override Color WhipLineColor => Color.OrangeRed;
-        public override void CustomDustAndTipEffects(List<Vector2> points)
+        public override void CustomAIDustAndTipEffects(List<Vector2> points)
         {
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, 25, 0f, 0f, 150, default, 0.75f);
         }

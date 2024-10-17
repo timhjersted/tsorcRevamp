@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override float WhipMultihitPenalty => 0.75f;
         public override Color WhipLineColor => Color.CadetBlue;
         public bool Hit = false;
-        public override void CustomDustAndTipEffects(List<Vector2> points)
+        public override void CustomAIDustAndTipEffects(List<Vector2> points)
         {
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], 10, 10, DustID.PurpleTorch, 0f, 0f, 150, default, 1f);
         }

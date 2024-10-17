@@ -43,14 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
         {
             if (Item.prefix == PrefixID.Terrible)
             {
-                if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-                {
-                    damage.Flat -= 1;
-                }
-                else
-                {
-                    damage.Flat -= 4;
-                }
+                damage.Flat -= 4;
             }
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)

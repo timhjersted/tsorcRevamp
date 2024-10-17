@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.Dominatrix
         public override int WhipDebuffDuration => DefaultWhipDebuffDuration;
         public override float WhipMultihitPenalty => 0.6f;
         public override Color WhipLineColor => Color.MediumVioletRed;
-        public override void CustomDustAndTipEffects(List<Vector2> points)
+        public override void CustomAIDustAndTipEffects(List<Vector2> points)
         {
             Dust.NewDust(Projectile.WhipPointsForCollision[points.Count - 1], DustWidth, DustHeight, DustID.CrimsonPlants, 0f, 0f, 150, default, 1.3f);
         }

@@ -28,6 +28,13 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
         public override int WhipDebuffDuration => DefaultWhipDebuffDuration;
         public override float WhipMultihitPenalty => 0.4f;
         public override Color WhipLineColor => Color.Brown;
+        public override void CustomAIDustAndTipEffects(List<Vector2> points)
+        {
+            if (Projectile.damage < 1)
+            {
+                Projectile.damage = 1;
+            }
+        }
         public override bool PreDraw(ref Color lightColor)
         {
             List<Vector2> list = new List<Vector2>();

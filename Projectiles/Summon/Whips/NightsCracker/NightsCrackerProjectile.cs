@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips.NightsCracker
         public override int WhipDebuffDuration => 0; //set to 0 so it does nothing and I can make a custom calculation
         public override float WhipMultihitPenalty => 1f; //set to 1 so it does nothing and I can make a custom calculation
         public override Color WhipLineColor => Color.Indigo;
-        public override void CustomDustAndTipEffects(List<Vector2> points)
+        public override void CustomAIDustAndTipEffects(List<Vector2> points)
         {
             Player player = Main.player[Projectile.owner];
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
