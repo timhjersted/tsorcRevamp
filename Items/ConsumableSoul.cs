@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items
             Item.useTurn = true;
             Item.value = 1;
             Item.consumable = true;
-            Item.useAnimation = 30; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
+            Item.useAnimation = 30;
             Item.useTime = 30;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.rare = ItemRarityID.Green; // Mainly for colour consistency.
@@ -80,15 +80,17 @@ namespace tsorcRevamp.Items
                 // This code runs once halfway through the useTime of the item.
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.25f, PitchVariance = 0.5f }, player.Center); // Plays sound.
 
-                if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
-                {
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), 50); // Gives player souls.
-                }
-
                 for (int d = 0; d < 10; d++)
                 {
                     Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 80, default, .75f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
+            }
+        }
+        public override void OnConsumeItem(Player player)
+        {
+            if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
+            {
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.SoulDelayer>(), 0, 0, Main.myPlayer, 50, 30);
             }
         }
     }
@@ -113,15 +115,19 @@ namespace tsorcRevamp.Items
             {
                 // This code runs once halfway through the useTime of the item. 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.35f, PitchVariance = 0.3f }, player.Center); // Plays sound.
-                if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
-                {
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), 200); // Gives player souls.
-                }
 
                 for (int d = 0; d < 30; d++)
                 {
                     Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default, .8f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
+            }
+        }
+
+        public override void OnConsumeItem(Player player)
+        {
+            if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
+            {
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.SoulDelayer>(), 0, 0, Main.myPlayer, 200, 30);
             }
         }
     }
@@ -151,12 +157,7 @@ namespace tsorcRevamp.Items
             if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.5f, PitchVariance = 0.3f }, player.Center); // Plays sound.
-
-                if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
-                {
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), 800); // Gives player souls.
-                }
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.5f, PitchVariance = 0.3f }, player.Center); // Plays sound.                
 
                 for (int d = 0; d < 60; d++)
                 {
@@ -172,6 +173,14 @@ namespace tsorcRevamp.Items
                 {
                     Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, 6f, -4f, 50, default, .65f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
+            }
+        }
+
+        public override void OnConsumeItem(Player player)
+        {
+            if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
+            {
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.SoulDelayer>(), 0, 0, Main.myPlayer, 800, 30);
             }
         }
     }
@@ -208,7 +217,6 @@ namespace tsorcRevamp.Items
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.75f, PitchVariance = 0.3f }, player.Center); // Plays sound.
                 if (Main.myPlayer == player.whoAmI)
                 {
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), 2000); // Gives player souls.
                     Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, ModContent.ProjectileType<Projectiles.Soulsplosion>(), 250, 15, 0);
                 }
 
@@ -228,7 +236,13 @@ namespace tsorcRevamp.Items
                 }
             }
         }
-
+        public override void OnConsumeItem(Player player)
+        {
+            if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
+            {
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.SoulDelayer>(), 0, 0, Main.myPlayer, 2000, 30);
+            }
+        }
     }
 
     public class BraveWarriorSoul : ModItem
@@ -290,7 +304,6 @@ namespace tsorcRevamp.Items
 
                 if (Main.myPlayer == player.whoAmI)
                 {
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), 5000); // Gives player souls.
                     Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, ModContent.ProjectileType<Projectiles.Soulsplosion>(), 600, 15, 0);
                 }
 
@@ -320,7 +333,13 @@ namespace tsorcRevamp.Items
                 }
             }
         }
-
+        public override void OnConsumeItem(Player player)
+        {
+            if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
+            {
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.SoulDelayer>(), 0, 0, Main.myPlayer, 5000, 60);
+            }
+        }
     }
 
     public class HeroSoul : ModItem
@@ -346,7 +365,7 @@ namespace tsorcRevamp.Items
             Item.useTurn = true;
             Item.value = 1;
             Item.consumable = true;
-            Item.useAnimation = 120; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
+            Item.useAnimation = 120;
             Item.useTime = 120;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.rare = ItemRarityID.Green; // Mainly for colour consistency.
@@ -380,7 +399,6 @@ namespace tsorcRevamp.Items
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 1f, PitchVariance = 0.3f }, player.Center); // Plays sound.
                 if (Main.myPlayer == player.whoAmI)
                 {
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DarkSoul>(), 10000); // Gives player souls.
                     Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, ModContent.ProjectileType<Projectiles.SoulsplosionLarge>(), 2000, 15, 0);
                 }
 
@@ -403,6 +421,13 @@ namespace tsorcRevamp.Items
                 {
                     Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, Main.rand.NextFloat(-3.5f, 3.5f), Main.rand.NextFloat(-3f, -10f), 30, default, Main.rand.NextFloat(.5f, .8f));
                 }
+            }
+        }
+        public override void OnConsumeItem(Player player)
+        {
+            if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
+            {
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, player.velocity, ModContent.ProjectileType<Projectiles.SoulDelayer>(), 0, 0, Main.myPlayer, 10000, 120);
             }
         }
 
