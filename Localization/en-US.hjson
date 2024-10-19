@@ -3716,7 +3716,7 @@ Mods: {
 					'''
 					A shard of glowing demonite, oozing with phazon
 					[c/00ffd4:This one contains a riddle:] 
-					"[c/ffbf00:Atop the Twin Peaks of Arazium, we gaze at Sky Above, and the Great Chasm Below. We are the Eyes of the Ancient One.]"
+					"[c/ffbf00:Below a Broken, familiar Bridge, you will find me.]"
 					'''
 			}
 
@@ -3758,8 +3758,10 @@ Mods: {
 				Tooltip:
 					'''
 					Three shards of oxygenated carbonate
-					Combined this makes one of eight. [c/00ffd4:On the underside it says simply:]
-					"[c/ffbf00:Below a Broken, familiar Bridge, you will find me.]"
+					Combined this makes one of eight.
+					When I fit all the pieces together, there's still something missing.
+					[c/00ffd4:These crests contains the final riddle:]
+					"[c/ffbf00:Towering Heights, Far to the West. The Molten Eye of Attraidies looks to the Sky Above. He is near.]"
 					'''
 			}
 
@@ -3780,12 +3782,10 @@ Mods: {
 					'''
 					A shard of solar-charged masonry
 					One of eight.
-					When I fit all the pieces together, there's still something missing.
-					[c/00ffd4:This crest contains the final riddle:]
-					"[c/ffbf00:Towering Heights, Far to the West. The Molten Eye of Attraidies looks to the Sky Above. He is near.]"
+					[c/00ffd4:A riddle is etched into the stone:]
+					"[c/ffbf00:Atop the Twin Peaks of Arazium, we gaze at Sky Above, and the Great Chasm Below. We are the Eyes of the Ancient One.]"
 					'''
 			}
-
 			CrestOfWater: {
 				DisplayName: Crest of Water
 				Tooltip:
@@ -5647,7 +5647,6 @@ Mods: {
 				Tooltip:
 					'''
 					'A blade of sharpened bone'
-					Shoots out a bone upon hitting enemies with the blade
 					'''
 			}
 
@@ -5731,7 +5730,7 @@ Mods: {
 				Tooltip:
 					'''
 					'A blade of bone and fangs'
-					Shoots out a homing skull upon hitting enemies with the blade
+					Shoots out a homing skull, even more upon hitting enemies with the blade
 					'''
 			}
 

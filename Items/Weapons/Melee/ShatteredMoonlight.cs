@@ -32,8 +32,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.noMelee = true;
             Item.shootSpeed = 18;
             Item.shoot = ModContent.ProjectileType<ShatteredMoonlightProjectile>();
-
-            Item.mana = 4;
         }
 
         public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)

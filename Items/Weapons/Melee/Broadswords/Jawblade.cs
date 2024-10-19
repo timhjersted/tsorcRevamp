@@ -19,14 +19,15 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.height = 76;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 40;
-            Item.useTime = 40;
-            Item.damage = 70;
+            Item.useTime = 80;
+            Item.damage = 45;
             Item.knockBack = 5f;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.LightRed;
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Melee;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
+            Item.shoot = ProjectileID.BookOfSkullsSkull;
+            Item.shootSpeed = 9f;
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.Beige * 0.75f;
         }

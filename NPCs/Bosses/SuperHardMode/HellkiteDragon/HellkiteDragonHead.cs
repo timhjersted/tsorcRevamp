@@ -38,7 +38,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.defense = 100;
             NPC.HitSound = SoundID.NPCHit13; //better flesh hit
             NPC.DeathSound = SoundID.Item119;//dragon death
-            NPC.lifeMax = 100000;
+            NPC.lifeMax = 800000;
             Music = 12;
             NPC.boss = true;
             NPC.noGravity = true;
@@ -219,24 +219,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             //speed of dragon is hiding here, 22
             tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, HellkiteDragonHead.hellkitePieceSeperation, 18, 0.25f, true, false, true, false, false); //18 was 22, sooooo fast before
 
-        }
-        public static void SetImmune(Projectile projectile, NPC hitNPC)
-        {
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                NPC currentNPC = Main.npc[i];
-                if (currentNPC.type == ModContent.NPCType<HellkiteDragonHead>() || currentNPC.type == ModContent.NPCType<HellkiteDragonBody>() || currentNPC.type == ModContent.NPCType<HellkiteDragonBody2>() || currentNPC.type == ModContent.NPCType<HellkiteDragonBody3>() || currentNPC.type == ModContent.NPCType<HellkiteDragonLegs>() || currentNPC.type == ModContent.NPCType<HellkiteDragonTail>())
-                {
-                    currentNPC.immune[projectile.owner] = 10;
-                }
-            }
-        }
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            if (projectile.DamageType != DamageClass.Melee)
-            {
-                SetImmune(projectile, NPC);
-            }
         }
 
         public override void BossLoot(ref string name, ref int potionType)

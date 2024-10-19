@@ -77,14 +77,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 NPC.active = false;
             }
         }
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            if (projectile.DamageType != DamageClass.Melee)
-            {
-                HellkiteDragonHead.SetImmune(projectile, NPC);
-            }
-        }
-
+        
         public override bool CheckActive()
         {
             return false;
