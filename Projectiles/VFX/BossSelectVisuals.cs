@@ -87,7 +87,10 @@ namespace tsorcRevamp.Projectiles.VFX
                         SHMDownedBosses[SHMDownedBosses.Count - 1].SetDefaults(NPCID.Bunny);
                     }
                 }
-
+                if (currentDownedList == null)
+                {
+                    currentDownedList = PreHardmodeDownedBosses;
+                }
                 inititalized = true;
             }
 

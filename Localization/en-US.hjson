@@ -3786,6 +3786,7 @@ Mods: {
 					"[c/ffbf00:Atop the Twin Peaks of Arazium, we gaze at Sky Above, and the Great Chasm Below. We are the Eyes of the Ancient One.]"
 					'''
 			}
+
 			CrestOfWater: {
 				DisplayName: Crest of Water
 				Tooltip:
@@ -5644,10 +5645,7 @@ Mods: {
 
 			CalciumBlade: {
 				DisplayName: Calcium Blade
-				Tooltip:
-					'''
-					'A blade of sharpened bone'
-					'''
+				Tooltip: "'A blade of sharpened bone'"
 			}
 
 			CoralSword: {

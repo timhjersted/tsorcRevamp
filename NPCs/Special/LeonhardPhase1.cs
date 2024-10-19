@@ -75,29 +75,31 @@ namespace tsorcRevamp.NPCs.Special
                 int leftOrRightVel = Main.rand.Next(-1, 1);
                 if (leftOrRightVel == 0) { leftOrRightVel = 1; }
 
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+
+                if (NPC.direction == 1)
                 {
-                    if (NPC.direction == 1)
+                    for (int i = 0; i <= 5; i++)
                     {
-                        for (int i = 0; i <= 5; i++)
-                        {
-                            Dust dust2 = Main.dust[Dust.NewDust(NPC.TopRight + new Vector2(-6, 8), 8, 8, 89, 0, 0, 50, default(Color), 0.8f)];
-                            dust2.noGravity = true;
-                        }
-
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.TopRight + new Vector2(-6, 8), new Vector2(leftOrRightVel, Main.rand.Next(-3, -2)), ModContent.ProjectileType<ShatteredMoonlightProjectile>(), 8, 0, 0, 2);
+                        Dust dust2 = Main.dust[Dust.NewDust(NPC.TopRight + new Vector2(-6, 8), 8, 8, 89, 0, 0, 50, default(Color), 0.8f)];
+                        dust2.noGravity = true;
                     }
-                    else
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i <= 5; i++)
-                        {
-                            Dust dust2 = Main.dust[Dust.NewDust(NPC.position + new Vector2(6, 8), 8, 8, 89, 0, 0, 50, default(Color), 0.8f)];
-                            dust2.noGravity = true;
-                        }
-
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position + new Vector2(6, 8), new Vector2(leftOrRightVel, Main.rand.Next(-3, -2)), ModContent.ProjectileType<ShatteredMoonlightProjectile>(), 8, 0, 0, 2);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.TopRight + new Vector2(-6, 8), new Vector2(leftOrRightVel, Main.rand.Next(-3, -2)), ModContent.ProjectileType<ShatteredMoonlightProjectile>(), 8, 0, Main.myPlayer, 2);
                     }
                 }
+                else
+                {
+                    for (int i = 0; i <= 5; i++)
+                    {
+                        Dust dust2 = Main.dust[Dust.NewDust(NPC.position + new Vector2(6, 8), 8, 8, 89, 0, 0, 50, default(Color), 0.8f)];
+                        dust2.noGravity = true;
+                    }
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position + new Vector2(6, 8), new Vector2(leftOrRightVel, Main.rand.Next(-3, -2)), ModContent.ProjectileType<ShatteredMoonlightProjectile>(), 8, 0, Main.myPlayer, 2);
+                    }
+                }                
             }
         }
 
@@ -552,6 +554,8 @@ namespace tsorcRevamp.NPCs.Special
                     NPC.velocity.X = 0; //Don't move left or right
                     NPC.FaceTarget(); //Face targeted player
                 }
+
+                
 
                 if (NPC.ai[1] == 120 && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<LeonhardPhase1>()))) //When timer is 120
                 {
