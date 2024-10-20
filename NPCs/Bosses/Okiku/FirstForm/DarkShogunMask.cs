@@ -218,20 +218,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                     {
                         float distance = Main.player[i].Distance(NPC.Center);
                         if (distance > 400)
-                        {
-                            float proximity = 500 - distance;
-                            proximity /= 500f;
-                            proximity = 1 - proximity;
-                            for (int j = 0; j < 10f * proximity * proximity; j++)
-                            {
-                                Vector2 diff = Main.player[i].Center - NPC.Center;
-                                diff = diff.SafeNormalize(Vector2.Zero);
-                                diff *= 500;
-
-                                diff = diff.RotatedBy(Main.rand.NextFloat(-MathHelper.Pi / 15, MathHelper.Pi / 15));
-
-                                Dust.NewDustPerfect(NPC.Center + diff, 62, NPC.velocity, default, default, 1.5f * proximity).noGravity = true;
-                            }
+                        {                          
                             if (distance > 500)
                             {
                                 Main.player[i].velocity = UsefulFunctions.Aim(Main.player[i].Center, NPC.Center, 5);
