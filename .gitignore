@@ -1,4 +1,5 @@
 *.db
+*.user
 /.vs
 /bin
 /obj
@@ -6,4 +7,3 @@ Tiles/SteamEmu/stats.ini
 tsorcRevamp.csproj.user
 Items/RubixCube.cs
 Items/RubixCube.png
-tsorcRevamp.csproj.user
