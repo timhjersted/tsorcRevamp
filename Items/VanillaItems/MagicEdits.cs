@@ -48,11 +48,11 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (item.type == ItemID.FairyQueenMagicItem)
             {
-                item.damage = 38;
+                item.damage = 40; //vanilla 50
             }
             if (item.type == ItemID.SparkleGuitar)
             {
-                item.damage = 50;
+                item.damage = 80; //Rare drop, should be better than the others
             }
             if (item.type == ItemID.LeafBlower)
             {
@@ -78,7 +78,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.ChargedBlasterCannon)
             {
-                item.damage = 125;
+                item.damage = 125; //SHM
             }
             if (item.type == ItemID.ToxicFlask)
             {
@@ -87,7 +87,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.BubbleGun)
             {
-                item.damage = 55; //vanilla 70
+                item.damage = 60; //vanilla 70
                 item.mana = 10; //vanilla 5
             }
 

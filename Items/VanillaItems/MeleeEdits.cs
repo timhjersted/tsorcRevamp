@@ -144,6 +144,11 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 //item.mana = 8;
             }
+            if (item.type == ItemID.NightsEdge)
+            {
+                item.damage = 34;
+                //item.mana = 18;
+            }
             if (item.type == ItemID.FlyingKnife)
             {
                 //item.mana = 18;
@@ -193,6 +198,13 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.height = 48;
                 //item.mana = 11;
             }
+            if (item.type == ItemID.TerraBlade)
+            {
+                item.damage = 80;
+                item.useTime = 22;
+                item.useAnimation = 22;
+                //item.mana = 18;
+            }
             if (item.type == ItemID.PossessedHatchet)
             {
                 item.damage = 110; //vanilla 80
@@ -210,20 +222,16 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 //item.mana = 15;
             }
-            if (item.type == ItemID.TerraBlade)
-            {
-                //item.mana = 23;
-            }
             if (item.type == ItemID.TheHorsemansBlade)
             {
-                item.damage = 220;
+                item.damage = 220; //SHM
                 item.useTime = 20;
                 item.useAnimation = 20;
                 //item.mana = 16;
             }
             if (item.type == ItemID.NorthPole)
             {
-                item.damage = 180;
+                item.damage = 180; //SHM
             }
             if (item.type == ItemID.DD2SquireBetsySword)
             {
@@ -231,7 +239,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.PiercingStarlight)
             {
-                item.damage = 50;
+                item.damage = 70;
             }
             if (item.type == ItemID.VampireKnives)
             {
@@ -244,7 +252,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.InfluxWaver)
             {
-                item.damage = 130;
+                item.damage = 130; //SHM
                 //item.mana = 23;
             }
             if (item.type == ItemID.DayBreak)

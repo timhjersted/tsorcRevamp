@@ -107,15 +107,15 @@ namespace tsorcRevamp.Items.VanillaItems
             #region Whips
             if (item.type == ItemID.RainbowWhip)
             {
-                item.damage = 75;
+                item.damage = 105;
             }
             if (item.type == ItemID.ScytheWhip)
             {
-                item.damage = 105;
+                item.damage = 115; //SHM
             }
             if (item.type == ItemID.MaceWhip)
             {
-                item.damage = 95;
+                item.damage = 120;
             }
             #endregion
 

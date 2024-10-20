@@ -30,8 +30,7 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.BloodRainBow)
             {
                 //given out as reward for beating a red knight so I think this is fair, also hard to use
-                item.damage = 20; //from 14
-                item.mana = 10;
+                item.damage = 15; //from 14
             }
 
             if (item.type == ItemID.HolyArrow)
@@ -41,14 +40,14 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (item.type == ItemID.DaedalusStormbow)
             {
-                item.damage = 45;
-                item.mana = 20;
+                //item.damage = 45;
+                //item.mana = 20;
             }
 
             //Why is this eventide's internal name i'm literally going to go feral
             if (item.type == ItemID.FairyQueenRangedItem)
             {
-                item.damage = 30;
+                item.damage = 40; //vanilla 50
             }
 
             //Golem items
@@ -59,34 +58,34 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (item.type == ItemID.StakeLauncher)
             {
-                item.damage = 120; //vanilla 45
+                item.damage = 120; //SHM
             }
 
             if (item.type == ItemID.ElfMelter)
             {
-                item.damage = 110; //vanilla 45
+                item.damage = 110; //SHM
             }
 
             //Lunar items
             if (item.type == ItemID.Phantasm)
             {
-                item.mana = 30;
+                //item.mana = 30;
             }
 
             //same damage as Gastraphetes, vanilla damage is 53
             if (item.type == ItemID.Tsunami)
             {
-                item.damage = 35;
+                item.damage = 41;
             }
 
             if (item.type == ItemID.Xenopopper)
             {
-                item.damage = 60;
+                item.damage = 60; //SHM
             }
 
             if (item.type == ItemID.ElectrosphereLauncher)
             {
-                item.damage = 80;
+                item.damage = 80; //SHM
             }
         }
     }

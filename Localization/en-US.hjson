@@ -3701,6 +3701,15 @@ Mods: {
 					'''
 			}
 
+			AbyssFlask: {
+				DisplayName: Flask of the Abyss
+				Tooltip:
+					'''
+					Melee and Whip attacks inflict enemies with Daybroken
+					Increase melee and whip damage and crit by 6%
+					'''
+			}
+
 			CompactFrame: {
 				DisplayName: Compact Frame
 				Tooltip:
@@ -8737,6 +8746,15 @@ Mods: {
 			TerraFallShardDebuff: {
 				DisplayName: Terra Fall Shard Debuff
 				Description: Mods.tsorcRevamp.Buffs.TerraFallShardDebuff.Description
+			}
+
+			AbyssWeaponImbue: {
+				DisplayName: Weapon Imbue: Abyss
+				Description:
+				'''
+				Melee and Whip attacks inflict enemies with Daybroken
+				Increase melee and whip damage and crit by 6%
+				'''
 			}
 		}
 
