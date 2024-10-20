@@ -89,7 +89,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                 initiate = true;
             }
 
-            if(!NPC.AnyNPCs(ModContent.NPCType<AttraidiesShield>()) && NPC.ai[0] != -1)
+            if(!NPC.AnyNPCs(ModContent.NPCType<AttraidiesShield>()) && NPC.ai[0] > -1)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
