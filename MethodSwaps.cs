@@ -2223,7 +2223,7 @@ namespace tsorcRevamp
             orig();
         }
 
-        static readonly List<int> IgnoreForQuickBuff = [ModContent.ItemType<GreatMagicMirror>(), ModContent.ItemType<VillageMirror>(), ItemID.MagicMirror, ItemID.RecallPotion];
+        static readonly List<int> IgnoreForQuickBuff = [ModContent.ItemType<GreatMagicMirror>(), ModContent.ItemType<VillageMirror>(), ItemID.MagicMirror, ItemID.RecallPotion, ItemID.MechanicalEye];
 
         private static void CustomQuickBuff(Terraria.On_Player.orig_QuickBuff orig, Player player)
         {

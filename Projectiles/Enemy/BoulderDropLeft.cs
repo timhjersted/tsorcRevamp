@@ -35,11 +35,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool PreKill(int timeLeft)
         {
             Projectile.type = ProjectileID.GrenadeI;
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(0, 0), ProjectileID.Boulder, 70, 1, Main.myPlayer);
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(0, 0), ProjectileID.Boulder, 70, 1, Main.myPlayer);
+            }
 
             return true;
         }
-
-
     }
 }
