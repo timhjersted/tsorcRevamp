@@ -287,17 +287,20 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 
                 if (TransformProgress < 550)
                 {
-                    if (Main.GameUpdateCount % 60 == 0 && TransformProgress > 200)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<MarilithLightning>(), 30, 0, Main.myPlayer);
-                    }
-                    if (Main.GameUpdateCount % 60 == 30 && TransformProgress > 350)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<MarilithLightning>(), 30, 0, Main.myPlayer);
-                    }
-                    if (Main.GameUpdateCount % 20 == 0 && TransformProgress > 450)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<MarilithLightning>(), 15, 0, Main.myPlayer);
+                        if (Main.GameUpdateCount % 60 == 0 && TransformProgress > 200)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<MarilithLightning>(), 30, 0, Main.myPlayer);
+                        }
+                        if (Main.GameUpdateCount % 60 == 30 && TransformProgress > 350)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<MarilithLightning>(), 30, 0, Main.myPlayer);
+                        }
+                        if (Main.GameUpdateCount % 20 == 0 && TransformProgress > 450)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(1, 1), ModContent.ProjectileType<MarilithLightning>(), 15, 0, Main.myPlayer);
+                        }
                     }
                 }
 
