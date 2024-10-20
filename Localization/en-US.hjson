@@ -8751,10 +8751,10 @@ Mods: {
 			AbyssWeaponImbue: {
 				DisplayName: Weapon Imbue: Abyss
 				Description:
-				'''
-				Melee and Whip attacks inflict enemies with Daybroken
-				Increase melee and whip damage and crit by 6%
-				'''
+					'''
+					Melee and Whip attacks inflict enemies with Daybroken
+					Increase melee and whip damage and crit by 6%
+					'''
 			}
 		}
 

@@ -276,7 +276,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<SolarBlast>());
             UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<Projectiles.Enemy.Marilith.MarilithLightning>());
             UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<DarkLaser>());
-            UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<DarkLaserHost>());
             UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<StardustShot>());
             UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<StardustBeam>());
             UsefulFunctions.ClearProjectileType(ModContent.ProjectileType<NebulaShot>());
@@ -389,9 +388,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
                         }
                     }
-                    for (int i = 0; i < 20; i++)
+                    for (int i = 0; i < 12; i++)
                     {
-                        Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / 20f);
+                        Vector2 projVel = new Vector2(5, 0).RotatedBy(i * 2f * MathHelper.Pi / 12f);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<EnemyAttraidiesBlackFire>(), BlackFireDamage, -1, Main.myPlayer, -1);
                     }
                 }
@@ -508,7 +507,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<DarkLaserHost>(), DarkLaserDamage, .5f, Main.myPlayer, NPC.whoAmI);
+                    for(int i = 0; i < 5; i++)
+                    {
+                        Vector2 aimVec = new Vector2(1, 0).RotatedBy(i * MathHelper.TwoPi / 5);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, aimVec, ModContent.ProjectileType<DarkLaser>(), DarkLaserDamage, .5f, Main.myPlayer, 0, NPC.whoAmI);
+                    }
                 }
             }
 
@@ -829,7 +832,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<DarkLaserHost>(), DarkLaserDamage, .5f, Main.myPlayer, NPC.whoAmI, 1);
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Vector2 aimVec = new Vector2(1, 0).RotatedBy(i * MathHelper.TwoPi / 5);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, aimVec, ModContent.ProjectileType<DarkLaser>(), DarkLaserDamage, .5f, Main.myPlayer, 0, NPC.whoAmI, 10);
+                    }
                 }
             }
 

@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
             Additive = true;
 
-            ProjectileSource = true;
+            ProjectileSource = false;
             FollowHost = true;
 
             LaserName = "Dark Laser";
@@ -58,15 +58,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             {
                 Projectile.Kill();
             }
-            if (Projectile.ai[0] >= 10)
+            if (Projectile.ai[2] == 10)
             {
                 Projectile.timeLeft = 9999;
                 FiringDuration = 99999;
-                Projectile.ai[0] -= 10;
+                Projectile.ai[2] -= 10;
                 rotationSpeed = 0.006f;
             }
-            Projectile.rotation += rotationSpeed;
-            Projectile.velocity = (Projectile.rotation + MathHelper.TwoPi * Projectile.ai[0] / 5f).ToRotationVector2();
+            Projectile.velocity = Projectile.velocity.RotatedBy(rotationSpeed);
             base.AI();
         }
     }
