@@ -61,7 +61,8 @@ namespace tsorcRevamp.Projectiles.VFX
                     AttackId = aimingInit.AttackId;
                 }
                 flippedSwing = AttackId % 2 != 0;
-                trailWidth = (int)(owner.HeldItem.height * owner.HeldItem.scale * 1.3f);
+                trailWidth = (int)(Math.Sqrt(owner.HeldItem.height * owner.HeldItem.height + owner.HeldItem.width * owner.HeldItem.width) * owner.HeldItem.scale);
+                trailWidth = Math.Max(trailWidth, 50);
                 Projectile.timeLeft = owner.itemAnimationMax + 10;
                 tsorcInstancedGlobalItem instancedGlobal = owner.HeldItem.GetGlobalItem<tsorcInstancedGlobalItem>();
                 slashColor = instancedGlobal.slashColor;
@@ -90,7 +91,7 @@ namespace tsorcRevamp.Projectiles.VFX
 
             if (Projectile.timeLeft > 10 && !reachedEnd)
             {
-                Projectile.rotation = QuickSlashMeleeAnimation.MeleeSwingRotation(owner, owner.HeldItem, flippedSwing);
+                Projectile.rotation = QuickSlashMeleeAnimation.MeleeSwingRotation(owner, owner.HeldItem, flippedSwing, 1.2f);
                 if (owner.gravDir == 1f) Projectile.rotation += MathHelper.PiOver2;
                 else if (owner.direction == 1) Projectile.rotation += (float)Math.PI;
 
@@ -118,6 +119,9 @@ namespace tsorcRevamp.Projectiles.VFX
         float trailIntensity = 1;
         public override void SetEffectParameters(Effect effect)
         {
+
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/Slash", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+
             if (baseNoiseUOffset == 0)
             {
                 baseNoiseUOffset = Main.rand.NextFloat();

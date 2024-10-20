@@ -23,7 +23,7 @@ public class QuickSlashMeleeAnimation : MeleeAnimation, ICanDoMeleeDamage
     }
 
     //This is public static so I can access it anywhere
-    public static float MeleeSwingRotation(Player player, Item item, bool IsAttackFlipped)
+    public static float MeleeSwingRotation(Player player, Item item, bool IsAttackFlipped, float leadFactor = 1)
     {
         float baseAngle;
 
@@ -36,7 +36,7 @@ public class QuickSlashMeleeAnimation : MeleeAnimation, ICanDoMeleeDamage
             baseAngle = 0f;
         }
 
-        float step = 1f - MathHelper.Clamp(player.itemAnimation / (float)player.itemAnimationMax, 0f, 1f);
+        float step = (1f - MathHelper.Clamp(player.itemAnimation / (float)player.itemAnimationMax, 0f, 1f)) * leadFactor;
         int dir = player.direction * (IsAttackFlipped ? -1 : 1);
 
         float minValue = baseAngle - MathHelper.PiOver2 * 1.25f;
@@ -45,13 +45,15 @@ public class QuickSlashMeleeAnimation : MeleeAnimation, ICanDoMeleeDamage
         bool flipped = player.gravDir != 1f && ModContent.GetInstance<tsorcRevampConfig>().GravityFix;
 
         Tuple<float, float> temp = new(minValue, maxValue);
-        if (flipped) {
+        if (flipped)
+        {
             minValue += MathHelper.PiOver2;
             maxValue += MathHelper.PiOver2;
-            if (player.direction == 1) {
+            if (player.direction == 1)
+            {
                 minValue += (float)Math.PI;
                 maxValue += (float)Math.PI;
-            } 
+            }
         }
 
         if (dir < 0)
@@ -74,7 +76,8 @@ public class QuickSlashMeleeAnimation : MeleeAnimation, ICanDoMeleeDamage
             (1.0f, maxValue)
         );
 
-        if (flipped) {
+        if (flipped)
+        {
             minValue = temp.Item1;
             maxValue = temp.Item2;
         }

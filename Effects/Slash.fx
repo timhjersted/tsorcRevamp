@@ -23,6 +23,7 @@ float speed;
 float2 samplePointOffset1;
 float2 samplePointOffset2;
 float baseNoiseUOffset;
+float intensity;
 
 struct VertexShaderInput
 {
@@ -53,7 +54,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     float2 uv = input.TextureCoordinates;
     
     //Calculate how close the current pixel is to the center line of the screen
-    float intensity = 1.0 - abs(uv.y - 0.5);
+    float intensity = 0.84;
     
     //Raise it to a high exponent, resulting in sharply increased intensity at the center that trails off smoothly
     //Higher number = more narrow and compressed trail
@@ -61,10 +62,10 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
         
     
     //Make it fade out towards all 4 edges
-    float start = 0.8;
+    float start = 0.75;
     float end = 0.01 + (1 - fadeOut);
-    float yStart = 0.9;
-    float yEnd = 0.1;
+    float yStart = 0.85;
+    float yEnd = 0.4;
     
     if (uv.x > start)
     {
@@ -76,11 +77,13 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     }    
     if (uv.y > yStart)
     {
-        intensity = lerp(0.0, intensity, pow((1.0 - uv.y) / yEnd, 5));
+        //intensity = lerp(0.0, intensity, pow((1.0 - uv.y) / yStart, 5));
+       //return intensity;
     }
     if (uv.y < yEnd)
     {
         intensity = lerp(0.0, intensity, pow(uv.y / yEnd, 5));
+
     }
     
     
@@ -88,9 +91,9 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
     intensity = pow(intensity, 1.75);
     
     //Make it fade out toward the far edge
-    intensity = intensity * uv.x;
+    intensity = intensity * pow(uv.x, .2);
     
-    float2 baseNoiseVector = float2((uv.x / 5) + time / 5 , uv.y);
+    float2 baseNoiseVector = float2((uv.x / 5) + time / 3 , uv.y);
     float baseNoiseIntensity = tex2D(baseNoiseSampler, baseNoiseVector).r;
     baseNoiseIntensity = pow(baseNoiseIntensity, 3) * 10;
     if (baseNoiseIntensity < 0.10)

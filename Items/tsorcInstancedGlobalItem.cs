@@ -15,6 +15,7 @@ namespace tsorcRevamp.Items
         public byte blessed;
         public float refreshing;
         public Color slashColor = Color.DarkGray;
+        public float slashIntensity = 1;
         public tsorcSlashStyle slashStyle;
 
         public tsorcInstancedGlobalItem()
