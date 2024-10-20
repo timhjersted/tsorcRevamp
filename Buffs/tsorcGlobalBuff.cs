@@ -40,6 +40,7 @@ namespace tsorcRevamp.Buffs
             if (type == BuffID.Tipsy)
             {
                 player.GetDamage(DamageClass.SummonMeleeSpeed) += 0.1f;
+                player.GetCritChance(DamageClass.SummonMeleeSpeed) += 2;
             }
 
             if (type == BuffID.Sharpened)

@@ -467,6 +467,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetCritChance(DamageClass.Melee) += ApplyScaling(2f);
             player.GetAttackSpeed(DamageClass.Melee) += ApplyScaling(0.1f);
             player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(0.1f);
+            player.GetCritChance(DamageClass.SummonMeleeSpeed) += ApplyScaling(2f);
         }
     }
 
