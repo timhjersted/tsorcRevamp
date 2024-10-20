@@ -2380,9 +2380,12 @@ namespace tsorcRevamp
             {
                 for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
                 {
-                    if (PotionBagItems[i] != null && PotionBagItems[i].type != 0 && (player.potionDelay == 0 || !PotionBagItems[i].potion) && ItemLoader.CanUseItem(PotionBagItems[i], player) && (player.GetHealMana(PotionBagItems[i], true) > player.GetHealMana(selectedItem, true)) || PotionBagItems[i].type == ModContent.ItemType<Items.Potions.SupremeManaPotion>())
+                    if (PotionBagItems[i] != null)
                     {
-                        selectedItem = PotionBagItems[i];
+                        if (PotionBagItems[i].type != 0 && (player.potionDelay == 0 || !PotionBagItems[i].potion) && ItemLoader.CanUseItem(PotionBagItems[i], player) && (player.GetHealMana(PotionBagItems[i], true) > player.GetHealMana(selectedItem, true)) || PotionBagItems[i].type == ModContent.ItemType<Items.Potions.SupremeManaPotion>())
+                        {
+                            selectedItem = PotionBagItems[i];
+                        }
                     }
                 }
             }

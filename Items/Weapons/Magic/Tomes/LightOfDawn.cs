@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.damage = 50;
             Item.autoReuse = true;
             Item.knockBack = 4;
-            Item.UseSound = SoundID.Item34;
+            Item.UseSound = SoundID.Item34 with { Volume = 0.335f };
             Item.rare = ItemRarityID.Red;
             Item.shootSpeed = 10;
             Item.crit = 2;

@@ -127,9 +127,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(), 10, 0, Main.myPlayer, 700, 60);
-                for (int i = 0; i < 16; i++)
+                for (int i = 0; i < 12; i++)
                 {
-                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(12, 0).RotatedBy((MathHelper.PiOver2 / 16f) + i * MathHelper.TwoPi / 16f), ModContent.ProjectileType<SolarBlast>(), Projectile.damage, .5f, Main.myPlayer);
+                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(12, 0).RotatedBy((MathHelper.PiOver2 / 12f) + i * MathHelper.TwoPi / 12f), ModContent.ProjectileType<SolarBlast>(), Projectile.damage, .5f, Main.myPlayer);
                 }
             }
 
@@ -153,7 +153,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             //Apply the shader, caching it as well
             if (data == null)
             {
-                data = new ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("tsorcRevamp/Effects/SolarDetonation", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "SolarDetonationShaderPass");
+                data = new ArmorShaderData(ModContent.Request<Effect>("tsorcRevamp/Effects/SolarDetonation", ReLogic.Content.AssetRequestMode.ImmediateLoad), "SolarDetonationShaderPass");
             }
 
             //Pass the size parameter in through the "saturation" variable, because there isn't a "size" one

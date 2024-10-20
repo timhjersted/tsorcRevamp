@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.Okiku
@@ -36,8 +37,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
                     targetVector += Main.rand.NextVector2Circular(2, 2);
                     targetVector.Normalize();
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, targetVector, ModContent.ProjectileType<StardustBeam>(), Projectile.damage, 0, Main.myPlayer, Projectile.ai[1], UsefulFunctions.EncodeID(Projectile));
-
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, targetVector, ModContent.ProjectileType<StardustBeam>(), Projectile.damage, 0, Main.myPlayer, Projectile.ai[1], UsefulFunctions.EncodeID(Projectile));
+                    }
                     if (!randomize)
                     {
                         break;

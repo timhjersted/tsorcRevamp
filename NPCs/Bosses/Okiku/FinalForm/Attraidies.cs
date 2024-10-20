@@ -251,6 +251,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 {
                     ClearObstructiveProjectiles();
                     NPC.Center = Target.Center + new Vector2(0, -600);
+                    if(NPC.Center.Y < 160)
+                    {
+                        NPC.position.Y = 160;
+                    }
                     NPC.dontTakeDamage = true;
                     UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.Thought"), Color.MediumPurple);
                     UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.Flight"), Color.Green);

@@ -17,10 +17,18 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
         public bool DragonDead = false;
         public int TimerRain = 0;
         public int DragonIndex = 0;
-        public float TimerSpawn = 0;
         public bool ChannellingDragon = false;
         int randPosX = 0;
-        int nextRandPosX = 0;
+        public int nextRandPosX
+        {
+            get => (int)NPC.ai[0];
+            set => NPC.ai[0] = value;
+        }
+        public int TimerSpawn
+        {
+            get => (int)NPC.ai[1];
+            set => NPC.ai[1] = value;
+        }
 
         public override void SetStaticDefaults()
         {
@@ -37,7 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             NPC.boss = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.lifeMax = 14000;
+            NPC.lifeMax = 24000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0f;
@@ -73,14 +81,16 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
                 if (TimerSpawn == 1) //teleport above player right after dragon is killed
                 {
                     randPosX = nextRandPosX;
-                    nextRandPosX = Main.rand.Next(-150, 150);
-                    NPC.netUpdate = true;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        nextRandPosX = Main.rand.Next(-150, 150);
+                    }
                 }
 
                 //While we're in the "spam obscure drops" phase               
                 if (TimerSpawn <= 600)
                 {
-                    NPC.position.X = Main.player[NPC.target].position.X + randPosX;
+                    NPC.position.X = Main.player[NPC.target].position.X + randPosX;                    
                     NPC.position.Y = Main.player[NPC.target].position.Y - 250;
 
                     TimerRain++;
@@ -161,11 +171,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(nextRandPosX);
+            //writer.Write(nextRandPosX);
         }
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            nextRandPosX = reader.ReadInt32();
+           // nextRandPosX = reader.ReadInt32();
         }
 
         public override void OnKill()

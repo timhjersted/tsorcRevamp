@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Debug
 
 
 
-            NPC.NewNPC(source, (int)position.X, (int)position.Y, ModContent.NPCType<NPCs.Special.AbyssCataclysm>());
+            //NPC.NewNPC(source, (int)position.X, (int)position.Y, ModContent.NPCType<NPCs.Special.AbyssCataclysm>());
 
             //NPCs.Bosses.PrimeV2.PrimeV2.ActuatePrimeArena();
 

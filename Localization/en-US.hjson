@@ -10441,6 +10441,7 @@ Mods: {
 			PinwheelFireball.DisplayName: PinwheelFireball
 			AbyssFracture.DisplayName: Abyss Fracture
 			AbyssCataclysm.DisplayName: Abyss Cataclysm
+			AttraidiesShield.DisplayName: Attraidies Shield
 		}
 
 		Prefixes: {

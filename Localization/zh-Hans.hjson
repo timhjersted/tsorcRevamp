@@ -10445,6 +10445,7 @@ Mods: {
 			PinwheelFireball.DisplayName: 三焱家族火球
 			AbyssFracture.DisplayName: 破碎深渊
 			AbyssCataclysm.DisplayName: 深渊风暴
+			// AttraidiesShield.DisplayName: Attraidies Shield
 		}
 
 		Prefixes: {

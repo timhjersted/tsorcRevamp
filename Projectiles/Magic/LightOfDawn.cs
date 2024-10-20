@@ -29,13 +29,13 @@ namespace tsorcRevamp.Projectiles.Magic
             Projectile.localNPCHitCooldown = 10;
             Projectile.DamageType = DamageClass.Magic;
 
-            trailWidth = 35;
+            trailWidth = 20;
             trailPointLimit = 900;
             trailCollision = true;
             NPCSource = false;
             collisionFrequency = 5;
             trailYOffset = 50;
-            trailMaxLength = 500;
+            trailMaxLength = 250;
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles.Magic
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (!playedSound)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item43 with { Volume = 0.5f }, Projectile.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item43 with { Volume = 0.0125f }, Projectile.Center);
                 playedSound = true;
             }
 

@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             NPC.boss = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.lifeMax = 12600;
+            NPC.lifeMax = 126000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0f;
