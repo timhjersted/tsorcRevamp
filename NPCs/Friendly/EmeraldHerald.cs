@@ -123,7 +123,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     if (Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 12)
                     {
                         Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax += 1;
-                        Main.LocalPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax += 7;
+                        Main.LocalPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax += 3;
                         if (Main.LocalPlayer.inventory[ShardItemIndex].stack == 1) { Main.LocalPlayer.inventory[ShardItemIndex].TurnToAir(); }
                         else Main.LocalPlayer.inventory[ShardItemIndex].stack--;
 

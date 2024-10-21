@@ -13,8 +13,8 @@ namespace tsorcRevamp.Items.VanillaItems
         public static int RedClothMaxManaBoost = 40;
         public static float RedClothManaCostReduction = 5f;
 
-        public const float BotCManaRestorationCuffsPercentage = 25;
-        public const float BotCManaStarMaxManaPercentage = 6;
+        public const float BotCManaRestorationCuffsPercentage = 34;
+        public const float BotCManaStarMaxManaPercentage = 10;
         public override void SetDefaults(Item item)
         {
             //Why is this eventide's internal name i'm literally going to go feral
@@ -42,6 +42,10 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.DamageType = DamageClass.MagicSummonHybrid;
             }
             if (item.type == ItemID.MagnetSphere)
+            {
+                item.DamageType = DamageClass.MagicSummonHybrid;
+            }
+            if (item.type == ItemID.RainbowGun)
             {
                 item.DamageType = DamageClass.MagicSummonHybrid;
             }

@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items
             if (player.whoAmI == Main.LocalPlayer.whoAmI && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain < 300)
             {
                 player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain += 30;
-                player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain += 40;
+                player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain += 30;
                 Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.SublimeBoneDust.EstusFlaskPotency") + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain, Color.OrangeRed);
                 Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.Items.SublimeBoneDust.CeruleanFlaskPotency") + Main.LocalPlayer.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain, Color.RoyalBlue);
                 return true;

@@ -1,5 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Magic;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
@@ -12,21 +13,20 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void SetDefaults()
         {
-            Item.damage = 30;
+            Item.width = 34;
             Item.height = 10;
-            Item.knockBack = 1;
+            Item.damage = 30;
+            Item.DamageType = DamageClass.MagicSummonHybrid;
+            Item.mana = 100;
+            Item.knockBack = 2f;
             Item.rare = ItemRarityID.LightRed;
-            Item.shootSpeed = 4;
-            Item.DamageType = DamageClass.Magic;
-            Item.mana = 10;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.shoot = ModContent.ProjectileType<EnergyStrikeScrollProjectile>();
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 20;
-            Item.useAnimation = 20;
-            Item.value = PriceByRarity.LightRed_4;
-            Item.width = 34;
+            Item.useTime = 60;
+            Item.useAnimation = 60;
             Item.noMelee = true;
-            Item.shoot = ModContent.ProjectileType<Projectiles.EnergyStrike>();
         }
     }
 }

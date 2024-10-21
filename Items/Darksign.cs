@@ -82,8 +82,8 @@ namespace tsorcRevamp.Items
         }
         public override bool? UseItem(Player player) // Won't consume item without this
         {
-            player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax = player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax * 3;
-            player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain = ((player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain - tsorcRevampEstusPlayer.DefaultEstusHealthGain) * 2) + 120;
+            player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanChargesMax = ((player.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax - tsorcRevampEstusPlayer.DefaultEstusChargesMax) * 3) + tsorcRevampCeruleanPlayer.DefaultCeruleanChargesMax;
+            player.GetModPlayer<tsorcRevampCeruleanPlayer>().ceruleanManaGain = player.GetModPlayer<tsorcRevampEstusPlayer>().estusHealthGain - tsorcRevampEstusPlayer.DefaultEstusHealthGain + tsorcRevampCeruleanPlayer.DefaultCeruleanManaGain;
             return true;
         }
         public override void UseStyle(Player player, Rectangle rectangle)

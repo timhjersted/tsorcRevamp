@@ -3,7 +3,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.VanillaItems
@@ -155,6 +157,34 @@ namespace tsorcRevamp.Items.VanillaItems
             .AddIngredient(ItemID.StardustWormBanner, 1)
             .AddTile(TileID.LunarCraftingStation);
             recipe4.Register();
+
+            Recipe VitalCrystal = Recipe.Create(ItemID.AegisCrystal)
+                .AddCondition(tsorcRevampWorld.AdventureModeEnabled)
+                .AddIngredient(ItemID.LifeCrystal, 3)
+                .AddIngredient(ModContent.ItemType<DarkSoul>(), 6000)
+                .AddTile(TileID.DemonAltar);
+            VitalCrystal.Register();
+
+            Recipe AegisFruit = Recipe.Create(ItemID.AegisFruit)
+                .AddCondition(tsorcRevampWorld.AdventureModeEnabled)
+                .AddIngredient(ItemID.LifeFruit, 3)
+                .AddIngredient(ModContent.ItemType<DarkSoul>(), 5000)
+                .AddTile(TileID.DemonAltar);
+            AegisFruit.Register();
+
+            Recipe ArcaneCrystal = Recipe.Create(ItemID.ArcaneCrystal)
+                .AddCondition(tsorcRevampWorld.AdventureModeEnabled)
+                .AddIngredient(ItemID.ManaCrystal, 3)
+                .AddIngredient(ModContent.ItemType<DarkSoul>(), 2000)
+                .AddTile(TileID.DemonAltar);
+            ArcaneCrystal.Register();
+
+            Recipe ShimmerArrow = Recipe.Create(ItemID.ShimmerArrow, 5)
+                .AddCondition(tsorcRevampWorld.AdventureModeEnabled)
+                .AddIngredient(ItemID.WoodenArrow, 5)
+                .AddIngredient(ModContent.ItemType<DarkSoul>(), 1)
+                .AddTile(TileID.DemonAltar);
+            ShimmerArrow.Register();
 
         }
     }

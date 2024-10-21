@@ -1839,6 +1839,7 @@ namespace tsorcRevamp
         {
             tsorcGlobalItem.populateSoulRecipes();
         }
+        public static bool VanillaBossesRemadeEnabled = false;
         public override void PostSetupContent()
         {
             #region Summoners Association Compatibility
@@ -2536,6 +2537,8 @@ namespace tsorcRevamp
                 Main.tileSolidTop[tileID] = false;
             }
             #endregion
+
+            VanillaBossesRemadeEnabled = ModLoader.TryGetMod("VanillaBossesRemade", out Mod VBM);
         }
 
         internal async void UpdateCheck()
