@@ -2388,6 +2388,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.value = 0; //currently unkillable
                         npc.rarity = 33;
+                        npc.damage = 0;
                         break;
                     }
 
@@ -3330,14 +3331,14 @@ namespace tsorcRevamp.NPCs
                     npc.velocity *= 0.92f;
                 }
             }
-            if (npc.type == NPCID.EyeofCthulhu && !tsorcRevamp.VanillaBossesRemadeEnabled)
+            if (npc.type == NPCID.EyeofCthulhu)
             {
                 AI_EoC(npc);
                 return false;
             }
 
 
-            if (npc.type == NPCID.WallofFlesh && !tsorcRevamp.VanillaBossesRemadeEnabled)
+            if (npc.type == NPCID.WallofFlesh)
             {
                 #region WoF AI
 
@@ -3664,7 +3665,7 @@ namespace tsorcRevamp.NPCs
                 return false;
             }
 
-            if (npc.type == NPCID.WallofFleshEye && !tsorcRevamp.VanillaBossesRemadeEnabled)
+            if (npc.type == NPCID.WallofFleshEye)
             {
                 #region WoF Eye AI
 

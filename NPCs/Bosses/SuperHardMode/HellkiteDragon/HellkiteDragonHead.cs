@@ -232,7 +232,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HellkiteStone>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HiRyuuSpear>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 7, 10));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<WorldEnderItem>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 3, 6));

@@ -339,7 +339,7 @@ namespace tsorcRevamp.Projectiles
             }
             if (projectile.type == ProjectileID.PhantasmalDeathray) //die
             {
-                projectile.damage = 1000;
+                projectile.damage = 200;
             }
             if (projectile.type == ProjectileID.PhantasmalBolt) //the double shot
             {
@@ -347,11 +347,11 @@ namespace tsorcRevamp.Projectiles
             }
             if (projectile.type == ProjectileID.PhantasmalSphere) //the big circly eyes that go after you
             {
-                projectile.damage = 130;
+                projectile.damage = 115;
             }
             if (projectile.type == ProjectileID.PhantasmalEye) //the things that home in towards you and explode
             {
-                projectile.damage = 90;
+                projectile.damage = 80;
             }
 
             //Destroyer shoots true lasers instead of normal projectile lasers

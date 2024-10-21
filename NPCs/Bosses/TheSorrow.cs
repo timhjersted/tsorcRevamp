@@ -459,7 +459,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.ai[3]++;
                 //NPC.alpha = 220; // No longer goes invisible, that is now just a Hunter mechanic
                 NPC.defense = 333; // Was 57, increased greatly just for The Sorrow to fit with frozen ice theme
-                NPC.damage = 160;
+                NPC.damage = 100;
                 NPC.netUpdate = true;
 
                 if (Main.player[NPC.target].Center.X < NPC.Center.X)

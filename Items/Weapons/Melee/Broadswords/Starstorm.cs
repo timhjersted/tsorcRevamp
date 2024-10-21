@@ -17,8 +17,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.width = 42;
             Item.height = 42;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 25;
-            Item.useTime = 50;
+            Item.useAnimation = 29;
+            Item.useTime = 58;
             Item.damage = 45;
             Item.knockBack = 6;
             Item.autoReuse = true;

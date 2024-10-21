@@ -211,6 +211,18 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
+            shop.Add(new Item(ItemID.Bottle)
+            {
+                shopCustomPrice = 3,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
+            shop.Add(new Item(ItemID.BottledWater)
+            {
+                shopCustomPrice = 3,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            });
+
             shop.Add(new Item(ModContent.ItemType<CosmicWatch>())
             {
                 shopCustomPrice = 5,
