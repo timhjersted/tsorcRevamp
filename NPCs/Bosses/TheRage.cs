@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
         }
-        public const int BaseHP = 16000;
+        public const int BaseHP = 20000;
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;

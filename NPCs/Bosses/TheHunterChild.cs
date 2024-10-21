@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Bosses
     //[AutoloadBossHead]
     class TheHunterChild : ModNPC
     {
-        int sproutDamage = 33;
+        int sproutDamage = 24;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
@@ -22,9 +22,9 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            NPC.lifeMax = 6000;
+            NPC.lifeMax = 5000;
             NPC.damage = 53;
-            NPC.defense = 36;
+            NPC.defense = 32;
             NPC.knockBackResist = 0f;
             NPC.value = 31500;
             NPC.npcSlots = 1;

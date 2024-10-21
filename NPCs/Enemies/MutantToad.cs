@@ -103,7 +103,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo) //hook works!
         {
-            target.AddBuff(BuffID.Poisoned, 30 * 60, false);
+            target.AddBuff(BuffID.Poisoned, 15 * 60, false);
             if (Main.hardMode)
             {
                 target.AddBuff(BuffID.Venom, 1 * 60, false);

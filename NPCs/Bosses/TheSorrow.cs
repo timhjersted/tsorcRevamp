@@ -35,7 +35,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn2] = true;
         }
-        public const int BaseHP = 19000;
+        public const int BaseHP = 24000;
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;

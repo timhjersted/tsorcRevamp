@@ -21,9 +21,9 @@ namespace tsorcRevamp.NPCs.Bosses
     [AutoloadBossHead]
     class TheHunter : ModNPC
     {
-        int sproutDamage = 33;
+        int sproutDamage = 26;
         int cursedBreathDamage = 30;
-        public const int BaseHP = 22000;
+        public const int BaseHP = 28000;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 7;
@@ -636,7 +636,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(BuffID.Bleeding, 30 * 60, false);
+            target.AddBuff(BuffID.Bleeding, 30 * 20, false);
         }
         public override void BossLoot(ref string name, ref int potionType)
         {

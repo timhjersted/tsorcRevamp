@@ -666,8 +666,9 @@ namespace tsorcRevamp.Projectiles
                 Vector2 Vel = Main.rand.NextVector2CircularEdge(20, 20);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity + Vel, ModContent.ProjectileType<SmallGolemFireball>(), projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
-                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity - Vel, ModContent.ProjectileType<SmallGolemFireball>(), projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
+                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity + Vel, ProjectileID.GreekFire1, projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
+                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity - Vel, ProjectileID.GreekFire2, projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
+                    Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity - Vel, ProjectileID.GreekFire3, projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
                 }
                 if (NPC.CountNPCS(NPCID.SolarCorite) < 3)
                 {
@@ -675,7 +676,7 @@ namespace tsorcRevamp.Projectiles
                     {
                         NPC Corite = NPC.NewNPCDirect(NPC.GetSource_NaturalSpawn(), projectile.Center, NPCID.SolarCorite);
 
-                        Corite.lifeMax = 125 * Difficulty; //main problem is too many of them spawned at one time
+                        Corite.lifeMax = 200 * Difficulty; //main problem is too many of them spawned at one time
                         Corite.life = Corite.lifeMax;
                         Corite.knockBackResist = 0.3f;
 

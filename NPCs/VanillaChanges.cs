@@ -1337,7 +1337,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.Tumbleweed):
                     {
-                        npc.damage = 300;
+                        npc.damage = 100;
                         npc.lifeMax = 300;
                         npc.value = 1260;
                         break;
@@ -1540,12 +1540,14 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.TacticalSkeleton):
                     {
                         npc.value = 2340;
+                        npc.damage = 0;
                         break;
                     }
 
                 case (NPCID.SkeletonCommando):
                     {
                         npc.value = 2490;
+                        npc.damage = 0;
                         break;
                     }
 
@@ -1652,7 +1654,7 @@ namespace tsorcRevamp.NPCs
                         {
                             npc.lifeMax = 50;
                         }
-                        npc.lifeMax = 1000;
+                        npc.lifeMax = 750;
                         npc.defense = 10;
                         npc.damage = 66;
                         npc.knockBackResist = 0.05f;
