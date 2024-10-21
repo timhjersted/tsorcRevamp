@@ -8,10 +8,10 @@ using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Marilith
+namespace tsorcRevamp.Projectiles.Magic
 {
 
-    public class MarilithLightning : GenericLaser
+    public class Bolt3Lightning : GenericLaser
     {
 
         //Titled "EnemyLightningStrike", but could also be used for player projectiles (and indeed is right now).
@@ -33,38 +33,31 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         {
             Projectile.width = 10;
             Projectile.height = 10;
-            Projectile.friendly = false;
-            Projectile.hostile = true;
+            Projectile.friendly = true;
+            Projectile.hostile = false;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.DamageType = DamageClass.Magic;
             Projectile.timeLeft = 180;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 30;
 
-            FollowHost = true;
-            LaserOrigin = Main.npc[HostIdentifier].Center;
             TelegraphTime = 60;
             FiringDuration = 30;
-            MaxCharge = 60;
+            MaxCharge = 30;
             LaserLength = 2000;
+            TileCollide = true;
             LaserSize = 1.3f;
             LaserColor = Color.Cyan;
             LaserTexture = TransparentTextureHandler.TransparentTextureType.Lightning;
 
             LaserTextureBody = new Rectangle(0, 0, 10, 4);
             LaserSound = null;
-            TileCollide = true;
 
             LaserDebuffs = new List<int>(BuffID.Electrified);
             DebuffTimers = new List<int>(300);
-            LaserName = "Fractoemissive Discharge";
+            LaserName = "Bolt 3 Arc";
 
             CastLight = true;
-
-            Projectile.friendly = true;
-            TileCollide = false;
-            segmentCount = 40;
         }
 
         public static SoundStyle ThunderSoundStyle = new SoundStyle("Terraria/Sounds/Thunder_0");
@@ -83,24 +76,72 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 SetLaserPosition();
             }
 
+
+            if (Projectile.timeLeft - 120 > 0)
+            {
+                float radius = (Projectile.timeLeft - 120);
+                for (int j = 0; j < 2; j++)
+                {
+                    Vector2 dir = Main.rand.NextVector2CircularEdge(radius, radius);
+                    Vector2 dustPos = Projectile.Center + dir;
+                    Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
+                    Dust.NewDustPerfect(dustPos, DustID.FireworkFountain_Blue, dustVel, 200, default, 0.8f).noGravity = true;
+                }
+            }
+
             base.ChargeLaser();
 
 
             Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
+            int dustSpawned = 0;
 
-            //Dust along lightning lines
-
+            //Dust along lightning lines            
             if (FiringTimeLeft == 28)
             {
-                Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f });
-            }
-
-            if (FiringTimeLeft == 28)
-            {
-                for (int i = 0; i < Main.maxPlayers; i++)
+                int dustCount = 4;
+                if (branches != null && branches.Count > 0)
                 {
-                    if (Main.player[i].active && !Main.player[i].dead && !Main.player[i].immune)
-                        CustomCollision(Main.player[i]);
+                    float pitch = Main.rand.NextFloat(-0.2f, 0.2f);
+                    if (FiringTimeLeft == 28)
+                    {
+                        Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Pitch = pitch, Volume = 0.2f }, Projectile.Center);
+                    }
+
+                    for (int i = 0; i < branches.Count; i++)
+                    {
+                        if (branches[i].Count > 0)
+                        {
+                            if (FastContainsPoint(screenRect, branches[i][0]) || i == 0)
+                            {
+                                for (int j = 0; j < branches[i].Count - 1; j++)
+                                {
+
+                                    Vector2 diff = branches[i][j + 1] - branches[i][j];
+                                    diff /= dustCount;
+                                    float lerpPercent = 0.8f * ((float)j / ((float)branches[i].Count - 1f));
+
+                                    float scale = 1.7f;
+                                    if (i == 0)
+                                    {
+                                        scale = 2.2f;
+                                        lerpPercent = 0;
+                                    }
+
+
+                                    for (int k = 0; k < dustCount; k++)
+                                    {
+                                        dustSpawned++;
+                                        Dust thisDust = Dust.NewDustPerfect(branches[i][j] + diff * k, DustID.AncientLight, Scale: scale);
+                                        thisDust.noLight = true;
+                                        thisDust.noGravity = true;
+                                        thisDust.velocity = Vector2.Zero;
+                                        thisDust.rotation = Main.rand.NextFloatDirection();
+                                        thisDust.color = Color.Lerp(Color.White, Color.DarkBlue, lerpPercent);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -133,16 +174,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         }
 
         public bool randomized = false;
-        public List<List<Vector2>> branches;
+        List<List<Vector2>> branches;
         List<List<float>> branchAngles;
         List<List<float>> branchLengths;
-        public int segmentCount = 80;
+        public int segmentCount = 30;
         public float segmentLength = 60;
         public float randomness = 150;
         bool positionSet = false;
         //public float initialAngleLimit = MathHelper.ToRadians(75); //Can diverge up to 75 degrees from 
         private void SetLaserPosition()
         {
+            segmentCount = 30;
             if (!positionSet)
             {
                 branches = new List<List<Vector2>>();
@@ -161,7 +203,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                     {
                         for (int j = 0; j < branches[i].Count - 1; j++)
                         {
-                            if (Main.rand.NextBool(3) && j > 5)
+                            if (Main.rand.NextBool(2) && j > 5)
                             {
                                 //If it's the first set of splits, let them go longer
                                 int segmentLimit = 3;
@@ -199,6 +241,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 {
                     initialAngle -= Main.rand.NextFloat(0.1f, 1.4f);
                 }
+
+                //initialAngle *= -1;
             }
 
             currentBranch.Add(Vector2.Zero);
@@ -329,8 +373,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
             //Draw the rendertarget with the shader
             float rotato = (branches[0][branches[0].Count - 1] - branches[0][0]).ToRotation();
-            Rectangle drawRect = new Rectangle(0, 0, (int)(lightningTarget.Width * 2 * Charge / MaxCharge), lightningTarget.Height);
-            if (IsAtMaxCharge || Projectile.ai[0] == 1 || Charge / MaxCharge > 0.5f)
+            Rectangle drawRect = new Rectangle(0, 0, (int)(lightningTarget.Width * Charge / MaxCharge), lightningTarget.Height);
+            if (IsAtMaxCharge)
             {
                 drawRect.Width = lightningTarget.Width;
             }
@@ -342,27 +386,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             return false;
         }
 
-        Vector2 lightningMaxDimensions = new Vector2(2500, 1000);
+        Vector2 lightningMaxDimensions = new Vector2(2500, 700);
         public static Effect lightningEffect;
         public static Effect blurEffect;
         public void CreateRenderTarget()
         {
-            //Potential better version of this: Rotate them just like is done when drawing them, and calcualte their max X and Y offset of every single branch node
-            //Probably an unnecessary optimization, but an option for if it does become necessary in the future
-            lightningMaxDimensions.X = 0;
-            for (int i = 0; i < branches.Count - 1; i++)
-            {
-                if (branches[i].Count > 2)
-                {
-                    float dist = branches[0][0].Distance(branches[i][branches[i].Count - 1]) + 100;
-                    if (lightningMaxDimensions.X < dist)
-                    {
-                        lightningMaxDimensions.X = dist;
-                    }
-                }
-            }
-            //Main.NewText(lightningMaxDimensions.X);
-
             //Store a reference to the graphics device to simplify code
             GraphicsDevice device = Main.graphics.GraphicsDevice;
 
@@ -430,95 +458,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             }
         }
 
-        public void DrawPrims()
-        {
-            GraphicsDevice device = Main.graphics.GraphicsDevice;
-            device.Textures[0] = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.Lightning];
 
-            VertexPositionColor[] vertices = new VertexPositionColor[12];
-            vertices[0] = new VertexPositionColor(new Vector3(-0.26286500f, 0.0000000f, 0.42532500f), Color.Red);
-            vertices[1] = new VertexPositionColor(new Vector3(0.26286500f, 0.0000000f, 0.42532500f), Color.Orange);
-            vertices[2] = new VertexPositionColor(new Vector3(-0.26286500f, 0.0000000f, -0.42532500f), Color.Yellow);
-            vertices[3] = new VertexPositionColor(new Vector3(0.26286500f, 0.0000000f, -0.42532500f), Color.Green);
-            vertices[4] = new VertexPositionColor(new Vector3(0.0000000f, 0.42532500f, 0.26286500f), Color.Blue);
-            vertices[5] = new VertexPositionColor(new Vector3(0.0000000f, 0.42532500f, -0.26286500f), Color.Indigo);
-            vertices[6] = new VertexPositionColor(new Vector3(0.0000000f, -0.42532500f, 0.26286500f), Color.Purple);
-            vertices[7] = new VertexPositionColor(new Vector3(0.0000000f, -0.42532500f, -0.26286500f), Color.White);
-            vertices[8] = new VertexPositionColor(new Vector3(0.42532500f, 0.26286500f, 0.0000000f), Color.Cyan);
-            vertices[9] = new VertexPositionColor(new Vector3(-0.42532500f, 0.26286500f, 0.0000000f), Color.Black);
-            vertices[10] = new VertexPositionColor(new Vector3(0.42532500f, -0.26286500f, 0.0000000f), Color.DodgerBlue);
-            vertices[11] = new VertexPositionColor(new Vector3(-0.42532500f, -0.26286500f, 0.0000000f), Color.Crimson);
-
-            short[] indices = new short[60];
-            indices[0] = 0; indices[1] = 6; indices[2] = 1;
-            indices[3] = 0; indices[4] = 11; indices[5] = 6;
-            indices[6] = 1; indices[7] = 4; indices[8] = 0;
-            indices[9] = 1; indices[10] = 8; indices[11] = 4;
-            indices[12] = 1; indices[13] = 10; indices[14] = 8;
-            indices[15] = 2; indices[16] = 5; indices[17] = 3;
-            indices[18] = 2; indices[19] = 9; indices[20] = 5;
-            indices[21] = 2; indices[22] = 11; indices[23] = 9;
-            indices[24] = 3; indices[25] = 7; indices[26] = 2;
-            indices[27] = 3; indices[28] = 10; indices[29] = 7;
-            indices[30] = 4; indices[31] = 8; indices[32] = 5;
-            indices[33] = 4; indices[34] = 9; indices[35] = 0;
-            indices[36] = 5; indices[37] = 8; indices[38] = 3;
-            indices[39] = 5; indices[40] = 9; indices[41] = 4;
-            indices[42] = 6; indices[43] = 10; indices[44] = 1;
-            indices[45] = 6; indices[46] = 11; indices[47] = 7;
-            indices[48] = 7; indices[49] = 10; indices[50] = 6;
-            indices[51] = 7; indices[52] = 11; indices[53] = 2;
-            indices[54] = 8; indices[55] = 10; indices[56] = 3;
-            indices[57] = 9; indices[58] = 11; indices[59] = 0;
-
-
-            VertexBuffer vertexBuffer;
-            vertexBuffer = new VertexBuffer(device, typeof(VertexPositionColor), 12, BufferUsage.WriteOnly);
-            vertexBuffer.SetData<VertexPositionColor>(vertices);
-            device.SetVertexBuffer(null);
-            device.SetVertexBuffer(vertexBuffer);
-
-            IndexBuffer indexBuffer;
-            indexBuffer = new IndexBuffer(device, typeof(short), indices.Length, BufferUsage.WriteOnly);
-            indexBuffer.SetData(indices);
-            device.Indices = indexBuffer;
-
-
-            BasicEffect basicEffect = new BasicEffect(device);
-            basicEffect.VertexColorEnabled = true;
-
-
-            Vector2 worldPos = Projectile.position - Main.screenPosition;
-            worldPos.X = (worldPos.X / (Main.screenWidth / 2)) - 1;
-            worldPos.Y = (worldPos.Y / (Main.screenHeight / -2f)) + 1;
-            worldPos *= Main.GameZoomTarget;
-            worldPos.X *= 3f / 2f;
-            basicEffect.World = Matrix.CreateTranslation(new Vector3(worldPos.X, worldPos.Y, 0));
-            basicEffect.Projection = Matrix.CreateOrthographic(3, 2, 0, 100f);// * Main.GameViewMatrix.ZoomMatrix;
-
-            //Still literally can't get any of this to work, so i'm working around it for now instead
-            //basicEffect.Projection *= Main.GameViewMatrix.ZoomMatrix;
-            //basicEffect.View = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 1.0f), Vector3.Zero, Vector3.Up);
-            //basicEffect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(75), 800f / 480f, 1f, 1000f);
-            //basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, (float)device.Viewport.Width, (float)device.Viewport.Height, 0, 1.0f, 1000.0f); //Doesn't work :/
-            //basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, 1920, 1080, 0, 1.0f, 1000.0f); //Also doesn't work :/
-            //basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, device.Viewport.Width, device.Viewport.Height, 0, 0, -1);
-
-
-            //basicEffect.World = Matrix.CreateTranslation(Main.screenPosition.X, Main.screenPosition.Y, 0);
-            //basicEffect.View = Main.GameViewMatrix.ZoomMatrix;
-            //basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, 3, 2, 0, -1, 1);
-
-            RasterizerState rasterizerState = new RasterizerState();
-            rasterizerState.CullMode = CullMode.None;
-            device.RasterizerState = rasterizerState;
-
-            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 12, 0, 20);
-            }
-        }
 
         public void DrawSegments()
         {
@@ -556,10 +496,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             if (lightningTarget != null && !lightningTarget.IsDisposed)
             {
                 lightningTarget.Dispose();
-            }
-            if (lightningTarget != null)
-            {
-                lightningTarget = null;
             }
         }
 
@@ -599,7 +535,38 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
+        {if (FiringTimeLeft == 28 && Vector2.DistanceSquared(targetHitbox.Center(), Projectile.Center) < 4000000)
+            {
+                if (branches == null || branches.Count == 0 || branches[0].Count == 0)
+                {
+                    return false;
+                }
+
+                float point = 0;
+
+                Vector2 topLeft = targetHitbox.TopLeft();
+                Vector2 size = targetHitbox.Size();
+
+                if (Collision.CheckAABBvLineCollision(topLeft, size, branches[0][0], branches[0][branches[0].Count - 1], 10, ref point))
+                {
+                    return true;
+                }
+
+                for (int i = 0; i < branches.Count; i++)
+                {
+                    if (branches[i].Count > 0)
+                    {
+                        for (int j = 0; j < branches[i].Count - 1; j++)
+                        {
+                            if (Collision.CheckAABBvLineCollision(topLeft, size, branches[i][j], branches[i][j + 1], 10, ref point))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
             return false;
         }
 

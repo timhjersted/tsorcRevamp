@@ -5084,7 +5084,7 @@ Mods: {
 				Tooltip:
 					'''
 					A lost tome for artisans
-					Emits a long ranged torrent of electricity
+					Emits a medium ranged torrent of electricity
 					Electrocutes and chains rapidly between enemies
 					'''
 			}
@@ -5094,8 +5094,9 @@ Mods: {
 				Tooltip:
 					'''
 					A lost tome fabled to deal great damage
-					Drops a lingering lightning strike on enemies
-					Only mages will be able to realize this tome's full potential.
+					Casts a furious arc of lightning
+					Only mages will be able to realize this tome's full potential
+					More powerful in water
 					'''
 			}
 
@@ -9384,6 +9385,8 @@ Mods: {
 			NightsCrackerTrail.DisplayName: Nights Cracker Trail
 			TerraFallTrail.DisplayName: Terra Fall Trail
 			SoulDelayer.DisplayName: Soul Delayer
+			Bolt3Lightning.DisplayName: Bolt3 Lightning
+			Bolt4Lightning.DisplayName: Bolt4 Lightning
 		}
 
 		NPCs: {

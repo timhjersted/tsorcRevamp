@@ -46,13 +46,21 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 
         public override bool CanUseItem(Player player)
         {
-            if (player.altFunctionUse == 2 && player.statMana <= (int)(5 * player.manaCost))
+            int manaCost = (int)(50 * player.manaCost);
+            if (player.altFunctionUse == 2)
             {
-                return false;
+                manaCost = (int)(5 * player.manaCost);
             }
-            if (player.altFunctionUse != 2 && player.statMana <= (int)(50 * player.manaCost))
+            if (player.statMana <= manaCost)
             {
-                return false;
+                if (!player.GetModPlayer<tsorcRevampCeruleanPlayer>().isCeruleanRestoring && !player.GetModPlayer<tsorcRevampCeruleanPlayer>().isDrinking)
+                {
+                    MethodSwaps.TryUseQuickMana(player);
+                }
+                if (player.statMana <= manaCost)
+                {
+                    return false;
+                }
             }
             return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.DyingStarHoldout>()] <= 0;
         }

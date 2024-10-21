@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 
         public override void SetDefaults()
         {
-            Item.damage = 140;
+            Item.damage = 750;
             Item.height = 10;
             Item.width = 34;
             Item.knockBack = 0.1f;
@@ -28,20 +28,28 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.shootSpeed = 24f;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
-            Item.mana = 70;
+            Item.mana = 201;
             Item.scale = 0.8f;
             Item.useAnimation = 60;
+            Item.useTime = 60;
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 60;
             Item.value = PriceByRarity.Lime_7;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Bolt4Ball>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Magic.Bolt4Lightning>();
         }
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             if (player.wet)
             {
-                player.AddBuff(BuffID.Electrified, 90);
+                player.AddBuff(BuffID.Electrified, 10);
+
+                if(player.whoAmI == Main.myPlayer)
+                {
+                    for(int i = 0; i < 3; i++)
+                    {
+                        Projectile.NewProjectile(Item.GetSource_FromThis(), player.Center, speed.RotatedByRandom(MathHelper.Pi), type, damage, knockBack);
+                    }
+                }
             }
 
             return true;

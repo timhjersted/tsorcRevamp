@@ -69,6 +69,7 @@ namespace tsorcRevamp.Items.Debug
         //For multiplayer testing, because I only have enough hands for one keyboard. Makes the player holding it float vaguely near the next other player.
         public override void UpdateInventory(Player player)
         {
+            player.statLife = player.statLifeMax;
             if (player.name == "MPTestDummy")
             {
                 if (player.whoAmI == 0)

@@ -9389,6 +9389,8 @@ Mods: {
 			// NightsCrackerTrail.DisplayName: Nights Cracker Trail
 			// TerraFallTrail.DisplayName: Terra Fall Trail
 			// SoulDelayer.DisplayName: Soul Delayer
+			// Bolt3Lightning.DisplayName: Bolt3 Lightning
+			// Bolt4Lightning.DisplayName: Bolt4 Lightning
 		}
 
 		NPCs: {

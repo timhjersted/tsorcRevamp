@@ -31,6 +31,7 @@ using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.Projectiles.Enemy.Marilith;
 using tsorcRevamp.Projectiles.Enemy.Triad;
+using tsorcRevamp.Projectiles.Magic;
 using tsorcRevamp.Projectiles.VFX;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
@@ -1717,6 +1718,26 @@ namespace tsorcRevamp
                                 lightning.CreateRenderTarget();
                             }
                         }
+                        //I really should just make one "Lightning" class that all these inherit from
+                        //But also ¯\_(ツ)_/¯
+                        if (Main.projectile[i].ModProjectile is Bolt3Lightning)
+                        {
+                            Bolt3Lightning lightning = (Bolt3Lightning)Main.projectile[i].ModProjectile;
+                            if (lightning.lightningTarget == null)
+                            {
+                                lightning.CreateRenderTarget();
+                            }
+                        }
+                        //I really should just make one "Lightning" class that all these inherit from
+                        //But also ¯\_(ツ)_/¯
+                        if (Main.projectile[i].ModProjectile is Bolt4Lightning)
+                        {
+                            Bolt4Lightning lightning = (Bolt4Lightning)Main.projectile[i].ModProjectile;
+                            if (lightning.lightningTarget == null)
+                            {
+                                lightning.CreateRenderTarget();
+                            }
+                        }
 
                         if (Main.projectile[i].ModProjectile is RealityCrack)
                         {
@@ -2336,7 +2357,7 @@ namespace tsorcRevamp
             }
         }
 
-        private static void CustomQuickMana(Terraria.On_Player.orig_QuickMana orig, Player player)
+        public static void TryUseQuickMana(Player player)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
@@ -2344,7 +2365,7 @@ namespace tsorcRevamp
             if (modPlayer.BearerOfTheCurse && player.statMana < player.statManaMax2 && ceruleanPlayer.ceruleanChargesCurrent > 0)
             {
                 if (player == Main.LocalPlayer && !player.mouseInterface && ceruleanPlayer.ceruleanChargesCurrent > 0 && player.itemAnimation == 0
-                && !modPlayer.isDodging && !ceruleanPlayer.isDrinking && !player.CCed && !estusPlayer.isDrinking)
+                && !modPlayer.isDodging && !ceruleanPlayer.isDrinking && !player.CCed && !estusPlayer.isDrinking && !ceruleanPlayer.isCeruleanRestoring)
                 {
                     ceruleanPlayer.isDrinking = true;
                     ceruleanPlayer.ceruleanDrinkTimer = 0;
@@ -2391,6 +2412,11 @@ namespace tsorcRevamp
             }
 
             UsePotion(selectedItem, player);
+        }
+
+        private static void CustomQuickMana(Terraria.On_Player.orig_QuickMana orig, Player player)
+        {
+            TryUseQuickMana(player);            
         }
 
         private static void CustomQuickHeal(Terraria.On_Player.orig_QuickHeal orig, Player player)

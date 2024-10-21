@@ -8,10 +8,10 @@ using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Marilith
+namespace tsorcRevamp.Projectiles.Magic
 {
 
-    public class MarilithLightning : GenericLaser
+    public class Bolt4Lightning : GenericLaser
     {
 
         //Titled "EnemyLightningStrike", but could also be used for player projectiles (and indeed is right now).
@@ -33,8 +33,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         {
             Projectile.width = 10;
             Projectile.height = 10;
-            Projectile.friendly = false;
-            Projectile.hostile = true;
+            Projectile.friendly = true;
+            Projectile.hostile = false;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Magic;
@@ -42,9 +42,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 30;
 
-            FollowHost = true;
-            LaserOrigin = Main.npc[HostIdentifier].Center;
-            TelegraphTime = 60;
+            FollowHost = false;
+            TelegraphTime = 40;
             FiringDuration = 30;
             MaxCharge = 60;
             LaserLength = 2000;
@@ -58,11 +57,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
             LaserDebuffs = new List<int>(BuffID.Electrified);
             DebuffTimers = new List<int>(300);
-            LaserName = "Fractoemissive Discharge";
+            LaserName = "Bolt 4 Cascade";
+            
 
             CastLight = true;
 
-            Projectile.friendly = true;
             TileCollide = false;
             segmentCount = 40;
         }
@@ -92,17 +91,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
 
             if (FiringTimeLeft == 28)
             {
-                Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f });
-            }
-
-            if (FiringTimeLeft == 28)
-            {
-                for (int i = 0; i < Main.maxPlayers; i++)
-                {
-                    if (Main.player[i].active && !Main.player[i].dead && !Main.player[i].immune)
-                        CustomCollision(Main.player[i]);
-                }
-            }
+                Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.3f }, Projectile.Center);
+            }            
 
             thisWatch.Stop();
             //if (thisWatch.ElapsedMilliseconds > 1)
@@ -136,9 +126,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         public List<List<Vector2>> branches;
         List<List<float>> branchAngles;
         List<List<float>> branchLengths;
-        public int segmentCount = 80;
+        public int segmentCount = 5;
         public float segmentLength = 60;
-        public float randomness = 150;
+        public float randomness = 140;
         bool positionSet = false;
         //public float initialAngleLimit = MathHelper.ToRadians(75); //Can diverge up to 75 degrees from 
         private void SetLaserPosition()
@@ -161,7 +151,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                     {
                         for (int j = 0; j < branches[i].Count - 1; j++)
                         {
-                            if (Main.rand.NextBool(3) && j > 5)
+                            if (j > 2)
                             {
                                 //If it's the first set of splits, let them go longer
                                 int segmentLimit = 3;
@@ -563,43 +553,41 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
             }
         }
 
-        public void CustomCollision(Player target)
+        
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            Rectangle targetHitbox = target.Hitbox;
-            if (branches == null || branches.Count == 0 || branches[0].Count == 0)
+            if (FiringTimeLeft == 28 && Vector2.DistanceSquared(targetHitbox.Center(), Projectile.Center) < 4000000)
             {
-                return;
-            }
-
-            float point = 0;
-
-            Vector2 topLeft = targetHitbox.TopLeft();
-            Vector2 size = targetHitbox.Size();
-
-            for (int i = 0; i < branches.Count; i++)
-            {
-                if (branches[i].Count > 0)
+                if (branches == null || branches.Count == 0 || branches[0].Count == 0)
                 {
-                    for (int j = 0; j < branches[i].Count - 1; j++)
+                    return false;
+                }
+
+                float point = 0;
+
+                Vector2 topLeft = targetHitbox.TopLeft();
+                Vector2 size = targetHitbox.Size();
+
+                if (Collision.CheckAABBvLineCollision(topLeft, size, branches[0][0], branches[0][branches[0].Count - 1], 10, ref point))
+                {
+                    return true;
+                }
+
+                for (int i = 0; i < branches.Count; i++)
+                {
+                    if (branches[i].Count > 0)
                     {
-                        if (Collision.CheckAABBvLineCollision(topLeft, size, branches[i][j], branches[i][j + 1], 10, ref point))
+                        for (int j = 0; j < branches[i].Count - 1; j++)
                         {
-                            CanHitPlayer(target);
-                            return;
+                            if (Collision.CheckAABBvLineCollision(topLeft, size, branches[i][j], branches[i][j + 1], 10, ref point))
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
             }
 
-            if (Collision.CheckAABBvLineCollision(topLeft, size, branches[0][0], branches[0][branches[0].Count - 1], 10, ref point))
-            {
-                CanHitPlayer(target);
-            }
-
-        }
-
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
             return false;
         }
 
@@ -651,16 +639,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         {
             target.AddBuff(BuffID.Electrified, 300);
             target.AddBuff(BuffID.Slow, 150);
-        }
-
-        public override bool CanHitPlayer(Player target)
-        {
-
-            string deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(-1, Projectile.whoAmI).GetDeathText(target.name).ToString();
-            deathMessage = deathMessage.Replace("Laser", LaserName);
-            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), Projectile.damage * 4, 1);
-
-            return false;
         }
     }
 }

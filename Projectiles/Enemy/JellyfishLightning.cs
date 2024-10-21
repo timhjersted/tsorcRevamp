@@ -63,7 +63,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
 
         public static SoundStyle ThunderSoundStyle = new SoundStyle("Terraria/Sounds/Thunder_0");
-        public SoundStyle ThunderSound = new SoundStyle("Terraria/Sounds/Thunder_0");
         public override void AI()
         {
             System.Diagnostics.Stopwatch thisWatch = new System.Diagnostics.Stopwatch();

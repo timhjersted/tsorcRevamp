@@ -155,6 +155,12 @@ namespace tsorcRevamp.Projectiles
                 {
                     Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), player.Center, velocity, ModContent.ProjectileType<Projectiles.Fireball3>(), Projectile.damage / 30, 0, Projectile.owner).rotation = velocity.ToRotation() + MathHelper.PiOver2;
                 }
+
+                //Drain BotC players stamina
+                if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                {
+                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 6;
+                }
             }
 
 

@@ -42,7 +42,17 @@ namespace tsorcRevamp.Items.Weapons.Magic
         //Only one allowed at a time
         public override bool CanUseItem(Player player)
         {
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Magic.LanceBeamLaser>()] == 0)
+            if (player.statMana <= 0 && !player.GetModPlayer<tsorcRevampCeruleanPlayer>().isCeruleanRestoring && !player.GetModPlayer<tsorcRevampCeruleanPlayer>().isDrinking)
+            {
+                MethodSwaps.TryUseQuickMana(player);
+            }
+            if(player.statMana <= 0)
+            {
+                return false;
+            }
+
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Magic.LanceBeamLaser>()] == 0 &&
+                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 15)
             {
                 return true;
             }
@@ -57,7 +67,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             return Vector2.Zero;
         }
-
+        public override void ModifyManaCost(Player player, ref float reduce, ref float mult)
+        {
+            player.manaRegenDelay = 180;
+            mult = 0;
+        }
 
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {

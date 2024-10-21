@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -43,12 +44,28 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
         float rotation = MathHelper.TwoPi / 12f;
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            rotation += MathHelper.TwoPi / 6f;
-            position += new Vector2(80, 0).RotatedBy(rotation);
+            if (player.whoAmI == Main.myPlayer)
+            {
+                rotation += MathHelper.TwoPi / 6f;
+                position += new Vector2(80, 0).RotatedBy(rotation);
+            }
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-
             modPlayer.collapseDelay = 30;
-            //tsorcRevampPlayerAuraDrawLayers.StartAura(player, 150, fadeOutSpeed: 30);
+        }
+
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            
+            bool baseResult = base.Shoot(player, source, position, velocity, type, damage, knockback);
+            /* if (velocity.X > 0)
+             {
+                 player.direction = 1;
+             }
+             else
+             {
+                 player.direction = -1;
+             }*/
+            return baseResult;
         }
 
         public override void HoldItem(Player player)

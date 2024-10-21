@@ -62,6 +62,12 @@ namespace tsorcRevamp.Projectiles.Magic
 
             if (IsAtMaxCharge)
             {
+                //Drain BotC players stamina
+                if (owner.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                {
+                    owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 1;
+                }
+
                 Vector2 endpoint = GetOrigin() + Projectile.velocity * Distance;
                 endpoint -= new Vector2(8, 8); //Offset endpoint so dust is centered on it, covering it better
                 float distance = Vector2.Distance(endpoint, GetOrigin());
@@ -99,7 +105,12 @@ namespace tsorcRevamp.Projectiles.Magic
                 Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/LaserLoopable") with { Volume = 0.5f }, Projectile.Center);
             }
 
-            if (!owner.channel || owner.noItems || owner.CCed || owner.statMana <= 0)
+            if (owner.statMana <= 0 && !owner.GetModPlayer<tsorcRevampCeruleanPlayer>().isCeruleanRestoring && !owner.GetModPlayer<tsorcRevampCeruleanPlayer>().isDrinking)
+            {
+                MethodSwaps.TryUseQuickMana(owner);
+            }
+
+            if (!owner.channel || owner.noItems || owner.CCed || owner.statMana <= 0 || owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent <= 0)
             {
                 Projectile.damage = 0;
 
