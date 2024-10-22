@@ -146,7 +146,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.NightsEdge)
             {
-                item.damage = 34;
+                item.damage = 35;
                 //item.mana = 18;
             }
             if (item.type == ItemID.FlyingKnife)
@@ -196,6 +196,7 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.width = 48;
                 item.height = 48;
+                item.damage = 45;
                 //item.mana = 11;
             }
             if (item.type == ItemID.TerraBlade)
@@ -235,7 +236,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.DD2SquireBetsySword)
             {
-                //item.mana = 18;
+                item.damage = 160; //Vanilla 180
             }
             if (item.type == ItemID.PiercingStarlight)
             {
@@ -265,11 +266,19 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.Meowmere)
             {
-                //item.mana = 31;
+                item.damage = 180; //Vanilla 200
+                item.useTime = 16; //Vanilla 14
+                item.useAnimation = 16; //Vanilla 14
             }
             if (item.type == ItemID.StarWrath)
             {
-                //item.mana = 34;
+                item.damage = 155; //Vanilla 170
+                item.useTime = 17; //Vanilla 16
+                item.useAnimation = 17;  //Vanilla 16
+            }
+            if (item.type == ItemID.Zenith)
+            {
+                item.damage = 100; //Vanilla 190
             }
         }
 
