@@ -85,8 +85,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 60 * 60);
-            target.AddBuff(BuffID.Poisoned, 60 * 60);
+            target.AddBuff(BuffID.MoonLeech, 10 * 60);
             target.AddBuff(BuffID.Bleeding, 60 * 60);
         }
     }

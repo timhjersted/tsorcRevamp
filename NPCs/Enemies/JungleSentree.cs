@@ -455,7 +455,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 5));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.GreenBlossom>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.GreenBlossom>()));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<LivingLog>(), 50, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<LivingLog>(), 9, 1, 2));;
         }
     }
 }

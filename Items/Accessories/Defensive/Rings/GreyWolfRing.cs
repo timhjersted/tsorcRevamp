@@ -60,6 +60,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             player.buffImmune[BuffID.Burning] = true;
             player.buffImmune[BuffID.Chilled] = true;
             player.buffImmune[BuffID.CursedInferno] = true;
+            player.buffImmune[BuffID.Frostburn] = true;
             player.buffImmune[BuffID.Ichor] = true;
             player.buffImmune[BuffID.Gravitation] = true;
             player.buffImmune[ModContent.BuffType<Frostbite>()] = true;

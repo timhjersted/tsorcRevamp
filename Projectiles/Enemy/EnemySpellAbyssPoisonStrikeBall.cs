@@ -30,9 +30,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             //Terraria.Audio.SoundEngine.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
             for (int i = 0; i < 10; i++)
             {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6, 0, 0, 0, default, 1f); //6 is a flame dust
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6, 0, 0, 0, default, 2f);
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6, 0, 0, 0, default, 2f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 169, 0, 0, 0, default, 1f); //6 is a flame dust
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 169, 0, 0, 0, default, 2f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 169, 0, 0, 0, default, 2f);
             }
             return true;
         }

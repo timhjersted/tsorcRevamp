@@ -49,7 +49,7 @@ namespace tsorcRevamp.Items.Tools
 
             player.AddBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>(), Duration * 60);
 
-            if (!modPlayer.DarkmoonCloak)
+            if (!modPlayer.ShadowmoonCloak)
             {
                 player.AddBuff(ModContent.BuffType<MagicImbueCooldown>(), Cooldown * 60);
             }

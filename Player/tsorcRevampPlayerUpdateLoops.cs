@@ -294,7 +294,7 @@ namespace tsorcRevamp
         public bool GreatMagicWeapon;
         public bool CrystalMagicWeapon;
         public bool ReboundProjectile;
-        public bool DarkmoonCloak;
+        public bool ShadowmoonCloak;
 
         //increased grab range immediately after killing a boss
         public int bossMagnetTimer;
@@ -483,7 +483,7 @@ namespace tsorcRevamp
             CrystalMagicWeapon = false;
             ReboundProjectile =false;
 
-            DarkmoonCloak = false;
+            ShadowmoonCloak = false;
             manaShield = 0;
             staminaShield = 0;
 

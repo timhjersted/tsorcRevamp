@@ -79,15 +79,13 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             if (Main.expertMode)
             {
-                target.AddBuff(BuffID.Poisoned, 9000, false);
-                target.AddBuff(BuffID.Darkness, 9000, false);
-                target.AddBuff(BuffID.Bleeding, 9000, false);
+                target.AddBuff(BuffID.Poisoned, 1200, false);
+                target.AddBuff(BuffID.WitheredWeapon, 180, false);
             }
             else
             {
-                target.AddBuff(BuffID.Poisoned, 18000, false);
-                target.AddBuff(BuffID.Darkness, 18000, false);
-                target.AddBuff(BuffID.Bleeding, 18000, false);
+                target.AddBuff(BuffID.Poisoned, 2400, false);
+                target.AddBuff(BuffID.WitheredWeapon, 360, false);
             }
         }
     }

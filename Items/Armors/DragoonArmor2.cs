@@ -37,17 +37,17 @@ namespace tsorcRevamp.Items.Armors
             player.GetAttackSpeed(DamageClass.Melee) += MeleeSpeed / 100f;
             player.starCloakItem = new Item(ItemID.StarCloak);
             player.lifeRegen += (int)(LightCloak.LifeRegen1 * DragoonCloakEfficiency / 100f);
-            player.GetCritChance(DamageClass.Generic) += DarkmoonCloak.DamageAndCritIncrease1 * DragoonCloakEfficiency / 100f;
-            player.GetDamage(DamageClass.Generic) += DarkmoonCloak.DamageAndCritIncrease1 * DragoonCloakEfficiency / 100f / 100f;
+            player.GetCritChance(DamageClass.Generic) += ShadowmoonCloak.DamageAndCritIncrease1 * DragoonCloakEfficiency / 100f;
+            player.GetDamage(DamageClass.Generic) += ShadowmoonCloak.DamageAndCritIncrease1 * DragoonCloakEfficiency / 100f / 100f;
 
-            player.GetModPlayer<tsorcRevampPlayer>().DarkmoonCloak = true;
+            player.GetModPlayer<tsorcRevampPlayer>().ShadowmoonCloak = true;
             if (player.statLife <= (player.statLifeMax2 * DragoonCloak.LifeThreshold / 100f))
             {
                 player.lifeRegen += (int)(LightCloak.LifeRegen2 * DragoonCloakEfficiency / 100f);
                 player.statDefense += (int)(DarkCloak.Defense2 * DragoonCloakEfficiency / 100f);
-                player.manaRegenBonus += (int)(DarkmoonCloak.ManaRegenBonus * DragoonCloakEfficiency / 100f);
-                player.GetCritChance(DamageClass.Generic) += DarkmoonCloak.DamageAndCritIncrease2 * DragoonCloakEfficiency / 100f;
-                player.GetDamage(DamageClass.Generic) += DarkmoonCloak.DamageAndCritIncrease2 * DragoonCloakEfficiency / 100f / 100f;
+                player.manaRegenBonus += (int)(ShadowmoonCloak.ManaRegenBonus * DragoonCloakEfficiency / 100f);
+                player.GetCritChance(DamageClass.Generic) += ShadowmoonCloak.DamageAndCritIncrease2 * DragoonCloakEfficiency / 100f;
+                player.GetDamage(DamageClass.Generic) += ShadowmoonCloak.DamageAndCritIncrease2 * DragoonCloakEfficiency / 100f / 100f;
                 int dust = Dust.NewDust(new Vector2(player.position.X, player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 150, Color.White, 0.5f);
                 Main.dust[dust].noGravity = true;
             }

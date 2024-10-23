@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Accessories.Damage
 {
     [AutoloadEquip(EquipType.Back)]
 
-    public class DarkmoonCloak : ModItem
+    public class ShadowmoonCloak : ModItem
     {
         public static float DamageAndCritIncrease1 = 5f;
         public static float LifeThreshold = 40f;
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Accessories.Damage
 
         public override void UpdateEquip(Player player)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().DarkmoonCloak = true;
+            player.GetModPlayer<tsorcRevampPlayer>().ShadowmoonCloak = true;
             player.GetCritChance(DamageClass.Generic) += DamageAndCritIncrease1;
             player.GetDamage(DamageClass.Generic) += DamageAndCritIncrease1 / 100f;
             player.starCloakItem = new Item(ItemID.StarCloak);

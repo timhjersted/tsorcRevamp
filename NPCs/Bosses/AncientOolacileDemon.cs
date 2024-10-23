@@ -91,13 +91,12 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.EyeofCthulhu)))
             {
-                target.AddBuff(BuffID.Poisoned, 2 * 60 + 30, false); //poisoned
                 target.AddBuff(BuffID.Bleeding, 2 * 60 + 30, false); //bleeding
             }
 
             if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)))
             {
-                target.AddBuff(BuffID.Venom, 2 * 60 + 30, false); //acid venom
+                target.AddBuff(BuffID.ShadowFlame, 3 * 60 + 30, false); //acid venom
                 target.AddBuff(ModContent.BuffType<CurseBuildup>(), 300 * 60, false); //-20 HP after several hits
                 target.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 20;
             }

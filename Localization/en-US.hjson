@@ -1079,8 +1079,8 @@ Mods: {
 				Night: You shift time forward and a new night begins...
 			}
 
-			DarkmoonCloak: {
-				DisplayName: Darkmoon Cloak
+			ShadowmoonCloak: {
+				DisplayName: Shadowmoon Cloak
 				Tooltip:
 					'''
 					Inherits the Star Cloaks effect and grants {$CommonItemTooltip.PercentIncreasedDamageCritChance}
@@ -1299,7 +1299,7 @@ Mods: {
 				DisplayName: Ring of Clarity
 				Tooltip:
 					'''
-					Immunity to {$CommonItemTooltip.OnFire}, Burning, Chilled, {$CommonItemTooltip.CursedInferno}, {$CommonItemTooltip.Ichor}, 
+					Immunity to {$CommonItemTooltip.OnFire}, Burning, Chilled, Frostburn, {$CommonItemTooltip.CursedInferno}, {$CommonItemTooltip.Ichor}, 
 					Gravitation, Bleeding, Poisoned and knockback
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.LifeRegen@1}
@@ -1356,7 +1356,7 @@ Mods: {
 				DisplayName: Dragoon Cloak
 				Tooltip:
 					'''
-					Combines the effects of the Dark, Light and Darkmoon Cloak into one all-powerful protective cloak.
+					Combines the effects of the Dark, Light and Shadowmoon Cloak into one all-powerful protective cloak.
 					Life Threshold for empowered effects is {0}%
 					A large amount of Dark Souls were used to preserve each cloak's potency.
 					'''
@@ -1456,7 +1456,7 @@ Mods: {
 				DisplayName: Cracked Dragon Stone
 				Tooltip:
 					'''
-					[c/ffbf00:Provides immunity to catching on fire, burning, frostbite and becoming chilled]
+					[c/ffbf00:Provides immunity to catching on fire, burning, frostbite, frostburn, and becoming chilled]
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.NoKnockback}
 					'''
@@ -1475,7 +1475,11 @@ Mods: {
 
 			DragonStone: {
 				DisplayName: Dragon Stone
-				Tooltip: Increases the Potency of most Debuffs on enemies by {0}x
+				Tooltip:
+					'''
+					Increases the Potency of most Debuffs on enemies by {0}x
+					Potency increase is 2x less effective with Daybreak
+					'''
 			}
 
 			DragoonBoots: {

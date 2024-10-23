@@ -66,8 +66,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             if (Main.rand.NextBool(4))
             {
-                target.AddBuff(BuffID.BrokenArmor, 3 * 60, false);
-                target.AddBuff(BuffID.Poisoned, 60 * 60, false);
+                target.AddBuff(BuffID.BrokenArmor, 40 * 60, false);
+                target.AddBuff(BuffID.Weak, 60 * 60, false);
                 //target.AddBuff(BuffID.Cursed, 300 / expertScale, false);
                 //target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
             }

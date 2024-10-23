@@ -66,6 +66,27 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 110; //SHM
             }
 
+            if (item.type == ItemID.CandyCornRifle)
+            {
+                item.damage = 100; //SHM
+            }
+
+            if (item.type == ItemID.ChainGun)
+            {
+                item.damage = 40; //SHM
+                item.useTime = 3;
+            }
+
+            if (item.type == ItemID.SnowmanCannon)
+            {
+                item.damage = 115; //SHM
+            }
+
+            if (item.type == ItemID.ElfMelter)
+            {
+                item.damage = 110; //SHM
+            }
+
             //Lunar items
             if (item.type == ItemID.Phantasm)
             {

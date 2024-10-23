@@ -59,7 +59,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(BuffID.Poisoned, 120 * 60, false);
+            target.AddBuff(BuffID.Poisoned, 25 * 60, false);
 
             if (Main.rand.NextBool(2))
             {

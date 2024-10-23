@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
 
             Color color = new Color();
-            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 160, color, 3.0f);
+            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.CrystalPulse, 0, 0, 160, color, 1f);
             Main.dust[dust].noGravity = true;
 
             this.Projectile.ai[0] += 1f;

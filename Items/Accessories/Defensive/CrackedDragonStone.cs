@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class CrackedDragonStone : ModItem
     {
-        public static float Dmg = 3f;
+        public static float Dmg = 4f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
         public override void SetStaticDefaults()
         {
@@ -32,6 +32,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
             player.buffImmune[BuffID.OnFire] = true;
             player.buffImmune[BuffID.Burning] = true;
             player.buffImmune[BuffID.Chilled] = true;
+            player.buffImmune[BuffID.Frostburn] = true;
             player.buffImmune[ModContent.BuffType<Frostbite>()] = true;
         }
 

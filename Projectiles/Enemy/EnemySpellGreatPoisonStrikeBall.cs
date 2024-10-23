@@ -47,7 +47,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                     int arg_1394_1 = Projectile.width;
                     int arg_1394_2 = Projectile.height;
-                    int arg_1394_3 = 15;
+                    int arg_1394_3 = 44;
                     float arg_1394_4 = 0f;
                     float arg_1394_5 = 0f;
                     int arg_1394_6 = 100;
@@ -59,7 +59,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Vector2 arg_1422_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                     int arg_1422_1 = Projectile.width;
                     int arg_1422_2 = Projectile.height;
-                    int arg_1422_3 = 15;
+                    int arg_1422_3 = 44;
                     float arg_1422_4 = 0f;
                     float arg_1422_5 = 0f;
                     int arg_1422_6 = 100;

@@ -1,6 +1,9 @@
 ﻿using Terraria;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Accessories.Damage
 {
@@ -17,7 +20,7 @@ namespace tsorcRevamp.Items.Accessories.Damage
             Item.width = 26;
             Item.height = 26;
             Item.accessory = true;
-            Item.value = PriceByRarity.LightRed_4;
+            Item.value = PriceByRarity.Cyan_9;
             Item.expert = true;
         }
 
@@ -26,6 +29,5 @@ namespace tsorcRevamp.Items.Accessories.Damage
             player.GetModPlayer<tsorcRevampPlayer>().DragonStoneImmunity = true;
             tsorcRevampPlayer.DragonStonePotency = true;
         }
-        //dropped by hellkite dragon
     }
 }

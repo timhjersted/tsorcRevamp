@@ -46,8 +46,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(22, 18000, false); //darkness
-            target.AddBuff(30, 1800, false); //bleeding
+            target.AddBuff(22, 1800, false); //darkness
             target.AddBuff(24, 1600, false); //on fire
             target.AddBuff(21, 600, false); //potion sickness
         }

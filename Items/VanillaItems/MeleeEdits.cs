@@ -230,6 +230,12 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.useAnimation = 20;
                 //item.mana = 16;
             }
+            if (item.type == ItemID.ChristmasTreeSword)
+            {
+                item.damage = 135; 
+                item.useTime = 20;
+                item.useAnimation = 20;
+            }
             if (item.type == ItemID.NorthPole)
             {
                 item.damage = 180; //SHM

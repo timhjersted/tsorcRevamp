@@ -40,6 +40,31 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 item.accessory = false;
             }
+            switch (item.type)
+            {
+                case ItemID.StakeLauncher:
+                case ItemID.TheHorsemansBlade:
+                case ItemID.RavenStaff:
+                case ItemID.BatScepter:
+                case ItemID.CandyCornRifle:
+                case ItemID.JackOLanternLauncher:
+                case ItemID.ScytheWhip:
+                case ItemID.ChristmasTreeSword:
+                case ItemID.Razorpine:
+                case ItemID.ElfMelter:
+                case ItemID.ChainGun:
+                case ItemID.BlizzardStaff:
+                case ItemID.NorthPole:
+                case ItemID.SnowmanCannon:
+                case ItemID.ChargedBlasterCannon:
+                case ItemID.LaserMachinegun:
+                case ItemID.Xenopopper:
+                case ItemID.ElectrosphereLauncher:
+                case ItemID.InfluxWaver:
+                case ItemID.ToxicFlask:
+                    item.rare = ItemRarityID.Red;
+                    break;
+            }
         }
         public override void GrabRange(Item item, Player player, ref int grabRange)
         {

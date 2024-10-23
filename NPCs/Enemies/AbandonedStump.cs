@@ -396,7 +396,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.Wood, 1, 2, 4));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Potions.GreenBlossom>(), 5, 1, 1, 4));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CharcoalPineResin>(), 3));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<LivingLog>(), 75, 1, 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<LivingLog>(), 12, 1, 2));
 
         }
     }

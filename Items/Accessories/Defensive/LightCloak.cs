@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     {
         public static int LifeRegen1 = 3;
         public static float LifeThreshold = 40f;
-        public static int LifeRegen2 = 11;
+        public static int LifeRegen2 = 6;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen1, LifeThreshold, LifeRegen2);
         public override void SetStaticDefaults()
         {

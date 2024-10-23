@@ -640,9 +640,7 @@ namespace tsorcRevamp
                 ItemID.MechanicalEye,
                 ItemID.MechanicalSkull,
                 ItemID.MechanicalWorm,
-                ItemID.CelestialSigil,
-                ItemID.NaughtyPresent,
-                ItemID.PumpkinMoonMedallion
+                ItemID.CelestialSigil
                 #endregion
                 ,
                 #region Large Gems IDs
@@ -1025,14 +1023,13 @@ namespace tsorcRevamp
                 #region Boss Items
                 { ItemID.PumpkinMoonMedallion,       new List<(int ItemID, int Count)>()
                                         {
-                                            (ItemID.SoulofFright, 1),
-                                            (ItemID.SoulofMight, 1),
-                                            (ItemID.SoulofSight, 1)
+                                            (ModContent.ItemType<RedTitanite>(), 6),
+                                            (ModContent.ItemType<WhiteTitanite>(), 3)
                                         }                                       },
                 { ItemID.NaughtyPresent,       new List<(int ItemID, int Count)>()
                                         {
-                                            (ItemID.SoulofMight, 1),
-                                            (ItemID.SoulofSight, 1)
+                                            (ModContent.ItemType<BlueTitanite>(), 6),
+                                            (ModContent.ItemType<WhiteTitanite>(), 3)
                                         }                                       },
                 #endregion
 

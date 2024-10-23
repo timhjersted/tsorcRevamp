@@ -76,10 +76,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 buffMod = 2;
             }
-            target.AddBuff(BuffID.Battle, 600);
-            target.AddBuff(BuffID.BrokenArmor, 300 / buffMod);
-            target.AddBuff(BuffID.Poisoned, 600 / buffMod);
-            target.AddBuff(BuffID.Bleeding, 600 / buffMod);
+            target.AddBuff(BuffID.WitheredArmor, 600 / buffMod);
+            target.AddBuff(BuffID.WitheredWeapon, 300 / buffMod);
         }
 
     }

@@ -216,12 +216,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(ModContent.BuffType<CurseBuildup>(), 600 * 60, false); //-20 HP curse
-            target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 300 * 60, false);
-            target.AddBuff(ModContent.BuffType<TornWings>(), 60 * 60, false);
+            target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 60 * 60, false);
+            target.AddBuff(ModContent.BuffType<TornWings>(), 20 * 60, false);
 
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.BrokenArmor, 60 * 60, false);
                 target.AddBuff(BuffID.Cursed, 3 * 60, false);
             }
         }

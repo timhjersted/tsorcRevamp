@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive
 {
     public class DarkCloak : ModItem
     {
-        public static int Defense1 = 7;
+        public static int Defense1 = 8;
         public static float LifeThreshold = 40f;
-        public static int Defense2 = 13;
+        public static int Defense2 = 15;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold, Defense2);
         public override void SetStaticDefaults()
         {

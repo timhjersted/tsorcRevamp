@@ -1079,15 +1079,15 @@ Mods: {
 				Night: 你将时间推移，新的夜幕降临了...
 			}
 
-			DarkmoonCloak: {
-				DisplayName: 黑月斗篷
-				Tooltip:
+			ShadowmoonCloak: {
+				// DisplayName: Shadowmoon Cloak
+				/* Tooltip:
 					'''
-					提供星星斗篷的效果，{$CommonItemTooltip.PercentIncreasedDamageCritChance}
-					武器魔法灌注不再需要冷却
-					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.Magic.ManaRegen@2} 
-					同时再获得{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}的增益
-					'''
+					Inherits the Star Cloaks effect and grants {$CommonItemTooltip.PercentIncreasedDamageCritChance}
+					Magic Imbues no longer need to go on cooldown
+					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.Magic.ManaRegen@2} and grants an additional
+					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
+					''' */
 			}
 
 			AncientDemonShield: {

@@ -78,7 +78,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.Poisoned, 60 * 60);
+                target.AddBuff(BuffID.Bleeding, 30 * 60);
                 target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30 * 60);
             }
         }

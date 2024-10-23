@@ -1852,6 +1852,16 @@ namespace tsorcRevamp.NPCs
                 npc.lifeRegen -= DoTPerS * 2;
                 damage += DoTPerS;
             }
+            if (npc.HasBuff(BuffID.Daybreak) && tsorcRevampPlayer.DragonStonePotency)
+            {
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                int DoTPerS = (100 * DragonStone.Potency - 100) / 2; //2x weaker with Daybreak
+                npc.lifeRegen -= DoTPerS * 2;
+                damage += DoTPerS;
+            }
             #endregion
             if (Ignited)
             {

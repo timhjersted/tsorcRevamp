@@ -75,6 +75,21 @@ namespace tsorcRevamp.Items.VanillaItems
                 item.damage = 110; //vanilla 90
                 item.useTime = 20; //vanilla 24
             }
+            if (item.type == ItemID.BatScepter)
+            {
+                item.damage = 65; //SHM
+                item.useTime = 11; 
+            }
+            if (item.type == ItemID.Razorpine)
+            {
+                item.damage = 59; //SHM
+                item.useTime = 7; 
+                item.mana = 6;
+            }
+            if (item.type == ItemID.BlizzardStaff)
+            {
+                item.damage = 85; //SHM
+            }
             if (item.type == ItemID.LaserMachinegun)
             {
                 item.damage = 80; //vanilla 60, buff as SHM weapon
