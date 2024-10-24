@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
     public class EstusRing : ModItem
     {
         public const int HealIncrease = 40;
-        public const int PercentHealIncrease = 5;
+        public const int PercentHealIncrease = 10;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(HealIncrease, PercentHealIncrease);
         public override void SetStaticDefaults()
         {

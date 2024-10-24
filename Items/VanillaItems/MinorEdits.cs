@@ -186,7 +186,7 @@ namespace tsorcRevamp.Items.VanillaItems
             Recipe VitalCrystal = Recipe.Create(ItemID.AegisCrystal)
                 .AddCondition(tsorcRevampWorld.AdventureModeEnabled)
                 .AddIngredient(ItemID.LifeCrystal, 3)
-                .AddIngredient(ModContent.ItemType<DarkSoul>(), 6000)
+                .AddIngredient(ModContent.ItemType<DarkSoul>(), 2000) // Was 6000, this was way too much for a weak permanent upgrade that can be dropped early in the game (it's only a 20% natural regen boost)
                 .AddTile(TileID.DemonAltar);
             VitalCrystal.Register();
 

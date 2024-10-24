@@ -1302,10 +1302,10 @@ namespace tsorcRevamp.NPCs
                         if (npc.type == NPCID.DesertGhoulCrimson)
                         {
                             npc.knockBackResist = 0f;
-                            npc.damage = 150; //15,000 lmao(small typo but I'll leave it for funsies)
+                            npc.damage = 95; //15,000 lmao(small typo but I'll leave it for funsies)
                             //actually "something mundane happened and i died instantly" is kinda silly
                             npc.defense = 70;
-                            npc.lifeMax = 3000;//was 6k, 3k still 2650 higher than vanilla
+                            npc.lifeMax = 2500;//was 6k, 3k still 2650 higher than vanilla
                             npc.value = 5510;
                         }
                         break;
@@ -1329,7 +1329,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.Vulture):
                     {
-                        npc.damage = 200;
+                        npc.damage = 45;
                         npc.lifeMax = 500;
                         npc.value = 1190;
                         break;
@@ -1337,7 +1337,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.Tumbleweed):
                     {
-                        npc.damage = 100;
+                        npc.damage = 50;
                         npc.lifeMax = 300;
                         npc.value = 1260;
                         break;
@@ -1699,10 +1699,9 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.GoblinShark):
                     {
-                        npc.lifeMax = 2000;
                         npc.damage = 80;
                         npc.value = 8580;
-                        npc.defense = 60;
+                        npc.defense = 40;
                         npc.knockBackResist = 0.1f;
                         break;
                     }
@@ -1733,8 +1732,8 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.Moth):
                     {
                         npc.life = 10000;
-                        npc.defense = 100;
-                        npc.damage = 300;
+                        npc.defense = 90;
+                        npc.damage = 140;
                         npc.value = 3950;
                         break;
                     }
@@ -1946,7 +1945,7 @@ namespace tsorcRevamp.NPCs
                         npc.value = 91480;
                         npc.defense = 12;
                         npc.damage = 45; //legacy: 50, then 35
-                        npc.lifeMax = 4400;
+                        npc.lifeMax = 4000;
                         npc.rarity = 11;
                         npc.buffImmune[BuffID.OnFire] = true;
                         break;
@@ -1957,7 +1956,7 @@ namespace tsorcRevamp.NPCs
                         npc.value = 0;
                         npc.defense = 14; //legacy: 12
                         npc.damage = 40; //legacy: 40, then 22, then 32 but reports still too easy
-                        npc.lifeMax = 600;
+                        npc.lifeMax = 900;
                         npc.buffImmune[BuffID.OnFire] = true;
                         break;
                     }

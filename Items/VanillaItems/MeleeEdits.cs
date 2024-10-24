@@ -225,7 +225,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.TheHorsemansBlade)
             {
-                item.damage = 220; //SHM
+                item.damage = 230; //SHM
                 item.useTime = 20;
                 item.useAnimation = 20;
                 //item.mana = 16;
@@ -259,7 +259,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.InfluxWaver)
             {
-                item.damage = 130; //SHM
+                item.damage = 120; //SHM
                 //item.mana = 23;
             }
             if (item.type == ItemID.DayBreak)

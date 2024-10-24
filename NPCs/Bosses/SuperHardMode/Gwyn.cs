@@ -1964,6 +1964,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Epilogue>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<EssenceOfTerraria>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.RodOfHarmony));
+            
             npcLoot.Add(notExpertCondition);
         }
         public override void BossLoot(ref string name, ref int potionType)

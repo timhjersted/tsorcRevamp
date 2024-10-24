@@ -2438,17 +2438,17 @@ Mods: {
 
 			MaskOfTheChild: {
 				DisplayName: Mask of the Child
-				Tooltip: ""
+				Tooltip: 20% increased mouvement speed and acceleration
 			}
 
 			MaskOfTheFather: {
 				DisplayName: Mask of the Father
-				Tooltip: ""
+				Tooltip: 12% increased damage
 			}
 
 			MaskOfTheMother: {
 				DisplayName: Mask of the Mother
-				Tooltip: ""
+				Tooltip: Increases HP by 60
 			}
 
 			AncientGoldenArmor: {
@@ -7774,7 +7774,7 @@ Mods: {
 				DisplayName: Ring of Favor And Protection
 				Tooltip:
 					'''
-					Increases HP by 20 and stamina by 10 while worn
+					Increases HP by 40 and stamina by 15 while worn
 					It seems as though Pinwheel held this to prevent
 					the necklace it wore from releasing its full power
 					'''

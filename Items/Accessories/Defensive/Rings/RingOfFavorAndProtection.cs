@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 {
     public class RingOfFavorAndProtection : ModItem
     {
-        public static int MaxLifeIncrease = 20;
-        public static int MaxStaminaIncrease = 10;
+        public static int MaxLifeIncrease = 40;
+        public static int MaxStaminaIncrease = 15;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxLifeIncrease, MaxStaminaIncrease);
         public override void SetStaticDefaults()
         {

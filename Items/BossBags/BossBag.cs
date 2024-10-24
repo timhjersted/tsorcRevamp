@@ -460,7 +460,6 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             //no expert-exclusive item yet
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<FlareTome>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.Bows.ElfinBow>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfChaos>(), 1, 3, 6));
@@ -579,6 +578,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Epilogue>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EssenceOfTerraria>()));
             itemLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<DraxEX>()));
+            itemLoot.Add(ItemDropRule.Common(ItemID.RodOfHarmony));
         }
     }
     #endregion

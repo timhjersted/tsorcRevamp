@@ -82,7 +82,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.Razorpine)
             {
-                item.damage = 59; //SHM
+                item.damage = 57; //SHM
                 item.useTime = 7; 
                 item.mana = 6;
             }
@@ -97,7 +97,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.ChargedBlasterCannon)
             {
-                item.damage = 125; //SHM
+                item.damage = 135; //SHM
             }
             if (item.type == ItemID.ToxicFlask)
             {

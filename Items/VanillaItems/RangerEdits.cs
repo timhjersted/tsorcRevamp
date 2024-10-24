@@ -68,7 +68,12 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (item.type == ItemID.CandyCornRifle)
             {
-                item.damage = 100; //SHM
+                item.damage = 110; //SHM
+            }
+
+            if (item.type == ItemID.JackOLanternLauncher)
+            {
+                item.damage = 115; //SHM
             }
 
             if (item.type == ItemID.ChainGun)
@@ -79,12 +84,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (item.type == ItemID.SnowmanCannon)
             {
-                item.damage = 115; //SHM
-            }
-
-            if (item.type == ItemID.ElfMelter)
-            {
-                item.damage = 110; //SHM
+                item.damage = 125; //SHM
             }
 
             //Lunar items
@@ -101,7 +101,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (item.type == ItemID.Xenopopper)
             {
-                item.damage = 60; //SHM
+                item.damage = 70; //SHM
             }
 
             if (item.type == ItemID.ElectrosphereLauncher)
