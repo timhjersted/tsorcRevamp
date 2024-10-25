@@ -9,6 +9,7 @@ namespace tsorcRevamp.Items.Armors
     public class MaskOfTheFather : ModItem
     {
         public static float Dmg = 12f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
         public override void SetStaticDefaults()
         {
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;

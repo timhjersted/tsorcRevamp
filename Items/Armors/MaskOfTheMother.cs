@@ -9,6 +9,7 @@ namespace tsorcRevamp.Items.Armors
     public class MaskOfTheMother : ModItem
     {
         public static int MaxLifeIncrease = 60;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxLifeIncrease);
         public override void SetStaticDefaults()
         {
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;

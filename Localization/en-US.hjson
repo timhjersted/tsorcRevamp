@@ -2438,17 +2438,17 @@ Mods: {
 
 			MaskOfTheChild: {
 				DisplayName: Mask of the Child
-				Tooltip: 20% increased mouvement speed and acceleration
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
 			}
 
 			MaskOfTheFather: {
 				DisplayName: Mask of the Father
-				Tooltip: 12% increased damage
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedDamage}"
 			}
 
 			MaskOfTheMother: {
 				DisplayName: Mask of the Mother
-				Tooltip: Increases HP by 60
+				Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeBy}"
 			}
 
 			AncientGoldenArmor: {

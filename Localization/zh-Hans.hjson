@@ -1080,14 +1080,14 @@ Mods: {
 			}
 
 			ShadowmoonCloak: {
-				// DisplayName: Shadowmoon Cloak
-				/* Tooltip:
+				DisplayName: 影月斗篷
+				Tooltip:
 					'''
-					Inherits the Star Cloaks effect and grants {$CommonItemTooltip.PercentIncreasedDamageCritChance}
-					Magic Imbues no longer need to go on cooldown
-					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.Magic.ManaRegen@2} and grants an additional
-					{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}
-					''' */
+					提供星星斗篷的效果，{$CommonItemTooltip.PercentIncreasedDamageCritChance}
+					武器魔法灌注不再需要冷却
+					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.Magic.ManaRegen@2} 
+					同时再获得{$CommonItemTooltip.PercentIncreasedDamageCritChance@3}的增益
+					'''
 			}
 
 			AncientDemonShield: {
@@ -1299,7 +1299,7 @@ Mods: {
 				DisplayName: 清晰之戒
 				Tooltip:
 					'''
-					免疫{$CommonItemTooltip.OnFire}、燃烧、冷冻、{$CommonItemTooltip.CursedInferno}、{$CommonItemTooltip.Ichor}
+					免疫{$CommonItemTooltip.OnFire}、燃烧、冷冻、霜冻、{$CommonItemTooltip.CursedInferno}、{$CommonItemTooltip.Ichor}
 					免疫重力颠倒、流血、中毒和击退
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.LifeRegen@1}
@@ -1356,7 +1356,7 @@ Mods: {
 				DisplayName: 龙骑士斗篷
 				Tooltip:
 					'''
-					融合了光明、黑暗斗篷与黑月斗篷的全能型防护装备
+					融合了光明、黑暗斗篷与影月斗篷的全能型防护装备
 					发动特殊效果的生命阈值为 {0}%
 					大量的黑暗之魂被用来保存每个斗篷的效力
 					'''
@@ -1456,7 +1456,7 @@ Mods: {
 				DisplayName: 碎裂龙之石
 				Tooltip:
 					'''
-					[c/ffbf00:免疫着火、燃烧、冻伤、冷冻]
+					[c/ffbf00:免疫着火、燃烧、冻伤、霜冻、冷冻]
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.NoKnockback}
 					'''
@@ -1475,7 +1475,11 @@ Mods: {
 
 			DragonStone: {
 				DisplayName: 龙之石
-				Tooltip: 增加 {0} 倍对敌人造成的减益伤害
+				Tooltip:
+					'''
+					增加 {0} 倍对敌人造成的减益伤害
+					破晓敌人造成的减益伤害为 2.5 倍
+					'''
 			}
 
 			DragoonBoots: {
@@ -1569,7 +1573,7 @@ Mods: {
 					'''
 					亚尔特留斯曾佩戴的戒指
 					曾拥有着这个世界所无法承受的力量
-					[c/ffbf00:免疫黑视、遮蔽与冰冻]
+					[c/ffbf00:免疫黑视、遮蔽、酸性毒液与冰冻]
 					[c/ffbf00:在诅咒达到 {0}%后，提高从诅咒获得的正面属性增益幅度]
 					'''
 			}
@@ -2436,17 +2440,17 @@ Mods: {
 
 			MaskOfTheChild: {
 				DisplayName: 孩童面具
-				Tooltip: ""
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
 			}
 
 			MaskOfTheFather: {
 				DisplayName: 父亲面具
-				Tooltip: ""
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedDamage}"
 			}
 
 			MaskOfTheMother: {
 				DisplayName: 母亲面具
-				Tooltip: ""
+				Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeBy}"
 			}
 
 			AncientGoldenArmor: {
@@ -3703,12 +3707,12 @@ Mods: {
 			}
 
 			AbyssFlask: {
-				// DisplayName: Flask of the Abyss
-				/* Tooltip:
+				DisplayName: 深渊瓶
+				Tooltip:
 					'''
-					Melee and Whip attacks inflict enemies with Daybroken
-					Increase melee and whip damage and crit by 6%
-					''' */
+					近战和鞭子攻击对敌人施加破晓
+					增加近战和鞭子伤害、暴击率
+					'''
 			}
 
 			CompactFrame: {
@@ -3727,7 +3731,7 @@ Mods: {
 					一块发光的恶魔碎片，渗出古老的能量
 					八分之一
 					[c/00ffd4:在底部有一段文字：]
-					[c/ffbf00:"在阿拉齐姆双峰之上，我们凝视上天，下观沟壑。我们是远古者的眼睛"]
+					[c/ffbf00:"在一座断裂的、熟悉的桥下，你会找到我。"]
 					'''
 			}
 
@@ -3770,9 +3774,10 @@ Mods: {
 				Tooltip:
 					'''
 					三片含氧碳酸盐碎片
-					三块加起来也是八分之一
-					[c/00ffd4:它的侧面有一条线索：]
-					[c/ffbf00:"在一座断裂的、熟悉的桥下，你会找到我。"]
+					八分之一
+					当我把所有的碎片拼在一起时，仍然缺少一些东西
+					[c/00ffd4:这个纹章包含一个谜语：]
+					[c/ffbf00:"高耸入云，远在西方。阿卓迪斯之眼仰望天空，他在附近。"]
 					'''
 			}
 
@@ -3793,9 +3798,8 @@ Mods: {
 					'''
 					一块太阳能量的纹章碎片
 					八分之一
-					当我把所有的碎片拼在一起时，仍然缺少一些东西
-					[c/00ffd4:这个纹章包含一个谜语：]
-					[c/ffbf00:"高耸入云，远在西方。阿卓迪斯之眼仰望天空，他在附近。"]
+					[c/00ffd4:一个谜语刻在石头上：]
+					[c/ffbf00:"在阿拉齐姆双峰之上，我们凝视上天，下观沟壑。我们是远古者的眼睛"]
 					'''
 			}
 
@@ -5095,7 +5099,7 @@ Mods: {
 				Tooltip:
 					'''
 					失落的传说巨著，《奔雷诀》第三卷《阴阳相汲》
-					对敌人进行持续的雷击
+					释放一道雷鸣之弧，对水中的敌人更为有效
 					只有法师才能充分发挥这本书的潜力 
 					'''
 			}
@@ -5653,11 +5657,7 @@ Mods: {
 
 			CalciumBlade: {
 				DisplayName: 钙质刀
-				Tooltip:
-					'''
-					“锋利的骨头刀片”
-					击中敌人时会发射骨头
-					'''
+				Tooltip: 锋利的骨头刀片
 			}
 
 			CoralSword: {
@@ -6765,7 +6765,7 @@ Mods: {
 				Tooltip0:
 					'''
 					{$CommonItemTooltip.Summon.TagArmorPen}
-					'This rust is almost infectious'
+					'小心破伤风'
 					'''
 			}
 
@@ -7774,7 +7774,7 @@ Mods: {
 				DisplayName: 恩惠与保护之戒
 				Tooltip:
 					'''
-					装备时增加 20 点生命值和 10 点耐力
+					装备时增加 40 点生命值和 15 点耐力
 					看起来三焱家族戴着这个
 					是为了防止它释放出全部的力量
 					'''
@@ -8749,17 +8749,17 @@ Mods: {
 			}
 
 			TerraFallShardDebuff: {
-				// DisplayName: Terra Fall Shard Debuff
-				// Description: Mods.tsorcRevamp.Buffs.TerraFallShardDebuff.Description
+				DisplayName: 泰拉之殇
+				Description: Mods.tsorcRevamp.Buffs.TerraFallShardDebuff.Description
 			}
 
 			AbyssWeaponImbue: {
-				// DisplayName: Weapon Imbue: Abyss
-				/* Description:
+				DisplayName: 武器灌注：深渊
+				Description:
 					'''
-					Melee and Whip attacks inflict enemies with Daybroken
-					Increase melee and whip damage and crit by 6%
-					''' */
+					近战和鞭子攻击对敌人施加破晓
+					增加近战和鞭子伤害、暴击率
+					'''
 			}
 		}
 
@@ -9383,15 +9383,15 @@ Mods: {
 			RealityFracture.DisplayName: 次元碎片
 			BlightCataclysm.DisplayName: 枯萎风暴
 			FreezeBolt3.DisplayName: 霜与电高阶
-			// StarstormProjectile.DisplayName: Starstorm Projectile
-			// DominatrixThorn.DisplayName: Dominatrix Thorn
-			// SearingLashBat.DisplayName: Searing Lash Bat
-			// NightsCrackerTrail.DisplayName: Nights Cracker Trail
-			// TerraFallTrail.DisplayName: Terra Fall Trail
-			// SoulDelayer.DisplayName: Soul Delayer
-			// Bolt3Lightning.DisplayName: Bolt3 Lightning
-			// Bolt4Lightning.DisplayName: Bolt4 Lightning
-			// EnergyStrikeScrollProjectile.DisplayName: Energy Strike Scroll Projectile
+			StarstormProjectile.DisplayName: 星爆
+			DominatrixThorn.DisplayName: 主宰
+			SearingLashBat.DisplayName: 灼热之鞭
+			NightsCrackerTrail.DisplayName: 碎夜
+			TerraFallTrail.DisplayName: 泰拉之殇
+			SoulDelayer.DisplayName: 魂灵收割者
+			Bolt3Lightning.DisplayName: 电弧
+			Bolt4Lightning.DisplayName: 电磁场
+			EnergyStrikeScrollProjectile.DisplayName: 能量打击卷轴
 		}
 
 		NPCs: {

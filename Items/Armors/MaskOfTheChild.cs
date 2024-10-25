@@ -9,6 +9,7 @@ namespace tsorcRevamp.Items.Armors
     public class MaskOfTheChild : ModItem
     {
         public static float MoveSpeedMult = 20f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeedMult);
         public override void SetStaticDefaults()
         {
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
@@ -24,7 +25,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed *= 1f + MoveSpeedMult / 100f;
+            player.moveSpeed += 1f + MoveSpeedMult / 100f;
         }
     }
 }
