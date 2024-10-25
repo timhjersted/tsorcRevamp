@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.moveSpeed += 1f + MoveSpeedMult / 100f;
+            player.moveSpeed += MoveSpeedMult / 100f;
         }
     }
 }
