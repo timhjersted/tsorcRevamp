@@ -780,7 +780,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             {
                 float potency = (float)ConsumedAmount / (float)ScalingFactor;
                 potency += 0.5f;
-                return Math.Min(potency, 2f);
+                return Math.Min(potency, 1f);
             }
         }
 
