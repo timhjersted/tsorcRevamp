@@ -132,20 +132,6 @@ namespace tsorcRevamp.NPCs.Friendly
 
 
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenIceRod>())
-            {
-                shopCustomPrice = 600,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, Condition.DownedEyeOfCthulhu);
-
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenThunderRod>())
-            {
-                shopCustomPrice = 600,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, Condition.DownedEyeOfCthulhu);
-
-
-
             shop.Add(new Item(ItemID.LuckyHorseshoe)
             {
                 shopCustomPrice = 230,
@@ -159,12 +145,6 @@ namespace tsorcRevamp.NPCs.Friendly
             }, Condition.DownedSkeletron);
 
 
-
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Rods.ForgottenStardustRod>())
-            {
-                shopCustomPrice = 3500,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheRage>()))));
 
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Melee.Axes.ForgottenPoisonAxe>())
             {

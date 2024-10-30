@@ -743,11 +743,6 @@ Mods: {
 				Tooltip: 电子哥不会被燃烧瓶砸死了...但是不确定闪光弹会不会
 			}
 
-			FlameBatBanner: {
-				DisplayName: "{$NPCs.FlameBat.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.FlameBat.DisplayName}"
-			}
-
 			GhostOfTheDarkmoonKnightBanner: {
 				DisplayName: "{$NPCs.GhostOfTheDarkmoonKnight.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GhostOfTheDarkmoonKnight.DisplayName}"
@@ -5967,21 +5962,6 @@ Mods: {
 				Tooltip: ""
 			}
 
-			ForgottenIceRod: {
-				DisplayName: 被遗忘的冰法杖
-				Tooltip: 冰霜四溢
-			}
-
-			ForgottenStardustRod: {
-				DisplayName: 被遗忘的流星法杖
-				Tooltip: 随机施放流星
-			}
-
-			ForgottenThunderRod: {
-				DisplayName: 被遗忘的雷电法杖
-				Tooltip: 随机释放无尽雷霆
-			}
-
 			ShatteredMoonlight: {
 				DisplayName: 破碎月光
 				Tooltip:
@@ -9858,7 +9838,6 @@ Mods: {
 			DworcVoodooShaman.DisplayName: 德沃克萨满
 			FirebombHollow.DisplayName: 燃烧瓶投掷者
 			FireLurker.DisplayName: 火炎潜伏者
-			FlameBat.DisplayName: 烈焰蝙蝠
 			GaibonFireball.DisplayName: 盖波的火球
 			GhostOfTheDarkmoonKnight.DisplayName: 暗月骑士之灵
 			GhostoftheForgottenKnight.DisplayName: 被遗忘的骑士之灵

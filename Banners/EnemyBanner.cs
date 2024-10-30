@@ -318,13 +318,6 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<FirebombHollow>();
     }
 
-    public class FlameBatBanner : EnemyBanner
-    {
-        public override int PlaceStyle => 32;
-
-        public override int NPCType => ModContent.NPCType<FlameBat>();
-    }
-
     public class GhostOfTheDarkmoonKnightBanner : EnemyBanner
     {
         public override int PlaceStyle => 33;

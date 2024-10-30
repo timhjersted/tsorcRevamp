@@ -744,11 +744,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.FirebombHollow.DisplayName}"
 			}
 
-			FlameBatBanner: {
-				DisplayName: "{$NPCs.FlameBat.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.FlameBat.DisplayName}"
-			}
-
 			GhostOfTheDarkmoonKnightBanner: {
 				DisplayName: "{$NPCs.GhostOfTheDarkmoonKnight.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GhostOfTheDarkmoonKnight.DisplayName}"
@@ -5969,21 +5964,6 @@ Mods: {
 				Tooltip: ""
 			}
 
-			ForgottenIceRod: {
-				DisplayName: Forgotten Ice Rod
-				Tooltip: Randomly casts ice 2.
-			}
-
-			ForgottenStardustRod: {
-				DisplayName: Forgotten Stardust Rod
-				Tooltip: Randomly casts Meteor.
-			}
-
-			ForgottenThunderRod: {
-				DisplayName: Forgotten Thunder Rod
-				Tooltip: Randomly casts Bolt 2.
-			}
-
 			ShatteredMoonlight: {
 				DisplayName: Shattered Moonlight
 				Tooltip:
@@ -9858,7 +9838,6 @@ Mods: {
 			DworcVoodooShaman.DisplayName: Dworc Shaman
 			FirebombHollow.DisplayName: Firebomb Hollow
 			FireLurker.DisplayName: Fire Lurker
-			FlameBat.DisplayName: Flame Bat
 			GaibonFireball.DisplayName: Gaibon Fireball
 			GhostOfTheDarkmoonKnight.DisplayName: Ghost of the Darkmoon Knight
 			GhostoftheForgottenKnight.DisplayName: Ghost of the Forgotten Knight
