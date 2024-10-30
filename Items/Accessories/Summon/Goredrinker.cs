@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
             if (!player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && player.HeldItem.type != ModContent.ItemType<WitchkingsSword>())
             {
                 player.GetModPlayer<tsorcRevampPlayer>().GoredrinkerReady = true;
-                player.whipRangeMultiplier *= 1f + WhipDmgRange / 100f;
+                player.whipRangeMultiplier += WhipDmgRange / 100f;
             }
         }
     }

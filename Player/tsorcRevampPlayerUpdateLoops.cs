@@ -1569,7 +1569,7 @@ namespace tsorcRevamp
             if (CrystallineShard)
             {
                 Player.GetCritChance(DamageClass.Summon) += CrystallineCritChance;
-                Player.whipRangeMultiplier -= CrystallineCritChance;
+                Player.whipRangeMultiplier -= CrystallineCritChance / 100f;
             }
 
             if (Player.HasAmmo(Player.HeldItem) && Player.HeldItem.useAmmo != 0 && AmmoBox)
