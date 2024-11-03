@@ -4670,6 +4670,12 @@ Mods: {
 				BuffName: Weapon Imbue: Acid Venom
 			}
 
+			PermanentAbyssImbuement: {
+				DisplayName: Permanent Abyssal Imbuement
+				Tooltip: ""
+				BuffName: Weapon Imbue: Abyss
+			}
+
 			PermanentFlipperPotion: {
 				DisplayName: Permanent Flipper Potion
 				Tooltip: ""

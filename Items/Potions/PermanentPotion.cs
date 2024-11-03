@@ -38,7 +38,8 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             new PermanentNanitesImbuement(),
             new PermanentPartyImbuement(),
             new PermanentPoisonImbuement(),
-            new PermanentVenomImbuement()
+            new PermanentVenomImbuement(),
+            new PermanentAbyssImbuement()
         };
         public abstract int PermanentID
         {
@@ -655,7 +656,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 1;
             player.GetCritChance(DamageClass.Melee) += ApplyScaling(Flasks.VenomFlaskCrit);
-            player.GetDamage(DamageClass.SummonMeleeSpeed) *= (1f + ApplyScaling(Flasks.VenomFlaskCrit / 100f));
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(Flasks.VenomFlaskCrit / 100f);
         }
     }
 
@@ -682,7 +683,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         {
             player.meleeEnchant = 6;
             player.GetCritChance(DamageClass.Melee) += ApplyScaling(Flasks.NanitesFlaskCrit);
-            player.GetDamage(DamageClass.SummonMeleeSpeed) *= (1f + ApplyScaling(Flasks.NanitesFlaskCrit / 100f));
+            player.GetDamage(DamageClass.SummonMeleeSpeed) += ApplyScaling(Flasks.NanitesFlaskCrit / 100f);
         }
     }
 
@@ -780,7 +781,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             {
                 float potency = (float)ConsumedAmount / (float)ScalingFactor;
                 potency += 0.5f;
-                return Math.Min(potency, 1f);
+                return Math.Min(potency, 2f);
             }
         }
 
@@ -1297,6 +1298,34 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         public override void PotionEffect(Player player)
         {
             player.luck += ApplyScaling(0.3f);
+        }
+    }
+    public class PermanentAbyssImbuement : PermanentPotion
+    {
+        public override string BuffName => LangUtils.GetTextValue("Items.PermanentAbyssImbuement.BuffName");
+        public override string Texture => "tsorcRevamp/Items/Potions/AbyssFlask";
+        public override int PermanentID => 58;
+        public override int BuffType => ModContent.BuffType<AbyssWeaponImbue>();
+        public override List<PermanentPotion> ExclusivePermanents => ExclusiveSetFlasks;
+        public override bool CanScale => true;
+        public override int ScalingFactor => 15;
+        public override float EffectPotency
+        {
+            get
+            {
+                float potency = (float)ConsumedAmount / (float)ScalingFactor;
+                potency += 0.5f;
+                return Math.Min(potency, 1.5f);
+            }
+        }
+
+        public override void PotionEffect(Player player)
+        {
+            player.meleeEnchant = 6;
+            player.GetDamage(DamageClass.Melee) += (AbyssFlask.DamageCritIncrease / 100f);
+            player.GetCritChance(DamageClass.Melee) += ApplyScaling(AbyssFlask.DamageCritIncrease);
+			player.GetDamage(DamageClass.SummonMeleeSpeed) += (AbyssFlask.DamageCritIncrease / 100f);
+            player.GetCritChance(DamageClass.SummonMeleeSpeed) += ApplyScaling(AbyssFlask.DamageCritIncrease);
         }
     }
     //increase PermanentBuffCount in tsorcRevampPlayerMain by 1 for each new potion added

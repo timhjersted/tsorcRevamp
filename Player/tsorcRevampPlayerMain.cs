@@ -57,7 +57,7 @@ namespace tsorcRevamp
 {
     public partial class tsorcRevampPlayer : ModPlayer
     {
-        public static readonly int PermanentBuffCount = 58;
+        public static readonly int PermanentBuffCount = 59;
         public static List<int> startingItemsList;
         public List<int> bagsOpened;
         public static int LastHit = 1;

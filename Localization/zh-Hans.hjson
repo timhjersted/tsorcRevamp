@@ -4671,6 +4671,12 @@ Mods: {
 				BuffName: 武器灌注：酸性毒液
 			}
 
+			PermanentAbyssImbuement: {
+				// DisplayName: Permanent Abyssal Imbuement
+				// Tooltip: ""
+				// BuffName: Weapon Imbue: Abyss
+			}
+
 			PermanentFlipperPotion: {
 				DisplayName: 永久脚蹼药水
 				Tooltip: ""

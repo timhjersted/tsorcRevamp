@@ -1363,12 +1363,17 @@ namespace tsorcRevamp
                 }
 
                 Vector2 centerOffset = new Vector2(Player.Center.X + 2 - Player.width / 2, Player.Center.Y + 6 - Player.height / 2);
-                for (int j = 1; j < 30; j++)
-                {
-                    var x = Dust.NewDust(centerOffset + (Vector2.One * (j % 8 == 0 ? Main.rand.Next(15, 150) : 150)).RotatedByRandom(Math.PI * 4.0), Player.width / 2, Player.height / 2, 235, Player.velocity.X, Player.velocity.Y);
-                    Main.dust[x].noGravity = true;
-                }
+                const float circleRadius = 150f; 
+                const int dustType = 235;
+                const int particleCount = 30;
 
+                for (int j = 1; j < particleCount; j++)
+                {
+                    Vector2 dustPosition = centerOffset + (Vector2.One * circleRadius).RotatedByRandom(Math.PI * 2);
+                    int dustIndex = Dust.NewDust(dustPosition, Player.width / 2, Player.height / 2, dustType, Player.velocity.X, Player.velocity.Y);
+                    Main.dust[dustIndex].noGravity = true;
+                    Main.dust[dustIndex].scale *= 0.75f;
+                }
             }
 
             #region Soul Siphon Dusts
@@ -1377,55 +1382,7 @@ namespace tsorcRevamp
             if (SoulSiphon)
             {
 
-                if (Main.rand.NextBool(3)) //outermost "ring"
-                {
-                    int num5 = Dust.NewDust(Player.position, Player.width, Player.height, 89, 0f, 0f, 120, default, 1f);
-                    Main.dust[num5].noGravity = true;
-                    Main.dust[num5].velocity *= 0.75f;
-                    Main.dust[num5].fadeIn = 1.5f;
-                    Vector2 vector = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
-                    vector.Normalize();
-                    vector *= (float)Main.rand.Next(50, 100) * 0.04f;
-                    Main.dust[num5].velocity = vector;
-                    vector.Normalize();
-                    vector *= Main.rand.Next(220, 900);
-                    Main.dust[num5].position = Player.Center - vector;
-                }
-
-                if (Main.rand.NextBool(6))
-                {
-                    int x = Dust.NewDust(Player.position, Player.width, Player.height, 89, Player.velocity.X, Player.velocity.Y, 120, default, 1f);
-                    Main.dust[x].noGravity = true;
-                    Main.dust[x].velocity *= 0.75f;
-                    Main.dust[x].fadeIn = 1.3f;
-                    Vector2 vector = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
-                    vector.Normalize();
-                    vector *= (float)Main.rand.Next(50, 100) * 0.05f; //velocity towards player
-                    Main.dust[x].velocity = vector;
-                    vector.Normalize();
-                    vector *= 200f; //spawn distance from player
-                    Main.dust[x].position = Player.Center - vector;
-
-                    //Vector2.Normalize(start - end) * someSpeed //start and end are also Vector2 // Aparently another way to make things move toward each other
-
-                }
-
-                if (Main.rand.NextBool(3))
-                {
-                    int z = Dust.NewDust(Player.position, Player.width, Player.height, 89, 0f, 0f, 120, default, 1f);
-                    Main.dust[z].noGravity = true;
-                    Main.dust[z].velocity *= 0.75f;
-                    Main.dust[z].fadeIn = 1.3f;
-                    Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
-                    vectorother.Normalize();
-                    vectorother *= (float)Main.rand.Next(50, 100) * 0.052f;
-                    Main.dust[z].velocity = vectorother;
-                    vectorother.Normalize();
-                    vectorother *= 150f;
-                    Main.dust[z].position = Player.Center - vectorother;
-                }
-
-                if (Main.rand.NextBool(2))
+                if (Main.rand.NextBool(4))
                 {
                     int z = Dust.NewDust(Player.position, Player.width, Player.height, 89, 0f, 0f, 120, default, 1f);
                     Main.dust[z].noGravity = true;
@@ -1440,7 +1397,7 @@ namespace tsorcRevamp
                     Main.dust[z].position = Player.Center - vectorother;
                 }
 
-                if (Main.rand.NextBool(2)) //innermost "ring"
+                if (Main.rand.NextBool(4)) //innermost "ring"
                 {
                     int z = Dust.NewDust(Player.position, Player.width, Player.height, 89, 0f, 0f, 120, default, 1f);
                     Main.dust[z].noGravity = true;

@@ -22,6 +22,7 @@ namespace tsorcRevamp.Items
             PermaPotionRecipeS(mod, ModContent.ItemType<BattlefrontPotion>(), ModContent.ItemType<PermanentBattlefrontPotion>());
             PermaPotionRecipeS(mod, ModContent.ItemType<DemonDrugPotion>(), ModContent.ItemType<PermanentDemonDrug>());
             PermaPotionRecipeS(mod, ModContent.ItemType<StrengthPotion>(), ModContent.ItemType<PermanentStrengthPotion>());
+            PermaPotionRecipeS(mod, ModContent.ItemType<AbyssFlask>(), ModContent.ItemType<PermanentAbyssImbuement>());
             PermaPotionRecipeS(mod, ItemID.EndurancePotion, ModContent.ItemType<PermanentEndurancePotion>());
             PermaPotionRecipeS(mod, ItemID.LifeforcePotion, ModContent.ItemType<PermanentLifeforcePotion>());
             PermaPotionRecipeS(mod, ItemID.MagicPowerPotion, ModContent.ItemType<PermanentMagicPowerPotion>());

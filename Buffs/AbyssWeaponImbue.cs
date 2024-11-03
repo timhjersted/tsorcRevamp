@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Buffs
 {
@@ -15,8 +16,10 @@ namespace tsorcRevamp.Buffs
 
 		public override void Update(Player player, ref int buffIndex)
 		{
-			player.GetDamage(DamageClass.Generic) += AbyssFlask.DamageCritIncrease / 100f;
-            player.GetCritChance(DamageClass.Generic) += AbyssFlask.DamageCritIncrease;
+            player.GetDamage(DamageClass.Melee) += AbyssFlask.DamageCritIncrease / 100f;
+            player.GetCritChance(DamageClass.Melee) += AbyssFlask.DamageCritIncrease;
+			player.GetDamage(DamageClass.SummonMeleeSpeed) += AbyssFlask.DamageCritIncrease / 100f;
+            player.GetCritChance(DamageClass.SummonMeleeSpeed) += AbyssFlask.DamageCritIncrease;
 			player.GetModPlayer<AbyssWeaponEnchantement>().abyssWeaponImbue = true;
 			player.MeleeEnchantActive = true; 
 		}
