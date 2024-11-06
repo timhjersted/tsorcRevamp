@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.VanillaItems
             //Why is this eventide's internal name i'm literally going to go feral
             if (item.type == ItemID.SparkleGuitar)
             {
-                item.mana = 25;
+                item.mana = 18;
             }
             if (item.type == ItemID.AmberStaff)
             {
@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.SparkleGuitar)
             {
-                item.damage = 80; //Rare drop, should be better than the others
+                item.damage = 80; 
             }
             if (item.type == ItemID.LeafBlower)
             {

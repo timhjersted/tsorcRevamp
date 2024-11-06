@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     [AutoloadEquip(EquipType.HandsOn)]
     public class MythrilGlove : ModItem
     {
-        public static float LifeThreshold = 30f;
+        public static float LifeThreshold = 50f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold, Buffs.GreatMagicShield.DefenseIncrease, Buffs.GreatMagicShield.DamagePenalty, Buffs.GreatMagicShield.Slowness);
         public override void SetStaticDefaults()
         {

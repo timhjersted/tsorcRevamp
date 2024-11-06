@@ -1,5 +1,8 @@
 using System;
 using System.Linq;
+using tsorcRevamp.Items.Lore;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Weapons.Summon;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -49,6 +52,7 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.WallOfFleshBossBag)
             {
                 itemLoot.RemoveWhere(_ => true);
+                itemLoot.Add(ItemDropRule.Common(ItemID.MoltenPickaxe));
                 itemLoot.Add(ItemDropRule.Common(ItemID.BadgersHat));
                 itemLoot.Add(ItemDropRule.Common(ItemID.DemonHeart));
                 itemLoot.Add(ItemDropRule.Common(ItemID.Pwnhammer));
@@ -81,6 +85,8 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.PlanteraBossBag)
             {
                 itemLoot.RemoveWhere(_ => true);
+                itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfLife>()));
+                itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfLife>(), 1, 15, 20));
                 itemLoot.Add(ItemDropRule.Common(ItemID.TempleKey));
                 itemLoot.Add(ItemDropRule.Common(ItemID.GrenadeLauncher));
                 itemLoot.Add(ItemDropRule.Common(ItemID.RocketI, 1, 150, 200));
@@ -100,6 +106,8 @@ namespace tsorcRevamp.Items.VanillaItems
 			if (item.type == ItemID.GolemBossBag)
             {
                 itemLoot.RemoveWhere(_ => true);
+                itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfStone>()));
+                itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BrokenPicksaw>()));
                 itemLoot.Add(ItemDropRule.Common(ItemID.Stynger, 1, 200, 300));
                 itemLoot.Add(ItemDropRule.Common(ItemID.StyngerBolt));
                 itemLoot.Add(ItemDropRule.Common(ItemID.PossessedHatchet));
@@ -116,12 +124,13 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.FairyQueenBossBag)
             {
                 itemLoot.RemoveWhere(_ => true);
+                itemLoot.Add(ItemDropRule.Common(ItemID.SparkleGuitar));
                 itemLoot.Add(ItemDropRule.Common(ItemID.FairyQueenMagicItem));
                 itemLoot.Add(ItemDropRule.Common(ItemID.FairyQueenRangedItem));
                 itemLoot.Add(ItemDropRule.Common(ItemID.PiercingStarlight));
                 itemLoot.Add(ItemDropRule.Common(ItemID.RainbowWhip));
                 itemLoot.Add(ItemDropRule.Common(ItemID.RainbowWings));
-                itemLoot.Add(ItemDropRule.Common(ItemID.HallowBossDye, 1, 3, 3));
+                itemLoot.Add(ItemDropRule.Common(ItemID.HallowBossDye, 1, 6, 6));
                 itemLoot.Add(ItemDropRule.Common(ItemID.RainbowCursor));
                 itemLoot.Add(ItemDropRule.Common(ItemID.EmpressFlightBooster));
                 itemLoot.Add(ItemDropRule.Common(ItemID.FairyQueenMask, 7));
@@ -142,6 +151,7 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.BossBagBetsy)
             {
                 itemLoot.RemoveWhere(_ => true);
+                itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EtherianWyvernStaff>()));
                 itemLoot.Add(ItemDropRule.Common(ItemID.BetsyWings));
                 itemLoot.Add(ItemDropRule.Common(ItemID.MonkStaffT3));
                 itemLoot.Add(ItemDropRule.Common(ItemID.DD2BetsyBow));

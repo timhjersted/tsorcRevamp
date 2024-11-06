@@ -402,8 +402,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons
                 Projectile.localNPCHitCooldown = BaseAttackSpeed; 
             }
 
-
-            Vector2 movementVec = player.GetModPlayer<tsorcRevampPlayer>().CursorPosition - Projectile.Center;
+            Vector2 offset = new Vector2(125, 0);
+            Vector2 movementVec = player.GetModPlayer<tsorcRevampPlayer>().CursorPosition + offset - Projectile.Center;
 
 
             //until here

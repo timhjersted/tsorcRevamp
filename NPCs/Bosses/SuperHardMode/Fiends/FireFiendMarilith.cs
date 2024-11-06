@@ -168,7 +168,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         private void ExpandingFireBombs()
         {
             MarilithFloat();
-            if (MoveTimer % 240 == 0 && Main.netMode != NetmodeID.MultiplayerClient && MoveTimer <= 1250)
+            if (MoveTimer % 210 == 0 && Main.netMode != NetmodeID.MultiplayerClient && MoveTimer <= 1250)
             {
                 float speed = 8;
 
@@ -295,7 +295,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         private void Barrage()
         {
             MarilithFloat();
-            if (MoveTimer % 60 == 0)
+            if (MoveTimer % 70 == 0)
             {
                 float distance = NPC.Distance(Target.Center);
                 targetVector = UsefulFunctions.Aim(NPC.Center, Target.Center, distance / 30);
@@ -312,7 +312,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector.RotatedBy(MathHelper.Pi), ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
                 //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector.RotatedBy(MathHelper.PiOver2 * 3), ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 1, NPC.whoAmI);
             }
-            if (MoveTimer % 60 == 1)
+            if (MoveTimer % 70 == 1)
             {
                 targetVector += Target.velocity;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -320,7 +320,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, targetVector, ModContent.ProjectileType<MarilithLightning>(), lightningDamage, 0, Main.myPlayer, 0, NPC.whoAmI);
                 }
             }
-            if (MoveTimer % 60 == 2)
+            if (MoveTimer % 70 == 2)
             {
                 targetVector += Target.velocity * 2;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -330,7 +330,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             }
 
             Vector2 randomVel = Main.rand.NextVector2Circular(1, 1);
-            if (MoveTimer % 6 == 5)
+            if (MoveTimer % 7 == 5)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -372,10 +372,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                     }
                 }
 
-                float intensity = MoveTimer / 60f;
-                if (intensity > 1)
+                float intensity = MoveTimer / 80f;
+                if (intensity > 0.8f)
                 {
-                    intensity = 1;
+                    intensity = 0.8f;
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
