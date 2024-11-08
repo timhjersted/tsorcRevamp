@@ -2178,7 +2178,7 @@ namespace tsorcRevamp.NPCs
                         npc.lifeMax = 35000; //base 30k
                         npc.damage = 93; //base 70
                         npc.value = 295930;
-                        npc.rarity = 26;
+                        npc.rarity = 25;
                         break;
                     }
 
@@ -2255,7 +2255,7 @@ namespace tsorcRevamp.NPCs
                     }
                 case (NPCID.GolemHeadFree):
                     {
-                        npc.rarity = 27;
+                        npc.rarity = 26;
                         break;
                     }
 
@@ -2295,7 +2295,7 @@ namespace tsorcRevamp.NPCs
                         }
                         npc.lifeMax = 142000;
                         npc.value = 444440;
-                        npc.rarity = 28;
+                        npc.rarity = 27;
                         break;
                     }
                 #endregion

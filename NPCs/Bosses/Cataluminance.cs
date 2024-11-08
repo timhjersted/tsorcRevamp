@@ -49,7 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.HitSound = SoundID.NPCHit42;
 
             NPC.value = 600000;
-            NPC.rarity =25;
+            NPC.rarity = 28;
             NPC.aiStyle = -1;
 
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Cataluminance.DespawnHandler"), Color.Cyan, 180);

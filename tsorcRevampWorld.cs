@@ -1592,10 +1592,10 @@ namespace tsorcRevamp
             { ModContent.NPCType<NPCs.Bosses.TheHunter>(), new Vector2(295, 1515) },
             { NPCID.TheDestroyer, new Vector2(2109, 856) },
             { ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>(), new Vector2(5066, 1056) },
-            { ModContent.NPCType<NPCs.Bosses.Cataluminance>(), new Vector2(2884, 240) },
             { NPCID.Plantera, new Vector2(5828, 1746) },
             { NPCID.Golem, new Vector2(6792, 1628) },
             { NPCID.HallowBoss, new Vector2(4468, 351) },
+            { ModContent.NPCType<NPCs.Bosses.Cataluminance>(), new Vector2(2884, 240) },
             { ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>(), new Vector2(1401, 307) },
             { ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>(), new Vector2(1401, 307) },
         };
