@@ -9,17 +9,18 @@ namespace tsorcRevamp.Items.Armors
     public class MaskOfTheMother : ModItem
     {
         public static int MaxLifeIncrease = 60;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxLifeIncrease);
+        public static int LifeRegen = 1;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxLifeIncrease, LifeRegen);
         public override void SetStaticDefaults()
         {
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
         }
         public override void SetDefaults()
         {
-            Item.defense = 9;
+            Item.defense = 6;
             Item.width = 26;
             Item.height = 30;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarityID.Green;
             Item.value = PriceByRarity.fromItem(Item);
         }
 

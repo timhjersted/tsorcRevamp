@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 {
     public class EstusRing : ModItem
     {
-        public const int HealIncrease = 40;
+        public const int HealIncrease = 30;
         public const int PercentHealIncrease = 10;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(HealIncrease, PercentHealIncrease);
         public override void SetStaticDefaults()
@@ -19,8 +19,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             Item.width = 28;
             Item.height = 28;
             Item.accessory = true;
-            Item.value = PriceByRarity.Blue_1;
-            Item.rare = ItemRarityID.Blue;
+            Item.value = PriceByRarity.Green_2;
+            Item.rare = ItemRarityID.Green;
         }
 
         public override void UpdateEquip(Player player)

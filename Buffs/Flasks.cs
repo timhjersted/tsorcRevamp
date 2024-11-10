@@ -14,7 +14,7 @@ namespace tsorcRevamp.Buffs
         public static float ConfettiFlaskDMG = 16f;
         public static float CursedFlaskDMG = 10f;
         public static float VenomFlaskCrit = 12f;
-        public static float NanitesFlaskCrit = 17f;
+        public static float NanitesFlaskCrit = 16f;
         public override void Update(int type, Player player, ref int buffIndex)
         {
             if (type == BuffID.WeaponImbuePoison)

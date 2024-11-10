@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Accessories.Damage
         public static float DamageAndCritIncrease1 = 5f;
         public static float LifeThreshold = 40f;
         public static int ManaRegenBonus = 5;
-        public static float DamageAndCritIncrease2 = 10f;
+        public static float DamageAndCritIncrease2 = 8f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageAndCritIncrease1, LifeThreshold, ManaRegenBonus, DamageAndCritIncrease2);
         public override void SetStaticDefaults()
         {

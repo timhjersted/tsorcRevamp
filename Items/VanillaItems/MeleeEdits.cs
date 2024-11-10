@@ -251,7 +251,7 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.VampireKnives)
             {
                 item.damage = 20;
-                //item.mana = 31;
+                item.mana = 30;
             }
             if (item.type == ItemID.ScourgeoftheCorruptor)
             {

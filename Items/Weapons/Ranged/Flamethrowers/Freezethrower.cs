@@ -50,14 +50,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Flamethrowers
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SlimeGun, 1);
             recipe.AddIngredient(ItemID.FrostDaggerfish, 5);
-            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 20);
+            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 16);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 7000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.SlimeGun, 1);
-            recipe2.AddIngredient(ModContent.ItemType<EphemeralDust>(), 20);
+            recipe2.AddIngredient(ModContent.ItemType<EphemeralDust>(), 16);
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.Register();

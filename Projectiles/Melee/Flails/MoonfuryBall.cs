@@ -61,6 +61,11 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
             Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ModdedFlail = true;
         }
 
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.ShadowFlame, 4 * 60);
+        }
+
         // This AI code was adapted from vanilla code: Terraria.Projectile.AI_015_Flails() 
         public override void AI()
         {

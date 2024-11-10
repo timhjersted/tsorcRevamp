@@ -82,11 +82,11 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             if (Main.expertMode)
             {
-                target.AddBuff(BuffID.OnFire, 450, false);
+                target.AddBuff(BuffID.Frostburn, 225, false);
             }
             else
             {
-                target.AddBuff(BuffID.OnFire, 900, false);
+                target.AddBuff(BuffID.Frostburn, 450, false);
             }
         }
     }

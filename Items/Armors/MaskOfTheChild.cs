@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class MaskOfTheChild : ModItem
     {
-        public static float MoveSpeedMult = 20f;
+        public static float MoveSpeedMult = 25f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeedMult);
         public override void SetStaticDefaults()
         {
@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Armors
             Item.defense = 6;
             Item.width = 44;
             Item.height = 40;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarityID.Green;
             Item.value = PriceByRarity.fromItem(Item);
         }
 

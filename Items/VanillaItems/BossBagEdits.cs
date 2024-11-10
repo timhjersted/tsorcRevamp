@@ -108,8 +108,8 @@ namespace tsorcRevamp.Items.VanillaItems
                 itemLoot.RemoveWhere(_ => true);
                 itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfStone>()));
                 itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BrokenPicksaw>()));
-                itemLoot.Add(ItemDropRule.Common(ItemID.Stynger, 1, 200, 300));
-                itemLoot.Add(ItemDropRule.Common(ItemID.StyngerBolt));
+                itemLoot.Add(ItemDropRule.Common(ItemID.StyngerBolt, 1, 200, 300));
+                itemLoot.Add(ItemDropRule.Common(ItemID.Stynger));
                 itemLoot.Add(ItemDropRule.Common(ItemID.PossessedHatchet));
                 itemLoot.Add(ItemDropRule.Common(ItemID.SunStone));
                 itemLoot.Add(ItemDropRule.Common(ItemID.EyeoftheGolem));

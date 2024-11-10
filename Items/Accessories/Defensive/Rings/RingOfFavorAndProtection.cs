@@ -22,8 +22,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             Item.width = 24;
             Item.height = 24;
             Item.accessory = true;
-            Item.value = PriceByRarity.Blue_1;
-            Item.rare = ItemRarityID.Blue;
+            Item.value = PriceByRarity.Green_2;
+            Item.rare = ItemRarityID.Green;
         }
 
         public override void UpdateEquip(Player player)
