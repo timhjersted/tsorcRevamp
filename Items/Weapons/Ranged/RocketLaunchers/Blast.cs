@@ -9,16 +9,12 @@ namespace tsorcRevamp.Items.Weapons.Ranged.RocketLaunchers
     {
         public override void SetStaticDefaults()
         {
-            /*Tooltip.SetDefault("Uses Rockets as ammo" +
-                "\nQuite dangerous to use" +
-                "\n'The Number 1 Hero'");*/
             ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
         }
 
         public override void SetDefaults()
         {
-
-            Item.damage = 1500; //This has to be in the thousands for the weapon to be viable, yes. 
+            Item.damage = 1000; //This has to be in the thousands for the weapon to be viable, yes. 
             Item.width = 46;
             Item.height = 26;
             Item.DamageType = DamageClass.Ranged;
@@ -35,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.RocketLaunchers
             Item.rare = ItemRarityID.Cyan;
             Item.value = PriceByRarity.Cyan_9;
         }
-        public override void AddRecipes()
+        /*public override void AddRecipes() //this wasn't meant to be obtainable because I haven't finished it yet
         {
             Recipe recipe = CreateRecipe();
 
@@ -45,6 +41,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.RocketLaunchers
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
-        }
+        }*/
     }
 }

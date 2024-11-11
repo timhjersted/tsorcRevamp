@@ -1,33 +1,36 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Drawing;
+using ReLogic.Utilities;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs;
 
-namespace tsorcRevamp.Projectiles.Magic
+namespace tsorcRevamp.Projectiles.Magic.Scrolls
 {
-    public class EnergyStrikeScrollProjectile : ModProjectile
+    public class EnergyStrikeScrollTeslaCoil : ModProjectile
     {
 
         public override void SetStaticDefaults()
         {
-            Main.projFrames[Projectile.type] = 12;
+            Main.projFrames[Projectile.type] = 5;
         }
 
+        public float Timer
+        {
+            get => Projectile.ai[0];
+            set => Projectile.ai[0] = value;
+        }
         public override void SetDefaults()
         {
-            Projectile.width = 44;
-            Projectile.height = 40;
+            Projectile.width = 40;
+            Projectile.height = 60;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.MagicSummonHybrid;
-            Projectile.tileCollide = true;
+            Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = Projectile.SentryLifeTime + 1;
-            Projectile.usesIDStaticNPCImmunity = true;
-            Projectile.idStaticNPCHitCooldown = 30;
-            Projectile.scale = 2;
         }
         public override void OnSpawn(IEntitySource source)
         {
@@ -50,10 +53,24 @@ namespace tsorcRevamp.Projectiles.Magic
             Player player = Main.player[Projectile.owner];
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
+            Lighting.AddLight(Projectile.Center, Color.Blue.ToVector3() * 2f);
+
+            Timer++;
+
             Projectile.velocity = Vector2.Zero;
             if (Projectile.timeLeft > Projectile.SentryLifeTime)
             {
-                 Projectile.velocity = Projectile.Center.DirectionTo(modPlayer.CursorPosition).SafeNormalize(Vector2.Zero) * Projectile.Center.Distance(modPlayer.CursorPosition);
+                 Projectile.velocity = Projectile.Center.DirectionTo(modPlayer.CursorPosition) * Projectile.Center.Distance(modPlayer.CursorPosition);
+            }
+
+            NPC closestNPC = FindClosestNPC(400);
+
+            if (closestNPC != null && Timer >= 30)
+            {
+                Projectile p = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<EnergyStrikeScrollZap>(), Projectile.damage, 0f, Main.myPlayer, 0, 0, closestNPC.whoAmI);
+                p.originalDamage = Projectile.damage;
+                p.netUpdate = true;
+                Timer = 0;
             }
 
             for (int i = 0; i < Main.maxNPCs; i++)
@@ -70,15 +87,35 @@ namespace tsorcRevamp.Projectiles.Magic
                 Projectile.frame++;
                 Projectile.frameCounter = 0;
             }
-            if (Projectile.frame >= 12)
+            if (Projectile.frame >= Main.projFrames[Type])
             {
                 Projectile.frame = 0;
                 return;
             }
         }
-        public override bool OnTileCollide(Vector2 oldVelocity)
+        public NPC FindClosestNPC(float maxDetectDistance)
         {
-            //Projectile.velocity = Vector2.Zero;
+            NPC closestNPC = null;
+
+            float sqrMaxDetectDistance = maxDetectDistance * maxDetectDistance;
+            for (int k = 0; k < Main.maxNPCs; k++)
+            {
+                NPC target = Main.npc[k];
+                if (target.CanBeChasedBy())
+                {
+                    float sqrDistanceToTarget = Vector2.DistanceSquared(target.Center, Projectile.Center);
+
+                    if (sqrDistanceToTarget < sqrMaxDetectDistance)
+                    {
+                        sqrMaxDetectDistance = sqrDistanceToTarget;
+                        closestNPC = target;
+                    }
+                }
+            }
+            return closestNPC;
+        }
+        public override bool? Colliding(Microsoft.Xna.Framework.Rectangle projHitbox, Microsoft.Xna.Framework.Rectangle targetHitbox)
+        {
             return false;
         }
     }

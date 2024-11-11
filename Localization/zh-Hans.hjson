@@ -1912,7 +1912,9 @@ Mods: {
 					增加 {1}% 召唤暴击率，但减少 {1}% 鞭子攻击范围
 					"一种只在水晶维度中发现的神奇物质"
 					'''
-				CriticalStrikeChance: "当前召唤属性改变量: "
+				// Tooltip0: "Current Modifier: "
+				// Tooltip1: "% summon tag strength and negative whip range, "
+				// Tooltip2: whip damage
 			}
 
 			ShamanEmblem: {
@@ -9378,6 +9380,8 @@ Mods: {
 			Bolt3Lightning.DisplayName: 电弧
 			Bolt4Lightning.DisplayName: 电磁场
 			EnergyStrikeScrollProjectile.DisplayName: 能量打击卷轴
+			// EnergyStrikeScrollTeslaCoil.DisplayName: Energy Strike Scroll Tesla Coil
+			// EnergyStrikeScrollZap.DisplayName: Energy Strike Scroll Zap
 		}
 
 		NPCs: {

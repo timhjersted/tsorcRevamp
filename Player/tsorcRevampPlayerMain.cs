@@ -36,6 +36,7 @@ using tsorcRevamp.Items.Armors.Summon;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Tools;
+using tsorcRevamp.Items.VanillaItems;
 using tsorcRevamp.Items.Weapons.Magic;
 using tsorcRevamp.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Items.Weapons.Melee.Axes;
@@ -908,7 +909,7 @@ namespace tsorcRevamp
             if (proj.type == ProjectileID.StardustDragon1 || proj.type == ProjectileID.StardustDragon2 || proj.type == ProjectileID.StardustDragon3 || proj.type == ProjectileID.StardustDragon4)
             {
                 float DragonStacks = Player.ownedProjectileCounts[ProjectileID.StardustDragon1] + Player.ownedProjectileCounts[ProjectileID.StardustDragon2] + Player.ownedProjectileCounts[ProjectileID.StardustDragon3] + Player.ownedProjectileCounts[ProjectileID.StardustDragon4];
-                modifiers.SourceDamage *= MathF.Max(0.5f - DragonStacks / 100f, 0.2f);
+                modifiers.SourceDamage *= MathF.Max(SummonerEdits.StardustDragonBaseDmgMult - DragonStacks / 100f, 0.2f);
             }
             if (!proj.IsMinionOrSentryRelated)
             {

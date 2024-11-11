@@ -1257,11 +1257,11 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
             }
             if (IsSlashing && !SlashHit && ActualTarget == target)
             {
-                Vector2 LightningPosition = target.Center + new Vector2(0, -850);
+                Vector2 LightningPosition = target.Center + new Vector2(target.width / 4, target.height / 4);
                 SlashHit = true;
                 if (Main.myPlayer == Projectile.owner)
                 {
-                    Projectile LightningStrike = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), LightningPosition, Vector2.Zero, ModContent.ProjectileType<SamuraiBeetleLightning>(), Projectile.damage, 0, Projectile.owner);
+                    Projectile LightningStrike = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), LightningPosition, Vector2.Zero, ModContent.ProjectileType<SamuraiBeetleLightning>(), Projectile.damage, 0, Projectile.owner, target.whoAmI);
                 }
             }
             AttackHit = true; //so it can't gain multiple thrust stacks by hitting multiple enemies at once

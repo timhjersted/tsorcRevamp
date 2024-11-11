@@ -147,6 +147,22 @@ namespace tsorcRevamp.Items.VanillaItems
                 player.manaCost -= RedClothManaCostReduction / 100f;
             }
         }
+        public override void ModifyWeaponCrit(Item item, Player player, ref float crit)
+        {
+            if (item.DamageType == DamageClass.MagicSummonHybrid)
+            {
+                DamageClass damageClass;
+                if (player.GetCritChance(DamageClass.Magic) < player.GetCritChance(DamageClass.Summon))
+                {
+                    damageClass = DamageClass.Magic;
+                }
+                else
+                {
+                    damageClass = DamageClass.Summon;
+                }
+                crit -= player.GetCritChance(damageClass);
+            }
+        }
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
             Player player = Main.player[Main.myPlayer];

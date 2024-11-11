@@ -48,15 +48,15 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.SpiderStaff)
             {
-                item.damage = 20;
+                item.damage = 22;
             }
             if (item.type == ItemID.SanguineStaff)
             {
-                item.damage = 26;
+                item.damage = 29;
             }
             if (item.type == ItemID.PirateStaff)
             {
-                item.damage = 34;
+                item.damage = 36;
             }
             if (item.type == ItemID.Smolstar)
             {
@@ -64,19 +64,19 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.OpticStaff)
             {
-                item.damage = 20;
+                item.damage = 21;
             }
             if (item.type == ItemID.PygmyStaff)
             {
-                item.damage = 28;
+                item.damage = 31;
             }
             if (item.type == ItemID.StormTigerStaff)
             {
-                item.damage = 25;
+                item.damage = 28;
             }
             if (item.type == ItemID.DeadlySphereStaff)
             {
-                item.damage = 26;
+                item.damage = 28;
             }
             if (item.type == ItemID.RavenStaff)
             {
@@ -84,11 +84,11 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.XenoStaff)
             {
-                item.damage = 22;
+                item.damage = 25;
             }
             if (item.type == ItemID.TempestStaff)
             {
-                item.damage = 40;
+                item.damage = 44;
             }
             if (item.type == ItemID.StardustCellStaff)
             {
@@ -126,10 +126,11 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.StaffoftheFrostHydra) //buff, using static immunity frame in tml1.4.4, vanilla damage is 100
             {//now uses local iframes in globalprojectile
-                item.damage = 100;
+                item.damage = 85;
             }
             #endregion
         }
+        public const float StardustDragonBaseDmgMult = 0.4f;
 
         public const float BeetleSummonTagStrengthBoost = 20f;
         public const float BeetleSummonCritChance = 5f;
@@ -326,11 +327,11 @@ namespace tsorcRevamp.Items.VanillaItems
             {
                 if (item.type == ItemID.EmpressBlade & !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())))
                 {
-                    damage *= 0.75f;
+                    damage *= 0.68f;
                 }
                 else if (item.type == ItemID.EmpressBlade & !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())))
                 {
-                    damage *= 0.88f;
+                    damage *= 0.82f;
                 }
             }
         }

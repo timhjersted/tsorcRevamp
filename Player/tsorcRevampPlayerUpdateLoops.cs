@@ -197,7 +197,7 @@ namespace tsorcRevamp
         public float SummonTagStrength;
         public float SummonTagDuration;
         public bool CrystallineShard;
-        public int CrystallineCritChance;
+        public int CrystallinePower;
 
         public bool MythrilBulwark = false;
         public bool IceboundMythrilAegis = false;
@@ -1522,11 +1522,12 @@ namespace tsorcRevamp
             Player.maxMinions *= MaxMinionTurretMultiplier;
             Player.maxTurrets *= MaxMinionTurretMultiplier;
 
-            CrystallineCritChance = Player.maxMinions / MaxMinionTurretMultiplier * Items.Accessories.Summon.CrystallineShard.CritChancePerMinion;
             if (CrystallineShard)
             {
-                Player.GetCritChance(DamageClass.Summon) += CrystallineCritChance;
-                Player.whipRangeMultiplier -= CrystallineCritChance / 100f;
+                CrystallinePower = Player.maxMinions / MaxMinionTurretMultiplier * Items.Accessories.Summon.CrystallineShard.CrystallinePowerPerMinion;
+                Player.GetDamage(DamageClass.SummonMeleeSpeed) += CrystallinePower * (Items.Accessories.Summon.CrystallineShard.WhipDmgAmp / Items.Accessories.Summon.CrystallineShard.CrystallinePowerPerMinion) / 100f;
+                SummonTagStrength += CrystallinePower / 100f;
+                Player.whipRangeMultiplier -= CrystallinePower / 100f;
             }
 
             if (Player.HasAmmo(Player.HeldItem) && Player.HeldItem.useAmmo != 0 && AmmoBox)

@@ -184,11 +184,6 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.Hardmode);
 
-            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.EnergyStrikeScroll>())
-            {
-                shopCustomPrice = 2000,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, Condition.Hardmode);
 
             shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.DeathStrikeScroll>())
             {
@@ -209,6 +204,11 @@ namespace tsorcRevamp.NPCs.Friendly
             }, Condition.Hardmode);
 
 
+            shop.Add(new Item(ModContent.ItemType<Items.Weapons.Magic.Scrolls.EnergyStrikeScroll>())
+            {
+                shopCustomPrice = 2000,
+                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
+            }, Condition.DownedPlantera);
 
 
             shop.Add(new Item(ModContent.ItemType<ForgottenIceBowScroll>())

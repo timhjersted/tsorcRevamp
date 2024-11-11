@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
 {
     public class SamuraiBeetleLightning : ModProjectile
     {
-        public float Volume = 0.05f;
+        public float Volume = 0.2f;
         public override void SetStaticDefaults()
         {
             Main.projFrames[Type] = 8;
@@ -54,6 +54,12 @@ namespace tsorcRevamp.Projectiles.Summon.SamuraiBeetle
         public bool SoundPlayed = false;
         public override void AI()
         {
+            NPC target = Main.npc[(int)Projectile.ai[0]];
+
+            Vector2 targetCenter = target.Center + new Vector2((target.width / 4), target.height / 4);
+
+            Projectile.velocity = targetCenter - Projectile.Center;
+
             if (!SoundEngine.TryGetActiveSound(ThunderLoopID, out var ActiveSound) && SoundCount < 2)
             {
                 SoundCount++;

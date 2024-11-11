@@ -9,9 +9,10 @@ namespace tsorcRevamp.Items.Accessories.Summon
     [LegacyName("Oxyale")]
     public class CrystallineShard : ModItem
     {
-        public const int CritChancePerMinion = 6;
+        public const int CrystallinePowerPerMinion = 6;
+        public const int WhipDmgAmp = CrystallinePowerPerMinion * 2;
         public const float MaximumMinionIncrease = 2;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaximumMinionIncrease, CritChancePerMinion);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaximumMinionIncrease, CrystallinePowerPerMinion, WhipDmgAmp);
         public override void SetStaticDefaults()
         {
         }
@@ -31,10 +32,11 @@ namespace tsorcRevamp.Items.Accessories.Summon
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
+            var modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
             int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip3");
             if (ttindex1 != -1)
             {
-                tooltips.Insert(ttindex1, new TooltipLine(Mod, "CritChance", Language.GetTextValue("Mods.tsorcRevamp.Items.CrystallineShard.CriticalStrikeChance") + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().CrystallineCritChance + "%"));
+                tooltips.Insert(ttindex1, new TooltipLine(Mod, "CritChance", Language.GetTextValue("Mods.tsorcRevamp.Items.CrystallineShard.Tooltip0") + modPlayer.CrystallinePower + Language.GetTextValue("Mods.tsorcRevamp.Items.CrystallineShard.Tooltip1") + (modPlayer.CrystallinePower * 2) + "% " + Language.GetTextValue("Mods.tsorcRevamp.Items.CrystallineShard.Tooltip2")));
             }
         }
     }

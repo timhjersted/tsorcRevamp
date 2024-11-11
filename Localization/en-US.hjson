@@ -1908,10 +1908,12 @@ Mods: {
 					'''
 					{$CommonItemTooltip.IncreasesMaxMinionsBy}
 					For each minion slot you have,
-					increase summon critical strike chance but also decrease whip range by {1}%
+					increase whip damage by {2}% and tag strength by {1}% but also decrease whip range by {1}%
 					"A magical substance found only in the Crystalline Dimension"
 					'''
-				CriticalStrikeChance: "Current Modifier: "
+				Tooltip0: "Current Modifier: "
+				Tooltip1: "% summon tag strength and negative whip range, "
+				Tooltip2: whip damage
 			}
 
 			ShamanEmblem: {
@@ -5187,7 +5189,11 @@ Mods: {
 
 			EnergyStrikeScroll: {
 				DisplayName: Energy Strike Scroll
-				Tooltip: The scroll reads "Exori vis."
+				Tooltip:
+					'''
+					The scroll reads "Exori vis."
+					Summons a stationary Tesla Coil that zaps nearby enemies
+					'''
 			}
 
 			ExplosionRune: {
@@ -9378,6 +9384,8 @@ Mods: {
 			Bolt3Lightning.DisplayName: Bolt3 Lightning
 			Bolt4Lightning.DisplayName: Bolt4 Lightning
 			EnergyStrikeScrollProjectile.DisplayName: Energy Strike Scroll Projectile
+			EnergyStrikeScrollTeslaCoil.DisplayName: Energy Strike Scroll Tesla Coil
+			EnergyStrikeScrollZap.DisplayName: Energy Strike Scroll Zap
 		}
 
 		NPCs: {
