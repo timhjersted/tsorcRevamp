@@ -421,8 +421,13 @@ namespace tsorcRevamp.NPCs
                 ):
                     {
                         npc.value = 350;
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {
+                            npc.active = false;
+                        }
                         break;
                     }
+                    
                 #endregion
 
                 # region Angry Bones
@@ -1658,7 +1663,7 @@ namespace tsorcRevamp.NPCs
                         npc.defense = 10;
                         npc.damage = 66;
                         npc.knockBackResist = 0.05f;
-                        npc.scale = 0.7f;
+                        npc.scale = 1.1f;
                         npc.value = 24200;
                         break;
                     }
@@ -3284,7 +3289,7 @@ namespace tsorcRevamp.NPCs
                     npc.active = false;
                 }
 
-                if (tsorcRevampWorld.SuperHardMode) // Vérifie si le jeu est en mode difficile
+                if (tsorcRevampWorld.SuperHardMode) 
                 {
                     if (npc.type == NPCID.Hornet
                         || npc.type == NPCID.BigHornetStingy
@@ -3325,8 +3330,9 @@ namespace tsorcRevamp.NPCs
                         || npc.type == NPCID.IceBat
                         || npc.type == NPCID.Antlion
                         || npc.type == NPCID.GiantWormHead
-                        || npc.type == NPCID.MotherSlime
-                        || npc.type == NPCID.BigHeadacheSkeleton)
+                        || npc.type == NPCID.Dandelion
+                        || npc.type == NPCID.TombCrawlerHead
+                        || npc.type == NPCID.MotherSlime)
                     {
                     npc.active = false;
                     }
