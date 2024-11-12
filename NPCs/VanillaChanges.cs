@@ -3283,6 +3283,54 @@ namespace tsorcRevamp.NPCs
                 {
                     npc.active = false;
                 }
+
+                if (tsorcRevampWorld.SuperHardMode) // Vérifie si le jeu est en mode difficile
+                {
+                    if (npc.type == NPCID.Hornet
+                        || npc.type == NPCID.BigHornetStingy
+                        || npc.type == NPCID.LittleHornetStingy
+                        || npc.type == NPCID.BigHornetSpikey
+                        || npc.type == NPCID.LittleHornetSpikey
+                        || npc.type == NPCID.BigHornetLeafy
+                        || npc.type == NPCID.LittleHornetLeafy
+                        || npc.type == NPCID.BigHornetHoney
+                        || npc.type == NPCID.LittleHornetHoney
+                        || npc.type == NPCID.BigHornetFatty
+                        || npc.type == NPCID.LittleHornetFatty
+                        || npc.type == NPCID.BigStinger
+                        || npc.type == NPCID.LittleStinger
+                        || npc.type == NPCID.ManEater
+                        || npc.type == NPCID.UndeadMiner
+                        || npc.type == NPCID.CaveBat //zombies are lame and old at this point and take up spawn slots too often, experience will be fresher without them
+                        || npc.type == NPCID.JungleBat
+                        || npc.type == NPCID.Snatcher
+                        || npc.type == NPCID.LavaSlime
+                        || npc.type == NPCID.Hellbat
+                        || npc.type == NPCID.BlueJellyfish
+                        || npc.type == NPCID.Crimera
+                        || npc.type == NPCID.BigCrimera
+                        || npc.type == NPCID.LittleCrimera
+                        || npc.type == NPCID.WallCreeperWall
+                        || npc.type == NPCID.FaceMonster
+                        || npc.type == NPCID.SnowFlinx
+                        || npc.type == NPCID.SpikedJungleSlime
+                        || npc.type == NPCID.SpikedIceSlime
+                        || npc.type == NPCID.BloodCrawler
+                        || npc.type == NPCID.WalkingAntlion
+                        || npc.type == NPCID.FlyingAntlion
+                        || npc.type == NPCID.TorchZombie
+                        || npc.type == NPCID.ArmedTorchZombie
+                        || npc.type == NPCID.GiantWalkingAntlion
+                        || npc.type == NPCID.GiantFlyingAntlion
+                        || npc.type == NPCID.IceBat
+                        || npc.type == NPCID.Antlion
+                        || npc.type == NPCID.GiantWormHead
+                        || npc.type == NPCID.MotherSlime
+                        || npc.type == NPCID.BigHeadacheSkeleton)
+                    {
+                    npc.active = false;
+                    }
+                }
             }
 
             if ((npc.friendly) && (npc.townNPC == true))

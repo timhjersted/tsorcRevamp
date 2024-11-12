@@ -3,6 +3,8 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Potions;
+using static tsorcRevamp.oSpawnHelper;
+using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -28,7 +30,19 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.15f;
+            if (Main.hardMode)
+            {
+                return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.07f;
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.03f;
+            }
+            else
+            {
+                return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.15f;
+            }
+        
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
