@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Melee.Axes
             Projectile.light = 0.8f;
             Projectile.alpha = 100;
             Projectile.DamageType = DamageClass.Melee;
-            Projectile.penetrate = 6;
+            Projectile.penetrate = 4;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
             Projectile.timeLeft = ProjectileLifetime;

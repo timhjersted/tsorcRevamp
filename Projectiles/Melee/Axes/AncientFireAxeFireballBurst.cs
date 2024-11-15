@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Melee.Axes
 {
     class AncientFireAxeFireballBurst : ModProjectile
     {
-        public int ProjectileLifetime = 40;
+        public int ProjectileLifetime = 30;
         public int Frames = 12;
         public override void SetStaticDefaults()
         {
