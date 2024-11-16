@@ -10,32 +10,36 @@ namespace tsorcRevamp.Items.Accessories.Defensive
     [AutoloadEquip(EquipType.HandsOn)]
     public class MythrilGlove : ModItem
     {
-        public static float LifeThreshold = 50f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold, Buffs.GreatMagicShield.DefenseIncrease, Buffs.GreatMagicShield.DamagePenalty, Buffs.GreatMagicShield.Slowness);
         public override void SetStaticDefaults()
         {
         }
 
         public override void SetDefaults()
         {
-            Item.width = 30;
-            Item.height = 34;
-            Item.accessory = true;
+            Item.width = 30; 
+            Item.height = 34; 
             Item.rare = ItemRarityID.Cyan;
             Item.value = PriceByRarity.Cyan_9;
-        }
-
-        public override void UpdateEquip(Player player)
-        {
-            if ((player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f)) && !(player.HasBuff(ModContent.BuffType<Buffs.MagicShield>()) || player.HasBuff(ModContent.BuffType<Buffs.MagicBarrier>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicBarrier>())))
-            {
-                player.AddBuff(ModContent.BuffType<Buffs.GreatMagicShield>(), 1, false);
-            }
-
+            Item.accessory = true; 
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
+            player.statDefense += 4; 
+            player.endurance += 0.06f; 
+
+            if (player.statLife < player.statLifeMax2 * 0.66f)
+            {
+                player.statDefense += 4; 
+                player.endurance += 0.06f; 
+            }
+
+            if (player.statLife < player.statLifeMax2 * 0.33f)
+            {
+                player.statDefense += 8; 
+                player.endurance += 0.12f; 
+            }
+
             if (!hideVisual)
             {
 
@@ -101,7 +105,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive
                         }
                     }
                 }
-                if (player.statLife <= (player.statLifeMax2 * 0.30f))
+                if (player.statLife <= (player.statLifeMax2 * 0.33f))
                 {
                     for (int num183 = 0; num183 < 2; num183++)
                     {
@@ -192,6 +196,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
                 }
             }
         }
+
+        
 
         public override void AddRecipes()
         {

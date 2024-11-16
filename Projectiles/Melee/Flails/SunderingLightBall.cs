@@ -340,6 +340,46 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
 
             if (Main.rand.NextBool(dustRate))
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldFlame, 0f, 0f, 150, default(Color), 1.3f);
+
+            int particleCount = 36; // Triple le nombre de particules (12 * 3)
+            float radius = 100f; // Double le rayon (50 * 2)
+
+            // Création des particules
+            for (int i = 0; i < particleCount; i++)
+            {
+                float angle = MathHelper.TwoPi / particleCount * i;
+                Vector2 particlePosition = Projectile.Center + radius * new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+                Dust dust = Dust.NewDustPerfect(particlePosition, DustID.GoldFlame, Vector2.Zero, 100, Color.Yellow, 1.5f);
+                dust.noGravity = true;
+            }
+
+            float damageRadius = 100f;
+            foreach (NPC target in Main.npc)
+            {
+                if (target.active && !target.friendly && !target.dontTakeDamage)
+                {
+                    float distanceToTarget = Vector2.Distance(target.Center, Projectile.Center);
+                    if (distanceToTarget <= damageRadius)
+                    {
+                        if (Projectile.localNPCImmunity[target.whoAmI] == 0)
+                        {
+                            int dynamicDamage = Main.DamageVar(Projectile.damage);
+
+                            NPC.HitInfo hitInfo = new NPC.HitInfo()
+                            {
+                                Damage = dynamicDamage,
+                                Knockback = Projectile.knockBack,
+                                HitDirection = Projectile.direction
+                            };
+
+                            target.StrikeNPC(hitInfo);
+
+                            Projectile.localNPCImmunity[target.whoAmI] = 20;
+                            Projectile.usesLocalNPCImmunity = true;
+                        }
+                    }
+                }
+            }
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)

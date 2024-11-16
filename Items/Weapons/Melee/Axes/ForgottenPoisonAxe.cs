@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         {
 
             Item.rare = ItemRarityID.Pink;
-            Item.damage = 76;
+            Item.damage = 72;
             Item.width = 63;
             Item.height = 58;
             Item.knockBack = 5;
@@ -33,7 +33,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
 
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(BuffID.Poisoned, 6 * 60, false);
+            if (Main.rand.NextFloat() < 0.20f) 
+            {
+                target.AddBuff(BuffID.Venom, 6 * 60, false);
+            }
+            else
+            {
+                target.AddBuff(BuffID.Poisoned, 5 * 60, false); 
+            }
         }
     }
 }

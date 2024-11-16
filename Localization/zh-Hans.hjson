@@ -1748,57 +1748,6 @@ Mods: {
 					'''
 			}
 
-			ImprovedBlueBalloon: {
-				DisplayName: 改进的云朵气球
-				Tooltip:
-					'''
-					允许持有者进行二段跳
-					增加跳跃高度
-					{$CommonItemTooltip.JumpSpeed}
-					'''
-			}
-
-			ImprovedBundleofBalloons: {
-				DisplayName: 改进的气球束
-				Tooltip:
-					'''
-					允许持球者四跳
-					增加跳跃高度
-					{$CommonItemTooltip.JumpSpeed}
-					'''
-			}
-
-			ImprovedPinkHorseshoeBalloon: {
-				DisplayName: 改进的鲨鱼龙气球
-				Tooltip:
-					'''
-					允许持有者进行二段跳
-					增加跳跃高度
-					{$CommonItemTooltip.JumpSpeed}
-					免疫摔落伤害
-					'''
-			}
-
-			ImprovedWhiteBalloon: {
-				DisplayName: 改进的暴雪气球
-				Tooltip:
-					'''
-					允许持有者进行二段跳
-					增加跳跃高度
-					{$CommonItemTooltip.JumpSpeed}
-					'''
-			}
-
-			ImprovedYellowBalloon: {
-				DisplayName: 改进的沙暴气球
-				Tooltip:
-					'''
-					允许持有者进行二段跳
-					增加跳跃高度
-					{$CommonItemTooltip.JumpSpeed}
-					'''
-			}
-
 			SpeedTalisman: {
 				DisplayName: 速度护身符
 				Tooltip:

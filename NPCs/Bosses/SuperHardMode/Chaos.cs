@@ -23,6 +23,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.CursedInferno] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Ichor] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Venom] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.ShadowFlame] = true;
         }
         public override void SetDefaults()
         {
@@ -46,14 +50,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         int fireBreathDamage = 50;
-        int iceStormDamage = 60;
-        int greatFireballDamage = 49;
+        int iceStormDamage = 50;
+        int greatFireballDamage = 48;
         int blazeBallDamage = 48;
         int purpleCrushDamage = 45;
-        int meteorDamage = 65;
+        int meteorDamage = 55;
         int tornadoDamage = 45;
         int obscureSeekerDamage = 50;
-        int crystalFireDamage = 60;
+        int crystalFireDamage = 50;
         int fireTrailsDamage = 45;
 
         int chaosHealed = 0;

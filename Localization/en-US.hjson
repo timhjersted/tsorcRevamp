@@ -1252,11 +1252,10 @@ Mods: {
 				DisplayName: Mythril Glove
 				Tooltip:
 					'''
-					{$CommonItemTooltip.LifeThreshold}Casts and sustains Wall
-					{$CommonItemTooltip.IncreasesDefenseBy@1}
-					{$CommonItemTooltip.BadDmgMult@2}
-					{$CommonItemTooltip.Slowness@3}
-					{$CommonItemTooltip.UniqueBarrier}
+					Grants bonus Defense and Resistance based on health:
+					4 Defense and 6 Resistance at all times
+					8 Defense and 12 Resistance below 66% health
+					16 Defense and 24 Resistance below 33% health
 					'''
 			}
 
@@ -1747,57 +1746,6 @@ Mods: {
 					'''
 			}
 
-			ImprovedBlueBalloon: {
-				DisplayName: Improved Cloud in a Balloon
-				Tooltip:
-					'''
-					Allows the holder to double jump
-					Increases jump height
-					{$CommonItemTooltip.JumpSpeed}
-					'''
-			}
-
-			ImprovedBundleofBalloons: {
-				DisplayName: Improved Bundle of Balloons
-				Tooltip:
-					'''
-					Allows the holder to quadruple jump
-					Increases jump height
-					{$CommonItemTooltip.JumpSpeed}
-					'''
-			}
-
-			ImprovedPinkHorseshoeBalloon: {
-				DisplayName: Improved Sharkron Balloon
-				Tooltip:
-					'''
-					Allows the holder to double jump
-					Increases jump height
-					{$CommonItemTooltip.JumpSpeed}
-					Grants immunity to fall damage
-					'''
-			}
-
-			ImprovedWhiteBalloon: {
-				DisplayName: Improved Blizzard in a Balloon
-				Tooltip:
-					'''
-					Allows the holder to double jump
-					Increases jump height
-					{$CommonItemTooltip.JumpSpeed}
-					'''
-			}
-
-			ImprovedYellowBalloon: {
-				DisplayName: Improved Sandstorm in a Balloon
-				Tooltip:
-					'''
-					Allows the holder to double jump
-					Increases jump height
-					{$CommonItemTooltip.JumpSpeed}
-					'''
-			}
-
 			SpeedTalisman: {
 				DisplayName: Speed Talisman
 				Tooltip:
@@ -1834,7 +1782,7 @@ Mods: {
 				Tooltip:
 					'''
 					Awesome supersonic movement speed, improved agility, virtually limitless flight,
-					plus all the previous abilities of Supersonic Wings and Improved Bundle of Balloons
+					plus all the previous abilities of Supersonic Wings
 					{$CommonItemTooltip.DragoonGearCompatible}
 					{$CommonItemTooltip.BootsDisableThis}
 					'''
@@ -5892,7 +5840,7 @@ Mods: {
 
 			ForgottenBurningFist: {
 				DisplayName: Forgotten Burning Fist
-				Tooltip: Randomly casts a great fireball explosion.
+				Tooltip: Create flames by hitting enemies
 			}
 
 			ForgottenKaiserKnuckles: {
@@ -6061,7 +6009,7 @@ Mods: {
 
 			AncientHolyLance: {
 				DisplayName: Ancient Holy Lance
-				Tooltip: Bright Holy Spear.
+				Tooltip: Shoots a light spear beam
 			}
 
 			CelestialLance: {

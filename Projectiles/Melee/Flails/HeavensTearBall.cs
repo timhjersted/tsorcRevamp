@@ -95,6 +95,24 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
             int movingHitCooldown = 10; // How often your flail hits when moving
             int ricochetTimeLimit = launchTimeLimit + 5;
 
+            if (Projectile.localAI[0]++ >= 15) // Every 15 ticks
+            {
+                Projectile.localAI[0] = 0; // 
+                if (Main.myPlayer == Projectile.owner)
+                {
+                    Vector2 projectileVelocity = new Vector2(0, 5); 
+                    Projectile.NewProjectile(
+                        Projectile.GetSource_FromThis(),
+                        Projectile.Center,
+                        projectileVelocity,
+                        ProjectileID.RainFriendly,
+                        Projectile.damage / 2,
+                        Projectile.knockBack,
+                        Main.myPlayer
+                    );
+                }
+            }
+
             // Scaling these speeds and accelerations by the players meleeSpeed make the weapon more responsive if the player boosts their meleeSpeed
             float meleeSpeed = player.GetAttackSpeed(DamageClass.Melee);
             float meleeSpeedMultiplier = 1f * meleeSpeed;
@@ -339,7 +357,47 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
                 dustRate = 1;
 
             if (Main.rand.NextBool(dustRate))
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldFlame, 0f, 0f, 150, default(Color), 1.3f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.WaterCandle, 0f, 0f, 150, default(Color), 1.3f);
+
+            int particleCount = 36; // Triple le nombre de particules (12 * 3)
+            float radius = 50f; // Double le rayon (50 * 2)
+
+            // Création des particules
+            for (int i = 0; i < particleCount; i++)
+            {
+                float angle = MathHelper.TwoPi / particleCount * i;
+                Vector2 particlePosition = Projectile.Center + radius * new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+                Dust dust = Dust.NewDustPerfect(particlePosition, DustID.WaterCandle, Vector2.Zero, 100, Color.Blue, 1.5f);
+                dust.noGravity = true;
+            }
+
+            float damageRadius = 50f;
+            foreach (NPC target in Main.npc)
+            {
+                if (target.active && !target.friendly && !target.dontTakeDamage)
+                {
+                    float distanceToTarget = Vector2.Distance(target.Center, Projectile.Center);
+                    if (distanceToTarget <= damageRadius)
+                    {
+                        if (Projectile.localNPCImmunity[target.whoAmI] == 0)
+                        {
+                            int dynamicDamage = Main.DamageVar(Projectile.damage);
+
+                            NPC.HitInfo hitInfo = new NPC.HitInfo()
+                            {
+                                Damage = dynamicDamage,
+                                Knockback = Projectile.knockBack,
+                                HitDirection = Projectile.direction
+                            };
+
+                            target.StrikeNPC(hitInfo);
+
+                            Projectile.localNPCImmunity[target.whoAmI] = 20;
+                            Projectile.usesLocalNPCImmunity = true;
+                        }
+                    }
+                }
+            }
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
