@@ -3306,7 +3306,7 @@ namespace tsorcRevamp.NPCs
                         || npc.type == NPCID.LittleStinger
                         || npc.type == NPCID.ManEater
                         || npc.type == NPCID.UndeadMiner
-                        || npc.type == NPCID.CaveBat //zombies are lame and old at this point and take up spawn slots too often, experience will be fresher without them
+                        || npc.type == NPCID.CaveBat 
                         || npc.type == NPCID.JungleBat
                         || npc.type == NPCID.Snatcher
                         || npc.type == NPCID.LavaSlime

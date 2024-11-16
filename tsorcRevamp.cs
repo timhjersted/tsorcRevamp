@@ -1103,7 +1103,7 @@ namespace tsorcRevamp
                                         }                                                   },
                 #endregion
 
-                #region Phasesabers
+                #region Melee
                 { ItemID.BluePhasesaber,   new List<(int ItemID, int Count)>()
                                         {
                                             (ItemID.SoulofLight, 5)
@@ -1131,6 +1131,11 @@ namespace tsorcRevamp
                 { ItemID.WhitePhasesaber,   new List<(int ItemID, int Count)>()
                                         {
                                             (ItemID.SoulofLight, 5)
+                                        }                                                   },
+                { ItemID.Zenith,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ModContent.ItemType<SoulOfChaos>(), 1),
+                                            (ModContent.ItemType<DarkSoul>(), 100000)
                                         }                                                   },
                 #endregion
 

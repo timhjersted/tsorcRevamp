@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
             NPC.damage = 85;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.lifeMax = 8000; // was 10k
+            NPC.lifeMax = 10000; // was 8k
             NPC.knockBackResist = 0;
             NPC.lavaImmune = true;
             NPC.scale = 1;
@@ -122,7 +122,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
                 float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y + (20f * NPC.direction), NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<CursedDragonsBreath>(), cursedBreathDamage, 0f, Main.myPlayer); //cursed dragons breath
+                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y + (3f * NPC.direction), NPC.velocity.X * 2f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 2f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<CursedDragonsBreath>(), cursedBreathDamage, 0f, Main.myPlayer); //cursed dragons breath
                     Main.projectile[num54].timeLeft = 50;
                 }
 
@@ -185,7 +185,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         {
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.CursedInferno, 10 * 60);
+                target.AddBuff(BuffID.ShadowFlame, 10 * 60);
                 target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 20 * 60);
             }
         }

@@ -68,7 +68,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         {
             if (Main.rand.NextBool(2))
             {
-                target.AddBuff(BuffID.CursedInferno, 3 * 60);
+                target.AddBuff(BuffID.ShadowFlame, 3 * 60);
                 target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 30 * 60);
             }
         }
