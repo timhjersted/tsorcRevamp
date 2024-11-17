@@ -359,8 +359,8 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
             if (Main.rand.NextBool(dustRate))
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.WaterCandle, 0f, 0f, 150, default(Color), 1.3f);
 
-            int particleCount = 36; // Triple le nombre de particules (12 * 3)
-            float radius = 50f; // Double le rayon (50 * 2)
+            int particleCount = 36; 
+            float radius = 50f; 
 
             // Création des particules
             for (int i = 0; i < particleCount; i++)

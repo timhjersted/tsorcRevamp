@@ -168,7 +168,26 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
                             Vector2 dropletvector = new Vector2(0, 5);
                             if (Main.myPlayer == Projectile.owner)
                             {
-                                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ProjectileID.SolarWhipSwordExplosion, Projectile.damage, Projectile.knockBack, Main.myPlayer);
+                                int infernoBlast = Projectile.NewProjectile(
+                                    Projectile.GetSource_FromThis(),
+                                    Projectile.Center,
+                                    Vector2.Zero, 
+                                    ProjectileID.InfernoFriendlyBlast,
+                                    Projectile.damage / 2, 
+                                    Projectile.knockBack, 
+                                    Main.myPlayer
+                                );
+                                if (infernoBlast >= 0 && Main.projectile[infernoBlast] != null)
+                                {
+                                    Projectile proj = Main.projectile[infernoBlast];
+                                    proj.scale *= 2f; 
+                                    proj.timeLeft = 60; 
+
+                                    for (int i = 0; i < 10; i++)
+                                    {
+                                        Dust.NewDust(proj.position, proj.width, proj.height, DustID.GoldFlame, 0f, 0f, 150, Color.Yellow, 1.5f);
+                                    }
+                                }
                             }
                         }
                         player.ChangeDir((player.Center.X < Projectile.Center.X) ? 1 : (-1));
@@ -341,10 +360,9 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
             if (Main.rand.NextBool(dustRate))
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldFlame, 0f, 0f, 150, default(Color), 1.3f);
 
-            int particleCount = 36; // Triple le nombre de particules (12 * 3)
-            float radius = 100f; // Double le rayon (50 * 2)
+            int particleCount = 48; 
+            float radius = 100f; 
 
-            // Création des particules
             for (int i = 0; i < particleCount; i++)
             {
                 float angle = MathHelper.TwoPi / particleCount * i;
