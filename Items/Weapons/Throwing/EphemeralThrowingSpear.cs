@@ -33,8 +33,8 @@ namespace tsorcRevamp.Items.Weapons.Throwing
         }
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe(30);
-            recipe.AddIngredient(ModContent.ItemType<RoyalThrowingSpear>(), 30);
+            Recipe recipe = CreateRecipe(200);
+            recipe.AddIngredient(ModContent.ItemType<RoyalThrowingSpear>(), 200);
             recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90);
             recipe.AddTile(TileID.DemonAltar);

@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
         }
         public override void SetDefaults()
         {
-            Item.width = 64;
+            Item.width = 82;
             Item.height = 24;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 16;

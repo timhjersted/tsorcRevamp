@@ -16,9 +16,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
         }
         public override void SetDefaults()
         {
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarityID.LightRed;
             Item.damage = 46;
-            Item.height = 32;
+            Item.height = 40;
             Item.knockBack = 5;
             Item.DamageType = DamageClass.Melee;
             Item.scale = .9f;
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 21;
             Item.value = 140000;
-            Item.width = 32;
+            Item.width = 40;
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.shoot = ModContent.ProjectileType<WyrmkillerProjectile>(); // The projectile is what makes a shortsword work

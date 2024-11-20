@@ -44,7 +44,13 @@ namespace tsorcRevamp.Items.VanillaItems
                 //item.mana = 20;
             }
 
-            //Why is this eventide's internal name i'm literally going to go feral
+           
+            if (item.type == ItemID.PhoenixBlaster)
+            {
+                item.damage = 25; //vanilla 50
+            }
+
+             //Why is this eventide's internal name i'm literally going to go feral
             if (item.type == ItemID.FairyQueenRangedItem)
             {
                 item.damage = 40; //vanilla 50
@@ -93,7 +99,7 @@ namespace tsorcRevamp.Items.VanillaItems
                 //item.mana = 30;
             }
 
-            //same damage as Gastraphetes, vanilla damage is 53
+            //Vanilla damage is 53
             if (item.type == ItemID.Tsunami)
             {
                 item.damage = 41;

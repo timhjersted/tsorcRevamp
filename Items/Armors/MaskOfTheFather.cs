@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class MaskOfTheFather : ModItem
     {
-        public static float Dmg = 12f;
+        public static float Dmg = 14f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
         public override void SetStaticDefaults()
         {
@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            Item.defense = 6;
+            Item.defense = 7;
             Item.width = 34;
             Item.height = 48;
             Item.rare = ItemRarityID.Green;

@@ -17,7 +17,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             Item.rare = ItemRarityID.Green;
             Item.damage = 40;
-            Item.height = 34;
+            Item.width = 30;
+            Item.height = 52;
             Item.knockBack = 7;
             Item.noMelee = true;
             Item.noUseGraphic = true;
@@ -27,8 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 22;
-            Item.value = 150000;
-            Item.width = 22;
+            Item.value = 150000;  
             Item.shoot = ModContent.ProjectileType<Projectiles.EphemeralThrowingAxeProj>();
         }
 

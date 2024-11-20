@@ -23,8 +23,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Item.shootSpeed = 10;
             Item.useTime = 45;
             Item.useAnimation = 45;
-            Item.width = 12;
-            Item.height = 28;
+            Item.width = 42;
+            Item.height = 20;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ProjectileID.PurificationPowder;

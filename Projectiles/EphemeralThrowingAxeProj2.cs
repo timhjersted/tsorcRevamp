@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,18 +9,16 @@ namespace tsorcRevamp.Projectiles
     class EphemeralThrowingAxeProj2 : ModProjectile
     {
 
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/EphemeralThrowingAxe";
-
         public override void SetDefaults()
         {
             Projectile.aiStyle = 2;
             Projectile.friendly = true;
-            Projectile.height = 22;
+            Projectile.width = 38;
+            Projectile.height = 72;
             Projectile.penetrate = 1;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
-            Projectile.width = 22;
-            Projectile.timeLeft = 50;
+            Projectile.timeLeft = 100;
         }
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
@@ -55,9 +54,10 @@ namespace tsorcRevamp.Projectiles
         public override void AI()
         {
             Color color = new Color();
-            int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 57, 0f, 0f, 80, color, 1f);
+            int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 91, 0f, 0f, 80, color, 1f);
             Main.dust[dust].noGravity = true;
         }
+        
         public override void OnKill(int timeLeft)
         {
 
@@ -67,7 +67,6 @@ namespace tsorcRevamp.Projectiles
             }
             Projectile.timeLeft = 0;
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
                 for (int i = 0; i < 10; i++)
                 {
                     Vector2 arg_92_0 = new Vector2(Projectile.position.X, Projectile.position.Y);

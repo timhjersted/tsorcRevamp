@@ -11,7 +11,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             Item.consumable = true;
             Item.damage = 14;
-            Item.height = 34;
+            Item.width = 28;
+            Item.height = 42;
             Item.knockBack = 6;
             Item.maxStack = Item.CommonMaxStack;
             Item.noMelee = true;
@@ -23,7 +24,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 22;
             Item.value = 5;
-            Item.width = 22;
             Item.shoot = ModContent.ProjectileType<Projectiles.ThrowingAxe>();
 
             //Item.mana = 3;

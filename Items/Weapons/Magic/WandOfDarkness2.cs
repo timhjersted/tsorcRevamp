@@ -8,7 +8,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
 {
     class WandOfDarkness2 : ModItem
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Magic/WandOfDarkness";
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Wand of Darkness II");

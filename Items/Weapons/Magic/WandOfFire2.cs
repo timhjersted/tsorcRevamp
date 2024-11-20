@@ -7,7 +7,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
 {
     class WandOfFire2 : ModItem
     {
-        public override string Texture => "tsorcRevamp/Items/Weapons/Magic/WandOfFire";
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Wand of Fire II");

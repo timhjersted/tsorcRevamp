@@ -8,16 +8,15 @@ namespace tsorcRevamp.Projectiles
     class ThrowingAxe : ModProjectile
     {
 
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/ThrowingAxe";
         public override void SetDefaults()
         {
             Projectile.aiStyle = 2;
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = true;
-            Projectile.height = 22;
+            Projectile.width = 26;
+            Projectile.height = 46;
             Projectile.penetrate = 1;
-            Projectile.width = 22;
         }
         public override void OnKill(int timeLeft)
         {

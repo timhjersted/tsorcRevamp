@@ -1253,9 +1253,9 @@ Mods: {
 				Tooltip:
 					'''
 					Grants bonus Defense and Resistance based on health:
-					4 Defense and 6 Resistance at all times
-					8 Defense and 12 Resistance below 66% health
-					16 Defense and 24 Resistance below 33% health
+					Increase Defense by 4 and Resistance by 6 at all times
+					Increase Defense by 8 and Resistance by 12 below 66% health
+					Increase Defense by 16 and Resistance by 24 below 33% health
 					'''
 			}
 
@@ -2393,7 +2393,11 @@ Mods: {
 
 			MaskOfTheMother: {
 				DisplayName: Mask of the Mother
-				Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeBy}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.IncreasesMaxLifeBy}
+					{$CommonItemTooltip.LifeRegen}
+					'''
 			}
 
 			AncientGoldenArmor: {

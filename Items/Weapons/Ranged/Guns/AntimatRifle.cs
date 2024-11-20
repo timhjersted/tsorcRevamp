@@ -24,8 +24,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             //item.prefixType=96;
             Item.autoReuse = true;
             Item.damage = 3000;
-            Item.width = 78;
-            Item.height = 26;
+            Item.width = 96;
+            Item.height = 32;
             Item.knockBack = 5;
             Item.noMelee = true;
             Item.rare = ItemRarityID.Purple;

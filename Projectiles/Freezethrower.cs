@@ -25,6 +25,9 @@ namespace tsorcRevamp.Projectiles
             Projectile.light = 1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 6;
+            Projectile.ArmorPenetration = 10;
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
         Player owner

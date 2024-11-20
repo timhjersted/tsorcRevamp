@@ -8,7 +8,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
     class EphemeralThrowingAxe2 : ModItem
     {
 
-        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/EphemeralThrowingAxe";
         public override void SetStaticDefaults()
         {
             // Tooltip.SetDefault("An enchanted melee weapon that can be thrown through walls.\n" + "It does double damage against mages and other magic users.");
@@ -17,19 +16,19 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             Item.rare = ItemRarityID.LightRed;
             Item.consumable = false;
-            Item.damage = 50;
-            Item.height = 34;
+            Item.damage = 60;
+            Item.width = 34;
+            Item.height = 58;
             Item.knockBack = 7;
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.DamageType = DamageClass.MeleeNoSpeed;
-            Item.shootSpeed = 10;
-            Item.useAnimation = 19;
+            Item.shootSpeed = 13;
+            Item.useAnimation = 24;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 19;
+            Item.useTime = 24;
             Item.value = 150000;
-            Item.width = 22;
             Item.shoot = ModContent.ProjectileType<Projectiles.EphemeralThrowingAxeProj2>();
         }
 

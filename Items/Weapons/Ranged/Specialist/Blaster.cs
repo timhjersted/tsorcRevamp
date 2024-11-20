@@ -22,14 +22,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Item.DamageType = DamageClass.Ranged;
             Item.crit = 4;
             Item.width = 44;
-            Item.height = 24;
+            Item.height = 30;
             Item.useTime = 24;
             Item.useAnimation = 24;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 3f;
             Item.value = 20000;
-            Item.scale = 0.7f;
+            Item.scale = 1f;
             Item.rare = ItemRarityID.Blue;
             Item.shoot = ModContent.ProjectileType<BlasterShot>();
             Item.shootSpeed = 14f;
