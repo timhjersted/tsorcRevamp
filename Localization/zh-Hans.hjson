@@ -7750,6 +7750,21 @@ Mods: {
 					{$CommonItemTooltip.Summon.TagDmgMult}
 					'''
 			}
+
+			HeavyBolt: {
+				// DisplayName: Heavy Bolt
+				// Tooltip: ""
+			}
+
+			MultishotReapeter: {
+				// DisplayName: Multishot Reapeter
+				// Tooltip: ""
+			}
+
+			MultishotRepeater: {
+				// DisplayName: Multishot Repeater
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -9331,6 +9346,9 @@ Mods: {
 			EnergyStrikeScrollProjectile.DisplayName: 能量打击卷轴
 			// EnergyStrikeScrollTeslaCoil.DisplayName: Energy Strike Scroll Tesla Coil
 			// EnergyStrikeScrollZap.DisplayName: Energy Strike Scroll Zap
+			// PowerBoltProjectile.DisplayName: Power Bolt Projectile
+			// SniperBoltProjectile.DisplayName: Sniper Bolt Projectile
+			// HeavyBoltProjectile.DisplayName: Heavy Bolt Projectile
 		}
 
 		NPCs: {

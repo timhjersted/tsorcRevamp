@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Ranged.Ammo
 {
-    public class BoltProjectile : ModProjectile
+    public class HeavyBoltProjectile : ModProjectile
     {
         public override void SetDefaults()
         {
@@ -17,6 +17,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
             AIType = ProjectileID.WoodenArrowFriendly;
             Projectile.aiStyle = 1;
             Projectile.DamageType = DamageClass.Ranged;
+            Projectile.ArmorPenetration = 8;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 20;
         }

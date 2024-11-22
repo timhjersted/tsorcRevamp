@@ -4,19 +4,20 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Ranged.Ammo
 {
-    public class BoltProjectile : ModProjectile
+    public class SniperBoltProjectile : ModProjectile
     {
         public override void SetDefaults()
         {
             Projectile.aiStyle = 1;
             Projectile.friendly = true;
             Projectile.height = 20;
-            Projectile.penetrate = 2;
+            Projectile.penetrate = 4;
             Projectile.tileCollide = true;
             Projectile.width = 10;
             AIType = ProjectileID.WoodenArrowFriendly;
             Projectile.aiStyle = 1;
             Projectile.DamageType = DamageClass.Ranged;
+            Projectile.ArmorPenetration = 15;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 20;
         }
