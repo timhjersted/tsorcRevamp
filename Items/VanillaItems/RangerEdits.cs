@@ -96,7 +96,7 @@ namespace tsorcRevamp.Items.VanillaItems
             //Lunar items
             if (item.type == ItemID.Phantasm)
             {
-                //item.mana = 30;
+                item.damage = 42;
             }
 
             //Vanilla damage is 53

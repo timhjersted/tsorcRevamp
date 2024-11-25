@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Projectiles.Ranged;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Guns
@@ -23,20 +24,20 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 
             //item.prefixType=96;
             Item.autoReuse = true;
-            Item.damage = 3000;
+            Item.damage = 1600;
+            Item.crit = 30;
             Item.width = 96;
             Item.height = 32;
             Item.knockBack = 5;
             Item.noMelee = true;
             Item.rare = ItemRarityID.Purple;
-            Item.scale = (float)0.9;
             Item.useAmmo = AmmoID.Bullet;
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = AmmoID.Bullet;
             Item.shootSpeed = 10;
             //item.pretendType=96;
-            Item.useAnimation = 120;
-            Item.useTime = 120;
+            Item.useAnimation = 60;
+            Item.useTime = 60;
             Item.UseSound = SoundID.Item36;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = PriceByRarity.Purple_11;
@@ -46,7 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
         {
             Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(ItemID.SniperRifle, 1);
+            recipe.AddIngredient(ModContent.ItemType<HighCaliberRifle>());
             recipe.AddIngredient(ModContent.ItemType<DestructionElement>());
             recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>());
             recipe.AddIngredient(ModContent.ItemType<Humanity>(), 10);

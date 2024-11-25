@@ -19,7 +19,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<Projectiles.CernosPrimeHeld>();
             Item.channel = true;
-            Item.damage = 795;
+            Item.damage = 800;
+            Item.crit = 16;
             Item.width = 58;
             Item.height = 76;
             Item.useTime = 48;

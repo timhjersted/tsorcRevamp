@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Item.useAnimation = 16;
             Item.useTime = 4;
             Item.reuseDelay = 18;
-            Item.damage = 50;
+            Item.damage = 45;
             Item.knockBack = 3;
             Item.crit = 5;
             Item.autoReuse = true;
@@ -43,9 +43,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<QuadroCannon>());
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
-            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 30);
-            //recipe.AddIngredient(ModContent.ItemType<SoulofBlight>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 20);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>(), 1);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 70);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200000);
             recipe.AddTile(TileID.DemonAltar);

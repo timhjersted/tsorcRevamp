@@ -19,7 +19,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<Projectiles.SagittariusBowHeld>();
             Item.channel = true;
-            Item.damage = 548;
+            Item.damage = 700;
+            Item.crit = 14;
             Item.width = 14;
             Item.height = 28;
             Item.useTime = 60;
@@ -31,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.value = PriceByRarity.Red_10;
             Item.rare = ItemRarityID.Red;
             Item.UseSound = SoundID.Item7;
-            Item.shootSpeed = 21f;
+            Item.shootSpeed = 22f;
             Item.useAmmo = AmmoID.Arrow;
         }
 

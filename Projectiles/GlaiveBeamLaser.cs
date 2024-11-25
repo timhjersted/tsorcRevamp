@@ -189,7 +189,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(BuffID.OnFire, 300);
+            target.AddBuff(BuffID.Daybreak, 300);
 
             Vector2 endpoint = target.position;
             Player player = Main.player[Projectile.owner];

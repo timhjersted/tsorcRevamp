@@ -20,6 +20,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.extraUpdates = 1;
+            Projectile.ArmorPenetration = 15;
         }
 
         int storedDamage = 0;

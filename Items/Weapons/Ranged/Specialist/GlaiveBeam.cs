@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Ammo;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
 {
@@ -18,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
         {
             //item.CloneDefaults(ItemID.LastPrism);
             Item.mana = 0;
-            Item.damage = 750;
+            Item.damage = 680;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Ranged;
             Item.height = 28;

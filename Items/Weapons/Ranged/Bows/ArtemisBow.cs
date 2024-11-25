@@ -20,7 +20,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<ArtemisBowHeld>();
             Item.channel = true;
-            Item.damage = 220; //was 370
+            Item.damage = 230;
+            Item.crit = 10;
             Item.width = 14;
             Item.height = 28;
             Item.useTime = 60;
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.value = PriceByRarity.LightRed_4;
             Item.rare = ItemRarityID.LightRed;
             Item.UseSound = SoundID.Item7;
-            Item.shootSpeed = 18f;
+            Item.shootSpeed = 21f;
             Item.useAmmo = AmmoID.Arrow;
         }
 
