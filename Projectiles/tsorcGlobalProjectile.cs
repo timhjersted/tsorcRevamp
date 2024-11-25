@@ -417,6 +417,11 @@ namespace tsorcRevamp.Projectiles
                 target.AddBuff(BuffID.BetsysCurse, EtherianWyvernStaff.DebuffDuration * 60);
             }
 
+            if ((projectile.type >= ProjectileID.ApprenticeStaffT3Shot) && Condition.DownedOldOnesArmyT3.IsMet())
+            {
+                target.AddBuff(BuffID.Daybreak, EtherianWyvernStaff.DebuffDuration * 60);
+            }
+
             #region Runeterra Poison Darts
             if (projectile.type == ProjectileID.PoisonDartBlowgun && player.HeldItem.type == ModContent.ItemType<ToxicShot>())
             {

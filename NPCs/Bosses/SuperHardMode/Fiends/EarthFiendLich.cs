@@ -16,8 +16,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
     [AutoloadBossHead]
     class EarthFiendLich : ModNPC
     {
-        int lightningDamage = 48;
-        int oracleDamage = 43;
+        int lightningDamage = 43;
+        int oracleDamage = 38;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 8;
@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             NPC.npcSlots = 10;
             NPC.width = 120;
             NPC.height = 160;
-            NPC.damage = 128;
+            NPC.damage = 120;
             NPC.defense = 82;
             NPC.aiStyle = 22;
             NPC.scale = 1.1f;
@@ -119,7 +119,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 13);
+                        Vector2 projVector = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 11);
                         projVector += Main.rand.NextVector2Circular(10, 10);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.TheOracle>(), oracleDamage, 0f, Main.myPlayer);
                     }

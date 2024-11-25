@@ -576,6 +576,7 @@ Mods: {
 				LargeSapphire: "[c/ffbf00:A symbol resembling a snow-capped mountain near a fortress is carved into it]"
 				LargeRuby: "[c/ffbf00:A symbol resembling a ancient jungle temple accessible via a large pyramid is carved into it]"
 				VulnerabilityHex: Applies a vulnerability hex if Betsy has been defeated
+				IncinerationHex: Applies a incineration hex if Betsy has been defeated
 				StarinaBottle: Increases mana regen by 10 and decreases mana regen delay by 50%
 				ManaRegenerationBand: Increases mana regen by 25 and decreases mana regen delay by 100%
 				WellFedItemsBotC: Increases stamina regen by {0}% for the [c/6d8827:Bearer of the Curse]
@@ -1253,9 +1254,9 @@ Mods: {
 				Tooltip:
 					'''
 					Grants bonus Defense and Resistance based on health:
-					Increase Defense by 4 and Resistance by 6 at all times
-					Increase Defense by 8 and Resistance by 12 below 66% health
-					Increase Defense by 16 and Resistance by 24 below 33% health
+					Increase Defense by 5 and Resistance by 8 at all times
+					Increase Defense by 10 and Resistance by 16 below 66% health
+					Increase Defense by 16 and Resistance by 32 below 33% health
 					'''
 			}
 
@@ -1539,7 +1540,6 @@ Mods: {
 				Tooltip:
 					'''
 					Inherits Mythril Bulwark, Ankh Shield and Frozen Shield effects
-					Includes immunity to Chilled and Stoned
 					Slows down your dodgeroll slightly
 					Rolling through an enemy may inflict some debuffs this item grants immunity to
 					'''

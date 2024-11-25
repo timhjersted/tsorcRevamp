@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Armors.Melee
     {
         public const int SoulCost = 70000;
         public static float Dmg = 33f;
-        public const float DmgMultWhileRolling = 3f;
+        public const float DmgMultWhileRolling = 2.25f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, DmgMultWhileRolling);
         public override void SetStaticDefaults()
         {

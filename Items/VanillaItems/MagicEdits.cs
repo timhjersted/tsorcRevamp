@@ -52,11 +52,11 @@ namespace tsorcRevamp.Items.VanillaItems
 
             if (item.type == ItemID.FairyQueenMagicItem)
             {
-                item.damage = 40; //vanilla 50
+                item.damage = 35; //vanilla 50
             }
             if (item.type == ItemID.SparkleGuitar)
             {
-                item.damage = 80; 
+                item.damage = 70; 
             }
             if (item.type == ItemID.LeafBlower)
             {
@@ -125,7 +125,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.LunarFlareBook)
             {
-                item.damage = 80;
+                item.damage = 90;
                 item.mana = 39;
             }
         }

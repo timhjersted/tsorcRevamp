@@ -37,7 +37,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         }
 
 
-        int frozenSawDamage = 105;
+        int frozenSawDamage = 46;
         //chaos
         int holdTimer = 0;
         #region AI

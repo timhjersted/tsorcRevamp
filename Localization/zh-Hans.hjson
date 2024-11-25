@@ -575,6 +575,7 @@ Mods: {
 				LargeSapphire: "[c/ffbf00:上面刻着飞龙法师堡垒附近的一座雪山的符号]"
 				LargeRuby: "[c/ffbf00:上面雕刻着一个符号，它形似一座可通过大型金字塔进入的古老丛林神庙]"
 				VulnerabilityHex: 如果已击败双足翼龙，则施加双足翼龙诅咒减益
+				// IncinerationHex: Applies a incineration hex if Betsy has been defeated
 				StarinaBottle: 增加 10 点魔力再生同时减少 50% 魔力再生延迟
 				ManaRegenerationBand: 增加 25 点魔力再生同时减少 100% 魔力再生延迟
 				WellFedItemsBotC: 为[c/6d8827:被诅咒者]增加 {0}% 耐力再生

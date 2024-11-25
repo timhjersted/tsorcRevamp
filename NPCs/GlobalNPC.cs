@@ -2052,15 +2052,18 @@ namespace tsorcRevamp.NPCs
 
             if (CrimsonBurn)
             {
-                int DoTPerS = 12;
+                int DoTPerS = 30;
+                
                 if (npc.lifeRegen > 0)
                 {
                     npc.lifeRegen = 0;
                 }
+
                 if (tsorcRevampPlayer.DragonStonePotency)
                 {
                     DoTPerS *= DragonStone.Potency;
                 }
+
                 if (npc.HasBuff(BuffID.Oiled))
                 {
                     if (tsorcRevampPlayer.DragonStonePotency)
@@ -2072,10 +2075,10 @@ namespace tsorcRevamp.NPCs
                         DoTPerS += 25;
                     }
                 }
-                npc.lifeRegen -= DoTPerS * 2;
-                if (Main.hardMode) npc.lifeRegen -= DoTPerS * 2 * 2; //this is additive to the one in pre-hm.....so it's tripled, not doubled
-                damage += DoTPerS;
-                if (Main.hardMode) damage += DoTPerS * 2;
+
+                npc.lifeRegen -= DoTPerS * (Main.hardMode ? 2 : 1); 
+
+                damage += DoTPerS * (Main.hardMode ? 2 : 1); 
             }
 
             if (ToxicCatDrain)

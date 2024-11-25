@@ -30,6 +30,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Shields
             recipe.AddIngredient(ItemID.AnkhShield);
             recipe.AddIngredient(ItemID.FrozenShield);
             recipe.AddIngredient(ModContent.ItemType<MythrilBulwark>());
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 80000);
             recipe.AddTile(TileID.DemonAltar);
 

@@ -113,15 +113,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
             Player player = Main.player[NPC.target];
             //when close to enemy, grapple and mobility hindered
-            UsefulFunctions.DustRing(NPC.Center, 600, DustID.RedTorch, 5, 2f);
-            if (NPC.Distance(player.Center) < 600)
+            UsefulFunctions.DustRing(NPC.Center, 500, DustID.RedTorch, 5, 2f);
+            if (NPC.Distance(player.Center) < 500)
             {
                 player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 2);
                 player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
 
             }
 
-            if (Main.hardMode && NPC.Distance(player.Center) < 600)
+            if (Main.hardMode && NPC.Distance(player.Center) < 500)
             {
                 player.AddBuff(ModContent.BuffType<Crippled>(), 30, false);
                 player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30, false);

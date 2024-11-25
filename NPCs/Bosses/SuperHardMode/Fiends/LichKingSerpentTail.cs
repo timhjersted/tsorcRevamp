@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             NPC.height = 14;
             NPC.aiStyle = 6;
             NPC.timeLeft = 750;
-            NPC.damage = 90;
+            NPC.damage = 80;
             NPC.defense = 30;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;

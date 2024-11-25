@@ -77,8 +77,9 @@ namespace tsorcRevamp.Items.VanillaItems
             SimpleModTooltip(Mod, item, tooltips, ItemID.MagicMirror, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RecallItem"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.RecallPotion, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.RecallItem"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.LargeAmethyst, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.LargeAmethyst"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.LargeRuby, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.LargeRuby"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.LargeSapphire, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.LargeSapphire"));
-            SimpleModTooltip(Mod, item, tooltips, ItemID.ApprenticeStaffT3, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.ApprenticeStaffT3, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.IncinerationHex"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.MonkStaffT3, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.DD2SquireBetsySword, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.DD2BetsyBow, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.VulnerabilityHex"));

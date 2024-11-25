@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         int cursedFlamesDamage = 40;
         int geyserDamage = 30;
         int plasmaOrbDamage = 65;
-        int trueContactDamage = 140; //Contact damage does not get multiplied by 4, hence the higher values
+        int trueContactDamage = 120; //Contact damage does not get multiplied by 4, hence the higher values
         int chargeContactDamage = 200;
 
         //If this is set to anything but -1, the boss will *only* use that attack ID
@@ -89,6 +89,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
         public override void AI()
         {
+                base.AI();
+
+            if (NPC.life <= 0 && !NPC.active)
+            {
+                foreach (Projectile proj in Main.projectile)
+                {
+                    if (proj.active && proj.owner == NPC.whoAmI)
+                    {
+                        proj.Kill(); 
+                    }
+                }
+            }
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0.4f, 0f, 0.25f);
 
@@ -265,7 +277,56 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         int projType = 0;
         private void AquaWave()
         {
+            if (NPC.Center != ArenaCenter)
+            {
+                if (MoveCounter < 45) 
+                {
+                    MoveCounter++;
+
+                    
+                    if (Main.rand.NextBool(2)) 
+                    {
+                        Vector2 dustPos = NPC.Center + Main.rand.NextVector2Circular(20, 20);
+                        Dust fallingDust = Dust.NewDustPerfect(dustPos, DustID.WaterCandle, new Vector2(0, 2), 100, default, 3f);
+                        fallingDust.noGravity = false; 
+                        fallingDust.velocity *= 0.3f; 
+                    }
+
+                    NPC.velocity = Vector2.Zero;
+
+                    return; 
+                }
+
+                for (int i = 0; i < 100; i++) 
+                {
+                    Vector2 dustPos = NPC.Center + Main.rand.NextVector2Circular(100, 100);
+
+                    Dust explosionDust = Dust.NewDustPerfect(dustPos, DustID.WaterCandle, Vector2.Zero, 200, default, 3f); 
+                    explosionDust.noGravity = true; 
+                    explosionDust.velocity = Main.rand.NextVector2Circular(8, 8);
+                    explosionDust.scale = Main.rand.NextFloat(1.5f, 3f); // 
+                }
+
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74, NPC.Center);
+
+                NPC.Center = ArenaCenter;
+                NPC.velocity = Vector2.Zero;
+
+                for (int i = 0; i < 50; i++) 
+                {
+                    Vector2 dustPos = NPC.Center + Main.rand.NextVector2Circular(100, 100);
+                    Dust arrivalDust = Dust.NewDustPerfect(dustPos, DustID.WaterCandle, Vector2.Zero, 200, default, 2f);
+                    arrivalDust.noGravity = true;
+                    arrivalDust.velocity = Main.rand.NextVector2Circular(3, 3);
+                }
+
+                MoveCounter = 0;
+
+                return;
+
             NPC.velocity = Vector2.Zero;
+
+        }
 
             if (projType >= 8)
             {
@@ -283,7 +344,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
             if (Main.GameUpdateCount % 40 == 0)
             {
-
                 if (projType < 5)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -314,15 +374,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 projType = Main.rand.Next(10);
             }
 
-
             radius++;
             FloodArena();
 
-
-            //Check if we're done
             if (radius > 300)
             {
-                //Self-correcting: If the chamber starts out flooded then the flooding algorithm will by nature do nothing
                 chamberFlooded = !chamberFlooded;
                 radius = 0;
 
@@ -384,32 +440,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         }
 
         Vector2 ArenaCenter = new Vector2(1820 * 16, 1702 * 16);
-        private void DashToArenaMidline()
-        {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode || NPC.Center.Y < 1660 * 16 || NPC.Center.Y > 1744 * 16 || NPC.Center.X < 1560 * 16 || NPC.Center.X > 2011 * 16)
-            {
-                NextAttack();
-                return;
-            }
-            MoveCounter++;
-            int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, 29, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 5);
-            Main.dust[dust].velocity = UsefulFunctions.Aim(NPC.Center, Main.dust[dust].position, 5);
-            if (MoveCounter > 60)
-            {
-                if (NPC.Center.Y < ArenaCenter.Y)
-                {
-                    NPC.velocity.Y = 12;
-                }
-                else
-                {
-                    NPC.velocity.Y = -12;
-                }
-            }
-            if (Math.Abs(NPC.Center.Y - ArenaCenter.Y) < 16)
-            {
-                NextAttack();
-            }
-        }
 
         float cursedRadius = 1400;
         private void CursedBarrage()
@@ -604,7 +634,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         {
             MoveList = new List<KrakenMove> {
                 new KrakenMove(CursedFireSpam, KrakenAttackID.CursedFireSpam, "Cursed Fire"),
-                new KrakenMove(DashToArenaMidline, KrakenAttackID.CenterDash, "Dash to Center"),
                 new KrakenMove(AquaWave, KrakenAttackID.AquaWave, "Aqua Wave"),
                 new KrakenMove(CursedBarrage, KrakenAttackID.CursedBarrage, "Cursed Barrage"),
                 };
@@ -614,8 +643,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         {
             public const short CursedFireSpam = 0;
             public const short AquaWave = 1;
-            public const short CenterDash = 2;
-            public const short CursedBarrage = 3;
+            public const short CursedBarrage = 2;
         }
         private class KrakenMove
         {
@@ -681,6 +709,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         }
         public override void OnKill()
         {
+                base.OnKill();
+
+                foreach (Projectile proj in Main.projectile)
+                {
+                    if (proj.active && proj.owner == NPC.whoAmI) 
+                    {
+                        proj.Kill();
+                    }
+                }
+                
             if (!Main.dedServ)
             {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 1").Type, 1f);

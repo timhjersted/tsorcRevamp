@@ -893,21 +893,26 @@ namespace tsorcRevamp.NPCs
 
                 case int mosshornet when (
                     (mosshornet >= NPCID.GiantMossHornet && mosshornet <= NPCID.TinyMossHornet) ||
-                    mosshornet == NPCID.MossHornet
-                    ):
+                    mosshornet == NPCID.MossHornet):
+                    
                     {
                         npc.value = 1570;
-                        MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
-                        if (!globalNPC.lifeBoosted)
-                        {
-                            npc.lifeMax *= 2; 
-                            npc.life = npc.lifeMax; 
-                            npc.defense = (int)(npc.defense * 1.5);
-                            npc.knockBackResist *= 1.25f;
-                            globalNPC.lifeBoosted = true; 
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax *= 2; 
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 1.5);
+                                npc.knockBackResist *= 1.25f;
+                                globalNPC.lifeBoosted = true; 
+                            }
                         }
                         break;
                     }
+
+                                               
 
                 #endregion
 
@@ -1213,14 +1218,17 @@ namespace tsorcRevamp.NPCs
                 ):
                     {
                         npc.value = 1850;
-                        MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
-                        if (!globalNPC.lifeBoosted)
-                        {
-                            npc.lifeMax = (int)(npc.lifeMax * 1.75);
-                            npc.life = npc.lifeMax; 
-                            npc.defense = (int)(npc.defense * 1.5);
-                            npc.knockBackResist *= 1.25f;
-                            globalNPC.lifeBoosted = true; 
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax *= 2; 
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 1.5);
+                                npc.knockBackResist *= 1.25f;
+                                globalNPC.lifeBoosted = true; 
+                            }
                         }
                         break;
                     }
@@ -1230,14 +1238,17 @@ namespace tsorcRevamp.NPCs
                  ):
                     {
                         npc.value = 1970;
-                        MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
-                        if (!globalNPC.lifeBoosted)
-                        {
-                            npc.lifeMax = (int)(npc.lifeMax * 1.75); 
-                            npc.life = npc.lifeMax; 
-                            npc.defense = (int)(npc.defense * 1.5);
-                            npc.knockBackResist *= 1.25f;
-                            globalNPC.lifeBoosted = true; 
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax *= 2; 
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 1.5);
+                                npc.knockBackResist *= 1.25f;
+                                globalNPC.lifeBoosted = true; 
+                            }
                         }
                         break;
                     }
@@ -1247,14 +1258,17 @@ namespace tsorcRevamp.NPCs
                      ):
                     {
                         npc.value = 2030;
-                        MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
-                        if (!globalNPC.lifeBoosted)
-                        {
-                            npc.lifeMax = (int)(npc.lifeMax * 1.75); 
-                            npc.life = npc.lifeMax; 
-                            npc.defense = (int)(npc.defense * 1.5);
-                            npc.knockBackResist *= 1.25f;
-                            globalNPC.lifeBoosted = true; 
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax *= 2; 
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 1.5);
+                                npc.knockBackResist *= 1.25f;
+                                globalNPC.lifeBoosted = true; 
+                            }
                         }
                         break;
                     }
@@ -1280,14 +1294,17 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.value = 2120;
                         npc.damage = 0;
-                        MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
-                        if (!globalNPC.lifeBoosted)
-                        {
-                            npc.lifeMax = (int)(npc.lifeMax * 1.75); 
-                            npc.life = npc.lifeMax; 
-                            npc.defense = (int)(npc.defense * 1.5);
-                            npc.knockBackResist *= 1.25f;
-                            globalNPC.lifeBoosted = true; 
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax *= 2; 
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 1.5);
+                                npc.knockBackResist *= 1.25f;
+                                globalNPC.lifeBoosted = true; 
+                            }
                         }
                         break;
                     }
@@ -1296,14 +1313,17 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.value = 2370;
                         npc.damage = 0;
-                        MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
-                        if (!globalNPC.lifeBoosted)
-                        {
-                            npc.lifeMax = (int)(npc.lifeMax * 1.75);
-                            npc.life = npc.lifeMax; 
-                            npc.defense = (int)(npc.defense * 1.5);
-                            npc.knockBackResist *= 1.25f;
-                            globalNPC.lifeBoosted = true; 
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax *= 2; 
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 1.5);
+                                npc.knockBackResist *= 1.25f;
+                                globalNPC.lifeBoosted = true; 
+                            }
                         }
                         break;
                     }
@@ -1312,14 +1332,17 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.value = 2240;
                         npc.damage = 0;
-                        MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
-                        if (!globalNPC.lifeBoosted)
-                        {
-                            npc.lifeMax = (int)(npc.lifeMax * 1.75);
-                            npc.life = npc.lifeMax; 
-                            npc.defense = (int)(npc.defense * 1.5);
-                            npc.knockBackResist *= 1.25f;
-                            globalNPC.lifeBoosted = true; 
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax *= 2; 
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 1.5);
+                                npc.knockBackResist *= 1.25f;
+                                globalNPC.lifeBoosted = true; 
+                            }
                         }
                         break;
                     }
@@ -1621,6 +1644,18 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.value = 2490;
                         npc.damage = 0;
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax *= 2; 
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 1.5);
+                                npc.knockBackResist *= 1.25f;
+                                globalNPC.lifeBoosted = true; 
+                            }
+                        }
                         break;
                     }
 

@@ -50,14 +50,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         int fireBreathDamage = 50;
-        int iceStormDamage = 50;
         int greatFireballDamage = 48;
         int blazeBallDamage = 48;
         int purpleCrushDamage = 45;
         int meteorDamage = 55;
         int tornadoDamage = 45;
-        int obscureSeekerDamage = 50;
-        int crystalFireDamage = 50;
+        int crystalFireDamage = 45;
         int fireTrailsDamage = 45;
 
         int chaosHealed = 0;
@@ -319,18 +317,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     NPC.ai[1] = 1f;
                 }
-                if (Main.rand.NextBool(500))
-                {
-                    Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 8);
-                    projTarget += Main.rand.NextVector2Circular(3, 3);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>(), iceStormDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    NPC.ai[1] = 1f;
-                }
-                if (Main.rand.NextBool(500))
+                if (Main.rand.NextBool(450))
                 {
                     Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 8);
                     projTarget += Main.rand.NextVector2Circular(3, 3);
@@ -378,18 +365,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.ai[1] = 1f;
                 }
                 */
-                if (Main.rand.NextBool(220))
-                {
-                    Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 8);
-                    projTarget += Main.rand.NextVector2Circular(3, 3);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.ObscureSeeker>(), obscureSeekerDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    NPC.ai[1] = 1f;
-                }
-                if (Main.rand.NextBool(50))
+                if (Main.rand.NextBool(60))
                 {
                     Vector2 projTarget = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 12);
                     projTarget += Main.rand.NextVector2Circular(3, 3);

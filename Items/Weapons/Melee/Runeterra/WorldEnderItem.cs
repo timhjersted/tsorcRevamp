@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Projectiles.Melee.Runeterra.WorldEnder;
 using tsorcRevamp.Utilities;
@@ -168,6 +169,19 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
                     tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Shift", LangUtils.GetTextValue("CommonItemTooltip.Details")));
                 }
             }
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 10);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 25);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
         }
     }
 }
