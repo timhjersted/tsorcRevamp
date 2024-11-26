@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
@@ -15,7 +16,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
         public override void SetDefaults()
         {
             Item.damage = 400;
-            Item.height = 22;
+            Item.crit = 20;
+            Item.height = 38;
             Item.noMelee = true;
             Item.autoReuse = true;
             Item.DamageType = DamageClass.Ranged;
@@ -28,8 +30,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Item.UseSound = SoundID.Item40;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = PriceByRarity.Lime_7;
-            Item.width = 66;
-            Item.knockBack = 50f;
+            Item.width = 110;
+            Item.knockBack = 25f;
         }
         public override void HoldItem(Player player)
         {
@@ -42,10 +44,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             recipe.AddIngredient(ItemID.SniperRifle);
             recipe.AddIngredient(ItemID.IllegalGunParts);
             recipe.AddIngredient(ItemID.Cog, 80);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
         }
+        public override Vector2? HoldoutOffset()
+        {
+			return new Vector2(-19f, -2f);
+		}
     }
 }

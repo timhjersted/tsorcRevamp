@@ -19,6 +19,7 @@ namespace tsorcRevamp.Items.Ammo
             Item.height = 20;
             Item.knockBack = 3f;
             Item.maxStack = Item.CommonMaxStack;
+            Item.rare = ItemRarityID.Blue;
             Item.shootSpeed = 3.8f;
             Item.value = 1000;
             Item.shoot = ModContent.ProjectileType<PowerBoltProjectile>();

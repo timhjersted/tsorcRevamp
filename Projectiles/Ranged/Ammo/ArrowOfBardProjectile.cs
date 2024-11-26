@@ -7,7 +7,6 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
     public class ArrowOfBardProjectile : ModProjectile
     {
 
-        public override string Texture => "tsorcRevamp/Items/Ammo/ArrowOfBard";
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;

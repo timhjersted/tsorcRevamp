@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -12,12 +13,12 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
         {
             Projectile.aiStyle = 1;
             Projectile.friendly = true;
-            Projectile.height = 10;
+            Projectile.height = 40;
             Projectile.damage = 25;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
-            Projectile.width = 5;
+            Projectile.width = 18;
             Projectile.extraUpdates = 1;
             Projectile.timeLeft = 1200;
             Projectile.light = 0.5f;
@@ -30,11 +31,19 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
 
         public override void AI()
         {
-            int dust = Dust.NewDust(Projectile.position, 1, 1, DustID.SolarFlare, Projectile.velocity.X, Projectile.velocity.Y, 0, default, 1f);
+            int dust = Dust.NewDust(
+                Projectile.Center - new Vector2(4, 4),
+                8, 
+                8, 
+                DustID.SolarFlare, 
+                Projectile.velocity.X * 0.2f, 
+                Projectile.velocity.Y * 0.2f,
+                0, 
+                default, 
+                1f 
+            );
             Main.dust[dust].noGravity = true;
             Main.dust[dust].velocity *= 0.2f;
-            Projectile.localAI[0] = 0;
-            Lighting.AddLight(Projectile.Center, 0.9f, 0.5f, 0f);
         }
 
 		public override void OnKill(int timeLeft) 

@@ -17,13 +17,13 @@ namespace tsorcRevamp.Items.Ammo
             Item.consumable = true;
             Item.ammo = AmmoID.Arrow;
             Item.damage = 25;
-            Item.height = 28;
+            Item.height = 40;
             Item.knockBack = (float)4.2;
             Item.maxStack = Item.CommonMaxStack;
             Item.DamageType = DamageClass.Ranged;
             Item.shootSpeed = 4.5f;
             Item.value = 50;
-            Item.width = 10;
+            Item.width = 18;
             Item.rare = ItemRarityID.Red; 
             Item.shoot = ModContent.ProjectileType<AbyssArrowProjectile>();
         }

@@ -7754,7 +7754,7 @@ Mods: {
 
 			HeavyBolt: {
 				// DisplayName: Heavy Bolt
-				// Tooltip: ""
+				// Tooltip: Pierces a small amount of armor
 			}
 
 			MultishotReapeter: {
@@ -7762,9 +7762,14 @@ Mods: {
 				// Tooltip: ""
 			}
 
-			MultishotRepeater: {
-				// DisplayName: Multishot Repeater
+			HeavyCrossbow: {
+				// DisplayName: Heavy Crossbow
 				// Tooltip: ""
+			}
+
+			SniperCrossbow: {
+				// DisplayName: Sniper Crossbow
+				// Tooltip: Converts normal bolts into sniper bolts
 			}
 		}
 

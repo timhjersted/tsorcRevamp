@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
 {
     class Crossbow : ModItem
     {
-        public const int BaseDmg = 13;
+        public const int BaseDmg = 10;
         public override void SetStaticDefaults()
         {
             ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
@@ -21,8 +21,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Item.knockBack = 4;
             Item.crit = 16;
             Item.shootSpeed = 10;
-            Item.useTime = 45;
-            Item.useAnimation = 45;
+            Item.useTime = 35;
+            Item.useAnimation = 35;
             Item.width = 42;
             Item.height = 20;
             Item.noMelee = true;

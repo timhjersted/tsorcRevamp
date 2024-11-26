@@ -27,6 +27,7 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.statLifeMax2 += MaxLifeIncrease;
+            player.lifeRegen += LifeRegen;
         }
     }
 }

@@ -7,7 +7,7 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
 {
-    class MultishotRepeater : ModItem
+    class HeavyCrossbow : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -16,20 +16,19 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
 
         public override void SetDefaults()
         {
-            Item.damage = 14;
+            Item.damage = 20;
             Item.knockBack = 4;
             Item.crit = 16;
             Item.shootSpeed = 11;
-            Item.useTime = 6; 
-            Item.useAnimation = 18;
-            Item.reuseDelay = 40; 
+            Item.useTime = 22; 
+            Item.useAnimation = 22;
             Item.width = 56;
             Item.height = 24;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ProjectileID.PurificationPowder;
             Item.useAmmo = ModContent.ItemType<Bolt>();
-            Item.UseSound = SoundID.Item5;
+            Item.UseSound = SoundID.Item98;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = PriceByRarity.Green_2;
             Item.rare = ItemRarityID.Green;
@@ -47,7 +46,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
 
             recipe.Register();
         }
-        	public override Vector2? HoldoutOffset() {
+        public override Vector2? HoldoutOffset()
+        {
 			return new Vector2(2f, -2f);
 		}
     }

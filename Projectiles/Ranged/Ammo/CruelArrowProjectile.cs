@@ -7,8 +7,6 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
 {
     public class CruelArrowProjectile : ModProjectile
     {
-
-        public override string Texture => "tsorcRevamp/Items/Ammo/CruelArrow";
         public override void SetDefaults()
         {
             Projectile.aiStyle = 1;
