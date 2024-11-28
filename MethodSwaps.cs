@@ -1180,6 +1180,7 @@ namespace tsorcRevamp
 
         private static void On_Player_ApplyVanillaHurtEffectModifiers(On_Player.orig_ApplyVanillaHurtEffectModifiers orig, Player self, ref Player.HurtModifiers modifiers)
         {
+            self.endurance = Math.Max(self.endurance, 0f);
             modifiers.FinalDamage *= Math.Max(100f / (100f + (self.endurance * 100f)), 0f);
             bool Above25PercentLife = false;
             for (int i = 0; i < 255; i++)

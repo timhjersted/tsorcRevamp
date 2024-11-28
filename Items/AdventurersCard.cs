@@ -39,7 +39,8 @@ namespace tsorcRevamp.Items
             int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
 
             tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "GenericStats", LangUtils.GetTextValue("Items.AdventurersCard.Generic",
-                (int)Math.Round(player.endurance * 100), 100 - (int)(100f / (100f + (player.endurance * 100f)) * 100f), (int)(player.moveSpeed * 100), player.lifeRegen / 2f, (int)(player.manaCost * 100), player.manaRegen / 2f, player.manaRegenDelayBonus * 100,
+                (int)Math.Round(Math.Max(player.endurance, 0f) * 100),
+                100 - (int)(100f / (100f + (Math.Max(player.endurance, 0f) * 100f)) * 100f), (int)(player.moveSpeed * 100), player.lifeRegen / 2f, (int)(player.manaCost * 100), player.manaRegen / 2f, player.manaRegenDelayBonus * 100,
                 (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGain * 100f), (float)Math.Round(60f / (player.GetModPlayer<tsorcRevampPlayer>().spawnRate) * 100, 1), (int)Math.Round(player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax))));
 
             switch (ClassCounter)
@@ -67,12 +68,6 @@ namespace tsorcRevamp.Items
                         tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "SummonStats", LangUtils.GetTextValue("Items.AdventurersCard.Summon",
                             (int)(player.GetTotalDamage(DamageClass.Summon).ApplyTo(100)), (int)player.GetTotalCritChance(DamageClass.Summon), (int)(player.GetTotalAttackSpeed(DamageClass.Summon) * 100), player.GetTotalArmorPenetration(DamageClass.Summon),
                             (int)(player.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(100)), player.maxMinions, player.maxTurrets, (int)(player.whipRangeMultiplier * 100f), player.GetModPlayer<tsorcRevampPlayer>().WhipCritDamage)));
-                        break;
-                    }
-                case 5:
-                    {
-                        tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "ThrowingStats", LangUtils.GetTextValue("Items.AdventurersCard.Throwing",
-                            (int)(player.GetTotalDamage(DamageClass.Throwing).ApplyTo(100)), (int)player.GetTotalCritChance(DamageClass.Throwing), (int)(player.GetTotalAttackSpeed(DamageClass.Throwing) * 100), player.GetTotalArmorPenetration(DamageClass.Throwing), player.ThrownVelocity)));
                         break;
                     }
             }
