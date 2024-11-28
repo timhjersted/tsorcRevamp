@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useTurn = true;
             Item.useAnimation = 5;
             Item.useTime = 5;
-            Item.damage = 75;
+            Item.damage = 80;
             Item.autoReuse = true;
             Item.knockBack = (float)4;
             Item.scale = (float)1;

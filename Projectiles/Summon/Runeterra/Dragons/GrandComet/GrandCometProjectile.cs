@@ -1,8 +1,10 @@
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Weapons.Summon.Runeterra;
@@ -27,6 +29,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
             Projectile.DamageType = DamageClass.Summon;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
+            Projectile.extraUpdates = 1;
         }
         public float DistanceToZone;
         public Vector2 CometZone;
@@ -37,6 +40,8 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
         }
         public override void AI()
         {
+            Lighting.AddLight(Projectile.Center, 0.8f, 0.8f, 1.0f);
+
             int DistanceDivisor = 2000;
             UsefulFunctions.SmoothHoming(Projectile, CometZone, 0.3f * DistanceToZone / DistanceDivisor, 10 * DistanceToZone / DistanceDivisor, null, false);
 
@@ -64,6 +69,7 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
                 Projectile.Kill();
             }
         }
+
         public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/CometHit") with { Volume = CenterOfTheUniverse.SoundVolume * 0.5f });
@@ -110,5 +116,6 @@ namespace tsorcRevamp.Projectiles.Summon.Runeterra.Dragons.GrandComet
         {
             target.AddBuff(ModContent.BuffType<AwestruckDebuff>(), CenterOfTheUniverse.AwestruckDebuffDuration * 60);
         }
+        
     }
 }

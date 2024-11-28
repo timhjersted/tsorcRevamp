@@ -58,8 +58,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int gravityBallDamage = 66;//300
 
         //basilisk attacks
-        int cursedBreathDamage = 81; //100
-        int cursedFlamesDamage = 77; //100
+        int cursedBreathDamage = 68; //100
+        int cursedFlamesDamage = 64; //100
         int disruptDamage = 68;//203
         int bioSpitDamage = 68;//185
         int bioSpitfinalDamage = 76;//230
@@ -100,7 +100,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int lineOfSightTimer = 0;
 
         //serris x
-        int plasmaOrbDamage = 102;
+        int plasmaOrbDamage = 70;
 
         //oolicile sorcerer
         public float DarkBeadShotTimer;
@@ -130,7 +130,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(BuffID.OnFire, 10 * 60, false);
-            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 60 * 60, false); //lose defense on hit
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 40 * 60, false); //lose defense on hit
             target.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 30 * 60, false); //slowed life regen
             target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30 * 60, false); //you lose knockback resistance
             if (Main.rand.NextBool(2))
@@ -194,7 +194,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     if (swordDead)
                     {
-                        NPC.defense = 130;
+                        NPC.defense = 110;
                     }
                     else
                     {
@@ -518,7 +518,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 //3 DEATH SKULLS WHEN PLAYER RUNS AWAY 
-                if (NPC.Distance(player.Center) > 550 && Main.rand.NextBool(350))
+                if (NPC.Distance(player.Center) > 550 && Main.rand.NextBool(400))
                 {
                     Player nT = Main.player[NPC.target];
                     for (int pcy = 0; pcy < 3; pcy++) //2.1 was 7.1f
@@ -535,7 +535,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
                 //RAIN OF DEATH
-                if (NPC.life >= NPC.lifeMax / 10 * 2 && NPC.Distance(player.Center) > 650 && Main.rand.NextBool(140))
+                if (NPC.life >= NPC.lifeMax / 10 * 2 && NPC.Distance(player.Center) > 650 && Main.rand.NextBool(180))
                 {
                     Player nT = Main.player[NPC.target];
 
@@ -558,7 +558,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
                 //RAIN OF DEATH FINAL
-                if (NPC.life <= NPC.lifeMax / 10 * 2 && NPC.Distance(player.Center) > 580 && NPC.Distance(player.Center) < 1199 && Main.rand.NextBool(90))
+                if (NPC.life <= NPC.lifeMax / 10 * 2 && NPC.Distance(player.Center) > 580 && NPC.Distance(player.Center) < 1199 && Main.rand.NextBool(120))
                 {
                     Player nT = Main.player[NPC.target];
 
@@ -1865,7 +1865,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (swordDead)
             {
                 modifiers.FinalDamage *= 1.2f;
-                herosArrowDamage = (int)(herosArrowDamage * 1.3f);
+                herosArrowDamage = (int)(herosArrowDamage * 1.1f);
             }
         }
 
@@ -1874,7 +1874,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (swordDead)
             {
                 modifiers.FinalDamage *= 1.2f;
-                herosArrowDamage = (int)(herosArrowDamage * 1.3f);
+                herosArrowDamage = (int)(herosArrowDamage * 1.1f);
             }
 
             if (projectile.minion)

@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false);
+            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 50 * 60, false);
         }
 
         public override void AI()

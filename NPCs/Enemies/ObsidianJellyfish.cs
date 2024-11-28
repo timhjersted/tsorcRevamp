@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.CloneDefaults(NPCID.PinkJellyfish);
             AnimationType = NPCID.PinkJellyfish;
             AIType = NPCID.PinkJellyfish;
-            NPC.lifeMax = 5;
+            NPC.lifeMax = 4;
             NPC.damage = 50;
             NPC.scale = 1f;
             NPC.knockBackResist = 0.9f;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.hardMode)
             {
                 NPC.knockBackResist = 0.7f;
-                NPC.lifeMax = 10;
+                NPC.lifeMax = 6;
                 NPC.defense = 999;
                 NPC.value = 600;
                 NPC.damage = 80;
