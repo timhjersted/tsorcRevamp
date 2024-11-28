@@ -18,10 +18,7 @@ namespace tsorcRevamp.Items.VanillaItems
         public override void SetDefaults(Item item)
         {
             //Why is this eventide's internal name i'm literally going to go feral
-            if (item.type == ItemID.SparkleGuitar)
-            {
-                item.mana = 18;
-            }
+
             if (item.type == ItemID.AmberStaff)
             {
                 item.damage = 30;
@@ -57,6 +54,7 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.SparkleGuitar)
             {
                 item.damage = 70; 
+                item.mana = 18;
             }
             if (item.type == ItemID.LeafBlower)
             {
@@ -82,7 +80,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.Razorpine)
             {
-                item.damage = 57; //SHM
+                item.damage = 52; //SHM
                 item.useTime = 7; 
                 item.mana = 6;
             }
