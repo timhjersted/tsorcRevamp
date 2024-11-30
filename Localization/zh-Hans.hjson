@@ -3920,12 +3920,6 @@ Mods: {
 					'''
 			}
 
-			DyingWindShard: {
-				DisplayName: 凋亡之风碎片
-				Tooltip: 一块褪色的风之水晶碎片
-				Chaos: 用于制作混沌的召唤物
-			}
-
 			EphemeralDust: {
 				DisplayName: 刹那浮尘
 				Tooltip: ""

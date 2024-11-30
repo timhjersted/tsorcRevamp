@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Armors
         {
             Item.width = 18;
             Item.height = 12;
-            Item.defense = 15;
+            Item.defense = 20;
             Item.rare = ItemRarityID.Expert;
             Item.value = PriceByRarity.fromItem(Item);
         }
@@ -92,15 +92,20 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void AddRecipes()
         {
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ModContent.ItemType<DragoonHelmet>());
+            recipe2.AddIngredient(ItemID.CharmofMyths);
+            recipe2.AddIngredient(ModContent.ItemType<LichBone>(), 1);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 54000);
+            recipe2.AddTile(TileID.DemonAltar);
+            recipe2.Register();
+
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<DragoonHelmet>());
             recipe.AddIngredient(ItemID.CharmofMyths);
-            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<KrakenFlesh>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 54000);
             recipe.AddTile(TileID.DemonAltar);
-
             recipe.Register();
         }
     }

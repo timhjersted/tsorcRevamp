@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.BossItems
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DyingWindShard>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 5);
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);

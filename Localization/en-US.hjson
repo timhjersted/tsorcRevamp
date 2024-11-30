@@ -3920,12 +3920,6 @@ Mods: {
 					'''
 			}
 
-			DyingWindShard: {
-				DisplayName: Dying Wind Shard
-				Tooltip: A shard of the fading Crystal of Wind.
-				Chaos: Used to craft the crystal that summons Chaos.
-			}
-
 			EphemeralDust: {
 				DisplayName: Ephemeral Dust
 				Tooltip: ""
@@ -9523,7 +9517,6 @@ Mods: {
 				Flight: And the power of the Earth uplift you from below, giving you the strength to finish him!
 				Weightless: You suddenly feel weightless...
 				Portal: A portal from The Abyss has been opened!
-				Artorias: Artorias, the Ancient Knight of the Abyss has entered this world!...
 				Hint: You must seek out the Shaman Elder, beyond the Western Sea...
 				AbyssOpen: The portal from The Abyss remains open...
 			}

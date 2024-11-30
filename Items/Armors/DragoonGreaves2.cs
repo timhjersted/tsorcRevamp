@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 15;
+            Item.defense = 20;
             Item.rare = ItemRarityID.Expert;
             Item.value = PriceByRarity.fromItem(Item);
         }
@@ -68,7 +68,9 @@ namespace tsorcRevamp.Items.Armors
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<DragoonGreaves>());
-            //recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 56000);
             recipe.AddTile(TileID.DemonAltar);

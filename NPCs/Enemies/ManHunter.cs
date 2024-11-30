@@ -46,11 +46,11 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.ArcheryPotion));
-            npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 36));
             npcLoot.Add(ItemDropRule.Common(ItemID.HunterPotion, 34));
+            npcLoot.Add(ItemDropRule.Common(ItemID.AmmoReservationPotion, 34));
             npcLoot.Add(ItemDropRule.Common(ItemID.SwiftnessPotion, 34));
             npcLoot.Add(new CommonDrop(ItemID.HealingPotion, 100, 1, 1, 2));
-            npcLoot.Add(ItemDropRule.Common(ItemID.HolyArrow, 4, 10, 20));
+            npcLoot.Add(ItemDropRule.Common(ItemID.UnholyArrow, 4, 10, 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 2, 1, 2));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<Lifegem>(), 8));
         }

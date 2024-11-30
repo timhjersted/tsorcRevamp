@@ -61,7 +61,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.Battle, 30 * 60, false); //battle
-                target.AddBuff(BuffID.Weak, 30 * 60, false); //weak
+                target.AddBuff(BuffID.Weak, 40 * 60, false); //weak
             }
 
         }
@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(new CommonDrop(ModContent.ItemType<DyingWindShard>(), 100, 1, 1, 50));
+            npcLoot.Add(new CommonDrop(ModContent.ItemType<WhiteTitanite>(), 4, 1, 2, 50));
         }
     }
 }

@@ -1336,7 +1336,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             {
 
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.Portal"), new Color(255, 255, 60));
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.Artorias"), new Color(255, 255, 60));
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.Hint"), new Color(249, 202, 12));
 
                 Main.hardMode = true;
