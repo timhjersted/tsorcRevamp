@@ -9,9 +9,8 @@ namespace tsorcRevamp.Items.Accessories.Damage
     public class AngerTalisman : ModItem
     {
         public static float DamageIncrease = 30f;
-        public static int DefenseDecrease = 30;
-        public static float DRDecrease = 15f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageIncrease, DefenseDecrease, DRDecrease);
+        public static int DefenseDecrease = 35;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageIncrease, DefenseDecrease);
         public override void SetStaticDefaults()
         {
         }
@@ -43,7 +42,6 @@ namespace tsorcRevamp.Items.Accessories.Damage
         public override void UpdateEquip(Player player)
         {
             player.GetDamage(DamageClass.Generic) += DamageIncrease / 100f;
-            player.endurance -= DRDecrease / 100f;
         }
 
     }

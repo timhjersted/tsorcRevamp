@@ -238,7 +238,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.NorthPole)
             {
-                item.damage = 180; //SHM
+                item.damage = 180; //SHM, was 80
             }
             if (item.type == ItemID.DD2SquireBetsySword)
             {

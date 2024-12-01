@@ -143,6 +143,7 @@ namespace tsorcRevamp
         public bool ChloranthyRing2 = false;
 
         public bool DarkInferno = false;
+        public bool MorgulPoisoning = false;
         public bool CrimsonDrain = false;
         public bool PhazonCorruption = false;
         public int count = 0;
@@ -361,6 +362,8 @@ namespace tsorcRevamp
 
         public bool gilled;
 
+        public bool MorgulWhipEffect;
+
 
         public bool CurseActive;
         public float CurseMaxLifeMultiplier;
@@ -458,6 +461,7 @@ namespace tsorcRevamp
 
             RTQ2 = false;
             DarkInferno = false;
+            MorgulPoisoning = false;
             BoneRevenge = false;
             SoulSiphon = false;
             SoulSiphonScaling = 1f;
@@ -492,6 +496,7 @@ namespace tsorcRevamp
             ConsSoulChanceMult = 0;
             SoulSickle = false;
             TornWings = false;
+            MorgulWhipEffect = false;
 
             Crippled = false;
             ShadowWeight = false;

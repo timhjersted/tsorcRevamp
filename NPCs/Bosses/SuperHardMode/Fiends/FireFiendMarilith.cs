@@ -620,6 +620,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<FairyInABottle>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ForgottenRisingSun>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BarrowBlade>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<FieryScale>(), 1, 2, 4));
             npcLoot.Add(notExpertCondition);
         }
         public override void OnKill()

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
     [AutoloadEquip(EquipType.HandsOn)]
     public class BandOfStarforging : ModItem
     {
-        public static int LifeRegen = 4;
+        public static int LifeRegen = 5;
         public static float MaxManaPercentIncrease = 100f;
         public static int ManaRegen = 50;
         public static float ManaRegenDelay = 150f;

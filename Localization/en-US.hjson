@@ -1040,7 +1040,6 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamage}
 					{$CommonItemTooltip.BadDefense@1}
-					{$CommonItemTooltip.BadDRStat@2}
 					'''
 			}
 
@@ -1253,10 +1252,10 @@ Mods: {
 				DisplayName: Mythril Glove
 				Tooltip:
 					'''
-					Grants bonus Defense and Resistance based on health:
-					Increase Defense by 5 and Resistance by 8 at all times
-					Increase Defense by 10 and Resistance by 16 below 66% health
-					Increase Defense by 16 and Resistance by 32 below 33% health
+					Grants bonus defense and resistance based on health:
+					Increase defense by 5 and resistance by 8 at all times
+					Increase defense by 10 and resistance by 16 below 66% health
+					Increase defense by 16 and resistance by 32 below 33% health
 					'''
 			}
 
@@ -2396,7 +2395,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.IncreasesMaxLifeBy}
-					{$CommonItemTooltip.LifeRegen}
+					Increase life regeneration by 2
 					'''
 			}
 
@@ -7355,6 +7354,7 @@ Mods: {
 				Tooltip:
 					'''
 					Doubles your maximum amount of minions and sentries
+					Whips inflict Morgul poisoning
 					{$CommonItemTooltip.Summon.BadDmgMult}
 					{$CommonItemTooltip.Summon.BadTagStrengthMult@1}
 					'''
@@ -7760,6 +7760,11 @@ Mods: {
 			SniperCrossbow: {
 				DisplayName: Sniper Crossbow
 				Tooltip: Converts normal bolts into sniper bolts
+			}
+
+			FieryScale: {
+				DisplayName: Fiery Scale
+				Tooltip: ""
 			}
 		}
 
@@ -8708,6 +8713,11 @@ Mods: {
 					Melee and Whip attacks inflict enemies with Daybroken
 					Increase melee and whip damage and crit by 6%
 					'''
+			}
+
+			MorgulPoisoning: {
+				Description: Mods.tsorcRevamp.Buffs.MorgulPoisoning.Description
+				DisplayName: Morgul Poisoning
 			}
 		}
 

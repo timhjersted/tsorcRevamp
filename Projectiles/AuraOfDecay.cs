@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.VFX;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -91,8 +92,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(BuffID.Poisoned, 120);
-            target.AddBuff(BuffID.Venom, 120);
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.MorgulPoisoning>(), 90);
         }
 
         float timeFactor = 0;

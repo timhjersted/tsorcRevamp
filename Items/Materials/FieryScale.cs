@@ -1,0 +1,21 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.Items.Materials
+{
+    class FieryScale : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
+        }
+        public override void SetDefaults()
+        {
+            Item.width = 38;
+            Item.height = 42;
+            Item.maxStack = Item.CommonMaxStack;
+            Item.value = 250000;
+            Item.rare = ItemRarityID.Red;
+        }
+    }
+}

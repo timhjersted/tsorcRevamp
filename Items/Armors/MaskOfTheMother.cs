@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class MaskOfTheMother : ModItem
     {
-        public static int MaxLifeIncrease = 70;
-        public static int LifeRegen = 1;
+        public static int MaxLifeIncrease = 60;
+        public static int LifeRegen = 2;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxLifeIncrease, LifeRegen);
         public override void SetStaticDefaults()
         {

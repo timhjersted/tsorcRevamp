@@ -898,6 +898,10 @@ namespace tsorcRevamp
             {
                 modifiers.FinalDamage *= 0.55f;
             }
+            if (proj.DamageType == DamageClass.SummonMeleeSpeed && MorgulWhipEffect)
+            {
+                target.AddBuff(ModContent.BuffType<MorgulPoisoning>(), 240);
+            }
             if (Goredrinker && proj.DamageType == DamageClass.SummonMeleeSpeed && !Player.HasBuff(ModContent.BuffType<GoredrinkerCooldown>()) && GoredrinkerSwung && ProjectileID.Sets.IsAWhip[proj.type])
             {
                 modifiers.SourceDamage += Items.Accessories.Summon.Goredrinker.WhipDmgRange / 100f / 3f; //guaranteed crit is in overcrit
