@@ -66,7 +66,7 @@ namespace tsorcRevamp.Buffs.Debuffs
         {
             if (lifeRegenDebuff)
             {
-                drawColor = Color.Lerp(drawColor, Color.Green, 0.5f);
+                drawColor = Color.Lerp(drawColor, Color.Green, 0.25f);
 
                 if (Main.rand.NextBool(5)) 
                 { 

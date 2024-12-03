@@ -140,11 +140,7 @@ Mods: {
 				ChargedWhipAtkSpeed: Gain {0}-{1}% summon attack speed upon striking an enemy
 				WhipCC: Performs better against multiple targets than most whips
 				TagArmorPen: "{0} summon tag armor penetration"
-				BadDmgMult:
-					'''
-					Decreases summon damage by {0}% multiplicatively
-					Tag Damage is unaffected
-					'''
+				BadDmgMult: Decreases summon damage by {0}% multiplicatively
 				SlotsRequired: Uses {0} minion slots
 				PercentOfASlot: Uses {0}% of a minion slot
 				MinionSentrySlot: Increases maximum minions by {0} and sentries by {1}
@@ -5899,7 +5895,11 @@ Mods: {
 
 			AncientWarhammer: {
 				DisplayName: Ancient Warhammer
-				Tooltip: An old choice for advancing druids
+				Tooltip:
+					'''
+					An old choice for advancing druids
+					Breaks the enemy's defense on hit
+					'''
 			}
 
 			DiamondMace: {
@@ -8718,6 +8718,11 @@ Mods: {
 			MorgulPoisoning: {
 				Description: Mods.tsorcRevamp.Buffs.MorgulPoisoning.Description
 				DisplayName: Morgul Poisoning
+			}
+
+			DefenseCrush: {
+				Description: Mods.tsorcRevamp.Buffs.DefenseCrush.Description
+				DisplayName: Defense Crush
 			}
 		}
 

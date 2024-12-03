@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Buffs.Debuffs;
 
 namespace tsorcRevamp.Items.Weapons.Melee.Hammers
 {
@@ -33,6 +34,10 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Microsoft.Xna.Framework.Color.DarkGray;
+        }
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(ModContent.BuffType<DefenseCrush>(), 400);
         }
 
         public override void AddRecipes()

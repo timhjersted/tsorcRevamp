@@ -446,8 +446,24 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
         public static Effect shieldEffect;
         public static Effect ringEffect;
         ArmorShaderData data;
+
+        private bool IsBossRematchTomeProjectileActive()
+        {
+            foreach (Projectile proj in Main.projectile)
+            {
+                if (proj.active && proj.type == ModContent.ProjectileType<Projectiles.VFX.BossSelectVisuals>())
+                {
+                    return true; 
+                }
+            }
+            return false; 
+        }
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            if (IsBossRematchTomeProjectileActive())
+            {
+                return true; 
+            }
             if (!ShieldBroken)
             {
                 Main.spriteBatch.End();

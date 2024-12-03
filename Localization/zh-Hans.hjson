@@ -8714,6 +8714,11 @@ Mods: {
 				// Description: Mods.tsorcRevamp.Buffs.MorgulPoisoning.Description
 				// DisplayName: Morgul Poisoning
 			}
+
+			DefenseCrush: {
+				// Description: Mods.tsorcRevamp.Buffs.DefenseCrush.Description
+				// DisplayName: Defense Crush
+			}
 		}
 
 		Projectiles: {
