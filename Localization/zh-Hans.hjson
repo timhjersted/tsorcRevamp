@@ -140,11 +140,7 @@ Mods: {
 				ChargedWhipAtkSpeed: 击中敌人时获得 {0}-{1}% 召唤攻击速度
 				WhipCC: 与其他鞭子相比，对多目标的表现更好
 				TagArmorPen: "{0} 召唤（鞭子标记）护甲穿透"
-				BadDmgMult:
-					'''
-					乘算减少 {0}% 召唤伤害
-					鞭子标记伤害不受影响
-					'''
+				BadDmgMult: 乘算减少 {0}% 召唤伤害
 				SlotsRequired: 消耗 {0} 召唤栏
 				PercentOfASlot: 消耗一个召唤栏的 {0}%
 				MinionSentrySlot: 增加 {0} 召唤栏和 {1} 哨兵栏
@@ -575,7 +571,7 @@ Mods: {
 				LargeSapphire: "[c/ffbf00:上面刻着飞龙法师堡垒附近的一座雪山的符号]"
 				LargeRuby: "[c/ffbf00:上面雕刻着一个符号，它形似一座可通过大型金字塔进入的古老丛林神庙]"
 				VulnerabilityHex: 如果已击败双足翼龙，则施加双足翼龙诅咒减益
-				// IncinerationHex: Applies a incineration hex if Betsy has been defeated
+				IncinerationHex: 如果已击败双足翼龙，则施加破晓减益
 				StarinaBottle: 增加 10 点魔力再生同时减少 50% 魔力再生延迟
 				ManaRegenerationBand: 增加 25 点魔力再生同时减少 100% 魔力再生延迟
 				WellFedItemsBotC: 为[c/6d8827:被诅咒者]增加 {0}% 耐力再生
@@ -1038,8 +1034,7 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamage}
-					{$CommonItemTooltip.BadDefense@1}
-					{$CommonItemTooltip.BadDRStat@2}（gkd 带着这玩意打无伤）
+					{$CommonItemTooltip.BadDefense@1}（gkd 带着这玩意打无伤）
 					'''
 			}
 
@@ -1253,11 +1248,10 @@ Mods: {
 				DisplayName: 神秘手套
 				Tooltip:
 					'''
-					{$CommonItemTooltip.LifeThreshold}施放维持短时间的障壁
-					{$CommonItemTooltip.IncreasesDefenseBy@1}
-					{$CommonItemTooltip.BadDmgMult@2}
-					{$CommonItemTooltip.Slowness@3}
-					{$CommonItemTooltip.UniqueBarrier}
+					基于生命值提供防御和抵抗力加成：
+					始终提供 5 防御和 8 抵抗力
+					当生命值低于 66% 时，提供 10 点防御和 16 抵抗力
+					当生命值低于 33% 时，提供 16 点防御和 32 抵抗力
 					'''
 			}
 
@@ -1541,7 +1535,6 @@ Mods: {
 				Tooltip:
 					'''
 					继承黑曜石护盾、冰冻护盾和神话壁垒的效果
-					同时免疫冷冻和石化
 					稍微减慢翻滚时的速度
 					翻滚经过敌人时有概率对其施加本饰品所免疫的状态效果
 					'''
@@ -1785,7 +1778,7 @@ Mods: {
 				Tooltip:
 					'''
 					惊人的超音速运动速度，几乎无限的飞行
-					继承超音速之翼的所有能力，同时有改进气球束的效果
+					继承超音速之翼的所有能力
 					{$CommonItemTooltip.DragoonGearCompatible}
 					{$CommonItemTooltip.BootsDisableThis}
 					'''
@@ -1858,13 +1851,11 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.IncreasesMaxMinionsBy}
-					每拥有一个仆从栏位
-					增加 {1}% 召唤暴击率，但减少 {1}% 鞭子攻击范围
+					每拥有一个召唤栏
+					增加 {2}% 鞭子伤害和 {1}% 召唤标记强度，但减少 {1}% 鞭子攻击范围
 					"一种只在水晶维度中发现的神奇物质"
 					'''
-				// Tooltip0: "Current Modifier: "
-				// Tooltip1: "% summon tag strength and negative whip range, "
-				// Tooltip2: whip damage
+				Tooltip0: 当前召唤属性改变量: 增加 {0}% 召唤标记强度和 {1}% 鞭子伤害，减少 {0}% 鞭子攻击范围
 			}
 
 			ShamanEmblem: {
@@ -1922,7 +1913,7 @@ Mods: {
 
 			PowerBolt: {
 				DisplayName: 强力弩箭
-				Tooltip: ""
+				Tooltip: 有几率引发爆炸
 			}
 
 			TeslaBolt: {
@@ -2397,7 +2388,12 @@ Mods: {
 
 			MaskOfTheMother: {
 				DisplayName: 母亲面具
-				Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeBy}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.IncreasesMaxLifeBy}
+					{$CommonItemTooltip.LifeRegen}
+					增加 2 点生命再生
+					'''
 			}
 
 			AncientGoldenArmor: {
@@ -3141,7 +3137,7 @@ Mods: {
 				Tooltip:
 					'''
 					一种稀有且珍贵的矿石
-					摸起来冰冷，散发着迷人的力量
+					摸起来冰冷，散发着神圣的力量
 					'''
 			}
 
@@ -3921,7 +3917,7 @@ Mods: {
 			}
 
 			EphemeralDust: {
-				DisplayName: 刹那浮尘
+				DisplayName: f
 				Tooltip: ""
 			}
 
@@ -4618,9 +4614,9 @@ Mods: {
 			}
 
 			PermanentAbyssImbuement: {
-				// DisplayName: Permanent Abyssal Imbuement
-				// Tooltip: ""
-				// BuffName: Weapon Imbue: Abyss
+				DisplayName: 永久深渊瓶
+				Tooltip: ""
+				BuffName: 武器灌注：深渊
 			}
 
 			PermanentFlipperPotion: {
@@ -4891,7 +4887,7 @@ Mods: {
 				Tooltip:
 					'''
 					一种稀有而珍贵的矿石
-					散发着热量，闪烁着禁忌的魔法
+					散发着热量，闪烁着禁忌的地牢魔法
 					'''
 			}
 
@@ -5133,7 +5129,11 @@ Mods: {
 
 			EnergyStrikeScroll: {
 				DisplayName: 能量打击卷轴
-				Tooltip: 卷轴上写着"Exori vis"（注：这是游戏Tibia中的一句话
+				Tooltip:
+					'''
+					卷轴上写着"Exori vis"（注：这是游戏Tibia中的一句话
+					召唤一个静止的特斯拉线圈，伤害附近的敌人
+					'''
 			}
 
 			ExplosionRune: {
@@ -5830,7 +5830,7 @@ Mods: {
 
 			ForgottenBurningFist: {
 				DisplayName: 被遗忘的燃烧之拳
-				Tooltip: 有极低的概率放出爆炸火球
+				Tooltip: 攻击敌人时释放火焰
 			}
 
 			ForgottenKaiserKnuckles: {
@@ -5892,7 +5892,11 @@ Mods: {
 
 			AncientWarhammer: {
 				DisplayName: 古代战锤
-				Tooltip: 德鲁伊的旧选择
+				Tooltip:
+					'''
+					德鲁伊的旧选择
+					粉碎敌人的防御
+					'''
 			}
 
 			DiamondMace: {
@@ -6000,7 +6004,7 @@ Mods: {
 
 			AncientHolyLance: {
 				DisplayName: 古代圣矛
-				Tooltip: 光明圣矛
+				Tooltip: 攻击时射出一道圣矛光束
 			}
 
 			CelestialLance: {
@@ -6276,8 +6280,7 @@ Mods: {
 				DisplayName: 反装甲步枪
 				Tooltip:
 					'''
-					令人难以置信的伤害，但射击的冷却时间为 2.5 秒
-					发射穿透薄墙的高速子弹
+					每秒发射穿透薄墙的高速子弹
 					伤害随着敌人的护甲而增加
 					'''
 			}
@@ -6753,7 +6756,7 @@ Mods: {
 				Tooltip:
 					'''
 					一种稀有而有价值的矿石
-					纯白的表面，投下诡异的紫色阴影
+					纯白的表面，投下紫红的邪恶阴影
 					'''
 			}
 
@@ -7141,7 +7144,7 @@ Mods: {
 				Keybind2: " 根据玩家所面对的方向来增加或缩小它们的[c/b22222:旋转半径]"
 				Details:
 					'''
-					[c/b22222:灰烬领主]本身消耗半个仆从栏，并根据召唤的[c/b22222:火球]数量进行缩放
+					[c/b22222:灰烬领主]本身消耗半个召唤栏，并根据召唤的[c/b22222:火球]数量进行缩放
 					[c/b22222:灰烬领主对敌人施加炽热减益，并且可以标记敌人]
 					每次攻击有 {0}% [c/b22222:几率施加标记]，标记 6 次后的敌人[c/b22222:被火球攻击可引发爆炸]
 					[c/b22222:引爆后的标记]会增强炽热减益的效果，持续 {1} 秒
@@ -7167,7 +7170,7 @@ Mods: {
 					[c/7fffd4:涡轮增压增加飞船的移动速度和霸天龙神的攻击速度]
 					[c/7fffd4:涡轮增压额外造成相当于目标最大生命值 {3}% 的伤害，最多 {4}]
 					[c/7fffd4:涡轮增压会快速消耗你的魔力，并在触发魔力病时结束]
-					[c/b22222:霸天龙神]本身消耗半个仆从栏，并根据召唤的[c/b22222:飞船]数量进行缩放
+					[c/b22222:霸天龙神]本身消耗半个召唤栏，并根据召唤的[c/b22222:飞船]数量进行缩放
 					[c/b22222:霸天龙神对敌人施加出其不意减益，并且可以标记敌人]
 					每次攻击有 {0}% [c/b22222:几率施加标记]，标记 6 次后的敌人[c/b22222:被飞船攻击可引发爆炸]
 					[c/b22222:引爆后的标记]会增强出其不意减益的效果，持续 {1} 秒
@@ -7199,7 +7202,7 @@ Mods: {
 					[c/7fffd4:涡轮增压增加星芒的移动速度和铸星龙王的攻击速度]
 					[c/7fffd4:涡轮增压额外造成相当于目标最大生命值 {3}% 的伤害，最多 {4}]
 					[c/7fffd4:涡轮增压会快速消耗你的魔力，并在触发魔力病时结束]
-					[c/b22222:铸星龙王]本身消耗半个仆从栏，并根据召唤的[c/b22222:星芒]数量进行缩放
+					[c/b22222:铸星龙王]本身消耗半个召唤栏，并根据召唤的[c/b22222:星芒]数量进行缩放
 					[c/b22222:铸星龙王对敌人施加日照减益，并且可以标记敌人]
 					每次攻击有 {0}% [c/b22222:几率施加标记]，标记 6 次后的敌人[c/b22222:被星芒攻击可引发爆炸]
 					[c/b22222:引爆后的标记]会增强日照减益的效果，持续 {1} 秒
@@ -7350,6 +7353,7 @@ Mods: {
 				Tooltip:
 					'''
 					你的召唤物栏位和哨兵栏位变多一倍
+					鞭子施加魔古尔剧毒
 					{$CommonItemTooltip.Summon.BadDmgMult}
 					{$CommonItemTooltip.Summon.BadTagStrengthMult@1}
 					'''
@@ -7632,7 +7636,7 @@ Mods: {
 					攻击速度: {2}%
 					护甲穿透: {3}
 					鞭子伤害倍率: {4}%
-					仆从栏: {5}
+					召唤栏: {5}
 					哨兵栏: {6}
 					鞭子范围: {7}%
 					用鞭子的尖端击中敌人总是会造成暴击
@@ -7738,28 +7742,28 @@ Mods: {
 			}
 
 			HeavyBolt: {
-				// DisplayName: Heavy Bolt
-				// Tooltip: Pierces a small amount of armor
+				DisplayName: 重型弩箭
+				Tooltip: 穿透一部分盔甲
 			}
 
 			MultishotReapeter: {
-				// DisplayName: Multishot Reapeter
-				// Tooltip: ""
+				DisplayName: 连弩
+				Tooltip: ""
 			}
 
 			HeavyCrossbow: {
-				// DisplayName: Heavy Crossbow
-				// Tooltip: ""
+				DisplayName: 重型十字弓
+				Tooltip: ""
 			}
 
 			SniperCrossbow: {
-				// DisplayName: Sniper Crossbow
-				// Tooltip: Converts normal bolts into sniper bolts
+				DisplayName: 精准十字弓
+				Tooltip: 将普通弩箭转化为高速弩箭
 			}
 
 			FieryScale: {
-				// DisplayName: Fiery Scale
-				// Tooltip: ""
+				DisplayName: 炽焰甲片
+				Tooltip: ""
 			}
 		}
 
@@ -8613,7 +8617,7 @@ Mods: {
 
 			LionheartMark: {
 				DisplayName: 狮心印记
-				Description: Mods.tsorcRevamp.Buffs.LionheartMark.Description
+				Description: ""
 			}
 
 			LethalTempo: {
@@ -8633,7 +8637,7 @@ Mods: {
 
 			PyromethaneDebuff: {
 				DisplayName: 燠沼气
-				Description: Mods.tsorcRevamp.Buffs.PyromethaneDebuff.Description
+				Description: ""
 			}
 
 			WorldEnderCooldown: {
@@ -8648,7 +8652,7 @@ Mods: {
 
 			RustedChainDebuff: {
 				DisplayName: 锈蚀铁链护甲穿透
-				Description: Mods.tsorcRevamp.Buffs.RustedChainDebuff.Description
+				Description: ""
 			}
 
 			Gilled: {
@@ -8658,7 +8662,7 @@ Mods: {
 
 			AwestruckDebuff: {
 				DisplayName: 惶恐减益
-				Description: Mods.tsorcRevamp.Buffs.AwestruckDebuff.Description
+				Description: ""
 			}
 
 			TerrorbeakBuff: {
@@ -8673,12 +8677,12 @@ Mods: {
 
 			Insanity: {
 				DisplayName: 疯狂
-				Description: Mods.tsorcRevamp.Buffs.Insanity.Description
+				Description: ""
 			}
 
 			CCShock: {
 				DisplayName: 电击猛击
-				Description: Mods.tsorcRevamp.Buffs.CCShock.Description
+				Description: ""
 			}
 
 			ForgottenImpBuff: {
@@ -8688,7 +8692,7 @@ Mods: {
 
 			Hemorrhage: {
 				DisplayName: 大出血
-				Description: Mods.tsorcRevamp.Buffs.Hemorrhage.Description
+				Description: ""
 			}
 
 			EtherianWyvernBuff: {
@@ -8698,7 +8702,7 @@ Mods: {
 
 			TerraFallShardDebuff: {
 				DisplayName: 泰拉之殇
-				Description: Mods.tsorcRevamp.Buffs.TerraFallShardDebuff.Description
+				Description: ""
 			}
 
 			AbyssWeaponImbue: {
@@ -8711,13 +8715,13 @@ Mods: {
 			}
 
 			MorgulPoisoning: {
-				// Description: Mods.tsorcRevamp.Buffs.MorgulPoisoning.Description
-				// DisplayName: Morgul Poisoning
+				Description: ""
+				DisplayName: 魔古尔剧毒
 			}
 
 			DefenseCrush: {
-				// Description: Mods.tsorcRevamp.Buffs.DefenseCrush.Description
-				// DisplayName: Defense Crush
+				Description: ""
+				DisplayName: 防御崩溃
 			}
 		}
 
@@ -9350,11 +9354,11 @@ Mods: {
 			Bolt3Lightning.DisplayName: 电弧
 			Bolt4Lightning.DisplayName: 电磁场
 			EnergyStrikeScrollProjectile.DisplayName: 能量打击卷轴
-			// EnergyStrikeScrollTeslaCoil.DisplayName: Energy Strike Scroll Tesla Coil
-			// EnergyStrikeScrollZap.DisplayName: Energy Strike Scroll Zap
-			// PowerBoltProjectile.DisplayName: Power Bolt Projectile
-			// SniperBoltProjectile.DisplayName: Sniper Bolt Projectile
-			// HeavyBoltProjectile.DisplayName: Heavy Bolt Projectile
+			EnergyStrikeScrollTeslaCoil.DisplayName: 能量打击卷轴
+			EnergyStrikeScrollZap.DisplayName: 能量打击卷轴
+			PowerBoltProjectile.DisplayName: 强力弩箭
+			SniperBoltProjectile.DisplayName: 高速弩箭
+			HeavyBoltProjectile.DisplayName: 重型弩箭
 		}
 
 		NPCs: {
@@ -10427,7 +10431,7 @@ Mods: {
 			PinwheelFireball.DisplayName: 三焱家族火球
 			AbyssFracture.DisplayName: 破碎深渊
 			AbyssCataclysm.DisplayName: 深渊风暴
-			// AttraidiesShield.DisplayName: Attraidies Shield
+			AttraidiesShield.DisplayName: 阿卓迪斯护盾
 		}
 
 		Prefixes: {

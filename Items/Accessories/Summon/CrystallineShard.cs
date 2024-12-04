@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Accessories.Summon
             int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip3");
             if (ttindex1 != -1)
             {
-                tooltips.Insert(ttindex1, new TooltipLine(Mod, "CritChance", Language.GetTextValue("Mods.tsorcRevamp.Items.CrystallineShard.Tooltip0") + modPlayer.CrystallinePower + Language.GetTextValue("Mods.tsorcRevamp.Items.CrystallineShard.Tooltip1") + (modPlayer.CrystallinePower * 2) + "% " + Language.GetTextValue("Mods.tsorcRevamp.Items.CrystallineShard.Tooltip2")));
+                tooltips.Insert(ttindex1, new TooltipLine(Mod, "CritChance", Language.GetTextValue("Mods.tsorcRevamp.Items.CrystallineShard.Tooltip0",modPlayer.CrystallinePower, modPlayer.CrystallinePower * 2)));
             }
         }
     }

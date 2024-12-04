@@ -1854,9 +1854,7 @@ Mods: {
 					increase whip damage by {2}% and tag strength by {1}% but also decrease whip range by {1}%
 					"A magical substance found only in the Crystalline Dimension"
 					'''
-				Tooltip0: "Current Modifier: "
-				Tooltip1: "% summon tag strength and negative whip range, "
-				Tooltip2: whip damage
+				Tooltip0: Current Modifier: {0}% summon tag strength and negative whip range, {1}% whip damage
 			}
 
 			ShamanEmblem: {
@@ -8618,7 +8616,7 @@ Mods: {
 
 			LionheartMark: {
 				DisplayName: Lionheart Mark
-				Description: Mods.tsorcRevamp.Buffs.LionheartMark.Description
+				Description: ""
 			}
 
 			LethalTempo: {
@@ -8638,7 +8636,7 @@ Mods: {
 
 			PyromethaneDebuff: {
 				DisplayName: Pyromethane Debuff
-				Description: Mods.tsorcRevamp.Buffs.PyromethaneDebuff.Description
+				Description: ""
 			}
 
 			WorldEnderCooldown: {
@@ -8653,7 +8651,7 @@ Mods: {
 
 			RustedChainDebuff: {
 				DisplayName: Rusted Chain Debuff
-				Description: Mods.tsorcRevamp.Buffs.RustedChainDebuff.Description
+				Description: ""
 			}
 
 			Gilled: {
@@ -8663,7 +8661,7 @@ Mods: {
 
 			AwestruckDebuff: {
 				DisplayName: Awestruck Debuff
-				Description: Mods.tsorcRevamp.Buffs.AwestruckDebuff.Description
+				Description: ""
 			}
 
 			TerrorbeakBuff: {
@@ -8678,12 +8676,12 @@ Mods: {
 
 			Insanity: {
 				DisplayName: Insanity
-				Description: Mods.tsorcRevamp.Buffs.Insanity.Description
+				Description: ""
 			}
 
 			CCShock: {
 				DisplayName: C C Shock
-				Description: Mods.tsorcRevamp.Buffs.CCShock.Description
+				Description: ""
 			}
 
 			ForgottenImpBuff: {
@@ -8693,7 +8691,7 @@ Mods: {
 
 			Hemorrhage: {
 				DisplayName: Hemorrhage
-				Description: Mods.tsorcRevamp.Buffs.Hemorrhage.Description
+				Description: ""
 			}
 
 			EtherianWyvernBuff: {
@@ -8703,7 +8701,7 @@ Mods: {
 
 			TerraFallShardDebuff: {
 				DisplayName: Terra Fall Shard Debuff
-				Description: Mods.tsorcRevamp.Buffs.TerraFallShardDebuff.Description
+				Description: ""
 			}
 
 			AbyssWeaponImbue: {
@@ -8716,12 +8714,12 @@ Mods: {
 			}
 
 			MorgulPoisoning: {
-				Description: Mods.tsorcRevamp.Buffs.MorgulPoisoning.Description
+				Description: ""
 				DisplayName: Morgul Poisoning
 			}
 
 			DefenseCrush: {
-				Description: Mods.tsorcRevamp.Buffs.DefenseCrush.Description
+				Description: ""
 				DisplayName: Defense Crush
 			}
 		}
