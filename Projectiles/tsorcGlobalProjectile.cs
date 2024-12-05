@@ -174,18 +174,6 @@ namespace tsorcRevamp.Projectiles
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-                if (projectile.type == ProjectileID.Terrarian && player.statMana >= (int)(player.manaCost * 2f))
-                {
-                    player.statMana -= (int)(player.manaCost * 2f);
-                }
-                else
-                {
-                    if (projectile.type == ProjectileID.Terrarian)
-                    {
-                        projectile.Kill();
-                    }
-                }
-
                 if (projectile.type == ProjectileID.MoonlordTurretLaser)
                 {
                     projectile.usesLocalNPCImmunity = false;

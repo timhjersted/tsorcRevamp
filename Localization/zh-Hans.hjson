@@ -7765,6 +7765,16 @@ Mods: {
 				DisplayName: 炽焰甲片
 				Tooltip: ""
 			}
+
+			LightningBolt: {
+				// DisplayName: Lightning Bolt
+				// Tooltip: Has a chance to summon lightning on hit
+			}
+
+			DivineBallista: {
+				// DisplayName: Divine Ballista
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -9359,6 +9369,7 @@ Mods: {
 			PowerBoltProjectile.DisplayName: 强力弩箭
 			SniperBoltProjectile.DisplayName: 高速弩箭
 			HeavyBoltProjectile.DisplayName: 重型弩箭
+			// LightningBoltProjectile.DisplayName: Lightning Bolt Projectile
 		}
 
 		NPCs: {
