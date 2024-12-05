@@ -13,7 +13,6 @@ namespace tsorcRevamp.Items.Potions
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SoulAmplifier, ConsSoulChanceAmplifier);
         public override void SetStaticDefaults()
         {
-            ItemID.Sets.ItemIconPulse[Item.type] = true; // Makes item pulsate in world.
         }
 
         public override void SetDefaults()

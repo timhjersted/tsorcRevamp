@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Potions
             Item.width = 20;
             Item.height = 26;
             Item.maxStack = Item.CommonMaxStack;
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarityID.Lime;
             Item.consumable = true;
             Item.value = 10000;
             Item.UseSound = SoundID.Item3;
