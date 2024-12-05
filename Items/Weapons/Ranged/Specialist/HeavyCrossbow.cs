@@ -32,7 +32,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = PriceByRarity.Green_2;
             Item.rare = ItemRarityID.Green;
-            Item.consumeAmmoOnLastShotOnly = true;
             Item.autoReuse = true; 
         }
 

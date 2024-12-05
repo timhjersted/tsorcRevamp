@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Item.crit = 15;
             Item.knockBack = 6;
             Item.crit = 16;
-            Item.shootSpeed = 12;
+            Item.shootSpeed = 13;
             Item.useTime = 38;
             Item.useAnimation = 38;
             Item.width = 72;

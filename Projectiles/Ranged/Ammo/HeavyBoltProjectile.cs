@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.ArmorPenetration = 8;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 20;
+            Projectile.localNPCHitCooldown = 60;
         }
 
         public override void OnKill(int timeLeft)
