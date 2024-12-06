@@ -6075,15 +6075,6 @@ Mods: {
 					'''
 			}
 
-			OldHalberd: {
-				DisplayName: Old Halberd
-				Tooltip:
-					'''
-					Does random damage from 0 to {0}
-					Maximum damage is increased by damage modifiers.
-					'''
-			}
-
 			SupremeDragoonLance: {
 				DisplayName: Supreme Dragoon Lance
 				Tooltip: An all-powerful spear forged from the fang of the Dragoon Serpent.
@@ -6182,15 +6173,6 @@ Mods: {
 			Gastraphetes: {
 				DisplayName: Gastraphetes
 				Tooltip: Blacken the sky
-			}
-
-			OldLongbow: {
-				DisplayName: Old Longbow
-				Tooltip:
-					'''
-					Does random damage from 0 to 32
-					Maximum damage is increased by damage modifiers.
-					'''
 			}
 
 			PhoenixOverdrive: {
@@ -6352,15 +6334,6 @@ Mods: {
 					Right click to throw a coin
 					Shooting a coin reflects your shot into the nearest enemy weak point
 					Reflected shots have increased damage, guarenteed crits, and pierce walls
-					'''
-			}
-
-			OldCrossbow: {
-				DisplayName: Old Crossbow
-				Tooltip:
-					'''
-					Does random damage from 0 to 38
-					Maximum damage is increased by damage modifiers.
 					'''
 			}
 
@@ -9141,7 +9114,6 @@ Mods: {
 			GaeBolgProj.DisplayName: Gae Bolg
 			HiRyuuSpearProj.DisplayName: Hi Ryuu Spear
 			LonginusProj.DisplayName: Longinus
-			OldHalberdProj.DisplayName: Old Halberd
 			SporePowder.DisplayName: Spore Powder
 			SSShot.DisplayName: S S Shot
 			StarfallProjectile.DisplayName: Starfall

@@ -19,7 +19,6 @@ namespace tsorcRevamp.Projectiles
             Projectile.penetrate = 8;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            Projectile.DamageType = DamageClass.Magic;
             Projectile.light = 0.8f;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 25;

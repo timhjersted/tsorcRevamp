@@ -48,7 +48,6 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.Torch, 10, 10, 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Throwing.ThrowingSpear>(), 1, 20, 75));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<IronShield>(), 30));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Spears.OldHalberd>(), 30));
             npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 5));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DeadChicken>(), 10));
         }

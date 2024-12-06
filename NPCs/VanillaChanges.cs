@@ -902,7 +902,7 @@ namespace tsorcRevamp.NPCs
                             MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
                             if (!globalNPC.lifeBoosted)
                             {
-                                npc.lifeMax *= 2; 
+                                npc.lifeMax = (int)(npc.lifeMax * 2.25f); 
                                 npc.life = npc.lifeMax; 
                                 npc.defense = (int)(npc.defense * 1.5);
                                 npc.knockBackResist *= 1.25f;
@@ -3133,6 +3133,8 @@ namespace tsorcRevamp.NPCs
 
                 case int pillars when (pillars == NPCID.LunarTowerVortex || pillars == NPCID.LunarTowerStardust || pillars == NPCID.LunarTowerSolar || pillars == NPCID.LunarTowerNebula):
                     {
+                        npc.lifeMax = 60000;
+                        npc.life = npc.lifeMax;
                         npc.value = 26660;
                         break;
                     }
@@ -3218,8 +3220,9 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.NebulaHeadcrab):
                     {
+                        npc.lifeMax = 500; 
+                        npc.life = npc.lifeMax;
                         npc.value = 2230;
-
                         break;
                     }
 
@@ -3382,9 +3385,9 @@ namespace tsorcRevamp.NPCs
                     MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
                     if (!globalNPC.lifeBoosted)
                     {
-                        npc.lifeMax *= 2; 
+                        npc.lifeMax = (int)(npc.lifeMax * 2.25f);
                         npc.life = npc.lifeMax; 
-                        npc.defense = (int)(npc.defense * 1.5);
+                        npc.defense = (int)(npc.defense * 1.75);
                         npc.knockBackResist *= 1.25f;
                         globalNPC.lifeBoosted = true; 
                     }
@@ -3410,10 +3413,55 @@ namespace tsorcRevamp.NPCs
                     MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
                     if (!globalNPC.lifeBoosted)
                     {
-                        npc.lifeMax *= 4; 
+                        npc.lifeMax = (int)(npc.lifeMax * 4.75f);
                         npc.life = npc.lifeMax; 
-                        npc.defense = (int)(npc.defense * 1.75);
+                        npc.defense = (int)(npc.defense * 2.25);
                         npc.knockBackResist *= 1.45f;
+                        globalNPC.lifeBoosted = true; 
+                    }
+                }
+            }
+
+            if (tsorcRevampWorld.SuperHardMode)
+            {       
+                if (npc.type == NPCID.StardustWormHead
+                    || npc.type == NPCID.StardustCellBig
+                    || npc.type == NPCID.StardustCellSmall
+                    || npc.type == NPCID.StardustJellyfishBig
+                    || npc.type == NPCID.StardustSpiderBig
+                    || npc.type == NPCID.StardustSpiderSmall
+                    || npc.type == NPCID.StardustSoldier
+                    || npc.type == NPCID.SolarCrawltipedeTail
+                    || npc.type == NPCID.SolarDrakomire
+                    || npc.type == NPCID.SolarDrakomireRider
+                    || npc.type == NPCID.SolarSroller
+                    || npc.type == NPCID.SolarCorite
+                    || npc.type == NPCID.SolarSolenian
+                    || npc.type == NPCID.NebulaBrain
+                    || npc.type == NPCID.NebulaHeadcrab
+                    || npc.type == NPCID.NebulaBeast
+                    || npc.type == NPCID.NebulaSoldier
+                    || npc.type == NPCID.VortexRifleman
+                    || npc.type == NPCID.VortexHornetQueen
+                    || npc.type == NPCID.VortexHornet
+                    || npc.type == NPCID.VortexLarva
+                    || npc.type == NPCID.VortexSoldier
+                    || npc.type == NPCID.SolarCorite
+                    || npc.type == NPCID.SolarCorite
+                    || npc.type == NPCID.SolarCorite
+                    || npc.type == NPCID.SolarCorite
+                    || npc.type == NPCID.SolarCorite
+                    || npc.type == NPCID.SolarCorite
+                    || npc.type == NPCID.Shark)
+                {
+
+                    MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                    if (!globalNPC.lifeBoosted)
+                    {
+                        npc.lifeMax = (int)(npc.lifeMax * 1.30f);
+                        npc.life = npc.lifeMax; 
+                        npc.defense = (int)(npc.defense * 1.20);
+                        npc.knockBackResist *= 1.10f;
                         globalNPC.lifeBoosted = true; 
                     }
                 }

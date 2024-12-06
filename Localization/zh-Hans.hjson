@@ -6075,15 +6075,6 @@ Mods: {
 					'''
 			}
 
-			OldHalberd: {
-				DisplayName: 旧戟
-				Tooltip:
-					'''
-					造成从 0 到 {0} 的随机伤害
-					随伤害词缀的最大伤害变化而变化
-					'''
-			}
-
 			SupremeDragoonLance: {
 				DisplayName: 至尊龙骑枪
 				Tooltip: 由龙蛇的毒牙锻造而成的全能长矛
@@ -6182,15 +6173,6 @@ Mods: {
 			Gastraphetes: {
 				DisplayName: 腹张弩
 				Tooltip: 以箭雨染黑天空...
-			}
-
-			OldLongbow: {
-				DisplayName: 旧长弓
-				Tooltip:
-					'''
-					造成从 0 到 32 的随机伤害
-					最大伤害随伤害词缀的变化而变化
-					'''
 			}
 
 			PhoenixOverdrive: {
@@ -6352,15 +6334,6 @@ Mods: {
 					右键投掷硬币
 					射击硬币，子弹会反弹到附近敌人身上并击中弱点
 					反弹后的子弹伤害增加，必定暴击，并且穿墙
-					'''
-			}
-
-			OldCrossbow: {
-				DisplayName: 旧弩
-				Tooltip:
-					'''
-					造成从 0 到 38 的随机伤害
-					随伤害词缀的最大伤害变化而变化
 					'''
 			}
 
@@ -9142,7 +9115,6 @@ Mods: {
 			GaeBolgProj.DisplayName: 盖博尔格
 			HiRyuuSpearProj.DisplayName: 空域之矛
 			LonginusProj.DisplayName: 朗基努斯
-			OldHalberdProj.DisplayName: 旧戟
 			SporePowder.DisplayName: 孢子粉
 			SSShot.DisplayName: S S之击
 			StarfallProjectile.DisplayName: 流星雨

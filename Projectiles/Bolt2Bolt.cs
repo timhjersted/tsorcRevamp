@@ -19,8 +19,9 @@ namespace tsorcRevamp.Projectiles
             Projectile.penetrate = 6;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            Projectile.DamageType = DamageClass.Magic;
             Projectile.light = 0.6f;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 25;
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
