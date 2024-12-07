@@ -7747,6 +7747,20 @@ Mods: {
 				DisplayName: Divine Ballista
 				Tooltip: ""
 			}
+
+			SupremeDragoonLash: {
+				DisplayName: Supreme Dragoon Lash
+				Tooltip: ""
+				Tooltip0:
+					'''
+					{$CommonItemTooltip.PercentSummonTagCritChance}
+					Reforged to its full potential
+					Breathe fire at enemies struck by this whip and a minion on a cooldown
+					Refresh the cooldown by whipping an enemy
+					Strike enemies to gain attack speed
+					{$CommonItemTooltip.Whips}
+					'''
+			}
 		}
 
 		Buffs: {
@@ -9341,6 +9355,7 @@ Mods: {
 			SniperBoltProjectile.DisplayName: Sniper Bolt Projectile
 			HeavyBoltProjectile.DisplayName: Heavy Bolt Projectile
 			LightningBoltProjectile.DisplayName: Lightning Bolt Projectile
+			SupremeDragoonLashProjectile.DisplayName: Supreme Dragoon Lash Projectile
 		}
 
 		NPCs: {

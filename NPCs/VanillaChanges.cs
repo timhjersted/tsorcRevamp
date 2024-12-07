@@ -60,13 +60,40 @@ namespace tsorcRevamp.NPCs
                 zombie == NPCID.MaggotZombie
                 ):
                     {
+                        
                         npc.value = 100;
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax = (int)(npc.lifeMax * 5f); 
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 3);
+                                npc.knockBackResist *= 1.75f;
+                                globalNPC.lifeBoosted = true; 
+                            }
+                        }
+                        break;
                         break;
                     }
 
-                case int armedzombie when ((armedzombie >= NPCID.ArmedZombie && armedzombie <= NPCID.ArmedZombieCenx) || armedzombie == NPCID.ArmedTorchZombie):
+                case int armedzombie when ((armedzombie >= NPCID.ArmedZombie && armedzombie <= NPCID.ArmedZombie) || armedzombie == NPCID.ArmedTorchZombie):
                     {
                         npc.value = 110;
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax = (int)(npc.lifeMax * 5f); 
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 3);
+                                npc.knockBackResist *= 1.75f;
+                                globalNPC.lifeBoosted = true; 
+                            }
+                        }
+                        break;
                         break;
                     }
 
@@ -88,12 +115,36 @@ namespace tsorcRevamp.NPCs
                 ):
                     {
                         npc.value = 140;
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax = (int)(npc.lifeMax * 5f); 
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 3);
+                                npc.knockBackResist *= 1.75f;
+                                globalNPC.lifeBoosted = true; 
+                            }
+                        }
                         break;
                     }
 
                 case int throwingskeleton when ((throwingskeleton >= NPCID.BoneThrowingSkeleton && throwingskeleton <= NPCID.BoneThrowingSkeleton4)):
                     {
                         npc.value = 210;
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax = (int)(npc.lifeMax * 5f); 
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 3);
+                                npc.knockBackResist *= 1.75f;
+                                globalNPC.lifeBoosted = true; 
+                            }
+                        }
                         break;
                     }
 
@@ -427,9 +478,18 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.value = 350;
                         if (tsorcRevampWorld.SuperHardMode)
-                        {
-                            npc.active = false;
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax = (int)(npc.lifeMax * 5f); 
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 3);
+                                npc.knockBackResist *= 1.75f;
+                                globalNPC.lifeBoosted = true; 
+                            }
                         }
+                        break;
                         break;
                     }
                     
@@ -3379,13 +3439,14 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.Medusa
                     || npc.type == NPCID.Mimic
                     || npc.type == NPCID.DungeonSpirit
+                    || npc.type == NPCID.DesertDjinn
                     || npc.type == NPCID.IceMimic)
                 {
 
                     MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
                     if (!globalNPC.lifeBoosted)
                     {
-                        npc.lifeMax = (int)(npc.lifeMax * 2.25f);
+                        npc.lifeMax = (int)(npc.lifeMax * 2.25f); //Buff some HM enemies in SHM
                         npc.life = npc.lifeMax; 
                         npc.defense = (int)(npc.defense * 1.75);
                         npc.knockBackResist *= 1.25f;
@@ -3407,13 +3468,15 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.Demon
                     || npc.type == NPCID.MeteorHead
                     || npc.type == NPCID.GreekSkeleton
+                    || npc.type == NPCID.BloodZombie
+                    || npc.type == NPCID.Drippler
                     || npc.type == NPCID.Shark)
                 {
 
-                    MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                    MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>(); 
                     if (!globalNPC.lifeBoosted)
                     {
-                        npc.lifeMax = (int)(npc.lifeMax * 4.75f);
+                        npc.lifeMax = (int)(npc.lifeMax * 4.75f); //Buff some PHM enemies in SHM
                         npc.life = npc.lifeMax; 
                         npc.defense = (int)(npc.defense * 2.25);
                         npc.knockBackResist *= 1.45f;
@@ -3494,7 +3557,7 @@ namespace tsorcRevamp.NPCs
                         || npc.type == NPCID.AngryBonesBigHelmet
                         || npc.type == NPCID.AngryBonesBigMuscle
                         || npc.type == NPCID.BlazingWheel
-                        || npc.type == NPCID.DesertDjinn //Literally make the lava/spike section near the entrance to the Hunter's dungeon in the underground desert impossible        
+                        //|| npc.type == NPCID.DesertDjinn : The corruption in the hunter's temple entrance was removed, so no need to remove this enemy anymore
 
                         )
                     {
@@ -3604,9 +3667,20 @@ namespace tsorcRevamp.NPCs
                         || npc.type == NPCID.Dandelion
                         || npc.type == NPCID.TombCrawlerHead
                         || npc.type == NPCID.MotherSlime
+                        || npc.type == NPCID.Piranha
+                        || npc.type == NPCID.UndeadViking
                         || npc.type == NPCID.CursedSkull)
                     {
-                    npc.active = false;
+                    npc.active = false; //Most PHM enemies are removed SHM, they're taking up spawn slots for nothing at this poin
+                    }
+
+                    if ((npc.type >= NPCID.DemonEye2 && npc.type <= NPCID.CataractEye2) ||
+                        npc.type == NPCID.DemonEye ||
+                        (npc.type >= NPCID.CataractEye && npc.type <= NPCID.PurpleEye) ||
+                        npc.type == NPCID.DemonEyeOwl ||
+                        npc.type == NPCID.DemonEyeSpaceship)
+                    {
+                        npc.active = false;
                     }
                 }
 

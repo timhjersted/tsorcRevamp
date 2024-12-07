@@ -30,6 +30,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.SnowOwlBanner>();
+
+            if (Main.hardMode)
+            {
+                NPC.lifeMax = 50;
+                NPC.defense = 15;
+                NPC.damage = 50;
+                NPC.value = 150; 
+            }
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
@@ -43,6 +51,10 @@ namespace tsorcRevamp.NPCs.Enemies
             if (spawnInfo.Water)
             {
                 chance = 0;
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                return chance /= 0;
             }
             return chance;
         }

@@ -98,7 +98,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (tsorcRevampWorld.SuperHardMode)
             {
-                return chance /= 8;
+                return chance /= 0;
             }
             return chance;
         }
