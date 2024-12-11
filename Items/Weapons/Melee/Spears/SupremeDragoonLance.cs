@@ -12,8 +12,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
     public class SupremeDragoonLance : ModdedSpearItem
     {
         public override int ProjectileID => ModContent.ProjectileType<SupremeDragoonLanceProjectile>();
-        public override int Width => 50;
-        public override int Height => 50;
+        public override int Width => 74;
+        public override int Height => 74;
         public override int BaseDmg => 450;
         public override int BaseCritChance => 26;
         public override float BaseKnockback => 15f;
