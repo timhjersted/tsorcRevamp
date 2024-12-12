@@ -9356,6 +9356,7 @@ Mods: {
 			HeavyBoltProjectile.DisplayName: Heavy Bolt Projectile
 			LightningBoltProjectile.DisplayName: Lightning Bolt Projectile
 			SupremeDragoonLashProjectile.DisplayName: Supreme Dragoon Lash Projectile
+			HighCaliberRound.DisplayName: High Caliber Round
 		}
 
 		NPCs: {

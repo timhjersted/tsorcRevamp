@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Ranged
 {
-    class AntiMaterialRound : ModProjectile
+    class HighCaliberRound : ModProjectile
     {
         public override void SetDefaults()
         {
@@ -15,9 +15,10 @@ namespace tsorcRevamp.Projectiles.Ranged
             Projectile.height = 12;
             Projectile.friendly = true;
             Projectile.aiStyle = 0;
+            Projectile.scale = 0.9f;
             Projectile.DamageType = DamageClass.Ranged;
-            Projectile.tileCollide = false;
-            Projectile.penetrate = 5;
+            Projectile.tileCollide = true;
+            Projectile.penetrate = 3;
             //In theory this means the projectile can only ever hit a NPC once.
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
@@ -27,6 +28,7 @@ namespace tsorcRevamp.Projectiles.Ranged
             // DisplayName.SetDefault("Anti-Material Round");
         }
 
+        public override string Texture => "tsorcRevamp/Projectiles/Ranged/AntiMaterialRound";
         bool reposition = true;
         float sinwaveCounter = -1.4f;
         bool hitTile = false;
@@ -91,7 +93,7 @@ namespace tsorcRevamp.Projectiles.Ranged
                     {//tracer
                         Vector2 DustPos = Projectile.position;
 
-                        int DustIndex = Dust.NewDust(DustPos, 0, 0, 272, 0, 0, 100, default(Color), 1.6f);
+                        int DustIndex = Dust.NewDust(DustPos, 0, 0, 6, 0, 0, 100, default(Color), 1.4f);
                         Main.dust[DustIndex].noGravity = true;
                         Main.dust[DustIndex].velocity = new Vector2(0, 0);
                     }
@@ -101,8 +103,8 @@ namespace tsorcRevamp.Projectiles.Ranged
                         int DustWidth = Projectile.width;
                         int DustHeight = Projectile.height;
 
-                        Dust.NewDust(DustPos, DustWidth, DustHeight, 272, 0, 0, 100, default(Color), 1.1f);
-                        int DustIndex = Dust.NewDust(DustPos, DustWidth, DustHeight, 31, 0, 0, 100, default(Color), 3f);
+                        Dust.NewDust(DustPos, DustWidth, DustHeight, 6, 0, 0, 100, default(Color), 1.1f);
+                        int DustIndex = Dust.NewDust(DustPos, DustWidth, DustHeight, 31, 0, 0, 100, default(Color), 2.5f);
                         Main.dust[DustIndex].noGravity = true;
                     }
                 }
@@ -113,7 +115,7 @@ namespace tsorcRevamp.Projectiles.Ranged
                         new Vector2((float)(15 * Math.Cos(sinwaveCounter) * Math.Cos(Projectile.rotation)),
                         (float)(15 * Math.Sin(sinwaveCounter) * Math.Sin(Projectile.rotation)));
 
-                    int sineTop = Dust.NewDust(DustTopPos, 0, 0, 272, 0, 0, 100, default(Color), 1.5f);
+                    int sineTop = Dust.NewDust(DustTopPos, 0, 0, 127, 0, 0, 100, default(Color), 0.9f);
                     Main.dust[sineTop].noGravity = true;
                     Main.dust[sineTop].velocity = new Vector2(0, 0);
                     //sine wave bottom
@@ -121,7 +123,7 @@ namespace tsorcRevamp.Projectiles.Ranged
                         new Vector2((float)(-15 * Math.Cos(sinwaveCounter) * Math.Cos(Projectile.rotation)),
                         (float)(-15 * Math.Sin(sinwaveCounter) * Math.Sin(Projectile.rotation)));
 
-                    int sineBot = Dust.NewDust(DustBotPos, 0, 0, 272, 0, 0, 100, default(Color), 1.5f);
+                    int sineBot = Dust.NewDust(DustBotPos, 0, 0, 127, 0, 0, 100, default(Color), 0.9f);
                     Main.dust[sineBot].noGravity = true;
                     Main.dust[sineBot].velocity = new Vector2(0, 0);
                 }
@@ -140,7 +142,7 @@ namespace tsorcRevamp.Projectiles.Ranged
 
                     if (Projectile.tileCollide)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath43, Projectile.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
                         Projectile.Kill();
                     }
                 }
@@ -182,7 +184,7 @@ namespace tsorcRevamp.Projectiles.Ranged
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath43, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
             modifiers.DefenseEffectiveness *= 0;
             if (Projectile.penetrate <= 0)
             {
@@ -194,11 +196,11 @@ namespace tsorcRevamp.Projectiles.Ranged
         {
             for (int i = 0; i < 10; i++)
             {
-                Dust.NewDustPerfect(Projectile.position, 205, Projectile.velocity + new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), 100, new Color(), 1f).noGravity = true;
+                Dust.NewDustPerfect(Projectile.position, 127, Projectile.velocity + new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), 100, new Color(), 0.9f).noGravity = true;
             }
             for (int i = 0; i < 7; i++)
             {
-                Dust.NewDustPerfect(Projectile.position, 134, Projectile.velocity + new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), 100, new Color(), 2f).noGravity = true;
+                Dust.NewDustPerfect(Projectile.position, 6, Projectile.velocity + new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), 100, new Color(), 1.5f).noGravity = true;
             }
             return base.PreKill(timeLeft);
         }

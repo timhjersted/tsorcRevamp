@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             Item.height = 40;
             Item.knockBack = 5;
             Item.DamageType = DamageClass.Melee;
-            Item.scale = .9f;
+            Item.scale = 1f;
             Item.useAnimation = 21;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;

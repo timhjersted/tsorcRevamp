@@ -1,8 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Weapons.Ranged;
+using tsorcRevamp.Projectiles.Ranged;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Guns
 {
@@ -23,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Item.DamageType = DamageClass.Ranged;
             Item.rare = ItemRarityID.Lime;
             Item.shoot = ProjectileID.PurificationPowder;
-            Item.shootSpeed = 20;
+            Item.shootSpeed = 9;
             Item.useAmmo = AmmoID.Bullet;
             Item.useAnimation = 60;
             Item.useTime = 60;
@@ -53,5 +56,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
         {
 			return new Vector2(-19f, -2f);
 		}
+
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+        {
+            type = ModContent.ProjectileType<HighCaliberRound>();
+        }
     }
 }
