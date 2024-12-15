@@ -422,6 +422,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<FairyInABottle>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.SpectreGoggles));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<FieryScale>(), 1, 4, 8));
         }
     }
     public class LichBag : BossBag
@@ -435,7 +436,7 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragoonBoots>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.ForgottenGaiaSword>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<LichBone>(), 1, 3, 6));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<LichBone>(), 1, 4, 8));
         }
     }
     public class BlightBag : BossBag

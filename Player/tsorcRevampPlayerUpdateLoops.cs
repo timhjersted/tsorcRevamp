@@ -819,6 +819,24 @@ namespace tsorcRevamp
                 Player.AddBuff(BuffID.Darkness, 60);
             }
 
+            if (Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.PinkDungeonSlab)
+            {
+                Player.AddBuff(BuffID.Darkness, 5*60);
+                Player.AddBuff(BuffID.WitheredArmor, 5*60);
+            }
+
+            if (Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.HeavenforgeBrickWall)
+            {
+                Player.AddBuff(BuffID.Darkness, 5*60);
+                Player.AddBuff(BuffID.WitheredArmor, 5*60);
+            }
+
+            if (Framing.GetTileSafely(new Point((int)Player.position.X / 16, (int)Player.position.Y / 16)).WallType == WallID.StarRoyaleBrickWall)
+            {
+                Player.AddBuff(BuffID.Darkness, 5*60);
+                Player.AddBuff(BuffID.WitheredArmor, 5*60);
+            }
+
             if (Player.HasBuff(ModContent.BuffType<NondescriptOwlBuff>()) && Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Summon.Archer.NondescriptOwlProjectile>()] == 0)
             {
                 Item staff = new();
@@ -2068,6 +2086,12 @@ namespace tsorcRevamp
             {
                 Player.AddBuff(BuffID.WitheredWeapon, 5*60);
                 Player.AddBuff(BuffID.Blackout, 5*60);
+            }
+
+            if (Main.LocalPlayer.ZoneGlowshroom && !Main.LocalPlayer.ZoneDungeon && Main.LocalPlayer.ZoneRockLayerHeight && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.SuperHardMode)
+            {
+                Player.AddBuff(BuffID.WaterCandle, 5*60);
+                Player.AddBuff(BuffID.MoonLeech, 5*60);
             }
         }
 

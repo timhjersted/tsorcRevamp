@@ -31,6 +31,14 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.PossessedArmor;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DunlendingBanner>();
+            
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 400; 
+                NPC.defense = 40;
+                NPC.value = 640; 
+                NPC.damage = 70;
+            }
         }
 
         public override void HitEffect(NPC.HitInfo hit)

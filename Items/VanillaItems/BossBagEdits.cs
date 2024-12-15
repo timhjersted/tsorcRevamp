@@ -161,6 +161,15 @@ namespace tsorcRevamp.Items.VanillaItems
                 itemLoot.Add(ItemDropRule.Common(ItemID.BossMaskBetsy, 7));
             }
 
+            if (item.type == ItemID.CultistBossBag)
+            {
+                itemLoot.RemoveWhere(_ => true);
+                itemLoot.Add(ItemDropRule.Common(ItemID.BlueLunaticHood));
+                itemLoot.Add(ItemDropRule.Common(ItemID.BlueLunaticRobe));
+                itemLoot.Add(ItemDropRule.Common(ItemID.LunarHook));
+                itemLoot.Add(ItemDropRule.Common(ItemID.BossMaskCultist, 7));
+            }
+
             if (item.type == ItemID.MoonLordBossBag)
             {
                 itemLoot.RemoveWhere(_ => true);

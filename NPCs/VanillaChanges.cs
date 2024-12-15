@@ -1726,6 +1726,19 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.value = 1680;
                         break;
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax *= 2; 
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 1.5);
+                                npc.knockBackResist *= 1.25f;
+                                globalNPC.lifeBoosted = true; 
+                            }
+                        }
+                        break;
                     }
 
                 case (NPCID.FlyingSnake):
@@ -2473,8 +2486,8 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.CultistBoss):
                     {
                         npc.GetGlobalNPC<tsorcRevampGlobalNPC>().DespawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.LunaticCultist.DespawnHandler"), Color.Blue, DustID.BlueTorch);
-
-                        npc.value = 123450;
+                        npc.lifeMax = 45000;
+                        npc.value = 200000;
                         break;
                     }
 
@@ -3193,7 +3206,7 @@ namespace tsorcRevamp.NPCs
 
                 case int pillars when (pillars == NPCID.LunarTowerVortex || pillars == NPCID.LunarTowerStardust || pillars == NPCID.LunarTowerSolar || pillars == NPCID.LunarTowerNebula):
                     {
-                        npc.lifeMax = 60000;
+                        npc.lifeMax = 50000;
                         npc.life = npc.lifeMax;
                         npc.value = 26660;
                         break;
@@ -3387,6 +3400,8 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.Arapaima
                     || npc.type == NPCID.SandShark
                     || npc.type == NPCID.SandsharkHallow
+                    || npc.type == NPCID.SandsharkCorrupt
+                    || npc.type == NPCID.SandsharkCrimson
                     || npc.type == NPCID.BlackRecluse
                     || npc.type == NPCID.BlackRecluseWall
                     || npc.type == NPCID.JungleCreeper
@@ -3407,6 +3422,7 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.PinkJellyfish
                     || npc.type == NPCID.BloodJelly
                     || npc.type == NPCID.FungoFish
+                    || npc.type == NPCID.Mummy
                     || npc.type == NPCID.LightMummy
                     || npc.type == NPCID.DarkMummy
                     || npc.type == NPCID.BloodMummy

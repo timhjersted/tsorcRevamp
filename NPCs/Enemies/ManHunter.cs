@@ -41,6 +41,15 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.damage = 25;
                 archerBoltDamage = 28;
             }
+
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 600;
+                NPC.defense = 38;
+                NPC.value = 1500; 
+                NPC.damage = 50;
+                archerBoltDamage = 40;
+            }
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

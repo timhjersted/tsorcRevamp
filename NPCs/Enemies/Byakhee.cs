@@ -33,6 +33,12 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.Demon;
             //Banner = Item.NPCtoBanner(NPCID.Zombie);
             //BannerItem = Item.BannerToItem(Banner);
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 700;
+                NPC.defense = 16;
+                NPC.damage = 50;
+            }
         }
 
         #region Spawn

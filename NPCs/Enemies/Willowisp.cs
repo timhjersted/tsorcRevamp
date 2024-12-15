@@ -36,6 +36,12 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.Pixie;
             //bannerItem = mod.ItemType("WillowispBanner");
             //banner = mod.NPCType("Willowisp");
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 350;
+                NPC.defense = 15;
+                NPC.damage = 65;
+            }
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
