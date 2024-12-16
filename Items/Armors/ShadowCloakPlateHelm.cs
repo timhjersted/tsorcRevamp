@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class ShadowCloakPlateHelm : ModItem
     {
-        public static float CritChance = 17f;
+        public static float CritChance = 13f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritChance);
         public override void SetStaticDefaults()
         {
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Armors
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 7;
+            Item.defense = 6;
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.fromItem(Item);
         }

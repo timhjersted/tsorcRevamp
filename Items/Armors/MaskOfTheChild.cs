@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void SetDefaults()
         {
-            Item.defense = 7;
+            Item.defense = 8;
             Item.width = 44;
             Item.height = 40;
             Item.rare = ItemRarityID.Green;

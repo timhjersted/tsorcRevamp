@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Legs)]
     public class ShadowCloakGreaves : ModItem
     {
-        public static float MoveSpeed = 5f;
-        public static float AtkSpeed = 7f;
+        public static float MoveSpeed = 8f;
+        public static float AtkSpeed = 9f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeed, AtkSpeed);
         public override void SetStaticDefaults()
         {

@@ -625,7 +625,7 @@ namespace tsorcRevamp.Items.VanillaItems
                         }
                         case 2:
                         {
-                            player.AddBuff(BuffID.Honey, 60 * 5);
+                            player.AddBuff(BuffID.RapidHealing, 60 * 5);
                             break;
                         }
                         case 3:
@@ -635,7 +635,7 @@ namespace tsorcRevamp.Items.VanillaItems
                         }
                         case 4:
                         {
-                            player.AddBuff(AttackSpeed, 60 * 5);
+                            player.AddBuff(BuffID.Rage, 60 * 5);
                             break;
                         }
                         case 5:
