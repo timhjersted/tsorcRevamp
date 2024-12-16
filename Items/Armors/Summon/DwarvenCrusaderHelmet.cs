@@ -12,8 +12,8 @@ namespace tsorcRevamp.Items.Armors.Summon
     {
         public static float WhipDmg = 16f;
         public static float AtkSpeed = 8f;
-        public static float TagDuration = 7f;
-        public static float CritChance = 5f;
+        public static float TagDuration = 8f;
+        public static float CritChance = 7f;
         public static float WhipRange = 30f;
         public static int LifeRegen = 3;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(WhipDmg, AtkSpeed, TagDuration, WhipRange, LifeRegen, CritChance);
@@ -75,7 +75,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
 
             Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(ItemID.AncientHallowedHelmet, 1);
+            recipe2.AddIngredient(ItemID.AncientHallowedHood, 1);
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe2.AddTile(TileID.DemonAltar);
 

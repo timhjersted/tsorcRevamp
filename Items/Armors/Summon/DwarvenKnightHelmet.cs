@@ -11,8 +11,8 @@ namespace tsorcRevamp.Items.Armors.Summon
     class DwarvenKnightHelmet : ModItem
     {
         public static float Dmg = 7f;
-        public static float TagStrength = 7f;
-        public static float CritChance = 7f;
+        public static float TagStrength = 8f;
+        public static float CritChance = 8f;
         public static int MinionSlots = 1;
         public static int SentrySlots = 1;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, TagStrength, MinionSlots, SentrySlots, CritChance);
@@ -70,7 +70,7 @@ namespace tsorcRevamp.Items.Armors.Summon
 
 
             Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(ItemID.AncientHallowedHelmet, 1);
+            recipe2.AddIngredient(ItemID.AncientHallowedHood, 1);
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe2.AddTile(TileID.DemonAltar);
 

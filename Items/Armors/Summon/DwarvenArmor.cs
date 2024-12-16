@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors.Summon
     class DwarvenArmor : ModItem
     {
         public static int MinionSlots = 1;
-        public static float Dmg = 10f;
+        public static float Dmg = 11f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MinionSlots, Dmg);
         public override void SetStaticDefaults()
         {
