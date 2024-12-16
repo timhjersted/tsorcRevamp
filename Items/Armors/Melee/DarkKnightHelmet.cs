@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Armors.Melee
 
 
             Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(ItemID.AncientHallowedHelmet, 1);
+            recipe2.AddIngredient(ItemID.AncientHallowedMask, 1);
             recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 20000);
             recipe2.AddTile(TileID.DemonAltar);
 

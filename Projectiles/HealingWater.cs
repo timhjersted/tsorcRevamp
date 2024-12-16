@@ -12,10 +12,10 @@ namespace tsorcRevamp.Projectiles
             Projectile.friendly = true;
             Projectile.ignoreWater = true;
             Projectile.DamageType = DamageClass.Magic;
-            Projectile.tileCollide = true;
+            Projectile.tileCollide = false;
             Projectile.height = 18;
             Projectile.width = 18;
-            Projectile.timeLeft = 40;
+            Projectile.timeLeft = 50;
             Projectile.alpha = 255;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;

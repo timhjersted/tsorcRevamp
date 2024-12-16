@@ -24,6 +24,7 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
             Projectile.width = 16;
             Projectile.height = 50;
             Projectile.penetrate = -1;
+            Projectile.scale = 1.3f;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
             Projectile.ownerHitCheck = true;
