@@ -707,6 +707,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Items.Weapons.Throwing.RoyalThrowingSpear>(), 100, 1, 50, 30));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Accessories.Mobility.BootsOfHaste>(), 10));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Spears.AncientDragonLance>(), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.Melee.Spears.OldHalberd>(), 5));
             npcLoot.Add(new CommonDrop(ItemID.IronskinPotion, 5, 1, 50, 2));
             npcLoot.Add(new CommonDrop(ItemID.ArcheryPotion, 5, 1, 50, 2));
             npcLoot.Add(new CommonDrop(ItemID.RegenerationPotion, 5, 1, 50, 2));

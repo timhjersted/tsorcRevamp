@@ -7762,6 +7762,15 @@ Mods: {
 					{$CommonItemTooltip.Whips}
 					''' */
 			}
+
+			OldHalberd: {
+				DisplayName: 旧戟
+				Tooltip:
+					'''
+					造成从 0 到 {0} 的随机伤害
+					随伤害词缀的最大伤害变化而变化
+					'''
+			}
 		}
 
 		Buffs: {
@@ -9358,6 +9367,7 @@ Mods: {
 			// LightningBoltProjectile.DisplayName: Lightning Bolt Projectile
 			// SupremeDragoonLashProjectile.DisplayName: Supreme Dragoon Lash Projectile
 			// HighCaliberRound.DisplayName: High Caliber Round
+			// OldHalberdProj.DisplayName: Old Halberd Proj
 		}
 
 		NPCs: {

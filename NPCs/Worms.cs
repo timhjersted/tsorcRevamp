@@ -8,6 +8,8 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles;
+using tsorcRevamp.Projectiles.Ranged;
 
 namespace tsorcRevamp.NPCs
 {
@@ -31,6 +33,7 @@ namespace tsorcRevamp.NPCs
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
+
             if (tsorcRevamp.DestroyerSegments.Contains(npc.type))
             {
                 if (projectile.IsMinionOrSentryRelated) //destroyer minion dmg reduction (flat, can't alter minion damage because they're mostly permanent projectiles)
@@ -69,11 +72,18 @@ namespace tsorcRevamp.NPCs
         }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
+            bool IsFlamethrower = projectile.type == ModContent.ProjectileType<Projectiles.Freezethrower>()
+            || projectile.type == ModContent.ProjectileType<Projectiles.Ranged.MeltdownFirestorm>();
+
             if (tsorcRevamp.DestroyerSegments.Contains(npc.type))
             {
-                if (!projectile.IsMinionOrSentryRelated)
+                if (!projectile.IsMinionOrSentryRelated && !IsFlamethrower)
                 {
                     projectile.damage = (int)(projectile.damage * 0.8f);
+                }
+                if (IsFlamethrower)
+                {
+                    hit.Damage = (int)Math.Round(hit.Damage * 0.4f);
                 }
                 /*for (int i = 0; i < Main.maxNPCs; i++)
                 {
@@ -85,16 +95,24 @@ namespace tsorcRevamp.NPCs
             }
             if (tsorcRevamp.JungleWyvernSegments.Contains(npc.type))
             {
-                if (!projectile.IsMinionOrSentryRelated)
+                if (!projectile.IsMinionOrSentryRelated && !IsFlamethrower)
                 {
                     projectile.damage = (int)(projectile.damage * 0.85f);
+                }
+                if (IsFlamethrower)
+                {
+                    hit.Damage = (int)Math.Round(hit.Damage * 0.4f);
                 }
             }
             if (tsorcRevamp.EaterOfWorldsSegments.Contains(npc.type))
             {
-                if (!projectile.IsMinionOrSentryRelated)
+                if (!projectile.IsMinionOrSentryRelated && !IsFlamethrower)
                 {
                     projectile.damage = (int)(projectile.damage * 0.92f);
+                }
+                if (IsFlamethrower)
+                {
+                    hit.Damage = (int)Math.Round(hit.Damage * 0.5f);
                 }
             }
             base.OnHitByProjectile(npc, projectile, hit, damageDone);

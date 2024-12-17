@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 6;
+            Projectile.localNPCHitCooldown = 8;
             Projectile.ArmorPenetration = 10;
         }
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Triad/HomingStarStar";
@@ -222,17 +222,6 @@ namespace tsorcRevamp.Projectiles
             {
                 target.AddBuff(BuffID.Frozen, 60);
             }
-        }
-        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        {
-            if (target.type == ModContent.NPCType<JungleWyvernHead>() || target.type == ModContent.NPCType<JungleWyvernBody>() || target.type == ModContent.NPCType<JungleWyvernBody2>() ||
-                target.type == ModContent.NPCType<JungleWyvernBody3>() || target.type == ModContent.NPCType<JungleWyvernLegs>() || target.type == ModContent.NPCType<JungleWyvernTail>() ||
-                target.type == ModContent.NPCType<JungleWyvernJuvenileHead>() || target.type == ModContent.NPCType<JungleWyvernJuvenileBody>() || target.type == ModContent.NPCType<JungleWyvernJuvenileBody2>() ||
-                target.type == ModContent.NPCType<JungleWyvernJuvenileBody3>() || target.type == ModContent.NPCType<JungleWyvernJuvenileLegs>() || target.type == ModContent.NPCType<JungleWyvernJuvenileTail>())
-            {
-                modifiers.FinalDamage *= 0.75f;
-            }
-            base.ModifyHitNPC(target, ref modifiers);
         }
     }
 }

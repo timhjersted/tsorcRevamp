@@ -7761,6 +7761,15 @@ Mods: {
 					{$CommonItemTooltip.Whips}
 					'''
 			}
+
+			OldHalberd: {
+				DisplayName: Old Halberd
+				Tooltip:
+					'''
+					Does random damage from 0 to {0}
+					Maximum damage is increased by damage modifiers.
+					'''
+			}
 		}
 
 		Buffs: {
@@ -9357,6 +9366,7 @@ Mods: {
 			LightningBoltProjectile.DisplayName: Lightning Bolt Projectile
 			SupremeDragoonLashProjectile.DisplayName: Supreme Dragoon Lash Projectile
 			HighCaliberRound.DisplayName: High Caliber Round
+			OldHalberdProj.DisplayName: Old Halberd Proj
 		}
 
 		NPCs: {
