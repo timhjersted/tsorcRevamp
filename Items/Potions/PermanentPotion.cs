@@ -1139,7 +1139,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
         public override void SetStaticDefaults()
         {
-            ItemID.Sets.ItemIconPulse[Item.type] = true; // Makes item pulsate in world.
+            //ItemID.Sets.ItemIconPulse[Item.type] = true; // Makes item pulsate in world.
         }
 
         public override void SetDefaults()

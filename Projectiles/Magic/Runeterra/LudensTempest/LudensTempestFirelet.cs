@@ -18,6 +18,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra.LudensTempest
             Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = true;
             Projectile.knockBack = 4;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 20;
         }
 
         public override void AI()

@@ -23,6 +23,8 @@ namespace tsorcRevamp.Projectiles.Magic.Runeterra.LudensTempest
             Projectile.tileCollide = false;
             Projectile.damage = 45;
             Projectile.knockBack = 9;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 20;
 
 
             trailCollision = true;
