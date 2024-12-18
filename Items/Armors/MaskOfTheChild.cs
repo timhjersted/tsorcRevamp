@@ -1,4 +1,4 @@
-﻿Iusing Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
