@@ -3375,6 +3375,7 @@ namespace tsorcRevamp.NPCs
             if (tsorcRevampWorld.SuperHardMode)
             {       
                 if (npc.type == NPCID.HoppinJack
+                    || npc.type == NPCID.GiantWalkingAntlion
                     || npc.type == NPCID.ToxicSludge
                     || npc.type == NPCID.Slimer
                     || npc.type == NPCID.Slimer2
@@ -3675,7 +3676,6 @@ namespace tsorcRevamp.NPCs
                         || npc.type == NPCID.FlyingAntlion
                         || npc.type == NPCID.TorchZombie
                         || npc.type == NPCID.ArmedTorchZombie
-                        || npc.type == NPCID.GiantWalkingAntlion
                         || npc.type == NPCID.GiantFlyingAntlion
                         || npc.type == NPCID.IceBat
                         || npc.type == NPCID.Antlion

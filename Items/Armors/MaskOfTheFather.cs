@@ -8,8 +8,9 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class MaskOfTheFather : ModItem
     {
-        public static float Dmg = 15f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
+        public static float Dmg = 14f;
+        public static float CritDmgIncrease = 15f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, CritDmgIncrease);
         public override void SetStaticDefaults()
         {
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
@@ -27,6 +28,7 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.GetDamage(DamageClass.Generic) += Dmg / 100f;
+            player.GetModPlayer<tsorcRevampPlayer>().MaskOfTheFather = true;
         }
     }
 }

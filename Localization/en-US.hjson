@@ -2376,12 +2376,20 @@ Mods: {
 
 			MaskOfTheChild: {
 				DisplayName: Mask of the Child
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					{$CommonItemTooltip.StaminaRegen@1}
+					'''
 			}
 
 			MaskOfTheFather: {
 				DisplayName: Mask of the Father
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedDamage}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					{$CommonItemTooltip.CritDmg}
+					'''
 			}
 
 			MaskOfTheMother: {

@@ -894,6 +894,10 @@ namespace tsorcRevamp
             {
                 modifiers.CritDamage += Items.Accessories.Ranged.InfinityEdge.CritDmgIncrease / 100f;
             }
+            if (MaskOfTheFather)
+            {
+                modifiers.CritDamage += Items.Armors.MaskOfTheFather.CritDmgIncrease / 100f;
+            }
             if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Bows.CernosPrime>())
             {
                 modifiers.FinalDamage *= 0.55f;

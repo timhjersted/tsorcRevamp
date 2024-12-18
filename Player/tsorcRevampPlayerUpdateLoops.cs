@@ -115,6 +115,7 @@ namespace tsorcRevamp
         public bool GoredrinkerReady = false;
         public bool GoredrinkerSwung = false;
         public int GoredrinkerHits = 0;
+        public bool MaskOfTheFather = false;
 
         public int WorldEnderSwing = 1;
 
@@ -403,10 +404,11 @@ namespace tsorcRevamp
             UndeadTalisman = false;
 
             SteraksGage = false;
-            InfinityEdge = false;
+            InfinityEdge = false; 
             LudensTempest = false;
             Goredrinker = false;
 
+            MaskOfTheFather = false;
             BoneRing = false;
             CursePositiveStatsMultiplier = 1f;
 

@@ -1,4 +1,4 @@
-﻿using Terraria;
+﻿Iusing Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -9,14 +9,15 @@ namespace tsorcRevamp.Items.Armors
     public class MaskOfTheChild : ModItem
     {
         public static float MoveSpeedMult = 25f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeedMult);
+        public static float StaminaRegen = 10f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeedMult, StaminaRegen);
         public override void SetStaticDefaults()
         {
             ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
         }
         public override void SetDefaults()
         {
-            Item.defense = 8;
+            Item.defense = 7;
             Item.width = 44;
             Item.height = 40;
             Item.rare = ItemRarityID.Green;
@@ -26,6 +27,7 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += MoveSpeedMult / 100f;
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 1f + StaminaRegen / 100f;
         }
     }
 }
