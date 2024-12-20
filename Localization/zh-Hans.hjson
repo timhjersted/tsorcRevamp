@@ -6171,7 +6171,7 @@ Mods: {
 			}
 
 			Gastraphetes: {
-				DisplayName: 腹张弩
+				DisplayName: 腹张连弩
 				Tooltip: 以箭雨染黑天空...
 			}
 
@@ -6200,7 +6200,7 @@ Mods: {
 			}
 
 			Crossbow: {
-				DisplayName: 弩
+				DisplayName: 弩炮
 				Tooltip:
 					'''
 					高暴击率
@@ -6556,7 +6556,7 @@ Mods: {
 				DisplayName: 龙纹鞭
 				Tooltip:
 					'''
-					击中敌人时，鞭子会释放火焰吐息
+					击中敌人时释放火焰吐息
 					击中敌人刷新冷却
 					用鞭子持续攻击敌人会增加攻击速度
 					{$CommonItemTooltip.Whips}
@@ -7725,12 +7725,12 @@ Mods: {
 			}
 
 			HeavyCrossbow: {
-				DisplayName: 重型十字弓
+				DisplayName: 重型弩炮
 				Tooltip: ""
 			}
 
 			SniperCrossbow: {
-				DisplayName: 精准十字弓
+				DisplayName: 精准弩炮
 				Tooltip: 将普通弩箭转化为高速弩箭
 			}
 
@@ -7740,27 +7740,27 @@ Mods: {
 			}
 
 			LightningBolt: {
-				// DisplayName: Lightning Bolt
-				// Tooltip: Has a chance to summon lightning on hit
+				DisplayName: 闪电弩箭
+				Tooltip: 命中时有几率召唤闪电
 			}
 
 			DivineBallista: {
-				// DisplayName: Divine Ballista
-				// Tooltip: ""
+				DisplayName: 神圣弩炮
+				Tooltip: ""
 			}
 
 			SupremeDragoonLash: {
-				// DisplayName: Supreme Dragoon Lash
-				// Tooltip: ""
-				/* Tooltip0:
+				DisplayName: 至尊龙纹鞭
+				Tooltip: ""
+				Tooltip0:
 					'''
 					{$CommonItemTooltip.PercentSummonTagCritChance}
-					Reforged to its full potential
-					Breathe fire at enemies struck by this whip and a minion on a cooldown
-					Refresh the cooldown by whipping an enemy
-					Strike enemies to gain attack speed
+					展现其真正的力量
+					击中敌人时释放火焰吐息和仆从
+					击中敌人刷新冷却
+					用鞭子持续攻击敌人会增加攻击速度
 					{$CommonItemTooltip.Whips}
-					''' */
+					'''
 			}
 
 			OldHalberd: {
@@ -9364,10 +9364,10 @@ Mods: {
 			PowerBoltProjectile.DisplayName: 强力弩箭
 			SniperBoltProjectile.DisplayName: 高速弩箭
 			HeavyBoltProjectile.DisplayName: 重型弩箭
-			// LightningBoltProjectile.DisplayName: Lightning Bolt Projectile
-			// SupremeDragoonLashProjectile.DisplayName: Supreme Dragoon Lash Projectile
-			// HighCaliberRound.DisplayName: High Caliber Round
-			// OldHalberdProj.DisplayName: Old Halberd Proj
+			LightningBoltProjectile.DisplayName: 闪电箭
+			SupremeDragoonLashProjectile.DisplayName: 至尊龙纹鞭
+			HighCaliberRound.DisplayName: 大口径步枪
+			OldHalberdProj.DisplayName: 旧戟
 		}
 
 		NPCs: {
