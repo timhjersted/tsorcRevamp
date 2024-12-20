@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Flamethrowers
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 30;
             Item.useTime = 5;
-            Item.damage = 15;
+            Item.damage = 16;
             Item.knockBack = 2;
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item34;

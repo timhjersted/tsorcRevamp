@@ -83,7 +83,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (IsFlamethrower)
                 {
-                    hit.Damage = (int)Math.Round(hit.Damage * 0.4f);
+                    hit.Damage = (int)Math.Round(hit.Damage * 0.2f);
                 }
                 /*for (int i = 0; i < Main.maxNPCs; i++)
                 {
@@ -101,7 +101,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (IsFlamethrower)
                 {
-                    hit.Damage = (int)Math.Round(hit.Damage * 0.4f);
+                    hit.Damage = (int)Math.Round(hit.Damage * 0.3f);
                 }
             }
             if (tsorcRevamp.EaterOfWorldsSegments.Contains(npc.type))
@@ -112,7 +112,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (IsFlamethrower)
                 {
-                    hit.Damage = (int)Math.Round(hit.Damage * 0.5f);
+                    hit.Damage = (int)Math.Round(hit.Damage * 0.4f);
                 }
             }
             base.OnHitByProjectile(npc, projectile, hit, damageDone);

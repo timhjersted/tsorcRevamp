@@ -21,27 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override int Rarity => ItemRarityID.Yellow;
         public override int Value => PriceByRarity.fromItem(Item);
         public override SoundStyle UseSoundID => SoundID.Item71;
-        public static float HiRyuuSpearDamageBoost = 20f;
+        public static float HiRyuuSpearDamageBoost = 25f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(HiRyuuSpearDamageBoost);
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.MonkStaffT2);
-            recipe.AddIngredient(ItemID.SoulofFlight, 5);
-            recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
-            recipe.AddTile(TileID.DemonAltar);
-
-            recipe.Register();
-
-            Recipe recipe2 = CreateRecipe();
-            recipe2.AddIngredient(ItemID.ObsidianSwordfish);
-            recipe2.AddIngredient(ItemID.SoulofFlight, 5);
-            recipe2.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoul>(), 70000);
-            recipe2.AddTile(TileID.DemonAltar);
-
-            recipe2.Register();
-        }
     }
 }
