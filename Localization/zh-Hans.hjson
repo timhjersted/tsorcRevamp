@@ -326,6 +326,7 @@ Mods: {
 			SelectWorld: 选择世界大小:
 			TSORCMap: 新的红云物语冒险地图
 			VanillaMap: 新的原版随机生成地图
+			// TSORCXelvaaRemix: New Story of Red Cloud Remix Map
 			TSORCMapFailed:
 				'''
 				冒险地图下载失败！

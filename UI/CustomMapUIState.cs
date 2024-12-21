@@ -22,6 +22,7 @@ namespace tsorcRevamp.UI
         bool invalidMap = false;
 
         tsorcUICenteredTextButton newCustomMap;
+        
         public override void OnInitialize()
         {
             ConstructUI();
@@ -42,12 +43,11 @@ namespace tsorcRevamp.UI
             tsorcUICenteredTextButton selectorBackground = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.SelectWorld"), .85f, true)
             {
                 Width = StyleDimension.FromPercent(1f),
-                Height = StyleDimension.FromPixels(330),
+                Height = StyleDimension.FromPixels(445),
                 Top = StyleDimension.FromPixels(100f),
                 TextVAlign = 0.075f,
                 BackgroundColor = new Color(33, 43, 79) * 0.8f
             };
-
 
             newCustomMap = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.TSORCMap"), .85f, true)
             {
@@ -57,32 +57,51 @@ namespace tsorcRevamp.UI
                 HAlign = 0.5f,
                 BackgroundColor = new Color(33, 43, 120).MultiplyRGB(Main.DiscoColor * 0.9f)
             };
+
             newCustomMap.OnMouseOver += HoverCustomMap;
             newCustomMap.OnMouseOut += UnselectCustomMap;
             newCustomMap.OnLeftMouseDown += CustomMapSelected;
 
-
-            tsorcUICenteredTextButton newVanillaMap = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.VanillaMap"), .85f, true)
+            tsorcUICenteredTextButton newRemixMap = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.TSORCXelvaaRemix"), .85f, true)
             {
                 Width = StyleDimension.FromPercent(1f),
                 Height = StyleDimension.FromPixels(100),
                 Top = StyleDimension.FromPixels(200f),
                 HAlign = 0.5f,
+                BackgroundColor = new Color(33, 43, 120).MultiplyRGB(Main.DiscoColor * 0.9f)
+            };
+
+            newRemixMap.OnMouseOver += HoverRemixMap;
+            newRemixMap.OnMouseOut += UnselectRemixMap;
+            newRemixMap.OnLeftMouseDown += RemixMapSelected;
+
+            tsorcUICenteredTextButton newVanillaMap = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.VanillaMap"), .85f, true)
+            {
+                Width = StyleDimension.FromPercent(1f),
+                Height = StyleDimension.FromPixels(100),
+                Top = StyleDimension.FromPixels(320f),
+                HAlign = 0.5f,
                 TextVAlign = 0.5f,
                 BackgroundColor = new Color(33, 43, 120)
             };
+
             newVanillaMap.OnMouseOver += HoverVanillaMap;
             newVanillaMap.OnMouseOut += UnselectVanillaMap;
             newVanillaMap.OnLeftMouseDown += VanillaMapSelected;
 
             selectorBackground.Append(newCustomMap);
+            selectorBackground.Append(newRemixMap);
             selectorBackground.Append(newVanillaMap);
+
+            mapSelector.Append(selectorBackground);
+            Append(mapSelector);
+            
 
             tsorcUICenteredTextButton backButton = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.Back"), .85f, true)
             {
                 Width = StyleDimension.FromPercent(1f),
                 Height = StyleDimension.FromPixels(80),
-                Top = StyleDimension.FromPixels(450f),
+                Top = StyleDimension.FromPixels(550f),
                 BackgroundColor = new Color(33, 43, 79),
                 TextHAlign = 0.5f,
 
@@ -93,10 +112,6 @@ namespace tsorcRevamp.UI
             backButton.OnLeftMouseDown += BackButtonPressed;
 
             mapSelector.Append(backButton);
-
-            mapSelector.Append(selectorBackground);
-
-
             Append(mapSelector);
         }
 
@@ -112,7 +127,6 @@ namespace tsorcRevamp.UI
             {
                 newCustomMap.BackgroundColor = Main.DiscoColor;
             }
-
         }
         private void HoverCustomMap(UIMouseEvent evt, UIElement listeningElement)
         {
@@ -123,8 +137,6 @@ namespace tsorcRevamp.UI
                 SoundEngine.PlaySound(SoundID.MenuTick);
             }
         }
-
-
 
         private void HoverVanillaMap(UIMouseEvent evt, UIElement listeningElement)
         {
@@ -137,6 +149,16 @@ namespace tsorcRevamp.UI
                 targetPanel.BackgroundColor = new Color(73, 94, 171);
                 targetPanel.BorderColor = Colors.FancyUIFatButtonMouseOver;
 
+            }
+        }
+
+        private void HoverRemixMap(UIMouseEvent evt, UIElement listeningElement)
+        {
+            UITextPanel<string> targetPanel = evt.Target as UITextPanel<string>;
+
+            if (targetPanel != null)
+            {
+                SoundEngine.PlaySound(SoundID.MenuTick);
             }
         }
         private void UnselectCustomMap(UIMouseEvent evt, UIElement listeningElement)
@@ -159,6 +181,17 @@ namespace tsorcRevamp.UI
                 SoundEngine.PlaySound(SoundID.MenuTick);
 
                 targetPanel.BackgroundColor = new Color(33, 43, 120);
+                targetPanel.BorderColor = Color.Black;
+            }
+        }
+
+        private void UnselectRemixMap(UIMouseEvent evt, UIElement listeningElement)
+        {
+            UITextPanel<string> targetPanel = evt.Target as UITextPanel<string>;
+
+            if (targetPanel != null)
+            {
+                SoundEngine.PlaySound(SoundID.MenuTick);
                 targetPanel.BorderColor = Color.Black;
             }
         }
@@ -263,6 +296,88 @@ namespace tsorcRevamp.UI
                 //targetPanel.SetText("Error: Map missing or corrupted!\nVisit our discord for help: discord.gg/UGE6Mstrgz");
             }
 
+        }
+
+        private void RemixMapSelected(UIMouseEvent evt, UIElement listeningElement)
+        {
+            SoundEngine.PlaySound(SoundID.MenuOpen);
+
+            string dataDir = Main.SavePath + "\\ModConfigs\\tsorcRevampData";
+
+            string remixMapFileName = "\\tsorc-xelvaa-remix.wld";
+            string userRemixMapFileName = "\\TheStoryofRedCloudXelvaaRemix.wld";
+            string worldsFolder = Main.SavePath + "\\Worlds";
+
+            Mod mod = ModContent.GetInstance<tsorcRevamp>();
+            tsorcRevamp thisMod = (tsorcRevamp)mod;
+
+            if (!thisMod.IsMapInvalid(dataDir + remixMapFileName))
+            {
+                if (File.Exists(dataDir + remixMapFileName))
+                {
+                    if (!File.Exists(worldsFolder + userRemixMapFileName))
+                    {
+                        FileInfo fileToCopy = new FileInfo(dataDir + remixMapFileName);
+                        mod.Logger.Info("Attempting to copy remix world.");
+
+                        try
+                        {
+                            fileToCopy.CopyTo(worldsFolder + userRemixMapFileName, false);
+                        }
+                        catch (System.Security.SecurityException e)
+                        {
+                            mod.Logger.Warn("World copy failed ({0}). Try again with administrator privileges?", e);
+                        }
+                        catch (Exception e)
+                        {
+                            mod.Logger.Warn("World copy failed ({0}).", e);
+                        }
+                    }
+                    else
+                    {
+                        mod.Logger.Info("Remix world already exists. Making renamed copy.");
+                        FileInfo fileToCopy = new FileInfo(dataDir + remixMapFileName);
+                        try
+                        {
+                            string newFileName;
+                            bool validName = false;
+                            int worldCount = 1;
+                            do
+                            {
+                                newFileName = "\\TheStoryofRedCloudXelvaaRemix_" + worldCount.ToString() + ".wld";
+                                if (File.Exists(worldsFolder + newFileName))
+                                {
+                                    worldCount++;
+                                    if (worldCount > 255)
+                                    {
+                                        mod.Logger.Warn("World copy failed, too many copies.");
+                                    }
+                                }
+                                else
+                                {
+                                    validName = true;
+                                }
+                            } while (!validName);
+
+                            fileToCopy.CopyTo(worldsFolder + newFileName, false);
+                        }
+                        catch (System.Security.SecurityException e)
+                        {
+                            mod.Logger.Warn("World copy failed ({0}). Try again with administrator privileges?", e);
+                        }
+                        catch (Exception e)
+                        {
+                            mod.Logger.Warn("World copy failed ({0}).", e);
+                        }
+                    }
+                }
+
+                Main.OpenWorldSelectUI();
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show(LangUtils.GetTextValue("UI.TSORCRemixMapFailed"), "TSORC: Remix Map Download Failure!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void BackButtonPressed(UIMouseEvent evt, UIElement listeningElement)

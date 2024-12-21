@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
     public class BandOfStarforging : ModItem
     {
         public static int LifeRegen = 5;
-        public static float MaxManaPercentIncrease = 100f;
+        public static float MaxManaPercentIncrease = 75f;
         public static int ManaRegen = 50;
         public static float ManaRegenDelay = 150f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeRegen, MaxManaPercentIncrease, ManaRegen, ManaRegenDelay);

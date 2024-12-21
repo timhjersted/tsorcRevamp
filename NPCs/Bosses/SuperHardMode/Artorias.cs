@@ -112,7 +112,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //PROJECTILE HIT LOGIC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            if (NPC.justHit && Main.rand.NextBool(13))
+            if (NPC.justHit && Main.rand.NextBool(25))
             {
                 tsorcRevampAIs.TeleportImmediately(NPC, 20, true);
                 poisonTimer = 1f;

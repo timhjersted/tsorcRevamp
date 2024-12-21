@@ -2553,6 +2553,7 @@ namespace tsorcRevamp
             string changelogPath = dataDir + separator + "tsorcChangelog.txt"; //Downloaded changelog from the github
             string musicTempPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcMusic.tmod"; //Where the music mod is downloaded to
             string mapBasePath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcBaseMap.wld"; //Where the map template is downloaded to
+            string mapRemixPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorc-xelvaa-remix.wld"; //Where the map template is downloaded to
 
             //Check if the data directory exists, if not then create it
             if (!Directory.Exists(dataDir))
@@ -2588,6 +2589,11 @@ namespace tsorcRevamp
 
             //If the template file doesn't exist or fails to load for whatever reason, flag its update id to 0 to force a download
             if (IsMapInvalid(mapBasePath))
+            {
+                ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("000000", "");
+            }
+
+            if (IsMapInvalid(mapRemixPath))
             {
                 ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("000000", "");
             }
@@ -2809,6 +2815,7 @@ namespace tsorcRevamp
             string worldsFolder = Main.SavePath + separator + "Worlds";
             string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
             string baseMapFileName = separator + "tsorcBaseMap.wld";
+            string remixMapFileName = separator + "tsorc-xelvaa-remix.wld";
             string newMapFileName = separator + "tsorcBaseMapDownload.wld";
 
             FileInfo fileToCopy = new FileInfo(dataDir + newMapFileName);

@@ -143,7 +143,7 @@ namespace tsorcRevamp.Projectiles
 
             if (size < maxSize)
             {
-                size += 30f;
+                size += 30f * 1.5f;
             }
         }
 

@@ -326,6 +326,7 @@ Mods: {
 			SelectWorld: Select World Type:
 			TSORCMap: New Story of Red Cloud Adventure Map
 			VanillaMap: New Vanilla Map
+			TSORCXelvaaRemix: New Story of Red Cloud Remix Map
 			TSORCMapFailed:
 				'''
 				Error: Adventure Map template missing or corrupted!

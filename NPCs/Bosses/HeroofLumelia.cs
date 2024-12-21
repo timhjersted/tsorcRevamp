@@ -547,35 +547,35 @@ namespace tsorcRevamp.NPCs.Bosses
                         customAi1 = 1f;
                         tsorcRevampAIs.QueueTeleport(NPC, 12, false, 45);
                         boredTeleport = 0;
-                    }
+                    } 
                 }
 
                 //JUSTHIT CODE
-                if (NPC.justHit && NPC.Distance(player.Center) < 100)
-                {
-                    customAi1 = 1f;
-                }
-                if (NPC.justHit && NPC.Distance(player.Center) < 400 && Main.rand.NextBool(3))//
-                {
-                    NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f); //was 6 and 3
-                    float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-6f, -4f);
-                    NPC.velocity.X = v;
-                    if (Main.rand.NextBool(2))
-                    { customAi1 = 70f; } //was 100 but knife goes away and doesn't shoot consistently
-                    else
-                    { customAi1 = 240f; }
+                //if (NPC.justHit && NPC.Distance(player.Center) < 100)
+                //{
+                    //customAi1 = 1f;
+                //}
+                //if (NPC.justHit && NPC.Distance(player.Center) < 400 && Main.rand.NextBool(3))//
+                //{
+                    //NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f); //was 6 and 3
+                    //float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-6f, -4f);
+                    //NPC.velocity.X = v;
+                    //if (Main.rand.NextBool(2))
+                    //{ customAi1 = 70f; } //was 100 but knife goes away and doesn't shoot consistently
+                    //else
+                    //{ customAi1 = 240f; }
 
 
-                    NPC.netUpdate = true;
-                }
-                if (NPC.justHit && NPC.Distance(player.Center) > 451 && Main.rand.NextBool(3))
-                {
-                    NPC.knockBackResist = 0f;
-                    NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f);
-                    NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(9f, 3f);
-                    NPC.netUpdate = true;
+                    //NPC.netUpdate = true;
+                //}
+                //if (NPC.justHit && NPC.Distance(player.Center) > 451 && Main.rand.NextBool(3))
+                //{
+                    //NPC.knockBackResist = 0f;
+                    //NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f);
+                    //NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(9f, 3f);
+                    //NPC.netUpdate = true; 
 
-                }
+                //}
 
                 //ARROWS FROM ARCHERS NEARBY ATTACK
                 if (NPC.Distance(player.Center) > 130 && Main.rand.NextBool(350))

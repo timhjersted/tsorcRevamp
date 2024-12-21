@@ -28,8 +28,8 @@ namespace tsorcRevamp.Projectiles.Magic
             FollowHost = true;
             LaserOrigin = Main.npc[HostIdentifier].Center;
             FiringDuration = 505;
-            TelegraphTime = 60;
-            MaxCharge = 60;
+            TelegraphTime = 30;
+            MaxCharge = 30;
             LaserLength = 5000;
             LaserColor = Color.Red;
             TileCollide = true;

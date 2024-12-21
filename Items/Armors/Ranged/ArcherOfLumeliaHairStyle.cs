@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.AdamantiteMask);
-            recipe2.AddIngredient(ItemID.TitaniumHelmet);
+            recipe2.AddIngredient(ItemID.TitaniumMask);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();

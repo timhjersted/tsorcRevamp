@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Armors.Ranged
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.MythrilHat);
-            recipe2.AddIngredient(ItemID.OrichalcumHeadgear);
+            recipe2.AddIngredient(ItemID.OrichalcumHelmet);
             recipe2.AddTile(TileID.DemonAltar);
 
             recipe2.Register();

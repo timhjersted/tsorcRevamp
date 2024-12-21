@@ -140,7 +140,7 @@ namespace tsorcRevamp.Projectiles.Ranged
 
             if (size < maxSize)
             {
-                size += 10f;
+                size += 10f * 1.5f;
             }
         }
 
