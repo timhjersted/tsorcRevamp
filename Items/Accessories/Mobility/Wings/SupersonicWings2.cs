@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
 
         public override void HorizontalWingSpeeds(Player player, ref float speed, ref float acceleration)
         {
-            speed = 6f;
+            speed = 6.5f;
             acceleration = 0.3f;
         }
 
@@ -91,7 +91,7 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             }
             if (!restricted)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 3;
+                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 2;
                 /** W1K's original code
                 if (player.controlLeft) {
                     if (player.velocity.X > -3) player.velocity.X -= (float)(player.moveSpeed - 1f) / 10;

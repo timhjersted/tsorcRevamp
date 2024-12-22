@@ -43,9 +43,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<QuadroCannon>());
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
-            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 20);
+            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 15);
             recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 70);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200000);
             recipe.AddTile(TileID.DemonAltar);
 

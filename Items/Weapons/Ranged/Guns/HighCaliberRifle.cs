@@ -46,7 +46,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SniperRifle);
             recipe.AddIngredient(ItemID.IllegalGunParts);
-            recipe.AddIngredient(ItemID.Cog, 80);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
             recipe.AddTile(TileID.DemonAltar);
 

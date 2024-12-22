@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.height = 1;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 400;
+            Projectile.timeLeft = 100;
             Projectile.penetrate = -1;
             Projectile.hostile = false;
             Projectile.hide = true;
@@ -92,7 +92,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.MorgulPoisoning>(), 90);
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.MorgulPoisoning>(), 60);
         }
 
         float timeFactor = 0;
