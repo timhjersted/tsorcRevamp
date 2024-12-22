@@ -22,6 +22,7 @@ namespace tsorcRevamp.UI
         bool invalidMap = false;
 
         tsorcUICenteredTextButton newCustomMap;
+        tsorcUICenteredTextButton newRemixMap;
         
         public override void OnInitialize()
         {
@@ -62,7 +63,7 @@ namespace tsorcRevamp.UI
             newCustomMap.OnMouseOut += UnselectCustomMap;
             newCustomMap.OnLeftMouseDown += CustomMapSelected;
 
-            tsorcUICenteredTextButton newRemixMap = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.TSORCXelvaaRemix"), .85f, true)
+            newRemixMap = new tsorcUICenteredTextButton(LangUtils.GetTextValue("UI.TSORCXelvaaRemix"), .85f, true)
             {
                 Width = StyleDimension.FromPercent(1f),
                 Height = StyleDimension.FromPixels(100),
@@ -127,8 +128,24 @@ namespace tsorcRevamp.UI
             {
                 newCustomMap.BackgroundColor = Main.DiscoColor;
             }
+
+            newRemixMap.BackgroundColor = new Color(33, 43, 120).MultiplyRGB(Main.DiscoColor * 0.9f);
+            if (newRemixMap.IsMouseHovering)
+            {
+                newRemixMap.BackgroundColor = Main.DiscoColor;
+            }
         }
         private void HoverCustomMap(UIMouseEvent evt, UIElement listeningElement)
+        {
+            UITextPanel<string> targetPanel = evt.Target as UITextPanel<string>;
+
+            if (targetPanel != null)
+            {
+                SoundEngine.PlaySound(SoundID.MenuTick);
+            }
+        }
+
+        private void HoverRemixMap(UIMouseEvent evt, UIElement listeningElement)
         {
             UITextPanel<string> targetPanel = evt.Target as UITextPanel<string>;
 
@@ -152,16 +169,18 @@ namespace tsorcRevamp.UI
             }
         }
 
-        private void HoverRemixMap(UIMouseEvent evt, UIElement listeningElement)
+        private void UnselectCustomMap(UIMouseEvent evt, UIElement listeningElement)
         {
             UITextPanel<string> targetPanel = evt.Target as UITextPanel<string>;
 
             if (targetPanel != null)
             {
                 SoundEngine.PlaySound(SoundID.MenuTick);
+                targetPanel.BorderColor = Color.Black;
             }
         }
-        private void UnselectCustomMap(UIMouseEvent evt, UIElement listeningElement)
+
+        private void UnselectRemixMap(UIMouseEvent evt, UIElement listeningElement)
         {
             UITextPanel<string> targetPanel = evt.Target as UITextPanel<string>;
 
@@ -181,17 +200,6 @@ namespace tsorcRevamp.UI
                 SoundEngine.PlaySound(SoundID.MenuTick);
 
                 targetPanel.BackgroundColor = new Color(33, 43, 120);
-                targetPanel.BorderColor = Color.Black;
-            }
-        }
-
-        private void UnselectRemixMap(UIMouseEvent evt, UIElement listeningElement)
-        {
-            UITextPanel<string> targetPanel = evt.Target as UITextPanel<string>;
-
-            if (targetPanel != null)
-            {
-                SoundEngine.PlaySound(SoundID.MenuTick);
                 targetPanel.BorderColor = Color.Black;
             }
         }
