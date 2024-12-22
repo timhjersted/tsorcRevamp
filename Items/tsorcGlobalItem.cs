@@ -14,6 +14,7 @@ using tsorcRevamp.Buffs.Runeterra.Melee;
 using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Items.Debug;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.NPCs.Bosses.WyvernMage;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 
@@ -131,7 +132,11 @@ namespace tsorcRevamp.Items
         {
             if (item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0 && !player.HasItem(ModContent.ItemType<DebugTome>()))
             {
-                if (item.type != ItemID.CreativeWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+                if (item.type != ItemID.CreativeWings && item.type != ItemID.AngelWings && item.type != ItemID.DemonWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+                {
+                    return false;
+                }
+                if ((item.type == ItemID.AngelWings || item.type == ItemID.DemonWings) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WyvernMage>())))
                 {
                     return false;
                 }
@@ -154,9 +159,13 @@ namespace tsorcRevamp.Items
 
             if (item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0)
             {
-                if (item.type != ItemID.CreativeWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+                if (item.type != ItemID.CreativeWings && item.type != ItemID.AngelWings && item.type != ItemID.DemonWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.WingsDisabled")));
+                }
+                if ((item.type == ItemID.AngelWings || item.type == ItemID.DemonWings) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WyvernMage>())))
+                {
+                    tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.WingsDisabled2")));
                 }
             }
 

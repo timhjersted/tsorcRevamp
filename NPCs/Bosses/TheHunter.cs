@@ -649,7 +649,6 @@ namespace tsorcRevamp.NPCs.Bosses
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CrestOfEarth>(), 1, 2, 2));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.Drax));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.AngelWings));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<TheHunterMask>(), 7));
             npcLoot.Add(notExpertCondition);
             npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<TheHunterRelic>()));

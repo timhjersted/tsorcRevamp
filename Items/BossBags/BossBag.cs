@@ -277,7 +277,6 @@ namespace tsorcRevamp.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<MythrilBulwark>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrestOfEarth>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.Drax));
-            itemLoot.Add(ItemDropRule.Common(ItemID.AngelWings));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TheHunterMask>(), 7));
         }
     }
@@ -330,6 +329,8 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.LionheartGunblade>()));
+            itemLoot.Add(ItemDropRule.Common(ItemID.AngelWings));
+            itemLoot.Add(ItemDropRule.Common(ItemID.DemonWings));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GemBox>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<LampTome>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>(), 1, 2, 2));

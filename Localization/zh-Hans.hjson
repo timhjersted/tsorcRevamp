@@ -18,6 +18,11 @@ Mods: {
 				这些翅膀已被凶残的[c/009400:茂林飞鸟-猎手][c/383838:诅咒]
 				它们在其被击败之前不能使用
 				'''
+			/* WingsDisabled2:
+				'''
+				These wings have been [c/383838:cursed] by a mysterious [c/FFFAFA:Mage]
+				They can not be used until it is defeated
+				''' */
 			TileEnabled: "[c/1cfc03:冒险模式下允许放置！]"
 			TileDisabled: "[c/fc1c03:冒险模式下禁止放置！]"
 			ItemDisabled: "[c/fc1c03:该物品在冒险模式下被禁用！]"

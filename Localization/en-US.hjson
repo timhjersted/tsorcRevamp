@@ -18,6 +18,11 @@ Mods: {
 				These wings have been [c/383838:cursed] by a ferocious [c/009400:Hunter]
 				They can not be used until it is defeated
 				'''
+			WingsDisabled2:
+				'''
+				These wings have been [c/383838:cursed] by a mysterious [c/FFFAFA:Mage]
+				They can not be used until it is defeated
+				'''
 			TileEnabled: "[c/1cfc03:Can be placed in adventure mode!]"
 			TileDisabled: "[c/fc1c03:Can not be placed in adventure mode!]"
 			ItemDisabled: "[c/fc1c03:This item is disabled in adventure mode!]"

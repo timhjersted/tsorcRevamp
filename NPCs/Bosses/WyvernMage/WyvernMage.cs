@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Accessories.Defensive.Rings;
+using tsorcRevamp.Items.Accessories.Magic;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Tools;
@@ -368,6 +369,13 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             npcLoot.Add(new ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.WyvernMageBag>(), 1, 1, 1, new WyvernMageDropCondition()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<StaminaVessel>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShard>(), 1, 2, 4));
+            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1, 1, 2));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<LampTome>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<GemBox>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.AngelWings));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ItemID.DemonWings));
+            npcLoot.Add(notExpertCondition);
         }
         public override void OnKill()
         {
@@ -382,12 +390,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             }
             if (!Main.expertMode)
             {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 2);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<LampTome>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Magic.GemBox>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<PoisonbiteRing>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<BloodbiteRing>(), 1);
-
                 if (!(tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WyvernMage>()))))
                 { //If the boss has not yet been killed
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 15000); //Then drop the souls
