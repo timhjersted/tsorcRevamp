@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Items.Accessories;
 using tsorcRevamp.Items.Accessories.Defensive;
@@ -12,6 +13,7 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
+    [AutoloadBossHead]
     class AncientDemon : ModNPC
     {
         int meteorDamage = 16;

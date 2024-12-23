@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Ammo
             Recipe recipe = CreateRecipe(400);
             recipe.AddIngredient(ItemID.WoodenArrow, 400);
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 1);  
-            recipe.AddTile(TileID.DemonAltar);
+            recipe.AddTile(TileID.LunarCraftingStation);
             recipe.Register();
         }
 

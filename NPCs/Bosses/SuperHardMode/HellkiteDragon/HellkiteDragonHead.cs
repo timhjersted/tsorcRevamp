@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
     [AutoloadBossHead]
     class HellkiteDragonHead : ModNPC
     {
-        int breathDamage = 17;
+        int breathDamage = 16;
         int flameRainDamage = 16; //was 37
         int meteorDamage = 32;
         public override void SetStaticDefaults()
@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             {
                 NPC.damage = 145;
                 NPC.value = 100000;
-                breathDamage = 58;
+                breathDamage = 54;
                 flameRainDamage = 50;
                 meteorDamage = 60;
             }
