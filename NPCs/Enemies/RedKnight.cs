@@ -117,11 +117,11 @@ namespace tsorcRevamp.NPCs.Enemies
         // Hit logic is stored in GlobalNPC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            //tsorcRevampAIs.RedKnightOnHit(NPC, true);
+            tsorcRevampAIs.RedKnightOnHit(NPC, true);
         }
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            //tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
         public Player player

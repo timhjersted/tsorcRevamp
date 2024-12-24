@@ -64,7 +64,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
 
-            NPC.knockBackResist = 0.15f;
+            NPC.knockBackResist = 0f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BlackKnightBanner>();
             //UsefulFunctions.AddAttack(NPC, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), spearDamage, 9, SoundID.Item17);
@@ -93,11 +93,11 @@ namespace tsorcRevamp.NPCs.Enemies
         // Hit logic is stored in GlobalNPC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            //tsorcRevampAIs.RedKnightOnHit(NPC, true);
+            tsorcRevampAIs.RedKnightOnHit(NPC, true);
         }
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            //tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
+            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
         public Player player

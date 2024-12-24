@@ -4489,7 +4489,7 @@ namespace tsorcRevamp.NPCs
                     switch (randomChoice)
                     {
                         case 0:
-                            npc.ai[1] = 50f;
+                            npc.ai[1] = 0f;
                             break;
 
                         case 1:
@@ -4505,7 +4505,7 @@ namespace tsorcRevamp.NPCs
                             break;
                         case 4:
                             // Big jump back - Spear
-                            if (Main.rand.NextBool(2))
+                            if (Main.rand.NextBool(4))
                             {
                                 npc.TargetClosest(true);
                                 npc.velocity.Y = -9f;
@@ -4515,12 +4515,12 @@ namespace tsorcRevamp.NPCs
                             }
                             else
                             {
-                                npc.ai[1] = 50f;
+                                npc.ai[1] = 0f;
                             }
                             break;
                         case 5:
                             // Small dash back - Bomb
-                            if (Main.rand.NextBool(2))
+                            if (Main.rand.NextBool(4))
                             {
                                 npc.TargetClosest(true);
                                 npc.velocity.Y = -6f;
@@ -4531,7 +4531,7 @@ namespace tsorcRevamp.NPCs
 
                             }
                             // Alt dash - Bomb
-                            else
+                            else if (Main.rand.NextBool(4))
                             {
                                 npc.ai[1] = 850f;
                                 npc.TargetClosest(true);
@@ -4541,29 +4541,24 @@ namespace tsorcRevamp.NPCs
                             break;
                         case 6:
                             // Big dash back - Bomb
-                            if (Main.rand.NextBool(2))
+                            if (Main.rand.NextBool(4))
                             {
                                 npc.TargetClosest(true);
                                 npc.ai[1] = 880f;
                                 npc.velocity.Y = -8f;
                                 npc.velocity.X = -11f * npc.direction;
                                 npc.netUpdate = true;
-                            }
-                            else
-                            {
-                                npc.TargetClosest(true);
-                                npc.ai[1] = 50f;
-                            }
+                            }                          
                             break;
                         case 7:
                             // Teleport
-                            if (Main.rand.NextBool(2))
+                            if (Main.rand.NextBool(4))
                             {
                                 npc.spriteDirection = npc.direction;
                                 TeleportImmediately(npc, 22, true);
                                 npc.netUpdate = true;
                             }
-                            else
+                            else if (Main.rand.NextBool(4))
                             {
                                 // Poison TP
                                 npc.spriteDirection = npc.direction;
@@ -4576,7 +4571,7 @@ namespace tsorcRevamp.NPCs
                             break;
                         case 8:
                             //Small dash back - Spear
-                            if (Main.rand.NextBool(2))
+                            if (Main.rand.NextBool(4))
                             {
                                 npc.TargetClosest(true);
                                 npc.velocity.Y = -3f;
@@ -4584,7 +4579,7 @@ namespace tsorcRevamp.NPCs
                                 npc.ai[1] = 130f;
                                 npc.netUpdate = true;
                             }
-                            else
+                            else if (Main.rand.NextBool(2))
                             {
                                 // Jump high
                                 npc.TargetClosest(true);
@@ -4596,7 +4591,7 @@ namespace tsorcRevamp.NPCs
                             break;
                         case 9:
                             // Dash back - Poison
-                            if (Main.rand.NextBool(2))
+                            if (Main.rand.NextBool(4))
                             {
                                 npc.TargetClosest(true);
                                 npc.velocity.Y = -6f;
@@ -4604,7 +4599,7 @@ namespace tsorcRevamp.NPCs
                                 npc.ai[1] = 280f;
                                 npc.netUpdate = true;
                             }
-                            else
+                            else if (Main.rand.NextBool(4))
                             {
                                 npc.TargetClosest(true);
                                 npc.velocity.Y = -10f;
@@ -4619,10 +4614,10 @@ namespace tsorcRevamp.NPCs
                 }
                 else
                 {
-                    npc.knockBackResist = 0;
+                    //npc.knockBackResist = 0;
                 }
 
-                npc.knockBackResist = 0.4f; //was 0.9            
+                //npc.knockBackResist = 0.4f; //was 0.9            
             }
 
             if (!melee)
@@ -4636,7 +4631,7 @@ namespace tsorcRevamp.NPCs
                     {
                         case 0:
                             // Burst forward
-                            if (Main.rand.NextBool(4))
+                            if (Main.rand.NextBool(5))
                             {
                                 npc.velocity.Y = -9f;
                                 npc.velocity.X = 4f * npc.direction;
@@ -4678,7 +4673,7 @@ namespace tsorcRevamp.NPCs
 
                         case 2:
                             // Teleport
-                            if (npc.Distance(Main.player[npc.target].Center) > 400 && Main.rand.NextBool(3))
+                            if (npc.Distance(Main.player[npc.target].Center) > 400 && Main.rand.NextBool(4))
                             {
                                 TeleportImmediately(npc, 15, false);
                             }
@@ -4715,7 +4710,7 @@ namespace tsorcRevamp.NPCs
                             break;
                         case 5:
                             // Small dash backwards - Bomb
-                            if (Main.rand.NextBool(2))
+                            if (Main.rand.NextBool(4))
                             {
                                 npc.TargetClosest(true);
                                 npc.velocity.Y = -6f;
@@ -4724,7 +4719,7 @@ namespace tsorcRevamp.NPCs
                                 npc.netUpdate = true;
                             }
                             // Alt dash backwards - Bomb
-                            else
+                            if (Main.rand.NextBool(4))
                             {
                                 npc.ai[1] = 850f;
                                 npc.TargetClosest(true);
@@ -4762,7 +4757,7 @@ namespace tsorcRevamp.NPCs
                             break;
                         case 8:
                             // Small dash backwards - Spear
-                            if (Main.rand.NextBool(3))
+                            if (Main.rand.NextBool(4))
                             {
                                 npc.TargetClosest(true);
                                 npc.velocity.Y = -3f;
@@ -4770,7 +4765,7 @@ namespace tsorcRevamp.NPCs
                                 npc.ai[1] = 140f;
                                 npc.netUpdate = true;
                             }
-                            else
+                            else if (Main.rand.NextBool(4))
                             // Jump high, slightly forward
                             {
                                 npc.TargetClosest(true);
