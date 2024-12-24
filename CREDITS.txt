@@ -9,6 +9,7 @@ Chroma Equinox / programmer + spriter
 RecursiveCollapse / programmer
 Vibrent / programmer + sprite editor
 MarfMasterofDesaster / programmer + beta testing
+Xelvaa / programmer + remix map builder
 NephilimDeath / spriter + translator
 JOI3 / spriter
 Fezzy Draws / spriter
