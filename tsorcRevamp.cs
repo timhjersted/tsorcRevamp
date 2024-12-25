@@ -115,6 +115,7 @@ namespace tsorcRevamp
         internal bool UICooldown = false;
         internal bool worldButtonClicked = false;
         internal static int worldDownloadFailures = 0;
+        internal static int RemixworldDownloadFailures = 0;
         internal static int musicModDownloadFailures = 0;
         public static List<int> KillAllowed;
         public static List<int> PlaceAllowed;
@@ -193,8 +194,11 @@ namespace tsorcRevamp
         public static bool DownloadingMusic = false;
         public static float MusicDownloadProgress = 0;
         public static string newMapUpdateString = "";
+        public static string newRemixMapUpdateString = "";
         public static float MapDownloadProgress = 0;
         public static float MapDownloadTotalBytes = 0;
+        public static float RemixMapDownloadProgress = 0;
+        public static float RemixMapDownloadTotalBytes = 0;
         public static ModKeybind DodgerollKey;
         //public static ModHotKey SwordflipKey;
 
@@ -2551,6 +2555,7 @@ namespace tsorcRevamp
             char separator = Path.DirectorySeparatorChar;
             string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
             string changelogPath = dataDir + separator + "tsorcChangelog.txt"; //Downloaded changelog from the github
+            string RemixchangelogPath = dataDir + separator + "xelvaa-RemixChangelog.txt"; //Downloaded changelog from the github
             string musicTempPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcMusic.tmod"; //Where the music mod is downloaded to
             string mapBasePath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcBaseMap.wld"; //Where the map template is downloaded to
             string mapRemixPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorc-xelvaa-remix.wld"; //Where the map template is downloaded to
@@ -2574,7 +2579,7 @@ namespace tsorcRevamp
                     {
                         musicModFileInfo.Delete();
                         musicModDownloadFailures++;
-                        ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("", "000000");
+                        ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("", "000000", "");
                     }
                     catch
                     {
@@ -2590,12 +2595,12 @@ namespace tsorcRevamp
             //If the template file doesn't exist or fails to load for whatever reason, flag its update id to 0 to force a download
             if (IsMapInvalid(mapBasePath))
             {
-                ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("000000", "");
+                ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("000000", "", "");
             }
 
             if (IsMapInvalid(mapRemixPath))
             {
-                ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("000000", "");
+                ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("", "", "000000");
             }
 
             try
@@ -2612,6 +2617,7 @@ namespace tsorcRevamp
                 if (File.Exists(changelogPath))
                 {
                     string mapString = "0000000000";
+                    string RemixmapString = "0000000000";
                     string musicString = "0000000000";
 
                     //Pull the version numbers from the file
@@ -2626,22 +2632,27 @@ namespace tsorcRevamp
                             continue;
                         }
 
+                        // check version based on the key words in CHANGELOG_URL
                         if (currentString.Contains("MAP ") && mapString == "0000000000") //Store the first line with the word MAP in it here
                         {
                             mapString = currentString;
+                        }
+                        if (currentString.Contains("RemixMAP ") && RemixmapString == "0000000000") //Store the first line with the word RemixMAP in it here
+                        {
+                            RemixmapString = currentString;
                         }
                         if (currentString.Contains("MUSIC ") && musicString == "0000000000") //Store the first line with the word MUSIC in it here
                         {
                             musicString = currentString;
                         }
 
-                        if (mapString != "0000000000" && musicString != "0000000000") //If both the music and map 
+                        if (mapString != "0000000000" && musicString != "0000000000" && RemixmapString != "0000000000") //If both the music and map 
                         {
                             break;
                         }
                     }
 
-                    if (mapString == "0000000000" || musicString == "0000000000")
+                    if (mapString == "0000000000" || musicString == "0000000000" || RemixmapString == "0000000000")
                     {
                         Logger.Warn("WARNING: Failed to read version data from downloaded changelog! This will prevent the mod from downloading the map, music mod, or updates!");
                     }
@@ -2649,16 +2660,22 @@ namespace tsorcRevamp
                     {
                         //Simplify them
                         SimplifyVersionString(ref mapString);
+                        SimplifyVersionString(ref RemixmapString);
                         SimplifyVersionString(ref musicString);
 
                         //Get the version info of the existing files
-                        Tuple<int, int> versionInfo = ReadVersionInfo();
+                        Tuple<int, int, int> versionInfo = ReadVersionInfo();
 
                         //If the current map template is a lower version than the new update, then update it
                         if (versionInfo.Item1 < Int32.Parse(mapString))
                         {
                             newMapUpdateString = mapString;
                             MapDownload();
+                        }
+                        if (versionInfo.Item3 < Int32.Parse(RemixmapString))
+                        {
+                            newRemixMapUpdateString = RemixmapString;
+                            RemixMapDownload();
                         }
 
                         //If the music one is less, then flag it as needing an update so the UI can ask the user if they want to download it
@@ -2667,7 +2684,7 @@ namespace tsorcRevamp
                         {
                             if (justUpdatedMusic)
                             {
-                                WriteVersionInfo("", musicString);
+                                WriteVersionInfo("", musicString, "");
                             }
                             else
                             {
@@ -2691,18 +2708,18 @@ namespace tsorcRevamp
         }
 
         //Returns a tuple containing the version info for the map and music mod, respectively
-        public Tuple<int, int> ReadVersionInfo()
+        public Tuple<int, int, int> ReadVersionInfo()
         {
             char separator = Path.DirectorySeparatorChar;
             string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
             string curVersionPath = dataDir + separator + "tsorcCurrentVer.txt"; //Stored file recording current map and music mod versions
             string[] curVersionFile = File.ReadAllLines(curVersionPath);
 
-            return new Tuple<int, int>(Int32.Parse(curVersionFile[0]), Int32.Parse(curVersionFile[1]));
+            return new Tuple<int, int, int>(Int32.Parse(curVersionFile[0]), Int32.Parse(curVersionFile[1]), Int32.Parse(curVersionFile[2]));
         }
 
         //Writes the version info of the map and music to the file. Passing "" means that will not be overwritten.
-        public void WriteVersionInfo(string mapVersion, string musicVersion)
+        public void WriteVersionInfo(string mapVersion, string musicVersion, string RemixmapVersion)
         {
             char separator = Path.DirectorySeparatorChar;
             string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
@@ -2713,6 +2730,7 @@ namespace tsorcRevamp
             {
                 using (StreamWriter versionFile = new StreamWriter(curVersionPath))
                 {
+                    versionFile.WriteLine("000000");
                     versionFile.WriteLine("000000");
                     versionFile.WriteLine("000000");
                 }
@@ -2728,6 +2746,10 @@ namespace tsorcRevamp
             if (musicVersion != "")
             {
                 curVersionFile[1] = musicVersion;
+            }
+            if (RemixmapVersion != "")
+            {
+                curVersionFile[2] = RemixmapVersion;
             }
 
             File.WriteAllLines(curVersionPath, curVersionFile);
@@ -2785,8 +2807,37 @@ namespace tsorcRevamp
                 using (WebClient client = new WebClient())
                 {
                     client.DownloadFileAsync(new Uri(VariousConstants.MAP_URL), filePath);
+                    //client.DownloadFileAsync(new Uri(VariousConstants.MAP_REMIX_URL), RemixfilePath);
                     client.DownloadProgressChanged += MapDownloadProgressChanged;
                     client.DownloadFileCompleted += TryCopyMap;
+                }
+            }
+            catch (WebException e)
+            {
+                Logger.Warn("Automatic world download failed ({0}). Connection to the internet failed or the file's location has changed.", e);
+            }
+            catch (Exception e)
+            {
+                Logger.Warn("Automatic world download failed ({0}).", e);
+            }
+            return;
+        }
+
+        public void RemixMapDownload()
+        {
+            char separator = Path.DirectorySeparatorChar;
+            string RemixfilePath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorc-xelvaa-remixDownload.wld";
+            string jsonPath = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData" + separator + "tsorcSoapstones.json";
+            if (File.Exists(jsonPath)) File.Delete(jsonPath);
+
+            Logger.Info("Attempting to download updated world template.");
+            try
+            {
+                using (WebClient client = new WebClient())
+                {
+                    client.DownloadFileAsync(new Uri(VariousConstants.MAP_REMIX_URL), RemixfilePath);
+                    client.DownloadProgressChanged += RemixMapDownloadProgressChanged;
+                    client.DownloadFileCompleted += TryCopyRemixMap;
                 }
             }
             catch (WebException e)
@@ -2805,6 +2856,11 @@ namespace tsorcRevamp
             MapDownloadProgress = downloadEvent.BytesReceived;
             MapDownloadTotalBytes = downloadEvent.TotalBytesToReceive;
         }
+        public static void RemixMapDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs downloadEvent)
+        {
+            RemixMapDownloadProgress = downloadEvent.BytesReceived;
+            RemixMapDownloadTotalBytes = downloadEvent.TotalBytesToReceive;
+        }
 
 
         //Checks if there is already a copy of the adventure map in the Worlds folder, and if not automatically copies one there.
@@ -2815,7 +2871,6 @@ namespace tsorcRevamp
             string worldsFolder = Main.SavePath + separator + "Worlds";
             string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
             string baseMapFileName = separator + "tsorcBaseMap.wld";
-            string remixMapFileName = separator + "tsorc-xelvaa-remix.wld";
             string newMapFileName = separator + "tsorcBaseMapDownload.wld";
 
             FileInfo fileToCopy = new FileInfo(dataDir + newMapFileName);
@@ -2848,7 +2903,7 @@ namespace tsorcRevamp
                 fileToCopy.Delete();
 
                 //Update version info
-                WriteVersionInfo(newMapUpdateString, "");
+                WriteVersionInfo(newMapUpdateString, "", "");
             }
 
             //Then check if there is a copy of the adventure map in the players worlds folder, and if not auto-copy one there
@@ -2883,6 +2938,92 @@ namespace tsorcRevamp
                 try
                 {
                     fileToCopy.CopyTo(worldsFolder + userMapFileName, false);
+                }
+                catch (System.Security.SecurityException e)
+                {
+                    thisLogger.Error("World copy failed ({0}). Try again with administrator privileges?", e);
+                }
+                catch (Exception e)
+                {
+                    thisLogger.Error("World copy failed ({0}).", e);
+                }
+            }
+        }
+
+        public void TryCopyRemixMap(object sender = null, AsyncCompletedEventArgs downloadEvent = null)
+        {
+            char separator = Path.DirectorySeparatorChar;
+            string userRemixMapFileName = separator + "TheStoryofRedCloudXelvaaRemix.wld";
+            string worldsFolder = Main.SavePath + separator + "Worlds";
+            string dataDir = Main.SavePath + separator + "ModConfigs" + separator + "tsorcRevampData";
+            string remixMapFileName = separator + "tsorc-xelvaa-remix.wld";
+            string newRemixMapFileName = separator + "tsorc-xelvaa-remixDownload.wld";
+
+            FileInfo RemixfileToCopy = new FileInfo(dataDir + newRemixMapFileName);
+            DirectoryInfo worlds = new DirectoryInfo(worldsFolder);
+            bool RemixworldExists = false;
+            log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
+
+            //Check if the new Remix file exists and is not too small (indicates corruption or failed download)
+            if (IsMapInvalid(dataDir + newRemixMapFileName))
+            {
+                RemixfileToCopy.Delete();
+
+                RemixworldDownloadFailures++;
+                if (RemixworldDownloadFailures < 3)
+                {
+                    ((tsorcRevamp)ModLoader.GetMod("tsorcRevamp")).MapDownload();
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("The Story of Red Cloud failed to download the remix map automatically!\nYou must download it manually from our discord instead: https://discord.gg/UGE6Mstrgz", "TSORC: Map Download Failure!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                return;
+            }
+            else
+            {
+                //If it exists and is valid, then overwrite the old map tempate with it
+                RemixfileToCopy.CopyTo(dataDir + remixMapFileName, true);
+
+                //Delete the temporary file
+                RemixfileToCopy.Delete();
+
+                //Update version info
+                WriteVersionInfo("", "", newRemixMapUpdateString);
+            }
+
+            //Then check if there is a copy of the adventure map in the players worlds folder, and if not auto-copy one there
+            if (!Directory.Exists(worldsFolder))
+            {
+                try
+                {
+                    Directory.CreateDirectory(worldsFolder);
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    thisLogger.Error("World directory creation failed ({0}). Try again with administrator privileges?", e);
+                }
+                catch (Exception e)
+                {
+                    thisLogger.Error("World directory creation failed ({0}).", e);
+                }
+            }
+
+            foreach (FileInfo file in worlds.GetFiles("*.wld"))
+            {
+                if (file.FullName.Contains("TheStoryofRedCloudXelvaaRemix"))
+                {
+                    RemixworldExists = true;
+                    break;
+                }
+            }
+
+            if (!RemixworldExists && File.Exists(dataDir + remixMapFileName))
+            {
+                thisLogger.Info("Attempting to copy Remixworld.");
+                try
+                {
+                    RemixfileToCopy.CopyTo(worldsFolder + userRemixMapFileName, false);
                 }
                 catch (System.Security.SecurityException e)
                 {
@@ -3041,7 +3182,7 @@ namespace tsorcRevamp
                 //System.Windows.Forms.MessageBox.Show("Failed to download the music mod automatically!\nYou may need to download it manually from our discord instead: https://discord.gg/UGE6Mstrgz", "Music Mod Download Failure!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 musicModFileInfo.Delete();
                 tsorcRevamp.musicModDownloadFailures++;
-                ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("", "000000");
+                ModContent.GetInstance<tsorcRevamp>().WriteVersionInfo("", "000000", "");
             }
             else
             {

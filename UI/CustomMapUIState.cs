@@ -352,7 +352,7 @@ namespace tsorcRevamp.UI
                             int worldCount = 1;
                             do
                             {
-                                newFileName = "\\TheStoryofRedCloudXelvaaRemix_" + worldCount.ToString() + ".wld";
+                                newFileName = "\\TheStoryOfRedCloudXelvaaRemix_" + worldCount.ToString() + ".wld";
                                 if (File.Exists(worldsFolder + newFileName))
                                 {
                                     worldCount++;

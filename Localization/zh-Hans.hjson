@@ -18,11 +18,11 @@ Mods: {
 				这些翅膀已被凶残的[c/009400:茂林飞鸟-猎手][c/383838:诅咒]
 				它们在其被击败之前不能使用
 				'''
-			/* WingsDisabled2:
+			WingsDisabled2:
 				'''
-				These wings have been [c/383838:cursed] by a mysterious [c/FFFAFA:Mage]
-				They can not be used until it is defeated
-				''' */
+				这些翅膀已被神秘的[c/009400:飞龙法师][c/383838:诅咒]
+				它们在其被击败之前不能使用
+				'''
 			TileEnabled: "[c/1cfc03:冒险模式下允许放置！]"
 			TileDisabled: "[c/fc1c03:冒险模式下禁止放置！]"
 			ItemDisabled: "[c/fc1c03:该物品在冒险模式下被禁用！]"
@@ -204,7 +204,7 @@ Mods: {
 			21: 石头构成的门不能被镐子挖开，必须用拉杆或开关打开
 			22: 绿花戒指大大提高了你的闪避能力，让你可以更好地躲避...
 			23: 某些黑暗区域的敌人掉落人性，可以刷新诅咒的效果
-			24: 需要更多提示？加入QQ群：645748667
+			24: 需要更多提示？加入QQ群：368675949
 			25: 可以在Boss重召唤书或Boss掉落的独特物品上找到下一步的线索
 			26: 不要忘记翻滚啊！
 			27: 如果你的暴击几率超过100%，你就有机会造成多重暴击，从而造成4倍或更多的伤害
@@ -327,16 +327,23 @@ Mods: {
 			MusicFail: 音乐包下载失败，请在创意工坊搜索 “The Story of Red Cloud Music” 订阅音乐包
 			AdvMapDownloadProgress: (在原版创意工坊订阅 Dark Souls Adventure Map，再在Tmod内创意工坊选择导入世界)地图下载中:
 			AdvMapUpdated: 冒险地图下载完成！
+			RemixMapDownloadProgress: (QQ群文件获取：368675949获取)重构版地图地图下载中:
+			RemixMapUpdated: 重构版地图下载完成！
 			Bless: 在这里放置一个物品以进行祝福
 			SelectWorld: 选择世界大小:
 			TSORCMap: 新的红云物语冒险地图
 			VanillaMap: 新的原版随机生成地图
-			// TSORCXelvaaRemix: New Story of Red Cloud Remix Map
+			TSORCXelvaaRemix: 重构版红云地图
 			TSORCMapFailed:
 				'''
 				冒险地图下载失败！
 				在原版创意工坊订阅 Dark Souls Adventure Map，再在Tmod内创意工坊选择导入世界
-				如仍失败，请加QQ群：645748667
+				如仍失败，请加QQ群：368675949
+				'''
+			TSORCRemixMapFailed:
+				'''
+				重构版红云地图下载失败！
+				如仍失败，请加QQ群：368675949
 				'''
 			Back: 返回
 			SpawnSetHoverText: 设置重生点

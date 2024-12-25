@@ -3357,6 +3357,31 @@ namespace tsorcRevamp
                     DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, mapText, musicTextPosition, musicTextColor, 0, Vector2.Zero, musicTextScale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
                     Main.spriteBatch.End();
                 }
+
+                if (tsorcRevamp.RemixMapDownloadTotalBytes > 0)
+                {
+                    string RemixmapText = LangUtils.GetTextValue("UI.RemixMapDownloadProgress") + (int)(((float)tsorcRevamp.RemixMapDownloadProgress / (float)tsorcRevamp.RemixMapDownloadTotalBytes) * 100) + "%";// (" + tsorcRevamp.MapDownloadProgress + " / " + tsorcRevamp.MapDownloadTotalBytes + " bytes)";
+
+                    if (tsorcRevamp.RemixMapDownloadProgress == tsorcRevamp.RemixMapDownloadTotalBytes)
+                    {
+                        RemixmapText = LangUtils.GetTextValue("UI.RemixMapUpdated");
+                    }
+
+                    float musicTextScale = 2;
+                    Vector2 musicTextOrigin = FontAssets.MouseText.Value.MeasureString(RemixmapText);
+                    Vector2 musicTextPosition = new Vector2((Main.screenWidth / 2f), 690f);
+                    Vector2 unscaledMusicTextPosition = musicTextPosition;
+                    musicTextPosition *= Main.UIScale;
+
+                    musicTextPosition.X -= musicTextOrigin.X;
+                    Color musicTextColor = Main.DiscoColor;
+
+
+                    Main.spriteBatch.Begin();
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, RemixmapText, new Vector2(musicTextPosition.X + 2, musicTextPosition.Y + 2), Color.Black, 0, Vector2.Zero, musicTextScale, SpriteEffects.None, 0);
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, RemixmapText, musicTextPosition, musicTextColor, 0, Vector2.Zero, musicTextScale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
+                    Main.spriteBatch.End();
+                }
             }
 
             else

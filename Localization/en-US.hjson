@@ -327,6 +327,8 @@ Mods: {
 			MusicFail: Music Mod Download Failed, click to retry...
 			AdvMapDownloadProgress: "Adventure Map Download In Progress: "
 			AdvMapUpdated: Adventure Map Update Complete!
+			RemixMapDownloadProgress: "Remix Map Download In Progress: "
+			RemixMapUpdated: Remix Map Update Complete!
 			Bless: Place an item here to bless
 			SelectWorld: Select World Type:
 			TSORCMap: New Story of Red Cloud Adventure Map
@@ -335,6 +337,12 @@ Mods: {
 			TSORCMapFailed:
 				'''
 				Error: Adventure Map template missing or corrupted!
+				Head back to the main menu and ensure it has finished downloading.
+				If this error persists, download it manually from our discord instead: https://discord.gg/UGE6Mstrgz
+				'''
+			TSORCRemixMapFailed:
+				'''
+				Error: Remix Map template missing or corrupted!
 				Head back to the main menu and ensure it has finished downloading.
 				If this error persists, download it manually from our discord instead: https://discord.gg/UGE6Mstrgz
 				'''
