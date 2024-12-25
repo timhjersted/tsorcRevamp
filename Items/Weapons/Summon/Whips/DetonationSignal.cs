@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
             Item.width = 88;
 
             Item.DamageType = DamageClass.SummonMeleeSpeed;
-            Item.damage = 120;
+            Item.damage = 190;
             Item.knockBack = 6;
             Item.rare = ItemRarityID.Red;
             Item.value = Item.buyPrice(2, 40, 0, 0);

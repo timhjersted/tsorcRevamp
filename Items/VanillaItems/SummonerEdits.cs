@@ -105,17 +105,9 @@ namespace tsorcRevamp.Items.VanillaItems
             #endregion
 
             #region Whips
-            if (item.type == ItemID.RainbowWhip)
-            {
-                item.damage = 105;
-            }
             if (item.type == ItemID.ScytheWhip)
             {
-                item.damage = 115; //SHM
-            }
-            if (item.type == ItemID.MaceWhip)
-            {
-                item.damage = 120;
+                item.damage = 200; //SHM, tag effect is pretty weak so just give it higher dmg than the vanilla whips at least I guess
             }
             #endregion
 

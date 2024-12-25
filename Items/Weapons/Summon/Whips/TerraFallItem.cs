@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
     [LegacyName("TerraFall")]
     public class TerraFallItem : ModItem
     {
-        public const int BaseDamage = 85;
+        public const int BaseDamage = 100;
         public const int MaxStacks = 4;
         public const int TagDmg = 20;
         public const int TagCrit = 12;

@@ -6580,7 +6580,6 @@ Mods: {
 					'''
 					Breathe fire at enemies struck by this whip and a minion on a cooldown
 					Refresh the cooldown by whipping an enemy
-					Strike enemies to gain attack speed
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -7779,7 +7778,6 @@ Mods: {
 					Reforged to its full potential
 					Breathe fire at enemies struck by this whip and a minion on a cooldown
 					Refresh the cooldown by whipping an enemy
-					Strike enemies to gain attack speed
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -8384,7 +8382,7 @@ Mods: {
 
 			DragoonLashBuff: {
 				DisplayName: Dragoon Awakening
-				Description: "{$CommonItemTooltip.Summon.AtkSpeed}"
+				Description: "Feeling spicy today!"
 			}
 
 			NightsCrackerBuff: {
