@@ -331,8 +331,8 @@ Mods: {
 			RemixMapUpdated: 重构版地图下载完成！
 			Bless: 在这里放置一个物品以进行祝福
 			SelectWorld: 选择世界大小:
-			TSORCMap: 新的红云物语冒险地图
-			VanillaMap: 新的原版随机生成地图
+			TSORCMap: 红云物语冒险地图
+			VanillaMap: 原版随机生成地图
 			TSORCXelvaaRemix: 重构版红云地图
 			TSORCMapFailed:
 				'''

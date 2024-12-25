@@ -1337,7 +1337,7 @@ namespace tsorcRevamp
                 return true;
             }
 
-            //Faisafe. Checks some blocks near the top of one of the Wyvern Mage's towers that are unlikely to change. Even if they do, this shouldn't be necessary though
+            //Faisafe. Checks some blocks near the top of one of the Wyvern Mage's towers that are unlikely to change. Even if they do, this shouldn't be necessary thoughworldName
             //This simply ensures even if something deeply silly happens it'll still likely register as the custom map
             if (Main.tile[7102, 137] != null && Main.tile[7103, 137] != null && Main.tile[7104, 136] != null && Main.tile[7105, 136] != null)
             {
@@ -1347,6 +1347,18 @@ namespace tsorcRevamp
                 }
             }
 
+            return false;
+        }
+
+        public static bool CheckForRemixMap()
+        {
+            if (CheckForCustomMap())
+            {
+                if (Main.tile[5960, 571].TileType == TileID.LivingMahogany && Main.tile[5960, 569].TileType == TileID.LivingLoom && Main.tile[5960, 574].TileType == TileID.LivingMahoganyLeaves && Main.tile[5965, 569].WallType == WallID.LivingWood)
+                {
+                    return true;
+                }
+            }
             return false;
         }
 
