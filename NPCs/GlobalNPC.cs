@@ -3155,7 +3155,26 @@ namespace tsorcRevamp.NPCs
         }
 
         #endregion
-
+        public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            var TownAnimals = new HashSet<int> {NPCID.TownDog, NPCID.TownCat, NPCID.TownBunny};
+            Texture2D Hat = null;
+            if (Main.xMas)
+            {
+                Hat = Main.Assets.Request<Texture2D>("Images/Item_588").Value;
+            }
+            if (npc.townNPC && !TownAnimals.Contains(npc.type))
+            {
+                Vector2 position = npc.Center - screenPos - new Vector2(0f, (npc.height / 2));//
+                position -= new Vector2(0f, 4f);
+                SpriteEffects spriteEffects = SpriteEffects.None;
+                if (npc.direction == -1)
+                {
+                    spriteEffects = SpriteEffects.FlipHorizontally;
+                }
+                spriteBatch.Draw(Hat, position, null, Color.White, 0f, new Vector2(Hat.Width / 2, Hat.Height / 2), npc.scale, spriteEffects, 0f);
+            }
+        }
     }
 
     ///<summary> 
