@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     public class MaskOfTheChild : ModItem
     {
         public static float MoveSpeedMult = 25f;
-        public static float StaminaRegen = 10f;
+        public static float StaminaRegen = 15f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MoveSpeedMult, StaminaRegen);
         public override void SetStaticDefaults()
         {

@@ -1725,7 +1725,6 @@ namespace tsorcRevamp.NPCs
                         ):
                     {
                         npc.value = 1680;
-                        break;
                         if (tsorcRevampWorld.SuperHardMode)
                         {   
                             MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
@@ -3409,8 +3408,6 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.JungleCreeperWall
                     || npc.type == NPCID.DesertScorpionWalk
                     || npc.type == NPCID.DesertScorpionWall
-                    || npc.type == NPCID.PigronHallow
-                    || npc.type == NPCID.PigronCorruption
                     || npc.type == NPCID.CursedHammer
                     || npc.type == NPCID.EnchantedSword
                     || npc.type == NPCID.CrimsonAxe
@@ -3455,8 +3452,11 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.FlyingSnake
                     || npc.type == NPCID.Medusa
                     || npc.type == NPCID.Mimic
-                    || npc.type == NPCID.DungeonSpirit
+                    || npc.type == NPCID.DungeonSpirit 
                     || npc.type == NPCID.DesertDjinn
+                    || npc.type == NPCID.AnomuraFungus
+                    || npc.type == NPCID.MushiLadybug
+                    || npc.type == NPCID.FungiBulb
                     || npc.type == NPCID.IceMimic)
                 {
 
@@ -3486,14 +3486,15 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.MeteorHead
                     || npc.type == NPCID.GreekSkeleton
                     || npc.type == NPCID.BloodZombie
-                    || npc.type == NPCID.Drippler
+                    || npc.type == NPCID.Drippler 
+                    || npc.type == NPCID.Harpy
                     || npc.type == NPCID.Shark)
                 {
 
                     MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>(); 
                     if (!globalNPC.lifeBoosted)
                     {
-                        npc.lifeMax = (int)(npc.lifeMax * 4.75f); //Buff some PHM enemies in SHM
+                        npc.lifeMax = (int)(npc.lifeMax * 5f); //Buff some PHM enemies in SHM
                         npc.life = npc.lifeMax; 
                         npc.defense = (int)(npc.defense * 2.25);
                         npc.knockBackResist *= 1.45f;
@@ -3538,10 +3539,10 @@ namespace tsorcRevamp.NPCs
                     MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
                     if (!globalNPC.lifeBoosted)
                     {
-                        npc.lifeMax = (int)(npc.lifeMax * 1.30f);
+                        npc.lifeMax = (int)(npc.lifeMax * 1.50f);
                         npc.life = npc.lifeMax; 
-                        npc.defense = (int)(npc.defense * 1.20);
-                        npc.knockBackResist *= 1.10f;
+                        npc.defense = (int)(npc.defense * 1.25);
+                        npc.knockBackResist *= 1.15f;
                         globalNPC.lifeBoosted = true; 
                     }
                 }
@@ -3687,7 +3688,7 @@ namespace tsorcRevamp.NPCs
                         || npc.type == NPCID.UndeadViking
                         || npc.type == NPCID.CursedSkull)
                     {
-                    npc.active = false; //Most PHM enemies are removed SHM, they're taking up spawn slots for nothing at this poin
+                    npc.active = false; //Most PHM enemies are removed SHM, they're taking up spawn slots for nothing at this point
                     }
 
                     if ((npc.type >= NPCID.DemonEye2 && npc.type <= NPCID.CataractEye2) ||

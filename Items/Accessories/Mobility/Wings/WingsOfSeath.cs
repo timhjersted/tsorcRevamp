@@ -51,11 +51,11 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
         }
         public override void HorizontalWingSpeeds(Player player, ref float speed, ref float acceleration)
         {
-            speed = 14f;
+            speed = 9f;
             acceleration = 0.45f;
             if (player.TryingToHoverDown && player.controlJump && player.wingTime > 0f && !player.merman)
             {
-                speed = 16f;
+                speed = 10f;
                 acceleration = 1f;
             }
         }

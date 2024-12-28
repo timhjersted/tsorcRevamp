@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.damage = 14;
             Item.width = 28;
             Item.height = 42;
-            Item.knockBack = 6;
+            Item.knockBack = 2;
             Item.maxStack = Item.CommonMaxStack;
             Item.noMelee = true;
             Item.noUseGraphic = true;

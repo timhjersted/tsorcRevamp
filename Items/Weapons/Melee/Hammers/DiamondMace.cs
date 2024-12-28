@@ -18,14 +18,15 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             Item.autoReuse = true;
             Item.useTurn = false;
             Item.rare = ItemRarityID.Pink;
-            Item.damage = 90;
+            Item.damage = 120;
+            Item.scale = 1.15f;
             Item.crit += 46;
             Item.width = 47;
             Item.height = 47;
-            Item.knockBack = 10;
+            Item.knockBack = 8;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 15;
-            Item.useTime = 15;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
             Item.UseSound = SoundID.Item1;
             Item.value = PriceByRarity.Pink_5;
             Item.useStyle = ItemUseStyleID.Swing;
@@ -35,9 +36,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
         }
         public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (Main.rand.NextBool(15))
+            if (Main.rand.NextBool(10))
             {
-                player.statLife += 20;
+                player.statLife += 15;
                 if (player.statLife > player.statLifeMax2)
                 {
                     player.statLife = player.statLifeMax2;
@@ -50,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Hammers
             recipe.AddIngredient(ItemID.AdamantiteBar, 3);
             recipe.AddIngredient(ItemID.Diamond, 1);
             recipe.AddIngredient(ItemID.SoulofMight, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 44000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

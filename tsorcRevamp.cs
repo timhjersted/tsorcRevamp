@@ -1141,6 +1141,10 @@ namespace tsorcRevamp
                                             (ModContent.ItemType<SoulOfChaos>(), 1),
                                             (ModContent.ItemType<DarkSoul>(), 100000)
                                         }                                                   },
+                { ItemID.TrueNightsEdge,   new List<(int ItemID, int Count)>()
+                                        {
+                                            (ItemID.SoulofLight, 5)
+                                        }                                                   },
                 #endregion
 
                 { ItemID.PapyrusScarab,   new List<(int ItemID, int Count)>()

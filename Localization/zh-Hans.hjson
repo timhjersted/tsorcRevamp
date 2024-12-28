@@ -8376,7 +8376,7 @@ Mods: {
 
 			DragoonLashBuff: {
 				DisplayName: 龙之觉醒
-				Description: "IDK how to chinese but if I didn't change this it'd prolly crash"
+				Description: IDK how to chinese but if I didn't change this it'd prolly crash
 			}
 
 			NightsCrackerBuff: {

@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             Item.useTime = 24;
             Item.UseSound = SoundID.Item71;
             Item.autoReuse = true;
-            Item.damage = 48;
+            Item.damage = 53;
             Item.knockBack = 6.5f;
             Item.noUseGraphic = true;
             Item.DamageType = DamageClass.Melee;

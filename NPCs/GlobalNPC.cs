@@ -534,7 +534,7 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.SolarCorite, 0.01f);
                 pool.Add(NPCID.SolarSpearman, 0.4f);
                 pool.Add(NPCID.SolarDrakomire, 0.4f);
-                pool.Add(NPCID.SolarSolenian, 0.6f);
+                pool.Add(NPCID.SolarSolenian, 0.6f); 
             }
             //catacombs
             if (spawnInfo.SpawnTileType == TileID.BoneBlock && tsorcRevampWorld.SuperHardMode)
@@ -549,19 +549,31 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.VortexLarva, 2f); //.1 is 3%
             }
-            //one of the outer thirds of the map
-            if ((Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3) && tsorcRevampWorld.SuperHardMode)
-            {
-                //pool.Add(NPCID.GoblinShark, 0.2f); //.1 is 3%
-            }
             // molten sky temple
-            if (spawnInfo.Player.ZoneUnderworldHeight && spawnInfo.SpawnTileType == TileID.MeteoriteBrick && tsorcRevampWorld.SuperHardMode)
+            if (spawnInfo.Player.ZoneUnderworldHeight && (spawnInfo.SpawnTileType == TileID.MeteoriteBrick || spawnInfo.SpawnTileType == TileID.HeavenforgeBrick || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.HeavenforgeBrickWall) && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.StardustWormHead, 0.1f); //.1 is 3%
                 pool.Add(NPCID.StardustCellBig, 0.02f); //.5 is 16%
                 pool.Add(NPCID.StardustJellyfishBig, 0.3f);
                 pool.Add(NPCID.StardustSpiderBig, 0.6f);
                 pool.Add(NPCID.StardustSoldier, 1f);
+            }
+            // wyvern mage prison (remix map)
+            if (spawnInfo.Player.ZoneMeteor && (spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneOverworldHeight) && spawnInfo.Player.ZoneCorrupt && tsorcRevampWorld.SuperHardMode)
+            {
+                pool.Add(NPCID.SolarCorite, 0.15f);
+                pool.Add(NPCID.NebulaBrain, 0.15f);
+                pool.Add(NPCID.StardustJellyfishBig, 0.15f);
+                pool.Add(NPCID.VortexLarva, 0.15f);
+            }
+            // great foundry (remix map)
+            if ((spawnInfo.SpawnTileType == TileID.Cog || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.TinPlating) && tsorcRevampWorld.SuperHardMode)
+            {
+                pool.Add(NPCID.SolarSolenian, 0.2f);
+                pool.Add(NPCID.HellArmoredBones, 0.1f);
+                pool.Add(NPCID.HellArmoredBonesSpikeShield, 0.1f);
+                pool.Add(NPCID.HellArmoredBonesMace, 0.1f);
+                pool.Add(NPCID.HellArmoredBonesSword, 0.1f);
             }
 
             Player thisPlayer = spawnInfo.Player;

@@ -189,7 +189,6 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.TrueNightsEdge)
             {
-                item.damage = 85;
                 //item.mana = 18;
             }
             if (item.type == ItemID.Seedler)
@@ -232,7 +231,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.ChristmasTreeSword)
             {
-                item.damage = 135; 
+                item.damage = 150; 
                 item.useTime = 20;
                 item.useAnimation = 20;
             }
@@ -259,7 +258,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.InfluxWaver)
             {
-                item.damage = 120; //SHM
+                item.damage = 125; //SHM
                 //item.mana = 23;
             }
             if (item.type == ItemID.DayBreak)
@@ -284,7 +283,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.Zenith)
             {
-                item.damage = 95; //Vanilla 190
+                item.damage = 90; //Vanilla 190
             }
         }
 

@@ -5924,7 +5924,7 @@ Mods: {
 
 			DiamondMace: {
 				DisplayName: Diamond Mace
-				Tooltip: A mace made of a large diamond. Has a 1 in 15 chance to heal 20 life.
+				Tooltip: A mace made of a large diamond. Has a 1 in 10 chance to heal 15 life.
 			}
 
 			Mjolnir: {
@@ -8382,7 +8382,7 @@ Mods: {
 
 			DragoonLashBuff: {
 				DisplayName: Dragoon Awakening
-				Description: "Feeling spicy today!"
+				Description: Feeling spicy today!
 			}
 
 			NightsCrackerBuff: {

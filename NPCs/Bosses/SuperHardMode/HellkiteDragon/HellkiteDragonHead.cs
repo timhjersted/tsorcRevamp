@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.defense = 100;
             NPC.HitSound = SoundID.NPCHit13; //better flesh hit
             NPC.DeathSound = SoundID.Item119;//dragon death
-            NPC.lifeMax = 650000;
+            NPC.lifeMax = (int)(650000 * (Main.masterMode ? 1.5f : 1));
             Music = 12;
             NPC.boss = true;
             NPC.noGravity = true;
