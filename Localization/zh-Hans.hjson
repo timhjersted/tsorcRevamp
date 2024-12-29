@@ -250,6 +250,9 @@ Mods: {
 			AncientOolacileDemon: 你这个愚蠢的人类...可悲的傲慢...
 			GoblinSummoner1: 你太大意了，瑞德。你来这里是个傻瓜...
 			GoblinSummoner2: 你觉得你很聪明吗，瑞德？
+			// ShadowTempleEvent: A strange vision has manifested itself from your fears...
+			// ShadowTempleEvent2: A paladin appears to Smite you!
+			// SandstormElementalEvent: A powerful elemental is summoned!
 			IceGolemWyvern: ！！！
 			IceGolem: ！
 			KingSlime: 史莱姆王出现了！

@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Ranged.Ammo
             Projectile.scale = 1.1f;
             Projectile.friendly = true;
             Projectile.height = 20;
-            Projectile.penetrate = 2;
+            Projectile.penetrate = 3;
             Projectile.tileCollide = true;
             Projectile.width = 10;
             AIType = ProjectileID.WoodenArrowFriendly;

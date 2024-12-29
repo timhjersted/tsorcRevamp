@@ -201,6 +201,10 @@ namespace tsorcRevamp
             MushroomCavern,
             AshCavernLeftside,
             AshCavernRightside,
+            ShadowTempleEvent,
+            ShadowTempleEvent2,
+            MoltenSkyTempleEvent,
+            SandstormElementalEvent,
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -525,7 +529,15 @@ namespace tsorcRevamp
             List<int> DrownedAmbush2EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.GhostOfTheDrowned>() };
             List<Vector2> DrownedAmbush2EnemyLocations = new List<Vector2>() { new Vector2(4117, 823) };
             ScriptedEvent DrownedAmbush2 = new ScriptedEvent(new Vector2(4090, 828), 11, DrownedAmbush2EnemyTypeList, DrownedAmbush2EnemyLocations, DustID.Water, true, false, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
-            DrownedAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.BoostPotion>() }, new List<int>() { 2 });
+            DrownedAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.BoostPotion>() }, new List<int>() { 2 }); 
+
+            //Sandstorm Elemental in the Solar Island
+            ScriptedEvent SandstormElementalEvent = new ScriptedEvent(new Vector2(2119, 248), 40, NPCID.SandElemental, 269, true, true, false, LangUtils.GetTextValue("Events.SandstormElementalEvent"), Color.Yellow);
+
+            //Paladin in the Shadow Temple 
+            ScriptedEvent ShadowTempleEvent = new ScriptedEvent(new Vector2(1460, 1364), 25, NPCID.AncientCultistSquidhead, 228, true, true, false, LangUtils.GetTextValue("Events.ShadowTempleEvent"), Color.Yellow);
+
+            ScriptedEvent ShadowTempleEvent2 = new ScriptedEvent(new Vector2(1734, 1297), 20, NPCID.Paladin, 133, true, true, false, LangUtils.GetTextValue("Events.ShadowTempleEvent2"), Color.Yellow);
 
             //Mushroom Cavern AMBUSH
             List<int> MushroomCavernEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), ModContent.NPCType<NPCs.Enemies.SuperHardMode.Abysswalker>(), };
@@ -537,6 +549,10 @@ namespace tsorcRevamp
 
             //Ashen Cavern Rightside - Oolacile Knight
             ScriptedEvent AshCavernRightside = new ScriptedEvent(new Vector2(2382, 1882), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileKnight>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red);
+
+            //Molten Sky Temple 
+            ScriptedEvent MoltenSkyTempleEvent = new ScriptedEvent(new Vector2(1040, 1865), 25, NPCID.CultistDragonHead, 15, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Blue);
+            MoltenSkyTempleEvent.SetCustomStats(25000, 20, 80, 10000);
 
             ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, SuperHardModeCustomCondition, SetNightCustomAction);
 
@@ -625,6 +641,10 @@ namespace tsorcRevamp
                 {ScriptedEventType.MushroomCavern, MushroomCavern },
                 {ScriptedEventType.AshCavernLeftside, AshCavernLeftside },
                 {ScriptedEventType.AshCavernRightside, AshCavernRightside },
+                {ScriptedEventType.ShadowTempleEvent, ShadowTempleEvent }, 
+                {ScriptedEventType.ShadowTempleEvent2, ShadowTempleEvent2 }, 
+                {ScriptedEventType.MoltenSkyTempleEvent, MoltenSkyTempleEvent }, 
+                {ScriptedEventType.SandstormElementalEvent, SandstormElementalEvent },
 
 
             };

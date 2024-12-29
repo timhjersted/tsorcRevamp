@@ -1,8 +1,20 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.NPCs.Enemies.SuperHardMode;
+using tsorcRevamp.NPCs.Bosses;
+using tsorcRevamp.NPCs.Bosses.WyvernMage;
+using tsorcRevamp.NPCs.Bosses.Okiku;
+using tsorcRevamp.NPCs.Bosses.Okiku.FirstForm;
+using tsorcRevamp.NPCs.Bosses.Okiku.SecondForm;
+using tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm;
+using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -37,7 +49,6 @@ namespace tsorcRevamp.Projectiles
                 //|| target.type == ModContent.NPCType<ShadowMage>()
                 //|| target.type == ModContent.NPCType<AttraidiesIllusion>()
                 //|| target.type == ModContent.NPCType<AttraidiesManifestation>()
-                //|| target.type == ModContent.NPCType<MindflayerKing>()
                 //|| target.type == ModContent.NPCType<DarkShogunMask>()
                 //|| target.type == ModContent.NPCType<DarkDragonMask>()
                 //|| target.type == ModContent.NPCType<BrokenOkiku>()
@@ -46,7 +57,6 @@ namespace tsorcRevamp.Projectiles
                 //|| target.type == ModContent.NPCType<LichKingDisciple>()
                 //|| target.type == ModContent.NPCType<Attraidies>()
                 //|| target.type == ModContent.NPCType<GhostOfTheForgottenKnight>()
-                //|| target.type == ModContent.NPCType<GhostOfTheForgottenWarrior>()
                 //|| target.type == ModContent.NPCType<BarrowWight>()
                 )
             {
@@ -83,7 +93,6 @@ namespace tsorcRevamp.Projectiles
                 }
             }
             Projectile.active = false;
-
         }
     }
 }
