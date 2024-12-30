@@ -558,23 +558,26 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.StardustSpiderBig, 0.6f);
                 pool.Add(NPCID.StardustSoldier, 1f);
             }
-            // wyvern mage prison (remix map)
-            if (spawnInfo.Player.ZoneMeteor && (spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneOverworldHeight) && spawnInfo.Player.ZoneCorrupt && tsorcRevampWorld.SuperHardMode)
+            if (tsorcRevampWorld.RemixMap) // If it is Remix Map
             {
-                pool.Add(NPCID.SolarCorite, 0.15f);
-                pool.Add(NPCID.NebulaBrain, 0.15f);
-                pool.Add(NPCID.StardustJellyfishBig, 0.15f);
-                pool.Add(NPCID.VortexLarva, 0.15f);
-            }
-            // great foundry (remix map)
-            if ((spawnInfo.SpawnTileType == TileID.Cog || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.TinPlating) && tsorcRevampWorld.SuperHardMode)
-            {
-                pool.Add(NPCID.SolarSolenian, 0.2f);
-                pool.Add(NPCID.HellArmoredBones, 0.1f);
-                pool.Add(NPCID.HellArmoredBonesSpikeShield, 0.1f);
-                pool.Add(NPCID.HellArmoredBonesMace, 0.1f);
-                pool.Add(NPCID.HellArmoredBonesSword, 0.1f);
-            }
+                // wyvern mage prison (remix map)
+                if (spawnInfo.Player.ZoneMeteor && (spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneOverworldHeight) && spawnInfo.Player.ZoneCorrupt && tsorcRevampWorld.SuperHardMode)
+                {
+                    pool.Add(NPCID.SolarCorite, 0.15f);
+                    pool.Add(NPCID.NebulaBrain, 0.15f);
+                    pool.Add(NPCID.StardustJellyfishBig, 0.15f);
+                    pool.Add(NPCID.VortexLarva, 0.15f);
+                }
+                // great foundry (remix map)
+                if ((spawnInfo.SpawnTileType == TileID.Cog || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.TinPlating) && tsorcRevampWorld.SuperHardMode)
+                {
+                    pool.Add(NPCID.SolarSolenian, 0.2f);
+                    pool.Add(NPCID.HellArmoredBones, 0.1f);
+                    pool.Add(NPCID.HellArmoredBonesSpikeShield, 0.1f);
+                    pool.Add(NPCID.HellArmoredBonesMace, 0.1f);
+                    pool.Add(NPCID.HellArmoredBonesSword, 0.1f);
+                }
+            }            
 
             Player thisPlayer = spawnInfo.Player;
             bool invasion = Main.invasionType != 0;

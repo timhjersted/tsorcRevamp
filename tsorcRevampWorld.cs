@@ -30,6 +30,7 @@ namespace tsorcRevamp
         public static bool SuperHardMode;
         public static bool TheEnd;
         public static bool CustomMap;
+        public static bool RemixMap;
 
         public static List<int> PairedBosses;
 
@@ -46,6 +47,7 @@ namespace tsorcRevamp
             SuperHardMode = false;
             TheEnd = false;
             CustomMap = false;
+            RemixMap = false;
             //Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
             boundShaders = new List<string>();
@@ -73,6 +75,8 @@ namespace tsorcRevamp
                 world_state.Add("TheEnd");
             if (CustomMap)
                 world_state.Add("CustomMap");
+            if (RemixMap)
+                world_state.Add("RemixMap");
 
             if (DownedBetsy)
             {
@@ -101,6 +105,7 @@ namespace tsorcRevamp
             SuperHardMode = worldStateList.Contains("SuperHardMode");
             TheEnd = worldStateList.Contains("TheEnd");
             CustomMap = worldStateList.Contains("CustomMap");
+            RemixMap = worldStateList.Contains("RemixMap");
 
             AbyssPortalLocation = tag.Get<Vector2>("AbyssPortal");
             if (AbyssPortalLocation == Vector2.Zero)
@@ -112,6 +117,11 @@ namespace tsorcRevamp
             if (Framing.GetTileSafely(7102, 137).TileType == 54 && Framing.GetTileSafely(7103, 137).TileType == 357 && Framing.GetTileSafely(7104, 136).TileType == 357 && Framing.GetTileSafely(7105, 136).TileType == 197)
             {
                 CustomMap = true;
+            }
+            //Checks some blocks near hallow surface Life Tree bonfire that are unlikely to change.
+            if (Framing.GetTileSafely(5960, 571).TileType == TileID.LivingMahogany && Framing.GetTileSafely(5960, 569).TileType == TileID.LivingLoom && Framing.GetTileSafely(5960, 574).TileType == TileID.LivingMahoganyLeaves)
+            {
+                RemixMap = true;
             }
 
             LitBonfireList = GetActiveBonfires();
@@ -190,6 +200,7 @@ namespace tsorcRevamp
             if (Main.netMode == NetmodeID.Server)
             {
                 writer.Write(CustomMap);
+                writer.Write(RemixMap);
                 writer.Write(SuperHardMode);
                 writer.WriteVector2(AbyssPortalLocation);
 
@@ -224,6 +235,7 @@ namespace tsorcRevamp
         public override void NetReceive(BinaryReader reader)
         {
             CustomMap = reader.ReadBoolean();
+            RemixMap = reader.ReadBoolean();
             SuperHardMode = reader.ReadBoolean();
             AbyssPortalLocation = reader.ReadVector2();
 
@@ -942,6 +954,10 @@ namespace tsorcRevamp
                     //This is done like this so that it can never set CustomMap to false, since that isn't what that function returning false means.
                     CustomMap = true;
                 }
+                if (CheckForRemixMap())
+                {
+                    RemixMap = true;
+                }
 
                 //Stuff that should only be done on the custom map
                 if (CustomMap)
@@ -1337,7 +1353,7 @@ namespace tsorcRevamp
                 return true;
             }
 
-            //Faisafe. Checks some blocks near the top of one of the Wyvern Mage's towers that are unlikely to change. Even if they do, this shouldn't be necessary thoughworldName
+            //Faisafe. Checks some blocks near the top of one of the Wyvern Mage's towers that are unlikely to change. Even if they do, this shouldn't be necessary though
             //This simply ensures even if something deeply silly happens it'll still likely register as the custom map
             if (Main.tile[7102, 137] != null && Main.tile[7103, 137] != null && Main.tile[7104, 136] != null && Main.tile[7105, 136] != null)
             {
@@ -1354,6 +1370,7 @@ namespace tsorcRevamp
         {
             if (CheckForCustomMap())
             {
+                // Checks some blocks near hallow surface Life Tree bonfire that are unlikely to change.
                 if (Main.tile[5960, 571].TileType == TileID.LivingMahogany && Main.tile[5960, 569].TileType == TileID.LivingLoom && Main.tile[5960, 574].TileType == TileID.LivingMahoganyLeaves && Main.tile[5965, 569].WallType == WallID.LivingWood)
                 {
                     return true;

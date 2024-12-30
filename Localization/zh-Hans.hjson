@@ -250,9 +250,9 @@ Mods: {
 			AncientOolacileDemon: 你这个愚蠢的人类...可悲的傲慢...
 			GoblinSummoner1: 你太大意了，瑞德。你来这里是个傻瓜...
 			GoblinSummoner2: 你觉得你很聪明吗，瑞德？
-			// ShadowTempleEvent: A strange vision has manifested itself from your fears...
-			// ShadowTempleEvent2: A paladin appears to Smite you!
-			// SandstormElementalEvent: A powerful elemental is summoned!
+			ShadowTempleEvent: 一个奇怪的远古幻影妖从你的恐惧中显现...
+			ShadowTempleEvent2: 一名圣骑士出现，准备对你进行制裁！
+			SandstormElementalEvent: 一个强大的沙尘精被召唤出来了！
 			IceGolemWyvern: ！！！
 			IceGolem: ！
 			KingSlime: 史莱姆王出现了！
@@ -6574,7 +6574,6 @@ Mods: {
 					'''
 					击中敌人时释放火焰吐息
 					击中敌人刷新冷却
-					用鞭子持续攻击敌人会增加攻击速度
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -7774,7 +7773,6 @@ Mods: {
 					展现其真正的力量
 					击中敌人时释放火焰吐息和仆从
 					击中敌人刷新冷却
-					用鞭子持续攻击敌人会增加攻击速度
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -8379,7 +8377,7 @@ Mods: {
 
 			DragoonLashBuff: {
 				DisplayName: 龙之觉醒
-				Description: IDK how to chinese but if I didn't change this it'd prolly crash
+				Description: 热辣滚烫！
 			}
 
 			NightsCrackerBuff: {
