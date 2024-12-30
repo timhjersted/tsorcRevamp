@@ -561,13 +561,13 @@ namespace tsorcRevamp
             
             ScriptedEvent JungleMimicEvent = new ScriptedEvent(new Vector2(5781, 1525), 25, NPCID.BigMimicJungle, 107, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Lime);
         
-            ScriptedEvent BloodBossEvent1 = new ScriptedEvent(new Vector2(2914, 526), 25, NPCID.BloodEelHead, 60, true, false, true, LangUtils.GetTextValue("Events.BloodBossEvent1"), Color.Red, false, null, SetNightCustomAction);
+            ScriptedEvent BloodBossEvent1 = new ScriptedEvent(new Vector2(2914, 526), 25, NPCID.BloodEelHead, 60, true, false, true, LangUtils.GetTextValue("Events.BloodBossEvent1"), Color.Red, false, RemixMapCondition, SetNightCustomAction);
             BloodBossEvent1.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.WrathPotion, ItemID.DripplerFlail }, new List<int>() { 5, 2, 1 });
 
-            ScriptedEvent BloodBossEvent2 = new ScriptedEvent(new Vector2(2765, 620), 25, NPCID.GoblinShark, 60, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, null, SetNightCustomAction);
+            ScriptedEvent BloodBossEvent2 = new ScriptedEvent(new Vector2(2765, 620), 25, NPCID.GoblinShark, 60, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, RemixMapCondition, SetNightCustomAction);
             BloodBossEvent2.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.RagePotion, ItemID.SharpTears }, new List<int>() { 5, 2, 1 });
 
-            ScriptedEvent BloodBossEvent3 = new ScriptedEvent(new Vector2(2893, 610), 30, NPCID.BloodNautilus, 60, true, false, true, LangUtils.GetTextValue("Events.BloodBossEvent3"), Color.Red, false, null, SetBloodMoonCustomAction);
+            ScriptedEvent BloodBossEvent3 = new ScriptedEvent(new Vector2(2893, 610), 30, NPCID.BloodNautilus, 60, true, false, true, LangUtils.GetTextValue("Events.BloodBossEvent3"), Color.Red, false, RemixMapCondition, SetBloodMoonCustomAction);
             BloodBossEvent3.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.LifeforcePotion, ItemID.BloodHamaxe, ItemID.SanguineStaff, ItemID.MagicQuiver, ItemID.LavaCharm }, new List<int>() { 6, 3, 1, 1, 1, 1});
 
             ScriptedEvent GoblinSharkTropicalIsland = new ScriptedEvent(new Vector2(7874, 390), 40, NPCID.GoblinShark, DustID.CrimsonSpray, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, null, SetNightCustomAction);
@@ -767,6 +767,11 @@ namespace tsorcRevamp
         public static bool SuperHardModeCustomCondition()
         {
             return tsorcRevampWorld.SuperHardMode;
+        }
+
+        public static bool RemixMapCondition()
+        {
+            return tsorcRevampWorld.RemixMap;
         }
 
         public static bool MarilithCustomCondition()
