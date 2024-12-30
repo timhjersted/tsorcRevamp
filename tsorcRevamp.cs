@@ -2637,7 +2637,7 @@ namespace tsorcRevamp
                         {
                             mapString = currentString;
                         }
-                        if (currentString.Contains("RemixMAP ") && RemixmapString == "0000000000") //Store the first line with the word RemixMAP in it here
+                        if (currentString.Contains("REMIXMAP ") && RemixmapString == "0000000000") //Store the first line with the word RemixMAP in it here
                         {
                             RemixmapString = currentString;
                         }
