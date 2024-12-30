@@ -3721,7 +3721,7 @@ namespace tsorcRevamp.NPCs
                     dustPos.X += Main.rand.NextFloat(0, npc.width);
                     dustPos.Y += Main.rand.NextFloat(0, npc.height);
                     Vector2 dustVel = Main.rand.NextVector2Square(-0.4f, 0.4f);
-                    Dust.NewDustPerfect(dustPos, DustID.MagicMirror, dustVel, Scale: 2);
+                    Dust.NewDustPerfect(dustPos, 92, dustVel, Scale: 2);
 
                     return true;
                 }

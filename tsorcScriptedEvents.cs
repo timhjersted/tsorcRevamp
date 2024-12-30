@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
+using tsorcRevamp;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Lore;
 using tsorcRevamp.Items.Materials;
@@ -205,6 +206,10 @@ namespace tsorcRevamp
             ShadowTempleEvent2,
             MoltenSkyTempleEvent,
             SandstormElementalEvent,
+            JungleMimicEvent,
+            BloodBossEvent1,
+            BloodBossEvent2,
+            BloodBossEvent3,
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -259,11 +264,6 @@ namespace tsorcRevamp
             ScriptedEvent GreatRedKnightInDesert = new ScriptedEvent(new Vector2(2229, 856), 100, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(), DustID.Shadowflame, true, false, true, LangUtils.GetTextValue("Events.GreatRedKnightInvasion"), Color.Red, false, SuperHardModeCustomCondition);
             GreatRedKnightInDesert.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<Humanity>() }, new List<int>() { 2, 2, 2 });
             GreatRedKnightInDesert.SetCustomStats(null, null, null, 20000);
-
-            //HEMOGLOBIN SHARK ON THE FLOATING TROPICAL ISLAND
-            ScriptedEvent GoblinSharkTropicalIsland = new ScriptedEvent(new Vector2(7874, 390), 40, NPCID.GoblinShark, DustID.CrimsonSpray, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, null, SetNightCustomAction);
-            GoblinSharkTropicalIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion, ItemID.SharpTears }, new List<int>() { 5, 3, 1 });
-            GoblinSharkTropicalIsland.SetCustomStats(5000, null, null, 15000);
 
             //Ancestral Spirit
             ScriptedEvent AncestralSpiritEvent = new ScriptedEvent(new Vector2(4043, 143), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.Blue, false, null, SetNightCustomAction);
@@ -534,9 +534,10 @@ namespace tsorcRevamp
             //Sandstorm Elemental in the Solar Island
             ScriptedEvent SandstormElementalEvent = new ScriptedEvent(new Vector2(2119, 248), 40, NPCID.SandElemental, 269, true, true, false, LangUtils.GetTextValue("Events.SandstormElementalEvent"), Color.Yellow);
 
-            //Paladin in the Shadow Temple 
+            //Ancient vision in the Shadow Temple
             ScriptedEvent ShadowTempleEvent = new ScriptedEvent(new Vector2(1460, 1364), 25, NPCID.AncientCultistSquidhead, 228, true, true, false, LangUtils.GetTextValue("Events.ShadowTempleEvent"), Color.Yellow);
-
+            
+            //Paladin in the Shadow Temple 
             ScriptedEvent ShadowTempleEvent2 = new ScriptedEvent(new Vector2(1734, 1297), 20, NPCID.Paladin, 133, true, true, false, LangUtils.GetTextValue("Events.ShadowTempleEvent2"), Color.Yellow);
 
             //Mushroom Cavern AMBUSH
@@ -552,12 +553,28 @@ namespace tsorcRevamp
 
             //Molten Sky Temple 
             ScriptedEvent MoltenSkyTempleEvent = new ScriptedEvent(new Vector2(1040, 1865), 25, NPCID.CultistDragonHead, 15, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Blue);
-            MoltenSkyTempleEvent.SetCustomStats(25000, 20, 80, 10000);
+            MoltenSkyTempleEvent.SetCustomStats(25000, null, null, 10000);
 
             ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, SuperHardModeCustomCondition, SetNightCustomAction);
 
             ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, () => !NPC.downedBoss3);
+            
+            ScriptedEvent JungleMimicEvent = new ScriptedEvent(new Vector2(5781, 1525), 25, NPCID.BigMimicJungle, 107, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Lime);
+        
+            ScriptedEvent BloodBossEvent1 = new ScriptedEvent(new Vector2(2914, 526), 25, NPCID.BloodEelHead, 60, true, false, true, LangUtils.GetTextValue("Events.BloodBossEvent1"), Color.Red, false, null, SetNightCustomAction);
+            BloodBossEvent1.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.WrathPotion, ItemID.DripplerFlail }, new List<int>() { 5, 2, 1 });
 
+            ScriptedEvent BloodBossEvent2 = new ScriptedEvent(new Vector2(2765, 620), 25, NPCID.GoblinShark, 60, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, null, SetNightCustomAction);
+            BloodBossEvent2.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.RagePotion, ItemID.SharpTears }, new List<int>() { 5, 2, 1 });
+
+            ScriptedEvent BloodBossEvent3 = new ScriptedEvent(new Vector2(2893, 610), 30, NPCID.BloodNautilus, 60, true, false, true, LangUtils.GetTextValue("Events.BloodBossEvent3"), Color.Red, false, null, SetBloodMoonCustomAction);
+            BloodBossEvent3.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.LifeforcePotion, ItemID.BloodHamaxe, ItemID.SanguineStaff, ItemID.MagicQuiver, ItemID.LavaCharm }, new List<int>() { 6, 3, 1, 1, 1, 1});
+
+            ScriptedEvent GoblinSharkTropicalIsland = new ScriptedEvent(new Vector2(7874, 390), 40, NPCID.GoblinShark, DustID.CrimsonSpray, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, null, SetNightCustomAction);
+            GoblinSharkTropicalIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion, ItemID.SharpTears }, new List<int>() { 5, 3, 1 });
+            GoblinSharkTropicalIsland.SetCustomStats(5000, null, null, 15000);
+
+            
 
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
@@ -645,8 +662,10 @@ namespace tsorcRevamp
                 {ScriptedEventType.ShadowTempleEvent2, ShadowTempleEvent2 }, 
                 {ScriptedEventType.MoltenSkyTempleEvent, MoltenSkyTempleEvent }, 
                 {ScriptedEventType.SandstormElementalEvent, SandstormElementalEvent },
-
-
+                {ScriptedEventType.JungleMimicEvent, JungleMimicEvent },
+                {ScriptedEventType.BloodBossEvent1, BloodBossEvent1 },
+                {ScriptedEventType.BloodBossEvent2, BloodBossEvent2 },
+                {ScriptedEventType.BloodBossEvent3, BloodBossEvent3 },
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();
@@ -961,6 +980,19 @@ namespace tsorcRevamp
             //UsefulFunctions.BroadcastText("Time shifts forward...", Color.Purple);
             Main.dayTime = false;
             Main.time = 0;
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.WorldData);
+            }
+            return EventActionStatus.EndAction;
+        }
+
+        public static EventActionStatus SetBloodMoonCustomAction(ScriptedEvent thisEvent)
+        {
+            //UsefulFunctions.BroadcastText("Time shifts forward...", Color.Purple);
+            Main.dayTime = false;
+            Main.time = 0;
+            Main.bloodMoon = true;
             if (Main.netMode == NetmodeID.Server)
             {
                 NetMessage.SendData(MessageID.WorldData);
