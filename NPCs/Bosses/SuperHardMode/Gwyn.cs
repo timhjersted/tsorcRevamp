@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.aiStyle = 3;
             NPC.height = 40;
             NPC.width = 20;
-            NPC.scale = 1.1f;
+            NPC.scale = 1.2f;
             Music = 12;
             NPC.damage = 95;
             NPC.defense = 160;

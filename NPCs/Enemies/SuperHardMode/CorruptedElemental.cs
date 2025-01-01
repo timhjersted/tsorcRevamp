@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.height = 40;
             AnimationType = 120;
             NPC.knockBackResist = 0.1f;
-
+            NPC.lavaImmune = true;
             NPC.aiStyle = 3;
             NPC.timeLeft = 750;
             NPC.damage = 50;

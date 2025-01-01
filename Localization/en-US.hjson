@@ -243,6 +243,7 @@ Mods: {
 			EoC: The Eye sees you!
 			EoW: The Eater of Worlds is ready to feed!
 			EoL: The Empress of Light awakens!
+			Lunatic: You can't beat what's coming, Red.
 			LichKing: The Lich King awakens!
 			Hunter: The hunt begins...
 			Rage: The Rage awakens!
@@ -252,6 +253,7 @@ Mods: {
 			GoblinSummoner2: You think you're clever, Red?
 			BloodBossEvent1: A Blood Eel is coming to devour you...
 			BloodBossEvent3: The Dreadnautilus, demon of the blood moon, has awakened!
+			FrozenCathedralEvent: You want to be frozen like the fools before you, Red?
 			ShadowTempleEvent: A strange vision has manifested itself from your fears...
 			ShadowTempleEvent2: A paladin appears to smite you!
 			SandstormElementalEvent: A powerful elemental is summoned!
@@ -410,6 +412,12 @@ Mods: {
 			Grapple: Your grapple strains against the force, but...!
 			Snap: Your grapple suddenly snaps!!
 			Expelled: A strong forcefield expels you from the ruins!
+		}
+
+		LunaticForcefield: {
+			Grapple: Your grapple strains against the force, but...
+			Snap: Your grapple snaps...
+			Expelled: A strong forcefield exepls you from the ship! It is connected with the power of the celestial pillars...
 		}
 
 		BossChecklist: {
@@ -9392,6 +9400,8 @@ Mods: {
 			SupremeDragoonLashProjectile.DisplayName: Supreme Dragoon Lash Projectile
 			HighCaliberRound.DisplayName: High Caliber Round
 			OldHalberdProj.DisplayName: Old Halberd Proj
+			DragoonLightning.DisplayName: Dragoon Lightning
+			SupremeDragoonLightning.DisplayName: Supreme Dragoon Lightning
 		}
 
 		NPCs: {

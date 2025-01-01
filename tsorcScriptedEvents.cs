@@ -210,6 +210,10 @@ namespace tsorcRevamp
             BloodBossEvent1,
             BloodBossEvent2,
             BloodBossEvent3,
+            CatacombsEvent,
+            FoundryEvent,
+            FrozenCathedralEvent,
+            Lunatic,
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -283,6 +287,9 @@ namespace tsorcRevamp
             //EMPRESS OF LIGHT
             ScriptedEvent EoL = new ScriptedEvent(new Vector2(4484, 355), 100, NPCID.HallowBoss, DustID.RainbowTorch, false, true, true, LangUtils.GetTextValue("Events.EoL"), Main.DiscoColor, false, EoLDownedCondition);
 
+            ScriptedEvent Lunatic = new ScriptedEvent(new Vector2(171, 210), 40, NPCID.CultistBoss, 15, false, true, true, LangUtils.GetTextValue("Events.Lunatic"), Color.Cyan, false, RemixMapCondition);
+            Lunatic.SetCustomDrops(new List<int>() { ItemID.CelestialSigil }, new List<int>() {1});
+            Lunatic.SetCustomStats(100000, null, null, null);
             //LITCH KING
             ScriptedEvent LitchKing = new ScriptedEvent(new Vector2(364, 1897), 40, ModContent.NPCType<EarthFiendLich>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.LichKing"), Color.Gold, false);
 
@@ -559,16 +566,23 @@ namespace tsorcRevamp
 
             ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, () => !NPC.downedBoss3);
             
-            ScriptedEvent JungleMimicEvent = new ScriptedEvent(new Vector2(5781, 1525), 25, NPCID.BigMimicJungle, 107, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Lime);
+            ScriptedEvent JungleMimicEvent = new ScriptedEvent(new Vector2(5781, 1525), 25, NPCID.BigMimicJungle, 107, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Lime, false, RemixMapCondition, SetNightCustomAction);
         
-            ScriptedEvent BloodBossEvent1 = new ScriptedEvent(new Vector2(2914, 526), 25, NPCID.BloodEelHead, 60, true, false, true, LangUtils.GetTextValue("Events.BloodBossEvent1"), Color.Red, false, RemixMapCondition, SetNightCustomAction);
+            ScriptedEvent BloodBossEvent1 = new ScriptedEvent(new Vector2(2914, 526), 25, NPCID.BloodEelHead, 60, true, true, false, LangUtils.GetTextValue("Events.BloodBossEvent1"), Color.Red, false, RemixMapCondition, SetNightCustomAction);
             BloodBossEvent1.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.WrathPotion, ItemID.DripplerFlail }, new List<int>() { 5, 2, 1 });
 
-            ScriptedEvent BloodBossEvent2 = new ScriptedEvent(new Vector2(2765, 620), 25, NPCID.GoblinShark, 60, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, RemixMapCondition, SetNightCustomAction);
+            ScriptedEvent BloodBossEvent2 = new ScriptedEvent(new Vector2(2765, 620), 25, NPCID.GoblinShark, 60, true, true, false, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, RemixMapCondition, SetNightCustomAction);
             BloodBossEvent2.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.RagePotion, ItemID.SharpTears }, new List<int>() { 5, 2, 1 });
 
-            ScriptedEvent BloodBossEvent3 = new ScriptedEvent(new Vector2(2893, 610), 30, NPCID.BloodNautilus, 60, true, false, true, LangUtils.GetTextValue("Events.BloodBossEvent3"), Color.Red, false, RemixMapCondition, SetBloodMoonCustomAction);
-            BloodBossEvent3.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.LifeforcePotion, ItemID.BloodHamaxe, ItemID.SanguineStaff, ItemID.MagicQuiver, ItemID.LavaCharm }, new List<int>() { 6, 3, 1, 1, 1, 1});
+            ScriptedEvent BloodBossEvent3 = new ScriptedEvent(new Vector2(2893, 610), 30, NPCID.BloodNautilus, 60, true, true, false, LangUtils.GetTextValue("Events.BloodBossEvent3"), Color.Red, false, RemixMapCondition, SetBloodMoonCustomAction);
+            BloodBossEvent3.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.LifeforcePotion, ItemID.BloodHamaxe, ItemID.MagicQuiver, ItemID.LavaCharm }, new List<int>() { 6, 3, 1, 1, 1, 1});
+
+            ScriptedEvent CatacombsEvent = new ScriptedEvent(new Vector2(3181, 1334), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.SlograII>(), DustID.Torch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapCondition);
+            CatacombsEvent.SetCustomStats(9000, null, null, null);
+
+            ScriptedEvent FoundryEvent = new ScriptedEvent(new Vector2(5229, 1254), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileKnight>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition);
+
+            ScriptedEvent FrozenCathedralEvent = new ScriptedEvent(new Vector2(7635, 1735), 65, NPCID.IceQueen, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.FrozenCathedralEvent"), Color.Cyan, false, RemixMapCondition, SetNightCustomAction);
 
             ScriptedEvent GoblinSharkTropicalIsland = new ScriptedEvent(new Vector2(7874, 390), 40, NPCID.GoblinShark, DustID.CrimsonSpray, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, null, SetNightCustomAction);
             GoblinSharkTropicalIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion, ItemID.SharpTears }, new List<int>() { 5, 3, 1 });
@@ -666,6 +680,10 @@ namespace tsorcRevamp
                 {ScriptedEventType.BloodBossEvent1, BloodBossEvent1 },
                 {ScriptedEventType.BloodBossEvent2, BloodBossEvent2 },
                 {ScriptedEventType.BloodBossEvent3, BloodBossEvent3 },
+                {ScriptedEventType.CatacombsEvent, CatacombsEvent },
+                {ScriptedEventType.FrozenCathedralEvent, FrozenCathedralEvent },
+                {ScriptedEventType.FoundryEvent, FoundryEvent },
+                {ScriptedEventType.Lunatic, Lunatic },
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();
@@ -828,6 +846,11 @@ namespace tsorcRevamp
         public static bool EoLDownedCondition()
         {
             return !NPC.downedEmpressOfLight;
+        }
+
+        public static bool CultistDownedCondition()
+        {
+            return !NPC.downedAncientCultist;
         }
 
         //This condition returns true if the player is in The Abyss

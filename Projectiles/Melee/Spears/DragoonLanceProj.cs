@@ -1,5 +1,5 @@
 using Microsoft.Xna.Framework;
-
+using tsorcRevamp.Projectiles;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -16,5 +16,4 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
         public override float Scale => 1;
         public override int dustID => DustID.Electric;
     }
-
 }

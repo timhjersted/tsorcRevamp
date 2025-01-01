@@ -16,5 +16,4 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
         public override float Scale => 1;
         public override int dustID => DustID.WitherLightning;
     }
-
 }

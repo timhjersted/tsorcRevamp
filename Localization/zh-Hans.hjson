@@ -243,6 +243,7 @@ Mods: {
 			EoC: 克苏鲁之眼盯上你了！
 			EoW: 世界吞噬者已经准备好饱餐一顿！
 			EoL: 光之女皇已苏醒！
+			// Lunatic: You can't beat what's coming, Red.
 			LichKing: 大地恶魔巫妖王已苏醒！
 			Hunter: 狩猎开始了...
 			Rage: 愤怒已苏醒！
@@ -252,6 +253,7 @@ Mods: {
 			GoblinSummoner2: 你觉得你很聪明吗，瑞德？
 			BloodBossEvent1: 一只血鳗鱼前来将你吞噬...
 			BloodBossEvent3: 血月恶魔-恐惧鹦鹉螺，已经苏醒！
+			// FrozenCathedralEvent: You want to be frozen like the fools before you, Red?
 			ShadowTempleEvent: 一只奇怪的远古幻影妖从你的恐惧中显现......
 			ShadowTempleEvent2: 一名圣骑士出现，准备对你进行制裁！
 			SandstormElementalEvent: 一个强大的沙尘精被召唤出来了！
@@ -409,6 +411,12 @@ Mods: {
 			Grapple: 你尽力用钩爪对抗这股力量，但...！
 			Snap: 你的钩爪突然失效！
 			Expelled: 一座强大的力场将你从废墟中驱逐出去！
+		}
+
+		LunaticForcefield: {
+			// Grapple: Your grapple strains against the force, but...
+			// Snap: Your grapple snaps...
+			// Expelled: A strong forcefield exepls you from the ship! It is connected with the power of the celestial pillars...
 		}
 
 		BossChecklist: {
@@ -9384,6 +9392,8 @@ Mods: {
 			SupremeDragoonLashProjectile.DisplayName: 至尊龙纹鞭
 			HighCaliberRound.DisplayName: 大口径步枪
 			OldHalberdProj.DisplayName: 旧戟
+			// DragoonLightning.DisplayName: Dragoon Lightning
+			// SupremeDragoonLightning.DisplayName: Supreme Dragoon Lightning
 		}
 
 		NPCs: {

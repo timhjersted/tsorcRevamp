@@ -10,6 +10,12 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using TerraUI.Objects;
+using tsorcRevamp;
+using tsorcRevamp.NPCs;
+using tsorcRevamp.NPCs.Enemies.SuperHardMode;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Accessories;
 using tsorcRevamp.Buffs.Armor;
@@ -1027,6 +1033,68 @@ namespace tsorcRevamp
                     }
                 }
             }
+            if (tsorcRevampWorld.RemixMap && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && (!NPC.downedTowerSolar || !NPC.downedTowerVortex || !NPC.downedTowerNebula || !NPC.downedTowerStardust))
+            {
+                Vector2 arenaLC = new Vector2(171, 202);
+                float distanceLC = Vector2.DistanceSquared(Player.Center / 16, arenaLC);
+
+                if (!NPC.AnyNPCs(NPCID.CultistBoss))
+                {
+                    if (distanceLC < 42500)
+                    {
+                        float proximity = distanceLC - 22500;
+                        proximity /= 20000f;
+                        proximity = 1 - proximity;
+
+                        for (int i = 0; i < 10f * proximity * proximity; i++)
+                        {
+                            Vector2 diff = Player.Center - arenaLC * 16;
+                            diff.Normalize();
+                            diff *= 2400;
+
+                            diff = diff.RotatedBy(Main.rand.NextFloat(-MathHelper.Pi / 30, MathHelper.Pi / 30));
+
+                            Vector2 vel = diff;
+                            vel.Normalize();
+                            vel = vel.RotatedBy(Main.rand.NextBool() ? MathHelper.PiOver2 : -MathHelper.PiOver2);
+                            Dust.NewDustPerfect(arenaLC * 16 + diff, DustID.AncientLight, vel, default, default, 1.5f * proximity).noGravity = true;
+                        }
+
+                        if (distanceLC < 22500)
+                        {
+                            for (int p = 0; p < 1000; p++)
+                            {
+                                if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == 7)
+                                {
+                                    FieldTimer++;
+                                    if (FieldTimer == 1)
+                                    {
+                                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("LunaticForcefield.Grapple"), Color.Cyan);
+                                        TextCooldown = 350;
+                                    }
+                                    if (FieldTimer >= 340)
+                                    {
+                                        Player.velocity += new Vector2(0, -15);
+                                        Player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 30);
+                                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("LunaticForcefield.Snap"), Color.Green);
+                                    }
+                                }
+                            }
+
+                            Player.velocity += UsefulFunctions.Aim(arenaLC * 16, Player.Center, 20);
+                            if (TextCooldown <= 0)
+                            {
+                                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("LunaticForcefield.Expelled"), Color.Pink);
+                                TextCooldown = 240;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        FieldTimer = 0;
+                    }
+                }
+            }
         }
 
         /*public override void ModifyMaxStats(out StatModifier health, out StatModifier mana)
@@ -1623,7 +1691,6 @@ namespace tsorcRevamp
                 //SupersonicWings2
                 if (supersonicLevel == 3)
                 {
-
                     moveSpeedPercentBoost = 1f;
                     baseSpeed = 7.5f;
                     Player.moveSpeed += 0.6f;
@@ -2094,6 +2161,82 @@ namespace tsorcRevamp
             {
                 Player.AddBuff(BuffID.WaterCandle, 5*60);
                 Player.AddBuff(BuffID.MoonLeech, 5*60);
+            }
+
+            if(tsorcRevampWorld.RemixMap)
+            {
+                if (Main.LocalPlayer.ZoneCorrupt && Main.LocalPlayer.ZoneUnderworldHeight && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.SuperHardMode)
+                {
+                    bool BossIsAlive = false;
+
+                    // if witchking or ancient abyss demon is alive
+                    foreach (NPC npc in Main.npc)
+                    {
+                        if (npc.active && 
+                            (npc.type == ModContent.NPCType<Witchking>() || npc.type == ModContent.NPCType<AncientDemonOfTheAbyss>())) 
+                        {
+                            BossIsAlive = true;
+                            break;
+                        }
+                    }
+
+                    // Applies the effects only if witchking or ancient abyss demon isn't here
+                    if (!BossIsAlive)
+                    {
+                        Player.AddBuff(BuffID.WitheredArmor, 4*60);
+                        Player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 4*60, false);
+                        Player.AddBuff(BuffID.Darkness, 4*60);
+                    }
+                }
+
+                if (Main.LocalPlayer.ZoneMeteor && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && (Main.LocalPlayer.ZoneSkyHeight || Main.LocalPlayer.ZoneOverworldHeight) && Main.LocalPlayer.ZoneCorrupt && tsorcRevampWorld.SuperHardMode)
+                {
+                    bool WyvernShadowIsAlive = false;
+
+                    foreach (NPC npc in Main.npc)
+                    {
+                        if (npc.active && 
+                            (npc.type == ModContent.NPCType<GhostDragonHead>() || npc.type == ModContent.NPCType<WyvernMageShadow>())) 
+                        {
+                            WyvernShadowIsAlive = true;
+                            break;
+                        }
+                    }
+
+                    if (!WyvernShadowIsAlive)
+                    {
+                        Player.AddBuff(BuffID.WitheredWeapon, 4*60);
+                        Player.AddBuff(BuffID.Battle, 4*60);
+                        Player.AddBuff(ModContent.BuffType<WeightOfShadow>(), 4*60, false);
+                    }
+                }
+
+                if (Main.LocalPlayer.ZoneJungle && !Main.LocalPlayer.ZoneDungeon && !Main.LocalPlayer.ZoneOverworldHeight && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.SuperHardMode)
+                {
+                    Player.AddBuff(ModContent.BuffType<SlowedLifeRegen>(), 5*60, false);
+                    Player.AddBuff(BuffID.Weak, 5*60);
+                }
+
+                if (Main.LocalPlayer.ZoneSnow && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Main.LocalPlayer.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
+                {
+                    bool SeathIsAlive = false;
+
+                    foreach (NPC npc in Main.npc)
+                    {
+                        if (npc.active && npc.type == ModContent.NPCType<SeathTheScalelessHead>()) 
+                        {
+                            SeathIsAlive = true;
+                            break;
+                        }
+                    }
+
+                    if (!SeathIsAlive)
+                    {
+                        Player.AddBuff(BuffID.WaterCandle, 5*60);
+                        Player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 5*60, false);
+                        Player.AddBuff(BuffID.Chilled, 3*60);
+                    }
+                }
             }
         }
 
