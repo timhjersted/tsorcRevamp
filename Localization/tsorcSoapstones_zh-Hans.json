@@ -440,14 +440,14 @@
   "style": 1
 }
 {
-  "text": "- 你发现了毁灭者的神庙 -",
+  "text": "- 你发现了毁灭者的神庙 - --NEWLINE   --NEWLINE Miakoda：\u0022瑞德，下一场战斗保持移动，闪避是关键\u0022",
   "tileX": 2108,
   "tileY": 968,
-  "textWidth": 250,
+  "textWidth": 550,
   "style": 1
 }
 {
-  "text": "- 这扇门守卫着通往火焰恶魔的路 - --NEWLINE   --NEWLINE 你拿出日记，写下一张纸条：\u0022蜥蜴门就在沙漠中一座未知神庙的东边。\u0022",
+  "text": "- 这扇门守卫着通往火焰恶魔地下陵寝的路 - --NEWLINE   --NEWLINE 你拿出日记，写下一张纸条：\u0022蜥蜴门就在沙漠中一座未知神庙的东边。\u0022",
   "tileX": 2238,
   "tileY": 857,
   "textWidth": 520,

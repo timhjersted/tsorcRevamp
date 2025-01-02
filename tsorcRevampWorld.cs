@@ -741,9 +741,11 @@ namespace tsorcRevamp
         public static void BuildSoapstones()
         {
             string jsonPath = "tsorcRevamp/Localization/tsorcSoapstones_" + Language.ActiveCulture.Name + ".json";
+            string RemixjsonPath = "tsorcRevamp/Localization/tsorcRemixSoapstones_" + Language.ActiveCulture.Name + ".json";
             if (Language.ActiveCulture.Name != "zh-Hans" && Language.ActiveCulture.Name != "en-US")
             {
                 jsonPath = "tsorcRevamp/Localization/tsorcSoapstones_en-US.json";
+                RemixjsonPath = "tsorcRevamp/Localization/tsorcRemixSoapstones_en-US.json";
             }
             tsorcRevamp mod = ModContent.GetInstance<tsorcRevamp>();
 
@@ -764,7 +766,7 @@ namespace tsorcRevamp
                     for (int y = 0; y < Main.maxTilesY - 2; y++)
                     {
                         Tile worldTile = Framing.GetTileSafely(x, y);
-                        if (worldTile.HasTile && worldTile.TileType == TileID.Signs)
+                        if (worldTile.HasTile && (worldTile.TileType == TileID.Signs || worldTile.TileType == TileID.AnnouncementBox))
                         {
                             for (int q = x; q < x + 2; q++)
                             {
@@ -778,7 +780,7 @@ namespace tsorcRevamp
                 }
                 for (int i = 0; i < 400; i++)
                 {
-                    if (Main.item[i].type == ItemID.Sign && Main.item[i].active)
+                    if ((Main.item[i].type == ItemID.Sign || Main.item[i].type == ItemID.AnnouncementBox) && Main.item[i].active)
                     {
                         Main.item[i].active = false; //delete ground items
                     }
@@ -789,6 +791,11 @@ namespace tsorcRevamp
                 }
 
                 Byte[] jsonBytes = ModContent.GetFileBytes(jsonPath);
+                if (RemixMap)
+                {
+                    jsonBytes = null;
+                    jsonBytes = ModContent.GetFileBytes(RemixjsonPath);
+                }
 
                 string bigJson = System.Text.Encoding.UTF8.GetString(jsonBytes);
 
@@ -839,7 +846,7 @@ namespace tsorcRevamp
                 for (int y = 0; y < Main.maxTilesY - 2; y++)
                 {
                     Tile worldTile = Framing.GetTileSafely(x, y);
-                    if (worldTile.HasTile && worldTile.TileType == TileID.Signs)
+                    if (worldTile.HasTile && (worldTile.TileType == TileID.Signs || worldTile.TileType == TileID.AnnouncementBox))
                     {
                         string h = Main.sign[Sign.ReadSign(x, y, false)].text;
                         string result = Regex.Replace(h, @"\r\n?|\n", " --NEWLINE ");
@@ -867,7 +874,7 @@ namespace tsorcRevamp
             }
             for (int i = 0; i < 400; i++)
             {
-                if (Main.item[i].type == ItemID.Sign && Main.item[i].active)
+                if ((Main.item[i].type == ItemID.Sign || Main.item[i].type == ItemID.AnnouncementBox) && Main.item[i].active)
                 {
                     Main.item[i].active = false; //delete ground items
                 }
@@ -981,6 +988,7 @@ namespace tsorcRevamp
                         {
                             Main.worldID = Main.rand.Next(9999999);
                             PlaceModdedTiles();
+                            //ReadSoapstonesIntoJson();
                             BuildSoapstones();
                         }
 
@@ -1084,7 +1092,7 @@ namespace tsorcRevamp
                     for (int y = 0; y < Main.maxTilesY - 2; y++)
                     {
                         Tile worldTile = Framing.GetTileSafely(x, y);
-                        if (worldTile.HasTile && worldTile.TileType == TileID.Signs)
+                        if (worldTile.HasTile && (worldTile.TileType == TileID.Signs || worldTile.TileType == TileID.AnnouncementBox))
                         {
                             string h = Main.sign[Sign.ReadSign(x, y, false)].text;
                             string result = Regex.Replace(h, @"\r\n?|\n", " --NEWLINE ");
@@ -1112,7 +1120,7 @@ namespace tsorcRevamp
                 }
                 for (int i = 0; i < 400; i++)
                 {
-                    if (Main.item[i].type == ItemID.Sign && Main.item[i].active)
+                    if ((Main.item[i].type == ItemID.Sign || Main.item[i].type == ItemID.AnnouncementBox) && Main.item[i].active)
                     {
                         Main.item[i].active = false; //delete ground items (in this case campfires)
                     }
@@ -1131,7 +1139,7 @@ namespace tsorcRevamp
                     for (int y = 0; y < Main.maxTilesY - 2; y++)
                     {
                         Tile worldTile = Framing.GetTileSafely(x, y);
-                        if (worldTile.HasTile && worldTile.TileType == TileID.Signs)
+                        if (worldTile.HasTile && (worldTile.TileType == TileID.Signs || worldTile.TileType == TileID.AnnouncementBox))
                         {
                             for (int q = x; q < x + 2; q++)
                             {
@@ -1145,7 +1153,7 @@ namespace tsorcRevamp
                 }
                 for (int i = 0; i < 400; i++)
                 {
-                    if (Main.item[i].type == ItemID.Sign && Main.item[i].active)
+                    if ((Main.item[i].type == ItemID.Sign || Main.item[i].type == ItemID.AnnouncementBox) && Main.item[i].active)
                     {
                         Main.item[i].active = false;
                     }

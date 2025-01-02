@@ -243,7 +243,7 @@ Mods: {
 			EoC: 克苏鲁之眼盯上你了！
 			EoW: 世界吞噬者已经准备好饱餐一顿！
 			EoL: 光之女皇已苏醒！
-			// Lunatic: You can't beat what's coming, Red.
+			Lunatic: 瑞德，你无法击败接下来的敌人
 			LichKing: 大地恶魔巫妖王已苏醒！
 			Hunter: 狩猎开始了...
 			Rage: 愤怒已苏醒！
@@ -253,7 +253,7 @@ Mods: {
 			GoblinSummoner2: 你觉得你很聪明吗，瑞德？
 			BloodBossEvent1: 一只血鳗鱼前来将你吞噬...
 			BloodBossEvent3: 血月恶魔-恐惧鹦鹉螺，已经苏醒！
-			// FrozenCathedralEvent: You want to be frozen like the fools before you, Red?
+			FrozenCathedralEvent: 瑞德，你想像之前的那些傻瓜一样被永远冰封吗？
 			ShadowTempleEvent: 一只奇怪的远古幻影妖从你的恐惧中显现......
 			ShadowTempleEvent2: 一名圣骑士出现，准备对你进行制裁！
 			SandstormElementalEvent: 一个强大的沙尘精被召唤出来了！
@@ -414,9 +414,9 @@ Mods: {
 		}
 
 		LunaticForcefield: {
-			// Grapple: Your grapple strains against the force, but...
-			// Snap: Your grapple snaps...
-			// Expelled: A strong forcefield exepls you from the ship! It is connected with the power of the celestial pillars...
+			Grapple: 你尽力用钩爪对抗这股力量，但...！
+			Snap: 你的钩爪失效了...
+			Expelled: 一座强大的力场将你弹开！它的力量和天界柱相连...
 		}
 
 		BossChecklist: {
@@ -1949,17 +1949,17 @@ Mods: {
 
 			AlucardFrockCoat: {
 				DisplayName: 阿鲁卡德礼服大衣
-				Tooltip: 属于 TSORC 团队的 NephilimDeath 的套装
+				Tooltip: 开发者时装，属于红云物语团队的NephilimDeath
 			}
 
 			AlucardJackboots: {
 				DisplayName: 阿鲁卡德长筒靴
-				Tooltip: 属于 TSORC 团队的 NephilimDeath 的套装
+				Tooltip: 开发者时装，属于红云物语团队的NephilimDeath
 			}
 
 			AlucardWig: {
 				DisplayName: 阿鲁卡德假发
-				Tooltip: 属于 TSORC 团队的 NephilimDeath 的套装
+				Tooltip: 开发者时装，属于红云物语团队的NephilimDeath
 			}
 
 			AncientHornedHelmet: {
@@ -2874,17 +2874,17 @@ Mods: {
 
 			SnarbolaxArmor: {
 				DisplayName: 蛇蝎铠甲
-				Tooltip: 开发者装备，属于红云物语团队的ChromaEquinox
+				Tooltip: 开发者时装，属于红云物语团队的ChromaEquinox
 			}
 
 			SnarbolaxGreaves: {
 				DisplayName: 蛇蝎护胫
-				Tooltip: 开发者装备，属于红云物语团队的ChromaEquinox
+				Tooltip: 开发者时装，属于红云物语团队的ChromaEquinox
 			}
 
 			SnipedStrangerHat: {
 				DisplayName: 陌生的狙击手帽子
-				Tooltip: 开发者装备，属于红云物语团队的ChromaEquinox
+				Tooltip: 开发者时装，属于红云物语团队的ChromaEquinox
 			}
 
 			StuddedLeatherArmor: {
@@ -5011,7 +5011,7 @@ Mods: {
 			}
 
 			DebugTome: {
-				DisplayName: 调试书
+				DisplayName: Debug Tome
 				Tooltip:
 					'''
 					你不应该拥有它
@@ -7300,17 +7300,17 @@ Mods: {
 
 			NecromancyAltar: {
 				DisplayName: 亡灵祭坛
-				Tooltip: 右键点击获得 迷魂 和 战略家 增益
+				Tooltip: 右键点击获得迷魂和战略家增益
 			}
 
 			JOI3Chassis: {
 				DisplayName: JOI3 上衣
-				Tooltip: JOI3 的开发者时装
+				Tooltip: 开发者时装，属于红云物语团队的JOI3
 			}
 
 			JOI3Headgear: {
 				DisplayName: JOI3 头饰
-				Tooltip: JOI3 的开发者时装
+				Tooltip: 开发者时装，属于红云物语团队的JOI3
 			}
 
 			SoulVessel: {
