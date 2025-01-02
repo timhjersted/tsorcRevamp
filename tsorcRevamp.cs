@@ -2633,7 +2633,7 @@ namespace tsorcRevamp
                         }
 
                         // check version based on the key words in CHANGELOG_URL
-                        if (currentString.Contains("MAP ") && mapString == "0000000000") //Store the first line with the word MAP in it here
+                        if (currentString.StartsWith("MAP ") && mapString == "0000000000") //Store the first line with the word MAP in it here
                         {
                             mapString = currentString;
                         }

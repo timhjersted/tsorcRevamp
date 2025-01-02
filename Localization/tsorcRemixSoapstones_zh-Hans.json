@@ -27,10 +27,17 @@
 "style": 1
 }
 {
-  "text": "一种黑暗的冲动驱使你杀死这朵花…… --NEWLINE   --NEWLINE 但你怀疑自己是否应当这么做。",
-  "tileX": 247,
-  "tileY": 1484,
-  "textWidth": 300,
+  "text": "- 你找到了 ??? - --NEWLINE  --NEWLINE Miakoda：\u0022抱歉瑞德，我不认识这地方，这的科技和环境似乎不属于我们的世界\u0022",
+  "tileX": 229,
+  "tileY": 152,
+  "textWidth": 600,
+  "style": 1
+}
+{
+  "text": "嘿，陌生人！我叫博什，我是个渔夫！ --NEWLINE  --NEWLINE 我们是一群拥有船只的旅行者，喜欢探索海岸。 --NEWLINE  --NEWLINE 我并非来自这个国家，但我注意到了这些令人印象深刻的废墟，它们似乎蕴藏着丰富的宝藏…… --NEWLINE  --NEWLINE 哦对了，欢迎在这艘船上加入我们！",
+  "tileX": 236,
+  "tileY": 858, 
+  "textWidth": 640,
   "style": 1
 }
 {
@@ -80,6 +87,13 @@
   "tileX": 335,
   "tileY": 1049,
   "textWidth": 380,
+  "style": 1
+}
+{
+  "text": "Miakoda：\u0022我听说在这些废墟下面藏有一笔令人垂涎的宝藏，但要小心，那里布满了陷阱……\u0022",
+  "tileX": 349,
+  "tileY": 850,
+  "textWidth": 660,
   "style": 1
 }
 {
@@ -174,6 +188,13 @@
   "style": 1
 }
 {
+  "text": "- You arrived in the Tropics - --NEWLINE  --NEWLINE The Tropics are the edge of the known world to the west, renowned for being rich in life but dangerous and filled with ruins...",
+  "tileX": 816,
+  "tileY": 833,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "拉动控制杆后，你听到从下方发出的巨大隆隆声， --NEWLINE   --NEWLINE 声音一直向东传播然后消失。 --NEWLINE   --NEWLINE 无论它打开了什么，它都离你很远。 --NEWLINE   --NEWLINE Miakoda：\u0022这座波涌神庙似乎还留下了一个秘密……\u0022",
   "tileX": 1051,
   "tileY": 955,
@@ -220,6 +241,13 @@
   "tileX": 1443,
   "tileY": 937,
   "textWidth": 270,
+  "style": 1
+}
+{
+  "text": " - 你发现了魔古尔遗迹 - --NEWLINE   --NEWLINE 这个世界腐败和黑暗魔法的源头",
+  "tileX": 1488,
+  "tileY": 1914,
+  "textWidth": 320,
   "style": 1
 }
 {
@@ -419,7 +447,14 @@
   "style": 1
 }
 {
-  "text": "你需要一块大琥珀来打开通道 --NEWLINE   --NEWLINE 这块琥珀很久以前就被封存在旧日之树中，以此来封印这个地方 --NEWLINE   --NEWLINE 你需要先击败夺心魔王阿卓迪斯才能获得它...",
+  "text": "- 你发现了猩红之丘 - --NEWLINE  --NEWLINE Miakoda：\u0022瑞德小心，右边的通道通向一些非常凶猛的血肉生物\u0022",
+  "tileX": 2921,
+  "tileY": 427,
+  "textWidth": 480,
+  "style": 1
+}
+{
+  "text": "你需要一块大琥珀来打开通道 --NEWLINE   --NEWLINE 这块琥珀很久以前就被封存在旧日之树中，以此来封印这个地方",
   "tileX": 2934,
   "tileY": 1200,
   "textWidth": 460,
@@ -727,10 +762,10 @@
   "style": 1
 }
 {
-  "text": "- 你发现了蘑菇洞窟 -",
+  "text": "Miakoda：\u0022瑞德，这种液体具有非常有趣的特性，你或许可以用它来帮助你在道路上前进……\u0022",
   "tileX": 3801,
   "tileY": 1545,
-  "textWidth": 220,
+  "textWidth": 720,
   "style": 1
 }
 {
@@ -1301,10 +1336,10 @@
   "style": 1
 }
 {
-  "text": "- 你发现了进入大地神庙的入口 - --NEWLINE   --NEWLINE 它被琥珀宝石门封住了 --NEWLINE   --NEWLINE \u0022据说住在埃什峰村西北雪山顶的巫师保管着钥匙\u0022",
+  "text": "- 你发现了进入大地神庙的入口 -",
   "tileX": 4521,
   "tileY": 857,
-  "textWidth": 360,
+  "textWidth": 260,
   "style": 1
 }
 {
@@ -1378,6 +1413,13 @@
   "style": 1
 }
 {
+  "text": "- 你发现了秋之空岛 - --NEWLINE   --NEWLINE 这些悬浮于村庄之上的小岛永远地停留在了秋天，这使得它们壮丽非凡。 --NEWLINE   --NEWLINE 然而，一些凝胶生物已在此定居，将其视为自己的领地。",
+  "tileX": 4651,
+  "tileY": 650,
+  "textWidth": 520,
+  "style": 1
+}
+{
   "text": "- 你发现了神秘小径 -",
   "tileX": 4666,
   "tileY": 919,
@@ -1413,7 +1455,7 @@
   "style": 1
 }
 {
-  "text": "- 这道门守护着通往灰烬洞穴的被遗忘之路 - --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022神庙蜥蜴砖门靠近地球熔化的核心， --NEWLINE   --NEWLINE 守护着我不知道该如何描述的东西……某种容器，或运输工具……\u0022 --NEWLINE   --NEWLINE 你试着画一个粗略的草图，并在上面画一座通往遗忘之城的塔作为参考点…",
+  "text": "- 这道门守护着通往魔古尔洞穴的被遗忘之路 - --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022神庙蜥蜴砖门靠近地球熔化的核心， --NEWLINE   --NEWLINE 守护着我不知道该如何描述的东西……某种容器，或运输工具……\u0022 --NEWLINE   --NEWLINE 你试着画一个粗略的草图，并在上面画一座通往遗忘之城的塔作为参考点…",
   "tileX": 4791,
   "tileY": 1907,
   "textWidth": 560,
@@ -1497,14 +1539,14 @@
   "style": 1
 }
 {
-  "text": "~·~ The Story Of Red Cloud 红云物语 ~·~  --NEWLINE 巨焱龙晶汉化组 汉化  --NEWLINE 人手不够 有部分翻译生硬 请见谅  --NEWLINE   --NEWLINE ~·~汉化人员：~·~ --NEWLINE 星界棱晶 b站id454936579 --NEWLINE 巨像ha b站id 52650683 --NEWLINE 丛林龙_亚戎 b站id 319380527 --NEWLINE 闪金 b站id 434011516 --NEWLINE 麒龙 b站id 178324958 --NEWLINE 芋圆銮歌 b站id 259288171 --NEWLINE 小小红白 b站id 397702 --NEWLINE 咕咕王 b站id 38075201 --NEWLINE urgiv --NEWLINE 感谢所有在翻译过程中提出建议和帮助的人",
+  "text": "~·~ The Story Of Red Cloud 红云物语·重构版·地图 ~·~ --NEWLINE   --NEWLINE 巨焱龙晶汉化组 汉化  --NEWLINE 人手不够 有部分翻译生硬 请见谅  --NEWLINE   --NEWLINE ~·~汉化人员：~·~ --NEWLINE 星界棱晶 b站id454936579 --NEWLINE 巨像ha b站id 52650683 --NEWLINE 丛林龙_亚戎 b站id 319380527 --NEWLINE 闪金 b站id 434011516 --NEWLINE 麒龙 b站id 178324958 --NEWLINE 芋圆銮歌 b站id 259288171 --NEWLINE 小小红白 b站id 397702 --NEWLINE 咕咕王 b站id 38075201 --NEWLINE urgiv --NEWLINE 感谢所有在翻译过程中提出建议和帮助的人",
   "tileX": 4926,
   "tileY": 860,
-  "textWidth": 320,
+  "textWidth": 400,
   "style": 1
 }
 {
-  "text": "附加的一些游玩提示： --NEWLINE   --NEWLINE 1.不要加内容类模组！ --NEWLINE 以及某些辅助类模组如：懒人、翻页背包、连锁挖矿。 --NEWLINE 不但你加的mod玩不好，这张地图也有可能出大bug，出事了只能说你活该。 --NEWLINE   --NEWLINE 2.如果游玩过程中遇到没翻译的句子、告示牌或你认为有问题的地方。 --NEWLINE 可以截图（尽量详细一些），发在我们的qq群里，并@群主&管理 --NEWLINE   --NEWLINE 可以加QQ群:368675949关注我们的动态以及提出宝贵建议！ --NEWLINE   --NEWLINE 感谢您对红云物语模组和该冒险地图以及我们的支持！祝您游玩愉快！",
+  "text": "附加的一些游玩提示： --NEWLINE   --NEWLINE ~ 这是红云物语的重构版地图，建议在游玩冒险地图后再体验 ~ --NEWLINE   --NEWLINE 1.不要加内容类模组！ --NEWLINE 以及某些辅助类模组如：懒人、翻页背包、连锁挖矿。 --NEWLINE 不但你加的mod玩不好，这张地图也有可能出大bug，出事了只能说你活该。 --NEWLINE   --NEWLINE 2.如果游玩过程中遇到没翻译的句子、告示牌或你认为有问题的地方。 --NEWLINE 可以截图（尽量详细一些），发在我们的qq群里，并@群主&管理 --NEWLINE   --NEWLINE 可以加QQ群:368675949关注我们的动态以及提出宝贵建议！ --NEWLINE   --NEWLINE 感谢您对红云物语模组和该冒险地图以及我们的支持！祝您游玩愉快！",
   "tileX": 4930,
   "tileY": 860,
   "textWidth": 600,
@@ -1581,7 +1623,7 @@
   "style": 1
 }
 {
-  "text": "这堵石墙必须从另一侧打开。",
+  "text": "- 你找到了大铸造厂的入口 - --NEWLINE   --NEWLINE 这座铸造厂已经被废弃很长时间了，但仍有部分保持运作，这相当奇怪。",
   "tileX": 5149,
   "tileY": 1004,
   "textWidth": 220,
@@ -1602,38 +1644,17 @@
   "style": 1
 }
 {
-  "text": "这扇门需要一块大黄玉才能打开，但那块黄玉早已遗失在位于树妖之屋下方的大铸造厂中。 --NEWLINE   --NEWLINE 然而，这个地方难以到达且极其危险，几乎没有人敢冒险去尝试找回它",
+  "text": "- 你发现了被遗忘的亚尔特留斯废墟 - --NEWLINE   --NEWLINE 这扇门需要一块大黄玉才能打开，但那块黄玉早已遗失在一座桥下丛林的大铸造厂中。 --NEWLINE   --NEWLINE 然而，这个地方难以到达且极其危险，几乎没有人敢冒险去尝试找回它",
   "tileX": 5163,
   "tileY": 1755,
   "textWidth": 640,
   "style": 1
 }
 {
-  "text": "- 你发现了被遗忘的亚尔特留斯废墟 -",
-  "tileX": 5176,
-  "tileY": 1755,
-  "textWidth": 320,
-  "style": 1
-}
-{
-  "text": "- 树妖之家 - --NEWLINE   --NEWLINE \u0022确保所有进入我家的人都有纯粹的善意；你会受到礼物和善意的欢迎。 --NEWLINE   --NEWLINE 带着恶意来，你也不会离开这个地方。欢迎旅行者！ --NEWLINE   --NEWLINE 轻轻一步，感谢这片神奇的大地，凝聚了我们所有亲人的生命！\u0022",
-  "tileX": 5201,
-  "tileY": 958,
-  "textWidth": 580,
-  "style": 1
-}
-{
-  "text": "商人告诉你一个关于流星雨的传闻—— --NEWLINE   --NEWLINE 流星雨从未落在地面上，一直悬浮在雨林上空。 --NEWLINE   --NEWLINE 如此奇怪的谜语…",
-  "tileX": 5254,
-  "tileY": 846,
-  "textWidth": 360,
-  "style": 1
-}
-{
-  "text": "- 乌纳丁酒店 - --NEWLINE   --NEWLINE 欢迎光临，你在这里的时候可以从我这里买弹药和药水。 --NEWLINE   --NEWLINE 如果我不在，请你自己随便找个房间住下。当你出去的时候在箱子里放上相应的货币，谢谢。 --NEWLINE   --NEWLINE -乌纳丁",
+  "text": "这座废墟般的房子曾是商人乌纳丁的家。 --NEWLINE   --NEWLINE 在你失去意识之前，你还记得去拜访他的那些日子。",
   "tileX": 5257,
   "tileY": 865,
-  "textWidth": 650,
+  "textWidth": 370,
   "style": 1
 }
 {
@@ -1676,6 +1697,13 @@
   "tileX": 5338,
   "tileY": 956,
   "textWidth": 180,
+  "style": 1
+}
+{
+  "text": "- 你发现了地狱边陲 - --NEWLINE  --NEWLINE 生命竟能在这又深又热的地方萌发，真是相当有趣。",
+  "tileX": 5367,
+  "tileY": 1877,
+  "textWidth": 370,
   "style": 1
 }
 {
@@ -1725,13 +1753,6 @@
   "tileX": 5599,
   "tileY": 1032,
   "textWidth": 440,
-  "style": 1
-}
-{
-  "text": "这个门需要一把神圣钻头打开吗？",
-  "tileX": 5662,
-  "tileY": 1790,
-  "textWidth": 250,
   "style": 1
 }
 {
@@ -1798,17 +1819,31 @@
   "style": 1
 }
 {
-  "text": "Miakoda：\u0022墙上的紫色圣草蕴含智慧，可能会将我们带到有趣的地方……\u0022",
+  "text": "- 你发现了丛林秘境的入口 - --NEWLINE   --NEWLINE 你拿出日记，写了一张便条：\u0022叶绿之门位于斯洛格拉和盖波陵墓以西的地下丛林\u0022",
   "tileX": 5939,
   "tileY": 1259,
-  "textWidth": 520,
+  "textWidth": 640,
   "style": 1
 }
 {
-  "text": "在与肉山的战斗后，你仍然喘着气，决定在这里休息一夜。 --NEWLINE   --NEWLINE 清晨，你计划回到地面，并决定前往东部山区，希望找到阿莎。",
+  "text": "- 你发现了丛林秘境 - --NEWLINE   --NEWLINE 世纪之花的花园",
+  "tileX": 5968,
+  "tileY": 1627,
+  "textWidth": 180,
+  "style": 1
+}
+{
+  "text": "嗯，这附近看起来只是普通的丛林...",
   "tileX": 5983,
   "tileY": 1544,
   "textWidth": 460,
+  "style": 1
+}
+{
+  "text": "一路上，你问自己：\u0027血肉之墙的毁灭会带来什么后果呢？\u0027",
+  "tileX": 6003,
+  "tileY": 1866,
+  "textWidth": 240,
   "style": 1
 }
 {
@@ -1903,10 +1938,17 @@
   "style": 1
 }
 {
-  "text": ">东部> --NEWLINE   --NEWLINE 黑曜石火山 --NEWLINE 神圣的洞穴 --NEWLINE 埃伦达利斯山脉 --NEWLINE 冻洋",
+  "text": ">东部> --NEWLINE   --NEWLINE 神圣之地 --NEWLINE 埃伦达利斯山脉 --NEWLINE 冻洋",
   "tileX": 6278,
   "tileY": 861,
   "textWidth": 120,
+  "style": 1
+}
+{
+  "text": "瑞德：这里发生了什么... --NEWLINE   --NEWLINE Miakoda：\u0022这个地方比上次更加混乱了，看来深渊与大地之间的裂痕已经完全摧毁了这里\u0022",
+  "tileX": 6281,
+  "tileY": 117, 
+  "textWidth": 640,
   "style": 1
 }
 {
@@ -1914,6 +1956,13 @@
   "tileX": 6349,
   "tileY": 1077,
   "textWidth": 660,
+  "style": 1
+}
+{
+  "text": "- 你抵达了神圣之地 -",
+  "tileX": 6376,
+  "tileY": 834,
+  "textWidth": 150, 
   "style": 1
 }
 {
@@ -1952,6 +2001,13 @@
   "style": 1
 }
 {
+  "text": "- 你发现了神圣洞穴的入口 - --NEWLINE   --NEWLINE 需要熔岩镐才能进入",
+  "tileX": 6528,
+  "tileY": 807,
+  "textWidth": 230,
+  "style": 1
+}
+{
   "text": "一个声音低声对你说： --NEWLINE   --NEWLINE \u0022在世界的尽头寻找枯萎，那里的寒冰将地平线永久地分割…\u0022",
   "tileX": 6589,
   "tileY": 1886,
@@ -1973,10 +2029,24 @@
   "style": 1
 }
 {
+  "text": "- 你发现了飞龙法师的监狱 - --NEWLINE   --NEWLINE 没人知道他在这里囚禁了什么...",
+  "tileX": 6724,
+  "tileY": 232,
+  "textWidth": 250,
+  "style": 1
+}
+{
   "text": "\u0022你看到了吗？\u0022一位女性的声音低语着。 --NEWLINE   --NEWLINE \u0022漂浮在村庄上空的天空神庙？\u0022 --NEWLINE   --NEWLINE \u0022这就是石巨人囚禁光之女皇的地方！\u0022",
   "tileX": 6733,
   "tileY": 1609,
   "textWidth": 420,
+  "style": 1
+}
+{
+  "text": "- 你发现了飞龙法师的堡垒 -",
+  "tileX": 6749,
+  "tileY": 457,
+  "textWidth": 220,
   "style": 1
 }
 {
@@ -2106,6 +2176,13 @@
   "style": 1
 }
 {
+  "text": "虽然这地方很吓人，但建筑却异常精美和复杂。",
+  "tileX": 7794,
+  "tileY": 1734,
+  "textWidth": 340,
+  "style": 1
+}
+{
   "text": "你俯瞰下面，看到云中一个青翠的岛屿。",
   "tileX": 7887,
   "tileY": 147,
@@ -2134,7 +2211,7 @@
   "style": 1
 }
 {
-  "text": "- 这扇门守卫着通往冰冻寒渊的道路 - --NEWLINE   --NEWLINE 你拿出日记，写一张便条：\u0022冰封海洋最深处的神庙蜥蜴砖大门……\u0022",
+  "text": "- 这扇门守卫着通往冰冻教堂的道路 - --NEWLINE   --NEWLINE 你拿出日记，写一张便条：\u0022冰封海洋最深处的神庙蜥蜴砖大门……\u0022",
   "tileX": 8070,
   "tileY": 1644,
   "textWidth": 480,
