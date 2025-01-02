@@ -206,6 +206,7 @@ namespace tsorcRevamp
             ShadowTempleEvent2,
             MoltenSkyTempleEvent,
             SandstormElementalEvent,
+            KingSlime2Event,
             JungleMimicEvent,
             BloodBossEvent1,
             BloodBossEvent2,
@@ -566,23 +567,30 @@ namespace tsorcRevamp
 
             ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, () => !NPC.downedBoss3);
             
+            ScriptedEvent KingSlime2Event = new ScriptedEvent(new Vector2(4749, 639), 25, NPCID.KingSlime, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.KingSlime"), Color.Blue, false, RemixMapCondition);
+
             ScriptedEvent JungleMimicEvent = new ScriptedEvent(new Vector2(5781, 1525), 25, NPCID.BigMimicJungle, 107, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Lime, false, RemixMapCondition, SetNightCustomAction);
         
             ScriptedEvent BloodBossEvent1 = new ScriptedEvent(new Vector2(2914, 526), 25, NPCID.BloodEelHead, 60, true, true, false, LangUtils.GetTextValue("Events.BloodBossEvent1"), Color.Red, false, RemixMapCondition, SetNightCustomAction);
             BloodBossEvent1.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.WrathPotion, ItemID.DripplerFlail }, new List<int>() { 5, 2, 1 });
+            BloodBossEvent1.SetCustomStats(null, null, null, 7500);
 
             ScriptedEvent BloodBossEvent2 = new ScriptedEvent(new Vector2(2765, 620), 25, NPCID.GoblinShark, 60, true, true, false, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, RemixMapCondition, SetNightCustomAction);
             BloodBossEvent2.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.RagePotion, ItemID.SharpTears }, new List<int>() { 5, 2, 1 });
+            BloodBossEvent2.SetCustomStats(null, null, null, 7500);
 
             ScriptedEvent BloodBossEvent3 = new ScriptedEvent(new Vector2(2893, 610), 30, NPCID.BloodNautilus, 60, true, true, false, LangUtils.GetTextValue("Events.BloodBossEvent3"), Color.Red, false, RemixMapCondition, SetBloodMoonCustomAction);
             BloodBossEvent3.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.LifeforcePotion, ItemID.BloodHamaxe, ItemID.MagicQuiver, ItemID.LavaCharm }, new List<int>() { 6, 3, 1, 1, 1, 1});
+            BloodBossEvent3.SetCustomStats(null, null, null, 12000);
 
             ScriptedEvent CatacombsEvent = new ScriptedEvent(new Vector2(3181, 1334), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.SlograII>(), DustID.Torch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapCondition);
             CatacombsEvent.SetCustomStats(9000, null, null, null);
 
             ScriptedEvent FoundryEvent = new ScriptedEvent(new Vector2(5229, 1254), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileKnight>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition);
 
+
             ScriptedEvent FrozenCathedralEvent = new ScriptedEvent(new Vector2(7635, 1735), 65, NPCID.IceQueen, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.FrozenCathedralEvent"), Color.Cyan, false, RemixMapCondition, SetNightCustomAction);
+            CatacombsEvent.SetCustomStats(null, null, null, 10000);
 
             ScriptedEvent GoblinSharkTropicalIsland = new ScriptedEvent(new Vector2(7874, 390), 40, NPCID.GoblinShark, DustID.CrimsonSpray, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, null, SetNightCustomAction);
             GoblinSharkTropicalIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion, ItemID.SharpTears }, new List<int>() { 5, 3, 1 });
@@ -684,6 +692,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.FrozenCathedralEvent, FrozenCathedralEvent },
                 {ScriptedEventType.FoundryEvent, FoundryEvent },
                 {ScriptedEventType.Lunatic, Lunatic },
+                {ScriptedEventType.KingSlime2Event, KingSlime2Event },
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();

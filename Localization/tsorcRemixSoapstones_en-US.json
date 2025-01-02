@@ -27,14 +27,21 @@
   "style": 1
 }
 {
-  "text": "A dark impulse compels you to kill the flower.... but you question whether you should.",
-  "tileX": 247,
-  "tileY": 1484,
+  "text": "- You arrived in the Tropics - --NEWLINE  --NEWLINE The Tropics are the edge of the known world to the west, renowned for being rich in life but dangerous and filled with ruins...",
+  "tileX": 816,
+  "tileY": 833,
   "textWidth": 320,
   "style": 1
 }
 {
-  "text": "The passage is blocked by chlorophyte, but also a large ruby \u200B\u200Band a large emerald. --NEWLINE The large emerald is a treasure long ago left in the tropics...",
+  "text": "Miakoda: I heard that beneath these ruins there is a coveted treasure, but be careful, it is full of traps...",
+  "tileX": 349,
+  "tileY": 850,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "The passage is blocked by chlorophyte, but also a large ruby and a large emerald. --NEWLINE The large emerald is a treasure long ago left in the tropics...",
   "tileX": 251,
   "tileY": 1050,
   "textWidth": 320,
@@ -62,7 +69,7 @@
   "style": 1
 }
 {
-  "text": "You\u0027ve found the entrance to the Eternal Reef. --NEWLINE  --NEWLINE There are levers in the nearby submerged village, maybe he can open the gate...",
+  "text": "You\u0027ve found the entrance to the Eternal Reef. --NEWLINE  --NEWLINE There are levers in the nearby submerged village, maybe they can open the gate...",
   "tileX": 335,
   "tileY": 1049,
   "textWidth": 320,
@@ -405,7 +412,7 @@
   "style": 1
 }
 {
-  "text": "You need a large amber to open the passage, which were kept long ago in the old one tree to seal this place. To access it, you will need to beat the Mindflayer King...",
+  "text": "You need a large amber to open the passage, which were kept long ago in the old one tree to seal this place.",
   "tileX": 2934,
   "tileY": 1200,
   "textWidth": 320,
@@ -713,7 +720,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found the Mushroom Caverns -",
+  "text": "Miakoda: Red, this liquid has very interesting properties, you should perhaps use it to move forward on your path...",
   "tileX": 3801,
   "tileY": 1545,
   "textWidth": 320,
@@ -1028,6 +1035,20 @@
   "style": 1
 }
 {
+  "text": "- You have found the Underworld's Outskirts - --NEWLINE  --NEWLINE It\u0027s quite interesting that nature developed here, in such a deep and hot place.",
+  "tileX": 5367,
+  "tileY": 1877,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Along the way, you ask yourself the question: \u0027What will be the consequences of the death of the great wall?\u0027",
+  "tileX": 6003,
+  "tileY": 1866,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "Bodhi: \u0022I have food and supplies here. Please take what you need... The mountain caverns to the West may be worth exploring before you set out as well.\u0022 --NEWLINE  --NEWLINE \u0022Thank you brother. You will be in my thoughts.\u0022",
   "tileX": 4234,
   "tileY": 695,
@@ -1122,6 +1143,13 @@
   "text": "An old man at the table tells you there\u0027s treasure to be found in the mountain caverns to the West of the village. --NEWLINE  --NEWLINE \u0022It\u0027s easy pick\u0027n\u0027s! If you\u0027re foolish enough to explore the Earth Temple below Ashenpeak, at least be smart enough to prepare a little.\u0022 --NEWLINE  --NEWLINE \u0022I\u0027m sure a young chap as spry as you could face down anything! But don\u0027t say I didn\u0027t warn ye!\u0022",
   "tileX": 4316,
   "tileY": 713,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- You have found the Autumnal Skies - --NEWLINE  --NEWLINE These small islands flying above the village have remained in autumn for eternity, which makes them magnificent. However, a gelatinous creature has settled there to make it its own little territory.",
+  "tileX": 4651,
+  "tileY": 650,
   "textWidth": 320,
   "style": 1
 }
@@ -1287,7 +1315,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve discovered the entrance to the Earth Temple - --NEWLINE  --NEWLINE It\u0027s locked by a Large Amber Gem Gate. --NEWLINE  --NEWLINE \u0022The wizard who lives in the snow-topped mountains to the North West of Ashenpeak village is said to be safeguarding the key.\u0022",
+  "text": "- You\u0027ve discovered the entrance to the Earth Temple -",
   "tileX": 4521,
   "tileY": 857,
   "textWidth": 320,
@@ -1399,9 +1427,16 @@
   "style": 1
 }
 {
-  "text": "- This gate guards the Forgotten Path to the Ashen Caves - --NEWLINE  --NEWLINE You get out your journal and write a note: --NEWLINE  --NEWLINE \u0022Lizard gate near the Earth\u0027s molten core, guarding something I do not know how to describe... a vessel of some kind, or a transporter.. \u0022 --NEWLINE  --NEWLINE You attempt a rough sketch of it, and draw the tower above it leading to the Forgotten City as a reference point...",
+  "text": "- This gate guards the Forgotten Path to Morgul Meleg - --NEWLINE  --NEWLINE You get out your journal and write a note: --NEWLINE  --NEWLINE \u0022Lizard gate near the Earth\u0027s molten core, guarding something I do not know how to describe... a vessel of some kind, or a transporter.. \u0022 --NEWLINE  --NEWLINE You attempt a rough sketch of it, and draw the tower above it leading to the Forgotten City as a reference point...",
   "tileX": 4791,
   "tileY": 1907,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": " - You\u0027ve found the Morgul Feleg, the source of corruption and dark magic in this world -",
+  "tileX": 1488,
+  "tileY": 1914,
   "textWidth": 320,
   "style": 1
 }
@@ -1553,7 +1588,7 @@
   "style": 1
 }
 {
-  "text": "This stone gate must open from the other side.",
+  "text": "- You\u0027ve found the entrance to the Great Foundry - --NEWLINE  --NEWLINE This foundry was abandoned for a long time but remains somewhat active, it\u0027s quite strange.",
   "tileX": 5149,
   "tileY": 1004,
   "textWidth": 320,
@@ -1574,35 +1609,14 @@
   "style": 1
 }
 {
-  "text": "This gate is blocked, only openable with a large topaz, but which has long since been lost in the great foundry, located below the dryad\u0027s house. But this place being difficult to access and very dangerous, almost no one ventured out to try to recover it.",
+  "text": "- You have found the Lost Ruins of Artorias - --NEWLINE  --NEWLINE This gate is blocked, only openable with a large topaz, but which has long since been lost in the great foundry, located in the Jungle below a bridge. But this place being difficult to access and very dangerous, almost no one ventured out to try to recover it.",
   "tileX": 5163,
   "tileY": 1755,
   "textWidth": 320,
   "style": 1
 }
 {
-  "text": "- You have found the Lost Ruins of Artorias -",
-  "tileX": 5176,
-  "tileY": 1755,
-  "textWidth": 320,
-  "style": 1
-}
-{
-  "text": "Home of the Dryad. \u0022Ensure that all who enter my home have a pure spirit of good intentions; you will be greeted with gifts and kindness. Come with bad intentions, and you will not leave this place the same. Welcome traveler! Step lightly, and give thanks to this wonderous Earth, vibrant with the life of all our relatives!\u0022",
-  "tileX": 5201,
-  "tileY": 958,
-  "textWidth": 320,
-  "style": 1
-}
-{
-  "text": "The Merchant tells you a rumor about a shower of fallen meteors that never hit the ground, remaining suspended mid-air above the jungle. Such strange mysteries...",
-  "tileX": 5254,
-  "tileY": 846,
-  "textWidth": 320,
-  "style": 1
-}
-{
-  "text": "Unadin Inn - Welcome. You can buy ammo and potions from me while you\u0027re here. If I\u0027m not around, please help yourself to a room and leave a coin in the chest on your way out. Thank you. - The Unadin",
+  "text": "This ruined house was previously that of Unadin, the merchant. You still remember before your unconsciousness the times you went to visit him.",
   "tileX": 5257,
   "tileY": 865,
   "textWidth": 320,
@@ -1700,13 +1714,6 @@
   "style": 1
 }
 {
-  "text": "- This gate requires the Drax -",
-  "tileX": 5662,
-  "tileY": 1790,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "An old druid\u0027s home, long since abandoned.",
   "tileX": 5680,
   "tileY": 1158,
@@ -1770,16 +1777,23 @@
   "style": 1
 }
 {
-  "text": "Miakoda: \u0022This purple hallowed grass on the walls is highly intelligent. It may lead us somewhere interesting...\u0022",
+  "text": "- You\u0027ve found the entrance to the Undergrowth - --NEWLINE  --NEWLINE You get out your map journal and write a note: \u0022Chlorophyte Gate just West of the Crypt of Slagora and Gaibon in the Underground Jungle.\u0022 ",
   "tileX": 5939,
   "tileY": 1259,
   "textWidth": 320,
   "style": 1
 }
 {
-  "text": "Still catching your breath from the battle with The Wall, you decide to rest here for the night.  --NEWLINE  --NEWLINE In the early morning, you plot your journey back to the surface, and decide to set out for the mountains to the East, in the hopes of finding Asha.",
+  "text": "Well, it just seems to be classic jungle around here...",
   "tileX": 5983,
   "tileY": 1544,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- You\u0022ve found the Undergrowth, the Plantera garden -",
+  "tileX": 5968,
+  "tileY": 1627,
   "textWidth": 320,
   "style": 1
 }
@@ -1875,9 +1889,23 @@
   "style": 1
 }
 {
-  "text": "\u003E EAST \u003E --NEWLINE  --NEWLINE Obsidian\u0027s Volcano --NEWLINE The Hallowed Caverns --NEWLINE The Great Mountains of Elendaris --NEWLINE The Frozen Ocean ",
+  "text": "\u003E EAST \u003E --NEWLINE  --NEWLINE The Hallow --NEWLINE The Great Mountains of Elendaris --NEWLINE The Frozen Ocean ",
   "tileX": 6278,
   "tileY": 861,
+  "textWidth": 320, 
+  "style": 1
+}
+{
+  "text": "- You arrived in the enchanted lands of the Hallow -",
+  "tileX": 6376,
+  "tileY": 834,
+  "textWidth": 320, 
+  "style": 1
+}
+{
+  "text": "You\u0027ve discovered the entrance to the Hallowed Caverns. --NEWLINE  --NEWLINE The Molten Pickaxe will be needed to enter.",
+  "tileX": 6528,
+  "tileY": 807,
   "textWidth": 320,
   "style": 1
 }
@@ -1938,6 +1966,13 @@
   "style": 1
 }
 {
+  "text": "- You have found the Scarlet Hill - --NEWLINE  --NEWLINE Miakoda: The passage on the right leads to some very strong blood creatures, be careful, Red.",
+  "tileX": 2921,
+  "tileY": 427,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "You feel yourself growing lighter. The gravitational pull is shifting... --NEWLINE  --NEWLINE Try pressing the up key (as if you had a gravity potion active) to become fully in tune with the unique gravitational forces within this area.",
   "tileX": 6718,
   "tileY": 848,
@@ -1945,9 +1980,44 @@
   "style": 1
 }
 {
+  "text": "You\u0027ve discovered the Wyvern Mage\u0027s Prison. It is unknown what he has imprisoned here...",
+  "tileX": 6724,
+  "tileY": 232,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Red: What the hell is happening here... --NEWLINE  --NEWLINE Miakoda: This place is much more chaotic than last time, it seems that the fracture between the Abyss and Earth has completely ravaged this place.",
+  "tileX": 6281,
+  "tileY": 117, 
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Hello stranger! My name is Bosh and I\u0027m an angler! We are travelers who own a boat and explore the coasts. I\u0027m not from the country but I noticed here the impressive ruins in these tropics which seem quite rich in treasure... Oh and otherwise you are welcome in this boat among us!",
+  "tileX": 236,
+  "tileY": 858, 
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- You\u0027ve found the ??? - --NEWLINE  --NEWLINE Miakoda: Sorry Red, but I don\u0027t know this place, this technology and this biome doesn\u0027t seem to come from our world...",
+  "tileX": 229,
+  "tileY": 152,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "\u0022Have you seen it?\u0022 whispers a feminine voice. --NEWLINE  --NEWLINE \u0022The sky temple that floats above the village?\u0022 --NEWLINE  --NEWLINE \u0022It is where Golem imprisoned the Empress!\u0022",
   "tileX": 6733,
   "tileY": 1609,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "-You\u0027ve discovered the Wyvern Mage\u0027s Fortress -",
+  "tileX": 6749,
+  "tileY": 457,
   "textWidth": 320,
   "style": 1
 }
@@ -2099,9 +2169,16 @@
   "style": 1
 }
 {
-  "text": "- This gate guards the path to the Frozen Depths -  --NEWLINE  --NEWLINE You get out your map and write a note: --NEWLINE  --NEWLINE \u0022Lizard Gate at the deepest point of the Frozen Ocean....\u0022",
+  "text": "- This gate guards the path to the Frozen Cathedral -  --NEWLINE  --NEWLINE You get out your map and write a note: --NEWLINE  --NEWLINE \u0022Lizard Gate at the deepest point of the Frozen Ocean....\u0022",
   "tileX": 8070,
   "tileY": 1644,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "Although this place is absolutely terrifying, the architecture is unequally beautiful and complex.",
+  "tileX": 7794,
+  "tileY": 1734,
   "textWidth": 320,
   "style": 1
 }
