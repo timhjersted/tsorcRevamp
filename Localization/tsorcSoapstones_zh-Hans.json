@@ -538,7 +538,7 @@
   "style": 1
 }
 {
-  "text": "向西<--- --NEWLINE 埃伦加德沙漠遗址 --NEWLINE 未知之地 --NEWLINE   --NEWLINE 向东--> --NEWLINE 阿拉齐姆双峰 --NEWLINE 村庄 --NEWLINE 奥里德部落的雨林",
+  "text": "向西<--- --NEWLINE 埃伦加德沙漠遗址 --NEWLINE 未知之地 --NEWLINE   --NEWLINE 向东--> --NEWLINE 阿拉齐姆双峰 --NEWLINE 埃什峰村",
   "tileX": 3009,
   "tileY": 348,
   "textWidth": 150,
@@ -1588,10 +1588,10 @@
   "style": 1
 }
 {
-  "text": "你的心沉了下去——你旁边的墓碑上没有碑文 --NEWLINE   --NEWLINE 这些一定是在埋葬你的时候挖的…",
+  "text": "你的心沉了下去——你旁边的两座墓碑上没有碑文 --NEWLINE   --NEWLINE 这些一定是在埋葬你的时候挖的…",
   "tileX": 4911,
   "tileY": 867,
-  "textWidth": 340,
+  "textWidth": 370,
   "style": 1
 }
 {
@@ -1672,7 +1672,7 @@
   "style": 1
 }
 {
-  "text": "- 你找到了遗忘之城的墓穴 - --NEWLINE   --NEWLINE \u0022门是密封的，但没有钥匙孔……\u0022 --NEWLINE   --NEWLINE 这上面挂着的太阳旗是什么意思？",
+  "text": "- 你找到了遗忘之城的墓穴 - --NEWLINE   --NEWLINE \u0022门是密封的，但没有钥匙孔……\u0022 --NEWLINE   --NEWLINE 这上面挂着的太阳旗在暗示什么？",
   "tileX": 5117,
   "tileY": 1743,
   "textWidth": 280,
@@ -2376,12 +2376,5 @@
   "tileX": 8172,
   "tileY": 1645,
   "textWidth": 560,
-  "style": 1
-}
-{
-  "text": "你屏住呼吸远眺地平线。只不过是一种淡淡的白色，轻松地融入了雪中发出的蓝绿色光芒。 --NEWLINE   --NEWLINE 这片海洋似乎消失得无边无际。谁能想象这个世界之外会发生什么？",
-  "tileX": 8334,
-  "tileY": 866,
-  "textWidth": 640,
   "style": 1
 }
