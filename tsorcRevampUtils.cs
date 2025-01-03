@@ -1488,5 +1488,25 @@ namespace tsorcRevamp
                 buffIndex++;
             }
         }
+
+        ///<summary> 
+        ///Check if player's position is inside the rectangle zone. 
+        ///<br/> Player's X coordinate is between X1 and X2. 
+        ///<br/> Player's Y coordinate is between Y1 and Y2.
+        ///</summary>         
+        ///<param name="X1">The left coordinate of the rectangle zone</param>
+        ///<param name="X2">The right coordinate of the rectangle zone</param>
+        ///<param name="Y1">The top coordinate of the rectangle zone</param>
+        ///<param name="Y2">The bottom coordinate of the rectangle zone</param>
+        public static bool PlayerInZone(in Player player, int X1, int X2, int Y1, int Y2)
+        {
+            int XPosition = (int)(player.position.X / 16);
+            int YPosition = (int)(player.position.Y / 16);
+            if (X1 <= XPosition && XPosition <= X2 && Y1 <= YPosition && YPosition <= Y2)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
