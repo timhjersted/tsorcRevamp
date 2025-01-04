@@ -360,6 +360,13 @@
   "tileX": 2238,
   "tileY": 857,
   "textWidth": 320,
+  "style": 1 
+}
+{
+  "text": "- You\u0022ve found the Dreamlike Caverns - --NEWLINE  --NEWLINE As the name suggests, you feel like you\u0022re traveling in a dream...",
+  "tileX": 2238,
+  "tileY": 857,
+  "textWidth": 320,
   "style": 1
 }
 {
@@ -1854,13 +1861,6 @@
   "style": 1
 }
 {
-  "text": "\u0022What ancient civilization could have built this?...\u0022",
-  "tileX": 6155,
-  "tileY": 880,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "You\u0027ve discovered the Underground Jungle Ruins.",
   "tileX": 6192,
   "tileY": 1034,
@@ -1868,7 +1868,14 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found the Jungle Ruins -",
+  "text": "- You\u0027ve found the Jungle Village - --NEWLINE  --NEWLINE \u0022Interesting, I recognize some of the residents here...\u0022",
+  "tileX": 5680,
+  "tileY": 822,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- You\u0027ve found the Jungle Ruins - --NEWLINE  --NEWLINE \u0022What ancient civilization could have built this?...\u0022",
   "tileX": 6200,
   "tileY": 879,
   "textWidth": 320,
@@ -1882,7 +1889,7 @@
   "style": 1
 }
 {
-  "text": "Up ahead you see the volcano this ancient temple must have been dedicated to.  --NEWLINE  --NEWLINE Powerful energies must emanate from below these lands...",
+  "text": "The exit from the Jungle is near, observing the Hallow and the mountains on the horizon, with still the light emitting from the Old One's Tree behind. Over time, you have heard that this part of the world is under the control of the Wyvern Mage, a powerful ally of Attraidies.",
   "tileX": 6278,
   "tileY": 854,
   "textWidth": 320,
