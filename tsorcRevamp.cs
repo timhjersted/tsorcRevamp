@@ -75,6 +75,7 @@ using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 using static tsorcRevamp.ILEdits;
 using static tsorcRevamp.MethodSwaps;
+using System.Linq;
 
 namespace tsorcRevamp
 {
@@ -2633,7 +2634,8 @@ namespace tsorcRevamp
                         }
 
                         // check version based on the key words in CHANGELOG_URL
-                        if (currentString.StartsWith("MAP ") && mapString == "0000000000") //Store the first line with the word MAP in it here
+                        // "MAP 1" looks ugly in code, but simple to use
+                        if (currentString.StartsWith("MAP 1") && mapString == "0000000000") //Store the first line with the word MAP in it here
                         {
                             mapString = currentString;
                         }
@@ -2662,6 +2664,7 @@ namespace tsorcRevamp
                         SimplifyVersionString(ref mapString);
                         SimplifyVersionString(ref RemixmapString);
                         SimplifyVersionString(ref musicString);
+                        //Logger.WarnFormat("mapString: {0} RemixmapString:{1} musicString:(2)", mapString, RemixmapString, musicString);
 
                         //Get the version info of the existing files
                         Tuple<int, int, int> versionInfo = ReadVersionInfo();
@@ -2726,19 +2729,17 @@ namespace tsorcRevamp
             string curVersionPath = dataDir + separator + "tsorcCurrentVer.txt"; //Stored file recording current map and music mod versions
 
             //If no stored version file exists, create it with version 000000
-            if (!File.Exists(curVersionPath))
+            List<string> curVersionFile = File.Exists(curVersionPath) ? File.ReadAllLines(curVersionPath).ToList(): new List<string> { "000000", "000000", "000000" };
+
+            //For players who just update from old version, this will add new version numbers to tsorcCurrentVer.txt.
+            //Mod currently have 3 numbers for Mapversion, MusicVersion, RemixMapVersion, maybe fourth number for RemixMusicVersion in the future
+            if (curVersionFile.Count < 3)
             {
-                using (StreamWriter versionFile = new StreamWriter(curVersionPath))
-                {
-                    versionFile.WriteLine("000000");
-                    versionFile.WriteLine("000000");
-                    versionFile.WriteLine("000000");
-                }
+                int numberOfElementsToAdd = 3 - curVersionFile.Count;
+                curVersionFile.AddRange(Enumerable.Repeat("000000", numberOfElementsToAdd));
             }
 
             //If it's less than the current map string, download the new one and update the stored version.
-            string[] curVersionFile = File.ReadAllLines(curVersionPath);
-
             if (mapVersion != "")
             {
                 curVersionFile[0] = mapVersion;
