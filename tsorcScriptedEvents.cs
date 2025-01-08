@@ -280,7 +280,7 @@ namespace tsorcRevamp
             ScriptedEvent OldManEvent = new ScriptedEvent(new Vector2(4979, 1398), 64, NPCID.OldMan, DustID.WhiteTorch, true, true, true, "default", Color.White, false, () => { return !NPC.AnyNPCs(NPCID.OldMan) && !NPC.AnyNPCs(NPCID.SkeletronHead) && !NPC.downedBoss3; });
 
             //EoC
-            ScriptedEvent EoCEvent = new ScriptedEvent(new Vector2(3900, 1138), 20, NPCID.EyeofCthulhu, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.EoC"), Color.Blue, false, OnlyAdventureMapCondition, SetNightCustomAction);
+            ScriptedEvent EoCEvent = new ScriptedEvent(new Vector2(3900, 1138), 20, NPCID.EyeofCthulhu, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.EoC"), Color.Blue, false, null, SetNightCustomAction);
 
             //EoW1
             ScriptedEvent EoW1Event = new ScriptedEvent(new Vector2(3633, 996), 46, NPCID.EaterofWorldsHead, DustID.Shadowflame, false, true, true, LangUtils.GetTextValue("Events.EoW"), Color.Purple, false, PreEoWCustomCondition);
