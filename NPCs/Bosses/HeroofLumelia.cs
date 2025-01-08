@@ -28,6 +28,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         public override void SetDefaults()
         {
+            NPC.scale = 1.1f;
             NPC.npcSlots = 5;
             AnimationType = 28;
             NPC.aiStyle = 3;

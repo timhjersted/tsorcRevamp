@@ -215,6 +215,8 @@ namespace tsorcRevamp
             FoundryEvent,
             FrozenCathedralEvent,
             Lunatic,
+            IceGolemIsland,
+            AncestralSpiritEvent2,
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -319,7 +321,14 @@ namespace tsorcRevamp
             //ICE GOLEM WYVERN COMBO
             List<int> Golem2EnemyTypeList = new List<int>() { NPCID.WyvernHead, NPCID.IceGolem };
             List<Vector2> Golem2EnemyLocations = new List<Vector2>() { new Vector2(7776, 829), new Vector2(7800, 868) };
-            ScriptedEvent Golem2 = new ScriptedEvent(new Vector2(7900, 868), 30, Golem2EnemyTypeList, Golem2EnemyLocations, DustID.Snow, true, false, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.BlueViolet, false, null, StormCustomAction); //
+            ScriptedEvent Golem2 = new ScriptedEvent(new Vector2(7900, 868), 30, Golem2EnemyTypeList, Golem2EnemyLocations, DustID.Snow, true, false, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.BlueViolet, false, OnlyAdventureMapCondition, StormCustomAction); //
+
+            //ANCESTRAL SPIRIT (REMIX MAP ONLY)
+            List<int> AncestralSpiritEvent2EnemyTypeList = new List<int>() { NPCID.Deerclops };
+            List<Vector2> AncestralSpiritEvent2EnemyLocations = new List<Vector2>() { new Vector2(7800, 868) };
+            ScriptedEvent AncestralSpiritEvent2 = new ScriptedEvent(new Vector2(7900, 868), 30, AncestralSpiritEvent2EnemyTypeList, AncestralSpiritEvent2EnemyLocations, DustID.Snow, true, false, false, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.BlueViolet, false, RemixMapCondition, RainCustomAction);
+            AncestralSpiritEvent2.SetCustomStats(17000, 18, 80, 15000);
+            AncestralSpiritEvent2.SetCustomDrops(new List<int>() { ItemID.FrostCore, ItemID.WarmthPotion }, new List<int>() { 1, 4 });
 
             //ICE GOLEM - FROZEN OCEAN
             ScriptedEvent IceGolemEvent = new ScriptedEvent(new Vector2(7651, 1020), 20, NPCID.IceGolem, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.IceGolem"), Color.Blue, false);
@@ -588,13 +597,16 @@ namespace tsorcRevamp
 
             ScriptedEvent FoundryEvent = new ScriptedEvent(new Vector2(5229, 1254), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileKnight>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition);
 
-
-            ScriptedEvent FrozenCathedralEvent = new ScriptedEvent(new Vector2(7635, 1735), 65, NPCID.IceQueen, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.FrozenCathedralEvent"), Color.Cyan, false, RemixMapCondition, SetNightCustomAction);
+            ScriptedEvent FrozenCathedralEvent = new ScriptedEvent(new Vector2(7635, 1735), 65, NPCID.IceQueen, 67, true, true, false, LangUtils.GetTextValue("Events.FrozenCathedralEvent"), Color.Cyan, false, RemixMapCondition, SetNightCustomAction);
             CatacombsEvent.SetCustomStats(null, null, null, 10000);
 
-            ScriptedEvent GoblinSharkTropicalIsland = new ScriptedEvent(new Vector2(7874, 390), 40, NPCID.GoblinShark, DustID.CrimsonSpray, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, null, SetNightCustomAction);
+            ScriptedEvent GoblinSharkTropicalIsland = new ScriptedEvent(new Vector2(7874, 390), 40, NPCID.GoblinShark, DustID.CrimsonSpray, true, false, true, LangUtils.GetTextValue("Events.GoblinShark"), Color.Red, false, OnlyAdventureMapCondition, SetNightCustomAction);
             GoblinSharkTropicalIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion, ItemID.SharpTears }, new List<int>() { 5, 3, 1 });
             GoblinSharkTropicalIsland.SetCustomStats(5000, null, null, 15000);
+
+            ScriptedEvent IceGolemIsland = new ScriptedEvent(new Vector2(7874, 390), 40, NPCID.IceGolem, 67, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Blue, false, RemixMapCondition);
+            IceGolemIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion}, new List<int>() { 5, 3 });
+            IceGolemIsland.SetCustomStats(null, null, null, 10000);
 
             
 
@@ -692,7 +704,9 @@ namespace tsorcRevamp
                 {ScriptedEventType.FrozenCathedralEvent, FrozenCathedralEvent },
                 {ScriptedEventType.FoundryEvent, FoundryEvent },
                 {ScriptedEventType.Lunatic, Lunatic },
-                {ScriptedEventType.KingSlime2Event, KingSlime2Event },
+                {ScriptedEventType.KingSlime2Event, KingSlime2Event },  
+                {ScriptedEventType.IceGolemIsland, IceGolemIsland },
+                {ScriptedEventType.AncestralSpiritEvent2, AncestralSpiritEvent2 },
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();
@@ -1009,6 +1023,18 @@ namespace tsorcRevamp
             return EventActionStatus.Continue;
         }
 
+
+        public static EventActionStatus RainCustomAction(ScriptedEvent thisEvent)
+        {
+            Main.raining = true;
+            Main.rainTime = Main.rand.Next(7200, 10800);
+            Main.maxRaining = 0.75f;
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.WorldData);
+            }
+            return EventActionStatus.EndAction;
+        }
 
         public static EventActionStatus StormCustomAction(ScriptedEvent thisEvent)
         {

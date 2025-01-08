@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.damage = 110;
             NPC.defense = 10;
             NPC.lifeMax = 100000;
-            NPC.scale = 1.1f;
+            NPC.scale = 1.3f;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.value = 350000;
@@ -256,7 +256,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 data.Apply(null);
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 Vector2 origin = NPC.frame.Size() / 2f;
-                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition + new Vector2(0, -13), NPC.frame, Color.White, NPC.rotation, origin, 1.1f * NPC.scale, effects, 0f);
+                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition + new Vector2(0, -13), NPC.frame, Color.White, NPC.rotation, origin, 1.35f * NPC.scale, effects, 0f);
                 UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
             }
         }

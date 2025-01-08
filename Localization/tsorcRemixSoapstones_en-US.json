@@ -769,7 +769,7 @@
   "style": 1
 }
 {
-  "text": "-You\u0027ve discovered the Corrupted Tunnel - --NEWLINE  --NEWLINE It was abandoned several years ago, after the dark mirth that pours from the Corruption Temple\u0027s mouth to the West made it too dangerous to maintain.",
+  "text": "You remember this place, which seemed rather peaceful. The eastern mountain serves in particular as a natural barrier between the dangerous lands of the west and the village. apart from a few weak creatures and corrupted men, there is no great threat, unlike the mountain of the west.",
   "tileX": 3851,
   "tileY": 713,
   "textWidth": 320,
@@ -2099,13 +2099,6 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found the Blood Cathedral, Lair of the Abysmal Oolicile Sorcerer  -",
-  "tileX": 7313,
-  "tileY": 1804,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "Red: \u0022Araz, can you help me? Since you were captured things have gotten so much worse. Ever since killing the snitch that gave us up to Attraidies, the world has been flooded with even more powerful beasts and demons. The corruption has been spreading farther and faster across the land. I don\u0027t know how I can stop it.\u0022",
   "tileX": 7318,
   "tileY": 604,
@@ -2127,7 +2120,7 @@
   "style": 1
 }
 {
-  "text": "Red: \u0022Thank you Araz, I  accepted the karma of my actions the moment I took Aaron\u0027s life, and resolve to make right and bring peace back to these lands, even by my last breath.\u0022 --NEWLINE  --NEWLINE Araz: \u0022Good luck my friend. You\u0027ve taken on your father\u0027s hardy spirit more than you know.\u0022",
+  "text": "Red: \u0022Thank you Araz, I accepted the karma of my actions the moment I took Aaron\u0027s life, and resolve to make right and bring peace back to these lands, even by my last breath.\u0022 --NEWLINE  --NEWLINE Araz: \u0022Good luck my friend. You\u0027ve taken on your father\u0027s hardy spirit more than you know.\u0022",
   "tileX": 7328,
   "tileY": 599,
   "textWidth": 320,
@@ -2144,13 +2137,6 @@
   "text": "\u0022Congratulations. I am quite impressed. Few have survived my game. The reward is yours.  --NEWLINE  --NEWLINE However, I would be weary, traveler; not all gifts are the treasure they appear to be.\u0022",
   "tileX": 7356,
   "tileY": 485,
-  "textWidth": 320,
-  "style": 1
-}
-{
-  "text": "Miakoda: \u0022This does not seem to be the path to The Rage.  --NEWLINE  --NEWLINE I do not know where this leads Red..  --NEWLINE  --NEWLINE Maybe we should travel back West to retrace our steps in the Hallowed Caverns...\u0022",
-  "tileX": 7556,
-  "tileY": 1536,
   "textWidth": 320,
   "style": 1
 }

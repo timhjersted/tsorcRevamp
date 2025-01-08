@@ -30,7 +30,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.damage = 0;
             NPC.defense = 56;
             NPC.height = 44;
-            NPC.scale = 1.2f;
+            NPC.scale = 1.15f;
             NPC.timeLeft = 22500;
             NPC.lifeMax = 100000;
             NPC.HitSound = SoundID.NPCHit1;

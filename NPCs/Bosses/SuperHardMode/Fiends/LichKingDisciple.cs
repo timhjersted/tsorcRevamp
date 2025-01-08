@@ -20,6 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             AnimationType = 29;
             NPC.aiStyle = 0;
             NPC.damage = 0;
+            NPC.scale = 1.15f;
             NPC.defense = 52;
             NPC.height = 44;
             NPC.boss = true;
@@ -32,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             NPC.lavaImmune = true;
             NPC.value = 40000;
             NPC.width = 28;
-            NPC.knockBackResist = 0.2f;
+            NPC.knockBackResist = 0.0f;
             despawnHandler = new NPCDespawnHandler(DustID.GreenFairy);
         }
 
