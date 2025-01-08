@@ -30,6 +30,7 @@ namespace tsorcRevamp
         public static bool SuperHardMode;
         public static bool TheEnd;
         public static bool CustomMap;
+        public static bool OnlyAdventureMap;
         public static bool RemixMap;
 
         public static List<int> PairedBosses;
@@ -47,6 +48,7 @@ namespace tsorcRevamp
             SuperHardMode = false;
             TheEnd = false;
             CustomMap = false;
+            OnlyAdventureMap = false;
             RemixMap = false;
             //Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
@@ -77,6 +79,8 @@ namespace tsorcRevamp
                 world_state.Add("CustomMap");
             if (RemixMap)
                 world_state.Add("RemixMap");
+            if (OnlyAdventureMap)
+                world_state.Add("OnlyAdventureMap");
 
             if (DownedBetsy)
             {
@@ -106,6 +110,7 @@ namespace tsorcRevamp
             TheEnd = worldStateList.Contains("TheEnd");
             CustomMap = worldStateList.Contains("CustomMap");
             RemixMap = worldStateList.Contains("RemixMap");
+            OnlyAdventureMap = worldStateList.Contains("OnlyAdventureMap");
 
             AbyssPortalLocation = tag.Get<Vector2>("AbyssPortal");
             if (AbyssPortalLocation == Vector2.Zero)
@@ -117,6 +122,12 @@ namespace tsorcRevamp
             if (Framing.GetTileSafely(7102, 137).TileType == 54 && Framing.GetTileSafely(7103, 137).TileType == 357 && Framing.GetTileSafely(7104, 136).TileType == 357 && Framing.GetTileSafely(7105, 136).TileType == 197)
             {
                 CustomMap = true;
+            }
+
+            //Checks some blocks near the Tim Hjersted that are unlikely to change.
+            if (Framing.GetTileSafely(7783, 1750).TileType == TileID.LivingFrostFire && Framing.GetTileSafely(7783, 1761).TileType == TileID.LivingIchor && Framing.GetTileSafely(7783, 1772).TileType == TileID.MeteoriteBrick && Framing.GetTileSafely(7783, 1783).TileType == TileID.LivingMahogany)
+            {
+                OnlyAdventureMap = true;
             }
             //Checks some blocks near hallow surface Life Tree bonfire that are unlikely to change.
             if (Framing.GetTileSafely(5960, 571).TileType == TileID.LivingMahogany && Framing.GetTileSafely(5960, 569).TileType == TileID.LivingLoom && Framing.GetTileSafely(5960, 574).TileType == TileID.LivingMahoganyLeaves)
@@ -201,6 +212,7 @@ namespace tsorcRevamp
             {
                 writer.Write(CustomMap);
                 writer.Write(RemixMap);
+                 writer.Write(OnlyAdventureMap);
                 writer.Write(SuperHardMode);
                 writer.WriteVector2(AbyssPortalLocation);
 
@@ -236,6 +248,7 @@ namespace tsorcRevamp
         {
             CustomMap = reader.ReadBoolean();
             RemixMap = reader.ReadBoolean();
+            OnlyAdventureMap = reader.ReadBoolean();
             SuperHardMode = reader.ReadBoolean();
             AbyssPortalLocation = reader.ReadVector2();
 
@@ -961,6 +974,10 @@ namespace tsorcRevamp
                     //This is done like this so that it can never set CustomMap to false, since that isn't what that function returning false means.
                     CustomMap = true;
                 }
+                if (CheckForOnlyAdventureMap())
+                {
+                    OnlyAdventureMap = true;
+                }
                 if (CheckForRemixMap())
                 {
                     RemixMap = true;
@@ -1366,6 +1383,20 @@ namespace tsorcRevamp
             if (Main.tile[7102, 137] != null && Main.tile[7103, 137] != null && Main.tile[7104, 136] != null && Main.tile[7105, 136] != null)
             {
                 if (Main.tile[7102, 137].TileType == 54 && Main.tile[7103, 137].TileType == 357 && Main.tile[7104, 136].TileType == 357 && Main.tile[7105, 136].TileType == 197)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool CheckForOnlyAdventureMap()
+        {
+            // Checks some blocks near the Tim Hjersted that are unlikely to change.
+            if (Main.tile[7783, 1750] != null && Main.tile[7783, 1761] != null && Main.tile[7783, 1772] != null && Main.tile[7783, 1783] != null)
+            {
+                if (Main.tile[7783, 1750].TileType == TileID.LivingFrostFire && Main.tile[7783, 1761].TileType == TileID.LivingIchor && Main.tile[7783, 1772].TileType == TileID.MeteoriteBrick && Main.tile[7783, 1783].TileType == TileID.LivingMahogany)
                 {
                     return true;
                 }
