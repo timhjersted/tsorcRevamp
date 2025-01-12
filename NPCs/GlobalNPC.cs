@@ -1051,10 +1051,10 @@ namespace tsorcRevamp.NPCs
             if (projectile.IsMinionOrSentryRelated)
             {
                 #region Minion effects
-                if (((Scorched || Shocked || Sunburnt) && (SuperScorchDuration > 0 || SuperShockDuration > 0 || SuperSunburnDuration > 0)) || Awestruck)
+                /*if (((Scorched || Shocked || Sunburnt) && (SuperScorchDuration > 0 || SuperShockDuration > 0 || SuperSunburnDuration > 0)) || Awestruck)
                 {
                     SummonTagCriticalStrikeChance += ScorchingPoint.SummonTagCrit;
-                }
+                }*/
                 #endregion
                 #region Modded Whip Special Effects
                 //Crystal Nunchaku Effect located in ModifyIncomingHit

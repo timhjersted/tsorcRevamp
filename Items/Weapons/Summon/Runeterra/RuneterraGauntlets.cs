@@ -34,7 +34,6 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public const int DragonDebuffDuration = 5;
         public const int SuperBurnDuration = 5;
         public const float SuperBurnDmgAmp = 50f;
-        public const int SummonTagCrit = 10;
         public const float MarkDetonationCritDmgAmp = 2f;
 
         public const float BoostPercentHPDmg = 0.05f;
@@ -150,7 +149,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
                 int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
                 if (ttindex != -1)
                 {
-                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue(LocalizationPath + "Details", ScorchingPoint.MarkChance, ScorchingPoint.SuperBurnDuration, ScorchingPoint.SummonTagCrit, InterstellarVesselGauntlet.BoostPercentHPDmg, InterstellarVesselGauntlet.BoostPercentHPDmgCap, CenterOfTheUniverse.AwestruckDebuffDuration, CenterOfTheUniverse.AwestruckStarDamageAmp)));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Details", LangUtils.GetTextValue(LocalizationPath + "Details", ScorchingPoint.MarkChance, ScorchingPoint.SuperBurnDuration, InterstellarVesselGauntlet.BoostPercentHPDmg, InterstellarVesselGauntlet.BoostPercentHPDmgCap, CenterOfTheUniverse.AwestruckDebuffDuration, CenterOfTheUniverse.AwestruckStarDamageAmp)));
                 }
             }
             else
