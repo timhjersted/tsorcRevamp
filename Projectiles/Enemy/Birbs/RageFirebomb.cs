@@ -26,8 +26,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
             DrawOffsetX = -5;
             DrawOriginOffsetY = -5;
 
-            trailWidth = 35;
-            trailPointLimit = 15;
+            trailWidth = 45;
+            trailPointLimit = 35;
             trailYOffset = 30;
             trailMaxLength = 75;
             NPCSource = false;
@@ -160,7 +160,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
                         Projectile.netUpdate = true;
                     }
                 }
-                Projectile.velocity.Y = Projectile.velocity.Y + 0.2f;
+
+                if(Projectile.velocity.Y < 9)
+                {
+                    Projectile.velocity.Y = Projectile.velocity.Y + 0.2f;
+                }
             }
 
             // Rotation increased by velocity.X 

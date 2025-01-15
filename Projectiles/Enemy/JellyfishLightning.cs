@@ -105,7 +105,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 {
                     float pitch = Main.rand.NextFloat(-0.2f, 0.2f);
                     //Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f, Pitch = pitch }, branches[0][0]);
-                    //Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f, Pitch = pitch }, branches[0][branches[0].Count / 2]);
+                    Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f, Pitch = pitch }, branches[0][branches[0].Count / 2]);
                     //Terraria.Audio.SoundEngine.PlaySound(ThunderSoundStyle with { Volume = 0.4f, Pitch = pitch }, branches[0][branches[0].Count - 1]);
 
                     for (int i = 0; i < branches.Count; i++)

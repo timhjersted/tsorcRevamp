@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Reflection;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -669,6 +670,19 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             Player player = Main.player[NPC.target];
+
+            int direction = modifiers.HitDirection;
+
+            Type hm = typeof(NPC.HitModifiers);
+            PropertyInfo prop = hm.GetProperty("HitDirectionOverride");
+            int? over = (int?)prop.GetValue(modifiers);
+
+            if (over != null && over != 0)
+            {
+                direction = over.Value;
+            }
+
+
             if (projectile.type != ModContent.ProjectileType<Items.Weapons.Ranged.Specialist.BlizzardBlasterShot>())
             {
                 if (shielding && !slashing && !jumpSlashing)
@@ -694,7 +708,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             }
                         }
 
-                        else if (modifiers.HitDirection == -1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
+                        else if (direction == -1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
                             modifiers.SourceDamage.Flat -= 15;
@@ -730,7 +744,7 @@ namespace tsorcRevamp.NPCs.Enemies
                                 NPC.ai[2] -= 20;
                             }
                         }
-                        else if (modifiers.HitDirection == 1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
+                        else if (direction == 1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
                             modifiers.SourceDamage.Flat -= 15;
@@ -759,7 +773,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         modifiers.FinalDamage *= 2; //bonus damage
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
                     }
-                    else if (modifiers.HitDirection == 1)
+                    else if (direction == 1)
                     {
                         CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
                         modifiers.FinalDamage *= 2; //bonus damage
@@ -774,7 +788,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         modifiers.FinalDamage *= 2; //bonus damage
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
                     }
-                    else if (modifiers.HitDirection == -1)
+                    else if (direction == -1)
                     {
                         CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, LangUtils.GetTextValue("NPCs.WeakSpot"), false, false);
                         modifiers.FinalDamage *= 2; //bonus damage

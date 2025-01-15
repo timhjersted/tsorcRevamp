@@ -40,6 +40,11 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
         bool initialized = false;
         public override void AI()
         {
+            if(Main.rand.NextBool(3))
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 1.3f, PitchVariance = 1f }, Projectile.Center); //flame thrower
+            }
+
             maxSize = 200;
             if (!initialized)
             {
@@ -62,7 +67,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
                 Vector2 targetRotation = UsefulFunctions.Aim(Projectile.Center, Main.player[Main.npc[hostIndex.Value].target].Center, 1);
                 Vector2 currentRotation = Projectile.rotation.ToRotationVector2();
                 Vector2 nextRotationVector = Vector2.Lerp(currentRotation, targetRotation, 0.02f);// was .03
-                Projectile.rotation = MathHelper.WrapAngle(nextRotationVector.ToRotation());
+                //Projectile.rotation = MathHelper.WrapAngle(nextRotationVector.ToRotation());
                 if (Projectile.rotation < 0)
                 {
                     Projectile.rotation += MathHelper.TwoPi;
@@ -75,7 +80,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
 
             if (size < maxSize)
             {
-                size += 3;
+                size += 12;
             }
         }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)

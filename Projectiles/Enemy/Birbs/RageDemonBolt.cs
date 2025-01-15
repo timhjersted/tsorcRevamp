@@ -52,7 +52,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Birbs
             {
                 if (realVelocity.Length() < 10)
                 {
-                    realVelocity += Vector2.Normalize(Projectile.velocity) * 0.5f;
+                    realVelocity += realVelocity * 0.1f;
                 }
             }
             Projectile.velocity = realVelocity.RotatedBy(Math.Sin(Main.GameUpdateCount * 0.15f));

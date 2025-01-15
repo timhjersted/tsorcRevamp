@@ -93,7 +93,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (Main.rand.NextBool(1200)) return 1;
                 else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(430))
                 {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Warlock.Near"), 175, 75, 255);
                     return 1;
                 }
 
@@ -103,7 +102,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (Main.rand.NextBool(600)) return 1;
                 else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(300))
                 {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Warlock.Hunt"), 175, 75, 255);
                     return 1;
                 }
             }
@@ -111,8 +109,24 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
+        bool saidIntro = false;
         public override void AI()
         {
+            if(!saidIntro)
+            {
+                if(Main.rand.NextBool())
+                {
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Warlock.Near"), 175, 75, 255);
+                }
+                else
+                {
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Warlock.Hunt"), 175, 75, 255);
+                }
+
+                saidIntro = true;
+            }
+
+            NPC.timeLeft = 100;
             tsorcRevampAIs.FighterAI(NPC, 1.8f, 0.03f, .2f, canTeleport: true, lavaJumping: true, canDodgeroll: true);
 
 

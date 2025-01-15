@@ -349,7 +349,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         {
             //Potential better version of this: Rotate them just like is done when drawing them, and calcualte their max X and Y offset of every single branch node
             //Probably an unnecessary optimization, but an option for if it does become necessary in the future
-            lightningMaxDimensions.X = 0;
+            lightningMaxDimensions.X = 1;
             for (int i = 0; i < branches.Count - 1; i++)
             {
                 if (branches[i].Count > 2)
@@ -362,6 +362,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
                 }
             }
             //Main.NewText(lightningMaxDimensions.X);
+
+
 
             //Store a reference to the graphics device to simplify code
             GraphicsDevice device = Main.graphics.GraphicsDevice;
@@ -540,6 +542,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Marilith
         {
             float rotato = (branches[0][branches[0].Count - 1] - branches[0][0]).ToRotation();
             start -= branches[0][0];
+            if(start.HasNaNs())
+            {
+                Projectile.Kill();
+                Main.projectile[Projectile.whoAmI].active = false;
+                return;
+            }
             start = start.RotatedBy(-rotato);
             start.X += lightningXOffset;
             start.Y += lightningMaxDimensions.Y / 2;

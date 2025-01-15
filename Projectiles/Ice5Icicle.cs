@@ -21,7 +21,17 @@ namespace tsorcRevamp.Projectiles
 
         public override void AI()
         {
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90); //this is really hacky but i dont care
+            Projectile.rotation = Projectile.velocity.ToRotation() + 1.57f; //90 degrees in radians!
+
+            Lighting.AddLight(Projectile.Center, Color.BlueViolet.ToVector3() * .75f);
+
+            if (Projectile.ai[0] >= 1)
+            {
+                //I intentionally leave Projectile.friendly = true, to make this deal 'friendly fire' against the Wyvern Mage's allies
+                Projectile.hostile = true;
+                Projectile.timeLeft = 400;
+                Projectile.ai[0] = 0;
+            }
         }
     }
 }

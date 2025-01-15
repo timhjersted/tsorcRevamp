@@ -2370,8 +2370,19 @@ namespace tsorcRevamp
                 {
                     ceruleanPlayer.isDrinking = true;
                     ceruleanPlayer.ceruleanDrinkTimer = 0;
-                    player.AddBuff(ModContent.BuffType<Crippled>(), (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f));
-                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f));
+
+                    //I am so tempted
+                    //Dear god I am so tempted
+                    //if (modPlayer.ChloranthyRing1 || modPlayer.ChloranthyRing2)
+                    //{
+                    //    player.AddBuff(BuffID.BrokenArmor, (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f * 2));
+                    //    player.AddBuff(BuffID.Ichor, (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f));
+                    //}
+                    //else
+                    //{
+                        player.AddBuff(ModContent.BuffType<Crippled>(), (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f));
+                        player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), (int)(ceruleanPlayer.ceruleanDrinkTimerMax * 60f));
+                    //}
                 }
                 return;
             }

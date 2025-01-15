@@ -7556,7 +7556,7 @@ Mods: {
 				DisplayName: Phoenix Skull
 				Tooltip:
 					'''
-					Prevents death({$CommonItemTooltip.Cooldown})
+					Prevents death ({$CommonItemTooltip.Cooldown})
 					Revives you with {1}% of your maximum life
 					Grants {2}% lifesteal for {3} seconds after reviving if worn
 					Lifesteal stops after healing to {4}% life
@@ -9799,6 +9799,7 @@ Mods: {
 				DespawnHandler: The Wyvern Mage stands victorious...
 				FrostWave: The Wyvern Mage emits a a chilling wave of frost! The cold is unbearable!
 				Archdeacons: The Wyvern Mage summons the Archdeacons!
+				DragonDead: You dare?!
 				Condition: Drops if his wyvern is dead
 			}
 

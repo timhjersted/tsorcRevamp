@@ -9791,6 +9791,7 @@ Mods: {
 				DespawnHandler: 飞龙法师所向披靡...
 				FrostWave: 飞龙法师发出寒意阵阵的霜冻！寒冷难忍！
 				Archdeacons: 飞龙法师召唤了执事长！
+				// DragonDead: You dare?!
 				Condition: 当他的机械飞龙死后掉落
 			}
 

@@ -76,49 +76,26 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode && !Main.dayTime && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneOverworldHeight && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(140))
             {
-                if (Main.rand.NextBool(3))
-                {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Assassin.Track"), 175, 75, 255);
-                }
-
                 return 1f;
             }
 
             if (Main.hardMode && !Main.dayTime && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(200))
             {
-                if (Main.rand.NextBool(3))
-                {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Assassin.Draw"), 175, 75, 255);
-                }
                 return 1f;
             }
 
             if (Main.hardMode && Main.dayTime && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(300))
             {
-                if (Main.rand.NextBool(3))
-                {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Assassin.Steps"), 175, 75, 255);
-                }
                 return 1f;
             }
 
             if (Main.hardMode && (spawnInfo.Player.ZoneDungeon || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneUndergroundDesert || spawnInfo.Player.ZoneDesert) && Main.rand.NextBool(200))
             {
-                if (Main.rand.NextBool(3))
-                {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Assassin.Track"), 175, 75, 255);
-                }
                 return 1f;
             }
 
-
-
             if (Main.hardMode && !Main.dayTime && spawnInfo.Player.ZoneOverworldHeight && Main.rand.NextBool(300))
             {
-                if (Main.rand.NextBool(3))
-                {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Assassin.Hunt"), 175, 75, 255);
-                }
                 return 1f;
             }
 
@@ -193,8 +170,38 @@ namespace tsorcRevamp.NPCs.Enemies
 
         }
 
+        bool introDone = false;
         public override void AI()
         {
+            if(!introDone)
+            {
+                Player target = UsefulFunctions.GetClosestPlayer(NPC.Center);
+
+                if (Main.hardMode && !Main.dayTime && target.ZoneJungle && !target.ZoneOverworldHeight && !target.ZoneDungeon && !target.ZoneCorrupt && !target.ZoneCrimson)
+                {
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Assassin.Track"), 175, 75, 255);
+                }
+                else if (Main.hardMode && !Main.dayTime && target.ZoneJungle && !target.ZoneDungeon && !target.ZoneCorrupt && !target.ZoneCrimson)
+                {
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Assassin.Draw"), 175, 75, 255);
+                }
+                else if(Main.hardMode && Main.dayTime && target.ZoneJungle && !target.ZoneDungeon && !target.ZoneCorrupt && !target.ZoneCrimson)
+                {
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Assassin.Steps"), 175, 75, 255);
+                }
+                else if(target.ZoneDungeon || target.ZoneHallow || target.ZoneSnow || target.ZoneUndergroundDesert || target.ZoneDesert)
+                {
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Assassin.Track"), 175, 75, 255);
+                }
+                else if(Main.hardMode && !Main.dayTime && target.ZoneOverworldHeight)
+                {
+                        UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Assassin.Hunt"), 175, 75, 255);
+                }
+
+                introDone = true;
+            }
+
+            NPC.timeLeft = 100;
             tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>(), 50, 14, 100, 2f, .05f, canTeleport: true, enragePercent: 0.4f, enrageTopSpeed: 4f, telegraphColor: Color.Green);
         }
 

@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses
     class Gaibon : ModNPC
     {
         //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
-        int burningSphereDamage = 120;
+        int burningSphereDamage = 90;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 2;
@@ -44,6 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.value = 130000;
             NPC.noTileCollide = true;
             NPC.noGravity = true;
+            NPC.damage = 40;
             despawnHandler = new NPCDespawnHandler(DustID.Torch);
 
             CurrentMove = Bombardment;

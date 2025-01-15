@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Placeable
         {
             var recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Campfire);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 800);
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);
             recipe.Register();

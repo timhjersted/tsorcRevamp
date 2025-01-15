@@ -93,8 +93,14 @@ namespace tsorcRevamp.Projectiles.Enemy
             return false;
         }
 
+        float initialVel = 0;
         public override void AI()
         {
+            if(initialVel == 0)
+            {
+                initialVel = Projectile.velocity.Length();
+            }
+
             base.AI();
 
             if (fadeOut < 0.3f)
@@ -109,6 +115,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 int rand = Main.rand.Next(-1, 2);
                 Projectile.velocity = RotateAboutOrigin(Projectile.velocity, (float)((Math.PI * rand) / 40f)); //the 40f controls the curve strength. too low and the projectile spins in circles
+                if(Projectile.velocity.Y < 2)
+                {
+                    Projectile.velocity.Y = 2;
+                    Projectile.velocity = Projectile.velocity.SafeNormalize(Projectile.velocity) * initialVel;
+                }
             }
 
             AI_Timer++;

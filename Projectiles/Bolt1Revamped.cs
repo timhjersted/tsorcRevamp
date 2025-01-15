@@ -1,9 +1,12 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Reflection;
+using System;
 using Terraria;
 using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -96,8 +99,24 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            //If it's moving to the right, set HitDirectionOverride to 1
+            //Otherwise if it's moving left, set it to -1
+            //This lets it interact properly with enemies that use 'hitdirection' for special interactions, like enemies that hold up a shield in one direction, or have weak points on the back
+            if (new Vector2(1, 0).RotatedBy(Projectile.rotation).X >= 0)
+            {
+                modifiers.HitDirectionOverride = 1;
+            }
+            else
+            {
+                modifiers.HitDirectionOverride = -1;
+            }
+        }
+
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+
             //Give hit targets a debuff that "marks" them as hit, so they can't chain it twice
             target.AddBuff(ModContent.BuffType<Buffs.BoltChainImmunity>(), 60);
 

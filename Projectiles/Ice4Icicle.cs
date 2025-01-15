@@ -32,6 +32,16 @@ namespace tsorcRevamp.Projectiles
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
+            Lighting.AddLight(Projectile.Center, Color.Cyan.ToVector3() * .75f);
+
+
+            if (Projectile.ai[0] >= 1)
+            {
+                Projectile.hostile = true;
+                Projectile.friendly = false;
+                Projectile.timeLeft = 1400;
+                Projectile.ai[0] = 0;
+            }
         }
     }
 }

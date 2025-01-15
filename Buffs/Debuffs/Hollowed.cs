@@ -23,9 +23,11 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         }
 
+
         private class tsrHollowedPlayer : ModPlayer
         {
             public bool Hollowed = false;
+            public bool HollowedLastFrame = false;
 
             public override void ResetEffects()
             {
@@ -38,6 +40,14 @@ namespace tsorcRevamp.Buffs.Debuffs
                 {
                     Player.statLifeMax2 = (int)(Player.statLifeMax2 * 0.80f);
                 }
+
+                //If they just lost the debuff this frame, restore the missing health
+                if(HollowedLastFrame && !Hollowed)
+                {
+                    Player.Heal((int)(Player.statLifeMax2 * 0.2f));
+                }
+
+                HollowedLastFrame = Hollowed;
 
                 Player.statLife = Math.Min(Player.statLife, Player.statLifeMax2);
             }
