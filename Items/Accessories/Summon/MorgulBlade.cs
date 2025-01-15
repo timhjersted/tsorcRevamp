@@ -6,8 +6,8 @@ namespace tsorcRevamp.Items.Accessories.Summon
 {
     public class MorgulBlade : ModItem
     {
-        public static float BadSummonDmgMultiplier = 36f;
-        public static float BadSummonTagStrengthMult = 36f;
+        public static float BadSummonDmgMultiplier = 35f;
+        public static float BadSummonTagStrengthMult = 30f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BadSummonDmgMultiplier, BadSummonTagStrengthMult);
         public override void SetStaticDefaults()
         {
