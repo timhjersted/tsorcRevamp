@@ -1162,7 +1162,7 @@ Mods: {
 			}
 
 			BarrierRing: {
-				DisplayName: 壁垒之戒
+				DisplayName: 壁垒戒指
 				Tooltip:
 					'''
 					在佩戴者周围释放可以豁免攻击的屏障
@@ -1172,7 +1172,7 @@ Mods: {
 			}
 
 			BloodbiteRing: {
-				DisplayName: 血液噬咬之戒
+				DisplayName: 咬血戒指
 				Tooltip:
 					'''
 					一枚由卡里姆的阿斯托爵士委托打造的臭名昭著的指环 
@@ -1182,7 +1182,7 @@ Mods: {
 			}
 
 			BlueTearstoneRing: {
-				DisplayName: 蓝泪晶戒指
+				DisplayName: 蓝泪石戒指
 				Tooltip:
 					'''
 					这种珍贵的宝石不可思议的具备察觉正在迫近的死亡的能力
@@ -1223,12 +1223,12 @@ Mods: {
 			}
 
 			GreyWolfRing: {
-				DisplayName: 灰狼之戒
+				DisplayName: 灰狼戒指
 				Tooltip:
 					'''
 					亚尔特留斯曾经佩戴的戒指之一
 					继承{$Items.RingOfClarity.DisplayName}的免疫效果
-					按下绑定的苍狼之戒快捷键以短暂提高生命恢复和受到的伤害
+					按下绑定的苍狼戒指快捷键以短暂提高生命恢复和受到的伤害
 					效果生效期间受到伤害会移除生命恢复效果加成，并进入长时间的冷却
 					在深渊中时{$CommonItemTooltip.IncreasesDefenseBy}
 					赋予酸性毒液灌注效果
@@ -1282,7 +1282,7 @@ Mods: {
 			}
 
 			PoisonbiteRing: {
-				DisplayName: 毒液噬咬之戒
+				DisplayName: 咬毒戒指
 				Tooltip:
 					'''
 					一枚由卡里姆的阿斯托爵士委托打造的臭名昭著的指环 
@@ -1303,7 +1303,7 @@ Mods: {
 			}
 
 			ProtectRing: {
-				DisplayName: 守护之戒
+				DisplayName: 守护戒指
 				Tooltip:
 					'''
 					与死亡对抗的指环
@@ -1312,7 +1312,7 @@ Mods: {
 			}
 
 			RingOfClarity: {
-				DisplayName: 清晰之戒
+				DisplayName: 清晰戒指
 				Tooltip:
 					'''
 					免疫{$CommonItemTooltip.OnFire}、燃烧、冷冻、霜冻、{$CommonItemTooltip.CursedInferno}、{$CommonItemTooltip.Ichor}
@@ -1349,11 +1349,11 @@ Mods: {
 			}
 
 			WolfRing: {
-				DisplayName: 苍狼之戒
+				DisplayName: 苍狼戒指
 				Tooltip:
 					'''
 					亚尔特留斯曾经佩戴的戒指之一
-					按下绑定的苍狼之戒快捷键以短暂提高生命恢复和受到的伤害
+					按下绑定的苍狼戒指快捷键以短暂提高生命恢复和受到的伤害
 					效果生效期间受到伤害会移除生命恢复效果加成，并进入长时间的冷却
 					在深渊中时{$CommonItemTooltip.IncreasesDefenseBy} 
 					赋予酸性毒液灌注效果
@@ -1444,7 +1444,7 @@ Mods: {
 			}
 
 			CovetousSilverSerpentRing: {
-				DisplayName: 贪婪银蛇之戒
+				DisplayName: 贪婪银蛇戒指
 				Tooltip:
 					'''
 					一个古老的遗物，在许多世纪前被锻造和遗失
@@ -1456,7 +1456,7 @@ Mods: {
 			}
 
 			CovetousSoulSerpentRing: {
-				DisplayName: 贪婪灵魂蛇之戒
+				DisplayName: 贪婪灵蛇戒指
 				Tooltip:
 					'''
 					一个古老的遗物，在许多世纪前被锻造和遗失
@@ -1533,7 +1533,7 @@ Mods: {
 			}
 
 			DuskCrownRing: {
-				DisplayName: 黄昏之冠戒指
+				DisplayName: 幽暗宝冠戒指
 				Tooltip:
 					'''
 					这枚魔法皇冠样式的魔戒是乌拉席露的黄昏公主出生时铸造的
@@ -1594,7 +1594,7 @@ Mods: {
 			}
 
 			RingOfPower: {
-				DisplayName: 力量之戒
+				DisplayName: 力量戒指
 				Tooltip:
 					'''
 					献给受难人的力量之戒
@@ -2214,7 +2214,7 @@ Mods: {
 			}
 
 			HollowSoldierBreastplate: {
-				DisplayName: 空洞士兵胸甲
+				DisplayName: 游魂士兵胸甲
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamage}
@@ -2225,12 +2225,12 @@ Mods: {
 			}
 
 			HollowSoldierHelmet: {
-				DisplayName: 空洞士兵头盔
+				DisplayName: 游魂士兵头盔
 				Tooltip: 不受到龙纹盾导致的负面耐力恢复效果影响
 			}
 
 			HollowSoldierWaistcloth: {
-				DisplayName: 空洞士兵腰带
+				DisplayName: 游魂士兵腰带
 				Tooltip: 增强翻滚的效果，特别是在平地上
 			}
 
@@ -2404,12 +2404,20 @@ Mods: {
 
 			MaskOfTheChild: {
 				DisplayName: 孩童面具
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					{$CommonItemTooltip.StaminaRegen@1}
+					'''
 			}
 
 			MaskOfTheFather: {
 				DisplayName: 父亲面具
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedDamage}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					{$CommonItemTooltip.CritDmg}
+					'''
 			}
 
 			MaskOfTheMother: {
@@ -2417,7 +2425,6 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.IncreasesMaxLifeBy}
-					{$CommonItemTooltip.LifeRegen}
 					增加 2 点生命再生
 					'''
 			}
@@ -2852,7 +2859,7 @@ Mods: {
 			}
 
 			SmoughArmor: {
-				DisplayName: 斯莫夫盔甲
+				DisplayName: 斯摩盔甲
 				Tooltip:
 					'''
 					加强龙纹盾的效果
@@ -2863,12 +2870,12 @@ Mods: {
 			}
 
 			SmoughGreaves: {
-				DisplayName: 斯莫夫腿甲
+				DisplayName: 斯摩腿甲
 				Tooltip: 降低翻滚能力
 			}
 
 			SmoughHelmet: {
-				DisplayName: 斯莫夫头盔
+				DisplayName: 斯摩头盔
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedDamage}"
 			}
 
@@ -3943,7 +3950,7 @@ Mods: {
 			}
 
 			EphemeralDust: {
-				DisplayName: f
+				DisplayName: 刹那浮尘
 				Tooltip: ""
 			}
 
@@ -5297,7 +5304,7 @@ Mods: {
 			}
 
 			GreatSoulArrowStaff: {
-				DisplayName: 伟大的灵魂之箭
+				DisplayName: 强力灵魂箭
 				Tooltip:
 					'''
 					射出一支轻盈归位的的灵魂之箭
@@ -5475,7 +5482,7 @@ Mods: {
 			}
 
 			SoulArrowStaff: {
-				DisplayName: 魂之箭
+				DisplayName: 灵魂箭
 				Tooltip: 射出轻微追踪的魂之箭
 			}
 
@@ -5650,7 +5657,7 @@ Mods: {
 			}
 
 			CrescentMoonSword: {
-				DisplayName: 新月剑
+				DisplayName: 月牙曲剑
 				Tooltip:
 					'''
 					无名指李奥纳德的首选武器
@@ -5708,7 +5715,7 @@ Mods: {
 			}
 
 			Jawblade: {
-				DisplayName: 狼吞虎咽
+				DisplayName: 龙颚剑
 				Tooltip:
 					'''
 					“一把由骨头与牙齿做成的刀”
@@ -5782,7 +5789,7 @@ Mods: {
 				Tooltip:
 					'''
 					一把被残夜魔力锻造过的锋利的剑
-					<right> 冲刺，消耗耐力让你暂时免疫攻击并增加伤害
+					<right>冲刺，消耗耐力让你暂时免疫攻击并增加伤害
 					'''
 			}
 
@@ -5812,7 +5819,7 @@ Mods: {
 			}
 
 			UltimaWeapon: {
-				DisplayName: 最终剑
+				DisplayName: 古老月光大剑
 				Tooltip:
 					'''
 					最终剑从持有者身上汲取力量
@@ -6674,7 +6681,6 @@ Mods: {
 				DisplayName: 附魔之鞭
 				Tooltip:
 					'''
-					{$CommonItemTooltip.SummonTagDamage}
 					用附魔之力击打敌人
 					被附魔的敌人会在被召唤物击中后引来落星
 					落星的伤害是鞭子的 {0}% 
@@ -6882,49 +6888,49 @@ Mods: {
 				DisplayName: 钢铁风暴
 				Tooltip:
 					'''
-					<right>释放 [c/708090:突刺]
+					<right>释放[c/708090:突刺]
 					[c/708090:突刺]敌人时获得一层[c/708090:钢铁风暴堆叠]
-					获得两层堆叠后，下次<right>将会释放一阵 [c/708090:旋风]
+					获得两层堆叠后，下次<right>将会释放一阵[c/708090:旋风]
 					[c/708090:“死亡如风，常伴吾身”]
 					'''
 				Details:
 					'''
 					武器有双倍的暴击率
-					每次 [c/708090:突刺] 最多获得一层 [c/708090:钢铁风暴堆叠]
-					释放 [c/708090:旋风] 会消耗所有 [c/708090:钢铁风暴堆叠]
-					近战速度加成可以减少 [c/708090:突刺冷却] (冷却最低为 1.33 秒)
-					当前 [c/708090:突刺冷却]: {0} 秒
-					[c/708090:突袭] 和 [c/708090:旋风] 造成双倍伤害
+					每次[c/708090:突刺]最多获得一层[c/708090:钢铁风暴堆叠]
+					释放[c/708090:旋风]会消耗所有[c/708090:钢铁风暴堆叠]
+					近战速度加成可以减少[c/708090:突刺冷却](冷却最低为 1.33 秒)
+					当前[c/708090:突刺冷却]: {0} 秒
+					[c/708090:突袭]和[c/708090:旋风]造成双倍伤害
 					'''
-				SmoughBalance: 从斯莫夫盔甲获得的暴击率不会被加倍
+				SmoughBalance: 从斯摩盔甲获得的暴击率不会被加倍
 			}
 
 			PlasmaWhirlwind: {
 				DisplayName: 等离子风暴
 				Tooltip:
 					'''
-					<right>释放 [c/708090:突刺]
+					<right>释放[c/708090:突刺]
 					[c/708090:突刺]敌人时获得一层[c/708090:钢铁风暴堆叠]
-					获得两层堆叠后，下次<right>将会释放一阵 [c/708090:旋风]
+					获得两层堆叠后，下次<right>将会释放一阵[c/708090:旋风]
 					{$Items.PlasmaWhirlwind.Keybind1}特殊能力键{$Items.PlasmaWhirlwind.Keybind2}
-					当 [c/00ffff:冲撞] 时长按<right>会释放一道 [c/00ffff:剑光]
+					当[c/00ffff:冲撞]时长按<right>会释放一道[c/00ffff:剑光]
 					[c/00ffff:“奥德赛的同伴”]
 					'''
 				Keybind1: "把光标对准一个敌人按 "
 				Keybind2: " 来[c/00ffff:冲撞]敌人"
 				Details:
 					'''
-					[c/00ffff:冲撞冷却] 作用于敌人({3} 秒)
-					用 [c/00ffff:剑光] 对敌人造成伤害会使 [c/708090:钢铁风暴堆叠] 到达最大值
-					[c/00ffff:剑光] 造成四倍伤害
-					[c/00ffff:剑光] 会将达到最大堆叠的 [c/708090:旋风] 原地释放
-					[c/00ffff:剑光] 和 [c/00ffff:冲撞] 在命中时额外造成 {1}% 的最大生命值伤害，最高到 {2}
+					[c/00ffff:冲撞冷却]作用于敌人({3} 秒)
+					用[c/00ffff:剑光]对敌人造成伤害会使[c/708090:钢铁风暴堆叠]到达最大值
+					[c/00ffff:剑光]造成四倍伤害
+					[c/00ffff:剑光]会将达到最大堆叠的[c/708090:旋风]原地释放
+					[c/00ffff:剑光]和[c/00ffff:冲撞]在命中时额外造成 {1}% 的最大生命值伤害，最高到 {2}
 					武器有双倍的暴击率
-					每次 [c/708090:突刺] 最多获得一层 [c/708090:钢铁风暴堆叠]
-					释放 [c/708090:旋风] 会消耗所有 [c/708090:钢铁风暴堆叠]
-					近战速度加成可以减少 [c/708090:突刺冷却] (冷却最低为 1.33 秒)
-					当前 [c/708090:突刺冷却]: {0} 秒
-					[c/708090:突袭] 和 [c/708090:旋风] 造成双倍伤害
+					每次[c/708090:突刺]最多获得一层[c/708090:钢铁风暴堆叠]
+					释放[c/708090:旋风]会消耗所有[c/708090:钢铁风暴堆叠]
+					近战速度加成可以减少[c/708090:突刺冷却](冷却最低为 1.33 秒)
+					当前[c/708090:突刺冷却]: {0} 秒
+					[c/708090:突袭]和[c/708090:旋风]造成双倍伤害
 					'''
 			}
 
@@ -6932,11 +6938,11 @@ Mods: {
 				DisplayName: 夜之使者
 				Tooltip:
 					'''
-					<right>释放 [c/708090:突刺]
+					<right>释放[c/708090:突刺]
 					[c/708090:突刺]敌人时获得一层[c/708090:钢铁风暴堆叠]
-					获得两层堆叠后，下次<right>将会释放一阵 [c/708090:旋风]
+					获得两层堆叠后，下次<right>将会释放一阵[c/708090:旋风]
 					{$Items.PlasmaWhirlwind.Keybind1}特殊能力键{$Items.PlasmaWhirlwind.Keybind2}
-					当 [c/00ffff:冲撞] 时长按<right>会释放一道 [c/00ffff:剑光]
+					当[c/00ffff:冲撞]时长按<right>会释放一道[c/00ffff:剑光]
 					{$Items.Nightbringer.Keybind1}特殊能力键{$Items.Nightbringer.Keybind2}
 					[c/ff4500:“和谐是一个用来迫使顺从的谎言”]
 					'''
@@ -6944,18 +6950,18 @@ Mods: {
 				Keybind2: 键 在面前产生一道 [c/ff4500:防火墙]
 				Details:
 					'''
-					[c/ff4500:防火墙] 能阻挡大部分敌人的弹幕攻击持续 {4} 秒，({$CommonItemTooltip.Cooldown@5})
-					[c/00ffff:冲撞冷却] 作用于敌人({3} 秒)
-					用 [c/00ffff:剑光] 对敌人造成伤害会使 [c/708090:钢铁风暴堆叠] 到达最大值
-					[c/00ffff:剑光] 造成四倍伤害
-					[c/00ffff:剑光] 会将达到最大堆叠的 [c/708090:旋风] 原地释放
-					[c/00ffff:剑光] 和 [c/00ffff:冲撞] 在命中时额外造成 {1}% 的最大生命值伤害，最高到 {2}
+					[c/ff4500:防火墙]能阻挡大部分敌人的弹幕攻击持续 {4} 秒，({$CommonItemTooltip.Cooldown@5})
+					[c/00ffff:冲撞冷却]作用于敌人({3} 秒)
+					用[c/00ffff:剑光]对敌人造成伤害会使[c/708090:钢铁风暴堆叠]到达最大值
+					[c/00ffff:剑光]造成四倍伤害
+					[c/00ffff:剑光]会将达到最大堆叠的[c/708090:旋风]原地释放
+					[c/00ffff:剑光]和[c/00ffff:冲撞]在命中时额外造成 {1}% 的最大生命值伤害，最高到 {2}
 					武器有双倍的暴击率
-					每次 [c/708090:突刺] 最多获得一层 [c/708090:钢铁风暴堆叠]
-					释放 [c/708090:旋风] 会消耗所有 [c/708090:钢铁风暴堆叠]
-					近战速度加成可以减少 [c/708090:突刺冷却] (冷却最低为 1.33 秒)
-					当前 [c/708090:突刺冷却]: {0} 秒
-					[c/708090:突袭] 和 [c/708090:旋风] 造成双倍伤害
+					每次[c/708090:突刺]最多获得一层[c/708090:钢铁风暴堆叠]
+					释放[c/708090:旋风]会消耗所有[c/708090:钢铁风暴堆叠]
+					近战速度加成可以减少[c/708090:突刺冷却](冷却最低为 1.33 秒)
+					当前[c/708090:突刺冷却]: {0} 秒
+					[c/708090:突袭]和[c/708090:旋风]造成双倍伤害
 					'''
 			}
 
@@ -6964,9 +6970,9 @@ Mods: {
 				Tooltip:
 					'''
 					将种子转化为[c/ba55d3:恶毒飞镖]，并允许你从草中收集种子
-					[c/ba55d3:恶毒飞镖] 对敌人造成 [c/ba55d3:酸性毒液] 减益并自动追踪附近敌人
+					[c/ba55d3:恶毒飞镖]对敌人造成[c/ba55d3:酸性毒液]减益并自动追踪附近敌人
 					也可以使用其它飞镖作为弹药，但使用毒镖造成 {0} 倍伤害
-					在使用时[c/ba55d3:有条件的限制玩家的移动] 
+					在使用时[c/ba55d3:有条件的限制玩家的移动]
 					手持该物品时，获得[c/ba55d3:移动速度和耐力回复提升]
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
 					[c/ba55d3:“那一定很刺痛”]
@@ -6975,14 +6981,14 @@ Mods: {
 				Keybind2: " 启用 [c/ba55d3:侦察兵激励II]"
 				Details:
 					'''
-					[c/ba55d3:恶毒飞镖]造成的[c/ba55d3:酸性毒液] 减益受到远程伤害和暴击率加成
-					手持该武器时获得 [c/ba55d3:侦察兵激励] 增益：
+					[c/ba55d3:恶毒飞镖]造成的[c/ba55d3:酸性毒液]减益受到远程伤害和暴击率加成
+					手持该武器时获得[c/ba55d3:侦察兵激励]增益：
 					{$CommonItemTooltip.MoveSpeedMult}，同时乘算增加 {1}% 耐力再生
 					当受到伤害时[c/ba55d3:侦察兵激励]被移除，同时获得 {$CommonItemTooltip.Cooldown@2}
-					当 [c/ba55d3:侦察兵激励] 激活时使用武器会减缓你的速度
-					当 [c/ba55d3:侦察兵激励] 冷却时使用该物品，会让你短暂的不能移动
-					[c/ba55d3:侦察兵激励II] 移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@3}
-					[c/ba55d3:侦察兵激励II] 加倍移动速度和耐力再生增益
+					当[c/ba55d3:侦察兵激励]激活时使用武器会减缓你的速度
+					当[c/ba55d3:侦察兵激励]冷却时使用该物品，会让你短暂的不能移动
+					[c/ba55d3:侦察兵激励II]移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@3}
+					[c/ba55d3:侦察兵激励II]加倍移动速度和耐力再生增益
 					'''
 			}
 
@@ -6991,26 +6997,26 @@ Mods: {
 				Tooltip:
 					'''
 					将种子转化为[c/ba55d3:外星激光]，并允许你从草中收集种子
-					[c/ba55d3:外星激光] 对敌人造成短暂的 [c/ba55d3:触电] 减益并自动追踪附近敌人
+					[c/ba55d3:外星激光]对敌人造成短暂的[c/ba55d3:触电]减益并自动追踪附近敌人
 					也可以使用其它飞镖作为弹药，但使用毒镖造成 {0} 倍伤害
-					在使用时[c/ba55d3:有条件的限制玩家的移动] 
+					在使用时[c/ba55d3:有条件的限制玩家的移动]
 					手持该物品时，获得[c/ba55d3:移动速度和耐力回复提升]
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
-					<right> 消耗魔力射出一道追踪的 [c/00ffff:致盲激光] 造成困惑减益
+					<right>消耗魔力射出一道追踪的[c/00ffff:致盲激光]造成困惑减益
 					[c/00ffff:“全副武装，随时战斗”]
 					'''
 				Details:
 					'''
-					[c/00ffff:致盲激光] 造成 {4} 伤害, 使用种子作为弹药时伤害再次乘 {5} ({$CommonItemTooltip.Cooldown@6})
-					[c/00ffff:致盲激光] 获得 {7}% 暴击几率加成和 {8}% 每击最大生命值伤害，最大到 {9}
-					[c/ba55d3:外星激光]造成的 [c/ba55d3:触电] 减益受到远程伤害和暴击率加成
-					手持该武器时获得 [c/ba55d3:侦察兵激励] 增益：
+					[c/00ffff:致盲激光]造成 {4} 伤害，使用种子作为弹药时伤害再次乘 {5} ({$CommonItemTooltip.Cooldown@6})
+					[c/00ffff:致盲激光]获得 {7}% 暴击几率加成和 {8}% 每击最大生命值伤害，最大到 {9}
+					[c/ba55d3:外星激光]造成的 [c/ba55d3:触电]减益受到远程伤害和暴击率加成
+					手持该武器时获得[c/ba55d3:侦察兵激励]增益：
 					{$CommonItemTooltip.MoveSpeedMult}，同时乘算增加 {1}% 耐力再生
 					当受到伤害时[c/ba55d3:侦察兵激励]被移除，同时获得 {$CommonItemTooltip.Cooldown@2}
-					当 [c/ba55d3:侦察兵激励] 激活时使用武器会减缓你的速度
-					当 [c/ba55d3:侦察兵激励] 冷却时使用该物品，会让你短暂的不能移动
-					[c/ba55d3:侦察兵激励II] 移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@3}
-					[c/ba55d3:侦察兵激励II] 加倍移动速度和耐力再生增益
+					当[c/ba55d3:侦察兵激励]激活时使用武器会减缓你的速度
+					当[c/ba55d3:侦察兵激励]冷却时使用该物品，会让你短暂的不能移动
+					[c/ba55d3:侦察兵激励II]移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@3}
+					[c/ba55d3:侦察兵激励II]加倍移动速度和耐力再生增益
 					'''
 			}
 
@@ -7018,13 +7024,13 @@ Mods: {
 				DisplayName: 欧米茄小队步枪
 				Tooltip:
 					'''
-					将种子转化为 [c/ba55d3:放射性飞镖] ，并允许你从草中收集种子
-					[c/ba55d3:放射性飞镖] 对敌人造成短暂的 [c/ba55d3:辐射] 减益并自动追踪附近敌人
+					将种子转化为[c/ba55d3:放射性飞镖]，并允许你从草中收集种子
+					[c/ba55d3:放射性飞镖]对敌人造成短暂的[c/ba55d3:辐射]减益并自动追踪附近敌人
 					也可以使用其它飞镖作为弹药，但使用毒镖造成 {0} 倍伤害
 					在使用时[c/ba55d3:有条件的限制玩家的移动]
 					手持该物品时，获得[c/ba55d3:移动速度和耐力回复提升]
 					{$Items.ToxicShot.Keybind1}Special Ability{$Items.ToxicShot.Keybind2}
-					<right> 消耗魔力射出一道追踪的 [c/00ffff:致盲激光] 造成困惑减益
+					<right>消耗魔力射出一道追踪的[c/00ffff:致盲激光]造成困惑减益
 					{$Items.OmegaSquadRifle.Keybind1}特殊能力键{$Items.OmegaSquadRifle.Keybind2}
 					[c/adff2f:“外面有一个蘑菇，上面有你的名字”]
 					'''
@@ -7032,19 +7038,19 @@ Mods: {
 				Keybind2: 键 消耗魔力在光标所指位置生成一个 [c/adff2f:蘑菇弹]
 				Details:
 					'''
-					[c/adff2f:蘑菇弹] 在发射后需要 {10} 秒来引爆，({$CommonItemTooltip.Cooldown@11})
-					[c/adff2f:蘑菇弹] 的爆炸造成巨量的伤害并施加更强的 [c/adff2f:辐射] 减益
-					[c/adff2f:蘑菇弹] 爆炸和 [c/ba55d3:放射性飞镖] 造成的 [c/adff2f:辐射] 减益相互叠加
-					[c/00ffff:致盲激光] 造成 {4} 倍伤害, 使用种子作为弹药时伤害再次乘 {5} ({$CommonItemTooltip.Cooldown@6})
-					[c/00ffff:致盲激光] 获得 {7}% 暴击几率加成和 {8}% 每击最大生命值伤害，最大到 {9}
-					[c/ba55d3:放射性飞镖] 造成的 [c/ba55d3:辐射] 减益受到远程伤害和暴击率加成
-					手持该武器时获得 [c/ba55d3:侦察兵激励] 增益：
+					[c/adff2f:蘑菇弹]在发射后需要 {10} 秒来引爆，({$CommonItemTooltip.Cooldown@11})
+					[c/adff2f:蘑菇弹]的爆炸造成巨量的伤害并施加更强的[c/adff2f:辐射]减益
+					[c/adff2f:蘑菇弹]爆炸和[c/ba55d3:放射性飞镖]造成的[c/adff2f:辐射]减益相互叠加
+					[c/00ffff:致盲激光]造成 {4} 倍伤害, 使用种子作为弹药时伤害再次乘 {5} ({$CommonItemTooltip.Cooldown@6})
+					[c/00ffff:致盲激光]获得 {7}% 暴击几率加成和 {8}% 每击最大生命值伤害，最大到 {9}
+					[c/ba55d3:放射性飞镖]造成的[c/ba55d3:辐射]减益受到远程伤害和暴击率加成
+					手持该武器时获得[c/ba55d3:侦察兵激励]增益：
 					{$CommonItemTooltip.MoveSpeedMult}，同时乘算增加 {1}% 耐力再生
 					当受到伤害时[c/ba55d3:侦察兵激励]被移除，同时获得 {$CommonItemTooltip.Cooldown@2}
-					当 [c/ba55d3:侦察兵激励] 激活时使用武器会减缓你的速度
-					当 [c/ba55d3:侦察兵激励] 冷却时使用该物品，会让你短暂的不能移动
-					[c/ba55d3:侦察兵激励II] 移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@3}
-					[c/ba55d3:侦察兵激励II] 加倍移动速度和耐力再生增益
+					当[c/ba55d3:侦察兵激励]激活时使用武器会减缓你的速度
+					当[c/ba55d3:侦察兵激励]冷却时使用该物品，会让你短暂的不能移动
+					[c/ba55d3:侦察兵激励II]移除移动速度惩罚，有 {$CommonItemTooltip.SecondDuration@3}
+					[c/ba55d3:侦察兵激励II]加倍移动速度和耐力再生增益
 					'''
 			}
 
@@ -7052,20 +7058,20 @@ Mods: {
 				DisplayName: 诡谲之珠
 				Tooltip:
 					'''
-					投出一个 [c/87cefa:魔法珠] ，它会在一定距离后返回你身边
+					投出一个[c/87cefa:魔法珠]，它会在一定距离后返回你身边
 					当[c/87cefa:珠子]投出时攻击会生成[c/87cefa:追踪火焰]
-					当[c/87cefa:珠子]命中和击杀敌人时，获得 [c/87cefa:精华窃取] 堆叠
+					当[c/87cefa:珠子]命中和击杀敌人时，获得[c/87cefa:精华窃取]堆叠
 					当获得九层堆叠时，下一次投出的[c/87cefa:魔法珠]将会消耗所有层数，[c/87cefa:治疗玩家并对敌人造成大量伤害]
 					[c/87cefa:“任性恣情，如指诸掌”]
 					'''
 				Details:
 					'''
-					[c/87cefa:魔法珠]额外造成 {0}% 的伤害，返回玩家时额外造成 {1}% 
+					[c/87cefa:魔法珠]额外造成 {0}% 的伤害，返回玩家时额外造成 {1}%
 					[c/87cefa:追踪火焰命中敌人时回复其消耗的一半魔力]
-					只有 [c/87cefa:魔法珠] 投出和返回时造成的第一次伤害可以获得 [c/87cefa:精华窃取] 堆叠
-					如果暴击则获得两层 [c/87cefa:精华窃取] 堆叠
-					击杀敌人时有 {2}% 的几率获得一层 [c/87cefa:精华窃取] 堆叠
-					满堆叠层数的 [c/87cefa:魔法珠] 对敌人额外造成 {3}% 的伤害，同时其治疗量由玩家最大魔力值和魔法伤害决定
+					只有[c/87cefa:魔法珠]投出和返回时造成的第一次伤害可以获得[c/87cefa:精华窃取]堆叠
+					如果暴击则获得两层[c/87cefa:精华窃取]堆叠
+					击杀敌人时有 {2}% 的几率获得一层[c/87cefa:精华窃取]堆叠
+					满堆叠层数的 [c/87cefa:魔法珠]对敌人额外造成 {3}% 的伤害，同时其治疗量由玩家最大魔力值和魔法伤害决定
 					'''
 				OrbFilled: 堆叠已满！
 				StackGained: "{0} / 9"
@@ -7075,24 +7081,24 @@ Mods: {
 				DisplayName: 烈焰之珠
 				Tooltip:
 					'''
-					投出一个附有火焰的 [c/87cefa:魔法珠] ，它会在一定距离后返回你身边
+					投出一个附有火焰的[c/87cefa:魔法珠]，它会在一定距离后返回你身边
 					当[c/87cefa:珠子]投出时攻击会生成[c/87cefa:追踪火焰]
-					当[c/87cefa:珠子]命中和击杀敌人时，获得 [c/87cefa:精华窃取] 堆叠
+					当[c/87cefa:珠子]命中和击杀敌人时，获得[c/87cefa:精华窃取]堆叠
 					当获得九层堆叠时，下一次投出的[c/87cefa:魔法珠]将会消耗所有层数，[c/87cefa:治疗玩家并对敌人造成大量伤害]
-					<right> 施放一个[c/ff7f50:割裂敌人的魔法火球并增加他们受到的魔法伤害]
+					<right>施放一个[c/ff7f50:割裂敌人的魔法火球并增加他们受到的魔法伤害]
 					[c/ff7f50:“苦痛之中，亦见光辉”]
 					'''
 				Details:
 					'''
-					[c/ff7f50:魔法火球] 每次攻击造成 {4} 倍伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}）
+					[c/ff7f50:魔法火球]每次攻击造成 {4} 倍伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}）
 					[c/ff7f50:割裂]的敌人受到的魔法伤害增加 {8}% ({$CommonItemTooltip.SecondDuration@12})
-					[c/87cefa:追踪火焰]优先攻击 [c/ff7f50:割裂] 的敌人
-					[c/87cefa:魔法珠]额外造成 {0}% 的伤害，返回玩家时额外造成 {1}% 
+					[c/87cefa:追踪火焰]优先攻击[c/ff7f50:割裂]的敌人
+					[c/87cefa:魔法珠]额外造成 {0}% 的伤害，返回玩家时额外造成 {1}%
 					[c/87cefa:追踪火焰命中敌人时回复其消耗的一半魔力]
-					只有 [c/87cefa:魔法珠] 投出和返回时造成的第一次伤害可以获得 [c/87cefa:精华窃取] 堆叠
-					如果暴击则获得两层 [c/87cefa:精华窃取] 堆叠
-					击杀敌人时有 {2}% 的几率获得一层 [c/87cefa:精华窃取] 堆叠
-					满堆叠层数的 [c/87cefa:魔法珠] 对敌人额外造成 {3}% 的伤害，同时其治疗量由玩家最大魔力值和魔法伤害决定
+					只有[c/87cefa:魔法珠]投出和返回时造成的第一次伤害可以获得[c/87cefa:精华窃取]堆叠
+					如果暴击则获得两层[c/87cefa:精华窃取]堆叠
+					击杀敌人时有 {2}% 的几率获得一层[c/87cefa:精华窃取]堆叠
+					满堆叠层数的[c/87cefa:魔法珠]对敌人额外造成 {3}% 的伤害，同时其治疗量由玩家最大魔力值和魔法伤害决定
 					'''
 			}
 
@@ -7100,11 +7106,11 @@ Mods: {
 				DisplayName: 灵性之珠
 				Tooltip:
 					'''
-					投出一个灵性的 [c/87cefa:魔法珠] ，它会在一定距离后返回你身边
+					投出一个灵性的[c/87cefa:魔法珠]，它会在一定距离后返回你身边
 					当[c/87cefa:珠子]投出时攻击会生成[c/87cefa:追踪火焰]
-					当[c/87cefa:珠子]命中和击杀敌人时，获得 [c/87cefa:精华窃取] 堆叠
+					当[c/87cefa:珠子]命中和击杀敌人时，获得[c/87cefa:精华窃取]堆叠
 					当获得九层堆叠时，下一次投出的[c/87cefa:魔法珠]将会消耗所有层数，[c/87cefa:治疗玩家并对敌人造成大量伤害]
-					<right> 施放一个[c/ff7f50:割裂敌人的爱心并增加他们受到的魔法伤害]
+					<right>施放一个[c/ff7f50:割裂敌人的爱心并增加他们受到的魔法伤害]
 					{$Items.OrbOfSpirituality.Keybind1}特殊能力键{$Items.OrbOfSpirituality.Keybind2}
 					[c/ff00ff:万物有灵，终有归宿]
 					[c/ff00ff:敌速投胎，物理超度]
@@ -7113,18 +7119,18 @@ Mods: {
 				Keybind2: " 以 [c/ff00ff:冲向光标所在的位置] 沿途发射[c/87cefa:追踪火焰]"
 				Details:
 					'''
-					按 [c/ff00ff:特殊能力键] 获得增益，允许你[c/ff00ff:冲刺三次]
+					按[c/ff00ff:特殊能力键]获得增益，允许你[c/ff00ff:冲刺三次]
 					增益{$CommonItemTooltip.SecondDuration@9}，{$CommonItemTooltip.Cooldown@10}
 					[c/ff00ff:冲刺产生的][c/87cefa:追踪火焰][c/ff00ff:命中敌人时不恢复魔力，激活[c/ff00ff:特殊能力] 消耗 {11} 魔力]
 					[c/ff7f50:爱心]每次攻击造成 {4} 倍伤害({$CommonItemTooltip.Cooldown@5}) 和 {6}% 最高生命值伤害，最高到 {7}
 					[c/ff7f50:割裂]的敌人受到的魔法伤害增加 {8}% ({$CommonItemTooltip.SecondDuration@12})
-					[c/87cefa:追踪火焰]优先攻击 [c/ff7f50:割裂] 的敌人
-					[c/87cefa:魔法珠]额外造成 {0}% 的伤害，返回玩家时额外造成 {1}% 
+					[c/87cefa:追踪火焰]优先攻击[c/ff7f50:割裂]的敌人
+					[c/87cefa:魔法珠]额外造成 {0}% 的伤害，返回玩家时额外造成 {1}%
 					[c/87cefa:追踪火焰命中敌人时回复其消耗的一半魔力]
-					只有 [c/87cefa:魔法珠] 投出和返回时造成的第一次伤害可以获得 [c/87cefa:精华窃取] 堆叠
-					如果暴击则获得两层 [c/87cefa:精华窃取] 堆叠
-					击杀敌人时有 {2}% 的几率获得一层 [c/87cefa:精华窃取] 堆叠
-					满堆叠层数的 [c/87cefa:魔法珠] 对敌人额外造成 {3}% 的伤害，同时其治疗量由玩家最大魔力值和魔法伤害决定
+					只有[c/87cefa:魔法珠]投出和返回时造成的第一次伤害可以获得[c/87cefa:精华窃取]堆叠
+					如果暴击则获得两层[c/87cefa:精华窃取]堆叠
+					击杀敌人时有 {2}% 的几率获得一层[c/87cefa:精华窃取]堆叠
+					满堆叠层数的[c/87cefa:魔法珠]对敌人额外造成 {3}% 的伤害，同时其治疗量由玩家最大魔力值和魔法伤害决定
 					'''
 			}
 
@@ -7691,12 +7697,12 @@ Mods: {
 			}
 
 			EstusRing: {
-				DisplayName: 元素之戒
+				DisplayName: 元素戒指
 				Tooltip: 提高元素瓶 {0} 点生命值的治疗效果，增加 {1}% 最大生命值
 			}
 
 			RingOfFavorAndProtection: {
-				DisplayName: 恩惠与保护之戒
+				DisplayName: 宠爱庇佑戒指
 				Tooltip:
 					'''
 					装备时增加 40 点生命值和 15 点耐力
@@ -9054,7 +9060,7 @@ Mods: {
 			GreatFireStrike.DisplayName: 爆炎一击
 			GreatMagicBarrier.DisplayName: 高级魔法屏障
 			GreatMagicShield.DisplayName: 大魔法盾
-			GreatSoulArrow.DisplayName: 伟大的灵魂之箭
+			GreatSoulArrow.DisplayName: 强力灵魂箭
 			GWPulsarShot.DisplayName: G W 脉冲波
 			HealingWater.DisplayName: 魔法水焰
 			HeavenPiercer.DisplayName: 天堂穿刺者
@@ -9791,7 +9797,7 @@ Mods: {
 				DespawnHandler: 飞龙法师所向披靡...
 				FrostWave: 飞龙法师发出寒意阵阵的霜冻！寒冷难忍！
 				Archdeacons: 飞龙法师召唤了执事长！
-				// DragonDead: You dare?!
+				DragonDead: 你竟敢！？
 				Condition: 当他的机械飞龙死后掉落
 			}
 
@@ -9864,8 +9870,8 @@ Mods: {
 			GhostOfTheDarkmoonKnight.DisplayName: 暗月骑士之灵
 			GhostoftheForgottenKnight.DisplayName: 被遗忘的骑士之灵
 			GhostOfTheForgottenWarrior.DisplayName: 被遗忘的战士之灵
-			HollowSoldier.DisplayName: 空洞卫兵
-			HollowWarrior.DisplayName: 空洞战士
+			HollowSoldier.DisplayName: 游魂卫兵
+			HollowWarrior.DisplayName: 游魂战士
 			HumanityPhantom.DisplayName: 人形幻影
 
 			JungleSentree: {
@@ -10461,9 +10467,9 @@ Mods: {
 				DespawnHandler2: 三焱家族的怒火消退...
 			}
 
-			GhostOfAHollowWarrior.DisplayName: 空洞战士幽魂
+			GhostOfAHollowWarrior.DisplayName: 游魂战士幽魂
 			GhostOfTheDrowned.DisplayName: 溺尸
-			HollowSpearman.DisplayName: 空洞矛手
+			HollowSpearman.DisplayName: 游魂矛手
 			PinwheelFireball.DisplayName: 三焱家族火球
 			AbyssFracture.DisplayName: 破碎深渊
 			AbyssCataclysm.DisplayName: 深渊风暴
@@ -10508,7 +10514,7 @@ Mods: {
 			"Reflection Shift.DisplayName": 反射位移
 			"Dodge Roll.DisplayName": 翻滚
 			"Special Ability.DisplayName": 特殊能力键
-			"Wolf Ring.DisplayName": 苍狼之戒
+			"Wolf Ring.DisplayName": 苍狼戒指
 			"Wings of Seath speed toggle.DisplayName": 希斯之翼加速度切换
 			Shunpo.DisplayName: 瞬步
 			"Necromancers Spell.DisplayName": 巫妖王之咒

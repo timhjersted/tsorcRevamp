@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
     public class LudensTempest : ModItem
     {
         public static float Dmg = 4f;
-        public static float ArmorPen = 3f;
+        public static float ArmorPen = 3;
         public static int Mana = 20;
         public static int Cooldown = 13;
         public static float ProcDmg = 1f;
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
         {
             player.GetModPlayer<tsorcRevampPlayer>().LudensTempest = true;
             player.GetDamage(DamageClass.Magic) += Dmg / 100f;
-            player.GetArmorPenetration(DamageClass.Magic) += ArmorPen / 100f;
+            player.GetArmorPenetration(DamageClass.Magic) += ArmorPen;
             player.statManaMax2 += Mana;
         }
     }

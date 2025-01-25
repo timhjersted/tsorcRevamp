@@ -685,7 +685,7 @@
   "style": 1
 }
 {
-  "text": "在上面发光蘑菇发出的暗淡光芒中， --NEWLINE   --NEWLINE 你隐约看到房间顶部的一个金色的箱子。",
+  "text": "在上方的暗淡光芒中， --NEWLINE   --NEWLINE 你隐约看到房间顶部的一个金色的箱子。",
   "tileX": 3541,
   "tileY": 468,
   "textWidth": 320,
@@ -811,10 +811,10 @@
   "style": 1
 }
 {
-  "text": "- 你发现了腐化的隧道 - --NEWLINE   --NEWLINE 它在多年前被废弃，因腐化神殿入口处涌出的黑暗使得它太危险而无法正常作业。",
+  "text": "你记得阿拉齐姆双峰，它看起来还是那么宁静祥和。 --NEWLINE   --NEWLINE 东边的山峰作为村庄与外界危险的天然屏障， --NEWLINE   --NEWLINE 除了少数几只弱小的生物和一些堕落之人之外，并没有什么威胁， --NEWLINE   --NEWLINE 而西边的山峰则危险的多。",
   "tileX": 3851,
   "tileY": 713,
-  "textWidth": 580,
+  "textWidth": 480,
   "style": 1
 }
 {
@@ -1252,13 +1252,6 @@
   "style": 1
 }
 {
-  "text": "\u0022这块该死的保护石仍在散发黑暗的气息，没有任何解脱的迹象。 --NEWLINE   --NEWLINE 我得更多地向西探索，看看是否有一条通往那个方向的路…\u0022",
-  "tileX": 4399,
-  "tileY": 1880,
-  "textWidth": 480,
-  "style": 1
-}
-{
   "text": "你拨动开关，听到下面有东西在动…",
   "tileX": 4435,
   "tileY": 775,
@@ -1490,10 +1483,10 @@
   "style": 1
 }
 {
-  "text": "这座桥是用燃烧的地狱石建造的。它在两个方向上持续一千英尺，没有任何起伏。 --NEWLINE   --NEWLINE \u0022我必须爬回这座塔，找到另一条路到这里，那里可以安全穿过地狱石…\u0022",
+  "text": "这座桥是用燃烧的地狱石建造的 --NEWLINE   --NEWLINE \u0022我差点忘了这里以前有多烫脚了……\u0022",
   "tileX": 4846,
   "tileY": 1884,
-  "textWidth": 600,
+  "textWidth": 320,
   "style": 1
 }
 {
@@ -1700,10 +1693,10 @@
   "style": 1
 }
 {
-  "text": "这扇大门从另一侧打开。",
+  "text": "这扇门需要从另一侧打开。",
   "tileX": 5338,
   "tileY": 956,
-  "textWidth": 180,
+  "textWidth": 200,
   "style": 1
 }
 {
@@ -1798,13 +1791,6 @@
   "style": 1
 }
 {
-  "text": "这扇大门必须从另一边打开…",
-  "tileX": 5863,
-  "tileY": 1229,
-  "textWidth": 220,
-  "style": 1
-}
-{
   "text": "Miakoda告诉你：\u0022这的钥匙可以打开西海底的猩红箱子。 --NEWLINE   --NEWLINE 我听说里面有能抵御熔岩的护符……\u0022",
   "tileX": 5887,
   "tileY": 1781,
@@ -1857,7 +1843,7 @@
   "text": "一路上，你问自己：\u0027血肉之墙的毁灭会带来什么后果呢？\u0027",
   "tileX": 6003,
   "tileY": 1866,
-  "textWidth": 240,
+  "textWidth": 440,
   "style": 1
 }
 {
@@ -1910,7 +1896,7 @@
   "style": 1
 }
 {
-  "text": "这扇门从另一侧打开。",
+  "text": "这扇门需要从另一侧打开。",
   "tileX": 6139,
   "tileY": 1143,
   "textWidth": 200,
@@ -1938,10 +1924,10 @@
   "style": 1
 }
 {
-  "text": "丛林的出口就在附近，你可以看到远处的神圣山脉，背后是那棵仍然散发着光芒的古老之树。 --NEWLINE   --NEWLINE 你听说世界的这部分区域处于飞龙法师的控制之下，而他是阿卓迪斯的强大盟友。",
+  "text": "丛林的出口就在附近， --NEWLINE   --NEWLINE 你可以看到远处的神圣山脉，背后是那棵仍然散发着光芒的古老之树。 --NEWLINE   --NEWLINE 你听说世界的这部分区域处于飞龙法师的控制之下，而他是阿卓迪斯的强大盟友。",
   "tileX": 6278,
   "tileY": 854,
-  "textWidth": 670,
+  "textWidth": 590,
   "style": 1
 }
 {
@@ -1969,7 +1955,7 @@
   "text": "- 你抵达了神圣之地 -",
   "tileX": 6376,
   "tileY": 834,
-  "textWidth": 150, 
+  "textWidth": 190, 
   "style": 1
 }
 {
@@ -1983,7 +1969,7 @@
   "text": "这扇门必须从对侧打开吗？",
   "tileX": 6461,
   "tileY": 1104,
-  "textWidth": 250,
+  "textWidth": 200,
   "style": 1
 }
 {
@@ -2173,13 +2159,6 @@
   "tileX": 7356,
   "tileY": 485,
   "textWidth": 420,
-  "style": 1
-}
-{
-  "text": "Miakoda：\u0022这似乎不是通往愤怒的道路，我不知道这会导致什么… --NEWLINE   --NEWLINE 也许我们应该回头向西，继续探索神圣洞穴…\u0022",
-  "tileX": 7556,
-  "tileY": 1536,
-  "textWidth": 480,
   "style": 1
 }
 {

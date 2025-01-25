@@ -643,7 +643,7 @@
   "style": 1
 }
 {
-  "text": "In the dim glow of the pulsating mushrooms above,  you can just barely see a gold chest at the top of this room.",
+  "text": "In the dim glow above,  you can just barely see a gold chest at the top of this room.",
   "tileX": 3541,
   "tileY": 468,
   "textWidth": 320,
@@ -1738,13 +1738,6 @@
   "text": "A dark impulse compels you to destroy one of these large flowers.  --NEWLINE  --NEWLINE You believe it is the key to gaining access to the Temple of Golem.",
   "tileX": 5833,
   "tileY": 1674,
-  "textWidth": 320,
-  "style": 1
-}
-{
-  "text": "The gate must only open from the other side...",
-  "tileX": 5863,
-  "tileY": 1229,
   "textWidth": 320,
   "style": 1
 }
