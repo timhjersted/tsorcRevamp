@@ -72,6 +72,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public float DarkBeadShotCounter;
         public float poisonTimer = 0;
         public float poisonTimer2 = 0;
+        private int teleportCooldown = 0;
 
 
 
@@ -112,12 +113,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //PROJECTILE HIT LOGIC
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            if (NPC.justHit && Main.rand.NextBool(32))
+            if (NPC.justHit && Main.rand.NextBool(32) && teleportCooldown <= 0)
             {
                 tsorcRevampAIs.TeleportImmediately(NPC, 20, true);
                 poisonTimer = 1f;
                 DarkBeadShotCounter = 0;
                 DarkBeadShotTimer = 0;
+                teleportCooldown = 120;
             }
             if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.NextBool(12))//
             {
@@ -202,6 +204,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             tsorcRevampAIs.FighterAI(NPC, 1.1f, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 1.6f);
 
             Player player = Main.player[NPC.target];
+
+            if (teleportCooldown > 0)
+            {
+                teleportCooldown--; 
+            }
+
+            tsorcRevampAIs.FighterAI(NPC, 1.1f, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 1.6f);
 
             //announce magical barrier warning once
             if (holdTimer > 1)

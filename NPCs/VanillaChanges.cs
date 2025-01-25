@@ -1461,7 +1461,7 @@ namespace tsorcRevamp.NPCs
                             npc.damage = 95; //15,000 lmao(small typo but I'll leave it for funsies)
                             //actually "something mundane happened and i died instantly" is kinda silly
                             npc.defense = 70;
-                            npc.lifeMax = 2500;//was 6k, 3k still 2650 higher than vanilla
+                            npc.lifeMax = 1000;//was 6k, 3k still 2650 higher than vanilla
                             npc.value = 5510;
                         }
                         break;
@@ -1609,7 +1609,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.Herpling):
                     {
                         npc.damage = 80;
-                        npc.lifeMax = 400;
+                        npc.lifeMax = 360;
                         npc.knockBackResist = 0f;
                         npc.value = 1440;
                         break;
@@ -1627,7 +1627,7 @@ namespace tsorcRevamp.NPCs
                 case (NPCID.IchorSticker):
                     {
                         npc.lifeMax = 400;
-                        npc.defense = 40;
+                        npc.defense = 35;
                         npc.value = 1690;
                         break;
                     }
@@ -2999,7 +2999,19 @@ namespace tsorcRevamp.NPCs
 
                 case int scarecrow when ((scarecrow >= NPCID.Scarecrow1 && scarecrow <= NPCID.Scarecrow10)):
                     {
-                        npc.value = 1480;
+                        npc.value = 1410;
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax = (int)(npc.lifeMax * 1.50f);
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 1.25);
+                                npc.knockBackResist *= 1.15f;
+                                globalNPC.lifeBoosted = true; 
+                            }
+                        }
                         break;
                     }
 
@@ -3050,6 +3062,18 @@ namespace tsorcRevamp.NPCs
                 case int zombieelfs when ((zombieelfs >= NPCID.ZombieElf && zombieelfs <= NPCID.ZombieElfGirl)):
                     {
                         npc.value = 1420;
+                        if (tsorcRevampWorld.SuperHardMode)
+                        {   
+                            MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();
+                            if (!globalNPC.lifeBoosted)
+                            {
+                                npc.lifeMax = (int)(npc.lifeMax * 1.50f);
+                                npc.life = npc.lifeMax; 
+                                npc.defense = (int)(npc.defense * 1.25);
+                                npc.knockBackResist *= 1.15f;
+                                globalNPC.lifeBoosted = true; 
+                            }
+                        }
                         break;
                     }
 
@@ -3528,12 +3552,23 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.VortexLarva
                     || npc.type == NPCID.VortexSoldier
                     || npc.type == NPCID.SolarCorite
-                    || npc.type == NPCID.SolarCorite
-                    || npc.type == NPCID.SolarCorite
-                    || npc.type == NPCID.SolarCorite
-                    || npc.type == NPCID.SolarCorite
-                    || npc.type == NPCID.SolarCorite
-                    || npc.type == NPCID.Shark)
+                    || npc.type == NPCID.HeadlessHorseman
+                    || npc.type == NPCID.MourningWood
+                    || npc.type == NPCID.Splinterling
+                    || npc.type == NPCID.Pumpking
+                    || npc.type == NPCID.Hellhound
+                    || npc.type == NPCID.Poltergeist
+                    || npc.type == NPCID.PresentMimic
+                    || npc.type == NPCID.GingerbreadMan
+                    || npc.type == NPCID.Yeti
+                    || npc.type == NPCID.Everscream
+                    || npc.type == NPCID.IceQueen
+                    || npc.type == NPCID.SantaNK1
+                    || npc.type == NPCID.ElfCopter
+                    || npc.type == NPCID.Nutcracker
+                    || npc.type == NPCID.ElfArcher
+                    || npc.type == NPCID.Krampus
+                    || npc.type == NPCID.Flocko)
                 {
 
                     MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>();

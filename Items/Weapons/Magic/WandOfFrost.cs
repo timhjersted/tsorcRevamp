@@ -17,26 +17,22 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetDefaults()
         {
-            Item.damage = 33;
+            Item.damage = 36;
             Item.height = 30;
             Item.knockBack = 4;
             Item.rare = ItemRarityID.Orange;
-            Item.shootSpeed = 11;
+            Item.shootSpeed = 12;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.mana = 18;
             Item.autoReuse = true;
             Item.useAnimation = 26;
-            Item.UseSound = SoundID.Item21;
+            Item.UseSound = SoundID.Item28;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useTime = 26;
             Item.value = PriceByRarity.Orange_3;
             Item.width = 30;
             Item.shoot = ModContent.ProjectileType<Projectiles.Icicle>();
-        }
-        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            target.AddBuff(BuffID.Frostburn, 360);
         }
         public override void AddRecipes()
         {

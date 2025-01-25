@@ -44,18 +44,16 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
 
 public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
 {
-    // Calcule la direction du projectile en fonction de la position du joueur et de la cible (ennemi)
-    Vector2 direction = target.Center - player.Center;  // Direction du joueur vers l'ennemi
-    direction.Normalize();  // Normalise le vecteur pour obtenir une direction unitaire
+    Vector2 direction = target.Center - player.Center;  
+    direction.Normalize();  
 
-    // Crée le projectile "Flames" avec 33% des dégâts de l'arme et une vélocité réduite de 50%
-    float speed = 3f;  // Exemple de vitesse, vous pouvez ajuster selon vos besoins
+    float speed = 3f;  
     Projectile.NewProjectileDirect(
         Item.GetSource_FromThis(), 
         player.Center, 
-        direction * speed,  // Vitesse dans la direction calculée
+        direction * speed,  
         ProjectileID.Flames, 
-        (int)(player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage) * 0.5f), // Réduit les dégâts à 33% de ceux de l'arme
+        (int)(player.GetTotalDamage(DamageClass.Melee).ApplyTo(Item.damage) * 0.5f), 
         player.GetTotalKnockback(DamageClass.Melee).ApplyTo(Item.knockBack), 
         Main.myPlayer
     );

@@ -107,14 +107,14 @@ namespace tsorcRevamp.Items.VanillaItems
             #region Whips
             if (item.type == ItemID.ScytheWhip)
             {
-                item.damage = 200; //SHM, tag effect is pretty weak so just give it higher dmg than the vanilla whips at least I guess
+                //item.damage = 200; //tag effect is pretty weak so just give it higher dmg than the vanilla whips at least I guess
             }
             #endregion
 
             #region Turrets/Sentries
             if (item.type == ItemID.HoundiusShootius)
             {
-                item.damage = 33;
+                item.damage = 30;
             }
             if (item.type == ItemID.StaffoftheFrostHydra) //buff, using static immunity frame in tml1.4.4, vanilla damage is 100
             {//now uses local iframes in globalprojectile

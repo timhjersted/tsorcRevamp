@@ -6182,7 +6182,7 @@ Mods: {
 				Tooltip:
 					'''
 					Always aim for the heart
-					Legendary
+					Shoots 2 extra elfin arrows every 3 shots
 					'''
 			}
 
@@ -9402,6 +9402,7 @@ Mods: {
 			OldHalberdProj.DisplayName: Old Halberd Proj
 			DragoonLightning.DisplayName: Dragoon Lightning
 			SupremeDragoonLightning.DisplayName: Supreme Dragoon Lightning
+			Icicle2.DisplayName: Icicle2
 		}
 
 		NPCs: {

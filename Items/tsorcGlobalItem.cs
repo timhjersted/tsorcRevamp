@@ -890,7 +890,7 @@ namespace tsorcRevamp.Items
         {
             if ((item.type == ItemID.OasisCrate || item.type == ItemID.OasisCrateHard || item.type == ItemID.DungeonFishingCrate || item.type == ItemID.DungeonFishingCrateHard) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
             {
-                return true;
+                return false;
             }
             return base.CanRightClick(item);
         }

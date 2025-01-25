@@ -315,6 +315,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.WitchkingBag>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkMirror>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AdventureModeRule, ItemID.LargeSapphire));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonAdventureModeRule, ModContent.ItemType<BrokenStrangeMagicRing>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());

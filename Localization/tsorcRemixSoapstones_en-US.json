@@ -1343,13 +1343,6 @@
   "style": 1
 }
 {
-  "text": "The water becomes unbearably cold...",
-  "tileX": 4604,
-  "tileY": 1007,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "A weapon that can pierce through walls may be essential to survival beyond this point.",
   "tileX": 4605,
   "tileY": 1100,
@@ -1525,13 +1518,6 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found the Flooded Mines -",
-  "tileX": 4966,
-  "tileY": 882,
-  "textWidth": 320,
-  "style": 1
-}
-{
   "text": "- You have found the tomb where The Machine was sealed away long ago  -",
   "tileX": 4977,
   "tileY": 1101,
@@ -1547,8 +1533,8 @@
 }
 {
   "text": "This gate is sealed by Chlorophyte, an ore stronger than Adamantite.  --NEWLINE  --NEWLINE \u0022I\u0027m going to need a really powerful drill to open this. Bombs and normal drills don\u0027t put a dent in it...\u0022 --NEWLINE  --NEWLINE You jot a note in your journal.",
-  "tileX": 5018,
-  "tileY": 915,
+  "tileX": 4850,
+  "tileY": 908,
   "textWidth": 320,
   "style": 1
 }

@@ -18,31 +18,27 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetDefaults()
         {
-            Item.damage = 45;
+            Item.damage = 52;
             Item.height = 30;
             Item.knockBack = 6;
             Item.rare = ItemRarityID.Pink; //yes, despite not taking any mech boss items
             Item.shootSpeed = 13f;
             Item.DamageType = DamageClass.Magic;
-            Item.mana = 25;
-            Item.useAnimation = 26;
+            Item.mana = 22;
+            Item.useAnimation = 24;
             Item.autoReuse = true;
-            Item.UseSound = SoundID.Item21;
+            Item.UseSound = SoundID.Item28;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 26;
+            Item.useTime = 24;
             Item.value = PriceByRarity.Pink_5;
             Item.width = 30;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Icicle>();
-        }
-        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            target.AddBuff(BuffID.Frostburn2, 360);
+            Item.shoot = ModContent.ProjectileType<Projectiles.Icicle2>();
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe(); ;
             recipe.AddIngredient(ModContent.ItemType<WandOfFrost>(), 1);
-            //recipe.AddIngredient(ItemID.CrystalShard, 30);
+            recipe.AddIngredient(ItemID.CrystalShard, 15);
             recipe.AddIngredient(ItemID.SoulofFlight, 9);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
             recipe.AddTile(TileID.DemonAltar);

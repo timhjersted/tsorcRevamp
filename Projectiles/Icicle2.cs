@@ -5,24 +5,25 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
-    class Icicle : ModProjectile
+    class Icicle2 : ModProjectile
     {
+        public override string Texture => "tsorcRevamp/Projectiles/Icicle";
         public override void SetDefaults()
         {
             //projectile.aiStyle = 9;
             Projectile.friendly = true;
-            Projectile.penetrate = 3;
+            Projectile.penetrate = 4;
             Projectile.height = 38;
             Projectile.width = 38;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 70;
-            Projectile.alpha = 70;
+            Projectile.timeLeft = 80;
+            Projectile.alpha = 90;
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(BuffID.Frostburn, 3 * 60);
+            target.AddBuff(BuffID.Frostburn2, 3 * 60);
         }
 
         public override void AI()
@@ -44,7 +45,7 @@ namespace tsorcRevamp.Projectiles
             Color newColor = default(Color);
             if (Main.rand.NextBool(2))
             {
-                int num47 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, arg_2675_3, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 1.5f);
+                int num47 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, arg_2675_3, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 2f);
                 Dust expr_2684 = Main.dust[num47];
                 expr_2684.velocity *= 0.3f;
 
@@ -53,7 +54,7 @@ namespace tsorcRevamp.Projectiles
                 Main.dust[num47].noGravity = true;
             }
 
-            int n1337 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, 172, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 1.5f);
+            int n1337 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, 172, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 2f);
 
 
             for (int i = 0; i < 2; i++)
