@@ -1287,10 +1287,10 @@
   "style": 1,
 }
 {
-  "text": "耀骑士索拉尔的瞭望塔 --NEWLINE   --NEWLINE 索拉尔在向你用赞美太阳的方式打招呼后， --NEWLINE   --NEWLINE 他问你是否和Jade说话了，Jade是村外瞭望塔的女人。 --NEWLINE   --NEWLINE \u0022去和她谈谈吧，我的朋友！ --NEWLINE   --NEWLINE 她有很多重要的事情要告诉你。也许在一些事情还能帮助你。\u0022 --NEWLINE   --NEWLINE \u0022接下来……\u0022他喃喃自语，然后咆哮道：\u0022为了我们的友谊干杯！\u0022",
+  "text": "太阳战士索拉尔的瞭望塔 --NEWLINE   --NEWLINE 索拉尔在向你用赞美太阳的方式打招呼后， --NEWLINE   --NEWLINE 他问你是否和Jade说话了，Jade是村外瞭望塔的女人。 --NEWLINE   --NEWLINE \u0022去和她谈谈吧，我的朋友！ --NEWLINE   --NEWLINE 她有很多重要的事情要告诉你。也许在一些事情还能帮助你。\u0022 --NEWLINE   --NEWLINE \u0022接下来……\u0022他喃喃自语，然后咆哮道：\u0022为了我们的友谊干杯！\u0022",
   "tileX": 4363,
   "tileY": 666,
-  "textWidth": 480,
+  "textWidth": 500,
   "style": 1
 }
 {
@@ -1637,10 +1637,10 @@
   "style": 1
 }
 {
-  "text": "\u0022看来住在这里的人都崇拜太阳…他们可能是耀骑士Solaire的祖先？ --NEWLINE   --NEWLINE 没有白天的温暖和阳光来安慰他们，他们一定很痛苦… --NEWLINE   --NEWLINE 也许他们还是找到了一种与太阳交流的方式……\u0022",
+  "text": "\u0022看来住在这里的人都崇拜太阳…他们可能是太阳战士Solaire的祖先？ --NEWLINE   --NEWLINE 没有白天的温暖和阳光来安慰他们，他们一定很痛苦… --NEWLINE   --NEWLINE 也许他们还是找到了一种与太阳交流的方式……\u0022",
   "tileX": 5002,
   "tileY": 1741,
-  "textWidth": 600,
+  "textWidth": 620,
   "style": 1
 }
 {

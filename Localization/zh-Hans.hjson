@@ -4419,7 +4419,7 @@ Mods: {
 			}
 
 			GreenBlossom: {
-				DisplayName: 绿色花簇
+				DisplayName: 绿花草
 				Tooltip: "{$CommonItemTooltip.StaminaRegen}"
 			}
 
@@ -6737,7 +6737,7 @@ Mods: {
 			}
 
 			BlackFirebomb: {
-				DisplayName: 黑色燃烧弹
+				DisplayName: 黑火焰壶
 				Tooltip:
 					'''
 					爆炸，在小范围内造成火焰伤害
@@ -6746,7 +6746,7 @@ Mods: {
 			}
 
 			Firebomb: {
-				DisplayName: 燃烧弹
+				DisplayName: 火焰壶
 				Tooltip: 爆炸，在小范围内造成火焰伤害
 			}
 
@@ -8044,7 +8044,7 @@ Mods: {
 			}
 
 			GreatMagicShield: {
-				DisplayName: 大魔法盾
+				DisplayName: 强力法术盾
 				Description:
 					'''
 					{$CommonItemTooltip.IncreasesDefenseBy}
@@ -8059,7 +8059,7 @@ Mods: {
 			}
 
 			GreenBlossom: {
-				DisplayName: 绿色花簇
+				DisplayName: 绿花草
 				Description: "{$CommonItemTooltip.StaminaRegen}"
 			}
 
@@ -8775,7 +8775,7 @@ Mods: {
 			BiohazardExplosion.DisplayName: 生化爆破
 			BiohazardShot.DisplayName: 生化弹
 			BlackFire.DisplayName: 黑焱
-			BlackFirebombProj.DisplayName: 黑色燃烧弹
+			BlackFirebombProj.DisplayName: 黑火焰壶
 			BlackFirelet.DisplayName: 黑焱
 			BlasterShot.DisplayName: 爆破弹
 			Bloodsign.DisplayName: 血信
@@ -9803,7 +9803,7 @@ Mods: {
 
 			AbyssPortal.DisplayName: 深渊裂缝
 			AttraidiesApparition.DisplayName: 阿卓迪斯
-			Faraam.DisplayName: 法拉姆
+			Faraam.DisplayName: 法汉
 			GwynBossVision.DisplayName: 葛温Boss
 			LeonhardPhase1.DisplayName: 李奥纳德
 			IchorGlob.DisplayName: 灵焰
@@ -9864,7 +9864,7 @@ Mods: {
 			DworcVenomsniper.DisplayName: 德沃克猛毒狙击者
 			DworcVoodoomaster.DisplayName: 德沃克炼金术士
 			DworcVoodooShaman.DisplayName: 德沃克萨满
-			FirebombHollow.DisplayName: 燃烧瓶投掷者
+			FirebombHollow.DisplayName: 游魂投掷手
 			FireLurker.DisplayName: 火炎潜伏者
 			GaibonFireball.DisplayName: 盖波的火球
 			GhostOfTheDarkmoonKnight.DisplayName: 暗月骑士之灵
@@ -9872,7 +9872,7 @@ Mods: {
 			GhostOfTheForgottenWarrior.DisplayName: 被遗忘的战士之灵
 			HollowSoldier.DisplayName: 游魂卫兵
 			HollowWarrior.DisplayName: 游魂战士
-			HumanityPhantom.DisplayName: 人形幻影
+			HumanityPhantom.DisplayName: 人性幻魔
 
 			JungleSentree: {
 				DisplayName: 丛林树兵
@@ -9893,7 +9893,7 @@ Mods: {
 				GivenName2: 真菌重犯
 			}
 
-			LothricBlackKnight.DisplayName: 洛斯里克黑骑士
+			LothricBlackKnight.DisplayName: 洛斯里克精英骑士
 			LothricKnight.DisplayName: 洛斯里克骑士
 			LothricSpearKnight.DisplayName: 洛斯里克长矛骑士
 			ManHunter.DisplayName: 男猎人
@@ -10300,7 +10300,7 @@ Mods: {
 			}
 
 			SolaireOfAstora: {
-				DisplayName: 耀骑士
+				DisplayName: 太阳战士
 				Name1: Solaire
 				Quote1: 黑暗之魂是强大的力量，亦是巨大的责任。
 				Quote2: 赞美太阳！
