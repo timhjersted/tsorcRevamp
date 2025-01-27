@@ -1425,6 +1425,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.StaminaRecovery}
 					[c/ffbf00:加强了翻滚时的灵巧度与闪避能力]
+					[c/ca1e00:被诅咒者: 使用蓝露滴圣杯瓶时不再限制移动能力]
 					增加耐力液滴的拾取范围
 					这枚古老的戒指因为其装饰性的绿色花朵而得名
 					但光泽却早已流逝
@@ -1438,6 +1439,7 @@ Mods: {
 					{$CommonItemTooltip.StaminaRecovery}
 					[c/ffbf00:加强了翻滚时的灵巧度与闪避能力]
 					[c/ffbf00:提供黑腰带的效果和空中的高机动能力]
+					[c/ca1e00:被诅咒者: 使用蓝露滴圣杯瓶时不再限制移动能力]
 					这枚古老的戒指因为其装饰性的绿色花朵而得名 
 					它的光泽现在已经完全恢复了
 					'''
@@ -6180,7 +6182,7 @@ Mods: {
 				Tooltip:
 					'''
 					始终以心脏为目标
-					传奇
+					每三次攻击射出两支精灵之箭
 					'''
 			}
 
@@ -9400,7 +9402,7 @@ Mods: {
 			OldHalberdProj.DisplayName: 旧戟
 			// DragoonLightning.DisplayName: Dragoon Lightning
 			// SupremeDragoonLightning.DisplayName: Supreme Dragoon Lightning
-			// Icicle2.DisplayName: Icicle2
+			Icicle2.DisplayName: 霜灾魔杖
 		}
 
 		NPCs: {
