@@ -1426,7 +1426,8 @@ Mods: {
 					'''
 					{$CommonItemTooltip.StaminaRecovery}
 					[c/ffbf00:Enhances your agility and evasiveness when dodge rolling]
-					Increases Stamina Droplet pickup range
+					BotCOnly: "[c/ca1e00:When drinking your Cerulean Flask, your movement is no longer hindered at the cost of temporary vulnerability.]"
+					Increases Stamina Droplet pickup range.
 					This old ring is named for its decorative green blossom, 
 					but its luster is long since faded
 					'''
@@ -1439,6 +1440,7 @@ Mods: {
 					{$CommonItemTooltip.StaminaRecovery}
 					[c/ffbf00:Further enhances your agility and evasiveness when dodge rolling]
 					[c/ffbf00:Grants the Black Belt's effect & superior mid-air dexterity]
+					BotCOnly: "[c/ca1e00:When drinking your Cerulean Flask, your movement is no longer hindered at the cost of temporary vulnerability.]"
 					This ring is named for its decorative green blossom. 
 					Its luster has now been fully restored.
 					'''
