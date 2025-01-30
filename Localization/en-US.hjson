@@ -5675,8 +5675,7 @@ Mods: {
 				DisplayName: Drakarthus
 				Tooltip:
 					'''
-					Right click to throw a dagger that
-					sticks to enemies and tiles it hits
+					Right click to throw a dagger that sticks to enemies and tiles it hits
 					Right click again to teleport towards the
 					dagger, destroying it and firing homing blades
 					Throwing a dagger costs 100 mana
@@ -10257,8 +10256,7 @@ Mods: {
 					To close the seal to the Abyss, you must defeat the 6 lords of The Abyss:
 					[c/ffbf00:Artorias], [c/00ffd4:The Blight], [c/aa00ff:The Wyvern Mage Shadow],
 					[c/fcff00:Chaos], and [c/18ffe2:Seath the Scaleless].
-					With a lord soul from each of these
-					beings you will be able to summon the final lord -
+					With a lord soul from each of these beings you will be able to summon the final lord -
 					[c/ff6618:Gwyn, Lord of Cinder].
 					'''
 				SandboxSHMQuote2:

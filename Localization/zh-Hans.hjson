@@ -350,6 +350,7 @@ Mods: {
 			TSORCRemixMapFailed:
 				'''
 				重构版红云地图下载失败！
+
 				如仍失败，请加QQ群：368675949
 				'''
 			Back: 返回
@@ -548,8 +549,9 @@ Mods: {
 				PapyrusScarab:
 					'''
 					{$CommonItemTooltip.Summon.TagStrength}
-					{$CommonItemTooltip.Summon.TagDuration@1}
-					{$CommonItemTooltip.Summon.CritChance@2}
+					{$CommonItemTooltip.Summon.TagDuration}
+					标记增益无法与死灵卷轴叠加
+					{$CommonItemTooltip.Summon.CritChance@1}
 					{$CommonItemTooltip.Summon.Knockback}
 					'''
 				FlinxFurChainedSetBonus: "{$CommonItemTooltip.IncreasesMaxMinionsBy}"
@@ -1078,8 +1080,7 @@ Mods: {
 				DisplayName: 超载状态
 				Tooltip:
 					'''
-					敌人每受到一个负面状态的影响
-					将会受到指数级增加的额外伤害
+					敌人每受到一个负面状态的影响，将会受到指数级增加的额外伤害
 					这不包括鞭子造成的效果
 					"水男火卫二速刷土豆 3=1 来个掠夺"
 					'''
@@ -1642,8 +1643,7 @@ Mods: {
 				DisplayName: 英雄证章
 				Tooltip:
 					'''
-					永久增加 {0}% 伤害和暴击率
-					增加 {0} 生命、{1} 防御和 {1}% 运气
+					永久增加 {0}% 伤害和暴击率、{0} 生命、{1} 防御和 {1}% 运气
 					均乘算增加 {0}% 
 					"英雄功业的证明"
 					'''
@@ -2002,7 +2002,6 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
 					{$CommonItemTooltip.SetBonus}允许你在翻滚时使用武器
 					翻滚时额外增加 {1} 倍近战伤害
-					上面有巴罗之刃留下的细长切口
 					'''
 			}
 
@@ -3562,7 +3561,8 @@ Mods: {
 					'''
 					召唤飞龙法师，擅长使用法力和闪电的强大法师
 					飞龙法师以操控忠诚的如钢般强悍的白鳞火龙而闻名
-					如果你输给他很多次，升级装备之后再来是明智的
+					如果你多次尝试后仍无法击败飞龙法师，
+					明智的做法是等你变得更强大并拥有更强的装备时再来挑战
 					'''
 				WrongTime: 飞龙法师不在这个维度，晚上再试试...
 				Summon: 召唤我是个错误...
@@ -3706,8 +3706,7 @@ Mods: {
 				DisplayName: 腐败之冠
 				Tooltip:
 					'''
-					一块发光的恶魔碎片，渗出古老的能量
-					八分之一
+					一块发光的恶魔碎片，渗出古老的能量八分之一
 					[c/00ffd4:在底部有一段文字：]
 					[c/ffbf00:"在一座断裂的、熟悉的桥下，你会找到我。"]
 					'''
@@ -3717,8 +3716,7 @@ Mods: {
 				DisplayName: 大地之冠
 				Tooltip:
 					'''
-					一块纯净的矿物打磨而成
-					八分之一
+					一块纯净的矿物打磨而成八分之一
 					[c/00ffd4:其中包含一个谜语：] 
 					[c/ffbf00:"有两条路通向入口。 在沙漠遗迹之下, 赛里斯开启了道路"]
 					[c/ffbf00:"大漠边缘的暗影之洞，叶绿之门守护着秘密"]
@@ -3822,7 +3820,8 @@ Mods: {
 					'''
 					[c/22dd96:远程暴击率将取决于你的射击准确度]
 					[c/22dd96:命中时增加 {0}% 准确度，未命中则减少 {1}% 准确度，每次只需命中一个敌人]
-					[c/22dd96:穿透敌人的射弹，多次命中只计算一次，未命中的容错也只有一次]
+					[c/22dd96:穿透敌人的射弹，多次命中只计算一次]
+					[c/22dd96:未命中的容错也只有一次]
 					[c/22dd96:自动追踪的射弹，命中时不会增加准确度]
 					[c/22dd96:实际暴击率= (原有暴击率 +准确度x{2}%) x ({4} +准确度x0.75)]
 					[c/22dd96:满准确度时增加 {2}% 暴击率，同时再将总暴击率额外乘算 {3}]
@@ -4284,8 +4283,7 @@ Mods: {
 					它发誓要帮助你找到你的妻子并击败阿卓迪斯
 					Miakoda 是一个当地方言的名字，意思是“月亮的力量”
 					【满月形态】，{$CommonItemTooltip.DRStat}
-					当你暴击时用月之魔法治疗自己
-					治疗量为 {1}+最大生命值的{2}%
+					暴击时用月之魔法恢复 {1} 生命值和 {2}% 的最大生命值
 					{$CommonItemTooltip.Cooldown@3}
 					可以在恶魔祭坛上切换形态
 					'''
@@ -5077,7 +5075,8 @@ Mods: {
 				Tooltip:
 					'''
 					失落的传说巨著，《奔雷诀》第三卷《阴阳相汲》
-					释放一道雷鸣之弧，对水中的敌人更为有效
+					释放一道雷鸣之弧
+					对水中的敌人更为有效
 					只有法师才能充分发挥这本书的潜力 
 					'''
 			}
@@ -5779,8 +5778,7 @@ Mods: {
 				DisplayName: 符文之刃
 				Tooltip:
 					'''
-					一把用来杀死各种法师的剑
-					在玩家周围生成符文
+					一把用来杀死各种法师的剑，在玩家周围生成符文
 					[c/ffbf00:对法师造成高达八倍的伤害]
 					“似乎夺心魔王也是法师...”
 					'''
@@ -6000,7 +5998,6 @@ Mods: {
 					克敌机先
 					像短剑一样使用它，右键单击进入无敌状态（{$CommonItemTooltip.Cooldown}）
 					只有拿着这把剑才能立于不败之地（{$CommonItemTooltip.SecondDuration@1}）
-
 					'''
 			}
 
@@ -10766,12 +10763,7 @@ Mods: {
 
 				AdjustBotCMechanicsVolume: {
 					Label: 被诅咒者机制音量
-					Tooltip:
-						'''
-						被诅咒者机制的音量是不是过于吵闹和烦人了？
-						这个滑块控制篝被诅咒者机制的音量
-						设置为 0 禁用被诅咒者机制的声音
-						'''
+					Tooltip: ""
 				}
 			}
 		}
