@@ -2333,7 +2333,7 @@ namespace tsorcRevamp
                     //Main.NewText("Jungle");
                     Player.ZoneJungle = true;
                 }
-                else if (UsefulFunctions.PlayerInZone(Player, 6270,6640, 460,850))
+                else if (UsefulFunctions.PlayerInZone(Player, 6460,6640, 460,850))
                 {
                     //Main.NewText("Hallow");
                     Player.ZoneHallow = true;

@@ -290,7 +290,7 @@ namespace tsorcRevamp
             ScriptedEvent EoW1Event = new ScriptedEvent(new Vector2(3633, 996), 46, NPCID.EaterofWorldsHead, DustID.Shadowflame, false, true, true, LangUtils.GetTextValue("Events.EoW"), Color.Purple, false, PreEoWCustomCondition);
 
             //EMPRESS OF LIGHT
-            ScriptedEvent EoL = new ScriptedEvent(new Vector2(4484, 355), 100, NPCID.HallowBoss, DustID.RainbowTorch, false, true, true, LangUtils.GetTextValue("Events.EoL"), Main.DiscoColor, false, EoLDownedCondition);
+            ScriptedEvent EoL = new ScriptedEvent(new Vector2(4484, 350), 100, NPCID.HallowBoss, DustID.RainbowTorch, false, true, true, LangUtils.GetTextValue("Events.EoL"), Main.DiscoColor, false, EoLDownedCondition);
 
             ScriptedEvent Lunatic = new ScriptedEvent(new Vector2(171, 210), 40, NPCID.CultistBoss, 15, false, true, true, LangUtils.GetTextValue("Events.Lunatic"), Color.Cyan, false, RemixMapCondition);
             Lunatic.SetCustomDrops(new List<int>() { ItemID.CelestialSigil }, new List<int>() {1});
@@ -339,7 +339,7 @@ namespace tsorcRevamp
             ScriptedEvent KingSlimeEvent = new ScriptedEvent(new Vector2(5995, 1117), 20, NPCID.KingSlime, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.KingSlime"), Color.Blue, false);
 
             //HERO OF LUMELIA FIGHT
-            ScriptedEvent HeroofLumeliaFight = new ScriptedEvent(new Vector2(2229, 854), 60, ModContent.NPCType<NPCs.Bosses.HeroofLumelia>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HeroOfLumelia"), Color.LightGoldenrodYellow, false, LumeliaCustomCondition);//location previously was 4413, 717, near village
+            ScriptedEvent HeroofLumeliaFight = new ScriptedEvent(new Vector2(2108, 849), 60, ModContent.NPCType<NPCs.Bosses.HeroofLumelia>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HeroOfLumelia"), Color.LightGoldenrodYellow, false, LumeliaCustomCondition);//location previously was 4413, 717, near village
 
             //FIRE LURKER PATH OF PAIN
             ScriptedEvent FireLurkerPain = new ScriptedEvent(new Vector2(3245, 1252), 9, ModContent.NPCType<NPCs.Enemies.FireLurker>(), DustID.CursedTorch, true, true, true, LangUtils.GetTextValue("Events.FireLurker"), Color.Purple, false, default, FireLurkerPainCustomAction);
@@ -604,7 +604,7 @@ namespace tsorcRevamp
 
             ScriptedEvent WyvernPrisonEvent = new ScriptedEvent(new Vector2(6408, 385), 32, ModContent.NPCType<NPCs.Enemies.MarilithSpiritTwin>(), DustID.Shadowflame, true, true, false, LangUtils.GetTextValue("Events.WyvernPrisonEvent"), Color.Purple, false, RemixMapCondition, SetNightCustomAction);
 
-            List<int> FrozenCathedralEvent2EnemyTypeList = new List<int>() { NPCID.MourningWood, NPCID.Everscream };
+            List<int> FrozenCathedralEvent2EnemyTypeList = new List<int>() { NPCID.MourningWood, NPCID.MourningWood };
             List<Vector2> FrozenCathedralEvent2EnemyLocations = new List<Vector2>() { new Vector2(7189, 1650), new Vector2(7164, 1650) };
             ScriptedEvent FrozenCathedralEvent2 = new ScriptedEvent(new Vector2(7177, 1650), 35, FrozenCathedralEvent2EnemyTypeList, FrozenCathedralEvent2EnemyLocations, 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition, SetNightCustomAction); //
 
@@ -647,7 +647,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.Golem2, Golem2},
                 {ScriptedEventType.IceGolemEvent, IceGolemEvent},
                 {ScriptedEventType.KingSlimeEvent, KingSlimeEvent},
-                {ScriptedEventType.HeroofLumeliaFight, HeroofLumeliaFight},
+                {ScriptedEventType.HeroofLumeliaFight, HeroofLumeliaFight}, 
                 {ScriptedEventType.FireLurkerPain, FireLurkerPain},
                 {ScriptedEventType.RedKnightPain, RedKnightPain},
                 {ScriptedEventType.RedKnightTwinMountain, RedKnightTwinMountain},

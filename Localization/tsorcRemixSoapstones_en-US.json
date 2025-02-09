@@ -48,6 +48,13 @@
   "style": 1
 }
 {
+  "text": "- You arrived in the Mycelium Forest - --NEWLINE  --NEWLINE \u0022If I remember correctly, this place is where the Truffle lives...\u0022",
+  "tileX": 2654,
+  "tileY": 673,
+  "textWidth": 320,
+  "style": 1
+}
+{
   "text": "In the murkey waters you realize there are pink flowers everywhere.  --NEWLINE  --NEWLINE Their allure is dark but seductive.. the flowers want to be destroyed...",
   "tileX": 284,
   "tileY": 1556,
@@ -321,14 +328,14 @@
   "style": 1
 }
 {
-  "text": "Suddenly you notice you are completely in shadow. You look up and see a dark mass blocking out the sun...",
+  "text": "In the distance you see a large tower in a ruined city emitting a shadow all over the desert...",
   "tileX": 1966,
   "tileY": 846,
   "textWidth": 320,
   "style": 1
 }
 {
-  "text": "Looking back at the temple architecture, Miakoda wonders aloud, \u0022Do you think the direction and alignment of these columns have any significance?\u0022",
+  "text": "- You arrived in the Great Desert of Elengad - --NEWLINE  --NEWLINE Looking back at the temple architecture, Miakoda wonders aloud, \u0022Do you think the direction and alignment of these columns have any significance?\u0022",
   "tileX": 2033,
   "tileY": 860,
   "textWidth": 320,
@@ -342,7 +349,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found the Temple of The Destroyer - --NEWLINE  --NEWLINE Miakoda: \u0022Stay nimble for this next fight, Red. Evasion will be key...\u0022",
+  "text": "- You\u0027ve found the Temple of The Destroyer - --NEWLINE Miakoda: \u0022Stay nimble for this next fight, Red. Evasion will be key...\u0022",
   "tileX": 2108,
   "tileY": 968,
   "textWidth": 320,
@@ -351,7 +358,7 @@
 {
   "text": "You need a large amber to open the passage, which were kept long ago in the old one tree to seal this place. To access it, you will need to beat the Mindflayer King...",
   "tileX": 2221,
-  "tileY": 859,
+  "tileY": 858,
   "textWidth": 320,
   "style": 1
 }
@@ -1637,7 +1644,7 @@
   "style": 1
 }
 {
-  "text": "To the EAST--\u003E --NEWLINE The Rainforest of the Orid Tribe --NEWLINE Obsidian\u0027s Volcano --NEWLINE Unknown --NEWLINE  --NEWLINE To the SOUTH --V --NEWLINE Cave entrance to the Dryad\u0027s Home",
+  "text": "To the EAST--\u003E --NEWLINE The Rainforest of the Orid Tribe --NEWLINE Obsidian\u0027s Volcano --NEWLINE The Hallow --NEWLINE Unknown --NEWLINE  --NEWLINE To the SOUTH --V --NEWLINE Cave entrance to the Dryad\u0027s Home",
   "tileX": 5338,
   "tileY": 867,
   "textWidth": 320,
@@ -1876,8 +1883,8 @@
 }
 {
   "text": "- You arrived in the enchanted lands of the Hallow -",
-  "tileX": 6376,
-  "tileY": 834,
+  "tileX": 6484,
+  "tileY": 827,
   "textWidth": 320, 
   "style": 1
 }
