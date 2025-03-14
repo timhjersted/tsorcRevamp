@@ -27,11 +27,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Item.knockBack = 5;
             Item.crit = 3;
             Item.UseSound = SoundID.Item11;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ItemRarityID.Purple;
             Item.shoot = ProjectileID.PurificationPowder;
             Item.shootSpeed = 10;
             Item.noMelee = true;
-            Item.value = PriceByRarity.Red_10;
+            Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Ranged;
             Item.autoReuse = true;
             Item.useAmmo = AmmoID.Bullet;

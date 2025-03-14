@@ -25,14 +25,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Item.knockBack = 9.0f;
             Item.noMelee = true;
             Item.autoReuse = true;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ItemRarityID.Purple;
             Item.useAmmo = ModContent.ItemType<TeslaBolt>();
             Item.shootSpeed = 30;
             Item.useAnimation = 45;
             Item.useTime = 45;
             Item.UseSound = SoundID.Item12;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.value = PriceByRarity.Red_10;
+            Item.value = PriceByRarity.Purple_11;
         }
 
         public override void AddRecipes()

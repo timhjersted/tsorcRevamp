@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
         }
         public override void SetDefaults()
         {
-            Item.rare = ItemRarityID.Cyan;
+            Item.rare = ItemRarityID.Purple;
             Item.damage = 330;
             Item.height = 80;
             Item.knockBack = 9;
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.scale = 2f;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.value = PriceByRarity.Cyan_9;
+            Item.value = PriceByRarity.Purple_11;
             Item.width = 84;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();

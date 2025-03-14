@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = Item.buyPrice(2, 0, 0, 0);
             Item.mana = 10;
-            Item.rare = ItemRarityID.Yellow;
+            Item.rare = ModContent.RarityType<OrangeRed>();
             Item.UseSound = SoundID.Item44;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Summon;

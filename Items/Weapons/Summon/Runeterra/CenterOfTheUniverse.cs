@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Runeterra
         public override int Width => 48;
         public override int Height => 56;
         public override int Value => Item.buyPrice(1, 0, 0, 0);
-        public override int Rarity => ItemRarityID.Red;
+        public override int Rarity => ModContent.RarityType<DarkBlue>();
         public override int BuffType => ModContent.BuffType<CenterOfTheUniverseBuff>();
         public override int ProjectileType => ModContent.ProjectileType<CenterOfTheUniverseStar>();
         public override int DragonType => ModContent.ProjectileType<StarForger>();

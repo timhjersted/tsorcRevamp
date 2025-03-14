@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.autoReuse = true;
             Item.useTurn = true;
             Item.UseSound = SoundID.Item1;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ModContent.RarityType<OrangeRed>();
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Red_10;
             Item.DamageType = DamageClass.Magic;

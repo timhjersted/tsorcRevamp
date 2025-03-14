@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Item.crit = 5;
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item11;
-            Item.rare = ItemRarityID.Purple;
+            Item.rare = ModContent.RarityType<OrangeRed>();
             Item.shoot = ProjectileID.PurificationPowder;
             Item.shootSpeed = 13;
             Item.useAmmo = AmmoID.Bullet;

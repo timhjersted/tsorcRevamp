@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
             Item.DamageType = DamageClass.SummonMeleeSpeed;
             Item.damage = BaseDamage;
             Item.knockBack = 3.8f;
-            Item.rare = ItemRarityID.Purple;
+            Item.rare = ModContent.RarityType<DarkBlue>();
             Item.value = Item.buyPrice(0, 70, 0, 0);
 
             Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.SupremeDragoonLashProjectile>();

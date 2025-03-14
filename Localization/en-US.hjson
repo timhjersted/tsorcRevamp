@@ -257,6 +257,7 @@ Mods: {
 			ShadowTempleEvent: A strange vision has manifested itself from your fears...
 			ShadowTempleEvent2: A paladin appears to smite you!
 			SandstormElementalEvent: A powerful elemental is summoned!
+			Dutchman: A flying Dutchman invades the tropics!
 			IceGolemWyvern: !!!
 			IceGolem: !
 			KingSlime: King Slime appears!
@@ -4350,7 +4351,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance}
 					{$CommonItemTooltip.Thorns@1} and grants the Battle potion effect
-					{$CommonItemTooltip.BadDRStat@2}
+					{$CommonItemTooltip.BadDefense@2}
 					Does not stack with Demon Drug, Armor Drug, or Strength Potions.
 					'''
 			}
@@ -5890,7 +5891,7 @@ Mods: {
 				Tooltip:
 					'''
 					An enchanted melee weapon that can be thrown through walls.
-					It does double damage against mages and other magic users.
+					It does 20% more damage against mages and other magic users.
 					'''
 			}
 
@@ -7816,6 +7817,7 @@ Mods: {
 					'''
 				SolarShield: "{$CommonItemTooltip.DRStat}, repel enemies when taking damage"
 				WeaponImbue: Increases melee and whip crit by {0}%
+				TitanPotion: Increases melee size by {0}%
 			}
 
 			Curse: {
@@ -10481,6 +10483,8 @@ Mods: {
 		}
 
 		Prefixes: {
+			Arcane: +20 mana and 2% reduced mana cost
+
 			Blessed: {
 				DisplayName: Blessed
 				Tooltip: +{0} life regen while held

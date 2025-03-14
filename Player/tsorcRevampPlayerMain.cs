@@ -1300,8 +1300,6 @@ namespace tsorcRevamp
             }
         }
 
-
-
         public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)
         {
             if (UndeadTalisman)

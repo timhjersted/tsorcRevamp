@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             Item.rare = ItemRarityID.LightRed;
             Item.consumable = false;
-            Item.damage = 55;
+            Item.damage = 48;
             Item.width = 34;
             Item.height = 58;
             Item.knockBack = 4;

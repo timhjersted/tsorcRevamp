@@ -18,8 +18,8 @@ namespace tsorcRevamp.Items.Accessories.Mobility.Wings
             Item.width = 32;
             Item.height = 28;
             Item.accessory = true;
-            Item.value = PriceByRarity.Cyan_9;
-            Item.rare = ItemRarityID.Cyan;
+            Item.value = PriceByRarity.Red_10;
+            Item.rare = ItemRarityID.Red;
         }
 
         public override void AddRecipes()

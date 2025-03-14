@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Item.damage = 480;
             Item.knockBack = 10;
             Item.UseSound = SoundID.Item1;
-            Item.rare = ItemRarityID.Purple;
+            Item.rare = ModContent.RarityType<OrangeRed>();
             Item.shootSpeed = 16;
             Item.noUseGraphic = true;
             Item.noMelee = true;

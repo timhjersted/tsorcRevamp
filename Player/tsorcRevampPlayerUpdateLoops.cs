@@ -2163,8 +2163,13 @@ namespace tsorcRevamp
                 Player.AddBuff(BuffID.MoonLeech, 5*60);
             }
 
-            if(tsorcRevampWorld.RemixMap)
+            if (tsorcRevampWorld.RemixMap)
             {
+                if (Main.tile[(Player.Center / 16).ToPoint()].WallType == WallID.ReefWall && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Main.hardMode)
+                {
+                    Player.AddBuff(BuffID.WaterCandle, 8*60);
+                }
+
                 if (Main.LocalPlayer.ZoneCorrupt && Main.LocalPlayer.ZoneUnderworldHeight && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.SuperHardMode)
                 {
                     bool BossIsAlive = false;

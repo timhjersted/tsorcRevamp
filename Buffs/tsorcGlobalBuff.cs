@@ -137,6 +137,5 @@ namespace tsorcRevamp.Buffs
                 tip = LangUtils.GetTextValue("CommonItemTooltip.DRStat", BeetleDR * 3);
             }
         }
-
     }
 }

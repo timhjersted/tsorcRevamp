@@ -134,7 +134,7 @@ namespace tsorcRevamp
             QueenSlimeEvent,
             GoblinSharkTropicalIsland,
             GreatRedKnightInDesert,
-            AncestralSpirit,
+            AncestralSpiritEvent,
             SkeletronHidden,
             AlienAmbush,
             EoC,
@@ -216,9 +216,12 @@ namespace tsorcRevamp
             FrozenCathedralEvent,
             Lunatic,
             IceGolemIsland,
-            AncestralSpiritEvent2,
-            FrozenCathedralEvent2,
+            AncestralSpiritRemixEvent,
+            FrozenCathedralEvent2, 
             WyvernPrisonEvent,
+            Dutchman,
+            SandstormElementalEvent2,
+            DeathRemix,
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -249,7 +252,9 @@ namespace tsorcRevamp
             FireLurkerAmbush1.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.GreenBlossom>() }, new List<int>() { 5 }, true);
 
             //DEATH
-            ScriptedEvent Death = new ScriptedEvent(new Vector2(1066, 529), 30, ModContent.NPCType<NPCs.Bosses.Death>(), DustID.BoneTorch, true, true, true, LangUtils.GetTextValue("Events.Death"), Color.Black, false);
+            ScriptedEvent Death = new ScriptedEvent(new Vector2(1066, 529), 30, ModContent.NPCType<NPCs.Bosses.Death>(), DustID.BoneTorch, true, true, true, LangUtils.GetTextValue("Events.Death"), Color.Black, false, OnlyAdventureMapCondition);
+
+            ScriptedEvent DeathRemix = new ScriptedEvent(new Vector2(8091, 557), 30, ModContent.NPCType<NPCs.Bosses.Death>(), DustID.BoneTorch, true, true, true, LangUtils.GetTextValue("Events.Death"), Color.Black, false, RemixMapCondition);
 
             //BLACK KNIGHT IN BLUE SHM DUNGEON
             ScriptedEvent BlackKnightSHMDungeon = new ScriptedEvent(new Vector2(2282, 1650), 30, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
@@ -275,8 +280,9 @@ namespace tsorcRevamp
             GreatRedKnightInDesert.SetCustomStats(null, null, null, 20000);
 
             //Ancestral Spirit
-            ScriptedEvent AncestralSpiritEvent = new ScriptedEvent(new Vector2(4043, 143), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.Blue, false, null, SetNightCustomAction);
+            ScriptedEvent AncestralSpiritEvent = new ScriptedEvent(new Vector2(4043, 143), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.Blue, false, OnlyAdventureMapCondition);
 
+            ScriptedEvent AncestralSpiritRemixEvent = new ScriptedEvent(new Vector2(7344, 768), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.Blue, false, RemixMapCondition);
             //SkeletronHidden
             ScriptedEvent SkeletronHiddenEvent = new ScriptedEvent(new Vector2(5563, 1676), 16, NPCID.SkeletronHead, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.SkeletronHidden"), Color.Blue, false, null, SetNightCustomAction);
 
@@ -324,13 +330,6 @@ namespace tsorcRevamp
             List<int> Golem2EnemyTypeList = new List<int>() { NPCID.WyvernHead, NPCID.IceGolem };
             List<Vector2> Golem2EnemyLocations = new List<Vector2>() { new Vector2(7776, 829), new Vector2(7800, 868) };
             ScriptedEvent Golem2 = new ScriptedEvent(new Vector2(7900, 868), 30, Golem2EnemyTypeList, Golem2EnemyLocations, DustID.Snow, true, false, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.BlueViolet, false, OnlyAdventureMapCondition, StormCustomAction); //
-
-            //ANCESTRAL SPIRIT (REMIX MAP ONLY)
-            List<int> AncestralSpiritEvent2EnemyTypeList = new List<int>() { NPCID.Deerclops };
-            List<Vector2> AncestralSpiritEvent2EnemyLocations = new List<Vector2>() { new Vector2(7800, 868) };
-            ScriptedEvent AncestralSpiritEvent2 = new ScriptedEvent(new Vector2(7900, 868), 30, AncestralSpiritEvent2EnemyTypeList, AncestralSpiritEvent2EnemyLocations, DustID.Snow, true, false, false, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.BlueViolet, false, RemixMapCondition, RainCustomAction);
-            AncestralSpiritEvent2.SetCustomStats(17000, 18, 80, 15000);
-            AncestralSpiritEvent2.SetCustomDrops(new List<int>() { ItemID.FrostCore, ItemID.WarmthPotion }, new List<int>() { 1, 4 });
 
             //ICE GOLEM - FROZEN OCEAN
             ScriptedEvent IceGolemEvent = new ScriptedEvent(new Vector2(7651, 1020), 20, NPCID.IceGolem, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.IceGolem"), Color.Blue, false);
@@ -602,7 +601,7 @@ namespace tsorcRevamp
             ScriptedEvent FrozenCathedralEvent = new ScriptedEvent(new Vector2(7635, 1735), 65, NPCID.IceQueen, 67, true, true, false, LangUtils.GetTextValue("Events.FrozenCathedralEvent"), Color.Cyan, false, RemixMapCondition, SetNightCustomAction);
             CatacombsEvent.SetCustomStats(null, null, null, 10000);
 
-            ScriptedEvent WyvernPrisonEvent = new ScriptedEvent(new Vector2(6408, 385), 32, ModContent.NPCType<NPCs.Enemies.MarilithSpiritTwin>(), DustID.Shadowflame, true, true, false, LangUtils.GetTextValue("Events.WyvernPrisonEvent"), Color.Purple, false, RemixMapCondition, SetNightCustomAction);
+            ScriptedEvent WyvernPrisonEvent = new ScriptedEvent(new Vector2(6408, 385), 32, ModContent.NPCType<NPCs.Enemies.MarilithSpiritTwin>(), DustID.Shadowflame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Purple, false, RemixMapCondition, SetNightCustomAction);
 
             List<int> FrozenCathedralEvent2EnemyTypeList = new List<int>() { NPCID.MourningWood, NPCID.MourningWood };
             List<Vector2> FrozenCathedralEvent2EnemyLocations = new List<Vector2>() { new Vector2(7189, 1650), new Vector2(7164, 1650) };
@@ -612,11 +611,16 @@ namespace tsorcRevamp
             GoblinSharkTropicalIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion, ItemID.SharpTears }, new List<int>() { 5, 3, 1 });
             GoblinSharkTropicalIsland.SetCustomStats(5000, null, null, 15000); 
 
-            ScriptedEvent IceGolemIsland = new ScriptedEvent(new Vector2(7874, 390), 40, NPCID.IceGolem, 67, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Blue, false, RemixMapCondition);
+            ScriptedEvent IceGolemIsland = new ScriptedEvent(new Vector2(7691, 357), 40, NPCID.IceGolem, 67, true, false, true, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Blue, false, RemixMapCondition);
             IceGolemIsland.SetCustomDrops(new List<int>() { ItemID.SuperHealingPotion, ItemID.RagePotion}, new List<int>() { 5, 3 });
             IceGolemIsland.SetCustomStats(null, null, null, 10000);
 
-            
+            //FLYING DUTCHMAN IN THE TROPICS 
+            ScriptedEvent Dutchman = new ScriptedEvent(new Vector2(597, 848), 50, NPCID.PirateShip, DustID.GoldFlame, true, false, true, LangUtils.GetTextValue("Events.Dutchman"), Color.Gold, false, RemixMapCondition);
+            Dutchman.SetCustomDrops(new List<int>() { ItemID.DiscountCard, ItemID.LuckyCoin, ItemID.GoldRing, ItemID.PirateStaff, ItemID.Cutlass, ItemID.PirateMinecart }, new List<int>() { 1, 1, 1, 1, 1, 1 });
+            Dutchman.SetCustomStats(null, null, null, 10000);
+
+            ScriptedEvent SandstormElementalEvent2 = new ScriptedEvent(new Vector2(950, 1503), 22, NPCID.SandElemental, 269, true, true, false, LangUtils.GetTextValue("Events.SandstormElementalEvent"), Color.Yellow, false, RemixMapCondition);
 
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
@@ -631,7 +635,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.BlackKnightHallowed, BlackKnightHallowed},
                 {ScriptedEventType.GoblinSharkTropicalIsland, GoblinSharkTropicalIsland},
                 {ScriptedEventType.GreatRedKnightInDesert, GreatRedKnightInDesert},
-                {ScriptedEventType.AncestralSpirit, AncestralSpiritEvent},
+                {ScriptedEventType.AncestralSpiritEvent, AncestralSpiritEvent},
                 {ScriptedEventType.OldManEvent, OldManEvent},
                 {ScriptedEventType.SkeletronHidden, SkeletronHiddenEvent},
                 {ScriptedEventType.AlienAmbush, AlienAmbush},
@@ -714,9 +718,13 @@ namespace tsorcRevamp
                 {ScriptedEventType.Lunatic, Lunatic },
                 {ScriptedEventType.KingSlime2Event, KingSlime2Event },  
                 {ScriptedEventType.IceGolemIsland, IceGolemIsland },          
-                {ScriptedEventType.AncestralSpiritEvent2, AncestralSpiritEvent2 },
-                {ScriptedEventType.FrozenCathedralEvent2, FrozenCathedralEvent2 },
-                {ScriptedEventType.WyvernPrisonEvent, WyvernPrisonEvent },
+                {ScriptedEventType.AncestralSpiritRemixEvent, AncestralSpiritRemixEvent },
+                {ScriptedEventType.FrozenCathedralEvent2, FrozenCathedralEvent2 }, 
+                {ScriptedEventType.WyvernPrisonEvent, WyvernPrisonEvent }, 
+                {ScriptedEventType.Dutchman, Dutchman },
+                {ScriptedEventType.SandstormElementalEvent2, SandstormElementalEvent2 },
+                {ScriptedEventType.DeathRemix, DeathRemix },
+
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();

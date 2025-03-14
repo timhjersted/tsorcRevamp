@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Specialist
             Item.shootSpeed = 30;
             Item.useAnimation = 150;
             Item.useTime = 200;
-            Item.rare = ItemRarityID.Purple;
+            Item.rare = ModContent.RarityType<OrangeRed>();
             Item.value = PriceByRarity.fromItem(Item);
 
         }

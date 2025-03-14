@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override float BaseKnockback => 7;
         public override int UseAnimationTime => 15;
         public override int UseTime => 15;
-        public override int Rarity => ItemRarityID.Yellow;
+        public override int Rarity => ItemRarityID.Red;
         public override int Value => PriceByRarity.fromItem(Item);
         public override SoundStyle UseSoundID => SoundID.Item71;
         public static float HiRyuuSpearDamageBoost = 25f;

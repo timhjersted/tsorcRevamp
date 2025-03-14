@@ -29,8 +29,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.knockBack = 5f;
-            Item.value = PriceByRarity.Red_10;
-            Item.rare = ItemRarityID.Red;
+            Item.value = PriceByRarity.Purple_11;
+            Item.rare = ItemRarityID.Purple;
             Item.UseSound = SoundID.Item7;
             Item.shootSpeed = 22f;
             Item.useAmmo = AmmoID.Arrow;

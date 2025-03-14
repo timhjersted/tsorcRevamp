@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.autoReuse = true;
             Item.shootSpeed = 16;
             Item.useAmmo = AmmoID.Arrow;
-            Item.rare = ItemRarityID.Purple;
+            Item.rare = ModContent.RarityType<OrangeRed>();
             Item.value = PriceByRarity.Purple_11;
             Item.shoot = 10;
             Item.useStyle = ItemUseStyleID.Shoot;

@@ -257,6 +257,7 @@ Mods: {
 			ShadowTempleEvent: 一只奇怪的远古幻影妖从你的恐惧中显现......
 			ShadowTempleEvent2: 一名圣骑士出现，准备对你进行制裁！
 			SandstormElementalEvent: 一个强大的沙尘精被召唤出来了！
+			// Dutchman: A flying Dutchman invades the tropics!
 			IceGolemWyvern: ！！！
 			IceGolem: ！
 			KingSlime: 史莱姆王出现了！
@@ -7812,6 +7813,7 @@ Mods: {
 					'''
 				SolarShield: "{$CommonItemTooltip.ReducesDamageTakenByPercent}, 受到伤害时击退敌人"
 				WeaponImbue: 增加 {0}% 近战和鞭子暴击率
+				// TitanPotion: Increases melee size by {0}%
 			}
 
 			Curse: {
@@ -10477,6 +10479,8 @@ Mods: {
 		}
 
 		Prefixes: {
+			// Arcane: +20 mana and 2% reduced mana cost
+
 			Blessed: {
 				DisplayName: 被祝福的
 				Tooltip: 手持时 +{0} 生命恢复速度

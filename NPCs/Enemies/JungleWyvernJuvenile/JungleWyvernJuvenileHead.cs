@@ -76,7 +76,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
             // Spawns in the Western Sea
             if (Main.hardMode && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 2 && spawnInfo.Water && spawnInfo.SpawnTileX < 800)
             {
-                chance = 0.05f;
+                chance = 0.04f;
             }
 
             return chance;

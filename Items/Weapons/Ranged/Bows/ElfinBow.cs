@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.knockBack = 5;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Ranged;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ModContent.RarityType<OrangeRed>();
             Item.scale = 0.9f;
             Item.shoot = ProjectileID.PurificationPowder;
             Item.shootSpeed = 9;
@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.useTime = 9;
             Item.UseSound = SoundID.Item5;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.value = PriceByRarity.Red_10;
+            Item.value = PriceByRarity.Purple_11;
             Item.width = 14;
         }
 

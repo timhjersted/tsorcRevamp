@@ -595,7 +595,11 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.Shark):
                     {
-                        npc.value = 500;
+                        npc.lifeMax = 500;
+                        npc.damage = 85;
+                        npc.defense = 38;
+                        npc.value = 1660;
+                        npc.knockBackResist = 0.8f;
                         break;
                     }
 
@@ -3481,6 +3485,7 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.AnomuraFungus
                     || npc.type == NPCID.MushiLadybug
                     || npc.type == NPCID.FungiBulb
+                    || npc.type == NPCID.Shark
                     || npc.type == NPCID.IceMimic)
                 {
 
@@ -3511,8 +3516,7 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.GreekSkeleton
                     || npc.type == NPCID.BloodZombie
                     || npc.type == NPCID.Drippler 
-                    || npc.type == NPCID.Harpy
-                    || npc.type == NPCID.Shark)
+                    || npc.type == NPCID.Harpy)
                 {
 
                     MyGlobalNPC globalNPC = npc.GetGlobalNPC<MyGlobalNPC>(); 

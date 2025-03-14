@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Sentry
             Item.useAnimation = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = Item.buyPrice(1, 0, 0, 0);
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ItemRarityID.Purple;
             Item.UseSound = SoundID.DD2_DefenseTowerSpawn;
             Item.sentry = true;
             Item.noMelee = true;

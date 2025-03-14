@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Potions
     {
         public const float DamageCritIncrease = 12f;
         public const float Thorns = 200f;
-        public const float ResistanceDecrease = 20f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageCritIncrease, Thorns, ResistanceDecrease);
+        public static int DefenseDecrease = 20;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DamageCritIncrease, Thorns, DefenseDecrease);
         public override void SetStaticDefaults()
         {
         }

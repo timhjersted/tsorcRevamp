@@ -9,7 +9,6 @@ namespace tsorcRevamp.Projectiles
 {
     class EphemeralThrowingAxeProj : ModProjectile
     {
-
         public override void SetDefaults()
         {
             Projectile.aiStyle = 2;
@@ -33,7 +32,6 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnKill(int timeLeft)
         {
-
             if (!Projectile.active)
             {
                 return;
@@ -54,6 +52,42 @@ namespace tsorcRevamp.Projectiles
                 }
             }
             Projectile.active = false;
+        }
+
+        public override void PostDraw(Color lightColor)
+        {
+            Texture2D glowTexture = ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/EphemeralThrowingAxeProj_Glowmask").Value;
+            Vector2 origin = new Vector2(glowTexture.Width / 2f, glowTexture.Height / 2f);
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+
+            for (int i = 1; i <= 3; i++) 
+            {
+                Vector2 offset = Projectile.velocity * -i * 0.5f; 
+                float alpha = 0.2f * (1f - (i / 6f)); 
+                Main.EntitySpriteDraw(
+                    glowTexture,
+                    drawPosition + offset, 
+                    null,
+                    Color.White * alpha, 
+                    Projectile.rotation,
+                    origin,
+                    1f, 
+                    SpriteEffects.None,
+                    0
+                );
+            }
+
+            Main.EntitySpriteDraw(
+                glowTexture,
+                drawPosition,
+                null,
+                Color.White * 0.2f, 
+                Projectile.rotation,
+                origin,
+                1f, 
+                SpriteEffects.None,
+                0
+            );
         }
     }
 }

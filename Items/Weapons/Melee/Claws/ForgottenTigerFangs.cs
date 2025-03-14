@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
         {
             Item.autoReuse = true;
             Item.useTurn = false;
-            Item.rare = ItemRarityID.Cyan;
+            Item.rare = ItemRarityID.Purple;
             Item.damage = 150;
             Item.width = 22;
             Item.height = 22;
@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Claws
             Item.useTime = 8;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.value = PriceByRarity.Cyan_9;
+            Item.value = PriceByRarity.Purple_11;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
         }
         public override void AddRecipes()

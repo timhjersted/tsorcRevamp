@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Projectiles.Ranged;
@@ -30,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Item.height = 32;
             Item.knockBack = 5;
             Item.noMelee = true;
-            Item.rare = ItemRarityID.Purple;
+            Item.rare = ModContent.RarityType<OrangeRed>();
             Item.useAmmo = AmmoID.Bullet;
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = AmmoID.Bullet;

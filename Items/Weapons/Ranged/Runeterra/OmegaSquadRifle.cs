@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Runeterra
     {
         public override int Width => 62;
         public override int Height => 22;
-        public override int Rarity => ItemRarityID.Red;
+        public override int Rarity => ModContent.RarityType<DarkBlue>();
         public override int Value => Item.buyPrice(1, 0, 0, 0);
         public override float Knockback => 6f;
         public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/";

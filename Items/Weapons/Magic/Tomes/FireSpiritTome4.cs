@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.knockBack = 90;
             Item.autoReuse = true;
             Item.scale = 1f;
-            Item.rare = ItemRarityID.Purple;
+            Item.rare = ModContent.RarityType<OrangeRed>();
             Item.shootSpeed = 44;
             Item.mana = 40;
             Item.value = PriceByRarity.Purple_11;

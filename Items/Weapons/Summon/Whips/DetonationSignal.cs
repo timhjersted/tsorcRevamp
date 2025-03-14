@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Summon.Whips
             Item.DamageType = DamageClass.SummonMeleeSpeed;
             Item.damage = 190;
             Item.knockBack = 6;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ModContent.RarityType<OrangeRed>();
             Item.value = Item.buyPrice(2, 40, 0, 0);
 
             Item.shoot = ModContent.ProjectileType<Projectiles.Summon.Whips.DetonationSignalProjectile>();

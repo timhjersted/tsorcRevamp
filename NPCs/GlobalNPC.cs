@@ -577,6 +577,12 @@ namespace tsorcRevamp.NPCs
                     pool.Add(NPCID.HellArmoredBonesMace, 0.1f);
                     pool.Add(NPCID.HellArmoredBonesSword, 0.1f);
                 }
+
+                if ((spawnInfo.Water && spawnInfo.SpawnTileType == TileID.Coralstone || spawnInfo.SpawnTileType == TileID.ReefBlock || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.ReefWall) && Main.hardMode)
+                {
+                    pool.Add(NPCID.CreatureFromTheDeep, 0.6f);
+                    pool.Add(NPCID.Shark, 0.6f);
+                }
             }            
 
             Player thisPlayer = spawnInfo.Player;
@@ -1288,7 +1294,7 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            if (!CrystalNunchakuProc && !(CrystalNunchakuStacks == 0) && markedByCrystalNunchaku)
+            if (!CrystalNunchakuProc && CrystalNunchakuStacks > 0 && markedByCrystalNunchaku)
             {
                 CrystalNunchakuStacks -= 1;
             }

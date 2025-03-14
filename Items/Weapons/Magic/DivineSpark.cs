@@ -19,11 +19,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.useTime = 1;
             Item.damage = 210;
             Item.autoReuse = true;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ModContent.RarityType<DarkBlue>();
             Item.shootSpeed = 1;
             Item.mana = 3;
             Item.noMelee = true;
-            Item.value = PriceByRarity.Red_10;
+            Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Magic;
             Item.channel = true;
             Item.shoot = ModContent.ProjectileType<Projectiles.MasterBuster>();

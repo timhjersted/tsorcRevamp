@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.DamageType = DamageClass.MeleeNoSpeed;
-            Item.shootSpeed = 8;
+            Item.shootSpeed = 9;
             Item.useAnimation = 22;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;

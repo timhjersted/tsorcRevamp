@@ -30,11 +30,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Item.damage = 300;
             Item.knockBack = 10;
             Item.UseSound = SoundID.Item1;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ModContent.RarityType<DarkBlue>();
             Item.shootSpeed = 14;
             Item.noUseGraphic = true;
             Item.noMelee = true;
-            Item.value = PriceByRarity.Red_10;
+            Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<HeavensTearBall>();
         }

@@ -28,12 +28,12 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.knockBack = (float)4;
             Item.scale = (float)1;
             Item.UseSound = SoundID.Item34;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ModContent.RarityType<DarkBlue>();
             Item.shootSpeed = (float)10;
             Item.crit = 2;
             Item.mana = 50;
             Item.noMelee = true;
-            Item.value = PriceByRarity.Red_10;
+            Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Magic;
 
             Item.channel = true;

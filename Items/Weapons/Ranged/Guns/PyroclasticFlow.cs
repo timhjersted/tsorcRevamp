@@ -21,8 +21,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             Item.autoReuse = true;
             Item.shootSpeed = 8;
             Item.useAmmo = AmmoID.Bullet;
-            Item.rare = ItemRarityID.Cyan;
-            Item.value = PriceByRarity.Cyan_9;
+            Item.rare = ItemRarityID.Red;
+            Item.value = PriceByRarity.Red_10;
             Item.shoot = 10;
             Item.height = 50;
             Item.width = 32;

@@ -61,7 +61,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             float chance = 0;
             if (tsorcRevampWorld.SuperHardMode)
             {
-                if (player.ZoneSkyHeight || spawnInfo.Player.ZoneDungeon)
+                if (player.ZoneSkyHeight || spawnInfo.Player.ZoneDungeon || spawnInfo.Player.ZoneSnow)
                 {
                     chance = 0.17f;
                 }

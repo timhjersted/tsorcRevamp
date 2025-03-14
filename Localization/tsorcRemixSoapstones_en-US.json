@@ -20,9 +20,9 @@
   "style": 1
 }
 {
-  "text": "the Eternal Reef is a place where life has developed in a spectacular way, independently of the rest of the world. --NEWLINE But this exotic fauna and flora makes this reef very dangerous.  --NEWLINE This is also where a huge mutated creature resides, maybe here you will find the place to bait it and fight it on the surface...",
-  "tileX": 190,
-  "tileY": 1052,
+  "text": "The Eternal Reef is a place where life has developed in a spectacular way, independently of the rest of the world. --NEWLINE But this exotic fauna and flora makes this reef very dangerous.  --NEWLINE This is also where a huge mutated creature resides, maybe here you will find the place to bait it and fight it on the surface...",
+  "tileX": 379,
+  "tileY": 1011,
   "textWidth": 320,
   "style": 1
 }
@@ -41,9 +41,9 @@
   "style": 1
 }
 {
-  "text": "The passage is blocked by chlorophyte, but also a large ruby and a large emerald. --NEWLINE The large emerald is a treasure long ago left in the tropics...",
-  "tileX": 251,
-  "tileY": 1050,
+  "text": "You need a large ruby and a large emerald to open the gate. --NEWLINE The large emerald is a treasure long ago left in the tropics...",
+  "tileX": 135,
+  "tileY": 944,
   "textWidth": 320,
   "style": 1
 }
@@ -76,9 +76,9 @@
   "style": 1
 }
 {
-  "text": "You\u0027ve found the entrance to the Eternal Reef. --NEWLINE  --NEWLINE There are levers in the nearby submerged village, maybe they can open the gate...",
-  "tileX": 335,
-  "tileY": 1049,
+  "text": "- You\u0027ve found the entrance to the Eternal Reef -",
+  "tileX": 174,
+  "tileY": 908,
   "textWidth": 320,
   "style": 1
 }
@@ -121,13 +121,6 @@
   "text": "A voice speaks to you from beyond the stars: \u0022Seek out the Great Pyramid once more. To its East, you will find the lock that guards an ancient, elemental being... The legends of your people refer to it as... Chaos.\u0022",
   "tileX": 481,
   "tileY": 1791,
-  "textWidth": 320,
-  "style": 1
-}
-{
-  "text": "Beneath the coral you notice this is actually a gate, but it must open from the other side.",
-  "tileX": 525,
-  "tileY": 1107,
   "textWidth": 320,
   "style": 1
 }
@@ -216,9 +209,16 @@
   "style": 1
 }
 {
-  "text": "You have discovered the hidden Temple of Serris.",
-  "tileX": 1443,
+  "text": "You have discovered the Basements of the Dark Tower. --NEWLINE  --NEWLINE \u0022Attraidies hides many things in this basement, it seems that a powerful alien is locked in there, somewhere...\u0022",
+  "tileX": 1445,
   "tileY": 937,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- You\u0027ve found The Dark Tower of Attraidies - --NEWLINE  --NEWLINE The top of the dark tower is blocked, to unblock the passage you will need to go to the basement of the tower...",
+  "tileX": 1401,
+  "tileY": 842,
   "textWidth": 320,
   "style": 1
 }

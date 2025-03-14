@@ -8,7 +8,6 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
     class FreezeBolt3 : ModItem
     {
 
-        public override string Texture => "tsorcRevamp/Items/Weapons/Magic/Tomes/FreezeBolt2";
         public override void SetStaticDefaults()
         {
             // DisplayName.SetDefault("Freeze Bolt III");
@@ -17,8 +16,8 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 
         public override void SetDefaults()
         {
-            Item.width = 24;
-            Item.height = 28;
+            Item.width = 28;
+            Item.height = 32;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 20;
             Item.useTime = 20;
@@ -26,10 +25,10 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
             Item.knockBack = 8;
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item21;
-            Item.rare = ItemRarityID.Cyan;
+            Item.rare = ItemRarityID.Purple;
             Item.shootSpeed = 16;
             Item.mana = 21;
-            Item.value = PriceByRarity.Cyan_9;
+            Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.FreezeBolt3>();
         }

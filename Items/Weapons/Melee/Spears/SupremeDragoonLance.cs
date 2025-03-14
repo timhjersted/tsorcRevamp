@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override float BaseKnockback => 15f;
         public override int UseAnimationTime => 21;
         public override int UseTime => 21;
-        public override int Rarity => ItemRarityID.Purple;
+        public override int Rarity => ModContent.RarityType<DarkBlue>();
         public override int Value => PriceByRarity.fromItem(Item);
         public override SoundStyle UseSoundID => SoundID.Item71;
         public override void AddRecipes()

@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.noUseGraphic = true;
             Item.knockBack = 4f;
             Item.value = PriceByRarity.Purple_11;
-            Item.rare = ItemRarityID.Purple;
+            Item.rare = ModContent.RarityType<OrangeRed>();
             Item.UseSound = SoundID.Item7;
             Item.useAmmo = AmmoID.Arrow;
             Item.shootSpeed = 24f;

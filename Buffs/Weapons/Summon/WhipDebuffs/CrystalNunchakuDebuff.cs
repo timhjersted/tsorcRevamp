@@ -46,9 +46,11 @@ namespace tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs
                 globalNPC.CrystalNunchakuProc = true;
 
                 Player player = globalNPC.CrystalNunchakuWielder;
-
-                player.GetModPlayer<tsorcRevampPlayer>().CrystalNunchakuDefenseDamage = CrystalNunchaku.MaxSummonTagDefense - (globalNPC.CrystalNunchakuStacks * CrystalNunchaku.MaxSummonTagDefense / 10);
-                player.AddBuff(ModContent.BuffType<CrystalShield>(), (int)(CrystalNunchaku.BuffDuration * 60 * player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration) - (5 * 60) + 1);
+                if (player != null && player.active) 
+                {
+                    player.GetModPlayer<tsorcRevampPlayer>().CrystalNunchakuDefenseDamage = CrystalNunchaku.MaxSummonTagDefense - (globalNPC.CrystalNunchakuStacks * CrystalNunchaku.MaxSummonTagDefense / 10);
+                    player.AddBuff(ModContent.BuffType<CrystalShield>(), (int)(CrystalNunchaku.BuffDuration * 60 * player.GetModPlayer<tsorcRevampPlayer>().SummonTagDuration) - (5 * 60) + 1);
+                }
             }
         }
     }

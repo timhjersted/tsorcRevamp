@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
         public override int SpinProjectileID => ModContent.ProjectileType<NightbringerSpin>();
         public override int Tier => 3;
         public override float SwingSoundVolume => 0.3f;
-        public override int RarityID => ItemRarityID.Red;
+        public override int RarityID => ModContent.RarityType<DarkBlue>();
         public override int Value => Item.buyPrice(1, 0, 0, 0);
         public override int BaseDamage => 250;
         public override int ItemWidth => 94;

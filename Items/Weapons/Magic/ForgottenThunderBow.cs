@@ -21,14 +21,14 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.autoReuse = true;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Magic;
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ModContent.RarityType<DarkBlue>();
             Item.mana = 100;
             Item.shootSpeed = 33;
             Item.useAnimation = 40;
             Item.UseSound = SoundID.Item5;
             Item.useTime = 40;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.value = PriceByRarity.Red_10;
+            Item.value = PriceByRarity.Purple_11;
             Item.width = 30;
             Item.shoot = ModContent.ProjectileType<Projectiles.Bolt4Ball>();
         }

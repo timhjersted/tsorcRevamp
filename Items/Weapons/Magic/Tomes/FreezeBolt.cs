@@ -14,8 +14,8 @@ namespace tsorcRevamp.Items.Weapons.Magic.Tomes
 
         public override void SetDefaults()
         {
-            Item.width = 24;
-            Item.height = 28;
+            Item.width = 28;
+            Item.height = 32;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useAnimation = 17;
             Item.useTime = 17;

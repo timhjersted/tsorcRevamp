@@ -17,8 +17,6 @@ namespace tsorcRevamp.Items.VanillaItems
         public const float BotCManaStarMaxManaPercentage = 10;
         public override void SetDefaults(Item item)
         {
-            //Why is this eventide's internal name i'm literally going to go feral
-
             if (item.type == ItemID.AmberStaff)
             {
                 item.damage = 30;

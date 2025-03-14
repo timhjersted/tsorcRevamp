@@ -23,9 +23,9 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = PriceByRarity.Red_10;
-            Item.DamageType = DamageClass.MeleeNoSpeed;
+            Item.DamageType = DamageClass.MeleeNoSpeed; 
             Item.shoot = ModContent.ProjectileType<Projectiles.ForgottenRisingSunProj>();
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ModContent.RarityType<DarkBlue>();
 
         }
 

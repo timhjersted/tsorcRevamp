@@ -20,7 +20,6 @@ namespace tsorcRevamp.Projectiles
 {
     class EphemeralThrowingAxeProj2 : ModProjectile
     {
-
         public override void SetDefaults()
         {
             Projectile.aiStyle = 2;
@@ -37,42 +36,56 @@ namespace tsorcRevamp.Projectiles
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            //todo add mod NPCs to this list
             if (target.type == NPCID.Tim
                 || target.type == NPCID.DarkCaster
                 || target.type == NPCID.GoblinSorcerer
-                //|| target.type == ModContent.NPCType<UndeadCaster>()
-                //|| target.type == ModContent.NPCType<MindflayerServant>()
-                //|| target.type == ModContent.NPCType<DungeonMage>()
-                //|| target.type == ModContent.NPCType<DemonSpirit>()
-                //|| target.type == ModContent.NPCType<CrazedDemonSpirit>()
-                //|| target.type == ModContent.NPCType<ShadowMage>()
-                //|| target.type == ModContent.NPCType<AttraidiesIllusion>()
-                //|| target.type == ModContent.NPCType<AttraidiesManifestation>()
-                //|| target.type == ModContent.NPCType<DarkShogunMask>()
-                //|| target.type == ModContent.NPCType<DarkDragonMask>()
-                //|| target.type == ModContent.NPCType<BrokenOkiku>()
-                //|| target.type == ModContent.NPCType<Okiku>()
-                //|| target.type == ModContent.NPCType<WyvernMage>()
-                //|| target.type == ModContent.NPCType<LichKingDisciple>()
-                //|| target.type == ModContent.NPCType<Attraidies>()
-                //|| target.type == ModContent.NPCType<GhostOfTheForgottenKnight>()
-                //|| target.type == ModContent.NPCType<BarrowWight>()
+                || target.type == ModContent.NPCType<UndeadCaster>()
+                || target.type == ModContent.NPCType<MindflayerServant>()
+                || target.type == ModContent.NPCType<DungeonMage>()
+                || target.type == ModContent.NPCType<DemonSpirit>()
+                || target.type == ModContent.NPCType<CrazedDemonSpirit>()
+                || target.type == ModContent.NPCType<ShadowMage>()
+                || target.type == ModContent.NPCType<AttraidiesIllusion>()
+                || target.type == ModContent.NPCType<AttraidiesManifestation>()
+                || target.type == ModContent.NPCType<DarkShogunMask>()
+                || target.type == ModContent.NPCType<DarkDragonMask>()
+                || target.type == ModContent.NPCType<BrokenOkiku>()
+                || target.type == ModContent.NPCType<Okiku>()
+                || target.type == ModContent.NPCType<WyvernMage>()
+                || target.type == ModContent.NPCType<LichKingDisciple>()
+                || target.type == ModContent.NPCType<Attraidies>()
+                || target.type == ModContent.NPCType<BarrowWight>()
                 )
             {
-                modifiers.FinalDamage *= 2;
+                modifiers.FinalDamage *= 1.2f;
             }
         }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (Main.myPlayer == Projectile.owner)
+            {
+                int spectreWrath = Projectile.NewProjectile(
+                    Projectile.GetSource_FromThis(),
+                    target.Center,
+                    Vector2.Zero,
+                    ProjectileID.SpectreWrath,
+                    Projectile.damage / 2,
+                    Projectile.knockBack / 2,
+                    Projectile.owner
+                );
+            }
+        }
+
         public override void AI()
         {
             Color color = new Color();
             int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 91, 0f, 0f, 80, color, 1f);
             Main.dust[dust].noGravity = true;
         }
-        
+
         public override void OnKill(int timeLeft)
         {
-
             if (!Projectile.active)
             {
                 return;
@@ -93,6 +106,42 @@ namespace tsorcRevamp.Projectiles
                 }
             }
             Projectile.active = false;
+        }
+
+        public override void PostDraw(Color lightColor)
+        {
+            Texture2D glowTexture = ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/EphemeralThrowingAxeProj2_Glowmask").Value;
+            Vector2 origin = new Vector2(glowTexture.Width / 2f, glowTexture.Height / 2f);
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+
+            for (int i = 1; i <= 3; i++) 
+            {
+                Vector2 offset = Projectile.velocity * -i * 0.5f; 
+                float alpha = 0.4f * (1f - (i / 6f)); 
+                Main.EntitySpriteDraw(
+                    glowTexture,
+                    drawPosition + offset, 
+                    null,
+                    Color.White * alpha, 
+                    Projectile.rotation,
+                    origin,
+                    1f, 
+                    SpriteEffects.None,
+                    0
+                );
+            }
+
+            Main.EntitySpriteDraw(
+                glowTexture,
+                drawPosition,
+                null,
+                Color.White * 0.4f, 
+                Projectile.rotation,
+                origin,
+                1f, 
+                SpriteEffects.None,
+                0
+            );
         }
     }
 }

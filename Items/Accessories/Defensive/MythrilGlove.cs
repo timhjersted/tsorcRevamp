@@ -18,8 +18,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive
         {
             Item.width = 30; 
             Item.height = 34; 
-            Item.rare = ItemRarityID.Cyan;
-            Item.value = PriceByRarity.Cyan_9;
+            Item.rare = ModContent.RarityType<DarkBlue>();
+            Item.value = PriceByRarity.Purple_11;
             Item.accessory = true; 
         }
 
