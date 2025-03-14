@@ -31,8 +31,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Runeterra
             Item.useTime = 45;
             Item.damage = 850;
             Item.knockBack = 20f;
-            Item.rare = ItemRarityID.Red;
-            Item.value = ModContent.RarityType<DarkBlue>();
+            Item.rare = ModContent.RarityType<OrangeRed>();
+            Item.value = Item.buyPrice(1, 0, 0, 0);
             Item.DamageType = DamageClass.MeleeNoSpeed;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             Item.shootSpeed = 100f;
