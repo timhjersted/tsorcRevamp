@@ -13,17 +13,24 @@
   "style": 1
 }
 {
+  "text": "你需要大红玉和大翡翠来打开通道 --NEWLINE   --NEWLINE 那块大翡翠是很久以前遗失在海边的遗迹了……",
+  "tileX": 135,
+  "tileY": 944,
+  "textWidth": 390,
+  "style": 1
+}
+{
+  "text": "- 你发现了永恒礁的入口 -",
+  "tileX": 174,
+  "tileY": 908,
+  "textWidth": 230,
+  "style": 1
+}
+{
 "text": "Miakoda：\u0022在这个迷宫般的区域，散落着酒馆老板最强大的4套盔甲，我建议你找到它们！\u0022",
 "tileX": 183,
 "tileY": 1266,
 "textWidth": 650,
-"style": 1
-}
-{
-"text": "永恒礁是一个独立于世界，生命以壮观的方式发展的地区 --NEWLINE   --NEWLINE 但这里的奇异动植物群使得这片珊瑚礁极为危险 --NEWLINE   --NEWLINE 这里也是一只巨大变异生物栖息之所，也许你会在这里找到引诱它出现并在地表与其战斗的东西……",
-"tileX": 190,
-"tileY": 1052,
-"textWidth": 720,
 "style": 1
 }
 {
@@ -38,13 +45,6 @@
   "tileX": 236,
   "tileY": 858, 
   "textWidth": 680,
-  "style": 1
-}
-{
-  "text": "通道被叶绿矿堵住了，并且还需要两块大红玉和大翡翠 --NEWLINE   --NEWLINE 那块大翡翠是很久以前遗失在海边的遗迹了……",
-  "tileX": 251,
-  "tileY": 1050,
-  "textWidth": 390,
   "style": 1
 }
 {
@@ -83,19 +83,19 @@
   "style": 1
 }
 {
-  "text": "你发现了永恒礁的入口 --NEWLINE   --NEWLINE 附近被淹没的村庄里获取有打开这扇门的拉杆……",
-  "tileX": 335,
-  "tileY": 1049,
-  "textWidth": 360,
-  "style": 1
-}
-{
   "text": "Miakoda：\u0022我听说在这些废墟下面藏有一笔令人垂涎的宝藏，但要小心，那里布满了陷阱……\u0022",
   "tileX": 349,
   "tileY": 850,
   "textWidth": 660,
   "style": 1
 }
+{
+  "text": "永恒礁是一个独立于世界，生命以壮观的方式发展的地区 --NEWLINE   --NEWLINE 但这里的奇异动植物群使得这片珊瑚礁极为危险 --NEWLINE   --NEWLINE 这里也是一只巨大变异生物栖息之所，也许你会在这里找到引诱它出现并在地表与其战斗的东西……",
+  "tileX": 379,
+  "tileY": 1011,
+  "textWidth": 710,
+  "style": 1
+  }
 {
   "text": "你感觉到一股强大的力量从这扇门后面涌出 --NEWLINE   --NEWLINE \u0022我需要神圣钻头……\u0022 --NEWLINE   --NEWLINE 直觉告诉你打开这扇门迫在眉睫",
   "tileX": 459,
@@ -136,13 +136,6 @@
   "tileX": 481,
   "tileY": 1791,
   "textWidth": 420,
-  "style": 1
-}
-{
-  "text": "在珊瑚下面，你注意到这实际上是一扇大门， --NEWLINE   --NEWLINE 但它必须从另一边打开。",
-  "tileX": 525,
-  "tileY": 1107,
-  "textWidth": 360,
   "style": 1
 }
 {
@@ -230,6 +223,13 @@
   "style": 1
 }
 {
+  "text": "- 你发现了阿卓迪斯的黑暗之塔 - --NEWLINE   --NEWLINE 塔的顶部被封锁了，要解开封锁，你需要前往塔的地下秘库……",
+  "tileX": 1401,
+  "tileY": 842,
+  "textWidth": 460,
+  "style": 1
+}
+{
   "text": "观察完这扇大门上的栓接系统， --NEWLINE   --NEWLINE 你认为必须要触发三个开关才能解锁它。",
   "tileX": 1427,
   "tileY": 1363,
@@ -237,10 +237,10 @@
   "style": 1
 }
 {
-  "text": "- 你发现了赛里斯藏身的神殿 -",
-  "tileX": 1443,
+  "text": "- 你发现了黑暗之塔的地下秘库 - --NEWLINE   --NEWLINE 阿卓迪斯在此隐藏了许多秘密，似乎有一个强大的外星生物被锁在了这里的某个地方……",
+  "tileX": 1445,
   "tileY": 937,
-  "textWidth": 270,
+  "textWidth": 640,
   "style": 1
 }
 {
@@ -356,14 +356,14 @@
   "style": 1
 }
 {
-  "text": "突然你注意到你完全在阴影中。 --NEWLINE   --NEWLINE 你抬头一看，看到一团黑暗挡住了太阳…",
+  "text": "你看到一座巨大的塔矗立在远处的城市废墟中，它的阴影笼罩着整个沙漠……",
   "tileX": 1966,
   "tileY": 846,
-  "textWidth": 350,
+  "textWidth": 560,
   "style": 1
 }
 {
-  "text": "回首望向神庙建筑，Miakoda问道： --NEWLINE   --NEWLINE \u0022你认为这些柱子的方向和排列有什么特殊意义吗？\u0022",
+  "text": "- 你抵达了伊伦加德大沙漠 - --NEWLINE   --NEWLINE 回首望向神庙建筑，Miakoda问道： --NEWLINE   --NEWLINE \u0022你认为这些柱子的方向和排列有什么特殊意义吗？\u0022",
   "tileX": 2033,
   "tileY": 860,
   "textWidth": 400,
@@ -377,16 +377,16 @@
   "style": 1
 }
 {
-  "text": "- 你发现了毁灭者的神庙 -",
+  "text": "- 你发现了毁灭者的神庙 - --NEWLINE   --NEWLINE Miakoda：\u0022瑞德，下一场战斗灵活应对，闪避将是关键…\u0022",
   "tileX": 2108,
   "tileY": 968,
-  "textWidth": 250,
+  "textWidth": 420,
   "style": 1
 }
 {
   "text": "你需要一块大琥珀来打开通道 --NEWLINE   --NEWLINE 这块琥珀很久以前就被封存在旧日之树中，以此来封印这个地方 --NEWLINE   --NEWLINE 你需要先击败夺心魔王阿卓迪斯才能获得它……",
   "tileX": 2221,
-  "tileY": 859,
+  "tileY": 858,
   "textWidth": 460,
   "style": 1
 }
@@ -430,6 +430,13 @@
   "tileX": 2630,
   "tileY": 1112,
   "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "- 你发现了菌丝林 - --NEWLINE   --NEWLINE \u0022如果我没记错的话，这里就是蘑菇人生活的地方……\u0022",
+  "tileX": 2654,
+  "tileY": 673,
+  "textWidth": 390,
   "style": 1
 }
 {
@@ -1672,7 +1679,7 @@
   "style": 1
 }
 {
-  "text": "向东--> --NEWLINE 奥里德部落的雨林 --NEWLINE 黑曜石火山 --NEWLINE 埃伦达利斯山脉 --NEWLINE 冻洋 --NEWLINE   --NEWLINE 向南↓ --NEWLINE 树妖之家的洞穴入口",
+  "text": "向东--> --NEWLINE 奥里德部落的雨林 --NEWLINE 黑曜石火山 --NEWLINE 神圣之地 --NEWLINE 未知 --NEWLINE   --NEWLINE 向南↓ --NEWLINE 树妖之家的洞穴入口",
   "tileX": 5338,
   "tileY": 867,
   "textWidth": 220,
@@ -1938,13 +1945,6 @@
   "style": 1
 }
 {
-  "text": "- 你抵达了神圣之地 -",
-  "tileX": 6376,
-  "tileY": 834,
-  "textWidth": 190, 
-  "style": 1
-}
-{
   "text": "- 你发现了丛林遗迹的秘密入口 - --NEWLINE   --NEWLINE 拉动操纵杆后不久，你听到西边的地面发出微弱的隆隆声。",
   "tileX": 6447,
   "tileY": 1126,
@@ -1959,7 +1959,14 @@
   "style": 1
 }
 {
-  "text": "你慢慢地开始感觉轻了很多，就像火山下面的重力是不同的。 --NEWLINE   --NEWLINE 如果你跳得够高的话，你认为你几乎可以…在天花板上行走。",
+  "text": "- 你抵达了神圣之地 -",
+  "tileX": 6484,
+  "tileY": 827,
+  "textWidth": 190, 
+  "style": 1
+}
+{
+  "text": "你慢慢地开始感觉轻了很多，就像火山下面的重力是不同的。 --NEWLINE   --NEWLINE 如果你跳得够高的话，你似乎可以…在天花板上行走。",
   "tileX": 6492,
   "tileY": 1020,
   "textWidth": 450,
