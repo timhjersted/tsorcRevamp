@@ -1645,7 +1645,7 @@ Mods: {
 				Tooltip:
 					'''
 					Permanently increases damage dealt and crit chance by {0}%,
-					defense by {0}, maximum life by {1} and Luck by {1}%
+					maximum life by {1} and Luck by 0.{0}
 					"Proof of the hero's accomplishments"
 					'''
 			}
