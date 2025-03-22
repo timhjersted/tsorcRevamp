@@ -402,12 +402,12 @@ namespace tsorcRevamp.Projectiles
 
             if ((projectile.type >= ProjectileID.MonkStaffT3 && projectile.type <= ProjectileID.DD2BetsyArrow || (projectile.type == ProjectileID.DD2SquireSonicBoom && projectile.ai[2] == 0)) && Condition.DownedOldOnesArmyT3.IsMet())
             {
-                target.AddBuff(BuffID.BetsysCurse, EtherianWyvernStaff.DebuffDuration * 60);
+                target.AddBuff(BuffID.BetsysCurse, 4 * 60);
             }
 
             if ((projectile.type >= ProjectileID.ApprenticeStaffT3Shot) && Condition.DownedOldOnesArmyT3.IsMet())
             {
-                target.AddBuff(BuffID.Daybreak, EtherianWyvernStaff.DebuffDuration * 60);
+                target.AddBuff(BuffID.Daybreak, 4 * 60);
             }
 
             #region Runeterra Poison Darts

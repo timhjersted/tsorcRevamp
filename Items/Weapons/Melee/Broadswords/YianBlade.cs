@@ -28,8 +28,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             Item.knockBack = 5f;
             Item.useTurn = false;
             Item.UseSound = SoundID.Item1;
-            Item.rare = ItemRarityID.Cyan;
-            Item.value = PriceByRarity.Cyan_9;
+            Item.rare = ItemRarityID.Purple;
+            Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<Projectiles.Nothing>();
             Item.shootSpeed = 5f;

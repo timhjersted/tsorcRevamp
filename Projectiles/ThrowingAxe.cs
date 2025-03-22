@@ -14,8 +14,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = true;
-            Projectile.width = 26;
-            Projectile.height = 46;
+            Projectile.width = 21;
+            Projectile.height = 37;
             Projectile.penetrate = 1;
         }
         public override void OnKill(int timeLeft)

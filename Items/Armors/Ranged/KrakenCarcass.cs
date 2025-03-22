@@ -13,9 +13,9 @@ namespace tsorcRevamp.Items.Armors.Ranged
     {
         public const float AmmoReduction = 25f;
         public const int SoulCost = 70000;
-        public const int TsunamiBaseDmg = 200;
-        public const float TsunamiBaseKnockback = 15f;
-        public const float TsunamiDmgBoost = 20f;
+        public const int TsunamiBaseDmg = 150;
+        public const float TsunamiBaseKnockback = 5f;
+        public const float TsunamiDmgBoost = 25f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(AmmoReduction, TsunamiDmgBoost, Main.LocalPlayer.GetTotalDamage(DamageClass.Ranged).ApplyTo(TsunamiBaseDmg));
         public override void SetStaticDefaults()
         {

@@ -71,6 +71,7 @@ namespace tsorcRevamp.Projectiles.Ranged
                     if (Main.myPlayer == Projectile.owner)
                     {
                         Projectile Shark = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<KrakenTsunamiShark>(), Projectile.originalDamage, Projectile.knockBack, Projectile.owner);
+                        Shark.velocity *= 1.3f;
                     }
                     if (!SoundEngine.TryGetActiveSound(WaterSoundID, out var ActiveSound))
                     {

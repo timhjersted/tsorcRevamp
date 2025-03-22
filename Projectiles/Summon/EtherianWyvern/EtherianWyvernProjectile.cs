@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Summon.EtherianWyvern
         {
             if(Condition.DownedOldOnesArmyT3.IsMet())
             {
-                target.AddBuff(BuffID.BetsysCurse, EtherianWyvernStaff.DebuffDuration * 60);
+                target.AddBuff(BuffID.BetsysCurse, 3 * 60);
             }
         }
         public override void Movement(bool foundTarget, float distanceFromTarget, Vector2 targetCenter, float distanceToIdlePosition, Vector2 vectorToIdlePosition)

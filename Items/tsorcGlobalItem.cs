@@ -438,7 +438,7 @@ namespace tsorcRevamp.Items
 
             if (item.type == ItemID.DD2SquireBetsySword)
             {
-                target.AddBuff(BuffID.BetsysCurse, 600);
+                target.AddBuff(BuffID.BetsysCurse, 240);
             }
             #region Lethal Tempo
             if ((item.DamageType == DamageClass.Melee || item.DamageType == DamageClass.MeleeNoSpeed) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)

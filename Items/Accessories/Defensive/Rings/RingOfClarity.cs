@@ -20,8 +20,8 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             Item.height = 24;
             Item.accessory = true;
             Item.defense = 8;
-            Item.rare = ItemRarityID.Orange;
-            Item.value = PriceByRarity.Orange_3;
+            Item.rare = ItemRarityID.Pink;
+            Item.value = PriceByRarity.Pink_5;
         }
 
         public override void AddRecipes()
@@ -32,7 +32,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             recipe.AddIngredient(ModContent.ItemType<CrackedDragonStone>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
             recipe.AddTile(TileID.DemonAltar);
-
             recipe.Register();
         }
 
@@ -50,7 +49,6 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             player.buffImmune[BuffID.Bleeding] = true;
             player.buffImmune[BuffID.Poisoned] = true;
             player.buffImmune[ModContent.BuffType<Frostbite>()] = true;
-
             player.GetDamage(DamageClass.Generic) += CrackedDragonStone.Dmg / 100f;
             player.lifeRegen += LifeRegen;
         }

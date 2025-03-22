@@ -75,7 +75,7 @@ namespace tsorcRevamp.Projectiles
         {
             if (Condition.DownedOldOnesArmyT3.IsMet())
             {
-                target.AddBuff(BuffID.BetsysCurse, EtherianWyvernStaff.DebuffDuration * 60);
+                target.AddBuff(BuffID.BetsysCurse, 3 * 60);
             }
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)

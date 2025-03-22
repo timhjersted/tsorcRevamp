@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories.Magic
 {
     public class AquamarineRing : ModItem
     {
-        public static int MagicArmorPen = 8;
+        public static int MagicArmorPen = 7;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MagicArmorPen);
         public override void SetStaticDefaults()
         {

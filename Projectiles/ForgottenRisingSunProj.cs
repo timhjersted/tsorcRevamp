@@ -31,9 +31,12 @@ namespace tsorcRevamp.Projectiles
                     Projectile.Kill();
                 }
             }
-            int dust = Dust.NewDust(Projectile.position, 1, 1, DustID.FlameBurst, Projectile.velocity.X, Projectile.velocity.Y, 0, default, 1.7f);
-            Main.dust[dust].noGravity = true;
-            Main.dust[dust].velocity *= 0.2f;
+            int dust1 = Dust.NewDust(Projectile.Center - new Vector2(2, 13), 1, 1, DustID.FlameBurst, Projectile.velocity.X, Projectile.velocity.Y, 0, default, 1.2f);
+            Main.dust[dust1].noGravity = true;
+            Main.dust[dust1].velocity *= 0.2f;
+            int dust2 = Dust.NewDust(Projectile.Center + new Vector2(2, 10), 1, 1, DustID.FlameBurst, Projectile.velocity.X, Projectile.velocity.Y, 0, default, 1.2f);
+            Main.dust[dust2].noGravity = true;
+            Main.dust[dust2].velocity *= 0.2f;
             Projectile.localAI[0] = 0;
             Lighting.AddLight(Projectile.Center, 0.9f, 0.5f, 0f);
         }
