@@ -225,16 +225,18 @@ namespace tsorcRevamp.Items.BossBags
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CovetousSilverSerpentRing>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 15, 30));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.SoulCoin>(), 1, 100, 150));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Ammo.ArrowOfBard>(), 1, 15, 30));
             itemLoot.Add(ItemDropRule.Common(ItemID.WolfMountItem));
+            itemLoot.Add(ItemDropRule.Common(ItemID.WaterWalkingBoots));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<MagicBarrierScroll>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.ObsidianSkinPotion));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 1, 2, 5));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 1, 2, 5));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GreaterRestorationPotion>(), 1, 2, 5));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GreaterRestorationPotion>(), 1, 2, 5)); 
             itemLoot.Add(ItemDropRule.Common(ItemID.LifeforcePotion, 1, 2, 5));
+
         }
     }
     public class TheRageBag : BossBag
@@ -342,9 +344,11 @@ namespace tsorcRevamp.Items.BossBags
         {
             ItemID.Sets.BossBag[Type] = true;
         }
-        public override void ModifyItemLoot(ItemLoot itemLoot)
+        public override void ModifyItemLoot(ItemLoot itemLoot) 	
         {
             //no expert-exclusive item yet
+            itemLoot.Add(ItemDropRule.Common(ItemID.HarpyWings));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>(), 1, 1, 2));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DemonDrugPotion>(), 1, 3, 7));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ArmorDrugPotion>(), 1, 3, 7));
         }

@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses
         int meteorDamage = 11;
         int cultistFireDamage = 15;
         int cultistMagicDamage = 19;
-        int cultistLightningDamage = 17;
+        int desertDjinnDamage = 17;
         int fireBreathDamage = 13;
         int lostSoulDamage = 14;
         int greatFireballDamage = 19;
@@ -60,7 +60,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 meteorDamage = 16;
                 cultistFireDamage = 17;
                 cultistMagicDamage = 20;
-                cultistLightningDamage = 19;
+                desertDjinnDamage = 19;
                 fireBreathDamage = 15;
                 lostSoulDamage = 15;
                 greatFireballDamage = 22;
@@ -69,20 +69,20 @@ namespace tsorcRevamp.NPCs.Bosses
             }
 
             //difficulty should be on par with jungle wyvern
-            if (NPC.downedBoss3)
-            {
-                NPC.defense = 26;
-                NPC.value = 120000;
-                meteorDamage = 17;
-                cultistFireDamage = 18;
-                cultistMagicDamage = 21;
-                cultistLightningDamage = 20;
-                fireBreathDamage = 17;
-                lostSoulDamage = 17;
-                greatFireballDamage = 23;
-                blackFireDamage = 28;
-                greatAttackDamage = 36;
-            }
+            //if (NPC.downedBoss3)
+            //{
+                //NPC.defense = 26;
+                //NPC.value = 120000;
+                //meteorDamage = 17;
+                //cultistFireDamage = 18;
+                //cultistMagicDamage = 21;
+                //desertDjinnDamage = 20;
+                //fireBreathDamage = 17;
+                //lostSoulDamage = 17;
+                //greatFireballDamage = 23;
+                //blackFireDamage = 28;
+                //greatAttackDamage = 36;
+            //}
         }
 
         NPCDespawnHandler despawnHandler;
@@ -284,7 +284,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     //SOUND BROKEN IN MP (can not be under a random, they must be synced)
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 0.1f), ProjectileID.CultistBossFireBall, cultistFireDamage, 0.1f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 0.1f), ProjectileID.CultistBossFireBallClone, cultistFireDamage, 0.1f, Main.myPlayer);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit34);
                     NPC.localAI[1] = 0;
@@ -382,7 +382,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             //PLAYER RUNNING AWAY? SPAWN DesertDjinnCurse, 
             Player player3 = Main.player[NPC.target];
-            if (Main.rand.NextBool(100) && NPC.Distance(player3.Center) > 600)
+            if (Main.rand.NextBool(150) && NPC.Distance(player3.Center) > 600)
             {
                 //SOUND BROKEN IN MP (can not be under a random, they must be synced)
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -397,26 +397,6 @@ namespace tsorcRevamp.NPCs.Bosses
 
             }
             //tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], ProjectileID.LostSoulHostile, lostSoulDamage, 3, lineOfSight, true, 4, 9);
-
-            //SPAWN FIRE LURKER
-            if ((spawnedDemons < 2) && NPC.life >= NPC.lifeMax / 3 * 2 && Main.rand.NextBool(3000))
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.FireLurker>(), 0);
-                    Main.npc[Spawned].velocity.Y = -8;
-                    spawnedDemons++;
-                    if (Main.netMode == NetmodeID.Server)
-                    {
-                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-                    }
-                }
-            }
-
-
-
-
-
 
             //CHOICES
             if (NPC.localAI[1] >= 160f && (choice == 0 || choice == 4) && NPC.life >= NPC.lifeMax / 3)
@@ -516,27 +496,37 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.localAI[1] = 1f;
                 }
             }
-            //LIGHTNING ATTACK
+            // DESERT DJINN CURSE CIRCULAR ATTACK
             if (NPC.localAI[1] == 160f && NPC.life >= NPC.lifeMax / 6 && NPC.life <= NPC.lifeMax / 3 * 2 && (choice == 5 || choice == 4))
             {
-                Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(1), 1);
-                //speed += Main.player[npc.target].velocity / 4;
+                
+                int numProjectiles = 8;
+                float angleStep = MathHelper.TwoPi / numProjectiles; 
 
-                speed.Y += Main.rand.NextFloat(-2, -5f);//was -2, -6
-
-                //speed += Main.rand.NextVector2Circular(-10, -8);
-                if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    for (int i = 0; i < numProjectiles; i++)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.CultistBossLightningOrb, cultistLightningDamage, 0f, Main.myPlayer);
+                        float angle = i * angleStep;
+                        Vector2 speed = new Vector2(5f, 0f).RotatedBy(angle); 
+
+                        Projectile.NewProjectile(
+                            NPC.GetSource_FromThis(),
+                            NPC.Center.X, NPC.Center.Y,
+                            speed.X, speed.Y,
+                            ProjectileID.DesertDjinnCurse, 
+                            desertDjinnDamage, 
+                            0f,
+                            Main.myPlayer
+                        );
                     }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
                 }
 
-                NPC.localAI[1] = -50f;
-            }
+                
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
 
+                NPC.localAI[1] = -50f; 
+            }
             /*JUMP DASH FOR FINAL
 			if (npc.localAI[1] == 140 && npc.velocity.Y == 0f && Main.rand.NextBool(20) && npc.life <= 1000)
 			{

@@ -1380,8 +1380,18 @@ namespace tsorcRevamp
                     {
                         if (Main.myPlayer == player.whoAmI)
                         {
-                            Projectile Skull = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center + Main.rand.NextVector2CircularEdge(30, 30), Vector2.Zero, ProjectileID.BookOfSkullsSkull, (int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(NecromancersShirt.SkullBaseDmg), player.GetTotalKnockback(DamageClass.MagicSummonHybrid).ApplyTo(NecromancersShirt.SkullBaseKnockback), player.whoAmI, 1);
+                            Vector2 speed = Main.rand.NextVector2Circular(6f, 6f); 
+                            Projectile Skull = Projectile.NewProjectileDirect(Projectile.GetSource_None(), player.Center + Main.rand.NextVector2CircularEdge(30, 30), speed, ProjectileID.BookOfSkullsSkull, (int)player.GetTotalDamage(DamageClass.MagicSummonHybrid).ApplyTo(NecromancersShirt.SkullBaseDmg), player.GetTotalKnockback(DamageClass.MagicSummonHybrid).ApplyTo(NecromancersShirt.SkullBaseKnockback), player.whoAmI, 1);
                         }
+                    }
+                    SoundEngine.PlaySound(SoundID.Zombie54, player.position);
+                    int dustAmount = 15 + LichKills * 2; 
+                    float dustScale = 1f + LichKills * 0.1f; 
+                    for (int d = 0; d < dustAmount; d++)
+                    { 
+                        Vector2 dustSpeed = Main.rand.NextVector2Circular(10f, 10f);
+                        int dustIndex = Dust.NewDust(player.Center, 0, 0, DustID.BoneTorch, dustSpeed.X, dustSpeed.Y, 0, default(Color), dustScale);
+                        Main.dust[dustIndex].noGravity = true; 
                     }
                     LichKills = 0;
                 }

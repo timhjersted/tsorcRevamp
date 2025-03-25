@@ -9402,6 +9402,8 @@ Mods: {
 			// DragoonLightning.DisplayName: Dragoon Lightning
 			// SupremeDragoonLightning.DisplayName: Supreme Dragoon Lightning
 			Icicle2.DisplayName: 霜灾魔杖
+			// ShadowBreath.DisplayName: Shadow Breath
+			// FrostFireBall.DisplayName: Frost Fire Ball
 		}
 
 		NPCs: {

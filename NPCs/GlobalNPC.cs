@@ -578,7 +578,7 @@ namespace tsorcRevamp.NPCs
                     pool.Add(NPCID.HellArmoredBonesSword, 0.1f);
                 }
 
-                if ((spawnInfo.Water && spawnInfo.SpawnTileType == TileID.Coralstone || spawnInfo.SpawnTileType == TileID.ReefBlock || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.ReefWall) && Main.hardMode)
+                if ((spawnInfo.Water && spawnInfo.SpawnTileType == TileID.Coralstone || spawnInfo.SpawnTileType == TileID.ReefBlock || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.HallowUnsafe2) && Main.hardMode)
                 {
                     pool.Add(NPCID.CreatureFromTheDeep, 0.6f);
                     pool.Add(NPCID.Shark, 0.6f);

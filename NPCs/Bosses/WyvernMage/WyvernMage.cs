@@ -62,6 +62,8 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         int lifeTimer = 0;
 
         int holdTimer = 0;
+        int lightningDelayTimer = -1; 
+        Vector2 delayedTargetPosition;
 
         //When this hits 5, the boss fires an orb and resets it back to 0. Only happens right at the start of its teleport.
         public int OrbTimer
@@ -179,6 +181,11 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             //Check if the dragon is alive. If so, spawn less transparent dusts and fire more orbs
             bool dragonAlive = NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>());
 
+            if (dragonAlive)
+            {
+                NPC.defense = 40; 
+            }
+
             if(dragonAliveLastFrame && !dragonAlive)
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.WyvernMage.DragonDead"), 235, 199, 23);//deep yellow
@@ -248,28 +255,37 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
                         //Fire it
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), startPos.X, startPos.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
-
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     OrbTimer = 0;
                     ShotCount++;
                 }
 
-                if (TeleportTimer % 6 == 0 && TeleportTimer < 180 && TeleportTimer > 60)
+                if (TeleportTimer % 30 == 0 && TeleportTimer < 180 && TeleportTimer > 60 && !dragonAlive)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        if (!dragonAlive)
+                        delayedTargetPosition = new Vector2(Main.player[NPC.target].Center.X, Main.player[NPC.target].Center.Y - 100);
+                        lightningDelayTimer = 20;
+                    }
+                }
+
+                if (lightningDelayTimer > 0)
+                {
+                    lightningDelayTimer--;
+                    if (lightningDelayTimer == 0)
+                    {
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Vector2 spawnPos = Main.player[NPC.target].Center;
-                            spawnPos.Y += -550;
+                            Vector2 spawnPos = delayedTargetPosition;
                             spawnPos.X += Main.rand.Next(-50, 50);
-                            Vector2 projVel = UsefulFunctions.Aim(spawnPos, Main.player[NPC.target].Center, 1);
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, projVel, ModContent.ProjectileType<Projectiles.Enemy.JellyfishLightning>(), frozenSawDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPos, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Bolt>(), frozenSawDamage, 0f, Main.myPlayer);
                         }
+                        lightningDelayTimer = -1;
                     }
                 }
             }
+
             else if (nextAttackType == 1)
             {
                 if (TeleportTimer == 50)
@@ -531,7 +547,18 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         }
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
-            modifiers.FinalDamage *= 2;
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>()))
+            {
+                modifiers.FinalDamage *= 0.5f; 
+            }
+        }
+
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>()))
+            {
+                modifiers.FinalDamage *= 0.5f; 
+            }
         }
         public override void FindFrame(int currentFrame)
         {

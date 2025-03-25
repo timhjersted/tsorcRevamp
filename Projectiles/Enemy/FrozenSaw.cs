@@ -1,6 +1,8 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -43,7 +45,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Main.rand.NextBool(2))
             {
 
-                Lighting.AddLight((int)Projectile.position.X / 16, (int)Projectile.position.Y / 16, 0f, 0.3f, 0.8f);
+                Lighting.AddLight((int)Projectile.position.X / 16, (int)Projectile.position.Y / 16, 0.1f, 0.5f, 0.8f);
                 return;
 
             }
@@ -75,6 +77,26 @@ namespace tsorcRevamp.Projectiles.Enemy
                 target.AddBuff(BuffID.Weak, 180 / buffLengthMod);
                 target.AddBuff(BuffID.Slow, 300 / buffLengthMod);
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
+            Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
+
+            Main.EntitySpriteDraw(
+                texture,
+                Projectile.Center - Main.screenPosition,
+                frame,
+                Color.White, 
+                Projectile.rotation,
+                frame.Size() / 2f,
+                Projectile.scale,
+                SpriteEffects.None,
+                0
+            );
+
+            return false;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.height = 22;
             Projectile.hostile = true;
             Projectile.timeLeft = 1500;
-            Projectile.scale = 2.2f;
+            Projectile.scale = 2f;
             Projectile.tileCollide = false;
             Main.projFrames[Projectile.type] = 4;
             Projectile.light = 1;
@@ -47,10 +47,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Main.rand.NextBool(2))
             {
 
-                Lighting.AddLight((int)Projectile.position.X / 16, (int)Projectile.position.Y / 16, 15f, 0f, 0.1f);
-                int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 100, Color.Green, 1.0f);
+                Lighting.AddLight((int)Projectile.position.X / 16, (int)Projectile.position.Y / 16, 0f, 0f, 0.1f);
+                int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.Electric, 0, 0, 100, Color.Cyan, 1.0f);
                 Main.dust[dust].noGravity = true;
-                int pdust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.CorruptGibs, 0, 0, 100, Color.Green, 1.0f);
+                int pdust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.BlueTorch, 0, 0, 100, Color.Cyan, 1.0f);
                 Main.dust[pdust].noGravity = true;
             }
 

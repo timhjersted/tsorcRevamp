@@ -1,5 +1,6 @@
 ﻿using System;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
@@ -32,6 +33,13 @@ namespace tsorcRevamp.Projectiles
 
         public override void AI()
         {
+            if (Projectile.ai[1] == 0f)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_EtherianPortalDryadTouch with { Volume = 0.8f }, Projectile.Center); //lightning sound
+                Projectile.ai[1] = 1f;
+
+            }
+
             if (Projectile.ai[0] == 0)
             {
                 Projectile.velocity.X *= 0.001f;

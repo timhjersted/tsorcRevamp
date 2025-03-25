@@ -206,6 +206,12 @@ namespace tsorcRevamp.Projectiles
                     }
                 }
 
+                if (projectile.type == ProjectileID.RubyBolt)
+                {
+                    projectile.localNPCHitCooldown = 100;
+                    projectile.usesLocalNPCImmunity = true;
+                }
+
                 if (projectile.type == ProjectileID.FrostBlastFriendly)
                 {
                     projectile.penetrate = 6;

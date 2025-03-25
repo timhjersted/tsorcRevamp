@@ -25,13 +25,13 @@ namespace tsorcRevamp.Items.Accessories
         {
             int cursorX = (int)((Main.mouseX + Main.screenPosition.X) / 16);
             int cursorY = (int)((Main.mouseY + Main.screenPosition.Y) / 16);
-            Lighting.AddLight(cursorX, cursorY, 2.5f, 2.5f, 2.5f);
+            Lighting.AddLight(cursorX, cursorY, 1.5f, 1.5f, 1.5f);
         }
         public override void UpdateVanity(Player player)
         {
             int cursorX = (int)((Main.mouseX + Main.screenPosition.X) / 16);
             int cursorY = (int)((Main.mouseY + Main.screenPosition.Y) / 16);
-            Lighting.AddLight(cursorX, cursorY, 2.5f, 2.5f, 2.5f);
+            Lighting.AddLight(cursorX, cursorY, 1.5f, 1.5f, 1.5f);
         }
         public override void AddRecipes()
         {

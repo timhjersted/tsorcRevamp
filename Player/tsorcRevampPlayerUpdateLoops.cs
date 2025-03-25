@@ -2165,7 +2165,7 @@ namespace tsorcRevamp
 
             if (tsorcRevampWorld.RemixMap)
             {
-                if (Main.tile[(Player.Center / 16).ToPoint()].WallType == WallID.ReefWall && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Main.hardMode)
+                if (!Main.LocalPlayer.ZoneHallow && Main.tile[(Player.Center / 16).ToPoint()].WallType == WallID.HallowUnsafe2 && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Main.hardMode)
                 {
                     Player.AddBuff(BuffID.WaterCandle, 8*60);
                 }

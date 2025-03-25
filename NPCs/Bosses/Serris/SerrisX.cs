@@ -62,7 +62,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
         bool extraProjs = false;
         NPCDespawnHandler despawnHandler;
         int attack = 0;
-        int secondaryCooldown = 900;
+        int secondaryCooldown = 600;
         float attackCounter = 0;
         int slowdownCounter = 100;
         public override void AI()
@@ -80,7 +80,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 
                 TimeLock = false;
                 NPC.ai[0] = 2;
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie38, NPC.Center);
                 NPC.netUpdate = true;
             }
 

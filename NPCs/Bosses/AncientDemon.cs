@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses
         int meteorDamage = 16;
         int cultistFireDamage = 36;
         int cultistMagicDamage = 50;
-        int cultistLightningDamage = 43;
+        int betsyFireballDamage = 43;
         int fireBreathDamage = 21;
         int lostSoulDamage = 32;
 
@@ -41,7 +41,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.width = 50;
             NPC.damage = 27;
             NPC.defense = 15;
-            NPC.lifeMax = 9000;
+            NPC.lifeMax = 10000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 76000;
@@ -180,13 +180,13 @@ namespace tsorcRevamp.NPCs.Bosses
             //EARLY TELEGRAPH
             if (NPC.localAI[1] >= 60)
             {
-                Lighting.AddLight(NPC.Center, Color.YellowGreen.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                Lighting.AddLight(NPC.Center, Color.Orange.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                 if (Main.rand.NextBool(6))
                 {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoblinSorcerer, NPC.velocity.X, NPC.velocity.Y);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoblinSorcerer, NPC.velocity.X, NPC.velocity.Y); //pink dusts
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoblinSorcerer, NPC.velocity.X, NPC.velocity.Y);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoblinSorcerer, NPC.velocity.X, NPC.velocity.Y); //pink dusts
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 174, NPC.velocity.X, NPC.velocity.Y);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 174, NPC.velocity.X, NPC.velocity.Y); 
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 174, NPC.velocity.X, NPC.velocity.Y);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 174, NPC.velocity.X, NPC.velocity.Y); 
 
 
                 }
@@ -194,12 +194,12 @@ namespace tsorcRevamp.NPCs.Bosses
             //LAST SECOND TELEGRAPH
             if (NPC.localAI[1] >= 110)
             {
-                Lighting.AddLight(NPC.Center, Color.DeepPink.ToVector3() * 5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                Lighting.AddLight(NPC.Center, Color.Red.ToVector3() * 5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                 if (Main.rand.NextBool(2))
                 {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y); //pink dusts
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemRuby, NPC.velocity.X, NPC.velocity.Y);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemRuby, NPC.velocity.X, NPC.velocity.Y); 
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemRuby, NPC.velocity.X, NPC.velocity.Y);
                 }
             }
 
@@ -270,12 +270,12 @@ namespace tsorcRevamp.NPCs.Bosses
 
             //PLAYER RUNNING AWAY? SPAWN DesertDjinnCurse, 
             Player player3 = Main.player[NPC.target];
-            if (Main.rand.NextBool(50) && NPC.Distance(player3.Center) > 700)
+            if (Main.rand.NextBool(60) && NPC.Distance(player3.Center) > 700)
             {
-                Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8f, 1.06f, true, true);
+                Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8f, 1.06f, true, true); 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ProjectileID.DesertDjinnCurse, lostSoulDamage, 7f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ProjectileID.FlamingWood, lostSoulDamage, 7f, Main.myPlayer);
                 }
 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, NPC.Center); //wobble
@@ -286,7 +286,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 
             //SPAWN FIRE LURKER
-            if ((spawnedDemons < 6) && NPC.life >= NPC.lifeMax / 3 && Main.rand.NextBool(3000))
+            if ((spawnedDemons < 6) && NPC.life >= NPC.lifeMax / 3 && Main.rand.NextBool(3500))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -399,28 +399,83 @@ namespace tsorcRevamp.NPCs.Bosses
                     NPC.localAI[1] = 1f;
                 }
             }
-            //LIGHTNING ATTACK
-            if (NPC.localAI[1] == 160f && NPC.life >= NPC.lifeMax / 6 && NPC.life <= NPC.lifeMax / 3 * 2 && (choice == 5 || choice == 4)) //&& Main.rand.NextBool(8) 
+            // BETSY FIREBALL ATTACK
+            if (NPC.localAI[1] == 160f && NPC.life >= NPC.lifeMax / 6 && NPC.life <= NPC.lifeMax / 3 * 2 && (choice == 5 || choice == 4))
             {
-                //&& Main.rand.NextBool(10) Main.rand.NextBool(2) &&
-                Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].OldPos(1), 1);
-                //speed += Main.player[npc.target].velocity / 4;
-
-                speed.Y += Main.rand.NextFloat(-2, -5f);//was -2, -6
-
-
-                if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    float spawnOffsetY = -40f;
+                    float spawnOffsetX = 35f;
+
+                    for (int i = 0; i < 4; i++)
                     {
-                        int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.CultistBossLightningOrb, cultistLightningDamage, 0f, Main.myPlayer);
-                        //ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()                    
+                        float posX = NPC.Center.X + (i - 1.5f) * spawnOffsetX;
+                        float posY = NPC.Center.Y + spawnOffsetY;
+
+                        Vector2 speed = new Vector2(0f, -7f);
+                        if (i < 2)
+                            speed.X = -2f - Main.rand.NextFloat(0f, 1f);
+                        else
+                            speed.X = 2f + Main.rand.NextFloat(0f, 1f);
+                        speed += Main.rand.NextVector2Circular(1.5f, 1.5f);
+
+                        int proj = Projectile.NewProjectile(
+                            NPC.GetSource_FromThis(),
+                            posX, posY,
+                            speed.X, speed.Y,
+                            ProjectileID.DD2BetsyFireball,
+                            betsyFireballDamage,
+                            0f,
+                            Main.myPlayer
+                        );
+
+                        Main.projectile[proj].timeLeft = 180;
                     }
+
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
 
+                    NPC.localAI[2] = 20f;
                 }
 
-                NPC.localAI[1] = -50f;
+                NPC.localAI[1] = -5f;
+            }
+
+            // Second
+            if (NPC.localAI[2] > 0)
+            {
+                NPC.localAI[2]--;
+                if (NPC.localAI[2] == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float spawnOffsetY = -40f;
+                    float spawnOffsetX = 35f;
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        float posX = NPC.Center.X + (i - 1.5f) * spawnOffsetX;
+                        float posY = NPC.Center.Y + spawnOffsetY;
+
+                        Vector2 speed = new Vector2(0f, -7f);
+                        if (i < 2)
+                            speed.X = -2f - Main.rand.NextFloat(0f, 1f);
+                        else
+                            speed.X = 2f + Main.rand.NextFloat(0f, 1f);
+                        speed += Main.rand.NextVector2Circular(1.5f, 1.5f);
+
+                        int proj = Projectile.NewProjectile(
+                            NPC.GetSource_FromThis(),
+                            posX, posY,
+                            speed.X, speed.Y,
+                            ProjectileID.DD2BetsyFireball,
+                            betsyFireballDamage,
+                            0f,
+                            Main.myPlayer
+                        );
+
+                        Main.projectile[proj].timeLeft = 180;
+                    }
+
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
+                }
             }
 
             /*JUMP DASH FOR FINAL

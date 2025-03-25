@@ -213,6 +213,7 @@ namespace tsorcRevamp
             BloodBossEvent3,
             CatacombsEvent,
             FoundryEvent,
+            FoundryEvent2,
             FrozenCathedralEvent,
             Lunatic,
             IceGolemIsland,
@@ -598,10 +599,12 @@ namespace tsorcRevamp
 
             ScriptedEvent FoundryEvent = new ScriptedEvent(new Vector2(5229, 1254), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileKnight>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition);
 
+            ScriptedEvent FoundryEvent2 = new ScriptedEvent(new Vector2(5801, 1381), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), DustID.GoldFlame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Yellow, false, RemixMapCondition);
+            
             ScriptedEvent FrozenCathedralEvent = new ScriptedEvent(new Vector2(7635, 1735), 65, NPCID.IceQueen, 67, true, true, false, LangUtils.GetTextValue("Events.FrozenCathedralEvent"), Color.Cyan, false, RemixMapCondition, SetNightCustomAction);
-            CatacombsEvent.SetCustomStats(null, null, null, 10000);
+            FrozenCathedralEvent.SetCustomStats(null, null, null, 10000);
 
-            ScriptedEvent WyvernPrisonEvent = new ScriptedEvent(new Vector2(6408, 385), 32, ModContent.NPCType<NPCs.Enemies.MarilithSpiritTwin>(), DustID.Shadowflame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Purple, false, RemixMapCondition, SetNightCustomAction);
+            ScriptedEvent WyvernPrisonEvent = new ScriptedEvent(new Vector2(6408, 385), 32, NPCID.Pumpking, DustID.Shadowflame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition, SetNightCustomAction);
 
             List<int> FrozenCathedralEvent2EnemyTypeList = new List<int>() { NPCID.MourningWood, NPCID.MourningWood };
             List<Vector2> FrozenCathedralEvent2EnemyLocations = new List<Vector2>() { new Vector2(7189, 1650), new Vector2(7164, 1650) };
@@ -713,8 +716,9 @@ namespace tsorcRevamp
                 {ScriptedEventType.BloodBossEvent2, BloodBossEvent2 },
                 {ScriptedEventType.BloodBossEvent3, BloodBossEvent3 },
                 {ScriptedEventType.CatacombsEvent, CatacombsEvent },
-                {ScriptedEventType.FrozenCathedralEvent, FrozenCathedralEvent },
+                {ScriptedEventType.FrozenCathedralEvent, FrozenCathedralEvent }, 
                 {ScriptedEventType.FoundryEvent, FoundryEvent },
+                {ScriptedEventType.FoundryEvent2, FoundryEvent2 },
                 {ScriptedEventType.Lunatic, Lunatic },
                 {ScriptedEventType.KingSlime2Event, KingSlime2Event },  
                 {ScriptedEventType.IceGolemIsland, IceGolemIsland },          

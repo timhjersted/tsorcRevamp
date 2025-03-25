@@ -12,8 +12,8 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
 
         public override void SetDefaults()
         {
-            Item.width = 34;
-            Item.height = 32;
+            Item.width = 44;
+            Item.height = 42;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.channel = true;
             Item.useAnimation = 44;
@@ -21,11 +21,11 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Item.damage = 124;
             Item.knockBack = 8;
             Item.UseSound = SoundID.Item1;
-            Item.rare = ItemRarityID.LightPurple;
+            Item.rare = ItemRarityID.Pink;
             Item.shootSpeed = 13;
             Item.noUseGraphic = true;
             Item.noMelee = true;
-            Item.value = PriceByRarity.LightPurple_6;
+            Item.value = PriceByRarity.Pink_5;
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<BerserkerNightmareBall>();
         }

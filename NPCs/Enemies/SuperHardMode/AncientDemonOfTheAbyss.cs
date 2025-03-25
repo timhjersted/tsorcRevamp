@@ -153,8 +153,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-
-
         //int breathTimer gives weird cool arrow shape, float does the circle
         int breathTimer = 0;
         int spawnedDemons = 0;
@@ -221,10 +219,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 Lighting.AddLight(NPC.Center, Color.YellowGreen.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                 if (Main.rand.NextBool(6))
                 {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoblinSorcerer, NPC.velocity.X, NPC.velocity.Y);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoblinSorcerer, NPC.velocity.X, NPC.velocity.Y); //pink dusts
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoblinSorcerer, NPC.velocity.X, NPC.velocity.Y);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoblinSorcerer, NPC.velocity.X, NPC.velocity.Y); //pink dusts
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Electric, NPC.velocity.X, NPC.velocity.Y);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Electric, NPC.velocity.X, NPC.velocity.Y); //pink dusts
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Electric, NPC.velocity.X, NPC.velocity.Y);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Electric, NPC.velocity.X, NPC.velocity.Y); //pink dusts
 
 
                 }
@@ -235,9 +233,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 Lighting.AddLight(NPC.Center, Color.DeepPink.ToVector3() * 5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                 if (Main.rand.NextBool(2))
                 {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y);
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y); //pink dusts
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CrystalSerpent, NPC.velocity.X, NPC.velocity.Y);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y); //pink dusts
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Vortex, NPC.velocity.X, NPC.velocity.Y);
                 }
             }
 
@@ -305,14 +303,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             }
 
-            //PLAYER RUNNING AWAY? SPAWN DesertDjinnCurse, 
+            //PLAYER RUNNING AWAY? SPAWN FrostWave, 
             Player player3 = Main.player[NPC.target];
-            if (Main.rand.NextBool(30) && NPC.Distance(player3.Center) > 700)
+            if (Main.rand.NextBool(70) && NPC.Distance(player3.Center) > 700)
             {
                 Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8f, 1.06f, true, true);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ProjectileID.DesertDjinnCurse, lostSoulDamage, 7f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ProjectileID.FrostWave, lostSoulDamage, 7f, Main.myPlayer);
                 }
 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, NPC.Center); //wobble
@@ -321,13 +319,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 NPC.netUpdate = true;
             }
 
-
-            //SPAWN FIRE LURKER
-            if ((spawnedDemons < 6) && NPC.life >= NPC.lifeMax / 15 && Main.rand.NextBool(3000))
+            //SPAWN Oolacile Sorcerer
+            if ((spawnedDemons < 6) && NPC.life >= NPC.lifeMax / 15 && Main.rand.NextBool(4500))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.FireLurker>(), 0);
+                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.SuperHardMode.OolacileSorcerer>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
                     spawnedDemons++;
                     if (Main.netMode == NetmodeID.Server)
@@ -336,11 +333,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     }
                 }
             }
-
-
-
-
-
 
             //CHOICES
             if (NPC.localAI[1] >= 160f && (choice == 0 || choice == 4) && NPC.life >= NPC.lifeMax / 3)
@@ -520,7 +512,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<NPCs.Enemies.FireLurker>(), 0);
+                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<NPCs.Enemies.SuperHardMode.VampireBat>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
                     intspawnedSpirits++;
                     if (Main.netMode == NetmodeID.Server)

@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override int ProjectileID => ModContent.ProjectileType<LonginusProj>();
         public override int Width => 94;
         public override int Height => 94;
-        public override int BaseDmg => 175;
+        public override int BaseDmg => 235;
         public override int BaseCritChance => 0;
         public override float BaseKnockback => 9;
         public override int UseAnimationTime => 20;
@@ -22,14 +22,14 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override int Rarity => ModContent.RarityType<DarkBlue>();
         public override int Value => PriceByRarity.fromItem(Item);
         public override SoundStyle UseSoundID => SoundID.Item71;
-        public const float BonusDmgWhileFalling = 130f;
-        public const int HealOnHit = 3;
+        public const float BonusDmgWhileFalling = 20f;
+        public const int HealOnHit = 4;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BonusDmgWhileFalling, HealOnHit);
         public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
             if (player.gravDir == 1f && player.velocity.Y > 0 || player.gravDir == -1f && player.velocity.Y < 0)
             {
-                damage += BonusDmgWhileFalling / 100f;
+                damage *= BonusDmgWhileFalling;
             }
         }
         public override void AddRecipes()
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
             recipe.AddIngredient(ItemID.ChlorophytePartisan, 1);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>());
             recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 40000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

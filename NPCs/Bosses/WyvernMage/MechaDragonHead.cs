@@ -43,7 +43,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             NPC.behindTiles = true;
             NPC.boss = true;
             NPC.value = 25000;
-            despawnHandler = new NPCDespawnHandler(DustID.OrangeTorch);
+            despawnHandler = new NPCDespawnHandler(DustID.IceTorch);
 
             bodyTypes = new int[] { ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
                 ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),

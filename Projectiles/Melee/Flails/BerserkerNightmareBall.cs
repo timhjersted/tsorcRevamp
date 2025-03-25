@@ -15,7 +15,6 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
     {
 
         private const string ChainTexturePath = "tsorcRevamp/Projectiles/Melee/Flails/BerserkerNightmareChain"; // The folder path to the flail chain sprite
-        private const string ChainTextureExtraPath = "tsorcRevamp/Projectiles/Melee/Flails/BerserkerNightmareChain2";  // This texture and related code is optional and used for a unique effect
 
         private enum AIState
         {
@@ -49,8 +48,8 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
         public override void SetDefaults()
         {
             Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
-            Projectile.width = 34; // The width of your projectile
-            Projectile.height = 34; // The height of your projectile
+            Projectile.width = 30; // The width of your projectile
+            Projectile.height = 30; // The height of your projectile
             Projectile.friendly = true; // Deals damage to enemies
             Projectile.penetrate = -1; // Infinite pierce
             Projectile.DamageType = DamageClass.Melee; // Deals melee damage
@@ -338,7 +337,7 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
                 dustRate = 1;
 
             if (Main.rand.NextBool(dustRate))
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.RedTorch, 0f, 0f, 150, default(Color), 1.3f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 180, 0f, 0f, 150, default(Color), 1.3f);
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
@@ -460,7 +459,6 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
             playerArmPosition.Y -= Main.player[Projectile.owner].gfxOffY;
 
             Asset<Texture2D> chainTexture = ModContent.Request<Texture2D>(ChainTexturePath);
-            Asset<Texture2D> chainTextureExtra = ModContent.Request<Texture2D>(ChainTextureExtraPath); // This texture and related code is optional and used for a unique effect
 
             Rectangle? chainSourceRectangle = null;
             // Drippler Crippler customizes sourceRectangle to cycle through sprite frames: sourceRectangle = asset.Frame(1, 6);
@@ -495,7 +493,6 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
                 else if (chainCount >= 2)
                 {
                     // Near to the ball, we draw a custom chain texture and slightly make it glow if unlit.
-                    chainTextureToDraw = chainTextureExtra;
                     byte minValue = 140;
                     if (chainDrawColor.R < minValue)
                         chainDrawColor.R = minValue;
@@ -509,7 +506,6 @@ namespace tsorcRevamp.Projectiles.Melee.Flails
                 else
                 {
                     // Close to the ball, we draw a custom chain texture and draw it at full brightness glow.
-                    chainTextureToDraw = chainTextureExtra;
                     chainDrawColor = Color.White;
                 }
 

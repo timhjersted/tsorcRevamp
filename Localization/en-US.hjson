@@ -6049,6 +6049,7 @@ Mods: {
 				Tooltip:
 					'''
 					Celestial lance fabled to hold sway over the world.
+					Rains fallen stars on enemy hits
 					{0}% increased damage while falling and has a chance to heal {1} HP on hit.
 					'''
 			}
@@ -6108,6 +6109,7 @@ Mods: {
 				Tooltip:
 					'''
 					Legendary spear fabled to hold sway over the world.
+					Summons red energy from the sky on enemy hits
 					Increases attack damage by {0}% when falling and has a chance to heal {1} HP on hit.
 					'''
 			}
@@ -9406,6 +9408,8 @@ Mods: {
 			DragoonLightning.DisplayName: Dragoon Lightning
 			SupremeDragoonLightning.DisplayName: Supreme Dragoon Lightning
 			Icicle2.DisplayName: Icicle2
+			ShadowBreath.DisplayName: Shadow Breath
+			FrostFireBall.DisplayName: Frost Fire Ball
 		}
 
 		NPCs: {
