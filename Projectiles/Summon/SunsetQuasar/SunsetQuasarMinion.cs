@@ -30,13 +30,13 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
             Projectile.DamageType = DamageClass.Summon;
             Projectile.friendly = true;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 15;
+            Projectile.localNPCHitCooldown = 12;
             Projectile.ContinuouslyUpdateDamageStats = true;
             DrawOffsetX = -14;
             DrawOriginOffsetY = -14;
         }
 
-        const float SCALING_PER_SLOT = 0.8f;
+        const float SCALING_PER_SLOT = 0.5f;
 
         public override bool MinionContactDamage()
         {
@@ -60,11 +60,12 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
             int tokenCount = player.ownedProjectileCounts[ModContent.ProjectileType<SunsetQuasarToken>()];
 
             float tokenMod = SCALING_PER_SLOT * (tokenCount - 1);
-            if (Main.hardMode) tokenMod *= 1.8f; //nothing to see here
-            if (tsorcRevampWorld.SuperHardMode) tokenMod *= 2.3f; //not me obviously biased in favor of this weapon or anything
-            //i think its cute and want people to use it. sue me.
+            if (Main.hardMode) tokenMod *= 1.8f; 
+            if (tsorcRevampWorld.SuperHardMode) tokenMod *= 2.3f; 
             float finalDamage = damage * (1.0f + tokenMod);
             Projectile.damage = (int)finalDamage;
+            float speedMultiplier = 1f + 0.08f * (tokenCount - 1);    
+            float jumpMultiplier = 1f + 0.08f * (tokenCount - 1);    
             Lighting.AddLight(Projectile.Center, 0.35f, 0.25f, 0.35f);
             SunsetQuasar();
         }
@@ -110,50 +111,50 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
         private void SunsetQuasar()
         {
             Player player = Main.player[Projectile.owner];
-            int targettingRange = 800;
-            float num12 = 500f;
-            float num21 = 300f;
+                int targettingRange = 800;
+                float num12 = 500f;
+                float num21 = 300f;
 
-            Vector2 targetCenter = player.Center;
+                Vector2 targetCenter = player.Center;
 
-            targetCenter.X -= (30 + player.width / 2) * player.direction;
-            targetCenter.X -= Projectile.minionPos * 30 * player.direction;
+                targetCenter.X -= (30 + player.width / 2) * player.direction;
+                targetCenter.X -= Projectile.minionPos * 30 * player.direction;
 
-            Projectile.shouldFallThrough = player.position.Y + (float)player.height > Projectile.position.Y + (float)Projectile.height;
+                Projectile.shouldFallThrough = player.position.Y + (float)player.height > Projectile.position.Y + (float)Projectile.height;
 
-            int num49 = 0;
-            int num50 = 15;
-            int attackTarget = -1;
-            bool inCombat = AI_State == (float)AI_States.Combat;
-            if (inCombat)
-            {
-                Projectile.Minion_FindTargetInRange(targettingRange, ref attackTarget, skipIfCannotHitWithOwnBody: true);
-            }
-            if (AI_State == (float)AI_States.ChaseOwner)
-            {
-                Projectile.tileCollide = false;
-                float chaseAccel = 0.4f;
-                float chaseVel = 30f;
-                int resetDist = 200;
-                if (chaseVel < Math.Abs(player.velocity.X) + Math.Abs(player.velocity.Y))
+                int num49 = 0;
+                int num50 = 15;
+                int attackTarget = -1;
+                bool inCombat = AI_State == (float)AI_States.Combat;
+                if (inCombat)
                 {
-                    chaseVel = Math.Abs(player.velocity.X) + Math.Abs(player.velocity.Y);
+                    Projectile.Minion_FindTargetInRange(targettingRange, ref attackTarget, skipIfCannotHitWithOwnBody: true);
                 }
-                Vector2 toPlayer = player.Center - Projectile.Center;
-                float toPlayerLength = toPlayer.Length();
-                if (toPlayerLength > 2000f)
+                if (AI_State == (float)AI_States.ChaseOwner)
                 {
-                    Projectile.position = player.Center - new Vector2(Projectile.width, Projectile.height) / 2f;
-                }
-                if (toPlayerLength < (float)resetDist && player.velocity.Y == 0f && Projectile.position.Y + (float)Projectile.height <= player.position.Y + (float)player.height && !Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height))
-                {
-                    AI_State = (float)AI_States.Combat;
-                    Projectile.netUpdate = true;
-                    if (Projectile.velocity.Y < -6f)
+                    Projectile.tileCollide = false;
+                    float chaseAccel = 0.4f;
+                    float chaseVel = 30f * (1f + 0.1f * (player.ownedProjectileCounts[ModContent.ProjectileType<SunsetQuasarToken>()] - 1)); 
+                    int resetDist = 200;
+                    if (chaseVel < Math.Abs(player.velocity.X) + Math.Abs(player.velocity.Y))
                     {
-                        Projectile.velocity.Y = -6f;
+                        chaseVel = Math.Abs(player.velocity.X) + Math.Abs(player.velocity.Y);
                     }
-                }
+                    Vector2 toPlayer = player.Center - Projectile.Center;
+                    float toPlayerLength = toPlayer.Length();
+                    if (toPlayerLength > 2000f)
+                    {
+                        Projectile.position = player.Center - new Vector2(Projectile.width, Projectile.height) / 2f;
+                    }
+                    if (toPlayerLength < (float)resetDist && player.velocity.Y == 0f && Projectile.position.Y + (float)Projectile.height <= player.position.Y + (float)player.height && !Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height))
+                    {
+                        AI_State = (float)AI_States.Combat;
+                        Projectile.netUpdate = true;
+                        if (Projectile.velocity.Y < -6f)
+                        {
+                            Projectile.velocity.Y = -6f;
+                        }
+                    }
                 if (!(toPlayerLength < 60f))
                 {
                     toPlayer.Normalize();
@@ -359,21 +360,21 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
                     }
                 }
                 Projectile.tileCollide = true;
-                float num25 = 1f;
-                float num26 = 8f;
-                float num27 = 8f;
-                float num28 = 0.1f;
-                if (attackTarget != -1)
-                {
-                    num25 = 0.65f;
-                    num26 = 5.5f;
-                    num27 = 5.5f;
-                }
-                if (num27 < Math.Abs(player.velocity.X) + Math.Abs(player.velocity.Y))
-                {
-                    num27 = Math.Abs(player.velocity.X) + Math.Abs(player.velocity.Y);
-                    num25 = 0.7f;
-                }
+                        float num25 = 1f;
+                        float num26 = 8f * (1f + 0.1f * (player.ownedProjectileCounts[ModContent.ProjectileType<SunsetQuasarToken>()] - 1)); 
+                        float num27 = 8f * (1f + 0.1f * (player.ownedProjectileCounts[ModContent.ProjectileType<SunsetQuasarToken>()] - 1)); 
+                        float num28 = 0.1f;
+                        if (attackTarget != -1)
+                        {
+                            num25 = 0.65f;
+                            num26 = 5.5f * (1f + 0.1f * (player.ownedProjectileCounts[ModContent.ProjectileType<SunsetQuasarToken>()] - 1)); 
+                            num27 = 5.5f * (1f + 0.1f * (player.ownedProjectileCounts[ModContent.ProjectileType<SunsetQuasarToken>()] - 1)); 
+                        }
+                        if (num27 < Math.Abs(player.velocity.X) + Math.Abs(player.velocity.Y))
+                        {
+                            num27 = Math.Abs(player.velocity.X) + Math.Abs(player.velocity.Y);
+                            num25 = 0.7f;
+                        }
                 int num29 = 0;
                 bool flag4 = false;
                 float num30 = targetCenter.X - Projectile.Center.X;
@@ -462,79 +463,81 @@ namespace tsorcRevamp.Projectiles.Summon.SunsetQuasar
                             projGroundTileY = (int)(Projectile.position.Y + (float)(Projectile.height / 2)) / 16;
                             num35 += num29;
                             num35 += (int)Projectile.velocity.X;
+                            float jumpMultiplier = 1f + 0.06f * (player.ownedProjectileCounts[ModContent.ProjectileType<SunsetQuasarToken>()] - 1); 
                             if (!WorldGen.SolidTile(num35, projGroundTileY - 1) && !WorldGen.SolidTile(num35, projGroundTileY - 2))
                             {
-                                Projectile.velocity.Y = -10.2f;
+                                Projectile.velocity.Y = -10.2f * jumpMultiplier;
                             }
                             else if (!WorldGen.SolidTile(num35, projGroundTileY - 2))
                             {
-                                Projectile.velocity.Y = -7.1f;
+                                Projectile.velocity.Y = -7.1f * jumpMultiplier;
                             }
                             else if (WorldGen.SolidTile(num35, projGroundTileY - 5))
                             {
-                                Projectile.velocity.Y = -11.1f;
+                                Projectile.velocity.Y = -11.1f * jumpMultiplier;
                             }
                             else if (WorldGen.SolidTile(num35, projGroundTileY - 4))
                             {
-                                Projectile.velocity.Y = -10.1f;
+                                Projectile.velocity.Y = -10.1f * jumpMultiplier;
                             }
                             else
                             {
-                                Projectile.velocity.Y = -9.1f;
+                                Projectile.velocity.Y = -9.1f * jumpMultiplier;
                             }
                         }
                         catch
                         {
-                            Projectile.velocity.Y = -9.1f;
+                            Projectile.velocity.Y = -9.1f * (1f + 0.06f * (player.ownedProjectileCounts[ModContent.ProjectileType<SunsetQuasarToken>()] - 1));
                         }
                     }
                     if (targetCenter.Y - Projectile.Center.Y < -48f)
                     {
                         float num37 = targetCenter.Y - Projectile.Center.Y;
                         num37 *= -1f;
+                        float jumpMultiplier = 1f + 0.06f * (player.ownedProjectileCounts[ModContent.ProjectileType<SunsetQuasarToken>()] - 1); 
                         if (num37 < 60f)
                         {
-                            Projectile.velocity.Y = -12f;
+                            Projectile.velocity.Y = -12f * jumpMultiplier;
                         }
                         else if (num37 < 80f)
                         {
-                            Projectile.velocity.Y = -14f;
+                            Projectile.velocity.Y = -14f * jumpMultiplier;
                         }
                         else if (num37 < 100f)
                         {
-                            Projectile.velocity.Y = -16f;
+                            Projectile.velocity.Y = -16f * jumpMultiplier;
                         }
                         else if (num37 < 120f)
                         {
-                            Projectile.velocity.Y = -18f;
+                            Projectile.velocity.Y = -18f * jumpMultiplier;
                         }
                         else if (num37 < 140f)
                         {
-                            Projectile.velocity.Y = -20f;
+                            Projectile.velocity.Y = -20f * jumpMultiplier;
                         }
                         else if (num37 < 160f)
                         {
-                            Projectile.velocity.Y = -22f;
+                            Projectile.velocity.Y = -22f * jumpMultiplier;
                         }
                         else if (num37 < 190f)
                         {
-                            Projectile.velocity.Y = -24f;
+                            Projectile.velocity.Y = -24f * jumpMultiplier;
                         }
                         else if (num37 < 210f)
                         {
-                            Projectile.velocity.Y = -26f;
+                            Projectile.velocity.Y = -26f * jumpMultiplier;
                         }
                         else if (num37 < 270f)
                         {
-                            Projectile.velocity.Y = -28f;
+                            Projectile.velocity.Y = -28f * jumpMultiplier;
                         }
                         else if (num37 < 310f)
                         {
-                            Projectile.velocity.Y = -30f;
+                            Projectile.velocity.Y = -30f * jumpMultiplier;
                         }
                         else
                         {
-                            Projectile.velocity.Y = -32f;
+                            Projectile.velocity.Y = -32f * jumpMultiplier;
                         }
                     }
                     if (Projectile.wet && num34 == 0f)

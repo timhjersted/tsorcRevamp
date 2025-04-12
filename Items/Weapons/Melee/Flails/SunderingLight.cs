@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             Item.channel = true;
             Item.useAnimation = 30;
             Item.useTime = 30;
-            Item.damage = 480;
+            Item.damage = 700;
             Item.knockBack = 10;
             Item.UseSound = SoundID.Item1;
             Item.rare = ModContent.RarityType<OrangeRed>();
@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Flails
             recipe.AddIngredient(ModContent.ItemType<Humanity>(), 10);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>());
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 10);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 170000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 120000);
 
             recipe.AddTile(TileID.DemonAltar);
 

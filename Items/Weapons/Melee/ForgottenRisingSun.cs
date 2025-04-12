@@ -15,17 +15,17 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useAnimation = 20;
             Item.useTime = 20;
             Item.autoReuse = true;
-            Item.damage = 445;
+            Item.damage = 465;
             Item.crit = 26;
             Item.knockBack = 5;
             Item.UseSound = SoundID.Item1;
             Item.shootSpeed = 19;
             Item.noUseGraphic = true;
             Item.noMelee = true;
-            Item.value = PriceByRarity.Red_10;
+            Item.rare = ModContent.RarityType<DarkBlue>();
+            Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.MeleeNoSpeed; 
             Item.shoot = ModContent.ProjectileType<Projectiles.ForgottenRisingSunProj>();
-            Item.rare = ModContent.RarityType<DarkBlue>();
 
         }
 

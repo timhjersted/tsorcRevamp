@@ -2333,7 +2333,7 @@ namespace tsorcRevamp
                     //Main.NewText("Crimson");
                     Player.ZoneCrimson = true;
                 }
-                else if (UsefulFunctions.PlayerInZone(Player, 5150,6120, 50,800) || UsefulFunctions.PlayerInZone(Player, 6120,6300, 400,800))
+                else if (UsefulFunctions.PlayerInZone(Player, 5150,6120, 50,800) || UsefulFunctions.PlayerInZone(Player, 6120,6300, 400,800) || UsefulFunctions.PlayerInZone(Player, 5726,5937, 1656,1803))
                 {
                     //Main.NewText("Jungle");
                     Player.ZoneJungle = true;

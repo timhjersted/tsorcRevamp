@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             NPC.friendly = false;
             NPC.noTileCollide = false;
             NPC.noGravity = true;
-            NPC.knockBackResist = 0.2f;
+            NPC.knockBackResist = 0f;
             NPC.lavaImmune = true;
             NPC.boss = true;
             NPC.value = 150000;

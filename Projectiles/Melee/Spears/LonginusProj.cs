@@ -51,7 +51,7 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
                 Projectile.NewProjectile(
                     Projectile.GetSource_FromThis(),
                     boltSpawnPos,
-                    boltVelocity * 1.8f,
+                    boltVelocity * 2.1f,
                     ProjectileID.RubyBolt,
                     boltDamage,
                     3f,

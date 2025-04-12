@@ -160,8 +160,8 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
 
             if (attackReady)
             {
-                int leashRange = 500;
-
+                int leashRange = 500; 
+                
                 if (AI_InCombatTimer > 0f)
                 {
                     leashRange += 250;
@@ -172,6 +172,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
                     AI_State = (float)AI_States.ChaseOwner;
                     ChangeAnimationState(AnimationStates.Flying);
                 }
+
                 float toOwnerX = player.position.X + player.width / 2 - Projectile.Center.X;
                 float toOwnerY = player.position.Y + player.height / 2 - Projectile.Center.Y;
                 float toOwnerDist = (float)Math.Sqrt(toOwnerX * toOwnerX + toOwnerY * toOwnerY);
@@ -181,30 +182,41 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
                     Projectile.position.X = player.position.X + player.width / 2 - Projectile.width / 2;
                     Projectile.position.Y = player.position.Y + player.height / 2 - Projectile.height / 2;
                 }
-                else if (toOwnerDist > leashRange || Math.Abs(toOwnerY) > 300f && !(AI_InCombatTimer > 0f))
+
+                else if (toOwnerDist > leashRange || Math.Abs(toOwnerY) > 500f && !(AI_InCombatTimer > 0f))
                 {
-                    if (Projectile.type != 324)
+                    bool enemyInRange = false;
+                    for (int i = 0; i < 200; i++)
                     {
-                        if (toOwnerY > 0f && Projectile.velocity.Y < 0f)
+                        if (Main.npc[i].CanBeChasedBy(this) && Vector2.Distance(Projectile.Center, Main.npc[i].Center) < 750f)
                         {
-                            Projectile.velocity.Y = 0f;
-                        }
-                        if (toOwnerY < 0f && Projectile.velocity.Y > 0f)
-                        {
-                            Projectile.velocity.Y = 0f;
+                            enemyInRange = true;
+                            break;
                         }
                     }
-                    AI_State = (float)AI_States.ChaseOwner;
-                    ChangeAnimationState(AnimationStates.Flying);
+                    if (!enemyInRange) 
+                    {
+                        if (Projectile.type != 324)
+                        {
+                            if (toOwnerY > 0f && Projectile.velocity.Y < 0f)
+                            {
+                                Projectile.velocity.Y = 0f;
+                            }
+                            if (toOwnerY < 0f && Projectile.velocity.Y > 0f)
+                            {
+                                Projectile.velocity.Y = 0f;
+                            }
+                        }
+                        AI_State = (float)AI_States.ChaseOwner;
+                        ChangeAnimationState(AnimationStates.Flying);
+                    }
                 }
-
             }
             int tokenCount = player.ownedProjectileCounts[ModContent.ProjectileType<ArcherToken>()];
             switch (AI_State)
             {
-                case (float)AI_States.Combat:
+                    case (float)AI_States.Combat:
                     {
-
                         float offset = Projectile.width * Projectile.minionPos;
                         int attackRate = 30;
                         int minCombatTime = 60;
@@ -215,6 +227,28 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
                         }
                         int targetWhoAmI = -1;
                         bool skippedAttack = false;
+
+                        bool enemyInRange = false;
+
+                        for (int i = 0; i < 200; i++)
+                        {
+                            if (Main.npc[i].CanBeChasedBy(this) && Vector2.Distance(Projectile.Center, Main.npc[i].Center) < 750f)
+                            {
+                                enemyInRange = true;
+                                break;
+                            }
+                        }
+
+                        if (enemyInRange && Projectile.velocity.Y == 0f) 
+                        {
+                            ChangeAnimationState(AnimationStates.Shooting);
+                        }
+
+                        else if (Projectile.velocity.Y != 0f && !enemyInRange) 
+                        {
+                            ChangeAnimationState(AnimationStates.Flying);
+                        }
+
                         if (AI_Timer > 0f)
                         {
                             AI_Timer -= 1f;
@@ -593,7 +627,7 @@ namespace tsorcRevamp.Projectiles.Summon.Archer
                         }
 
 
-                        if (toPlayerDistAbs < nearOwnerRange && player.velocity.Y == 0f && Projectile.position.Y + Projectile.height <= player.position.Y + player.height && !Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height))
+                        if (toPlayerDistAbs < nearOwnerRange && !Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height))
                         {
                             AI_State = (float)AI_States.Combat;
                             if (Projectile.velocity.Y < -6f)

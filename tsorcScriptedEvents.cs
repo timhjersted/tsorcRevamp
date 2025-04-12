@@ -311,7 +311,7 @@ namespace tsorcRevamp
             //THE RAGE
             ScriptedEvent TheRage = new ScriptedEvent(new Vector2(7000, 1845), 30, ModContent.NPCType<NPCs.Bosses.TheRage>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.Rage"), Color.Red, false);
 
-            //ANCIENT DEMON (FORGOTTEN CITY, CLOSE TO FIRE TEMPLE)
+            //DEFILED DEMON (FORGOTTEN CITY, CLOSE TO FIRE TEMPLE)
             ScriptedEvent AncientDemon = new ScriptedEvent(new Vector2(5317, 1800), 25, ModContent.NPCType<NPCs.Bosses.AncientDemon>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.AncientDemon"), Color.MediumPurple, false);
             AncientDemon.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<DarkSoul>() }, new List<int>() { 1, 5000 });
 
@@ -564,7 +564,7 @@ namespace tsorcRevamp
             List<Vector2> MushroomCavernEnemyLocations = new List<Vector2>() { new Vector2(3690, 1545), new Vector2(3675, 1545) };
             ScriptedEvent MushroomCavern = new ScriptedEvent(new Vector2(3690, 1535), 30, MushroomCavernEnemyTypeList, MushroomCavernEnemyLocations, DustID.Water, true, true, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
 
-            //Ashen Cavern Leftside - Ancient Demon Of The Abyss
+            //Ashen Cavern Leftside - Great Demon Of The Abyss
             ScriptedEvent AshCavernLeftside = new ScriptedEvent(new Vector2(1578, 1895), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemonOfTheAbyss>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red);
 
             //Ashen Cavern Rightside - Oolacile Knight

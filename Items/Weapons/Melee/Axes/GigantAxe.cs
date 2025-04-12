@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Axes
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 21;
             Item.useTime = 21;
-            Item.scale = 2f;
+            Item.scale = 1.8f;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Purple_11;

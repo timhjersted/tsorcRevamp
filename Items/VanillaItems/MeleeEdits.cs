@@ -231,9 +231,9 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.ChristmasTreeSword)
             {
-                item.damage = 150; 
-                item.useTime = 20;
-                item.useAnimation = 20;
+                item.damage = 135; 
+                item.useTime = 21;
+                item.useAnimation = 21;
             }
             if (item.type == ItemID.NorthPole)
             {
@@ -258,7 +258,7 @@ namespace tsorcRevamp.Items.VanillaItems
             }
             if (item.type == ItemID.InfluxWaver)
             {
-                item.damage = 125; //SHM
+                item.damage = 120; //SHM
                 //item.mana = 23;
             }
             if (item.type == ItemID.DayBreak)

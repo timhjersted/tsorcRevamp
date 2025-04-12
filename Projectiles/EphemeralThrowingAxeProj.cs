@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles
                     Vector2 arg_92_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
                     int arg_92_1 = Projectile.width;
                     int arg_92_2 = Projectile.height;
-                    int arg_92_3 = 7;
+                    int arg_92_3 = 57;
                     float arg_92_4 = 0f;
                     float arg_92_5 = 0f;
                     int arg_92_6 = 0;

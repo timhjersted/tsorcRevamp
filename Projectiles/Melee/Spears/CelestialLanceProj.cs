@@ -56,7 +56,7 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
                     Projectile.NewProjectile(
                         Projectile.GetSource_FromThis(), 
                         starSpawnPos,                  
-                        starVelocity * 1.8f,            
+                        starVelocity * 2.2f,            
                         starType,                       
                         starDamage,                    
                         3f,                             

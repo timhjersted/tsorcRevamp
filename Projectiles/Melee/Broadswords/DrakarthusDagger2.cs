@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Melee.Broadswords
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(45);
 
             UsefulFunctions.HomeOnEnemy(Projectile, 240, 24);
-            Dust.NewDustDirect(Projectile.position, 24, 24, DustID.SolarFlare).noGravity = true;
+            Dust.NewDustDirect(Projectile.position, 24, 24, DustID.GemRuby).noGravity = true;
         }
 
     }

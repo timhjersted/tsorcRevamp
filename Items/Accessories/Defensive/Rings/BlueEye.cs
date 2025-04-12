@@ -5,15 +5,15 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories.Defensive.Rings
 {
-    public class RingOfTheBlueEye : ModItem
+    public class BlueEye : ModItem
     {
         public override void SetStaticDefaults()
         {
         }
         public override void SetDefaults()
         {
-            Item.width = 24;
-            Item.height = 24;
+            Item.width = 20;
+            Item.height = 34;
             Item.alpha = 0;
             Item.accessory = true;
             Item.value = 1000000;

@@ -524,7 +524,11 @@ namespace tsorcRevamp.NPCs
             //mushroom
             if (spawnInfo.Player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode)
             {
-                pool.Add(NPCID.DD2LightningBugT3, 0.28f);
+                pool.Add(NPCID.StardustWormHead, 0.1f); //.1 is 3%
+                pool.Add(NPCID.StardustCellBig, 0.02f); //.5 is 16%
+                pool.Add(NPCID.StardustJellyfishBig, 0.3f);
+                pool.Add(NPCID.StardustSpiderBig, 0.6f);
+                pool.Add(NPCID.StardustSoldier, 1f);
             }
             //underground 
             if (spawnInfo.Player.ZoneUnderworldHeight && !spawnInfo.Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
@@ -552,11 +556,10 @@ namespace tsorcRevamp.NPCs
             // molten sky temple
             if (spawnInfo.Player.ZoneUnderworldHeight && (spawnInfo.SpawnTileType == TileID.MeteoriteBrick || spawnInfo.SpawnTileType == TileID.HeavenforgeBrick || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.HeavenforgeBrickWall) && tsorcRevampWorld.SuperHardMode)
             {
-                pool.Add(NPCID.StardustWormHead, 0.1f); //.1 is 3%
-                pool.Add(NPCID.StardustCellBig, 0.02f); //.5 is 16%
-                pool.Add(NPCID.StardustJellyfishBig, 0.3f);
-                pool.Add(NPCID.StardustSpiderBig, 0.6f);
-                pool.Add(NPCID.StardustSoldier, 1f);
+                pool.Add(NPCID.VortexRifleman, 0.1f); //.1 is 3%
+                pool.Add(NPCID.VortexHornet, 0.02f); //.5 is 16%
+                pool.Add(NPCID.VortexSoldier, 0.3f);
+                pool.Add(NPCID.Paladin, 0.6f);
             }
             if (tsorcRevampWorld.RemixMap) // If it is Remix Map
             {

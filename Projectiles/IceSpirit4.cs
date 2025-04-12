@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void AI()
         {
-            int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 27, 0, 0, 100, default, 1.0f);
+            int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 92, 0, 0, 100, default, 1.0f);
             Main.dust[dust].noGravity = true;
 
 

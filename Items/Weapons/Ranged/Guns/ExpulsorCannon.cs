@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Guns
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 15);
             recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>(), 1);
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 200000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 130000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

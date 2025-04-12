@@ -57,6 +57,7 @@ namespace tsorcRevamp
             NewSlain = new();
             tsorcScriptedEvents.InitializeScriptedEvents();
             MapMarkers = new();
+            BossIDsAndCoordinatesInternal = null;
 
             PopulatePairedBosses();
         }
@@ -1683,7 +1684,17 @@ namespace tsorcRevamp
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), new Vector2(6432, 247) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), new Vector2(6317, 1900) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), new Vector2(5787, 1775) },
-            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), new Vector2(801, 1245) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), new Vector2(801, 1245) }, 
+        };
+
+        public static Dictionary<int, Vector2> RemixPreHardmodeBossIDs = new Dictionary<int, Vector2>
+        {
+            { NPCID.Deerclops, new Vector2(7344, 768) }, 
+        };
+
+        public static Dictionary<int, Vector2> RemixHardmodeBossIDs = new Dictionary<int, Vector2>
+        {
+            { ModContent.NPCType<NPCs.Bosses.Death>(), new Vector2(8091, 557) },
         };
 
         private static Dictionary<int, Vector2> BossIDsAndCoordinatesInternal;
@@ -1694,14 +1705,49 @@ namespace tsorcRevamp
                 if (BossIDsAndCoordinatesInternal == null)
                 {
                     BossIDsAndCoordinatesInternal = new Dictionary<int, Vector2>();
-                    foreach (KeyValuePair<int, Vector2> pair in PreHardmodeBossIDs)
+
+                    // If Remix Map is activated, use remix coordinates 
+                    if (RemixMap)
                     {
-                        BossIDsAndCoordinatesInternal.Add(pair.Key, pair.Value);
+                        foreach (KeyValuePair<int, Vector2> pair in RemixPreHardmodeBossIDs)
+                        {
+                            BossIDsAndCoordinatesInternal[pair.Key] = pair.Value;
+                        }
+
+                        foreach (KeyValuePair<int, Vector2> pair in PreHardmodeBossIDs)
+                        {
+                            if (!RemixPreHardmodeBossIDs.ContainsKey(pair.Key))
+                            {
+                                BossIDsAndCoordinatesInternal.Add(pair.Key, pair.Value);
+                            }
+                        }
+
+                        foreach (KeyValuePair<int, Vector2> pair in RemixHardmodeBossIDs)
+                        {
+                            BossIDsAndCoordinatesInternal[pair.Key] = pair.Value;
+                        }
+
+                        foreach (KeyValuePair<int, Vector2> pair in HardmodeBossIDs)
+                        {
+                            if (!RemixHardmodeBossIDs.ContainsKey(pair.Key))
+                            {
+                                BossIDsAndCoordinatesInternal.Add(pair.Key, pair.Value);
+                            }
+                        }
                     }
-                    foreach (KeyValuePair<int, Vector2> pair in HardmodeBossIDs)
+                    else
                     {
-                        BossIDsAndCoordinatesInternal.Add(pair.Key, pair.Value);
+                        foreach (KeyValuePair<int, Vector2> pair in PreHardmodeBossIDs)
+                        {
+                            BossIDsAndCoordinatesInternal.Add(pair.Key, pair.Value);
+                        }
+
+                        foreach (KeyValuePair<int, Vector2> pair in HardmodeBossIDs)
+                        {
+                            BossIDsAndCoordinatesInternal.Add(pair.Key, pair.Value);
+                        }
                     }
+
                     foreach (KeyValuePair<int, Vector2> pair in SHMBossIDs)
                     {
                         BossIDsAndCoordinatesInternal.Add(pair.Key, pair.Value);

@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Accessories.Ranged
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(RangedDmgCrit);
         public override void SetStaticDefaults()
         {
-            ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<RingOfTheBlueEye>();
+            ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<BlueEye>();
         }
         public override void SetDefaults()
         {

@@ -1110,7 +1110,7 @@ Mods: {
 			}
 
 			AncientDemonShield: {
-				DisplayName: Ancient Demon Shield
+				DisplayName: Defiled Demon Shield
 				Tooltip:
 					'''
 					{$CommonItemTooltip.DRStat}
@@ -1324,8 +1324,8 @@ Mods: {
 					'''
 			}
 
-			RingOfTheBlueEye: {
-				DisplayName: Ring of the Blue Eye
+			BlueEye: {
+				DisplayName: Blazing Blue Eye
 				Tooltip: Bones fly out in retaliation when player is hurt
 			}
 
@@ -2916,7 +2916,7 @@ Mods: {
 			}
 
 			AncientDemonArmor: {
-				DisplayName: Ancient Demon Armor
+				DisplayName: Defiled Demon Armor
 				Tooltip:
 					'''
 					Forged by those who brave Annihilation
@@ -2929,7 +2929,7 @@ Mods: {
 			}
 
 			AncientDemonGreaves: {
-				DisplayName: Ancient Demon Greaves
+				DisplayName: Defiled Demon Greaves
 				Tooltip:
 					'''
 					{$CommonItemTooltip.IncreasesMaxMinionsBy}
@@ -2938,7 +2938,7 @@ Mods: {
 			}
 
 			AncientDemonHelmet: {
-				DisplayName: Ancient Demon Helmet
+				DisplayName: Defiled Demon Helmet
 				Tooltip:
 					'''
 					You hear an evil whispering from inside
@@ -3177,7 +3177,7 @@ Mods: {
 			}
 
 			AncientDemonBag: {
-				DisplayName: Treasure Bag (Ancient Demon)
+				DisplayName: Treasure Bag (Defiled Demon)
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -5147,7 +5147,7 @@ Mods: {
 
 			EnchantedThrowingSpear: {
 				DisplayName: Enchanted Throwing Spear
-				Tooltip: Magic throwing spear that passes through walls and is created with mana on each throw
+				Tooltip: Magic throwing spear that passes through walls
 			}
 
 			EnergyBombRune: {
@@ -5835,15 +5835,6 @@ Mods: {
 			VampireBlade: {
 				DisplayName: Vampire Blade
 				Tooltip: Heals 2 hp on hit
-			}
-
-			WereBane: {
-				DisplayName: WereBane
-				Tooltip:
-					'''
-					A sword used to kill werewolves instantly.
-					Does 8x damage to werewolves.
-					'''
 			}
 
 			WitchkingsSword: {
@@ -9410,6 +9401,7 @@ Mods: {
 			Icicle2.DisplayName: Icicle2
 			ShadowBreath.DisplayName: Shadow Breath
 			FrostFireBall.DisplayName: Frost Fire Ball
+			DrakarthusProjectile.DisplayName: Drakarthus Projectile
 		}
 
 		NPCs: {
@@ -9458,8 +9450,8 @@ Mods: {
 			MoonLord.DespawnHandler: Nobody remains to impede the Moon Lord's wrath...
 
 			AncientDemon: {
-				DisplayName: Ancient Demon
-				DespawnHandler: An ancient demon decides to show you mercy ...
+				DisplayName: Defiled Demon of the Forgotten City
+				DespawnHandler: The defiled Demon of the Forgotten City decides to show you mercy ...
 			}
 
 			AncientOolacileDemon: {
@@ -9941,7 +9933,7 @@ Mods: {
 			Abysswalker.DisplayName: Dworc Abysswalker
 
 			AncientDemonOfTheAbyss: {
-				DisplayName: Ancient Demon of the Abyss
+				DisplayName: Great Demon of the Abyss
 				DespawnHandler: A demon of the abyss has absorbed you into its flesh ...
 			}
 

@@ -23,8 +23,8 @@ namespace tsorcRevamp.Items.Armors.Summon
             Item.width = 18;
             Item.height = 12;
             Item.defense = 16;
-            Item.rare = ItemRarityID.Purple;
-            Item.value = PriceByRarity.fromItem(Item);
+            Item.rare = ModContent.RarityType<DarkBlue>();
+            Item.value = PriceByRarity.Purple_11;
         }
         public override void UpdateEquip(Player player)
         {

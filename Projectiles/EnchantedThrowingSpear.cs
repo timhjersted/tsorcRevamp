@@ -55,7 +55,7 @@ namespace tsorcRevamp.Projectiles
             for (int i = 0; i < 10; i++)
             {
                 Vector2 projPosition = new Vector2(Projectile.position.X, Projectile.position.Y);
-                Dust.NewDust(projPosition, Projectile.width, Projectile.height, 7, 0f, 0f, 0, default, 1f);
+                Dust.NewDust(projPosition, Projectile.width, Projectile.height, 15, 0f, 0f, 0, default, 1f);
             }
         }
 

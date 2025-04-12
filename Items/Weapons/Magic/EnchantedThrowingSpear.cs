@@ -15,13 +15,12 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void SetDefaults()
         {
-            Item.shootSpeed = 12f;
-            Item.damage = 39;
+            Item.shootSpeed = 13f;
+            Item.damage = 43;
             Item.knockBack = 9f;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 20;
             Item.useTime = 20;
-            Item.mana = 10;
             Item.width = 64;
             Item.height = 64;
             Item.rare = ItemRarityID.LightRed;
@@ -40,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<ThrowingSpear>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<ThrowingSpear>(), 100);
             recipe.AddIngredient(ItemID.SoulofLight, 3);
             //recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);

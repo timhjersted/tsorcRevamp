@@ -59,7 +59,6 @@ namespace tsorcRevamp.Items.Weapons.Melee.Broadswords
             if (player.altFunctionUse != 2) //shoot Nothing
                 return true;
 
-
             if (player.ownedProjectileCounts[ModContent.ProjectileType<DrakarthusDagger>()] == 0)
             {
                 if (player.statMana <= MANA_COST) return false;
