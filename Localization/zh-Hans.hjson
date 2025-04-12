@@ -6045,6 +6045,7 @@ Mods: {
 				Tooltip:
 					'''
 					传说中的天界之矛掌管着世界
+					命中时召唤坠星
 					坠落时增加 {0}% 伤害，每次攻击有机会回复 {1} 生命值
 					'''
 			}
@@ -6104,6 +6105,7 @@ Mods: {
 				Tooltip:
 					'''
 					称霸世界的传说长矛
+					命中时召唤星火
 					坠落时增加 {0}% 伤害，每次攻击有机会回复 {1} 生命值
 					'''
 			}
@@ -9399,11 +9401,11 @@ Mods: {
 			SupremeDragoonLashProjectile.DisplayName: 至尊龙纹鞭
 			HighCaliberRound.DisplayName: 大口径步枪
 			OldHalberdProj.DisplayName: 旧戟
-			// DragoonLightning.DisplayName: Dragoon Lightning
-			// SupremeDragoonLightning.DisplayName: Supreme Dragoon Lightning
+			DragoonLightning.DisplayName: Dragoon Lightning
+			SupremeDragoonLightning.DisplayName: Supreme Dragoon Lightning
 			Icicle2.DisplayName: 霜灾魔杖
-			// ShadowBreath.DisplayName: Shadow Breath
-			// FrostFireBall.DisplayName: Frost Fire Ball
+			ShadowBreath.DisplayName: Shadow Breath
+			FrostFireBall.DisplayName: Frost Fire Ball
 		}
 
 		NPCs: {
