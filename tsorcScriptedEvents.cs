@@ -165,6 +165,7 @@ namespace tsorcRevamp
             AbyssPortal,
             GwynFight,
             AbysmalOolacileSorcererFight,
+            RemixAbysmalOolacileSorcererFight,
             WitchkingFight,
             WyvernMageShadowFight,
             ChaosFight,
@@ -398,7 +399,9 @@ namespace tsorcRevamp
             ScriptedEvent GwynEvent = new ScriptedEvent(new Vector2(832, 1244), 16, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.Gwyn"), Color.Red, false);
 
             //ABYSMAL OOLACILE SORCERER
-            ScriptedEvent AbysmalOolacileSorcererEvent = new ScriptedEvent(new Vector2(6721, 1905), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AbysmalOolacileSorcerer"), Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent AbysmalOolacileSorcererEvent = new ScriptedEvent(new Vector2(6721, 1905), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AbysmalOolacileSorcerer"), Color.Red, false, OnlyAdventureMapCondition);
+
+            ScriptedEvent RemixAbysmalOolacileSorcererEvent = new ScriptedEvent(new Vector2(8239, 1870), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AbysmalOolacileSorcerer"), Color.Red, false, RemixMapCondition);
 
             //WITCHKING
             ScriptedEvent WitchkingEvent = new ScriptedEvent(new Vector2(2484, 1795), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.Witchking"), Color.Red, false, SuperHardModeCustomCondition);
@@ -670,6 +673,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.GwynTombVision, GwynsTombEvent},
                 {ScriptedEventType.GwynFight, GwynEvent},
                 {ScriptedEventType.AbysmalOolacileSorcererFight, AbysmalOolacileSorcererEvent},
+                {ScriptedEventType.RemixAbysmalOolacileSorcererFight, RemixAbysmalOolacileSorcererEvent},
                 {ScriptedEventType.WitchkingFight, WitchkingEvent},
                 {ScriptedEventType.ChaosFight, ChaosEvent},
                 {ScriptedEventType.WyvernMageShadowFight, WyvernMageShadowEvent},

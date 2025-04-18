@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles
         {
             Projectile.penetrate = 10;
             Projectile.width = 16;
-            Projectile.height = 16;
+            Projectile.height = 44;
             Projectile.timeLeft = 1800;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;

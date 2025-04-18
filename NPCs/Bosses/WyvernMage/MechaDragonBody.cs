@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
     {
         public int Timer = -1000;
         public static int[] bodyTypes;
-        public int CrystalFireDamage = 21;
+        public int HostileFreezeBoltDamage = 21;
         public override void SetStaticDefaults()
         {
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
@@ -98,7 +98,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     rotation += Main.rand.Next(-50, 50) / 100;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.CrystalFire>(), CrystalFireDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.HostileFreezeBolt>(), HostileFreezeBoltDamage, 0f, Main.myPlayer);
                     }
                     Timer = -600 - Main.rand.Next(700);
                 }

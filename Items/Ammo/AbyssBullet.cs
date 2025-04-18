@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Ammo
 			Item.damage = 22; 
 			Item.DamageType = DamageClass.Ranged;
 			Item.width = 10;
-			Item.height = 14;
+			Item.height = 26;
 			Item.maxStack = Item.CommonMaxStack;
 			Item.consumable = true; 
 			Item.knockBack = 4.1f;

@@ -133,7 +133,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     //float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
-                    Vector2 projVelocity = NPC.velocity * 1.25f + new Vector2(Main.rand.NextFloat(-2, 3), Main.rand.NextFloat(-2, 3));
+                    Vector2 projVelocity = NPC.velocity * 1f + new Vector2(Main.rand.NextFloat(-2, 3), Main.rand.NextFloat(-2, 3));
                     Vector2 projPosition = new Vector2((NPC.Center.X + spawnOffset.X), (NPC.Center.Y + spawnOffset.Y));
                     Projectile newProj = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), projPosition, projVelocity, ProjectileID.Flames, breathDamage, 3.2f, Main.myPlayer, NPC.whoAmI); 
                     newProj.hostile = true;

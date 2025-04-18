@@ -6144,8 +6144,8 @@ Mods: {
 			}
 
 			Blast: {
-				DisplayName: Blast
-				Tooltip: ""
+				DisplayName: Tactical High-Explosive Launcher
+				Tooltip: Converts rockets into mini-nukes
 			}
 
 			BlizzardBlaster: {
@@ -9402,6 +9402,8 @@ Mods: {
 			ShadowBreath.DisplayName: Shadow Breath
 			FrostFireBall.DisplayName: Frost Fire Ball
 			DrakarthusProjectile.DisplayName: Drakarthus Projectile
+			HostileFreezeBolt.DisplayName: Hostile Freeze Bolt
+			DivineBoltProjectile.DisplayName: Divine Bolt Projectile
 		}
 
 		NPCs: {

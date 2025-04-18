@@ -23,8 +23,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             AnimationType = 42;
             AIType = 42;
             NPC.width = 34;
-            NPC.height = 12;
-            NPC.knockBackResist = .2f;
+            NPC.height = 35;
+            NPC.knockBackResist = 0.15f;
             NPC.value = 4000; // life / 2.5 : was 113
             NPC.aiStyle = 5;
             NPC.timeLeft = 750;

@@ -1324,7 +1324,7 @@ Mods: {
 					'''
 			}
 
-			RingOfTheBlueEye: {
+			BlueEye: {
 				DisplayName: 深蓝之眼指环
 				Tooltip: 当你被打的时候，身体里会有骨头飞出来（对敌方造成伤害）
 			}
@@ -5833,15 +5833,6 @@ Mods: {
 				Tooltip: 每次攻击恢复 3 点生命值
 			}
 
-			WereBane: {
-				DisplayName: 祸根
-				Tooltip:
-					'''
-					用于瞬杀狼人的剑
-					对狼人造成十六倍伤害
-					'''
-			}
-
 			WitchkingsSword: {
 				DisplayName: 巫师王之剑
 				Tooltip: 攻击敌人对其施加 1-2 种随机的减益
@@ -9404,8 +9395,11 @@ Mods: {
 			DragoonLightning.DisplayName: Dragoon Lightning
 			SupremeDragoonLightning.DisplayName: Supreme Dragoon Lightning
 			Icicle2.DisplayName: 霜灾魔杖
-			ShadowBreath.DisplayName: Shadow Breath
-			FrostFireBall.DisplayName: Frost Fire Ball
+			// ShadowBreath.DisplayName: Shadow Breath
+			// FrostFireBall.DisplayName: Frost Fire Ball
+			// DrakarthusProjectile.DisplayName: Drakarthus Projectile
+			// HostileFreezeBolt.DisplayName: Hostile Freeze Bolt
+			// DivineBoltProjectile.DisplayName: Divine Bolt Projectile
 		}
 
 		NPCs: {

@@ -20,7 +20,6 @@ namespace tsorcRevamp.Projectiles
         }
         public override bool PreKill(int timeLeft)
         {
-            Projectile.type = 15;
             return true;
         }
         public override void OnSpawn(IEntitySource source)

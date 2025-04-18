@@ -1696,6 +1696,12 @@ namespace tsorcRevamp
         {
             { ModContent.NPCType<NPCs.Bosses.Death>(), new Vector2(8091, 557) },
         };
+        
+        public static Dictionary<int, Vector2> RemixSHMBossIDs = new Dictionary<int, Vector2>
+        {
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), new Vector2(8234, 1875) },
+        };
+
 
         private static Dictionary<int, Vector2> BossIDsAndCoordinatesInternal;
         public static Dictionary<int, Vector2> BossIDsAndCoordinates
@@ -1734,6 +1740,19 @@ namespace tsorcRevamp
                                 BossIDsAndCoordinatesInternal.Add(pair.Key, pair.Value);
                             }
                         }
+
+                        foreach (KeyValuePair<int, Vector2> pair in RemixSHMBossIDs)
+                        {
+                            BossIDsAndCoordinatesInternal[pair.Key] = pair.Value;
+                        }
+
+                        foreach (KeyValuePair<int, Vector2> pair in SHMBossIDs)
+                        {
+                            if (!RemixSHMBossIDs.ContainsKey(pair.Key))
+                            {
+                                BossIDsAndCoordinatesInternal.Add(pair.Key, pair.Value);
+                            }
+                        }
                     }
                     else
                     {
@@ -1746,11 +1765,11 @@ namespace tsorcRevamp
                         {
                             BossIDsAndCoordinatesInternal.Add(pair.Key, pair.Value);
                         }
-                    }
 
-                    foreach (KeyValuePair<int, Vector2> pair in SHMBossIDs)
-                    {
-                        BossIDsAndCoordinatesInternal.Add(pair.Key, pair.Value);
+                        foreach (KeyValuePair<int, Vector2> pair in SHMBossIDs)
+                        {
+                            BossIDsAndCoordinatesInternal.Add(pair.Key, pair.Value);
+                        }
                     }
                 }
 

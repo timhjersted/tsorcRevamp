@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.width = 6;
             Projectile.height = 6;
             Projectile.scale = 1f;
-            Projectile.alpha = 255;
+            Projectile.alpha = 200;
             Projectile.aiStyle = 0;
             Projectile.timeLeft = 3600;
             Projectile.friendly = true;
@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles
             {
                 Projectile.timeLeft = 60;
             }
-            if (Projectile.ai[0] > 7f)
+            if (Projectile.ai[0] > 4f)
             {
                 float num152 = 1f;
                 if (Projectile.ai[0] == 8f)
@@ -61,9 +61,9 @@ namespace tsorcRevamp.Projectiles
                 {
                     for (int i = 0; i < 1; i++)
                     {
-                        int num155 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 10, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
-                        int dust2 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y - 10), Projectile.width, Projectile.height, 10, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
-                        int dust3 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y + 10), Projectile.width, Projectile.height, 10, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
+                        int num155 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 32, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
+                        int dust2 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y - 10), Projectile.width, Projectile.height, 32, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
+                        int dust3 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y + 10), Projectile.width, Projectile.height, 32, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
                         if (!Main.rand.NextBool(3))
                         {
                             Main.dust[num155].noGravity = true;
