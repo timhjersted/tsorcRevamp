@@ -1110,7 +1110,7 @@ Mods: {
 			}
 
 			AncientDemonShield: {
-				DisplayName: 远古恶魔之盾
+				DisplayName: 渎遗恶魔之盾
 				Tooltip:
 					'''
 					{$CommonItemTooltip.DRStat}
@@ -2916,7 +2916,7 @@ Mods: {
 			}
 
 			AncientDemonArmor: {
-				DisplayName: 古代恶魔盔甲
+				DisplayName: 亵渎恶魔盔甲
 				Tooltip:
 					'''
 					由直面毁灭的勇敢者铸造
@@ -2929,7 +2929,7 @@ Mods: {
 			}
 
 			AncientDemonGreaves: {
-				DisplayName: 古代恶魔战靴
+				DisplayName: 亵渎恶魔战靴
 				Tooltip:
 					'''
 					{$CommonItemTooltip.IncreasesMaxMinionsBy}
@@ -2938,7 +2938,7 @@ Mods: {
 			}
 
 			AncientDemonHelmet: {
-				DisplayName: 古代恶魔盔
+				DisplayName: 亵渎恶魔盔
 				Tooltip:
 					'''
 					你可以听到里面的恶魔低语
@@ -3177,7 +3177,7 @@ Mods: {
 			}
 
 			AncientDemonBag: {
-				DisplayName: 宝藏袋（远古恶魔）
+				DisplayName: 宝藏袋（渎遗恶魔）
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -5145,7 +5145,7 @@ Mods: {
 
 			EnchantedThrowingSpear: {
 				DisplayName: 附魔投矛
-				Tooltip: 穿过墙壁的魔法投掷矛，每次投掷都会消耗魔力值
+				Tooltip: 穿过墙壁的魔法投掷矛
 			}
 
 			EnergyBombRune: {
@@ -6140,8 +6140,8 @@ Mods: {
 			}
 
 			Blast: {
-				DisplayName: 起爆器
-				Tooltip: ""
+				DisplayName: 战术高爆发射器
+				Tooltip: 将火箭转化为微型核弹
 			}
 
 			BlizzardBlaster: {
@@ -9037,7 +9037,7 @@ Mods: {
 			BerserkerNightmareBall.DisplayName: 狂热者的梦魇球
 			HeavensTearBall.DisplayName: 天堂之泪
 			MoonfuryBall.DisplayName: 月煞球
-			SunderingLightBall.DisplayName: 肃杀光球
+			SunderingLightBall.DisplayName: 消逝之光
 			FlameJet.DisplayName: 喷火陷阱
 			FlameStrike.DisplayName: 燎焱卷轴
 			ForgottenRisingSunProj.DisplayName: 被遗忘的旭日
@@ -9448,8 +9448,8 @@ Mods: {
 			MoonLord.DespawnHandler: 没有人能阻挡月亮领主的怒火...
 
 			AncientDemon: {
-				DisplayName: 远古恶魔
-				DespawnHandler: 远古恶魔打算放你一马...
+				DisplayName: 渎遗恶魔
+				DespawnHandler: 渎遗恶魔打算放你一马...
 			}
 
 			AncientOolacileDemon: {
