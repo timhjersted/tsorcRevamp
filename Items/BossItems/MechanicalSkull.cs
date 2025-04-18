@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.BossItems
                 }
                 else
                 {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.CursedSkull.Wrong"), 220, 180, 180);
+                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.MechanicalSkull.Wrong"), 220, 180, 180);
                     return false;
                 }
             }
