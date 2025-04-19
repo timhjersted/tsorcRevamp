@@ -77,7 +77,7 @@ Mods: {
 			StaminaRegen: 增加 {0}% 耐力再生
 			StaminaRecovery: 增加 {0}% 耐力回复速度
 			DRStat: 增加 {0} 抵抗力
-			BadDRStat: 减少 {0}% 抵抗力
+			BadDRStat: 减少 {0} 抵抗力
 			Cooldown: "{0} 秒冷却"
 			CritDmg: 暴击时造成 {0}% 额外伤害
 			LifeThreshold: 当生命值低于 {0}% 时，
@@ -4349,7 +4349,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance}
 					{$CommonItemTooltip.Thorns@1}，获得战斗药水效果
-					{$CommonItemTooltip.BadDefense@2}
+					{$CommonItemTooltip.BadDRStat@2}
 					不与恶魔药水、护甲药水或力量药水叠加
 					'''
 			}

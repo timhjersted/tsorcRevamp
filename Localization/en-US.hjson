@@ -4364,7 +4364,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance}
 					{$CommonItemTooltip.Thorns@1} and grants the Battle potion effect
-					{$CommonItemTooltip.BadDefense@2}
+					{$CommonItemTooltip.BadDRStat@2}
 					Does not stack with Demon Drug, Armor Drug, or Strength Potions.
 					'''
 			}
