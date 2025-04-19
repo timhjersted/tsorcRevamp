@@ -578,7 +578,6 @@ Mods: {
 					[c/ffbf00:Fortress above the hallowed caverns to the East]
 					'''
 				DivingHelmet: Can be placed in an accessory slot or in your head slot.
-				MechanicalSkull: "{$CommonItemTooltip.NonConsumable}"
 				MechanicalWorm:
 					'''
 					It's heavier than you expected
@@ -3362,6 +3361,20 @@ Mods: {
 				WrongTime: This item can only be used at night...
 			}
 
+			MechanicalSkull: {
+				DisplayName: Mechanical Skull
+				Tooltip:
+					'''
+					Summons The Machine, Ancient Warden of the Great Pyramid.
+					You must use this at the end of the Flooded Temple, where its spirit stands guard over the gateway towards The Great Pyramid.
+					This item is for use only after the Machine has already been defeated.
+					{$CommonItemTooltip.NonConsumable}
+					'''
+				Summon: The Machine has awoken!
+				Wrong: This item can only be used in The Flooded Machine Temple at night...
+				WrongTime: This item can only be used at night...
+			}
+
 			DarkMirror: {
 				DisplayName: Dark Mirror
 				Tooltip: ""
@@ -4351,7 +4364,7 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedDamageCritChance}
 					{$CommonItemTooltip.Thorns@1} and grants the Battle potion effect
-					{$CommonItemTooltip.BadDefense@2}
+					{$CommonItemTooltip.BadDRStat@2}
 					Does not stack with Demon Drug, Armor Drug, or Strength Potions.
 					'''
 			}
@@ -6144,8 +6157,8 @@ Mods: {
 			}
 
 			Blast: {
-				DisplayName: Tactical High-Explosive Launcher
-				Tooltip: Converts rockets into mini-nukes
+				DisplayName: Blast
+				Tooltip: ""
 			}
 
 			BlizzardBlaster: {
@@ -9402,8 +9415,6 @@ Mods: {
 			ShadowBreath.DisplayName: Shadow Breath
 			FrostFireBall.DisplayName: Frost Fire Ball
 			DrakarthusProjectile.DisplayName: Drakarthus Projectile
-			HostileFreezeBolt.DisplayName: Hostile Freeze Bolt
-			DivineBoltProjectile.DisplayName: Divine Bolt Projectile
 		}
 
 		NPCs: {
