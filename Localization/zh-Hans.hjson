@@ -578,7 +578,6 @@ Mods: {
 					[c/ffbf00:位于东边神圣洞穴上方的雪山]
 					'''
 				DivingHelmet: 可以放在饰品栏或头部盔甲栏中
-				MechanicalSkull: "{$CommonItemTooltip.NonConsumable}"
 				MechanicalWorm:
 					'''
 					它比你预期的要重
@@ -3360,6 +3359,20 @@ Mods: {
 				Summon: 骷髅王已苏醒
 				Wrong: 这个物品只能在晚上的远古神庙废墟使用...
 				WrongTime: 这个物品只能在晚上使用...
+			}
+
+			MechanicalSkull: {
+				// DisplayName: Mechanical Skull
+				/* Tooltip:
+					'''
+					Summons The Machine, Ancient Warden of the Great Pyramid.
+					You must use this at the end of the Flooded Temple, where its spirit stands guard over the gateway towards The Great Pyramid.
+					This item is for use only after the Machine has already been defeated.
+					{$CommonItemTooltip.NonConsumable}
+					''' */
+				// Summon: The Machine has awoken!
+				// Wrong: This item can only be used in The Flooded Machine Temple at night...
+				// WrongTime: This item can only be used at night...
 			}
 
 			DarkMirror: {
