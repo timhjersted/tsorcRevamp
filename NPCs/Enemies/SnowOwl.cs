@@ -48,14 +48,11 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //Otherwise it spawns in the frozen ocean and gets stuck in the ceiling
-            if (spawnInfo.Water)
+            if (spawnInfo.Water || tsorcRevampWorld.SuperHardMode)
             {
                 chance = 0;
             }
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                return chance /= 0;
-            }
+
             return chance;
         }
 
