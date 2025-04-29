@@ -43,7 +43,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             Player player = spawnInfo.Player;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
             float chance = 0;
 
             //Ensuring it can't spawn if one already exists.
@@ -60,15 +59,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
 
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneOverworldHeight && (FrozenOcean || player.ZoneHallow))
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneOverworldHeight && (player.ZoneSnow || player.ZoneHallow))
             {
                 chance = 0.2f;
             }
-            if (tsorcRevampWorld.SuperHardMode && !spawnInfo.Player.ZoneOverworldHeight && (FrozenOcean || player.ZoneHallow))
+            if (tsorcRevampWorld.SuperHardMode && !spawnInfo.Player.ZoneOverworldHeight && (player.ZoneSnow || player.ZoneHallow))
             {
                 chance = 0.36f;
             }
-            if (FrozenOcean && player.ZoneHallow)
+            if (player.ZoneSnow && player.ZoneHallow)
             {
                 chance *= 2;
             }

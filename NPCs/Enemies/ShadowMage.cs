@@ -38,6 +38,12 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0.3f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.ShadowMageBanner>();
+
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 1350; 
+                NPC.defense = 40;
+            }
         }
 
         //float customAi1;

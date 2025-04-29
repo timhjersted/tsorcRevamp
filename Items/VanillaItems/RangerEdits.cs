@@ -30,12 +30,12 @@ namespace tsorcRevamp.Items.VanillaItems
             if (item.type == ItemID.BloodRainBow)
             {
                 //given out as reward for beating a red knight so I think this is fair, also hard to use
-                item.damage = 15; //from 14
+                item.damage = 12; //from 14
             }
 
             if (item.type == ItemID.HolyArrow)
             {
-                item.damage = 1;
+                item.damage = 5; 
             }
 
             if (item.type == ItemID.DaedalusStormbow)

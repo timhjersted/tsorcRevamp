@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Ammo
     public class CruelArrow : ModItem
     {
         public static int Pierce = 1;
-        public static float DmgMult = 8;
+        public static float DmgMult = 5;
         public override void SetStaticDefaults()
         {
         }
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Ammo
         {
             Recipe recipe = CreateRecipe(30);
             recipe.AddIngredient(ItemID.WoodenArrow, 30);
-            recipe.AddIngredient(ItemID.IronOre, 1);
+            recipe.AddIngredient(ItemID.IronBar, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15); //480 DS per 1000, I think that's fair. 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

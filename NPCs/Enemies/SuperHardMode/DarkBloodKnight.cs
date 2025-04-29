@@ -62,7 +62,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
 
-            if (tsorcRevampWorld.SuperHardMode && player.ZoneJungle && !player.ZoneDungeon && !(player.ZoneCorrupt || player.ZoneCrimson) && !Ocean)
+            if (tsorcRevampWorld.SuperHardMode && !player.ZoneDungeon && (player.ZoneUnderworldHeight || player.ZoneCrimson) && !Ocean)
             {
                 if (player.ZoneOverworldHeight)
                 {

@@ -7,14 +7,14 @@ namespace tsorcRevamp.Buffs
 {
     public class Flasks : GlobalBuff
     {
-        public static float PoisonFlaskDMG = 10f;
-        public static float IchorFlaskDMG = 6f;
-        public static float FireFlaskDMG = 10f;
-        public static float GoldFlaskDMG = 15f;
-        public static float ConfettiFlaskDMG = 16f;
-        public static float CursedFlaskDMG = 10f;
-        public static float VenomFlaskCrit = 12f;
-        public static float NanitesFlaskCrit = 16f;
+        public static float PoisonFlaskDMG = 7f;
+        public static float IchorFlaskDMG = 5f;
+        public static float FireFlaskDMG = 7f;
+        public static float GoldFlaskDMG = 14f;
+        public static float ConfettiFlaskDMG = 14f;
+        public static float CursedFlaskDMG = 8f;
+        public static float VenomFlaskCrit = 10f;
+        public static float NanitesFlaskCrit = 14f;
         public override void Update(int type, Player player, ref int buffIndex)
         {
             if (type == BuffID.WeaponImbuePoison)
