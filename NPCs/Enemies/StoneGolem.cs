@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (tsorcRevampWorld.SuperHardMode)
             {
-                return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.03f;
+                return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.01f;
             }
             else
             {

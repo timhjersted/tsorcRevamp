@@ -1700,6 +1700,7 @@ namespace tsorcRevamp
         public static Dictionary<int, Vector2> RemixSHMBossIDs = new Dictionary<int, Vector2>
         {
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), new Vector2(8234, 1875) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), new Vector2(2490, 1804) },
         };
 
 

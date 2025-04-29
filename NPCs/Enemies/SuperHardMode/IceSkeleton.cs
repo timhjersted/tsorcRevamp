@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Player p = spawnInfo.Player;
             if (tsorcRevampWorld.SuperHardMode && p.ZoneSnow)
             {
-                return 0.15f;
+                return 0.1f;
             }
             if (tsorcRevampWorld.SuperHardMode && spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f)
             {

@@ -18,6 +18,7 @@ namespace tsorcRevamp.Items.BossItems
         }
         public override void SetDefaults()
         {
+            Item.rare = ItemRarityID.LightRed;
             Item.width = 12;
             Item.height = 12;
             Item.useStyle = ItemUseStyleID.HoldUp;

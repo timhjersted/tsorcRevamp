@@ -167,6 +167,7 @@ namespace tsorcRevamp
             AbysmalOolacileSorcererFight,
             RemixAbysmalOolacileSorcererFight,
             WitchkingFight,
+            RemixWitchkingEvent,
             WyvernMageShadowFight,
             ChaosFight,
             BlightFight,
@@ -404,7 +405,9 @@ namespace tsorcRevamp
             ScriptedEvent RemixAbysmalOolacileSorcererEvent = new ScriptedEvent(new Vector2(8239, 1870), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AbysmalOolacileSorcerer"), Color.Red, false, RemixMapCondition);
 
             //WITCHKING
-            ScriptedEvent WitchkingEvent = new ScriptedEvent(new Vector2(2484, 1795), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.Witchking"), Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent WitchkingEvent = new ScriptedEvent(new Vector2(2484, 1795), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.Witchking"), Color.Red, false, OnlyAdventureMapCondition);
+
+            ScriptedEvent RemixWitchkingEvent = new ScriptedEvent(new Vector2(2487, 1803), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.CursedTorch, true, true, true, LangUtils.GetTextValue("Events.Witchking"), Color.Green, false, RemixMapCondition);
 
             //BLIGHT
             ScriptedEvent BlightEvent = new ScriptedEvent(new Vector2(8174, 866), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.Blight"), Color.Blue, false, SuperHardModeCustomCondition);
@@ -675,6 +678,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.AbysmalOolacileSorcererFight, AbysmalOolacileSorcererEvent},
                 {ScriptedEventType.RemixAbysmalOolacileSorcererFight, RemixAbysmalOolacileSorcererEvent},
                 {ScriptedEventType.WitchkingFight, WitchkingEvent},
+                {ScriptedEventType.RemixWitchkingEvent, RemixWitchkingEvent},
                 {ScriptedEventType.ChaosFight, ChaosEvent},
                 {ScriptedEventType.WyvernMageShadowFight, WyvernMageShadowEvent},
                 {ScriptedEventType.BlightFight, BlightEvent},

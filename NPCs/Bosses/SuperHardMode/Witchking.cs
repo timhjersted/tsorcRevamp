@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -38,11 +39,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.height = 45;
             NPC.width = 30;
             NPC.damage = 110;
-            NPC.defense = 10;
-            NPC.lifeMax = 100000;
+            NPC.defense = 25;
+            NPC.lifeMax = 150000;
             NPC.scale = 1.3f;
-            NPC.HitSound = SoundID.NPCHit4;
-            NPC.DeathSound = SoundID.NPCDeath6;
+            NPC.HitSound = SoundID.NPCHit4; 
+            NPC.DeathSound = new SoundStyle("tsorcRevamp/Sounds/Lotr/WitchkingScream");
             NPC.value = 350000;
             NPC.knockBackResist = 0.0f;
             NPC.rarity =32;
@@ -256,7 +257,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 data.Apply(null);
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 Vector2 origin = NPC.frame.Size() / 2f;
-                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition + new Vector2(0, -13), NPC.frame, Color.White, NPC.rotation, origin, 1.35f * NPC.scale, effects, 0f);
+                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition + new Vector2(5, -35), NPC.frame, Color.White, NPC.rotation, origin, 1.25f * NPC.scale, effects, 0f);
                 UsefulFunctions.RestartSpritebatch(ref Main.spriteBatch);
             }
         }

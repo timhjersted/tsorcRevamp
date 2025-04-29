@@ -37,6 +37,13 @@ namespace tsorcRevamp.NPCs.Enemies
             AnimationType = NPCID.GoblinSorcerer;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DungeonMageBanner>();
+
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 1050; 
+                NPC.defense = 35;
+                NPC.value = 900; 
+            }
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

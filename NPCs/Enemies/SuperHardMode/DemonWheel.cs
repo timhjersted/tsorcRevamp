@@ -39,14 +39,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             Player player = spawnInfo.Player;
 
-            if (player.ZoneDungeon && tsorcRevampWorld.SuperHardMode) return 1;
+            if (player.ZoneDungeon && tsorcRevampWorld.SuperHardMode) return 0.5f; 
 
-            if (player.ZoneDungeon && Main.hardMode) return 0.2f;
+            if (player.ZoneDungeon && Main.hardMode) return 0.1f; 
 
-            if ((player.ZoneCorrupt || player.ZoneCrimson) && tsorcRevampWorld.SuperHardMode) return 1;
+            if ((player.ZoneCorrupt || player.ZoneCrimson) && tsorcRevampWorld.SuperHardMode) return 0.5f; 
 
-            if (player.ZoneUnderworldHeight && tsorcRevampWorld.SuperHardMode) return 0.5f;
-
+            if (player.ZoneUnderworldHeight && tsorcRevampWorld.SuperHardMode) return 0.25f; 
 
             return 0;
         }

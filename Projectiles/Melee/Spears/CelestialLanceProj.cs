@@ -51,7 +51,19 @@ namespace tsorcRevamp.Projectiles.Melee.Spears
 
                     int starDamage = damageDone / 2; 
 
-                    int starType = Main.rand.NextBool(3) ? ProjectileID.SuperStar : ProjectileID.StarVeilStar;
+                    int starType;
+                    switch (Main.rand.Next(3)) 
+                    {
+                        case 0:
+                            starType = ProjectileID.BeeCloakStar;
+                            break;
+                        case 1:
+                            starType = ProjectileID.StarCloakStar;
+                            break;
+                        default: 
+                            starType = ProjectileID.StarVeilStar;
+                            break;
+                    }
 
                     Projectile.NewProjectile(
                         Projectile.GetSource_FromThis(), 

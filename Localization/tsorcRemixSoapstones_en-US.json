@@ -386,7 +386,7 @@
 {
   "text": "A voice whispers to you... \u0022Seek the Lost Ruins of Artorias, to the East of the Forgotten City, beyond the sun worshiper\u0027s house.  --NEWLINE  --NEWLINE He is waiting...\u0022",
   "tileX": 2445,
-  "tileY": 1794,
+  "tileY": 1802,
   "textWidth": 320,
   "style": 1
 }
@@ -1315,7 +1315,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve discovered the entrance to the Earth Temple -",
+  "text": "- You\u0027ve discovered the entrance to the Earth Temple - --NEWLINE  --NEWLINE It\u0027s locked by a Large Diamond Gem Gate. --NEWLINE  --NEWLINE \u0022It is said that the key can be found in the mountains west of the Ashenpeak village, in several copies.\u0022",
   "tileX": 4521,
   "tileY": 857,
   "textWidth": 320,
@@ -1350,7 +1350,7 @@
   "style": 1
 }
 {
-  "text": "- You\u0027ve found the Flooded Machine Temple - --NEWLINE  --NEWLINE  Your father told you stories about this place as a child - that the machine that was built here actually guards the path to a great pyramid, long ago forgotten... --NEWLINE  --NEWLINE It is unknown how the temple became flooded. Perhaps it was an attempt to destroy The Machine...  ",
+  "text": "- You\u0027ve found the Flooded Machine Temple - --NEWLINE  --NEWLINE  Your father told you stories about this place as a child - that the machine that was built here is still somewhat active... --NEWLINE  --NEWLINE It is unknown how the temple became flooded. Perhaps it was an attempt to destroy The Machine...  ",
   "tileX": 4615,
   "tileY": 1026,
   "textWidth": 320,
@@ -1927,13 +1927,6 @@
   "text": "A spirit appears and whispers into your ear: --NEWLINE  --NEWLINE \u0022A hidden entrance to the underground jungle ruins lies this way, to the left... Deep inside these ruins, above the three golden shrines, you will find an escape back to the surface.\u0022",
   "tileX": 6521,
   "tileY": 1165,
-  "textWidth": 320,
-  "style": 1
-}
-{
-  "text": "A voice whispers to you... \u0022Seek the Blight at the end of the world, where ice cuts forever into the horizon...\u0022",
-  "tileX": 6589,
-  "tileY": 1886,
   "textWidth": 320,
   "style": 1
 }

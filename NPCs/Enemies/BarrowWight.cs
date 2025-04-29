@@ -52,8 +52,10 @@ namespace tsorcRevamp.NPCs.Enemies
             if (!Main.hardMode && p.ZoneDungeon) return .00833f;
             if (!tsorcRevampWorld.SuperHardMode && Main.hardMode && oSky(p)) return 0.0567f;
             if (!tsorcRevampWorld.SuperHardMode && Main.hardMode && p.ZoneDungeon) return 0.033f;
+             if (!tsorcRevampWorld.SuperHardMode && Main.hardMode && p.ZoneSnow) return 0.033f;
             if (tsorcRevampWorld.SuperHardMode && oSky(p)) return 0.025f;
             if (tsorcRevampWorld.SuperHardMode && p.ZoneDungeon) return 0.008f;
+            if (tsorcRevampWorld.SuperHardMode && p.ZoneSnow) return 0.008f;
 
             return 0;
         }

@@ -3365,8 +3365,8 @@ Mods: {
 				// DisplayName: Mechanical Skull
 				/* Tooltip:
 					'''
-					Summons The Machine, Ancient Warden of the Great Pyramid.
-					You must use this at the end of the Flooded Temple, where its spirit stands guard over the gateway towards The Great Pyramid.
+					Summons The Machine, Ancient Warden of the underground.
+					You must use this at the end of the Flooded Temple.
 					This item is for use only after the Machine has already been defeated.
 					{$CommonItemTooltip.NonConsumable}
 					''' */
@@ -9530,11 +9530,6 @@ Mods: {
 				DisplayName: 大地恶魔巫妖王
 				DespawnHandler: 大地恶魔巫妖王让你消散于这片土地...
 				Heat: 大地恶魔巫妖王借助来自世界岩浆核心的热量！
-			}
-
-			LichKingDisciple: {
-				DisplayName: 巫妖王信徒
-				Aura: 巫妖王信徒的周围散发出一股恶臭！！
 			}
 
 			LichKingSerpentBody.DisplayName: 巫妖狂蟒

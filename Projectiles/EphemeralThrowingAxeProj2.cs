@@ -52,7 +52,6 @@ namespace tsorcRevamp.Projectiles
                 || target.type == ModContent.NPCType<BrokenOkiku>()
                 || target.type == ModContent.NPCType<Okiku>()
                 || target.type == ModContent.NPCType<WyvernMage>()
-                || target.type == ModContent.NPCType<LichKingDisciple>()
                 || target.type == ModContent.NPCType<Attraidies>()
                 || target.type == ModContent.NPCType<BarrowWight>()
                 )

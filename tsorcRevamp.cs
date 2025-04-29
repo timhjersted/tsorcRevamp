@@ -1356,7 +1356,7 @@ namespace tsorcRevamp
             { ProjectileID.FireWhip, 1.25f },
             { ProjectileID.CoolWhip, 1.35f },
             { ProjectileID.SwordWhip, 1.55f },
-            { ProjectileID.MaceWhip, 1.3f },
+            { ProjectileID.MaceWhip, 1.4f },
             { ProjectileID.ScytheWhip, 1.75f },
             { ProjectileID.RainbowWhip, 1.7f }
         };
@@ -1409,7 +1409,6 @@ namespace tsorcRevamp
                 ModContent.NPCType<MindflayerKingServant>(),
                 ModContent.NPCType<MindflayerServant>(),
                 ModContent.NPCType<MindflayerIllusion>(),
-                ModContent.NPCType<LichKingDisciple>()
             };
             #endregion
             #region Vanilla Melee BlackList

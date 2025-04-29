@@ -36,6 +36,12 @@ namespace tsorcRevamp.NPCs.Enemies
             UsefulFunctions.AddAttack(NPC, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 9, SoundID.Item17, 0.1f, 120, 1, telegraphColor: Color.Blue);
             UsefulFunctions.AddAttack(NPC, 240, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>(), iceStormDamage, 8, SoundID.Item17);
             UsefulFunctions.AddAttack(NPC, 160, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), iceBallDamage, 12, SoundID.Item17, 0, 1, 0, new Vector2(0, -240), Color.Cyan);
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = 1200; 
+                NPC.defense = 50;
+                NPC.value = 2500; 
+            }
         }
 
         //Spawns in Hardmode Surface and Underground, 6.5/10th of the world to the right edge (Width). Does not spawn in Dungeons, Jungle, or Meteor. Only spawns with Town NPCs during Blood Moons.

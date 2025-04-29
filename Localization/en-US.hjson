@@ -3365,8 +3365,8 @@ Mods: {
 				DisplayName: Mechanical Skull
 				Tooltip:
 					'''
-					Summons The Machine, Ancient Warden of the Great Pyramid.
-					You must use this at the end of the Flooded Temple, where its spirit stands guard over the gateway towards The Great Pyramid.
+					Summons The Machine, Ancient Warden of the underground.
+					You must use this at the end of the Flooded Temple.
 					This item is for use only after the Machine has already been defeated.
 					{$CommonItemTooltip.NonConsumable}
 					'''
@@ -9534,11 +9534,6 @@ Mods: {
 				DisplayName: Earth Fiend Lich
 				DespawnHandler: Earth Fiend Lich returns to the ground...
 				Heat: The Lich King emanates the heat of the Earth's magma core!
-			}
-
-			LichKingDisciple: {
-				DisplayName: Lich King Disciple
-				Aura: The Lich King's Disciple emanates a miasma of Ichor around him!
 			}
 
 			LichKingSerpentBody.DisplayName: Lich King Serpent
