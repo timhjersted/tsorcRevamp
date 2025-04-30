@@ -407,7 +407,7 @@
 {
   "text": "一个声音在对你低语… --NEWLINE   --NEWLINE \u0022寻找失落之城东边被遗忘的亚尔特留斯废墟 --NEWLINE   --NEWLINE 在太阳崇拜者房间的外面,他正在等待…\u0022",
   "tileX": 2445,
-  "tileY": 1794,
+  "tileY": 1802,
   "textWidth": 350,
   "style": 1
 }
@@ -1336,10 +1336,10 @@
   "style": 1
 }
 {
-  "text": "- 你发现了进入大地神庙的入口 -",
+  "text": "- 你发现了进入大地神庙的入口 - --NEWLINE   --NEWLINE 它被一扇大钻石门锁住了 --NEWLINE   --NEWLINE \u0022据说这把钥匙的多个副本可以在埃什峰村以西的山脉中找到\u0022",
   "tileX": 4521,
   "tileY": 857,
-  "textWidth": 260,
+  "textWidth": 430,
   "style": 1
 }
 {
@@ -1371,7 +1371,7 @@
   "style": 1
 }
 {
-  "text": "你找到了被淹没的机器神殿。 --NEWLINE   --NEWLINE 你父亲小时候给你讲过这个地方的故事 --NEWLINE   --NEWLINE 在这里建造的机器守卫着通往大金字塔的道路， --NEWLINE   --NEWLINE 在很久以前就消逝在世人的记忆之中了… --NEWLINE   --NEWLINE 没人知道这座神庙是如何被洪水淹没的。 --NEWLINE   --NEWLINE 也许是因为一次尝试击败旧日机械支配者的战斗…",
+  "text": "你找到了被淹没的机器神殿。 --NEWLINE   --NEWLINE 你父亲小时候给你讲过这个地方的故事 --NEWLINE   --NEWLINE 当年建造于此的机器至今仍在运作 --NEWLINE   --NEWLINE 没人知道这座神庙是如何被洪水淹没的。 --NEWLINE   --NEWLINE 也许是因为一次尝试击败旧日机械支配者的战斗…",
   "tileX": 4615,
   "tileY": 1026,
   "textWidth": 360,
@@ -1987,13 +1987,6 @@
   "style": 1
 }
 {
-  "text": "一个声音低声对你说： --NEWLINE   --NEWLINE \u0022在世界的尽头寻找枯萎，那里的寒冰将地平线永久地分割…\u0022",
-  "tileX": 6589,
-  "tileY": 1886,
-  "textWidth": 450,
-  "style": 1
-}
-{
   "text": "你应当休息。",
   "tileX": 6616,
   "tileY": 1525,
@@ -2225,7 +2218,7 @@
   "style": 1
 }
 {
-  "text": "\u0022但我需要你，瑞德。 --NEWLINE   --NEWLINE 你看，邪恶的力量在黑暗中诞生， --NEWLINE   --NEWLINE 而包含这支军队的咒语仍然被你父亲的纯洁精神锁住。 --NEWLINE   --NEWLINE 要打破封印，一个纯真的战士必须被复仇的欲望所腐蚀。\u0022",
+  "text": "\u0022但我需要你，瑞德。 --NEWLINE   --NEWLINE 你看，邪恶的力量在黑暗中诞生， --NEWLINE   --NEWLINE 而包含这支军队的咒语仍然被你父亲的纯洁精神封印。 --NEWLINE   --NEWLINE 要打破封印，一个纯真的战士必须被复仇的欲望所腐蚀。\u0022",
   "tileX": 8169,
   "tileY": 1645,
   "textWidth": 420,

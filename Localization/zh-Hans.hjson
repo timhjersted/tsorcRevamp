@@ -3362,17 +3362,17 @@ Mods: {
 			}
 
 			MechanicalSkull: {
-				// DisplayName: Mechanical Skull
-				/* Tooltip:
+				DisplayName: 机械头骨
+				Tooltip:
 					'''
-					Summons The Machine, Ancient Warden of the underground.
-					You must use this at the end of the Flooded Temple.
-					This item is for use only after the Machine has already been defeated.
+					召唤旧日机械支配者，古老的地狱典狱长
+					此物品只能在被淹没的机器神殿的终点使用
+					此物品只能在被击败后使用
 					{$CommonItemTooltip.NonConsumable}
-					''' */
-				// Summon: The Machine has awoken!
-				// Wrong: This item can only be used in The Flooded Machine Temple at night...
-				// WrongTime: This item can only be used at night...
+					'''
+				Summon: 旧日机械支配者已苏醒！
+				Wrong: 此物品只能在被淹没的机器神殿夜间使用...
+				WrongTime: 此物品只能在夜间使用...
 			}
 
 			DarkMirror: {
