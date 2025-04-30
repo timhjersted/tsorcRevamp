@@ -23,4 +23,14 @@ namespace tsorcRevamp.Items
 
         public override Color RarityColor => new Color(255, 90, 55); 
     }
+
+    public class PermanentPotion : ModRarity
+    {
+        public override int GetPrefixedRarity(int offset, float valueMult)
+        {
+            return Type; 
+        }
+
+        public override Color RarityColor => new Color(255, 10, 170); 
+    }
 }

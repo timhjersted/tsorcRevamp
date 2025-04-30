@@ -9,6 +9,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Items;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Utilities;
 
@@ -98,11 +99,11 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             Item.width = 16;
             Item.height = 25;
             Item.consumable = false;
-            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useStyle = ItemUseStyleID.Shoot; 
             Item.useAnimation = 8;
             Item.useTime = 8;
             Item.UseSound = SoundID.Item21;
-            Item.rare = ItemRarityID.Orange;
+            Item.rare = ModContent.RarityType<PermanentPotion>();
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

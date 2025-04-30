@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.damage = 24;
             Item.height = 58;
             Item.width = 16;
-            Item.knockBack = 1.5f;
+            Item.knockBack = 1.25f;
             Item.noMelee = true;
             Item.rare = ItemRarityID.Green;
             Item.shootSpeed = 7.5f;

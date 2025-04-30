@@ -669,22 +669,6 @@ namespace tsorcRevamp.Projectiles
                     Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity - Vel, ProjectileID.GreekFire2, projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
                     Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity - Vel, ProjectileID.GreekFire3, projectile.damage / 2, projectile.knockBack / 2, Main.myPlayer);
                 }
-                if (NPC.CountNPCS(NPCID.SolarCorite) < 3)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        NPC Corite = NPC.NewNPCDirect(NPC.GetSource_NaturalSpawn(), projectile.Center, NPCID.SolarCorite);
-
-                        Corite.lifeMax = 200 * Difficulty; //main problem is too many of them spawned at one time
-                        Corite.life = Corite.lifeMax;
-                        Corite.knockBackResist = 0.3f;
-
-                        Corite.damage = 60 * Difficulty;
-
-                        Corite.value = 100 * Difficulty;
-                        Corite.netUpdate = true;
-                    }
-                }
             }
             if (projectile.friendly && !projectile.hostile)
             {

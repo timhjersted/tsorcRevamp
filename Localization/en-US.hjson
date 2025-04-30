@@ -1934,7 +1934,7 @@ Mods: {
 				Tooltip:
 					'''
 					An arrow fashioned to kill lost and forgotten souls...
-					Does 8x greater damage to some enemies
+					Does 5x greater damage to some enemies
 					Pierces once
 					'''
 			}
@@ -6172,7 +6172,7 @@ Mods: {
 
 			AncientGreatBow: {
 				DisplayName: Ancient Great Bow
-				Tooltip: ""
+				Tooltip: Converts wooden arrows into unholy arrows
 			}
 
 			ArtemisBow: {
