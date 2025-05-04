@@ -3436,13 +3436,15 @@ Mods: {
 				Summon: 水之恶魔—克拉肯从深处出现
 			}
 
-			DyingWindCrystal: {
-				DisplayName: 消逝风晶
-				Tooltip:
+			DyingDarkCrystal: {
+				// DisplayName: Dying Dark Crystal
+				/* Tooltip:
 					'''
-					逐渐消逝的暴风之晶 
-					召唤「混沌」
-					'''
+					The fading Crystal of Darkness. 
+					Will summon Chaos.
+					Item is non-consumable
+					''' */
+				// Summon: Chaos reincarnates from the shadows!
 			}
 
 			FieryEgg: {
@@ -3540,13 +3542,13 @@ Mods: {
 				Summon: 死亡只能浇筑出我的不朽，瑞德...
 			}
 
-			StrangeMagicRing: {
-				DisplayName: 奇怪的魔法戒指
-				Tooltip:
+			MasterRing: {
+				// DisplayName: Master Ring
+				/* Tooltip:
 					'''
-					Miakoda告诉过你一个奇怪的魔法戒指能召唤亚尔特留斯，那个深渊行者
-					作为葛温的四骑士之一，亚尔特留斯是个带着不屈的钢铁意志的神圣战士
-					'''
+					This ring leads to damnation those tempted by its treacherous and evil power.
+					Summons the Witchking who will answer the call of the ring.
+					''' */
 			}
 
 			TomeOfSlograAndGaibon: {
@@ -3676,7 +3678,7 @@ Mods: {
 					'''
 			}
 
-			BrokenStrangeMagicRing: {
+			BrokenDarkMagicRing: {
 				DisplayName: 破损的奇怪魔法戒指
 				Tooltip:
 					'''
@@ -6770,16 +6772,6 @@ Mods: {
 					'''
 			}
 
-			WitchkingScroll: {
-				DisplayName: 巫师王卷轴
-				Tooltip:
-					'''
-					要关闭通往深渊的传送门，你必须找到巫师王并修复他掉落的奇怪戒指
-					他会在晚上出现在深渊之外，并且更频繁地出现在地下深处，尤其是在地牢中
-					找到他的最可靠方法是戴上亚尔特留斯之约戒指，亲入深渊一探究竟
-					'''
-			}
-
 			WorldIDReset: {
 				DisplayName: "{TROUBLESHOOTING ITEM！！} World ID Reset"
 				Tooltip:
@@ -7807,6 +7799,11 @@ Mods: {
 					随伤害词缀的最大伤害变化而变化
 					'''
 			}
+
+			WitchkingMace: {
+				// DisplayName: Witchking Mace
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -8766,6 +8763,11 @@ Mods: {
 				Description: ""
 				DisplayName: 防御崩溃
 			}
+
+			WitchkingMaceDebuff: {
+				// Description: Mods.tsorcRevamp.Buffs.WitchkingMaceDebuff.Description
+				// DisplayName: Witchking Mace Debuff
+			}
 		}
 
 		Projectiles: {
@@ -9413,6 +9415,7 @@ Mods: {
 			// DrakarthusProjectile.DisplayName: Drakarthus Projectile
 			// HostileFreezeBolt.DisplayName: Hostile Freeze Bolt
 			// DivineBoltProjectile.DisplayName: Divine Bolt Projectile
+			// WitchkingMaceProjectile.DisplayName: Witchking Mace Projectile
 		}
 
 		NPCs: {
@@ -10482,6 +10485,7 @@ Mods: {
 			AbyssFracture.DisplayName: 破碎深渊
 			AbyssCataclysm.DisplayName: 深渊风暴
 			AttraidiesShield.DisplayName: 阿卓迪斯护盾
+			// LichKingDisciple.DisplayName: Lich King Disciple
 		}
 
 		Prefixes: {

@@ -3411,7 +3411,7 @@ Mods: {
 					Will summon Lich. 
 					Item is non-consumable
 					'''
-				Summon: Earth Fiend Lich ascends from the ground
+				Summon: Earth Fiend Lich ascends from the ground!
 			}
 
 			DyingFireCrystal: {
@@ -3422,7 +3422,7 @@ Mods: {
 					Will summon Marilith. 
 					Item is non-consumable
 					'''
-				Summon: Fire Fiend Maralith erupts from a pillar of dark flame
+				Summon: Fire Fiend Maralith erupts from a pillar of dark flame!
 			}
 
 			DyingWaterCrystal: {
@@ -3433,16 +3433,18 @@ Mods: {
 					Will summon Kraken. 
 					Item is non-consumable
 					'''
-				Summon: Water Fiend Kraken emerges from the depths
+				Summon: Water Fiend Kraken emerges from the depths!
 			}
 
-			DyingWindCrystal: {
-				DisplayName: Dying Wind Crystal
+			DyingDarkCrystal: {
+				DisplayName: Dying Dark Crystal
 				Tooltip:
 					'''
-					The fading Crystal of Wind. 
+					The fading Crystal of Darkness. 
 					Will summon Chaos.
+					Item is non-consumable
 					'''
+				Summon: Chaos reincarnates from the shadows!
 			}
 
 			FieryEgg: {
@@ -3540,12 +3542,12 @@ Mods: {
 				Summon: "Thy death will only fuel my immortality, Red... "
 			}
 
-			StrangeMagicRing: {
-				DisplayName: Strange Magic Ring
+			MasterRing: {
+				DisplayName: Master Ring
 				Tooltip:
 					'''
-					A strange magic ring that Miakoda tells you will summon Artorias, the Abysswalker.
-					One of Gwyn's Four Knights, Artorias is a holy warrior with an unbendable will of steel.
+					This ring leads to damnation those tempted by its treacherous and evil power.
+					Summons the Witchking who will answer the call of the ring.
 					'''
 			}
 
@@ -3676,11 +3678,11 @@ Mods: {
 					'''
 			}
 
-			BrokenStrangeMagicRing: {
-				DisplayName: Broken Strange Magic Ring
+			BrokenDarkMagicRing: {
+				DisplayName: Broken Dark Magic Ring
 				Tooltip:
 					'''
-					A strange magic ring, broken into two pieces...
+					A dark magic ring, broken into two pieces...
 					Miakoda: "To reforge this ring and restore its magical abilitiy,
 					you'll need 5 White Titanite and 1000 Dark Souls.
 					To find what we need, we should seek out the Evil Biomes and the Dungeon."
@@ -6172,7 +6174,7 @@ Mods: {
 
 			AncientGreatBow: {
 				DisplayName: Ancient Great Bow
-				Tooltip: Converts wooden arrows into unholy arrows
+				Tooltip: ""
 			}
 
 			ArtemisBow: {
@@ -6771,16 +6773,6 @@ Mods: {
 					'''
 					A rare and valuable ore
 					A solid white surface, it casts an eerie purple shadow
-					'''
-			}
-
-			WitchkingScroll: {
-				DisplayName: Witchking Scroll
-				Tooltip:
-					'''
-					To close the portal to the Abyss you must seek out the Witchking and restore the strange ring he drops.
-					He will appear out of the Abyss at night, and more often deeper underground, especially in dungeons.
-					The most assured way to find him, however, is to enter the Abyss yourself, using the Covanent of Artorias ring.
 					'''
 			}
 
@@ -7424,7 +7416,11 @@ Mods: {
 
 			DarkMagicRing: {
 				DisplayName: Dark Magic Ring
-				Tooltip: A dark relic that can summon a forgotten seeker.
+				Tooltip:
+					'''
+					A dark magic ring that Miakoda tells you will summon Artorias, the Abysswalker.
+					One of Gwyn's Four Knights, Artorias is a holy warrior with an unbendable will of steel.
+					'''
 			}
 
 			TheMachineTrophy: {
@@ -7810,6 +7806,11 @@ Mods: {
 					Does random damage from 0 to {0}
 					Maximum damage is increased by damage modifiers.
 					'''
+			}
+
+			WitchkingMace: {
+				DisplayName: Witchking Mace
+				Tooltip: ""
 			}
 		}
 
@@ -8770,6 +8771,11 @@ Mods: {
 				Description: ""
 				DisplayName: Defense Crush
 			}
+
+			WitchkingMaceDebuff: {
+				Description: Mods.tsorcRevamp.Buffs.WitchkingMaceDebuff.Description
+				DisplayName: Witchking Mace Debuff
+			}
 		}
 
 		Projectiles: {
@@ -9417,6 +9423,7 @@ Mods: {
 			DrakarthusProjectile.DisplayName: Drakarthus Projectile
 			HostileFreezeBolt.DisplayName: Hostile Freeze Bolt
 			DivineBoltProjectile.DisplayName: Divine Bolt Projectile
+			WitchkingMaceProjectile.DisplayName: Witchking Mace Projectile
 		}
 
 		NPCs: {
@@ -10486,6 +10493,7 @@ Mods: {
 			AbyssFracture.DisplayName: Abyss Fracture
 			AbyssCataclysm.DisplayName: Abyss Cataclysm
 			AttraidiesShield.DisplayName: Attraidies Shield
+			LichKingDisciple.DisplayName: Lich King Disciple
 		}
 
 		Prefixes: {

@@ -26,14 +26,14 @@ namespace tsorcRevamp.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>());
             return true;
         }
 
         public override bool CanUseItem(Player player)
         {
             bool canUse = true;
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))
             {
                 canUse = false;
             }
@@ -43,8 +43,8 @@ namespace tsorcRevamp.Items.BossItems
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.IronBar, 5);
-            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 5);
+            recipe.AddIngredient(ModContent.ItemType<BrokenDarkMagicRing>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddCondition(tsorcRevampWorld.AdventureModeDisabled);

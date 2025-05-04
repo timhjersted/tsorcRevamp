@@ -103,7 +103,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             Item.useAnimation = 8;
             Item.useTime = 8;
             Item.UseSound = SoundID.Item21;
-            Item.rare = ModContent.RarityType<PermanentPotion>();
+            Item.rare = ModContent.RarityType<Pinky>();
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

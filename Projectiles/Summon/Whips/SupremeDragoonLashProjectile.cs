@@ -86,7 +86,7 @@ namespace tsorcRevamp.Projectiles.Summon.Whips
                 else if (i > 0)
                 {
                     frame.Y = 36;
-                    frame.Height = 12;
+                    frame.Height = 10;
                 }
 
                 Vector2 element = list[i];

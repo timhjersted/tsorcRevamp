@@ -79,6 +79,7 @@ namespace tsorcRevamp.NPCs
         public bool markedByUrumi;
         public bool markedByRustedChain;
         public bool markedByLeatherWhip;
+        public bool markedByWitchkingMace;
         public bool markedBySnapthorn;
         public bool markedBySpinalTap;
         public bool markedByFirecracker;

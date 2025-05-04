@@ -2382,7 +2382,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Artorias.DisplayName"),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.ArtoriasDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.StrangeMagicRing>()
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DarkMagicRing>()
                     }
                     );
 
@@ -2479,7 +2479,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = Language.GetText("Mods.tsorcRevamp.NPCs.Chaos.DisplayName"),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.ChaosDesc"),
-                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DyingWindCrystal>()
+                        ["spawnItems"] = ModContent.ItemType<Items.BossItems.DyingDarkCrystal>()
                     }
                     );
 

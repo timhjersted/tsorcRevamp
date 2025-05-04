@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.DyingEarthCrystal.Summon"), Color.GreenYellow);
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.DyingEarthCrystal.Summon"), Color.Yellow);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<EarthFiendLich>());
             return true;
         }
