@@ -3,38 +3,42 @@ The Story of Red Cloud is a massive 40+ hour Dark Souls-inspired adventure built
 In development over 7 years, your 1-4 player journey will span 18 dungeons spread across an expansive, hand-crafted open world filled with shortcuts, hidden paths, epic boss fights, and countless secrets.
 
 
-✅ The Custom World will load automatically when you reach the Select World screen. To create a fresh or updated world, click New on the World screen.
+✅  The Custom World will load automatically when you reach the Select World screen. To create a fresh or updated world, click New on the World screen.
 
-✅ To download TSORC's Music Mod, click the text prompt you'll see on TML's main menu after enabling this mod OR Subscribe to the mod on Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=3135388514
+✅  To download TSORC's Music Mod, click the text prompt you'll see on TML's main menu after enabling this mod OR Subscribe to the mod on Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=3135388514
+
+✅  To download Xelvaa's Music Mod Remix, Subscribe to the Mod on Steam:
+https://steamcommunity.com/sharedfiles/filedetails/?id=3409707567
 
 ⚠️  Scroll down to read about our Discord, Cross Mod Compatibility, and the Game Manual
 
 
-✅ TOP FEATURES
+✅  TOP FEATURES
 ------------------------------------------
-*Companion Soundtrack with 65 songs! (Dark Souls and Elden Ring fans will love it)
-*43 bosses (27 mod bosses plus 16 vanilla at scripted locations)
-*100+ new enemies and 8 friendly NPCs
-*800+ new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
-*Dark Souls game mechanics, including bonfire save points, soul currency and the dodge roll 
-*The mod enforces old school adventure map rules, so if you can do it, it's okay to do it!
-*Bearer of The Curse Mode offers the ultimate Dark Souls experience, adding an Estus Flask and Cerulean Tear to your UI, prevents the use of healing potions and makes all weapons use different amounts of stamina
+- Companion Soundtrack with 65 songs! (Dark Souls and Elden Ring fans will love it)
+- 43 bosses (27 mod bosses plus 16 vanilla at scripted locations)
+- 100+ new enemies and 8 friendly NPCs
+- 800+ new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
+- Dark Souls game mechanics, including bonfire save points, soul currency and the dodge roll 
+- The mod enforces old school adventure map rules, so if you can do it, it's okay to do it!
+- Bearer of The Curse Mode offers the ultimate Dark Souls experience, adding an Estus Flask and Cerulean Tear to your UI, prevents the use of healing potions and makes all weapons use different amounts of stamina
+- New Remix World designed by Xelvaa offers a fresh and expanded experience compared to the classic game world designed by Tim Hjersted, ideal for a 2nd playthrough
 
 
-✅ DISCORD
+✅  DISCORD
 ------------------------------------------
 Join our discord to discuss the mod, give feedback or join the dev team:
 https://discord.gg/UGE6Mstrgz
 
--Know how to code or sprite? We'd love more devs to join the team!
--Please share suggestions for improvement under #any-suggestions or #bug-reports.
--The changelogs can be found under #mod-changelog and #map-changelog.
--TSORC holds many secrets. If you have questions, post them to #map-questions or #mod-questions.
--Share videos of your playthrough in #tsorc-media.
--The mod has been made fully translatable through a localization file. If you're interested in making it more accessible to your fellow speakers, please ask MarfMaster for details. 
+- Know how to code or sprite? We'd love more devs to join the team!
+- Please share suggestions for improvement under #any-suggestions or #bug-reports.
+- The changelogs can be found under #mod-changelog and #map-changelog.
+- TSORC holds many secrets. If you have questions, post them to #map-questions or #mod-questions.
+- Share videos of your playthrough in #tsorc-media.
+- The mod has been made fully translatable through a localization file. If you're interested in making it more accessible to your fellow speakers, please reach out in our Discord. 
 
 
-⚠️ CROSS MOD COMPATIBILITY:
+⚠️  CROSS MOD COMPATIBILITY:
 ------------------------------------------
 Highly Recommended QoL mods:
 ✅  AutoTrash
@@ -63,29 +67,29 @@ Some mods interfere with the Adventure Map, but may be used if you're playing on
 ⚠️ Veinminer
 
 
-⚠️ GAME MANUAL:
+✅  GAME MANUAL:
 ------------------------------------------
-*Create a new classic character named Red Cloud (for multiplayer, everyone should use a different name)
+- Create a new classic character named Red Cloud (for multiplayer, everyone should use a different name)
 
-*On death, you will drop all your Dark Souls and have one chance to recover them. For a more forgiving experience, you can turn this off in the mod's Config options.
+- On death, you will drop all your Dark Souls and have one chance to recover them. For a more forgiving experience, you can turn this off in the mod's Config options.
 
-*The new dodge roll action with i-frames can be bound to any key in TModLoader's controller settings, under the mod section. (Left Alt by default. Left Shift is also recommended, with Auto Select bound to Left Alt.)
+- The new dodge roll action with i-frames can be bound to any key in TModLoader's controller settings, under the mod section. (Left Alt by default. Left Shift is also recommended, with Auto Select bound to Left Alt.)
 
-*In Bearer of the Curse Mode, your Estus Flask is bound to the Quick Heal key and the Cerulian Tear is tied to your Quick Mana key.
+- In Bearer of the Curse Mode, your Estus Flask is bound to the Quick Heal key and the Cerulian Tear is tied to your Quick Mana key.
 
-*Adventure Mode should stay checked in the TSORC mod config options to play with the custom story world.
+- Adventure Mode should stay checked in the TSORC mod config options to play with the custom story world.
 
-*Multiplayer is supported for 4 players. Class diversity recommended. Post issues you find under #bug-reports. Thanks! 
+- Multiplayer is supported for 4 players. Class diversity recommended. Post issues you find under #bug-reports. Thanks! 
 
-*Go to #tips and #boss-list in our Discord for all game hints and walkthrough help
+- Go to #tips and #boss-list in our Discord for all game hints and walkthrough help
 
 
-⚠️ PROJECT STATUS:
+✅  PROJECT STATUS:
 ------------------------------------------
-The game is fairly polished up to the end of the main story (defeating Attraidies). The post-Attraidies expansion (aka Super Hardmode) is fully playable but game balance is still WIP and not all bosses have been revamped.
+The game is fairly polished up to the end of the main story (defeating Attraidies). The post-Attraidies expansion (aka Super Hard Mode) is fully playable but not all bosses have been fully revamped to the standards of our other bosses.
 
-Going forward, we'll continue to release occasional updates to address bugs and game feedback as our free time allows.
+Going forward, we'll continue to release occasional updates to make improvements, address bugs and respond to game feedback as our free time allows.
 
-We're looking for new team members to help us, as our current team is often busy with work, college or other life things these days.
+We're looking for new team members to help us, as our current team is often busy with work or college these days.
 
-We still have big plans, but looking at it realistically, in the team's current state it's unlikely we'll ever reach 1.0, unless we can collect a few new team members willing to help us reach this (especially coders familiar with TML and GitHub). So if you want to see a full release become reality, come help us directly or spread the message to people who might be interested! Thanks!
+To reach our official 1.0 release goals, we really only have a handful of very late-game bosses left to give the full revamp treatment. If you're a coder that would be interested in this, get in touch via our Discord! Or spread the message to people who might be interested! Thanks!
