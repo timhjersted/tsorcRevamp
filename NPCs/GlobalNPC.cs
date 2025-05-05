@@ -119,6 +119,8 @@ namespace tsorcRevamp.NPCs
         public static double expertScale = 2;
 
         public bool DarkInferno;
+        public bool WitchkingCurse;
+
         public bool CCShocked;
         public bool Ignited;
         public bool CrimsonBurn;
@@ -256,6 +258,7 @@ namespace tsorcRevamp.NPCs
         public override void ResetEffects(NPC npc)
         {
             DarkInferno = false;
+            WitchkingCurse = false;
             CCShocked = false;
             Ignited = false;
             CrimsonBurn = false;
@@ -1692,11 +1695,16 @@ namespace tsorcRevamp.NPCs
                         }
                     case 6:
                         {
-                            SunburnMarkSourceRectangle = new Rectangle(0, 0 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6);
+                            SunburnMarkSourceRectangle = new Rectangle(0, 0 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6); 
                             break;
                         }
                 }
                 Main.EntitySpriteDraw(SunburnMarksSprite, npc.Center - Main.screenPosition - new Vector2(0, SunburnMarksSprite.Height / 6 * SunburnMarks - 100), SunburnMarkSourceRectangle, Color.White, 0, SunburnMarkSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
+            }
+
+            if (WitchkingCurse)
+            {
+                drawColor = Color.Lerp(drawColor, Color.Red, 0.9f);
             }
 
             if (DodgeTimer > 0 && Main.GameUpdateCount % 10 < 5)
@@ -2010,13 +2018,35 @@ namespace tsorcRevamp.NPCs
                 damage += DoTPerS;
 
                 var N = npc;
-                for (int j = 0; j < 6; j++)
+                for (int j = 0; j < 6; j++) 
                 {
                     int dust = Dust.NewDust(N.position, N.width / 2, N.height / 2, 54, (N.velocity.X * 0.2f), N.velocity.Y * 0.2f, 100, default, 1f);
                     Main.dust[dust].noGravity = true;
 
                     int dust2 = Dust.NewDust(N.position, N.width / 2, N.height / 2, 58, (N.velocity.X * 0.2f), N.velocity.Y * 0.2f, 100, default, 1f);
                     Main.dust[dust2].noGravity = true;
+                }
+            }
+
+            if (WitchkingCurse)
+            {
+                int DoTPerS = 151;
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                npc.lifeRegen -= DoTPerS * 2; 
+                damage += DoTPerS;
+
+                npc.damage = (int)(npc.damage * 0.8f);
+                npc.defense = Math.Max(0, npc.defDefense - 40);
+                npc.velocity *= 0.9f;
+
+                var N = npc; 
+
+                if (Main.rand.NextBool(15))
+                { 
+                    Dust.NewDust(npc.position, npc.width, npc.height, DustID.Blood, npc.velocity.X * 0.2f, npc.velocity.Y * 0.2f, 100, Color.Red, 1.25f);
                 }
             }
 

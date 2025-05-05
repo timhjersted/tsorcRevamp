@@ -5,7 +5,7 @@ using tsorcRevamp.Items.Materials;
 
 namespace tsorcRevamp.Items.Weapons.Ranged.Bows
 {
-    public class AncientGreatBow : ModItem
+    public class TaintedBow : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -16,8 +16,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged.Bows
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ProjectileID.PurificationPowder;
             Item.damage = 24;
-            Item.height = 58;
-            Item.width = 16;
+            Item.height = 46;
+            Item.width = 18;
             Item.knockBack = 1.25f;
             Item.noMelee = true;
             Item.rare = ItemRarityID.Green;

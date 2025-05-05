@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -14,7 +15,7 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void SetDefaults()
         {
-            Item.rare = ItemRarityID.LightRed;
+            Item.rare = ItemRarityID.Red;
             Item.width = 38;
             Item.height = 34;
             Item.useStyle = ItemUseStyleID.HoldUp;
@@ -89,6 +90,21 @@ namespace tsorcRevamp.Items.BossItems
             for (int i = 0; i < 50; i++)
             {
                 Dust.NewDustPerfect(player.Center, DustID.PurpleCrystalShard, Main.rand.NextVector2Circular(10, 10), 100, default, 5f).noGravity = true;
+            }
+            return true;
+        }
+        float rotation = 0;
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            for (int i = 0; i < 4; i++)
+            {
+                rotation += 0.01f;
+                Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i + rotation) * 5;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Violet * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
+
+                offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i - rotation) * 5;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Violet * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
             }
             return true;
         }

@@ -88,7 +88,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 NPC.active = false;
             }
 
-            if (Timer >= 0)
+            if (Timer >= 480)
             {
                 if (Main.netMode != 2)
                 {
@@ -100,7 +100,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.HostileFreezeBolt>() , HostileFreezeBoltDamage, Main.myPlayer);
                     }
-                    Timer = -1200 - Main.rand.Next(1400);
+                    Timer = 0;
                 }
                 //npc.netUpdate=true; //new
             }

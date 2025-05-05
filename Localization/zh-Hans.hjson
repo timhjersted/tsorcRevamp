@@ -5717,11 +5717,6 @@ Mods: {
 				Tooltip: "[c/ffbf00:攻击敌人可能会让你暂时免疫攻击]"
 			}
 
-			Galaxia: {
-				DisplayName: 银河
-				Tooltip: 由渺远星系的恒星荟萃而成
-			}
-
 			IntrepidSword: {
 				DisplayName: 无畏之刃
 				Tooltip:
@@ -7804,6 +7799,11 @@ Mods: {
 				// DisplayName: Witchking Mace
 				// Tooltip: ""
 			}
+
+			TaintedBow: {
+				// Tooltip: ""
+				// DisplayName: Tainted Bow
+			}
 		}
 
 		Buffs: {
@@ -8767,6 +8767,11 @@ Mods: {
 			WitchkingMaceDebuff: {
 				// Description: Mods.tsorcRevamp.Buffs.WitchkingMaceDebuff.Description
 				// DisplayName: Witchking Mace Debuff
+			}
+
+			WitchkingCurse: {
+				// Description: Mods.tsorcRevamp.Buffs.WitchkingCurse.Description
+				// DisplayName: Witchking Curse
 			}
 		}
 
@@ -10533,6 +10538,7 @@ Mods: {
 			Shunpo.DisplayName: 瞬步
 			"Necromancers Spell.DisplayName": 巫妖王之咒
 			"Krakens Cast.DisplayName": 海妖之怒
+			// "Witchking Scream.DisplayName": Witchking Scream
 		}
 
 		InfoDisplays: {

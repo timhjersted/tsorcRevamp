@@ -63,6 +63,7 @@ namespace tsorcRevamp
         public List<int> bagsOpened;
         public static int LastHit = 1;
         public static int ShunpoCooldownPerHit = -40;
+        public int WitchScreamCooldown = 0;
         public static bool SameHit = false;
         public static bool DiffHit = false;
         public Dictionary<int, int> consumedPotions;
@@ -1396,6 +1397,39 @@ namespace tsorcRevamp
                     LichKills = 0;
                 }
             }
+            if (tsorcRevamp.WitchScream.JustReleased && WitchScreamCooldown <= 0)
+                {
+                    if (Main.myPlayer == Player.whoAmI)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Lotr/WitchkingScream"), Player.Center);
+
+                        for (int i = 0; i < 25; i++) 
+                        {
+                            Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
+                            int dustIndex = Dust.NewDust(player.Center, 0, 0, 114, dustSpeed.X, dustSpeed.Y, 0, default(Color), 2f);
+                            Main.dust[dustIndex].noGravity = true; 
+                        }
+                        for (int i = 0; i < 25; i++) 
+                        {
+                            Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
+                            int dustIndex = Dust.NewDust(player.Center, 0, 0, 130, dustSpeed.X, dustSpeed.Y, 0, default(Color), 2f);
+                            Main.dust[dustIndex].noGravity = true; 
+                        }
+
+                        float radius = 30 * 16; 
+                        for (int i = 0; i < Main.maxNPCs; i++)
+                        {
+                            NPC npc = Main.npc[i];
+                            if (npc.active && !npc.friendly && npc.Distance(Main.MouseWorld) <= radius)
+                            {
+                                npc.AddBuff(ModContent.BuffType<WitchkingCurse>(), 6 * 60); 
+                            }
+                        }
+
+                        WitchScreamCooldown = 1200; 
+                    }
+                }
+
             if (tsorcRevamp.KrakensCast.JustReleased)
             {
                 if (Kraken)

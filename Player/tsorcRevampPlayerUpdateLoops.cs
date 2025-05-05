@@ -212,8 +212,6 @@ namespace tsorcRevamp
 
         public bool WaspPower = false;
         public bool DemonPower = false;
-        public bool WitchPower = false;
-
         public bool HollowSoldierAgility = false;
         public bool SmoughShieldSkills = false;
         public bool BurdenOfSmough = false;
@@ -460,8 +458,7 @@ namespace tsorcRevamp
 
             WaspPower = false;
             DemonPower = false;
-            WitchPower = false;
-
+            
             HollowSoldierAgility = false;
             SmoughShieldSkills = false;
             BurdenOfSmough = false;
@@ -2276,6 +2273,10 @@ namespace tsorcRevamp
                 forcedItemRotation = null;
             }
 
+            if (WitchScreamCooldown > 0)
+            {
+                WitchScreamCooldown--;
+            }       
 
             TryForceFrame(ref Player.headFrame, ref forcedHeadFrame);
             TryForceFrame(ref Player.bodyFrame, ref forcedBodyFrame);

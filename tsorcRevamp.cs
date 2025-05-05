@@ -107,6 +107,7 @@ namespace tsorcRevamp
         public static ModKeybind reflectionShiftKey;
         public static ModKeybind specialAbility;
         public static ModKeybind NecromancersSpell;
+        public static ModKeybind WitchScream;
         public static ModKeybind KrakensCast;
         public static ModKeybind WolfRing;
         public static ModKeybind WingsOfSeath;
@@ -241,6 +242,7 @@ namespace tsorcRevamp
             WingsOfSeath = KeybindLoader.RegisterKeybind(this, "Wings of Seath speed toggle", Microsoft.Xna.Framework.Input.Keys.U);
             //armor set bonus keybinds
             NecromancersSpell = KeybindLoader.RegisterKeybind(this, "Necromancers Spell", Microsoft.Xna.Framework.Input.Keys.V);
+            WitchScream = KeybindLoader.RegisterKeybind(this, "Witchking Scream", Microsoft.Xna.Framework.Input.Keys.V);
             KrakensCast = KeybindLoader.RegisterKeybind(this, "Krakens Cast", Microsoft.Xna.Framework.Input.Keys.V);
             Shunpo = KeybindLoader.RegisterKeybind(this, "Shunpo", Microsoft.Xna.Framework.Input.Keys.V);
             //SwordflipKey = KeybindLoader.RegisterKeybind(this, "Sword Flip", Microsoft.Xna.Framework.Input.Keys.P);
@@ -1444,6 +1446,7 @@ namespace tsorcRevamp
             reflectionShiftKey = null;
             specialAbility = null;
             NecromancersSpell = null;
+            WitchScream = null;
             KrakensCast = null;
             WolfRing = null;
             WingsOfSeath = null;

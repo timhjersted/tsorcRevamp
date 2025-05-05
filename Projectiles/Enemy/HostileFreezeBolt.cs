@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.friendly = false;
             Projectile.hostile = true;
             Projectile.penetrate = 10;
-            Projectile.tileCollide = true;
+            Projectile.tileCollide = false;
         }
 
         public override void AI()
@@ -45,38 +45,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override bool OnTileCollide(Vector2 CollideVel)
-        {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
-            Projectile.ai[0] += 1f;
-            if (Projectile.ai[0] >= 6f)
-            {
-                Projectile.position += Projectile.velocity;
-                Projectile.Kill();
-            }
-            else
-            {
-                if (Projectile.velocity.Y > 4f)
-                {
-                    if (Projectile.velocity.Y != CollideVel.Y)
-                    {
-                        Projectile.velocity.Y = -CollideVel.Y * 0.8f;
-                    }
-                }
-                else
-                {
-                    if (Projectile.velocity.Y != CollideVel.Y)
-                    {
-                        Projectile.velocity.Y = -CollideVel.Y;
-                    }
-                }
-                if (Projectile.velocity.X != CollideVel.X)
-                {
-                    Projectile.velocity.X = -CollideVel.X;
-                }
-            }
-            return false;
-        }
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             if (Main.rand.NextBool(4) && info.PvP)

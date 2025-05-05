@@ -3515,7 +3515,7 @@ Mods: {
 				Tooltip:
 					'''
 					Use this relic to summon the final battle with Attraidies. 
-					Attraidies laughs. 'Alright Red, I'm content to end this now. Face me. No more games.'
+					Attraidies laughs. '[c/ff08ff:Alright Red, I'm content to end this now. Face me. No more games.]'
 					'''
 			}
 
@@ -3526,7 +3526,12 @@ Mods: {
 
 			SerrisBait: {
 				DisplayName: Serris Bait
-				Tooltip: Summons Serris
+				Tooltip:
+					'''
+					Attracts and Summons Serris, An ancient alien who crash-landed in the desert centuries ago.
+					Given his dangerous nature and unique properties, he was imprisoned by Attraidies
+					beneath the tower and also used to create some advanced technologies.
+					'''
 			}
 
 			StoneOfSeath: {
@@ -4454,8 +4459,8 @@ Mods: {
 				DisplayName: Holy War Elixir
 				Tooltip:
 					'''
-					Will make you invincible.
-					Cannot be used again for {0} seconds after wearing off.
+					Will make you invincible for a short time 
+					Cannot be used again for {0} seconds after wearing off
 					{$CommonItemTooltip.Limited}
 					'''
 			}
@@ -5719,11 +5724,6 @@ Mods: {
 			ForgottenSwordbreaker: {
 				DisplayName: Forgotten Swordbreaker
 				Tooltip: "[c/ffbf00:Striking an enemy may temporarily make you deflect attacks.]"
-			}
-
-			Galaxia: {
-				DisplayName: Galaxia
-				Tooltip: Forged from the stars of a distant galaxy
 			}
 
 			IntrepidSword: {
@@ -7474,7 +7474,11 @@ Mods: {
 
 			BewitchedTitanite: {
 				DisplayName: Bewitched Titanite
-				Tooltip: ""
+				Tooltip:
+					'''
+					A form of titanite corrupted by morgul magic
+					Reflecting the spirit, it emanates a strange shadow
+					'''
 			}
 
 			TheMachineRelic: {
@@ -7811,6 +7815,11 @@ Mods: {
 			WitchkingMace: {
 				DisplayName: Witchking Mace
 				Tooltip: ""
+			}
+
+			TaintedBow: {
+				Tooltip: ""
+				DisplayName: Tainted Bow
 			}
 		}
 
@@ -8775,6 +8784,11 @@ Mods: {
 			WitchkingMaceDebuff: {
 				Description: Mods.tsorcRevamp.Buffs.WitchkingMaceDebuff.Description
 				DisplayName: Witchking Mace Debuff
+			}
+
+			WitchkingCurse: {
+				Description: Mods.tsorcRevamp.Buffs.WitchkingCurse.Description
+				DisplayName: Witchking Curse
 			}
 		}
 
@@ -10540,7 +10554,8 @@ Mods: {
 			"Wings of Seath speed toggle.DisplayName": Wings of Seath Speed toggle
 			Shunpo.DisplayName: Shunpo
 			"Necromancers Spell.DisplayName": Necromancers Spell
-			"Krakens Cast.DisplayName": Krakens  Cast
+			"Krakens Cast.DisplayName": Krakens Cast
+			"Witchking Scream.DisplayName": Witchking Scream
 		}
 
 		InfoDisplays: {

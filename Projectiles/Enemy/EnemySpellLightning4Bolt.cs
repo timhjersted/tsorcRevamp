@@ -19,35 +19,43 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetDefaults()
         {
             Projectile.penetrate = 8;
-            Projectile.hostile = true;
+            Projectile.hostile = false; // hostile only during the animation
             Projectile.tileCollide = false;
             Projectile.width = 130;
             Projectile.height = 402;
             DrawOffsetX = -55;
             DrawOriginOffsetY = -30;
         }
+
         public override void AI()
         {
-
-            if (Projectile.ai[1] == 0f)
-            {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_EtherianPortalDryadTouch with { Volume = 0.8f }, Projectile.Center); //lightning sound
-                Projectile.ai[1] = 1f;
-
-            }
-
-
-
-
             Projectile.frameCounter++;
-            Projectile.frame = (int)Math.Floor((double)Projectile.frameCounter / 4);
 
-            if (Projectile.frame >= 16)
+            if (Projectile.frameCounter < 15)
             {
-                Projectile.frame = 15;
+                Projectile.frame = 0;
+                Projectile.hostile = false; 
             }
-            if (Projectile.frameCounter > 71)
-            { // (projFrames * 4.5) - 1
+            else
+            {
+                if (Projectile.ai[1] == 0f)
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_EtherianPortalDryadTouch with { Volume = 0.8f }, Projectile.Center); //lightning sound
+                    Projectile.ai[1] = 1f;
+                }
+
+                Projectile.hostile = true; 
+                int animationSpeed = 4; 
+                Projectile.frame = (int)Math.Floor((double)(Projectile.frameCounter - 15) / animationSpeed);
+
+                if (Projectile.frame >= 16)
+                {
+                    Projectile.frame = 15;
+                }
+            }
+
+            if (Projectile.frameCounter > (15 + 16 * 4)) 
+            {
                 Projectile.alpha += 15;
             }
 
@@ -74,7 +82,5 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             return true;
         }
-
     }
 }
-
