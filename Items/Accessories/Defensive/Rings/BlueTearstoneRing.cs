@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
     {
         public static float LifeThreshold = 40f;
         public static int Defense = 25;
-        public static float DR = 9f;
+        public static float DrIncrease = 9f;
         public static int BadMeleeDmg = 200;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold, Defense, DR, BadMeleeDmg);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(LifeThreshold, Defense, DrIncrease, BadMeleeDmg);
         public override void SetStaticDefaults()
         {
         }
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Accessories.Defensive.Rings
             if (player.statLife <= (player.statLifeMax2 * LifeThreshold / 100f))
             {
                 player.statDefense += Defense;
-                player.endurance = DR / 100f;
+                player.endurance += DrIncrease / 100f;
                 player.GetDamage(DamageClass.Melee) -= BadMeleeDmg / 100;
             }
         }

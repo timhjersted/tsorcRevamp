@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Melee.Spears
         public override int UseAnimationTime => 20;
         public override int UseTime => 20;
         public override int Rarity => ModContent.RarityType<DarkBlue>();
-        public override int Value => PriceByRarity.fromItem(Item);
+        public override int Value => PriceByRarity.Lime_7;
         public override SoundStyle UseSoundID => SoundID.Item71;
         public const float BonusDmgWhileFalling = 120f;
         public const int HealOnHit = 4;
