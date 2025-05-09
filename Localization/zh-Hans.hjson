@@ -8020,6 +8020,11 @@ Mods: {
 				Description: 你不能飞行！
 			}
 
+			WitchkingsGrasp: {
+				// DisplayName: The Witchking's Grasp
+				// Description: You will not escape.
+			}
+
 			WeightOfShadow: {
 				DisplayName: 阴暗引力
 				Description: 重力正在改变...

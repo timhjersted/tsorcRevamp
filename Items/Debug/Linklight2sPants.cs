@@ -24,24 +24,15 @@ namespace tsorcRevamp.Items.Debug
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 30;
+            Item.defense = 25;
             Item.rare = ItemRarityID.Expert;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
-            if (head.type == ModContent.ItemType<Linklight2sHat>() && body.type == ModContent.ItemType<Linklight2sShirt>())
-            {
-                return true;
-            }
-
-            return false;
+            return head.type == ModContent.ItemType<Linklight2sHat>() && body.type == ModContent.ItemType<Linklight2sShirt>();
         }
 
-        public override void UpdateArmorSet(Player player)
-        {
-            DragoonHelmet.ApplyDragoonSetBonus(player);
-        }
         public override void ArmorSetShadows(Player player)
         {
             player.armorEffectDrawShadow = true;

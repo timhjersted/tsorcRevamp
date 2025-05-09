@@ -60,6 +60,7 @@ namespace tsorcRevamp
         public int SoulReaper = 5;
         public bool TornWings = false;
         public bool Crippled = false;
+        public bool BeingPulledIntoTheWitchking = false;
 
         public bool Celestriad = false;
         public bool UndeadTalisman = false;
@@ -504,6 +505,7 @@ namespace tsorcRevamp
             MorgulWhipEffect = false;
 
             Crippled = false;
+            BeingPulledIntoTheWitchking = false;
             ShadowWeight = false;
             ReflectionShiftEnabled = false;
 
@@ -1353,6 +1355,11 @@ namespace tsorcRevamp
                     int dust = Dust.NewDust(new Vector2(Player.position.X - 6, Player.position.Y + 36), 32, 4, 184, 0, 0, 30, default(Color), 1f);
                     Main.dust[dust].noGravity = true;
                 }
+            }
+
+            if (BeingPulledIntoTheWitchking)
+            {
+                // TODO: Add visual effects to the player while being pulled in.
             }
 
             for (int i = 0; i < 50; i++)

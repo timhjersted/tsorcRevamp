@@ -17,10 +17,10 @@ namespace tsorcRevamp.Items.Debug
     public class Linklight2sShirt : ModItem
     {
         public override string Texture => "tsorcRevamp/Items/Armors/RedHerosShirt";
-        public static float HeroCloakEfficiency = 200f;
+        public static float HeroCloakEfficiency = 100f;
         public static float Dmg = 50f;
         public static float MeleeSpeed = 50f;
-        public static float HeroLifeThreshold = 99f;
+        public static float HeroLifeThreshold = 80f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(HeroCloakEfficiency, HeroLifeThreshold, Dmg, MeleeSpeed);
 
         public override void SetStaticDefaults()
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Debug
         {
             Item.width = 18;
             Item.height = 18;
-            Item.defense = 60;
+            Item.defense = 45;
             Item.rare = ItemRarityID.Yellow;
             Item.value = PriceByRarity.fromItem(Item);
         }

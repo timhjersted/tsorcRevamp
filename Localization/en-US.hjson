@@ -8037,6 +8037,11 @@ Mods: {
 				Description: You cannot fly!
 			}
 
+			WitchkingsGrasp: {
+				DisplayName: The Witchking's Grasp
+				Description: You will not escape.
+			}
+
 			WeightOfShadow: {
 				DisplayName: Weight of Shadow
 				Description: The gravity of what you might become sets in...

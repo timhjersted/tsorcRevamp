@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Debug
         public static float ManaCost = 50f;
         public static int ManaRegen = 20;
         public static float CritChance = 50f;
-        public static int LifeRegen = 10;
+        public static int LifeRegen = 25;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost, ManaRegen, CritChance, LifeRegen);
         public override void SetStaticDefaults()
         {
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Debug
         {
             Item.width = 18;
             Item.height = 12;
-            Item.defense = 30;
+            Item.defense = 25;
             Item.rare = ItemRarityID.Expert;
             Item.value = PriceByRarity.fromItem(Item);
         }
@@ -66,7 +66,7 @@ namespace tsorcRevamp.Items.Debug
 
             player.ignoreWater = true;
             player.iceSkate = true;
-            player.endurance += 150;
+            player.endurance += 150f / 100f;
         }
         public override bool WingUpdate(Player player, bool inUse)
         {

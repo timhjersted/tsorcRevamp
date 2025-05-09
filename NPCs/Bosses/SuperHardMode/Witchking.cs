@@ -27,6 +27,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         bool chargeDamageFlag = false;
         int blackBreathDamage = 27;
         float lifeThreshold = 80f;
+        bool beingPulled = false;
+
+        int frameCount = 0;
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.PossessedArmor];
@@ -52,6 +56,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.boss = true;
             AnimationType = NPCID.PossessedArmor;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Witchking.DespawnHandler"), Color.Purple, DustID.PurpleTorch);
+
+            NPC.lavaImmune = true;
 
             UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), 75, 8, SoundID.Item20);
             UsefulFunctions.AddAttack(NPC, 700, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 95, 0, SoundID.Item100, needsLineOfSight: false);
@@ -106,7 +112,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 0.8f, canTeleport: false, enragePercent: 0.5f, enrageTopSpeed: 1.6f);
+
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
+
             if (NPC.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
             {
                 defenseBroken = true;
@@ -123,6 +131,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 lifeThreshold -= 20f;
 
+                if (lifeThreshold == 0f)
+                {
+                    lifeThreshold = 10f;
+                }
+
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Lotr/WitchkingScream"), NPC.Center);
 
                 for (int i = 0; i < 25; i++)
@@ -138,8 +151,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Main.dust[dustIndex].noGravity = true;
                 }
 
-                ref var player = ref Main.player[NPC.target];
+                beingPulled = true;
+                frameCount = 0;
             }
+
+            if (beingPulled)
+            {
+                beingPulled = Pull();
+            }
+
             if (chargeDamageFlag == true)
             {
                 chargeTelegraphTimer++;
@@ -168,7 +188,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     chargeDamageFlag = false;
                     chargeTelegraphTimer = 0;
                 }
-
             }
 
 
@@ -183,7 +202,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (NPC.Distance(player.Center) < 600)
                     {
                         player.AddBuff(BuffID.Slow, 60, false);
-                        player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
                         player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60, false);
 
                     }
@@ -191,6 +209,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         player.AddBuff(BuffID.Silenced, 180, false);
                         player.AddBuff(BuffID.Bleeding, 600, false);
+                        player.AddBuff(ModContent.BuffType<TornWings>(), 20, false);
                     }
                 }
             }
@@ -237,6 +256,51 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
             }
+        }
+
+        public bool Pull()
+        {
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                // Skip over invalid players
+                if (!Main.player[i].active || Main.player[i].dead)
+                {
+                    continue;
+                }
+
+                Player player = Main.player[i];
+
+                // Creates visual for the pull
+                player.AddBuff(ModContent.BuffType<WitchkingsGrasp>(), 5, false);
+
+                // A positive xDiff = the player is to the right of the witchking
+                float xDiff = player.Center.X - NPC.Center.X;
+
+                // A negative yDiff = the player is above the witchking
+                float yDiff = player.Center.Y - NPC.Center.Y;
+                
+                /*
+                if (frameCount % 60 == 0)
+                {
+                    Main.NewText("Pullx = " + string.Format("{0:N3}", -1f * xDiff) + "yDiff = " + string.Format("{0:N3}", -1f * yDiff), Color.White);
+                }
+                */
+
+                float xSign = xDiff > 0 ? 1 : -1;
+                float ySign = yDiff > 0 ? 1 : -1;
+
+                // Will range from 1 - 5 in practice, 5 being the lowest threshold before the witchking dies
+                float strength = (100f - lifeThreshold) / 20f;
+
+                // The pull gets stronger as the witchking is lower on life and the player is further away
+                player.velocity.X -= (xDiff / 4000f + strength * .056f * xSign) * (1 + strength * .13f);
+                player.velocity.Y -= yDiff / 800f + strength * .03f * ySign;
+            }
+
+            frameCount++;
+
+            const int pullTimeInSeconds = 30;
+            return frameCount < pullTimeInSeconds * 60;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
