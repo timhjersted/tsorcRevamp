@@ -7858,13 +7858,13 @@ Mods: {
 			}
 
 			EchoGoggles: {
+				DisplayName: Echo Goggles
 				Tooltip: 
 				```
 				The Spectres residing within gain power from dark souls.
 				Echo Vision is now granted even from the vanity slot.
 				The truth will never escape your sight.
-				```
-				DisplayName: Echo Goggles
+
 			}
 		}
 
