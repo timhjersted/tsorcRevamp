@@ -14,7 +14,7 @@ using tsorcRevamp.Items;
 
 namespace tsorcRevamp.Items.Debug
 {
-    public class ServantsOfTheDevs : ModItem
+    public class WrathOfThePhoenix : ModItem
     {
         public override string Texture => "tsorcRevamp/Items/Weapons/Summon/PhoenixEgg";
         public static float CritDamage = 50f;
