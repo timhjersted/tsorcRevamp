@@ -95,11 +95,7 @@ namespace tsorcRevamp.Items.Debug
 
         public override bool CanUseItem(Player player)
         {
-            //if (player.name == "Zeodexic" || player.name.Contains("Sam") || player.name == "Chroma TSORC test")
-            {
-                return true;
-            }
-            //return false;
+            return Terraria.ModLoader.ModContent.GetInstance<tsorcRevampConfig>().DebugMode;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

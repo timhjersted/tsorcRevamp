@@ -15,7 +15,6 @@ namespace tsorcRevamp
         [DefaultValue(true)]
         public bool AdventureMode { get; set; }
 
-
         [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.GameplayChanges")]
         [BackgroundColor(60, 140, 80, 192)]
         [DefaultValue(true)]
@@ -49,6 +48,9 @@ namespace tsorcRevamp
         [DefaultValue(false)]
         public bool DisableSupersonicWings2ExtraJumps { get; set; }
 
+        [BackgroundColor(60, 140, 80, 192)]
+        [DefaultValue(false)]
+        public bool DebugMode { get; set; }
 
         [Header("Mods.tsorcRevamp.Configs.tsorcRevampConfig.Headers.Visual")]
 

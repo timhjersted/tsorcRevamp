@@ -1,6 +1,11 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Items.Weapons.Magic;
+using tsorcRevamp.Items.Weapons.Melee.Axes;
 
 namespace tsorcRevamp.Items.Debug
 {
@@ -26,6 +31,15 @@ namespace tsorcRevamp.Items.Debug
         {
             player.immune = true;
             player.lifeRegen += 8000;
+        }
+
+        public override void AddRecipes()
+        {
+            var recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<ForgottenRuneAxe>(), 1);
+            recipe.AddCondition(tsorcRevampWorld.DebugModeEnabled);
+            
+            recipe.Register();
         }
     }
 }

@@ -7821,6 +7821,51 @@ Mods: {
 				Tooltip: ""
 				DisplayName: Tainted Bow
 			}
+
+			Linklight2sHat: {
+				DisplayName: Linklight2s Hat
+				Tooltip: "For testing purposes only."
+			}
+
+			Linklight2sPants: {
+				DisplayName: Linklight2s Pants
+				Tooltip: "For testing purposes only."
+			}
+
+			Linklight2sShirt: {
+				DisplayName: Linklight2s Shirt
+				Tooltip: "For testing purposes only."
+			}
+
+			Linklight2sBoots: {
+				DisplayName: Linklight2s Boots
+				Tooltip: "For testing purposes only."
+			}
+
+			Linklight2sSword: {
+				DisplayName: Linklight2s Sword
+				Tooltip: "For testing purposes only."
+			}
+
+			WrathOfThePhoenix: {
+				Tooltip: "For testing purposes only."
+				DisplayName: Wrath of the Phoenix
+			}
+
+			TeleportationRod: {
+				DisplayName: Teleportation Rod
+				Tooltip: ""
+			}
+
+			EchoGoggles: {
+				Tooltip: 
+				```
+				The Spectres residing within gain power from dark souls.
+				Echo Vision is now granted even from the vanity slot.
+				The truth will never escape your sight.
+				```
+				DisplayName: Echo Goggles
+			}
 		}
 
 		Buffs: {
@@ -10802,12 +10847,18 @@ Mods: {
 					Label: Adjust Bot C Mechanics Volume
 					Tooltip: ""
 				}
+
+				DebugMode: {
+					Tooltip: ""
+					Label: Debug Mode
+				}
 			}
 		}
 
 		Conditions: {
 			AdventureModeDisabled: Sandbox-only
 			AdventureModeEnabled: Adventure Mode-only
+			DebugModeEnabled: For testing-only
 			BotCEnabled: Bearer of the Curse-only
 			SorrowDowned: The Sorrow has been defeated
 			HunterDowned: The Hunter has been defeated

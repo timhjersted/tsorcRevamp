@@ -4,6 +4,8 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items;
+using tsorcRevamp.Items.Ammo;
 
 namespace tsorcRevamp.Items.Materials
 {
@@ -130,6 +132,16 @@ namespace tsorcRevamp.Items.Materials
         public override bool ItemSpace(Player player)
         {
             return true;
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe(1000000);
+
+            recipe.AddIngredient(ModContent.ItemType<Bolt>(), 1);
+            recipe.AddCondition(tsorcRevampWorld.DebugModeEnabled);
+
+            recipe.Register();
         }
     }
 

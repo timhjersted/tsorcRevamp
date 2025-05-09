@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using rail;
 using System;
 using System.IO;
 using Terraria;
@@ -25,6 +26,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         float customspawn1;
         bool chargeDamageFlag = false;
         int blackBreathDamage = 27;
+        float lifeThreshold = 80f;
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.PossessedArmor];
@@ -115,6 +117,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 chargeDamageFlag = true;
 
+            }
+            // SCREAM BABY!!!
+            if (lifeThreshold > 0f && NPC.life < (int)((float)NPC.lifeMax * lifeThreshold / 100f))
+            {
+                lifeThreshold -= 20f;
+
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Lotr/WitchkingScream"), NPC.Center);
+
+                for (int i = 0; i < 25; i++)
+                {
+                    Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
+                    int dustIndex = Dust.NewDust(NPC.Center, 0, 0, 114, dustSpeed.X, dustSpeed.Y, 0, default(Color), 2f);
+                    Main.dust[dustIndex].noGravity = true;
+                }
+                for (int i = 0; i < 25; i++)
+                {
+                    Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
+                    int dustIndex = Dust.NewDust(NPC.Center, 0, 0, 130, dustSpeed.X, dustSpeed.Y, 0, default(Color), 2f);
+                    Main.dust[dustIndex].noGravity = true;
+                }
+
+                ref var player = ref Main.player[NPC.target];
             }
             if (chargeDamageFlag == true)
             {

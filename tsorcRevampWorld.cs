@@ -1477,6 +1477,18 @@ namespace tsorcRevamp
                 return internalEnabled;
             }
         }
+        static Condition debugEnabled;
+        public static Condition DebugModeEnabled
+        {
+            get
+            {
+                if (debugEnabled == null)
+                {
+                    debugEnabled = new Condition("Mods.tsorcRevamp.Conditions.DebugModeEnabled", () => ModContent.GetInstance<tsorcRevampConfig>().DebugMode);
+                }
+                return debugEnabled;
+            }
+        }
         static Condition BotCEnabled;
         public static Condition BearerOfTheCurseEnabled
         {

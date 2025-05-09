@@ -7804,6 +7804,46 @@ Mods: {
 				// Tooltip: ""
 				// DisplayName: Tainted Bow
 			}
+
+			Linklight2sHat: {
+				// DisplayName: Linklight2s Hat
+				// Tooltip: ""
+			}
+
+			Linklight2sPants: {
+				// DisplayName: Linklight2s Pants
+				// Tooltip: ""
+			}
+
+			Linklight2sShirt: {
+				// DisplayName: Linklight2s Shirt
+				// Tooltip: ""
+			}
+
+			Linklight2sBoots: {
+				// DisplayName: Linklight2s Boots
+				// Tooltip: ""
+			}
+
+			Linklight2sSword: {
+				// DisplayName: Linklight2s Sword
+				// Tooltip: ""
+			}
+
+			ServantsOfTheDevs: {
+				// Tooltip: ""
+				// DisplayName: Servants Of The Devs
+			}
+
+			TeleportationRod: {
+				// DisplayName: Teleportation Rod
+				// Tooltip: ""
+			}
+
+			EchoGoggles: {
+				// Tooltip: ""
+				// DisplayName: Echo Goggles
+			}
 		}
 
 		Buffs: {
@@ -10785,12 +10825,18 @@ Mods: {
 					Label: 被诅咒者机制音量
 					Tooltip: ""
 				}
+
+				DebugMode: {
+					// Tooltip: ""
+					// Label: Debug Mode
+				}
 			}
 		}
 
 		Conditions: {
 			AdventureModeDisabled: 仅限沙盒模式
 			AdventureModeEnabled: 仅限冒险模式
+			// DebugModeEnabled: For testing-only
 			BotCEnabled: 仅限被诅咒者
 			SorrowDowned: 击败悲伤
 			HunterDowned: 击败猎手
