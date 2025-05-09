@@ -1327,8 +1327,14 @@ namespace tsorcRevamp
 
             if (TornWings)
             {
-                Player.wingTime = 0;
+                // Should allow for a single jump, just nothing while midair.
+
+                Player.wingTime = 0; 
                 Player.moveSpeed *= 0.8f;
+
+                Player.canRocket = false;
+                Player.rocketTime = 0;
+                Player.jumpBoost = false;
             }
 
             if (Crippled)

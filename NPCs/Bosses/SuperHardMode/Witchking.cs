@@ -209,7 +209,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         player.AddBuff(BuffID.Silenced, 180, false);
                         player.AddBuff(BuffID.Bleeding, 600, false);
-                        player.AddBuff(ModContent.BuffType<TornWings>(), 20, false);
+                        player.AddBuff(ModContent.BuffType<TornWings>(), 40, false);
                     }
                 }
             }
@@ -294,7 +294,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 // The pull gets stronger as the witchking is lower on life and the player is further away
                 player.velocity.X -= (xDiff / 4000f + strength * .056f * xSign) * (1 + strength * .13f);
-                player.velocity.Y -= yDiff / 800f + strength * .03f * ySign;
+
+                // Only apply a Y velocity if the player is currently midair - prevents no jump bug along with torn wings
+                if (player.velocity.Y != 0f)
+                {
+                    player.velocity.Y -= yDiff / 800f + strength * .03f * ySign;
+                }
             }
 
             frameCount++;
