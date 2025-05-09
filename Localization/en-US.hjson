@@ -7824,31 +7824,31 @@ Mods: {
 
 			Linklight2sHat: {
 				DisplayName: Linklight2s Hat
-				Tooltip: "For testing purposes only."
+				Tooltip: For testing purposes only.
 			}
 
 			Linklight2sPants: {
 				DisplayName: Linklight2s Pants
-				Tooltip: "For testing purposes only."
+				Tooltip: For testing purposes only.
 			}
 
 			Linklight2sShirt: {
 				DisplayName: Linklight2s Shirt
-				Tooltip: "For testing purposes only."
+				Tooltip: For testing purposes only.
 			}
 
 			Linklight2sBoots: {
 				DisplayName: Linklight2s Boots
-				Tooltip: "For testing purposes only."
+				Tooltip: For testing purposes only.
 			}
 
 			Linklight2sSword: {
 				DisplayName: Linklight2s Sword
-				Tooltip: "For testing purposes only."
+				Tooltip: For testing purposes only.
 			}
 
 			WrathOfThePhoenix: {
-				Tooltip: "For testing purposes only."
+				Tooltip: For testing purposes only.
 				DisplayName: Wrath of the Phoenix
 			}
 
@@ -7859,12 +7859,12 @@ Mods: {
 
 			EchoGoggles: {
 				DisplayName: Echo Goggles
-				Tooltip: 
-				```
-				The Spectres residing within gain power from dark souls.
-				Echo Vision is now granted even from the vanity slot.
-				The truth will never escape your sight.
-
+				Tooltip:
+					'''
+					The Spectres residing within gain power from dark souls.
+					Echo Vision is now granted even from the vanity slot.
+					The truth will never escape your sight.
+					'''
 			}
 		}
 
