@@ -14,9 +14,11 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.UI;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Projectiles;
 using tsorcRevamp.Projectiles.VFX;
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp
 {
@@ -183,9 +185,32 @@ namespace tsorcRevamp
         //no vanilla items have purple rarity base. only cyan and red with modifiers can be purple. im guessing on the price.
         public static readonly int Purple_11 = Item.buyPrice(platinum: 0, gold: 54, silver: 0, copper: 0);
 
+        // Returns whether the value is within the lower and upper bounds, inclusive
+        public static bool InRange(int x, int lower, int upper)
+        {
+            return x >= lower && x <= upper;
+        }
+
         public static int fromItem(Item item)
         {
-            return fromRarity(item.rare);
+            // Item has a vanilla rarity
+            if (InRange(item.rare, 0, 11))
+            {
+                return fromRarity(item.rare);
+            }
+
+            // These rarities are for post attraides content
+            if (item.rare == ModContent.RarityType<OrangeRed>() || item.rare == ModContent.RarityType<DarkBlue>())
+            {
+                return Red_10;
+            }
+            // Used for eternal potions
+            else if (item.rare == ModContent.RarityType<Pinky>())
+            {
+                return Yellow_8;
+            }
+
+            return White_0;
         }
 
         public static int fromRarity(int rarity)
