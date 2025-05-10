@@ -1414,8 +1414,8 @@
 }
 {
   "text": "None of your family is in sight, but you hold out hope they\u0027re still alive.  --NEWLINE  --NEWLINE \u0022Perhaps they made it to the village...\u0022",
-  "tileX": 4776,
-  "tileY": 867,
+  "tileX": 4671,
+  "tileY": 852,
   "textWidth": 320,
   "style": 1
 }
@@ -1435,8 +1435,8 @@
 }
 {
   "text": "The crackling embers of your old home blow in the wind. Your writings and paintings destroyed. Your wife is gone. You look down at a broken picture frame of the two of you; your heart clenches, a pang of rage and sadness lashes your heart. \u0022What meaning can be found in this life? This short life seeking simple pleasures, a little comfort, love, food and security? This attachment to success and approval? None of it matters now -- all of this I leave behind, left to burn to ashes.\u0022",
-  "tileX": 4808,
-  "tileY": 864,
+  "tileX": 4976,
+  "tileY": 846,
   "textWidth": 320,
   "style": 1
 }
@@ -1449,8 +1449,8 @@
 }
 {
   "text": "Your brother Elijah and Bodhi\u0027s house",
-  "tileX": 4837,
-  "tileY": 867,
+  "tileX": 4842,
+  "tileY": 855,
   "textWidth": 320,
   "style": 1
 }
@@ -1470,15 +1470,22 @@
 }
 {
   "text": "\u003C*\u003E Press Left Alt to dodge roll through enemies while avoiding harm. --NEWLINE  --NEWLINE You can change the input via TML\u0027s controller settings, in the mod section. --NEWLINE  --NEWLINE Swapping Left Alt with Left Shift may also be worth trying. Find what works for you. It will be essential to your journey. \u003C*\u003E",
-  "tileX": 4855,
-  "tileY": 866,
+  "tileX": 4795,
+  "tileY": 851,
+  "textWidth": 320,
+  "style": 1
+}
+{
+  "text": "You notice that this camp wasn't here before. This territory, which belonged to Ashenpeak Village, was abandoned after Attraidies attacked, where Dunlendings now take refuge. You remember that these men are hostile to you...",
+  "tileX": 4730,
+  "tileY": 853,
   "textWidth": 320,
   "style": 1
 }
 {
   "text": "Your mother and father\u0027s house",
-  "tileX": 4880,
-  "tileY": 863,
+  "tileX": 4905,
+  "tileY": 850,
   "textWidth": 320,
   "style": 1
 }
@@ -1491,29 +1498,36 @@
 }
 {
   "text": "Your last memories before unconsciousness start to come back.  --NEWLINE  --NEWLINE Your family\u0027s village was raided and set ablaze by an army wearing the sigil of Attraidies, The Mindflayer King.  --NEWLINE  --NEWLINE You rush to the site of your family\u0027s home to search for survivors.",
-  "tileX": 4905,
-  "tileY": 867,
+  "tileX": 4909,
+  "tileY": 854,
   "textWidth": 320,
   "style": 1
 }
 {
   "text": "Your stomach sinks -- the two graves next to yours are unmarked, but must have been dug at the time of yours. ",
-  "tileX": 4915,
-  "tileY": 867,
+  "tileX": 4917,
+  "tileY": 854,
+  "textWidth": 320, 
+  "style": 1
+}
+{
+  "text": "The great eastern tower, which marks the border between the verdant plains of Ashenpeak and the jungle, is now in ruins following numerous attacks. The tower is now sometimes inhabited by goblins who have always fought for this territory...",
+  "tileX": 5028,
+  "tileY": 831,
   "textWidth": 320,
   "style": 1
 }
 {
   "text": "You wake up coughing black, dried blood.  --NEWLINE  --NEWLINE Coming to your senses, your heart starts racing as you realize you were buried alive.  --NEWLINE  --NEWLINE You scramble to find anything in the darkness that could help dig your way out and feel something sharp jabbing you in the side - a broken shard of your father\u0027s pickaxe...",
-  "tileX": 4919,
-  "tileY": 873,
+  "tileX": 4922,
+  "tileY": 860,
   "textWidth": 320,
   "style": 1
 }
 {
   "text": "To the WEST \u003C--- --NEWLINE Ashen Peak Village --NEWLINE  --NEWLINE To the EAST---\u003E --NEWLINE The Tree Village of the Orid Tribe --NEWLINE Jungle Ruins --NEWLINE Obsidian\u0027s Volcano --NEWLINE Unknown",
-  "tileX": 4944,
-  "tileY": 859,
+  "tileX": 5054,
+  "tileY": 831,
   "textWidth": 320,
   "style": 1
 }
@@ -2029,7 +2043,7 @@
   "style": 1
 }
 {
-  "text": "This gate has been sealed by the Wyvern Mage, who lives high atop these mountains. --NEWLINE  --NEWLINE Beyond this gate lies the Frozen Ocean, Miakoda tells you.",
+  "text": "You\u0027ve found the lair of the Ancestral Spirit. --NEWLINE  --NEWLINE A mystical creature from the frozen lands about whom you know little. It has made its home beneath the mountains and guards the entrance to the Frozen Ocean. It is said that this entity has slaughtered many travelers attempting to travel west, and that it has piled the bones in its lair...",
   "tileX": 7219,
   "tileY": 773,
   "textWidth": 320,

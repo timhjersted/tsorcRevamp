@@ -181,6 +181,7 @@ namespace tsorcRevamp
             AttraidiesTheSorrowEvent,
             TwinEoWFight,
             DunledingAmbush,
+            RemixDunledingAmbush,
             BoulderfallEvent1,
             BoulderfallEvent2,
             BoulderfallEvent3,
@@ -442,12 +443,21 @@ namespace tsorcRevamp
             //DUNLENDING AMBUSH
             List<int> DunledingAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>() };
             List<Vector2> DunledingAmbushEnemyLocations = new List<Vector2>() { new Vector2(4697, 858), new Vector2(4645, 858), new Vector2(4645, 841) };
-            ScriptedEvent DunledingAmbush = new ScriptedEvent(new Vector2(4666, 856), 10, DunledingAmbushEnemyTypeList, DunledingAmbushEnemyLocations, default, true, false, false, LangUtils.GetTextValue("Events.DunlendingAmbush"), Color.Red, false, PreEoCCustomCondition, DundledingAmbushAction);
+            ScriptedEvent DunledingAmbush = new ScriptedEvent(new Vector2(4666, 856), 10, DunledingAmbushEnemyTypeList, DunledingAmbushEnemyLocations, default, true, false, false, LangUtils.GetTextValue("Events.DunlendingAmbush"), Color.Red, false, OnlyAdventureMapCondition, DundledingAmbushAction);
             if (Main.netMode == NetmodeID.SinglePlayer && Main.expertMode)
             {
                 DunledingAmbush.SetCustomStats((int?)(player.statLifeMax2 * .5f), null, (int?)(player.statLifeMax2 * 0.10f) + 25); //damage doesn't double for Expert
             }
             DunledingAmbush.SetCustomDrops(new List<int>() { ModContent.ItemType<DodgerollMemo>() }, new List<int>() { 1 }, true);
+
+            List<int> RemixDunledingAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>() };
+            List<Vector2> RemixDunledingAmbushEnemyLocations = new List<Vector2>() { new Vector2(4691, 854), new Vector2(4733, 854), new Vector2(4698, 853) };
+            ScriptedEvent RemixDunledingAmbush = new ScriptedEvent(new Vector2(4715, 853), 7, RemixDunledingAmbushEnemyTypeList, RemixDunledingAmbushEnemyLocations, default, true, false, false, LangUtils.GetTextValue("Events.DunlendingAmbush"), Color.Red, false, RemixMapCondition, DundledingAmbushAction);
+            if (Main.netMode == NetmodeID.SinglePlayer && Main.expertMode)
+            {
+                RemixDunledingAmbush.SetCustomStats((int?)(player.statLifeMax2 * .5f), null, (int?)(player.statLifeMax2 * 0.10f) + 25); //damage doesn't double for Expert
+            }
+            RemixDunledingAmbush.SetCustomDrops(new List<int>() { ModContent.ItemType<DodgerollMemo>() }, new List<int>() { 1 }, true);
 
 
             //ALIEN AMBUSH
@@ -692,7 +702,8 @@ namespace tsorcRevamp
                 {ScriptedEventType.SpawnGoblin, SpawnGoblin },
                 {ScriptedEventType.AttraidiesTheSorrowEvent, AttraidiesTheSorrowEvent},
                 {ScriptedEventType.TwinEoWFight, TwinEoWFight},
-                {ScriptedEventType.DunledingAmbush, DunledingAmbush},
+                {ScriptedEventType.DunledingAmbush, DunledingAmbush}, 
+                {ScriptedEventType.RemixDunledingAmbush, RemixDunledingAmbush},
                 {ScriptedEventType.BoulderfallEvent1, BoulderfallEvent1},
                 {ScriptedEventType.BoulderfallEvent2, BoulderfallEvent2},
                 {ScriptedEventType.BoulderfallEvent3, BoulderfallEvent3},

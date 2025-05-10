@@ -1,8 +1,10 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Materials;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Items.Armors.Summon
 {
@@ -40,8 +42,19 @@ namespace tsorcRevamp.Items.Armors.Summon
             int i2 = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;
             int j2 = (int)(player.position.Y + 2f) / 16;
             Lighting.AddLight(i2, j2, 0.92f, 0.8f, 0.65f);
+            player.GetModPlayer<tsorcRevampPlayer>().Witch = true;
         }
-
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            var WitchScreamKey = tsorcRevamp.WitchScream.GetAssignedKeys();
+            string WitchScreamString = WitchScreamKey.Count > 0 ? WitchScreamKey[0] : LangUtils.GetTextValue("Keybinds.Witchking Scream.DisplayName") + LangUtils.GetTextValue("CommonItemTooltip.NotBound");
+            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip2");
+            if (ttindex1 != -1)
+            {
+                tooltips.RemoveAt(ttindex1);
+                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", LangUtils.GetTextValue("Items.WitchkingRobe.Keybind1") + WitchScreamString + LangUtils.GetTextValue("Items.WitchkingRobe.Keybind2")));
+            }
+        }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

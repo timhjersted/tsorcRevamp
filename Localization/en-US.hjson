@@ -3120,9 +3120,12 @@ Mods: {
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
-					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
-					{$CommonItemTooltip.SetBonus}Empowers the Witchking's Sword
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1} 
+					{$CommonItemTooltip.SetBonus}{$Items.WitchkingRobe.Keybind1}WitchScream{$Items.WitchkingRobe.Keybind2}
+					Affected enemies deal less damage, have reduced defense and speed, and take significant damage over time for a short moment
 					'''
+				Keybind1: "Press "
+				Keybind2: " to let out a terrifying scream that affects enemies in a radius"
 			}
 
 			SymbolOfAvarice: {
@@ -5855,11 +5858,6 @@ Mods: {
 			WitchkingsSword: {
 				DisplayName: Witchking's Sword
 				Tooltip: Inflicts 1-2 random debuffs on-hit
-				Empowered:
-					'''
-					Now inflicts 1 random whip debuff each hit instead
-					Scales with whip damage, range and summon crit instead of melee stats
-					'''
 			}
 
 			YianBlade: {
@@ -7814,7 +7812,7 @@ Mods: {
 
 			WitchkingMace: {
 				DisplayName: Witchking Mace
-				Tooltip: ""
+				Tooltip: Inflicts 1 random whip debuff each hit
 			}
 
 			TaintedBow: {

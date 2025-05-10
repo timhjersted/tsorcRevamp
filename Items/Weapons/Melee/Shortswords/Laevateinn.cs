@@ -26,9 +26,9 @@ namespace tsorcRevamp.Items.Weapons.Melee.Shortswords
             Item.noUseGraphic = true;
             Item.shoot = ModContent.ProjectileType<LaevateinnProjectile>(); // The projectile is what makes a shortsword work
             Item.shootSpeed = 2.1f; // This value bleeds into the behavior of the projectile as velocity, keep that in mind when tweaking values
-            Item.useAnimation = 8; //holy shit that is some d(ee)ps
-            Item.useTime = 8;
-            Item.damage = 55;
+            Item.useAnimation = 10; //holy shit that is some d(ee)ps
+            Item.useTime = 10;
+            Item.damage = 65;
             Item.knockBack = 3.8f;
             Item.autoReuse = true;
             Item.useTurn = false;

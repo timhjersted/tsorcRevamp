@@ -130,6 +130,7 @@ namespace tsorcRevamp
         public bool CelestialCloak;
 
         public bool CanUseItemsWhileDodging;
+        public bool Witch;
 
         public bool Kraken;
 
@@ -448,6 +449,8 @@ namespace tsorcRevamp
             CelestialCloak = false;
 
             CanUseItemsWhileDodging = false;
+            
+            Witch = false;
 
             Lich = false;
 

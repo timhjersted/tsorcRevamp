@@ -29,6 +29,7 @@ using tsorcRevamp.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Items.Weapons.Melee.Runeterra;
 using tsorcRevamp.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Items.BossBags
 {
@@ -554,6 +555,7 @@ namespace tsorcRevamp.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<MorgulBlade>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.WitchkingsSword>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<WitchkingMace>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BewitchedTitanite>(), 1, 20, 30));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CovenantOfArtorias>()));
         }

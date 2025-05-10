@@ -1399,34 +1399,68 @@ namespace tsorcRevamp
             }
             if (tsorcRevamp.WitchScream.JustReleased && WitchScreamCooldown <= 0)
                 {
-                    if (Main.myPlayer == Player.whoAmI)
+                    if (Witch)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Lotr/WitchkingScream"), Player.Center);
+                        if (Main.myPlayer == Player.whoAmI)
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Lotr/WitchkingScream"), Player.Center);
 
-                        for (int i = 0; i < 25; i++) 
-                        {
-                            Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
-                            int dustIndex = Dust.NewDust(player.Center, 0, 0, 114, dustSpeed.X, dustSpeed.Y, 0, default(Color), 2f);
-                            Main.dust[dustIndex].noGravity = true; 
-                        }
-                        for (int i = 0; i < 25; i++) 
-                        {
-                            Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
-                            int dustIndex = Dust.NewDust(player.Center, 0, 0, 130, dustSpeed.X, dustSpeed.Y, 0, default(Color), 2f);
-                            Main.dust[dustIndex].noGravity = true; 
-                        }
-
-                        float radius = 30 * 16; 
-                        for (int i = 0; i < Main.maxNPCs; i++)
-                        {
-                            NPC npc = Main.npc[i];
-                            if (npc.active && !npc.friendly && npc.Distance(Main.MouseWorld) <= radius)
+                            Projectile.NewProjectile(
+                                Player.GetSource_Misc("WitchScream"),
+                                Player.Center,
+                                Vector2.Zero,
+                                ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(),
+                                0,
+                                0,
+                                Player.whoAmI,
+                                550, // ai0
+                                20  // ai1
+                            );
+                            Projectile.NewProjectile(
+                                Player.GetSource_Misc("WitchScream"),
+                                Player.Center,
+                                Vector2.Zero,
+                                ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(),
+                                0,
+                                0,
+                                Player.whoAmI,
+                                520, // ai0
+                                60   // ai1
+                            );
+                            for (int i = 0; i < 20; i++) 
                             {
-                                npc.AddBuff(ModContent.BuffType<WitchkingCurse>(), 6 * 60); 
+                                Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
+                                int dustIndex = Dust.NewDust(player.Center, 0, 0, 114, dustSpeed.X, dustSpeed.Y, 0, default(Color), 1.8f);
+                                Main.dust[dustIndex].noGravity = true; 
                             }
-                        }
+                            for (int i = 0; i < 20; i++) 
+                            {
+                                Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
+                                int dustIndex = Dust.NewDust(player.Center, 0, 0, 130, dustSpeed.X, dustSpeed.Y, 0, default(Color), 1.8f);
+                                Main.dust[dustIndex].noGravity = true; 
+                            }
 
-                        WitchScreamCooldown = 1200; 
+                            float radius = 30 * 16; 
+                            for (int i = 0; i < Main.maxNPCs; i++)
+                            {
+                                NPC npc = Main.npc[i];
+                                if (npc.active && !npc.friendly && npc.Distance(Player.Center) <= radius)
+                                {
+                                    npc.AddBuff(ModContent.BuffType<WitchkingCurse>(), 6 * 60); // 6 seconds
+                                    
+                                    npc.StrikeNPC(new NPC.HitInfo
+                                    {
+                                        Damage = (int)Player.GetTotalDamage(DamageClass.Summon).ApplyTo(200),
+                                        Knockback = 0,
+                                        HitDirection = 0,
+                                        Crit = false,
+                                        DamageType = DamageClass.Summon
+                                    }, false, false); // noPlayerInteraction = false, dontTriggerSound = false
+                                }
+                            }
+
+                            WitchScreamCooldown = 1200; 
+                        }
                     }
                 }
 

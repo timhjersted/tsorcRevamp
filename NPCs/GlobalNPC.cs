@@ -1702,11 +1702,6 @@ namespace tsorcRevamp.NPCs
                 Main.EntitySpriteDraw(SunburnMarksSprite, npc.Center - Main.screenPosition - new Vector2(0, SunburnMarksSprite.Height / 6 * SunburnMarks - 100), SunburnMarkSourceRectangle, Color.White, 0, SunburnMarkSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
             }
 
-            if (WitchkingCurse)
-            {
-                drawColor = Color.Lerp(drawColor, Color.Red, 0.9f);
-            }
-
             if (DodgeTimer > 0 && Main.GameUpdateCount % 10 < 5)
             {
                 return false;
@@ -2030,7 +2025,7 @@ namespace tsorcRevamp.NPCs
 
             if (WitchkingCurse)
             {
-                int DoTPerS = 151;
+                int DoTPerS = 201;
                 if (npc.lifeRegen > 0)
                 {
                     npc.lifeRegen = 0;
@@ -2040,14 +2035,9 @@ namespace tsorcRevamp.NPCs
 
                 npc.damage = (int)(npc.damage * 0.8f);
                 npc.defense = Math.Max(0, npc.defDefense - 40);
-                npc.velocity *= 0.9f;
+                npc.velocity *= 0.95f;
 
                 var N = npc; 
-
-                if (Main.rand.NextBool(15))
-                { 
-                    Dust.NewDust(npc.position, npc.width, npc.height, DustID.Blood, npc.velocity.X * 0.2f, npc.velocity.Y * 0.2f, 100, Color.Red, 1.25f);
-                }
             }
 
             if (CCShocked)
@@ -2730,6 +2720,21 @@ namespace tsorcRevamp.NPCs
                 if (Main.rand.NextBool(2))
                 {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 74, npc.velocity.X * 0f, -2f, 100, default(Color), .8f); ;
+                    Main.dust[dust].velocity *= 0f;
+                    Main.dust[dust].noGravity = true;
+                    Main.dust[dust].velocity += npc.velocity;
+                    Main.dust[dust].fadeIn = 1f;
+                }
+            }
+
+            if (WitchkingCurse)
+            {
+                drawColor = Color.OrangeRed;
+                Lighting.AddLight(npc.position, 0.23f, 0.125f, 0.065f);
+
+                if (Main.rand.NextBool(6))
+                {
+                    int dust = Dust.NewDust(npc.position, npc.width, npc.height, 5, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), 1f); ;
                     Main.dust[dust].velocity *= 0f;
                     Main.dust[dust].noGravity = true;
                     Main.dust[dust].velocity += npc.velocity;

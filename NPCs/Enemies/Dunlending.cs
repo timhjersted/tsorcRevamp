@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lifeMax = 45;
             NPC.value = 220;
             NPC.HitSound = SoundID.NPCHit1;
-            NPC.DeathSound = SoundID.NPCDeath2;
+            NPC.DeathSound = SoundID.NPCDeath1;
             AnimationType = NPCID.PossessedArmor;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DunlendingBanner>();

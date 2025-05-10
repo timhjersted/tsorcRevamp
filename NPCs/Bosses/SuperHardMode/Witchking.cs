@@ -14,6 +14,7 @@ using tsorcRevamp.Items.Accessories.Defensive;
 using tsorcRevamp.Items.BossItems;
 using tsorcRevamp.Items.Materials;
 using tsorcRevamp.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Projectiles.Melee.Shortswords;
 using tsorcRevamp.Utilities;
 
@@ -138,18 +139,40 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Lotr/WitchkingScream"), NPC.Center);
 
-                for (int i = 0; i < 25; i++)
+                for (int i = 0; i < 20; i++)
                 {
                     Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
                     int dustIndex = Dust.NewDust(NPC.Center, 0, 0, 114, dustSpeed.X, dustSpeed.Y, 0, default(Color), 2f);
                     Main.dust[dustIndex].noGravity = true;
                 }
-                for (int i = 0; i < 25; i++)
+                for (int i = 0; i < 20; i++)
                 {
                     Vector2 dustSpeed = Main.rand.NextVector2Circular(30f, 30f);
                     int dustIndex = Dust.NewDust(NPC.Center, 0, 0, 130, dustSpeed.X, dustSpeed.Y, 0, default(Color), 2f);
                     Main.dust[dustIndex].noGravity = true;
-                }
+                } 
+                    Projectile.NewProjectile(
+                    NPC.GetSource_FromThis(),
+                    NPC.Center,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.VFX.ExplosionFlash>(),
+                    0,
+                    0,
+                    Main.myPlayer,
+                    550, // ai0
+                    20  // ai1
+                );
+                    Projectile.NewProjectile(
+                    NPC.GetSource_FromThis(),
+                    NPC.Center,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<Projectiles.VFX.ShockwaveEffect>(),
+                    0,
+                    0,
+                    Main.myPlayer,
+                    520, // ai0
+                    60   // ai1
+                );
 
                 beingPulled = true;
                 frameCount = 0;
@@ -414,6 +437,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonAdventureModeRule, ModContent.ItemType<BrokenDarkMagicRing>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<WitchkingsSword>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<WitchkingMace>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BewitchedTitanite>(), 1, 15, 20));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CovenantOfArtorias>()));
             npcLoot.Add(notExpertCondition);

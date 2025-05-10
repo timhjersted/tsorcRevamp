@@ -3123,6 +3123,8 @@ Mods: {
 					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
 					{$CommonItemTooltip.SetBonus}增强了巫师王之剑
 					'''
+				// Keybind1: "Press "
+				// Keybind2: " to let out a terrifying scream that affects enemies in a radius"
 			}
 
 			SymbolOfAvarice: {
@@ -5846,11 +5848,6 @@ Mods: {
 			WitchkingsSword: {
 				DisplayName: 巫师王之剑
 				Tooltip: 攻击敌人对其施加 1-2 种随机的减益
-				Empowered:
-					'''
-					每次命中获得 1-2 种随机的鞭子增益效果
-					受到鞭子伤害、范围和召唤暴击率加成，而不是近战
-					'''
 			}
 
 			YianBlade: {
@@ -7797,7 +7794,7 @@ Mods: {
 
 			WitchkingMace: {
 				// DisplayName: Witchking Mace
-				// Tooltip: ""
+				// Tooltip: Inflicts 1 random whip debuff each hit
 			}
 
 			TaintedBow: {
