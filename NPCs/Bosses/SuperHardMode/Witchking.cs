@@ -199,17 +199,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (Main.player[i].active && !Main.player[i].dead)
                 {
                     Player player = Main.player[i];
-                    if (NPC.Distance(player.Center) < 600)
+                    if (NPC.Distance(player.Center) < 800)
                     {
                         player.AddBuff(BuffID.Slow, 60, false);
                         player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60, false);
 
                     }
-                    if (NPC.Distance(player.Center) < 150)
+                    if (NPC.Distance(player.Center) < 225)
                     {
                         player.AddBuff(BuffID.Silenced, 180, false);
                         player.AddBuff(BuffID.Bleeding, 600, false);
-                        player.AddBuff(ModContent.BuffType<TornWings>(), 40, false);
+                        player.AddBuff(ModContent.BuffType<TornWings>(), 20, false);
                     }
                 }
             }
