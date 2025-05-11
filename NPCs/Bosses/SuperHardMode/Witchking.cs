@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.DeathSound = new SoundStyle("tsorcRevamp/Sounds/Lotr/WitchkingScream");
             NPC.value = 350000;
             NPC.knockBackResist = 0.0f;
-            NPC.rarity =32;
+            NPC.rarity = 32;
             NPC.boss = true;
             AnimationType = NPCID.PossessedArmor;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Witchking.DespawnHandler"), Color.Purple, DustID.PurpleTorch);
@@ -222,13 +222,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (Main.player[i].active && !Main.player[i].dead)
                 {
                     Player player = Main.player[i];
-                    if (NPC.Distance(player.Center) < 800)
+                    if (NPC.Distance(player.Center) < 600)
                     {
                         player.AddBuff(BuffID.Slow, 60, false);
                         player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60, false);
-
                     }
-                    if (NPC.Distance(player.Center) < 225)
+                    if (NPC.Distance(player.Center) < 200)
                     {
                         player.AddBuff(BuffID.Silenced, 180, false);
                         player.AddBuff(BuffID.Bleeding, 600, false);
@@ -293,15 +292,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 Player player = Main.player[i];
 
-                // Creates visual for the pull
-                player.AddBuff(ModContent.BuffType<WitchkingsGrasp>(), 5, false);
-
                 // A positive xDiff = the player is to the right of the witchking
                 float xDiff = player.Center.X - NPC.Center.X;
 
                 // A negative yDiff = the player is above the witchking
                 float yDiff = player.Center.Y - NPC.Center.Y;
-                
+
                 /*
                 if (frameCount % 60 == 0)
                 {
@@ -316,12 +312,32 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 float strength = (100f - lifeThreshold) / 20f;
 
                 // The pull gets stronger as the witchking is lower on life and the player is further away
-                player.velocity.X -= (xDiff / 4000f + strength * .056f * xSign) * (1 + strength * .13f);
+                player.velocity.X -= (xDiff / 4000f + strength * .052f * xSign) * (1 + strength * .13f);
 
                 // Only apply a Y velocity if the player is currently midair - prevents no jump bug along with torn wings
                 if (player.velocity.Y != 0f)
                 {
                     player.velocity.Y -= yDiff / 800f + strength * .03f * ySign;
+                }
+
+                // Creates the player visual for the pull
+                player.AddBuff(ModContent.BuffType<WitchkingsGrasp>(), 5, false);
+                player.GetModPlayer<tsorcRevampPlayer>().PullStrength = (int)strength;
+
+                // Creates pull effect of dust flying towards the witchking
+                Rectangle playerRect = new Rectangle(0, 0, 20, 45);
+
+                for (int x = 0; x < (int)strength; x++)
+                {
+                    Vector2 offset = Main.rand.NextVector2FromRectangle(playerRect);
+                    Vector2 dustPosition = player.position + offset;
+
+                    Vector2 velocity = new Vector2(10f, 0).RotatedBy(dustPosition.AngleTo(NPC.Center)) * Main.rand.NextFloat(1f, Math.Abs(xDiff) / 45f);
+
+                    dustPosition.X += velocity.X;
+                    dustPosition.Y += velocity.Y;
+
+                    Dust.NewDustPerfect(dustPosition, DustID.ShadowbeamStaff, velocity, Scale: Main.rand.NextFloat(0.8f, 1.5f)).noGravity = true;
                 }
             }
 

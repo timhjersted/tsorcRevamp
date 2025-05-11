@@ -60,7 +60,10 @@ namespace tsorcRevamp
         public int SoulReaper = 5;
         public bool TornWings = false;
         public bool Crippled = false;
-        public bool BeingPulledIntoTheWitchking = false;
+        public bool WitchkingsGrasp = false;
+        public int PullStrength = 0;
+        public int PullFrame = 0;
+
 
         public bool Celestriad = false;
         public bool UndeadTalisman = false;
@@ -505,10 +508,10 @@ namespace tsorcRevamp
             ConsSoulChanceMult = 0;
             SoulSickle = false;
             TornWings = false;
+            WitchkingsGrasp = false;
             MorgulWhipEffect = false;
 
             Crippled = false;
-            BeingPulledIntoTheWitchking = false;
             ShadowWeight = false;
             ReflectionShiftEnabled = false;
 
@@ -1366,9 +1369,25 @@ namespace tsorcRevamp
                 }
             }
 
-            if (BeingPulledIntoTheWitchking)
+            if (WitchkingsGrasp)
             {
-                // TODO: Add visual effects to the player while being pulled in.
+                PullFrame++;
+                // Generate dust every 5 frames
+                if (PullFrame % 5 == 0)
+                {
+                    PullFrame = 0;
+
+                    float dustSpeed = Main.rand.NextFloat(0, 2f);
+                    Rectangle playerRect = new Rectangle(0, 0, 20, 45);
+
+                    // The stronger the pull, the more dust created.
+                    for (int i = 0; i < PullStrength; i++)
+                    {
+                        Vector2 offset = Main.rand.NextVector2FromRectangle(playerRect);
+                        Vector2 velocity = new Vector2(dustSpeed, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
+                        Dust.NewDustPerfect(Player.position + offset, DustID.Shadowflame, velocity, Scale: 2).noGravity = true;
+                    }
+                }
             }
 
             for (int i = 0; i < 50; i++)

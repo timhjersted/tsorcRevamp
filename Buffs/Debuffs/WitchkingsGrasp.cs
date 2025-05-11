@@ -3,7 +3,6 @@ using Terraria;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
-{
     public class WitchkingsGrasp : ModBuff
     {
         public override void SetStaticDefaults()
@@ -14,7 +13,7 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.GetModPlayer<tsorcRevampPlayer>().BeingPulledIntoTheWitchking = true;
+            player.GetModPlayer<tsorcRevampPlayer>().WitchkingsGrasp = true;
         }
     }
 }
