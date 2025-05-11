@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
+{ 
     public class WitchkingsGrasp : ModBuff
     {
         public override void SetStaticDefaults()
