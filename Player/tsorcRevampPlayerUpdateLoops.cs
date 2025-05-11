@@ -1385,6 +1385,7 @@ namespace tsorcRevamp
                     {
                         Vector2 offset = Main.rand.NextVector2FromRectangle(playerRect);
                         Vector2 velocity = new Vector2(dustSpeed, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
+                        Dust.NewDustPerfect(Player.position + offset, DustID.Shadowflame, velocity, Scale: 1).noGravity = false;
                     }
                 }
             }
