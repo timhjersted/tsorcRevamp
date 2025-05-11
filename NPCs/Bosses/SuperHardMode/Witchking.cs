@@ -327,6 +327,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // Creates pull effect of dust flying towards the witchking
                 Rectangle playerRect = new Rectangle(0, 0, 20, 45);
 
+                // More dust at lower life thresholds to represent the stronger pull
                 for (int x = 0; x < (int)strength; x++)
                 {
                     Vector2 offset = Main.rand.NextVector2FromRectangle(playerRect);
@@ -334,6 +335,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     Vector2 velocity = new Vector2(10f, 0).RotatedBy(dustPosition.AngleTo(NPC.Center)) * Main.rand.NextFloat(1f, Math.Abs(xDiff) / 45f);
 
+                    // Moves the dust off of the player before it visually spawns
                     dustPosition.X += velocity.X;
                     dustPosition.Y += velocity.Y;
 
