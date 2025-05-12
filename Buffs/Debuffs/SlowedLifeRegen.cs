@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
@@ -13,14 +14,7 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            if (player.lifeRegen - 3 <= 0)
-            {
-                player.lifeRegen = 0;
-            }
-            else
-            {
-                player.lifeRegen -= 3;
-            }
+            player.lifeRegen = Math.Max(player.lifeRegen - 3, 0);
         }
     }
 }
